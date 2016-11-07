@@ -16,6 +16,7 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
+	isPostContentEmpty,
 	mergeIgnoringArrays
 } from '../utils';
 
@@ -373,6 +374,26 @@ describe( 'utils', () => {
 					wookie_post_tags: [ 'raaar', 'uggggaaarr' ]
 				}
 			} );
+		} );
+	} );
+
+	describe( 'isPostContentEmpty()', () => {
+		it( 'should return true for empty strings', () => {
+			const content = '';
+
+			expect( isPostContentEmpty( content ) ).to.eql( true );
+		} );
+
+		it( 'should return true for empty paragraphs', () => {
+			const content = '<p></p>';
+
+			expect( isPostContentEmpty( content ) ).to.eql( true );
+		} );
+
+		it( 'should return false for random texts', () => {
+			const content = 'small content';
+
+			expect( isPostContentEmpty( content ) ).to.eql( false );
 		} );
 	} );
 } );

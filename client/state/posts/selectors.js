@@ -13,6 +13,7 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	isPostContentEmpty,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
 	normalizePostForDisplay
@@ -354,6 +355,46 @@ export const isEditedPostDirty = createSelector(
 				value !== DEFAULT_NEW_POST_VALUES[ key ]
 			);
 		} );
+	},
+	( state ) => [ state.posts.items, state.posts.edits ]
+);
+
+/**
+  * Returns true if the edited post has content
+  * (title, excerpt or content not empty)
+  *
+  * @param  {Object}  state  Global state tree
+  * @param  {Number}  siteId Site ID
+  * @param  {Number}  postId Post ID
+  * @return {Boolean}        Whether the edited post has content or not
+ */
+export const editedPostHasContent = createSelector(
+	( state, siteId, postId ) => {
+		const post = getSitePost( state, siteId, postId );
+		const edits = getPostEdits( state, siteId, postId );
+
+		if ( ! post && ! edits ) {
+			return false;
+		}
+
+		const getRecentAttribute = key => {
+			if ( edits && key in edits ) {
+				return edits[ key ];
+			}
+			if ( post ) {
+				return post[ key ];
+			}
+			return null;
+		};
+
+		const title = getRecentAttribute( 'title' );
+		const excerpt = getRecentAttribute( 'excerpt' );
+		const content = getRecentAttribute( 'content' );
+		if ( ( title && title.trim() ) || excerpt ) {
+			return true;
+		}
+
+		return ! isPostContentEmpty( content );
 	},
 	( state ) => [ state.posts.items, state.posts.edits ]
 );

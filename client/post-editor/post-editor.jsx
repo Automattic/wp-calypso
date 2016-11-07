@@ -38,7 +38,7 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { getPostEdits, isEditedPostDirty, editedPostHasContent } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -201,7 +201,7 @@ export const PostEditor = React.createClass( {
 						onPublish={ this.onPublish }
 						isPublishing={ this.state.isPublishing }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						onClose={ this.onClose }
 						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
@@ -286,7 +286,7 @@ export const PostEditor = React.createClass( {
 						isNew={ this.state.isNew }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						isSaving={ this.state.isSaving }
 						isPublishing={ this.state.isPublishing }
 						onSave={ this.onSave }
@@ -767,6 +767,7 @@ export default connect(
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
+			hasContent: editedPostHasContent( state, siteId, postId )
 		};
 	},
 	( dispatch ) => {
