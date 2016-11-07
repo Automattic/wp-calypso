@@ -83,14 +83,14 @@ const ThemesListFetcher = React.createClass( {
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? props.tier : 'free';
 
 		this.props.query( {
-			search,
-			tier,
-			filter: props.filter,
-			page: 0,
-			perPage: PER_PAGE,
+			params: {
+				search,
+				tier,
+				filter: props.filter,
+				perPage: PER_PAGE,
+			},
+			site
 		} );
-
-		this.props.fetchNextPage( site );
 	},
 
 	fetchNextPage: function( options ) {
