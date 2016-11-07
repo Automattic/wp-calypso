@@ -239,7 +239,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		if ( this.props.site.jetpack && ! config.isEnabled( 'jetpack/seo-tools' ) ) {
+		if ( this.props.site.jetpack && ( ! config.isEnabled( 'jetpack/seo-tools' ) || ! this.props.site.isModuleActive( 'seo-tools' ) ) ) {
 			return;
 		}
 
