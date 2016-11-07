@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { useNock } from 'test/helpers/use-nock';
