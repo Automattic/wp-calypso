@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import Lru from 'lru-cache';
 import startsWith from 'lodash/startsWith';
 
 /**
@@ -18,7 +19,11 @@ import wpcom from 'lib/wp';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );
-const themeDetailsCache = new Map();
+const HOUR_IN_MS = 3600000;
+const themeDetailsCache = new Lru( {
+	max: 500,
+	maxAge: HOUR_IN_MS
+} );
 
 export function fetchThemeDetailsData( context, next ) {
 	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
@@ -28,8 +33,7 @@ export function fetchThemeDetailsData( context, next ) {
 	const themeSlug = context.params.slug;
 	const theme = themeDetailsCache.get( themeSlug );
 
-	const HOUR_IN_MS = 3600000;
-	if ( theme && ( theme.timestamp + HOUR_IN_MS > Date.now() ) ) {
+	if ( theme ) {
 		debug( 'found theme!', theme.id );
 		context.store.dispatch( receiveThemeDetails( theme ) );
 		context.renderCacheKey = context.path + theme.timestamp;
