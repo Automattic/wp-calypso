@@ -22,12 +22,11 @@ export const SiteTitleTour = makeTour(
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
-					translate( "We noticed you haven't changed the title of your site yet. It's quick and easy to do " +
-											"and we'd love to show you how to do that." )
+					translate( "We noticed you haven't changed the title of your site yet. Do you want to change it?" )
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next step="click-settings">{ translate( "Let's go!" ) }</Next>
+				<Next step="click-settings">{ translate( "Let's change it!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</div>
 		</Step>
@@ -42,7 +41,7 @@ export const SiteTitleTour = makeTour(
 			<div className="guided-tours__actionstep-instructions">
 				<Continue target="settings" step="site-title-input" click>
 					{
-						translate( 'Click the {{strong}}{{GridIcon/}} Settings{{/strong}} to continue.', {
+						translate( 'Click {{strong}}{{GridIcon/}} Settings{{/strong}} to continue.', {
 							components: {
 								GridIcon: <Gridicon icon="cog" size={ 24 } />,
 								strong: <strong />,
@@ -89,7 +88,7 @@ export const SiteTitleTour = makeTour(
 		>
 			<p className="guided-tours__step-text">
 				{
-					translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
+					translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
 						components: {
 							strong: <strong />,
 						}
