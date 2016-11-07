@@ -110,6 +110,7 @@ normalizePost.withContentDOM = function( transforms ) {
 };
 
 import removeStyles from './rule-content-remove-styles';
+import removeElementsBySelector from './rule-content-remove-elements-by-selector';
 import makeImagesSafe from './rule-content-make-images-safe';
 import makeEmbedsSafe from './rule-content-make-embeds-safe';
 import wordCountAndReadingTime from './rule-content-word-count';
@@ -120,6 +121,7 @@ import detectPolls from './rule-content-detect-polls';
 
 normalizePost.content = {
 	removeStyles,
+	removeElementsBySelector,
 	makeImagesSafe,
 	makeEmbedsSafe,
 	wordCountAndReadingTime,
