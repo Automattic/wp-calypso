@@ -120,7 +120,7 @@ describe( 'actions', () => {
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/settings' )
 				.reply( 200, {
-					updated: { default_category: 'chicken' }
+					updated: { real_update: 'ribs' }
 				} )
 				.post( '/rest/v1.1/sites/2916285/settings' )
 				.reply( 403, {
@@ -129,20 +129,25 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
+		it( 'should dispatch fetch action and an optimistic update when thunk triggered', () => {
 			saveSiteSettings( 2916284, { default_category: 'chicken' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916284
 			} );
+			expect( spy ).to.have.been.calledWith(
+				updateSiteSettings( 2916284, {
+					default_category: 'chicken'
+				} )
+			);
 		} );
 
 		it( 'should dispatch update action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
 					updateSiteSettings( 2916284, {
-						default_category: 'chicken'
+						real_update: 'ribs'
 					} )
 				);
 			} );
@@ -158,7 +163,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return saveSiteSettings( 2916285 )( spy ).catch( () => {
+			return saveSiteSettings( 2916285 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId: 2916285,

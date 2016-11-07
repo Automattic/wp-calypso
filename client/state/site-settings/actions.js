@@ -87,6 +87,8 @@ export function saveSiteSettings( siteId, settings ) {
 			type: SITE_SETTINGS_SAVE,
 			siteId
 		} );
+		// Optimistic update
+		dispatch( updateSiteSettings( siteId, settings ) );
 
 		return wpcom.undocumented().settings( siteId, 'post', settings )
 			.then( ( { updated } ) => {
@@ -102,8 +104,6 @@ export function saveSiteSettings( siteId, settings ) {
 					siteId,
 					error
 				} );
-
-				return Promise.reject( error );
 			} );
 	};
 }
