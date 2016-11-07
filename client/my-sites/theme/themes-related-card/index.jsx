@@ -75,6 +75,6 @@ const ThemesRelatedCard = React.createClass( {
 
 export default connect(
 	state => ( {
-		getDetailsUrl: getThemeDetailsUrl.bind( null, state )
+		getDetailsUrl: theme => getThemeDetailsUrl( state, theme )
 	} )
 )( ThemesRelatedCard );
