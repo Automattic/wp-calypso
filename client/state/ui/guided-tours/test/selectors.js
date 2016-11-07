@@ -9,6 +9,7 @@ import { constant, times } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 
 describe( 'selectors', () => {
 	let getGuidedTourState;
@@ -24,6 +25,57 @@ describe( 'selectors', () => {
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
+	} );
+
+	describe( '#isConflictingWithFirstView', () => {
+		const stateWithEligibleFirstView = {
+			currentUser: {
+				id: 73705554
+			},
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' }
+				}
+			},
+			ui: {
+				actionLog: [ {
+					type: 'ROUTE_SET',
+					path: '/stats'
+				} ],
+				queryArguments: {
+					initial: {}
+				},
+				section: {
+					name: 'stats',
+					paths: [ '/stats' ]
+				}
+			},
+			preferences: {
+				remoteValues: {
+					firstViewHistory: []
+				},
+				lastFetchedTimestamp: 123456
+			}
+		};
+		it( 'expects shouldViewBeVisible to work normally', () => {
+			expect( shouldViewBeVisible( stateWithEligibleFirstView ) ).to.be.true;
+		} );
+
+		it( 'should short-circuit findEligibleTour', () => {
+			const stateWithFirstViewAndTourRequest = {
+				...stateWithEligibleFirstView,
+				ui: {
+					...stateWithEligibleFirstView.ui,
+					queryArguments: {
+						initial: {
+							tour: 'main'
+						}
+					}
+				}
+			};
+
+			expect( findEligibleTour( stateWithFirstViewAndTourRequest ) ).to.be.null;
+		} );
 	} );
 
 	describe( '#getGuidedTourState()', () => {

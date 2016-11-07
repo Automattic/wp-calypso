@@ -148,9 +148,16 @@ const findTriggeredTour = state => {
 	} );
 };
 
+const isSectionBlacklisted = state =>
+	includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+
+const isConflictingWithFirstView = state =>
+	false && state;
+
 const shouldBail = state => {
 	// bail if we're on a blacklisted page
-	return includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+	return isSectionBlacklisted( state ) ||
+		isConflictingWithFirstView( state );
 };
 
 export const findEligibleTour = createSelector(
