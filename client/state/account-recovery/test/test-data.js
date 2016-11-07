@@ -1,5 +1,5 @@
 const dummyData = {
-	email: 'dummytest@a8ctest.com',
+	email: 'dummytest@example.com',
 	email_validated: false,
 	phone: {
 		country_code: 'TW',
