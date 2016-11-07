@@ -109,21 +109,21 @@ const RelatedPostCardv2Example = () => (
 		<div className="reader-related-card-v2__blocks is-same-site">
 			<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">Cats and Furballs</a></h1>
 				<ul className="reader-related-card-v2__list">
-					{ moreOnSameSite.map( item =>
+					{ moreOnSameSite.map( item => (
 						<li className="reader-related-card-v2__list-item">
 							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
 						</li>
-					) }
+					) ) }
 				</ul>
 		</div>
 		<div className="reader-related-card-v2__blocks is-other-site">
 			<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">WordPress.com</a></h1>
 				<ul className="reader-related-card-v2__list">
-					{ moreOnWordPress.map( item =>
+					{ moreOnWordPress.map( item => (
 						<li className="reader-related-card-v2__list-item">
 							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
 						</li>
-					) }
+					) ) }
 				</ul>
 		</div>
 		</Card>
