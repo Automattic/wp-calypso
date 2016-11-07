@@ -5,7 +5,7 @@ import {
 	GUIDED_TOUR_UPDATE,
 } from 'state/action-types';
 
-import { setPreference } from 'state/preferences/actions';
+import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
 export function quitGuidedTour( { tour, stepName, finished } ) {
@@ -40,7 +40,7 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 // and saving that as the new history.
 
 function addSeenGuidedTour( getState, tourName, finished = false ) {
-	return setPreference( 'guided-tours-history', [
+	return savePreference( 'guided-tours-history', [
 		...getPreference( getState(), 'guided-tours-history' ),
 		{
 			timestamp: Date.now(),
