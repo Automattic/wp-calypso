@@ -148,6 +148,31 @@ export class VirtualList extends Component {
 		}
 	}
 
+	setRowRef = ( index, rowRef ) => {
+		if ( ! rowRef ) {
+			return;
+		}
+
+		// By falling back to the row height constant, we avoid an unnecessary
+		// forced update if all of the rows match our guessed height
+		const height = this.rowHeights[ index ] || this.this.props.defaultRowHeight;
+		const nextHeight = rowRef.clientHeight;
+		this.rowHeights[ index ] = nextHeight;
+
+		// If height changes, wait until the end of the current call stack and
+		// fire a single forced update to recompute the row heights
+		if ( height !== nextHeight ) {
+			this.queueRecomputeRowHeights();
+		}
+	};
+
+	renderRow = props => {
+		const element = this.props.renderRow( props );
+		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
+
+		return React.cloneElement( element, { ref: setRowRef } );
+	};
+
 	render() {
 		const rowCount = this.getRowCount();
 		const { className, loading, height, defaultRowHeight, getRowHeight } = this.props;
@@ -165,7 +190,7 @@ export class VirtualList extends Component {
 					rowCount={ rowCount }
 					estimatedRowSize={ defaultRowHeight }
 					rowHeight={ getRowHeight }
-					rowRenderer={ this.props.renderRow }
+					rowRenderer={ this.renderRow }
 					noRowsRenderer={ this.renderNoResults }
 					className={ className } />
 			</div>
