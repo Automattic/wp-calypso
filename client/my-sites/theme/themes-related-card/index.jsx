@@ -13,6 +13,7 @@ import Card from 'components/card';
 import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 
@@ -75,6 +76,6 @@ const ThemesRelatedCard = React.createClass( {
 
 export default connect(
 	state => ( {
-		getDetailsUrl: theme => getThemeDetailsUrl( state, theme )
+		getDetailsUrl: theme => getThemeDetailsUrl( state, theme, getSelectedSiteId( state ) )
 	} )
 )( ThemesRelatedCard );
