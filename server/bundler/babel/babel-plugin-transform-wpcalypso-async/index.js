@@ -71,7 +71,10 @@ module.exports = ( { types: t } ) => {
 
 				// In both asynchronous and synchronous case, we'll finish by
 				// calling require on the loaded module
-				let requireCall = t.callExpression( t.identifier( 'require' ), [ argument ] );
+				let requireCall = t.memberExpression(
+					t.callExpression( t.identifier( 'require' ), [ argument ] ),
+					t.identifier( 'default' )
+				);
 
 				// If a callback was passed as an argument, wrap it as part of
 				// the transformation
