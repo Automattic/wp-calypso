@@ -45,7 +45,7 @@ var REGEXP_IMG = /<img\s[^>]*\/?>/ig,
 	SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
-	numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
+	numOfImagesToUpdate = null;
 
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -334,7 +334,9 @@ function mediaButton( editor ) {
 				return level;
 			} );
 
-			numOfImagesToUpdate -= 1;
+			if ( numOfImagesToUpdate ) {
+				numOfImagesToUpdate -= 1;
+			}
 		} );
 
 		if ( ! transients && PostEditStore.isSaveBlocked( 'MEDIA_MODAL_TRANSIENT_INSERT' ) ) {
@@ -358,7 +360,7 @@ function mediaButton( editor ) {
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
 			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
 
-			numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
+			numOfImagesToUpdate = null;
 		}
 	} );
 
