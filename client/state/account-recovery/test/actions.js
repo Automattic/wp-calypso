@@ -23,7 +23,7 @@ import {
 
 import dummyData from './test-data';
 
-describe( 'account-recovery ctions', () => {
+describe( 'account-recovery actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
