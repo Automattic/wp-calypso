@@ -5,7 +5,7 @@
  */
 import { PropTypes, createElement, PureComponent } from 'react';
 import classNames from 'classnames';
-import { omit, compact } from 'lodash';
+import { omit, uniq, compact } from 'lodash';
 
 export default class Button extends PureComponent {
 	static propTypes = {
@@ -39,7 +39,11 @@ export default class Button extends PureComponent {
 
 		// Block referrers when external link
 		if ( props.target ) {
-			props.rel = compact( [ props.rel, 'noopener', 'noreferrer' ] ).join( ' ' );
+			props.rel = uniq( compact( [
+				...( props.rel || '' ).split( ' ' ),
+				'noopener',
+				'noreferrer'
+			] ) ).join( ' ' );
 		}
 
 		return createElement( tag, {
