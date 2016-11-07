@@ -18,6 +18,8 @@ import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
 
+require('./style.scss');
+
 /**
  * Constants
  */
