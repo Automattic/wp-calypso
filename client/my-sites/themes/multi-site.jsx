@@ -2,57 +2,35 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
-import {
-	preview,
-	purchase,
-	activate,
-	tryandcustomize,
-	separator,
-	info,
-	support,
-	help,
-	bindOptionsToDispatch
-} from './theme-options';
+import ThemeOptions from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ThemesMultiSite = props => (
-	<ThemesSiteSelectorModal { ...props } sourcePath="/design">
-		<ThemeShowcase { ...props }>
-			<SidebarNavigation />
-		</ThemeShowcase>
-	</ThemesSiteSelectorModal>
+export default props => (
+	<ThemeOptions options={ [
+		'preview',
+		'purchase',
+		'activate',
+		'tryandcustomize',
+		'separator',
+		'info',
+		'support',
+		'help',
+	] }
+	defaultOption="activate"
+	secondaryOption="tryandcustomize"
+	getScreenshotOption={ function() {
+		return 'info';
+	} }>
+		<ThemesSiteSelectorModal sourcePath="/design">
+			<ThemeShowcase { ...props } source="showcase">
+				<SidebarNavigation />
+			</ThemeShowcase>
+		</ThemesSiteSelectorModal>
+	</ThemeOptions>
 );
-
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
-	{},
-	ownProps,
-	stateProps,
-	{
-		options: dispatchProps,
-		defaultOption: dispatchProps.activate,
-		secondaryOption: dispatchProps.tryandcustomize,
-		getScreenshotOption: () => dispatchProps.info
-	}
-);
-
-export default connect(
-	null,
-	bindOptionsToDispatch( {
-		preview,
-		purchase,
-		activate,
-		tryandcustomize,
-		separator,
-		info,
-		support,
-		help,
-	}, 'showcase' ),
-	mergeProps
-)( ThemesMultiSite );

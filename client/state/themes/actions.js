@@ -192,17 +192,17 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-export function activate( theme, site, source = 'unknown' ) {
+export function activate( theme, siteId, source = 'unknown' ) {
 	return dispatch => {
 		dispatch( {
 			type: THEME_ACTIVATE,
 			theme: theme,
-			site: site
+			siteId: siteId
 		} );
 
-		wpcom.undocumented().activateTheme( theme, site.ID )
+		wpcom.undocumented().activateTheme( theme, siteId )
 			.then( () => {
-				dispatch( activated( theme, site, source ) );
+				dispatch( activated( theme, siteId, source ) );
 			} )
 			.catch( error => {
 				dispatch( receiveServerError( error ) );
@@ -210,9 +210,9 @@ export function activate( theme, site, source = 'unknown' ) {
 	};
 }
 
-export function activated( theme, site, source = 'unknown', purchased = false ) {
+export function activated( theme, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
-		const previousTheme = getCurrentTheme( getState(), site.ID );
+		const previousTheme = getCurrentTheme( getState(), siteId );
 		const queryParams = getState().themes.themesList.get( 'query' );
 
 		if ( typeof theme !== 'object' ) {
@@ -222,8 +222,7 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 		const action = {
 			type: THEME_ACTIVATED,
 			theme,
-			site,
-			siteId: site.ID
+			siteId: siteId
 		};
 
 		const trackThemeActivation = recordTracksEvent(
