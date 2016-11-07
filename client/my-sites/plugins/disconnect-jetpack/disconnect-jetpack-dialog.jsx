@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -68,7 +68,7 @@ class DisconnectJetpackDialog extends Component {
 	}
 
 	render() {
-		const { translate, site } = this.props;
+		const { site } = this.props;
 		const deactivationButtons = [
 			{
 				action: 'cancel',
@@ -111,5 +111,10 @@ class DisconnectJetpackDialog extends Component {
 export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state )
-	} )
-)( localize( DisconnectJetpackDialog ) );
+	} ),
+	null,
+	null,
+	{
+		withRef: true
+	}
+)( DisconnectJetpackDialog );

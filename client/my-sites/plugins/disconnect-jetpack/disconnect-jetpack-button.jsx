@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { omit } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,15 +24,14 @@ class DisconnectJetpackButton extends Component {
 		if ( this.props.isMock ) {
 			return;
 		}
-
-		this.refs.dialog.open();
+		this.refs.dialog.getWrappedInstance().open();
 		analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	}
 
 	render() {
-		const { site, redirect, linkDisplay, translate } = this.props;
+		const { site, redirect, linkDisplay } = this.props;
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'moment', 'numberFormat', 'translate' ];
+		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text' ];
 		const buttonProps = {
 			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
@@ -72,4 +71,4 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true
 };
 
-export default localize( DisconnectJetpackButton );
+export default DisconnectJetpackButton;
