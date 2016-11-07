@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -14,18 +14,24 @@ import analytics from 'lib/analytics';
 import SitesListActions from 'lib/sites-list/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const DisconnectJetpackDialog = React.createClass( {
-	getInitialState() {
-		return {
+class DisconnectJetpackDialog extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
 			showJetpackDisconnectDialog: false
 		};
-	},
+
+		this.open = this.open.bind( this );
+		this.close = this.close.bind( this );
+		this.disconnectJetpack = this.disconnectJetpack.bind( this );
+	}
 
 	open() {
 		this.setState( {
 			showJetpackDisconnectDialog: true
 		} );
-	},
+	}
 
 	close( action ) {
 		this.setState( {
@@ -38,7 +44,7 @@ const DisconnectJetpackDialog = React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 		}
-	},
+	}
 
 	disconnectJetpack() {
 		const { site, selectedSite } = this.props;
@@ -59,7 +65,7 @@ const DisconnectJetpackDialog = React.createClass( {
 		if ( selectedSite === site ) {
 			page.redirect( '/sites' );
 		}
-	},
+	}
 
 	render() {
 		const { translate, site } = this.props;
@@ -100,7 +106,7 @@ const DisconnectJetpackDialog = React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => ( {
