@@ -11,7 +11,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_DETAILS_RECEIVE
 } from 'state/action-types';
 import reducer from '../reducer';
@@ -117,7 +117,7 @@ describe( 'reducer', () => {
 		const initialState = Map( { twentyfifteen, twentysixteen } );
 
 		const state = reducer( initialState, {
-			type: THEME_ACTIVATED,
+			type: THEME_ACTIVATE_REQUEST_SUCCESS,
 			theme: {
 				author: 'the WordPress team',
 				author_uri: 'https://wordpress.org/',

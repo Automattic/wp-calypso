@@ -11,7 +11,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEMES_RECEIVE
 } from 'state/action-types';
 
@@ -46,7 +46,7 @@ export default ( state = initialState, action ) => {
 					.set( 'currentSiteId', action.siteId )
 			} );
 		}
-		case THEME_ACTIVATED:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
 			return initialState;

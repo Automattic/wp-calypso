@@ -12,8 +12,9 @@ import property from 'lodash/property';
  * Internal dependencies
  */
 import {
-	THEME_ACTIVATE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DETAILS_RECEIVE,
@@ -27,14 +28,12 @@ import {
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
-import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeById } from './themes/selectors';
 import wpcom from 'lib/wp';
 
 export function fetchThemes( site ) {
@@ -194,53 +193,77 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-export function activate( theme, site, source = 'unknown' ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_ACTIVATE,
-			theme: theme,
-			site: site
-		} );
+/**
+ * Returns an action object to be used in signalling that a theme activation
+ * has been triggered
+ *
+ * @param  {String}  themeId Theme to be activated
+ * @param  {Object}  siteId Site used for activation
+ * @return {Object}  Action object
+ */
+export function themeActivation( themeId, siteId ) {
+	return {
+		type: THEME_ACTIVATE_REQUEST,
+		themeId,
+		siteId,
+	};
+}
 
-		wpcom.undocumented().activateTheme( theme, site.ID )
+/**
+ * Returns an action object to be used in signalling that a theme activation
+ * has been successfull
+ *
+ * @param  {String}  themeId Theme received
+ * @param  {Number}  siteId Site used for activation
+ * @return {Object}  Action object
+ */
+export function themeActivated( themeId, siteId ) {
+	return {
+		type: THEME_ACTIVATE_REQUEST_SUCCESS,
+		themeId,
+		siteId,
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that a theme activation
+ * has failed
+ *
+ * @param  {String}  themeId Theme received
+ * @param  {Number}  siteId Site used for activation
+ * @param  {Number}  error Error response from server
+ * @return {Object}  Action object
+ */
+export function themeActivationFailed( themeId, siteId, error ) {
+	return {
+		type: THEME_ACTIVATE_REQUEST_FAILURE,
+		themeId,
+		siteId,
+		error,
+	};
+}
+
+export function activateTheme( themeId, siteId, trackThemesActivationData ) {
+	return dispatch => {
+		dispatch( themeActivation( themeId, siteId ) );
+
+		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( () => {
-				dispatch( activated( theme, site, source ) );
+				dispatch( themeActivationSuccess( themeId, siteId, trackThemesActivationData ) );
 			} )
 			.catch( error => {
-				dispatch( receiveServerError( error ) );
+				dispatch( themeActivationFailed( themeId, siteId, error ) );
 			} );
 	};
 }
 
-export function activated( theme, site, source = 'unknown', purchased = false ) {
-	return ( dispatch, getState ) => {
-		const previousTheme = getCurrentTheme( getState(), site.ID );
-		const queryParams = getState().themes.themesList.get( 'query' );
-
-		if ( typeof theme !== 'object' ) {
-			theme = getThemeById( getState(), theme );
-		}
-
-		const action = {
-			type: THEME_ACTIVATED,
-			theme,
-			site,
-			siteId: site.ID
-		};
-
-		const trackThemeActivation = recordTracksEvent(
-			'calypso_themeshowcase_theme_activate',
-			{
-				theme: theme.id,
-				previous_theme: previousTheme.id,
-				source: source,
-				purchased: purchased,
-				search_term: queryParams.get( 'search' ) || null
-			}
-		);
-
-		dispatch( withAnalytics( trackThemeActivation, action ) );
-	};
+export function themeActivationSuccess( themeId, siteId, trackThemesActivationData ) {
+	const action = themeActivated( themeId, siteId );
+	const trackThemeActivation = recordTracksEvent(
+		'calypso_themeshowcase_theme_activate',
+		trackThemesActivationData
+	);
+	return withAnalytics( trackThemeActivation, action );
 }
 
 export function clearActivated() {

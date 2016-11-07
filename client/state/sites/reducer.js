@@ -26,7 +26,7 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	PRESSABLE_TRANSFER_START,
 	PRESSABLE_TRANSFER_SUCCESS,
@@ -111,7 +111,7 @@ export function items( state = {}, action ) {
 				return memo;
 			}, {} );
 
-		case THEME_ACTIVATED:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			const { siteId, theme } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
