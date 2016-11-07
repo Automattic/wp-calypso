@@ -34,7 +34,10 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
+import ListItem from 'reader/list-item';
 const stats = require( 'reader/stats' );
+const wpcom = require( 'lib/wp' );
+const config = require( 'config' );
 
 const initialLoadFeedCount = 20;
 
@@ -75,7 +78,12 @@ const FollowingEdit = React.createClass( {
 		};
 
 		if ( props.search ) {
-			newState.subscriptions = this.searchSubscriptions( newState.subscriptions, props.search );
+			if ( ! config.isEnabled( 'reader/follow-feed-search' ) ) {
+				newState.subscriptions = this.searchSubscriptions( newState.subscriptions, props.search );
+			} else {
+				var params = { q: props.search };
+				wpcom.undocumented().readFollowingMine( params, this.searchCallback );
+			}
 		}
 
 		if ( this.state && this.state.sortOrder ) {
@@ -83,6 +91,11 @@ const FollowingEdit = React.createClass( {
 		}
 
 		return newState;
+	},
+
+	searchCallback: function( error, data ) {
+		const newState = { newSubscriptions: data.subscriptions };
+		this.smartSetState( newState );
 	},
 
 	// Add change listeners to stores
@@ -489,7 +502,8 @@ const FollowingEdit = React.createClass( {
 		let subscriptions = this.state.subscriptions,
 			subscriptionsToDisplay = [],
 			searchPlaceholder = '',
-			hasNoSubscriptions = false;
+			hasNoSubscriptions = false,
+			subscriptionRender = [];
 
 		// We're only interested in showing subscriptions with an ID (i.e. those that came from the API)
 		// At this point we may have some kicking around that just have a URL, such as those added when
@@ -514,6 +528,17 @@ const FollowingEdit = React.createClass( {
 			'is-searching': this.state.isSearching,
 			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
+
+		if ( config.isEnabled( 'reader/follow-feed-search' ) && this.state.newSubscriptions ) {
+			this.state.newSubscriptions.forEach( function( sub ) {
+				subscriptionRender.push(
+					<div className="subscription-list-item__header-content"
+							 key={ 'subscription-list-feed-item-' + sub.ID }>
+						<ListItem>{ sub.URL }</ListItem>
+					</div>
+				);
+			} );
+		}
 
 		return (
 			<Main className={ containerClasses }>
@@ -569,7 +594,8 @@ const FollowingEdit = React.createClass( {
 					ref="url-search" /> : null }
 
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
-				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
+				{ subscriptionRender.length > 0 ? subscriptionRender
+					: subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
 					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
 					: <InfiniteList className="following-edit__sites"
 						items={ subscriptionsToDisplay }
