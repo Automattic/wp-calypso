@@ -73,7 +73,7 @@ class SharingServiceAction extends Component {
 				primary={ primary }
 				borderless={ false }
 				scary={ warning }
-				compact={ true }
+				compact
 				onClick={ this.onActionClick }
 				disabled={ isPending }>
 				{ label }
