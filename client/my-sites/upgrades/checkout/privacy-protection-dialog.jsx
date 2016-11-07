@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+const React = require( 'react' ),
+	transform = require( 'lodash/transform' );
 
 /**
  * Internal dependencies
  */
 const Dialog = require( 'components/dialog' ),
-	PrivacyProtectionExample = require( './privacy-protection-example' );
+	PrivacyProtectionExample = require( './privacy-protection-example' ),
+	getProtectedContactInformation = require( 'lib/domains/whois/protected-contact-information' );
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtectionDialog',
@@ -18,20 +20,10 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getProtectedFields: function() {
-		return {
-			firstName: {},
-			lastName: {},
-			organization: { value: 'Domains By Proxy, LLC' },
-			email: { value: this.props.domain + '@domainsbyproxy.com' },
-			phone: { value: '+1.4806242599' },
-			address1: { value: '14747 N Northsight Blvd' },
-			address2: { value: 'Suite 111, PMB 309' },
-			city: { value: 'Scottsdale' },
-			state: { value: 'AZ' },
-			postalCode: { value: '85260' },
-			countryCode: { value: 'US' }
-		};
+	formatAsFields: function( contactInformation ) {
+		return transform( contactInformation, ( result, value, key ) => {
+			result[ key ] = { value };
+		}, {} );
 	},
 
 	render: function() {
@@ -68,7 +60,7 @@ module.exports = React.createClass( {
 						</div>
 						<PrivacyProtectionExample
 							countriesList= { this.props.countriesList }
-							fields={ this.getProtectedFields() } />
+							fields={ this.formatAsFields( getProtectedContactInformation( this.props.domain ) ) } />
 						<button
 								className="button is-primary"
 								disabled={ this.props.disabled }
