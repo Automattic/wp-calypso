@@ -17,14 +17,13 @@ import { getPostStat } from 'state/stats/posts/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
 function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, viewCount } ) {
-	const postId = post.ID,
-		siteId = post.site_ID;
+	const { ID: postId, site_ID: siteId } = post;
 	let viewsCountDisplay = '',
 		viewsTitle;
 
-	if ( viewCount && ! isNaN( viewCount ) ) {
+	if ( viewCount ) {
 		viewsCountDisplay = numberFormat( viewCount );
-		viewsTitle = translate( '1 Total View', '%(count)s Total Views', {
+		viewsTitle = translate( '%(count)s Total View', '%(count)s Total Views', {
 			count: viewCount,
 			args: {
 				count: viewCount
@@ -34,8 +33,12 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 		viewsTitle = translate( 'Total Views' );
 	}
 
+	if ( ! slug ) {
+		return <QuerySites siteId={ siteId } />;
+	}
+
 	return (
-		<a href={ `/stats/post/${postId}/${slug}` }
+		<a href={ `/stats/post/${ postId }/${ slug }` }
 			className={ classNames( {
 				'post__total-views': true,
 				'is-empty': ! viewsCountDisplay
@@ -43,7 +46,6 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 			title={ viewsTitle }
 			onClick={ clickHandler }>
 			<QueryPostStats siteId= { siteId } postId={ postId } stat="views" />
-			<QuerySites siteId={ siteId } />
 			<Gridicon icon="visible" size={ 24 } />
 			<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
 		</a>
