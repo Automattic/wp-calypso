@@ -164,6 +164,7 @@ function mediaButton( editor ) {
 			images = content.match( REGEXP_IMG ) || [];
 		}
 
+		// Let's loop through all the images in a post/page editor.
 		images.forEach( function( img ) {
 			const current = MediaSerialization.deserialize( img );
 
@@ -172,9 +173,14 @@ function mediaButton( editor ) {
 				return;
 			}
 
+			// Let's get the media object counterpart of an image in post/page editor.
+			// This media object contains the latest changes to the media file.
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 
-			// If image is edited in image editor, let's update it in post/page editor.
+			let mediaHasCaption = false;
+			let captionNode = null;
+
+			// If image is edited in image editor, we mark it as dirty and update it in post/page editor.
 			if ( media && media.isDirty ) {
 				if (
 					! lastDirtyImage ||
@@ -182,20 +188,22 @@ function mediaButton( editor ) {
 				) {
 					lastDirtyImage = media;
 
+					// We need to count how many instances of the same dirty image are there in a post/page editor
+					// so we can update them all and then mark the image not dirty at the end of this fn.
 					const dirtyImages = editor.dom.select( `img.wp-image-${ media.ID }` );
 
+					// Let's keep the count of dirty images in a global counter.
 					numOfImagesToUpdate = dirtyImages.length;
 				}
-			}
 
-			let mediaHasCaption = false;
-			let captionNode = null;
-
-			if ( media && media.isDirty ) {
+				// If an image was edited in image editor, we need to manually set its counterpart in post/page editor
+				// as transient so we can update it.
 				current.media.transient = true;
 
 				captionNode = editor.dom.getParent( img, '.mceTemp' );
 
+				// If an edited image includes a caption shortcode, we get the caption text so we can render a new
+				// caption with the same text.
 				if ( captionNode ) {
 					media.caption = editor.dom.$( '.wp-caption-dd', captionNode ).text();
 					mediaHasCaption = true;
@@ -209,8 +217,10 @@ function mediaButton( editor ) {
 
 			if (
 				// We only want to update post contents in cases where the media
-				// transitions to being persisted
+				// transitions to being persisted...
 				current.media.transient && ( ! media || ! media.transient ) ||
+
+				// ...or if an image was edited with image editor to show the edits immediately.
 				current.media.transient && media && media.isDirty && media.transient
 			) {
 				transients--;
@@ -259,14 +269,16 @@ function mediaButton( editor ) {
 				} );
 
 				if ( ! mediaHasCaption ) {
-					// Since we're explicitly targetting the image, don't allow the
-					// caption to be considered in the generated markup
+					// If a media doesn't include a caption shortcode, we're explicitly targetting the media.
+					// Therefore, we don't allow the caption to be considered in the generated markup.
 					delete merged.caption;
 				}
 
 				// Use markup utility to generate replacement element
 				markup = MediaMarkup.get( merged, options );
 
+				// If a media includes a caption shortcode, we can get the HTML markup of the shortcode with
+				// the following method.
 				if ( mediaHasCaption ) {
 					markup = editor.wpSetImgCaption( markup );
 				}
@@ -300,17 +312,16 @@ function mediaButton( editor ) {
 
 			let mediaString = '';
 
-			if ( mediaHasCaption ) {
-				if ( captionNode.outerHTML ) {
-					mediaString = captionNode.outerHTML;
+			// If media is wrapped in [caption] shortcode and we are in the Visual mode,
+			// we want to replace the whole caption wrapper and media node.
+			if ( mediaHasCaption && captionNode.outerHTML ) {
+				mediaString = captionNode.outerHTML;
 
-					captionNode.outerHTML = event.content;
-				} else {
-					mediaString = captionNode;
-				}
-			} else if ( img.outerHTML ) {
+				captionNode.outerHTML = event.content;
+
 				// The `img` object can be a string or a DOM node. We need a
 				// normalized string to replace the post content markup
+			} else if ( img.outerHTML ) {
 				mediaString = img.outerHTML;
 
 				// In visual editing mode, we apply the changes immediately by
@@ -334,7 +345,9 @@ function mediaButton( editor ) {
 				return level;
 			} );
 
-			if ( numOfImagesToUpdate ) {
+			// If we got this far in code execution and the counter of edited images to update is > 0,
+			// we decrease it as an image was just updated in a post/page.
+			if ( numOfImagesToUpdate > 0 ) {
 				numOfImagesToUpdate -= 1;
 			}
 		} );
@@ -357,9 +370,13 @@ function mediaButton( editor ) {
 			editor.fire( 'change' );
 		}
 
+		// After editing an image, we need to update them in a post/page. If we updated all instances
+		// of the edited image, we dispatch an action which marks the image media object not dirty.
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
 			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
 
+			// We also need to reset the counter of post/page images to update so if another image is
+			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
 		}
 	} );
