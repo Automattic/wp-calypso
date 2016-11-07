@@ -12,9 +12,6 @@ import Button from '../';
 import Gridicon from 'components/gridicon';
 
 describe( 'Button', () => {
-	const blank = '_blank';
-	const relString = 'noopener noreferrer';
-
 	describe( 'renders', () => {
 		it( 'with modifiers', () => {
 			const button = shallow( <Button scary primary borderless compact /> );
@@ -48,26 +45,36 @@ describe( 'Button', () => {
 	} );
 
 	describe( 'with href prop', () => {
-		const address = 'https://wordpress.com/';
-		const button = shallow( <Button href={ address } target={ blank } rel={ relString } type="submit" /> );
-
 		it( 'renders as a link', () => {
+			const button = shallow( <Button href="https://wordpress.com/" /> );
+
 			expect( button ).to.match( 'a' );
+			expect( button ).to.have.prop( 'href' ).equal( 'https://wordpress.com/' );
 		} );
 
 		it( 'ignores type prop and renders a link without type attribute', () => {
+			const button = shallow( <Button href="https://wordpress.com/" type="submit" /> );
+
 			expect( button ).to.not.have.prop( 'type' );
 		} );
 
 		it( 'including target and rel props renders a link with target and rel attributes', () => {
-			expect( button ).to.have.prop( 'href' ).equal( address );
-			expect( button ).to.have.prop( 'target' ).equal( blank );
-			expect( button ).to.have.prop( 'rel' ).equal( relString );
+			const button = shallow( <Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" /> );
+
+			expect( button ).to.have.prop( 'target' ).equal( '_blank' );
+			expect( button ).to.have.prop( 'rel' ).equal( 'noopener noreferrer' );
+		} );
+
+		it( 'adds noopener noreferrer rel if target is specified', () => {
+			const button = shallow( <Button href="https://wordpress.com/" target="_blank" /> );
+
+			expect( button ).to.have.prop( 'target' ).equal( '_blank' );
+			expect( button ).to.have.prop( 'rel' ).equal( 'noopener noreferrer' );
 		} );
 	} );
 
 	describe( 'without href prop', () => {
-		const button = shallow( <Button target={ blank } rel={ relString } /> );
+		const button = shallow( <Button target="_blank" rel="noopener noreferrer" /> );
 
 		it( 'renders as a button', () => {
 			expect( button ).to.match( 'button' );
@@ -80,7 +87,7 @@ describe( 'Button', () => {
 
 		it( 'renders button with type attribute set to type prop if specified', () => {
 			const typeProp = 'submit';
-			const submitButton = shallow( <Button target={ blank } rel={ relString } type={ typeProp } /> );
+			const submitButton = shallow( <Button target="_blank" rel="noopener noreferrer" type={ typeProp } /> );
 
 			expect( submitButton ).to.have.prop( 'type' ).equal( typeProp );
 		} );
