@@ -188,7 +188,7 @@ When a statement is too long to fit on one line, line breaks must occur after an
 // Bad
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
-```js
+```
 ```js
 // Good
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
