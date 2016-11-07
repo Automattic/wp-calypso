@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
@@ -91,16 +92,17 @@ function renderPluginList( context, basePath ) {
 	lastPluginsQuerystring = context.querystring;
 	context.store.dispatch( setTitle( i18n.translate( 'Plugins', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( PluginListComponent, {
-			path: basePath,
-			context,
-			filter: context.params.pluginFilter,
-			sites,
-			search
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
+	ReactDom.render(
+		React.createElement( ReduxProvider, { store: context.store },
+			React.createElement( PluginListComponent, {
+				path: basePath,
+				context,
+				filter: context.params.pluginFilter,
+				sites,
+				search
+			} )
+		),
+		document.getElementById( 'primary' )
 	);
 
 	if ( search ) {
