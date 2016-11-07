@@ -15,13 +15,14 @@ module.exports = {
 	entry: {
 		vendor: [
 			'classnames',
-			'debug',
 			'i18n-calypso',
 			'moment',
 			'page',
 			'react',
+			'react-dom',
 			'react-redux',
 			'redux',
+			'redux-thunk',
 			'store',
 			'wpcom',
 		]
