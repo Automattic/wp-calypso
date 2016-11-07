@@ -5,10 +5,10 @@
  */
 import {
 	constant,
-	get,
 	difference,
 	find,
 	findLast,
+	get,
 	includes,
 	map,
 	startsWith,
