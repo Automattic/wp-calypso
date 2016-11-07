@@ -4,6 +4,11 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
+
 export default class AccountDialogAccount extends Component {
 	static propTypes = {
 		account: PropTypes.shape( {
@@ -54,6 +59,7 @@ export default class AccountDialogAccount extends Component {
 		return (
 			<li className={ classes }>
 				<label className="account-dialog-account__label">
+					{ this.props.conflicting && <Gridicon icon="notice" /> }
 					{ this.getRadioElement() }
 					{ this.getPictureElement() }
 					<span className="account-dialog-account__name">{ this.props.account.name }</span>

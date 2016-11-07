@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
+import Gridicon from 'components/gridicon';
 import { warningNotice } from 'state/notices/actions';
 
 class AccountDialog extends Component {
@@ -153,7 +154,7 @@ class AccountDialog extends Component {
 
 		if ( this.isSelectedAccountConflicting() ) {
 			this.props.warningNotice( this.props.translate( 'The connection marked {{icon/}} will be replaced with your selection.', {
-				components: { icon: <span className="noticon noticon-warning" /> },
+				components: { icon: <Gridicon icon="notice" size={ 18 } /> },
 				context: 'Sharing: Publicize confirmation',
 			} ), { showDismiss: false } );
 		}

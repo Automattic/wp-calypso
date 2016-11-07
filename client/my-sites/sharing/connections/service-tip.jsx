@@ -2,7 +2,13 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
 
 /**
  * Module constants
@@ -82,13 +88,13 @@ class SharingServiceTip extends Component {
 	}
 
 	render() {
-		if ( -1 === SERVICES_WHITELIST.indexOf( this.props.service.ID ) ) {
+		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
 			return <div className="sharing-service-tip" />;
 		}
 
 		return (
 			<div className="sharing-service-tip">
-				<span className="noticon noticon-info" />
+				<Gridicon icon="info" size={ 18 } />
 				{ this[ this.props.service.ID ]() }
 			</div>
 		);
