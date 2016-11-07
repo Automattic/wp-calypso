@@ -129,8 +129,8 @@ export class Step extends Component {
 	 * Needed for analytics, since GT is selector-driven
 	 */
 	start() {
-		const { start, tour, tourVersion } = this.context;
-		start( { tour, tourVersion } );
+		const { start, step, tour, tourVersion } = this.context;
+		start( { step, tour, tourVersion } );
 	}
 
 	/*
