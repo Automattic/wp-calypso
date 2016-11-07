@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import debugModule from 'debug';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { without } from 'lodash';
+import { includes, without } from 'lodash';
 
 /**
  * Module variables
@@ -16,7 +16,7 @@ const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
 let formsChanged = [];
 
 export const protectForm = WrappedComponent => {
-	class ProtectedFormComponent extends Component {
+	return class ProtectedFormComponent extends Component {
 		componentDidMount() {
 			window.addEventListener( 'beforeunload', this.warnIfChanged );
 		}
@@ -36,7 +36,7 @@ export const protectForm = WrappedComponent => {
 		};
 
 		markChanged = () => {
-			if ( -1 === formsChanged.indexOf( this ) ) {
+			if ( ! includes( formsChanged, this ) ) {
 				formsChanged.push( this );
 			}
 		};
@@ -59,8 +59,6 @@ export const protectForm = WrappedComponent => {
 			);
 		}
 	}
-
-	return ProtectedFormComponent;
 };
 
 export const checkFormHandler = ( context, next ) => {
