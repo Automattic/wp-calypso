@@ -14,6 +14,8 @@ import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { getThemeDetailsUrl } from 'state/themes/selectors';
 
+const THEME_THUMBNAIL_WIDTH = 660;
+
 const ThemesRelatedCard = React.createClass( {
 
 	propTypes: {
@@ -60,7 +62,7 @@ const ThemesRelatedCard = React.createClass( {
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
 								<a href={ this.props.getDetailsUrl( theme ) }>
-									<img src={ theme.screenshot + '?w=' + '660' } />
+									<img src={ theme.screenshot + '?w=' + String( THEME_THUMBNAIL_WIDTH ) } />
 								</a>
 							</Card>
 						</li>
