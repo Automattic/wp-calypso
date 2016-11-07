@@ -23,8 +23,7 @@ import MediaUtils from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
 import MediaStore from 'lib/media/store';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import EditorMediaModal from 'post-editor/media-modal';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
@@ -92,16 +91,13 @@ function mediaButton( editor ) {
 
 		ReactDom.render(
 			<ReduxProvider store={ store }>
-				<MediaLibrarySelectedData siteId={ selectedSite.ID }>
-					<EditorMediaModal
-						{ ...props }
-						onClose={ renderModal.bind( null, { visible: false } ) }
-						onInsertMedia={ ( markup ) => {
-							insertMedia( markup );
-							renderModal( { visible: false } );
-						} }
-						site={ selectedSite } />
-				</MediaLibrarySelectedData>
+				<EditorMediaModal
+					{ ...props }
+					onClose={ renderModal.bind( null, { visible: false } ) }
+					onInsertMedia={ ( markup ) => {
+						insertMedia( markup );
+						renderModal( { visible: false } );
+					} } />
 			</ReduxProvider>,
 			nodes.modal
 		);
