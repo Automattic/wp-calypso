@@ -45,7 +45,7 @@ var translation = i18n.translate( 'Some content to translate' );
 
 ### Strings Only
 
-Translation strings are extracted from our codebase through a process of [static analysis](http://en.wikipedia.org/wiki/Static_program_analysis) and imported into GlotPress where they are translated ([more on that process here](../../../../server/i18n)). So you must avoid passing a variable, ternary expression, function call, or other form of logic in place of a string value to the `translate` method. The _one_ exception is that you can split a long string into mulitple substrings concatenated with the `+` operator.
+Translation strings are ewxtracted from our codebase through a process of [static analysis](http://en.wikipedia.org/wiki/Static_program_analysis) and imported into GlotPress where they are translated ([more on that process here](./cli)). So you must avoid passing a variable, ternary expression, function call, or other form of logic in place of a string value to the `translate` method. The _one_ exception is that you can split a long string into mulitple substrings concatenated with the `+` operator.
 
 ```js
 /*----------------- Bad Examples -----------------*/
