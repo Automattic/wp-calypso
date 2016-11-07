@@ -44,6 +44,9 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 var REGEXP_IMG = /<img\s[^>]*\/?>/ig,
 	SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
+let lastDirtyImage = null,
+	numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
+
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
 	var nodes = {},
@@ -145,14 +148,6 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		const dirtyImage = MediaStore.getDirtyImage();
-		let numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
-
-		if ( dirtyImage ) {
-			const dirtyImages = editor.dom.select( `img.wp-image-${ dirtyImage.ID }` );
-			numOfImagesToUpdate = dirtyImages.length;
-		}
-
 		isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
@@ -177,6 +172,20 @@ function mediaButton( editor ) {
 			}
 
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+
+			if ( media && media.isDirty ) {
+				if (
+					! lastDirtyImage ||
+					( lastDirtyImage.ID !== media.ID )
+				) {
+					lastDirtyImage = media;
+
+					const dirtyImages = editor.dom.select( `img.wp-image-${ media.ID }` );
+
+					numOfImagesToUpdate = dirtyImages.length;
+				}
+			}
+
 			let mediaHasCaption = false;
 			let captionNode = null;
 
@@ -341,8 +350,10 @@ function mediaButton( editor ) {
 			editor.fire( 'change' );
 		}
 
-		if ( dirtyImage && dirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
-			MediaActions.edit( selectedSite.ID, { ...dirtyImage, isDirty: false } );
+		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
+			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
+
+			numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
 		}
 	} );
 
