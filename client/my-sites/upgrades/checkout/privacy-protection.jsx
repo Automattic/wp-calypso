@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const cartItems = require( 'lib/cart-values' ).cartItems,
-	PrivacyProtectionDialog = require( './privacy-protection-dialog' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+import { cartItems } from 'lib/cart-values';
+import PrivacyProtectionDialog from './privacy-protection-dialog';
+import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtection',
@@ -30,33 +30,20 @@ module.exports = React.createClass( {
 		this.props.onDialogClose();
 	},
 
-	getDomainRegistrations: function() {
-		return cartItems.getDomainRegistrations( this.props.cart );
-	},
-
-	getFirstDomainToRegister: function() {
-		const domainRegistration = this.getDomainRegistrations().shift();
-
-		return domainRegistration.meta;
-	},
-
 	hasDomainPartOfPlan: function() {
 		const cart = this.props.cart;
 		return cart.has_bundle_credit || cartItems.hasPlan( cart );
 	},
 
-	getNumberOfDomainRegistrations: function() {
-		return this.getDomainRegistrations().length;
-	},
-
 	getPrivacyProtectionCost: function() {
 		const products = this.props.productsList.get();
-
 		return products.private_whois.cost_display;
 	},
 
 	render: function() {
-		const numberOfDomainRegistrations = this.getNumberOfDomainRegistrations(),
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart ),
+			numberOfDomainRegistrations = domainRegistrations.length,
+			firstDomainToRegister = domainRegistrations[0],
 			hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1,
 			privacyText = this.translate(
 				"Privacy Protection hides your personal information in your domain's public records, to protect your identity and prevent spam."
@@ -100,7 +87,8 @@ module.exports = React.createClass( {
 				</Card>
 				<PrivacyProtectionDialog
 					disabled={ this.props.disabled }
-					domain={ this.getFirstDomainToRegister() }
+					domain={ firstDomainToRegister.meta }
+					registrar={ firstDomainToRegister.extra && firstDomainToRegister.extra.registrar }
 					cost={ this.getPrivacyProtectionCost() }
 					countriesList={ this.props.countriesList }
 					fields={ this.props.fields }
