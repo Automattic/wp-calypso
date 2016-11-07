@@ -54,7 +54,6 @@ import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
-import { abtest } from 'lib/abtest';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -181,7 +180,6 @@ const CheckoutThankYou = React.createClass( {
 
 		const userCreatedMoment = moment( this.props.userDate );
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
-		const isPaidNuxStreamlinedAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
 		if ( ! purchases && ! this.isGenericReceipt() ) {
@@ -194,7 +192,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		// streamlined paid NUX thanks page
-		if ( isPaidNuxStreamlinedAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
+		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />

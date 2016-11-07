@@ -89,15 +89,6 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
-	paidNuxStreamlined: {
-		datestamp: '20161020',
-		variations: {
-			original: 50,
-			streamlined: 50,
-		},
-		defaultVariation: 'original',
-		allowAnyLocale: true,
-	},
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {
