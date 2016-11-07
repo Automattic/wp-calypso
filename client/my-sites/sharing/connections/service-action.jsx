@@ -71,7 +71,6 @@ class SharingServiceAction extends Component {
 		return (
 			<Button
 				primary={ primary }
-				borderless={ false }
 				scary={ warning }
 				compact
 				onClick={ this.onActionClick }
