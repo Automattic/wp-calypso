@@ -42,9 +42,11 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
 /**
  * Module vars
  */
-const READER_CONTENT_WIDTH = 720,
+const
+	isRefreshedStream = config.isEnabled( 'reader/refresh/stream' ),
+	READER_CONTENT_WIDTH = 720,
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
-	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
+	PHOTO_ONLY_MIN_WIDTH = isRefreshedStream ? 480 : 570,
 	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4;
 
@@ -61,7 +63,7 @@ function discoverFullBleedImages( post, dom ) {
 	return post;
 }
 
-const hasShortContent = config.isEnabled( 'reader/refresh/stream' )
+const hasShortContent = isRefreshedStream
 	? post => post.character_count <= 100
 	: post => post.word_count < 100;
 
