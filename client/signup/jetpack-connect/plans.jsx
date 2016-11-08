@@ -101,6 +101,7 @@ class Plans extends Component {
 		} else if ( this.props.selectedSite ) {
 			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
+		this.props.completeFlow();
 	}
 
 	redirect( path ) {
