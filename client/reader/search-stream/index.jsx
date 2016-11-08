@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { trim } from 'lodash';
+import { trim, sampleSize } from 'lodash';
 import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -19,14 +20,12 @@ import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
-import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 import { staffSuggestions, popularSuggestions } from './suggestions';
 import { abtest } from 'lib/abtest';
 import SearchCard from 'blocks/reader-search-card';
 import ReaderPostCard from 'blocks/reader-post-card';
 import config from 'config';
-import { localize } from 'i18n-calypso';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -77,15 +76,15 @@ const SearchCardAdapter = React.createClass( {
 
 	render() {
 		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
-		const cardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
-		return React.createElement( cardComponent, {
-			post: this.props.post,
-			site: this.props.site,
-			feed: this.props.feed,
-			onClick: isRefreshedStream ? this.onRefreshCardClick : this.onCardClick,
-			onCommentClick: this.onCommentClick,
-			showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards
-		} );
+		const CardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
+		return <CardComponent
+			post={ this.props.post }
+			site={ this.props.site }
+			feed={ this.props.feed }
+			onClick={ isRefreshedStream ? this.onRefreshCardClick : this.onCardClick }
+			onCommentClick={ this.onCommentClick }
+			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
+		/>;
 	}
 } );
 
@@ -106,7 +105,7 @@ const emptyStore = {
 	off() {}
 };
 
-const FeedStream = React.createClass( {
+const SearchStream = React.createClass( {
 
 	propTypes: {
 		query: React.PropTypes.string
@@ -207,4 +206,4 @@ const FeedStream = React.createClass( {
 	}
 } );
 
-export default localize( FeedStream );
+export default localize( SearchStream );
