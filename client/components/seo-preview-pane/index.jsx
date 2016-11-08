@@ -35,6 +35,7 @@ import {
 	getSectionName,
 	getSelectedSite
 } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
@@ -177,15 +178,19 @@ export class SeoPreviewPane extends PureComponent {
 	constructor( props ) {
 		super( props );
 
+		const defaultService = props.post ? 'wordpress' : 'google';
 		this.state = {
-			selectedService: props.post ? 'wordpress' : 'google'
+			selectedService: defaultService
 		};
 
 		this.selectPreview = this.selectPreview.bind( this );
+
+		recordTracksEvent( 'calypso_seo_tools_social_preview', defaultService );
 	}
 
 	selectPreview( selectedService ) {
 		this.setState( { selectedService } );
+		recordTracksEvent( 'calypso_seo_tools_social_preview', selectedService );
 	}
 
 	render() {
