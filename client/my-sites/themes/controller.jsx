@@ -60,7 +60,6 @@ export function singleSite( context, next ) {
 	const { site_id: siteId } = context.params;
 	const props = getProps( context );
 
-	props.key = siteId;
 	props.siteId = siteId;
 
 	// Scroll to the top
