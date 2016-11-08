@@ -18,8 +18,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import NoResults from 'my-sites/no-results';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
-import PluginsListStore from 'lib/plugins/wporg-data/list-store';
-import PluginsActions from 'lib/plugins/wporg-data/actions';
 import EmptyContent from 'components/empty-content';
 import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
@@ -27,20 +25,22 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { fetchPluginsList } from 'state/plugins/wporg/actions';
+import { canFetchList, getList, getShortList, isFetchingList, getCurrentSearchTerm } from 'state/plugins/wporg/selectors';
+import QueryPluginLists from 'components/data/query-plugin-lists';
+
+const SHORT_LIST_LENGTH = 6;
+const FIST_PAGE = 1;
 
 const PluginsBrowser = React.createClass( {
 
 	displayName: 'PluginsBrowser',
-	_SHORT_LIST_LENGTH: 6,
 
 	visibleCategories: [ 'new', 'popular', 'featured' ],
 
 	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
 
 	componentDidMount() {
-		PluginsListStore.on( 'change', this.refreshLists );
-		this.props.sites.on( 'change', this.refreshLists );
-
 		if ( this.props.search && this.props.searchTitle ) {
 			this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
 				search_query: this.props.search
@@ -48,62 +48,34 @@ const PluginsBrowser = React.createClass( {
 		}
 	},
 
-	getInitialState() {
-		return this.getPluginsLists( this.props.search );
-	},
-
-	componentWillUnmount() {
-		PluginsListStore.removeListener( 'change', this.refreshLists );
-		this.props.sites.removeListener( 'change', this.refreshLists );
-	},
-
-	componentWillReceiveProps( newProps ) {
-		this.refreshLists( newProps.search );
-	},
-
-	refreshLists( search ) {
-		this.setState( this.getPluginsLists( search || this.props.search ) );
-	},
-
-	fetchNextPagePlugins() {
-		let doSearch = true;
-
-		if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
-			doSearch = false;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.search ) {
+			if ( nextProps.search !== this.props.search ) {
+				this.fetchNextPagePlugins( nextProps.search );
+			}
 		}
-
-		if ( this.state.fullLists.search && this.state.fullLists.search.list && this.state.fullLists.search.list.length < 10 ) {
-			doSearch = false;
-		}
-
-		if ( this.props.search && doSearch ) {
-			PluginsActions.fetchNextCategoryPage( 'search', this.props.search );
-		} else if ( this.props.category ) {
-			PluginsActions.fetchNextCategoryPage( this.props.category );
-		}
-	},
-
-	getPluginsLists( search ) {
-		const shortLists = {},
-			fullLists = {};
-		this.visibleCategories.forEach( category => {
-			shortLists[ category ] = PluginsListStore.getShortList( category );
-			fullLists[ category ] = PluginsListStore.getFullList( category );
+		this.setState( {
+			accessError: pluginsAccessControl.hasRestrictedAccess()
 		} );
-		fullLists.search = PluginsListStore.getSearchList( search );
-		return {
-			accessError: pluginsAccessControl.hasRestrictedAccess(),
-			shortLists: shortLists,
-			fullLists: fullLists
-		};
 	},
 
-	getPluginsShortList( listName ) {
-		return this.state.shortLists[ listName ] ? this.state.shortLists[ listName ].list : [];
-	},
-
-	getPluginsFullList( listName ) {
-		return this.state.fullLists[ listName ] ? this.state.fullLists[ listName ].list : [];
+	fetchNextPagePlugins( searchTerm ) {
+		searchTerm = typeof searchTerm === 'string' ? searchTerm : this.props.search;
+		if ( searchTerm ) {
+			const lastFetchedPage = this.props.lastPage.search >= FIST_PAGE ? this.props.lastPage.search : -1;
+			if ( this.props.currentSearchTerm !== searchTerm ) {
+				this.props.fetchPluginsList( 'search', FIST_PAGE, searchTerm );
+			} else if ( this.props.canFetchList( 'search', lastFetchedPage + 1, searchTerm ) ) {
+				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, searchTerm );
+			}
+		} else if ( this.props.category ) {
+			const lastFetchedPage = this.props.lastPage[ this.props.category ] >= FIST_PAGE
+				? this.props.lastPage[ this.props.category ]
+				: -1;
+			if ( this.props.canFetchList( this.props.category, lastFetchedPage + 1 ) ) {
+				this.props.fetchPluginsList( this.props.category, lastFetchedPage + 1 );
+			}
+		}
 	},
 
 	getPluginBrowserContent() {
@@ -128,21 +100,21 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getFullListView( category ) {
-		const isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
-		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
+		const list = this.props.getList( category );
+		if ( ( list && list.length > 0 ) || this.props.isFetchingList( category ) ) {
 			return <PluginsBrowserList
-				plugins={ this.getPluginsFullList( category ) }
+				plugins={ list }
 				listName={ category }
 				title={ this.translateCategory( category ) }
 				site={ this.props.site }
-				showPlaceholders={ isFetching }
+				showPlaceholders={ this.props.isFetchingList( category ) }
 				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
 
 	getSearchListView( searchTerm ) {
-		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
-		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
+		const isFetching = this.props.isFetchingList( 'search' );
+		if ( this.props.getList( 'search' ).length > 0 || isFetching ) {
 			const searchTitle = this.props.searchTitle || this.translate( 'Results for: %(searchTerm)s', {
 				textOnly: true,
 				args: {
@@ -150,7 +122,7 @@ const PluginsBrowser = React.createClass( {
 				}
 			} );
 			return <PluginsBrowserList
-				plugins={ this.getPluginsFullList( 'search' ) }
+				plugins={ this.props.getList( 'search' ) }
 				listName={ searchTerm }
 				title={ searchTitle }
 				site={ this.props.site }
@@ -171,13 +143,13 @@ const PluginsBrowser = React.createClass( {
 	getPluginSingleListView( category ) {
 		const listLink = '/plugins/browse/' + category + '/';
 		return <PluginsBrowserList
-			plugins={ this.getPluginsShortList( category ) }
+			plugins={ this.props.getShortList( category ) }
 			listName={ category }
 			title={ this.translateCategory( category ) }
 			site={ this.props.site }
-			expandedListLink={ this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false }
-			size={ this._SHORT_LIST_LENGTH }
-			showPlaceholders={ this.state.fullLists[ category ].fetching !== false }
+			expandedListLink={ this.props.getList( category ).length > SHORT_LIST_LENGTH ? listLink : false }
+			size={ SHORT_LIST_LENGTH }
+			showPlaceholders={ this.props.isFetchingList( category ) !== false }
 			currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 	},
 
@@ -267,7 +239,7 @@ const PluginsBrowser = React.createClass( {
 
 	getMockPluginItems: function() {
 		return <PluginsBrowserList
-			plugins={ this.getPluginsShortList( 'popular' ) }
+			plugins={ this.props.getShortList( 'popular' ) }
 			listName={ 'Plugins' }
 			title={ this.translate( 'Popular Plugins' ) }
 			size={ 12 } />;
@@ -312,6 +284,7 @@ const PluginsBrowser = React.createClass( {
 
 		return (
 			<MainComponent>
+				<QueryPluginLists categories={ this.visibleCategories } />
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
@@ -321,8 +294,18 @@ const PluginsBrowser = React.createClass( {
 } );
 
 export default connect(
-	null,
+	( state ) => {
+		return {
+			lastPage: state.plugins.wporg.lists.lastFetchedPage,
+			canFetchList: ( category, searchTerm ) => canFetchList( state, category, searchTerm ),
+			getList: ( category ) => getList( state, category ),
+			getShortList: ( category ) => getShortList( state, category ),
+			isFetchingList: ( category ) => isFetchingList( state, category ),
+			currentSearchTerm: getCurrentSearchTerm( state )
+		};
+	},
 	dispatch => bindActionCreators( {
-		recordTracksEvent
+		recordTracksEvent,
+		fetchPluginsList
 	}, dispatch )
 )( PluginsBrowser );

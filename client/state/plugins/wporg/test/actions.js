@@ -16,7 +16,7 @@ const testDispatch = ( test, testCallNumber ) => {
 		if ( ! testCallNumber || testCallNumber === calls ) {
 			test( action );
 		}
-	}
+	};
 };
 
 describe( 'WPorg Data Actions', function() {
@@ -76,5 +76,18 @@ describe( 'WPorg Data Actions', function() {
 		WPorgActions.fetchPluginData( 'test' )( function() { } );
 		WPorgActions.fetchPluginData( 'test' )( function() { } );
 		assert.equal( mockedWporg.getActivity().fetchPluginInformation, 1 );
+	} );
+
+	describe( 'Plugin lists', function() {
+		it( 'Actions should have method fetchPluginData', function() {
+			assert.isFunction( WPorgActions.fetchPluginsList );
+		} );
+
+		it( 'fetchPluginsList action should make a request', function( done ) {
+			WPorgActions.fetchPluginsList( 'test', 0 )( testDispatch( function() {
+				assert.equal( mockedWporg.getActivity().fetchPluginsList, 1 );
+				done();
+			}, 2 ) );
+		} );
 	} );
 } );
