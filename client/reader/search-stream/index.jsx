@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { trim } from 'lodash';
+import { trim, sampleSize } from 'lodash';
 import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -16,14 +17,15 @@ import EmptyContent from './empty';
 import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
-import SearchCard from 'blocks/reader-search-card';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
-import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 import { staffSuggestions, popularSuggestions } from './suggestions';
 import { abtest } from 'lib/abtest';
+import SearchCard from 'blocks/reader-search-card';
+import ReaderPostCard from 'blocks/reader-post-card';
+import config from 'config';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -63,18 +65,26 @@ const SearchCardAdapter = React.createClass( {
 		this.props.handleClick( this.props.post, {} );
 	},
 
+	onRefreshCardClick( post ) {
+		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
+		this.props.handleClick( post, {} );
+	},
+
 	onCommentClick() {
 		this.props.handleClick( this.props.post, { comments: true } );
 	},
 
 	render() {
-		return <SearchCard
+		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
+		const CardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
+		return <CardComponent
 			post={ this.props.post }
-			site={ this.state.site }
-			feed={ this.state.feed }
-			onClick={ this.onCardClick }
+			site={ this.props.site }
+			feed={ this.props.feed }
+			onClick={ isRefreshedStream ? this.onRefreshCardClick : this.onCardClick }
 			onCommentClick={ this.onCommentClick }
-			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards } />;
+			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
+		/>;
 	}
 } );
 
@@ -95,7 +105,7 @@ const emptyStore = {
 	off() {}
 };
 
-const FeedStream = React.createClass( {
+const SearchStream = React.createClass( {
 
 	propTypes: {
 		query: React.PropTypes.string
@@ -169,19 +179,19 @@ const FeedStream = React.createClass( {
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = this.translate( 'Search billions of WordPress.com posts…' );
+			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
 		return (
 			<Stream { ...this.props } store={ store }
-				listName={ this.translate( 'Search' ) }
+				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title || this.translate( 'Search' ) } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
 				<CompactCard className="search-stream__input-card">
 					<SearchInput
 						initialValue={ this.props.query }
@@ -196,4 +206,4 @@ const FeedStream = React.createClass( {
 	}
 } );
 
-export default FeedStream;
+export default localize( SearchStream );
