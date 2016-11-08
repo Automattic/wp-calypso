@@ -23,7 +23,7 @@ function ValidationError( code ) {
 inherits( ValidationError, Error );
 
 function canAddGoogleApps( domainName ) {
-	var tld = domainName.split( '.' )[ 1 ],
+	const tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
 			return includes( domainName, phrase );
 		} );
@@ -78,7 +78,7 @@ function canMap( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
-		var errorCode;
+		let errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
 		} else if ( ! data.is_mappable ) {
@@ -132,7 +132,7 @@ function isSubdomain( domainName ) {
 }
 
 function isInitialized( state, siteId ) {
-	var siteState = state[ siteId ];
+	const siteState = state[ siteId ];
 	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
 }
 
