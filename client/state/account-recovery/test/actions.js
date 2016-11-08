@@ -200,7 +200,7 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	const newEmail = 'newtest@a8ctest.com';
+	const newEmail = 'newtest@example.com';
 
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryEmail',
