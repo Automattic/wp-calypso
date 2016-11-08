@@ -16,6 +16,10 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_DELETE,
+	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
 const createActionInProgressReducer = ( initiateActions, finishActions ) => {
@@ -47,6 +51,11 @@ const isUpdatingPhone = createActionInProgressReducer(
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
 );
 
+const isDeletingPhone = createActionInProgressReducer(
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+);
+
 const data = createReducer( {}, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
 		...state,
@@ -60,7 +69,16 @@ const data = createReducer( {}, {
 		switch ( target ) {
 			case 'phone':
 				return { ...state, phone: data };
-			default: // do nothing to unknown fields
+			default: // do nothing to unknown targets
+				return { ...state };
+		}
+	},
+
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) => {
+		switch ( target ) {
+			case 'phone':
+				return { ...state, phone: {} };
+			default: // do nothing to unknown targets
 				return { ...state };
 		}
 	},
@@ -69,5 +87,6 @@ const data = createReducer( {}, {
 export default combineReducers( {
 	isFetching,
 	isUpdatingPhone,
+	isDeletingPhone,
 	data,
 } );
