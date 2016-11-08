@@ -36,15 +36,7 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import {
-	signup,
-	purchase,
-	activate,
-	customize,
-	tryandcustomize,
-	bindOptionsToDispatch,
-	bindOptionsToSite
-} from 'my-sites/themes/theme-options';
+import { connectOptions } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -78,20 +70,23 @@ const ThemeSheet = React.createClass( {
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
 		defaultOption: React.PropTypes.shape( {
-			label: React.PropTypes.string.isRequired,
+			label: React.PropTypes.string,
 			action: React.PropTypes.func,
 			getUrl: React.PropTypes.func,
 		} ),
 		secondaryOption: React.PropTypes.shape( {
-			label: React.PropTypes.string.isRequired,
+			label: React.PropTypes.string,
 			action: React.PropTypes.func,
 			getUrl: React.PropTypes.func,
 		} ),
 	},
 
 	getDefaultProps() {
+		// The defaultOption default prop is surprisingly important, see the long
+		// comment near the connect() function at the bottom of this file.
 		return {
 			section: '',
+			defaultOption: {}
 		};
 	},
 
@@ -326,14 +321,26 @@ const ThemeSheet = React.createClass( {
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
+	getDefaultOptionLabel() {
+		const { defaultOption, active: isActive, isLoggedIn, price } = this.props;
+		if ( isLoggedIn && ! isActive ) {
+			if ( price ) { // purchase
+				return i18n.translate( 'Pick this design' );
+			} // else: activate
+			return i18n.translate( 'Activate this design' );
+		}
+		return defaultOption.label;
+	},
+
 	renderPreview() {
-		const { secondaryOption, active, isLoggedIn, defaultOption } = this.props;
+		const { active, isLoggedIn, defaultOption, secondaryOption } = this.props;
+
 		const showSecondaryButton = secondaryOption && ! active && isLoggedIn;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
 				onClose={ this.togglePreview }
-				primaryButtonLabel={ defaultOption.label }
+				primaryButtonLabel={ this.getDefaultOptionLabel() }
 				getPrimaryButtonHref={ defaultOption.getUrl }
 				onPrimaryButtonClick={ this.onButtonClick }
 				secondaryButtonLabel={ showSecondaryButton ? secondaryOption.label : null }
@@ -379,7 +386,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderButton() {
-		const { label, getUrl } = this.props.defaultOption;
+		const { getUrl } = this.props.defaultOption;
+		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 
 		return (
@@ -465,61 +473,88 @@ const ThemeSheet = React.createClass( {
 	},
 } );
 
-const WrappedThemeSheet = ( props ) => {
-	if ( ! props.isLoggedIn || props.selectedSite ) {
-		return <ThemeSheet { ...props } />;
+const ConnectedThemeSheet = connectOptions(
+	( props ) => {
+		if ( ! props.isLoggedIn || props.selectedSite ) {
+			return <ThemeSheet { ...props } />;
+		}
+
+		return (
+			<ThemesSiteSelectorModal { ...props }
+				sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+				<ThemeSheet />
+			</ThemesSiteSelectorModal>
+		);
 	}
+);
 
-	return (
-		<ThemesSiteSelectorModal { ...props }
-			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
-			<ThemeSheet />
-		</ThemesSiteSelectorModal>
-	);
-};
-
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site, active: isActive, price, isLoggedIn } = stateProps;
+const ThemeSheetWithOptions = ( props ) => {
+	const { selectedSite: site, active: isActive, price, isLoggedIn } = props;
 
 	let defaultOption;
 
 	if ( ! isLoggedIn ) {
-		defaultOption = dispatchProps.signup;
+		defaultOption = 'signup';
 	} else if ( isActive ) {
-		defaultOption = dispatchProps.customize;
+		defaultOption = 'customize';
 	} else if ( price ) {
-		defaultOption = dispatchProps.purchase;
-		defaultOption.label = i18n.translate( 'Pick this design' );
+		defaultOption = 'purchase';
 	} else {
-		defaultOption = dispatchProps.activate;
-		defaultOption.label = i18n.translate( 'Activate this design' );
+		defaultOption = 'activate';
 	}
 
-	const dispatchOptions = {
-		defaultOption,
-		secondaryOption: dispatchProps.tryandcustomize
-	};
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		site ? bindOptionsToSite( dispatchOptions, site ) : dispatchOptions,
+	return (
+		<ConnectedThemeSheet { ...props }
+			site={ site }
+			theme={ props /* TODO: Have connectOptions() only use theme ID */ }
+			options={ [
+				'signup',
+				'customize',
+				'tryandcustomize',
+				'purchase',
+				'activate'
+			] }
+			defaultOption={ defaultOption }
+			secondaryOption="tryandcustomize"
+			source="showcase-sheet" />
 	);
 };
 
 export default connect(
-	( state, props ) => {
+	/*
+	 * A number of the props that this mapStateToProps function computes are used
+	 * by ThemeSheetWithOptions to compute defaultOption. After a state change
+	 * triggered by an async action, connect()ed child components are, quite
+	 * counter-intuitively, updated before their connect()ed parents (this is
+	 * https://github.com/reactjs/redux/issues/1415), and might be fixed by
+	 * react-redux 5.0.
+	 * For this reason, after e.g. activating a theme in single-site mode,
+	 * first the ThemeSheetWithOptions component's (child) connectOptions component
+	 * will update in response to the currently displayed theme being activated.
+	 * Doing so, it will filter and remove the activate option (adding customize
+	 * instead). However, since the parent connect()ed-ThemeSheetWithOptions will
+	 * only react to the state change afterwards, there is a brief moment when
+	 * connectOptions still receives "activate" as its defaultOption prop, when
+	 * activate is no longer part of its filtered options set, hence passing on
+	 * undefined as the defaultOption object prop for its child. For the theme
+	 * sheet, which eventually gets that defaultOption object prop, this means
+	 * we must be careful to not accidentally access any attribute of that
+	 * defaultOption prop. Otherwise, there will be an error that will prevent the
+	 * state update from finishing properly, hence not updating defaultOption at all.
+	 * The solution to this incredibly intricate issue is simple: Give ThemeSheet
+	 * a valid defaultProp for defaultOption.
+	 */
+	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const themeDetails = getThemeDetails( state, props.id );
+		const themeDetails = getThemeDetails( state, id );
 
 		return {
 			...themeDetails,
-			id: props.id,
+			id,
 			selectedSite,
 			siteSlug,
 			backPath,
@@ -527,13 +562,5 @@ export default connect(
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
 		};
-	},
-	bindOptionsToDispatch( {
-		signup,
-		customize,
-		tryandcustomize,
-		purchase,
-		activate,
-	}, 'showcase-sheet' ),
-	mergeProps
-)( WrappedThemeSheet );
+	}
+)( ThemeSheetWithOptions );
