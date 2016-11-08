@@ -154,7 +154,7 @@ function plugin( editor ) {
 	function checkIfFinished() {
 		if ( ! editor.dom.select( 'span.hiddenSpellError, span.hiddenGrammarError, span.hiddenSuggestion' ).length ) {
 			if ( suggestionsMenu ) {
-				suggestionsMenu.hideMenu();
+				suggestionsMenu.hide();
 			}
 
 			finish();
