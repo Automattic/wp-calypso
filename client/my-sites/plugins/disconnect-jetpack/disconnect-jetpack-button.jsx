@@ -13,20 +13,18 @@ import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconn
 import analytics from 'lib/analytics';
 
 class DisconnectJetpackButton extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.handleClick = this.handleClick.bind( this );
-	}
-
-	handleClick( event ) {
+	handleClick = ( event ) => {
 		event.preventDefault();
 		if ( this.props.isMock ) {
 			return;
 		}
-		this.refs.dialog.getWrappedInstance().open();
+
+		if ( this.refs.dialog ) {
+			this.refs.dialog.getWrappedInstance().open();
+		}
+
 		analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
-	}
+	};
 
 	render() {
 		const { site, redirect, linkDisplay } = this.props;
