@@ -67,8 +67,24 @@ class DisconnectJetpackDialog extends Component {
 		}
 	}
 
-	render() {
+	renderInfo() {
 		const { site } = this.props;
+
+		if ( ! site ) {
+			return translate( 'Disconnecting Jetpack will remove access to WordPress.com features.', {
+				context: 'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.'
+			} );
+		}
+
+		return translate( 'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.', {
+			args: {
+				siteName: site.name || site.title
+			},
+			context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.'
+		} );
+	}
+
+	render() {
 		const deactivationButtons = [
 			{
 				action: 'cancel',
@@ -80,20 +96,6 @@ class DisconnectJetpackDialog extends Component {
 				isPrimary: true
 			}
 		];
-		let moreInfo;
-
-		if ( site && site.name || site && site.title ) {
-			moreInfo = translate(
-				'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.', {
-					args: { siteName: site.name || site.title },
-					context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.'
-				} );
-		} else {
-			moreInfo = translate(
-				'Disconnecting Jetpack will remove access to WordPress.com features.', {
-					context: 'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.'
-				} );
-		}
 
 		return (
 			<Dialog
@@ -102,7 +104,7 @@ class DisconnectJetpackDialog extends Component {
 				onClose={ this.close }
 				transitionLeave={ false }>
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-				<p>{ moreInfo }</p>
+				<p>{ this.renderInfo() }</p>
 			</Dialog>
 		);
 	}
