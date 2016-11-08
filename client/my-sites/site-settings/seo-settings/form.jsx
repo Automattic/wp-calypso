@@ -224,7 +224,6 @@ export const SeoForm = React.createClass( {
 		const {
 			site,
 			storedTitleFormats,
-			trackSubmission,
 			showAdvancedSeo,
 			showWebsiteMeta
 		} = this.props;
@@ -306,7 +305,21 @@ export const SeoForm = React.createClass( {
 			}
 		} );
 
-		trackSubmission();
+		this.trackSubmission();
+	},
+
+	trackSubmission() {
+		const { dirtyFields } = this.state;
+
+		recordTracksEvent( 'calypso_seo_settings_form_submit', {} );
+
+		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
+			recordTracksEvent( 'calypso_seo_tools_title_formats_updated', {} );
+		}
+
+		if ( dirtyFields.has( 'frontPageMetaDescription' ) ) {
+			recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', {} );
+		}
 	},
 
 	refreshCustomTitles() {
@@ -668,8 +681,7 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = {
-	refreshSiteData: siteId => requestSite( siteId ),
-	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} ),
+	refreshSiteData: siteId => requestSite( siteId )
 };
 
 export default connect(
