@@ -4,8 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,7 +62,12 @@ const Theme = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		return ! isEqual( nextProps.theme, this.props.theme );
+		// TODO: Once we're not using theme.active and theme.purchased anymore, just compare theme.id instead of entire theme objects.
+		return ! isEqual( nextProps.theme, this.props.theme ) ||
+			! isEqual( nextProps.buttonContents, this.props.buttonContents ) ||
+			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
+			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
+			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
 	getDefaultProps() {
@@ -131,7 +135,7 @@ const Theme = React.createClass( {
 							? <img className="theme__img"
 								src={ screenshot + '?w=' + screenshotWidth }
 								onClick={ this.onScreenshotClick }
-								id={ screenshotID }/>
+								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
 							</div>
