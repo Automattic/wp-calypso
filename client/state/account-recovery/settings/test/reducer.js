@@ -22,6 +22,7 @@ import {
 } from 'state/action-types';
 
 import { dummyData, dummyNewPhone } from './test-data';
+import { generateActionInProgressStateFlagTests } from './utils';
 import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
@@ -82,30 +83,12 @@ describe( '#account-recovery reducer update / delete:', () => {
 } );
 
 describe( '#account-recovery reducer action status flags: ', () => {
-	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH should set isFetching to true', () => {
-		const state = reducer( { isFetching: false }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
-		} );
-
-		assert( state.isFetching );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS action should set isFetching to false', () => {
-		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-			...dummyData,
-		} );
-
-		assert.isFalse( state.isFetching );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED action should set isFetching to false', () => {
-		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-		} );
-
-		assert.isFalse( state.isFetching );
-	} );
+	generateActionInProgressStateFlagTests(
+		'isFetching',
+		reducer,
+		[ ACCOUNT_RECOVERY_SETTINGS_FETCH ],
+		[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]
+	);
 
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set isUpdatingPhone to true', () => {
 		const state = reducer( { isUpdatingPhone: true }, {

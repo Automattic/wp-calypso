@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { assert } from 'chai';
+
+/**
  * Internal dependencies
  */
 import { useNock } from 'test/helpers/use-nock';
@@ -49,6 +54,28 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 			preCondition();
 
 			return action.then( postConditionFailed );
+		} );
+	} );
+};
+
+export const generateActionInProgressStateFlagTests = ( stateKey, reducer, initiateActions, finishActions ) => {
+	initiateActions.forEach( ( action ) => {
+		it( action + ' should set ' + stateKey + ' to true', () => {
+			const state = reducer( { [ stateKey ]: false }, {
+				type: action,
+			} );
+
+			assert.isTrue( state[ stateKey ] );
+		} );
+	} );
+
+	finishActions.forEach( ( action ) => {
+		it( action + ' should set ' + stateKey + ' to false', () => {
+			const state = reducer( { [ stateKey ]: true }, {
+				type: action,
+			} );
+
+			assert.isFalse( state[ stateKey ] );
 		} );
 	} );
 };
