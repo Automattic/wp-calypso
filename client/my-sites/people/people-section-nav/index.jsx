@@ -24,6 +24,7 @@ let PeopleSearch = React.createClass( {
 			<Search
 				pinned
 				fitsContainer
+				baseUrl={ this.props.baseUrl }
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
 				ref="url-search"

@@ -37,7 +37,7 @@ module.exports = {
 			return;
 		}
 
-		searchURL = buildUrl( window.location.href, keywords );
+		searchURL = buildUrl( this.props.baseUrl || window.location.href, keywords );
 
 		debug( 'search posts for:', keywords );
 		if ( this.props.search && keywords ) {
