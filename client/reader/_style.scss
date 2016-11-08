@@ -281,12 +281,8 @@
 	position: absolute;
 		bottom: 0;
 	width: 100%;
-	transition: opacity .25s ease-in-out;
-	opacity: 0;
 }
-.tiled-gallery-item:hover .tiled-gallery-caption {
-	opacity: 1;
-}
+
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 	font-size: 11px;
 }
