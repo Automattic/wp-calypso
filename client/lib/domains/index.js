@@ -51,15 +51,14 @@ function canRegister( domainName, onComplete ) {
 		} = data;
 
 		let errorCode;
-		if ( ! isAvailable ) {
-			if ( isMappable ) {
-				errorCode = 'not_available_but_mappable';
-			} else if ( unmappabilityReason ) {
-				errorCode = `not_mappable_${ unmappabilityReason }`;
-			} else {
-				errorCode = 'not_mappable';
+		if ( ! isMappable ) {
+			errorCode = 'not_mappable';
+			if ( unmappabilityReason ) {
+				errorCode += `_${ unmappabilityReason }`;
 			}
-		} else if ( ! isRegistrable ) {
+		} else if ( ! isAvailable && isMappable ) {
+			errorCode = 'not_available_but_mappable';
+		} else if ( isAvailable && ! isRegistrable ) {
 			errorCode = 'available_but_not_registrable';
 		}
 
