@@ -35,6 +35,7 @@ describe( '#account-recovery reducer fetch:', () => {
 		isFetching: false,
 		isUpdatingPhone: false,
 		isDeletingPhone: false,
+		isUpdatingEmail: false,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {
