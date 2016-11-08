@@ -90,44 +90,17 @@ describe( '#account-recovery reducer action status flags: ', () => {
 		[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]
 	);
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set isUpdatingPhone to true', () => {
-		const state = reducer( { isUpdatingPhone: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
-			target: 'phone',
-		} );
+	generateActionInProgressStateFlagTests(
+		'isUpdatingPhone',
+		reducer,
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
+	);
 
-		assert.isTrue( state.isUpdatingPhone );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should set isUpdatingPhone to false', () => {
-		const state = reducer( { isUpdatingPhone: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-		} );
-
-		assert.isFalse( state.isUpdatingPhone );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE action should set isDeletingPhone to true', () => {
-		const state = reducer( { isDeletingPhone: false }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
-		} );
-
-		assert.isTrue( state.isDeletingPhone );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action should set isDeletingPhone to false', () => {
-		const state = reducer( { isDeletingPhone: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-		} );
-
-		assert.isFalse( state.isDeletingPhone );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED action should set isDeletingPhone to false', () => {
-		const state = reducer( { isDeletingPhone: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-		} );
-
-		assert.isFalse( state.isDeletingPhone );
-	} );
+	generateActionInProgressStateFlagTests(
+		'isDeletingPhone',
+		reducer,
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+	);
 } );
