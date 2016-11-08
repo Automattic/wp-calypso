@@ -29,14 +29,9 @@ export class TaxonomyManager extends Component {
 		postType: 'post'
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			search: null
-		};
-
-		this.onSearch = this.onSearch.bind( this );
-	}
+	state = {
+		search: null
+	};
 
 	onSearch = searchTerm => {
 		if ( searchTerm !== this.state.search ) {

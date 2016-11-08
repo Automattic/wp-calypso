@@ -9,7 +9,6 @@ import {
 	includes,
 	filter,
 	map,
-	memoize,
 	noop,
 	reduce,
 	union,
@@ -60,13 +59,18 @@ export class TaxonomyManagerList extends Component {
 	};
 
 	componentWillMount() {
-		this.itemIds = map( this.props.terms, 'ID' );
-		this.getTermChildren = memoize( this.getTermChildren );
+		this.termIds = map( this.props.terms, 'ID' );
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.terms !== this.props.terms ) {
+			this.termIds = map( this.props.terms, 'ID' );
+		}
 	}
 
 	getTermChildren( termId ) {
 		const { terms } = this.props;
-		return filter( terms, ( { parent } ) => parent === termId );
+		return filter( terms, { parent: termId } );
 	}
 
 	getItemHeight = ( item, _recurse = false ) => {
@@ -156,11 +160,11 @@ export class TaxonomyManagerList extends Component {
 		return (
 			<div className={ classes }>
 				{ this.state.requestedPages.map( page => (
-						<QueryTerms
-							key={ `query-${ page }` }
-							siteId={ siteId }
-							taxonomy={ taxonomy }
-							query={ { ...query, page } } />
+					<QueryTerms
+						key={ `query-${ page }` }
+						siteId={ siteId }
+						taxonomy={ taxonomy }
+						query={ { ...query, page } } />
 				) ) }
 				<VirtualList
 					items={ terms }
