@@ -24,12 +24,17 @@ export function uploadGravatar( file, bearerToken, email ) {
 			.send( data )
 			.set( 'Authorization', 'Bearer ' + bearerToken )
 			.then( () => {
-				dispatch( {
-					type: GRAVATAR_UPLOAD_RECEIVE
+				const fileReader = new FileReader( file );
+				fileReader.addEventListener( 'load', function() {
+					dispatch( {
+						type: GRAVATAR_UPLOAD_RECEIVE,
+						src: fileReader.result,
+					} );
+					dispatch( {
+						type: GRAVATAR_UPLOAD_REQUEST_SUCCESS
+					} );
 				} );
-				dispatch( {
-					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS
-				} );
+				fileReader.readAsDataURL( file );
 			} )
 			.catch( () => {
 				dispatch( {
