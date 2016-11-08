@@ -10,6 +10,7 @@ import { truncate } from 'lodash';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import {
+	ACCOUNT_RECOVERY_FETCH_FAILED,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
@@ -89,6 +90,7 @@ export function onPostSaveSuccess( dispatch, action ) {
  */
 
 export const handlers = {
+	[ ACCOUNT_RECOVERY_FETCH_FAILED ]: dispatchError( translate( 'An error occurred while fetching for your account recovery settings.' ) ),
 	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: dispatchError( translate( 'New Gravatar was not saved.' ) ),
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: dispatchSuccess( translate( 'New Gravatar uploaded successfully!' ) ),
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
