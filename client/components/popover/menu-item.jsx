@@ -14,12 +14,14 @@ export default class PopoverMenuItem extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		className: PropTypes.string,
+		selected: PropTypes.bool,
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
 		children: PropTypes.node
 	};
 
 	static defaultProps = {
+		selected: false,
 		focusOnHover: true
 	};
 
@@ -28,8 +30,10 @@ export default class PopoverMenuItem extends Component {
 	}
 
 	render() {
-		const { className, href, focusOnHover, icon, children } = this.props;
-		const classes = classnames( 'popover__menu-item', className );
+		const { className, href, selected, focusOnHover, icon, children } = this.props;
+		const classes = classnames( 'popover__menu-item', className, {
+			'is-selected': selected
+		} );
 		const ItemComponent = href ? 'a' : 'button';
 
 		let hoverHandler;
