@@ -40,7 +40,7 @@ module.exports = React.createClass( {
 			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			people,
-			showRoles = config.isEnabled( 'manage/people/role-filtering' );
+			showRoles = ! this.props.search && config.isEnabled( 'manage/people/role-filtering' );
 
 		if ( this.fetchHasCompleted() && ! this.props.users.length && this.props.fetchOptions.search ) {
 			return (
