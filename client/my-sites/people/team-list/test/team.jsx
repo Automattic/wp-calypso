@@ -14,7 +14,9 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Team', function() {
-	let PeopleListSectionHeader,
+	let Card,
+		PeopleListItem,
+		PeopleListSectionHeader,
 		ReactInjection,
 		Team,
 		translations,
@@ -26,6 +28,8 @@ describe( 'Team', function() {
 		configMock = sinon.stub();
 		configMock.isEnabled = sinon.stub();
 		mockery.registerMock( 'config', configMock );
+		mockery.registerMock( 'lib/analytics', {} );
+		mockery.registerMock( 'lib/sites-list', () => null );
 	} );
 
 	before( function() {
@@ -36,6 +40,8 @@ describe( 'Team', function() {
 		};
 		ReactInjection.Class.injectMixin( { translate: translate } );
 
+		Card = require( 'components/card' );
+		PeopleListItem = require( 'my-sites/people/people-list-item' );
 		PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
 
 		Team = require( '../team' );
@@ -71,5 +77,19 @@ describe( 'Team', function() {
 		);
 
 		expect( wrapper.find( PeopleListSectionHeader ).prop( 'showRoles' ) ).to.be.false;
+	} );
+
+	it( 'renders loading placeholder before fetch has started', function() {
+		const wrapper = shallow(
+			<Team
+				fetchInitialized={ true }
+				fetchingUsers={ false }
+				fetchOptions={ {} }
+				users={ [] }
+				excludedUsers={ [] }
+			/>
+		);
+
+		expect( wrapper.find( Card ).find( PeopleListItem).key() ).to.equal( 'people-list-item-placeholder' );
 	} );
 } );
