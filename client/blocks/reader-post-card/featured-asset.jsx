@@ -11,7 +11,7 @@ import url from 'url';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 
-const candidateForFeature = ( media ) => {
+function isCandidateForFeature( media ) {
 	if ( ! media ) {
 		return false;
 	}
@@ -29,13 +29,13 @@ const candidateForFeature = ( media ) => {
 	}
 
 	return true;
-};
+}
 
 // jetpack lies about thumbnails so we need to make sure its actually an image. See: thumbIsLikelyImage in pick-canonical-image rule
-const uriIsLikelyAnImage = ( uri ) => {
+function isUrlLikelyAnImage( uri ) {
 	const withoutQuery = url.parse( uri ).pathname;
 	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
-};
+}
 
 /**
  * Given a post:
@@ -48,11 +48,11 @@ const FeaturedAsset = ( { post } ) => {
 		return null;
 	}
 
-	if ( post.featured_image && uriIsLikelyAnImage( post.featured_image ) ) {
+	if ( post.featured_image && isUrlLikelyAnImage( post.featured_image ) ) {
 		return <FeaturedImage imageUri={ post.featured_image } href={ post.URL } />;
 	}
 
-	const featuredMedia = find( post.content_media, candidateForFeature );
+	const featuredMedia = find( post.content_media, isCandidateForFeature );
 
 	if ( featuredMedia && featuredMedia.mediaType === 'video' ) {
 		return <FeaturedVideo { ...featuredMedia } videoEmbed={ featuredMedia } />;
