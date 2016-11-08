@@ -25,6 +25,7 @@ describe( 'account-recovery reducer', () => {
 			phoneValidated: dummyData.phone_validated,
 		},
 		isFetching: false,
+		isUpdatingPhone: false,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {

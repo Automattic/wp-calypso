@@ -12,6 +12,10 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
+	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 } from 'state/action-types';
 
 const createActionInProgressReducer = ( initiateActions, finishActions ) => {
@@ -38,6 +42,11 @@ const isFetching = createActionInProgressReducer(
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]
 );
 
+const isUpdatingPhone = createActionInProgressReducer(
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
+);
+
 const data = createReducer( {}, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
 		...state,
@@ -46,9 +55,19 @@ const data = createReducer( {}, {
 		phone,
 		phoneValidated: phone_validated
 	} ),
+
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, data } ) => {
+		switch ( target ) {
+			case 'phone':
+				return { ...state, phone: data };
+			default: // do nothing to unknown fields
+				return { ...state };
+		}
+	},
 } );
 
 export default combineReducers( {
 	isFetching,
+	isUpdatingPhone,
 	data,
 } );
