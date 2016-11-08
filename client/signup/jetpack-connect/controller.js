@@ -76,7 +76,7 @@ const getPlansLandingPage = ( context, hideFreePlan ) => {
 
 	renderWithReduxStore(
 		<PlansLanding
-				context={ context }
+			context={ context }
 			destinationType={ context.params.destinationType }
 			intervalType={ context.params.intervalType }
 			isLanding={ true }
