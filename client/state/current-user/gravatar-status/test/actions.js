@@ -19,11 +19,19 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;
+	const tempImageSrc = 'tempImageSrc';
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 		global.FormData = sandbox.stub().returns( {
 			append: noop
+		} );
+		global.FileReader = sandbox.stub().returns( {
+			readAsDataURL: noop,
+			addEventListener: function( event, callback ) {
+				this.result = tempImageSrc;
+				callback();
+			}
 		} );
 	} );
 
@@ -47,7 +55,8 @@ describe( 'actions', () => {
 				return uploadGravatar( 'file', 'bearerToken', 'email' )( spy )
 					.then( () => {
 						expect( spy ).to.have.been.calledWith( {
-							type: GRAVATAR_UPLOAD_RECEIVE
+							type: GRAVATAR_UPLOAD_RECEIVE,
+							src: tempImageSrc
 						} );
 					} );
 			} );
