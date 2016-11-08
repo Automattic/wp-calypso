@@ -378,7 +378,7 @@ describe( 'selectors', () => {
 			expect( isRedirectingToWpAdmin( state ) ).to.be.false;
 		} );
 
-		it( 'should return false if redirection flag is set to true', () => {
+		it( 'should return true if redirection flag is set to true', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
