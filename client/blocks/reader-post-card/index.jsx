@@ -103,14 +103,6 @@ export default class RefreshPostCard extends React.Component {
 			followUrl = feed ? feed.feed_URL : post.site_URL;
 		}
 
-		let title = truncate( post.title, {
-			length: 140,
-			separator: /,? +/
-		} );
-		if ( ! title ) {
-			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
-		}
-
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } />
