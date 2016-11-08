@@ -86,10 +86,6 @@ export default class RefreshPostCard extends React.Component {
 		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
-		const title = truncate( post.title, {
-			length: 140,
-			separator: /,? +/
-		} );
 		const featuredAsset = FeaturedAsset( { post } ); // this is ... gross? gross.
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! featuredAsset,
@@ -97,6 +93,14 @@ export default class RefreshPostCard extends React.Component {
 			'is-gallery': isGallery
 		} );
 		const showExcerpt = ! isPhotoOnly;
+		let title = truncate( post.title, {
+			length: 140,
+			separator: /,? +/
+		} );
+
+		if ( ! title && isPhotoOnly ) {
+			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
+		}
 
 		let followUrl;
 		if ( showPrimaryFollowButton ) {
