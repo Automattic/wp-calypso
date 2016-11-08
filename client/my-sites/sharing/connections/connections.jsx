@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,6 +14,10 @@ class SharingConnections extends Component {
 	static propTypes = {
 		connections: PropTypes.object,
 		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		translate: identity,
 	};
 
 	render() {

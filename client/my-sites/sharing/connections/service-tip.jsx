@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { includes } from 'lodash';
+import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -33,6 +33,10 @@ class SharingServiceTip extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		translate: identity,
 	};
 
 	facebook() {

@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,6 +30,7 @@ const SharingService = React.createClass( {
 		connections: PropTypes.object.isRequired,   // A collections-list instance
 		service: PropTypes.object.isRequired,       // The single service object
 		siteId: PropTypes.number,                   // The site ID for which connections are created
+		translate: PropTypes.func,
 	},
 
 	mixins: [ observe( 'connections' ) ],
@@ -46,6 +48,7 @@ const SharingService = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			siteId: 0,
+			translate: identity,
 		};
 	},
 

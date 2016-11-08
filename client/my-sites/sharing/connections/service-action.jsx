@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,11 +25,13 @@ class SharingServiceAction extends Component {
 
 	static defaultProps = {
 		connections: Object.freeze( [] ),
+		isConnecting: false,
 		isDisconnecting: false,
 		isRefreshing: false,
-		isConnecting: false,
 		onAction: () => {},
+		removableConnections: Object.freeze( [] ),
 		status: 'unknown',
+		translate: identity,
 	};
 
 	onActionClick = ( event ) => {

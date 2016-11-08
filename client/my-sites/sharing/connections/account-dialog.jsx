@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, find, isEqual } from 'lodash';
+import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,7 +30,7 @@ class AccountDialog extends Component {
 		isVisible: true,
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
-		translate: () => {},
+		translate: identity,
 		warningNotice: () => {},
 	};
 

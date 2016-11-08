@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -38,7 +39,7 @@ class SharingConnection extends Component {
 		onToggleSitewideConnection: () => {},
 		recordGoogleEvent: () => {},
 		showDisconnect: false,
-		translate: ( string ) => string,
+		translate: identity,
 		userHasCaps: false,
 		userId: 0,
 	};

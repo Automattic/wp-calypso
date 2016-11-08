@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -39,6 +39,12 @@ class SharingServiceExamples extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		site: PropTypes.object,
+		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		site: Object.freeze( {} ),
+		translate: identity,
 	};
 
 	getSharingButtonsLink() {

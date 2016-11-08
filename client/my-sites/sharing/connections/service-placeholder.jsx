@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +15,10 @@ import GridIcon from 'components/gridicon';
 class SharingServicePlaceholder extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		translate: identity,
 	};
 
 	render() {

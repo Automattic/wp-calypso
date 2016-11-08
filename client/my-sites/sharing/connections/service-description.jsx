@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 class SharingServiceDescription extends Component {
@@ -12,7 +13,6 @@ class SharingServiceDescription extends Component {
 	};
 
 	static defaultProps = {
-		numberOfConnections: 0,
 		descriptions: Object.freeze( {
 			facebook: function() {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -97,6 +97,8 @@ class SharingServiceDescription extends Component {
 				} );
 			},
 		} ),
+		numberOfConnections: 0,
+		translate: identity,
 	};
 
 	render() {
