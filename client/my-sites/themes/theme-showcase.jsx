@@ -170,9 +170,8 @@ const ThemeShowcase = React.createClass( {
 	}
 } );
 
-export default connect(
-	state => ( {
-		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state ),
-	} )
+export default connect( state => ( {
+	queryParams: getQueryParams( state ),
+	themesList: getThemesList( state )
+} )
 )( localize( ThemeShowcase ) );

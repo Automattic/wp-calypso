@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import times from 'lodash/times';
+import isEqual from 'lodash/isEqual';
 import { localize } from 'i18n-calypso';
-import { identity, isEqual } from 'lodash';
+import identity from 'lodash/identity';
 import { connect } from 'react-redux';
 
 /**
@@ -64,12 +65,8 @@ export const ThemesList = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		return nextProps.loading !== this.props.loading ||
-			! isEqual( nextProps.themes, this.props.themes ) ||
-			( nextProps.getButtonOptions, this.props.getButtonOptions ) ||
-			( nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ) ||
-			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
-			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
+		return this.props.loading !== nextProps.loading ||
+			! isEqual( this.props.themes, nextProps.themes );
 	},
 
 	renderTheme( theme, index ) {
