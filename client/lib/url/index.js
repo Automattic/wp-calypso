@@ -91,6 +91,14 @@ function urlToSlug( url ) {
 	return withoutHttp( url ).replace( /\//g, '::' );
 }
 
+function slugToUrl( slug ) {
+	if ( ! slug ) {
+		return null;
+	}
+
+	return slug.replace( /::/g, '/' );
+}
+
 export default {
 	isOutsideCalypso,
 	isExternal,
@@ -99,4 +107,5 @@ export default {
 	addSchemeIfMissing,
 	setUrlScheme,
 	urlToSlug,
+	slugToUrl,
 };

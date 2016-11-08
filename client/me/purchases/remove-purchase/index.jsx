@@ -22,6 +22,7 @@ import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
+import { slugToUrl } from 'lib/url';
 
 const user = userFactory();
 
@@ -130,7 +131,7 @@ const RemovePurchase = React.createClass( {
 				notices.success(
 					this.translate( '%(productName)s was removed from {{siteName/}}.', {
 						args: { productName },
-						components: { siteName: <em>{ selectedSite.slug }</em> }
+						components: { siteName: <em>{ slugToUrl( selectedSite.slug ) }</em> }
 					} ),
 					{ persistent: true }
 				);
@@ -287,7 +288,7 @@ const RemovePurchase = React.createClass( {
 							'Are you sure you want to remove %(productName)s from {{siteName/}}?',
 							{
 								args: { productName },
-								components: { siteName: <em>{ this.props.selectedSite.slug }</em> }
+								components: { siteName: <em>{ slugToUrl( this.props.selectedSite.slug ) }</em> }
 							}
 						)
 					}
