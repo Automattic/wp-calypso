@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 import { query, fetchNextPage } from 'state/themes/actions';
-import { hasSiteChanged, isJetpack } from 'state/themes/themes-last-query/selectors';
+import { getQuerySiteId, isJetpack } from 'state/themes/themes-last-query/selectors';
 import { isLastPage, isFetchingNextPage, getThemesList, isFetchError } from 'state/themes/themes-list/selectors';
 import { getThemeById } from 'state/themes/themes/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -36,7 +36,7 @@ const ThemesListFetcher = React.createClass( {
 		lastPage: React.PropTypes.bool.isRequired,
 		loading: React.PropTypes.bool.isRequired,
 		lastQuery: React.PropTypes.shape( {
-			hasSiteChanged: React.PropTypes.bool.isRequired,
+			querySiteId: React.PropTypes.number.isRequired,
 			isJetpack: React.PropTypes.bool.isRequired
 		} ).isRequired,
 		query: React.PropTypes.func.isRequired,
@@ -54,12 +54,9 @@ const ThemesListFetcher = React.createClass( {
 		}
 		if (
 			nextProps.filter !== this.props.filter ||
-			nextProps.tier !== this.props.tier || (
-				nextProps.search !== this.props.search && (
-					! nextProps.lastQuery.isJetpack ||
-					nextProps.lastQuery.hasSiteChanged
-				)
-			)
+			nextProps.tier !== this.props.tier ||
+			nextProps.search !== this.props.search ||
+			nextProps.site.ID !== this.props.lastQuery.querySiteId
 		) {
 			this.refresh( nextProps );
 		}
@@ -150,8 +147,7 @@ export default connect(
 		lastPage: isLastPage( state ),
 		loading: isFetchingNextPage( state ),
 		lastQuery: {
-			hasSiteChanged: hasSiteChanged( state ),
-			isJetpack: isJetpack( state )
+			querySiteId: getQuerySiteId( state ),
 		},
 		error: isFetchError( state )
 	} ),
