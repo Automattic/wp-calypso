@@ -8,7 +8,8 @@ import assert from 'assert';
  */
 import {
 	isRequestingHappinessEngineers,
-	getHappinessEngineers
+	getHappinessEngineers,
+	hasReceivedHappinessEngineers
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -32,6 +33,16 @@ describe( 'selectors', () => {
 				getHappinessEngineers( getState() ),
 				[ 'test 1', 'test 2' ]
 			);
+		} );
+	} );
+
+	describe( 'hasReceivedHappinessEngineers()', () => {
+		it( 'should return true if some state', () => {
+			assert( hasReceivedHappinessEngineers( getState() ) === true );
+		} );
+
+		it( 'should return false if null', () => {
+			assert( hasReceivedHappinessEngineers( { happinessEngineers: { items: null } } ) === false );
 		} );
 	} );
 } );
