@@ -280,7 +280,7 @@ Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEma
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.settings = function( siteId, method, data, fn ) {
+Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, fn ) {
 	debug( '/sites/:site_id:/settings query' );
 	if ( 'function' === typeof method ) {
 		fn = method;
@@ -288,7 +288,7 @@ Undocumented.prototype.settings = function( siteId, method, data, fn ) {
 		data = {};
 	}
 
-	this.wpcom.req[ method ]( {
+	return this.wpcom.req[ method ]( {
 		path: '/sites/' + siteId + '/settings',
 		body: data
 	}, fn );
