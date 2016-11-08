@@ -11,10 +11,6 @@ Manages data concerning each site's currently selected theme.
 
 Provides details for a theme given its ID.
 
-### themes-last-query/
-
-Tracks the last themes query.
-
 ### themes-list/
 
 Manages the list of themes, per query.
