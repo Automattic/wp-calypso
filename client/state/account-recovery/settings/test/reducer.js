@@ -40,31 +40,6 @@ describe( '#account-recovery reducer fetch:', () => {
 
 		assert.deepEqual( initState, expectedState );
 	} );
-
-	it( 'should populate isFetching in the state', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
-		} );
-
-		assert( state.isFetching );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS action should set isFetching to false', () => {
-		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-			...dummyData,
-		} );
-
-		assert.isFalse( state.isFetching );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED action should set isFetching to false', () => {
-		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-		} );
-
-		assert.isFalse( state.isFetching );
-	} );
 } );
 
 describe( '#account-recovery reducer update / delete:', () => {
@@ -94,6 +69,31 @@ describe( '#account-recovery reducer update / delete:', () => {
 } );
 
 describe( '#account-recovery reducer action status flags: ', () => {
+	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH should set isFetching to true', () => {
+		const state = reducer( { isFetching: false }, {
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
+		} );
+
+		assert( state.isFetching );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS action should set isFetching to false', () => {
+		const state = reducer( { isFetching: true }, {
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+			...dummyData,
+		} );
+
+		assert.isFalse( state.isFetching );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED action should set isFetching to false', () => {
+		const state = reducer( { isFetching: true }, {
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
+		} );
+
+		assert.isFalse( state.isFetching );
+	} );
+
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set isUpdatingPhone to true', () => {
 		const state = reducer( { isUpdatingPhone: true }, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
