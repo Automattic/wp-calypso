@@ -1,76 +1,73 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Connection = require( './connection' ),
-	serviceConnections = require( './service-connections' ),
-	analytics = require( 'lib/analytics' );
+import Connection from './connection';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
-	displayName: 'SharingServiceConnectedAccounts',
+class SharingServiceConnectedAccounts extends Component {
+	static propTypes = {
+		connections: PropTypes.array,               // Set of connections for the service
+		isDisconnecting: PropTypes.bool,            // Whether a disconnect request is pending
+		isRefreshing: PropTypes.bool,               // Whether a connection refresh is pending
+		onAddConnection: PropTypes.func,            // Handler to invoke when adding a new connection
+		onRefreshConnection: PropTypes.func,        // Handler to invoke when refreshing a connection
+		onRemoveConnection: PropTypes.func,         // Handler to invoke when removing an existing connection
+		onToggleSitewideConnection: PropTypes.func, // Handler to invoke when toggling a connection to be shared sitewide
+		recordGoogleEvent: PropTypes.func,          // Redux action to track an event
+		service: PropTypes.object.isRequired,       // The service object
+		translate: PropTypes.func,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,                    // The site for which the connections were created
-		user: React.PropTypes.object,                    // A user object
-		service: React.PropTypes.object.isRequired,      // The service object
-		connections: React.PropTypes.array,              // Set of connections for the service
-		onAddConnection: React.PropTypes.func,           // Handler to invoke when adding a new connection
-		onRemoveConnection: React.PropTypes.func,        // Handler to invoke when removing an existing connection
-		isDisconnecting: React.PropTypes.bool,           // Whether a disconnect request is pending
-		onRefreshConnection: React.PropTypes.func,       // Handler to invoke when refreshing a connection
-		isRefreshing: React.PropTypes.bool,              // Whether a connection refresh is pending
-		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
-	},
+	static defaultProps = {
+		connections: Object.freeze( [] ),
+		isDisconnecting: false,
+		isRefreshing: false,
+		onAddConnection: () => {},
+		onRefreshConnection: () => {},
+		onRemoveConnection: () => {},
+		onToggleSitewideConnection: () => {},
+		translate: identity,
+	};
 
-	getDefaultProps: function() {
-		return {
-			connections: Object.freeze( [] ),
-			onAddConnection: function() {},
-			onRemoveConnection: function() {},
-			isDisconnecting: false,
-			onRefreshConnection: function() {},
-			isRefreshing: false,
-			onToggleSitewideConnection: function() {}
-		};
-	},
+	connectAnother = () => {
+		this.props.onAddConnection();
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
+	};
 
-	getConnectionElements: function() {
-		return this.props.connections.map( function( connection ) {
-			return <Connection
+	getConnectionElements() {
+		return this.props.connections.map( ( connection ) =>
+			<Connection
 				key={ connection.keyring_connection_ID }
-				site={ this.props.site }
-				user={ this.props.user }
 				connection={ connection }
-				service={ this.props.service }
-				onDisconnect={ this.props.onRemoveConnection }
 				isDisconnecting={ this.props.isDisconnecting }
-				showDisconnect={ this.props.connections.length > 1 || 'broken' === connection.status }
-				onRefresh={ this.props.onRefreshConnection }
 				isRefreshing={ this.props.isRefreshing }
-				onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />;
-		}, this );
-	},
+				onDisconnect={ this.props.onRemoveConnection }
+				onRefresh={ this.props.onRefreshConnection }
+				onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
+				service={ this.props.service }
+				showDisconnect={ this.props.connections.length > 1 || 'broken' === connection.status } />
+		);
+	}
 
-	getConnectAnotherElement: function() {
-		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.ID ) ) {
+	getConnectAnotherElement() {
+		if ( 'publicize' === this.props.service.type ) {
 			return (
 				<a onClick={ this.connectAnother } className="button new-account">
-					{ this.translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
+					{ this.props.translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
 				</a>
 			);
 		}
-	},
+	}
 
-	connectAnother: function() {
-		this.props.onAddConnection();
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
-	},
-
-	render: function() {
+	render() {
 		return (
 			<div className="sharing-service-accounts-detail">
 				<ul className="sharing-service-connected-accounts">
@@ -80,4 +77,11 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	},
+)( localize( SharingServiceConnectedAccounts ) );
