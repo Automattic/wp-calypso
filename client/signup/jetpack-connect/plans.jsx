@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import { PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'state/sites/selectors';
-import { getFlowType } from 'state/jetpack-connect/selectors';
+import { getFlowType, isRedirectingToWpAdmin } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -29,6 +29,7 @@ import { canCurrentUser } from 'state/current-user/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLAN_PAGE = '/plans/my-plan/';
+const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
 	constructor() {
@@ -72,8 +73,20 @@ class Plans extends Component {
 				return this.autoselectPlan();
 			}
 		} else if ( this.props.hasPaidPlan || ! this.props.canPurchasePlans ) {
-			const { queryObject } = this.props.jetpackConnectAuthorize;
+			this.redirectToWpAdmin();
+		}
+	}
+
+	redirectToWpAdmin() {
+		if ( this.props.redirectingToWpAdmin ) {
+			return;
+		}
+
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		if ( queryObject ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else if ( this.props.selectedSite ) {
+			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 	}
 
@@ -107,8 +120,7 @@ class Plans extends Component {
 		if ( this.props.calypsoStartedConnection ) {
 			page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
 		} else {
-			const { queryObject } = this.props.jetpackConnectAuthorize;
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+			this.redirectToWpAdmin();
 		}
 	}
 
@@ -190,7 +202,8 @@ export default connect(
 			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug ),
+			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 		};
 	},
 	{
