@@ -88,7 +88,7 @@ const ThemesSingleSite = ( props ) => {
 	}
 
 	return (
-		<ThemeShowcase { ...props } siteId={ site && site.ID }>
+		<ThemeShowcase { ...props }>
 			<SidebarNavigation />
 			<ThanksModal
 				site={ site }
