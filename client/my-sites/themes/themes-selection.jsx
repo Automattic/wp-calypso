@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import compact from 'lodash/compact';
 
@@ -14,6 +15,7 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
+import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getFilter,
 	getSortedFilterTerms,
@@ -31,7 +33,7 @@ const ThemesSelection = React.createClass( {
 			PropTypes.object,
 			PropTypes.bool
 		] ).isRequired,
-		siteId: PropTypes.string,
+		siteId: PropTypes.number,
 		search: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		getOptions: React.PropTypes.func,
@@ -92,9 +94,9 @@ const ThemesSelection = React.createClass( {
 	},
 
 	updateUrl( tier, filter, searchString = this.props.search ) {
-		const { siteId, vertical } = this.props;
+		const { siteSlug, vertical } = this.props;
 
-		const siteIdSection = siteId ? `/${ siteId }` : '';
+		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
 		const filterSection = filter ? `/filter/${ filter }` : '';
@@ -149,4 +151,8 @@ const ThemesSelection = React.createClass( {
 
 } );
 
-export default ThemesSelection;
+export default connect(
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId )
+	} )
+)( ThemesSelection );
