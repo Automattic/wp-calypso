@@ -18,6 +18,10 @@ import { getCurrentUserDate } from 'state/current-user/selectors';
 
 export function getConfigForCurrentView( state ) {
 	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+	if ( ! currentRoute ) {
+		return false;
+	}
+
 	const path = currentRoute.path ? currentRoute.path : '';
 	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
 
