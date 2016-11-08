@@ -15,6 +15,7 @@ import {
 	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
+	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
@@ -351,6 +352,42 @@ describe( 'selectors', () => {
 			};
 
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#isRedirectingToWpAdmin()', () => {
+		it( 'should return false if redirection flag is not set', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {}
+				}
+			};
+
+			expect( isRedirectingToWpAdmin( state ) ).to.be.false;
+		} );
+
+		it( 'should return false if redirection flag is set to false', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						isRedirectingToWpAdmin: false
+					}
+				}
+			};
+
+			expect( isRedirectingToWpAdmin( state ) ).to.be.false;
+		} );
+
+		it( 'should return true if redirection flag is set to true', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						isRedirectingToWpAdmin: true
+					}
+				}
+			};
+
+			expect( isRedirectingToWpAdmin( state ) ).to.be.true;
 		} );
 	} );
 
