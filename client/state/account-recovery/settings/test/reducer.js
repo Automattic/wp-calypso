@@ -21,8 +21,9 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
-import { dummyData, dummyNewPhone } from './test-data';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import { generateActionInProgressStateFlagTests } from './utils';
+
 import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
@@ -80,6 +81,16 @@ describe( '#account-recovery reducer update / delete:', () => {
 
 		assert.deepEqual( state.data.phone, {} );
 	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {
+		const state = reducer( initState, {
+			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+			target: 'email',
+			data: dummyNewEmail,
+		} );
+
+		assert.deepEqual( state.data.email, dummyNewEmail );
+	} );
 } );
 
 describe( '#account-recovery reducer action status flags: ', () => {
@@ -102,5 +113,12 @@ describe( '#account-recovery reducer action status flags: ', () => {
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
 		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+	);
+
+	generateActionInProgressStateFlagTests(
+		'isUpdatingEmail',
+		reducer,
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
 	);
 } );
