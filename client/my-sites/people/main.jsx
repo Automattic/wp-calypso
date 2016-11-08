@@ -56,7 +56,7 @@ export default React.createClass( {
 	renderPeopleSectionNav: function( site ) {
 		const commonProps = omit( this.props, [ 'sites' ] );
 		if ( this.props.filter === 'team' ) {
-			return <PeopleSectionNav { ...commonProps } site={ site } baseUrl={ `/people/team/${site}` } />;
+			return <PeopleSectionNav { ...commonProps } site={ site } baseUrl={ `/people/team/${this.props.sites.selected}` } />;
 		} else {
 			return <PeopleSectionNav { ...commonProps } site={ site } />;
 		}
@@ -93,7 +93,7 @@ export default React.createClass( {
 			<Main>
 				<SidebarNavigation />
 				<div>
-					{ this.renderPeopleSectionNav( this.props.sites.selected ) }
+					{ this.renderPeopleSectionNav( site ) }
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
