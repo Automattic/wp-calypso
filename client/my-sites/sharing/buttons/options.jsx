@@ -134,13 +134,22 @@ module.exports = React.createClass( {
 			return;
 		}
 
+		const checked = typeof this.props.values.jetpack_comment_likes_enabled === 'undefined'
+			? false
+			: this.props.values.jetpack_comment_likes_enabled;
+
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ this.translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
 				<label>
-					<input name="jetpack_comment_likes_enabled" type="checkbox" checked={ this.props.values.jetpack_comment_likes_enabled } onChange={ this.handleChange } disabled={ ! this.props.initialized } />
+					<input name="jetpack_comment_likes_enabled"
+						type="checkbox"
+						checked={ checked }
+						onChange={ this.handleChange }
+						disabled={ ! this.props.initialized }
+					/>
 					<span>{ this.translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }</span>
 				</label>
 			</fieldset>
