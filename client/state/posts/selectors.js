@@ -370,31 +370,14 @@ export const isEditedPostDirty = createSelector(
  */
 export const editedPostHasContent = createSelector(
 	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
-
-		if ( ! post && ! edits ) {
-			return false;
-		}
-
-		const getRecentAttribute = key => {
-			if ( edits && key in edits ) {
-				return edits[ key ];
-			}
-			if ( post ) {
-				return post[ key ];
-			}
-			return null;
-		};
-
-		const title = getRecentAttribute( 'title' );
-		const excerpt = getRecentAttribute( 'excerpt' );
-		const content = getRecentAttribute( 'content' );
-		if ( ( title && title.trim() ) || excerpt ) {
-			return true;
-		}
-
-		return ! isPostContentEmpty( content );
+		const editedPost = getEditedPost( state, siteId, postId );
+		return (
+			!! editedPost &&
+			(
+				some( [ 'title', 'excerpt' ], ( field ) => editedPost[ field ] && !! editedPost[ field ].trim() ) ||
+				! isPostContentEmpty( editedPost.content )
+			)
+		);
 	},
 	( state ) => [ state.posts.items, state.posts.edits ]
 );
