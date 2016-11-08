@@ -20,7 +20,6 @@ describe( 'themes-last-query reducer', () => {
 		it( 'does not persist data because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
-				previousSiteId: 2123982,
 				isJetpack: false,
 				lastParams: {
 					search: 'foo bar',
@@ -36,7 +35,6 @@ describe( 'themes-last-query reducer', () => {
 		it( 'does not load persisted data because this is not implemented yet', () => {
 			const jsObject = Object.freeze( {
 				currentSiteId: 12345678,
-				previousSiteId: 2123982,
 				isJetpack: false,
 				lastParams: {
 					search: 'foo bar',
@@ -52,7 +50,6 @@ describe( 'themes-last-query reducer', () => {
 		it( 'converts state from server to immutable.js object', () => {
 			const jsObject = deepFreeze( {
 				currentSiteId: 12345678,
-				previousSiteId: 2123982,
 				isJetpack: false,
 				lastParams: {
 					search: 'foo bar',
