@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { omit } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -10,7 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
 	handleClick = ( event ) => {
@@ -23,13 +24,13 @@ class DisconnectJetpackButton extends Component {
 			this.refs.dialog.getWrappedInstance().open();
 		}
 
-		analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	};
 
 	render() {
 		const { site, redirect, linkDisplay } = this.props;
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text' ];
+		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent' ];
 		const buttonProps = {
 			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
@@ -69,4 +70,7 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true
 };
 
-export default DisconnectJetpackButton;
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( DisconnectJetpackButton );
