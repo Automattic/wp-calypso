@@ -15,7 +15,6 @@ import {
 } from 'state/action-types';
 
 export const initialState = fromJS( {
-	previousSiteId: 0,
 	currentSiteId: null,
 	isJetpack: null,
 	lastParams: null
@@ -27,7 +26,6 @@ export default ( state = initialState, action ) => {
 			return state.set( 'lastParams', action.params );
 		case THEMES_INCREMENT_PAGE:
 			return state
-				.set( 'previousSiteId', state.get( 'currentSiteId' ) )
 				.set( 'currentSiteId', action.site.ID )
 				.set( 'isJetpack', !! action.site.jetpack );
 		case DESERIALIZE:
