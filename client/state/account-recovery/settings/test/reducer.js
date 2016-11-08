@@ -38,6 +38,7 @@ describe( '#account-recovery reducer fetch:', () => {
 		isUpdatingPhone: false,
 		isDeletingPhone: false,
 		isUpdatingEmail: false,
+		isDeletingEmail: false,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {
@@ -89,7 +90,16 @@ describe( '#account-recovery reducer update / delete:', () => {
 			data: dummyNewEmail,
 		} );
 
-		assert.deepEqual( state.data.email, dummyNewEmail );
+		assert.equal( state.data.email, dummyNewEmail );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action with email target should wipe the email field', () => {
+		const state = reducer( initState, {
+			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+			target: 'email',
+		} );
+
+		assert.equal( state.data.email, '' );
 	} );
 } );
 
@@ -120,5 +130,12 @@ describe( '#account-recovery reducer action status flags: ', () => {
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
 		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
+	);
+
+	generateActionInProgressStateFlagTests(
+		'isDeletingEmail',
+		reducer,
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
 	);
 } );

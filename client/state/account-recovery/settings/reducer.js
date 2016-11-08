@@ -61,6 +61,11 @@ const isUpdatingEmail = createActionInProgressReducer(
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
 );
 
+const isDeletingEmail = createActionInProgressReducer(
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+);
+
 const data = createReducer( {}, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
 		...state,
@@ -85,6 +90,8 @@ const data = createReducer( {}, {
 		switch ( target ) {
 			case 'phone':
 				return { ...state, phone: {} };
+			case 'email':
+				return { ...state, email: '' };
 			default: // do nothing to unknown targets
 				return { ...state };
 		}
@@ -96,5 +103,6 @@ export default combineReducers( {
 	isUpdatingPhone,
 	isDeletingPhone,
 	isUpdatingEmail,
+	isDeletingEmail,
 	data,
 } );
