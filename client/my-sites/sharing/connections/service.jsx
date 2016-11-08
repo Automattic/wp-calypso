@@ -1,36 +1,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var ServiceTip = require( './service-tip' ),
-	ServiceDescription = require( './service-description' ),
-	ServiceExamples = require( './service-examples' ),
-	ServiceAction = require( './service-action' ),
-	ServiceConnectedAccounts = require( './service-connected-accounts' ),
-	notices = require( 'notices' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	sites = require( 'lib/sites-list' )(),
-	serviceConnections = require( './service-connections' ),
-	analytics = require( 'lib/analytics' ),
-	FoldableCard = require( 'components/foldable-card' ),
-	SocialLogo = require( 'components/social-logo' );
+import AccountDialog from './account-dialog';
+import FoldableCard from 'components/foldable-card';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import notices from 'notices';
+import observe from 'lib/mixins/data-observe';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import ServiceAction from './service-action';
+import ServiceConnectedAccounts from './service-connected-accounts';
+import serviceConnections from './service-connections';
+import ServiceDescription from './service-description';
+import ServiceExamples from './service-examples';
+import ServiceTip from './service-tip';
+import SocialLogo from 'components/social-logo';
 
-module.exports = React.createClass( {
+const SharingService = React.createClass( {
 	displayName: 'SharingService',
 
 	propTypes: {
-		site: React.PropTypes.object,                    // The site for which connections are created
-		user: React.PropTypes.object,                    // A user object
-		service: React.PropTypes.object.isRequired,      // The single service object
-		connections: React.PropTypes.object.isRequired,  // A collections-list instance
-		onAddConnection: React.PropTypes.func,           // Handler for creating a new connection for this service
-		onRemoveConnection: React.PropTypes.func,        // Handler for removing a connection from this service
-		onRefreshConnection: React.PropTypes.func,       // Handler for refreshing a Keyring connection for this service
-		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
+		connections: PropTypes.object.isRequired,   // A collections-list instance
+		service: PropTypes.object.isRequired,       // The single service object
+		siteId: PropTypes.number,                   // The site ID for which connections are created
+		translate: PropTypes.func,
 	},
 
 	mixins: [ observe( 'connections' ) ],
@@ -40,16 +40,15 @@ module.exports = React.createClass( {
 			isOpen: false,          // The service is visually opened
 			isConnecting: false,    // A pending connection is awaiting authorization
 			isDisconnecting: false, // A pending disconnection is awaiting completion
-			isRefreshing: false     // A pending refresh is awaiting completion
+			isRefreshing: false,    // A pending refresh is awaiting completion
+			isSelectingAccount: false,
 		};
 	},
 
 	getDefaultProps: function() {
 		return {
-			onAddConnection: function() {},
-			onRemoveConnection: function() {},
-			onRefreshConnection: function() {},
-			onToggleSitewideConnection: function() {}
+			siteId: 0,
+			translate: identity,
 		};
 	},
 
@@ -62,11 +61,44 @@ module.exports = React.createClass( {
 		this.props.connections.off( 'refresh:error', this.onRefreshError );
 	},
 
+	addConnection: function( service, keyringConnectionId, externalUserId ) {
+		if ( service ) {
+			// Attempt to create a new connection. If a Keyring connection ID
+			// is not provided, the user will need to authorize the app
+			this.props.connections.create( service, this.props.siteId, keyringConnectionId, externalUserId );
+
+			// In the case that a Keyring connection doesn't exist, wait for app
+			// authorization to occur, then display with the available connections
+			if ( ! keyringConnectionId ) {
+				this.props.connections.once( 'connect', function() {
+					if ( serviceConnections.didKeyringConnectionSucceed( service.ID, this.props.siteId ) &&
+						serviceConnections.isServiceForPublicize( service.ID ) ) {
+						this.setState( { isSelectingAccount: true } );
+					}
+				}.bind( this ) );
+			} else {
+				this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button in Modal', this.props.service.ID );
+			}
+		} else {
+			// If an account wasn't selected from the dialog or the user cancels
+			// the connection, the dialog should simply close
+			this.props.connections.emit( 'create:error', { cancel: true } );
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.props.service.ID );
+		}
+
+		// Reset active account selection
+		this.setState( { isSelectingAccount: null } );
+	},
+
+	toggleSitewideConnection: function( connection, isSitewide ) {
+		this.props.connections.update( connection, { shared: isSitewide } );
+	},
+
 	onConnectionSuccess: function() {
 		this.setState( { isConnecting: false } );
 		this.props.connections.off( 'create:error', this.onConnectionError );
 
-		notices.success( this.translate( 'The %(service)s account was successfully connected.', {
+		notices.success( this.props.translate( 'The %(service)s account was successfully connected.', {
 			args: { service: this.props.service.label },
 			context: 'Sharing: Publicize connection confirmation'
 		} ) );
@@ -81,17 +113,18 @@ module.exports = React.createClass( {
 		this.props.connections.off( 'create:success', this.onConnectionSuccess );
 
 		if ( reason && reason.cancel ) {
-			notices.warning( this.translate( 'The %(service)s connection could not be made because no account was selected.', {
+			notices.warning( this.props.translate( 'The %(service)s connection could not be made because no account was selected.', {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize connection confirmation'
 			} ) );
 		} else if ( reason && reason.connected ) {
-			notices.warning( this.translate( 'The %(service)s connection could not be made because all available accounts are already connected.', {
-				args: { service: this.props.service.label },
-				context: 'Sharing: Publicize connection confirmation'
-			} ) );
+			notices.warning( this.props.translate(
+				'The %(service)s connection could not be made because all available accounts are already connected.', {
+					args: { service: this.props.service.label },
+					context: 'Sharing: Publicize connection confirmation'
+				} ) );
 		} else {
-			notices.error( this.translate( 'The %(service)s connection could not be made.', {
+			notices.error( this.props.translate( 'The %(service)s connection could not be made.', {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize connection confirmation'
 			} ) );
@@ -102,7 +135,7 @@ module.exports = React.createClass( {
 		this.setState( { isDisconnecting: false } );
 		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
 
-		notices.success( this.translate( 'The %(service)s account was successfully disconnected.', {
+		notices.success( this.props.translate( 'The %(service)s account was successfully disconnected.', {
 			args: { service: this.props.service.label },
 			context: 'Sharing: Publicize disconnection confirmation'
 		} ) );
@@ -112,7 +145,7 @@ module.exports = React.createClass( {
 		this.setState( { isDisconnecting: false } );
 		this.props.connections.off( 'destroy:success', this.onDisconnectionSuccess );
 
-		notices.error( this.translate( 'The %(service)s account was unable to be disconnected.', {
+		notices.error( this.props.translate( 'The %(service)s account was unable to be disconnected.', {
 			args: { service: this.props.service.label },
 			context: 'Sharing: Publicize disconnection confirmation'
 		} ) );
@@ -122,7 +155,7 @@ module.exports = React.createClass( {
 		this.setState( { isRefreshing: false } );
 		this.props.connections.off( 'refresh:error', this.onRefreshError );
 
-		notices.success( this.translate( 'The %(service)s account was successfully reconnected.', {
+		notices.success( this.props.translate( 'The %(service)s account was successfully reconnected.', {
 			args: { service: this.props.service.label },
 			context: 'Sharing: Publicize reconnection confirmation'
 		} ) );
@@ -132,7 +165,7 @@ module.exports = React.createClass( {
 		this.setState( { isRefreshing: false } );
 		this.props.connections.off( 'refresh:success', this.onRefreshSuccess );
 
-		notices.error( this.translate( 'The %(service)s account was unable to be reconnected.', {
+		notices.error( this.props.translate( 'The %(service)s account was unable to be reconnected.', {
 			args: { service: this.props.service.label },
 			context: 'Sharing: Publicize reconnection confirmation'
 		} ) );
@@ -142,7 +175,7 @@ module.exports = React.createClass( {
 		this.setState( { isConnecting: true } );
 		this.props.connections.once( 'create:success', this.onConnectionSuccess );
 		this.props.connections.once( 'create:error', this.onConnectionError );
-		this.props.onAddConnection( this.props.service );
+		this.addConnection( this.props.service );
 	},
 
 	disconnect: function( connections ) {
@@ -155,7 +188,9 @@ module.exports = React.createClass( {
 		this.setState( { isDisconnecting: true } );
 		this.props.connections.once( 'destroy:success', this.onDisconnectionSuccess );
 		this.props.connections.once( 'destroy:error', this.onDisconnectionError );
-		this.props.onRemoveConnection( connections );
+
+		connections = serviceConnections.filterConnectionsToRemove( connections );
+		this.props.connections.destroy( connections );
 	},
 
 	refresh: function( connection ) {
@@ -168,7 +203,7 @@ module.exports = React.createClass( {
 			// the first broken connection owned by the current user.
 			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
 		}
-		this.props.onRefreshConnection( connection );
+		this.props.connections.refresh( connection );
 	},
 
 	performAction: function() {
@@ -178,39 +213,33 @@ module.exports = React.createClass( {
 		// service action button
 		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
 			this.disconnect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
 			this.refresh();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
 			this.connect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	},
 
 	render: function() {
 		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
-			connections = serviceConnections.getConnections( this.props.service.ID ),
-			elementClass = [
-				'sharing-service',
-				this.props.service.ID,
-				connectionStatus,
-				this.state.isOpen ? 'is-open' : ''
-			].join( ' ' ),
-			iconsMap = {
-				Facebook: 'facebook',
-				Twitter: 'twitter',
-				'Google+': 'google-plus',
-				LinkedIn: 'linkedin',
-				Tumblr: 'tumblr',
-				Path: 'path',
-				Eventbrite: 'eventbrite'
-			};
+			connections = serviceConnections.getConnections( this.props.service.ID );
+		const elementClass = [
+			'sharing-service',
+			this.props.service.ID,
+			connectionStatus,
+			this.state.isOpen ? 'is-open' : ''
+		].join( ' ' );
+		const accounts = this.state.isSelectingAccount
+			? serviceConnections.getAvailableExternalAccounts( this.props.service.ID, this.props.siteId )
+			: [];
 
 		const header = (
 			<div>
 				<SocialLogo
-					icon={ iconsMap[ this.props.service.label ] }
+					icon={ this.props.service.ID }
 					size={ 48 }
 					className="sharing-service__logo" />
 
@@ -227,18 +256,16 @@ module.exports = React.createClass( {
 		const content = (
 			<div
 				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
-				<ServiceExamples service={ this.props.service } site={ sites.getSelectedSite() } />
+				<ServiceExamples service={ this.props.service } />
 				<ServiceConnectedAccounts
-					site={ this.props.site }
-					user={ this.props.user }
-					service={ this.props.service }
 					connections={ connections }
-					onAddConnection={ this.connect }
-					onRemoveConnection={ this.disconnect }
 					isDisconnecting={ this.state.isDisconnecting }
-					onRefreshConnection={ this.refresh }
 					isRefreshing={ this.state.isRefreshing }
-					onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />
+					onAddConnection={ this.connect }
+					onRefreshConnection={ this.refresh }
+					onRemoveConnection={ this.disconnect }
+					onToggleSitewideConnection={ this.toggleSitewideConnection }
+					service={ this.props.service } />
 				<ServiceTip service={ this.props.service } />
 			</div> );
 
@@ -249,18 +276,35 @@ module.exports = React.createClass( {
 				onAction={ this.performAction }
 				isConnecting={ this.state.isConnecting }
 				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting } />
+				isDisconnecting={ this.state.isDisconnecting }
+				removableConnections={ serviceConnections.getRemovableConnections( this.props.service.ID ) } />
 		);
 		return (
-			<FoldableCard
-				className={ elementClass }
-				header={ header }
-				clickableHeader
-				compact
-				summary={ action }
-				expandedSummary={ action } >
-				{ content }
-			</FoldableCard>
+			<div>
+				<AccountDialog
+					isVisible={ this.state.isSelectingAccount }
+					service={ this.props.service }
+					accounts={ accounts }
+					onAccountSelected={ this.addConnection } />
+				<FoldableCard
+					className={ elementClass }
+					header={ header }
+					clickableHeader
+					compact
+					summary={ action }
+					expandedSummary={ action } >
+					{ content }
+				</FoldableCard>
+			</div>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		siteId: getSelectedSiteId( state ),
+	} ),
+	{
+		recordGoogleEvent,
+	},
+)( localize( SharingService ) );
