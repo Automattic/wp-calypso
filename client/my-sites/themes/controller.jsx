@@ -57,12 +57,18 @@ function getProps( context ) {
 }
 
 export function singleSite( context, next ) {
+	const { site_id: siteId } = context.params;
+	const props = getProps( context );
+
+	props.key = siteId;
+	props.siteId = siteId;
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
+	context.primary = <SingleSiteComponent { ...props } />;
 	next();
 }
 
