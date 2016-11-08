@@ -53,7 +53,7 @@ import {
 } from 'state/action-types';
 
 import dummyData from './test-data';
-import { generateSuccessAndFailedTestsForThunk } from './util';
+import { generateSuccessAndFailedTestsForThunk } from './utils';
 
 describe( 'account-recovery actions', () => {
 	let spy;
