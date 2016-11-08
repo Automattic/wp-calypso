@@ -207,7 +207,7 @@ export const EditorMediaModal = React.createClass( {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true, this.props.receiveMediaItems );
 	},
 
 	onImageEditorDone( error, blob, imageEditorProps ) {
