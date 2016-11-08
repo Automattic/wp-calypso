@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
 import SitesListActions from 'lib/sites-list/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackDialog extends Component {
 	constructor( props ) {
@@ -40,9 +40,9 @@ class DisconnectJetpackDialog extends Component {
 
 		if ( action === 'continue' ) {
 			this.disconnectJetpack();
-			analytics.ga.recordEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+			this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 		} else {
-			analytics.ga.recordEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+			this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 		}
 	}
 
@@ -112,7 +112,9 @@ export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state )
 	} ),
-	null,
+	{
+		recordGoogleEvent
+	},
 	null,
 	{
 		withRef: true
