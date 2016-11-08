@@ -335,8 +335,9 @@ export default connect(
 		const siteId = props.sites.getSite( props.domain ).ID;
 		const previousTheme = getCurrentTheme( state, siteId );
 		const queryParams = state.themes.themesList.get( 'query' );
+		const previousId = previousTheme ? previousTheme.id : 'unknown';
 		const trackingData = {
-			previous_theme: previousTheme.id,
+			previous_theme: previousId,
 			source: 'customizer',
 			purchased: false,
 			search_term: queryParams.get( 'search' ) || null
