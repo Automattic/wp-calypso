@@ -1,30 +1,28 @@
 /**
  * External dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
-	has = require( 'lodash/has' ),
-	includes = require( 'lodash/includes' ),
-	React = require( 'react' );
-
+import analytics from 'lib/analytics';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { has, includes } from 'lodash';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	CurrentSite = require( 'my-sites/current-site' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
-	Gridicon = require( 'components/gridicon' ),
-	productsValues = require( 'lib/products-values' ),
-	PublishMenu = require( './publish-menu' ),
-	Sidebar = require( 'layout/sidebar' ),
-	SidebarHeading = require( 'layout/sidebar/heading' ),
-	SidebarItem = require( 'layout/sidebar/item' ),
-	SidebarMenu = require( 'layout/sidebar/menu' ),
-	SidebarRegion = require( 'layout/sidebar/region' ),
-	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
+import config from 'config';
+import CurrentSite from 'my-sites/current-site';
+import { getCustomizeUrl } from '../themes/helpers';
+import Gridicon from 'components/gridicon';
+import productsValues from 'lib/products-values';
+import PublishMenu from './publish-menu';
+import Sidebar from 'layout/sidebar';
+import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
+import SidebarRegion from 'layout/sidebar/region';
+import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 
 import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
@@ -33,13 +31,15 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
+const debug = debugFactory( 'calypso:my-sites:sidebar' );
+
 export const MySitesSidebar = React.createClass( {
 	propTypes: {
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		path: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		currentUser: React.PropTypes.object,
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		path: PropTypes.string,
+		sites: PropTypes.object,
+		currentUser: PropTypes.object,
 	},
 
 	componentDidMount: function() {
@@ -60,7 +60,7 @@ export const MySitesSidebar = React.createClass( {
 	},
 
 	itemLinkClass: function( paths, existingClasses ) {
-		var classSet = {};
+		const classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
 			if ( ! Array.isArray( existingClasses ) ) {
@@ -117,7 +117,7 @@ export const MySitesSidebar = React.createClass( {
 		return this.isSingle() ? '/' + this.getSingleSiteDomain() : '';
 	},
 
-	publish: function() {
+	renderPublishMenu: function() {
 		return (
 			<PublishMenu site={ this.getSelectedSite() }
 				sites={ this.props.sites }
@@ -128,8 +128,8 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	stats: function() {
-		var site = this.getSelectedSite();
+	renderStatsOption: function() {
+		const site = this.getSelectedSite();
 
 		if ( site && ! site.capabilities ) {
 			return null;
@@ -149,28 +149,28 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	ads: function() {
-		var site = this.getSelectedSite(),
-			adsLink = '/ads/earnings' + this.siteSuffix();
+	renderAdsOption: function() {
+		const site = this.getSelectedSite();
 
 		if ( ! site || ! site.options.wordads ) {
 			return null;
 		}
 
+		const link = '/ads/earnings' + this.siteSuffix();
+
 		return (
 			<SidebarItem
 				label={ site.jetpack ? 'AdControl' : 'WordAds' }
 				className={ this.itemLinkClass( '/ads', 'rads' ) }
-				link={ adsLink }
+				link={ link }
 				onNavigate={ this.onNavigate }
 				icon="speaker" />
 		);
 	},
 
-	themes: function() {
-		var site = this.getSelectedSite(),
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			themesLink;
+	renderThemesOption: function() {
+		const site = this.getSelectedSite();
+		let link;
 
 		if ( site && ! site.isCustomizable() ) {
 			return null;
@@ -180,12 +180,14 @@ export const MySitesSidebar = React.createClass( {
 			return null;
 		}
 
+		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+
 		if ( site.jetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
+			link = site.options.admin_url + 'themes.php';
 		} else if ( this.isSingle() ) {
-			themesLink = '/design' + this.siteSuffix();
+			link = '/design' + this.siteSuffix();
 		} else {
-			themesLink = '/design';
+			link = '/design';
 		}
 
 		return (
@@ -193,7 +195,7 @@ export const MySitesSidebar = React.createClass( {
 				label={ this.translate( 'Themes' ) }
 				tipTarget="themes"
 				className={ this.itemLinkClass( '/design', 'themes' ) }
-				link={ themesLink }
+				link={ link }
 				onNavigate={ this.onNavigate }
 				icon="themes"
 				preloadSectionName="themes"
@@ -205,10 +207,8 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	menus: function() {
-		var site = this.getSelectedSite(),
-			menusLink = '/menus' + this.siteSuffix(),
-			showClassicLink = ! config.isEnabled( 'manage/menus' );
+	renderMenusOption: function() {
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
@@ -226,29 +226,31 @@ export const MySitesSidebar = React.createClass( {
 			return null;
 		}
 
-		if ( showClassicLink ) {
-			menusLink = site.options.admin_url + 'nav-menus.php';
-		}
+		const showClassicLink = ! config.isEnabled( 'manage/menus' );
+		const link = showClassicLink
+			? site.options.admin_url + 'nav-menus.php'
+			: '/menus' + this.siteSuffix();
 
 		return (
 			<SidebarItem
 				tipTarget="menus"
 				label={ this.translate( 'Menus' ) }
 				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusLink }
+				link={ link }
 				onNavigate={ this.onNavigate }
 				icon="menus"
 				preloadSectionName="menus" />
 		);
 	},
 
-	plugins: function() {
-		var site = this.getSelectedSite(),
-			pluginsLink = '/plugins' + this.siteSuffix(),
-			addPluginsLink;
+	renderPluginsOption: function() {
+		const site = this.getSelectedSite();
+		const isSingleSite = this.isSingle();
+		let pluginsLink = '/plugins' + this.siteSuffix();
+		let addPluginsLink;
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! this.isSingle() ) {
+			if ( ! isSingleSite ) {
 				return null;
 			}
 
@@ -261,7 +263,7 @@ export const MySitesSidebar = React.createClass( {
 			return null;
 		}
 
-		if ( ( this.isSingle() && site.jetpack ) || ( ! this.isSingle() && this.hasJetpackSites() ) ) {
+		if ( ( isSingleSite && site.jetpack ) || ( ! isSingleSite && this.hasJetpackSites() ) ) {
 			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
 
@@ -281,10 +283,11 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	upgrades: function() {
-		var site = this.getSelectedSite(),
-			domainsLink = '/domains/manage' + this.siteSuffix(),
-			addDomainLink = '/domains/add' + this.siteSuffix();
+	renderUpgradesOption: function() {
+		const site = this.getSelectedSite();
+		const siteSuffix = this.siteSuffix();
+		const domainsLink = '/domains/manage' + siteSuffix;
+		const addDomainLink = '/domains/add' + siteSuffix;
 
 		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
@@ -322,7 +325,7 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	plan: function() {
+	renderPlanOption: function() {
 		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
 		}
@@ -383,9 +386,9 @@ export const MySitesSidebar = React.createClass( {
 		this.onNavigate();
 	},
 
-	sharing: function() {
-		var site = this.getSelectedSite(),
-			sharingLink = '/sharing' + this.siteSuffix();
+	renderSharingOption: function() {
+		const site = this.getSelectedSite();
+		let sharingLink = '/sharing' + this.siteSuffix();
 
 		if ( ! site.capabilities ) {
 			return null;
@@ -422,10 +425,11 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	users: function() {
-		var site = this.getSelectedSite(),
-			usersLink = '/people/team' + this.siteSuffix(),
-			addPeopleLink = '/people/new' + this.siteSuffix();
+	renderUsersOption: function() {
+		const site = this.getSelectedSite();
+		const siteSuffix = this.siteSuffix();
+		let usersLink = '/people/team' + siteSuffix;
+		let addPeopleLink = '/people/new' + siteSuffix;
 
 		if ( ! site.capabilities ) {
 			return null;
@@ -465,9 +469,9 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	siteSettings: function() {
-		var site = this.getSelectedSite(),
-			siteSettingsLink = '/settings/general' + this.siteSuffix();
+	renderSettingsOption: function() {
+		const site = this.getSelectedSite();
+		const siteSettingsLink = '/settings/general' + this.siteSuffix();
 
 		if ( ! site.capabilities ) {
 			return null;
@@ -492,9 +496,9 @@ export const MySitesSidebar = React.createClass( {
 		);
 	},
 
-	wpAdmin: function() {
-		var site = this.getSelectedSite(),
-			currentUser = this.props.currentUser;
+	renderWpAdminOption: function() {
+		const site = this.getSelectedSite();
+		const currentUser = this.props.currentUser;
 
 		if ( ! site.options ) {
 			return null;
@@ -527,133 +531,126 @@ export const MySitesSidebar = React.createClass( {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked WP Admin' );
 	},
 
-	vip: function() {
-		var site, viplink;
-
+	renderVipUpdatesOption: function() {
 		if ( ! config.isEnabled( 'vip' ) ) {
 			return null;
 		}
 
-		site = this.getSelectedSite();
-		viplink = '/vip/updates' + this.siteSuffix();
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
 		}
 
+		const link = '/vip/updates' + this.siteSuffix();
+
 		return (
 			<li className={ this.itemLinkClass( '/vip/updates', 'sidebar__vip' ) } >
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Updates' ) }</span>
 				</a>
 			</li>
 		);
 	},
 
-	vipDeploys: function() {
-		var site, viplink;
-
+	renderVipDeploysOption: function() {
 		if ( ! config.isEnabled( 'vip/deploys' ) ) {
 			return null;
 		}
 
-		site = this.getSelectedSite();
-		viplink = '/vip/deploys' + this.siteSuffix();
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
 		}
 
+		const link = '/vip/deploys' + this.siteSuffix();
+
 		return (
 			<li className={ this.itemLinkClass( '/vip/deploys', 'sidebar__vip-deploys' ) } >
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Deploys' ) }</span>
 				</a>
 			</li>
 		);
 	},
 
-	vipBilling: function() {
-		var site, viplink;
-
+	renderVipBillingOption: function() {
 		if ( ! config.isEnabled( 'vip/billing' ) ) {
 			return null;
 		}
 
-		site = this.getSelectedSite();
-		viplink = '/vip/billing' + this.siteSuffix();
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
 		}
 
+		const link = '/vip/billing' + this.siteSuffix();
+
 		return (
 			<li className={ this.itemLinkClass( '/vip/billing', 'sidebar__vip-billing' ) }>
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Billing' ) }</span>
 				</a>
 			</li>
 		);
 	},
 
-	vipSupport: function() {
-		var viplink;
-
+	renderVipSupportOption: function() {
 		if ( ! config.isEnabled( 'vip/support' ) ) {
 			return null;
 		}
 
-		viplink = '/vip/support' + this.siteSuffix();
+		const link = '/vip/support' + this.siteSuffix();
 
 		return (
 			<li className={ this.itemLinkClass( '/vip/support', 'sidebar__vip-support' ) }>
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Support' ) }</span>
 				</a>
 			</li>
 		);
 	},
 
-	vipBackups: function() {
-		var site, viplink;
-
+	renderVipBackupsOption: function() {
 		if ( ! config.isEnabled( 'vip/backups' ) ) {
 			return null;
 		}
 
-		site = this.getSelectedSite();
-		viplink = '/vip/backups' + this.siteSuffix();
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
 		}
 
+		const link = '/vip/backups' + this.siteSuffix();
+
 		return (
 			<li className={ this.itemLinkClass( '/vip/backups', 'sidebar__vip-backups' ) }>
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Backups' ) }</span>
 				</a>
 			</li>
 		);
 	},
 
-	vipLogs: function() {
-		var site, viplink;
-
+	renderVipLogsOption: function() {
 		if ( ! config.isEnabled( 'vip/logs' ) ) {
 			return null;
 		}
 
-		site = this.getSelectedSite();
-		viplink = '/vip/logs' + this.siteSuffix();
+		const site = this.getSelectedSite();
 
 		if ( ! site ) {
 			return null;
 		}
 
+		const link = '/vip/logs' + this.siteSuffix();
+
 		return (
 			<li className={ this.itemLinkClass( '/vip/logs', 'sidebar__vip-logs' ) }>
-				<a href={ viplink } >
+				<a href={ link } >
 					<span className="menu-link-text">{ this.translate( 'Logs' ) }</span>
 				</a>
 			</li>
@@ -664,7 +661,7 @@ export const MySitesSidebar = React.createClass( {
 		this.props.setLayoutFocus( 'content' );
 	},
 
-	addNewSite: function() {
+	renderAddNewSiteButton: function() {
 		if ( this.props.currentUser.visible_site_count > 1 ) {
 			return null;
 		}
@@ -681,10 +678,16 @@ export const MySitesSidebar = React.createClass( {
 	},
 
 	render: function() {
-		var publish = !! this.publish(),
-			appearance = ( !! this.themes() || !! this.menus() ),
-			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
-			vip = !! this.vip();
+		const showPublishMenu = !! this.renderPublishMenu();
+		const showAppearanceMenu = !! this.renderThemesOption() || !! this.renderMenusOption();
+		const showConfigurationMenu = (
+			!! this.renderSharingOption() ||
+			!! this.renderUsersOption() ||
+			!! this.renderSettingsOption() ||
+			!! this.renderPluginsOption() ||
+			!! this.renderUpgradesOption()
+		);
+		const showVipMenu = !! this.renderVipUpdatesOption();
 
 		return (
 			<Sidebar>
@@ -696,63 +699,60 @@ export const MySitesSidebar = React.createClass( {
 				/>
 				<SidebarMenu>
 					<ul>
-						{ this.stats() }
-						{ this.plan() }
+						{ this.renderStatsOption() }
+						{ this.renderPlanOption() }
 					</ul>
 				</SidebarMenu>
 
-				{ vip
-					? <SidebarMenu>
+				{ showVipMenu && (
+					<SidebarMenu>
 						<SidebarHeading>VIP</SidebarHeading>
 						<ul>
-							{ this.vip() }
-							{ this.vipDeploys() }
-							{ this.vipBilling() }
-							{ this.vipSupport() }
-							{ this.vipBackups() }
-							{ this.vipLogs() }
+							{ this.renderVipUpdatesOption() }
+							{ this.renderVipDeploysOption() }
+							{ this.renderVipBillingOption() }
+							{ this.renderVipSupportOption() }
+							{ this.renderVipBackupsOption() }
+							{ this.renderVipLogsOption() }
 						</ul>
 					</SidebarMenu>
-					: null
-				}
+				) }
 
-				{ publish
-					? <SidebarMenu>
+				{ showPublishMenu && (
+					<SidebarMenu>
 						<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
-						{ this.publish() }
+						{ this.renderPublishMenu() }
 					</SidebarMenu>
-					: null
-				}
+				) }
 
-				{ appearance
-					? <SidebarMenu>
+				{ showAppearanceMenu && (
+					<SidebarMenu>
 						<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>
-							{ this.themes() }
-							{ this.menus() }
+							{ this.renderThemesOption() }
+							{ this.renderMenusOption() }
 						</ul>
 					</SidebarMenu>
-					: null
-				}
+				) }
 
-				{ configuration
-					? <SidebarMenu>
+				{ showConfigurationMenu && (
+					<SidebarMenu>
 						<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
-							{ this.ads() }
-							{ this.sharing() }
-							{ this.users() }
-							{ this.plugins() }
-							{ this.upgrades() }
-							{ this.siteSettings() }
-							{ this.wpAdmin() }
+							{ this.renderAdsOption() }
+							{ this.renderSharingOption() }
+							{ this.renderUsersOption() }
+							{ this.renderPluginsOption() }
+							{ this.renderUpgradesOption() }
+							{ this.renderSettingsOption() }
+							{ this.renderWpAdminOption() }
 						</ul>
 					</SidebarMenu>
-					: null
-				}
+				) }
+
 				</SidebarRegion>
 				<SidebarFooter>
-					{ this.addNewSite() }
+					{ this.renderAddNewSiteButton() }
 				</SidebarFooter>
 			</Sidebar>
 		);
