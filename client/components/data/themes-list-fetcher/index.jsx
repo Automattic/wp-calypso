@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 import { query, fetchNextPage } from 'state/themes/actions';
-import { isJetpack } from 'state/themes/themes-last-query/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isLastPage, isFetchingNextPage, getThemesList, isFetchError } from 'state/themes/themes-list/selectors';
 import { getThemeById } from 'state/themes/themes/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -112,11 +112,11 @@ const ThemesListFetcher = React.createClass( {
 
 } );
 
-function getFilteredThemes( state, search ) {
+function getFilteredThemes( state, search, siteId ) {
 	const allThemes = getThemesList( state )
 		.map( getThemeById.bind( null, state ) );
 
-	if ( ! isJetpack( state ) || ! search ) {
+	if ( ! isJetpackSite( state, siteId ) || ! search ) {
 		return allThemes;
 	}
 
@@ -138,8 +138,8 @@ function join( value ) {
 }
 
 export default connect(
-	( state, props ) => ( {
-		themes: getFilteredThemes( state, props.search ),
+	( state, { search, site } ) => ( {
+		themes: getFilteredThemes( state, search, site.ID ),
 		lastPage: isLastPage( state ),
 		loading: isFetchingNextPage( state ),
 		error: isFetchError( state )
