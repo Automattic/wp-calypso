@@ -1,29 +1,42 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ThemeShowcase from './theme-showcase';
-import { connectOptions } from './theme-options';
+import {
+	preview,
+	signup,
+	separator,
+	info,
+	support,
+	help,
+	bindOptionsToDispatch
+} from './theme-options';
 
-const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
-
-export default props => (
-	<ConnectedThemeShowcase { ...props }
-	options={ [
-		'signup',
-		'preview',
-		'separator',
-		'info',
-		'support',
-		'help'
-	] }
-	defaultOption="signup"
-	getScreenshotOption={ function() {
-		return 'info';
-	} }
-	source="showcase" />
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
+	{},
+	ownProps,
+	stateProps,
+	{
+		options: dispatchProps,
+		defaultOption: dispatchProps.signup,
+		getScreenshotOption: () => dispatchProps.info
+	}
 );
+
+export default connect(
+	null,
+	bindOptionsToDispatch( {
+		signup,
+		preview,
+		separator,
+		info,
+		support,
+		help
+	}, 'showcase' ),
+	mergeProps
+)( ThemeShowcase );
