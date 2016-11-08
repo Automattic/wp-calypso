@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	some = require( 'lodash/some' ),
-	xor = require( 'lodash/xor' );
+import React from 'react';
+import { get, some, xor } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var MultiCheckbox = require( 'components/forms/multi-checkbox' ),
-	analytics = require( 'lib/analytics' );
+import MultiCheckbox from 'components/forms/multi-checkbox';
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsOptions',
@@ -134,9 +133,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		const checked = typeof this.props.values.jetpack_comment_likes_enabled === 'undefined'
-			? false
-			: this.props.values.jetpack_comment_likes_enabled;
+		const checked = get( this.props.values, 'jetpack_comment_likes_enabled', false );
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">

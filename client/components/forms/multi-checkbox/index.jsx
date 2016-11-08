@@ -2,10 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { omit } from 'lodash';
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:forms:multi-checkbox' );
+import { includes, omit } from 'lodash';
 
 export default class MultiCheckbox extends Component {
 	static propTypes = {
@@ -13,23 +10,20 @@ export default class MultiCheckbox extends Component {
 		defaultChecked: PropTypes.array,
 		disabled: PropTypes.bool,
 		onChange: PropTypes.func,
-		options: PropTypes.array,
+		options: PropTypes.array.isRequired,
 		name: PropTypes.string,
 	};
 
 	static defaultProps = {
 		defaultChecked: Object.freeze( [] ),
-		onChange: function() {},
-		disabled: false
+		disabled: false,
+		onChange: () => {},
+		name: 'mutliCheckbox'
 	};
 
 	state = {
 		initialChecked: this.props.defaultChecked
 	};
-
-	componentWillMount() {
-		debug( 'Mounting MultiCheckbox React component.' );
-	}
 
 	handleChange = ( event ) => {
 		const target = event.target;
@@ -45,31 +39,25 @@ export default class MultiCheckbox extends Component {
 		event.stopPropagation();
 	};
 
-	getCheckboxElements() {
-		const checked = this.props.checked || this.state.initialChecked;
-
-		return this.props.options.map( ( option ) => {
-			const isChecked = checked.indexOf( option.value ) !== -1;
-
-			return (
-				<label key={ option.value }>
-					<input
-						name={ this.props.name + '[]' }
-						type="checkbox" value={ option.value }
-						checked={ isChecked }
-						onChange={ this.handleChange }
-						disabled={ this.props.disabled }
-					/>
-					<span>{ option.label }</span>
-				</label>
-			);
-		}, this );
-	}
-
 	render() {
+		const { disabled, name, options } = this.props;
+		const checked = this.props.checked || this.state.initialChecked;
 		return (
 			<div className="multi-checkbox" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>
-				{ this.getCheckboxElements() }
+				{ options.map( ( option ) => (
+						<label key={ option.value }>
+							<input
+								name={ name + '[]' }
+								type="checkbox"
+								value={ option.value }
+								checked={ includes( checked, option.value ) }
+								onChange={ this.handleChange }
+								disabled={ disabled }
+							/>
+							<span>{ option.label }</span>
+						</label>
+					) )
+				}
 			</div>
 		);
 	}
