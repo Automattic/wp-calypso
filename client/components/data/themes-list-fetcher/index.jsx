@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 import { query, fetchNextPage } from 'state/themes/actions';
-import { getQuerySiteId, isJetpack } from 'state/themes/themes-last-query/selectors';
+import { isJetpack } from 'state/themes/themes-last-query/selectors';
 import { isLastPage, isFetchingNextPage, getThemesList, isFetchError } from 'state/themes/themes-list/selectors';
 import { getThemeById } from 'state/themes/themes/selectors';
 import { errorNotice } from 'state/notices/actions';
@@ -35,10 +35,6 @@ const ThemesListFetcher = React.createClass( {
 		themes: React.PropTypes.array.isRequired,
 		lastPage: React.PropTypes.bool.isRequired,
 		loading: React.PropTypes.bool.isRequired,
-		lastQuery: React.PropTypes.shape( {
-			querySiteId: React.PropTypes.number.isRequired,
-			isJetpack: React.PropTypes.bool.isRequired
-		} ).isRequired,
 		query: React.PropTypes.func.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
 		error: React.PropTypes.bool,
@@ -56,7 +52,7 @@ const ThemesListFetcher = React.createClass( {
 			nextProps.filter !== this.props.filter ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.search !== this.props.search ||
-			nextProps.site.ID !== this.props.lastQuery.querySiteId
+			nextProps.site.ID !== this.props.site.ID
 		) {
 			this.refresh( nextProps );
 		}
@@ -146,9 +142,6 @@ export default connect(
 		themes: getFilteredThemes( state, props.search ),
 		lastPage: isLastPage( state ),
 		loading: isFetchingNextPage( state ),
-		lastQuery: {
-			querySiteId: getQuerySiteId( state ),
-		},
 		error: isFetchError( state )
 	} ),
 	{ query, fetchNextPage, errorNotice }
