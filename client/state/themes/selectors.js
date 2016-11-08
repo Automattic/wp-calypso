@@ -150,13 +150,6 @@ export function getThemeSignupUrl( state, theme ) {
 /**
  * Returns the currently active theme on a given site.
  *
- * DON'T USE YET! This relies on a site object's options.theme_slug attr. If you trigger my-sites' siteSelection
- * middleware during theme activation, it will fetch the current site fresh from the API even though that
- * theme_slug attr might not have been updated on the server yet -- and you'll end up with the old themeId!
- * This happens in particular after purchasing a premium theme in single-site mode since after a theme purchase,
- * the checkout-thank-you component always redirects to the theme showcase for the current site.
- * One possible fix would be to get rid of that redirect (related: https://github.com/Automattic/wp-calypso/issues/8262).
- *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
  * @return {?String}         Theme ID
@@ -184,8 +177,6 @@ export function getActiveTheme( state, siteId ) {
 /**
  * Returns whether the theme is currently active on the given site.
  *
- * DON'T USE YET! This relies on the getActiveTheme() selector; see its JSDoc.
- *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID
@@ -199,8 +190,6 @@ export function isThemeActive( state, themeId, siteId ) {
  * Returns whether the theme has been purchased for the given site.
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
- *
- * DON'T USE YET! This uses the getSitePurchases() which sometimes seems to omit some purchases.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID

@@ -4,15 +4,24 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map, pickBy } from 'lodash';
+import map from 'lodash/map';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import CurrentThemeButton from './button';
-import { connectOptions } from '../theme-options';
+import {
+	customize,
+	info,
+	support,
+	bindOptionsToDispatch,
+	bindOptionsToSite
+} from '../theme-options';
 import { trackClick } from '../helpers';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 
@@ -33,6 +42,8 @@ const CurrentTheme = React.createClass( {
 			PropTypes.bool
 		] ).isRequired,
 		// connected props
+		isCustomizable: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
 		currentTheme: PropTypes.object
 	},
 
@@ -43,13 +54,9 @@ const CurrentTheme = React.createClass( {
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
-		const options = pickBy( this.props.options, option =>
-			currentTheme && ! ( option.hideForTheme && option.hideForTheme( currentTheme ) )
-		);
-
 		return (
 			<Card className="current-theme">
-				{ site && <QueryCurrentTheme siteId={ site.ID } /> }
+				{ site && <QueryCurrentTheme siteId={ site.ID }/> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
@@ -60,11 +67,12 @@ const CurrentTheme = React.createClass( {
 				</div>
 				<div className={ classNames(
 					'current-theme__actions',
-					{ 'two-buttons': Object.keys( options ).length === 2 }
+					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
-					{ map( options, ( option, name ) => (
-						<CurrentThemeButton name={ name }
+					{ map( this.props.options, ( option, name ) => (
+						<CurrentThemeButton
 							key={ name }
+							name={ name }
 							label={ option.label }
 							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }
@@ -76,21 +84,39 @@ const CurrentTheme = React.createClass( {
 	}
 } );
 
-const ConnectedCurrentTheme = connectOptions( CurrentTheme );
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { site } = ownProps;
+	// FIXME (ockham): Remove this ugly hack. Currently required since the endpoint doesn't return an `active` attr
+	const theme = Object.assign( {}, stateProps.currentTheme, { active: true } );
 
-const CurrentThemeWithOptions = ( { site, currentTheme } ) => (
-	<ConnectedCurrentTheme currentTheme={ currentTheme }
-		site={ site }
-		options={ [
-			'customize',
-			'info',
-			'support'
-		] }
-		source="current theme" />
-);
+	const filteredOptions = pickBy( dispatchProps, option =>
+		! ( option.hideForSite && option.hideForSite( stateProps ) ) &&
+		! ( option.hideForTheme && option.hideForTheme( theme ) )
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options: bindOptionsToSite( filteredOptions, site )
+		}
+	);
+};
 
 export default connect(
-	( state, { site } ) => ( {
-		currentTheme: site && getCurrentTheme( state, site.ID )
-	} )
-)( CurrentThemeWithOptions );
+	( state, props ) => {
+		const { site: selectedSite } = props;
+		return {
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			currentTheme: selectedSite && getCurrentTheme( state, selectedSite.ID )
+		};
+	},
+	bindOptionsToDispatch( {
+		customize,
+		info,
+		support
+	}, 'current theme' ),
+	mergeProps
+)( CurrentTheme );

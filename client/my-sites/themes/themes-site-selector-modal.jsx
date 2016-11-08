@@ -14,19 +14,14 @@ import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
 
-const OPTION_SHAPE = PropTypes.shape( {
-	label: PropTypes.string,
-	header: PropTypes.string,
-	getUrl: PropTypes.func,
-	action: PropTypes.func
-} );
-
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
-		children: PropTypes.element,
-		options: PropTypes.objectOf( OPTION_SHAPE ),
-		defaultOption: OPTION_SHAPE,
-		secondaryOption: OPTION_SHAPE,
+		options: React.PropTypes.objectOf( React.PropTypes.shape( {
+			label: React.PropTypes.string,
+			header: React.PropTypes.string,
+			action: React.PropTypes.func
+		} ) ),
+		selectedSite: React.PropTypes.object,
 		// Will be prepended to site slug for a redirect on selection
 		sourcePath: PropTypes.string.isRequired,
 	},
@@ -107,7 +102,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site.ID );
+						return selectedOption.getUrl( selectedTheme, site );
 					} : null } >
 
 					<Theme isActionable={ false } theme={ selectedTheme } />

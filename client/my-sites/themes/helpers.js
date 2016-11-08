@@ -1,10 +1,6 @@
 /** @ssr-ready **/
 
 /**
- * DEPRECATED. Use client/state/themes/selectors instead.
- */
-
-/**
  * External dependencies
  */
 import analytics from 'lib/analytics';
