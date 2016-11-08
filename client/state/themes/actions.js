@@ -32,7 +32,7 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { isJetpack } from './themes-last-query/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeById } from './themes/selectors';
 import wpcom from 'lib/wp';
@@ -167,7 +167,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 			type: THEMES_RECEIVE,
 			siteId: site.ID,
 			isJetpack: !! site.jetpack,
-			wasJetpack: isJetpack( getState() ),
+			wasJetpack: isJetpackSite( getState(), site.ID ),
 			themes: data.themes,
 			found: data.found,
 			queryParams: queryParams
