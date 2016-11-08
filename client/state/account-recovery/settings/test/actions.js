@@ -44,7 +44,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
-import dummyData from './test-data';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import { generateSuccessAndFailedTestsForThunk } from './utils';
 
 describe( 'account-recovery actions', () => {
@@ -98,22 +98,15 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	const newPhoneData = {
-		country_code: 'US',
-		country_numeric_code: '+1',
-		number: '8881234567',
-		number_full: '+18881234567',
-	};
-
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryPhone',
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/phone',
-			successResponse: newPhoneData,
+			successResponse: dummyNewPhone,
 			errorResponse: errorResponse,
 		},
-		thunk: () => updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy ),
+		thunk: () => updateAccountRecoveryPhone( dummyNewPhone.country_code, dummyNewPhone.number )( spy ),
 		preCondition: () =>
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -123,7 +116,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				value: newPhoneData,
+				data: dummyNewPhone,
 			} ) ),
 		postConditionFailed: () =>
 			assert( spy.calledWith( {
@@ -208,17 +201,15 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	const newEmail = 'newtest@example.com';
-
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryEmail',
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/email',
-			successResponse: { email: newEmail },
+			successResponse: { email: dummyNewEmail },
 			errorResponse: errorResponse,
 		},
-		thunk: () => updateAccountRecoveryEmail( newEmail )( spy ),
+		thunk: () => updateAccountRecoveryEmail( dummyNewEmail )( spy ),
 		preCondition: () =>
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -228,7 +219,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'email',
-				value: newEmail,
+				data: dummyNewEmail,
 			} ) );
 		},
 		postConditionFailed: () => {
