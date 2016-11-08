@@ -42,7 +42,6 @@ describe( 'index', function() {
 				getProducts: noop
 			} )
 		} );
-		mockery.registerMock( 'blocks/domain-to-plan-nudge', EmptyComponent );
 	} );
 
 	before( () => {
