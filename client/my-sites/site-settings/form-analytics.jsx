@@ -4,6 +4,7 @@
 import React from 'react';
 import notices from 'notices';
 import debugFactory from 'debug';
+import { overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +17,14 @@ import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness
+} from 'lib/products-values';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 export default protectForm( React.createClass( {
 
@@ -168,7 +175,7 @@ export default protectForm( React.createClass( {
 	},
 
 	isEnabled() {
-		return productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan );
+		return hasBusinessPlan( this.props.site.plan );
 	},
 
 	renderNudge() {
@@ -185,6 +192,7 @@ export default protectForm( React.createClass( {
 				feature="google-analytics"
 				event="google_analytics_settings"
 				icon="stats-alt"
+				jetpack
 			/>
 		);
 	},
