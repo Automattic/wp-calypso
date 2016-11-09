@@ -54,6 +54,7 @@
 		"jetpack/seo-tools": true,
 		"jetpack/sso": true,
 		"jetpack_core_inline_update": true,
+		"jetpack/google-analytics": true,
 		"jetpack/sync-panel": true,
 		"jetpack/api-cache": true,
 		"keyboard-shortcuts": true,
