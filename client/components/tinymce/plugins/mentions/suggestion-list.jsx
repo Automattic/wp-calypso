@@ -20,6 +20,7 @@ const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick 
 		onClose={ onClose }>
 			{ suggestions.map( ( suggestion ) => (
 				<PopoverMenuItem
+					className="mentions__suggestion"
 					key={ suggestion.ID }
 					onClick={ onClick.bind( null, suggestion ) }>
 					<Suggestion

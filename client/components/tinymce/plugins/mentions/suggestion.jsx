@@ -44,7 +44,7 @@ const Suggestion = ( { avatarUrl, username, fullName, query } ) => {
 	highlightedUsername.unshift( '@' );
 
 	return (
-		<div className="mentions__suggestion">
+		<div>
 			<img className="mentions__avatar" src={ avatarUrl } />
 			<span className="mentions__username">{ highlightedUsername }</span>
 			<small className="mentions__fullname">{ highlightedFullName }</small>

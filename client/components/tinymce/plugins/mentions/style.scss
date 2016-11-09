@@ -8,9 +8,14 @@ $avatar-margin: 10px;
 .mentions__suggestions {
 	width: 70%;
 
-	@include breakpoint( ">660px" ) {
-		width: 30%;
+	@include breakpoint( ">480px" ) {
+		width: 20%;
+		min-width: 29em;
 	}
+}
+
+.mentions__suggestion {
+	padding: 8px 10px;
 }
 
 .mentions__avatar {
@@ -28,8 +33,7 @@ $avatar-margin: 10px;
 	padding-top: 10px;
 	margin: -10px 0 0 0;
 
-	@include breakpoint( ">960px" ) {
-		padding-right: 10px;
+	@include breakpoint( ">480px" ) {
 		padding-bottom: 10px;
 	}
 }
@@ -42,9 +46,10 @@ $avatar-margin: 10px;
 	font-weight: 400;
 	display: inline-block;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( ">480px" ) {
 		float: right;
 		clear: none;
+		margin-left: 0;
 	}
 }
 
