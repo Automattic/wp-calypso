@@ -615,25 +615,25 @@ describe( 'index', function() {
 				images: [
 					null, // null reference
 					{
-						naturalHeight: 1,
-						naturalWidth: 1
+						height: 1,
+						width: 1
 					}, // too small
 					{
-						naturalHeight: 351,
-						naturalWidth: 5
+						height: 351,
+						width: 5
 					}, // too narrow
 					{
-						naturalHeight: 5,
-						naturalWidth: 351
+						height: 5,
+						width: 351
 					}, // too short
 					{
-						naturalHeight: 351,
-						naturalWidth: 351,
+						height: 351,
+						width: 351,
 						src: 'http://example.com/image.jpg'
 					}, // YES
 					{
-						naturalHeight: 3500,
-						naturalWidth: 3500
+						height: 3500,
+						width: 3500
 					} // prefer first that passes
 				]
 			};
@@ -686,8 +686,8 @@ describe( 'index', function() {
 		it( 'should filter post.images based on size', function() {
 			function fakeImage( width, height ) {
 				return {
-					naturalWidth: width,
-					naturalHeight: height
+					width: width,
+					height: height
 				};
 			}
 			let post = {
