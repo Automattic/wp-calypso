@@ -36,6 +36,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isPlanFeaturesEnabled } from 'lib/plans';
+import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -112,6 +113,8 @@ export const List = React.createClass( {
 					{ this.notice() }
 					{ this.listItems() }
 				</div>
+
+				<DomainToPlanNudge />
 			</Main>
 		);
 	},
