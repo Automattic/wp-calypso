@@ -165,8 +165,8 @@ export const findEligibleTour = createSelector(
 		findOngoingTour( state ) ||
 		findRequestedTour( state ) ||
 		findTriggeredTour( state )
-	),
-	[ getActionLog, getToursHistory ]
+	) || undefined,
+	[ shouldBail, getActionLog, getToursHistory ]
 );
 
 /**
