@@ -166,6 +166,7 @@ export class TaxonomyManagerList extends Component {
 						taxonomy={ taxonomy }
 						query={ { ...query, page } } />
 				) ) }
+
 				<VirtualList
 					items={ terms }
 					lastPage={ lastPage }
@@ -176,7 +177,7 @@ export class TaxonomyManagerList extends Component {
 					perPage={ DEFAULT_TERMS_PER_PAGE }
 					loadOffset={ LOAD_OFFSET }
 					searching={ query.search && query.search.length }
-					defaultItemHeight={ ITEM_HEIGHT }
+					defaultRowHeight={ ITEM_HEIGHT }
 				/>
 			</div>
 		);

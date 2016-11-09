@@ -1,10 +1,30 @@
 .taxonomy-manager {
-	position: relative;
-	border: 1px solid lighten( $gray, 20% );
+	height: 300px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
 }
 
-.taxonomy-manager__search {
-	margin-bottom: 0;
+.taxonomy-manager__header {
+	display: flex;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	background: $white;
+}
+
+.taxonomy-manager__header .search-card {
+	margin-bottom: 1px;
+	display: flex;
+	flex-grow: 1;
+	box-shadow: none;
+}
+
+.taxonomy-manager__header .search-card .search {
+	height: 58px;
+}
+
+.taxonomy-manager__actions {
+	flex-grow: 0;
+	padding: 16px 24px;
 }
 
 .taxonomy-manager__nested-list {

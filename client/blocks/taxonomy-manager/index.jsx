@@ -8,8 +8,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
 import SearchCard from 'components/search-card';
 import Button from 'components/button';
 import TermsList from './list';
@@ -52,15 +50,15 @@ export class TaxonomyManager extends Component {
 		return (
 			<div>
 				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
-				<SectionHeader label={ labels.name }>
-					<Button compact primary>
-						{ labels.add_new_item }
-					</Button>
-				</SectionHeader>
-				<Card>
-					<SearchCard onSearch={ this.onSearch } className="taxonomy-manager__search" delaySearch />
-					<TermsList query={ query } taxonomy={ taxonomy } />
-				</Card>
+				<div className="taxonomy-manager__header">
+					<SearchCard onSearch={ this.onSearch } delaySearch />
+					<div className="taxonomy-manager__actions">
+						<Button compact primary>
+							{ labels.add_new_item }
+						</Button>
+					</div>
+				</div>
+				<TermsList query={ query } taxonomy={ taxonomy } />
 			</div>
 		);
 	}

@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
+import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
 	noop,
@@ -22,8 +23,7 @@ export class VirtualList extends Component {
 		perPage: PropTypes.number,
 		loadOffset: PropTypes.number,
 		query: PropTypes.object,
-		defaultRowHeight: PropTypes.number,
-		height: PropTypes.number,
+		defaultRowHeight: PropTypes.number
 	};
 
 	static defaultProps = {
@@ -34,7 +34,6 @@ export class VirtualList extends Component {
 		renderRow: noop,
 		perPage: 100,
 		loadOffset: 10,
-		height: 300,
 		query: {}
 	};
 
@@ -71,14 +70,6 @@ export class VirtualList extends Component {
 		this.virtualScroll.forceUpdate();
 	}
 
-	setSelectorRef = selectorRef => {
-		if ( ! selectorRef ) {
-			return;
-		}
-
-		this.setState( { selectorRef } );
-	}
-
 	getPageForIndex( index ) {
 		const { query, lastPage, perPage } = this.props;
 		const rowsPerPage = query.number || perPage;
@@ -109,15 +100,6 @@ export class VirtualList extends Component {
 
 	hasNoRows() {
 		return ! this.props.loading && ( this.props.items && ! this.props.items.length );
-	}
-
-	getResultsWidth() {
-		const { selectorRef } = this.state;
-		if ( selectorRef ) {
-			return selectorRef.clientWidth;
-		}
-
-		return 0;
 	}
 
 	getRowCount() {
@@ -177,25 +159,30 @@ export class VirtualList extends Component {
 
 	render() {
 		const rowCount = this.getRowCount();
-		const { className, loading, height, defaultRowHeight, getRowHeight } = this.props;
+		const { className, loading, defaultRowHeight, getRowHeight } = this.props;
 		const classes = classNames( 'virtual-list', className, {
 			'is-loading': loading
 		} );
 
 		return (
-			<div ref={ this.setSelectorRef } className={ classes }>
-				<VirtualScroll
-					ref={ this.setVirtualScrollRef }
-					width={ this.getResultsWidth() }
-					height={ height }
-					onRowsRendered={ this.setRequestedPages }
-					rowCount={ rowCount }
-					estimatedRowSize={ defaultRowHeight }
-					rowHeight={ getRowHeight }
-					rowRenderer={ this.renderRow }
-					noRowsRenderer={ this.renderNoResults }
-					className={ className } />
-			</div>
+			<AutoSizer>
+				{ ( { height, width } ) => (
+					<div className={ classes }>
+						<VirtualScroll
+							ref={ this.setVirtualScrollRef }
+							onRowsRendered={ this.setRequestedPages }
+							rowCount={ rowCount }
+							estimatedRowSize={ defaultRowHeight }
+							rowHeight={ getRowHeight }
+							rowRenderer={ this.renderRow }
+							noRowsRenderer={ this.renderNoResults }
+							className={ className }
+							width={ width }
+							height={ height }
+						/>
+					</div>
+				) }
+			</AutoSizer>
 		);
 	}
 }

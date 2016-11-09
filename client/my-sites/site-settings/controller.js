@@ -18,6 +18,7 @@ import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
+import Taxonomies from './taxonomies';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
@@ -168,6 +169,13 @@ module.exports = {
 		renderPage(
 			context,
 			<StartOver sites={ sites } path={ context.path } />
+		);
+	},
+
+	taxonomies( context ) {
+		renderPage(
+			context,
+			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
 		);
 	},
 
