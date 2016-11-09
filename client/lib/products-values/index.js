@@ -4,7 +4,6 @@
  * External dependencies
  */
 var assign = require( 'lodash/assign' ),
-	endsWith = require( 'lodash/endsWith' ),
 	difference = require( 'lodash/difference' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	pick = require( 'lodash/pick' );
@@ -262,6 +261,11 @@ function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 		product.meta === dependentProduct.meta
 	);
 }
+function isFreeWordPressComDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+	return product.is_free === true;
+}
 
 function isGoogleApps( product ) {
 	product = formatProduct( product );
@@ -319,13 +323,6 @@ function isUnlimitedThemes( product ) {
 	return 'unlimited_themes' === product.product_slug;
 }
 
-function isWordPressDomain( product ) {
-	product = formatProduct( product );
-	assertValidProduct( product );
-
-	return endsWith( product.domain_name, '.wordpress.com' );
-}
-
 function whitelistAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
@@ -358,6 +355,7 @@ module.exports = {
 	isFreePlan,
 	isPersonal,
 	isFreeTrial,
+	isFreeWordPressComDomain,
 	isGoogleApps,
 	isGuidedTransfer,
 	isJetpackBusiness,
@@ -376,6 +374,5 @@ module.exports = {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
-	isWordPressDomain,
 	whitelistAttributes
 };
