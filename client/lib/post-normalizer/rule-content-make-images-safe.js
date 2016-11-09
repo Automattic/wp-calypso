@@ -8,7 +8,6 @@ import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import toArray from 'lodash/toArray';
 import url from 'url';
-import srcset from 'srcset';
 
 /**
  * Internal Dependencies
@@ -111,26 +110,7 @@ export default function( maxWidth ) {
 			image.setAttribute( 'src', safeSource );
 
 			if ( image.hasAttribute( 'srcset' ) ) {
-				let imgSrcSet;
-				try {
-					imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) );
-				} catch ( ex ) {
-					// if srcset parsing fails, set the srcset to an empty array. This will have the effect of removing the srcset entirely.
-					imgSrcSet = [];
-				}
-				imgSrcSet = imgSrcSet.map( imgSrc => {
-					if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
-						imgSrc.url = url.resolve( post.URL, imgSrc.url );
-					}
-					imgSrc.url = safeImageURL( imgSrc.url );
-					return imgSrc;
-				} ).filter( imgSrc => imgSrc.url );
-				const newSrcSet = srcset.stringify( imgSrcSet );
-				if ( newSrcSet ) {
-					image.setAttribute( 'srcset', newSrcSet );
-				} else {
-					image.removeAttribute( 'srcset' );
-				}
+				image.removeAttribute( 'srcset' );
 			}
 
 			if ( isCandidateForContentImage( imgSource ) ) {
@@ -145,7 +125,9 @@ export default function( maxWidth ) {
 
 		// grab all of the non-tracking pixels and push them into content_images
 		content_images = filter( content_images, function( image ) {
-			if ( ! image.src ) return false;
+			if ( ! image.src ) {
+				return false;
+			}
 			const edgeLength = image.height + image.width;
 			// if the image size isn't set (0) or is greater than 2, keep it
 			return edgeLength === 0 || edgeLength > 2;

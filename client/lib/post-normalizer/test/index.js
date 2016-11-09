@@ -466,13 +466,13 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'fixes up srcsets', function( done ) {
+		it( 'removes srcsets', function( done ) {
 			normalizer(
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE" srcset="http://example.com/example-100.jpg-SAFE 100w, http://example.com/example-600.jpg-SAFE 600w">' );
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
