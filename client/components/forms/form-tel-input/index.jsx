@@ -17,7 +17,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var otherProps = omit( this.props, [ 'className', 'type', 'isError' ] ),
+		var otherProps = omit( this.props, [ 'isError' ] ),
 			classes = classNames( {
 				'form-tel-input': true,
 				'is-error': this.props.isError
