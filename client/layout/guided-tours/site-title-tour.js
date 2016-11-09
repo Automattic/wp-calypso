@@ -15,7 +15,6 @@ import {
 	selectedSiteHasDefaultSiteTitle,
 	userIsOlderThan,
 	isEnabled,
-	inSection,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
 
@@ -26,20 +25,21 @@ export const SiteTitleTour = makeTour(
 		name="siteTitle"
 		version="20161010"
 		path=""
-		when={ and( inSection( 'stats' ),
+		when={ and(
 						isEnabled( 'guided-tours/site-title' ),
 						selectedSiteHasDefaultSiteTitle,
-						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS ) )
+						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS )
+					)
 		}>
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
-					translate( "We noticed you haven't changed the title of your site yet. Do you want to change it?" )
+					translate( "Hey there! We noticed you haven't changed the title of your site yet. Want to change it? " )
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next step="click-settings">{ translate( "Let's change it!" ) }</Next>
-				<Quit>{ translate( 'No thanks.' ) }</Quit>
+				<Next step="click-settings">{ translate( 'Yes, please!' ) }</Next>
+				<Quit>{ translate( 'No thanks' ) }</Quit>
 			</div>
 		</Step>
 
@@ -71,12 +71,13 @@ export const SiteTitleTour = makeTour(
 		>
 			<p className="guided-tours__step-text">
 				{
-					translate( 'Go ahead and change the title to whatever you want!' )
+					translate( 'You can change the site title here. The site title and tagline ' +
+						'tells people about your site and appears in places like the top of your web browser and in search results.' )
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
 				<Next step="click-save">{ translate( 'Looks Good' ) }</Next>
-				<Quit />
+				<Quit>Cancel</Quit>
 			</div>
 		</Step>
 
@@ -88,7 +89,7 @@ export const SiteTitleTour = makeTour(
 		>
 			<p className="guided-tours__step-text">
 				{
-					translate( "Don't forget to save your new settings." )
+					translate( "Don't forget to save your new settings!" )
 				}
 			</p>
 			<Continue target="settings-site-profile-save" step="finish" click />
