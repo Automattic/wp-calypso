@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:chart' );
+import React from 'react';
 import { some, noop, throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var BarContainer = require( './bar-container' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	touchDetect = require( 'lib/touch-detect' );
+import BarContainer from './bar-container';
+import observe from 'lib/mixins/data-observe';
+import touchDetect from 'lib/touch-detect';
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChart',
@@ -59,29 +58,27 @@ module.exports = React.createClass( {
 	},
 
 	resize: function() {
-		if ( this.isMounted() ) {
-			var node = this.refs.chart,
-				width = node.clientWidth - 82,
-				maxBars;
+		const node = this.refs.chart;
+		let width = node.clientWidth - 82,
+			maxBars;
 
-			if ( touchDetect.hasTouch() ) {
-				width = ( width <= 0 ) ? 350 : width; // mobile safari bug with zero width
-				maxBars = Math.floor( width / this.props.minTouchBarWidth );
-			} else {
-				maxBars = Math.floor( width / this.props.minBarWidth );
-			}
-
-			this.setState( {
-				maxBars: maxBars,
-				width: width
-			} );
+		if ( touchDetect.hasTouch() ) {
+			width = ( width <= 0 ) ? 350 : width; // mobile safari bug with zero width
+			maxBars = Math.floor( width / this.props.minTouchBarWidth );
+		} else {
+			maxBars = Math.floor( width / this.props.minBarWidth );
 		}
+
+		this.setState( {
+			maxBars: maxBars,
+			width: width
+		} );
 	},
 
 	getYAxisMax: function( values ) {
-		var max = Math.max.apply( null, values ),
-			operand = Math.pow( 10, ( max.toString().length - 1 ) ),
-			rounded = ( Math.ceil( ( max + 1 ) / operand ) * operand );
+		const max = Math.max.apply( null, values ),
+			operand = Math.pow( 10, ( max.toString().length - 1 ) );
+		let rounded = ( Math.ceil( ( max + 1 ) / operand ) * operand );
 
 		if ( rounded < 10 ) {
 			rounded = 10;
@@ -91,7 +88,7 @@ module.exports = React.createClass( {
 	},
 
 	getData: function() {
-		var data = this.props.data;
+		let data = this.props.data;
 
 		data = data.slice( 0 - this.state.maxBars );
 
@@ -99,9 +96,9 @@ module.exports = React.createClass( {
 	},
 
 	getValues: function() {
-		var data = this.getData();
+		let data = this.getData();
 
-		data = data.map( function ( item ) {
+		data = data.map( function( item ) {
 			return item.value;
 		}, this );
 
@@ -113,12 +110,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering chart with props: ', this.props );
-
-		var values = this.getValues(),
+		const values = this.getValues(),
 			yAxisMax = this.getYAxisMax( values ),
-			data = this.getData(),
-			emptyChart;
+			data = this.getData();
+		let	emptyChart;
 
 		// If we have an empty chart, show a message
 		// @todo this message needs to either use a <Notice> or make a custom "chart__notice" class
@@ -136,7 +131,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div ref="chart" className='chart'>
+			<div ref="chart" className="chart">
 				<div className="chart__y-axis-markers">
 					<div className="chart__y-axis-marker is-hundred"></div>
 					<div className="chart__y-axis-marker is-fifty"></div>
@@ -148,7 +143,13 @@ module.exports = React.createClass( {
 					<div className="chart__y-axis-label is-fifty">{ this.numberFormat( yAxisMax / 2 ) }</div>
 					<div className="chart__y-axis-label is-zero">{ this.numberFormat( 0 ) }</div>
 				</div>
-				<BarContainer barClick={ this.props.barClick } data={ data } yAxisMax={ yAxisMax } chartWidth={ this.state.width } isTouch={ touchDetect.hasTouch() } />
+				<BarContainer
+					barClick={ this.props.barClick }
+					data={ data }
+					yAxisMax={ yAxisMax }
+					chartWidth={ this.state.width }
+					isTouch={ touchDetect.hasTouch() }
+				/>
 				{ emptyChart }
 			</div>
 		);
