@@ -1,34 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
+export default function FormTelInput( { className, isError, ...props } ) {
+	const classes = classNames( 'form-tel-input', className, {
+		'is-error': isError
+	} );
 
-	displayName: 'FormTelInput',
+	return <input { ...props } type="tel" pattern="[0-9]*" className={ classes } />;
+}
 
-	getDefaultProps: function() {
-		return {
-			isError: false
-		};
-	},
+FormTelInput.propTypes = {
+	className: PropTypes.string,
+	isError: PropTypes.bool
+};
 
-	render: function() {
-		var otherProps = omit( this.props, [ 'isError' ] ),
-			classes = classNames( {
-				'form-tel-input': true,
-				'is-error': this.props.isError
-			} );
-
-		return (
-			<input
-				{ ...otherProps }
-				type={ 'tel' }
-				pattern={ '[0-9]*' }
-				className={ classnames( this.props.className, classes ) } />
-		);
-	}
-} );
+FormTelInput.defaultProps = {
+	isError: false
+};

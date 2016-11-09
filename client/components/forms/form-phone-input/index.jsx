@@ -83,7 +83,6 @@ module.exports = React.createClass( {
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
 						name="phone_number"
-						ref="phoneNumber"
 						valueLink={ phoneValueLink }
 					/>
 				</FormFieldset>
