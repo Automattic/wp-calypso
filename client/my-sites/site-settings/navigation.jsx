@@ -97,7 +97,7 @@ export default React.createClass( {
 
 					{
 						( ! site.jetpack && config.isEnabled( 'manage/seo' ) ||
-							site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) ) && site.isModuleActive( 'seo-tools' ) &&
+							site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && site.isModuleActive( 'seo-tools' ) ) &&
 						<NavItem
 							path={ `/settings/seo/${ site.slug }` }
 							selected={ section === 'seo' } >
