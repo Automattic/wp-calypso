@@ -451,7 +451,7 @@
 
 	// add space in the main column for the docked sidebar
 	.has-chat .layout__content {
-		padding: 32px 304px;
+		padding: 79px 304px 32px;
 	}
 
 	// adjust when scoll arrows show up in stats insights when panel is open
@@ -462,7 +462,7 @@
 
 	// adjust themes page to accomodate docked sidebar
 	.has-chat.is-section-theme .layout__content {
-		padding: 32px 0;
+		padding: 79px 0 32px;
 	}
 
 	.has-chat.is-section-theme .theme__sheet {
@@ -475,7 +475,7 @@
 
 	// add space in the editor for the docked sidebar
 	.has-chat.is-group-editor .layout__content {
-		padding: 0 272px 0 0;
+		padding: 47px 272px 0 0;
 	}
 
 	.has-chat.is-group-editor .editor__header,
