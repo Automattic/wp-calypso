@@ -8,7 +8,8 @@
 		height: 0;
 		transition: none;
 
-		.focus-sidebar & {
+		// Order-dependet with client/layout/sidebar/style.scss
+		.layout.focus-sidebar & {
 			height: auto;
 			transform: none;
 			transition: none;
