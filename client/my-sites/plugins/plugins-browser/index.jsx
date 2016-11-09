@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
 import SearchCard from 'components/search-card';
 import SectionNav from 'components/section-nav';
@@ -265,7 +266,7 @@ const PluginsBrowser = React.createClass( {
 		);
 	},
 
-	getMockPluginItems: function() {
+	getMockPluginItems() {
 		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( 'popular' ) }
 			listName={ 'Plugins' }
@@ -273,10 +274,15 @@ const PluginsBrowser = React.createClass( {
 			size={ 12 } />;
 	},
 
+	renderDocumentHead() {
+		return <DocumentHead title={ this.translate( 'Plugin Browser', { textOnly: true } ) } />;
+	},
+
 	renderAccessError() {
 		if ( this.state.accessError ) {
 			return (
 				<MainComponent>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample
@@ -290,6 +296,7 @@ const PluginsBrowser = React.createClass( {
 
 		return (
 			<MainComponent>
+				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
@@ -312,6 +319,7 @@ const PluginsBrowser = React.createClass( {
 
 		return (
 			<MainComponent>
+				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }

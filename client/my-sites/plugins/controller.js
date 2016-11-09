@@ -3,11 +3,11 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import some from 'lodash/some';
 import includes from 'lodash/includes';
 import capitalize from 'lodash/capitalize';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -20,7 +20,6 @@ import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 
@@ -67,8 +66,6 @@ function renderSinglePlugin( context, siteUrl ) {
 			sites,
 			pluginSlug,
 			siteUrl,
-			// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-			onPluginRefresh: title => context.store.dispatch( setTitle( title ) )
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -89,18 +86,18 @@ function renderPluginList( context, basePath ) {
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
-	context.store.dispatch( setTitle( i18n.translate( 'Plugins', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( PluginListComponent, {
-			path: basePath,
-			context,
-			filter: context.params.pluginFilter,
-			sites,
-			search
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
+	ReactDom.render(
+		React.createElement( ReduxProvider, { store: context.store },
+			React.createElement( PluginListComponent, {
+				path: basePath,
+				context,
+				filter: context.params.pluginFilter,
+				sites,
+				search
+			} )
+		),
+		document.getElementById( 'primary' )
 	);
 
 	if ( search ) {
@@ -135,8 +132,6 @@ function renderPluginsBrowser( context ) {
 	if ( ! site && allowedCategoryNames.indexOf( context.params.siteOrCategory ) < 0 ) {
 		site = { slug: context.params.siteOrCategory };
 	}
-
-	context.store.dispatch( setTitle( i18n.translate( 'Plugin Browser', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
 	analytics

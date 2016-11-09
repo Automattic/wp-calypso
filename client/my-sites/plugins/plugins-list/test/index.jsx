@@ -1,19 +1,21 @@
-/*
+/**
  * External dependencies
-*/
+ */
 import { expect } from 'chai';
 import { noop } from 'lodash';
+import { Provider as ReduxProvider } from 'react-redux';
 
-/*
+/**
  * Internal dependencies
-*/
+ */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { createReduxStore } from 'state';
 
 import { sites } from './fixtures';
 
 describe( 'PluginsList', () => {
-	let React, testRenderer, PluginsList, siteListMock;
+	let React, testRenderer, PluginsList, siteListMock, TestUtils;
 
 	useFakeDom();
 
@@ -21,19 +23,18 @@ describe( 'PluginsList', () => {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 		mockery.registerSubstitute( 'query', 'component-query' );
 
-		let emptyComponent = require( 'test/helpers/react/empty-component' );
+		const emptyComponent = require( 'test/helpers/react/empty-component' );
 		mockery.registerMock( 'my-sites/plugins/plugin-item/plugin-item', emptyComponent );
 		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
 
-		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop }} );
+		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 		mockery.registerMock( 'lib/sites-list', () => siteListMock );
 	} );
 
 	before( () => {
 		React = require( 'react' );
-
-		const TestUtils = require( 'react-addons-test-utils' ),
-			ReactInjection = require( 'react/lib/ReactInjection' );
+		TestUtils = require( 'react-addons-test-utils' );
+		const ReactInjection = require( 'react/lib/ReactInjection' );
 
 		ReactInjection.Class.injectMixin( require( 'i18n-calypso' ).mixin );
 
@@ -48,8 +49,8 @@ describe( 'PluginsList', () => {
 
 		before( () => {
 			plugins = [
-				{sites, slug: 'hello', name: 'Hello Dolly'},
-				{sites, slug: 'jetpack', name: 'Jetpack'} ];
+				{ sites, slug: 'hello', name: 'Hello Dolly' },
+				{ sites, slug: 'jetpack', name: 'Jetpack' } ];
 
 			props = {
 				plugins,
@@ -62,7 +63,12 @@ describe( 'PluginsList', () => {
 		} );
 
 		beforeEach( () => {
-			renderedPluginsList = testRenderer( <PluginsList { ...props } /> );
+			renderedPluginsList = testRenderer(
+				<ReduxProvider store={ createReduxStore() }>
+					<PluginsList { ...props } />
+				</ReduxProvider>
+			);
+			renderedPluginsList = TestUtils.scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ];
 		} );
 
 		it( 'should be intialized with no selectedPlugins', () => {
@@ -76,7 +82,7 @@ describe( 'PluginsList', () => {
 		} );
 
 		it( 'should always reset to all selected when toggled on', () => {
-			renderedPluginsList.togglePlugin( plugins[0] );
+			renderedPluginsList.togglePlugin( plugins[ 0 ] );
 			expect( Object.keys( renderedPluginsList.state.selectedPlugins ) ).to.have.lengthOf( 1 );
 
 			renderedPluginsList.toggleBulkManagement();

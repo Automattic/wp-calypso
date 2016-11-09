@@ -18,6 +18,7 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import PluginItem from './plugin-item/plugin-item';
+import DocumentHead from 'components/data/document-head';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -252,6 +253,10 @@ const PluginsMain = React.createClass( {
 		return isEmpty( plugins ) && this.isFetchingPlugins();
 	},
 
+	renderDocumentHead() {
+		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
+	},
+
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
 		const selectedSite = this.props.sites.getSelectedSite();
@@ -338,6 +343,7 @@ const PluginsMain = React.createClass( {
 		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<WpcomPluginPanel />
 				</Main>
@@ -347,6 +353,7 @@ const PluginsMain = React.createClass( {
 		if ( this.state.accessError ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample
@@ -360,6 +367,7 @@ const PluginsMain = React.createClass( {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -379,6 +387,7 @@ const PluginsMain = React.createClass( {
 
 		return (
 			<Main className={ containerClass }>
+				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
