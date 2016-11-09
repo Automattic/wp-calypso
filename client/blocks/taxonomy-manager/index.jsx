@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { debounce, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +16,6 @@ import TermsList from './list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import QueryTaxonomies from 'components/data/query-taxonomies';
-
-const SEARCH_DEBOUNCE_WAIT = 200;
 
 export class TaxonomyManager extends Component {
 	static propTypes = {
@@ -35,13 +33,13 @@ export class TaxonomyManager extends Component {
 		search: null
 	};
 
-	onSearch = debounce( searchTerm => {
+	onSearch = searchTerm => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm
 			} );
 		}
-	}, SEARCH_DEBOUNCE_WAIT );
+	};
 
 	render() {
 		const { search } = this.state;
@@ -60,7 +58,7 @@ export class TaxonomyManager extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<SearchCard onSearch={ this.onSearch } className="taxonomy-manager__search" />
+					<SearchCard onSearch={ this.onSearch } className="taxonomy-manager__search" delaySearch />
 					<TermsList query={ query } taxonomy={ taxonomy } />
 				</Card>
 			</div>
