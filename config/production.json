@@ -19,7 +19,7 @@
 		"community-translator": true,
 		"desktop-promo": true,
 		"guided-tours": true,
-		"happychat": false,
+		"happychat": true,
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect": true,
