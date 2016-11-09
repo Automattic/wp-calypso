@@ -47,7 +47,6 @@ describe( 'index', function() {
 				normalizer.content.makeImagesSafe( 300 ),
 				normalizer.content.makeEmbedsSafe,
 				normalizer.content.detectEmbeds,
-				normalizer.content.wordCountAndReadingTime
 			] ),
 			normalizer.createBetterExcerpt,
 			normalizer.waitForImagesToLoad,
@@ -488,58 +487,6 @@ describe( 'index', function() {
 					done( err );
 				}
 			);
-		} );
-	} );
-
-	describe( 'content.wordCountAndReadingTime', function() {
-		function assertCountAndTime( content, count, time, done ) {
-			normalizer(
-				{
-					content: content
-				},
-				[ normalizer.withContentDOM( [ normalizer.content.wordCountAndReadingTime ] ) ], function( err, normalized ) {
-					assert.strictEqual( normalized.word_count, count );
-					assert.strictEqual( normalized.reading_time, time );
-					done( err );
-				}
-			);
-		}
-
-		function assertTimeForCount( count, time, done ) {
-			assertCountAndTime( ( new Array( count + 1 ) ).join( ' word ' ), count, time, done );
-		}
-
-		it( 'is undefined for empty content', function( done ) {
-			assertCountAndTime( '', undefined, undefined, done );
-		} );
-
-		it( 'has zero words, no time, with only punctuation', function( done ) {
-			assertCountAndTime( ';:,.?¿\-!¡', 0, undefined, done );
-		} );
-
-		it( 'can deal with html in the content', function( done ) {
-			assertCountAndTime( '<p>This is a sentence , made ,. up of words!</p>', 8, 2, done );
-		} );
-
-		it( 'can deal with urls', function( done ) {
-			assertCountAndTime( 'welcome to http://example.com?foo=bar, another college website', 6, 2, done );
-		} );
-
-		it( 'reading time matches the expected breakpoints', function( done ) {
-			function doneIfError( err ) {
-				if ( err ) {
-					done( err );
-				}
-			}
-			assertTimeForCount( 1, 1, doneIfError );
-			assertTimeForCount( 4, 1, doneIfError );
-			assertTimeForCount( 5, 2, doneIfError );
-			assertTimeForCount( 8, 2, doneIfError );
-			assertTimeForCount( 9, 3, doneIfError );
-			assertTimeForCount( 12, 3, doneIfError );
-			assertTimeForCount( 13, 4, doneIfError );
-
-			done();
 		} );
 	} );
 
