@@ -1,14 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Bar = require( './bar' ),
-	XAxis = require( './x-axis' ),
-	user = require( 'lib/user' )();
+import Bar from './bar';
+import XAxis from './x-axis';
+import userModule from 'lib/user';
+
+/**
+ * Module variables
+ */
+const user = userModule();
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBarContainer',
@@ -22,17 +27,15 @@ module.exports = React.createClass( {
 	},
 
 	buildBars: function( max ) {
-		var bars,
-			numberBars = this.props.data.length,
-			tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right',
+		const numberBars = this.props.data.length,
 			width = this.props.chartWidth,
 			barWidth = ( width / numberBars );
+		let tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right';
 
-		bars = this.props.data.map( function ( item, index ) {
-			var barOffset = barWidth * ( index + 1 );
+		const bars = this.props.data.map( function( item, index ) {
+			const barOffset = barWidth * ( index + 1 );
 
-			if ( ( ( barOffset + 230 ) > width ) &&
-					( ( ( barOffset + barWidth ) - 230 ) > 0 ) ) {
+			if ( ( ( barOffset + 230 ) > width ) && ( ( ( barOffset + barWidth ) - 230 ) > 0 ) ) {
 				tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
 			}
 
