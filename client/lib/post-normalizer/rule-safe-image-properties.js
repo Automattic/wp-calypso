@@ -19,7 +19,7 @@ export default function safeImagePropertiesForWidth( maxWidth ) {
 		if ( post.featured_media && post.featured_media.type === 'image' ) {
 			makeImageURLSafe( post.featured_media, 'uri', maxWidth, post.URL );
 		}
-		if ( post.canonical_image && post.canonical_image.type === 'image' ) {
+		if ( post.canonical_image && post.canonical_image.uri ) {
 			makeImageURLSafe( post.canonical_image, 'uri', maxWidth, post.URL );
 		}
 		if ( post.attachments ) {
