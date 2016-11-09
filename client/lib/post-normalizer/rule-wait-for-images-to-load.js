@@ -66,7 +66,7 @@ export default function waitForImagesToLoad( post ) {
 			post.content_media = map( post.content_media, ( media ) => {
 				if ( media.mediaType === 'image' ) {
 					const img = find( post.images, { src: media.src } );
-					return { ...img, ...media, };
+					return { ...media, ...img };
 				}
 				return media;
 			} );
