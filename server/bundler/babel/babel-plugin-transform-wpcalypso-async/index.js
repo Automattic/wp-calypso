@@ -70,10 +70,18 @@ module.exports = ( { types: t } ) => {
 				const isAsync = state.opts.async;
 
 				// In both asynchronous and synchronous case, we'll finish by
-				// calling require on the loaded module
-				let requireCall = t.memberExpression(
-					t.callExpression( t.identifier( 'require' ), [ argument ] ),
-					t.identifier( 'default' )
+				// calling require on the loaded module. If the module is an
+				// ES2015 module, use its default export.
+				let requireCall = t.conditionalExpression(
+					t.memberExpression(
+						t.callExpression( t.identifier( 'require' ), [ argument ] ),
+						t.identifier( '__esModule' )
+					),
+					t.memberExpression(
+						t.callExpression( t.identifier( 'require' ), [ argument ] ),
+						t.identifier( 'default' )
+					),
+					t.callExpression( t.identifier( 'require' ), [ argument ] )
 				);
 
 				// If a callback was passed as an argument, wrap it as part of
