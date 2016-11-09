@@ -18,7 +18,7 @@ export default class MultiCheckbox extends Component {
 		defaultChecked: Object.freeze( [] ),
 		disabled: false,
 		onChange: () => {},
-		name: 'mutliCheckbox'
+		name: 'multiCheckbox'
 	};
 
 	state = {
@@ -45,19 +45,18 @@ export default class MultiCheckbox extends Component {
 		return (
 			<div className="multi-checkbox" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>
 				{ options.map( ( option ) => (
-						<label key={ option.value }>
-							<input
-								name={ name + '[]' }
-								type="checkbox"
-								value={ option.value }
-								checked={ includes( checked, option.value ) }
-								onChange={ this.handleChange }
-								disabled={ disabled }
-							/>
-							<span>{ option.label }</span>
-						</label>
-					) )
-				}
+					<label key={ option.value }>
+						<input
+							name={ name + '[]' }
+							type="checkbox"
+							value={ option.value }
+							checked={ includes( checked, option.value ) }
+							onChange={ this.handleChange }
+							disabled={ disabled }
+						/>
+						<span>{ option.label }</span>
+					</label>
+				) ) }
 			</div>
 		);
 	}
