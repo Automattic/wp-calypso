@@ -24,7 +24,6 @@ import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
-import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
@@ -63,9 +62,17 @@ function discoverFullBleedImages( post, dom ) {
 	return post;
 }
 
+function getWordCount( post ) {
+	return ( post.better_excerpt_no_html.replace( /['";:,.?¿\-!¡]+/g, '' ).match( /\S+/g ) || [] ).length;
+}
+
+function getCharacterCount( post ) {
+	return post.better_excerpt_no_html.length;
+}
+
 const hasShortContent = isRefreshedStream
-	? post => post.character_count <= 100
-	: post => post.word_count < 100;
+	? post => getCharacterCount( post ) <= 100
+	: post => getWordCount( post ) < 100;
 
 /**
  * Attempt to classify the post into a display type
@@ -156,7 +163,6 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 	] ),
 	firstPassCanonicalImage,
-	wordCount,
 	createBetterExcerpt,
 	classifyPost,
 ] );
