@@ -28,7 +28,7 @@ var productsValues = require( 'lib/products-values' ),
 	isUnlimitedThemes = productsValues.isUnlimitedThemes,
 	isVideoPress = productsValues.isVideoPress,
 	isJetpackPlan = productsValues.isJetpackPlan,
-	isFreeWordPressComDomain = productsValues.isFreeWordPressComDomain,
+	isWordPressDomain = productsValues.isWordPressDomain,
 	sortProducts = require( 'lib/products-values/sort' ),
 	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
@@ -729,7 +729,7 @@ function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggesti
 		// not free or a cart item
 		( isDomainRegistration( suggestionOrCartItem ) ||
 			isDomainMapping( suggestionOrCartItem ) ||
-			( suggestionOrCartItem.domain_name && ! isFreeWordPressComDomain( suggestionOrCartItem ) ) ) &&
+			( suggestionOrCartItem.domain_name && ! isWordPressDomain( suggestionOrCartItem ) ) ) &&
 		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
 		( ! isNextDomainFree( cart ) ) && // domain credit
 		( ! hasPlan( cart ) ) && // already a plan in cart
