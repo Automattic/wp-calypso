@@ -9,9 +9,9 @@ import deepFreeze from 'deep-freeze';
  */
 
 import {
-	ACCOUNT_RECOVERY_FETCH,
-	ACCOUNT_RECOVERY_FETCH_SUCCESS,
-	ACCOUNT_RECOVERY_FETCH_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'state/action-types';
 
 import dummyData from './test-data';
@@ -28,7 +28,7 @@ describe( 'account-recovery reducer', () => {
 
 	it( 'should return an initial object with the settings data.', () => {
 		const initState = reducer( null, {
-			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			...dummyData,
 		} );
 
@@ -42,7 +42,7 @@ describe( 'account-recovery reducer', () => {
 		} );
 
 		const state = reducer( prevState, {
-			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			...dummyData,
 		} );
 
@@ -54,24 +54,24 @@ describe( 'account-recovery reducer', () => {
 
 	it( 'should populate isFetching in the state', () => {
 		const state = reducer( null, {
-			type: ACCOUNT_RECOVERY_FETCH,
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
 		} );
 
 		assert( state.isFetching );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_FETCH_SUCCESS action should set isFetching to false', () => {
+	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS action should set isFetching to false', () => {
 		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			...dummyData,
 		} );
 
 		assert.isFalse( state.isFetching );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_FETCH_FAILED action should set isFetching to false', () => {
+	it( 'ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED action should set isFetching to false', () => {
 		const state = reducer( { isFetching: true }, {
-			type: ACCOUNT_RECOVERY_FETCH_FAILED,
+			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 		} );
 
 		assert.isFalse( state.isFetching );
