@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:module-chart:legend' );
+import React from 'react';
 import { find } from 'lodash';
 
 /**
- * Internal dependencies
+ * Module variables
  */
+// TODO: remove and extend from PureComponent after porting the component to ES6
+const PureRenderMixin = require( 'react-pure-render/mixin' );
 
-var LegendItem = React.createClass( {
+const LegendItem = React.createClass( {
 	displayName: 'ModuleChartLegendItem',
 
 	mixins: [ PureRenderMixin ],
@@ -30,7 +30,7 @@ var LegendItem = React.createClass( {
 		return (
 			<li className="chart__legend-option">
 				<label htmlFor="checkbox" className="chart__legend-label is-selectable" onClick={ this.clickHandler } >
-					<input type="checkbox" className="chart__legend-checkbox" checked={ this.props.checked } onChange={ function(){} } />
+					<input type="checkbox" className="chart__legend-checkbox" checked={ this.props.checked } onChange={ function() {} } />
 					<span className={ this.props.className }></span>{ this.props.label }
 				</label>
 			</li>
@@ -39,7 +39,7 @@ var LegendItem = React.createClass( {
 
 } );
 
-var Legend = React.createClass( {
+const Legend = React.createClass( {
 	displayName: 'ModuleChartLegend',
 
 	propTypes: {
@@ -55,26 +55,33 @@ var Legend = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering legend', this.props );
-		var legendColors = [ 'chart__legend-color is-dark-blue' ],
-			tab = this.props.activeTab,
-			legendItems;
+		const legendColors = [ 'chart__legend-color is-dark-blue' ],
+			activeTab = this.props.activeTab;
 
-		legendItems = this.props.availableCharts.map( function( legendItem, index ) {
-			var colorClass = legendColors[ index ],
+		const legendItems = this.props.availableCharts.map( function( legendItem, index ) {
+			const colorClass = legendColors[ index ],
 				checked = ( -1 !== this.props.activeCharts.indexOf( legendItem ) ),
-				tab;
+				tab = find( this.props.tabs, { attr: legendItem } );
 
-			tab = find( this.props.tabs, { attr: legendItem } );
-
-			return <LegendItem key={ index } className={ colorClass } label={ tab.label } attr={ tab.attr } changeHandler={ this.onFilterChange } checked={ checked } />;
+			return <LegendItem
+				key={ index }
+				className={ colorClass }
+				label={ tab.label }
+				attr={ tab.attr }
+				changeHandler={ this.onFilterChange }
+				checked={ checked }
+			/>;
 		}, this );
-
 
 		return (
 			<div className="chart__legend">
 				<ul className="chart__legend-options">
-					<li className="chart__legend-option" key='default-tab'><span className="chart__legend-label"><span className="chart__legend-color is-wordpress-blue"></span>{ tab.label }</span></li>
+					<li className="chart__legend-option" key="default-tab">
+						<span className="chart__legend-label">
+							<span className="chart__legend-color is-wordpress-blue"></span>
+							{ activeTab.label }
+						</span>
+					</li>
 					{ legendItems }
 				</ul>
 			</div>

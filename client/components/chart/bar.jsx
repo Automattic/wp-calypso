@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:module-chart:bar' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var	Tooltip = require( 'components/tooltip' ),
-	Gridicon = require( 'components/gridicon' );
+import Tooltip from 'components/tooltip';
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBar',
@@ -24,38 +23,38 @@ module.exports = React.createClass( {
 		count: React.PropTypes.number
 	},
 
+	getDefaultProps: () => ( {
+		max: Infinity,
+	} ),
+
 	getInitialState: function() {
 		return { showPopover: false };
 	},
 
 	buildSections: function() {
-		var value = this.props.data.value,
-			max = this.props.max,
-			percentage = max ? Math.ceil( ( value / max ) * 10000 ) / 100 : 0,
+		const { active, data, max } = this.props;
+		const { nestedValue, value } = data;
+
+		const percentage = Math.ceil( ( value / max ) * 10000 ) / 100,
 			remain = 100 - percentage,
 			remainFloor = Math.max( 1, Math.floor( remain ) ),
 			sections = [],
-			remainStyle,
-			valueStyle,
-			nestedValue = this.props.data.nestedValue,
-			nestedBar,
-			nestedPercentage,
-			nestedStyle,
 			spacerClassOptions = {
 				'chart__bar-section': true,
 				'is-spacer': true,
-				'is-ghost': ( 100 === remain ) && ! this.props.active
+				'is-ghost': ( 100 === remain ) && ! active
+			},
+			remainStyle = {
+				height: remainFloor + '%'
+			},
+			valueStyle = {
+				top: remainFloor + '%'
 			};
-
-		remainStyle = {
-			height: remainFloor + '%'
-		};
+		let nestedBar,
+			nestedPercentage,
+			nestedStyle;
 
 		sections.push( <div key="spacer" className={ classNames( spacerClassOptions ) } style={ remainStyle } /> );
-
-		valueStyle = {
-			top: remainFloor + '%'
-		};
 
 		if ( nestedValue ) {
 			nestedPercentage = value ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
@@ -72,14 +71,13 @@ module.exports = React.createClass( {
 		return sections;
 	},
 
-	clickHandler: function(){
+	clickHandler: function() {
 		if ( 'function' === typeof( this.props.clickHandler ) ) {
 			this.props.clickHandler( this.props.data );
 		}
 	},
 
-
-	mouseEnter: function(){
+	mouseEnter: function() {
 		this.setState( { showPopover: true } );
 	},
 
@@ -99,8 +97,8 @@ module.exports = React.createClass( {
 		const { tooltipData } = this.props.data;
 
 		const listItemElements = tooltipData.map( function( options, i ) {
-			var wrapperClasses = [ 'module-content-list-item' ],
-				gridiconSpan;
+			const wrapperClasses = [ 'module-content-list-item' ];
+			let	gridiconSpan;
 
 			if ( options.icon ) {
 				gridiconSpan = ( <Gridicon icon={ options.icon } size={ 18 } /> );
@@ -110,9 +108,9 @@ module.exports = React.createClass( {
 
 			return (
 				<li key={ i } className={ wrapperClasses.join( ' ' ) } >
-					<span className='wrapper'>
-						<span className='value'>{ options.value }</span>
-						<span className='label'>{ gridiconSpan }{ options.label }</span>
+					<span className="chart__tooltip-wrapper wrapper">
+						<span className="chart__tooltip-value value">{ options.value }</span>
+						<span className="chart__tooltip-label label">{ gridiconSpan }{ options.label }</span>
 					</span>
 				</li>
 			);
@@ -135,19 +133,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering bar', this.state );
-
-		var barStyle,
-			barClass,
-			count = this.props.count || 1;
-
-		barClass = { chart__bar: true };
-
-		if ( this.props.className ){
-			barClass[ this.props.className ] = true;
-		}
-
-		barStyle = {
+		const barClass = classNames( 'chart__bar', this.props.className );
+		const count = this.props.count || 1;
+		const barStyle = {
 			width: ( ( 1 / count ) * 100 ) + '%'
 		};
 
