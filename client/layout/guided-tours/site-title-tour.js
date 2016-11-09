@@ -14,19 +14,23 @@ import {
 import {
 	selectedSiteHasDefaultSiteTitle,
 	userIsOlderThan,
+	isEnabled,
+	inSection,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 
-// TODO (markehrabe): user has unchanged title
-// TODO (markehrabe): what path to use?
 export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
 		version="20161010"
-		path="/stats/day/marekhrabe.wordpress.com"
-		when={ and( selectedSiteHasDefaultSiteTitle, userIsOlderThan( TWO_DAYS_IN_MILLISECONDS ) ) }>
+		path=""
+		when={ and( inSection( 'stats' ),
+						isEnabled( 'guided-tours/site-title' ),
+						selectedSiteHasDefaultSiteTitle,
+						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS ) )
+		}>
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
