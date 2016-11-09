@@ -77,6 +77,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 					height: 225px;
 					opacity: .4;
 					position: absolute;
+						bottom: 0;
+						left: 0;
 					width: 100%;
 					z-index: 1;
 				}
@@ -353,6 +355,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	.ellipsis-menu .button.is-borderless .gridicon {
+		left: 2px;
 		top: -2px;
 	}
 }
@@ -457,7 +460,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__gallery-image {
 	height: 100px;
 
-	@include brakpoint( ">960px" ) {
+	@include breakpoint( ">960px" ) {
 		height: 130px;
 	}
 }
