@@ -42,6 +42,7 @@ import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import sites from './sites/reducer';
+import siteRoles from './site-roles/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
@@ -89,6 +90,7 @@ export const reducer = combineReducers( {
 	shortcodes,
 	signup,
 	sites,
+	siteRoles,
 	siteSettings,
 	stats,
 	storedCards,
