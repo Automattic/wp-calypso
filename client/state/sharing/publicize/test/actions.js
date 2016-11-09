@@ -12,6 +12,8 @@ import {
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
+	PUBLICIZE_CONNECTION_REFRESH,
+	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
@@ -26,6 +28,7 @@ import {
 	failConnectionsRequest,
 	fetchConnections,
 	receiveConnections,
+	refreshSiteConnection,
 	updateSiteConnection,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -167,6 +170,65 @@ describe( 'actions', () => {
 					error: sinon.match( { message: 'An active access token must be used to access publicize connections.' } )
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'refreshSiteConnection()', () => {
+		const connection = { label: 'Facebook' };
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/rest/v1.1/sites/2916284/publicize-connections' )
+				.reply( 200, {
+					connections: [
+						{ ID: 2, site_ID: 2916284 }
+					]
+				} )
+				.get( '/rest/v1.1/sites/77203074/publicize-connections' )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'An active access token must be used to access publicize connections.'
+				} );
+		} );
+
+		it( 'should dispatch fetch action when thunk triggered', () => {
+			refreshSiteConnection( 2916284, connection )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: PUBLICIZE_CONNECTIONS_REQUEST,
+				siteId: 2916284
+			} );
+		} );
+
+		it( 'should dispatch receive action when request completes', ( done ) => {
+			refreshSiteConnection( 2916284, connection )( spy ).then( () => {
+				expect( spy ).to.have.been.calledThrice;
+
+				const action1 = spy.getCall( 1 ).args[ 0 ];
+				expect( action1.type ).to.equal( PUBLICIZE_CONNECTIONS_RECEIVE );
+				expect( action1.siteId ).to.equal( 2916284 );
+				expect( action1.data.connections ).to.eql( [ { ID: 2, site_ID: 2916284 } ] );
+
+				const action2 = spy.getCall( 2 ).args[ 0 ];
+				expect( action2.type ).to.equal( PUBLICIZE_CONNECTION_REFRESH );
+				expect( action2.connection.label ).to.equal( 'Facebook' );
+
+				done();
+			} ).catch( done );
+		} );
+
+		it( 'should dispatch fail action when request fails', ( done ) => {
+			refreshSiteConnection( 77203074, connection )( spy ).then( () => {
+				expect( spy ).to.have.been.calledThrice;
+
+				const action = spy.getCall( 1 ).args[ 0 ];
+				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_REFRESH_FAILURE );
+				expect( action.error.label ).to.equal( 'Facebook' );
+				expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
+
+				done();
+			} ).catch( done );
 		} );
 	} );
 

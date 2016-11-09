@@ -7,10 +7,12 @@ import {
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
+	PUBLICIZE_CONNECTION_REFRESH,
+	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
+	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	PUBLICIZE_SHARE,
 	PUBLICIZE_SHARE_SUCCESS,
@@ -110,6 +112,37 @@ export function updateSiteConnection( connection, attributes ) {
 				type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 				error: { ...error, label: connection.label },
 			} ) );
+}
+
+/**
+ * Triggers a network request to refresh a Publicize connection for the
+ * specifiedsite ID.
+ *
+ * @param  {Number} siteId           Site ID
+ * @param  {Object} connection       Connection to be deleted.
+ * @param  {String} connection.label Name of the service that was connected.
+ * @return {Function}                Action thunk
+ */
+export function refreshSiteConnection( siteId, connection ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: PUBLICIZE_CONNECTIONS_REQUEST,
+			siteId,
+		} );
+
+		return wpcom.undocumented().siteConnections( siteId )
+			.then( ( response ) => {
+				dispatch( receiveConnections( siteId, response ) );
+				dispatch( {
+					type: PUBLICIZE_CONNECTION_REFRESH,
+					connection,
+				} );
+			} )
+			.catch( ( error ) => dispatch( dispatch( {
+				type: PUBLICIZE_CONNECTION_REFRESH_FAILURE,
+				error: { ...error, label: connection.label },
+			} ) ) );
+	};
 }
 
 /**
