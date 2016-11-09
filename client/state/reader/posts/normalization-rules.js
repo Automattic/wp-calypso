@@ -154,11 +154,11 @@ const fastPostNormalizationRules = flow( [
 		detectEmbeds,
 		detectMedia,
 		detectPolls,
-		wordCount
 	] ),
 	firstPassCanonicalImage,
+	wordCount,
 	createBetterExcerpt,
-	classifyPost
+	classifyPost,
 ] );
 
 export function runFastRules( post ) {

@@ -9,12 +9,9 @@ import { trim } from 'lodash';
 
 const READING_WORDS_PER_SECOND = 250 / 60; // Longreads says that people can read 250 words per minute. We want the rate in words per second.
 
-export default function wordCountAndReadingTime( post, dom ) {
-	if ( ! dom ) {
-		throw new Error( 'this transform must be used as part of withContentDOM' );
-	}
+export default function wordCountAndReadingTime( post ) {
 
-	const textContent = trim( dom.textContent );
+	const textContent = trim( post.better_excerpt_no_html );
 
 	post.character_count = textContent.length;
 	post.word_count = ( textContent.replace( /['";:,.?¿\-!¡]+/g, '' ).match( /\S+/g ) || [] ).length;
