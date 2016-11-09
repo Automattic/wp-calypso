@@ -23,6 +23,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect": true,
+		"jetpack/seo-tools": true,
 		"jetpack/sso": true,
 		"jetpack/sync-panel": true,
 		"mailing-lists/unsubscribe": true,
