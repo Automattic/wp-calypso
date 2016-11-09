@@ -8,6 +8,10 @@ $avatar-margin: 10px;
 .mentions__suggestions {
 	width: 70%;
 
+	.popover__arrow {
+		display: none;
+	}
+
 	@include breakpoint( ">480px" ) {
 		width: 20%;
 		min-width: 29em;
