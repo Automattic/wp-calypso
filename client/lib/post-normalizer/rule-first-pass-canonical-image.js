@@ -23,7 +23,7 @@ export default function firstPassCanonicalImage( post ) {
 	} else if ( post.content_images && post.content_images.length ) {
 		const canonicalImage = find( post.content_images, isCandidateForCanonicalImage );
 		if ( canonicalImage ) {
-			post.canonicalImage = {
+			post.canonical_image = {
 				uri: canonicalImage.src,
 				width: canonicalImage.width,
 				height: canonicalImage.height
