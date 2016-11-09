@@ -389,9 +389,11 @@ const HelpContact = React.createClass( {
 	},
 
 	shouldUseHappychat: function() {
+		const { olark } = this.state;
 		const { isHappychatAvailable } = this.props;
 		const { olark: { isUserEligible } } = this.state;
-		const isEn = i18n.getLocaleSlug() === 'en';
+		let isEn = i18n.getLocaleSlug() === 'en';
+		isEn = olark.locale ? olark.locale === 'en' : isEn;
 
 		// if happychat is disabled in the config, do not use it
 		if ( ! config.isEnabled( 'happychat' ) ) {
