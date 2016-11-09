@@ -82,6 +82,7 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 	return some( section.paths, path => startsWith( routeSet.path, path ) );
 }
 
+// TODO: memoize
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
@@ -92,6 +93,15 @@ export function shouldViewBeVisible( state ) {
 	return isViewEnabled( state, firstViewConfig ) &&
 		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
+}
+
+// TODO: memoize
+export function hasViewJustBeenVisible( state, now = Date.now() ) {
+	const lastFirstView = findLast( getActionLog( state ), {
+		type: FIRST_VIEW_HIDE
+	} );
+	// threshold is one minute
+	return lastFirstView && ( now - lastFirstView.timestamp ) < 60000;
 }
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {
