@@ -68,7 +68,7 @@ export function getSection( state ) {
  * @return {?String}       Current section name
  */
 export function getSectionName( state ) {
-	return get( state.ui.section, 'name', null );
+	return get( getSection( state ), 'name', null );
 }
 
 /**
@@ -78,7 +78,7 @@ export function getSectionName( state ) {
  * @return {?String}       Current section group name
  */
 export function getSectionGroup( state ) {
-	return get( state.ui.section, 'group', null );
+	return get( getSection( state ), 'group', null );
 }
 
 /**
@@ -110,7 +110,7 @@ export function isSectionLoading( state ) {
  * @see client/sections
  */
 export function isSectionIsomorphic( state ) {
-	return get( state.ui.section, 'isomorphic', false );
+	return get( getSection( state ), 'isomorphic', false );
 }
 
 /**
@@ -139,5 +139,5 @@ export function hasSidebar( state ) {
 	if ( val === false ) {
 		return false;
 	}
-	return get( state.ui.section, 'secondary', true );
+	return get( getSection( state ), 'secondary', true );
 }

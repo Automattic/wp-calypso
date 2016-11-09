@@ -22,7 +22,7 @@ import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSection } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -154,7 +154,7 @@ function renderPluginsBrowser( context ) {
 
 function renderProvisionPlugins( context ) {
 	const state = context.store.getState();
-	const section = state.ui.section;
+	const section = getSection( state );
 	const site = getSelectedSite( state );
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
