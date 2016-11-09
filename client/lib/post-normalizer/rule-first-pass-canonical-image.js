@@ -1,12 +1,12 @@
 /**
  * External Dependencies
  */
-import { assign, find, startsWith } from 'lodash';
+import { assign, find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { imageSizeFromAttachments, thumbIsLikelyImage } from './utils';
+import { imageSizeFromAttachments, thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 
 export default function firstPassCanonicalImage( post ) {
 	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
@@ -14,23 +14,19 @@ export default function firstPassCanonicalImage( post ) {
 		post.canonical_image = {
 			uri: url,
 			width,
-			height,
-			type: 'image'
+			height
 		};
 	} else if ( post.featured_image ) {
 		post.canonical_image = assign( {
-			uri: post.featured_image,
-			type: 'image'
+			uri: post.featured_image
 		}, imageSizeFromAttachments( post.featured_image ) );
-	} else {
-		const candidate = find( post.attachments, ( { mime_type } ) => startsWith( mime_type, 'image/' ) );
-
-		if ( candidate ) {
+	} else if ( post.content_images && post.content_images.length ) {
+		const canonicalImage = find( post.content_images, isCandidateForCanonicalImage );
+		if ( canonicalImage ) {
 			post.canonical_image = {
-				uri: candidate.URL,
-				width: candidate.width,
-				height: candidate.height,
-				type: 'image'
+				uri: canonicalImage.src,
+				width: canonicalImage.width,
+				height: canonicalImage.height
 			};
 		}
 	}

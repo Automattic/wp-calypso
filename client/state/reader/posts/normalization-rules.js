@@ -143,7 +143,6 @@ const fastPostNormalizationRules = flow( [
 	makeSiteIdSafeForApi,
 	pickPrimaryTag,
 	safeImageProperties( READER_CONTENT_WIDTH ),
-	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
 		removeElementsBySelector,
@@ -157,6 +156,7 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 		wordCount
 	] ),
+	firstPassCanonicalImage,
 	createBetterExcerpt,
 	classifyPost
 ] );
