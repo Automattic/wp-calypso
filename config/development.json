@@ -28,6 +28,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"accept-invite": true,
+		"account-recovery": true,
 		"ad-tracking": false,
 		"apple-pay": true,
 		"code-splitting": true,
