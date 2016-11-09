@@ -13,7 +13,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  */
 import config from 'config';
 import {
-	activate as activateAction
+		activateTheme as activateAction
 } from 'state/themes/actions';
 import {
 	isPremiumTheme as isPremium

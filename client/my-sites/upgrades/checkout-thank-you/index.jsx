@@ -10,7 +10,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { activated } from 'state/themes/actions';
+import { themeActivationSuccess } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
@@ -20,6 +20,7 @@ import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
+import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
@@ -314,19 +315,45 @@ const CheckoutThankYou = React.createClass( {
 	}
 } );
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	return Object.assign(
+		{},
+		stateProps,
+		dispatchProps,
+		ownProps,
+		{
+			activateTheme( meta, site ) {
+				dispatchProps.activateTheme( meta, site, stateProps.trackingData );
+			}
+		}
+	);
+};
+
 export default connect(
 	( state, props ) => {
+		const siteId = props.selectedSite.ID;
+		const previousTheme = getCurrentTheme( state, siteId );
+		const queryParams = state.themes.themesList.get( 'query' );
+		const previousId = previousTheme ? previousTheme.id : 'unknown';
+		const trackingData = {
+			previous_theme: previousId,
+			source: 'calypso',
+			purchased: true,
+			search_term: queryParams.get( 'search' ) || null
+		};
+
 		return {
 			receipt: getReceiptById( state, props.receiptId ),
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
+			trackingData
 		};
 	},
 	( dispatch ) => {
 		return {
-			activatedTheme( meta, site ) {
-				dispatch( activated( meta, site, 'calypstore', true ) );
+			activatedTheme( meta, site, trackingData ) {
+				dispatch( themeActivationSuccess( meta, site, trackingData ) );
 			},
 			fetchReceipt( receiptId ) {
 				dispatch( fetchReceipt( receiptId ) );
@@ -338,5 +365,6 @@ export default connect(
 				dispatch( refreshSitePlans( site.ID ) );
 			},
 		};
-	}
+	},
+	mergeProps
 )( CheckoutThankYou );
