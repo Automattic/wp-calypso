@@ -101,6 +101,33 @@ const SharingService = React.createClass( {
 	},
 
 	/**
+	 * Given a service name and optional site ID, returns the current status of the
+	 * service's connection.
+	 *
+	 * @param {string} service The name of the service to check
+	 * @return {string} Connection status.
+	 */
+	getConnectionStatus: function( service ) {
+		let status;
+
+		if ( this.props.isFetching ) {
+			// When connections are still loading, we don't know the status
+			status = 'unknown';
+		} else if ( ! some( this.getConnections(), { service } ) ) {
+			// If no connections exist, the service isn't connected
+			status = 'not-connected';
+		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
+			// A problematic connection exists
+			status = 'reconnect';
+		} else {
+			// If all else passes, assume service is connected
+			status = 'connected';
+		}
+
+		return this.filter( 'getConnectionStatus', service, status, arguments );
+	},
+
+	/**
 	 * Given an array of connection objects which are desired to be destroyed,
 	 * returns a filtered set of connection objects to be destroyed. This
 	 * enables service-specific handlers to react to destroy events.
@@ -248,7 +275,7 @@ const SharingService = React.createClass( {
 				popupMonitor.once( 'close', () => {
 					// When the user has finished authorizing the connection
 					// (or otherwise closed the window), force a refresh
-					this.props.requestKeyringConnections;
+					this.props.requestKeyringConnections();
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -319,33 +346,6 @@ const SharingService = React.createClass( {
 
 		connections = this.filterConnectionsToRemove( connections );
 		connections.map( this.props.deleteSiteConnection );
-	},
-
-	/**
-	 * Given a service name and optional site ID, returns the current status of the
-	 * service's connection.
-	 *
-	 * @param {string} service The name of the service to check
-	 * @return {string} Connection status.
-	 */
-	getConnectionStatus: function( service ) {
-		let status;
-
-		if ( this.props.isFetching ) {
-			// When connections are still loading, we don't know the status
-			status = 'unknown';
-		} else if ( ! some( this.getConnections(), { service } ) ) {
-			// If no connections exist, the service isn't connected
-			status = 'not-connected';
-		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
-			// A problematic connection exists
-			status = 'reconnect';
-		} else {
-			// If all else passes, assume service is connected
-			status = 'connected';
-		}
-
-		return this.filter( 'getConnectionStatus', service, status, arguments );
 	},
 
 	render: function() {
