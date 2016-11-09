@@ -24,6 +24,8 @@ import {
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
+	PUBLICIZE_CONNECTION_REFRESH,
+	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -107,9 +109,23 @@ export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispa
 );
 
 export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
-	successNotice( translate( 'The %(service)s account was unable to be disconnected.', {
+	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( translate( 'The %(service)s account was unable to be reconnected.', {
+		args: { service: error.label },
+		context: 'Sharing: Publicize reconnection confirmation'
 	} ) )
 );
 
@@ -133,6 +149,8 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchErrorMessage,
 	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
+	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
+	[ PUBLICIZE_CONNECTION_REFRESH_FAILURE ]: onPublicizeConnectionRefreshFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };
