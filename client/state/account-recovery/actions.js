@@ -8,22 +8,17 @@ import {
 	ACCOUNT_RECOVERY_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_FETCH_FAILED,
 
-	ACCOUNT_RECOVERY_PHONE_UPDATE,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+	ACCOUNT_RECOVERY_UPDATE,
+	ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+	ACCOUNT_RECOVERY_UPDATE_FAILED,
 
-	ACCOUNT_RECOVERY_PHONE_DELETE,
-	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
-
-	ACCOUNT_RECOVERY_EMAIL_UPDATE,
-	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
-
-	ACCOUNT_RECOVERY_EMAIL_DELETE,
-	ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+	ACCOUNT_RECOVERY_DELETE,
+	ACCOUNT_RECOVERY_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_DELETE_FAILED,
 } from 'state/action-types';
+
+const TARGET_PHONE = 'phone';
+const TARGET_EMAIL = 'email';
 
 export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
 	return {
@@ -52,98 +47,118 @@ export const accountRecoveryFetch = () => ( dispatch ) => {
 
 export const updateAccountRecoveryPhoneSuccess = ( phone ) => {
 	return {
-		type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-		phone,
+		type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+		target: TARGET_PHONE,
+		data: phone,
 	};
 };
 
 export const updateAccountRecoveryPhoneFailed = ( error ) => {
 	return {
-		type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+		type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+		target: TARGET_PHONE,
 		error,
 	};
 };
 
 export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch ) => {
-	dispatch( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } );
+	dispatch( {
+		type: ACCOUNT_RECOVERY_UPDATE,
+		target: TARGET_PHONE,
+	} );
 
 	return wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number )
-		.then( ( phone ) => {
-			dispatch( updateAccountRecoveryPhoneSuccess( phone ) );
-		} ).catch( ( { status, message } ) => {
-			dispatch( updateAccountRecoveryPhoneFailed( { status, message } ) );
-		} );
+		.then( ( phone ) =>
+			dispatch( updateAccountRecoveryPhoneSuccess( phone ) )
+		).catch( ( { status, message } ) =>
+			dispatch( updateAccountRecoveryPhoneFailed( { status, message } ) )
+		);
 };
 
 export const deleteAccountRecoveryPhoneSuccess = () => {
 	return {
-		type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+		type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+		target: TARGET_PHONE,
 	};
 };
 
 export const deleteAccountRecoveryPhoneFailed = ( error ) => {
 	return {
-		type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+		type: ACCOUNT_RECOVERY_DELETE_FAILED,
+		target: TARGET_PHONE,
 		error,
 	};
 };
 
 export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
-	dispatch( { type: ACCOUNT_RECOVERY_PHONE_DELETE } );
+	dispatch( {
+		type: ACCOUNT_RECOVERY_DELETE,
+		target: TARGET_PHONE,
+	} );
 
 	return wpcom.undocumented().me().deleteAccountRecoveryPhone()
-		.then( () => {
-			dispatch( deleteAccountRecoveryPhoneSuccess() );
-		} ).catch( ( { status, message } ) => {
-			dispatch( deleteAccountRecoveryPhoneFailed( { status, message } ) );
-		} );
+		.then( () =>
+			dispatch( deleteAccountRecoveryPhoneSuccess() )
+		).catch( ( { status, message } ) =>
+			dispatch( deleteAccountRecoveryPhoneFailed( { status, message } ) )
+		);
 };
 
 export const updateAccountRecoveryEmailSuccess = ( email ) => {
 	return {
-		type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-		email,
+		type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+		target: TARGET_EMAIL,
+		data: email,
 	};
 };
 
 export const updateAccountRecoveryEmailFailed = ( error ) => {
 	return {
-		type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+		type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+		target: TARGET_EMAIL,
 		error,
 	};
 };
 
 export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
-	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } );
+	dispatch( {
+		type: ACCOUNT_RECOVERY_UPDATE,
+		target: TARGET_EMAIL,
+	} );
 
 	return wpcom.undocumented().me().updateAccountRecoveryEmail( newEmail )
-		.then( ( { email } ) => {
-			dispatch( updateAccountRecoveryEmailSuccess( email ) );
-		} ).catch( ( { status, message } ) => {
-			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) );
-		} );
+		.then( ( { email } ) =>
+			dispatch( updateAccountRecoveryEmailSuccess( email ) )
+		).catch( ( { status, message } ) =>
+			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) )
+		);
 };
 
 export const deleteAccountRecoveryEmailSuccess = () => {
 	return {
-		type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+		type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+		target: TARGET_EMAIL,
 	};
 };
 
 export const deleteAccountRecoveryEmailFailed = ( error ) => {
 	return {
-		type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+		type: ACCOUNT_RECOVERY_DELETE_FAILED,
+		target: TARGET_EMAIL,
 		error,
 	};
 };
 
 export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
-	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_DELETE } );
+	dispatch( {
+		type: ACCOUNT_RECOVERY_DELETE,
+		target: TARGET_EMAIL,
+	} );
 
 	return wpcom.undocumented().me().deleteAccountRecoveryEmail()
-		.then( () => {
-			dispatch( deleteAccountRecoveryEmailSuccess() );
-		} ).catch( ( { status, message } ) => {
-			dispatch( deleteAccountRecoveryEmailFailed( { status, message } ) );
-		} );
+		.then( () =>
+			dispatch( deleteAccountRecoveryEmailSuccess() )
+		).catch( ( { status, message } ) =>
+			dispatch( deleteAccountRecoveryEmailFailed( { status, message } ) )
+		);
 };

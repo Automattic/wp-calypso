@@ -35,21 +35,13 @@ import {
 	ACCOUNT_RECOVERY_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_FETCH_FAILED,
 
-	ACCOUNT_RECOVERY_PHONE_UPDATE,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+	ACCOUNT_RECOVERY_UPDATE,
+	ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+	ACCOUNT_RECOVERY_UPDATE_FAILED,
 
-	ACCOUNT_RECOVERY_PHONE_DELETE,
-	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
-
-	ACCOUNT_RECOVERY_EMAIL_UPDATE,
-	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
-
-	ACCOUNT_RECOVERY_EMAIL_DELETE,
-	ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+	ACCOUNT_RECOVERY_DELETE,
+	ACCOUNT_RECOVERY_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_DELETE_FAILED,
 } from 'state/action-types';
 
 import dummyData from './test-data';
@@ -122,39 +114,45 @@ describe( 'account-recovery actions', () => {
 			errorResponse: errorResponse,
 		},
 		thunk: () => updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy ),
-		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) ),
-		postConditionSuccess: () => {
+		preCondition: () =>
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-				phone: newPhoneData,
-			} ) );
-		},
-		postConditionFailed: () => {
+				type: ACCOUNT_RECOVERY_UPDATE,
+				target: 'phone',
+			} ) ),
+		postConditionSuccess: () =>
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+				type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+				target: 'phone',
+				data: newPhoneData,
+			} ) ),
+		postConditionFailed: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+				target: 'phone',
 				error: errorResponse,
-			} ) );
-		},
+			} ) ),
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS', () => {
+		it( 'should return ACCOUNT_RECOVERY_UPDATE_SUCCESS with the new phone data', () => {
 			const phone = dummyData.phone;
 			const action = updateAccountRecoveryPhoneSuccess( phone );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-				phone,
+				type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+				target: 'phone',
+				data: phone,
 			} );
 		} );
 	} );
 
 	describe( '#updateAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED', () => {
+		it( 'should return ACCOUNT_RECOVERY_UPDATE_FAILED with target: phone', () => {
 			const action = updateAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+				type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+				target: 'phone',
 				error: errorResponse,
 			} );
 		} );
@@ -169,32 +167,42 @@ describe( 'account-recovery actions', () => {
 			errorResponse: errorResponse,
 		},
 		thunk: () => deleteAccountRecoveryPhone()( spy ),
-		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE } ) ),
-		postConditionSuccess: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS } ) ),
-		postConditionFailed: () => {
+		preCondition: () =>
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+				type: ACCOUNT_RECOVERY_DELETE,
+				target: 'phone',
+			} ) ),
+		postConditionSuccess: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+				target: 'phone',
+			} ) ),
+		postConditionFailed: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_DELETE_FAILED,
+				target: 'phone',
 				error: errorResponse,
-			} ) );
-		},
+			} ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS', () => {
+		it( 'should return ACCOUNT_RECOVERY_DELETE_SUCCESS with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneSuccess();
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+				type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+				target: 'phone',
 			} );
 		} );
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_PHONE_DELETE_FAILED', () => {
+		it( 'should return ACCOUNT_RECOVERY_DELETE_FAILED with target: phone', () => {
 			const action = deleteAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+				type: ACCOUNT_RECOVERY_DELETE_FAILED,
+				target: 'phone',
 				error: errorResponse,
 			} );
 		} );
@@ -211,38 +219,46 @@ describe( 'account-recovery actions', () => {
 			errorResponse: errorResponse,
 		},
 		thunk: () => updateAccountRecoveryEmail( newEmail )( spy ),
-		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } ) ),
+		preCondition: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_UPDATE,
+				target: 'email',
+			} ) ),
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-				email: newEmail,
+				type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+				target: 'email',
+				data: newEmail,
 			} ) );
 		},
 		postConditionFailed: () => {
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+				type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+				target: 'email',
 				error: errorResponse,
 			} ) );
 		},
 	} );
 
 	describe( '#updateAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS', () => {
+		it( 'should return ACCOUNT_RECOVERY_UPDATE_SUCCESS with target: email', () => {
 			const action = updateAccountRecoveryEmailSuccess( dummyData.email );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-				email: dummyData.email,
+				type: ACCOUNT_RECOVERY_UPDATE_SUCCESS,
+				target: 'email',
+				data: dummyData.email,
 			} );
 		} );
 	} );
 
 	describe( '#updateAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_EMAIL_FAILED', () => {
+		it( 'should return ACCOUNT_RECOVERY_FAILED with target: email', () => {
 			const action = updateAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+				type: ACCOUNT_RECOVERY_UPDATE_FAILED,
+				target: 'email',
 				error: errorResponse,
 			} );
 		} );
@@ -257,32 +273,42 @@ describe( 'account-recovery actions', () => {
 			errorResponse: errorResponse,
 		},
 		thunk: () => deleteAccountRecoveryEmail()( spy ),
-		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_DELETE } ) ),
-		postConditionSuccess: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS } ) ),
-		postConditionFailed: () => {
+		preCondition: () =>
 			assert( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+				type: ACCOUNT_RECOVERY_DELETE,
+				target: 'email',
+			} ) ),
+		postConditionSuccess: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+				target: 'email',
+			} ) ),
+		postConditionFailed: () =>
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_DELETE_FAILED,
+				target: 'email',
 				error: errorResponse,
-			} ) );
-		},
+			} ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryEmailSuccess', () => {
-		it( 'should return ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS', () => {
+		it( 'should return ACCOUNT_RECOVERY_DELETE_SUCCESS with target: email', () => {
 			const action = deleteAccountRecoveryEmailSuccess();
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+				type: ACCOUNT_RECOVERY_DELETE_SUCCESS,
+				target: 'email',
 			} );
 		} );
 	} );
 
 	describe( '#deleteAccountRecoveryEmailFailed', () => {
-		it( 'should return ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED', () => {
+		it( 'should return ACCOUNT_RECOVERY_DELETE_FAILED with target: email', () => {
 			const action = deleteAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
-				type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+				type: ACCOUNT_RECOVERY_DELETE_FAILED,
+				target: 'email',
 				error: errorResponse,
 			} );
 		} );
