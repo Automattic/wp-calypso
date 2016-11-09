@@ -178,19 +178,18 @@ export class SeoPreviewPane extends PureComponent {
 	constructor( props ) {
 		super( props );
 
-		const defaultService = props.post ? 'wordpress' : 'google';
 		this.state = {
-			selectedService: defaultService
+			selectedService: props.post ? 'wordpress' : 'google'
 		};
 
 		this.selectPreview = this.selectPreview.bind( this );
-
-		recordTracksEvent( 'calypso_seo_tools_social_preview', defaultService );
 	}
 
 	selectPreview( selectedService ) {
 		this.setState( { selectedService } );
-		recordTracksEvent( 'calypso_seo_tools_social_preview', selectedService );
+
+		const { trackPreviewService } = this.props;
+		trackPreviewService( selectedService );
 	}
 
 	render() {
@@ -275,4 +274,8 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, null )( localize( SeoPreviewPane ) );
+const mapDispatchToProps = dispatch => ( {
+	trackPreviewService: service => dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) )
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );
