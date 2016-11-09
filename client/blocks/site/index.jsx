@@ -203,8 +203,8 @@ export default React.createClass( {
 							data-tip-target={ this.props.tipTarget }
 							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
 							title={ this.props.homeLink
-								? this.translate( 'View "%(title)s"', { args: { title: site.title } } )
-								: site.title
+								? this.translate( 'View this site' )
+								: this.translate( 'Select this site' )
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
