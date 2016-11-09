@@ -18,7 +18,7 @@ export default function( router ) {
 		if ( isLoggedIn ) {
 			router(
 				`/design/:vertical(${ verticals })?/:tier(free|premium)?`,
-				multiSite, makeNavigation, makeLayout
+				siteSelection, multiSite, makeNavigation, makeLayout
 			);
 			router(
 				`/design/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
