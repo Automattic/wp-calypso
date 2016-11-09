@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, filter, replace, some } from 'lodash';
+import { identity, find, replace, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -24,7 +24,6 @@ import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
 	getRemovableConnections,
@@ -56,7 +55,6 @@ const SharingService = React.createClass( {
 		failCreateConnection: PropTypes.func,
 		fetchConnection: PropTypes.func,
 		isFetching: PropTypes.bool,
-		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
 		requestKeyringConnections: PropTypes.func,
@@ -217,7 +215,7 @@ const SharingService = React.createClass( {
 			this.refresh();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
-			this.addConnection();
+			this.addConnection( this.props.service );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	},
@@ -229,13 +227,13 @@ const SharingService = React.createClass( {
 			if ( keyringConnectionId ) {
 				// Since we have a Keyring connection to work with, we can immediately
 				// create or update the connection
-				const keyringConnections = filter( this.props.keyringConnections, { ID: keyringConnectionId } );
+				const existingConnection = find( this.props.siteUserConnections, { keyring_connection_ID: keyringConnectionId } );
 
-				if ( this.props.siteId && externalUserId && keyringConnections.length ) {
+				if ( this.props.siteId && existingConnection ) {
 					// If a Keyring connection is already in use by another connection,
 					// we should trigger an update. There should only be one connection,
 					// so we're correct in using the connection ID from the first
-					this.props.updateSiteConnection( this.props.siteId, keyringConnections[ 0 ].ID, { external_user_ID: externalUserId } );
+					this.props.updateSiteConnection( existingConnection, { external_user_ID: externalUserId } );
 				} else {
 					this.props.createSiteConnection( this.props.siteId, keyringConnectionId, externalUserId );
 				}
@@ -287,7 +285,7 @@ const SharingService = React.createClass( {
 		if ( ! connection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			connection = filter( this.getConnections(), { status: 'broken' } );
+			connection = find( this.getConnections(), { status: 'broken' } );
 		}
 		this.refreshConnection( connection );
 	},
@@ -442,7 +440,6 @@ export default connect(
 			availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
 			brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 			isFetching: isFetchingConnections( state, siteId ),
-			keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 			removableConnections: getRemovableConnections( state, service.ID ),
 			siteId,
 			siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
