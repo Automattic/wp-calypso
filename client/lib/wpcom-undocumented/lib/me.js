@@ -180,7 +180,7 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
 UndocumentedMe.prototype.storedCardAdd = function( paygateToken, callback ) {
 	debug( '/me/stored-cards' );
 
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/me/stored-cards'
 	}, {
 		payment_key: paygateToken
@@ -335,7 +335,7 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback 
 UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 	debug( '/me/purchases/{purchaseId}/delete' );
 
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: `/me/purchases/${purchaseId}/delete`
 	}, fn );
 };
