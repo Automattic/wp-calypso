@@ -19,10 +19,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
+import {
+	GUIDED_TOUR_UPDATE,
+	ROUTE_SET,
+} from 'state/action-types';
 import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import {
+	hasViewJustBeenVisible,
+	shouldViewBeVisible
+} from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
 
@@ -152,7 +159,8 @@ const isSectionBlacklisted = state =>
 	includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
 
 const isConflictingWithFirstView = state =>
-	false && state;
+	hasViewJustBeenVisible( state ) ||
+	shouldViewBeVisible( state );
 
 const shouldBail = state => {
 	// bail if we're on a blacklisted page

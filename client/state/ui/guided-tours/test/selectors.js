@@ -28,7 +28,9 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isConflictingWithFirstView', () => {
-		const stateWithEligibleFirstView = {
+		const now = Date.now();
+
+		const withEligibleFirstView = {
 			currentUser: {
 				id: 73705554
 			},
@@ -52,29 +54,84 @@ describe( 'selectors', () => {
 			},
 			preferences: {
 				remoteValues: {
-					firstViewHistory: []
+					firstViewHistory: [],
+					'guided-tours-history': [],
 				},
 				lastFetchedTimestamp: 123456
 			}
 		};
+
+		const withFirstViewAndTourRequest = {
+			...withEligibleFirstView,
+			ui: {
+				...withEligibleFirstView.ui,
+				queryArguments: {
+					initial: {
+						tour: 'main'
+					}
+				}
+			}
+		};
+
+		const havingJustSeenFirstView = {
+			...withEligibleFirstView,
+			ui: {
+				...withEligibleFirstView.ui,
+				actionLog: [
+					...withEligibleFirstView.ui.actionLog,
+					{
+						type: 'FIRST_VIEW_HIDE',
+						view: 'stats',
+						timestamp: now - 30000,
+					}
+				],
+			},
+			preferences: {
+				remoteValues: {
+					firstViewHistory: [ {
+						view: 'stats',
+						timestamp: now - 30000
+					} ]
+				},
+				lastFetchedTimestamp: now - 10000
+			}
+		};
+
+		const havingSeenFirstViewEarlier = {
+			...withEligibleFirstView,
+			ui: {
+				...withEligibleFirstView.ui,
+				actionLog: [
+					...withEligibleFirstView.ui.actionLog,
+					{
+						type: 'FIRST_VIEW_HIDE',
+						view: 'stats',
+						timestamp: now - 120000,
+					}
+				],
+			},
+			preferences: {
+				remoteValues: {
+					firstViewHistory: [ {
+						view: 'stats',
+						timestamp: now - 120000
+					} ]
+				},
+				lastFetchedTimestamp: now - 10000
+			}
+		};
+
 		it( 'expects shouldViewBeVisible to work normally', () => {
-			expect( shouldViewBeVisible( stateWithEligibleFirstView ) ).to.be.true;
+			expect( shouldViewBeVisible( withEligibleFirstView ) ).to.be.true;
 		} );
 
 		it( 'should short-circuit findEligibleTour', () => {
-			const stateWithFirstViewAndTourRequest = {
-				...stateWithEligibleFirstView,
-				ui: {
-					...stateWithEligibleFirstView.ui,
-					queryArguments: {
-						initial: {
-							tour: 'main'
-						}
-					}
-				}
-			};
+			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
+			expect( findEligibleTour( havingJustSeenFirstView ) ).to.be.undefined;
+		} );
 
-			expect( findEligibleTour( stateWithFirstViewAndTourRequest ) ).to.be.null;
+		it( 'should reallow tours after a while', () => {
+			expect( findEligibleTour( havingSeenFirstViewEarlier ) ).to.equal( 'stats' );
 		} );
 	} );
 
