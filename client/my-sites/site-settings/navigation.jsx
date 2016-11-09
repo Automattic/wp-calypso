@@ -87,7 +87,8 @@ export default React.createClass( {
 					</NavItem>
 
 					{
-						! site.jetpack && config.isEnabled( 'manage/plans' ) &&
+						( ( ! site.jetpack && config.isEnabled( 'manage/plans' ) ) ||
+							( site.jetpack && config.isEnabled( 'jetpack/google-analytics' ) ) ) &&
 							<NavItem
 								path={ `/settings/analytics/${ site.slug }` }
 								selected={ section === 'analytics' } >
