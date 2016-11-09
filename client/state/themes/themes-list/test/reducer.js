@@ -15,7 +15,7 @@ import {
 } from 'state/action-types';
 import reducer, { initialState, query } from '../reducer';
 
-describe( 'themes-last-query reducer', () => {
+describe( 'themes-list reducer', () => {
 	describe( 'persistence', () => {
 		it( 'does not persist state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
