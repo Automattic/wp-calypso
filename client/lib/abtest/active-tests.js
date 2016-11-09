@@ -88,6 +88,15 @@ module.exports = {
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
 	},
+	domainToPersonalPlanNudge3: {
+		datestamp: '20161109',
+		variations: {
+			original: 50,
+			nudge: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true
+	},
 	gSuiteOnSignup: {
 		datestamp: '20161025',
 		variations: {
