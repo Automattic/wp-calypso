@@ -52,6 +52,16 @@ export function getSelectedSiteSlug( state ) {
 }
 
 /**
+ * Returns the current section.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Object}        Current section
+ */
+export function getSection( state ) {
+	return state.ui.section || {};
+}
+
+/**
  * Returns the current section name.
  *
  * @param  {Object}  state Global state tree
