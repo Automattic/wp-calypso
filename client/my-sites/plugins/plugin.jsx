@@ -29,6 +29,7 @@ import PluginSections from 'my-sites/plugins/plugin-sections';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
+import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 
 /**
@@ -104,7 +105,8 @@ const SinglePlugin = React.createClass( {
 			accessError: pluginsAccessControl.hasRestrictedAccess(),
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
 			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
-			plugin: plugin
+			plugin: plugin,
+			pageTitle: this.buildPageTitle( plugin.name ),
 		};
 	},
 
@@ -114,6 +116,15 @@ const SinglePlugin = React.createClass( {
 		this.updatePageTitle();
 	},
 
+	buildPageTitle( pluginName ) {
+		return this.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
+			count: pluginName.toLowerCase() !== 'standard' | 0,
+			args: { pluginName: upperFirst( this._currentPageTitle ) },
+			textOnly: true,
+			context: 'Page title: Plugin detail'
+		} )
+	},
+
 	updatePageTitle() {
 		const pageTitle = this.state.plugin ? this.state.plugin.name : this.props.pluginSlug;
 		if ( this._currentPageTitle === pageTitle ) {
@@ -121,14 +132,10 @@ const SinglePlugin = React.createClass( {
 		}
 
 		this._currentPageTitle = pageTitle;
-		this.pluginRefreshTimeout = setTimeout( () => {
-			this.props.onPluginRefresh( this.translate( '%(pluginName)s Plugin', '%(pluginName)s Plugins', {
-				count: pageTitle.toLowerCase() !== 'standard' | 0,
-				args: { pluginName: upperFirst( this._currentPageTitle ) },
-				textOnly: true,
-				context: 'Page title: Plugin detail'
-			} ) );
-		}, 1 );
+
+		this.setState( {
+			pageTitle: this.buildPageTitle( pageTitle )
+		} )
 	},
 
 	removeNotice( error ) {
@@ -227,6 +234,10 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
+	renderDocumentHead() {
+		return <DocumentHead title={ this.state.pageTitle } />;
+	},
+
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
@@ -303,6 +314,7 @@ const SinglePlugin = React.createClass( {
 		if ( selectedSite && ! selectedSite.jetpack ) {
 			return (
 				<MainComponent>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<WpcomPluginsList />
 				</MainComponent>
@@ -312,6 +324,7 @@ const SinglePlugin = React.createClass( {
 		if ( this.state.accessError ) {
 			return (
 				<MainComponent>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
@@ -333,6 +346,7 @@ const SinglePlugin = React.createClass( {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
 			return (
 				<MainComponent>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -348,6 +362,7 @@ const SinglePlugin = React.createClass( {
 
 		return (
 			<MainComponent>
+				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }

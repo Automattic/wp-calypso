@@ -1,39 +1,36 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { omit } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
+class DisconnectJetpackButton extends Component {
+	handleClick = ( event ) => {
+		event.preventDefault();
+		if ( this.props.isMock ) {
+			return;
+		}
 
-	displayName: 'DisconnectJetpackButton',
+		if ( this.refs.dialog ) {
+			this.refs.dialog.getWrappedInstance().open();
+		}
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		redirect: React.PropTypes.string.isRequired,
-		disabled: React.PropTypes.bool,
-		linkDisplay: React.PropTypes.bool,
-		isMock: React.PropTypes.bool,
-		text: React.PropTypes.string
-	},
-
-	getDefaultProps() {
-		return {
-			linkDisplay: true
-		};
-	},
+		this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+	};
 
 	render() {
 		const { site, redirect, linkDisplay } = this.props;
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text' ];
+		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent' ];
 		const buttonProps = {
 			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
@@ -42,31 +39,38 @@ export default React.createClass( {
 			disabled: this.props.disabled,
 			scary: true,
 			borderless: linkDisplay,
-			onClick: ( event ) => {
-				event.preventDefault();
-				if ( this.props.isMock ) {
-					return;
-				}
-				this.refs.dialog.open();
-				analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
-			}
+			onClick: this.handleClick
 		};
 
 		let { text } = this.props;
 
 		if ( ! text ) {
-			text = this.translate( 'Disconnect', {
+			text = translate( 'Disconnect', {
 				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
 			} );
 		}
 
-		const buttonChildren = (
-			<div>
-				{ text }
-				<DisconnectJetpackDialog site={ site } ref="dialog" redirect={ redirect } />
-			</div>
-		);
-
-		return React.createElement( Button, buttonProps, buttonChildren );
+		return <Button { ...buttonProps }>
+			{ text }
+			<DisconnectJetpackDialog site={ site } ref="dialog" redirect={ redirect } />
+		</Button>;
 	}
-} );
+}
+
+DisconnectJetpackButton.propTypes = {
+	site: PropTypes.object.isRequired,
+	redirect: PropTypes.string.isRequired,
+	disabled: PropTypes.bool,
+	linkDisplay: PropTypes.bool,
+	isMock: PropTypes.bool,
+	text: PropTypes.string
+};
+
+DisconnectJetpackButton.defaultProps = {
+	linkDisplay: true
+};
+
+export default connect(
+	null,
+	{ recordGoogleEvent }
+)( DisconnectJetpackButton );
