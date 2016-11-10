@@ -26,6 +26,8 @@ import {
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_REFRESH,
 	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
+	PUBLICIZE_CONNECTION_UPDATE,
+	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -129,6 +131,20 @@ export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => di
 	} ) )
 );
 
+export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully updated.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
+		args: { service: error.label },
+		context: 'Sharing: Publicize reconnection confirmation'
+	} ) )
+);
+
 /**
  * Handler action type mapping
  */
@@ -151,6 +167,8 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
 	[ PUBLICIZE_CONNECTION_REFRESH_FAILURE ]: onPublicizeConnectionRefreshFailure,
+	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
+	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };
