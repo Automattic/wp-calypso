@@ -67,7 +67,7 @@ normalizePost.stripHTML = wrapSync( stripHtml );
 import preventWidows from './rule-prevent-widows';
 normalizePost.preventWidows = wrapSync( preventWidows );
 
-import pickCanonicalImage from './rule-first-pass-canonical-image';
+import pickCanonicalImage from './rule-pick-canonical-image';
 normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 
 import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';

@@ -559,7 +559,7 @@ describe( 'index', function() {
 	describe( 'canonical image picker', function() {
 		it( 'can pick the canonical image from images', function( done ) {
 			const postRunThroughWaitForImagesToLoad = {
-				images: [
+				content_images: [
 					null, // null reference
 					{
 						height: 1,

@@ -23,7 +23,7 @@ import { dissocPath } from 'lodash/fp';
  * Internal dependencies
  */
 import { DEFAULT_POST_QUERY } from './constants';
-import pickCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
+import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
 
