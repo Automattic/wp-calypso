@@ -2,6 +2,7 @@
  * External dependencies
  */
 var config = require( 'config' );
+var user = require( 'lib/user' );
 
 /**
  * Module variables
@@ -149,7 +150,7 @@ sections = [
 		paths: [ '/theme' ],
 		module: 'my-sites/theme',
 		enableLoggedOut: true,
-		secondary: false,
+		secondary: !! user.get(),
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes'
