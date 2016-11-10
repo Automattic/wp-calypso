@@ -17,7 +17,8 @@ const ExpandableSidebarAddForm = React.createClass( {
 		addLabel: React.PropTypes.string,
 		addPlaceholder: React.PropTypes.string,
 		onAddSubmit: React.PropTypes.func,
-		onAddClick: React.PropTypes.func
+		onAddClick: React.PropTypes.func,
+		hideAddButton: React.PropTypes.bool,
 	},
 
 	getInitialState() {
