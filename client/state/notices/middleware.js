@@ -43,8 +43,6 @@ export function dispatchError( message ) {
 	return ( dispatch ) => dispatch( errorNotice( message ) );
 }
 
-export const dispatchErrorMessage = ( dispatch, { error } ) => dispatch( errorNotice( error.message ) );
-
 /**
  * Handlers
  */
@@ -162,7 +160,7 @@ export const handlers = {
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
-	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchErrorMessage,
+	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchError( translate( 'An error occurred while connecting the account.' ) ),
 	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
