@@ -96,21 +96,24 @@ const Signup = React.createClass( {
 	},
 
 	submitQueryDependencies() {
-		if ( 'undefined' === typeof this.props.queryObject ) {
+		if ( ! this.props.queryObject ) {
 			return;
 		}
-		const vertical = this.props.queryObject.vertical;
+
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		if ( 'undefined' === typeof vertical || -1 !== flowSteps.indexOf( 'survey' ) ) {
-			return;
+
+		// `vertical` query parameter
+		const vertical = this.props.queryObject.vertical;
+		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+			debug( 'From query string: vertical = %s', vertical );
+			this.props.setSurvey( {
+				vertical,
+				otherText: '',
+			} );
+			SignupActions.submitSignupStep(
+				{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
+			);
 		}
-		this.props.setSurvey( {
-			vertical,
-			otherText: '',
-		} );
-		SignupActions.submitSignupStep(
-			{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
-		);
 	},
 
 	componentWillMount() {
