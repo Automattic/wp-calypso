@@ -49,7 +49,7 @@ export const updateAccountRecoveryPhoneSuccess = ( phone ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 		target: TARGET_PHONE,
-		data: phone,
+		value: phone,
 	};
 };
 
@@ -108,7 +108,7 @@ export const updateAccountRecoveryEmailSuccess = ( email ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 		target: TARGET_EMAIL,
-		data: email,
+		value: email,
 	};
 };
 
