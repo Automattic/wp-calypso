@@ -9,7 +9,6 @@ import noop from 'lodash/noop';
  * Internal Dependencies
  */
 import Gridicon from 'components/gridicon';
-import Button from 'components/button';
 
 const ExpandableSidebarAddForm = React.createClass( {
 
@@ -61,7 +60,6 @@ const ExpandableSidebarAddForm = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>{ this.translate( 'Add' ) }</Button>
 
 				<div className="sidebar__menu-add">
 					<input
