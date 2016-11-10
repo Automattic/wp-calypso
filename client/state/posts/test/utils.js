@@ -16,7 +16,7 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
-	isPostContentEmpty,
+	isEmptyContent,
 	mergeIgnoringArrays
 } from '../utils';
 
@@ -377,23 +377,23 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'isPostContentEmpty()', () => {
+	describe( 'isEmptyContent()', () => {
 		it( 'should return true for empty strings', () => {
 			const content = '';
 
-			expect( isPostContentEmpty( content ) ).to.eql( true );
+			expect( isEmptyContent( content ) ).to.eql( true );
 		} );
 
 		it( 'should return true for empty paragraphs', () => {
 			const content = '<p></p>';
 
-			expect( isPostContentEmpty( content ) ).to.eql( true );
+			expect( isEmptyContent( content ) ).to.eql( true );
 		} );
 
 		it( 'should return false for random texts', () => {
 			const content = 'small content';
 
-			expect( isPostContentEmpty( content ) ).to.eql( false );
+			expect( isEmptyContent( content ) ).to.eql( false );
 		} );
 	} );
 } );

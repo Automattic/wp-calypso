@@ -13,7 +13,7 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
-	isPostContentEmpty,
+	isEmptyContent,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
 	normalizePostForDisplay
@@ -375,7 +375,7 @@ export const editedPostHasContent = createSelector(
 			!! editedPost &&
 			(
 				some( [ 'title', 'excerpt' ], ( field ) => editedPost[ field ] && !! editedPost[ field ].trim() ) ||
-				! isPostContentEmpty( editedPost.content )
+				! isEmptyContent( editedPost.content )
 			)
 		);
 	},
