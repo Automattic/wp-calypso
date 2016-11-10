@@ -1,0 +1,15 @@
+version: '2'
+services:
+  calypso:
+    image: node:6.9.1
+    environment:
+      CALYPSO_ENV: 'development'
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/calypso
+      - node_modules:/calypso/node_modules
+    working_dir: /calypso
+    command: "bash -c 'npm install; make run'"
+volumes:
+  node_modules:
