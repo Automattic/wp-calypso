@@ -38,28 +38,39 @@ export const accountRecoveryFetch = () => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
 
 	return wpcom.undocumented().me().getAccountRecovery()
-		.then( ( accountRecoverySettings ) => {
-			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) );
-		} ).catch( ( { status, message } ) => {
-			dispatch( accountRecoveryFetchFailed( { status, message } ) );
-		} );
+		.then( ( accountRecoverySettings ) =>
+			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) )
+		).catch( ( { status, message } ) =>
+			dispatch( accountRecoveryFetchFailed( { status, message } ) )
+		);
 };
 
-export const updateAccountRecoveryPhoneSuccess = ( phone ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-		target: TARGET_PHONE,
-		value: phone,
-	};
-};
+const updateSuccessAction = ( target, value ) => ( {
+	type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+	target,
+	value,
+} );
 
-export const updateAccountRecoveryPhoneFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-		target: TARGET_PHONE,
-		error,
-	};
-};
+const updateFailedAction = ( target, error ) => ( {
+	type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+	target,
+	error,
+} );
+
+const deleteSuccessAction = ( target ) => ( {
+	type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+	target,
+} );
+
+const deleteFailedAction = ( target, error ) => ( {
+	type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+	target,
+	error,
+} );
+
+export const updateAccountRecoveryPhoneSuccess = ( phone ) => updateSuccessAction( TARGET_PHONE, phone );
+
+export const updateAccountRecoveryPhoneFailed = ( error ) => updateFailedAction( TARGET_PHONE, error );
 
 export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch ) => {
 	dispatch( {
@@ -75,20 +86,9 @@ export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch 
 		);
 };
 
-export const deleteAccountRecoveryPhoneSuccess = () => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-		target: TARGET_PHONE,
-	};
-};
+export const deleteAccountRecoveryPhoneSuccess = () => deleteSuccessAction( TARGET_PHONE );
 
-export const deleteAccountRecoveryPhoneFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-		target: TARGET_PHONE,
-		error,
-	};
-};
+export const deleteAccountRecoveryPhoneFailed = ( error ) => deleteFailedAction( TARGET_PHONE, error );
 
 export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 	dispatch( {
@@ -104,21 +104,9 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 		);
 };
 
-export const updateAccountRecoveryEmailSuccess = ( email ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-		target: TARGET_EMAIL,
-		value: email,
-	};
-};
+export const updateAccountRecoveryEmailSuccess = ( email ) => updateSuccessAction( TARGET_EMAIL, email );
 
-export const updateAccountRecoveryEmailFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-		target: TARGET_EMAIL,
-		error,
-	};
-};
+export const updateAccountRecoveryEmailFailed = ( error ) => updateFailedAction( TARGET_EMAIL, error );
 
 export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 	dispatch( {
@@ -134,20 +122,9 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 		);
 };
 
-export const deleteAccountRecoveryEmailSuccess = () => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-		target: TARGET_EMAIL,
-	};
-};
+export const deleteAccountRecoveryEmailSuccess = () => deleteSuccessAction( TARGET_EMAIL );
 
-export const deleteAccountRecoveryEmailFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-		target: TARGET_EMAIL,
-		error,
-	};
-};
+export const deleteAccountRecoveryEmailFailed = ( error ) => deleteFailedAction( TARGET_EMAIL, error );
 
 export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 	dispatch( {
