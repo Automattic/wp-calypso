@@ -23,7 +23,7 @@ import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
-import firstPassCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
+import pickCanonicalImage from 'lib/post-normalizer/rule-first-pass-canonical-image';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
 import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
@@ -31,7 +31,6 @@ import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties'
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
-import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';

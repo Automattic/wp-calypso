@@ -67,8 +67,8 @@ normalizePost.stripHTML = wrapSync( stripHtml );
 import preventWidows from './rule-prevent-widows';
 normalizePost.preventWidows = wrapSync( preventWidows );
 
-import firstPassCanonicalImage from './rule-first-pass-canonical-image';
-normalizePost.firstPassCanonicalImage = wrapSync( firstPassCanonicalImage );
+import pickCanonicalImage from './rule-first-pass-canonical-image';
+normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 
 import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';
 normalizePost.makeSiteIDSafeForAPI = wrapSync( makeSiteIDSafeForAPI );
@@ -94,9 +94,6 @@ import keepValidImages from './rule-keep-valid-images';
 normalizePost.keepValidImages = function( minWidth, minHeight ) {
 	return wrapSync( keepValidImages( minWidth, minHeight ) );
 };
-
-import pickCanonicalImage from './rule-pick-canonical-image';
-normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 
 import createBetterExcerpt from './rule-create-better-excerpt';
 normalizePost.createBetterExcerpt = wrapSync( createBetterExcerpt );
