@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { map, compact, includes, some } from 'lodash';
+import { map, compact, includes, some, filter } from 'lodash';
 import getVideoId from 'get-video-id';
 
 /**
@@ -159,6 +159,7 @@ export default function detectMedia( post, dom ) {
 	} );
 
 	post.content_media = compact( contentMedia );
+	post.content_embeds = filter( post.content_media, m => m.mediaType === 'video' );
 
 	return post;
 }

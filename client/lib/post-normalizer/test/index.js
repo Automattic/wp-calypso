@@ -46,7 +46,7 @@ describe( 'index', function() {
 				normalizer.content.sanitizeContent,
 				normalizer.content.makeImagesSafe( 300 ),
 				normalizer.content.makeEmbedsSafe,
-				normalizer.content.detectEmbeds,
+				normalizer.content.detectMedia,
 			] ),
 			normalizer.createBetterExcerpt,
 			normalizer.waitForImagesToLoad,
@@ -674,6 +674,30 @@ describe( 'index', function() {
 			);
 		} );
 
+		it( 'allows trusted sources to be unsandboxed', function( done ) {
+			normalizer(
+				{
+					content: '<iframe src="http://spotify.com"></iframe>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
+					assert.strictEqual( normalized.content, '<iframe src="https://spotify.com/"></iframe>' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'applies the right level of sandboxing to whitelisted sources', function( done ) {
+			normalizer(
+				{
+					content: '<iframe src="http://youtube.com"></iframe>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
+					assert.strictEqual( normalized.content, '<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
+					done( err );
+				}
+			);
+		} );
+
 		it( 'removes iframes with an empty src', function( done ) {
 			normalizer(
 				{
@@ -713,18 +737,18 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.contentEmbeds', function() {
-		it( 'detects whitelisted iframes and alters the sandbox', function( done ) {
+	describe( 'content.detectMedia', function() {
+		it( 'detects whitelisted iframes', function( done ) {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
+					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com"></iframe>' );
 					assert.strictEqual( embed.height, 50 );
 					assert.strictEqual( embed.width, 100 );
 					assert.isNull( embed.type );
@@ -734,12 +758,12 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'detects trusted iframes and removes the sandbox', function( done ) {
+		it( 'detects trusted iframes', function( done ) {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
@@ -757,7 +781,7 @@ describe( 'index', function() {
 					'</span></p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'youtube' );
 					done( err );
@@ -772,88 +796,35 @@ describe( 'index', function() {
 					'</div>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'vimeo' );
 					done( err );
 				}
 			);
 		} );
-		it( 'detects special instagram embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="instagram-media"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-instagram' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special twitter embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="twitter-video"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-twitter' );
-					done( err );
-				}
-			);
-		} );
-		// skipping for now because jsdom doesn't like namespaced elements
-		it.skip( 'detects special facebook post embed', function( done ) {
-			normalizer(
-				{
-					content: '<fb:post data-href="http://facebook.com"></fb:post>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special facebook embed', function( done ) {
-			normalizer(
-				{
-					content: '<div class="fb-video"><div></div></div>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'empty content does not set the array', function( done ) {
+		it( 'empty content yields undefined', function( done ) {
 			normalizer(
 				{
 					content: '',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.isUndefined( normalized.content_embeds );
 					done( err );
 				}
 			);
 		} );
-		it( 'content with no embeds does not set the array', function( done ) {
+		it( 'content with no embeds yields an empty array', function( done ) {
 			normalizer(
 				{
 					content: '<p>foo</p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds );
+					assert.deepEqual( normalized.content_embeds, [] );
 					done( err );
 				}
 			);
@@ -873,9 +844,9 @@ describe( 'index', function() {
 					content: badContent,
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds, 'No content_embeds should have been found' );
+					assert.deepEqual( normalized.content_embeds, [], 'No content_embeds should have been found' );
 					done( err );
 				}
 			);

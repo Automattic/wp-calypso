@@ -1,37 +1,55 @@
 /**
  * External Dependencies
  */
-import forEach from 'lodash/forEach';
-import startsWith from 'lodash/startsWith';
+import { some, forEach, startsWith, endsWith } from 'lodash';
+import { iframeIsWhitelisted } from './utils';
+import url from 'url';
 
 /**
  * Internal Dependencies
  */
+
+/** Given an iframe, is it okay to have it run without a sandbox?
+ * @param {object} iframe - the iframe to check
+ * @returns {boolean} true/false if we trust the source and we know they don't work in a sandbox
+ */
+function doesNotNeedSandbox( iframe ) {
+	const trustedHosts = [
+		'spotify.com',
+		'kickstarter.com'
+	];
+
+	const iframeHost = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+
+	return some( trustedHosts, trustedHost => endsWith( '.' + iframeHost, '.' + trustedHost ) );
+}
 
 export default function makeEmbedsSafe( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
-	let iframes = dom.querySelectorAll( 'iframe' );
-
-	const badFrames = [];
+	const iframes = dom.querySelectorAll( 'iframe' );
 
 	forEach( iframes, function( iframe ) {
-		iframe.setAttribute( 'sandbox', '' );
 		if ( ! startsWith( iframe.src, 'http' ) ) {
-			badFrames.push( iframe );
+			iframe.parentNode.removeChild( iframe );
+			return;
+		}
+
+		iframe.src = iframe.src.replace( /^http:/, 'https:' );
+
+		if ( doesNotNeedSandbox( iframe ) ) {
+			iframe.removeAttribute( 'sandbox' );
+		} else if ( iframeIsWhitelisted( iframe ) ) {
+			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
 		} else {
-			iframe.src = iframe.src.replace( /^http:/, 'https:' );
+			iframe.setAttribute( 'sandbox', '' );
 		}
 	} );
 
-	forEach( badFrames, function( frame ) {
-		frame.parentNode.removeChild( frame );
-	} );
-
 	if ( post.is_external || post.is_jetpack ) {
-		let embeds = dom.querySelectorAll( 'embed,object' );
+		const embeds = dom.querySelectorAll( 'embed,object' );
 
 		forEach( embeds, function( embed ) {
 			embed.parentNode.removeChild( embed );
