@@ -58,7 +58,7 @@ export function getSelectedSiteSlug( state ) {
  * @return {Object}        Current section
  */
 export function getSection( state ) {
-	return state.ui.section || {};
+	return state.ui.section || false;
 }
 
 /**
@@ -68,7 +68,11 @@ export function getSection( state ) {
  * @return {?String}       Current section name
  */
 export function getSectionName( state ) {
-	return get( getSection( state ), 'name', null );
+	const section = getSection( state );
+	if ( ! section ) {
+		return null;
+	}
+	return get( section, 'name', null );
 }
 
 /**
@@ -78,7 +82,11 @@ export function getSectionName( state ) {
  * @return {?String}       Current section group name
  */
 export function getSectionGroup( state ) {
-	return get( getSection( state ), 'group', null );
+	const section = getSection( state );
+	if ( ! section ) {
+		return null;
+	}
+	return get( section, 'group', null );
 }
 
 /**
@@ -110,7 +118,11 @@ export function isSectionLoading( state ) {
  * @see client/sections
  */
 export function isSectionIsomorphic( state ) {
-	return get( getSection( state ), 'isomorphic', false );
+	const section = getSection( state );
+	if ( ! section ) {
+		return false;
+	}
+	return get( section, 'isomorphic', false );
 }
 
 /**

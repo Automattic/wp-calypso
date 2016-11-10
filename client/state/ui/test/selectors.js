@@ -113,14 +113,14 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSection()', () => {
-		it( 'should return an empty object if no section is assigned', () => {
+		it( 'should return false if no section is assigned', () => {
 			const section = getSection( {
 				ui: {
 					section: false
 				}
 			} );
 
-			expect( section ).to.eql( {} );
+			expect( section ).to.eql( false );
 		} );
 
 		it( 'should return the current section if there is one assigned', () => {
