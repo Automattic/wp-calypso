@@ -114,6 +114,7 @@
 
 .survey__vertical-chevron {
 	color: lighten( $gray, 20% );
+	pointer-events: none;
 }
 
 .survey__other {
