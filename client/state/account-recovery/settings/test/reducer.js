@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -19,15 +18,17 @@ import reducer from '../reducer';
 
 describe( 'account-recovery reducer', () => {
 	const expectedState = {
-		email: dummyData.email,
-		emailValidated: dummyData.email_validated,
-		phone: dummyData.phone,
-		phoneValidated: dummyData.phone_validated,
+		data: {
+			email: dummyData.email,
+			emailValidated: dummyData.email_validated,
+			phone: dummyData.phone,
+			phoneValidated: dummyData.phone_validated,
+		},
 		isFetching: false,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {
-		const initState = reducer( null, {
+		const initState = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 			...dummyData,
 		} );
@@ -35,25 +36,8 @@ describe( 'account-recovery reducer', () => {
 		assert.deepEqual( initState, expectedState );
 	} );
 
-	it( 'should return a new state object with the settings data.', () => {
-		const prevState = deepFreeze( {
-			foo: '1',
-			bar: 'bar',
-		} );
-
-		const state = reducer( prevState, {
-			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-			...dummyData,
-		} );
-
-		assert.deepEqual( state, {
-			...prevState,
-			...expectedState,
-		} );
-	} );
-
 	it( 'should populate isFetching in the state', () => {
-		const state = reducer( null, {
+		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH,
 		} );
 
