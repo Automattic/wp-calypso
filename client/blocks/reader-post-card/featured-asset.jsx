@@ -2,14 +2,14 @@
  * External Dependencies
  */
 import React from 'react';
-import { find, endsWith, some, } from 'lodash';
-import url from 'url';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
+import { isUrlLikelyAnImage } from '../../lib/post-normalizer/utils.js';
 
 function isCandidateForFeature( media ) {
 	if ( ! media ) {
@@ -19,8 +19,8 @@ function isCandidateForFeature( media ) {
 	if ( media.mediaType === 'image' ) {
 		const image = media;
 
-		const imageIsTallEnough = 350 <= image.width || 350 <= image.naturalWidth;
-		const imageIsWideEnough = 85 <= image.height || 85 <= image.naturalHeight;
+		const imageIsTallEnough = 350 <= image.width;
+		const imageIsWideEnough = 85 <= image.height;
 
 		return imageIsTallEnough && imageIsWideEnough;
 	} else if ( media.mediaType === 'video' ) {
@@ -28,13 +28,7 @@ function isCandidateForFeature( media ) {
 		return media.thumbnailUrl && media.autoplayIframe;
 	}
 
-	return true;
-}
-
-// jetpack lies about thumbnails so we need to make sure its actually an image. See: thumbIsLikelyImage in pick-canonical-image rule
-function isUrlLikelyAnImage( uri ) {
-	const withoutQuery = url.parse( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
+	return false;
 }
 
 /**
@@ -48,6 +42,7 @@ const FeaturedAsset = ( { post } ) => {
 		return null;
 	}
 
+	// jetpack lies about thumbnails/featured_images so we need to make sure its actually an image
 	if ( post.featured_image && isUrlLikelyAnImage( post.featured_image ) ) {
 		return <FeaturedImage imageUri={ post.featured_image } href={ post.URL } />;
 	}
