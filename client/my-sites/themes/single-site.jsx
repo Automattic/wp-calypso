@@ -22,6 +22,7 @@ import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
@@ -113,9 +114,6 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			] }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
-			getScreenshotOption={ function( theme ) {
-				return theme.active ? 'customize' : 'info';
-			} }
 			source="showcase" />
 	);
 };
@@ -126,7 +124,8 @@ export default connect(
 		return {
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			getScreenshotOption: ( theme ) => ( selectedSite && isActiveTheme( state, theme.id, selectedSite.ID ) ) ? 'customize' : 'info'
 		};
 	}
 )( SingleSiteThemeShowcaseWithOptions );

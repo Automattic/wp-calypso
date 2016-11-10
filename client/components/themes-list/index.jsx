@@ -4,7 +4,7 @@
 import React from 'react';
 import times from 'lodash/times';
 import { localize } from 'i18n-calypso';
-import { identity, isEqual } from 'lodash';
+import { identity, isEqual, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -35,6 +35,7 @@ export const ThemesList = React.createClass( {
 		onScreenshotClick: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
 		getActionLabel: React.PropTypes.func,
+		isActive: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
@@ -53,13 +54,10 @@ export const ThemesList = React.createClass( {
 			showThemeUpload: false,
 			themeUploadClickRecorder: identity,
 			onThemeUpload: identity,
-			fetchNextPage() {},
-			optionsGenerator() {
-				return [];
-			},
-			getActionLabel() {
-				return '';
-			}
+			fetchNextPage: noop,
+			optionsGenerator: () => [],
+			getActionLabel: () => '',
+			isActive: () => false
 		};
 	},
 
@@ -81,7 +79,8 @@ export const ThemesList = React.createClass( {
 			onMoreButtonClick={ this.props.onMoreButtonClick }
 			actionLabel={ this.props.getActionLabel( theme ) }
 			index={ index }
-			theme={ theme } />;
+			theme={ theme }
+			active={ this.props.isActive( theme.id ) } />;
 	},
 
 	renderLoadingPlaceholders() {
