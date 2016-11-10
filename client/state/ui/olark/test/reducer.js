@@ -9,20 +9,44 @@ import { expect } from 'chai';
 import {
 	OLARK_READY,
 	OLARK_REQUEST,
-	OLARK_TIMEOUT
+	OLARK_TIMEOUT,
+	OLARK_OPERATORS_AVAILABLE,
+	OLARK_OPERATORS_AWAY
 } from 'state/action-types';
 import {
 	STATUS_READY,
-	STATUS_TIMEOUT
+	STATUS_TIMEOUT,
+	OPERATOR_STATUS_AVAILABLE,
+	OPERATOR_STATUS_AWAY
 } from '../constants';
-import reducer, { status, requesting } from '../reducer';
+import reducer, { status, requesting, operatorStatus } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'status',
-			'requesting'
+			'requesting',
+			'operatorStatus'
 		] );
+	} );
+
+	describe( '#operatorStatus()', () => {
+		it( 'should default to away', () => {
+			const state = operatorStatus( undefined, {} );
+			expect( state ).to.equal( OPERATOR_STATUS_AWAY );
+		} );
+		it( 'should update on available', () => {
+			const state = operatorStatus( undefined, {
+				type: OLARK_OPERATORS_AVAILABLE
+			} );
+			expect( state ).to.equal( OPERATOR_STATUS_AVAILABLE );
+		} );
+		it( 'should update on away', () => {
+			const state = operatorStatus( undefined, {
+				type: OLARK_OPERATORS_AWAY
+			} );
+			expect( state ).to.equal( OPERATOR_STATUS_AWAY );
+		} );
 	} );
 
 	describe( '#status()', () => {

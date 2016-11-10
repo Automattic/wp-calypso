@@ -377,7 +377,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' );
+		require( 'lib/olark' ).initialize( reduxStore.dispatch );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
