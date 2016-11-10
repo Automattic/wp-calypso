@@ -35,13 +35,17 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
-import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
+import { getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness
+} from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const serviceIds = {
@@ -55,10 +59,14 @@ const serviceIds = {
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
+}
+
+function getJetpackPluginUrl( slug ) {
+	return `/plugins/jetpack/${ slug }`;
 }
 
 function stateForSite( site ) {
@@ -342,12 +350,17 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge } = this.props;
+		const { showAdvancedSeo,
+			showWebsiteMeta,
+			showUpgradeNudge,
+			jetpackVersionSupportsSeo,
+		} = this.props;
 		const {
 			slug = '',
 			settings: {
 				blog_public = 1
 			} = {},
+			jetpack = false,
 		} = this.props.site;
 
 		const {
@@ -364,12 +377,14 @@ export const SeoForm = React.createClass( {
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
+		const isJetpackUnsupported = jetpack && ! jetpackVersionSupportsSeo;
+		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const siteUrl = `https://${ slug }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
+		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 		const placeholderTagContent = '1234';
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
@@ -381,6 +396,10 @@ export const SeoForm = React.createClass( {
 		const hasError = function( service ) {
 			return includes( invalidCodes, service );
 		};
+
+		const nudgeTitle = jetpack
+			? this.translate( 'Enable SEO Tools Features by Upgrading to Jetpack Pro' )
+			: this.translate( 'Enable SEO Tools Features by Upgrading to the Business Plan' );
 
 		const submitButton = (
 			<Button
@@ -419,31 +438,49 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
+				{ isJetpackUnsupported &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ this.translate(
+							'SEO Tools require a newer version of Jetpack.'
+						) }
+					>
+						<NoticeAction href={ jetpackUpdateUrl }>
+							{ this.translate( 'Update Now' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						feature={ FEATURE_ADVANCED_SEO }
-						title={ this.translate( 'Enable SEO Tools by Upgrading to the Business Plan' ) }
-						message={ this.translate( `Adds tools to optimize your site for search engines and social media sharing.` ) }
+						title={ nudgeTitle }
+						message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
+						jetpack={ jetpack }
 					/>
 				}
 
-				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
-				</SectionHeader>
-				<Card>
-					{ this.translate(
-						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
-						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
-						'these settings if you\'d like more advanced control. Read more about what you can do ' +
-						'to {{a}}optimize your site\'s SEO{{/a}}.',
-						{
-							components: {
-								a: <a href={ 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/' } />,
-								b: <strong />
-							}
-						}
-					) }
-				</Card>
+				{ ! jetpack &&
+					<div>
+						<SectionHeader label={ this.translate( 'Search Engine Optimization' ) } />
+						<Card>
+							{ this.translate(
+								'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
+								'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
+								'these settings if you\'d like more advanced control. Read more about what you can do ' +
+								'to {{a}}optimize your site\'s SEO{{/a}}.',
+								{
+									components: {
+										a: <a href={ 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/' } />,
+										b: <strong />
+									}
+								}
+							) }
+						</Card>
+					</div>
+				}
 
 				<form onChange={ this.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
@@ -471,7 +508,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || showWebsiteMeta ) &&
+					{ ( showAdvancedSeo || ( ! jetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Website Meta' ) }>
 								{ submitButton }
@@ -656,14 +693,21 @@ export const SeoForm = React.createClass( {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
+	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const siteId = get( site, 'ID', 0 );
+	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4.0' );
+	const seoFeatureEnabled = site &&
+		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
+			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo && site.isModuleActive( 'seo-tools' ) );
 
 	return {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showAdvancedSeo: isAdvancedSeoEligible && seoFeatureEnabled,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' )
+		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
+		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 	};
 };
 
