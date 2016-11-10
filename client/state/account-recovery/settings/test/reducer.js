@@ -104,38 +104,45 @@ describe( '#account-recovery reducer update / delete:', () => {
 } );
 
 describe( '#account-recovery reducer action status flags: ', () => {
+	const targetPhone = { target: 'phone' };
+	const targetEmail = { target: 'email' };
+
 	generateActionInProgressStateFlagTests(
 		'isFetching',
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_FETCH ],
-		[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]
+		[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ],
 	);
 
 	generateActionInProgressStateFlagTests(
 		'isUpdatingPhone',
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
+		targetPhone
 	);
 
 	generateActionInProgressStateFlagTests(
 		'isDeletingPhone',
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
+		targetPhone
 	);
 
 	generateActionInProgressStateFlagTests(
 		'isUpdatingEmail',
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]
+		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
+		targetEmail
 	);
 
 	generateActionInProgressStateFlagTests(
 		'isDeletingEmail',
 		reducer,
 		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]
+		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
+		targetEmail
 	);
 } );

@@ -58,22 +58,27 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 	} );
 };
 
-export const generateActionInProgressStateFlagTests = ( stateKey, reducer, initiateActions, finishActions ) => {
-	initiateActions.forEach( ( action ) => {
-		it( action + ' should set ' + stateKey + ' to true', () => {
-			const state = reducer( { [ stateKey ]: false }, {
-				type: action,
-			} );
+export const generateActionInProgressStateFlagTests = ( stateKey, reducer, initiateActions, finishActions, extraActionProperties = {} ) => {
+	initiateActions.forEach( ( actionType ) => {
+		it( actionType + ' should set ' + stateKey + ' to true', () => {
+			const action = {
+				...extraActionProperties,
+				type: actionType,
+			};
+			const state = reducer( { [ stateKey ]: false }, action );
 
 			assert.isTrue( state[ stateKey ] );
 		} );
 	} );
 
-	finishActions.forEach( ( action ) => {
-		it( action + ' should set ' + stateKey + ' to false', () => {
-			const state = reducer( { [ stateKey ]: true }, {
-				type: action,
-			} );
+	finishActions.forEach( ( actionType ) => {
+		it( actionType + ' should set ' + stateKey + ' to false', () => {
+			const action = {
+				...extraActionProperties,
+				type: actionType,
+			};
+
+			const state = reducer( { [ stateKey ]: true }, action );
 
 			assert.isFalse( state[ stateKey ] );
 		} );
