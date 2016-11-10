@@ -30,29 +30,29 @@ import {
 	bindOptionsToDispatch,
 	bindOptionsToSite
 } from './theme-options';
-import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import {
+	canJetpackSiteManage,
+	getSiteOption,
+	hasJetpackSiteJetpackThemes,
+	isJetpackSite
+} from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
 
-const sites = sitesFactory();
-
 const JetpackThemeReferrerPage = localize(
-	( { translate, site, analyticsPath, analyticsPageTitle } ) => (
+	( { translate, adminUrl, site, analyticsPath, analyticsPageTitle } ) => (
 		<Main className="themes">
-			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 			<SidebarNavigation />
-			<CurrentTheme
-				site={ site }
-				canCustomize={ site && site.isCustomizable() } />
+			<CurrentTheme site={ site } />
 			<EmptyContent title={ translate( 'Changing Themes?' ) }
 				line={ translate( 'Use your site theme browser to manage themes.' ) }
 				action={ translate( 'Open Site Theme Browser' ) }
-				actionURL={ site.options.admin_url + 'themes.php' }
+				actionURL={ adminUrl + 'themes.php' }
 				actionTarget="_blank"
 				illustration="/calypso/images/drake/drake-jetpack.svg" />
 		</Main>
@@ -60,8 +60,17 @@ const JetpackThemeReferrerPage = localize(
 );
 
 const ThemesSingleSite = ( props ) => {
-	const site = sites.getSelectedSite(),
-		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
+	const {
+		adminUrl,
+		analyticsPath,
+		analyticsPageTitle,
+		canManage,
+		hasJetpackThemes,
+		isCustomizable,
+		isJetpack,
+		selectedSite: site,
+		translate
+	} = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 	// If we've only just switched from single to multi-site, there's a chance
@@ -75,14 +84,16 @@ const ThemesSingleSite = ( props ) => {
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackThemeReferrerPage site={ site }
+					adminUrl={ adminUrl }
+					isCustomizable={ isCustomizable }
 					analyticsPath={ analyticsPath }
-					analyticsPageTitle={ analyticsPageTitle }/>
+					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
-		if ( ! site.hasJetpackThemes ) {
+		if ( ! hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
 		}
-		if ( ! site.canManage() ) {
+		if ( ! canManage ) {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 	}
@@ -92,10 +103,8 @@ const ThemesSingleSite = ( props ) => {
 			<SidebarNavigation />
 			<ThanksModal
 				site={ site }
-				source={ 'list' }/>
-			<CurrentTheme
-				site={ site }
-				canCustomize={ site && site.isCustomizable() } />
+				source={ 'list' } />
+			<CurrentTheme site={ site } />
 			<UpgradeNudge
 				title={ translate( 'Get Custom Design with Premium' ) }
 				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
@@ -135,7 +144,10 @@ export default connect(
 		return {
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			adminUrl: getSiteOption( state, selectedSite.ID, 'admin_url' ),
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, selectedSite.ID ),
+			canManage: canJetpackSiteManage( state, selectedSite.ID )
 		};
 	},
 	bindOptionsToDispatch( {
