@@ -171,6 +171,7 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 	] ),
 	config.isEnabled( 'reader/refresh/stream' ) ? createBetterExcerptRefresh : createBetterExcerpt,
+	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
 ] );
