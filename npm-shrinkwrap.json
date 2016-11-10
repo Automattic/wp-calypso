@@ -996,12 +996,7 @@
       "version": "1.1.2"
     },
     "draft-js": {
-      "version": "0.8.1",
-      "dependencies": {
-        "immutable": {
-          "version": "3.7.6"
-        }
-      }
+      "version": "0.8.1"
     },
     "duplexer": {
       "version": "0.1.1",
@@ -1027,7 +1022,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.1.5",
+          "version": "2.2.1",
           "dev": true
         }
       }
@@ -1816,7 +1811,7 @@
       "version": "4.1.1"
     },
     "immutable": {
-      "version": "3.8.1"
+      "version": "3.7.6"
     },
     "imports-loader": {
       "version": "0.6.5"
@@ -2394,7 +2389,7 @@
           "version": "1.0.0"
         },
         "readable-stream": {
-          "version": "2.1.5"
+          "version": "2.2.1"
         }
       }
     },
@@ -2875,7 +2870,7 @@
       "dev": true
     },
     "postcss-selector-parser": {
-      "version": "2.2.1",
+      "version": "2.2.2",
       "dev": true
     },
     "postcss-value-parser": {
@@ -3089,7 +3084,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.1.5",
+          "version": "2.2.1",
           "dev": true
         }
       }
@@ -3116,7 +3111,7 @@
           "version": "3.0.3"
         },
         "readable-stream": {
-          "version": "2.1.5"
+          "version": "2.2.1"
         }
       }
     },
@@ -3645,7 +3640,7 @@
           "dev": true
         },
         "readable-stream": {
-          "version": "2.1.5",
+          "version": "2.2.1",
           "dev": true
         },
         "resolve-from": {
@@ -3678,7 +3673,7 @@
           "version": "6.3.0"
         },
         "readable-stream": {
-          "version": "2.1.5"
+          "version": "2.2.1"
         }
       }
     },
@@ -3746,7 +3741,7 @@
           "version": "1.0.0"
         },
         "readable-stream": {
-          "version": "2.1.5"
+          "version": "2.2.1"
         }
       }
     },
