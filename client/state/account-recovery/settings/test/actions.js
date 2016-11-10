@@ -123,7 +123,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				data: newPhoneData,
+				value: newPhoneData,
 			} ) ),
 		postConditionFailed: () =>
 			assert( spy.calledWith( {
@@ -141,7 +141,7 @@ describe( 'account-recovery actions', () => {
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				data: phone,
+				value: phone,
 			} );
 		} );
 	} );
@@ -228,7 +228,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'email',
-				data: newEmail,
+				value: newEmail,
 			} ) );
 		},
 		postConditionFailed: () => {
@@ -247,7 +247,7 @@ describe( 'account-recovery actions', () => {
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'email',
-				data: dummyData.email,
+				value: dummyData.email,
 			} );
 		} );
 	} );
