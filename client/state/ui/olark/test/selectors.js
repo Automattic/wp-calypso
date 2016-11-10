@@ -8,15 +8,40 @@ import { expect } from 'chai';
  */
 import {
 	isOlarkReady,
+	isOperatorsAvailable,
 	isOlarkTimedOut,
 	isRequestingOlark
 } from '../selectors';
 import {
 	STATUS_READY,
-	STATUS_TIMEOUT
+	STATUS_TIMEOUT,
+	OPERATOR_STATUS_AVAILABLE,
+	OPERATOR_STATUS_AWAY
 } from '../constants';
 
 describe( 'selectors', () => {
+	describe( '#isOperatorsAvailable()', () => {
+		it( 'should return true if operators are available', () => {
+			const isAvailable = isOperatorsAvailable( {
+				ui: {
+					olark: {
+						operatorStatus: OPERATOR_STATUS_AVAILABLE
+					}
+				}
+			} );
+			expect( isAvailable ).to.equal( true );
+		} );
+		it( 'should return false if operators are away', () => {
+			const isAvailable = isOperatorsAvailable( {
+				ui: {
+					olark: {
+						operatorStatus: OPERATOR_STATUS_AWAY
+					}
+				}
+			} );
+			expect( isAvailable ).to.equal( false );
+		} );
+	} );
 	describe( '#isOlarkReady()', () => {
 		it( 'should return false if olark has unknown status', () => {
 			const isReady = isOlarkReady( {
