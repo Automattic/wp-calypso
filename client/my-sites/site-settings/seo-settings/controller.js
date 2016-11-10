@@ -36,7 +36,7 @@ export default {
 		}
 
 		// redirect SEO to general if SEO tools are not enabled for Jetpack sites
-		if ( site.jetpack && ( ! config.isEnabled( 'jetpack/seo-tools' ) || ! site.isModuleActive( 'seo-tools' ) ) ) {
+		if ( site.jetpack && ! config.isEnabled( 'jetpack/seo-tools' ) ) {
 			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}

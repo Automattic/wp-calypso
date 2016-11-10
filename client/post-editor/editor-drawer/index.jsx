@@ -231,6 +231,8 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderSeo: function() {
+		const { jetpackVersionSupportsSeo } = this.props;
+
 		if ( ! this.props.site ) {
 			return;
 		}
@@ -240,7 +242,9 @@ const EditorDrawer = React.createClass( {
 		}
 
 		if ( this.props.site.jetpack ) {
-			if ( ! config.isEnabled( 'jetpack/seo-tools' ) || ! this.props.site.isModuleActive( 'seo-tools' ) ) {
+			if ( ! config.isEnabled( 'jetpack/seo-tools' ) ||
+				! this.props.site.isModuleActive( 'seo-tools' ) ||
+				! jetpackVersionSupportsSeo ) {
 				return;
 			}
 		}
@@ -318,6 +322,7 @@ export default connect(
 
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
+			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4.0' ),
 			typeObject: getPostType( state, siteId, type )
 		};
 	},

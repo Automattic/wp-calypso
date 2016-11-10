@@ -508,7 +508,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || showWebsiteMeta ) &&
+					{ ( showAdvancedSeo || ( ! jetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Website Meta' ) }>
 								{ submitButton }
@@ -693,12 +693,13 @@ export const SeoForm = React.createClass( {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
-	// SEO Tools are available with Business plan on WordPress.com, and with Free plan on Jetpack sites
+	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const siteId = get( site, 'ID', 0 );
+	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4.0' );
 	const seoFeatureEnabled = site &&
 		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
-			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && site.isModuleActive( 'seo-tools' ) );
-	const siteId = get( site, 'ID', 0 );
+			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo && site.isModuleActive( 'seo-tools' ) );
 
 	return {
 		selectedSite: getSelectedSite( state ),
@@ -706,7 +707,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		showAdvancedSeo: isAdvancedSeoEligible && seoFeatureEnabled,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
-		jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4.0' ),
+		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 	};
 };
 
