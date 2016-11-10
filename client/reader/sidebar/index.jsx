@@ -193,14 +193,17 @@ export const ReaderSidebar = React.createClass( {
 				</SidebarMenu>
 
 				<QueryReaderLists />
-				<ReaderSidebarLists
-					lists={ this.props.subscribedLists }
-					path={ this.props.path }
-					isOpen={ this.props.isListsOpen }
-					onClick={ this.props.toggleListsVisibility }
-					currentListOwner={ this.state.currentListOwner }
-					currentListSlug={ this.state.currentListSlug } />
-
+				{ this.props.subscribedLists && this.props.subscribedLists.length
+				? <ReaderSidebarLists
+						lists={ this.props.subscribedLists }
+						path={ this.props.path }
+						isOpen={ this.props.isListsOpen }
+						onClick={ this.props.toggleListsVisibility }
+						currentListOwner={ this.state.currentListOwner }
+						currentListSlug={ this.state.currentListSlug }
+					/>
+				: null
+				}
 				<ReaderSidebarTags
 					tags={ this.state.tags }
 					path={ this.props.path }

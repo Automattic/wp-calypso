@@ -9,6 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import ReaderSidebarHelper from '../helper';
 
 const ReaderSidebarListsListItem = React.createClass( {
@@ -31,7 +32,13 @@ const ReaderSidebarListsListItem = React.createClass( {
 	render() {
 		const list = this.props.list;
 		const listRelativeUrl = `/read/list/${ list.owner }/${ list.slug }`;
+		let listManageUrl = `https://wordpress.com${ listRelativeUrl }/edit`;
+		let listRel = 'external';
 
+		if ( config.isEnabled( 'reader/list-management' ) ) {
+			listManageUrl = `${ listRelativeUrl }/edit`;
+			listRel = '';
+		}
 		const listManagementUrls = [
 			listRelativeUrl + '/tags',
 			listRelativeUrl + '/edit',
@@ -55,6 +62,7 @@ const ReaderSidebarListsListItem = React.createClass( {
 				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>
 					<div className="sidebar__menu-item-listname">{ list.title }</div>
 				</a>
+				{ list.is_owner ? <a href={ listManageUrl } rel={ listRel } className="add-new">{ this.translate( 'Manage' ) }</a> : null }
 			</li>
 		);
 	}
