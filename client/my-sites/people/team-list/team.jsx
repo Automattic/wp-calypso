@@ -142,4 +142,5 @@ class Team extends Component {
 	}
 }
 
+export { Team };
 export default localize( Team );
