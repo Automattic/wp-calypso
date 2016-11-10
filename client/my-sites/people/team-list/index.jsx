@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var Team = require( './team' ),
-	SiteUsersFetcher = require( 'components/site-users-fetcher' );
+import Team from './team';
+import SiteUsersFetcher from 'components/site-users-fetcher';
 
-module.exports = React.createClass( {
-	displayName: 'TeamList',
-
-	render: function() {
-		var fetchOptions = {
+/**
+ * Module Variables
+ */
+class TeamList extends Component {
+	render() {
+		const fetchOptions = {
 			siteId: this.props.site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
@@ -29,4 +30,6 @@ module.exports = React.createClass( {
 			</SiteUsersFetcher>
 		);
 	}
-} );
+}
+
+export default TeamList;
