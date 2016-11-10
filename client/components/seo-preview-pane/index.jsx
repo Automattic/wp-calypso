@@ -185,6 +185,14 @@ export class SeoPreviewPane extends PureComponent {
 		this.selectPreview = this.selectPreview.bind( this );
 	}
 
+	componentDidMount() {
+		// Track the first service that is viewed
+		const { trackPreviewService } = this.props;
+		const { selectedService } = this.state;
+
+		trackPreviewService( selectedService );
+	}
+
 	selectPreview( selectedService ) {
 		this.setState( { selectedService } );
 
