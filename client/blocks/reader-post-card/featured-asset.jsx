@@ -11,18 +11,27 @@ import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import { isUrlLikelyAnImage } from '../../lib/post-normalizer/utils.js';
 
+/** Returns true if an image is large enough to be a featured asset
+ * @param {object} image - image must have a width and height property
+ * @returns {boolean} true if large enough, false if image undefined or too small
+ */
+function isImageLargeEnoughForFeature( image ) {
+	if ( ! image ) {
+		return false;
+	}
+	const imageIsTallEnough = 350 <= image.width;
+	const imageIsWideEnough = 85 <= image.height;
+
+	return imageIsTallEnough && imageIsWideEnough;
+}
+
 function isCandidateForFeature( media ) {
 	if ( ! media ) {
 		return false;
 	}
 
 	if ( media.mediaType === 'image' ) {
-		const image = media;
-
-		const imageIsTallEnough = 350 <= image.width;
-		const imageIsWideEnough = 85 <= image.height;
-
-		return imageIsTallEnough && imageIsWideEnough;
+		return isImageLargeEnoughForFeature( media );
 	} else if ( media.mediaType === 'video' ) {
 		// we need to have a thumbnail and know how to autoplay it
 		return media.thumbnailUrl && media.autoplayIframe;
@@ -43,7 +52,8 @@ const FeaturedAsset = ( { post } ) => {
 	}
 
 	// jetpack lies about thumbnails/featured_images so we need to make sure its actually an image
-	if ( post.featured_image && isUrlLikelyAnImage( post.featured_image ) ) {
+	if ( post.featured_image && isUrlLikelyAnImage( post.featured_image ) &&
+			isImageLargeEnoughForFeature( post.post_thumbnail ) ) {
 		return <FeaturedImage imageUri={ post.featured_image } href={ post.URL } />;
 	}
 
