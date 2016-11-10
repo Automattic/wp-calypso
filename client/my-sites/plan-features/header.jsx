@@ -92,7 +92,7 @@ class PlanFeaturesHeader extends Component {
 			rawPrice,
 			intervalType,
 			site,
-			isInJetpackConnect
+			basePlansPath
 		} = this.props;
 
 		if ( ! rawPrice || this.isPlanCurrent() ) {
@@ -102,11 +102,10 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		let plansUrl = '';
-		if ( isInJetpackConnect ) {
-			plansUrl = '/jetpack/connect';
+		let plansUrl = '/plans';
+		if ( basePlansPath ) {
+			plansUrl = basePlansPath;
 		}
-		plansUrl += '/plans';
 
 		return (
 			<SegmentedControl className="plan-features__interval-type" primary={ true }>
@@ -224,7 +223,7 @@ PlanFeaturesHeader.defaultProps = {
 	isPlaceholder: false,
 	intervalType: 'yearly',
 	site: {},
-	isInJetpackConnect: false,
+	basePlansPath: null,
 	currentSitePlan: {}
 };
 

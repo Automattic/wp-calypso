@@ -25,17 +25,24 @@ module.exports = function() {
 		page( '/jetpack/connect/install', jetpackConnectController.install );
 
 		page( '/jetpack/connect/premium', jetpackConnectController.premium );
+		page( '/jetpack/connect/premium/:intervalType', jetpackConnectController.premium );
 
 		page( '/jetpack/connect/pro', jetpackConnectController.pro );
+		page( '/jetpack/connect/pro/:intervalType', jetpackConnectController.pro );
 
 		page( '/jetpack/connect', jetpackConnectController.connect );
 
-		page( '/jetpack/connect/choose/:site',
-			jetpackConnectController.plansPreSelection
+		page( '/jetpack/connect/choose/:site', jetpackConnectController.plansPreSelection );
+
+		page(
+			'/jetpack/connect/authorize/:localeOrInterval?',
+			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
+			jetpackConnectController.saveQueryObject,
+			jetpackConnectController.authorizeForm
 		);
 
 		page(
-			'/jetpack/connect/authorize/:locale?',
+			'/jetpack/connect/authorize/:intervalType/:locale',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.saveQueryObject,
 			jetpackConnectController.authorizeForm
@@ -47,20 +54,14 @@ module.exports = function() {
 			jetpackConnectController.install
 		);
 
-		page(
-			'/jetpack/connect/store',
-			jetpackConnectController.plansLanding
-		);
+		page( '/jetpack/connect/store', jetpackConnectController.plansLanding );
+		page( '/jetpack/connect/store/:intervalType', jetpackConnectController.plansLanding );
 
-		page(
-			'/jetpack/connect/vaultpress',
-			jetpackConnectController.vaultpressLanding
-		);
+		page( '/jetpack/connect/vaultpress', jetpackConnectController.vaultpressLanding );
+		page( '/jetpack/connect/vaultpress/:intervalType', jetpackConnectController.vaultpressLanding );
 
-		page(
-			'/jetpack/connect/akismet',
-			jetpackConnectController.akismetLanding
-		);
+		page( '/jetpack/connect/akismet', jetpackConnectController.akismetLanding );
+		page( '/jetpack/connect/akismet/:intervalType', jetpackConnectController.akismetLanding );
 
 		page(
 			'/jetpack/connect/:locale?',

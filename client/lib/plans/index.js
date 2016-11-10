@@ -191,13 +191,12 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
-
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
 	}
 
-	if ( site ) {
+	if ( site && site.slug ) {
 		url += '/' + site.slug;
 	}
 
