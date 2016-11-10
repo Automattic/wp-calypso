@@ -14,11 +14,14 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
  */
 class TeamList extends Component {
 	render() {
+		const { props } = this;
+		const { site, search } = props;
+
 		const fetchOptions = {
-			siteId: this.props.site.ID,
+			siteId: site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
-			search: ( this.props.search ) ? '*' + this.props.search + '*' : null,
+			search: search ? '*' + search + '*' : null,
 			search_columns: [ 'display_name', 'user_login' ]
 		};
 
@@ -26,7 +29,7 @@ class TeamList extends Component {
 
 		return (
 			<SiteUsersFetcher fetchOptions={ fetchOptions } >
-				<Team { ...this.props } />
+				<Team { ...props } />
 			</SiteUsersFetcher>
 		);
 	}
