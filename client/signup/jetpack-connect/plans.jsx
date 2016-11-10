@@ -38,6 +38,7 @@ class Plans extends Component {
 	constructor() {
 		super();
 		this.selectPlan = this.selectPlan.bind( this );
+		this.storeSelectedPlan = this.storeSelectedPlan.bind( this );
 		this.redirecting = false;
 	}
 
@@ -84,8 +85,8 @@ class Plans extends Component {
 		}
 	}
 
-	isFlowTypePaid()  {
-		return  this.props.flowType === 'pro' || this.props.flowType === 'premium' || this.props.flowType === 'personal';
+	isFlowTypePaid() {
+		return this.props.flowType === 'pro' || this.props.flowType === 'premium' || this.props.flowType === 'personal';
 	}
 
 	redirectToWpAdmin() {
@@ -102,7 +103,7 @@ class Plans extends Component {
 	}
 
 	redirect( path ) {
-		page.redirect( path + this.props.selectedSite.slug );
+		page.redirect( path + this.props.selectedSiteSlug );
 		this.redirecting = true;
 		this.props.completeFlow();
 	}
@@ -146,7 +147,7 @@ class Plans extends Component {
 
 	selectFreeJetpackPlan() {
 		// clears whatever we had stored in local cache
-		this.props.selectPlanInAdvance( null, this.props.selectedSite.slug );
+		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
@@ -160,7 +161,7 @@ class Plans extends Component {
 	selectPlan( cartItem ) {
 		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
 		// clears whatever we had stored in local cache
-		this.props.selectPlanInAdvance( null, this.props.selectedSite.slug );
+		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
 
 		if ( cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
@@ -220,7 +221,7 @@ export default connect(
 	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
-		const selectedSiteSlug = selectedSite ? selectedSite.slug : null;
+		const selectedSiteSlug = selectedSite ? selectedSite.slug : '*';
 
 		const selectedPlan = getSiteSelectedPlan( state, selectedSiteSlug ) || getGlobalSelectedPlan( state );
 		const searchPlanBySlug = ( planSlug ) => {
@@ -229,15 +230,16 @@ export default connect(
 
 		return {
 			selectedSite,
+			selectedSiteSlug,
 			selectedPlan,
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			userId: user ? user.ID : null,
-			canPurchasePlans: canCurrentUser( state, selectedSite.ID, 'manage_options' ),
-			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
+			canPurchasePlans: selectedSite ? canCurrentUser( state, selectedSite.ID, 'manage_options' ) : true,
+			flowType: getFlowType( state, selectedSiteSlug ),
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug ),
+			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 		};
 	},
