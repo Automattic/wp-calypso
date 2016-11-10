@@ -37,6 +37,7 @@ import QueryCurrentTheme from 'components/data/query-current-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
+import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -62,10 +63,10 @@ const ThemeSheet = React.createClass( {
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
-		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
+		isActive: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -322,7 +323,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, active: isActive, isLoggedIn, price } = this.props;
+		const { defaultOption, isActive, isLoggedIn, price } = this.props;
 		if ( isLoggedIn && ! isActive ) {
 			if ( price ) { // purchase
 				return i18n.translate( 'Pick this design' );
@@ -333,9 +334,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
-		const { active, isLoggedIn, defaultOption, secondaryOption } = this.props;
+		const { isActive, isLoggedIn, defaultOption, secondaryOption } = this.props;
 
-		const showSecondaryButton = secondaryOption && ! active && isLoggedIn;
+		const showSecondaryButton = secondaryOption && ! isActive && isLoggedIn;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
@@ -376,7 +377,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.active ) {
+		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
 		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
@@ -489,7 +490,7 @@ const ConnectedThemeSheet = connectOptions(
 );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, active: isActive, price, isLoggedIn } = props;
+	const { selectedSite: site, isActive, price, isLoggedIn } = props;
 
 	let defaultOption;
 
@@ -561,6 +562,7 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
+			isActive: selectedSite && isActiveTheme( state, id, selectedSite.ID )
 		};
 	}
 )( ThemeSheetWithOptions );

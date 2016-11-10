@@ -16,6 +16,7 @@ import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
+import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import {
 	getFilter,
 	getSortedFilterTerms,
@@ -43,6 +44,9 @@ const ThemesSelection = React.createClass( {
 		tier: React.PropTypes.string,
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
+		// connected props
+		siteSlug: React.PropTypes.string.isRequired,
+		isActiveTheme: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
@@ -107,7 +111,7 @@ const ThemesSelection = React.createClass( {
 
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! theme.active ) {
+		if ( ! this.props.isActiveTheme( theme.id ) ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
@@ -119,31 +123,32 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const site = this.props.selectedSite;
+		const { selectedSite: site } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<StickyPanel>
 					<ThemesSearchCard
-							site={ site }
-							onSearch={ this.doSearch }
-							search={ this.prependFilterKeys() + this.props.search }
-							tier={ this.props.tier }
-							select={ this.onTierSelect } />
+						site={ site }
+						onSearch={ this.doSearch }
+						search={ this.prependFilterKeys() + this.props.search }
+						tier={ this.props.tier }
+						select={ this.onTierSelect } />
 				</StickyPanel>
 				<ThemesData
-						site={ site }
-						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
-						search={ this.props.search }
-						tier={ this.props.tier }
-						filter={ this.addVerticalToFilters() }
-						onRealScroll={ this.trackScrollPage }
-						onLastPage={ this.trackLastPage } >
+					site={ site }
+					isMultisite={ ! this.props.siteId } // Not the same as `! site` !
+					search={ this.props.search }
+					tier={ this.props.tier }
+					filter={ this.addVerticalToFilters() }
+					onRealScroll={ this.trackScrollPage }
+					onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
 						getScreenshotUrl={ this.props.getScreenshotUrl }
-						getActionLabel={ this.props.getActionLabel } />
+						getActionLabel={ this.props.getActionLabel }
+						isActive={ this.props.isActiveTheme } />
 				</ThemesData>
 			</div>
 		);
@@ -153,6 +158,7 @@ const ThemesSelection = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId )
+		siteSlug: getSiteSlug( state, siteId ),
+		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId )
 	} )
 )( ThemesSelection );
