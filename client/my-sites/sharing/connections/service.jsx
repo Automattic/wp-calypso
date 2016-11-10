@@ -145,9 +145,7 @@ class SharingService extends Component {
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
-					if ( this.didKeyringConnectionSucceed( service.ID, this.props.siteId ) && 'publicize' === service.type ) {
-						this.setState( { isSelectingAccount: true } );
-					}
+					this.setState( { isAwaitingConnections: true } );
 				} );
 			}
 		} else {
@@ -228,11 +226,12 @@ class SharingService extends Component {
 		super( ...arguments );
 
 		this.state = {
-			isOpen: false,               // The service is visually opened
-			isConnecting: false,         // A pending connection is awaiting authorization
-			isDisconnecting: false,      // A pending disconnection is awaiting completion
-			isRefreshing: false,         // A pending refresh is awaiting completion
-			isSelectingAccount: false,   // The modal to select an account is open
+			isOpen: false,                // The service is visually opened
+			isConnecting: false,          // A pending connection is awaiting authorization
+			isDisconnecting: false,       // A pending disconnection is awaiting completion
+			isRefreshing: false,          // A pending refresh is awaiting completion
+			isSelectingAccount: false,    // The modal to select an account is open
+			isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
 		};
 	}
 
@@ -247,6 +246,14 @@ class SharingService extends Component {
 
 		if ( this.props.brokenConnections.length !== nextProps.brokenConnections.length ) {
 			this.setState( { isRefreshing: false } );
+		}
+
+		if ( this.state.isAwaitingConnections ) {
+			this.setState( { isAwaitingConnections: false } );
+
+			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) && 'publicize' === this.props.service.type ) {
+				this.setState( { isSelectingAccount: true } );
+			}
 		}
 	}
 
@@ -306,15 +313,13 @@ class SharingService extends Component {
 	 * Given a service name and optional site ID, returns whether the Keyring
 	 * authorization attempt succeeded in creating new Keyring account options.
 	 *
-	 * @param {string} service The name of the service
-	 * @param {int}    siteId  An optional site ID
+	 * @param {Array} externalAccounts Props to check on if a keyring connection succeeded.
 	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
 	 */
-	didKeyringConnectionSucceed( service, siteId = 0 ) {
-		const externalConnections = this.props.availableExternalAccounts,
-			isAnyConnectionOptions = some( externalConnections, { isConnected: false } );
+	didKeyringConnectionSucceed( externalAccounts ) {
+		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
 
-		if ( ! externalConnections.length ) {
+		if ( ! externalAccounts.length ) {
 			// At this point, if there are no available accounts to
 			// select, we must assume the user closed the popup
 			// before completing the authorization step.
@@ -325,7 +330,7 @@ class SharingService extends Component {
 				} ),
 			} );
 			this.setState( { isConnecting: false } );
-		} else if ( ! isAnyConnectionOptions ) {
+		} else if ( ! hasAnyConnectionOptions ) {
 			// Similarly warn user if all options are connected
 			this.props.failCreateConnection( {
 				message: this.props.translate( 'The %(service)s connection could not be made because all available accounts are already connected.', {
@@ -336,10 +341,10 @@ class SharingService extends Component {
 			this.setState( { isConnecting: false } );
 		}
 
-		return this.filter( 'didKeyringConnectionSucceed', service, externalConnections.length && isAnyConnectionOptions, [
+		return this.filter( 'didKeyringConnectionSucceed', this.props.service.ID, externalAccounts.length && hasAnyConnectionOptions, [
 			...arguments,
-			externalConnections,
-			siteId,
+			externalAccounts,
+			this.props.siteId,
 		] );
 	}
 
