@@ -58,7 +58,7 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @param  {Number} siteId  Site ID
  * @param  {Number} userId  User ID to filter
  * @param  {String} service The name of the service to check
- * @return {Boolean}        Whether there are broken connections.
+ * @return {Array}          Broken user connections.
  */
 export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {
 	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), { status: 'broken' } );
