@@ -31,13 +31,13 @@ const Theme = React.createClass( {
 			price: React.PropTypes.string,
 			// If true, the user has 'purchased' the theme
 			purchased: React.PropTypes.bool,
-			// If true, highlight this theme as active
-			active: React.PropTypes.bool,
 			author: React.PropTypes.string,
 			author_uri: React.PropTypes.string,
 			demo_uri: React.PropTypes.string,
 			stylesheet: React.PropTypes.string
 		} ),
+		// If true, highlight this theme as active
+		active: React.PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
 		// URL the screenshot link points to
@@ -62,9 +62,10 @@ const Theme = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		// TODO: Once we're not using theme.active and theme.purchased anymore, just compare theme.id instead of entire theme objects.
+		// TODO: Once we're not using theme.purchased anymore, just compare theme.id instead of entire theme objects.
 		return ! isEqual( nextProps.theme, this.props.theme ) ||
 			! isEqual( nextProps.buttonContents, this.props.buttonContents ) ||
+			( nextProps.active !== this.props.active ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
@@ -75,7 +76,8 @@ const Theme = React.createClass( {
 			isPlaceholder: false,
 			buttonContents: {},
 			onMoreButtonClick: noop,
-			actionLabel: ''
+			actionLabel: '',
+			active: false
 		} );
 	},
 
@@ -108,11 +110,11 @@ const Theme = React.createClass( {
 	render() {
 		const {
 			name,
-			active,
 			price,
 			purchased,
 			screenshot
 		} = this.props.theme;
+		const { active } = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
@@ -156,6 +158,7 @@ const Theme = React.createClass( {
 								<ThemeMoreButton
 									index={ this.props.index }
 									theme={ this.props.theme }
+									active={ this.props.active }
 									onClick={ this.props.onMoreButtonClick }
 									options={ this.props.buttonContents } />
 							</TrackInteractions> : null }
