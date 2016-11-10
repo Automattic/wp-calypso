@@ -43,16 +43,11 @@ class Plans extends Component {
 	}
 
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
-		context: PropTypes.object.isRequired,
-		destinationType: PropTypes.string,
 		sitePlans: PropTypes.object.isRequired,
 		showJetpackFreePlan: PropTypes.bool,
-		intervalType: PropTypes.string
 	};
 
 	static defaultProps = {
-		intervalType: 'yearly',
 		siteSlug: '*'
 	};
 
