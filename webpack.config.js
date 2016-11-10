@@ -148,7 +148,7 @@ const jsLoader = {
 	exclude: /node_modules/,
 	loader: 'babel',
 	query: {
-		cacheDirectory: true,
+		cacheDirectory: './.babel-cache',
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 			{ async: config.isEnabled( 'code-splitting' ) }
