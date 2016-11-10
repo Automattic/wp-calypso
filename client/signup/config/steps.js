@@ -47,14 +47,6 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
-	'survey-user': {
-		stepName: 'survey-user',
-		apiRequestFunction: stepActions.createAccount,
-		providesToken: true,
-		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		providesDependencies: [ 'bearer_token', 'username' ]
-	},
-
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
