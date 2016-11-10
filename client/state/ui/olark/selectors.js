@@ -37,7 +37,7 @@ export function isRequestingOlark( state ) {
 /**
  * Returns if olark operators are available.
  * @param   {Object}  state  Global state tree
- * @returns {Boolean}        true, when olark is ready
+ * @returns {Boolean}        true, when olark operators are available
  */
 export function isOperatorsAvailable( state ) {
 	return state.ui.olark.operatorStatus === OPERATOR_STATUS_AVAILABLE;

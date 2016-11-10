@@ -148,6 +148,7 @@
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
+		"upgrades/precancellation-chat": true,
 		"vip": false,
 		"vip/backups": true,
 		"vip/billing": true,
