@@ -193,7 +193,7 @@ describe( 'metadata:', () => {
 
 		describe( 'NANPA', () => {
 			it( 'should format full length numbers', () => {
-				equal( formatNumber( '14252222222', countries.us ), '1 (425) 222-2222' );
+				equal( formatNumber( '14252222222', countries.us ), '1 425-222-2222' );
 			} );
 			it( 'should format as you type', () => {
 				equal( formatNumber( '14', countries.us ), '14' );
@@ -202,10 +202,10 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '14256', countries.us ), '1 425-6' );
 				equal( formatNumber( '142565', countries.us ), '1 425-65' );
 				equal( formatNumber( '1425655', countries.us ), '1 425-655' );
-				equal( formatNumber( '14256559', countries.us ), '1 425-6559' );
-				equal( formatNumber( '142565599', countries.us ), '1 (425) 655-99' );
-				equal( formatNumber( '1425655999', countries.us ), '1 (425) 655-999' );
-				equal( formatNumber( '14256559999', countries.us ), '1 (425) 655-9999' );
+				equal( formatNumber( '14256559', countries.us ), '1 425-655-9' );
+				equal( formatNumber( '142565599', countries.us ), '1 425-655-99' );
+				equal( formatNumber( '1425655999', countries.us ), '1 425-655-999' );
+				equal( formatNumber( '14256559999', countries.us ), '1 425-655-9999' );
 			} );
 		} );
 	} );

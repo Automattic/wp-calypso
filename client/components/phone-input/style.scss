@@ -2,6 +2,7 @@
 	pointer-events: none;
 	width: 24px;
 	align-self: center;
+	box-shadow: 0 0 1px lighten( $gray, 20% );
 }
 
 .phone-input__flag-selector-icon {
