@@ -306,7 +306,7 @@ export function jetpackSSOSessions( state = {}, action ) {
 export function jetpackConnectSelectedPlans( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE:
-			const siteSlug = action.site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+			const siteSlug = urlToSlug( action.site );
 			return Object.assign( {}, state, { [ siteSlug ]: action.plan } );
 		case JETPACK_CONNECT_CHECK_URL:
 			return { '*': state[ '*' ] };

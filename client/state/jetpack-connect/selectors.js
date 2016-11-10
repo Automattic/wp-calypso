@@ -106,10 +106,10 @@ const hasXmlrpcError = function( state ) {
 
 const getJetpackPlanSelected = function( state ) {
 	const selectedPlans = state.jetpackConnect.jetpackConnectSelectedPlans;
-	const siteUrl = state.jetpackConnect.jetpackConnectAuthorize.queryObject.site;
+	const siteUrl = getAuthorizationRemoteQueryData( state ).site;
 
 	if ( siteUrl ) {
-		const siteSlug = siteUrl.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		const siteSlug = urlToSlug( siteUrl );
 		if ( selectedPlans && selectedPlans[ siteSlug ] ) {
 			return selectedPlans[ siteSlug ];
 		}
