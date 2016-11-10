@@ -37,7 +37,9 @@ const ExpandableSidebarMenu = React.createClass( {
 				'is-togglable': true
 			}
 		);
-
+		if ( ! this.props.count ) {
+			return null;
+		}
 		return (
 			<SidebarMenu className={ classes }>
 				<ExpandableSidebarHeading title={ this.props.title } count={ this.props.count } onClick={ this.props.onClick } />
