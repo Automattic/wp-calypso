@@ -7,7 +7,7 @@ A module for managing keyring connections.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `requestKeyringConnections()`
+### `requestKeyringConnections( successCallback: function )`
 
 Get a list of keyring connections.
 

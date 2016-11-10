@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { identity } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -12,9 +17,11 @@ import {
 /**
  * Triggers a network request for a user's connected services.
  *
+ * @param {Function} successCallback Function that is called after a successful
+ *                                   request. Default: _.identity.
  * @return {Function} Action thunk
  */
-export function requestKeyringConnections() {
+export function requestKeyringConnections( successCallback = identity ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: KEYRING_CONNECTIONS_REQUEST,
@@ -30,6 +37,7 @@ export function requestKeyringConnections() {
 					type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 				} );
 			} )
+			.then( successCallback )
 			.catch( ( error ) => dispatch( {
 				type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
 				error,
