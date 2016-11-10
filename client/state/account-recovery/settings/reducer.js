@@ -96,12 +96,12 @@ const data = createReducer( {}, {
 		phoneValidated: phone_validated
 	} ),
 
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, data } ) => {
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) => {
 		switch ( target ) {
 			case 'phone':
-				return { ...state, phone: data };
+				return { ...state, phone: value };
 			case 'email':
-				return { ...state, email: data };
+				return { ...state, email: value };
 			default: // do nothing to unknown targets
 				return { ...state };
 		}

@@ -65,7 +65,7 @@ describe( '#account-recovery reducer update / delete:', () => {
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: 'phone',
-			data: dummyNewPhone,
+			value: dummyNewPhone,
 		} );
 
 		assert.deepEqual( state.data, {
@@ -87,7 +87,7 @@ describe( '#account-recovery reducer update / delete:', () => {
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: 'email',
-			data: dummyNewEmail,
+			value: dummyNewEmail,
 		} );
 
 		assert.equal( state.data.email, dummyNewEmail );

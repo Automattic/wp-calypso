@@ -116,7 +116,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				data: dummyNewPhone,
+				value: dummyNewPhone,
 			} ) ),
 		postConditionFailed: () =>
 			assert( spy.calledWith( {
@@ -219,7 +219,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'email',
-				data: dummyNewEmail,
+				value: dummyNewEmail,
 			} ) );
 		},
 		postConditionFailed: () => {
