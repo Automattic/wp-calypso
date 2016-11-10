@@ -50,7 +50,9 @@ const PlansLanding = React.createClass( {
 		return (
 			<div>
 				<QueryPlans />
-				<PlansGrid { ...this.props } onSelect={ this.storeSelectedPlan } />
+				<PlansGrid { ...this.props }
+					onSelect={ this.storeSelectedPlan }
+					basePlansPath={ this.props.basePlansPath } />
 			</div>
 		);
 	}
