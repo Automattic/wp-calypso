@@ -14,7 +14,7 @@ import { PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS } from '
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -171,7 +171,7 @@ class Plans extends Component {
 				user: this.props.userId
 			} );
 		}
-		upgradesActions.addItem( cartItem );
+		addItem( cartItem );
 		this.redirecting = true;
 		this.props.completeFlow();
 		page( checkoutPath );
