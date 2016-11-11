@@ -209,6 +209,7 @@ const LoggedInForm = React.createClass( {
 			)
 		) {
 			debug( 'Authorizing automatically on component mount' );
+			this.setState( { haveAuthorized: true } );
 			return this.props.authorize( queryObject );
 		}
 		if ( this.props.isAlreadyOnSitesList && ! this.state.hasRefetchedSites && ! this.props.isFetchingSites() ) {
@@ -231,10 +232,13 @@ const LoggedInForm = React.createClass( {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
-		} else if ( this.props.plansFirst && this.props.selectedPlan && ! this.state.haveAuthorized ) {
-			this.setState( {
-				haveAuthorized: true
-			} );
+		} else if (
+			this.props.plansFirst &&
+			this.props.selectedPlan &&
+			! this.state.haveAuthorized &&
+			! this.isAuthorizing()
+		) {
+			this.setState( { haveAuthorized: true } );
 			this.props.authorize( queryObject );
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManageAndRedirect();
@@ -297,7 +301,9 @@ const LoggedInForm = React.createClass( {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 
-		return this.props.authorize( queryObject );
+		if ( ! ! this.isAuthorizing() ) {
+			return this.props.authorize( queryObject );
+		}
 	},
 
 	handleSignOut() {
