@@ -22,6 +22,7 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' );
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
@@ -35,6 +36,7 @@ export const EditorMediaModal = React.createClass( {
 		onClose: React.PropTypes.func,
 		onInsertMedia: React.PropTypes.func,
 		site: React.PropTypes.object,
+		siteId: React.PropTypes.number,
 		labels: React.PropTypes.object,
 		single: React.PropTypes.bool,
 		defaultFilter: React.PropTypes.string,
@@ -463,8 +465,11 @@ export const EditorMediaModal = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
-		view: getMediaModalView( state )
+	( state, { site, siteId } ) => ( {
+		view: getMediaModalView( state ),
+		// [TODO]: Migrate toward dropping incoming site prop, accepting only
+		// siteId and forcing descendant components to access via state
+		site: site || getSelectedSite( state, siteId )
 	} ),
 	{
 		setView: setEditorMediaModalView,
