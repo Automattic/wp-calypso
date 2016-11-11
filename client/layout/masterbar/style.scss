@@ -163,6 +163,7 @@ $autobar-height: 20px;
 
 		@include breakpoint( ">960px" ) {
 			display: block;
+			margin-right: 4px;
 		}
 	}
 
