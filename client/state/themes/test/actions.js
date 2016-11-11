@@ -3,6 +3,7 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
+import { Map } from 'immutable';
 
 /**
  * Internal dependencies
@@ -107,12 +108,30 @@ describe( 'actions', () => {
 		siteId: 2211667,
 	};
 
+	const currentThemes = Map().set(
+		2211667, {
+			id: 'twentyfifteen'
+		} );
+
+	const fakeState = {
+		themes: {
+			currentTheme: Map( { currentThemes } ),
+			themesList: Map( {
+				query: Map( {
+					search: 'simple, white'
+				} )
+			} )
+		}
+	};
+
+	const fakeGetState = () => fakeState;
+
 	describe( '#themeActivationSuccess()', () => {
 		it( 'should return an action object', () => {
 			const themeId = 'twentysixteen';
 			const siteId = 2211667;
 
-			const action = themeActivationSuccess( themeId, siteId, trackingData );
+			const action = themeActivationSuccess( themeId, siteId )( () => {}, fakeGetState );
 			expect( action ).to.eql( expectedActivationSuccess );
 		} );
 	} );
@@ -142,11 +161,12 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch theme activation success action when request completes', () => {
+		it( 'should dispatch theme activation success thunk when request completes', () => {
 			return activateTheme( themeId, siteId, trackingData )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
+				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivationSuccessThunk' );
 			} );
 		} );
+
 		it( 'should dispatch theme activation failure action when request completes', () => {
 			const error = {
 				error: sinon.match( { message: 'The specified theme was not found' } ),

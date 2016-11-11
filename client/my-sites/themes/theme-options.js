@@ -12,9 +12,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import {
-		activateTheme as activateAction
-} from 'state/themes/actions';
+import { activateTheme } from 'state/themes/actions';
 import {
 	isPremiumTheme as isPremium
 } from 'state/themes/utils';
@@ -47,7 +45,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	action: activateAction,
+	action: activateTheme,
 	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site ) || ( theme.price && ! theme.purchased )
 };
 
@@ -128,7 +126,7 @@ const ALL_THEME_OPTIONS = {
 	help
 };
 
-const ALL_THEME_ACTIONS = { activate: activateAction }; // All theme related actions available.
+const ALL_THEME_ACTIONS = { activate: activateTheme }; // All theme related actions available.
 
 export const connectOptions = connect(
 	( state, { options: optionNames, site } ) => {
@@ -170,10 +168,10 @@ export const connectOptions = connect(
 		let mapAction;
 
 		if ( site ) {
-			// TODO (@ockham): Change actions to use siteId.
-			mapAction = action => ( t ) => action( t, site, source );
+			// TODO (@ockham): Change actions to use siteId. (@budzanowski) activateTheme is using only IDs
+			mapAction = action => ( t ) => action( t.Id, site.ID, source );
 		} else { // Bind only source.
-			mapAction = action => ( t, s ) => action( t, s, source );
+			mapAction = action => ( t, s ) => action( t.Id, s.ID, source );
 		}
 
 		return bindActionCreators(

@@ -28,6 +28,7 @@ import {
 	THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from '../action-types';
+import { getCurrentTheme } from './current-theme/selectors';
 import {
 	recordTracksEvent,
 	withAnalytics
@@ -243,13 +244,13 @@ export function themeActivationFailed( themeId, siteId, error ) {
 	};
 }
 
-export function activateTheme( themeId, siteId, trackThemesActivationData ) {
+export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( themeActivation( themeId, siteId ) );
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( () => {
-				dispatch( themeActivationSuccess( themeId, siteId, trackThemesActivationData ) );
+				dispatch( themeActivationSuccess( themeId, siteId, source, purchased ) );
 			} )
 			.catch( error => {
 				dispatch( themeActivationFailed( themeId, siteId, error ) );
@@ -257,13 +258,25 @@ export function activateTheme( themeId, siteId, trackThemesActivationData ) {
 	};
 }
 
-export function themeActivationSuccess( themeId, siteId, trackThemesActivationData ) {
-	const action = themeActivated( themeId, siteId );
-	const trackThemeActivation = recordTracksEvent(
-		'calypso_themeshowcase_theme_activate',
-		trackThemesActivationData
-	);
-	return withAnalytics( trackThemeActivation, action );
+export function themeActivationSuccess( themeId, siteId, source = 'unknown', purchased = false ) {
+	const themeActivationSuccessThunk = ( dispatch, getState ) => {
+		const action = themeActivated( themeId, siteId );
+		const previousTheme = getCurrentTheme( getState(), siteId );
+		const queryParams = getState().themes.themesList.get( 'query' );
+
+		const trackThemeActivation = recordTracksEvent(
+			'calypso_themeshowcase_theme_activate',
+			{
+				theme: themeId,
+				previous_theme: previousTheme.id,
+				source: source,
+				purchased: purchased,
+				search_term: queryParams.get( 'search' ) || null
+			}
+		);
+		return withAnalytics( trackThemeActivation, action );
+	};
+	return themeActivationSuccessThunk; // it is named function just for testing purposes
 }
 
 export function clearActivated() {
