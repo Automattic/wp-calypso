@@ -37,16 +37,15 @@ const DomainSuggestion = React.createClass( {
 
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
-		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
+		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
 			'is-added': isAdded,
-			'is-clickable': true,
 		}, extraClasses );
 
 		return (
 			<div
 				className={ classes }
 				onClick={ this.props.onButtonClick }
-				aria-role='button'
+				aria-role="button"
 				data-e2e-domain={ this.props.domain }>
 				<div className="domain-suggestion__content">
 					{ children }
@@ -54,7 +53,7 @@ const DomainSuggestion = React.createClass( {
 						rule={ priceRule }
 						price={ price }/>
 				</div>
-				<div className='domain-suggestion__action'>
+				<div className="domain-suggestion__action">
 					{ this.props.buttonContent }
 				</div>
 				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
@@ -73,7 +72,7 @@ DomainSuggestion.Placeholder = React.createClass( {
 				<div className="domain-suggestion__content">
 					<h3 />
 				</div>
-				<div className='domain-suggestion__action' />
+				<div className="domain-suggestion__action" />
 				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 			</div>
 		);
