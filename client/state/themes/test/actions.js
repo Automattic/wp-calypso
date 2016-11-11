@@ -46,15 +46,15 @@ describe( 'actions', () => {
 
 	describe( '#themeActivated()', () => {
 		it( 'should return an action object', () => {
-			const themeId = 'twentysixteen';
+			const theme = { id: 'twentysixteen' };
 			const siteId = 2211667;
 			const expected = {
 				type: THEME_ACTIVATE_REQUEST_SUCCESS,
-				themeId,
+				theme,
 				siteId,
 			};
 
-			const action = themeActivated( themeId, siteId );
+			const action = themeActivated( theme, siteId );
 			expect( action ).to.eql( expected );
 		} );
 	} );
@@ -104,7 +104,7 @@ describe( 'actions', () => {
 			],
 		},
 		type: THEME_ACTIVATE_REQUEST_SUCCESS,
-		themeId: 'twentysixteen',
+		theme: { id: 'twentysixteen' },
 		siteId: 2211667,
 	};
 
@@ -128,11 +128,11 @@ describe( 'actions', () => {
 
 	describe( '#themeActivationSuccess()', () => {
 		it( 'should return an action object', () => {
-			const themeId = 'twentysixteen';
+			const theme = { id: 'twentysixteen' };
 			const siteId = 2211667;
 
-			const action = themeActivationSuccess( themeId, siteId )( () => {}, fakeGetState );
-			expect( action ).to.eql( expectedActivationSuccess );
+			themeActivationSuccess( theme, siteId )( spy, fakeGetState );
+			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );
 
