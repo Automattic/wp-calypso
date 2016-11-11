@@ -470,6 +470,17 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
+				{ jetpack && ! this.props.site.isModuleActive( 'seo-tools' ) &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ this.translate(
+							'You must activate SEO Tools module in Jetpack\'s dashboard for these changes to take effect.'
+						) }
+					>
+					</Notice>
+				}
+
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						feature={ FEATURE_ADVANCED_SEO }
@@ -718,7 +729,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const seoFeatureEnabled = site &&
 		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
-			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo && site.isModuleActive( 'seo-tools' ) );
+			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo );
 
 	return {
 		selectedSite: getSelectedSite( state ),
