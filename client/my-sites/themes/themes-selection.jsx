@@ -163,6 +163,10 @@ export default connect(
 	( state, { siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
 		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
+		// Note: This component assumes that purchase data is already present in the state tree
+		// (used by the isThemePurchased selector). At the time of implementation there's no caching
+		// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
+		// redundant AJAX requests, we're not rendering the query component locally.
 		isThemePurchased: themeId => isThemePurchased( state, themeId, siteId )
 	} )
 )( ThemesSelection );
