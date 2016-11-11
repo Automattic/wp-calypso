@@ -272,6 +272,7 @@ export class Step extends Component {
 			this.props.className,
 			'guided-tours__step',
 			'guided-tours__step-glow',
+			this.context.step === 'init' && 'guided-tours__step-first',
 			targetSlug && 'guided-tours__step-pointing',
 			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,

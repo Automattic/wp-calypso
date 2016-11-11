@@ -28,7 +28,7 @@ const scrollSidebarToTop = () =>
 
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }>
-		<Step name="init" placement="right" className="guided-tours__step-first">
+		<Step name="init" placement="right">
 			<p className="guided-tours__step-text">
 				{
 					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
