@@ -35,6 +35,7 @@ import {
 } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getQueryParams } from './themes-list/selectors';
+import { getThemeById } from './themes/selectors';
 import wpcom from 'lib/wp';
 
 export function fetchThemes( site ) {
@@ -214,14 +215,14 @@ export function themeActivation( themeId, siteId ) {
  * Returns an action object to be used in signalling that a theme activation
  * has been successfull
  *
- * @param  {String}  themeId Theme received
+ * @param  {Object}  theme Theme received
  * @param  {Number}  siteId Site used for activation
  * @return {Object}  Action object
  */
-export function themeActivated( themeId, siteId ) {
+export function themeActivated( theme, siteId ) {
 	return {
 		type: THEME_ACTIVATE_REQUEST_SUCCESS,
-		themeId,
+		theme,
 		siteId,
 	};
 }
@@ -249,8 +250,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 		dispatch( themeActivation( themeId, siteId ) );
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
-			.then( () => {
-				dispatch( themeActivationSuccess( themeId, siteId, source, purchased ) );
+			.then( ( theme ) => {
+				dispatch( themeActivationSuccess( theme, siteId, source, purchased ) );
 			} )
 			.catch( error => {
 				dispatch( themeActivationFailed( themeId, siteId, error ) );
@@ -258,16 +259,20 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 	};
 }
 
-export function themeActivationSuccess( themeId, siteId, source = 'unknown', purchased = false ) {
+export function themeActivationSuccess( theme, siteId, source = 'unknown', purchased = false ) {
 	const themeActivationSuccessThunk = ( dispatch, getState ) => {
-		const action = themeActivated( themeId, siteId );
+		if ( typeof theme !== 'object' ) {
+			theme = getThemeById( getState(), theme );
+		}
+
+		const action = themeActivated( theme, siteId );
 		const previousTheme = getCurrentTheme( getState(), siteId );
 		const queryParams = getState().themes.themesList.get( 'query' );
 
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
-				theme: themeId,
+				theme: theme.id,
 				previous_theme: previousTheme.id,
 				source: source,
 				purchased: purchased,

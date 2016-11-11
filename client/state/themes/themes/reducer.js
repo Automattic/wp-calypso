@@ -47,7 +47,7 @@ export default ( state = initialState, action ) => {
 			} );
 		}
 		case THEME_ACTIVATE_REQUEST_SUCCESS:
-			return state.update( 'themes', setActiveTheme.bind( null, action.themeId ) );
+			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
 			return initialState;
 		case SERVER_DESERIALIZE:

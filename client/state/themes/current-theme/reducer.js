@@ -55,7 +55,7 @@ export default ( state = initialState, action ) => {
 			return state
 				.set( 'isActivating', false )
 				.set( 'hasActivated', true )
-				.setIn( [ 'currentThemes', action.siteId ], action.themeId );
+				.setIn( [ 'currentThemes', action.siteId ], action.theme );
 		case THEME_CLEAR_ACTIVATED:
 			return state.set( 'hasActivated', false );
 		case DESERIALIZE:

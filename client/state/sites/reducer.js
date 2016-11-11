@@ -112,7 +112,7 @@ export function items( state = {}, action ) {
 			}, {} );
 
 		case THEME_ACTIVATE_REQUEST_SUCCESS:
-			const { siteId, themeId } = action;
+			const { siteId, theme } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
 				break;
@@ -122,7 +122,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ siteId ]: merge( {}, site, {
 					options: {
-						theme_slug: themeId
+						theme_slug: theme.stylesheet
 					}
 				} )
 			};
