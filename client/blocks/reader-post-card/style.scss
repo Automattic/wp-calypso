@@ -314,6 +314,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	font-weight: 100;
 	margin-top: 9px;
 	word-break: break-word;
+	overflow: hidden;
+	max-height: 15px * 1.6 * 3;
+	position: relative;
+
+	&::before {
+		@include long-content-fade( $size: 15px * 1.6 * 5 );
+		top: inherit;
+		height: 15px * 1.6;
+	}
 }
 
 // Action buttons in post card
