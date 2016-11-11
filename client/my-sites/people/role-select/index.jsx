@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import omit from 'lodash/omit';
+import { omit, map } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,7 +18,7 @@ import QuerySiteRoles from 'components/data/query-site-roles';
 import { getSite } from 'state/sites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 
-const getWPCOMFollowerRole = ( { site, translate } ) => {
+const getWpcomFollowerRole = ( { site, translate } ) => {
 	const displayName = site.is_private
 		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
 		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
@@ -30,8 +30,8 @@ const getWPCOMFollowerRole = ( { site, translate } ) => {
 };
 
 const RoleSelect = ( props ) => {
-	const { siteRoles, site, includeFollower, siteId, id, explanation, translate } = props;
-	const roles = siteRoles && siteRoles.slice( 0 );
+	let { siteRoles } = props;
+	const { site, includeFollower, siteId, id, explanation, translate } = props;
 	const omitProps = [
 		'site',
 		'key',
@@ -45,24 +45,20 @@ const RoleSelect = ( props ) => {
 		'translate'
 	];
 
-	if ( site && roles && includeFollower ) {
-		roles.push( getWPCOMFollowerRole( props ) );
+	if ( site && siteRoles && includeFollower ) {
+		siteRoles = siteRoles.concat( getWpcomFollowerRole( props ) );
 	}
 
 	return (
-		<FormFieldset key={ siteId } disabled={ ! roles }>
-			{ siteId &&
-				<QuerySites siteId={ siteId } /> &&
-				<QuerySiteRoles siteId={ siteId } />
-			}
+		<FormFieldset key={ siteId } disabled={ ! siteRoles }>
+			{ siteId && <QuerySites siteId={ siteId } /> }
+			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
 			<FormLabel htmlFor={ id }>
-				{ translate( 'Role', {
-					context: 'Text that is displayed in a label of a form.'
-				} ) }
+				{ translate( 'Role' ) }
 			</FormLabel>
 			<FormSelect { ...omit( props, omitProps ) }>
 				{
-					roles && roles.map( ( role ) => {
+					siteRoles && map( siteRoles, ( role ) => {
 						return (
 							<option value={ role.name } key={ role.name }>
 								{ role.display_name }

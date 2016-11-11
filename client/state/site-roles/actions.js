@@ -1,11 +1,6 @@
 /**
  * Internal dependencies
  */
-import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'lib/wp';
 import {
 	SITE_ROLES_RECEIVE,
@@ -32,11 +27,10 @@ export function requestSiteRoles( siteId ) {
 				siteId,
 				roles
 			} );
-		} ).catch( ( error ) => {
+		} ).catch( () => {
 			dispatch( {
 				type: SITE_ROLES_REQUEST_FAILURE,
-				siteId,
-				error: pick( error, [ 'error', 'status', 'message' ] )
+				siteId
 			} );
 		} );
 	};
