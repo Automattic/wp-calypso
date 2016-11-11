@@ -34,7 +34,6 @@ export default ( state = Map(), action ) => {
 					taxonomies: action.themeTaxonomies,
 					stylesheet: action.themeStylesheet,
 					demo_uri: action.themeDemoUri,
-					purchased: action.themePurchased,
 					isRequesting: false
 				} ) );
 		case THEME_DETAILS_RECEIVE_FAILURE:
