@@ -87,7 +87,7 @@
 	}
 }
 
-.domain-suggestion__non-button-action {
+.domain-suggestion__action {
 	flex: 1 0 auto;
 	min-width: 66px;
 	text-align: center;
@@ -113,46 +113,5 @@
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		color: lighten( $gray, 30% );
-	}
-}
-
-.domain-suggestion__action {
-	flex: 1 0 auto;
-	margin: 1px 0 0 5%;
-	min-width: 100px;
-
-	@include breakpoint( ">660px" ) {
-		margin-top: 3px;
-	}
-
-	@include breakpoint( ">960px" ) {
-		margin-top: 0;
-	}
-
-	.is-placeholder & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
-		border: none;
-		border-radius: 0;
-		color: transparent;
-		height: 40px;
-
-		.button {
-			opacity: 0;
-			pointer-events: none;
-		}
-	}
-
-	.button {
-		width: 100%;
-
-		&.added {
-			background-color: $gray-light;
-
-			.noticon {
-				font-size: 25px;
-				line-height: 16px;
-			}
-		}
 	}
 }
