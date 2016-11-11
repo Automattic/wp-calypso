@@ -322,7 +322,7 @@ export default connect(
 
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
-			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4.0' ),
+			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type )
 		};
 	},
