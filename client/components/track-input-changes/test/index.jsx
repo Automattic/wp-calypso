@@ -120,6 +120,6 @@ describe( 'TrackInputChanges#onNewValue', function() {
 				/>
 			</TrackInputChanges>,
 			container
-		) ).to.throw( 'onlyChild must be passed a children with exactly one child.' );
+		) ).to.throw;
 	} );
 } );
