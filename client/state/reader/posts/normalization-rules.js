@@ -36,6 +36,7 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
+import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
 
 /**
@@ -84,15 +85,16 @@ function classifyPost( post ) {
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
 		canonicalAspect;
 
-	if ( post.images &&
-			post.images.length >= 1 &&
-			post.content_images.length < GALLERY_MIN_IMAGES &&
-			canonicalImage && canonicalImage.width >= PHOTO_ONLY_MIN_WIDTH &&
+	if ( post.canonical_media &&
+			post.canonical_media.mediaType === 'image' &&
+			( ! post.content_images || post.content_images.length < GALLERY_MIN_IMAGES ) &&
+			post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
 			hasShortContent( post ) ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
 	if ( canonicalImage ) {
+		// TODO do we still need aspect logic here and any of these?
 		if ( canonicalImage.width >= 600 ) {
 			displayType ^= DISPLAY_TYPES.LARGE_BANNER;
 		}
@@ -124,10 +126,8 @@ function classifyPost( post ) {
 		}
 	}
 
-	if ( post.content_embeds && post.content_embeds.length >= 1 ) {
-		if ( ! canonicalImage || post.content_embeds.length === 1 ) {
-			displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
-		}
+	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
+		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 
 	if ( post.content_images && post.content_images.length >= GALLERY_MIN_IMAGES ) {
@@ -164,6 +164,7 @@ const fastPostNormalizationRules = flow( [
 	] ),
 	firstPassCanonicalImage,
 	createBetterExcerpt,
+	pickCanonicalMedia,
 	classifyPost,
 ] );
 
@@ -179,6 +180,7 @@ export function runFastRules( post ) {
 const slowSyncRules = flow( [
 	keepValidImages( 144, 72 ),
 	pickCanonicalImage,
+	pickCanonicalMedia,
 	classifyPost
 ] );
 
