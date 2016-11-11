@@ -714,7 +714,8 @@ const mapStateToProps = ( state, ownProps ) => {
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const siteId = get( site, 'ID', 0 );
-	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4.0' );
+	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
+
 	const seoFeatureEnabled = site &&
 		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
 			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo && site.isModuleActive( 'seo-tools' ) );
