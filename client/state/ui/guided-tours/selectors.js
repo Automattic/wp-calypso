@@ -162,19 +162,27 @@ const isConflictingWithFirstView = state =>
 	hasViewJustBeenVisible( state ) ||
 	shouldViewBeVisible( state );
 
-const shouldBail = state => {
-	// bail if we're on a blacklisted page
-	return isSectionBlacklisted( state ) ||
-		isConflictingWithFirstView( state );
-};
+const shouldBailAllTours = state =>
+	isSectionBlacklisted( state );
+
+const shouldBailNewTours = state =>
+	isConflictingWithFirstView( state );
 
 export const findEligibleTour = createSelector(
-	state => ! shouldBail( state ) && (
-		findOngoingTour( state ) ||
-		findRequestedTour( state ) ||
-		findTriggeredTour( state )
-	) || undefined,
-	[ shouldBail, getActionLog, getToursHistory ]
+	state => {
+		if ( shouldBailAllTours( state ) ) {
+			return;
+		}
+
+		return findOngoingTour( state ) ||
+			! shouldBailNewTours( state ) && (
+				findRequestedTour( state ) ||
+				findTriggeredTour( state )
+			) || undefined;
+	},
+	// Though other state selectors are used in `findEligibleTour`'s body,
+	// we're intentionally reducing the list of dependants to the following:
+	[ getActionLog, getToursHistory ]
 );
 
 /**
