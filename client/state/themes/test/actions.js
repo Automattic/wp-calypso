@@ -97,7 +97,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch request action when thunk triggered', () => {
+		it( 'should dispatch request action when thunk is triggered', () => {
 			activateTheme( themeId, siteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
