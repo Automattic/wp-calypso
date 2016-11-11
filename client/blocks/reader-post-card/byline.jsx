@@ -69,7 +69,8 @@ class PostByline extends React.Component {
 					preferGravatar={ true }
 					siteUrl={ streamUrl } />
 				<div className="reader-post-card__byline-details">
-					{ shouldDisplayAuthor &&
+					<div className="reader-post-card__byline-author-site">
+						{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
 							className="reader-post-card__link"
 							author={ post.author }
@@ -77,15 +78,16 @@ class PostByline extends React.Component {
 							post={ post }>
 							{ post.author.name }
 						</ReaderAuthorLink>
-					}
-					{ shouldDisplayAuthor && ', ' }
-					<ReaderSiteStreamLink
-						className="reader-post-card__site reader-post-card__link"
-						feedId={ feedId }
-						siteId={ siteId }
-						post={ post }>
-						{ siteName }
-					</ReaderSiteStreamLink>
+						}
+						{ shouldDisplayAuthor && ', ' }
+						<ReaderSiteStreamLink
+							className="reader-post-card__site reader-post-card__link"
+							feedId={ feedId }
+							siteId={ siteId }
+							post={ post }>
+							{ siteName }
+						</ReaderSiteStreamLink>
+					</div>
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date && post.URL &&
 							<span className="reader-post-card__timestamp">
