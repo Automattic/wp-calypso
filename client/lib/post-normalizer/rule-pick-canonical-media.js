@@ -1,15 +1,12 @@
 /**
  * External Dependencies
  */
-import React from 'react';
 import { find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import FeaturedVideo from './featured-video';
-import FeaturedImage from './featured-image';
-import { isUrlLikelyAnImage } from '../../lib/post-normalizer/utils.js';
+import { isUrlLikelyAnImage } from './utils.js';
 
 /** Returns true if an image is large enough to be a featured asset
  * @param {object} image - image must have a width and height property
@@ -46,30 +43,26 @@ function isCandidateForFeature( media ) {
  *  2. if there is no usable featured image, use the media that appears first in the content of the post
  *  3. if there is no eligible asset, return null
  */
-const FeaturedAsset = ( { post } ) => {
+export default function pickCanonicalMedia( post ) {
 	if ( ! post ) {
-		return null;
+		return post;
 	}
 
 	// jetpack lies about thumbnails/featured_images so we need to make sure its actually an image
 	if ( post.featured_image && isUrlLikelyAnImage( post.featured_image ) &&
 			isImageLargeEnoughForFeature( post.post_thumbnail ) ) {
-		return <FeaturedImage imageUri={ post.featured_image } href={ post.URL } />;
+		post.canonical_media = {
+			src: post.featured_image,
+			height: post.post_thumbnail.height,
+			width: post.post_thumbnail.width,
+			mediaType: 'image',
+		};
+		return post;
 	}
 
-	const featuredMedia = find( post.content_media, isCandidateForFeature );
+	const canonicalMedia = find( post.content_media, isCandidateForFeature );
+	post.canonical_media = { ...canonicalMedia };
 
-	if ( featuredMedia && featuredMedia.mediaType === 'video' ) {
-		return <FeaturedVideo { ...featuredMedia } videoEmbed={ featuredMedia } />;
-	} else if ( featuredMedia && featuredMedia.mediaType === 'image' ) {
-		return <FeaturedImage imageUri={ featuredMedia.src } href={ post.URL } />;
-	}
+	return post;
+}
 
-	return null;
-};
-
-FeaturedAsset.propTypes = {
-	post: React.PropTypes.object.isRequired,
-};
-
-export default FeaturedAsset;
