@@ -15,7 +15,7 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { sectionify } from 'lib/route/path';
 import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
 export function getSignupUrl( theme ) {
@@ -128,8 +128,7 @@ function appendActionTracking( option, name ) {
 }
 
 export function getAnalyticsData( path, tier, site_id ) {
-	// Since lib/route isn't available in SSR context, check for it before we use it
-	let basePath = route.sectionify && route.sectionify( path );
+	let basePath = sectionify( path );
 	let analyticsPageTitle = 'Themes';
 
 	if ( tier ) {
