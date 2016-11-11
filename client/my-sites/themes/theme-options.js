@@ -169,9 +169,9 @@ export const connectOptions = connect(
 
 		if ( site ) {
 			// TODO (@ockham): Change actions to use siteId. (@budzanowski) activateTheme is using only IDs
-			mapAction = action => ( t ) => action( t.Id, site.ID, source );
+			mapAction = action => ( t ) => action( t.id, site.ID, source );
 		} else { // Bind only source.
-			mapAction = action => ( t, s ) => action( t.Id, s.ID, source );
+			mapAction = action => ( t, s ) => action( t.id, s.ID, source );
 		}
 
 		return bindActionCreators(

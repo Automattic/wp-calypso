@@ -104,7 +104,7 @@ export default ( state = initialState, action ) => {
 			// `createReducerStore()` only emits a `change` event when the new
 			// state is different from the old one, we need something to change
 			// here.
-			return state.set( 'active', action.theme.id );
+			return state.set( 'active', action.themeId );
 		case DESERIALIZE:
 			return initialState;
 		case SERVER_DESERIALIZE:

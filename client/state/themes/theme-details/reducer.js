@@ -43,7 +43,7 @@ export default ( state = Map(), action ) => {
 		case THEME_DETAILS_RECEIVE_FAILURE:
 			return state.set( action.themeId, Map( { error: action.error } ) );
 		case THEME_ACTIVATE_REQUEST_SUCCESS:
-			return state.update( setActiveTheme.bind( null, action.theme.id ) );
+			return state.update( setActiveTheme.bind( null, action.themeId ) );
 		case DESERIALIZE:
 			return Map();
 		case SERVER_DESERIALIZE:

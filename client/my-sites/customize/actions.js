@@ -33,14 +33,12 @@ var CustomizeActions = {
 	// `themeActivated` shouldn't be passed as an argument anymore,
 	// but directly imported and dispatch()ed from inside `activated()`,
 	// which needs to be turned into a Redux thunk.
-	activated: function( id, site, themeActivated, trackingData ) {
+	activated: function( id, site, themeActivated ) {
 		trackClick( 'customizer', 'activate' );
 
 		page( '/design/' + site.slug );
 
-		trackingData.theme = id;
-
-		themeActivated( id, site.ID, trackingData );
+		themeActivated( id, site.ID, 'customizer' );
 
 		Dispatcher.handleViewAction( {
 			type: 'THEME_ACTIVATED_WITH_CUSTOMIZER',

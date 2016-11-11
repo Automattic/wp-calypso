@@ -18,9 +18,7 @@ var notices = require( 'notices' ),
 	EmptyContent = require( 'components/empty-content' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Actions = require( 'my-sites/customize/actions' ),
-	themeActivated = require( 'state/themes/actions' ).themeActivationSuccess,
-	getCurrentTheme = require( 'state/themes/current-theme/selectors' ).getCurrentTheme,
-	QueryCurrentTheme = require( 'components/data/query-current-theme' );
+	themeActivated = require( 'state/themes/actions' ).themeActivationSuccess;
 
 var loadingTimer;
 
@@ -34,7 +32,6 @@ var Customize = React.createClass( {
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
 		panel: React.PropTypes.string,
-		trackingData: React.PropTypes.object.isRequired,
 	},
 
 	getDefaultProps: function() {
@@ -237,7 +234,7 @@ var Customize = React.createClass( {
 					break;
 				case 'activated':
 					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					Actions.activated( themeSlug, site, this.props.themeActivated, this.props.trackingData );
+					Actions.activated( themeSlug, site, this.props.themeActivated );
 					break;
 				case 'purchased':
 					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
@@ -302,7 +299,6 @@ var Customize = React.createClass( {
 
 		if ( iframeUrl ) {
 			debug( 'loading iframe URL', iframeUrl );
-			const siteID = this.getSite().ID;
 			const iframeClassName = this.state.iframeLoaded ? 'is-iframe-loaded' : '';
 			// The loading message here displays while the iframe is loading. When the
 			// loading completes, the customizer will send a postMessage back to this
@@ -310,7 +306,6 @@ var Customize = React.createClass( {
 			// waitForLoading above) then an error will be shown.
 			return (
 				<div className="main main-column customize is-iframe" role="main">
-					{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
 					<iframe className={ iframeClassName } src={ iframeUrl } />
 				</div>
@@ -331,19 +326,6 @@ var Customize = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
-		const siteId = props.sites.getSite( props.domain ).ID;
-		const previousTheme = getCurrentTheme( state, siteId );
-		const queryParams = state.themes.themesList.get( 'query' );
-		const previousId = previousTheme ? previousTheme.id : 'unknown';
-		const trackingData = {
-			previous_theme: previousId,
-			source: 'customizer',
-			purchased: false,
-			search_term: queryParams.get( 'search' ) || null
-		};
-
-		return { trackingData };
-	},
+	( state, props ) => props,
 	bindActionCreators.bind( null, { themeActivated } )
 )( Customize );

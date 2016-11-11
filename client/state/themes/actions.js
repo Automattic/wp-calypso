@@ -274,7 +274,7 @@ export function themeActivationSuccess( themeId, siteId, source = 'unknown', pur
 				search_term: queryParams.get( 'search' ) || null
 			}
 		);
-		return withAnalytics( trackThemeActivation, action );
+		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivationSuccessThunk; // it is named function just for testing purposes
 }
