@@ -63,7 +63,7 @@ const ThemesRelatedCard = React.createClass( {
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
 								<a href={ this.props.getDetailsUrl( theme ) }>
-									<img src={ theme.screenshot + '?w=' + String( THEME_THUMBNAIL_WIDTH ) } />
+									<img src={ theme.screenshot + `?w=${ THEME_THUMBNAIL_WIDTH }` } />
 								</a>
 							</Card>
 						</li>
