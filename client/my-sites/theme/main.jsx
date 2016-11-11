@@ -505,7 +505,7 @@ const ThemeSheetWithOptions = ( props ) => {
 
 	return (
 		<ConnectedThemeSheet { ...props }
-			site={ site }
+			siteId={ site.ID }
 			theme={ props /* TODO: Have connectOptions() only use theme ID */ }
 			options={ [
 				'signup',

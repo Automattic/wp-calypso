@@ -130,18 +130,16 @@ const ALL_THEME_OPTIONS = {
 const ALL_THEME_ACTIONS = { activate: activateTheme }; // All theme related actions available.
 
 export const connectOptions = connect(
-	( state, { options: optionNames, site } ) => {
+	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
 		let mapGetUrl = identity, mapHideForSite = identity;
 
 		// We bind hideForTheme to site even if it is null since the selectors
 		// that are used by it are expected to recognize that case as "no site selected"
 		// and work accordingly.
-		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, site ? site.ID : null );
+		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId || null );
 
-		if ( site ) {
-			const siteId = site.ID;
-
+		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
