@@ -34,8 +34,7 @@ export const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
-	queryState: {},
-	active: 0
+	queryState: {}
 } ) );
 
 /**

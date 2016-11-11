@@ -24,7 +24,6 @@ describe( 'themes reducer', () => {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
-						active: true,
 						id: 'activetest',
 						author: 'activetest author',
 						screenshot: 'http://example.com',
@@ -54,7 +53,6 @@ describe( 'themes reducer', () => {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
-						active: true,
 						id: 'activetest',
 						author: 'activetest author',
 						screenshot: 'http://example.com',
@@ -84,7 +82,6 @@ describe( 'themes reducer', () => {
 				currentSiteId: 12345678,
 				themes: {
 					activetest: {
-						active: true,
 						id: 'activetest',
 						author: 'activetest author',
 						screenshot: 'http://example.com',

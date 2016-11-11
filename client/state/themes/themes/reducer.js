@@ -25,12 +25,6 @@ function add( newThemes, themes ) {
 	}, {} ) );
 }
 
-export function setActiveTheme( themeId, themes ) {
-	return themes
-		.map( theme => theme.delete( 'active' ) )
-		.setIn( [ themeId, 'active' ], true );
-}
-
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case THEMES_RECEIVE: {

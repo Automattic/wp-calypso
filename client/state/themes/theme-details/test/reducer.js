@@ -52,7 +52,6 @@ describe( 'reducer', () => {
 					filter: 'raw'
 				} ]
 			},
-			themeActive: false,
 			themePurchased: false
 		} );
 
@@ -82,7 +81,6 @@ describe( 'reducer', () => {
 					filter: 'raw'
 				} ]
 			},
-			active: false,
 			purchased: false,
 			isRequesting: false,
 		} );

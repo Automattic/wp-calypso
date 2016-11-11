@@ -34,7 +34,6 @@ export default ( state = Map(), action ) => {
 					taxonomies: action.themeTaxonomies,
 					stylesheet: action.themeStylesheet,
 					demo_uri: action.themeDemoUri,
-					active: action.themeActive,
 					purchased: action.themePurchased,
 					isRequesting: false
 				} ) );

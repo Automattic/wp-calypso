@@ -8,7 +8,7 @@ describe( 'themes', () => {
 	const actionReceiveThemes = {
 		type: THEMES_RECEIVE,
 		themes: [
-			{ id: 'bold-news', active: true },
+			{ id: 'bold-news' },
 			{ id: 'picard' }
 		]
 	};
