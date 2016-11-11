@@ -58,23 +58,19 @@ describe( 'actions', () => {
 		siteId: 2211667,
 	};
 
-	const currentThemes = Map().set(
-		2211667, {
-			id: 'twentyfifteen'
-		} );
-
-	const fakeState = {
+	const fakeGetState = () => ( {
 		themes: {
-			currentTheme: Map( { currentThemes } ),
+			currentTheme: Map( {
+				currentThemes: Map().set( 2211667, {
+					id: 'twentyfifteen'
+				} ) } ),
 			themesList: Map( {
 				query: Map( {
 					search: 'simple, white'
 				} )
 			} )
 		}
-	};
-
-	const fakeGetState = () => fakeState;
+	} );
 
 	describe( '#themeActivated()', () => {
 		it( 'should return an action object', () => {
