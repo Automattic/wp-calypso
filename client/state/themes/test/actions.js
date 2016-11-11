@@ -26,60 +26,60 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	const trackingData = {
-		theme: 'twentysixteen',
-		previous_theme: 'twentyfifteen',
-		source: 'unknown',
-		purchased: false,
-		search_term: 'simple, white'
-	};
-
-	const expectedActivationSuccess = {
-		meta: {
-			analytics: [
-				{
-					payload: {
-						name: 'calypso_themeshowcase_theme_activate',
-						properties: {
-							previous_theme: 'twentyfifteen',
-							purchased: false,
-							search_term: 'simple, white',
-							source: 'unknown',
-							theme: 'twentysixteen',
-						},
-						service: 'tracks',
-					},
-					type: 'ANALYTICS_EVENT_RECORD'
-				},
-			],
-		},
-		type: THEME_ACTIVATE_REQUEST_SUCCESS,
-		theme: { id: 'twentysixteen' },
-		siteId: 2211667,
-	};
-
-	const fakeGetState = () => ( {
-		themes: {
-			currentTheme: Map( {
-				currentThemes: Map().set( 2211667, {
-					id: 'twentyfifteen'
-				} ) } ),
-			themesList: Map( {
-				query: Map( {
-					search: 'simple, white'
-				} )
-			} )
-		}
-	} );
-
 	describe( '#themeActivated()', () => {
 		it( 'should return an action object', () => {
+			const expectedActivationSuccess = {
+				meta: {
+					analytics: [
+						{
+							payload: {
+								name: 'calypso_themeshowcase_theme_activate',
+								properties: {
+									previous_theme: 'twentyfifteen',
+									purchased: false,
+									search_term: 'simple, white',
+									source: 'unknown',
+									theme: 'twentysixteen',
+								},
+								service: 'tracks',
+							},
+							type: 'ANALYTICS_EVENT_RECORD'
+						},
+					],
+				},
+				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				theme: { id: 'twentysixteen' },
+				siteId: 2211667,
+			};
+
+			const fakeGetState = () => ( {
+				themes: {
+					currentTheme: Map( {
+						currentThemes: Map().set( 2211667, {
+							id: 'twentyfifteen'
+						} ) } ),
+					themesList: Map( {
+						query: Map( {
+							search: 'simple, white'
+						} )
+					} )
+				}
+			} );
+
 			themeActivated( { id: 'twentysixteen' }, 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );
 
 	describe( '#activateTheme()', () => {
+		const trackingData = {
+			theme: 'twentysixteen',
+			previous_theme: 'twentyfifteen',
+			source: 'unknown',
+			purchased: false,
+			search_term: 'simple, white'
+		};
+
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
