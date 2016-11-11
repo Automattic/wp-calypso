@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	includes = require( 'lodash/includes' );
+import React from 'react';
+import classnames from 'classnames';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	Button = require( 'components/button' ),
-	SitesDropdown = require( 'components/sites-dropdown' ),
-	sitesList = require( 'lib/sites-list' )();
+import Dialog from 'components/dialog';
+import Button from 'components/button';
+import SitesDropdown from 'components/sites-dropdown';
+import sitesListFactory from 'lib/sites-list';
+
+const sitesList = sitesListFactory();
 
 /**
  * Component
  */
-var SiteSelectorModal = React.createClass( {
+const SiteSelectorModal = React.createClass( {
 	propTypes: {
 		// children: Custom content. Will be displayed above the `SitesDropdown`.
 		children: React.PropTypes.node,
@@ -36,7 +38,7 @@ var SiteSelectorModal = React.createClass( {
 		className: React.PropTypes.string
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		const primarySite = sitesList.getPrimary();
 		let filteredSites = sitesList.getVisible();
 
@@ -47,16 +49,16 @@ var SiteSelectorModal = React.createClass( {
 		return {
 			site: includes( filteredSites, primarySite )
 				? primarySite
-				: filteredSites[0]
+				: filteredSites[ 0 ]
 		};
 	},
 
-	setSite: function( slug ) {
-		var site = sitesList.getSite( slug );
+	setSite( slug ) {
+		const site = sitesList.getSite( slug );
 		this.setState( { site: site } );
 	},
 
-	onClose: function( action ) {
+	onClose( action ) {
 		if ( 'mainAction' === action ) {
 			this.props.mainAction( this.state.site );
 		}
@@ -64,20 +66,20 @@ var SiteSelectorModal = React.createClass( {
 		this.props.hide();
 	},
 
-	onButtonClick: function() {
+	onButtonClick() {
 		this.props.mainAction( this.state.site );
 	},
 
-	getMainLink: function() {
-		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
+	getMainLink() {
+		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
 			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
 			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
 	},
 
-	render: function() {
-		var mainLink = this.getMainLink(),
+	render() {
+		const mainLink = this.getMainLink(),
 			buttons = [
 				{ action: 'back', label: this.translate( 'Back' ) },
 				mainLink
@@ -101,4 +103,4 @@ var SiteSelectorModal = React.createClass( {
 	}
 } );
 
-module.exports = SiteSelectorModal;
+export default SiteSelectorModal;
