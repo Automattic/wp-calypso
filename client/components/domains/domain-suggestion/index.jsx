@@ -51,7 +51,7 @@ const DomainSuggestion = React.createClass( {
 					{ children }
 					<DomainProductPrice
 						rule={ priceRule }
-						price={ price }/>
+						price={ price } />
 				</div>
 				<div className="domain-suggestion__action">
 					{ this.props.buttonContent }
