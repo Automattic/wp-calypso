@@ -221,6 +221,34 @@
 	}
 }
 
+// X-Posts
+
+.is-reader-page {
+
+	.reader__card.card.is-x-post {
+		border-bottom: 1px solid lighten( $gray, 30% );
+		margin: 0;
+		padding: 20px;
+
+		&:hover {
+			box-shadow: none; // Disables hover for now until we implement hover in all card types
+		}
+
+		.reader__site-and-author-icon {
+			margin-right: 12px;
+			width: auto;
+		}
+
+		.site-icon {
+			border: 1px solid lighten( $gray, 30% );
+		}
+
+		.gravatar {
+			border: 1px solid $white;
+		}
+	}
+}
+
 // Featured Image/Video
 .reader__post-featured-image,
 .reader__post-featured-video {
