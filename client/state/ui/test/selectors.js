@@ -10,6 +10,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
+	getSection,
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
@@ -108,6 +109,35 @@ describe( 'selectors', () => {
 			} );
 
 			expect( slug ).to.eql( 'example.com' );
+		} );
+	} );
+
+	describe( '#getSection()', () => {
+		it( 'should return false if no section is assigned', () => {
+			const section = getSection( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( section ).to.eql( false );
+		} );
+
+		it( 'should return the current section if there is one assigned', () => {
+			const sectionObj = {
+				name: 'post-editor',
+				paths: [ '/post', '/page' ],
+				module: 'post-editor',
+				group: 'editor',
+				secondary: true
+			};
+			const section = getSection( {
+				ui: {
+					section: sectionObj
+				}
+			} );
+
+			expect( section ).to.equal( sectionObj );
 		} );
 	} );
 

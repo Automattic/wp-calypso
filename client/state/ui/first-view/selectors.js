@@ -12,7 +12,7 @@ import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
+import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
@@ -74,7 +74,7 @@ export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
 }
 
 function routeSetIsInCurrentSection( state, routeSet ) {
-	const section = state.ui.section;
+	const section = getSection( state );
 	return some( section.paths, path => startsWith( routeSet.path, path ) );
 }
 
