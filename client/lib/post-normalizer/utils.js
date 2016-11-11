@@ -86,6 +86,15 @@ export function domForHtml( html ) {
 	return dom;
 }
 
+/** Determine if url is likely pointed to an image
+ * @param {string} uri - a url
+ * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
+ */
+export function isUrlLikelyAnImage( uri ) {
+	const withoutQuery = url.parse( uri ).pathname;
+	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
+}
+
 /**
  * Determine if a post thumbnail is likely an image
  * @param  {object} thumb the thumbnail object from a post
@@ -100,11 +109,7 @@ export function thumbIsLikelyImage( thumb ) {
 	//if ( startsWith( thumb.mime_type, 'image/' ) ) {
 	//	return true;
 	// }
-
-	const { pathname } = url.parse( thumb.URL, true, true );
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], function( ext ) {
-		return endsWith( pathname, ext );
-	} );
+	return isUrlLikelyAnImage( thumb.URL );
 }
 
 /**
