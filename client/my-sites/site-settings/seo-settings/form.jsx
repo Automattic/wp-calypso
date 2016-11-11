@@ -589,6 +589,17 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
+					{ jetpack && ! this.props.site.isModuleActive( 'verification-tools' ) &&
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ this.translate(
+								'You must activate Site Verification module in Jetpack\'s dashboard for these changes to take effect.'
+							) }
+						>
+						</Notice>
+					}
+
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
 					</SectionHeader>
