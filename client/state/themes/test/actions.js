@@ -14,10 +14,7 @@ import {
 	THEME_ACTIVATE_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
-	themeActivation,
 	themeActivated,
-	themeActivationFailed,
-	themeActivationSuccess,
 	activateTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -27,53 +24,6 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	describe( '#themeActivation()', () => {
-		it( 'should return an action object', () => {
-			const themeId = 'twentysixteen';
-			const siteId = 2211667;
-			const expected = {
-				type: THEME_ACTIVATE_REQUEST,
-				themeId,
-				siteId,
-			};
-
-			const action = themeActivation( themeId, siteId );
-			expect( action ).to.eql( expected );
-		} );
-	} );
-
-	describe( '#themeActivated()', () => {
-		it( 'should return an action object', () => {
-			const theme = { id: 'twentysixteen' };
-			const siteId = 2211667;
-			const expected = {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
-				theme,
-				siteId,
-			};
-
-			const action = themeActivated( theme, siteId );
-			expect( action ).to.eql( expected );
-		} );
-	} );
-
-	describe( '#themeActivationFailed()', () => {
-		it( 'should return an action object', () => {
-			const themeId = 'twentysixteen';
-			const siteId = 2211667;
-			const error = { error: 'theme_not_found', message: 'The specified theme was not found' };
-			const expected = {
-				type: THEME_ACTIVATE_REQUEST_FAILURE,
-				themeId,
-				siteId,
-				error,
-			};
-
-			const action = themeActivationFailed( themeId, siteId, error );
-			expect( action ).to.deep.equal( expected );
-		} );
 	} );
 
 	const trackingData = {
@@ -126,12 +76,12 @@ describe( 'actions', () => {
 
 	const fakeGetState = () => fakeState;
 
-	describe( '#themeActivationSuccess()', () => {
+	describe( '#themeActivated()', () => {
 		it( 'should return an action object', () => {
 			const theme = { id: 'twentysixteen' };
 			const siteId = 2211667;
 
-			themeActivationSuccess( theme, siteId )( spy, fakeGetState );
+			themeActivated( theme, siteId )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );
@@ -163,7 +113,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch theme activation success thunk when request completes', () => {
 			return activateTheme( themeId, siteId, trackingData )( spy ).then( () => {
-				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivationSuccessThunk' );
+				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivatedThunk' );
 			} );
 		} );
 

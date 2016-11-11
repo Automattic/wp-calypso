@@ -195,77 +195,40 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-/**
- * Returns an action object to be used in signalling that a theme activation
- * has been triggered
- *
- * @param  {String}  themeId Theme to be activated
- * @param  {Object}  siteId Site used for activation
- * @return {Object}  Action object
- */
-export function themeActivation( themeId, siteId ) {
-	return {
-		type: THEME_ACTIVATE_REQUEST,
-		themeId,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that a theme activation
- * has been successfull
- *
- * @param  {Object}  theme Theme received
- * @param  {Number}  siteId Site used for activation
- * @return {Object}  Action object
- */
-export function themeActivated( theme, siteId ) {
-	return {
-		type: THEME_ACTIVATE_REQUEST_SUCCESS,
-		theme,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that a theme activation
- * has failed
- *
- * @param  {String}  themeId Theme received
- * @param  {Number}  siteId Site used for activation
- * @param  {Number}  error Error response from server
- * @return {Object}  Action object
- */
-export function themeActivationFailed( themeId, siteId, error ) {
-	return {
-		type: THEME_ACTIVATE_REQUEST_FAILURE,
-		themeId,
-		siteId,
-		error,
-	};
-}
-
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
-		dispatch( themeActivation( themeId, siteId ) );
+		dispatch( {
+			type: THEME_ACTIVATE_REQUEST,
+			themeId,
+			siteId,
+		} );
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				dispatch( themeActivationSuccess( theme, siteId, source, purchased ) );
+				dispatch( themeActivated( theme, siteId, source, purchased ) );
 			} )
 			.catch( error => {
-				dispatch( themeActivationFailed( themeId, siteId, error ) );
+				dispatch( {
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					themeId,
+					siteId,
+					error,
+				} );
 			} );
 	};
 }
 
-export function themeActivationSuccess( theme, siteId, source = 'unknown', purchased = false ) {
-	const themeActivationSuccessThunk = ( dispatch, getState ) => {
+export function themeActivated( theme, siteId, source = 'unknown', purchased = false ) {
+	const themeActivatedThunk = ( dispatch, getState ) => {
 		if ( typeof theme !== 'object' ) {
 			theme = getThemeById( getState(), theme );
 		}
 
-		const action = themeActivated( theme, siteId );
+		const action = {
+			type: THEME_ACTIVATE_REQUEST_SUCCESS,
+			theme,
+			siteId,
+		};
 		const previousTheme = getCurrentTheme( getState(), siteId );
 		const queryParams = getState().themes.themesList.get( 'query' );
 
@@ -281,7 +244,7 @@ export function themeActivationSuccess( theme, siteId, source = 'unknown', purch
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
-	return themeActivationSuccessThunk; // it is named function just for testing purposes
+	return themeActivatedThunk; // it is named function just for testing purposes
 }
 
 export function clearActivated() {

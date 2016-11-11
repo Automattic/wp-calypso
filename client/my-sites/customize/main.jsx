@@ -18,7 +18,7 @@ var notices = require( 'notices' ),
 	EmptyContent = require( 'components/empty-content' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Actions = require( 'my-sites/customize/actions' ),
-	themeActivated = require( 'state/themes/actions' ).themeActivationSuccess;
+	themeActivated = require( 'state/themes/actions' ).themeActivated;
 
 var loadingTimer;
 

@@ -10,7 +10,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { themeActivationSuccess } from 'state/themes/actions';
+import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
@@ -326,7 +326,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			activatedTheme( meta, site ) {
-				dispatch( themeActivationSuccess( meta, site, 'calypstore', true ) );
+				dispatch( themeActivated( meta, site, 'calypstore', true ) );
 			},
 			fetchReceipt( receiptId ) {
 				dispatch( fetchReceipt( receiptId ) );
