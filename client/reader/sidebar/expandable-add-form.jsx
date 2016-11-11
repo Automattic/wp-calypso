@@ -13,12 +13,16 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 
 export class ExpandableSidebarAddForm extends Component {
+
 	constructor() {
 		super();
+		this.toggleAdd = this.toggleAdd.bind( this );
+		this.handleAddKeyDown = this.handleAddKeyDown.bind( this );
 		this.state = {
 			isAdding: false,
 		};
 	}
+	
 	toggleAdd() {
 		if ( ! this.state.isAdding ) {
 			this.refs.menuAddInput.focus();
@@ -37,7 +41,7 @@ export class ExpandableSidebarAddForm extends Component {
 		}
 	}
 	render() {
-		const { translate } = this.props;
+		const { translate, addLabel, addPlaceholder } = this.props;
 		const classes = classNames(
 			'sidebar__menu-add-item',
 			{
@@ -52,10 +56,10 @@ export class ExpandableSidebarAddForm extends Component {
 				}
 				<div className="sidebar__menu-add">
 					<input
-						aria-label={ this.props.addLabel }
+						aria-label={ addLabel }
 						className="sidebar__menu-add-input"
 						type="text"
-						placeholder={ this.props.addPlaceholder }
+						placeholder={ addPlaceholder }
 						ref="menuAddInput"
 						onKeyDown={ this.handleAddKeyDown }
 					/>
@@ -80,4 +84,5 @@ ExpandableSidebarAddForm.defaultProps = {
 	onAddClick: noop,
 	translate: identity,
 };
+
 export default localize( ExpandableSidebarAddForm );
