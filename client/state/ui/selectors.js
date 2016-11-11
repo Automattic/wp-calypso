@@ -68,11 +68,7 @@ export function getSection( state ) {
  * @return {?String}       Current section name
  */
 export function getSectionName( state ) {
-	const section = getSection( state );
-	if ( ! section ) {
-		return null;
-	}
-	return get( section, 'name', null );
+	return get( getSection( state ), 'name', null );
 }
 
 /**
@@ -82,11 +78,7 @@ export function getSectionName( state ) {
  * @return {?String}       Current section group name
  */
 export function getSectionGroup( state ) {
-	const section = getSection( state );
-	if ( ! section ) {
-		return null;
-	}
-	return get( section, 'group', null );
+	return get( getSection( state ), 'group', null );
 }
 
 /**
@@ -118,11 +110,7 @@ export function isSectionLoading( state ) {
  * @see client/sections
  */
 export function isSectionIsomorphic( state ) {
-	const section = getSection( state );
-	if ( ! section ) {
-		return false;
-	}
-	return get( section, 'isomorphic', false );
+	return get( getSection( state ), 'isomorphic', false );
 }
 
 /**
