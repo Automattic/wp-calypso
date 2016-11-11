@@ -43,6 +43,7 @@ ExpandableSidebarMenu.propTypes = {
 	onClick: React.PropTypes.func,
 	hideAddButton: React.PropTypes.bool,
 };
+
 ExpandableSidebarMenu.defaultProps = {
 	expanded: false,
 	hideAddButton: false,
