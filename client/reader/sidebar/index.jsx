@@ -211,7 +211,6 @@ export const ReaderSidebar = React.createClass( {
 					onClick={ this.props.toggleTagsVisibility }
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
-
 			</SidebarRegion>
 
 			{ this.props.shouldRenderAppPromo &&
