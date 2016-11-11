@@ -20,12 +20,14 @@ const ExpandableSidebarMenu = React.createClass( {
 		addPlaceholder: React.PropTypes.string,
 		onAddSubmit: React.PropTypes.func,
 		onAddClick: React.PropTypes.func,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
+		hideAddButton: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
-			expanded: false
+			expanded: false,
+			hideAddButton: false,
 		};
 	},
 
@@ -37,11 +39,10 @@ const ExpandableSidebarMenu = React.createClass( {
 				'is-togglable': true
 			}
 		);
-		const shouldHideAddButton = ! this.props.count && this.props.title === 'Lists';
 		return (
 			<SidebarMenu className={ classes }>
 				<ExpandableSidebarHeading title={ this.props.title } count={ this.props.count } onClick={ this.props.onClick } />
-				<ExpandableSidebarAddForm hideAddButton={ shouldHideAddButton } addLabel={ this.props.addLabel } addPlaceholder={ this.props.addPlaceholder } onAddClick={ this.props.onAddClick } onAddSubmit={ this.props.onAddSubmit } />
+				<ExpandableSidebarAddForm hideAddButton={ this.props.hideAddButton } addLabel={ this.props.addLabel } addPlaceholder={ this.props.addPlaceholder } onAddClick={ this.props.onAddClick } onAddSubmit={ this.props.onAddSubmit } />
 				<ul className="sidebar__menu-list">
 					{ this.props.children }
 				</ul>
