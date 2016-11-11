@@ -61,8 +61,9 @@ export default function pickCanonicalMedia( post ) {
 	}
 
 	const canonicalMedia = find( post.content_media, isCandidateForFeature );
-	post.canonical_media = { ...canonicalMedia };
+	if ( canonicalMedia ) {
+		post.canonical_media = canonicalMedia;
+	}
 
 	return post;
 }
-
