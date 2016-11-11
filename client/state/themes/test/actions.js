@@ -88,7 +88,7 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: themeId } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
 				.reply( 200, { id: 'karuna', version: '1.0.3' } )
 				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' } )
 				.reply( 404, {
@@ -102,8 +102,8 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
-				siteId,
-				themeId,
+				siteId: 2211667,
+				themeId: 'twentysixteen',
 			} );
 		} );
 
