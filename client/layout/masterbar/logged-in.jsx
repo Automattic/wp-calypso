@@ -97,7 +97,7 @@ const MasterbarLoggedIn = React.createClass( {
 					tooltip={ this.translate( 'Create a New Post', { textOnly: true } ) }
 				>
 					{ this.translate( 'Post', {
-						context: 'add new on admin bar'
+						context: 'add new from admin bar'
 					} ) }
 				</Publish>
 				<Item
