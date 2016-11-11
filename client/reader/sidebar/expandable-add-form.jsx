@@ -1,9 +1,10 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { noop, identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -11,36 +12,20 @@ import noop from 'lodash/noop';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 
-const ExpandableSidebarAddForm = React.createClass( {
-
-	propTypes: {
-		addLabel: React.PropTypes.string,
-		addPlaceholder: React.PropTypes.string,
-		onAddSubmit: React.PropTypes.func,
-		onAddClick: React.PropTypes.func,
-		hideAddButton: React.PropTypes.bool,
-	},
-
-	getInitialState() {
-		return {
-			isAdding: false
+export class ExpandableSidebarAddForm extends Component {
+	constructor() {
+		super();
+		this.state = {
+			isAdding: false,
 		};
-	},
-
-	getDefaultProps() {
-		return {
-			onAddSubmit: noop,
-			onAddClick: noop
-		};
-	},
-
+	}
 	toggleAdd() {
 		if ( ! this.state.isAdding ) {
 			this.refs.menuAddInput.focus();
 			this.props.onAddClick();
 		}
 		this.setState( { isAdding: ! this.state.isAdding } );
-	},
+	}
 
 	handleAddKeyDown( event ) {
 		const inputValue = this.refs.menuAddInput.value;
@@ -50,8 +35,9 @@ const ExpandableSidebarAddForm = React.createClass( {
 			this.refs.menuAddInput.value = '';
 			this.toggleAdd();
 		}
-	},
+	}
 	render() {
+		const { translate } = this.props;
 		const classes = classNames(
 			'sidebar__menu-add-item',
 			{
@@ -62,7 +48,7 @@ const ExpandableSidebarAddForm = React.createClass( {
 			<div className={ classes }>
 				{ this.props.hideAddButton
 					? null
-					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>{ this.translate( 'Add' ) }</Button>
+					: <Button compact className="sidebar__menu-add-button" onClick={ this.toggleAdd }>{ translate( 'Add' ) }</Button>
 				}
 				<div className="sidebar__menu-add">
 					<input
@@ -78,6 +64,20 @@ const ExpandableSidebarAddForm = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default ExpandableSidebarAddForm;
+ExpandableSidebarAddForm.propTypes = {
+	addLabel: PropTypes.string,
+	addPlaceholder: PropTypes.string,
+	onAddSubmit: PropTypes.func,
+	onAddClick: PropTypes.func,
+	hideAddButton: PropTypes.bool,
+	translate: PropTypes.func,
+};
+
+ExpandableSidebarAddForm.defaultProps = {
+	onAddSubmit: noop,
+	onAddClick: noop,
+	translate: identity,
+};
+export default localize( ExpandableSidebarAddForm );
