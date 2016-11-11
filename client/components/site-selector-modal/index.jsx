@@ -57,7 +57,7 @@ class SiteSelectorModal extends Component {
 
 	setSite = ( slug ) => {
 		const site = sitesList.getSite( slug );
-		this.setState( { site: site } );
+		this.setState( { site } );
 	}
 
 	onClose = ( action ) => {
@@ -72,7 +72,7 @@ class SiteSelectorModal extends Component {
 		this.props.mainAction( this.state.site );
 	}
 
-	getMainLink = () => {
+	getMainLink() {
 		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
@@ -81,12 +81,12 @@ class SiteSelectorModal extends Component {
 	}
 
 	render() {
-		const mainLink = this.getMainLink(),
-			buttons = [
-				{ action: 'back', label: this.props.translate( 'Back' ) },
-				mainLink
-			],
-			classNames = classnames( 'site-selector-modal', this.props.className );
+		const mainLink = this.getMainLink();
+		const buttons = [
+			{ action: 'back', label: this.props.translate( 'Back' ) },
+			mainLink
+		];
+		const classNames = classnames( 'site-selector-modal', this.props.className );
 
 		return (
 			<Dialog className={ classNames }
