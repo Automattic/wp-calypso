@@ -99,12 +99,7 @@ describe( 'actions', () => {
 				return requestSiteRoles( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: SITE_ROLES_REQUEST_FAILURE,
-						siteId,
-						error: {
-							error,
-							message,
-							status: 403
-						}
+						siteId
 					} );
 				} );
 			} );
