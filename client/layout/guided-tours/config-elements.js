@@ -417,6 +417,20 @@ export class Continue extends Component {
 	}
 }
 
+export class ButtonRow extends Component {
+	constructor( props ) {
+		super( props );
+	}
+
+	render() {
+		return (
+			<div className="guided-tours__choice-button-row">
+				{ this.props.children }
+			</div>
+		);
+	}
+}
+
 export class Link extends Component {
 	constructor( props ) {
 		super( props );

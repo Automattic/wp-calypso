@@ -6,6 +6,7 @@ import {
 	makeTour,
 	Tour,
 	Step,
+	ButtonRow,
 	Next,
 	Quit,
 	Continue,
@@ -40,10 +41,10 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="my-sites"
