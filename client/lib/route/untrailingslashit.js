@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 var trailingSlashRe = /\/$/;
 
 module.exports = function unTrailingSlashIt( path ) {
