@@ -45,7 +45,7 @@ const ThemesSelection = React.createClass( {
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
 		// connected props
-		siteSlug: React.PropTypes.string.isRequired,
+		siteSlug: React.PropTypes.string,
 		isActiveTheme: React.PropTypes.func,
 	},
 
