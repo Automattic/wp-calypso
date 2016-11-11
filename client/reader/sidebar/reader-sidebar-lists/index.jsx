@@ -38,6 +38,7 @@ const ReaderSidebarLists = React.createClass( {
 
 	render() {
 		const listCount = this.props.lists ? this.props.lists.length : 0;
+		const shouldHideAddButton = ! this.props.count;
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOpen }
@@ -47,7 +48,9 @@ const ReaderSidebarLists = React.createClass( {
 				addPlaceholder={ this.translate( 'Give your list a name' ) }
 				onAddClick={ this.handleAddClick }
 				onAddSubmit={ this.createList }
-				onClick={ this.props.onClick }>
+				onClick={ this.props.onClick }
+				hideAddButton={ shouldHideAddButton }
+			>
 					<ReaderSidebarListsList { ...this.props } />
 			</ExpandableSidebarMenu>
 		);
