@@ -65,6 +65,7 @@ const Theme = React.createClass( {
 		return nextProps.theme.id !== this.props.theme.id ||
 			! isEqual( nextProps.buttonContents, this.props.buttonContents ) ||
 			( nextProps.active !== this.props.active ) ||
+			( nextProps.purchased !== this.props.purchased ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
