@@ -29,8 +29,6 @@ const Theme = React.createClass( {
 			screenshot: React.PropTypes.string,
 			// Theme price (pre-formatted string) -- empty string indicates free theme
 			price: React.PropTypes.string,
-			// If true, the user has 'purchased' the theme
-			purchased: React.PropTypes.bool,
 			author: React.PropTypes.string,
 			author_uri: React.PropTypes.string,
 			demo_uri: React.PropTypes.string,
@@ -38,6 +36,8 @@ const Theme = React.createClass( {
 		} ),
 		// If true, highlight this theme as active
 		active: React.PropTypes.bool,
+		// If true, the user has 'purchased' the theme
+		purchased: React.PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
 		// URL the screenshot link points to
@@ -62,10 +62,10 @@ const Theme = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		// TODO: Once we're not using theme.purchased anymore, just compare theme.id instead of entire theme objects.
-		return ! isEqual( nextProps.theme, this.props.theme ) ||
+		return nextProps.theme.id !== this.props.theme.id ||
 			! isEqual( nextProps.buttonContents, this.props.buttonContents ) ||
 			( nextProps.active !== this.props.active ) ||
+			( nextProps.purchased !== this.props.purchased ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
@@ -111,10 +111,12 @@ const Theme = React.createClass( {
 		const {
 			name,
 			price,
-			purchased,
 			screenshot
 		} = this.props.theme;
-		const { active } = this.props;
+		const {
+			active,
+			purchased
+		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )

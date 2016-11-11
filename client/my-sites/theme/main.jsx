@@ -63,7 +63,6 @@ const ThemeSheet = React.createClass( {
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
-		purchased: React.PropTypes.bool,
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
