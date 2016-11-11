@@ -62,6 +62,15 @@ export default function waitForImagesToLoad( post ) {
 				return find( post.images, { src: image.src } );
 			} ), Boolean );
 
+			// this adds adds height/width to images
+			post.content_media = map( post.content_media, ( media ) => {
+				if ( media.mediaType === 'image' ) {
+					const img = find( post.images, { src: media.src } );
+					return { ...media, ...img };
+				}
+				return media;
+			} );
+
 			resolve( post );
 		}
 
