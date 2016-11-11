@@ -3,20 +3,15 @@
  */
 import React from 'react';
 import map from 'lodash/map';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarListsListItem from './list-item';
 
-const ReaderSidebarListsList = React.createClass( {
-
-	propTypes: {
-		lists: React.PropTypes.array,
-		path: React.PropTypes.string.isRequired,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string
-	},
+export class ReaderSidebarListsList extends React.Component {
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
@@ -30,12 +25,13 @@ const ReaderSidebarListsList = React.createClass( {
 					currentListSlug={ currentListSlug } />
 			);
 		} );
-	},
+	}
 
-	render: function() {
-		if ( ! this.props.lists || this.props.lists.length === 0 ) {
+	render() {
+		const { translate, lists } = this.props;
+		if ( ! lists || lists.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ this.translate( 'Collect sites together by adding a\xa0list.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">{ translate( 'Collect sites together by adding a\xa0list.' ) }</li>
 			);
 		}
 
@@ -43,6 +39,18 @@ const ReaderSidebarListsList = React.createClass( {
 			<div>{ this.renderItems() }</div>
 		);
 	}
-} );
+}
 
-export default ReaderSidebarListsList;
+ReaderSidebarListsList.propTypes = {
+	lists: React.PropTypes.array,
+	path: React.PropTypes.string.isRequired,
+	currentListOwner: React.PropTypes.string,
+	currentListSlug: React.PropTypes.string,
+	translate: React.PropTypes.func,
+};
+
+ReaderSidebarListsList.defaultProps = {
+	translate: identity,
+};
+
+export default localize( ReaderSidebarListsList );

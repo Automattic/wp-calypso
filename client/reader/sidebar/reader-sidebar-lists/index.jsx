@@ -14,7 +14,11 @@ import ReaderListsActions from 'lib/reader-lists/actions';
 const stats = require( 'reader/stats' );
 
 export class ReaderSidebarLists extends Component {
-
+	constructor() {
+		super();
+		this.createList = this.createList.bind( this );
+		this.handleAddClick = this.handleAddClick.bind( this );
+	}
 	createList( list ) {
 		stats.recordAction( 'add_list' );
 		stats.recordGaEvent( 'Clicked Create List' );
@@ -49,6 +53,7 @@ export class ReaderSidebarLists extends Component {
 		);
 	}
 }
+
 ReaderSidebarLists.propTypes = {
 	lists: PropTypes.array,
 	path: PropTypes.string.isRequired,
@@ -57,8 +62,8 @@ ReaderSidebarLists.propTypes = {
 	currentListOwner: PropTypes.string,
 	currentListSlug: PropTypes.string,
 	translate: PropTypes.func,
-
 };
+
 ReaderSidebarLists.defaultProps = {
 	translate: identity,
 };

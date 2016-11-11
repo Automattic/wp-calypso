@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import last from 'lodash/last';
 import classNames from 'classnames';
@@ -11,14 +11,7 @@ import classNames from 'classnames';
  */
 import ReaderSidebarHelper from '../helper';
 
-const ReaderSidebarListsListItem = React.createClass( {
-
-	propTypes: {
-		list: React.PropTypes.object.isRequired,
-		path: React.PropTypes.string.isRequired,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string
-	},
+export class ReaderSidebarListsListItem extends Component {
 
 	componentDidMount() {
 		// Scroll to the current list
@@ -26,7 +19,7 @@ const ReaderSidebarListsListItem = React.createClass( {
 			const node = ReactDom.findDOMNode( this );
 			node.scrollIntoView();
 		}
-	},
+	}
 
 	render() {
 		const list = this.props.list;
@@ -57,7 +50,13 @@ const ReaderSidebarListsListItem = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
+
+ReaderSidebarListsListItem.propTypes = {
+	list: React.PropTypes.object.isRequired,
+	path: React.PropTypes.string.isRequired,
+	currentListOwner: React.PropTypes.string,
+	currentListSlug: React.PropTypes.string
+};
 
 export default ReaderSidebarListsListItem;
-
