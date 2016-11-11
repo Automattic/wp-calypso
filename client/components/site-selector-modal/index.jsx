@@ -1,88 +1,92 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	includes = require( 'lodash/includes' );
+import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
+import { includes } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	Button = require( 'components/button' ),
-	SitesDropdown = require( 'components/sites-dropdown' ),
-	sitesList = require( 'lib/sites-list' )();
+import Dialog from 'components/dialog';
+import Button from 'components/button';
+import SitesDropdown from 'components/sites-dropdown';
+import sitesListFactory from 'lib/sites-list';
 
-/**
- * Component
- */
-var SiteSelectorModal = React.createClass( {
-	propTypes: {
+const sitesList = sitesListFactory();
+
+class SiteSelectorModal extends Component {
+	static propTypes = {
 		// children: Custom content. Will be displayed above the `SitesDropdown`.
-		children: React.PropTypes.node,
+		children: PropTypes.node,
 		// filter: Function to filter sites to display
-		filter: React.PropTypes.func,
+		filter: PropTypes.func,
 		// hide: Will be called when clicking either button. Should toggle the `isVisible` prop.
-		hide: React.PropTypes.func.isRequired,
+		hide: PropTypes.func.isRequired,
 		// isVisible: Determines if `SiteSelectorModal` will be displayed.
-		isVisible: React.PropTypes.bool.isRequired,
+		isVisible: PropTypes.bool.isRequired,
 		// mainAction: Will be run upon clicking the call-for-action button. Receives `site` as argument.
-		mainAction: React.PropTypes.func.isRequired,
+		mainAction: PropTypes.func.isRequired,
 		// getMainUrl: Use if the call-for-action button should be turned into an `<a>` link. Receives `site` as argument, returns a URL.
-		getMainUrl: React.PropTypes.func,
+		getMainUrl: PropTypes.func,
 		// mainActionLabel: Label for the call-for-action button.
-		mainActionLabel: React.PropTypes.string.isRequired,
+		mainActionLabel: PropTypes.string.isRequired,
 		// className: class name(s) to be added to the Dialog
-		className: React.PropTypes.string
-	},
+		className: PropTypes.string,
+		// from localize()
+		translate: PropTypes.func.isRequired
+	}
 
-	getInitialState: function() {
+	constructor( props ) {
+		super( props );
+
 		const primarySite = sitesList.getPrimary();
 		let filteredSites = sitesList.getVisible();
 
-		if ( this.props.filter ) {
-			filteredSites = filteredSites.filter( this.props.filter );
+		if ( props.filter ) {
+			filteredSites = filteredSites.filter( props.filter );
 		}
 
-		return {
+		this.state = {
 			site: includes( filteredSites, primarySite )
 				? primarySite
-				: filteredSites[0]
+				: filteredSites[ 0 ]
 		};
-	},
+	}
 
-	setSite: function( slug ) {
-		var site = sitesList.getSite( slug );
-		this.setState( { site: site } );
-	},
+	setSite = ( slug ) => {
+		const site = sitesList.getSite( slug );
+		this.setState( { site } );
+	}
 
-	onClose: function( action ) {
+	onClose = ( action ) => {
 		if ( 'mainAction' === action ) {
 			this.props.mainAction( this.state.site );
 		}
 
 		this.props.hide();
-	},
+	}
 
-	onButtonClick: function() {
+	onButtonClick = () => {
 		this.props.mainAction( this.state.site );
-	},
+	}
 
-	getMainLink: function() {
-		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
+	getMainLink() {
+		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
 			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
 			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
-	},
+	}
 
-	render: function() {
-		var mainLink = this.getMainLink(),
-			buttons = [
-				{ action: 'back', label: this.translate( 'Back' ) },
-				mainLink
-			],
-			classNames = classnames( 'site-selector-modal', this.props.className );
+	render() {
+		const mainLink = this.getMainLink();
+		const buttons = [
+			{ action: 'back', label: this.props.translate( 'Back' ) },
+			mainLink
+		];
+		const classNames = classnames( 'site-selector-modal', this.props.className );
 
 		return (
 			<Dialog className={ classNames }
@@ -99,6 +103,6 @@ var SiteSelectorModal = React.createClass( {
 			</Dialog>
 		);
 	}
-} );
+}
 
-module.exports = SiteSelectorModal;
+export default localize( SiteSelectorModal );
