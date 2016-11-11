@@ -17,6 +17,7 @@ import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
+import { isThemePurchased } from 'state/themes/selectors';
 import {
 	getFilter,
 	getSortedFilterTerms,
@@ -47,6 +48,7 @@ const ThemesSelection = React.createClass( {
 		// connected props
 		siteSlug: React.PropTypes.string,
 		isActiveTheme: React.PropTypes.func,
+		isThemePurchased: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
@@ -148,7 +150,8 @@ const ThemesSelection = React.createClass( {
 						onScreenshotClick={ this.onScreenshotClick }
 						getScreenshotUrl={ this.props.getScreenshotUrl }
 						getActionLabel={ this.props.getActionLabel }
-						isActive={ this.props.isActiveTheme } />
+						isActive={ this.props.isActiveTheme }
+						isPurchased={ this.props.isThemePurchased } />
 				</ThemesData>
 			</div>
 		);
@@ -159,6 +162,7 @@ const ThemesSelection = React.createClass( {
 export default connect(
 	( state, { siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
-		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId )
+		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
+		isThemePurchased: themeId => isThemePurchased( state, themeId, siteId )
 	} )
 )( ThemesSelection );
