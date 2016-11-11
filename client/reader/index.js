@@ -19,7 +19,6 @@ module.exports = function() {
 		page( '/',
 			controller.preloadReaderBundle,
 			controller.loadSubscriptions,
-			controller.checkForColdStart,
 			controller.initAbTests,
 			controller.updateLastRoute,
 			controller.sidebar,

@@ -6,8 +6,6 @@ import React from 'react';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
-import config from 'config';
-import defer from 'lodash/defer';
 
 /**
  * Internal Dependencies
@@ -23,9 +21,6 @@ import {
 	getPrettySiteUrl
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { requestGraduate } from 'state/reader/start/actions';
-import { isRequestingGraduation } from 'state/reader/start/selectors';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ReaderSidebarComponent from 'reader/sidebar';
@@ -129,49 +124,6 @@ module.exports = {
 			CommentEmailSubscriptionStore = require( 'lib/reader-comment-email-subscriptions' ); // eslint-disable-line no-unused-vars
 		FeedSubscriptionActions.fetchAll();
 		next();
-	},
-
-	checkForColdStart: function( context, next ) {
-		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
-		const user = getCurrentUser( context.store.getState() );
-		const numberofTries = 3;
-		let graduationThreshold;
-
-		if ( abtest( 'coldStartReader' ) === 'noEmailColdStartWithAutofollows' ) {
-			graduationThreshold = config( 'reader_cold_start_graduation_threshold_with_autofollows' );
-		} else {
-			graduationThreshold = config( 'reader_cold_start_graduation_threshold' );
-		}
-
-		if ( ! user ) {
-			next();
-			return;
-		}
-
-		if ( ! user.is_new_reader ) {
-			next();
-			return;
-		}
-
-		function checkSubCount( tries ) {
-			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
-				// we have total subs now, make the decision
-				if ( FeedSubscriptionStore.getTotalSubscriptions() < graduationThreshold ) {
-					defer( page.redirect.bind( page, '/recommendations/start' ) );
-				} else {
-					if ( ! isRequestingGraduation( context.store.getState() ) ) {
-						context.store.dispatch( requestGraduate() );
-					}
-					defer( next );
-				}
-			} else if ( tries > -1 ) {
-				FeedSubscriptionStore.once( 'change', checkSubCount.bind( null, --tries ) );
-			} else {
-				defer( next );
-			}
-		}
-
-		checkSubCount( numberofTries );
 	},
 
 	sidebar: function( context, next ) {
