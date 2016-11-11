@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import map from 'lodash/map';
 
 /**
@@ -9,12 +9,12 @@ import map from 'lodash/map';
  */
 import ReaderSidebarTeamsListItem from './list-item';
 
-const ReaderSidebarTeams = React.createClass( {
+export class ReaderSidebarTeams extends Component {
 
-	propTypes: {
-		teams: React.PropTypes.array,
-		path: React.PropTypes.string.isRequired
-	},
+	constructor() {
+		super();
+		this.renderItems = this.renderItems.bind( this );
+	}
 
 	renderItems() {
 		const { path } = this.props;
@@ -23,9 +23,9 @@ const ReaderSidebarTeams = React.createClass( {
 				<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
 			);
 		} );
-	},
+	}
 
-	render: function() {
+	render() {
 		if ( ! this.props.teams ) {
 			return null;
 		}
@@ -34,6 +34,11 @@ const ReaderSidebarTeams = React.createClass( {
 			<div>{ this.renderItems() }</div>
 		);
 	}
-} );
+}
+
+ReaderSidebarTeamsListItem.propTypes = {
+	teams: React.PropTypes.array,
+	path: React.PropTypes.string.isRequired,
+};
 
 export default ReaderSidebarTeams;
