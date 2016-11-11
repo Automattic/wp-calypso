@@ -90,14 +90,11 @@ export default ( state = initialState, action ) => {
 				.updateIn( [ 'query', 'page' ], page => page + 1 );
 
 		case THEMES_RECEIVE_SERVER_ERROR:
+		case THEME_ACTIVATE_REQUEST_FAILURE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 				.setIn( [ 'queryState', 'isLastPage' ], true )
 				.setIn( [ 'queryState', 'error' ], true );
-
-		case THEME_ACTIVATE_REQUEST_FAILURE:
-			// Placeholder
-			return state;
 
 		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			// The `active` attribute isn't ever really read, but since
