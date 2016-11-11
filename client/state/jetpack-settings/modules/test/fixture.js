@@ -17,10 +17,12 @@ export const modules = {
 };
 
 export const requests = {
-	activating: {
-		123456: {
-			'module-a': false,
-			'module-b': true
+	123456: {
+		'module-a': {
+			activating: false,
+		},
+		'module-b': {
+			activating: true
 		}
 	}
 };

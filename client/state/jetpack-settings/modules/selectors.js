@@ -11,7 +11,7 @@ import get from 'lodash/get';
  * @return {Boolean}       Weather a module is activated
  */
 export function isModuleActivated( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'activated' ], false );
+	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'active' ], false );
 }
 
 /**
@@ -23,5 +23,5 @@ export function isModuleActivated( state, siteId, moduleSlug ) {
  * @return {Boolean}         Whether module is being activated
  */
 export function isActivatingModule( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.requests, [ 'activating', siteId, moduleSlug ], false );
+	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'activating' ], false );
 }

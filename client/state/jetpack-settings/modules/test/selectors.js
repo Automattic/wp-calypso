@@ -15,7 +15,7 @@ import {
 
 describe( 'requests selectors', () => {
 	describe( '#isActivatingModule', () => {
-		it( 'should return state.jetpackSettings.jetpackModules.requests.activating[ siteId ][ module_slug ]', () => {
+		it( 'should return state.jetpackSettings.jetpackModules.requests[ siteId ][ module_slug ].activating', () => {
 			const stateIn = {
 					jetpackSettings: {
 						jetpackModules: {

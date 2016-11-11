@@ -14,8 +14,7 @@ import {
 } from 'state/action-types';
 import {
 	items as itemsReducer,
-	requests as requestsReducer,
-	initialRequestsState
+	requests as requestsReducer
 } from '../reducer';
 
 import {
@@ -47,11 +46,11 @@ describe( 'items reducer', () => {
 describe( 'requests reducer', () => {
 	it( 'state should default to initialState', () => {
 		const state = requestsReducer( undefined, {} );
-		expect( state ).to.equal( initialRequestsState );
+		expect( state ).to.eql( {} );
 	} );
 
 	describe( '#modulesActivation', () => {
-		it( 'should set activating[ siteId ][ moduleSlug ] to true when activating a module', () => {
+		it( 'should set [ siteId ][ moduleSlug ].activating to true when activating a module', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -60,10 +59,10 @@ describe( 'requests reducer', () => {
 					moduleSlug: 'moduleSlug'
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut.activating[ siteId ][ action.moduleSlug ] ).to.be.true;
+			expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.true;
 		} );
 
-		it( 'should set activating[ siteId ][ moduleSlug ] to false when module has been activated', () => {
+		it( 'should set [ siteId ][ moduleSlug ].activating to false when module has been activated', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -72,10 +71,10 @@ describe( 'requests reducer', () => {
 					moduleSlug: 'moduleSlug'
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut.activating[ siteId ][ action.moduleSlug ] ).to.be.false;
+			expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
 		} );
 
-		it( 'should set activating[ siteId ][ moduleSlug ] to false when activating a module fails', () => {
+		it( 'should set [ siteId ][ moduleSlug ].activating to false when activating a module fails', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 123456,
 				action = {
@@ -84,7 +83,7 @@ describe( 'requests reducer', () => {
 					moduleSlug: 'moduleSlug'
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut.activating[ siteId ][ action.moduleSlug ] ).to.be.false;
+			expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
 		} );
 	} );
 } );

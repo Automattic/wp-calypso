@@ -42,10 +42,6 @@ export const items = ( state = {}, { type, siteId, moduleSlug } ) => {
 	}
 };
 
-export const initialRequestsState = {
-	activating: {},
-};
-
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules-related requests
@@ -54,29 +50,29 @@ export const initialRequestsState = {
  * @param {Object} action - action
  * @return {Object} updated state
  */
-export const requests = ( state = initialRequestsState, { type, siteId, moduleSlug } ) => {
+export const requests = ( state = {}, { type, siteId, moduleSlug } ) => {
 	switch ( type ) {
 		case JETPACK_MODULE_ACTIVATE:
 			return merge( {}, state, {
-				activating: {
-					[ siteId ]: {
-						[ moduleSlug ]: true
+				[ siteId ]: {
+					[ moduleSlug ]: {
+						activating: true
 					}
 				}
 			} );
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
 			return merge( {}, state, {
-				activating: {
-					[ siteId ]: {
-						[ moduleSlug ]: false
+				[ siteId ]: {
+					[ moduleSlug ]: {
+						activating: false
 					}
 				}
 			} );
 		// return initial state when serializing/deserializing
 		case SERIALIZE:
 		case DESERIALIZE:
-			return initialRequestsState;
+			return {};
 		default:
 			return state;
 	}
