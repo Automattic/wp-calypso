@@ -168,6 +168,21 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	width: 100%;
 }
 
+.reader-post-card__byline-author-site {
+	overflow: hidden;
+	position: relative;
+	height: 20px;
+	width: calc( 100% - 25px );
+
+	&::after {
+		@include long-content-fade( $size: 10% );
+	}
+
+	@include breakpoint( ">660px" ) {
+		width: calc( 100% - 90px );
+	}
+}
+
 .reader-post-card__timestamp-and-tag {
 	display: flex;
 	flex-direction: row;
@@ -186,9 +201,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
     height: 20px;
     width: 100%;
 
-    &::after {
-    	@include long-content-fade( $size: 10% );
-    }
+	&::after {
+		@include long-content-fade( $size: 10% );
+	}
 }
 
 .reader-post-card__tag .gridicons-tag {
