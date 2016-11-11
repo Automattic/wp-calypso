@@ -72,7 +72,7 @@ describe( 'actions', () => {
 			};
 
 			const action = themeActivationFailed( themeId, siteId, error );
-			expect( action ).to.eql( expected );
+			expect( action ).to.deep.equal( expected );
 		} );
 	} );
 
