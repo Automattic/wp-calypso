@@ -69,6 +69,7 @@ export class ReaderSidebarTags extends Component {
 		);
 	}
 }
+
 ReaderSidebarTags.propTypes = {
 	tags: PropTypes.array,
 	path: PropTypes.string.isRequired,
@@ -78,7 +79,9 @@ ReaderSidebarTags.propTypes = {
 	onTagExists: PropTypes.func,
 	translate: PropTypes.func,
 };
+
 ReaderSidebarTags.defaultProps = {
 	translate: identity,
 };
+
 export default localize( ReaderSidebarTags );
