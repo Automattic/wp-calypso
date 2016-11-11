@@ -22,19 +22,6 @@ const DomainSuggestion = React.createClass( {
 		domain: React.PropTypes.string
 	},
 
-	renderButton() {
-		const buttonClasses = classNames( 'button', 'domain-suggestion__select-button', this.props.buttonClasses );
-		return (
-			<button
-				ref="button"
-				className={ buttonClasses }
-				onClick={ this.props.onButtonClick }
-				data-e2e-domain={ this.props.domain }>
-					{ this.props.buttonContent }
-			</button>
-		);
-	},
-
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
 		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
