@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -19,23 +19,23 @@ const sitesList = sitesListFactory();
 class SiteSelectorModal extends Component {
 	static propTypes = {
 		// children: Custom content. Will be displayed above the `SitesDropdown`.
-		children: React.PropTypes.node,
+		children: PropTypes.node,
 		// filter: Function to filter sites to display
-		filter: React.PropTypes.func,
+		filter: PropTypes.func,
 		// hide: Will be called when clicking either button. Should toggle the `isVisible` prop.
-		hide: React.PropTypes.func.isRequired,
+		hide: PropTypes.func.isRequired,
 		// isVisible: Determines if `SiteSelectorModal` will be displayed.
-		isVisible: React.PropTypes.bool.isRequired,
+		isVisible: PropTypes.bool.isRequired,
 		// mainAction: Will be run upon clicking the call-for-action button. Receives `site` as argument.
-		mainAction: React.PropTypes.func.isRequired,
+		mainAction: PropTypes.func.isRequired,
 		// getMainUrl: Use if the call-for-action button should be turned into an `<a>` link. Receives `site` as argument, returns a URL.
-		getMainUrl: React.PropTypes.func,
+		getMainUrl: PropTypes.func,
 		// mainActionLabel: Label for the call-for-action button.
-		mainActionLabel: React.PropTypes.string.isRequired,
+		mainActionLabel: PropTypes.string.isRequired,
 		// className: class name(s) to be added to the Dialog
-		className: React.PropTypes.string,
+		className: PropTypes.string,
 		// from localize()
-		translate: React.PropTypes.func.isRequired
+		translate: PropTypes.func.isRequired
 	}
 
 	constructor( props ) {
