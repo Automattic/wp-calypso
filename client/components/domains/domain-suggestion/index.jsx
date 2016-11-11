@@ -37,7 +37,7 @@ const DomainSuggestion = React.createClass( {
 
 	render() {
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
-		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
+		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-clickable', {
 			'is-added': isAdded,
 		}, extraClasses );
 
