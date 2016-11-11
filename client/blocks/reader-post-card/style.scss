@@ -317,6 +317,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	overflow: hidden;
 	max-height: 15px * 1.6 * 3;
 	position: relative;
+
 	&::before {
 		@include long-content-fade( $size: 15px * 1.6 * 5 );
 		top: inherit;
