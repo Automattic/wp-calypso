@@ -74,9 +74,6 @@ const CurrentSite = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
-		if ( this.refs.site ) {
-			this.refs.site.closeActions();
-		}
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},
@@ -156,12 +153,10 @@ const CurrentSite = React.createClass( {
 					? <Site
 						site={ site }
 						homeLink={ true }
-						enableActions={ true }
 						externalLink={ true }
 						onClick={ this.previewSite }
 						onSelect={ this.previewSite }
-						tipTarget="site-card-preview"
-						ref="site" />
+						tipTarget="site-card-preview" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
 				{ ! site.jetpack && this.getDomainWarnings() }
