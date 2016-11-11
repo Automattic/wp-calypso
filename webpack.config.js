@@ -11,6 +11,7 @@ const webpack = require( 'webpack' ),
  */
 const config = require( './server/config' ),
 	sections = require( './client/sections' ),
+	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 
@@ -148,7 +149,8 @@ const jsLoader = {
 	exclude: /node_modules/,
 	loader: 'babel',
 	query: {
-		cacheDirectory: true,
+		cacheDirectory: './.babel-cache',
+		cacheIdentifier: cacheIdentifier,
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 			{ async: config.isEnabled( 'code-splitting' ) }

@@ -1,5 +1,6 @@
 .webpack-cache
 .sass-cache
+.babel-cache
 .vagrant
 .unison
 .env
