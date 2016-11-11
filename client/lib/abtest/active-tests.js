@@ -15,16 +15,6 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
-	coldStartReader: {
-		datestamp: '20160901',
-		variations: {
-			noEmailColdStart: 33,
-			noEmailColdStartWithAutofollows: 33,
-			noChanges: 34
-		},
-		defaultVariation: 'noChanges',
-		allowExistingUsers: false,
-	},
 	domainSuggestionClickableRow: {
 		datestamp: '20160802',
 		variations: {
