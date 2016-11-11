@@ -202,7 +202,7 @@ const CheckoutThankYou = React.createClass( {
 		// streamlined paid NUX thanks page
 		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
-				<Main className="checkout-thank-you{ emailNudgeOnTop ? ' checkout-thank-you__email-nudge-top-test' }">
+				<Main className="checkout-thank-you">
 					{ emailNudgeOnTop ? this.renderConfirmationNotice() : null }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 					{ ! emailNudgeOnTop ? this.renderConfirmationNotice() : null }
