@@ -105,7 +105,6 @@
 	font-family: helvetica, arial, sans-serif;
 	font-size: 12px;
 	line-height: 16px;
-	max-height: 50px;
 	overflow-y: hidden;
 }
 
@@ -157,6 +156,7 @@
 	max-height: 158px;
 
 	.facebook-preview__image {
+		flex-shrink: 0;
 		height: 100%;
 		width: 158px;
 
@@ -166,6 +166,10 @@
 			height: auto;
 			width: 100%;
 		}
+	}
+
+	.facebook-preview__body {
+		width: 100%;
 	}
 
 	.facebook-preview__title {
