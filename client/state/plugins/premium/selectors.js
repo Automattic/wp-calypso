@@ -26,7 +26,7 @@ const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	}
 
 	// patch to solve a bug in jp 4.3 ( https://github.com/Automattic/jetpack/issues/5498 )
-	if ( whitelist === 'backups' ) {
+	if ( whitelist === 'backups' || whitelist === 'scan' ) {
 		whitelist = 'vaultpress';
 	}
 
