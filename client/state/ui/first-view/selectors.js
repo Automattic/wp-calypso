@@ -101,13 +101,19 @@ export function shouldViewBeVisible( state ) {
 
 export const hasViewJustBeenVisible = createSelector(
 	( state, now = Date.now() ) => {
+		console.log( 'called', now - 1478623930204 );
 		const lastFirstView = findLast( getActionLog( state ), {
 			type: FIRST_VIEW_HIDE
 		} );
 		// threshold is one minute
 		return lastFirstView && ( now - lastFirstView.timestamp ) < 60000;
 	},
-	getActionLog
+	( state, now = Date.now() ) => [
+		getActionLog( state ),
+		Math.floor( now / 10000 )
+	],
+	// caching only goes stale after 10 s
+	( state, now = Date.now() ) => Math.floor( now / 10000 )
 );
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {

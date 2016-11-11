@@ -97,7 +97,18 @@ export default function createSelector( selector, getDependants = DEFAULT_GET_DE
 			currentDependants = [ currentDependants ];
 		}
 
+		if ( currentDependants.length === 2 &&
+				typeof currentDependants[1] === 'number' ) {
+			console.log(
+					args[0] - 1478623930204,
+					currentDependants[1],
+					!! lastDependants,
+					! shallowEqual( currentDependants, lastDependants )
+			);
+		}
+
 		if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+			console.log( 'cache miss', args[0] - 1478623930204 );
 			memoizedSelector.cache.clear();
 		}
 
