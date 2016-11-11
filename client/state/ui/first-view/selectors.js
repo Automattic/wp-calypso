@@ -4,11 +4,12 @@
  * External dependencies
  */
 import moment from 'moment';
-import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
+import { memoize, some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
@@ -16,17 +17,23 @@ import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
-export function getConfigForCurrentView( state ) {
-	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-	if ( ! currentRoute ) {
-		return false;
-	}
+const getConfigForPath = memoize( path =>
+	find( FIRST_VIEW_CONFIG, entry =>
+		some( entry.paths, entryPath =>
+			startsWith( path, entryPath ) ) ) || false );
 
-	const path = currentRoute.path ? currentRoute.path : '';
-	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
+export const getConfigForCurrentView = createSelector(
+	state => {
+		const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+		if ( ! currentRoute ) {
+			return false;
+		}
 
-	return config || false;
-}
+		const path = currentRoute.path ? currentRoute.path : '';
+		return getConfigForPath( path );
+	},
+	getActionLog
+);
 
 export function isUserEligible( state, config ) {
 	const userStartDate = getCurrentUserDate( state );
@@ -86,23 +93,22 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
-	if ( ! firstViewConfig ) {
-		return false;
-	}
-
-	return isViewEnabled( state, firstViewConfig ) &&
+	return firstViewConfig &&
+		isViewEnabled( state, firstViewConfig ) &&
 		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
 }
 
-// TODO: memoize
-export function hasViewJustBeenVisible( state, now = Date.now() ) {
-	const lastFirstView = findLast( getActionLog( state ), {
-		type: FIRST_VIEW_HIDE
-	} );
-	// threshold is one minute
-	return lastFirstView && ( now - lastFirstView.timestamp ) < 60000;
-}
+export const hasViewJustBeenVisible = createSelector(
+	( state, now = Date.now() ) => {
+		const lastFirstView = findLast( getActionLog( state ), {
+			type: FIRST_VIEW_HIDE
+		} );
+		// threshold is one minute
+		return lastFirstView && ( now - lastFirstView.timestamp ) < 60000;
+	},
+	getActionLog
+);
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {
 	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
