@@ -12,8 +12,9 @@ import property from 'lodash/property';
  * Internal dependencies
  */
 import {
-	THEME_ACTIVATE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DETAILS_RECEIVE,
@@ -194,39 +195,42 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-export function activate( theme, site, source = 'unknown' ) {
+export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( {
-			type: THEME_ACTIVATE,
-			theme: theme,
-			site: site
+			type: THEME_ACTIVATE_REQUEST,
+			themeId,
+			siteId,
 		} );
 
-		wpcom.undocumented().activateTheme( theme, site.ID )
-			.then( () => {
-				dispatch( activated( theme, site, source ) );
+		return wpcom.undocumented().activateTheme( themeId, siteId )
+			.then( ( theme ) => {
+				dispatch( themeActivated( theme, siteId, source, purchased ) );
 			} )
 			.catch( error => {
-				dispatch( receiveServerError( error ) );
+				dispatch( {
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					themeId,
+					siteId,
+					error,
+				} );
 			} );
 	};
 }
 
-export function activated( theme, site, source = 'unknown', purchased = false ) {
-	return ( dispatch, getState ) => {
-		const previousTheme = getCurrentTheme( getState(), site.ID );
-		const queryParams = getState().themes.themesList.get( 'query' );
-
+export function themeActivated( theme, siteId, source = 'unknown', purchased = false ) {
+	const themeActivatedThunk = ( dispatch, getState ) => {
 		if ( typeof theme !== 'object' ) {
 			theme = getThemeById( getState(), theme );
 		}
 
 		const action = {
-			type: THEME_ACTIVATED,
+			type: THEME_ACTIVATE_REQUEST_SUCCESS,
 			theme,
-			site,
-			siteId: site.ID
+			siteId,
 		};
+		const previousTheme = getCurrentTheme( getState(), siteId );
+		const queryParams = getState().themes.themesList.get( 'query' );
 
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
@@ -238,9 +242,9 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 				search_term: queryParams.get( 'search' ) || null
 			}
 		);
-
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
+	return themeActivatedThunk; // it is named function just for testing purposes
 }
 
 export function clearActivated() {

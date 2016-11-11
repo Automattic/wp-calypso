@@ -1481,11 +1481,11 @@ Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
-Undocumented.prototype.activateTheme = function( theme, siteId, fn ) {
+Undocumented.prototype.activateTheme = function( themeId, siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post( {
 		path: '/sites/' + siteId + '/themes/mine',
-		body: { theme: theme.id }
+		body: { theme: themeId }
 	}, fn );
 };
 

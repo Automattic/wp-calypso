@@ -10,7 +10,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_DETAILS_REQUEST,
@@ -42,7 +42,7 @@ export default ( state = Map(), action ) => {
 				} ) );
 		case THEME_DETAILS_RECEIVE_FAILURE:
 			return state.set( action.themeId, Map( { error: action.error } ) );
-		case THEME_ACTIVATED:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			return state.update( setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
 			return Map();

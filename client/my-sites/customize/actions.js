@@ -38,7 +38,7 @@ var CustomizeActions = {
 
 		page( '/design/' + site.slug );
 
-		themeActivated( id, site, 'customizer' );
+		themeActivated( id, site.ID, 'customizer' );
 
 		Dispatcher.handleViewAction( {
 			type: 'THEME_ACTIVATED_WITH_CUSTOMIZER',

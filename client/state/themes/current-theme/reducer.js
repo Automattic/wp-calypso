@@ -10,8 +10,8 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_CLEAR_ACTIVATED,
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
@@ -49,13 +49,13 @@ export default ( state = initialState, action ) => {
 			return state.setIn( [ 'requesting', action.siteId ], true );
 		case THEME_REQUEST_CURRENT_FAILURE:
 			return state.setIn( [ 'requesting', action.siteId ], false );
-		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_REQUEST:
 			return state.set( 'isActivating', true );
-		case THEME_ACTIVATED:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			return state
 				.set( 'isActivating', false )
 				.set( 'hasActivated', true )
-				.setIn( [ 'currentThemes', action.site.ID ], action.theme );
+				.setIn( [ 'currentThemes', action.siteId ], action.theme );
 		case THEME_CLEAR_ACTIVATED:
 			return state.set( 'hasActivated', false );
 		case DESERIALIZE:

@@ -10,7 +10,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { activated } from 'state/themes/actions';
+import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
@@ -140,7 +140,7 @@ const CheckoutThankYou = React.createClass( {
 
 	redirectIfThemePurchased() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
-			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite.ID );
 
 			page.redirect( '/design/' + this.props.selectedSite.slug );
 		}
@@ -326,7 +326,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			activatedTheme( meta, site ) {
-				dispatch( activated( meta, site, 'calypstore', true ) );
+				dispatch( themeActivated( meta, site, 'calypstore', true ) );
 			},
 			fetchReceipt( receiptId ) {
 				dispatch( fetchReceipt( receiptId ) );
