@@ -23,7 +23,7 @@ function ValidationError( code ) {
 inherits( ValidationError, Error );
 
 function canAddGoogleApps( domainName ) {
-	var tld = domainName.split( '.' )[ 1 ],
+	const tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
 			return includes( domainName, phrase );
 		} );
@@ -51,15 +51,14 @@ function canRegister( domainName, onComplete ) {
 		} = data;
 
 		let errorCode;
-		if ( ! isAvailable ) {
-			if ( isMappable ) {
-				errorCode = 'not_available_but_mappable';
-			} else if ( unmappabilityReason ) {
-				errorCode = `not_mappable_${ unmappabilityReason }`;
-			} else {
-				errorCode = 'not_mappable';
+		if ( ! isMappable ) {
+			errorCode = 'not_mappable';
+			if ( unmappabilityReason ) {
+				errorCode += `_${ unmappabilityReason }`;
 			}
-		} else if ( ! isRegistrable ) {
+		} else if ( ! isAvailable && isMappable ) {
+			errorCode = 'not_available_but_mappable';
+		} else if ( isAvailable && ! isRegistrable ) {
 			errorCode = 'available_but_not_registrable';
 		}
 
@@ -78,7 +77,7 @@ function canMap( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
-		var errorCode;
+		let errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
 		} else if ( ! data.is_mappable ) {
@@ -132,7 +131,7 @@ function isSubdomain( domainName ) {
 }
 
 function isInitialized( state, siteId ) {
-	var siteState = state[ siteId ];
+	const siteState = state[ siteId ];
 	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
 }
 
