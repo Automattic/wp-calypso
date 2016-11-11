@@ -200,8 +200,6 @@ export function isThemeActive( state, themeId, siteId ) {
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
  *
- * DON'T USE YET! This uses the getSitePurchases() which sometimes seems to omit some purchases.
- *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
  * @param  {Number}  siteId  Site ID

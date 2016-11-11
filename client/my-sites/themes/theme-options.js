@@ -22,7 +22,8 @@ import {
 	getThemeCustomizeUrl as	getCustomizeUrl,
 	getThemeDetailsUrl as getDetailsUrl,
 	getThemeSupportUrl as getSupportUrl,
-	getThemeHelpUrl as getHelpUrl
+	getThemeHelpUrl as getHelpUrl,
+	isThemePurchased as isPurchased
 } from 'state/themes/selectors';
 import { isActiveTheme as isActive } from 'state/themes/current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -38,7 +39,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getPurchaseUrl,
-		hideForTheme: ( state, theme, site ) => ! theme.price || isActive( state, theme.id, site ) || theme.purchased
+		hideForTheme: ( state, theme, site ) => ! theme.price || isActive( state, theme.id, site ) || isPurchased( state, theme.id, site )
 	}
 	: {};
 
@@ -46,7 +47,7 @@ const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateTheme,
-	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site ) || ( theme.price && ! theme.purchased )
+	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site ) || ( theme.price && ! isPurchased( state, theme.id, site ) )
 };
 
 const customize = {
