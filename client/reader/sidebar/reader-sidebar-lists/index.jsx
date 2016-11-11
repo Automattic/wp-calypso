@@ -1,8 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-
+import React, { Component, PropTypes } from 'react';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
@@ -12,49 +13,54 @@ import ReaderListsActions from 'lib/reader-lists/actions';
 
 const stats = require( 'reader/stats' );
 
-const ReaderSidebarLists = React.createClass( {
-
-	propTypes: {
-		lists: React.PropTypes.array,
-		path: React.PropTypes.string.isRequired,
-		isOpen: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string
-	},
+export class ReaderSidebarLists extends Component {
 
 	createList( list ) {
 		stats.recordAction( 'add_list' );
 		stats.recordGaEvent( 'Clicked Create List' );
 		stats.recordTrack( 'calypso_reader_create_list_clicked' );
 		ReaderListsActions.create( list );
-	},
+	}
 
 	handleAddClick() {
 		stats.recordAction( 'add_list_open_input' );
 		stats.recordGaEvent( 'Clicked Add List to Open Input' );
 		stats.recordTrack( 'calypso_reader_add_list_clicked' );
-	},
+	}
 
 	render() {
-		const listCount = this.props.lists ? this.props.lists.length : 0;
-		const shouldHideAddButton = ! this.props.count;
+		const { translate, lists, count, isOpen, onClick } = this.props;
+		const listCount = lists ? lists.length : 0;
+		const shouldHideAddButton = ! count;
 		return (
 			<ExpandableSidebarMenu
-				expanded={ this.props.isOpen }
-				title={ this.translate( 'Lists' ) }
+				expanded={ isOpen }
+				title={ translate( 'Lists' ) }
 				count={ listCount }
-				addLabel={ this.translate( 'New list name' ) }
-				addPlaceholder={ this.translate( 'Give your list a name' ) }
+				addLabel={ translate( 'New list name' ) }
+				addPlaceholder={ translate( 'Give your list a name' ) }
 				onAddClick={ this.handleAddClick }
 				onAddSubmit={ this.createList }
-				onClick={ this.props.onClick }
+				onClick={ onClick }
 				hideAddButton={ shouldHideAddButton }
 			>
 					<ReaderSidebarListsList { ...this.props } />
 			</ExpandableSidebarMenu>
 		);
 	}
-} );
+}
+ReaderSidebarLists.propTypes = {
+	lists: PropTypes.array,
+	path: PropTypes.string.isRequired,
+	isOpen: PropTypes.bool,
+	onClick: PropTypes.func,
+	currentListOwner: PropTypes.string,
+	currentListSlug: PropTypes.string,
+	translate: PropTypes.func,
 
-export default ReaderSidebarLists;
+};
+ReaderSidebarLists.defaultProps = {
+	translate: identity,
+};
+
+export default localize( ReaderSidebarLists );
