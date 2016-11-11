@@ -101,6 +101,7 @@
 
 .facebook-preview__description {
 	color: #4b4f56;
+	flex-grow: 1;
 	font-family: helvetica, arial, sans-serif;
 	font-size: 12px;
 	line-height: 16px;
@@ -160,14 +161,11 @@
 		width: 158px;
 
 		& img {
+			display: block;
 			font-size: 14px;
 			height: auto;
 			width: 100%;
 		}
-	}
-
-	.facebook-preview__body {
-		height: 138px;
 	}
 
 	.facebook-preview__title {
@@ -177,6 +175,7 @@
 
 	.facebook-preview__url {
 		margin-top: auto;
+		margin-bottom: 5px;
 	}
 }
 
