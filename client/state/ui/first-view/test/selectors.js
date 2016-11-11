@@ -301,37 +301,6 @@ describe( 'selectors', () => {
 			};
 			expect( hasViewJustBeenVisible( state, now ) ).to.be.falsey;
 		} );
-		/*
-		 * This is what I mean by the tests not working as expected.
-		 */
-		it( 'should be off by a few seconds due to caching', () => {
-			const past = 1478623930204;
-			const state = {
-				ui: {
-					actionLog: [ {
-						type: FIRST_VIEW_HIDE,
-						view: 'stats',
-						timestamp: past,
-					} ]
-				}
-			};
-			// cache the result
-			expect( hasViewJustBeenVisible( state, past + 50000 ) ).to.be.true;
-
-			// cheat the selector by mutating in-place
-			state.ui.actionLog[0].timestamp -= 11000;
-
-			// previously used args, so expect the cached (wrong) answer
-			expect( hasViewJustBeenVisible( state, past + 50000 ) ).to.be.true;
-
-			// new args, but same heuristic result, thus wrong answer again
-			expect( hasViewJustBeenVisible( state, past + 50100 ) ).to.be.true;
-
-			// create a new reference
-			state.ui.actionLog = [ ...state.ui.actionLog ];
-			expect( hasViewJustBeenVisible( state, past + 50000 ) ).to.be.false;
-			expect( hasViewJustBeenVisible( state, past + 55000 ) ).to.be.false;
-		} );
 	} );
 
 	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {
