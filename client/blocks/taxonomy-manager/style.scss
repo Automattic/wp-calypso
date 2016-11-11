@@ -1,0 +1,73 @@
+.taxonomy-manager {
+	height: 300px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+}
+
+.taxonomy-manager__header {
+	display: flex;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	background: $white;
+}
+
+.taxonomy-manager__header .search-card {
+	margin-bottom: 1px;
+	display: flex;
+	flex-grow: 1;
+	box-shadow: none;
+}
+
+.taxonomy-manager__header .search-card .search {
+	height: 58px;
+}
+
+.taxonomy-manager__actions {
+	flex-grow: 0;
+	padding: 16px 24px;
+}
+
+.taxonomy-manager__nested-list {
+	margin-left: 2em;
+}
+
+.taxonomy-manager__list-item {
+	background-color: $gray-light;
+}
+
+.taxonomy-manager__list-item-card {
+	cursor: pointer;
+}
+
+.taxonomy-manager__list-item-toggle {
+	color: $gray;
+	cursor: pointer;
+	font-size: 24px;
+	margin: 17px 28px;
+	position: absolute;
+		right: 0;
+		top: 0;
+	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+	&.is-active {
+		color: $blue-medium;
+		transform: rotate( 90deg );
+	}
+}
+
+.taxonomy-manager__label {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+
+	.taxonomy-manager__list-item.is-placeholder & {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
+
+.taxonomy-manager .virtual-list__list-row.is-empty {
+	padding: 16px 24px;
+	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+}

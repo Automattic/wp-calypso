@@ -33,5 +33,9 @@ module.exports = function() {
 		page( '/settings/start-over/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.startOver );
 	}
 
+	if ( config.isEnabled( 'manage/site-settings/categories' ) ) {
+		page( '/settings/taxonomies/:site_id/:taxonomy', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.taxonomies );
+	}
+
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );
 };
