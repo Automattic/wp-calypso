@@ -64,10 +64,18 @@ function discoverFullBleedImages( post, dom ) {
 }
 
 function getWordCount( post ) {
+	if ( ! post || ! post.better_excerpt_no_html ) {
+		return 0;
+	}
+
 	return ( post.better_excerpt_no_html.replace( /['";:,.?¿\-!¡]+/g, '' ).match( /\S+/g ) || [] ).length;
 }
 
 function getCharacterCount( post ) {
+	if ( ! post || ! post.better_excerpt_no_html ) {
+		return 0;
+	}
+
 	return post.better_excerpt_no_html.length;
 }
 
