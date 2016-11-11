@@ -12,7 +12,8 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	THEMES_RECEIVE,
@@ -89,12 +90,13 @@ export default ( state = initialState, action ) => {
 				.updateIn( [ 'query', 'page' ], page => page + 1 );
 
 		case THEMES_RECEIVE_SERVER_ERROR:
+		case THEME_ACTIVATE_REQUEST_FAILURE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 				.setIn( [ 'queryState', 'isLastPage' ], true )
 				.setIn( [ 'queryState', 'error' ], true );
 
-		case THEME_ACTIVATED:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
 			// The `active` attribute isn't ever really read, but since
 			// `createReducerStore()` only emits a `change` event when the new
 			// state is different from the old one, we need something to change

@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { createStore } from 'redux';
 
-import { THEME_ACTIVATED, THEMES_RECEIVE } from 'state/action-types';
+import { THEME_ACTIVATE_REQUEST_SUCCESS, THEMES_RECEIVE } from 'state/action-types';
 import reducer from '../reducer';
 
 describe( 'themes', () => {
@@ -20,7 +20,7 @@ describe( 'themes', () => {
 		]
 	};
 	const actionThemeActivated = {
-		type: THEME_ACTIVATED,
+		type: THEME_ACTIVATE_REQUEST_SUCCESS,
 		theme: { id: 'picard' }
 	};
 
@@ -58,7 +58,7 @@ describe( 'themes', () => {
 		} );
 	} );
 
-	context( 'when THEME_ACTIVATED is received', () => {
+	context( 'when THEME_ACTIVATE_REQUEST_SUCCESS is received', () => {
 		beforeEach( () => {
 			store.dispatch( actionReceiveThemes );
 		} );
