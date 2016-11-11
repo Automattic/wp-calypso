@@ -74,17 +74,12 @@ describe( 'actions', () => {
 
 	describe( '#themeActivated()', () => {
 		it( 'should return an action object', () => {
-			const theme = { id: 'twentysixteen' };
-			const siteId = 2211667;
-
-			themeActivated( theme, siteId )( spy, fakeGetState );
+			themeActivated( { id: 'twentysixteen' }, 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );
 
 	describe( '#activateTheme()', () => {
-		const themeId = 'twentysixteen';
-		const siteId = 2211667;
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -98,7 +93,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request action when thunk is triggered', () => {
-			activateTheme( themeId, siteId )( spy );
+			activateTheme( 'twentysixteen', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
@@ -108,7 +103,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch theme activation success thunk when request completes', () => {
-			return activateTheme( themeId, siteId, trackingData )( spy ).then( () => {
+			return activateTheme( 'twentysixteen', 2211667, trackingData )( spy ).then( () => {
 				expect( spy.secondCall.args[ 0 ].name ).to.equal( 'themeActivatedThunk' );
 			} );
 		} );
@@ -121,7 +116,7 @@ describe( 'actions', () => {
 				type: THEME_ACTIVATE_REQUEST_FAILURE
 			};
 
-			return activateTheme( 'badTheme', siteId, trackingData )( spy ).then( () => {
+			return activateTheme( 'badTheme', 2211667, trackingData )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( themeActivationFailure );
 			} );
 		} );
