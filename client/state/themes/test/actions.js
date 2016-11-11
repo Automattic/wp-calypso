@@ -114,7 +114,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch theme activation failure action when request completes', () => {
-			const error = {
+			const themeActivationFailure = {
 				error: sinon.match( { message: 'The specified theme was not found' } ),
 				siteId: 2211667,
 				themeId: 'badTheme',
@@ -122,7 +122,7 @@ describe( 'actions', () => {
 			};
 
 			return activateTheme( 'badTheme', siteId, trackingData )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( error );
+				expect( spy ).to.have.been.calledWith( themeActivationFailure );
 			} );
 		} );
 	} );
