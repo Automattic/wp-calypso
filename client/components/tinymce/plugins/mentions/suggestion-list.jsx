@@ -16,7 +16,7 @@ const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick 
 		context={ popoverContext }
 		isVisible={ true }
 		autoPosition={ false }
-		position="bottom"
+		position="bottom right"
 		onClose={ onClose }>
 			{ suggestions.map( ( suggestion ) => (
 				<PopoverMenuItem

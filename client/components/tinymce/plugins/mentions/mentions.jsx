@@ -54,11 +54,63 @@ export class Mentions extends React.Component {
 
 	componentDidMount() {
 		const { editor } = this.props;
+		const position = this.getPosition();
 
 		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'click', () => {
 			this.setState( { showPopover: false } );
 		} );
+
+		this.left = position.left;
+		this.top = position.top;
+	}
+
+	componentWillUpdate( nextProps, nextState ) {
+		// Update position of popover if going from invisible to visible state.
+		if ( ! this.state.showPopover && nextState.showPopover ) {
+			this.updatePosition();
+			return;
+		}
+
+		// Update position of popover if cursor has moved to a new line.
+		if ( nextState.showPopover ) {
+			const currentPosition = this.getPosition();
+			const isLineBefore = ( this.top > currentPosition.top ) && ( this.left < currentPosition.left );
+			const isLineAfter = ( this.top < currentPosition.top ) && ( this.left > currentPosition.left );
+
+			if ( isLineBefore || isLineAfter ) {
+				this.updatePosition( currentPosition );
+			}
+		}
+	}
+
+	getPosition() {
+		let left, top;
+		const { editor } = this.props;
+		const nodePosition = tinymce.$( editor.selection.getNode() ).offset();
+		const rectList = editor.selection.getRng().getClientRects();
+
+		if ( rectList.length > 0 ) {
+			left = rectList[ 0 ].left;
+			top = rectList[ 0 ].top + rectList[ 0 ].height;
+		} else {
+			left = nodePosition.left;
+			top = nodePosition.top;
+		}
+
+		return { left: left, top: top };
+	}
+
+	updatePosition( position = this.getPosition() ) {
+		const { editor, node } = this.props;
+		const selectedNode = editor.selection.getNode();
+		const nodePosition = tinymce.$( selectedNode ).offset();
+		const mceToolbar = tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ];
+
+		this.left = position.left;
+		this.top = position.top;
+		node.style.left = this.left + 'px';
+		node.style.top = nodePosition.top + mceToolbar.offsetHeight + selectedNode.offsetHeight + 'px';
 	}
 
 	setPopoverContext = ( popoverContext ) => {
