@@ -39,7 +39,7 @@ export default {
 	IMPORT: `${ root }/import`,
 	INSTAGRAM_WIDGET: `${ root }/instagram/instagram-widget`,
 	JETPACK_SUPPORT: `${ root }/setting-up-premium-services/`,
-	JETPACK_CONTACT_SUPPORT: `${ root }/premium-services/`,
+	JETPACK_CONTACT_SUPPORT: 'https://jetpack.com/contact-support/',
 	JETPACK_SERVICE_VAULTPRESS: `${ root }/setting-up-premium-services/#vaultpress`,
 	JETPACK_SERVICE_AKISMET: `${ root }/setting-up-premium-services/#akismet`,
 	JETPACK_SERVICE_POLLDADDY: `${ root }/setting-up-premium-services/#polldaddy`,
