@@ -1,8 +1,6 @@
 /**
  * Console dispatcher Redux store enhancer
  *
- * @blame dmsnell
- *
  * Inject into the `createStore` enhancer chain in order
  * to provide access to the store directly from the console.
  *
@@ -19,10 +17,7 @@
 /**
  * External dependencies
  */
-import {
-	matchesProperty,
-	now,
-} from 'lodash';
+import { matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +31,7 @@ const state = {
 };
 
 const actionLog = {
+	clear: () => state.actionHistory = [],
 	filter: type => state.actionHistory.filter( matchesProperty( 'type', type ) ),
 	setSize: size => state.historySize = size,
 	start: () => state.shouldRecordActions = true,
@@ -53,7 +49,18 @@ const recordAction = action => {
 		historySize,
 	} = state;
 
-	actionHistory.push( { ...action, meta: { ...action.meta, timestamp: now() } } );
+	const thunkDescription = 'function' === typeof action
+		? { type: 'thunk (hidden)' }
+		: {};
+
+	actionHistory.push( {
+		...action,
+		...thunkDescription,
+		meta: {
+			...action.meta,
+			timestamp: Date.now(),
+		},
+	} );
 
 	// cheap optimization to keep from
 	// thrashing once we hit our size limit
