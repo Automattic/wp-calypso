@@ -30,7 +30,14 @@ export default class PopoverMenuItem extends Component {
 	}
 
 	render() {
-		const { className, href, selected, focusOnHover, icon, children } = this.props;
+		const {
+			children,
+			className,
+			focusOnHover,
+			href,
+			icon,
+			selected,
+		} = this.props;
 		const classes = classnames( 'popover__menu-item', className, {
 			'is-selected': selected
 		} );
