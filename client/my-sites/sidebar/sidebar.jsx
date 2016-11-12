@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
  */
 var config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
 	productsValues = require( 'lib/products-values' ),
 	PublishMenu = require( './publish-menu' ),
@@ -32,6 +31,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import AppearanceMenu from './appearanceMenu';
 
 export const MySitesSidebar = React.createClass( {
 	propTypes: {
@@ -164,81 +164,6 @@ export const MySitesSidebar = React.createClass( {
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
 				icon="speaker" />
-		);
-	},
-
-	themes: function() {
-		var site = this.getSelectedSite(),
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
-			themesLink;
-
-		if ( site && ! site.isCustomizable() ) {
-			return null;
-		}
-
-		if ( ! config.isEnabled( 'manage/themes' ) ) {
-			return null;
-		}
-
-		if ( site.jetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
-		} else if ( this.isSingle() ) {
-			themesLink = '/design' + this.siteSuffix();
-		} else {
-			themesLink = '/design';
-		}
-
-		return (
-			<SidebarItem
-				label={ this.translate( 'Themes' ) }
-				tipTarget="themes"
-				className={ this.itemLinkClass( '/design', 'themes' ) }
-				link={ themesLink }
-				onNavigate={ this.onNavigate }
-				icon="themes"
-				preloadSectionName="themes"
-			>
-				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
-					{ this.translate( 'Customize' ) }
-				</SidebarButton>
-			</SidebarItem>
-		);
-	},
-
-	menus: function() {
-		var site = this.getSelectedSite(),
-			menusLink = '/menus' + this.siteSuffix(),
-			showClassicLink = ! config.isEnabled( 'manage/menus' );
-
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( ! site.capabilities ) {
-			return null;
-		}
-
-		if ( site.capabilities && ! site.capabilities.edit_theme_options ) {
-			return null;
-		}
-
-		if ( ! this.isSingle() ) {
-			return null;
-		}
-
-		if ( showClassicLink ) {
-			menusLink = site.options.admin_url + 'nav-menus.php';
-		}
-
-		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ this.translate( 'Menus' ) }
-				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusLink }
-				onNavigate={ this.onNavigate }
-				icon="menus"
-				preloadSectionName="menus" />
 		);
 	},
 
@@ -682,7 +607,6 @@ export const MySitesSidebar = React.createClass( {
 
 	render: function() {
 		var publish = !! this.publish(),
-			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
 			vip = !! this.vip();
 
@@ -724,16 +648,7 @@ export const MySitesSidebar = React.createClass( {
 					: null
 				}
 
-				{ appearance
-					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
-						<ul>
-							{ this.themes() }
-							{ this.menus() }
-						</ul>
-					</SidebarMenu>
-					: null
-				}
+				<AppearanceMenu sites={ this.props.sites } path={ this.props.path } />
 
 				{ configuration
 					? <SidebarMenu>
