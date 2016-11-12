@@ -1,33 +1,36 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import userUtils from 'lib/user/utils';
 
-export default React.createClass( {
-	displayName: 'StatsDatePicker',
-
-	propTypes: {
+class StatsDatePicker extends Component {
+	static propTypes = {
 		period: PropTypes.string.isRequired,
 		date: PropTypes.oneOfType( [
 			PropTypes.object.isRequired,
 			PropTypes.string.isRequired
 		] ),
-		summary: PropTypes.bool
-	},
+		summary: PropTypes.bool,
+		translate: PropTypes.func,
+	}
 
 	dateForDisplay() {
 		const locale = userUtils.getLocaleSlug();
-		const date = this.moment( this.props.date ).locale( locale );
+		const date = moment( this.props.date );
+		if ( date.locale() !== locale ) {
+			date.locale( locale );
+		}
 		let formattedDate;
 
 		switch ( this.props.period ) {
 			case 'week':
-				formattedDate = this.translate(
+				formattedDate = this.props.translate(
 					'%(startDate)s - %(endDate)s',
 					{
 						context: 'Date range for which stats are being displayed',
@@ -54,26 +57,26 @@ export default React.createClass( {
 		}
 
 		return formattedDate;
-	},
+	}
 
 	render() {
-		const sectionTitle = this.translate( 'Stats for {{period/}}', {
+		const sectionTitle = this.props.translate( 'Stats for {{period/}}', {
 			components: {
-				period: <span className="period">
-							<span className="date">{ this.dateForDisplay() }</span>
-						</span>
+				period: <span>{ this.dateForDisplay() }</span>
 			},
 			context: 'Stats: Main stats page heading',
 			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
 		} );
 
-		return(
+		return (
 			<div>
 				{ this.props.summary
 					? <span>{ sectionTitle }</span>
-					: <h3 className="stats-section-title">{ sectionTitle }</h3>
+					: <h3 className="stats-date-picker__title">{ sectionTitle }</h3>
 				}
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( StatsDatePicker );

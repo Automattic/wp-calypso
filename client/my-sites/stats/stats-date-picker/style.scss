@@ -1,0 +1,12 @@
+.stats-date-picker__title {
+	@include heading;
+
+	@include breakpoint( "<660px" ) {
+		margin-left: 24px;
+		margin-right: 24px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		text-align: center;
+	}
+}
