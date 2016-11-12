@@ -25,6 +25,7 @@ export default class RefreshPostCard extends React.Component {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
 		feed: PropTypes.object,
+		isSelected: PropTypes.bool,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
@@ -33,7 +34,8 @@ export default class RefreshPostCard extends React.Component {
 
 	static defaultProps = {
 		onClick: noop,
-		onCommentClick: noop
+		onCommentClick: noop,
+		isSelected: false
 	};
 
 	propagateCardClick = () => {
@@ -84,13 +86,14 @@ export default class RefreshPostCard extends React.Component {
 	}
 
 	render() {
-		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
+		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton, isSelected } = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoOnly,
-			'is-gallery': isGallery
+			'is-gallery': isGallery,
+			'is-selected': isSelected
 		} );
 		const showExcerpt = ! isPhotoOnly;
 		let title = truncate( post.title, {
