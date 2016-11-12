@@ -17,6 +17,22 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin: 0;
 	}
 
+	&.is-selected {
+		&::before {
+			content: '';
+			position: absolute;
+				top: 0;
+				bottom: 0;
+				left: -8px;
+				width: 2px;
+			background: $blue-wordpress;
+
+			@include breakpoint( ">660px" ) {
+				left: -16px;
+			}
+		}
+	}
+
 	&.has-thumbnail {
 
 		.reader-post-card__featured-image {
