@@ -3,11 +3,25 @@
 */
 
 .welcome-message {
-	@extend %container;
+	@include clear-fix;
+
+	box-shadow: 0 1px 2px rgba(0,0,0,0.075);
 	position: relative;
 	background: $gray-light;
 	margin-bottom: 6%;
 	padding: 16px;
+
+
+	ul,
+	ol {
+		font-size: 14px;
+		margin-bottom: 4px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin-left: .25em;
+		margin-right: .25em;
+	}
 
 	.close-button {
 		position: absolute;
