@@ -11,6 +11,7 @@ const thingsToRemove = [
 	'.sharedaddy', // share daddy
 	'script', // might be too late for these at this point...
 	'.jp-relatedposts', // jetpack related posts
+	'.jp-relatedposts-headline', // same
 	'.mc4wp-form', // mailchimp 4 wp
 	'.wpcnt', // wordads?
 	'.OUTBRAIN',
