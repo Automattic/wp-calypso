@@ -29,7 +29,7 @@ export const StandardPluginsPanel = React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Standard Plugins' ) }>
+				<SectionHeader label={ this.translate( 'Jetpack & other plugins' ) }>
 					<Button className="is-active-plugin" compact borderless>
 						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
 					</Button>
@@ -67,7 +67,7 @@ const trackClick = name => recordTracksEvent(
 	'calypso_plugin_wpcom_click',
 	{
 		plugin_name: name,
-		plugin_plan: 'standard'
+		plugin_plan: 'jetpack'
 	}
 );
 
