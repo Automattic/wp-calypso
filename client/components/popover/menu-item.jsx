@@ -53,7 +53,7 @@ export default class PopoverMenuItem extends Component {
 				role="menuitem"
 				onMouseOver={ hoverHandler }
 				tabIndex="-1"
-				{ ...omit( this.props, 'icon', 'focusOnHover' ) }
+				{ ...omit( this.props, 'icon', 'focusOnHover', 'isSelected' ) }
 				className={ classes }>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }
