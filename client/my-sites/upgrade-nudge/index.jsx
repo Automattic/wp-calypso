@@ -2,8 +2,10 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,16 +14,12 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
-import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { getSelectedSite } from 'state/ui/selectors';
 
-const sites = sitesList();
-
-export default React.createClass( {
-
-	displayName: 'UpgradeNudge',
+const UpgradeNudge = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
@@ -33,7 +31,8 @@ export default React.createClass( {
 		jetpack: React.PropTypes.bool,
 		compact: React.PropTypes.bool,
 		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
-		shouldDisplay: React.PropTypes.func
+		shouldDisplay: React.PropTypes.func,
+		site: React.PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -60,8 +59,8 @@ export default React.createClass( {
 		this.props.onClick();
 	},
 
-	shouldDisplay( site ) {
-		const { feature, jetpack, shouldDisplay } = this.props;
+	shouldDisplay() {
+		const { feature, jetpack, shouldDisplay, site } = this.props;
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
@@ -84,9 +83,8 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { site, translate } = this.props;
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
-
-		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
 		if ( ! this.shouldDisplay( site ) ) {
@@ -107,7 +105,7 @@ export default React.createClass( {
 					<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
 					<div className="upgrade-nudge__info">
 						<span className="upgrade-nudge__title">
-							{ this.props.title || this.translate( 'Upgrade to Premium' ) }
+							{ this.props.title || translate( 'Upgrade to Premium' ) }
 						</span>
 						<span className="upgrade-nudge__message" >
 							{ this.props.message }
@@ -122,7 +120,7 @@ export default React.createClass( {
 				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } size={ 18 } />
 				<div className="upgrade-nudge__info">
 					<span className="upgrade-nudge__title">
-						{ this.props.title || this.translate( 'Upgrade to Premium' ) }
+						{ this.props.title || translate( 'Upgrade to Premium' ) }
 					</span>
 					<span className="upgrade-nudge__message" >
 						{ this.props.message }
@@ -139,3 +137,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+function mapStateToProps( state ) {
+	const site = getSelectedSite( state );
+
+	return {
+		site,
+	};
+}
+
+export default connect( mapStateToProps )( localize( UpgradeNudge ) );
