@@ -905,6 +905,7 @@ describe( 'index', function() {
 					<div class="sharedaddy">sharedaddy</div>
 					<script>/*hi*/</script>
 					<div class="jp-relatedposts">jetpack</div>
+					<div class="jp-relatedposts-headline">jetpack</div>
 					<div class="mc4wp-form">a form</div>
 					<div class="wpcnt">wordads</div>
 					<div class="OUTBRAIN">outbrain content ads</div>
