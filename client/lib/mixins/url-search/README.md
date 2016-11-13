@@ -63,5 +63,9 @@ _If_ your search component should only be displayed dynamically, you can use `th
 		);
 ```
 
+Ordinarily, this mixin will replace the `s` querystring parameter for the current `window.location.href`.  If the baseUrl property is provided then instead the route change will
+be applied to the value of baseUrl.  This is to allow the route to change when search is executed.
+
 ## History
+
 `url-search` adds the first search result page to the browser history, and then uses push-state to update the page on subsequent searches. So only the most-recent search is persisted in the browser's history.

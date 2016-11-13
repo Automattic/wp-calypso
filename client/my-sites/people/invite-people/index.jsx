@@ -341,6 +341,7 @@ const InvitePeople = React.createClass( {
 							</div>
 
 							<RoleSelect
+								fieldset
 								id="role"
 								name="role"
 								includeFollower

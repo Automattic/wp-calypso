@@ -14,6 +14,7 @@ import ButtonGroup from 'components/button-group';
 import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 import config from 'config';
+import RoleSelect from 'my-sites/people/role-select';
 
 export default React.createClass( {
 	displayName: 'PeopleListSectionHeader',
@@ -64,18 +65,33 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { label, count, site } = this.props;
+		const { label, count, site, role } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
 			'people-list-section-header'
 		);
+		const calculatePath = function ( role ) {
+			return role ? `/people/team/role/${role}/${site.slug}` : `/people/team/${site.slug}`;
+		};
+		const allLabel = this.translate( 'All', { context: 'A label when displaying team members of all roles.' } )
+		const roleSelect = (
+			<RoleSelect
+				id="role"
+				name="role"
+				selectedValue={ role || '' }
+				selectedCount={ count }
+				defaultOption={ { value: '', label: allLabel, path: calculatePath() } }
+				siteId={ site.ID }
+				calculatePath={ calculatePath }
+			/>
+		);
 
 		return (
 			<SectionHeader
 				className={ classes }
-				count={ count }
-				label={ label } >
+				count={ this.props.showRoles ? null : count }
+				label={ this.props.showRoles ? roleSelect : label } >
 
 				{ siteLink &&
 					<ButtonGroup>

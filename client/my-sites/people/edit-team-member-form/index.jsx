@@ -138,6 +138,7 @@ const EditUserForm = React.createClass( {
 			case 'roles':
 				returnField = (
 					<RoleSelect
+						fieldset
 						id="roles"
 						name="roles"
 						key="roles"

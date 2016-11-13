@@ -72,7 +72,8 @@ function renderPeopleList( filter, context ) {
 			sites: sites,
 			peopleLog: PeopleLogStore,
 			filter: filter,
-			search: context.query.s
+			search: context.query.s,
+			role: context.params.role
 		} ),
 		document.getElementById( 'primary' ),
 		context.store

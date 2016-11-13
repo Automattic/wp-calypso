@@ -24,6 +24,7 @@ let PeopleSearch = React.createClass( {
 			<Search
 				pinned
 				fitsContainer
+				baseUrl={ this.props.baseUrl }
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
 				ref="url-search"
@@ -108,6 +109,7 @@ module.exports = React.createClass( {
 
 	getNavigableFilters: function() {
 		var allowedFilterIds = [ 'team' ];
+
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
@@ -128,7 +130,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var selectedText,
+		var selectedFilter,
+			selectedText,
 			hasPinnedItems = false,
 			search = null;
 
@@ -141,7 +144,8 @@ module.exports = React.createClass( {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		selectedFilter = find( this.getFilters(), { id: this.props.filter } )
+		selectedText = selectedFilter ? selectedFilter.title : 'team';
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />

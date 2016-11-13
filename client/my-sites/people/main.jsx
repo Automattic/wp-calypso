@@ -37,7 +37,7 @@ export default React.createClass( {
 	renderPeopleList: function( site ) {
 		switch ( this.props.filter ) {
 			case 'team':
-				return <TeamList site={ site } search={ this.props.search } />;
+				return <TeamList site={ site } search={ this.props.search } role={ this.props.role } />;
 			case 'followers':
 				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
 			case 'email-followers':
@@ -50,6 +50,15 @@ export default React.createClass( {
 				return <ViewersList site={ site } label={ this.translate( 'Viewers' ) } />;
 			default:
 				return null;
+		}
+	},
+
+	renderPeopleSectionNav: function( site ) {
+		const commonProps = omit( this.props, [ 'sites' ] );
+		if ( this.props.filter === 'team' ) {
+			return <PeopleSectionNav { ...commonProps } site={ site } baseUrl={ `/people/team/${this.props.sites.selected}` } />;
+		} else {
+			return <PeopleSectionNav { ...commonProps } site={ site } />;
 		}
 	},
 
@@ -84,7 +93,7 @@ export default React.createClass( {
 			<Main>
 				<SidebarNavigation />
 				<div>
-					{ <PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } site={ site } /> }
+					{ this.renderPeopleSectionNav( site ) }
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>

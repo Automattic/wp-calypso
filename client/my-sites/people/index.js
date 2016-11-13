@@ -12,6 +12,17 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
+		if ( config.isEnabled( 'manage/people/role-filtering' ) ) {
+			page( '/people/team/role/:role', controller.siteSelection, controller.sites );
+			page(
+				'/people/team/role/:role/:site_id',
+				peopleController.enforceSiteEnding,
+				controller.siteSelection,
+				controller.navigation,
+				peopleController.people.bind( null, 'team' )
+			);
+		}
+
 		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );
 			page(
