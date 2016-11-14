@@ -49,17 +49,18 @@ const JetpackThemeReferrerPage = localize(
 const SingleSiteThemeShowcase = connectOptions(
 	localize(
 		( props ) => {
+			const { siteId } = props;
 			const site = sites.getSelectedSite(),
 				{ translate } = props;
 
 			return (
-				<ThemeShowcase { ...props } siteId={ site && site.ID }>
-					{ site && <QuerySitePurchases siteId={ site.ID } /> }
+				<ThemeShowcase { ...props } siteId={ siteId }>
+					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<SidebarNavigation />
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					<CurrentTheme site={ site } />
+					<CurrentTheme siteId={ siteId } />
 					<UpgradeNudge
 						title={ translate( 'Get Custom Design with Premium' ) }
 						message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
