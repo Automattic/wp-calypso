@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,10 +15,14 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import CompactCard from 'components/card/compact';
 
 const TaxonomyCard = ( { labels, site, taxonomy } ) => {
-	const settingsLink = `/settings/taxonomies/${ site.slug }/${ taxonomy }`;
+	const settingsLink = site ? `/settings/taxonomies/${ site.slug }/${ taxonomy }` : null;
+	const classes = classNames( 'taxonomies__card-title', {
+		'is-loading': ! labels.name
+	} );
+
 	return (
 		<CompactCard href={ settingsLink }>
-				<h2 className="taxonomies__card-title">{ labels.name }</h2>
+				<h2 className={ classes }>{ labels.name }</h2>
 		</CompactCard>
 	);
 };

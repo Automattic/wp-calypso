@@ -25,7 +25,7 @@ class QueryTaxonomies extends Component {
 	}
 
 	request( props ) {
-		if ( props.requesting ) {
+		if ( props.requesting || ! props.siteId ) {
 			return;
 		}
 
@@ -42,7 +42,7 @@ class QueryTaxonomies extends Component {
 }
 
 QueryTaxonomies.propTypes = {
-	siteId: PropTypes.number.isRequired,
+	siteId: PropTypes.number,
 	postType: PropTypes.string.isRequired,
 	requesting: PropTypes.bool.isRequired,
 	requestPostTypeTaxonomies: PropTypes.func.isRequired
