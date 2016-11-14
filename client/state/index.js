@@ -12,6 +12,7 @@ import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
@@ -119,7 +120,11 @@ export function createReduxStore( initialState = {} ) {
 		window.app.isDebug &&
 		window.devToolsExtension
 	) {
-		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
+		createStoreWithMiddleware = compose(
+			createStoreWithMiddleware,
+			consoleDispatcher,
+			window.devToolsExtension(),
+		);
 	}
 	return createStoreWithMiddleware( createStore )( reducer, initialState );
 }
