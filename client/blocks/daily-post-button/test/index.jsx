@@ -95,7 +95,7 @@ describe( 'DailyPostButton', () => {
 		} );
 	} );
 
-	describe( 'staring a post', () => {
+	describe( 'starting a post', () => {
 		it( 'adds the daily post prompt attributes to the redirect url', () => {
 			const prompt = shallow( <DailyPostButton post={ dailyPromptPost } /> );
 			prompt.instance().openEditorWithSite( 'calypsop2.wordpress.com' );
