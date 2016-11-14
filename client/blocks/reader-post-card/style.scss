@@ -526,6 +526,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+.reader-post-card.card .daily-post-button {
+	margin-bottom: 10px;
+}
+
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
