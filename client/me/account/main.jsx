@@ -154,7 +154,7 @@ const Account = React.createClass( {
 
 		// Config names are like 'fr - Francais', so strip the slug off
 		const languageName = language.name.replace( /^[a-zA-Z-]* - /, '' );
-		const url = 'https://en.support.wordpress.com/translators/?contributor_locale=' + locale;
+		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
 		return ( <FormSettingExplanation> {
 			this.translate( 'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!', {
