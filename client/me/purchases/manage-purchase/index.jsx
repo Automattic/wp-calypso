@@ -295,7 +295,7 @@ const ManagePurchase = React.createClass( {
 				amount,
 				currencyCode,
 				currencySymbol,
-				period: productSlug && isMonthly( productSlug ) ? 'month' : 'year'
+				period: productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' )
 			},
 			components: {
 				period: <span className="manage-purchase__time-period" />
