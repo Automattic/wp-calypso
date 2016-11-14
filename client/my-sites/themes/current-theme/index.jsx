@@ -28,10 +28,7 @@ const CurrentTheme = React.createClass( {
 			icon: PropTypes.string.isRequired,
 			getUrl: PropTypes.func.isRequired
 		} ) ),
-		site: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
+		siteID: PropTypes.number.isRequired,
 		// connected props
 		currentTheme: PropTypes.object
 	},
@@ -39,7 +36,7 @@ const CurrentTheme = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	render() {
-		const { currentTheme, site } = this.props,
+		const { currentTheme, siteId } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
@@ -49,7 +46,7 @@ const CurrentTheme = React.createClass( {
 
 		return (
 			<Card className="current-theme">
-				{ site && <QueryCurrentTheme siteId={ site.ID } /> }
+				{ siteId && <QueryCurrentTheme siteId={ siteId } /> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
@@ -78,9 +75,9 @@ const CurrentTheme = React.createClass( {
 
 const ConnectedCurrentTheme = connectOptions( CurrentTheme );
 
-const CurrentThemeWithOptions = ( { site, currentTheme } ) => (
+const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
-		site={ site }
+		siteId={ siteId }
 		options={ [
 			'customize',
 			'info',
@@ -90,7 +87,7 @@ const CurrentThemeWithOptions = ( { site, currentTheme } ) => (
 );
 
 export default connect(
-	( state, { site } ) => ( {
-		currentTheme: site && getCurrentTheme( state, site.ID )
+	( state, { siteId } ) => ( {
+		currentTheme: siteId && getCurrentTheme( state, siteId )
 	} )
 )( CurrentThemeWithOptions );
