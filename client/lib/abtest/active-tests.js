@@ -80,7 +80,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	paidNuxThankYouPage: {
-		datestamp: '20161021',
+		datestamp: '20161114',
 		variations: {
 			original: 50,
 			emailNudgeOnTop: 50,
