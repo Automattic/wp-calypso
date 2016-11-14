@@ -28,7 +28,7 @@ const CurrentTheme = React.createClass( {
 			icon: PropTypes.string.isRequired,
 			getUrl: PropTypes.func.isRequired
 		} ) ),
-		siteID: PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
 		// connected props
 		currentTheme: PropTypes.object
 	},
