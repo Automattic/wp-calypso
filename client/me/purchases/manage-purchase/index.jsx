@@ -273,9 +273,27 @@ const ManagePurchase = React.createClass( {
 		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
+	renderPricePerPeriod() {
+		const purchase = getPurchase( this.props ),
+			{ amount, currencyCode, currencySymbol, productSlug } = purchase,
+			period = productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' );
+
+		return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+			args: {
+				amount,
+				currencyCode,
+				currencySymbol,
+				period
+			},
+			components: {
+				period: <span className="manage-purchase__time-period" />
+			}
+		} );
+	},
+
 	renderPrice() {
 		const purchase = getPurchase( this.props ),
-			{ amount, currencyCode, currencySymbol, productSlug } = purchase;
+			{ amount, currencyCode, currencySymbol } = purchase;
 
 		if ( isOneTimePurchase( purchase ) ) {
 			return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}(one-time){{/period}}', {
@@ -290,17 +308,7 @@ const ManagePurchase = React.createClass( {
 			return this.translate( 'Free with Plan' );
 		}
 
-		return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-			args: {
-				amount,
-				currencyCode,
-				currencySymbol,
-				period: productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' )
-			},
-			components: {
-				period: <span className="manage-purchase__time-period" />
-			}
-		} );
+		return this.renderPricePerPeriod();
 	},
 
 	renderPaymentInfo() {
