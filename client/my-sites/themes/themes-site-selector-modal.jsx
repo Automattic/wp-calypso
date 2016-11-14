@@ -109,7 +109,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site.ID );
+						return site && selectedOption.getUrl( selectedTheme, site.ID );
 					} : null } >
 					<QuerySites allSites />
 					<Theme isActionable={ false } theme={ selectedTheme } />
