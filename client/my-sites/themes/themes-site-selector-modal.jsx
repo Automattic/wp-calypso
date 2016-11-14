@@ -45,8 +45,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 	},
 
 	trackAndCallAction( siteId ) {
-		const action = this.state.selectedOption.action;
-		const themeId = this.state.selectedThemeId;
+		const { selectedOption: optionName, selectedThemeId: themeId } = this.state;
+		const { action } = this.props.options[ optionName ];
 		const { search } = this.props;
 		const siteSlug = this.props.getSiteSlug( siteId );
 
@@ -83,12 +83,12 @@ const ThemesSiteSelectorModal = React.createClass( {
 	 * but only if it also has a header, because the latter indicates it really needs
 	 * a site to be selected and doesn't work otherwise.
 	 */
-	wrapOption( option ) {
+	wrapOption( option, name ) {
 		return Object.assign(
 			{},
 			option,
 			option.header
-				? { action: themeId => this.showSiteSelectorModal( option, themeId ) }
+				? { action: themeId => this.showSiteSelectorModal( name, themeId ) }
 				: {},
 			option.getUrl && option.header
 				? { getUrl: null }
@@ -106,7 +106,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 			} )
 		);
 
-		const { selectedOption, selectedThemeId } = this.state;
+		const { selectedOption: selectedOptionName, selectedThemeId } = this.state;
+		const selectedOption = this.props.options[ selectedOptionName ];
 		const theme = this.props.getWpcomTheme( selectedThemeId );
 
 		return (
