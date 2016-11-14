@@ -111,7 +111,7 @@ export default React.createClass( {
 				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 			}
 
-			onInsertMedia( markup.get( selectedItems[ 0 ] ) );
+			onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		} else {
 			// In all other cases, show the media modal list view
