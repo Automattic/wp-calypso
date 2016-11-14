@@ -1,0 +1,12 @@
+.daily-post-button {
+	margin-top: 20px;
+	display: inline-block;
+
+	.daily-post-button__button {
+		text-transform: capitalize;
+
+		.gridicon {
+			margin-right: 5px;
+		}
+	}
+}
