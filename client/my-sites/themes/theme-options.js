@@ -46,7 +46,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 
 const activate = {
 	label: i18n.translate( 'Activate' ),
-	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a siteId on which to activate a theme' } ),
+	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateTheme,
 	hideForTheme: ( state, theme, siteId ) =>
 		isActive( state, theme.id, siteId ) || ( theme.price && ! isPurchased( state, theme.id, siteId ) )
@@ -54,7 +54,7 @@ const activate = {
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
-	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a siteId for which to customize a theme' } ),
+	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
