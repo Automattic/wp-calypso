@@ -438,8 +438,8 @@ const ThemeSheet = React.createClass( {
 					meta={ metas }
 					link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
-					{ this.renderBar() }
-					{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
+				{ this.renderBar() }
+				{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
 				<ThanksModal
 					site={ this.props.selectedSite }
 					source={ 'details' } />
@@ -490,6 +490,7 @@ const ConnectedThemeSheet = connectOptions(
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { selectedSite: site, isActive, price, isLoggedIn } = props;
+	const siteId = site ? site.ID : null;
 
 	let defaultOption;
 
@@ -505,7 +506,7 @@ const ThemeSheetWithOptions = ( props ) => {
 
 	return (
 		<ConnectedThemeSheet { ...props }
-			siteId={ site.ID }
+			siteId={ siteId }
 			theme={ props /* TODO: Have connectOptions() only use theme ID */ }
 			options={ [
 				'signup',
