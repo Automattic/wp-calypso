@@ -87,7 +87,7 @@ class DailyPostButton extends React.Component {
 		}
 	}
 
-	_deferMenuChange( showingMenu ) {
+	deferMenuChange( showingMenu ) {
 		if ( this._closeTimerId ) {
 			clearTimeout( this._closeTimerId );
 		}
@@ -122,7 +122,7 @@ class DailyPostButton extends React.Component {
 				return this.openEditorWithSite( primarySlug );
 			}
 		}
-		this._deferMenuChange( ! this.state.showingMenu );
+		this.deferMenuChange( ! this.state.showingMenu );
 	}
 
 	closeMenu() {
@@ -130,7 +130,7 @@ class DailyPostButton extends React.Component {
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
 		if ( this._isMounted ) {
-			this._deferMenuChange( false );
+			this.deferMenuChange( false );
 		}
 	}
 
