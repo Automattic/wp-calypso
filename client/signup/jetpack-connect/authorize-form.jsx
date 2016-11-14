@@ -29,11 +29,14 @@ import {
 import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
-	isRemoteSiteOnSitesList,
 	getSSOSessions,
 	isCalypsoStartedConnection,
-	hasXmlrpcError
+	hasXmlrpcError,
+	getSiteSelectedPlan,
+	isRemoteSiteOnSitesList,
+	getGlobalSelectedPlan
 } from 'state/jetpack-connect/selectors';
+import { abtest } from 'lib/abtest';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -60,6 +63,8 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import Plans from './plans';
+import CheckoutData from 'components/data/checkout';
 
 /**
  * Constants
@@ -186,7 +191,8 @@ const LoggedInForm = React.createClass( {
 
 	getInitialState() {
 		return {
-			hasRefetchedSites: false
+			hasRefetchedSites: false,
+			haveAuthorized: false
 		};
 	},
 
@@ -203,6 +209,7 @@ const LoggedInForm = React.createClass( {
 			)
 		) {
 			debug( 'Authorizing automatically on component mount' );
+			this.setState( { haveAuthorized: true } );
 			return this.props.authorize( queryObject );
 		}
 		if ( this.props.isAlreadyOnSitesList && ! this.state.hasRefetchedSites && ! this.props.isFetchingSites() ) {
@@ -225,6 +232,14 @@ const LoggedInForm = React.createClass( {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
+		} else if (
+			this.props.plansFirst &&
+			this.props.selectedPlan &&
+			! this.state.haveAuthorized &&
+			! this.isAuthorizing()
+		) {
+			this.setState( { haveAuthorized: true } );
+			this.props.authorize( queryObject );
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManageAndRedirect();
 		}
@@ -286,7 +301,9 @@ const LoggedInForm = React.createClass( {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 
-		return this.props.authorize( queryObject );
+		if ( ! ! this.isAuthorizing() ) {
+			return this.props.authorize( queryObject );
+		}
 	},
 
 	handleSignOut() {
@@ -384,7 +401,7 @@ const LoggedInForm = React.createClass( {
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
-			return this.translate( 'Return to your site' );
+			return this.translate( 'Go back to your site' );
 		}
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
@@ -475,10 +492,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getRedirectionTarget() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const site = queryObject.site;
-		const siteSlug = urlToSlug( site );
-		return PLANS_PAGE + siteSlug;
+		return PLANS_PAGE + this.props.siteSlug;
 	},
 
 	renderFooterLinks() {
@@ -584,6 +598,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
 
+
 	renderNoQueryArgsError() {
 		return (
 			<Main>
@@ -602,6 +617,16 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		);
 	},
 
+	renderPlansSelector() {
+		return (
+				<div>
+					<CheckoutData>
+						<Plans { ...this.props } showFirst={ true } />
+					</CheckoutData>
+				</div>
+		);
+	},
+
 	renderForm() {
 		const { userModule } = this.props;
 		const user = userModule.get();
@@ -611,14 +636,23 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ this.props.calypsoStartedConnection } isSSO={ this.isSSO() } />
+				? <LoggedInForm { ...props } isSSO={ this.isSSO() } />
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
+
 		if ( typeof queryObject === 'undefined' ) {
 			return this.renderNoQueryArgsError();
+		}
+
+		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
+			this.renderMainForm();
+		}
+
+		if ( this.props.plansFirst && ! this.props.selectedPlan ) {
+			return this.renderPlansSelector();
 		}
 
 		return (
@@ -634,16 +668,21 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 export default connect(
 	state => {
 		const remoteSiteUrl = getAuthorizationRemoteSite( state );
-
+		const siteSlug = urlToSlug( remoteSiteUrl );
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
 		};
+		const selectedPlan = getSiteSelectedPlan( state, siteSlug ) || getGlobalSelectedPlan( state );
 
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
+
 		return {
+			siteSlug,
+			selectedPlan,
 			jetpackConnectAuthorize: getAuthorizationData( state ),
+			plansFirst: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
 			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites,

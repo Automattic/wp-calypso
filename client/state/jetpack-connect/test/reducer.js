@@ -85,7 +85,8 @@ describe( 'reducer', () => {
 			'jetpackConnectAuthorize',
 			'jetpackConnectSessions',
 			'jetpackSSO',
-			'jetpackSSOSessions'
+			'jetpackSSOSessions',
+			'jetpackConnectSelectedPlans'
 		] );
 	} );
 
