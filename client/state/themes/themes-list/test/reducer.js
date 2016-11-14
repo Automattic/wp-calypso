@@ -31,8 +31,7 @@ describe( 'themes-list reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = fromJS( jsObject );
 			const persistedState = reducer( state, { type: SERIALIZE } );
@@ -52,8 +51,7 @@ describe( 'themes-list reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
 			expect( state ).to.eql( initialState );
@@ -73,8 +71,7 @@ describe( 'themes-list reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( query( fromJS( jsObject ) ) );
