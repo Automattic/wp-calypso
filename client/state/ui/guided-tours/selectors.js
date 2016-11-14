@@ -27,7 +27,6 @@ import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import {
-	hasViewJustBeenVisible,
 	shouldViewBeVisible
 } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
@@ -158,15 +157,27 @@ const findTriggeredTour = state => {
 const isSectionBlacklisted = state =>
 	includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
 
-const isConflictingWithFirstView = state =>
-	hasViewJustBeenVisible( state ) ||
+export const hasTourJustBeenVisible = createSelector(
+	( state, now = Date.now() ) => {
+		const last = findLast( getActionLog( state ), {
+			type: GUIDED_TOUR_UPDATE,
+			shouldShow: false,
+		} );
+		// threshold is one minute
+		return last && ( now - last.timestamp ) < 60000;
+	},
+	getActionLog
+);
+
+const isConflictingWithOtherHelp = state =>
+	hasTourJustBeenVisible( state ) ||
 	shouldViewBeVisible( state );
 
 const shouldBailAllTours = state =>
 	isSectionBlacklisted( state );
 
 const shouldBailNewTours = state =>
-	isConflictingWithFirstView( state );
+	isConflictingWithOtherHelp( state );
 
 export const findEligibleTour = createSelector(
 	state => {

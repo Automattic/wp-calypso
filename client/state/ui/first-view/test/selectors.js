@@ -10,7 +10,6 @@ import {
 	isUserEligible,
 	getConfigForCurrentView,
 	isViewEnabled,
-	hasViewJustBeenVisible,
 	wasFirstViewHiddenSinceEnteringCurrentSection,
 	secondsSpentOnCurrentView,
 	bucketedTimeSpentOnCurrentView,
@@ -267,39 +266,6 @@ describe( 'selectors', () => {
 			}, config );
 
 			expect( viewEnabled ).to.be.false;
-		} );
-	} );
-
-	describe( '#hasViewJustBeenVisible', () => {
-		it( 'should return false when no tour has been seen', () => {
-			const state = { ui: { actionLog: [] } };
-			expect( hasViewJustBeenVisible( state ) ).to.be.falsey;
-		} );
-		it( 'should return true when a tour has just been seen', () => {
-			const now = 1478623930204;
-			const state = {
-				ui: {
-					actionLog: [ {
-						type: FIRST_VIEW_HIDE,
-						view: 'stats',
-						timestamp: now - 10000, // 10 seconds earlier
-					} ]
-				}
-			};
-			expect( hasViewJustBeenVisible( state, now ) ).to.be.true;
-		} );
-		it( 'should return false when a tour has been seen longer ago', () => {
-			const now = 1478623930204;
-			const state = {
-				ui: {
-					actionLog: [ {
-						type: FIRST_VIEW_HIDE,
-						view: 'stats',
-						timestamp: now - 120000, // 2 minutes earlier
-					} ]
-				}
-			};
-			expect( hasViewJustBeenVisible( state, now ) ).to.be.falsey;
 		} );
 	} );
 

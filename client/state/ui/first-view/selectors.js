@@ -99,17 +99,6 @@ export function shouldViewBeVisible( state ) {
 		! isSectionLoading( state );
 }
 
-export const hasViewJustBeenVisible = createSelector(
-	( state, now = Date.now() ) => {
-		const lastFirstView = findLast( getActionLog( state ), {
-			type: FIRST_VIEW_HIDE
-		} );
-		// threshold is one minute
-		return lastFirstView && ( now - lastFirstView.timestamp ) < 60000;
-	},
-	getActionLog
-);
-
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {
 	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
 	return currentRoute ? ( now - currentRoute.timestamp ) / 1000 : -1;

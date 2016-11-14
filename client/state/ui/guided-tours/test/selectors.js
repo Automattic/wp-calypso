@@ -14,6 +14,7 @@ import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 describe( 'selectors', () => {
 	let getGuidedTourState;
 	let findEligibleTour;
+	let hasTourJustBeenVisible;
 
 	useFakeDom();
 
@@ -25,6 +26,7 @@ describe( 'selectors', () => {
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
+		hasTourJustBeenVisible = selectors.hasTourJustBeenVisible;
 	} );
 
 	describe( '#isConflictingWithFirstView', () => {
@@ -73,7 +75,7 @@ describe( 'selectors', () => {
 			}
 		};
 
-		const havingJustSeenFirstView = {
+		const havingJustSeenTour = {
 			...withEligibleFirstView,
 			ui: {
 				...withEligibleFirstView.ui,
@@ -82,6 +84,11 @@ describe( 'selectors', () => {
 					{
 						type: 'FIRST_VIEW_HIDE',
 						view: 'stats',
+						timestamp: now - 120000,
+					},
+					{
+						type: 'GUIDED_TOUR_UPDATE',
+						shouldShow: false,
 						timestamp: now - 30000,
 					}
 				],
@@ -97,7 +104,7 @@ describe( 'selectors', () => {
 			}
 		};
 
-		const havingSeenFirstViewEarlier = {
+		const havingSeenTourEarlier = {
 			...withEligibleFirstView,
 			ui: {
 				...withEligibleFirstView.ui,
@@ -106,6 +113,11 @@ describe( 'selectors', () => {
 					{
 						type: 'FIRST_VIEW_HIDE',
 						view: 'stats',
+						timestamp: now - 120000,
+					},
+					{
+						type: 'GUIDED_TOUR_UPDATE',
+						shouldShow: false,
 						timestamp: now - 120000,
 					}
 				],
@@ -127,11 +139,46 @@ describe( 'selectors', () => {
 
 		it( 'should short-circuit findEligibleTour', () => {
 			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
-			expect( findEligibleTour( havingJustSeenFirstView ) ).to.be.undefined;
+			expect( findEligibleTour( havingJustSeenTour ) ).to.be.undefined;
 		} );
 
 		it( 'should reallow tours after a while', () => {
-			expect( findEligibleTour( havingSeenFirstViewEarlier ) ).to.equal( 'stats' );
+			expect( findEligibleTour( havingSeenTourEarlier ) ).to.equal( 'stats' );
+		} );
+	} );
+
+	describe( '#hasTourJustBeenVisible', () => {
+		it( 'should return false when no tour has been seen', () => {
+			const state = { ui: { actionLog: [] } };
+			expect( hasTourJustBeenVisible( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return true when a tour has just been seen', () => {
+			const now = 1478623930204;
+			const state = {
+				ui: {
+					actionLog: [ {
+						type: 'GUIDED_TOUR_UPDATE',
+						shouldShow: false,
+						timestamp: now - 10000, // 10 seconds earlier
+					} ]
+				}
+			};
+			expect( hasTourJustBeenVisible( state, now ) ).to.be.true;
+		} );
+
+		it( 'should return false when a tour has been seen longer ago', () => {
+			const now = 1478623930204;
+			const state = {
+				ui: {
+					actionLog: [ {
+						type: 'GUIDED_TOUR_UPDATE',
+						shouldShow: false,
+						timestamp: now - 120000, // 2 minutes earlier
+					} ]
+				}
+			};
+			expect( hasTourJustBeenVisible( state, now ) ).to.be.falsey;
 		} );
 	} );
 
