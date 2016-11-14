@@ -926,6 +926,7 @@ describe( 'index', function() {
 			);
 		} );
 	} );
+
 	describe( 'The fancy excerpt creator', function() {
 		function assertExcerptBecomes( source, expected, done ) {
 			normalizer( { content: source }, [ normalizer.createBetterExcerpt ], function( err, normalized ) {
@@ -948,7 +949,11 @@ describe( 'index', function() {
 		} );
 
 		it( 'limits the excerpt to 3 elements after trimming', function( done ) {
-			assertExcerptBecomes( '<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>', '<p>one</p><p>two</p><br>', done );
+			assertExcerptBecomes(
+				'<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>',
+				'<p>one</p><p>two</p><br>',
+				done
+			);
 		} );
 
 		it( 'only trims top-level breaks', function( done ) {
@@ -961,6 +966,23 @@ describe( 'index', function() {
 				'<p>hi there</p>',
 				done
 			);
+		} );
+	} );
+
+	describe( 'The refreshed fancy excerpt creator', () => {
+		function assertExcerptBecomes( source, expected, done ) {
+			normalizer( { content: source }, [ normalizer.createBetterExcerptRefresh ], function( err, normalized ) {
+				assert.strictEqual( normalized.better_excerpt, expected );
+				done( err );
+			} );
+		}
+
+		it( 'removes tags but inserts spaces between p tags', function( done ) {
+			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four ', done );
+		} );
+
+		it( 'turns br tags into spaces', function( done ) {
+			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three ', done );
 		} );
 	} );
 } );
