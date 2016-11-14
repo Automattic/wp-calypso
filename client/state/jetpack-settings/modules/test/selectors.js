@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import {
 	isActivatingModule,
-	isModuleActivated
+	isModuleActive
 } from '../selectors';
 
 import {
@@ -31,7 +31,7 @@ describe( 'requests selectors', () => {
 } );
 
 describe( 'items selectors', () => {
-	describe( '#isModuleActivated', () => {
+	describe( '#isModuleActive', () => {
 		it( 'should return state.jetpackSettings.jetpackModules.items[ siteId ][ module_slug ].active', () => {
 			const stateIn = {
 					jetpackSettings: {
@@ -41,7 +41,7 @@ describe( 'items selectors', () => {
 					}
 				},
 				siteId = 123456;
-			const output = isModuleActivated( stateIn, siteId, 'module-a' );
+			const output = isModuleActive( stateIn, siteId, 'module-a' );
 			expect( output ).to.eql( stateIn.jetpackSettings.jetpackModules.items[ siteId ][ 'module-a' ].active );
 		} );
 	} );

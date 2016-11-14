@@ -10,7 +10,7 @@ import get from 'lodash/get';
  * @param  {String}  moduleSlug  A module's slug
  * @return {Boolean}       Weather a module is activated
  */
-export function isModuleActivated( state, siteId, moduleSlug ) {
+export function isModuleActive( state, siteId, moduleSlug ) {
 	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'active' ], false );
 }
 
