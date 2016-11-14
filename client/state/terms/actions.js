@@ -16,7 +16,7 @@ import {
 } from 'state/action-types';
 import { editPost } from 'state/posts/actions';
 import { getSitePosts } from 'state/posts/selectors';
-import { getTerms } from './selectors';
+import { getTerm, getTerms } from './selectors';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -89,6 +89,53 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 				} );
 
 				return updatedTerm;
+			}
+		);
+	};
+}
+
+/**
+ * Returns an action thunk, deleting a term and removing it from the store
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Number} termId   term Id
+ * @param  {String} termSlug term Slug
+ * @return {Object}          Action object
+ */
+export function deleteTerm( siteId, taxonomy, termId, termSlug ) {
+	return ( dispatch, getState ) => {
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term( termSlug ).delete().then(
+			() => {
+				const state = getState();
+				const deletedTerm = getTerm( state, siteId, taxonomy, termId );
+
+				// Update the parentId of its children
+				const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), term => {
+					return term.parent === termId;
+				} ).map( term => {
+					return { ...term, parent: deletedTerm.parent };
+				} );
+				if ( termsToUpdate.length ) {
+					dispatch( receiveTerms( siteId, taxonomy, termsToUpdate ) );
+				}
+
+				// Drop the term from posts
+				const postsToUpdate = filter( getSitePosts( getState(), siteId ), post => {
+					return post.terms && post.terms[ taxonomy ] &&
+						find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
+				} );
+				postsToUpdate.forEach( post => {
+					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
+					dispatch( editPost( siteId, post.ID, {
+						terms: {
+							[ taxonomy ]: newTerms
+						}
+					} ) );
+				} );
+
+				// remove the term from the store
+				dispatch( removeTerm( siteId, taxonomy, termId ) );
 			}
 		);
 	};
