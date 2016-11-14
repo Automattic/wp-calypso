@@ -176,10 +176,10 @@ const flows = {
 	},
 
 	'get-dot-blog': {
-		steps: [ 'get-dot-blog-survey', 'get-dot-blog-themes', 'get-dot-blog-plans' ],
+		steps: [ 'get-dot-blog-themes', 'get-dot-blog-plans' ],
 		destination: getSiteDestination,
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
-		lastModified: '2016-10-03'
+		lastModified: '2016-11-14'
 	}
 };
 
