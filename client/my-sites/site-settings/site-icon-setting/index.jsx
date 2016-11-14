@@ -15,12 +15,16 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import InfoPopover from 'components/info-popover';
 import { addQueryArgs } from 'lib/url';
 
 function SiteIconSetting( { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } ) {
 	let buttonProps;
-	if ( ! isEnabled( 'manage/site-settings/site-icon' ) ) {
+	if ( isEnabled( 'manage/site-settings/site-icon' ) ) {
+		buttonProps = {
+			type: 'button'
+		};
+	} else {
 		buttonProps = { rel: 'external' };
 
 		if ( isJetpack ) {
@@ -35,16 +39,22 @@ function SiteIconSetting( { translate, siteId, isJetpack, customizerUrl, general
 
 	return (
 		<FormFieldset className="site-icon-setting">
-			<FormLabel>{ translate( 'Site Icon' ) }</FormLabel>
-			<div className="site-icon-setting__controls">
-				<SiteIcon size={ 64 } siteId={ siteId } />
-				<Button { ...buttonProps } className="site-icon-setting__change-button">
-					{ translate( 'Change site icon' ) }
-				</Button>
-			</div>
-			<FormSettingExplanation>
-				{ translate( 'The Site Icon is used as a browser and app icon for your site.' ) }
-			</FormSettingExplanation>
+			<FormLabel className="site-icon-setting__heading">
+				{ translate( 'Site Icon' ) }
+				<InfoPopover position="bottom right">
+					{ translate( 'A browser and app icon for your site.' ) }
+				</InfoPopover>
+			</FormLabel>
+			{ React.createElement( buttonProps.href ? 'a' : 'button', {
+				...buttonProps,
+				className: 'site-icon-setting__icon'
+			}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
+			<Button
+				{ ...buttonProps }
+				className="site-icon-setting__change-button"
+				compact>
+				{ translate( 'Change' ) }
+			</Button>
 		</FormFieldset>
 	);
 }
