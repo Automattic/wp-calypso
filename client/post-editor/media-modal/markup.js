@@ -175,10 +175,11 @@ Markup = {
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {Object} media An audio media object
 		 * @return {string}       An audio markup string
 		 */
-		audio: function( media ) {
+		audio: function( site, media ) {
 			return Shortcode.stringify( {
 				tag: 'audio',
 				attrs: {
@@ -191,10 +192,11 @@ Markup = {
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {string} media A video media object
 		 * @return {string}       A video markup string
 		 */
-		video: function( media ) {
+		video: function( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
 				return Shortcode.stringify( {
 					tag: 'wpvideo',
