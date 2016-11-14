@@ -1,4 +1,4 @@
-# Reader Daily Post
+# Daily Post Button
 
 The component wraps a Button and SitesPopover to set up a new post in the editor for a [Daily Post](dailypost.wordpress.com) prompt or challenge.
 
@@ -8,7 +8,6 @@ The component wraps a Button and SitesPopover to set up a new post in the editor
 - `position`: string, the SitesPopover position relative to the Button
 - `post`: object, the Daily Post post
 
-
 ## Helper
 
-Use the `isDailyPost` helper function to assert the post is from dailypost.wordpress.com.
+Use the `isDailyPostChallengeOrPrompt` helper function to assert the post is from dailypost.wordpress.com.
