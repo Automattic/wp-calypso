@@ -111,7 +111,7 @@ describe( 'metadata:', () => {
 		describe( 'In international format', () => {
 			it( 'should format full length numbers', () => {
 				equal( formatNumber( '+14252222222', countries.us ), '+1 425-222-2222' );
-				equal( formatNumber( '+905325555555', countries.tr ), '+90 532 555 5555' );
+				equal( formatNumber( '+905325555555', countries.tr ), '+90 532 555 55 55' );
 			} );
 
 			it( 'should format as you type', () => {
@@ -148,15 +148,15 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '+90555888', countries.tr ), '+90 555 888' );
 				equal( formatNumber( '+905558889', countries.tr ), '+90 555 888 9' );
 				equal( formatNumber( '+9055588899', countries.tr ), '+90 555 888 99' );
-				equal( formatNumber( '+90555888999', countries.tr ), '+90 555 888 999' );
-				equal( formatNumber( '+905558889999', countries.tr ), '+90 555 888 9999' );
+				equal( formatNumber( '+90555888999', countries.tr ), '+90 555 888 99 9' );
+				equal( formatNumber( '+905558889999', countries.tr ), '+90 555 888 99 99' );
 			} );
 		} );
 
 		describe( 'In national format', () => {
 			it( 'should format full length numbers', () => {
 				equal( formatNumber( '4252222222', countries.us ), '(425) 222-2222' );
-				equal( formatNumber( '05325555555', countries.tr ), '0532 555 5555' );
+				equal( formatNumber( '05325555555', countries.tr ), '0532 555 55 55' );
 				equal( formatNumber( '0215369851', countries.au ), '02 1536 9851' );
 			} );
 
@@ -193,7 +193,7 @@ describe( 'metadata:', () => {
 
 		describe( 'NANPA', () => {
 			it( 'should format full length numbers', () => {
-				equal( formatNumber( '14252222222', countries.us ), '1 (425) 222-2222' );
+				equal( formatNumber( '14252222222', countries.us ), '1 425-222-2222' );
 			} );
 			it( 'should format as you type', () => {
 				equal( formatNumber( '14', countries.us ), '14' );
@@ -202,10 +202,10 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '14256', countries.us ), '1 425-6' );
 				equal( formatNumber( '142565', countries.us ), '1 425-65' );
 				equal( formatNumber( '1425655', countries.us ), '1 425-655' );
-				equal( formatNumber( '14256559', countries.us ), '1 425-6559' );
-				equal( formatNumber( '142565599', countries.us ), '1 (425) 655-99' );
-				equal( formatNumber( '1425655999', countries.us ), '1 (425) 655-999' );
-				equal( formatNumber( '14256559999', countries.us ), '1 (425) 655-9999' );
+				equal( formatNumber( '14256559', countries.us ), '1 425-655-9' );
+				equal( formatNumber( '142565599', countries.us ), '1 425-655-99' );
+				equal( formatNumber( '1425655999', countries.us ), '1 425-655-999' );
+				equal( formatNumber( '14256559999', countries.us ), '1 425-655-9999' );
 			} );
 		} );
 	} );
