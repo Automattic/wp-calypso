@@ -21,6 +21,7 @@ import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import QueryTerms from 'components/data/query-terms';
+import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
 import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -123,6 +124,7 @@ const SiteSettingsFormWriting = React.createClass( {
 			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
 				{ config.isEnabled( 'manage/site-settings/categories' ) &&
 					<div className="site-settings__taxonomies">
+						<QueryTaxonomies siteId={ this.props.siteId } postType="post" />
 						<TaxonomyCard taxonomy="category" postType="post" />
 						<TaxonomyCard taxonomy="post_tag" postType="post" />
 					</div>
