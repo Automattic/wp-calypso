@@ -287,19 +287,22 @@ export function isRequestingSitePost( state, siteId, postId ) {
  * @param  {Number} postId Post ID
  * @return {Object}        Post object with revisions
  */
-export function getEditedPost( state, siteId, postId ) {
-	const post = getSitePost( state, siteId, postId );
-	const edits = getPostEdits( state, siteId, postId );
-	if ( ! edits ) {
-		return post;
-	}
+export const getEditedPost = createSelector(
+	( state, siteId, postId ) => {
+		const post = getSitePost( state, siteId, postId );
+		const edits = getPostEdits( state, siteId, postId );
+		if ( ! edits ) {
+			return post;
+		}
 
-	if ( ! post ) {
-		return edits;
-	}
+		if ( ! post ) {
+			return edits;
+		}
 
-	return mergeIgnoringArrays( {}, post, edits );
-}
+		return mergeIgnoringArrays( {}, post, edits );
+	},
+	( state ) => [ state.posts.items, state.posts.edits ]
+);
 
 /**
  * Returns an object of edited post attributes for the site ID post ID pairing.
@@ -368,19 +371,16 @@ export const isEditedPostDirty = createSelector(
   * @param  {Number}  postId Post ID
   * @return {Boolean}        Whether the edited post has content or not
  */
-export const editedPostHasContent = createSelector(
-	( state, siteId, postId ) => {
-		const editedPost = getEditedPost( state, siteId, postId );
-		return (
-			!! editedPost &&
-			(
-				some( [ 'title', 'excerpt' ], ( field ) => editedPost[ field ] && !! editedPost[ field ].trim() ) ||
-				! isEmptyContent( editedPost.content )
-			)
-		);
-	},
-	( state ) => [ state.posts.items, state.posts.edits ]
-);
+export function editedPostHasContent( state, siteId, postId ) {
+	const editedPost = getEditedPost( state, siteId, postId );
+	return (
+		!! editedPost &&
+		(
+			some( [ 'title', 'excerpt' ], ( field ) => editedPost[ field ] && !! editedPost[ field ].trim() ) ||
+			! isEmptyContent( editedPost.content )
+		)
+	);
+}
 
 /**
  * Returns true if the post status is publish, private, or future
