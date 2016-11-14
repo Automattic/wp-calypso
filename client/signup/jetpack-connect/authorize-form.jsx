@@ -301,9 +301,7 @@ const LoggedInForm = React.createClass( {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 
-		if ( ! ! this.isAuthorizing() ) {
-			return this.props.authorize( queryObject );
-		}
+		return this.props.authorize( queryObject );
 	},
 
 	handleSignOut() {
