@@ -88,6 +88,6 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 
 export default connect(
 	( state, { siteId } ) => ( {
-		currentTheme: siteId && getCurrentTheme( state, siteId )
+		currentTheme: getCurrentTheme( state, siteId )
 	} )
 )( CurrentThemeWithOptions );
