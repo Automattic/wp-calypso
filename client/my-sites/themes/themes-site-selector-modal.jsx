@@ -12,7 +12,6 @@ import mapValues from 'lodash/mapValues';
  */
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
-import QuerySites from 'components/data/query-sites';
 import { trackClick } from './helpers';
 
 const OPTION_SHAPE = PropTypes.shape( {
@@ -40,8 +39,8 @@ const ThemesSiteSelectorModal = React.createClass( {
 	},
 
 	trackAndCallAction( site ) {
-		const { selectedOption: optionName, selectedTheme: theme } = this.state;
-		const { action } = this.props.options[ optionName ];
+		const action = this.state.selectedOption.action;
+		const theme = this.state.selectedTheme;
 
 		trackClick( 'site selector', this.props.name );
 		page( this.props.sourcePath + '/' + site.slug );
@@ -71,12 +70,12 @@ const ThemesSiteSelectorModal = React.createClass( {
 	 * but only if it also has a header, because the latter indicates it really needs
 	 * a site to be selected and doesn't work otherwise.
 	 */
-	wrapOption( option, name ) {
+	wrapOption( option ) {
 		return Object.assign(
 			{},
 			option,
 			option.action || ( option.getUrl && option.header )
-				? { action: theme => this.showSiteSelectorModal( name, theme ) }
+				? { action: theme => this.showSiteSelectorModal( option, theme ) }
 				: {},
 			option.getUrl && option.header
 				? { getUrl: null }
@@ -94,8 +93,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			} )
 		);
 
-		const { selectedOption: selectedOptionName, selectedTheme } = this.state;
-		const selectedOption = this.props.options[ selectedOptionName ];
+		const { selectedOption, selectedTheme } = this.state;
 
 		return (
 			<div>
@@ -109,9 +107,9 @@ const ThemesSiteSelectorModal = React.createClass( {
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return site && selectedOption.getUrl( selectedTheme, site.ID );
+						return selectedOption.getUrl( selectedTheme, site.ID );
 					} : null } >
-					<QuerySites allSites />
+
 					<Theme isActionable={ false } theme={ selectedTheme } />
 					<h1>{ selectedOption.header }</h1>
 				</SiteSelectorModal> }
