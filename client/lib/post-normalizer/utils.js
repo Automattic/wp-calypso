@@ -58,6 +58,12 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		parsedURL.query.strip = 'info'; // strip all exif data, leave ICC intact
 	}
 
+	// make a new query object with keys in a known order
+	parsedURL.query = Object.keys( parsedURL.query ).sort().reduce( ( memo, key ) => {
+		memo[ key ] = parsedURL.query[ key ];
+		return memo;
+	}, {} );
+
 	return url.format( parsedURL );
 }
 
