@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import JetpackConnect from './index';
-import jetpackConnectAuthorizeForm from './authorize-form';
+import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import {
@@ -56,6 +56,32 @@ const jetpackConnectFirstStep = ( context, type ) => {
 			userModule: userModule,
 			locale: context.params.locale
 		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
+const getPlansLandingPage = ( context, hideFreePlan, path ) => {
+	const PlansLanding = require( './plans-landing' ),
+		analyticsPageTitle = 'Plans',
+		basePath = route.sectionify( context.path ),
+		analyticsBasePath = basePath + '/:site';
+
+	removeSidebar( context );
+
+	context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+
+	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+	renderWithReduxStore(
+		<PlansLanding
+			context={ context }
+			destinationType={ context.params.destinationType }
+			intervalType={ context.params.intervalType }
+			isLanding={ true }
+			basePlansPath={ path }
+			hideFreePlan={ hideFreePlan } />,
 		document.getElementById( 'primary' ),
 		context.store
 	);
@@ -138,14 +164,23 @@ export default {
 
 		userModule.fetch();
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		let intervalType = context.params.intervalType;
+		let locale = context.params.locale;
+		if ( context.params.localeOrInterval ) {
+			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+				intervalType = context.params.localeOrInterval;
+			} else {
+				locale = context.params.localeOrInterval;
+			}
+		}
 
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 		renderWithReduxStore(
-			React.createElement( jetpackConnectAuthorizeForm, {
-				path: context.path,
-				locale: context.params.locale,
-				userModule: userModule
-			} ),
+			<JetpackConnectAuthorizeForm
+				path={ context.path }
+				intervalType={ intervalType }
+				locale={ locale }
+				userModule={ userModule } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -174,7 +209,19 @@ export default {
 		);
 	},
 
+	vaultpressLanding( context ) {
+		getPlansLandingPage( context, true, '/jetpack/connect/vaultpress' );
+	},
+
+	akismetLanding( context ) {
+		getPlansLandingPage( context, false, '/jetpack/connect/akismet' );
+	},
+
 	plansLanding( context ) {
+		getPlansLandingPage( context, false, '/jetpack/connect/store' );
+	},
+
+	plansSelection( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			state = context.store.getState(),
@@ -203,6 +250,25 @@ export default {
 					destinationType={ context.params.destinationType }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	plansPreSelection( context ) {
+		const Plans = require( './plans' ),
+			analyticsPageTitle = 'Plans',
+			basePath = route.sectionify( context.path ),
+			analyticsBasePath = basePath + '/:site';
+
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		renderWithReduxStore(
+			<Plans
+				context={ context }
+				showFirst={ true }
+				destinationType={ context.params.destinationType } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
