@@ -4,12 +4,21 @@
 import React from 'react';
 import { map, take } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
+import resizeImageUrl from 'lib/resize-image-url';
+
+const GALLERY_ITEM_WIDTH = 206;
+
 const PostGallery = ( { post } ) => {
 	const numberOfImagesToDisplay = 4;
 	const imagesToDisplay = take( post.content_images, numberOfImagesToDisplay );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
+		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_WIDTH } );
+		const safeCssUrl = imageUrl.replace( ')', '\\)' ).replace( '(', '\\(' );
 		const imageStyle = {
-			backgroundImage: 'url(' + image.src + ')',
+			backgroundImage: 'url(' + safeCssUrl + ')',
 			backgroundSize: 'cover',
 			backgroundPosition: '50% 50%',
 			backgroundRepeat: 'no-repeat'
