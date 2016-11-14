@@ -36,27 +36,29 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
-			comment: 'label for selecting a site for which to purchase a theme'
+			comment: 'label for selecting a siteId for which to purchase a theme'
 		} ),
 		getUrl: getPurchaseUrl,
-		hideForTheme: ( state, theme, site ) => ! theme.price || isActive( state, theme.id, site ) || isPurchased( state, theme.id, site )
+		hideForTheme: ( state, theme, siteId ) =>
+			! theme.price || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
 	}
 	: {};
 
 const activate = {
 	label: i18n.translate( 'Activate' ),
-	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
+	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a siteId on which to activate a theme' } ),
 	action: activateTheme,
-	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site ) || ( theme.price && ! isPurchased( state, theme.id, site ) )
+	hideForTheme: ( state, theme, siteId ) =>
+		isActive( state, theme.id, siteId ) || ( theme.price && ! isPurchased( state, theme.id, siteId ) )
 };
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
-	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
+	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a siteIdId for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
-	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, site ) => ! isActive( state, theme.id, site )
+	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
+	hideForTheme: ( state, theme, siteId ) => ! isActive( state, theme.id, siteId )
 };
 
 const tryandcustomize = {
@@ -65,18 +67,18 @@ const tryandcustomize = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	getUrl: getCustomizeUrl,
-	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site )
+	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
+	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
 	label: i18n.translate( 'Live demo', {
-		comment: 'label for previewing the theme demo website'
+		comment: 'label for previewing the theme demo websiteId'
 	} ),
-	hideForSite: ( state, site ) => isJetpackSite( state, site ),
-	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site )
+	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
+	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
 const signup = {
@@ -103,7 +105,7 @@ const support = {
 	icon: 'help',
 	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, site ) => isJetpackSite( state, site ),
+	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme ) => ! isPremium( theme )
 };
 
@@ -111,7 +113,7 @@ const help = {
 	label: i18n.translate( 'Support' ),
 	getUrl: getHelpUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, site ) => isJetpackSite( state, site ),
+	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 };
 
 const ALL_THEME_OPTIONS = {
