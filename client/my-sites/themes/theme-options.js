@@ -54,7 +54,7 @@ const activate = {
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
-	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a siteIdId for which to customize a theme' } ),
+	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a siteId for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -75,7 +75,7 @@ const tryandcustomize = {
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
 	label: i18n.translate( 'Live demo', {
-		comment: 'label for previewing the theme demo websiteId'
+		comment: 'label for previewing the theme demo website'
 	} ),
 	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
