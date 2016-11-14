@@ -17,7 +17,7 @@ import closest from 'component-closest';
 import SiteListFactory from 'lib/sites-list';
 import PostActions from 'lib/posts/actions';
 import PostEditStore from 'lib/posts/post-edit-store';
-import MediaConstants from 'lib/media/constants';
+import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
