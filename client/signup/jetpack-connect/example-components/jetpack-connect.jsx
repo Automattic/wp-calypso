@@ -11,12 +11,12 @@ import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
-const JetpackConnectExampleConnect = ( { isLegacy, url, translate } ) => {
+const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) => {
 	const contentClassName = classNames( 'example-components__content', 'example-components__connect-jetpack', {
 		'is-legacy': isLegacy
 	} );
 	return (
-		<div className="example-components__main">
+		<div className="example-components__main" onClick={ onClick }>
 			<div className="example-components__browser-chrome example-components__site-url-input-container">
 				<div className="example-components__browser-chrome-dots">
 					<div className="example-components__browser-chrome-dot"></div>
@@ -66,12 +66,14 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate } ) => {
 
 JetpackConnectExampleConnect.propTypes = {
 	isLegacy: React.PropTypes.bool,
-	url: React.PropTypes.string
+	url: React.PropTypes.string,
+	onClick: React.PropTypes.func
 };
 
 JetpackConnectExampleConnect.defaultProps = {
 	isLegacy: false,
-	url: ''
+	url: '',
+	onClick: () => {}
 };
 
 export default localize( JetpackConnectExampleConnect );
