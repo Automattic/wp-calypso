@@ -19,6 +19,8 @@ import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import FollowButton from 'reader/follow-button';
 import PostGallery from './gallery';
+import DailyPostButton from 'blocks/daily-post-button';
+import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 
 export default class RefreshPostCard extends React.Component {
 	static propTypes = {
@@ -128,6 +130,7 @@ export default class RefreshPostCard extends React.Component {
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
 						{ showExcerpt && <div className="reader-post-card__excerpt">{ post.better_excerpt_no_html }</div> }
+						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ post &&
 							<ReaderPostActions
 								post={ originalPost ? originalPost : post }
