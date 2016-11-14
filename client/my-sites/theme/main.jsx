@@ -445,8 +445,8 @@ const ThemeSheet = React.createClass( {
 					source={ 'details' } />
 				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="theme__sheet-action-bar"
-							backHref={ this.props.backPath }
-							backText={ i18n.translate( 'All Themes' ) }>
+					backHref={ this.props.backPath }
+					backText={ i18n.translate( 'All Themes' ) }>
 					{ this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
