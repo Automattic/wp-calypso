@@ -65,6 +65,12 @@
 		}
 	}
 
+	audio {
+		display: block;
+		width: 100%;
+		margin: 24px auto;
+	}
+
 	iframe[class^="twitter-"],
 	iframe[class^="instagram-"],
 	.fb_iframe_widget {
