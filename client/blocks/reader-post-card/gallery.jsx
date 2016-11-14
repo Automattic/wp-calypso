@@ -2,20 +2,26 @@
  * External Dependencies
  */
 import React from 'react';
-import { map, take } from 'lodash';
+import { map, take, filter } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
 
-const GALLERY_ITEM_WIDTH = 206;
+const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
+
+function getGalleryWorthyImages( post ) {
+	const worthyImages = filter( post.images, imageIsBigEnoughForGallery );
+	const numberOfImagesToDisplay = 4;
+	return take( worthyImages, numberOfImagesToDisplay );
+}
 
 const PostGallery = ( { post } ) => {
-	const numberOfImagesToDisplay = 4;
-	const imagesToDisplay = take( post.content_images, numberOfImagesToDisplay );
+	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
-		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_WIDTH } );
+		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
 		const safeCssUrl = imageUrl.replace( ')', '\\)' ).replace( '(', '\\(' );
 		const imageStyle = {
 			backgroundImage: 'url(' + safeCssUrl + ')',

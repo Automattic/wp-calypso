@@ -1,11 +1,8 @@
 /**
  * External Dependencies
  */
-import find from 'lodash/find';
-import flow from 'lodash/flow';
-import forEach from 'lodash/forEach';
+import { filter, find, flow, forEach, matches } from 'lodash';
 import url from 'url';
-import matches from 'lodash/matches';
 
 /**
  * Internal Dependencies
@@ -48,7 +45,8 @@ const
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = isRefreshedStream ? 480 : 570,
 	DISCOVER_BLOG_ID = 53424024,
-	GALLERY_MIN_IMAGES = 4;
+	GALLERY_MIN_IMAGES = 4,
+	GALLERY_MIN_IMAGE_WIDTH = 350;
 
 function discoverFullBleedImages( post, dom ) {
 	if ( post.site_ID === DISCOVER_BLOG_ID ) {
@@ -77,6 +75,10 @@ function getCharacterCount( post ) {
 	}
 
 	return post.better_excerpt_no_html.length;
+}
+
+export function imageIsBigEnoughForGallery( image ) {
+	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
 }
 
 const hasShortContent = isRefreshedStream
@@ -138,7 +140,7 @@ function classifyPost( post ) {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 
-	if ( post.content_images && post.content_images.length >= GALLERY_MIN_IMAGES ) {
+	if ( post.content_images && filter( post.content_images, imageIsBigEnoughForGallery ).length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	}
 

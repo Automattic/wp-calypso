@@ -236,11 +236,11 @@ describe( 'index', function() {
 				}
 			};
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
-				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200' );
 				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
@@ -433,7 +433,7 @@ describe( 'index', function() {
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?w=400&amp;quality=80&amp;strip=info"><img src="http://example.com/example2.jpg-SAFE?w=400&amp;quality=80&amp;strip=info">' );
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400"><img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' );
 					done( err );
 				}
 			);
