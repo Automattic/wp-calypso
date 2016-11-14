@@ -21,6 +21,7 @@ import {
 	GalleryDefaultAttrs
 } from './constants';
 import Shortcode from 'lib/shortcode';
+import versionCompare from 'lib/version-compare';
 
 /**
  * Module variables
@@ -235,7 +236,7 @@ const MediaUtils = {
 	 * @return {Boolean}      Site allowed file types are accurate
 	 */
 	isSiteAllowedFileTypesToBeTrusted: function( site ) {
-		return ! site || ! site.jetpack || site.versionCompare( '3.8.1', '>=' );
+		return ! site || ! site.jetpack || versionCompare( site.options.jetpack_version, '3.8.1', '>=' );
 	},
 
 	/**

@@ -16,6 +16,7 @@ import EditorMediaModalGalleryPreview from './preview';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { isModuleActive } from 'lib/site/utils';
 
 const EditorMediaModalGallery = React.createClass( {
 	propTypes: {
@@ -95,7 +96,7 @@ const EditorMediaModalGallery = React.createClass( {
 
 		let defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
 
-		if ( site && ( ! site.jetpack || site.isModuleActive( 'tiled-gallery' ) ) ) {
+		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
 			defaultSettings.type = 'rectangular';
 		}
 
