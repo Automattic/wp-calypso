@@ -16,8 +16,7 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
-import wp from 'lib/wp';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -27,15 +26,14 @@ describe( 'actions', () => {
 	} );
 	describe( '#activateJetpackModule', () => {
 		const siteId = 123456;
-		let sandbox;
 
-		useSandbox( newSandbox => sandbox = newSandbox );
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/sites/123456/jetpack/modules/module-a' )
+			.reply( 200, {} );
+		} );
 
 		it( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
-			sandbox.stub( wp, 'undocumented', () => ( {
-				jetpackModulesActivate: () => Promise.resolve( {} )
-			} ) );
-
 			activateModule( siteId, 'module-a' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
@@ -47,15 +45,14 @@ describe( 'actions', () => {
 	} );
 	describe( '#activateJetpackModuleSuccess', () => {
 		const siteId = 123456;
-		let sandbox;
 
-		useSandbox( newSandbox => sandbox = newSandbox );
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/sites/123456/jetpack/modules/module-a' )
+			.reply( 200, {} );
+		} );
 
 		it( 'should dispatch complete success when API activates a module', () => {
-			sandbox.stub( wp, 'undocumented', () => ( {
-				jetpackModulesActivate: () => Promise.resolve( {} )
-			} ) );
-
 			const result = activateModule( siteId, 'module-a' )( spy );
 			return result.then( () => {
 				expect( spy ).to.have.been.calledWith( {
@@ -69,24 +66,21 @@ describe( 'actions', () => {
 
 	describe( '#activateJetpackModuleFailure', () => {
 		const siteId = 123456;
-		let sandbox;
 
-		useSandbox( newSandbox => sandbox = newSandbox );
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/sites/123456/jetpack/modules/module-a' )
+			.reply( 500, {} );
+		} );
 
 		it( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
-			sandbox.stub( wp, 'undocumented', () => ( {
-				jetpackModulesActivate: () => Promise.reject( {
-					message: 'error_message'
-				} )
-			} ) );
-
 			const result = activateModule( siteId, 'module-a' )( spy );
 			return result.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
 					moduleSlug: 'module-a',
-					error: 'error_message'
+					error: '500 status code for " /rest/v1.1/sites/123456/jetpack/modules/module-a"'
 				} );
 			} );
 		} );
