@@ -36,7 +36,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
-			comment: 'label for selecting a siteId for which to purchase a theme'
+			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getPurchaseUrl,
 		hideForTheme: ( state, theme, siteId ) =>
