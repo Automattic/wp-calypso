@@ -41,7 +41,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 
 	trackAndCallAction( site ) {
 		const { selectedOption: optionName, selectedTheme: theme } = this.state;
-		const action = this.props.options[ optionName ].action;
+		const { action } = this.props.options[ optionName ];
 
 		trackClick( 'site selector', this.props.name );
 		page( this.props.sourcePath + '/' + site.slug );
