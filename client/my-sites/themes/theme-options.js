@@ -128,16 +128,15 @@ const ALL_THEME_OPTIONS = {
 };
 
 const ALL_THEME_ACTIONS = { activate: activateTheme }; // All theme related actions available.
-
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
 		let mapGetUrl = identity, mapHideForSite = identity;
 
-		// We bind hideForTheme to site even if it is null since the selectors
+		// We bind hideForTheme to siteId even if it is null since the selectors
 		// that are used by it are expected to recognize that case as "no site selected"
 		// and work accordingly.
-		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId || null );
+		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
@@ -163,13 +162,13 @@ export const connectOptions = connect(
 				: {}
 		) );
 	},
-	( dispatch, { site, source = 'unknown' } ) => {
+	( dispatch, { siteId, source = 'unknown' } ) => {
 		let mapAction;
 
-		if ( site ) {
-			mapAction = action => ( t ) => action( t.id, site.ID, source );
+		if ( siteId ) {
+			mapAction = action => ( t ) => action( t.id, siteId, source );
 		} else { // Bind only source.
-			mapAction = action => ( t, s ) => action( t.id, s.ID, source );
+			mapAction = action => ( t, s ) => action( t.id, s, source );
 		}
 
 		return bindActionCreators(
