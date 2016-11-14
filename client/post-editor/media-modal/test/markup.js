@@ -252,7 +252,7 @@ describe( 'markup', function() {
 
 		describe( '#audio()', function() {
 			it( 'should return an `audio` shortcode for an audio item', function() {
-				var value = markup.mimeTypes.audio( {
+				var value = markup.mimeTypes.audio( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp3'
 				} );
 
@@ -262,7 +262,7 @@ describe( 'markup', function() {
 
 		describe( '#video()', function() {
 			it( 'should return a `wpvideo` shortcode for a VideoPress video', function() {
-				var value = markup.mimeTypes.video( {
+				var value = markup.mimeTypes.video( site, {
 					videopress_guid: '11acMj3O'
 				} );
 
@@ -270,7 +270,7 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should return a `video` shortcode for a video', function() {
-				var value = markup.mimeTypes.video( {
+				var value = markup.mimeTypes.video( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp4',
 					height: 454,
 					width: 1436
