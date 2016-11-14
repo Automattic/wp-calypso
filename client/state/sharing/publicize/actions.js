@@ -7,8 +7,10 @@ import {
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
-	PUBLICIZE_CONNECTION_REFRESH,
-	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
+	PUBLICIZE_CONNECTION_RECEIVE,
+	PUBLICIZE_CONNECTION_REQUEST,
+	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -73,6 +75,44 @@ export function fetchConnections( siteId ) {
 }
 
 /**
+ * Triggers a network request to request a Publicize connection for the
+ * specified site ID.
+ *
+ * @param  {Number} siteId       Site ID
+ * @param  {Number} connectionId ID of the connection to be fetched.
+ * @param  {String} label        Name of the service to be fetched.
+ * @return {Function}            Action thunk
+ */
+export function fetchConnection( siteId, { ID: connectionId, label } ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: PUBLICIZE_CONNECTION_REQUEST,
+			connectionId,
+			siteId,
+		} );
+
+		return wpcom.undocumented().getSiteConnection( siteId, connectionId )
+			.then( ( connection ) => {
+				dispatch( {
+					type: PUBLICIZE_CONNECTION_RECEIVE,
+					connection,
+					siteId,
+				} );
+				dispatch( {
+					type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
+					connectionId,
+					siteId,
+				} );
+			} )
+			.catch( ( error ) => dispatch( {
+				type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+				error: { ...error, label },
+				siteId,
+			} ) );
+	};
+}
+
+/**
  * Given a service and optional site, establishes a new connection to the
  * service for the current user.
  *
@@ -112,37 +152,6 @@ export function updateSiteConnection( connection, attributes ) {
 				type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 				error: { ...error, label: connection.label },
 			} ) );
-}
-
-/**
- * Triggers a network request to refresh a Publicize connection for the
- * specifiedsite ID.
- *
- * @param  {Number} siteId           Site ID
- * @param  {Object} connection       Connection to be deleted.
- * @param  {String} connection.label Name of the service that was connected.
- * @return {Function}                Action thunk
- */
-export function refreshSiteConnection( siteId, connection ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_CONNECTIONS_REQUEST,
-			siteId,
-		} );
-
-		return wpcom.undocumented().siteConnections( siteId )
-			.then( ( response ) => {
-				dispatch( receiveConnections( siteId, response ) );
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_REFRESH,
-					connection,
-				} );
-			} )
-			.catch( ( error ) => dispatch( dispatch( {
-				type: PUBLICIZE_CONNECTION_REFRESH_FAILURE,
-				error: { ...error, label: connection.label },
-			} ) ) );
-	};
 }
 
 /**

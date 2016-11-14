@@ -741,6 +741,22 @@ Undocumented.prototype.siteConnections = function( siteId, fn ) {
 };
 
 /**
+ * Returns a single site connection.
+ *
+ * @param {Number|String} siteId       The site ID or domain
+ * @param {Number}        connectionId The connection ID to get.
+ * @api public
+ * @return {Promise} A Promise to resolve when complete.
+ */
+Undocumented.prototype.getSiteConnection = function( siteId, connectionId ) {
+	debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
+	return this.wpcom.req.get( {
+		path: '/sites/' + siteId + '/publicize-connections/' + connectionId,
+		apiVersion: '1.1'
+	} );
+};
+
+/**
  * Deletes a single site connection
  *
  * @param {Number|String} siteId       The site ID or domain

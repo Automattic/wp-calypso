@@ -10,6 +10,10 @@ import deepFreeze from 'deep-freeze';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
+	PUBLICIZE_CONNECTION_RECEIVE,
+	PUBLICIZE_CONNECTION_REQUEST,
+	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
@@ -25,30 +29,36 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'reducer', () => {
 	describe( '#fetchingConnections()', () => {
 		it( 'should set fetching to true for fetching action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_REQUEST,
-				siteId: 2916284
-			} );
+			[ PUBLICIZE_CONNECTION_REQUEST, PUBLICIZE_CONNECTIONS_REQUEST ].map( ( type ) => {
+				const state = fetchingConnections( null, {
+					type,
+					siteId: 2916284,
+				} );
 
-			expect( state[ 2916284 ] ).to.be.true;
+				expect( state[ 2916284 ] ).to.be.true;
+			} );
 		} );
 
 		it( 'should set fetching to false for received action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284
-			} );
+			[ PUBLICIZE_CONNECTION_REQUEST_SUCCESS, PUBLICIZE_CONNECTIONS_RECEIVE ].map( ( type ) => {
+				const state = fetchingConnections( null, {
+					type,
+					siteId: 2916284,
+				} );
 
-			expect( state[ 2916284 ] ).to.be.false;
+				expect( state[ 2916284 ] ).to.be.false;
+			} );
 		} );
 
 		it( 'should set fetching to false for failed action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-				siteId: 2916284
-			} );
+			[ PUBLICIZE_CONNECTION_REQUEST_FAILURE, PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ].map( ( type ) => {
+				const state = fetchingConnections( null, {
+					type,
+					siteId: 2916284,
+				} );
 
-			expect( state[ 2916284 ] ).to.be.false;
+				expect( state[ 2916284 ] ).to.be.false;
+			} );
 		} );
 
 		describe( 'persistence', () => {
@@ -126,7 +136,7 @@ describe( 'reducer', () => {
 
 		it( 'should override previous connections of same ID', () => {
 			const connection = { ID: 1, site_ID: 2916284, foo: true };
-			const state = connections( deepFreeze( {
+			let state = connections( deepFreeze( {
 				1: { ID: 1, site_ID: 2916284 }
 			} ), {
 				type: PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -138,6 +148,18 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				1: connection
+			} );
+
+			state = connections( deepFreeze( {
+				1: { ID: 1, site_ID: 2916284 }
+			} ), {
+				type: PUBLICIZE_CONNECTION_RECEIVE,
+				connection,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.eql( {
+				1: connection,
 			} );
 		} );
 
