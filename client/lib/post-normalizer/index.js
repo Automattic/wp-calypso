@@ -101,6 +101,9 @@ normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 import createBetterExcerpt from './rule-create-better-excerpt';
 normalizePost.createBetterExcerpt = wrapSync( createBetterExcerpt );
 
+import createBetterExcerptRefresh from './rule-create-better-excerpt-refresh';
+normalizePost.createBetterExcerptRefresh = wrapSync( createBetterExcerptRefresh );
+
 import withContentDOM from './rule-with-content-dom';
 normalizePost.withContentDOM = function( transforms ) {
 	return function( post, callback ) {
