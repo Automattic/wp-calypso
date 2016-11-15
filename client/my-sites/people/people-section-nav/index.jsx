@@ -1,22 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	find = require( 'lodash/find' ),
-	includes = require( 'lodash/includes' );
+import React from 'react';
+import config from 'config';
+import find from 'lodash/find';
+import includes from 'lodash/includes';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Search = require( 'components/search' ),
-	UrlSearch = require( 'lib/mixins/url-search' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' );
+import Search from 'components/search';
+import UrlSearch from 'lib/mixins/url-search';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import { localize } from 'i18n-calypso';
+import { getSelectedSite } from 'state/ui/selectors';
+import versionCompare from 'lib/version-compare';
 
-let PeopleSearch = React.createClass( {
+const PeopleSearch = React.createClass( { // eslint-disable-line react/prefer-es6-class
 	displayName: 'PeopleSearch',
+
 	mixins: [ UrlSearch ],
 
 	render: function() {
@@ -33,9 +38,12 @@ let PeopleSearch = React.createClass( {
 	}
 } );
 
-let PeopleNavTabs = React.createClass( {
-	displayName: 'PeopleNavTabs',
-	render: function() {
+class PeopleNavTabs extends React.PureComponent {
+	constructor( props ) {
+		super( props );
+	}
+
+	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
 				{ this.props.filters.map( function( filterItem ) {
@@ -51,63 +59,65 @@ let PeopleNavTabs = React.createClass( {
 			</NavTabs>
 		);
 	}
-} );
+}
 
-module.exports = React.createClass( {
+class PeopleSectionNav extends React.PureComponent {
+	constructor( props ) {
+		super( props );
+	}
 
-	displayName: 'PeopleSectionNav',
+	canSearch() {
+		const { site, filter } = this.props;
 
-	canSearch: function() {
 		// Disable search for wpcom followers and viewers
-		if ( this.props.filter ) {
-			if ( 'followers' === this.props.filter || 'viewers' === this.props.filter ) {
+		if ( filter ) {
+			if ( 'followers' === filter || 'viewers' === filter ) {
 				return false;
 			}
 		}
 
-		if ( ! this.props.site.jetpack ) {
+		if ( ! site.jetpack ) {
 			// wpcom sites will always support search
 			return true;
 		}
-
-		if ( 'team' === this.props.filter && ! this.props.site.versionCompare( '3.7.0-beta', '>=' ) ) {
+		if ( 'team' === filter && versionCompare( site.options.jetpack_version, '3.7.0-beta' ) < 0 ) {
 			// Jetpack sites can only search team on versions of 3.7.0-beta or later
 			return false;
 		}
 
 		return true;
-	},
+	}
 
-	getFilters: function() {
-		var siteFilter = this.props.site.slug,
+	getFilters() {
+		const siteFilter = this.props.site.slug,
 			filters = [
 				{
-					title: this.translate( 'Team', { context: 'Filter label for people list' } ),
+					title: this.props.translate( 'Team', { context: 'Filter label for people list' } ),
 					path: '/people/team/' + siteFilter,
 					id: 'team'
 				},
 				{
-					title: this.translate( 'Followers', { context: 'Filter label for people list' } ),
+					title: this.props.translate( 'Followers', { context: 'Filter label for people list' } ),
 					path: '/people/followers/' + siteFilter,
 					id: 'followers'
 				},
 				{
-					title: this.translate( 'Email Followers', { context: 'Filter label for people list' } ),
+					title: this.props.translate( 'Email Followers', { context: 'Filter label for people list' } ),
 					path: '/people/email-followers/' + siteFilter,
 					id: 'email-followers'
 				},
 				{
-					title: this.translate( 'Viewers', { context: 'Filter label for people list' } ),
+					title: this.props.translate( 'Viewers', { context: 'Filter label for people list' } ),
 					path: '/people/viewers/' + siteFilter,
 					id: 'viewers'
 				}
 			];
 
 		return filters;
-	},
+	}
 
-	getNavigableFilters: function() {
-		var allowedFilterIds = [ 'team' ];
+	getNavigableFilters() {
+		let allowedFilterIds = [ 'team' ]; // eslint-disable-line prefer-const
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
@@ -118,22 +128,21 @@ module.exports = React.createClass( {
 		}
 
 		return this.getFilters().filter( filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id ) );
-	},
+	}
 
-	shouldDisplayViewers: function() {
+	shouldDisplayViewers() {
 		if ( 'viewers' === this.props.filter || ( ! this.props.site.jetpack && this.props.site.is_private ) ) {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	render: function() {
-		var selectedText,
-			hasPinnedItems = false,
+	render() {
+		let hasPinnedItems = false,
 			search = null;
 
 		if ( this.props.fetching ) {
-			return <SectionNav></SectionNav>
+			return <SectionNav></SectionNav>;
 		}
 
 		if ( this.canSearch() ) {
@@ -141,7 +150,7 @@ module.exports = React.createClass( {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		const selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />
@@ -149,4 +158,13 @@ module.exports = React.createClass( {
 			</SectionNav>
 		);
 	}
-} );
+}
+
+const mapStateToProps = ( state ) => {
+	return {
+		site: getSelectedSite( state )
+	};
+};
+
+export default localize( connect( mapStateToProps )( PeopleSectionNav ) );
+
