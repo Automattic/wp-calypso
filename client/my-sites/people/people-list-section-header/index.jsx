@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import Gridicon from 'gridicons';
+import identity from 'lodash/identity';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,37 +16,36 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Tooltip from 'components/tooltip';
 
-export default React.createClass( {
-	displayName: 'PeopleListSectionHeader',
-
-	PropTypes: {
+class PeopleSectionHeader extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
 		label: React.PropTypes.string.isRequired,
 		count: React.PropTypes.number,
 		isFollower: React.PropTypes.bool,
-		site: React.PropTypes.object
-	},
+		site: React.PropTypes.object,
+	};
 
-	getInitialState() {
-		return {
+	static defaultProps = {
+		translate: identity,
+		isFollower: false,
+	};
+
+	constructor() {
+		super( ...arguments );
+		this.state = {
 			addPeopleTooltip: false
 		};
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			isFollower: false
-		};
-	},
-
-	showAddTooltip() {
+	showAddTooltip = () => {
 		this.setState( { addPeopleTooltip: true } );
-	},
+	};
 
-	hideAddTooltip() {
+	hideAddTooltip = () => {
 		this.setState( { addPeopleTooltip: false } );
-	},
+	};
 
-	getAddLink() {
+	getAddLink = () => {
 		const siteSlug = get( this.props, 'site.slug' );
 		const isJetpack = get( this.props, 'site.jetpack' );
 		const wpAdminUrl = get( this.props, 'site.options.admin_url' );
@@ -58,10 +59,10 @@ export default React.createClass( {
 		}
 
 		return '/people/new/' + siteSlug;
-	},
+	}
 
 	render() {
-		const { label, count, site } = this.props;
+		const { label, count, site, translate } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
@@ -84,13 +85,13 @@ export default React.createClass( {
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
 							ref="addPeopleButton"
-							aria-label={ this.translate( 'Invite user', { context: 'button label' } ) }>
+							aria-label={ translate( 'Invite user', { context: 'button label' } ) }>
 							<Gridicon icon="plus-small" size={ 18 } /><Gridicon icon="user" size={ 18 } />
 							<Tooltip
 								isVisible={ this.state.addPeopleTooltip }
 								context={ this.refs && this.refs.addPeopleButton }
 								position="bottom">
-								{ this.translate( 'Invite user', { context: 'button tooltip' } ) }
+								{ translate( 'Invite user', { context: 'button tooltip' } ) }
 							</Tooltip>
 						</Button>
 					</ButtonGroup>
@@ -99,4 +100,7 @@ export default React.createClass( {
 			</SectionHeader>
 		);
 	}
-} );
+}
+
+export { PeopleSectionHeader };
+export default localize( PeopleSectionHeader );

@@ -39,15 +39,17 @@ describe( 'PeopleListItem', function() {
 		ReactInjection.Class.injectMixin( { translate: translate } );
 
 		SectionHeader = require( 'components/section-header' );
-		PeopleListSectionHeader = require( '..' );
+		PeopleListSectionHeader = require( '..' ).PeopleSectionHeader;
 	} );
 
 	it( 'renders SectionHeader', function() {
 		const wrapper = shallow(
 			<PeopleListSectionHeader
+				label="label value"
 			/>
 		);
 
 		expect( wrapper.find( SectionHeader ).length ).to.equal( 1 );
+		expect( wrapper.find( SectionHeader ).props().label ).to.equal( 'label value' );
 	} );
 } );
