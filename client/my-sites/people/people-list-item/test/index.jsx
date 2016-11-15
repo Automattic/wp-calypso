@@ -15,9 +15,6 @@ import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PeopleListItem', function() {
 	let configMock,
-		ReactInjection,
-		translations,
-		translate,
 		PeopleListItem,
 		CompactCard;
 
@@ -31,15 +28,8 @@ describe( 'PeopleListItem', function() {
 	} );
 
 	before( function() {
-		ReactInjection = require( 'react/lib/ReactInjection' );
-		translations = [];
-		translate = function() {
-			translations.push( Array.from( arguments ) );
-		};
-		ReactInjection.Class.injectMixin( { translate: translate } );
-
 		CompactCard = require( 'components/card/compact' );
-		PeopleListItem = require( '..' );
+		PeopleListItem = require( '..' ).PeopleListItem;
 	} );
 
 	it( 'renders CompactCard', function() {
