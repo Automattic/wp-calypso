@@ -16,6 +16,7 @@ import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
+import DocsSelectors from './docs-selectors';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
@@ -108,6 +109,18 @@ const devdocs = {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( Blocks, {
 					component: context.params.component
+				} )
+			),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	selectors: function( context ) {
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( DocsSelectors, {
+					selector: context.params.selector,
+					search: context.query.search
 				} )
 			),
 			document.getElementById( 'primary' )
