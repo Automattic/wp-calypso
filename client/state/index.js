@@ -21,6 +21,7 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
+import jetpackSettings from './jetpack-settings/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
@@ -71,6 +72,7 @@ export const reducer = combineReducers( {
 	happychat,
 	help,
 	jetpackConnect,
+	jetpackSettings,
 	jetpackSync,
 	notices,
 	pageTemplates,
