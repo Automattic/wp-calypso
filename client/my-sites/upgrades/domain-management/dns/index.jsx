@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DnsAddNew from './dns-add-new';
+import Office365 from './office-365';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
@@ -52,6 +53,10 @@ const Dns = React.createClass( {
 						selectedDomainName={ this.props.selectedDomainName } />
 
 					<DnsAddNew
+						isSubmittingForm={ this.props.dns.isSubmittingForm }
+						selectedDomainName={ this.props.selectedDomainName } />
+
+					<Office365
 						isSubmittingForm={ this.props.dns.isSubmittingForm }
 						selectedDomainName={ this.props.selectedDomainName } />
 				</Card>
