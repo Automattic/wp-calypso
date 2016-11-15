@@ -21,8 +21,7 @@ import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
-import { staffSuggestions, popularSuggestions } from './suggestions';
-import { abtest } from 'lib/abtest';
+import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
 import ReaderPostCard from 'blocks/reader-post-card';
 import config from 'config';
@@ -113,18 +112,10 @@ const SearchStream = React.createClass( {
 
 	getInitialState() {
 		const lang = i18nUtils.getLocaleSlug();
-		let sourceSuggestions = null;
 		let pickedSuggestions = null;
 
-		// Which set of suggestions should we use?
-		if ( abtest( 'readerSearchSuggestions' ) === 'popularSuggestions' ) {
-			sourceSuggestions = popularSuggestions;
-		} else {
-			sourceSuggestions = staffSuggestions;
-		}
-
-		if ( sourceSuggestions[ lang ] ) {
-			pickedSuggestions = sampleSize( sourceSuggestions[ lang ], 3 );
+		if ( suggestions[ lang ] ) {
+			pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
 		}
 
 		return {
