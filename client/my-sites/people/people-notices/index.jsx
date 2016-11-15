@@ -56,7 +56,7 @@ const PeopleNotices = React.createClass( {
 	},
 
 	getState() {
-		const siteId = this.props.site.ID,
+		const siteId = this.props.site && this.props.site.ID,
 			userId = this.props.user && this.props.user.ID;
 
 		return {

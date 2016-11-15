@@ -89,7 +89,8 @@ class PeopleSectionNav extends React.PureComponent {
 	}
 
 	getFilters() {
-		const siteFilter = this.props.site.slug,
+		const { site } = this.props,
+			siteFilter = ( site && site.slug ) ? site.slug : '',
 			filters = [
 				{
 					title: this.props.translate( 'Team', { context: 'Filter label for people list' } ),
@@ -131,13 +132,16 @@ class PeopleSectionNav extends React.PureComponent {
 	}
 
 	shouldDisplayViewers() {
-		if ( 'viewers' === this.props.filter || ( ! this.props.site.jetpack && this.props.site.is_private ) ) {
+		const { site, filter } = this.props;
+		if ( site && ( 'viewers' === filter || ( ! site.jetpack && site.is_private ) ) ) {
 			return true;
 		}
 		return false;
 	}
 
 	render() {
+		const { site } = this.props;
+
 		let hasPinnedItems = false,
 			search = null;
 
@@ -145,7 +149,7 @@ class PeopleSectionNav extends React.PureComponent {
 			return <SectionNav></SectionNav>;
 		}
 
-		if ( this.canSearch() ) {
+		if ( site && this.canSearch() ) {
 			hasPinnedItems = true;
 			search = <PeopleSearch { ...this.props } />;
 		}
