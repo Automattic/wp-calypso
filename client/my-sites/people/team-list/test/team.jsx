@@ -30,7 +30,7 @@ describe( 'Team', function() {
 
 	before( function() {
 		Card = require( 'components/card' );
-		PeopleListItem = require( 'my-sites/people/people-list-item' );
+		PeopleListItem = require( 'my-sites/people/people-list-item' ).default;
 
 		Team = require( '../team' ).Team;
 	} );
