@@ -494,3 +494,15 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-top: 4px;
 	}
 }
+
+// Targets RP cards on Devdocs
+.is-section-devdocs .reader-related-card-v2__blocks.is-same-site {
+	border: 0;
+	padding-top: 0;
+}
+
+.is-section-devdocs .reader-related-card-v2__blocks.is-other-site {
+	margin-top: 20px;
+	padding-top: 20px;
+}
+
