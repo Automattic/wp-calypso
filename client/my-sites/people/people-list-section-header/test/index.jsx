@@ -13,7 +13,7 @@ import sinon from 'sinon';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'PeopleListItem', function() {
+describe( 'PeopleListSectionHeader', function() {
 	let configMock,
 		ReactInjection,
 		translations,
