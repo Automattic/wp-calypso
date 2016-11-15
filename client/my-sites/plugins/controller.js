@@ -110,17 +110,18 @@ function renderPluginList( context, basePath ) {
 			? ' ' + capitalize( context.params.pluginFilter )
 			: ''
 		);
-	if ( site && site.domain ) {
-		analytics
-		.pageView
-		.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
+	let baseAnalyticsPath = 'plugins/';
+	if ( site ) {
+		baseAnalyticsPath += '/:site';
 	}
-
+	analytics
+		.pageView
+		.record( baseAnalyticsPath, analyticsPageTitle );
 }
 
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
-	let site = getSelectedSite( context.store.getState() );
+	const site = getSelectedSite( context.store.getState() );
 	let { category } = context.params;
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
@@ -132,14 +133,16 @@ function renderPluginsBrowser( context ) {
 	) {
 		category = context.params.siteOrCategory;
 	}
-	if ( ! site && allowedCategoryNames.indexOf( context.params.siteOrCategory ) < 0 ) {
-		site = { slug: context.params.siteOrCategory };
-	}
 
 	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
+	let baseAnalyticsPath = 'plugins/browser' + ( category ? '/' + category : '' );
+	if ( site ) {
+		baseAnalyticsPath += '/:site';
+	}
+
 	analytics
 	.pageView
-	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
+	.record( baseAnalyticsPath, analyticsPageTitle );
 
 	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
@@ -160,8 +163,12 @@ function renderProvisionPlugins( context ) {
 	const site = getSelectedSite( state );
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	let baseAnalyticsPath = 'plugins/setup';
+	if ( site ) {
+		baseAnalyticsPath += '/:site';
+	}
 
-	analytics.pageView.record( context.pathname.replace( site.domain, ':site' ), 'Jetpack Plugins Setup' );
+	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
 
 	renderWithReduxStore(
 		React.createElement( PlanSetup, {
