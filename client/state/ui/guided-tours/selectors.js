@@ -112,7 +112,7 @@ const hasJustSeenTour = createSelector(
  * When applicable, returns the name of the tour that has been started and not
  * yet finished or dimissed according to the action log.
  */
-const findOngoingTour = state => {
+export const findOngoingTour = state => {
 	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
 	return last && ( last.shouldShow === undefined ) && last.tour;
 };
