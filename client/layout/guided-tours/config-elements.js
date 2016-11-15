@@ -254,6 +254,7 @@ export class Step extends Component {
 
 	render() {
 		const { when, children } = this.props;
+		const { isLastStep } = this.context;
 
 		debug( 'Step#render' );
 		if ( this.context.shouldPause ) {
@@ -273,6 +274,7 @@ export class Step extends Component {
 			'guided-tours__step',
 			'guided-tours__step-glow',
 			this.context.step === 'init' && 'guided-tours__step-first',
+			isLastStep && 'guided-tours__step-finish',
 			targetSlug && 'guided-tours__step-pointing',
 			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,
@@ -413,7 +415,11 @@ export class Continue extends Component {
 			return null;
 		}
 
-		return <i>{ this.props.children || translate( 'Click to continue.' ) }</i>;
+		return (
+			<p className="guided-tours__actionstep-instructions">
+				<i>{ this.props.children || translate( 'Click to continue.' ) }</i>
+			</p>
+		);
 	}
 }
 
@@ -424,7 +430,7 @@ export class ButtonRow extends Component {
 
 	render() {
 		return (
-			<div className="guided-tours__choice-button-row">
+			<div className="{ this.props.single === true ? 'guided-tours__single-button-row' : 'guided-tours__choice-button-row' }">
 				{ this.props.children }
 			</div>
 		);
