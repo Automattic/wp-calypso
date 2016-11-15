@@ -120,7 +120,8 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 	}
 
-	handleBack() {
+	handleBack( event ) {
+		event.preventDefault();
 		recordAction( 'full_post_close' );
 		recordGaEvent( 'Closed Full Post Dialog' );
 		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
