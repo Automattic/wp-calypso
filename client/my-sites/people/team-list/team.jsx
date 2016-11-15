@@ -65,6 +65,28 @@ class Team extends Component {
 
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 
+	headerText = () => {
+		const { props } = this;
+		const { translate } = props;
+		if ( props.search && props.totalUsers && props.site && props.users.length ) {
+			return translate(
+				'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
+				'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
+				{
+					count: props.users.length,
+					args: {
+						numberPeople: props.totalUsers,
+						searchTerm: props.search
+					},
+					components: {
+						em: <em />
+					}
+				}
+			);
+		}
+		return translate( 'Team', { context: 'A navigation label.' } );
+	};
+
 	render() {
 		const { props, state } = this;
 		const { translate } = props;
@@ -73,7 +95,6 @@ class Team extends Component {
 			'bulk-editing': state.bulkEditing,
 		} );
 
-		let headerText = translate( 'Team', { context: 'A navigation label.' } );
 		let people;
 
 		if ( props.fetchInitialized && ! props.users.length && props.fetchOptions.search && ! props.fetchingUsers ) {
@@ -92,23 +113,6 @@ class Team extends Component {
 		}
 
 		if ( props.site && props.users.length ) {
-			if ( props.search && props.totalUsers ) {
-				headerText = translate(
-					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
-					'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
-					{
-						count: props.users.length,
-						args: {
-							numberPeople: props.totalUsers,
-							searchTerm: props.search
-						},
-						components: {
-							em: <em />
-						}
-					}
-				);
-			}
-
 			people = (
 				<InfiniteList
 					key={ key }
@@ -131,7 +135,7 @@ class Team extends Component {
 		return (
 			<div>
 				<PeopleListSectionHeader
-					label={ headerText }
+					label={ this.headerText() }
 					site={ props.site }
 					count={ props.fetchingUsers || props.fetchOptions.search ? null : props.totalUsers } />
 				<Card className={ listClass }>

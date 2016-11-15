@@ -68,8 +68,7 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( translate.callCount )
-		.to.equal( 1 );
+		expect( translate.callCount ).to.equal( 1 );
 
 		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
 		.to.equal( 'team label' );
@@ -77,11 +76,7 @@ describe( 'Team', function() {
 
 	it( 'renders translated header text for search when there are search results', function() {
 		const translate = sinon.stub();
-		translate
-			.returns( 'translated search label' );
-		translate
-			.withArgs( 'Team', { context: 'A navigation label.' } )
-			.returns( 'team label' );
+		translate.returns( 'translated search label' );
 
 		const wrapper = shallow(
 			<Team
@@ -97,8 +92,7 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( translate.callCount )
-		.to.equal( 2 );
+		expect( translate.callCount ).to.equal( 1 );
 
 		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
 		.to.equal( 'translated search label' );
