@@ -39,7 +39,7 @@ const getDeleteErrorMessage = ( target ) => {
 
 const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]: dispatchError(
-		translate( 'An error occurred while fetching for your account recovery settings.' )
+		translate( 'An error occurred while fetching your account recovery settings.' )
 	),
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: ( dispatch, { target } ) => dispatch( errorNotice( getUpdateErrorMessage( target ) ) ),
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: ( dispatch, { target } ) => dispatch( errorNotice( getDeleteErrorMessage( target ) ) ),
