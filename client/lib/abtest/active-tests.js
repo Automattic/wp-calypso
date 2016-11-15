@@ -130,4 +130,13 @@ module.exports = {
 		allowExistingUsers: true
 	},
 
+	domainContactNewPhoneInput: {
+		datestamp: '20170105',
+		variations: {
+			disabled: 50,
+			enabled: 50
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true
+	}
 };

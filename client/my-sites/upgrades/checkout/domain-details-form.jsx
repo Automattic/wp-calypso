@@ -3,10 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import map from 'lodash/map';
-import camelCase from 'lodash/camelCase';
-import kebabCase from 'lodash/kebabCase';
-import head from 'lodash/head';
+import { map, camelCase, kebabCase, head, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +17,10 @@ import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
+import { countries } from 'components/phone-input/data';
+import { toIcannFormat } from 'components/phone-input/phone-number';
+import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import { abtest } from 'lib/abtest';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -47,7 +48,8 @@ export default React.createClass( {
 		return {
 			form: null,
 			isDialogVisible: false,
-			submissionCount: 0
+			submissionCount: 0,
+			phoneCountryCode: 'us'
 		};
 	},
 
@@ -85,7 +87,12 @@ export default React.createClass( {
 	validate( fieldValues, onComplete ) {
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 
-		wpcom.validateDomainContactInformation( fieldValues, domainNames, ( error, data ) => {
+		const allFieldValues = Object.assign( {}, fieldValues );
+		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
+			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
+		}
+
+		wpcom.validateDomainContactInformation( allFieldValues, domainNames, ( error, data ) => {
 			const messages = data && data.messages || {};
 			onComplete( error, messages );
 		} );
@@ -115,11 +122,30 @@ export default React.createClass( {
 				value: '',
 				hideError: true
 			} );
+
+			if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
+				if ( ! formState.getFieldValue( this.state.form, 'phone' ) ) {
+					this.setState( {
+						phoneCountryCode: event.target.value.toLowerCase()
+					} );
+				}
+			}
 		}
 
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value
+		} );
+	},
+
+	handlePhoneChange( { value, countryCode } ) {
+		this.formStateController.handleFieldChange( {
+			name: 'phone',
+			value
+		} );
+
+		this.setState( {
+			phoneCountryCode: countryCode.toLowerCase()
 		} );
 	},
 
@@ -132,7 +158,7 @@ export default React.createClass( {
 			name,
 			ref: name,
 			additionalClasses: 'checkout-field',
-			value: formState.getFieldValue( this.state.form, name ),
+			value: formState.getFieldValue( this.state.form, name ) || '',
 			isError: formState.isFieldInvalid( this.state.form, name ),
 			disabled: formState.isFieldDisabled( this.state.form, name ),
 			onChange: this.handleChangeEvent,
@@ -177,6 +203,34 @@ export default React.createClass( {
 		);
 	},
 
+	renderPhoneField() {
+		const label = this.translate( 'Phone', { textOnly: true } );
+
+		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
+			return (
+				<FormPhoneMediaInput
+					label={ label }
+					countriesList={ countriesList }
+					countryCode={ this.state.phoneCountryCode }
+					onChange={ this.handlePhoneChange }
+					{ ...omit( this.getFieldProps( 'phone' ), 'onChange' ) } />
+			);
+		}
+		return (
+			<Input
+				label={ label }
+				placeholder={ this.translate(
+					'e.g. +1.5558675309',
+					{
+						context: 'Domain contact info phone placeholder',
+						comment: 'Please use the phone number format most common for your language, ' +
+						'but it must begin with just the country code in the format \'+1\' - no parenthesis, leading zeros, etc.'
+					}
+				) }
+				{ ...this.getFieldProps( 'phone' ) } />
+		);
+	},
+
 	fields() {
 		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
 			fieldProps = ( name ) => this.getFieldProps( name ),
@@ -206,16 +260,8 @@ export default React.createClass( {
 					{ ...fieldProps( 'organization' ) }/>
 
 				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
-				<Input
-					label={ this.translate( 'Phone', { textOnly } ) }
-					placeholder={ this.translate(
-						'e.g. +1.5558675309',
-						{
-							context: 'Domain contact info phone placeholder',
-							comment: 'Please use the phone number format most common for your language, but it must begin with just the country code in the format \'+1\' - no parenthesis, leading zeros, etc.'
-						}
-					) }
-					{ ...fieldProps( 'phone' ) }/>
+
+				{ this.renderPhoneField() }
 
 				<CountrySelect
 					label={ this.translate( 'Country', { textOnly } ) }
@@ -316,7 +362,11 @@ export default React.createClass( {
 	finish( options = {} ) {
 		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
 
-		setDomainDetails( formState.getAllFieldValues( this.state.form ) );
+		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
+		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
+			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode.toLowerCase() ] );
+		}
+		setDomainDetails( allFieldValues );
 	},
 
 	setPrivacyProtectionSubscriptions( enable ) {
