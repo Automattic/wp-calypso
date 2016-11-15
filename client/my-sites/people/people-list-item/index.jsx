@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import omit from 'lodash/omit';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,22 +12,23 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
+import { getSelectedSite } from 'state/ui/selectors';
+import { localize } from 'i18n-calypso';
 
-export default React.createClass( {
-
-	displayName: 'PeopleListItem',
-
-	mixins: [ PureRenderMixin ],
+class PeopleListItem extends React.PureComponent {
+	constructor( props ) {
+		super( props );
+	}
 
 	navigateToUser() {
 		window.scrollTo( 0, 0 );
 		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
-	},
+	}
 
 	userHasPromoteCapability() {
 		const site = this.props.site;
 		return site && site.capabilities && site.capabilities.promote_users;
-	},
+	}
 
 	canLinkToProfile() {
 		const site = this.props.site,
@@ -42,13 +42,12 @@ export default React.createClass( {
 			this.userHasPromoteCapability() &&
 			! this.props.isSelectable
 		);
-	},
+	}
 
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
@@ -60,11 +59,19 @@ export default React.createClass( {
 				this.props.onRemove &&
 				<div className="people-list-item__actions">
 					<button className="button is-link people-list-item__remove-button" onClick={ this.props.onRemove }>
-						{ this.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
+						{ this.props.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
 					</button>
 				</div>
 				}
 			</CompactCard>
 		);
 	}
-} );
+}
+
+const mapStateToProps = ( state ) => {
+	return {
+		site: getSelectedSite( state )
+	};
+};
+
+export default localize( connect( mapStateToProps )( PeopleListItem ) );

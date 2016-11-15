@@ -898,6 +898,10 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
+	if ( ! Array.isArray( fileModDisabled ) ) {
+		return false;
+	}
+
 	return compact( fileModDisabled.map( clue => {
 		if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
 			if ( clue === 'has_no_file_system_write_access' ) {

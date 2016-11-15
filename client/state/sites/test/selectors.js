@@ -2006,6 +2006,18 @@ describe( 'selectors', () => {
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
 			expect( reason ).to.deep.equal( [ 'Core autoupdates are explicitly disabled by a site administrator.' ] );
 		} );
+
+		it( 'it should return false if file_mod_disabled is not set', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true
+				}
+			} );
+
+			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
+			expect( reason ).to.be.false;
+		} );
 	} );
 
 	describe( '#isJetpackSiteMainNetworkSite()', () => {
