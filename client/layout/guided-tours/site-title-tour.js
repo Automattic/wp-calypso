@@ -45,7 +45,7 @@ export const SiteTitleTour = makeTour(
 
 		<Step name="click-settings"
 			target="settings"
-			arrow="left-middle"
+			arrow="left-top"
 			placement="beside"
 			scrollContainer=".sidebar__region"
 			shouldScrollTo
