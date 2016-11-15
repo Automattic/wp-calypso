@@ -48,201 +48,6 @@ import {
 	getCustomizerUrl
 } from '../selectors';
 
-/**
- * Module variables
- */
-const singleJetpackSite = {
-	sites: {
-		items: {
-			95250642: {
-				ID: 95250642,
-				name: 'Another sandbox site',
-				description: 'Just another sandbox site',
-				URL: 'http://sandbox.wpsandbox.me',
-				user_can_manage: false,
-				capabilities: {
-					edit_pages: true,
-					edit_posts: true,
-					edit_others_posts: true,
-					edit_others_pages: true,
-					delete_posts: true,
-					delete_others_posts: true,
-					edit_theme_options: true,
-					edit_users: true,
-					list_users: true,
-					manage_categories: true,
-					manage_options: true,
-					activate_wordads: true,
-					promote_users: true,
-					publish_posts: true,
-					upload_files: true,
-					delete_users: false,
-					remove_users: true,
-					view_stats: true
-				},
-				jetpack: true,
-				is_multisite: true,
-				post_count: 2,
-				subscribers_count: 0,
-				lang: 'en-US',
-				logo: {
-					id: 0,
-					sizes: [],
-					url: ''
-				},
-				visible: false,
-				is_private: false,
-				single_user_site: true,
-				is_vip: false,
-				is_following: false,
-				options: {
-					timezone: '',
-					gmt_offset: 0,
-					videopress_enabled: false,
-					upgraded_filetypes_enabled: true,
-					login_url: 'http://sandbox.wpsandbox.me/wp-login.php',
-					admin_url: 'http://sandbox.wpsandbox.me/wp-admin/',
-					is_mapped_domain: true,
-					is_redirect: false,
-					unmapped_url: 'http://sandbox.wpsandbox.me',
-					featured_images_enabled: false,
-					theme_slug: 'twentyfifteen',
-					header_image: false,
-					background_color: false,
-					image_default_link_type: 'file',
-					image_thumbnail_width: 150,
-					image_thumbnail_height: 150,
-					image_thumbnail_crop: 0,
-					image_medium_width: 300,
-					image_medium_height: 300,
-					image_large_width: 1024,
-					image_large_height: 1024,
-					permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
-					post_formats: [],
-					default_post_format: '0',
-					default_category: 1,
-					allowed_file_types: [
-						'jpg',
-						'jpeg',
-						'png',
-						'gif',
-						'pdf',
-						'doc',
-						'ppt',
-						'odt',
-						'pptx',
-						'docx',
-						'pps',
-						'ppsx',
-						'xls',
-						'xlsx',
-						'key'
-					],
-					show_on_front: 'posts',
-					default_likes_enabled: true,
-					default_sharing_status: false,
-					default_comment_status: true,
-					default_ping_status: true,
-					software_version: '4.5-beta1-36798',
-					created_at: '2015-07-08T16:27:57+00:00',
-					wordads: false,
-					publicize_permanently_disabled: false,
-					frame_nonce: '77e7b3b6a0',
-					headstart: false,
-					headstart_is_fresh: false,
-					ak_vp_bundle_enabled: 0,
-					advanced_seo_front_page_description: '',
-					verification_services_codes: null,
-					podcasting_archive: null,
-					jetpack_version: '3.8.2-alpha',
-					main_network_site: 'http://sandbox.wpsandbox.me',
-					active_modules: [
-						'protect',
-						'after-the-deadline',
-						'contact-form',
-						'custom-content-types',
-						'custom-css',
-						'enhanced-distribution',
-						'gravatar-hovercards',
-						'json-api',
-						'latex',
-						'notes',
-						'omnisearch',
-						'post-by-email',
-						'publicize',
-						'sharedaddy',
-						'shortcodes',
-						'shortlinks',
-						'stats',
-						'subscriptions',
-						'verification-tools',
-						'widget-visibility',
-						'widgets',
-						'manage',
-						'carousel',
-						'photon',
-						'related-posts',
-						'sso',
-						'vaultpress'
-					],
-					max_upload_size: '1536000',
-					is_multi_network: false,
-					is_multi_site: true,
-					file_mod_disabled: [
-						'is_version_controlled'
-					]
-				},
-				plan: {
-					product_id: 2002,
-					product_slug: 'jetpack_free',
-					product_name_short: 'Free',
-					free_trial: false,
-					expired: false,
-					user_is_owner: false
-				},
-				jetpack_modules: [
-					'protect',
-					'after-the-deadline',
-					'contact-form',
-					'custom-content-types',
-					'custom-css',
-					'enhanced-distribution',
-					'gravatar-hovercards',
-					'json-api',
-					'latex',
-					'notes',
-					'omnisearch',
-					'post-by-email',
-					'publicize',
-					'sharedaddy',
-					'shortcodes',
-					'shortlinks',
-					'stats',
-					'subscriptions',
-					'verification-tools',
-					'widget-visibility',
-					'widgets',
-					'manage',
-					'carousel',
-					'photon',
-					'related-posts',
-					'sso',
-					'vaultpress'
-				],
-				meta: {
-					links: {
-						self: 'https://public-api.wordpress.com/rest/v1.1/sites/95250642',
-						help: 'https://public-api.wordpress.com/rest/v1.1/sites/95250642/help',
-						posts: 'https://public-api.wordpress.com/rest/v1.1/sites/95250642/posts/',
-						comments: 'https://public-api.wordpress.com/rest/v1.1/sites/95250642/comments/',
-						xmlrpc: 'http://sandbox.wpsandbox.me/xmlrpc.php'
-					}
-				}
-			}
-		}
-	}
-};
-
 describe( 'selectors', () => {
 	const createStateWithItems = items => deepFreeze( {
 		sites: { items }
@@ -306,7 +111,22 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return a normalized site with Jetpack specific computed attributes when site is Jetpack', () => {
-			const site = getSite( singleJetpackSite, 95250642 ),
+			const site = getSite( {
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								name: 'WordPress.com Example Blog',
+								URL: 'https://example.com',
+								options: {
+									unmapped_url: 'https://example.wordpress.com',
+									file_mod_disabled: [ 'has_no_file_system_write_access' ]
+								},
+								jetpack: true
+							}
+						}
+					}
+				}, 2916284 ),
 				expectedProps = [
 					'canManage',
 					'canUpdateFiles',
