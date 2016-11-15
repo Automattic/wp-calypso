@@ -1,6 +1,9 @@
-var sinon = require( 'sinon' );
+/**
+ * External dependencies
+ */
+import sinon from 'sinon';
 
-module.exports = {
+export default {
 	togglePluginActivation: sinon.spy(),
-	removePluginsNotices: function() {}
+	removePluginsNotices: () => {}
 };

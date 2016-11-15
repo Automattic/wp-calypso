@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,9 +12,9 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
-class PluginActivateToggle extends Component {
+export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
 		const { isMock, disabled, site, plugin, notices } = this.props;
 		if ( isMock || disabled ) {
@@ -24,14 +25,14 @@ class PluginActivateToggle extends Component {
 		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
 
 		if ( plugin.active ) {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			analytics.tracks.recordEvent( 'calypso_plugin_deactivate_click', {
+			this.props.recordGoogleEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
+			this.props.recordTracksEvent( 'calypso_plugin_deactivate_click', {
 				site: site.ID,
 				plugin: plugin.slug
 			} );
 		} else {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			analytics.tracks.recordEvent( 'calypso_plugin_activate_click', {
+			this.props.recordGoogleEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
+			this.props.recordTracksEvent( 'calypso_plugin_activate_click', {
 				site: site.ID,
 				plugin: plugin.slug
 			} );
@@ -85,4 +86,10 @@ PluginActivateToggle.propTypes = {
 	isMock: PropTypes.bool,
 };
 
-export default localize( PluginActivateToggle );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		recordTracksEvent
+	}
+)( localize( PluginActivateToggle ) );
