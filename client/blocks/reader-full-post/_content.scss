@@ -323,6 +323,13 @@
 	}
 }
 
+// gizmodo fixes
+.reader-full-post.feed-19797 {
+	.reader-full-post__story-content > img {
+		display: none;
+	}
+}
+
 
 // Hides Jetpack RP in Reader
 .reader-full-post .jp-relatedposts-headline,
