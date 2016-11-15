@@ -20,6 +20,10 @@ $avatar-margin: 10px;
 
 .mentions__suggestion {
 	padding: 8px 10px;
+
+	@include breakpoint( ">480px" ) {
+		line-height: 24px;
+	}
 }
 
 .mentions__avatar {
@@ -30,25 +34,22 @@ $avatar-margin: 10px;
 	margin: 0 $avatar-margin 0 0;
 }
 
-.mentions__username {
+.mentions__username,
+.mentions__fullname {
 	float: left;
 	display: inline-block;
 	font-weight: 400;
+}
+
+.mentions__username {
 	padding-top: 10px;
 	margin: -10px 0 0 0;
-
-	@include breakpoint( ">480px" ) {
-		padding-bottom: 10px;
-	}
 }
 
 .mentions__fullname {
-	float: left;
 	clear: left;
 	margin-left: $avatar-size + $avatar-margin;
 	font-size: 11px;
-	font-weight: 400;
-	display: inline-block;
 
 	@include breakpoint( ">480px" ) {
 		float: right;
