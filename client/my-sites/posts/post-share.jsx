@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import includes from 'lodash/includes';
 import map from 'lodash/map';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -23,7 +24,6 @@ import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import SocialLogo from 'components/social-logo';
 
 const PostSharing = React.createClass( {
 	propTypes: {
