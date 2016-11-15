@@ -155,7 +155,8 @@ const PluginsList = React.createClass( {
 	},
 
 	siteSuffix() {
-		return ( this.props.selectedSite || this.props.sites.get().length === 1 ) ? '/' + this.props.selectedSiteSlug : '';
+		const hasSingleSite = this.props.sites && this.props.sites.get().length === 1;
+		return ( this.props.selectedSite || hasSingleSite ) ? '/' + this.props.selectedSiteSlug : '';
 	},
 
 	recordEvent( eventAction, includeSelectedPlugins ) {
@@ -455,5 +456,9 @@ export default connect(
 		selectedSite: getSelectedSite( state ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
-	{ recordGoogleEvent }
+	{ recordGoogleEvent },
+	null,
+	{
+		withRef: true
+	}
 )( PluginsList );
