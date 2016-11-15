@@ -52,7 +52,7 @@ class PeopleListItem extends PureComponent {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove', 'translate' ) }
+				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove', 'translate', 'moment', 'numberFormat' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
