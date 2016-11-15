@@ -1,87 +1,88 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var PluginsActions = require( 'lib/plugins/actions' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginAction = require( 'my-sites/plugins/plugin-action/plugin-action' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	analytics = require( 'lib/analytics' );
+import PluginsActions from 'lib/plugins/actions';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
-
-	displayName: 'PluginActivateToggle',
-
-	propTypes: {
-		isMock: React.PropTypes.bool,
-		site: React.PropTypes.object.isRequired,
-		plugin: React.PropTypes.object.isRequired,
-	},
-
-	toggleActivation: function() {
-		if ( this.props.isMock || this.props.disabled ) {
+class PluginActivateToggle extends Component {
+	toggleActivation = () => {
+		const { isMock, disabled, site, plugin, notices } = this.props;
+		if ( isMock || disabled ) {
 			return;
 		}
 
-		PluginsActions.togglePluginActivation( this.props.site, this.props.plugin );
-		PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+		PluginsActions.togglePluginActivation( site, plugin );
+		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
 
-		if ( this.props.plugin.active ) {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', this.props.plugin.slug );
+		if ( plugin.active ) {
+			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
 			analytics.tracks.recordEvent( 'calypso_plugin_deactivate_click', {
-				site: this.props.site.ID,
-				plugin: this.props.plugin.slug
+				site: site.ID,
+				plugin: plugin.slug
 			} );
 		} else {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', this.props.plugin.slug );
+			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
 			analytics.tracks.recordEvent( 'calypso_plugin_activate_click', {
-				site: this.props.site.ID,
-				plugin: this.props.plugin.slug
+				site: site.ID,
+				plugin: plugin.slug
 			} );
 		}
-	},
+	}
 
-	render: function() {
-		var inProgress;
+	render() {
+		const { site, plugin, isMock, disabled, translate } = this.props;
 
-		if ( ! this.props.site ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
+		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
 			'ACTIVATE_PLUGIN',
 			'DEACTIVATE_PLUGIN'
 		] );
 
-		if ( this.props.plugin && 'jetpack' === this.props.plugin.slug ) {
+		if ( plugin && 'jetpack' === plugin.slug ) {
 			return (
 				<PluginAction
 					className="plugin-activate-toggle"
-					htmlFor={ 'disconnect-jetpack-' + this.props.site.ID }
+					htmlFor={ 'disconnect-jetpack-' + site.ID }
 					>
 					<DisconnectJetpackButton
-						disabled={ this.props.disabled || ! this.props.plugin }
-						site={ this.props.site }
+						disabled={ disabled || ! plugin }
+						site={ site }
 						redirect="/plugins/jetpack"
-						isMock={ this.props.isMock }
+						isMock={ isMock }
 						/>
 				</PluginAction>
 			);
 		}
 		return (
 			<PluginAction
-				disabled={ this.props.disabled }
+				disabled={ disabled }
 				className="plugin-activate-toggle"
-				label={ this.translate( 'Active', { context: 'plugin status' } ) }
+				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }
-				status={ this.props.plugin && this.props.plugin.active }
+				status={ plugin && plugin.active }
 				action={ this.toggleActivation }
-				htmlFor={ 'activate-' + this.props.plugin.slug + '-' + this.props.site.ID }
+				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
 				/>
 		);
 	}
-} );
+}
+
+PluginActivateToggle.propTypes = {
+	site: PropTypes.object.isRequired,
+	plugin: PropTypes.object.isRequired,
+	isMock: PropTypes.bool,
+};
+
+export default localize( PluginActivateToggle );
