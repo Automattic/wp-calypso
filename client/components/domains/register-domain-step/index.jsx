@@ -524,8 +524,8 @@ const RegisterDomainStep = React.createClass( {
 
 	showValidationErrorMessage: function( domain, error ) {
 		let message,
-			severity = 'error',
-			tldIndex;
+			severity = 'error';
+		const tld = domain.lastIndexOf( '.' ) !== -1 && domain.substring( domain.lastIndexOf( '.' ) );
 
 		switch ( error.code ) {
 			case 'dotblog_domain':
@@ -540,13 +540,12 @@ const RegisterDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'available_but_not_registrable':
-				tldIndex = domain.lastIndexOf( '.' );
-				if ( tldIndex !== -1 ) {
+				if ( tld ) {
 					message = this.translate(
 						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
 						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 						{
-							args: { tld: domain.substring( tldIndex ) },
+							args: { tld },
 							components: {
 								strong: <strong />,
 								a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
@@ -557,12 +556,11 @@ const RegisterDomainStep = React.createClass( {
 				}
 				break;
 			case 'tld_in_maintenance':
-				tldIndex = domain.lastIndexOf( '.' );
-				if ( tldIndex !== -1 ) {
+				if ( tld ) {
 					message = this.translate(
-						'Domains ending with {{strong}}%(tld)s{{/strong}} are undergoing maintenance. They will be available again soon.',
+						'Domains ending with {{strong}}%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
 						{
-							args: { tld: domain.substring( tldIndex ) },
+							args: { tld },
 							components: {
 								strong: <strong />
 							}
