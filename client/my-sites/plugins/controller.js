@@ -110,7 +110,7 @@ function renderPluginList( context, basePath ) {
 			? ' ' + capitalize( context.params.pluginFilter )
 			: ''
 		);
-	let baseAnalyticsPath = 'plugins/';
+	let baseAnalyticsPath = 'plugins';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
 	}
@@ -135,7 +135,7 @@ function renderPluginsBrowser( context ) {
 	}
 
 	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
-	let baseAnalyticsPath = 'plugins/browser' + ( category ? '/' + category : '' );
+	let baseAnalyticsPath = 'plugins/browse' + ( category ? '/' + category : '' );
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
 	}
