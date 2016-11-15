@@ -7,6 +7,7 @@ import request from 'superagent';
  * Internal dependencies
  */
 import {
+	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -41,5 +42,12 @@ export function uploadGravatar( file, bearerToken, email ) {
 					type: GRAVATAR_UPLOAD_REQUEST_FAILURE
 				} );
 			} );
+	};
+}
+
+export function receiveGravatarImageFailed( errorMessage ) {
+	return {
+		type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
+		errorMessage
 	};
 }
