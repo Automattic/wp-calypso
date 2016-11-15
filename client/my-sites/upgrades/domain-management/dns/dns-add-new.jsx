@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classnames from 'classnames';
 import includes from 'lodash/includes';
 import assign from 'lodash/assign';
 import find from 'lodash/find';
@@ -33,7 +32,6 @@ const DnsAddNew = React.createClass( {
 
 	getInitialState() {
 		return {
-			show: false,
 			fields: null,
 			type: 'A'
 		};
@@ -77,11 +75,6 @@ const DnsAddNew = React.createClass( {
 	onAddDnsRecord( event ) {
 		event.preventDefault();
 
-		if ( ! this.state.show ) {
-			this.setState( { show: true } );
-			return;
-		}
-
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				return;
@@ -100,7 +93,6 @@ const DnsAddNew = React.createClass( {
 					notices.success( this.translate( 'The DNS record has been added.' ), {
 						duration: 5000
 					} );
-					this.setState( { show: true } );
 				}
 			} );
 		} );
@@ -145,8 +137,7 @@ const DnsAddNew = React.createClass( {
 	},
 
 	render() {
-		const classes = classnames( 'form-content', { 'is-hidden': ! this.state.show } ),
-			options = [ 'A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT' ].map( function( type ) {
+		const options = [ 'A', 'AAAA', 'CNAME', 'MX', 'SRV', 'TXT' ].map( function( type ) {
 				return <option key={ type }>{ type }</option>;
 			} ),
 			isSubmitDisabled = formState.isSubmitButtonDisabled( this.state.fields ) ||
@@ -155,7 +146,7 @@ const DnsAddNew = React.createClass( {
 
 		return (
 			<form className="dns__add-new">
-				<div className={ classes }>
+				<div className="dns__form-content">
 					<FormFieldset>
 						<FormLabel>{ this.translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
 
@@ -169,25 +160,13 @@ const DnsAddNew = React.createClass( {
 
 				<FormFooter>
 					<FormButton
-						disabled={ this.state.show ? isSubmitDisabled : false }
+						disabled={ isSubmitDisabled }
 						onClick={ this.onAddDnsRecord }>
 						{ this.translate( 'Add New DNS Record' ) }
 					</FormButton>
-
-					{ this.state.show && <FormButton
-						type="button"
-						disabled={ this.props.isSubmittingForm }
-						isPrimary={ false }
-						onClick={ this.onCancel }>
-						{ this.translate( 'Cancel' ) }
-					</FormButton> }
 				</FormFooter>
 			</form>
 		);
-	},
-
-	onCancel() {
-		this.setState( { show: false } );
 	}
 } );
 
