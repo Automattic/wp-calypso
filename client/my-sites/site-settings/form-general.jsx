@@ -152,7 +152,8 @@ const FormGeneral = React.createClass( {
 							valueLink={ this.linkState( 'blogdescription' ) }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) }
+							data-tip-target="site-tagline-input" />
 						<FormSettingExplanation>
 							{ this.translate( 'In a few words, explain what this site is about.' ) }
 						</FormSettingExplanation>

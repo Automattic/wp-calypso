@@ -71,12 +71,29 @@ export const SiteTitleTour = makeTour(
 		>
 			<p className="guided-tours__step-text">
 				{
-					translate( 'You can change the site title here. The site title and tagline ' +
-						'tells people about your site and appears in places like the top of your web browser and in search results.' )
+					translate( 'You can change the site title here. The site title appears in places like the top ' +
+						'of your web browser and in search results.' )
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next step="click-save">{ translate( 'Looks Good' ) }</Next>
+				<Next step="site-tagline-input">{ translate( 'Looks Good' ) }</Next>
+				<Quit>Cancel</Quit>
+			</div>
+		</Step>
+
+		<Step name="site-tagline-input"
+			target="site-tagline-input"
+			arrow="top-left"
+			placement="below"
+		>
+			<p className="guided-tours__step-text">
+				{
+					translate( 'This is the tagline of your site. It should explain what your site is about in few words. ' +
+						'It usually appears right bellow your site title.' )
+				}
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next step="click-save">{ translate( 'Continue' ) }</Next>
 				<Quit>Cancel</Quit>
 			</div>
 		</Step>
@@ -87,12 +104,13 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 			next="site-title"
 		>
-			<p className="guided-tours__step-text">
-				{
-					translate( "Don't forget to save your new settings!" )
-				}
-			</p>
-			<Continue target="settings-site-profile-save" step="finish" click />
+			<div className="guided-tours__actionstep-instructions">
+				<Continue target="settings-site-profile-save" step="finish" click>
+					{
+						translate( "Don't forget to save your new settings!" )
+					}
+				</Continue>
+			</div>
 		</Step>
 
 		<Step name="finish"
