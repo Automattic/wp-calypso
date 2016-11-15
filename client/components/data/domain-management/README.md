@@ -10,7 +10,6 @@ This folder contains the following components:
 * `EmailData`
 * `EmailForwardingData`
 * `NameserversData`
-* `PrimaryDomainData`
 * `SiteRedirectData`
 * `TransferData`
 * `WhoisData`
