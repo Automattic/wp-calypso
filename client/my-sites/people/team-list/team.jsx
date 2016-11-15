@@ -40,40 +40,41 @@ class Team extends Component {
 		};
 	}
 
+	isLastPage = () => this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
+
+	renderPerson = ( user ) => {
+		return (
+			<PeopleListItem
+				key={ user.ID }
+				user={ user }
+				type="user"
+				site={ this.props.site }
+				isSelectable={ this.state.bulkEditing } />
+		);
+	};
+
+	fetchNextPage = () => {
+		const offset = this.props.users.length;
+		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
+		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
+		debug( 'fetching next batch of users' );
+		UsersActions.fetchUsers( fetchOptions );
+	};
+
+	getPersonRef = ( user ) => `user-${ user.ID }`;
+
+	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
+
 	render() {
 		const { props, state } = this;
 		const { translate } = props;
 		const key = deterministicStringify( omit( props.fetchOptions, [ 'number', 'offset' ] ) );
-		const	listClass = classNames( {
+		const listClass = classNames( {
 			'bulk-editing': state.bulkEditing,
 		} );
 
 		let headerText = translate( 'Team', { context: 'A navigation label.' } );
 		let people;
-
-		const isLastPage = () => props.totalUsers <= props.users.length + props.excludedUsers.length;
-		const renderPerson = ( user ) => {
-			return (
-				<PeopleListItem
-					key={ user.ID }
-					user={ user }
-					type="user"
-					site={ props.site }
-					isSelectable={ state.bulkEditing } />
-			);
-		};
-
-		const fetchNextPage = () => {
-			const offset = props.users.length;
-			const fetchOptions = Object.assign( {}, props.fetchOptions, { offset: offset } );
-			analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
-			debug( 'fetching next batch of users' );
-			UsersActions.fetchUsers( fetchOptions );
-		};
-
-		const getPersonRef = ( user ) => `user-${ user.ID }`;
-
-		const renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 		if ( props.fetchInitialized && ! props.users.length && props.fetchOptions.search && ! props.fetchingUsers ) {
 			return (
@@ -115,16 +116,16 @@ class Team extends Component {
 					className="people-selector__infinite-list"
 					ref="infiniteList"
 					fetchingNextPage={ props.fetchingUsers }
-					lastPage={ isLastPage() }
-					fetchNextPage={ fetchNextPage }
-					getItemRef={ getPersonRef }
-					renderLoadingPlaceholders={ renderLoadingPeople }
-					renderItem={ renderPerson }
+					lastPage={ this.isLastPage() }
+					fetchNextPage={ this.fetchNextPage }
+					getItemRef={ this.getPersonRef }
+					renderLoadingPlaceholders={ this.renderLoadingPeople }
+					renderItem={ this.renderPerson }
 					guessedItemHeight={ 126 }>
 				</InfiniteList>
 			);
 		} else {
-			people = renderLoadingPeople();
+			people = this.renderLoadingPeople();
 		}
 
 		return (
@@ -136,7 +137,7 @@ class Team extends Component {
 				<Card className={ listClass }>
 					{ people }
 				</Card>
-				{ isLastPage() && <div className="infinite-scroll-end" /> }
+				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
 			</div>
 		);
 	}
