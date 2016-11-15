@@ -17,14 +17,20 @@ describe( 'Team', function() {
 	let Card,
 		PeopleListItem,
 		PeopleListSectionHeader,
+		InfiniteList,
 		Team,
-		configMock;
+		configMock,
+		deterministicStringify;
 
 	useFakeDom();
 	useMockery( mockery => {
 		configMock = sinon.stub();
 		configMock.isEnabled = sinon.stub();
 		mockery.registerMock( 'config', configMock );
+
+		deterministicStringify = sinon.stub();
+		mockery.registerMock( 'lib/deterministic-stringify', deterministicStringify );
+
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/sites-list', () => null );
 	} );
@@ -33,6 +39,7 @@ describe( 'Team', function() {
 		Card = require( 'components/card' );
 		PeopleListItem = require( 'my-sites/people/people-list-item' ).default;
 		PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ).default;
+		InfiniteList = require( 'components/infinite-list' );
 
 		Team = require( '../team' ).Team;
 	} );
@@ -49,6 +56,25 @@ describe( 'Team', function() {
 		);
 
 		expect( wrapper.find( Card ).find( PeopleListItem ).key() ).to.equal( 'people-list-item-placeholder' );
+	} );
+
+	it( 'renders infinite list when site is specified and any users have been loaded', function() {
+		deterministicStringify
+			.withArgs( { option1: 'option1value', option2: 'option2value' } )
+			.returns( 'list key' );
+
+		const wrapper = shallow(
+			<Team
+				fetchInitialized={ true }
+				fetchingUsers={ false }
+				fetchOptions={ { option1: 'option1value', option2: 'option2value', number: 10, offset: 2 } }
+				site={ 'site1' }
+				users={ [ 'user1' ] }
+				excludedUsers={ [] }
+			/>
+		);
+
+		expect( wrapper.find( Card ).find( InfiniteList ).key() ).to.equal( 'list key' );
 	} );
 
 	it( 'renders translated team header text by default', function() {
