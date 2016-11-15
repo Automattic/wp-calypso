@@ -33,6 +33,7 @@ import steps from './config/steps';
 import stepComponents from './config/step-components';
 import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
+import wpcom from 'lib/wp' ;
 import userModule from 'lib/user';
 const user = userModule();
 import analytics from 'lib/analytics';
@@ -68,6 +69,7 @@ const Signup = React.createClass( {
 			user: user.get(),
 			loginHandler: null,
 			hasCartItems: false,
+			silentLogin: false,
 		};
 	},
 
@@ -173,15 +175,33 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
-		this.setToken( dependencies );
 
-		if ( dependencies.cartItem || dependencies.domainItem ) {
-			this.handleLogin( dependencies, destination );
-		} else {
-			this.setState( {
-				loginHandler: this.handleLogin.bind( this, dependencies, destination )
-			} );
-		}
+		// login the user
+		this.logInUserAfterFlowComplete( dependencies, () => {
+			if ( dependencies.cartItem || dependencies.domainItem ) {
+				this.handleLogin( dependencies, destination );
+			} else {
+				this.setState( {
+					loginHandler: this.handleLogin.bind( this, dependencies, destination ),
+					silentLogin: true,
+				} );
+			}
+		} );
+	},
+
+	logInUserAfterFlowComplete( dependencies, callback ) {
+		const loginUrl = dependencies.siteSlug
+			? 'https://' + dependencies.siteSlug + '/wp-login.php'
+			: 'https://wordpress.com/wp-login.php'; // TODO verify it's working
+
+		const data = {
+			log: dependencies.username,
+			pwd: '',
+			authorization: dependencies.bearer_token,
+		};
+
+		// send an AJAX request
+		wpcom.undocumented().logInUserAfterFlowComplete( loginUrl, data, callback );
 	},
 
 	handleLogin( dependencies, destination ) {
@@ -204,19 +224,6 @@ const Signup = React.createClass( {
 				bearerToken: dependencies.bearer_token,
 				username: dependencies.username,
 				redirectTo: this.loginRedirectTo( destination )
-			} );
-		}
-	},
-
-	setToken( dependencies ) {
-		const userIsLoggedIn = Boolean( user.get() );
-
-		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
-			oauthToken.setToken( dependencies.bearer_token );
-			this.setState( {
-				bearerToken: dependencies.bearer_token,
-				username: dependencies.username,
-				redirectTo: undefined
 			} );
 		}
 	},
@@ -343,10 +350,10 @@ const Signup = React.createClass( {
 	loginForm() {
 		return this.state.bearerToken
 			? <WpcomLoginForm
-				authorization={ 'Bearer ' + this.state.bearerToken }
-				log={ this.state.username }
-				redirectTo={ this.state.redirectTo }
-				silentSubmit={ true }
+			authorization={ 'Bearer ' + this.state.bearerToken }
+			log={ this.state.username }
+			redirectTo={ this.state.redirectTo }
+			silentSubmit={ this.state.silentLogin }
 		/>
 			: null;
 	},

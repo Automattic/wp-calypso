@@ -2036,6 +2036,26 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
 		}, fn );
 };
 
+
+// TODO fix
+/**
+ * GET paypal_express_url
+ *
+ * @param {String} loginUrl
+ * @param {object} [data] The POST data
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * The data format is: {
+ *		country: {string} The billing country,
+ *		postal_code: {string} The billing postal code,
+ *		cart: {array} An JSON serialization of the cart,
+ * }
+ */
+Undocumented.prototype.logInUserAfterFlowComplete = function( loginUrl, data, fn ) {
+	this.wpcom.req.post( loginUrl, data, fn );
+};
+
 /**
  * Expose `Undocumented` module
  */
