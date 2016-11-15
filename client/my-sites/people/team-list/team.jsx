@@ -63,8 +63,6 @@ class Team extends Component {
 
 	getPersonRef = ( user ) => `user-${ user.ID }`;
 
-	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
-
 	headerText = () => {
 		const { props } = this;
 		const { translate } = props;
@@ -87,15 +85,38 @@ class Team extends Component {
 		return translate( 'Team', { context: 'A navigation label.' } );
 	};
 
+	cardContent = () => {
+		const { props } = this;
+		const { site, users, fetchOptions, fetchingUsers } = props;
+		const key = deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) );
+		const renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
+
+		if ( site && users.length ) {
+			return (
+				<InfiniteList
+					key={ key }
+					items={ users }
+					className="people-selector__infinite-list"
+					ref="infiniteList"
+					fetchingNextPage={ fetchingUsers }
+					lastPage={ this.isLastPage() }
+					fetchNextPage={ this.fetchNextPage }
+					getItemRef={ this.getPersonRef }
+					renderLoadingPlaceholders={ renderLoadingPeople }
+					renderItem={ this.renderPerson }
+					guessedItemHeight={ 126 }>
+				</InfiniteList>
+			);
+		}
+		return renderLoadingPeople();
+	};
+
 	render() {
 		const { props, state } = this;
 		const { translate } = props;
-		const key = deterministicStringify( omit( props.fetchOptions, [ 'number', 'offset' ] ) );
 		const listClass = classNames( {
 			'bulk-editing': state.bulkEditing,
 		} );
-
-		let people;
 
 		if ( props.fetchInitialized && ! props.users.length && props.fetchOptions.search && ! props.fetchingUsers ) {
 			return (
@@ -112,26 +133,6 @@ class Team extends Component {
 			);
 		}
 
-		if ( props.site && props.users.length ) {
-			people = (
-				<InfiniteList
-					key={ key }
-					items={ props.users }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
-					fetchingNextPage={ props.fetchingUsers }
-					lastPage={ this.isLastPage() }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPersonRef }
-					renderLoadingPlaceholders={ this.renderLoadingPeople }
-					renderItem={ this.renderPerson }
-					guessedItemHeight={ 126 }>
-				</InfiniteList>
-			);
-		} else {
-			people = this.renderLoadingPeople();
-		}
-
 		return (
 			<div>
 				<PeopleListSectionHeader
@@ -139,7 +140,7 @@ class Team extends Component {
 					site={ props.site }
 					count={ props.fetchingUsers || props.fetchOptions.search ? null : props.totalUsers } />
 				<Card className={ listClass }>
-					{ people }
+					{ this.cardContent() }
 				</Card>
 				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
 			</div>
