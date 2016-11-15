@@ -3,7 +3,8 @@
  */
 import {
 	STATUS_READY,
-	STATUS_TIMEOUT
+	STATUS_TIMEOUT,
+	OPERATOR_STATUS_AVAILABLE
 } from './constants';
 
 /**
@@ -31,4 +32,13 @@ export function isOlarkTimedOut( state ) {
  */
 export function isRequestingOlark( state ) {
 	return state.ui.olark.requesting;
+}
+
+/**
+ * Returns if olark operators are available.
+ * @param   {Object}  state  Global state tree
+ * @returns {Boolean}        true, when olark operators are available
+ */
+export function isOperatorsAvailable( state ) {
+	return state.ui.olark.operatorStatus === OPERATOR_STATUS_AVAILABLE;
 }
