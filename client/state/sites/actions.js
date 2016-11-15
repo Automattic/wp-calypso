@@ -117,10 +117,13 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 
 		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
 			const updatedOptions = {
-				page_for_posts: parseInt( response.page_for_posts_id, 10 ),
 				page_on_front: parseInt( response.page_on_front_id, 10 ),
 				show_on_front: response.is_page_on_front ? 'page' : 'posts',
 			};
+
+			if( response.page_for_posts_id ) {
+				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
+			}
 
 			// This gives us a means to fix the `SitesList` cache outside of actions
 			// @todo Remove this when `SitesList` is Reduxified
