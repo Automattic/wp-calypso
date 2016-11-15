@@ -4,6 +4,7 @@
 import noop from 'lodash/noop';
 import find from 'lodash/find';
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,27 +17,33 @@ import { countries } from './data';
 const PhoneInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
-		initialValue: React.PropTypes.string,
+		value: React.PropTypes.string,
 		selectedCountryCode: React.PropTypes.string.isRequired,
 		countriesList: React.PropTypes.object.isRequired
 	},
 
 	getDefaultProps() {
 		return {
-			initialValue: '',
+			value: '',
 			onChange: noop,
 		};
 	},
 
 	getInitialState() {
 		const selectedCountry = countries[ this.props.selectedCountryCode ];
-		const formattedNumber = formatNumber( this.props.initialValue, selectedCountry );
+		const formattedNumber = formatNumber( this.props.value, selectedCountry );
 		return {
 			selectedCountry,
 			formattedNumber,
 			queryString: '',
 			freezeSelection: false
 		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.value !== nextProps.value && nextProps.value ) {
+			this.setState( this.getFormattedNumberAndCountry( nextProps.value ) );
+		}
 	},
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -47,9 +54,24 @@ const PhoneInput = React.createClass( {
 		}
 	},
 
+	getFormattedNumberAndCountry: function( value ) {
+		let formattedNumber = value,
+			selectedCountry = this.state.selectedCountry;
+
+		if ( value ) {
+			if ( ( value[ 0 ] === '+' || value[ 0 ] === '1' ) && ! this.state.freezeSelection ) {
+				selectedCountry = findCountryFromNumber( value ) || this.state.selectedCountry;
+			}
+
+			formattedNumber = formatNumber( value, selectedCountry );
+		}
+		return {
+			selectedCountry,
+			formattedNumber
+		}
+	},
+
 	handleInput( event ) {
-		let formattedNumber = '',
-			newSelectedCountry = this.state.selectedCountry;
 		const { value } = event.target;
 		if ( value === this.state.formattedNumber ) {
 			// nothing changed
@@ -57,14 +79,7 @@ const PhoneInput = React.createClass( {
 		}
 
 		event.preventDefault();
-
-		if ( value ) {
-			if ( ( value[ 0 ] === '+' || value[ 0 ] === '1' ) && ! this.state.freezeSelection ) {
-				newSelectedCountry = findCountryFromNumber( value ) || this.state.selectedCountry;
-			}
-
-			formattedNumber = formatNumber( value, newSelectedCountry );
-		}
+		let { formattedNumber, selectedCountry } = this.getFormattedNumberAndCountry( value );
 
 		let caretPosition = event.target.selectionStart;
 		const oldFormattedText = this.state.formattedNumber;
@@ -73,8 +88,7 @@ const PhoneInput = React.createClass( {
 		this.setState( {
 			value,
 			formattedNumber,
-			freezeSelection: this.state.freezeSelection,
-			selectedCountry: newSelectedCountry
+			selectedCountry
 		}, () => {
 			if ( diff > 0 ) {
 				caretPosition = caretPosition - diff;
@@ -84,8 +98,8 @@ const PhoneInput = React.createClass( {
 				this.numberInput.setSelectionRange( caretPosition, caretPosition );
 			}
 
-			this.props.onChange( this.state.formattedNumber );
 		} );
+		this.props.onChange( event );
 	},
 
 	cursorToEnd() {
@@ -116,14 +130,19 @@ const PhoneInput = React.createClass( {
 		} );
 	},
 
+	getCountry() {
+		return this.state.selectedCountry
+	},
+
 	render() {
 		return (
-			<div className="phone-input">
+			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
 					placeholder={ formatNumber(
 						( this.state.selectedCountry.nationalPrefix || '' ) + '9876543210', this.state.selectedCountry
 					) }
 					onChange={ this.handleInput }
+					name={ this.props.name }
 					value={ this.state.formattedNumber }
 					ref={ c => this.numberInput = c }
 					type="tel" />
