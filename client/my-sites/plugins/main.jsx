@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { find, isEmpty, some } from 'lodash';
@@ -428,7 +427,5 @@ export default connect(
 		canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
 		canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 	} ),
-	dispatch => bindActionCreators( {
-		wporgFetchPluginData
-	}, dispatch )
+	{ wporgFetchPluginData }
 )( PluginsMain );
