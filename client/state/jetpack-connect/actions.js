@@ -27,6 +27,7 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -39,6 +40,7 @@ import userFactory from 'lib/user';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
+import { urlToSlug } from 'lib/url';
 
 /**
  *  Local variables;
@@ -178,6 +180,25 @@ export default {
 			tracksEvent( dispatch, 'calypso_jpc_success_redirect', {
 				url: url,
 				type: 'remote_auth'
+			} );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
+		};
+	},
+	retryAuth( url, attemptNumber ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				attemptNumber: attemptNumber,
+				slug: urlToSlug( url )
+			} );
+			tracksEvent( dispatch, 'calypso_jpc_retry_auth', {
+				url: url,
+				attempt: attemptNumber
 			} );
 			externalRedirect(
 				addQueryArgs( {
