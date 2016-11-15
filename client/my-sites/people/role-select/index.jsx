@@ -76,6 +76,7 @@ const RoleSelect = ( props ) => {
 	);
 };
 
+export { RoleSelect };
 export default connect(
 	( state, ownProps ) => ( {
 		site: getSite( state, ownProps.siteId ),
