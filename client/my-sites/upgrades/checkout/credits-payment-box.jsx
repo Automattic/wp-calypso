@@ -10,6 +10,8 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon'
+
 var CreditsPaymentBox = React.createClass( {
 	content: function() {
 		var cart = this.props.cart;
@@ -35,6 +37,9 @@ var CreditsPaymentBox = React.createClass( {
 				</div>
 
 				<TermsOfService />
+
+				<CartCoupon cart={ cart } />
+
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
