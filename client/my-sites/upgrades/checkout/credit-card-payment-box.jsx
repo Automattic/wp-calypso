@@ -13,6 +13,8 @@ var PayButton = require( './pay-button' ),
 	analytics = require( 'lib/analytics' ),
 	cartValues = require( 'lib/cart-values' );
 
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
+
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
 		return { previousCart: null };
@@ -39,6 +41,8 @@ var CreditCardPaymentBox = React.createClass( {
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
+
+				<CartCoupon cart={ cart } />
 
 				<div className="payment-box-actions">
 					<PayButton
