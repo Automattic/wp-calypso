@@ -356,7 +356,7 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		const installInProgress = PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
+		const installing = selectedSite && PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
 
 		return (
 			<MainComponent>
@@ -375,7 +375,7 @@ const SinglePlugin = React.createClass( {
 								? null
 								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
-						isInstalling={ installInProgress } />
+						isInstalling={ installing } />
 					{ plugin.wporg && <PluginSections plugin={ plugin } /> }
 					{ this.renderSitesList( plugin ) }
 				</div>
