@@ -13,7 +13,7 @@ import {
 	requests as REQUESTS_FIXTURE
 } from './fixture';
 
-describe( 'requests selectors', () => {
+describe( 'selectors', () => {
 	describe( '#isActivatingModule', () => {
 		it( 'should return state.jetpackSettings.jetpackModules.requests[ siteId ][ module_slug ].activating', () => {
 			const stateIn = {
@@ -28,9 +28,7 @@ describe( 'requests selectors', () => {
 			expect( output ).to.be.true;
 		} );
 	} );
-} );
 
-describe( 'items selectors', () => {
 	describe( '#isModuleActive', () => {
 		it( 'should return state.jetpackSettings.jetpackModules.items[ siteId ][ module_slug ].active', () => {
 			const stateIn = {

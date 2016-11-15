@@ -4,11 +4,11 @@
 import get from 'lodash/get';
 
 /**
- * Returns true if the module is activated
+ * Returns true if the module is activate
  * @param  {Object}  state Global state tree
  * @param  {String}  siteId The ID of the site we're querying
  * @param  {String}  moduleSlug  A module's slug
- * @return {Boolean}       Weather a module is activated
+ * @return {Boolean}       Weather a module is active
  */
 export function isModuleActive( state, siteId, moduleSlug ) {
 	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'active' ], false );
@@ -20,7 +20,7 @@ export function isModuleActive( state, siteId, moduleSlug ) {
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The ID of the site we're querying
  * @param  {String}  moduleSlug module's slug
- * @return {Boolean}         Whether module is being activated
+ * @return {Boolean}         Whether module is being active
  */
 export function isActivatingModule( state, siteId, moduleSlug ) {
 	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'activating' ], false );
