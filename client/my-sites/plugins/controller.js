@@ -110,10 +110,12 @@ function renderPluginList( context, basePath ) {
 			? ' ' + capitalize( context.params.pluginFilter )
 			: ''
 		);
+	if ( site && site.domain ) {
+		analytics
+		.pageView
+		.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
+	}
 
-	analytics
-	.pageView
-	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 }
 
 function renderPluginsBrowser( context ) {
@@ -182,7 +184,6 @@ const controller = {
 			next();
 			return;
 		}
-
 		// When site URL is present, bail if ...
 		//
 		// ... the plugin parameter is not on the WordPress.com list for a WordPress.com site.
