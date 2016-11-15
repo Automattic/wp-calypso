@@ -120,12 +120,4 @@ module.exports = {
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
 	},
-
-	'get-dot-blog-survey': {
-		stepName: 'get-dot-blog-survey',
-		props: {
-			surveySiteType: 'blog'
-		},
-		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
-	},
 };
