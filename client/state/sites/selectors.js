@@ -62,7 +62,7 @@ export const getSite = createSelector(
 			return null;
 		}
 
-		return {
+		let attributes = {
 			...site,
 			...getComputedAttributes( site ),
 			hasConflict: isSiteConflicting( state, siteId ),
@@ -71,6 +71,22 @@ export const getSite = createSelector(
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
 		};
+
+		if ( attributes.jetpack ) {
+			attributes = Object.assign( attributes, {
+				canManage: canJetpackSiteManage( state, siteId ),
+				canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
+				canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+				hasJetpackMenus: hasJetpackSiteJetpackMenus( state, siteId ),
+				hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
+				isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
+				isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
+				hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
+				fileModDisabledReason: getJetpackSiteUpdateFilesDisabledReasons( state, siteId )
+			} );
+		}
+
+		return attributes;
 	},
 	( state ) => state.sites.items
 );
