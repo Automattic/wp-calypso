@@ -296,7 +296,6 @@ const PluginsMain = React.createClass( {
 					header={ this.translate( 'Plugins' ) }
 					plugins={ plugins }
 					sites={ this.props.sites }
-					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
 					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
 			</div>
