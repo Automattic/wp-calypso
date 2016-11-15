@@ -11,3 +11,11 @@
 		vertical-align: middle;
 	}
 }
+
+.remove-purchase__chat-button {
+	display: block;
+
+	@include breakpoint( ">480px" ) {
+		float: left;
+	}
+}

@@ -9,12 +9,18 @@ import { expect } from 'chai';
 import {
 	OLARK_READY,
 	OLARK_REQUEST,
-	OLARK_TIMEOUT
+	OLARK_TIMEOUT,
+	OLARK_OPERATORS_AVAILABLE,
+	OLARK_OPERATORS_AWAY
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 import { OLARK_TIMEOUT_MS } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
+import {
+	operatorsAvailable,
+	operatorsAway
+} from '../actions';
 
 describe( 'actions', () => {
 	let olarkTimeout, olarkReady, requestOlark, sandbox, spy, clock, callOlarkReady = false;
@@ -56,6 +62,24 @@ describe( 'actions', () => {
 			const action = olarkReady();
 			expect( action ).to.eql( {
 				type: OLARK_READY
+			} );
+		} );
+	} );
+
+	describe( '#operatorsAway()', () => {
+		it( 'should return an action object', () => {
+			const action = operatorsAway();
+			expect( action ).to.eql( {
+				type: OLARK_OPERATORS_AWAY
+			} );
+		} );
+	} );
+
+	describe( '#operatorsAvailable()', () => {
+		it( 'should return an action object', () => {
+			const action = operatorsAvailable();
+			expect( action ).to.eql( {
+				type: OLARK_OPERATORS_AVAILABLE
 			} );
 		} );
 	} );

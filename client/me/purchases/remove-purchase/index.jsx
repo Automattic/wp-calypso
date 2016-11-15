@@ -23,6 +23,8 @@ import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { slugToUrl } from 'lib/url';
+import { isOperatorsAvailable } from 'state/ui/olark/selectors';
+import olarkActions from 'lib/olark-store/actions';
 
 const user = userFactory();
 
@@ -70,6 +72,11 @@ const RemovePurchase = React.createClass( {
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: true } );
+	},
+
+	openChat() {
+		olarkActions.expandBox();
+		this.setState( { isDialogVisible: false } );
 	},
 
 	changeSurveyStep() {
@@ -160,6 +167,15 @@ const RemovePurchase = React.createClass( {
 		);
 	},
 
+	getChatButton() {
+		return {
+			action: 'chat',
+			additionalClassNames: 'remove-purchase__chat-button is-borderless',
+			onClick: this.openChat,
+			label: this.translate( 'Need help? Chat with us' ),
+		};
+	},
+
 	renderDomainDialog() {
 		const buttons = [ {
 				action: 'cancel',
@@ -174,6 +190,10 @@ const RemovePurchase = React.createClass( {
 				onClick: this.removePurchase
 			} ],
 			productName = getName( getPurchase( this.props ) );
+
+		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+			buttons.unshift( this.getChatButton() );
+		}
 
 		return (
 			<Dialog
@@ -244,6 +264,10 @@ const RemovePurchase = React.createClass( {
 			buttonsArr = [ buttons.cancel, buttons.remove ];
 		} else {
 			buttonsArr = inStepOne ? [ buttons.cancel, buttons.next ] : [ buttons.cancel, buttons.prev, buttons.remove ];
+		}
+
+		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+			buttonsArr.unshift( this.getChatButton() );
 		}
 
 		return (
@@ -331,6 +355,8 @@ const RemovePurchase = React.createClass( {
 } );
 
 export default connect(
-	null,
+	( state ) => ( {
+		showChatLink: isOperatorsAvailable( state ),
+	} ),
 	{ removePurchase }
 )( RemovePurchase );
