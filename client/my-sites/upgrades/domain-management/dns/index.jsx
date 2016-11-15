@@ -30,6 +30,10 @@ const Dns = React.createClass( {
 		] ).isRequired
 	},
 
+	getInitialState() {
+		return { addNew: true };
+	},
+
 	render() {
 		if ( ! this.props.dns.hasLoadedFromServer ) {
 			return <DomainMainPlaceholder goBack={ this.goBack } />;
@@ -52,13 +56,18 @@ const Dns = React.createClass( {
 						selectedSite={ this.props.selectedSite }
 						selectedDomainName={ this.props.selectedDomainName } />
 
-					<DnsAddNew
-						isSubmittingForm={ this.props.dns.isSubmittingForm }
-						selectedDomainName={ this.props.selectedDomainName } />
+					{ this.state.addNew
+						? <DnsAddNew
+							isSubmittingForm={ this.props.dns.isSubmittingForm }
+							selectedDomainName={ this.props.selectedDomainName } />
+						: <Office365
+							isSubmittingForm={ this.props.dns.isSubmittingForm }
+							selectedDomainName={ this.props.selectedDomainName } />
+					}
 
-					<Office365
-						isSubmittingForm={ this.props.dns.isSubmittingForm }
-						selectedDomainName={ this.props.selectedDomainName } />
+					<button onClick={ this.office365Toggle }>{ this.state.addNew
+						? this.translate( 'Looking for Office 365 setup? Continue from here.' )
+						: this.translate( 'Add new DNS records' ) }</button>
 				</Card>
 			</Main>
 		);
@@ -77,6 +86,11 @@ const Dns = React.createClass( {
 			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		) );
+	},
+
+	office365Toggle() {
+		event.preventDefault();
+		this.setState( { addNew: ! this.state.addNew } );
 	}
 } );
 

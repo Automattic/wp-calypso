@@ -3,7 +3,6 @@
  */
 import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,17 +20,12 @@ import * as upgradesActions from 'lib/upgrades/actions';
 class Office365 extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = { show: false, token: '' };
-	}
-
-	onAddOffice365 = ( event ) => {
-		event.preventDefault();
-		this.setState( { show: true } );
+		this.state = { token: '' };
 	}
 
 	onChange = ( event ) => {
 		const { value } = event.target;
-		this.setState( { show: true, token: value } );
+		this.setState( { token: value } );
 	}
 
 	onAddDnsRecords = ( event ) => {
@@ -43,19 +37,16 @@ class Office365 extends Component {
 				notices.success( this.props.translate( 'The DNS record has been added.' ), {
 					duration: 5000
 				} );
-				this.setState( { show: true } );
 			}
 		} );
 	}
 
 	render() {
-		const classes = classnames( 'form-content', { 'is-hidden': ! this.state.show } );
 		const isDataValid = this.state.token.match( /^MS=ms\d+$/ );
 
 		return (
 			<form className="dns__office365">
-				<a onClick={ this.onAddOffice365 }>{ this.props.translate( 'Looking for Office 365 setup? Continue from here.' ) }</a>
-				<div className={ classes }>
+				<div className="dns__form-content">
 					<FormFieldset>
 						<FormLabel>{ this.props.translate( 'Office 365 Verification Token' ) }</FormLabel>
 						<FormTextInput
@@ -71,7 +62,7 @@ class Office365 extends Component {
 						<FormButton
 							disabled={ ! isDataValid }
 							onClick={ this.onAddDnsRecords }>
-							{ this.props.translate( 'Add New DNS Records' ) }
+							{ this.props.translate( 'Set up Office 365' ) }
 						</FormButton>
 					</FormFooter>
 				</div>
