@@ -121,7 +121,7 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 				show_on_front: response.is_page_on_front ? 'page' : 'posts',
 			};
 
-			if( response.page_for_posts_id ) {
+			if ( response.page_for_posts_id ) {
 				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
 			}
 
