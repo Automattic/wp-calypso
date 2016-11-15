@@ -186,12 +186,12 @@ const controller = {
 		// When site URL is present, bail if ...
 		//
 		// ... the plugin parameter is not on the WordPress.com list for a WordPress.com site.
-		const pluginIsNotInList = ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter );
+		const pluginIsNotInList = site && ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter );
 
 		// ... or the plugin parameter is on the WordPress.com list for a Jetpack site.
 		// if no site URL is provided, bail if a WordPress.com filter was provided.
 		//  Only Jetpack plugins should work when no URL is provided.
-		const onlyJetPack = site.jetpack && appliedFilter === wpcomFilter;
+		const onlyJetPack = site && site.jetpack && appliedFilter === wpcomFilter;
 
 		if ( siteUrl && ( pluginIsNotInList || onlyJetPack ) ) {
 			page.redirect( '/plugins/' + siteUrl );
