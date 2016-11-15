@@ -100,7 +100,6 @@ let Followers = React.createClass( {
 				key={ follower.ID }
 				user={ follower }
 				type="follower"
-				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
 				onRemove={ removeFollower }
 			/>
