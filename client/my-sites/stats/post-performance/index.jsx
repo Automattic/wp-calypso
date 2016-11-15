@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,32 +16,24 @@ import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Emojify from 'components/emojify';
 import SectionHeader from 'components/section-header';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import {
-	isRequestingSitePostsForQuery,
-	getSitePostsForQuery
-} from 'state/posts/selectors';
-import { getPostStat } from 'state/stats/posts/selectors';
+import queryGraph from 'lib/graph/query';
 
 const StatsPostPerformance = React.createClass( {
 
 	displayName: 'StatsPostPerformance',
 
 	propTypes: {
-		viewCount: PropTypes.number,
 		site: PropTypes.oneOfType( [
 			PropTypes.bool,
 			PropTypes.object
 		] ),
-		siteID: PropTypes.number,
-		query: PropTypes.object,
-		post: PropTypes.object,
-		isRequesting: PropTypes.bool
+		results: PropTypes.object
 	},
 
 	buildTabs( summaryUrl ) {
-		const { viewCount, post, loading } = this.props;
+		const { results } = this.props;
+		const post = get( results, [ 'posts', 0 ], false );
+		const viewCount = get( results, [ 'posts', 0, 'stat' ] );
 		const tabClassName = 'is-post-summary';
 
 		const tabs = [
@@ -51,21 +43,18 @@ const StatsPostPerformance = React.createClass( {
 				value: viewCount,
 				href: summaryUrl,
 				className: tabClassName,
-				loading: loading
 			},
 			{
 				label: this.translate( 'Likes' ),
 				gridicon: 'star',
 				value: post ? post.like_count : null,
 				className: tabClassName,
-				loading: loading
 			},
 			{
 				label: this.translate( 'Comments' ),
 				gridicon: 'comment',
 				value: post ? post.discussion.comment_count : null,
 				className: tabClassName,
-				loading: loading
 			}
 		];
 
@@ -79,8 +68,9 @@ const StatsPostPerformance = React.createClass( {
 	},
 
 	render() {
-		const { site, query, post, isRequesting } = this.props;
-		const loading = ! site || isRequesting;
+		const { site, results } = this.props;
+		const post = get( results, [ 'posts', 0 ], false );
+		const isLoadingPosts = ! site || get( results, [ 'requests', 'posts' ], false );
 		const postTime = post ? this.moment( post.date ) : this.moment();
 		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
 
@@ -98,11 +88,9 @@ const StatsPostPerformance = React.createClass( {
 
 		return (
 			<div>
-				{ site ? <QueryPosts siteId={ site.ID } query={ query } /> : null }
-				{ site && post ? <QueryPostStats siteId= { site.ID } postId={ post.ID } stat="views" /> : null }
 				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
-					<StatsModulePlaceholder isLoading={ loading && ! post } />
+					<StatsModulePlaceholder isLoading={ isLoadingPosts } />
 					{ post
 						? (
 							<div className="module-content-text">
@@ -124,7 +112,7 @@ const StatsPostPerformance = React.createClass( {
 							</div>
 						) : null
 					}
-					{ ! loading && ! post
+					{ ! isLoadingPosts && ! post
 						? (
 							<div className="module-content-text is-empty-message is-error">
 								<p className="stats-post-performance__no-posts-message">
@@ -152,18 +140,24 @@ const StatsPostPerformance = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
-	const { site } = ownProps;
-	const query = { status: 'publish', number: 1 };
-	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
-	const post = posts && posts.length ? posts[ 0 ] : null;
-	const viewCount = post && site ? getPostStat( state, 'views', site.ID, post.ID ) : null;
-	const isRequesting = isRequestingSitePostsForQuery( state, site.ID, query );
-
-	return {
-		viewCount,
-		query,
-		post,
-		isRequesting
-	};
+export default queryGraph( ( { site } ) => {
+	return `
+		{
+			hello
+			posts( siteId: ${ site.ID }, query: { number: 1, status: "publish" } ) {
+				ID
+				date
+				title
+				URL
+				like_count
+				discussion {
+					comment_count
+				}
+				stat( stat: "views" )
+			}
+			requests {
+				posts( siteId: ${ site.ID }, query: { number: 1, status: "publish" } )
+			}
+		}
+	`;
 } )( StatsPostPerformance );

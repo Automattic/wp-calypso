@@ -1,6 +1,7 @@
 // External Dependencies
 @import '../../node_modules/react-virtualized/styles';
 @import '../../node_modules/draft-js/dist/Draft';
+@import '../../node_modules/graphiql/graphiql';
 
 // Shared
 @import 'shared/reset';                        // css reset before the rest of the styles are defined
@@ -31,3 +32,4 @@
 
 // Devdocs
 @import 'devdocs/design/style';
+@import 'lib/graph/style';

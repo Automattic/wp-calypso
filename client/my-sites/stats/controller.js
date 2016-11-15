@@ -20,6 +20,9 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import GraphProvider from 'lib/graph/GraphProvider';
+import createGraph from 'lib/graph';
+import GraphiQL from 'lib/graph/GraphiQL';
 
 const user = userFactory();
 const sites = sitesFactory();
@@ -99,6 +102,17 @@ module.exports = {
 		}
 	},
 
+	graph: function( context ) {
+		const graph = createGraph( context.store );
+		renderWithReduxStore(
+			React.createElement( GraphProvider, { graph },
+				React.createElement( GraphiQL )
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
 	insights: function( context, next ) {
 		const Insights = require( 'my-sites/stats/stats-insights' );
 		const StatsList = require( 'lib/stats/stats-list' );
@@ -152,17 +166,20 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
+		const graph = createGraph( context.store );
 		renderWithReduxStore(
-			React.createElement( StatsComponent, {
-				site: site,
-				followList: followList,
-				commentsList: commentsList,
-				tagsList: tagsList,
-				wpcomFollowersList: wpcomFollowersList,
-				emailFollowersList: emailFollowersList,
-				commentFollowersList: commentFollowersList,
-				summaryDate: summaryDate
-			} ),
+			React.createElement( GraphProvider, { graph },
+				React.createElement( StatsComponent, {
+					site: site,
+					followList: followList,
+					commentsList: commentsList,
+					tagsList: tagsList,
+					wpcomFollowersList: wpcomFollowersList,
+					emailFollowersList: emailFollowersList,
+					commentFollowersList: commentFollowersList,
+					summaryDate: summaryDate
+				} )
+			),
 			document.getElementById( 'primary' ),
 			context.store
 		);

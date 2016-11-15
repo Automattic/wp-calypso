@@ -12,12 +12,16 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/stats' ) ) {
+
 		// Stat Overview Page
 		page( '/stats', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/day', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/week', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/month', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/year', controller.siteSelection, controller.navigation, statsController.overview );
+
+		// Doc
+		page( '/stats/graph', statsController.graph );
 
 		// Stat Insights Page
 		page( '/stats/insights/:site_id', controller.siteSelection, controller.navigation, statsController.insights );

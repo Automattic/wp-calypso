@@ -31,7 +31,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		}
 
 		return PAGINATION_QUERY_KEYS.some( ( key ) => {
-			return query.hasOwnProperty( key );
+			return ( {} ).hasOwnProperty.call( query, key );
 		} );
 	}
 

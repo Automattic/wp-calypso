@@ -110,8 +110,8 @@ export const getSitePostsForQuery = createSelector(
 		if ( ! manager ) {
 			return null;
 		}
-
 		const posts = manager.getItems( query );
+
 		if ( ! posts ) {
 			return null;
 		}
