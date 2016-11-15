@@ -52,7 +52,7 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_FRONT_PAGE_SET_SUCCESS: {
-			const { siteId, pageId } = action;
+			const { siteId, updatedOptions } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
 				break;
@@ -61,10 +61,7 @@ export function items( state = {}, action ) {
 			return {
 				...state,
 				[ siteId ]: merge( {}, site, {
-					options: {
-						show_on_front: pageId === 0 ? 'posts' : 'page',
-						page_on_front: pageId
-					}
+					options: updatedOptions,
 				} )
 			};
 		}
