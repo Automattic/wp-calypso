@@ -17,6 +17,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin: 0;
 	}
 
+	&:nth-last-child(2) {
+		border-bottom: 0;
+	}
+
 	&.is-selected {
 		&::before {
 			content: '';
