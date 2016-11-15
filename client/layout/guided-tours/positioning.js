@@ -32,11 +32,11 @@ const helpers = {
 	yBelow: ( bottom ) => {
 		return bottom + DIALOG_PADDING;
 	},
-	xAboveBelow: ( left, right ) => {
+	xAboveBelow: ( left, right, width ) => {
 		if ( ( left + DIALOG_WIDTH + DIALOG_PADDING ) < document.documentElement.clientWidth ) {
 			return left + DIALOG_PADDING;
 		} else if ( right - DIALOG_WIDTH - DIALOG_PADDING > 0 ) {
-			return right - DIALOG_WIDTH - DIALOG_PADDING;
+			return right - ( DIALOG_WIDTH - width );
 		}
 		return DIALOG_PADDING;
 	},
@@ -44,13 +44,13 @@ const helpers = {
 
 const dialogPositioners = {
 	below: ( rect ) => {
-		const x = helpers.xAboveBelow( rect.left, rect.right );
+		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
 		const y = helpers.yBelow( rect.bottom );
 
 		return { x, y };
 	},
 	above: ( rect ) => {
-		const x = helpers.xAboveBelow( rect.left, rect.right );
+		const x = helpers.xAboveBelow( rect.left, rect.right, rect.width );
 		const y = helpers.yAbove( rect.top );
 
 		return { x, y };
