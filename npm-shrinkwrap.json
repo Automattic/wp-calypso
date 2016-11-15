@@ -433,9 +433,6 @@
     "bl": {
       "version": "1.0.3",
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
         "readable-stream": {
           "version": "2.0.6"
         }
@@ -492,12 +489,7 @@
       "version": "1.3.6"
     },
     "buffer": {
-      "version": "4.9.1",
-      "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        }
-      }
+      "version": "4.9.1"
     },
     "buffer-shims": {
       "version": "1.0.0"
@@ -537,7 +529,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000601"
+      "version": "1.0.30000602"
     },
     "caseless": {
       "version": "0.11.0"
@@ -713,9 +705,6 @@
     "concat-stream": {
       "version": "1.5.2",
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
         "readable-stream": {
           "version": "2.0.6"
         }
@@ -958,14 +947,7 @@
       "dev": true
     },
     "doctrine": {
-      "version": "1.5.0",
-      "dev": true,
-      "dependencies": {
-        "isarray": {
-          "version": "1.0.0",
-          "dev": true
-        }
-      }
+      "version": "2.0.0"
     },
     "doctypes": {
       "version": "1.1.0"
@@ -1027,10 +1009,6 @@
       "dev": true,
       "dependencies": {
         "end-of-stream": {
-          "version": "1.0.0",
-          "dev": true
-        },
-        "isarray": {
           "version": "1.0.0",
           "dev": true
         },
@@ -1112,6 +1090,9 @@
         },
         "has-binary": {
           "version": "0.1.6"
+        },
+        "isarray": {
+          "version": "0.0.1"
         }
       }
     },
@@ -1304,6 +1285,10 @@
           "version": "1.1.3",
           "dev": true
         },
+        "doctrine": {
+          "version": "1.5.0",
+          "dev": true
+        },
         "strip-bom": {
           "version": "3.0.0",
           "dev": true
@@ -1324,7 +1309,13 @@
     },
     "eslint-plugin-react": {
       "version": "6.4.1",
-      "dev": true
+      "dev": true,
+      "dependencies": {
+        "doctrine": {
+          "version": "1.5.0",
+          "dev": true
+        }
+      }
     },
     "eslint-plugin-wpcalypso": {
       "version": "3.0.2",
@@ -1447,6 +1438,9 @@
       "dependencies": {
         "acorn": {
           "version": "1.2.2"
+        },
+        "isarray": {
+          "version": "0.0.1"
         }
       }
     },
@@ -1467,7 +1461,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.7",
+      "version": "0.8.8",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -1595,6 +1589,9 @@
     "function-bind": {
       "version": "1.1.0",
       "dev": true
+    },
+    "fuse.js": {
+      "version": "2.6.1"
     },
     "gather-stream": {
       "version": "1.0.0"
@@ -1746,7 +1743,12 @@
       "version": "2.0.0"
     },
     "has-binary": {
-      "version": "0.1.7"
+      "version": "0.1.7",
+      "dependencies": {
+        "isarray": {
+          "version": "0.0.1"
+        }
+      }
     },
     "has-cors": {
       "version": "1.1.0"
@@ -2073,18 +2075,13 @@
       "version": "1.0.0"
     },
     "isarray": {
-      "version": "0.0.1"
+      "version": "1.0.0"
     },
     "isexe": {
       "version": "1.1.2"
     },
     "isobject": {
-      "version": "2.1.0",
-      "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        }
-      }
+      "version": "2.1.0"
     },
     "isomorphic-fetch": {
       "version": "2.2.1"
@@ -2470,9 +2467,6 @@
     "memory-fs": {
       "version": "0.3.0",
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
         "readable-stream": {
           "version": "2.2.2"
         }
@@ -2815,6 +2809,9 @@
     "page": {
       "version": "1.6.4",
       "dependencies": {
+        "isarray": {
+          "version": "0.0.1"
+        },
         "path-to-regexp": {
           "version": "1.2.1"
         }
@@ -3154,10 +3151,6 @@
       "version": "3.1.0",
       "dev": true,
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0",
-          "dev": true
-        },
         "readable-stream": {
           "version": "2.2.2",
           "dev": true
@@ -3174,14 +3167,16 @@
       "version": "1.0.1"
     },
     "readable-stream": {
-      "version": "1.1.14"
+      "version": "1.1.14",
+      "dependencies": {
+        "isarray": {
+          "version": "0.0.1"
+        }
+      }
     },
     "readdirp": {
       "version": "2.1.0",
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
         "minimatch": {
           "version": "3.0.3"
         },
@@ -3546,6 +3541,10 @@
           "version": "1.1.2",
           "dev": true
         },
+        "isarray": {
+          "version": "0.0.1",
+          "dev": true
+        },
         "json3": {
           "version": "3.2.6",
           "dev": true
@@ -3570,6 +3569,9 @@
       "dependencies": {
         "component-emitter": {
           "version": "1.1.2"
+        },
+        "isarray": {
+          "version": "0.0.1"
         }
       }
     },
@@ -3722,10 +3724,6 @@
           "version": "3.9.2",
           "dev": true
         },
-        "isarray": {
-          "version": "1.0.0",
-          "dev": true
-        },
         "readable-stream": {
           "version": "2.2.2",
           "dev": true
@@ -3752,9 +3750,6 @@
         },
         "form-data": {
           "version": "1.0.0-rc4"
-        },
-        "isarray": {
-          "version": "1.0.0"
         },
         "qs": {
           "version": "6.3.0"
@@ -3824,9 +3819,6 @@
     "tar-stream": {
       "version": "1.5.2",
       "dependencies": {
-        "isarray": {
-          "version": "1.0.0"
-        },
         "readable-stream": {
           "version": "2.2.2"
         }
@@ -3842,6 +3834,9 @@
     "through2": {
       "version": "0.6.5",
       "dependencies": {
+        "isarray": {
+          "version": "0.0.1"
+        },
         "readable-stream": {
           "version": "1.0.34"
         }
@@ -4158,6 +4153,10 @@
         },
         "filesize": {
           "version": "3.3.0",
+          "dev": true
+        },
+        "isarray": {
+          "version": "0.0.1",
           "dev": true
         },
         "ms": {
