@@ -40,7 +40,7 @@ describe( 'PluginsList', () => {
 
 		testRenderer = TestUtils.renderIntoDocument;
 
-		siteListMock = { getSelectedSite: () => sites[ 0 ] };
+		siteListMock = { getSelectedSite: () => sites[ 0 ], get: () => sites };
 		PluginsList = require( '../' );
 	} );
 
@@ -68,7 +68,7 @@ describe( 'PluginsList', () => {
 					<PluginsList { ...props } />
 				</ReduxProvider>
 			);
-			renderedPluginsList = TestUtils.scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ];
+			renderedPluginsList = TestUtils.scryRenderedComponentsWithType( renderedPluginsList, PluginsList )[ 0 ].getWrappedInstance();
 		} );
 
 		it( 'should be intialized with no selectedPlugins', () => {
