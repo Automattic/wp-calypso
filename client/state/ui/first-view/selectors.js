@@ -16,7 +16,7 @@ import { getPreference, preferencesLastFetchedTimestamp } from 'state/preference
 import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
-import { findOngoingTour } from 'state/ui/guided-tours/selectors';
+import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
 
 const getConfigForPath = memoize( path =>
 	find( FIRST_VIEW_CONFIG, entry =>
@@ -90,7 +90,6 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 	return some( section.paths, path => startsWith( routeSet.path, path ) );
 }
 
-// TODO: memoize
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
