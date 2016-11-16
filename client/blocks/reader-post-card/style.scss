@@ -324,11 +324,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__title-link:visited {
 	color: $gray-dark;
 	cursor: pointer;
-	font-size: 21px;
+	font-size: 18px;
 	font-weight: 700;
 
 	&:hover {
 		color: $gray-dark;
+	}
+
+	@include breakpoint( ">480px" ) {
+		font-size: 21px;
 	}
 }
 
