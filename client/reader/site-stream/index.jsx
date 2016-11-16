@@ -26,6 +26,26 @@ import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import smartSetState from 'lib/react-smart-set-state';
 
+var React = require( 'react' ),
+	page = require( 'page' ),
+	includes = require( 'lodash/includes' );
+	DocumentHead = require( 'components/data/document-head' ),
+	FeedHeader = require( 'blocks/reader-feed-header' ),
+	FeedFeatured = require( './featured' ),
+	EmptyContent = require( './empty' ),
+	Stream = require( 'reader/stream' ),
+	HeaderBack = require( 'reader/header-back' ),
+	SiteStore = require( 'lib/reader-site-store' ),
+	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
+	SiteState = require( 'lib/reader-site-store/constants' ).state,
+	FeedError = require( 'reader/feed-error' ),
+	FeedStore = require( 'lib/feed-store' ),
+	FeedStoreActions = require( 'lib/feed-store/actions' ),
+	FeedState = require( 'lib/feed-store/constants' ).state,
+	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
+	feedStreamFactory = require( 'lib/feed-stream-store' ),
+	smartSetState = require( 'lib/react-smart-set-state' );
+
 function checkForRedirect( site ) {
 	if ( site && site.get( 'prefer_feed' ) && site.get( 'feed_ID' ) ) {
 		setTimeout( function() {
