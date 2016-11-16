@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 import {
 	isActivatingModule,
+	isDeactivatingModule,
 	isModuleActive
 } from '../selectors';
 
@@ -25,6 +26,21 @@ describe( 'selectors', () => {
 				},
 				siteId = 123456;
 			const output = isActivatingModule( stateIn, siteId, 'module-b' );
+			expect( output ).to.be.true;
+		} );
+	} );
+
+	describe( '#isDeactivatingModule', () => {
+		it( 'should return state.jetpackSettings.jetpackModules.requests[ siteId ][ module_slug ].deactivating', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isDeactivatingModule( stateIn, siteId, 'module-a' );
 			expect( output ).to.be.true;
 		} );
 	} );
