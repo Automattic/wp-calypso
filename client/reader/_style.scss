@@ -233,7 +233,7 @@
 	clear: both;
 	overflow: hidden;
 	margin: 0 auto 20px auto;
-	max-width: 500px;
+	max-width: 100%;
 }
 .tiled-gallery img {
 	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
@@ -268,21 +268,21 @@
 	padding: 0;
 	vertical-align: middle;
 }
+
 .tiled-gallery-caption { /* Captions */
+	box-sizing: border-box; /* to make width: 100% work */
 	background: #eee;
 	background: rgba( 255,255,255,0.8 );
 	color: #333;
 	font-size: 13px;
 	font-weight: 400;
 	overflow: hidden;
-	padding: 10px 0;
+	padding: 10px 20px;
 	position: absolute;
 		bottom: 0;
-	text-indent: 10px;
-	text-overflow: ellipsis;
 	width: 100%;
-	white-space: nowrap;
 }
+
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 	font-size: 11px;
 }
@@ -371,9 +371,9 @@
 
 	.foldable-card__expand .gridicon {
 		transform: rotate( -90deg );
-	    position: absolute;
-	    	top: 24px;
-     	left: 0;
+		position: absolute;
+			top: 24px;
+			left: 0;
 	}
  }
 
