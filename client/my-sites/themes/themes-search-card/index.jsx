@@ -4,7 +4,6 @@
 import React from 'react';
 import find from 'lodash/find';
 import debounce from 'lodash/debounce';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -90,7 +89,7 @@ const ThemesSearchCard = React.createClass( {
 							path={ getExternalThemesUrl( this.props.site ) }
 							onClick={ this.onMore }
 							isExternalLink={ true }>
-							{ this.props.translate( 'More' ) + ' ' }
+							{ this.translate( 'More' ) + ' ' }
 						</NavItem> }
 					</NavTabs>
 
@@ -100,7 +99,7 @@ const ThemesSearchCard = React.createClass( {
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						ref="url-search"
-						placeholder={ this.props.translate( 'Search themes…' ) }
+						placeholder={ this.translate( 'Search themes…' ) }
 						analyticsGroup="Themes"
 						delaySearch={ true }
 					/>
@@ -114,9 +113,9 @@ const ThemesSearchCard = React.createClass( {
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
-			{ value: 'all', label: this.props.translate( 'All' ) },
-			{ value: 'free', label: this.props.translate( 'Free' ) },
-			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+			{ value: 'all', label: this.translate( 'All' ) },
+			{ value: 'free', label: this.translate( 'Free' ) },
+			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
 
 		if ( this.state.isMobile ) {
@@ -129,7 +128,7 @@ const ThemesSearchCard = React.createClass( {
 					onSearch={ this.props.onSearch }
 					initialValue={ this.props.search }
 					ref="url-search"
-					placeholder={ this.props.translate( 'What kind of theme are you looking for?' ) }
+					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 					analyticsGroup="Themes"
 					delaySearch={ true }
 				/>
@@ -144,11 +143,11 @@ const ThemesSearchCard = React.createClass( {
 												rel="noopener noreferrer"
 												onClick={ this.onMore }>
 
-												{ this.props.translate( 'More' ) }
+												{ this.translate( 'More' ) }
 											</a> }
 			</div>
 		);
 	}
 } );
 
-export default localize( ThemesSearchCard );
+export default ThemesSearchCard;
