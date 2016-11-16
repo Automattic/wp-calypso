@@ -74,7 +74,7 @@ const CurrentTheme = React.createClass( {
 	}
 } );
 
-const ConnectedCurrentTheme = connectOptions( CurrentTheme );
+const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
 const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
@@ -91,4 +91,4 @@ export default connect(
 	( state, { siteId } ) => ( {
 		currentTheme: getCurrentTheme( state, siteId )
 	} )
-)( localize( CurrentThemeWithOptions ) );
+)( CurrentThemeWithOptions );
