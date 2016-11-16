@@ -1,15 +1,15 @@
 .notice {
 	display: flex;
+		flex-direction: column;
 	position: relative;
+	width: 100%;
 	margin-bottom: 24px;
-	border-radius: 1px;
 	background: lighten( $gray, 30 );
 	box-sizing: border-box;
-	font-size: 14px;
 	animation: appear .3s ease-in-out;
 
-	@include breakpoint( ">660px" ) {
-		font-size: inherit;
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
 	}
 
 	// Success!
@@ -49,35 +49,40 @@
 }
 
 .notice__icon {
-	flex-shrink: 0;
-	padding: 13px 0 13px 16px;
-	flex-shrink: 0;
+	position: absolute;
+		top: 0;
+		left: 0;
+	display: flex;
+		flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	padding: 14px 16px;
 
-	@include breakpoint( "<660px" ) {
-		display: none;
+	@include breakpoint( ">480px" ) {
+		position: relative;
+		padding: 13px 0px 13px 16px;
+		width: 24px;
+		height: 24px;
 	}
 }
 
 .notice__content {
 	display: flex;
-	flex-grow: 1;
+		flex-grow: 1;
+	padding: 14px 48px;
+	font-size: 12px;
 
-	@include breakpoint( "<480px" ) {
-		flex-direction: column;
+	@include breakpoint( ">480px" ) {
+		font-size: 14px;
+		padding: 13px;
 	}
 }
 
 .notice__text {
-	font-size: 15px;
-	padding: 11px 24px;
 
 	& > span,
 	& > div {
 		max-width: 680px;
-	}
-
-	@include breakpoint( ">660px" ) {
-		padding: 13px;
 	}
 
 	a {
@@ -111,14 +116,28 @@
 
 // "X" for dismissing a notice
 .notice__dismiss {
+	position: absolute;
+		top: 0;
+		right: 0;
 	display: flex;
 		flex-shrink: 0;
-	padding: 11px 16px;
+	padding: 14px 16px;
 	cursor: pointer;
 	color: $gray;
 
-	@include breakpoint( ">660px" ) {
+	.gridicon {
+		width: 18px;
+		height: 18px;
+	}
+
+	@include breakpoint( ">480px" ) {
+		position: relative;
 		padding: 13px 16px;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
 	}
 
 	&:hover,
@@ -140,16 +159,33 @@
 // specificity for general `a` elements within notice is too great
 a.notice__action {
 	display: flex;
-		align-items: center;
+		justify-content: center;
 		flex-shrink: 0;
+		flex-grow: 1;
 	box-sizing: border-box;
+	margin: 0 8px 8px 8px;
+	padding: 8px;
+	border-radius: 3px;
 	cursor: pointer;
-	font-size: 15px;
+	font-size: 12px;
 	font-weight: 400;
-	margin-left: auto; // forces the element to the right;
-	padding: 13px 16px;
 	text-decoration: none;
 	white-space: nowrap;
+
+	@include breakpoint( ">480px" ) {
+			flex-shrink: 1;
+			flex-grow: 0;
+		align-items: center;
+		border-radius: 0;
+		font-size: 14px;
+		margin: 0 0 0 auto; // forces the element to the right;
+		padding: 13px 16px;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
 
 	.is-success &,
 	.is-error &,
@@ -166,24 +202,23 @@ a.notice__action {
 	.gridicon {
 		margin-left: 8px;
 		opacity: 0.7;
+		width: 18px;
+		height: 18px;
 	}
 
 	&:hover,
 	&:focus {
 		background: rgba( 255, 255, 255, 0.2 );
 	}
-
-	@include breakpoint( "<480px" ) {
-		margin: 0;
-		justify-content: flex-end;
-	}
 }
 
 // Compact notices
 .notice.is-compact {
-	border-radius: 2px;
 	display: inline-flex;
-	flex-wrap: nowrap;
+		flex-wrap: nowrap;
+		flex-direction: row;
+	width: auto;
+	border-radius: 2px;
 	min-height: 20px;
 	margin: 0;
 	padding: 0;
@@ -198,13 +233,17 @@ a.notice__action {
 		color: $white;
 	}
 
-	.notice__text {
+	.notice__content {
 		font-size: 12px;
 		padding: 6px 8px;
+	}
+
+	.notice__text {
 		line-height: 1;
 	}
 
 	.notice__icon {
+		position: relative;
 		align-self: center;
 		flex-shrink: 0;
 		margin: 0 0 0 8px;
@@ -221,7 +260,8 @@ a.notice__action {
 	a.notice__action {
 		background: transparent;
 		display: inline-block;
-		font-size: 11px;
+		margin: 0;
+		font-size: 12px;
 		font-weight: 600;
 		align-self: center;
 		margin-left: 16px;

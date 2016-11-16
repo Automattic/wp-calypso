@@ -54,7 +54,13 @@ export const Notice = React.createClass( {
 		let content, text;
 
 		if ( typeof this.props.children === 'string' ) {
-			return <span className="notice__text"><span>{ this.props.children }</span></span>;
+			return (
+				<span className="notice__content">
+					<span className="notice__text">
+						<span>{ this.props.children }</span>
+					</span>
+				</span>
+			);
 		}
 
 		if ( this.props.text ) {
@@ -65,9 +71,17 @@ export const Notice = React.createClass( {
 			}
 
 			content = [ this.props.children ];
-			content.unshift( <span key="notice_text" className="notice__text">{ text }</span> );
+			content.unshift(
+				<span className="notice__content">
+					<span key="notice_text" className="notice__text">{ text }</span>
+				</span>
+			);
 		} else {
-			content = <span key="notice_text" className="notice__text">{ this.props.children }</span>;
+			content =
+				<span className="notice__content">
+					<span key="notice_text" className="notice__text">{ this.props.children }</span>
+				</span>
+			;
 		}
 
 		return content;
@@ -123,9 +137,7 @@ export const Notice = React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, noticeClass ) }>
 				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
-				<div className="notice__content">
 					{ this.renderChildren() }
-				</div>
 				{ dismiss }
 			</div>
 		);
