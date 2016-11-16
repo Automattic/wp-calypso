@@ -4,8 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import uniq from 'lodash/uniq';
-import upperFirst from 'lodash/upperFirst';
+import { uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,7 +69,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getSitesPlugin( nextProps ) {
-		const props = nextProps || this.props,
+		const props = nextProps || this.props;
 			{ selectedSite } = this.props;
 
 		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
