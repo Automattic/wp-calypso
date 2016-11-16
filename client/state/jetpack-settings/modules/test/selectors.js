@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 import {
 	isActivatingModule,
+	isDeactivatingModule,
 	isModuleActive
 } from '../selectors';
 
@@ -15,7 +16,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isActivatingModule', () => {
-		it( 'should return state.jetpackSettings.jetpackModules.requests[ siteId ][ module_slug ].activating', () => {
+		it( 'should return true if module is currently being activated', () => {
 			const stateIn = {
 					jetpackSettings: {
 						jetpackModules: {
@@ -27,10 +28,90 @@ describe( 'selectors', () => {
 			const output = isActivatingModule( stateIn, siteId, 'module-b' );
 			expect( output ).to.be.true;
 		} );
+
+		it( 'should return false if module is currently not being activated', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isActivatingModule( stateIn, siteId, 'module-a' );
+			expect( output ).to.be.false;
+		} );
+
+		it( 'should return null if that module is not known', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isActivatingModule( stateIn, siteId, 'module-z' );
+			expect( output ).to.be.null;
+		} );
+	} );
+
+	describe( '#isDeactivatingModule', () => {
+		it( 'should return true if module is currently being deactivated', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isDeactivatingModule( stateIn, siteId, 'module-a' );
+			expect( output ).to.be.true;
+		} );
+
+		it( 'should return false if module is currently not being deactivated', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isDeactivatingModule( stateIn, siteId, 'module-b' );
+			expect( output ).to.be.false;
+		} );
+
+		it( 'should return null if that module is not known', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isDeactivatingModule( stateIn, siteId, 'module-z' );
+			expect( output ).to.be.null;
+		} );
 	} );
 
 	describe( '#isModuleActive', () => {
-		it( 'should return state.jetpackSettings.jetpackModules.items[ siteId ][ module_slug ].active', () => {
+		it( 'should return true if the module is currently active', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							items: MODULES_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isModuleActive( stateIn, siteId, 'module-b' );
+			expect( output ).to.be.true;
+		} );
+
+		it( 'should return false if the module is currently not active', () => {
 			const stateIn = {
 					jetpackSettings: {
 						jetpackModules: {
@@ -40,7 +121,20 @@ describe( 'selectors', () => {
 				},
 				siteId = 123456;
 			const output = isModuleActive( stateIn, siteId, 'module-a' );
-			expect( output ).to.eql( stateIn.jetpackSettings.jetpackModules.items[ siteId ][ 'module-a' ].active );
+			expect( output ).to.be.false;
+		} );
+
+		it( 'should return null if that module is not known', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							items: MODULES_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isModuleActive( stateIn, siteId, 'module-z' );
+			expect( output ).to.be.null;
 		} );
 	} );
 } );
