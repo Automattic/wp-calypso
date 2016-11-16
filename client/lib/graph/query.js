@@ -1,14 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { isString } from 'lodash';
+import React, { Component, PropTypes } from 'react';
+import { isString, uniqueId } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { clearRequests } from 'state/requests/actions';
 
 const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
 	return class GraphQueryComponent extends Component {
 		state = {
 			results: null
 		};
+
+		uid = uniqueId();
 
 		static contextTypes = {
 			graph: PropTypes.object
@@ -20,7 +27,7 @@ const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
 		}
 
 		componentDidMount() {
-			this.unsubscribe = this.context.graph.subscribe( () => {
+			this.unsubscribe = this.context.graph.store.subscribe( () => {
 				this.request();
 			} );
 			this.request();
@@ -28,6 +35,7 @@ const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
 
 		componentWillUnmount() {
 			this.unsubscribe && this.unsubscribe();
+			this.context.graph.store.dispatch( clearRequests( this.uid ) );
 		}
 
 		componentWillReceiveProps( newProps ) {
@@ -43,7 +51,7 @@ const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
 		}
 
 		request() {
-			this.context.graph.request( this.query )
+			this.context.graph.request( this.query, { uid: this.uid } )
 				.then( results => {
 					this.setState( { results: results.data } );
 				} );

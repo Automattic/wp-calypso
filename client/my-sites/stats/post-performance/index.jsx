@@ -90,7 +90,7 @@ const StatsPostPerformance = React.createClass( {
 			<div>
 				<SectionHeader label={ this.translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
-					<StatsModulePlaceholder isLoading={ isLoadingPosts } />
+					<StatsModulePlaceholder isLoading={ isLoadingPosts && ! post } />
 					{ post
 						? (
 							<div className="module-content-text">

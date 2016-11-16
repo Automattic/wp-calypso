@@ -39,6 +39,7 @@ import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
+import requests from './requests/reducer';
 import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
@@ -88,6 +89,7 @@ export const reducer = combineReducers( {
 	pushNotifications,
 	reader,
 	receipts,
+	requests,
 	sharing,
 	shortcodes,
 	signup,

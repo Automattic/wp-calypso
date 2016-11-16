@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
+import { getSitePost } from 'state/posts/selectors';
 import { requestSitePost } from 'state/posts/actions';
+import { refreshByUid } from './utils';
 import createPostStatResolver from './post-stat';
 
 export const resolvePost = ( store, post ) => {
@@ -19,18 +20,13 @@ export const resolvePost = ( store, post ) => {
 	};
 };
 
-const createResolver = store => ( { siteId, postId } ) => {
+const createResolver = store => ( args, { uid } ) => {
+	const { siteId, postId } = args;
+	refreshByUid( store, uid, 'post', args, () => {
+		store.dispatch( requestSitePost( siteId, postId ) );
+	} );
 	const state = store.getState();
-
-	// First Check if we need to request and request
-	// We could also dispatch queries to the store (to avoid running requests multiple times)
 	const post = getSitePost( state, siteId, postId );
-	const isRequesting = isRequestingSitePost( state, siteId, postId );
-	if ( ! post && ! isRequesting && siteId && postId ) {
-		setTimeout( () => store.dispatch( requestSitePost( siteId, postId ) ) );
-	}
-
-	// Use Selectors to resolve the result
 	return resolvePost( store, post );
 };
 

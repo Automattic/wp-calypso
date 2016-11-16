@@ -53,13 +53,13 @@ function createGraph( store ) {
 		}
 	};
 
-	const request = query => {
-		return graphql( schema, query, root );
+	const request = ( query, context ) => {
+		return graphql( schema, query, root, context );
 	};
 
 	return {
 		request,
-		subscribe: store.subscribe.bind( store )
+		store
 	};
 }
 
