@@ -17,6 +17,8 @@ var analytics = require( 'lib/analytics' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon'
+
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',
 
@@ -145,6 +147,8 @@ module.exports = React.createClass( {
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
+
+				<CartCoupon cart={ this.props.cart } />
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
