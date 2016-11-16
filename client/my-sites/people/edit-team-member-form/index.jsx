@@ -25,7 +25,7 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import UsersActions from 'lib/users/actions';
 import userModule from 'lib/user';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleLog from 'lib/people/log-store';

@@ -54,7 +54,7 @@ import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 export const PostEditor = React.createClass( {
 	propTypes: {

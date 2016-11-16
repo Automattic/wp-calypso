@@ -16,7 +16,7 @@ import LanguageSelector from 'components/forms/language-selector';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
 import config from 'config';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';

@@ -27,7 +27,7 @@ var Card = require( 'components/card' ),
 	sites = require( 'lib/sites-list' )();
 
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 const AdsFormSettings = React.createClass( {
 

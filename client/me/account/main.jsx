@@ -18,7 +18,7 @@ import { bindActionCreators } from 'redux';
  */
 import LanguageSelector from 'components/forms/language-selector';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
 import Card from 'components/card';

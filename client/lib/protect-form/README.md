@@ -7,7 +7,7 @@ Usage
 -----
 
 ```
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 ```
 
 ... and then later in your component definition like so:

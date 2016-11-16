@@ -14,7 +14,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormPasswordInput = require( 'components/forms/form-password-input' ),

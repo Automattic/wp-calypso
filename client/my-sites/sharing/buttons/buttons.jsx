@@ -13,7 +13,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	ButtonsOptions = require( './options' ),
 	notices = require( 'notices' ),
 	analytics = require( 'lib/analytics' );
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 module.exports = protectForm( React.createClass( {
 	displayName: 'SharingButtons',

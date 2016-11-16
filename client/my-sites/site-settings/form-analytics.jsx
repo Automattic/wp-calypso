@@ -10,7 +10,7 @@ import debugFactory from 'debug';
  */
 import formBase from './form-base';
 import productsValues from 'lib/products-values';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';

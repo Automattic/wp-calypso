@@ -8,7 +8,7 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
  * Internal dependencies
  */
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import Card from 'components/card';
 import Navigation from 'me/notification-settings/navigation';

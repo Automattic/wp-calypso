@@ -21,7 +21,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'lib/analytics' ),
 	EmailVerificationGate = require( 'components/email-verification/email-verification-gate' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 var Menus = React.createClass( {
 

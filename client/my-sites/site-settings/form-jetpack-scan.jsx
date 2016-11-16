@@ -20,7 +20,7 @@ var formBase = require( 'my-sites/site-settings/form-base' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 module.exports = protectForm( React.createClass( {
 

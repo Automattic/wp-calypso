@@ -15,7 +15,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 import { updateListDetails, dismissListNotice, updateTitle, updateDescription } from 'state/reader/lists/actions';
 import { isUpdatedList, hasError } from 'state/reader/lists/selectors';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 const ListManagementDescriptionEdit = React.createClass( {
 	propTypes: {

@@ -20,7 +20,7 @@ var formBase = require( './form-base' ),
 	Card = require( 'components/card' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' );
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 
 module.exports = protectForm( React.createClass( {
 

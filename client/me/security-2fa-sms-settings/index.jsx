@@ -17,7 +17,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	analytics = require( 'lib/analytics' );
 
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import Notice from 'components/notice';
 
 module.exports = protectForm( React.createClass( {

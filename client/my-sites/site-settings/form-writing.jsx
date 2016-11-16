@@ -9,7 +9,7 @@ import { each, pick, map } from 'lodash';
  * Internal dependencies
  */
 import formBase from './form-base';
-import { protectForm } from 'components/hoc/protect-form';
+import { protectForm } from 'lib/protect-form';
 import config from 'config';
 import PressThisLink from './press-this-link';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
