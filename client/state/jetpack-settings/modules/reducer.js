@@ -8,8 +8,6 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import {
-	SERIALIZE,
-	DESERIALIZE,
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -17,6 +15,29 @@ import {
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
+
+const createItemsReducer = ( active ) => {
+	return ( state, { siteId, moduleSlug } ) => {
+		return merge( {}, state, {
+			[ siteId ]: {
+				[ moduleSlug ]: {
+					active
+				}
+			}
+		} );
+	};
+};
+
+const createRequestsReducer = ( data ) => {
+	return ( state, { siteId, moduleSlug } ) => {
+		return merge( {}, state, {
+			[ siteId ]: {
+				[ moduleSlug ]: data
+			}
+		} );
+	};
+};
 
 /**
  * `Reducer` function which handles request/response actions
@@ -26,32 +47,10 @@ import {
  * @param  {Object} action action
  * @return {Array}         Updated state
  */
-export const items = ( state = {}, { type, siteId, moduleSlug } ) => {
-	switch ( type ) {
-		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						active: true
-					}
-				}
-			} );
-		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						active: false
-					}
-				}
-			} );
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-		default:
-			return state;
-	}
-};
+export const items = createReducer( {}, {
+	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
+	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
+} );
 
 /**
  * `Reducer` function which handles request/response actions
@@ -61,50 +60,14 @@ export const items = ( state = {}, { type, siteId, moduleSlug } ) => {
  * @param {Object} action - action
  * @return {Object} updated state
  */
-export const requests = ( state = {}, { type, siteId, moduleSlug } ) => {
-	switch ( type ) {
-		case JETPACK_MODULE_ACTIVATE:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						activating: true
-					}
-				}
-			} );
-		case JETPACK_MODULE_ACTIVATE_FAILURE:
-		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						activating: false
-					}
-				}
-			} );
-		case JETPACK_MODULE_DEACTIVATE:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						deactivating: true
-					}
-				}
-			} );
-		case JETPACK_MODULE_DEACTIVATE_FAILURE:
-		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ moduleSlug ]: {
-						deactivating: false
-					}
-				}
-			} );
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-		default:
-			return state;
-	}
-};
+export const requests = createReducer( {}, {
+	[ JETPACK_MODULE_ACTIVATE ]: createRequestsReducer( { activating: true } ),
+	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: createRequestsReducer( { activating: false } ),
+	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createRequestsReducer( { activating: false } ),
+	[ JETPACK_MODULE_DEACTIVATE ]: createRequestsReducer( { deactivating: true } ),
+	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: createRequestsReducer( { deactivating: false } ),
+	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createRequestsReducer( { deactivating: false } ),
+} );
 
 export const reducer = combineReducers( {
 	items,
