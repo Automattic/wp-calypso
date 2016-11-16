@@ -330,6 +330,12 @@
 	}
 }
 
+// center twitter widgets. these use a fancy custom element on modern browsers
+.reader-full-post twitterwidget {
+	margin: 0 auto;
+	margin-bottom: 24px !important; // override element style from twitter
+}
+
 
 // Hides Jetpack RP in Reader
 .reader-full-post .jp-relatedposts-headline,
