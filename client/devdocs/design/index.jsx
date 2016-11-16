@@ -28,7 +28,7 @@ import Buttons from 'components/button/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Gridicons from 'components/gridicon/docs/example';
 import Accordions from 'components/accordion/docs/example';
-import SocialLogos from 'components/social-logo/docs/example';
+import SocialLogos from 'social-logos/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import Cards from 'components/card/docs/example';
