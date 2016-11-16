@@ -13,6 +13,11 @@ const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 import userUtils from 'lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
 
+function hasDiscoverSlug( post, searchSlug ) {
+	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
+	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
+}
+
 export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }
@@ -21,9 +26,12 @@ export function isDiscoverPost( post ) {
 	return !! ( get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
 }
 
+export function isDiscoverPick( post ) {
+	return hasDiscoverSlug( post, 'pick' );
+}
+
 export function isDiscoverSitePick( post ) {
-	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
-	return !! ( metaData && find( metaData, { slug: 'site-pick' } ) );
+	return hasDiscoverSlug( post, 'site-pick' );
 }
 
 export function isInternalDiscoverPost( post ) {
