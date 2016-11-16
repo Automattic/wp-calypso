@@ -50,7 +50,7 @@ export const PluginPanel = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
+	const standardPluginsLink = `/plugins/category/standard/${ siteSlug }`;
 	const purchaseLink = `/plans/${ siteSlug }`;
 
 	const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
