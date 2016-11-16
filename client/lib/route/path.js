@@ -8,13 +8,13 @@ import includes from 'lodash/includes';
 /**
  * Internal Dependencies
  */
-var trailingslashit = require( './trailingslashit' ),
+const trailingslashit = require( './trailingslashit' ),
 	untrailingslashit = require( './untrailingslashit' );
 
 /**
  * Module variables
  */
-var statsLocationsByTab = {
+const statsLocationsByTab = {
 	day: '/stats/day/',
 	week: '/stats/week/',
 	month: '/stats/month/',
@@ -23,26 +23,31 @@ var statsLocationsByTab = {
 };
 
 function getSiteFragment( path ) {
-	const basePath = path.split( '?' )[0];
+	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
 	// There are 2 URL positions where we should look for the site fragment:
 	// last (most sections) and second-to-last (post ID is last in editor)
-
 	// Check last and second-to-last piece for site slug
-	for ( let i = 2; i > 0; i-- ) {
-		const piece = pieces[ pieces.length - i ];
-		if ( piece && -1 !== piece.indexOf( '.' ) ) {
-			return piece;
-		}
+	const last_piece = pieces[ pieces.length - 1 ];
+	if ( last_piece && -1 !== last_piece.indexOf( '.' ) ) {
+		return last_piece;
+	}
+
+	const second_to_last_piece = pieces[ pieces.length - 2 ];
+	if ( second_to_last_piece && -1 !== second_to_last_piece.indexOf( '.' ) ) {
+		return second_to_last_piece;
 	}
 
 	// Check last and second-to-last piece for numeric site ID
-	for ( let i = 2; i > 0; i-- ) {
-		const piece = parseInt( pieces[ pieces.length - i ], 10 );
-		if ( Number.isSafeInteger( piece ) ) {
-			return piece;
-		}
+	const second_to_last_piece_int = parseInt( second_to_last_piece, 10 );
+	if ( Number.isSafeInteger( second_to_last_piece_int ) ) {
+		return second_to_last_piece_int;
+	}
+
+	const last_piece_int = parseInt( last_piece, 10 );
+	if ( Number.isSafeInteger( last_piece_int ) ) {
+		return last_piece_int;
 	}
 
 	// No site fragment here
@@ -66,8 +71,8 @@ function addSiteFragment( path, site ) {
 }
 
 function sectionify( path ) {
-	var basePath = path.split( '?' )[0],
-		site = getSiteFragment( basePath );
+	let basePath = path.split( '?' )[ 0 ];
+	const site = getSiteFragment( basePath );
 
 	if ( site ) {
 		basePath = trailingslashit( basePath ).replace( '/' + site + '/', '/' );
@@ -76,7 +81,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	var path = '/stats/insights/';
+	const path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;
@@ -86,8 +91,6 @@ function getStatsDefaultSitePage( slug ) {
 }
 
 function getStatsPathForTab( tab, siteIdOrSlug ) {
-	var path;
-
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -97,7 +100,7 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
 		return getStatsDefaultSitePage();
 	}
 
-	path = statsLocationsByTab[ tab ];
+	const path = statsLocationsByTab[ tab ];
 
 	if ( ! path ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );

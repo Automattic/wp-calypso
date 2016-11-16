@@ -19,7 +19,7 @@ describe( 'route', function() {
 
 	describe( '#addQueryArgs()', () => {
 		it( 'should error when args is not an object', () => {
-			var types = [
+			const types = [
 				undefined,
 				1,
 				true,
@@ -36,7 +36,7 @@ describe( 'route', function() {
 		} );
 
 		it( 'should error when url is not a string', () => {
-			var types = [
+			const types = [
 				{},
 				undefined,
 				1,
@@ -223,6 +223,16 @@ describe( 'route', function() {
 				expect(
 					route.getSiteFragment( '/pages/drafts/1000000000000000000000' )
 				).to.be.false;
+			} );
+			it( 'should not return a site when viewing username without a dot', () => {
+				expect(
+					route.getSiteFragment( '/people/edit/bob/example.com' )
+				).to.equal( 'example.com' );
+			} );
+			it( 'should not return a site when viewing username with a dot', () => {
+				expect(
+					route.getSiteFragment( '/people/edit/bob.bob/example.com' )
+				).to.equal( 'example.com' );
 			} );
 		} );
 		describe( 'for stats paths', function() {
