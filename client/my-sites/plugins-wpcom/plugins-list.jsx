@@ -20,7 +20,7 @@ import { defaultStandardPlugins } from './default-plugins';
 
 export const PluginsList = ( { siteSlug, translate } ) => (
 	<div className="wpcom-plugin-panel wpcom-plugins-expanded">
-		<PageViewTracker path="/plugins/standard/:site" title="Plugins > WPCOM Site > Standard Plugins" />
+		<PageViewTracker path="/plugins/category/standard/:site" title="Plugins > WPCOM Site > Standard Plugins" />
 		<HeaderCake backHref={ `/plugins/${ siteSlug }` } onClick={ noop }>
 			{ translate( 'Standard Plugins' ) }
 		</HeaderCake>
