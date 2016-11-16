@@ -291,7 +291,14 @@ function deleteDns( domainName, record, onComplete ) {
 }
 
 function addDnsOffice( domainName, token, onComplete ) {
-	wpcom.addDnsOffice( domainName, token, ( error ) => {
+	wpcom.addDnsOffice( domainName, token, ( error, data ) => {
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_FETCH_COMPLETED,
+				records: data && data.records,
+				domainName
+			} );
+		}
 		onComplete( error );
 	} );
 }
