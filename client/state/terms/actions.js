@@ -16,6 +16,7 @@ import {
 } from 'state/action-types';
 import { editPost } from 'state/posts/actions';
 import { getSitePosts } from 'state/posts/selectors';
+import { getTerms } from './selectors';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -62,13 +63,17 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 	return ( dispatch, getState ) => {
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term( termSlug ).update( term ).then(
 			( updatedTerm ) => {
+				const state = getState();
 				// When updating a term, we receive a newId and a new Slug
 				// We have to remove the old term and add the new one
+				// We also have to update the parent ID of its children
+				const children = filter( getTerms( state, siteId, taxonomy ), { parent: termId } )
+					.map( child => ( { ...child, parent: updatedTerm.ID } ) );
 				dispatch( removeTerm( siteId, taxonomy, termId ) );
-				dispatch( receiveTerm( siteId, taxonomy, updatedTerm ) );
+				dispatch( receiveTerms( siteId, taxonomy, children.concat( [ updatedTerm ] ) ) );
 
 				// We also have to update post terms
-				const postsToUpdate = filter( getSitePosts( getState(), siteId ), post => {
+				const postsToUpdate = filter( getSitePosts( state, siteId ), post => {
 					return post.terms && post.terms[ taxonomy ] &&
 						find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
 				} );
