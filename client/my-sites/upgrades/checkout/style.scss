@@ -244,6 +244,22 @@
 		}
 	}
 
+	.cart-coupon {
+		display: none;
+		margin: 16px 0;
+
+		// On larger screens, users can use the coupon functionality present on the sidebar
+		@include breakpoint( "<660px" ) {
+			display: block;
+			text-align: center;
+		}
+
+		input {
+			margin-right: 15px;
+			width: 50%;
+		}
+	}
+
 	.payment-box-actions {
 		@include breakpoint( ">660px" ) {
 			margin: 20px -30px 0px -30px;
