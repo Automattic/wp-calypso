@@ -6,7 +6,6 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import some from 'lodash/some';
-import includes from 'lodash/includes';
 import capitalize from 'lodash/capitalize';
 
 /**
@@ -180,38 +179,6 @@ function renderProvisionPlugins( context ) {
 }
 
 const controller = {
-	validateFilters( filter, context, next ) {
-		const wpcomFilter = 'standard';
-		const siteUrl = route.getSiteFragment( context.path );
-		const site = getSelectedSite( context.store.getState() );
-		const appliedFilter = ( filter ? filter : context.params.plugin ).toLowerCase();
-
-		// bail if /plugins/:site_id?
-		if ( siteUrl && appliedFilter === siteUrl.toString().toLowerCase() ) {
-			next();
-			return;
-		}
-		// When site URL is present, bail if ...
-		//
-		// ... the plugin parameter is not on the WordPress.com list for a WordPress.com site.
-		const pluginIsNotInList = site && ! site.jetpack && ! includes( [ 'all', wpcomFilter ], appliedFilter );
-
-		// ... or the plugin parameter is on the WordPress.com list for a Jetpack site.
-		// if no site URL is provided, bail if a WordPress.com filter was provided.
-		//  Only Jetpack plugins should work when no URL is provided.
-		const onlyJetPack = site && site.jetpack && appliedFilter === wpcomFilter;
-
-		if ( siteUrl && ( pluginIsNotInList || onlyJetPack ) ) {
-			page.redirect( '/plugins/' + siteUrl );
-			return;
-		} else if ( ! siteUrl && appliedFilter === wpcomFilter ) {
-			page.redirect( '/plugins' );
-			return;
-		}
-
-		next();
-	},
-
 	plugins( filter, context, next ) {
 		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
