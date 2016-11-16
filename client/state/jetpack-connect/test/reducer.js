@@ -33,6 +33,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_RETRY_AUTH,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -42,7 +43,8 @@ import reducer, {
 	jetpackSSO,
 	jetpackSSOSessions,
 	jetpackConnectSessions,
-	jetpackConnectSite
+	jetpackConnectSite,
+	jetpackAuthAttempts
 } from '../reducer';
 
 const successfulSSOValidation = {
@@ -86,7 +88,8 @@ describe( 'reducer', () => {
 			'jetpackConnectSessions',
 			'jetpackSSO',
 			'jetpackSSOSessions',
-			'jetpackConnectSelectedPlans'
+			'jetpackConnectSelectedPlans',
+			'jetpackAuthAttempts'
 		] );
 	} );
 
@@ -882,6 +885,44 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.eql( {} );
+		} );
+	} );
+
+	describe( '#jetpackAuthAttempts()', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackAuthAttempts( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should update the timestamp when adding an existent slug with stale timestamp', () => {
+			const nowTime = Date.now();
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: 1, attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+			expect( state[ 'example.com' ] ).to.have.property( 'timestamp' )
+				.to.be.at.least( nowTime );
+		} );
+
+		it( 'should reset the attempt number to 0 when adding an existent slug with stale timestamp', () => {
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: 1, attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+
+			expect( state[ 'example.com' ] ).to.have.property( 'attempt' ).to.equals( 0 );
+		} );
+
+		it( 'should store the attempt number when adding an existent slug with non-stale timestamp', () => {
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: Date.now(), attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+
+			expect( state[ 'example.com' ] ).to.have.property( 'attempt' ).to.equals( 2 );
 		} );
 	} );
 } );

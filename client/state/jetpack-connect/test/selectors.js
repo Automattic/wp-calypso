@@ -19,7 +19,8 @@ import {
 	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
-	hasXmlrpcError
+	hasXmlrpcError,
+	getAuthAttempts
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -544,6 +545,49 @@ describe( 'selectors', () => {
 		it( 'should be true if all the conditions are met', () => {
 			const hasError = hasXmlrpcError( stateHasXmlrpcError );
 			expect( hasError ).to.be.true;
+		} );
+	} );
+
+	describe( '#getAuthAttempts()', () => {
+		it( 'should return 0 if there\'s no stored info for the site', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackAuthAttempts: {
+					}
+				}
+			};
+
+			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 0 );
+		} );
+
+		it( 'should return 0 if there\'s stored info for the site, but it\'s stale', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackAuthAttempts: {
+						'sitetest.com': {
+							timestamp: 1,
+							attempt: 2
+						}
+					}
+				}
+			};
+
+			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 0 );
+		} );
+
+		it( 'should return the attempt number if there\'s stored info for the site, and it\'s not stale', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackAuthAttempts: {
+						'sitetest.com': {
+							timestamp: Date.now(),
+							attempt: 2
+						}
+					}
+				}
+			};
+
+			expect( getAuthAttempts( state, 'sitetest.com' ) ).to.equals( 2 );
 		} );
 	} );
 } );

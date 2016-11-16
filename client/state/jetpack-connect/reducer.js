@@ -26,6 +26,7 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -40,7 +41,7 @@ import {
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
 import { isStale } from './utils';
-import { JETPACK_CONNECT_AUTHORIZE_TTL } from './constants';
+import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from './constants';
 import { urlToSlug } from 'lib/url';
 
 function buildDefaultAuthorizeState() {
@@ -264,6 +265,29 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 	return state;
 }
 
+export function jetpackAuthAttempts( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_RETRY_AUTH:
+			const slug = action.slug;
+			let currentTimestamp = state[ slug ] ? state[ slug ].timestamp || Date.now() : Date.now();
+			let attemptNumber = action.attemptNumber;
+			if ( attemptNumber > 0 ) {
+				const now = Date.now();
+				if ( isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
+					currentTimestamp = now;
+					attemptNumber = 0;
+				}
+			}
+			return Object.assign( {}, state, { [ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp } } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
+		case DESERIALIZE:
+		case SERIALIZE:
+			state;
+	}
+	return state;
+}
+
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
@@ -326,4 +350,5 @@ export default combineReducers( {
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
 	jetpackConnectSelectedPlans,
+	jetpackAuthAttempts,
 } );

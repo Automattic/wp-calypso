@@ -9,6 +9,7 @@ import { get } from 'lodash';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { isStale } from './utils';
 import { urlToSlug } from 'lib/url';
+import { AUTH_ATTEMPS_TTL } from './constants';
 
 const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
@@ -85,6 +86,14 @@ const getJetpackSiteByUrl = ( state, url ) => {
 	return site;
 };
 
+const getAuthAttempts = ( state, slug ) => {
+	const attemptsData = get( state, [ 'jetpackConnect', 'jetpackAuthAttempts', slug ] );
+	if ( attemptsData && isStale( attemptsData.timestamp, AUTH_ATTEMPS_TTL ) ) {
+		return 0;
+	}
+	return attemptsData ? attemptsData.attempt || 0 : 0;
+};
+
 /**
  * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
  * and if the error message contains the string 'error'
@@ -141,5 +150,6 @@ export default {
 	hasXmlrpcError,
 	getJetpackPlanSelected,
 	getSiteSelectedPlan,
-	getGlobalSelectedPlan
+	getGlobalSelectedPlan,
+	getAuthAttempts
 };
