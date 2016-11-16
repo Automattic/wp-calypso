@@ -13,6 +13,7 @@ import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import * as stats from 'reader/stats';
+import cssSafeUrl from 'lib/css-safe-url';
 
 export default React.createClass( {
 	displayName: 'FeedFeatured',
@@ -106,7 +107,7 @@ export default React.createClass( {
 					break;
 				default:
 					let style = {
-						backgroundImage: post.canonical_image && post.canonical_image.uri ? 'url(' + post.canonical_image.uri + ')' : null
+						backgroundImage: post.canonical_image && post.canonical_image.uri ? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')' : null
 					};
 
 					return (
