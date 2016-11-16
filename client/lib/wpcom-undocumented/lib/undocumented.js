@@ -1822,11 +1822,11 @@ Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, 
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.getOlarkConfiguration = function( client, fn ) {
+Undocumented.prototype.getOlarkConfiguration = function( client, support_context, fn ) {
 	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: '/help/olark/mine',
-		body: { client }
+		body: { client, support_context }
 	}, fn );
 };
 

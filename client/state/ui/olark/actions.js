@@ -7,9 +7,13 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_CONFIG_FETCH,
+	OLARK_CONFIG_RECEIVE,
+	OLARK_CONFIG_ERROR,
 } from 'state/action-types';
 import { OLARK_TIMEOUT_MS } from './constants';
+import wpcom from 'lib/wp';
 
 /**
  * Returns an action object to be used in signalling that olark did not load
@@ -53,6 +57,34 @@ export function operatorsAvailable() {
 export function operatorsAway() {
 	return {
 		type: OLARK_OPERATORS_AWAY
+	};
+}
+
+export function configError( error ) {
+	return {
+		type: OLARK_CONFIG_ERROR,
+		error,
+	};
+}
+
+export function configReceive( context, config ) {
+	return {
+		type: OLARK_CONFIG_RECEIVE,
+		context,
+		config,
+	};
+}
+
+export function fetchOlarkConfig( clientSlug, context ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: OLARK_CONFIG_FETCH,
+			context,
+		} );
+
+		wpcom.undocumented().getOlarkConfiguration( clientSlug, context )
+			.then( config => dispatch( configReceive( context, config ) ) )
+			.catch( error => dispatch( configError( error ) ) );
 	};
 }
 
