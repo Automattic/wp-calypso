@@ -19,11 +19,13 @@ describe( 'reducer', () => {
 			type: SIGNUP_STEPS_SURVEY_SET,
 			survey: {
 				vertical: 'test-survey',
-				otherText: 'test-other-text'
+				otherText: 'test-other-text',
+				siteType: 'test-site-type',
 			}
 		} ) ).to.be.eql( {
 			vertical: 'test-survey',
-			otherText: 'test-other-text'
+			otherText: 'test-other-text',
+			siteType: 'test-site-type',
 		} );
 	} );
 
@@ -31,7 +33,8 @@ describe( 'reducer', () => {
 		expect( signupSurveyReducer(
 			{
 				vertical: 'test-survey',
-				otherText: 'test-other-text'
+				otherText: 'test-other-text',
+				siteType: 'test-site-type',
 			},
 			{
 				type: SIGNUP_COMPLETE_RESET,

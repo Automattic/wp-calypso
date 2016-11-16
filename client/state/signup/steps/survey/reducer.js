@@ -15,7 +15,8 @@ export default createReducer( {},
 			return {
 				...state,
 				vertical: action.survey.vertical,
-				otherText: action.survey.otherText
+				otherText: action.survey.otherText,
+				siteType: action.survey.siteType,
 			};
 		},
 		[ SIGNUP_COMPLETE_RESET ]: () => {

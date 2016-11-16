@@ -150,6 +150,7 @@ const SurveyStep = React.createClass( {
 		this.props.setSurvey( {
 			vertical: value,
 			otherText: otherWriteIn || '',
+			siteType: this.props.surveySiteType,
 		} );
 
 		SignupActions.submitSignupStep(
