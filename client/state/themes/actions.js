@@ -75,7 +75,7 @@ export function incrementThemesPage( site ) {
 	};
 }
 
-export function fetchCurrentTheme( siteId ) {
+export function requestActiveTheme( siteId ) {
 	return dispatch => {
 		dispatch( {
 			type: THEME_REQUEST_CURRENT,
