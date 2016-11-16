@@ -184,7 +184,7 @@ const PluginsMain = React.createClass( {
 
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
-			if ( this.props.isJetpackSite( selectedSite.ID ) ) {
+			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/drake/drake-jetpack.svg';
 				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
@@ -229,7 +229,7 @@ const PluginsMain = React.createClass( {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			return this.props.isJetpackSite( selectedSite.ID ) && this.props.canJetpackSiteUpdateFiles( selectedSite.ID );
+			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
 		}
 
 		return some(
@@ -330,7 +330,7 @@ const PluginsMain = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( selectedSite && ! this.props.isJetpackSite( selectedSite.ID ) ) {
+		if ( ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
@@ -354,7 +354,7 @@ const PluginsMain = React.createClass( {
 			);
 		}
 
-		if ( selectedSite && this.props.isJetpackSite( selectedSite.ID ) && ! this.props.canJetpackSiteManage( selectedSite.ID ) ) {
+		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
@@ -419,13 +419,19 @@ const PluginsMain = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		wporgPlugins: state.plugins.wporg.items,
-		selectedSite: getSelectedSite( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		isJetpackSite: siteId => isJetpackSite( state, siteId ),
-		canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
-		canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+
+		return {
+			selectedSite,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
+			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
+			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
+			isJetpackSite: siteId => isJetpackSite( state, siteId ),
+			wporgPlugins: state.plugins.wporg.items,
+		};
+	},
 	{ wporgFetchPluginData }
 )( PluginsMain );
