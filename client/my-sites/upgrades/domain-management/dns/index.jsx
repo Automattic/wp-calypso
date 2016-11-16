@@ -34,6 +34,17 @@ const Dns = React.createClass( {
 		return { addNew: true };
 	},
 
+	hasOffice() {
+		const { dns } = this.props;
+		if ( ! dns || ! dns.records ) {
+			return false;
+		}
+
+		return !! dns.records.filter( ( record ) => {
+			return 'autodiscover.outlook.com.' === record.data;
+		} ).length;
+	},
+
 	render() {
 		if ( ! this.props.dns.hasLoadedFromServer ) {
 			return <DomainMainPlaceholder goBack={ this.goBack } />;
@@ -56,7 +67,7 @@ const Dns = React.createClass( {
 						selectedSite={ this.props.selectedSite }
 						selectedDomainName={ this.props.selectedDomainName } />
 
-					{ this.state.addNew
+					{ this.state.addNew || this.hasOffice()
 						? <DnsAddNew
 							isSubmittingForm={ this.props.dns.isSubmittingForm }
 							selectedDomainName={ this.props.selectedDomainName } />
@@ -65,9 +76,11 @@ const Dns = React.createClass( {
 							selectedDomainName={ this.props.selectedDomainName } />
 					}
 
-					<a className="dns__office-link" href="#" onClick={ this.office365Toggle }>{ this.state.addNew
-						? this.translate( 'Looking for Office 365 setup? Continue from here.' )
-						: this.translate( 'Add new DNS records' ) }</a>
+					{ ! this.hasOffice()
+						? <a className="dns__office-link" href="#" onClick={ this.office365Toggle }>{ this.state.addNew
+							? this.translate( 'Looking for Office 365 setup? Continue from here.' )
+							: this.translate( 'Add new DNS records' ) }</a>
+						: null }
 				</Card>
 			</Main>
 		);
