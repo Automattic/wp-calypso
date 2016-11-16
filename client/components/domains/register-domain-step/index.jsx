@@ -13,7 +13,6 @@ import noop from 'lodash/noop';
 import startsWith from 'lodash/startsWith';
 import page from 'page';
 import qs from 'qs';
-import endsWith from 'lodash/endsWith';
 import { connect } from 'react-redux';
 
 /**
@@ -310,12 +309,6 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( endsWith( domain, '.blog' ) ) {
-						const error = { code: 'dotblog_domain' };
-						this.showValidationErrorMessage( domain, error );
-						return callback();
-					}
-
 					if ( ! domain.match( /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i ) ) {
 						return callback();
 					}
@@ -527,22 +520,6 @@ const RegisterDomainStep = React.createClass( {
 			severity = 'error';
 
 		switch ( error.code ) {
-			case 'dotblog_domain':
-				message = this.translate(
-					'.blog domains are not available yet. {{a}}Sign up{{/a}} to get updates on the launch.', {
-						components: {
-							a: <a
-								target="_blank"
-								rel="noopener noreferrer"
-								href={ `https://dotblog.wordpress.com/
-									?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
-									&domain=${ domain }`
-									} />
-						}
-					}
-				);
-				severity = 'info';
-				break;
 			case 'available_but_not_registrable':
 				const tldIndex = domain.lastIndexOf( '.' );
 				if ( tldIndex !== -1 ) {
