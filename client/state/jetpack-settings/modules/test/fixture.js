@@ -20,9 +20,11 @@ export const requests = {
 	123456: {
 		'module-a': {
 			activating: false,
+			deactivating: true,
 		},
 		'module-b': {
-			activating: true
+			activating: true,
+			deactivating: false
 		}
 	}
 };
