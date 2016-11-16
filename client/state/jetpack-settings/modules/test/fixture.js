@@ -25,8 +25,27 @@ export const requests = {
 		'module-b': {
 			activating: true,
 			deactivating: false
-		}
+		},
+		fetchingModules: true
 	}
+};
+
+export const api_module_list_response = {
+	modules: [
+		{
+			id: 'module-a',
+			active: false
+		},
+		{
+			id: 'module-b',
+			active: true,
+			options: {
+				c: {
+					currentValue: 2
+				}
+			}
+		}
+	]
 };
 
 export const moduleData = {

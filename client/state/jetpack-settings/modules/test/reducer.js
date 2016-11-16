@@ -14,6 +14,10 @@ import {
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_RECEIVE,
+	JETPACK_MODULES_REQUEST,
+	JETPACK_MODULES_REQUEST_FAILURE,
+	JETPACK_MODULES_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -74,6 +78,18 @@ describe( 'reducer', () => {
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
+		} );
+
+		it( 'should replace the items object for the site with a new list of modules', () => {
+			const stateIn = MODULES_FIXTURE,
+				siteId = 123456,
+				action = {
+					type: JETPACK_MODULES_RECEIVE,
+					siteId,
+					modules: MODULES_FIXTURE[ siteId ]
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ] ).to.eql( MODULES_FIXTURE[ siteId ] );
 		} );
 	} );
 
@@ -156,6 +172,43 @@ describe( 'reducer', () => {
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
+			} );
+		} );
+
+		describe( '#moduleListFetching', () => {
+			it( 'should set [ siteId ].fetchingModules to true when requesting the module list', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULES_REQUEST,
+						siteId
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ].fetchingModules ).to.be.true;
+			} );
+
+			it( 'should set [ siteId ].fetchingModules to false when the module list has been received', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULES_REQUEST_SUCCESS,
+						siteId,
+						modules: {}
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
+			} );
+
+			it( 'should set [ siteId ].fetchingModules to false when requesting the module list fails', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULES_REQUEST_FAILURE,
+						siteId,
+						modules: {}
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
 			} );
 		} );
 
