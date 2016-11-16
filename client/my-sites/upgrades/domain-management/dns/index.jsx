@@ -65,9 +65,9 @@ const Dns = React.createClass( {
 							selectedDomainName={ this.props.selectedDomainName } />
 					}
 
-					<button onClick={ this.office365Toggle }>{ this.state.addNew
+					<a className="dns__office-link" href="#" onClick={ this.office365Toggle }>{ this.state.addNew
 						? this.translate( 'Looking for Office 365 setup? Continue from here.' )
-						: this.translate( 'Add new DNS records' ) }</button>
+						: this.translate( 'Add new DNS records' ) }</a>
 				</Card>
 			</Main>
 		);
@@ -88,7 +88,7 @@ const Dns = React.createClass( {
 		) );
 	},
 
-	office365Toggle() {
+	office365Toggle( event ) {
 		event.preventDefault();
 		this.setState( { addNew: ! this.state.addNew } );
 	}
