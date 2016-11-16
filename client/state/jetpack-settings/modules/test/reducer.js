@@ -10,7 +10,12 @@ import deepFreeze from 'deep-freeze';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
-	JETPACK_MODULE_ACTIVATE_SUCCESS
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE,
+	JETPACK_MODULE_DEACTIVATE_FAILURE,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
 import {
 	items as itemsReducer,
@@ -29,18 +34,46 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		describe( '#moduleActivation', () => {
-			it( 'should activate a module', () => {
-				const stateIn = MODULES_FIXTURE,
-					siteId = 123456,
-					action = {
-						type: JETPACK_MODULE_ACTIVATE_SUCCESS,
-						siteId,
-						moduleSlug: 'module-a'
-					};
-				const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ 'module-a' ].active ).to.be.true;
-			} );
+		it( 'should activate a module', () => {
+			const stateIn = MODULES_FIXTURE,
+				siteId = 123456,
+				action = {
+					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
+					siteId,
+					moduleSlug: 'module-a'
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ][ 'module-a' ].active ).to.be.true;
+		} );
+
+		it( 'should deactivate a module', () => {
+			const stateIn = MODULES_FIXTURE,
+				siteId = 123456,
+				action = {
+					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
+					siteId,
+					moduleSlug: 'module-b'
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ][ 'module-b' ].active ).to.be.false;
+		} );
+
+		it( 'should not persist state', () => {
+			const stateIn = MODULES_FIXTURE,
+				action = {
+					type: SERIALIZE
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const stateIn = MODULES_FIXTURE,
+				action = {
+					type: DESERIALIZE
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {} );
 		} );
 	} );
 
@@ -85,6 +118,64 @@ describe( 'reducer', () => {
 					};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
+			} );
+		} );
+
+		describe( '#moduleDeactivation', () => {
+			it( 'should set [ siteId ][ moduleSlug ].deactivating to true when deactivating a module', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULE_DEACTIVATE,
+						siteId,
+						moduleSlug: 'moduleSlug'
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.true;
+			} );
+
+			it( 'should set [ siteId ][ moduleSlug ].deactivating to false when module has been deactivated', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
+						siteId,
+						moduleSlug: 'moduleSlug'
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
+			} );
+
+			it( 'should set [ siteId ][ moduleSlug ].deactivating to false when deactivating a module fails', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					siteId = 123456,
+					action = {
+						type: JETPACK_MODULE_DEACTIVATE_FAILURE,
+						siteId,
+						moduleSlug: 'moduleSlug'
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
+			} );
+		} );
+
+		describe( 'persistence', () => {
+			it( 'should not persist state', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					action = {
+						type: SERIALIZE
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut ).to.eql( {} );
+			} );
+
+			it( 'should not load persisted state', () => {
+				const stateIn = REQUESTS_FIXTURE,
+					action = {
+						type: DESERIALIZE
+					};
+				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+				expect( stateOut ).to.eql( {} );
 			} );
 		} );
 	} );
