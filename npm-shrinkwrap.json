@@ -173,7 +173,7 @@
       "dev": true
     },
     "babel-generator": {
-      "version": "6.18.0",
+      "version": "6.19.0",
       "dependencies": {
         "source-map": {
           "version": "0.5.6"
@@ -283,7 +283,7 @@
       "version": "6.8.0"
     },
     "babel-plugin-transform-es2015-destructuring": {
-      "version": "6.18.0"
+      "version": "6.19.0"
     },
     "babel-plugin-transform-es2015-duplicate-keys": {
       "version": "6.8.0"
@@ -331,7 +331,7 @@
       "version": "6.8.0"
     },
     "babel-plugin-transform-object-rest-spread": {
-      "version": "6.16.0"
+      "version": "6.19.0"
     },
     "babel-plugin-transform-react-display-name": {
       "version": "6.8.0"
@@ -375,13 +375,13 @@
       "version": "6.16.0"
     },
     "babel-traverse": {
-      "version": "6.18.0"
+      "version": "6.19.0"
     },
     "babel-types": {
-      "version": "6.18.0"
+      "version": "6.19.0"
     },
     "babylon": {
-      "version": "6.13.1"
+      "version": "6.14.0"
     },
     "backo2": {
       "version": "1.0.2"
@@ -598,7 +598,7 @@
       "version": "1.1.1"
     },
     "clean-css": {
-      "version": "3.4.20",
+      "version": "3.4.21",
       "dependencies": {
         "commander": {
           "version": "2.8.1"
@@ -3482,7 +3482,7 @@
       "version": "1.0.9"
     },
     "social-logos": {
-      "version": "1.0.0-alpha.2"
+      "version": "1.0.0-alpha.3"
     },
     "socket.io": {
       "version": "1.4.5",
