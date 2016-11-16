@@ -18,7 +18,6 @@ import delay from 'lodash/delay';
 import assign from 'lodash/assign';
 import matchesProperty from 'lodash/matchesProperty';
 import indexOf from 'lodash/indexOf';
-import reject from 'lodash/reject';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 /**
@@ -350,8 +349,16 @@ const Signup = React.createClass( {
 	},
 
 	isEveryStepSubmitted() {
-		var flowSteps = flows.getFlow( this.props.flowName ).steps;
-		return flowSteps.length === reject( SignupProgressStore.get(), { status: 'in-progress' } ).length;
+		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const signupProgress = filter(
+				SignupProgressStore.get(),
+				step => (
+					-1 !== flowSteps.indexOf( step.stepName )
+					&& 'in-progress' !== step.status
+				),
+			);
+
+		return flowSteps.length === signupProgress.length;
 	},
 
 	positionInFlow() {
