@@ -53,7 +53,7 @@ class PlanFeaturesHeader extends Component {
 					popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon>
 				}
 				{
-					newPlan && <Ribbon color={ 'green' }>{ translate( 'New' ) }</Ribbon>
+					newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
 				}
 				<div className="plan-features__header-figure" >
 					<PlanIcon plan={ planType } />
