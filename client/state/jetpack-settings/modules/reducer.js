@@ -12,7 +12,10 @@ import {
 	DESERIALIZE,
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
-	JETPACK_MODULE_ACTIVATE_SUCCESS
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE,
+	JETPACK_MODULE_DEACTIVATE_FAILURE,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS
 } from 'state/action-types';
 
 /**
@@ -30,6 +33,14 @@ export const items = ( state = {}, { type, siteId, moduleSlug } ) => {
 				[ siteId ]: {
 					[ moduleSlug ]: {
 						active: true
+					}
+				}
+			} );
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ moduleSlug ]: {
+						active: false
 					}
 				}
 			} );
@@ -66,6 +77,23 @@ export const requests = ( state = {}, { type, siteId, moduleSlug } ) => {
 				[ siteId ]: {
 					[ moduleSlug ]: {
 						activating: false
+					}
+				}
+			} );
+		case JETPACK_MODULE_DEACTIVATE:
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ moduleSlug ]: {
+						deactivating: true
+					}
+				}
+			} );
+		case JETPACK_MODULE_DEACTIVATE_FAILURE:
+		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ moduleSlug ]: {
+						deactivating: false
 					}
 				}
 			} );
