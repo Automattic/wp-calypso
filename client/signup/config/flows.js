@@ -96,7 +96,7 @@ const flows = {
 	},
 
 	subdomain: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Provide a vertical for subdomains',
 		lastModified: '2016-10-31'
