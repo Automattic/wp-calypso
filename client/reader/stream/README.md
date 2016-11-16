@@ -1,6 +1,6 @@
 # Following Stream
 
-A stream of posts. Currently serves as the basis for all streams of posts in the reader.
+A stream of posts. Currently serves as the basis for all streams of posts in the Reader.
 
 ## Props
 - `store`: The post list store this stream should bind to
