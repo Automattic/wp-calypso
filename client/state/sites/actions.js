@@ -115,13 +115,22 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 			page_on_front_id: pageId,
 		};
 
-		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
+		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
+			const updatedOptions = {
+				page_on_front: parseInt( response.page_on_front_id, 10 ),
+				show_on_front: response.is_page_on_front ? 'page' : 'posts',
+			};
+
+			if ( 0 === response.page_for_posts_id || response.page_for_posts_id ) {
+				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
+			}
+
 			// This gives us a means to fix the `SitesList` cache outside of actions
 			// @todo Remove this when `SitesList` is Reduxified
 			if ( 'function' === typeof( successCallback ) ) {
 				successCallback( {
 					siteId,
-					pageId,
+					updatedOptions,
 				} );
 			}
 
@@ -133,7 +142,7 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 			dispatch( {
 				type: SITE_FRONT_PAGE_SET_SUCCESS,
 				siteId,
-				pageId
+				updatedOptions,
 			} );
 		} ).catch( ( error ) => {
 			dispatch( bumpStat( 'calypso_front_page_set', 'failure' ) );

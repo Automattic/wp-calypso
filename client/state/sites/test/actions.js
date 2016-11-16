@@ -214,7 +214,10 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_FRONT_PAGE_SET_SUCCESS,
 					siteId: 2916284,
-					pageId: 1
+					updatedOptions: {
+						page_on_front: 1,
+						show_on_front: 'page',
+					}
 				} );
 			} );
 		} );
