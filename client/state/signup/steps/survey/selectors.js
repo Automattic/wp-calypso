@@ -10,3 +10,7 @@ export function getSurveyVertical( state ) {
 export function getSurveyOtherText( state ) {
 	return get( state, 'signup.steps.survey.otherText', '' );
 }
+
+export function getSurveySiteType( state ) {
+	return get( state, 'signup.steps.survey.siteType', '' );
+}

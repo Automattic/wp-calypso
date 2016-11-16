@@ -21,6 +21,7 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
@@ -33,13 +34,14 @@ function createSiteWithCart( callback, dependencies, {
 	themeItem
 } ) {
 	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
+	const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
-			vertical: dependencies.surveyQuestion || undefined
+			vertical: surveyVertical || undefined
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -175,13 +177,16 @@ module.exports = {
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
+		const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
+		const surveySiteType = getSurveySiteType( this._reduxStore.getState() ).trim();
+
 		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
 				signup_flow_name: flowName,
-				nux_q_site_type: dependencies.surveySiteType,
-				nux_q_question_primary: dependencies.surveyQuestion,
+				nux_q_site_type: surveySiteType,
+				nux_q_question_primary: surveyVertical,
 				jetpack_redirect: queryArgs.jetpackRedirect
 			}
 		), ( error, response ) => {
