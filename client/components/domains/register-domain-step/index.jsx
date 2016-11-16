@@ -526,7 +526,8 @@ const RegisterDomainStep = React.createClass( {
 	showValidationErrorMessage: function( domain, error ) {
 		let message,
 			severity = 'error';
-		const tld = domain.lastIndexOf( '.' ) !== -1 && domain.substring( domain.lastIndexOf( '.' ) ),
+		const lastIndexOfDot = domain.lastIndexOf( '.' ),
+			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot ),
 			translate = this.props.translate;
 
 		switch ( error.code ) {

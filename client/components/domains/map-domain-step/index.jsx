@@ -180,24 +180,34 @@ var MapDomainStep = React.createClass( {
 
 	handleValidationErrorMessage: function( domain, error ) {
 		let message;
-		const severity = 'error';
+		const severity = 'error',
+			lastIndexOfDot = domain.lastIndexOf( '.' ),
+			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot );
 
 		switch ( error.code ) {
+			case 'tld_in_maintenance':
+				if ( tld ) {
+					message = this.translate( 'Sorry, %(tld)s TLD is in maintenance, and we cannot check availability for it.', {
+						args: { tld }
+					} );
+				}
+				break;
+
 			case 'not_mappable':
 				message = this.translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
-					args: { domain: domain }
+					args: { domain }
 				} );
 				break;
 
 			case 'invalid_domain':
 				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-					args: { domain: domain }
+					args: { domain }
 				} );
 				break;
 
 			case 'mapped_domain':
 				message = this.translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
-					args: { domain: domain }
+					args: { domain }
 				} );
 				break;
 
@@ -219,20 +229,20 @@ var MapDomainStep = React.createClass( {
 					);
 				} else {
 					message = this.translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
-						args: { domain: domain }
+						args: { domain }
 					} );
 				}
 				break;
 
 			case 'forbidden_domain':
 				message = this.translate( 'Sorry, you do not have the correct permissions to map %(domain)s.', {
-					args: { domain: domain }
+					args: { domain }
 				} );
 				break;
 
 			case 'invalid_tld':
 				message = this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
-					args: { domain: domain }
+					args: { domain }
 				} );
 				break;
 
