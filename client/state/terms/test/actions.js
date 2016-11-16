@@ -25,6 +25,7 @@ import {
 	updateTerm
 } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
+import TermQueryManager from 'lib/query-manager/term';
 
 /**
  * Module Variables
@@ -278,7 +279,18 @@ describe( 'actions', () => {
 							items: postObjects[ siteId ]
 						} )
 					},
-
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ taxonomyName ]: new TermQueryManager( {
+								items: {
+									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 }
+								},
+								queries: {}
+							} )
+						}
+					}
 				}
 			};
 			const getState = () => state;
@@ -294,7 +306,10 @@ describe( 'actions', () => {
 					type: TERMS_RECEIVE,
 					siteId: siteId,
 					taxonomy: taxonomyName,
-					terms: [ { ID: 123, name: 'ribs', description: '' } ],
+					terms: [
+						{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
+						{ ID: 123, name: 'ribs', description: '' }
+					],
 					query: undefined,
 					found: undefined
 				} );

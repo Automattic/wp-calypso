@@ -30,11 +30,19 @@ class TaxonomyManagerListItem extends Component {
 		};
 	}
 
-	togglePopoverMenu = () => {
+	togglePopoverMenu = event => {
+		event.stopPropagation && event.stopPropagation();
 		this.setState( {
 			popoverMenuOpen: ! this.state.popoverMenuOpen
-		} )
-	}
+		} );
+	};
+
+	editItem = () => {
+		this.setState( {
+			popoverMenuOpen: false
+		} );
+		this.props.onClick();
+	};
 
 	render() {
 		const { name, translate } = this.props;
@@ -56,7 +64,7 @@ class TaxonomyManagerListItem extends Component {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
-					<PopoverMenuItem onClick={ this.props.onClick }>
+					<PopoverMenuItem onClick={ this.editItem }>
 						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
