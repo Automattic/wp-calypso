@@ -312,11 +312,17 @@ const PluginsBrowser = React.createClass( {
 
 	render() {
 		const { selectedSite } = this.props;
-		const cantManage = selectedSite &&
-			this.props.isJetpackSite( selectedSite.ID ) &&
-			! this.props.canJetpackSiteManage( selectedSite.ID );
-
-		if ( this.state.accessError || cantManage ) {
+		if (
+			(
+				this.state.accessError ||
+				(
+					selectedSite &&
+					selectedSite.jetpack &&
+					! selectedSite.canManage()
+				)
+			) &&
+			( selectedSite && selectedSite.jetpack )
+		) {
 			return this.renderAccessError( selectedSite );
 		}
 
