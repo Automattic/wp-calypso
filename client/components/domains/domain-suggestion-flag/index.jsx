@@ -2,20 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import endsWith from 'lodash/endsWith';
+import { endsWith } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Notice from 'components/notice';
 
-const DomainSuggestionFlag = React.createClass( {
-	propTypes: {
-		domain: React.PropTypes.string.isRequired
-	},
-
+class DomainSuggestionFlag extends React.Component {
 	render() {
-		const newTLDs = [ 'wales' ];
+		const newTLDs = [ 'blog' ];
 
 		if ( newTLDs.some( ( tld ) => {
 			return endsWith( this.props.domain, tld );
@@ -24,13 +21,17 @@ const DomainSuggestionFlag = React.createClass( {
 				<Notice
 					isCompact
 					status="is-success">
-					{ this.translate( 'New', { context: 'Domain suggestion flag' } ) }
+					{ this.props.translate( 'New', { context: 'Domain suggestion flag' } ) }
 				</Notice>
 			);
 		}
 
 		return null;
 	}
-} );
+}
 
-export default DomainSuggestionFlag;
+DomainSuggestionFlag.propTypes = {
+	domain: React.PropTypes.string.isRequired
+};
+
+export default localize( DomainSuggestionFlag );
