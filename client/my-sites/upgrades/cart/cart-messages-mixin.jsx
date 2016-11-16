@@ -78,7 +78,8 @@ module.exports = {
 
 		if ( ! isEmpty( messages.errors ) ) {
 			notices.error(
-				messages.errors.map( ( error, index ) => ( <p key={ `${ error.code }-${ index }` }>{ error.message }</p> ) )
+				messages.errors.map( ( error, index ) => ( <p key={ `${ error.code }-${ index }` }>{ error.message }</p> ) ),
+				{ persistent: true }
 			);
 		} else if ( ! isEmpty( messages.success ) ) {
 			notices.success(
