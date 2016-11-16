@@ -11,7 +11,11 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_CONFIG_FETCH,
+	OLARK_CONFIG_RECEIVE,
+	OLARK_CONFIG_ERROR,
+	SERIALIZE,
 } from 'state/action-types';
 import {
 	STATUS_READY,
@@ -57,6 +61,30 @@ export function operatorStatus( state = OPERATOR_STATUS_AWAY, action ) {
 	return state;
 }
 
+export function configContext( state = {}, action ) {
+	switch ( action.type ) {
+		case OLARK_CONFIG_FETCH:
+			return { ...state, ...{ isFetching: true } };
+		case OLARK_CONFIG_RECEIVE:
+			return { ...state, ...{ isFetching: false, ...action.config } };
+		case OLARK_CONFIG_ERROR:
+			return { ...state, ...{ isFetching: false, error: action.error } };
+	}
+	return state;
+}
+
+export function config( state = {}, action ) {
+	switch ( action.type ) {
+		case OLARK_CONFIG_FETCH:
+		case OLARK_CONFIG_RECEIVE:
+		case OLARK_CONFIG_ERROR:
+			return { ...state, ...{ [ action.context ]: configContext( state[ action.context ] || {}, action ) } };
+		case SERIALIZE:
+			return {};
+	}
+	return state;
+}
+
 /**
  * Tracks olark fetching state
  *
@@ -75,6 +103,7 @@ export function requesting( state = false, action ) {
 }
 
 export default combineReducers( {
+	config,
 	operatorStatus,
 	requesting,
 	status

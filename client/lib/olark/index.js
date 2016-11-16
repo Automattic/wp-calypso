@@ -73,21 +73,9 @@ const olark = {
 	},
 
 	getOlarkConfiguration: function() {
-		return new Promise( ( resolve, reject ) => {
-			// TODO: Maybe store this configuration in local storage? The problem is that the configuration for a user could
-			// change if they purchase upgrades or if their upgrades expire. There's also throttling that happens for unpaid users.
-			// There is lots to consider before storing this configuration
-			debug( 'Using rest api to get olark configuration' );
-			const clientSlug = config( 'client_slug' );
-
-			wpcomUndocumented.getOlarkConfiguration( clientSlug, ( error, configuration ) => {
-				if ( error ) {
-					reject( error );
-					return;
-				}
-				resolve( configuration );
-			} );
-		} );
+		debug( 'Using rest api to get olark configuration' );
+		const clientSlug = config( 'client_slug' );
+		return wpcomUndocumented.getOlarkConfiguration( clientSlug );
 	},
 
 	configureOlark: function( wpcomOlarkConfig = {}, dispatch ) {
