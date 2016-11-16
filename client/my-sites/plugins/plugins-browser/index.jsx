@@ -321,7 +321,10 @@ const PluginsBrowser = React.createClass( {
 					! selectedSite.canManage()
 				)
 			) &&
-			( selectedSite && selectedSite.jetpack )
+			(
+				! config.isEnabled( 'automated-transfer' ) ||
+				( selectedSite && selectedSite.jetpack )
+			)
 		) {
 			return this.renderAccessError( selectedSite );
 		}

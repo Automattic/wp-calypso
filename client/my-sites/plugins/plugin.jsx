@@ -305,7 +305,11 @@ const SinglePlugin = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( selectedSite && ! this.props.isJetpackSite( selectedSite.ID ) ) {
+		if (
+			selectedSite &&
+			! selectedSite.jetpack &&
+			! config.isEnabled( 'automated-transfer' )
+		) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
@@ -315,7 +319,10 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		if ( this.state.accessError ) {
+		if (
+			this.state.accessError &&
+			( ! selectedSite || selectedSite.jetpack )
+		) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
