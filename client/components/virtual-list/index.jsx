@@ -23,7 +23,9 @@ export class VirtualList extends Component {
 		perPage: PropTypes.number,
 		loadOffset: PropTypes.number,
 		query: PropTypes.object,
-		defaultRowHeight: PropTypes.number
+		defaultRowHeight: PropTypes.number,
+		height: PropTypes.number,
+		scrollTop: PropTypes.number
 	};
 
 	static defaultProps = {
@@ -159,14 +161,14 @@ export class VirtualList extends Component {
 
 	render() {
 		const rowCount = this.getRowCount();
-		const { className, loading, defaultRowHeight, getRowHeight } = this.props;
+		const { className, loading, defaultRowHeight, getRowHeight, height, scrollTop } = this.props;
 		const classes = classNames( 'virtual-list', className, {
 			'is-loading': loading
 		} );
 
 		return (
-			<AutoSizer>
-				{ ( { height, width } ) => (
+			<AutoSizer disableHeight>
+				{ ( { width } ) => (
 					<div className={ classes }>
 						<VirtualScroll
 							ref={ this.setVirtualScrollRef }
@@ -179,6 +181,8 @@ export class VirtualList extends Component {
 							className={ className }
 							width={ width }
 							height={ height }
+							scrollTop={ scrollTop }
+							autoHeight
 						/>
 					</div>
 				) }

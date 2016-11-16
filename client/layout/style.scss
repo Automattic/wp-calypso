@@ -10,8 +10,8 @@
 .layout__content {
 	@include clear-fix;
 	position: relative;
-	margin: 47px 0 0 0;
-	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
+	margin: 0;
+	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
 	transition: opacity 0.3s;
@@ -33,8 +33,7 @@
 // Tablets
 @include breakpoint( "<960px" ) {
 	.layout__content {
-		padding: 24px;
-		padding-left: ( $sidebar-width-min + 24px );
+		padding: 71px 24px 24px ( $sidebar-width-min + 24px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;
@@ -52,6 +51,7 @@
 	.layout__content {
 		margin-left: 0;
 		padding: 0;
+		padding-top: 47px;
 
 		.has-no-sidebar & {
 			padding-left: 0;
