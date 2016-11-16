@@ -4,13 +4,18 @@
 import React from 'react';
 import { noop } from 'lodash';
 
+/**
+ * Internal Dependencies
+ */
+import cssSafeUrl from 'lib/css-safe-url';
+
 const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 	if ( imageUri === undefined ) {
 		return null;
 	}
 
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + imageUri + ')',
+		backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'right center'
@@ -34,4 +39,3 @@ FeaturedImage.defaultProps = {
 };
 
 export default FeaturedImage;
-
