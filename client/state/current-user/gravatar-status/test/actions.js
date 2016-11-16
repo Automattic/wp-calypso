@@ -8,12 +8,16 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import {
+	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE
  } from 'state/action-types';
-import { uploadGravatar } from '../actions';
+import {
+	receiveGravatarImageFailed,
+	uploadGravatar
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -85,6 +89,17 @@ describe( 'actions', () => {
 							type: GRAVATAR_UPLOAD_REQUEST_FAILURE
 						} );
 					} );
+			} );
+		} );
+	} );
+
+	describe( '#receiveGravatarImageFailed', () => {
+		it( 'returns image receive failure action with error message', () => {
+			const error = 'error';
+			const result = receiveGravatarImageFailed( error );
+			expect( result ).to.eql( {
+				type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
+				errorMessage: error
 			} );
 		} );
 	} );

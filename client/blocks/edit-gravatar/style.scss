@@ -20,3 +20,31 @@
 		left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+.edit-gravatar-modal.dialog.card {
+	max-width: none;
+	padding: 0;
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+	@include breakpoint( ">660px" ) {
+		top: 5%;
+		bottom: 5%;
+		left: 5%;
+		right: 5%;
+		width: 90%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		left: 12.5%;
+		right: 12.5%;
+		width: 75%;
+	}
+}
+
+.edit-gravatar-modal .dialog__content {
+	height: 100%;
+}
