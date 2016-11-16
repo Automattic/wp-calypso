@@ -196,7 +196,7 @@ module.exports = {
 						product={ product }
 						productsList={ productsList }
 						selectedFeature={ selectedFeature }
-						sites={ sites } />
+					/>
 				</CheckoutData>
 			),
 			document.getElementById( 'primary' ),
