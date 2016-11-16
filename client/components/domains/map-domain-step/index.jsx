@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	{ connect } = require( 'react-redux' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems,
-	{ getFixedDomainSearch, canMap, canRegister } = require( 'lib/domains' ),
-	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
-	DomainProductPrice = require( 'components/domains/domain-product-price' ),
-	analyticsMixin = require( 'lib/mixins/analytics' ),
-	{ getCurrentUser } = require( 'state/current-user/selectors' ),
-	support = require( 'lib/url/support' );
-
+import { cartItems } from 'lib/cart-values';
+import { getFixedDomainSearch, canMap, canRegister } from 'lib/domains';
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainProductPrice from 'components/domains/domain-product-price';
+import analyticsMixin from 'lib/mixins/analytics';
+import { getCurrentUser } from 'state/current-user/selectors';
+import support from 'lib/url/support';
 import Notice from 'components/notice';
 
-var MapDomainStep = React.createClass( {
+const MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],
 
 	propTypes: {
@@ -59,7 +59,8 @@ var MapDomainStep = React.createClass( {
 
 	render: function() {
 		const suggestion = { cost: this.props.products.domain_map.cost_display, product_slug: this.props.products.domain_map.product_slug },
-			price = this.props.products.domain_map ? this.props.products.domain_map.cost_display : null;
+			price = this.props.products.domain_map ? this.props.products.domain_map.cost_display : null,
+			translate = this.props.translate;
 
 		return (
 			<div className="map-domain-step">
@@ -68,7 +69,7 @@ var MapDomainStep = React.createClass( {
 
 					<div className="map-domain-step__domain-description">
 						<p>
-							{ this.translate( 'Map this domain to use it as your site\'s address.', {
+							{ translate( 'Map this domain to use it as your site\'s address.', {
 								context: 'Upgrades: Description in domain registration',
 								comment: "Explains how you could use a new domain name for your site's address."
 							} ) }
@@ -76,7 +77,11 @@ var MapDomainStep = React.createClass( {
 					</div>
 
 					<DomainProductPrice
-						rule={ cartItems.getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
+						rule={ cartItems.getDomainPriceRule(
+							this.props.domainsWithPlansOnly,
+							this.props.selectedSite,
+							this.props.cart, suggestion
+						) }
 						price={ price } />
 
 					<div className="map-domain-step__add-domain" role="group">
@@ -84,14 +89,14 @@ var MapDomainStep = React.createClass( {
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ this.translate( 'Enter a domain', { textOnly: true } ) }
+							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
 							autoFocus />
 						<button className="map-domain-step__go button is-primary"
 								onClick={ this.recordGoButtonClick }>
-							{ this.translate( 'Add', {
+							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain'
 							} ) }
 						</button>
@@ -104,7 +109,7 @@ var MapDomainStep = React.createClass( {
 	},
 
 	domainRegistrationUpsell: function() {
-		var suggestion = this.state.suggestion;
+		const suggestion = this.state.suggestion;
 		if ( ! suggestion ) {
 			return;
 		}
@@ -115,7 +120,7 @@ var MapDomainStep = React.createClass( {
 					status="is-success"
 					showDismiss={ false }>
 					{
-						this.translate(
+						this.props.translate(
 							'%(domain)s is available!',
 							{ args: { domain: suggestion.domain_name } }
 						)
@@ -182,72 +187,75 @@ var MapDomainStep = React.createClass( {
 		let message;
 		const severity = 'error',
 			lastIndexOfDot = domain.lastIndexOf( '.' ),
-			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot );
+			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot ),
+			translate = this.props.translate;
 
 		switch ( error.code ) {
 			case 'tld_in_maintenance':
 				if ( tld ) {
-					message = this.translate( 'Sorry, %(tld)s TLD is in maintenance, and we cannot check availability for it.', {
+					message = translate( 'Sorry, %(tld)s TLD is in maintenance, and we cannot check availability for it.', {
 						args: { tld }
 					} );
 				}
 				break;
 
 			case 'not_mappable':
-				message = this.translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
+				message = translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
 					args: { domain }
 				} );
 				break;
 
 			case 'invalid_domain':
-				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+				message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain }
 				} );
 				break;
 
 			case 'mapped_domain':
-				message = this.translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
+				message = translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
 					args: { domain }
 				} );
 				break;
 
 			case 'restricted_domain':
-				message = this.translate( 'Sorry, WordPress.com domains cannot be mapped to a WordPress.com blog.' );
+				message = translate( 'Sorry, WordPress.com domains cannot be mapped to a WordPress.com blog.' );
 				break;
 
 			case 'blacklisted_domain':
 				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
-					message = this.translate(
-						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. Please {{a2}}contact support{{/a2}} if you have any questions.',
+					message = translate(
+						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing ' +
+						'{{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
+						'Please {{a2}}contact support{{/a2}} if you have any questions.',
 						{
 							components: {
 								strong: <strong />,
-								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/"/>,
-								a2: <a href={ support.CALYPSO_CONTACT }/>
+								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
+								a2: <a href={ support.CALYPSO_CONTACT } />
 							}
 						}
 					);
 				} else {
-					message = this.translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
+					message = translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
 						args: { domain }
 					} );
 				}
 				break;
 
 			case 'forbidden_domain':
-				message = this.translate( 'Sorry, you do not have the correct permissions to map %(domain)s.', {
+				message = translate( 'Sorry, you do not have the correct permissions to map %(domain)s.', {
 					args: { domain }
 				} );
 				break;
 
 			case 'invalid_tld':
-				message = this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
+				message = translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain }
 				} );
 				break;
 
 			case 'empty_query':
-				message = this.translate( 'Please enter a domain name or keyword.' );
+				message = translate( 'Please enter a domain name or keyword.' );
 				break;
 
 			default:
@@ -260,4 +268,4 @@ var MapDomainStep = React.createClass( {
 	}
 } );
 
-module.exports = connect( state => ( { currentUser: getCurrentUser( state ) } ) )( MapDomainStep );
+module.exports = connect( state => ( { currentUser: getCurrentUser( state ) } ) )( localize( MapDomainStep ) );
