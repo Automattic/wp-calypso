@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'social-logos';
 
 export default React.createClass( {
 	displayName: 'SocialLogos',

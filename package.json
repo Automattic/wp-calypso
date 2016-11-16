@@ -108,6 +108,7 @@
     "rtlcss": "2.0.5",
     "sanitize-html": "1.11.1",
     "semver": "5.1.0",
+    "social-logos": "1.0.0",
     "socket.io-client": "1.4.5",
     "source-map": "0.1.39",
     "source-map-loader": "0.1.5",
