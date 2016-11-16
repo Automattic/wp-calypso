@@ -129,7 +129,11 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_process: function() {
-		var signupProgress = SignupProgressStore.get(),
+		var currentSteps = this._flow.steps,
+			signupProgress = filter(
+				SignupProgressStore.get(),
+				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+			),
 			pendingSteps = filter( signupProgress, { status: 'pending' } ),
 			completedSteps = filter( signupProgress, { status: 'completed' } ),
 			bearerToken = SignupDependencyStore.get().bearer_token,
@@ -143,7 +147,7 @@ assign( SignupFlowController.prototype, {
 			map( pendingSteps, this._processStep.bind( this ) );
 		}
 
-		if ( completedSteps.length === this._flow.steps.length && undefined !== this._onComplete ) {
+		if ( completedSteps.length === currentSteps.length && undefined !== this._onComplete ) {
 			if ( this._assertFlowProvidedRequiredDependencies() ) {
 				// deferred to ensure that the onComplete function is called after the stores have
 				// emitted their final change events.
