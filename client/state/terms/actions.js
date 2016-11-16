@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, uniqueId, find } from 'lodash';
+import { filter, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import {
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
 import { editPost } from 'state/posts/actions';
-import { getSitePosts } from 'state/posts/selectors';
+import { getSitePostsByTerm } from 'state/posts/selectors';
 import { getTerm, getTerms } from './selectors';
 
 /**
@@ -73,11 +73,7 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 				dispatch( receiveTerms( siteId, taxonomy, children.concat( [ updatedTerm ] ) ) );
 
 				// We also have to update post terms
-				const postsToUpdate = filter( getSitePosts( state, siteId ), post => {
-					return post.terms && post.terms[ taxonomy ] &&
-						find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
-				} );
-
+				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 				postsToUpdate.forEach( post => {
 					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
 					newTerms.push( updatedTerm );
@@ -121,10 +117,7 @@ export function deleteTerm( siteId, taxonomy, termId, termSlug ) {
 				}
 
 				// Drop the term from posts
-				const postsToUpdate = filter( getSitePosts( getState(), siteId ), post => {
-					return post.terms && post.terms[ taxonomy ] &&
-						find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
-				} );
+				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
 				postsToUpdate.forEach( post => {
 					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
 					dispatch( editPost( siteId, post.ID, {
