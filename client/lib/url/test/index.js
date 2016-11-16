@@ -13,7 +13,6 @@ import {
 	addSchemeIfMissing,
 	setUrlScheme,
 	urlToSlug,
-	slugToUrl,
 } from '../';
 
 describe( 'withoutHttp', () => {
@@ -236,22 +235,5 @@ describe( 'urlToSlug()', () => {
 		const urlWithoutHttp = urlToSlug( urlWithHttp );
 
 		expect( urlWithoutHttp ).to.equal( 'example.com::example::test123' );
-	} );
-} );
-
-describe( 'slugToUrl()', () => {
-	it( 'should return null if slug is not provided', () => {
-		expect( slugToUrl() ).to.be.null;
-	} );
-
-	it( 'should return null if slug is empty string', () => {
-		expect( slugToUrl( '' ) ).to.be.null;
-	} );
-
-	it( 'should return null convert double colons to forward slashes', () => {
-		const slug = 'example.com::example::test123';
-		const expected = 'example.com/example/test123';
-
-		expect( slugToUrl( slug ) ).to.equal( expected );
 	} );
 } );
