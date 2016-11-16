@@ -250,7 +250,10 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: SITE_FRONT_PAGE_SET_SUCCESS,
 				siteId: 2916284,
-				pageId: 1
+				updatedOptions: {
+					show_on_front: 'page',
+					page_on_front: 1,
+				}
 			} );
 
 			expect( state ).to.eql( {
@@ -265,7 +268,10 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: SITE_FRONT_PAGE_SET_SUCCESS,
 				siteId: 77203074,
-				pageId: 1
+				updatedOptions: {
+					show_on_front: 'page',
+					page_on_front: 1,
+				}
 			} );
 
 			expect( state ).to.eql( original );
