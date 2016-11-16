@@ -34,7 +34,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-const PluginsList = React.createClass( {
+export const PluginsList = React.createClass( {
 	mixins: [ PluginNotices ],
 
 	propTypes: {
@@ -49,6 +49,12 @@ const PluginsList = React.createClass( {
 		selectedSiteSlug: PropTypes.string,
 		pluginUpdateCount: PropTypes.number,
 		isPlaceholder: PropTypes.bool.isRequired,
+	},
+
+	getDefaultProps() {
+		return {
+			recordGoogleEvent: () => {}
+		};
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
@@ -456,9 +462,5 @@ export default connect(
 		selectedSite: getSelectedSite( state ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	} ),
-	{ recordGoogleEvent },
-	null,
-	{
-		withRef: true
-	}
+	{ recordGoogleEvent }
 )( PluginsList );
