@@ -36,7 +36,6 @@ import {
 	isRemoteSiteOnSitesList,
 	getGlobalSelectedPlan
 } from 'state/jetpack-connect/selectors';
-import { abtest } from 'lib/abtest';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -596,7 +595,6 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
 
-
 	renderNoQueryArgsError() {
 		return (
 			<Main>
@@ -680,7 +678,7 @@ export default connect(
 			siteSlug,
 			selectedPlan,
 			jetpackConnectAuthorize: getAuthorizationData( state ),
-			plansFirst: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
+			plansFirst: false,
 			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites,
