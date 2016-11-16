@@ -1,22 +1,34 @@
-import React, { PropTypes } from 'react';
+/**
+ * External dependencies
+ */
+import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from 'components/gridicon';
 
 const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
 
-export const Plugin = React.createClass( {
-	getInitialState() {
-		return { isUnderMouse: false };
-	},
+export class Plugin extends Component {
+	state = {
+		isUnderMouse: false,
+	};
 
-	startHover() {
-		this.setState( { isUnderMouse: true } );
-	},
+	static propTypes = {
+		category: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		icon: PropTypes.string,
+		isActive: PropTypes.bool,
+		name: PropTypes.string.isRequired,
+		onClick: PropTypes.func,
+		descriptionLink: PropTypes.string.isRequired
+	};
 
-	stopHover() {
-		this.setState( { isUnderMouse: false } );
-	},
+	startHover = () => this.setState( { isUnderMouse: true } );
+
+	stopHover = () => this.setState( { isUnderMouse: false } );
 
 	render() {
 		const {
@@ -42,10 +54,12 @@ export const Plugin = React.createClass( {
 			: icon;
 
 		return (
-			<div className="wpcom-plugins__plugin-item">
+			<div
+				className="wpcom-plugins__plugin-item"
+			>
 				<a
 					href={ descriptionLink }
-					onClick={ onClick }
+					onClick={ () => onClick( name ) }
 					onMouseEnter={ this.startHover }
 					onMouseLeave={ this.stopHover }
 					target={ target }
@@ -62,16 +76,6 @@ export const Plugin = React.createClass( {
 			</div>
 		);
 	}
-} );
-
-Plugin.propTypes = {
-	category: PropTypes.string.isRequired,
-	description: PropTypes.string.isRequired,
-	icon: PropTypes.string,
-	isActive: PropTypes.bool,
-	name: PropTypes.string.isRequired,
-	onClick: PropTypes.func,
-	descriptionLink: PropTypes.string.isRequired
-};
+}
 
 export default Plugin;
