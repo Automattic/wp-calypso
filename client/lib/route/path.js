@@ -33,8 +33,9 @@ function getSiteFragment( path ) {
 	if ( last_piece && -1 !== last_piece.indexOf( '.' ) ) {
 		return last_piece;
 	}
-
-	const second_to_last_piece = pieces[ pieces.length - 2 ];
+	// People section can have usernames in the url that have dits in the name.
+	// So we can just ignore the second to last part
+	const second_to_last_piece = pieces[ 1 ] === 'people' ? '' : pieces[ pieces.length - 2 ];
 	if ( second_to_last_piece && -1 !== second_to_last_piece.indexOf( '.' ) ) {
 		return second_to_last_piece;
 	}

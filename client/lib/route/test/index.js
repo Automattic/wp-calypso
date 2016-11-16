@@ -234,6 +234,11 @@ describe( 'route', function() {
 					route.getSiteFragment( '/people/edit/bob.bob/example.com' )
 				).to.equal( 'example.com' );
 			} );
+			it( 'should not return a site when viewing username with a dot', () => {
+				expect(
+					route.getSiteFragment( '/people/edit/bob.bob/12345' )
+				).to.equal( 12345 );
+			} );
 		} );
 		describe( 'for stats paths', function() {
 			it( 'should return false when there is no site yet', function() {
