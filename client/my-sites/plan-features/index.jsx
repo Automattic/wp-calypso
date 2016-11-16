@@ -554,7 +554,8 @@ export default connect(
 					primaryUpgrade: (
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
-						popular
+						popular,
+						newPlan
 					),
 					rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
 					relatedMonthlyPlan: relatedMonthlyPlan
