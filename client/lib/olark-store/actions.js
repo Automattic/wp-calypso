@@ -86,6 +86,16 @@ const olarkActions = {
 
 	hideBox() {
 		olarkApi( 'api.box.hide' );
+	},
+
+	/**
+	 * This method performs olark actions that tricks the olark api into thinking
+	 * the user is interacting and will make it fire the onOperatorsAway and onOperatorsAvailable events sooner.
+	 */
+	tickle() {
+		olarkActions.expandBox();
+		olarkActions.shrinkBox();
+		olarkActions.hideBox();
 	}
 };
 

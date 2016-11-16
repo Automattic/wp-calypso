@@ -11,7 +11,6 @@ import { isRequestingOlark } from 'state/ui/olark/selectors';
 import { requestOlark } from 'state/ui/olark/actions';
 
 class QueryOlark extends Component {
-
 	componentWillMount() {
 		if ( ! this.props.requestingOlark ) {
 			this.props.requestOlark();

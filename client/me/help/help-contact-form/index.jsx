@@ -23,6 +23,8 @@ import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { OLARK_CONFIG_CONTEXTS } from 'lib/olark/constants';
+import OlarkConfigContext from 'components/olark-config-context';
 
 /**
  * Module variables
@@ -261,6 +263,7 @@ export const HelpContactForm = React.createClass( {
 					</strong>
 				) }
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
+				<OlarkConfigContext supportContext={ OLARK_CONFIG_CONTEXTS.DEFAULT } />
 			</div>
 		);
 	}

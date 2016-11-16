@@ -34,6 +34,21 @@ export function isRequestingOlark( state ) {
 	return state.ui.olark.requesting;
 }
 
+export function getOlarkConfigOptions( state, context ) {
+	const config = state.ui.olark.config[ context ];
+	return config && config.options;
+}
+
+export function isRequestingConfig( state, context ) {
+	const config = state.ui.olark.config[ context ];
+	return !! ( config && config.isRequesting );
+}
+
+export function isEligibleForChat( state, context ) {
+	const options = getOlarkConfigOptions( state, context );
+	return !! ( options && options.isUserEligible );
+}
+
 /**
  * Returns if olark operators are available.
  * @param   {Object}  state  Global state tree

@@ -63,12 +63,7 @@ const HelpContact = React.createClass( {
 		sites.on( 'change', this.onSitesChanged );
 
 		olarkActions.updateDetails();
-
-		// The following lines trick olark into thinking we are interacting with it. This interaction
-		// makes olark fire off its onOperatorsAway and onOperatorsAvailable events sooner.
-		olarkActions.expandBox();
-		olarkActions.shrinkBox();
-		olarkActions.hideBox();
+		olarkActions.tickle();
 	},
 
 	componentWillUnmount: function() {

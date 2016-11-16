@@ -23,8 +23,10 @@ import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { slugToUrl } from 'lib/url';
-import { isOperatorsAvailable } from 'state/ui/olark/selectors';
+import { isOperatorsAvailable, isEligibleForChat } from 'state/ui/olark/selectors';
+import { OLARK_CONFIG_CONTEXTS } from 'lib/olark/constants';
 import olarkActions from 'lib/olark-store/actions';
+import OlarkConfigContext from 'components/olark-config-context';
 
 const user = userFactory();
 
@@ -191,7 +193,8 @@ const RemovePurchase = React.createClass( {
 			} ],
 			productName = getName( getPurchase( this.props ) );
 
-		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		const chatEnabled = config.isEnabled( 'upgrades/precancellation-chat' );
+		if ( this.props.showChatLink && chatEnabled ) {
 			buttons.unshift( this.getChatButton() );
 		}
 
@@ -203,6 +206,7 @@ const RemovePurchase = React.createClass( {
 				onClose={ this.closeDialog }>
 				<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 				{ this.renderDomainDialogText() }
+				{ chatEnabled && <OlarkConfigContext supportContext={ OLARK_CONFIG_CONTEXTS.PRECANCELLATION } /> }
 			</Dialog>
 		);
 	},
@@ -266,7 +270,8 @@ const RemovePurchase = React.createClass( {
 			buttonsArr = inStepOne ? [ buttons.cancel, buttons.next ] : [ buttons.cancel, buttons.prev, buttons.remove ];
 		}
 
-		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		const chatEnabled = config.isEnabled( 'upgrades/precancellation-chat' );
+		if ( this.props.showChatLink && chatEnabled ) {
 			buttonsArr.unshift( this.getChatButton() );
 		}
 
@@ -284,6 +289,7 @@ const RemovePurchase = React.createClass( {
 						defaultContent={ this.renderPlanDialogsText() }
 						onInputChange={ this.onSurveyChange }
 					/>
+					{ chatEnabled && <OlarkConfigContext supportContext={ OLARK_CONFIG_CONTEXTS.PRECANCELLATION } /> }
 				</Dialog>
 			</div>
 		);
@@ -356,7 +362,7 @@ const RemovePurchase = React.createClass( {
 
 export default connect(
 	( state ) => ( {
-		showChatLink: isOperatorsAvailable( state ),
+		showChatLink: isOperatorsAvailable( state ) && isEligibleForChat( state, OLARK_CONFIG_CONTEXTS.PRECANCELLATION ),
 	} ),
 	{ removePurchase }
 )( RemovePurchase );
