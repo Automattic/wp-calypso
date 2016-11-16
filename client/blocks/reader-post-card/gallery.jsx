@@ -9,6 +9,7 @@ import { map, take, filter } from 'lodash';
  */
 import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
+import cssSafeUrl from 'lib/css-safe-url';
 
 const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
 
@@ -22,7 +23,7 @@ const PostGallery = ( { post } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
-		const safeCssUrl = imageUrl.replace( ')', '\\)' ).replace( '(', '\\(' );
+		const safeCssUrl = cssSafeUrl( imageUrl );
 		const imageStyle = {
 			backgroundImage: 'url(' + safeCssUrl + ')',
 			backgroundSize: 'cover',
