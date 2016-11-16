@@ -529,7 +529,7 @@ const RegisterDomainStep = React.createClass( {
 		switch ( error.code ) {
 			case 'dotblog_domain':
 				message = this.translate(
-					'Coming soon! {{strong}}.blog{{/strong}} domains will be available on November 21st.',
+					'Coming soon! {{strong}}.blog{{/strong}} domains will be available on {{strong}}November 21st{{/strong}}.',
 					{
 						components: {
 							strong: <strong />
