@@ -3,8 +3,9 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
+import { identity, replace } from 'lodash';
 import { localize } from 'i18n-calypso';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import serviceConnections from './service-connections';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import SocialLogo from 'components/social-logo';
 
 const SharingService = React.createClass( {
 	displayName: 'SharingService',
@@ -239,7 +239,7 @@ const SharingService = React.createClass( {
 		const header = (
 			<div>
 				<SocialLogo
-					icon={ this.props.service.ID }
+					icon={ replace( this.props.service.ID, '_', '-' ) }
 					size={ 48 }
 					className="sharing-service__logo" />
 

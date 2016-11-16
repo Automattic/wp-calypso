@@ -5,13 +5,13 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	qs = require( 'qs' ),
 	page = require( 'page' );
+import SocialLogo from 'social-logos';
 
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	Gridicon = require( 'components/gridicon' ),
 	sitesList = require( 'lib/sites-list' )(),
 	stats = require( 'reader/stats' ),
-	SocialLogo = require( 'components/social-logo' ),
 	SitesPopover = require( 'components/sites-popover' ),
 	sections = require( 'sections-preload' );
 
