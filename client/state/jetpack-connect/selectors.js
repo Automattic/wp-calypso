@@ -87,9 +87,8 @@ const getJetpackSiteByUrl = ( state, url ) => {
 };
 
 const getAuthAttempts = ( state, slug ) => {
-	const now = Date.now();
 	const attemptsData = get( state, [ 'jetpackConnect', 'jetpackAuthAttempts', slug ] );
-	if ( attemptsData && now - attemptsData.timestamp > AUTH_ATTEMPS_TTL ) {
+	if ( attemptsData && isStale( attemptsData.timestamp, AUTH_ATTEMPS_TTL ) ) {
 		return 0;
 	}
 	return attemptsData ? attemptsData.attempt || 0 : 0;

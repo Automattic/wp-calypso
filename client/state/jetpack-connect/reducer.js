@@ -273,7 +273,7 @@ export function jetpackAuthAttempts( state = {}, action ) {
 			let attemptNumber = action.attemptNumber;
 			if ( attemptNumber > 0 ) {
 				const now = Date.now();
-				if ( now - currentTimestamp > AUTH_ATTEMPS_TTL ) {
+				if ( isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
 					currentTimestamp = now;
 					attemptNumber = 0;
 				}
