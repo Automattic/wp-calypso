@@ -27,16 +27,17 @@ const searchItems = [
 			discussion: {
 				comment_count: 99
 			},
-			canonical_image: {
-				uri: 'https://placekitten.com/600/400',
+			canonical_media: {
+				src: 'https://placekitten.com/600/400',
 				width: 300,
-				height: 200
+				height: 200,
+				mediaType: 'image',
 			},
 			date: '1976-09-15T10:12:00Z',
 
 			site: 'cats.wordpress.com',
 
-			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
+			better_excerpt_no_html: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
 	},
 	{
@@ -57,20 +58,19 @@ const searchItems = [
 				comment_count: 42
 			},
 			site: 'cats.wordpress.com',
-			content_embeds: [
-				{
-					aspectRatio: 1.641025641025641,
-					autoplayIframe: "<iframe data-wpcom-embed-url=\"https://www.youtube.com/watch?v=ptkYu1fdRIM\" class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"390\" src=\"https://www.youtube.com/embed/ptkYu1fdRIM?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent&amp;autoplay=1\" allowfullscreen=\"true\" sandbox=\"allow-same-origin allow-scripts allow-popups\"></iframe>",
-					embedUrl: "https://www.youtube.com/watch?v=ptkYu1fdRIM",
-					height: 390,
-					iframe: "<iframe data-wpcom-embed-url=\"https://www.youtube.com/watch?v=ptkYu1fdRIM\" class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"390\" src=\"https://www.youtube.com/embed/ptkYu1fdRIM?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent\" allowfullscreen=\"true\" sandbox=\"allow-same-origin allow-scripts allow-popups\"></iframe>",
-					src: "https://www.youtube.com/embed/ptkYu1fdRIM?version=3&rel=1&fs=1&autohide=2&showsearch=0&showinfo=1&iv_load_policy=1&wmode=transparent",
-					thumbnailUrl: "https://img.youtube.com/vi/ptkYu1fdRIM/mqdefault.jpg",
-					type: "youtube",
-					width: 640
-				}
-			],
-			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
+			canonical_media: {
+				aspectRatio: 1.641025641025641,
+				autoplayIframe: "<iframe data-wpcom-embed-url=\"https://www.youtube.com/watch?v=ptkYu1fdRIM\" class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"390\" src=\"https://www.youtube.com/embed/ptkYu1fdRIM?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent&amp;autoplay=1\" allowfullscreen=\"true\" sandbox=\"allow-same-origin allow-scripts allow-popups\"></iframe>",
+				embedUrl: "https://www.youtube.com/watch?v=ptkYu1fdRIM",
+				height: 390,
+				iframe: "<iframe data-wpcom-embed-url=\"https://www.youtube.com/watch?v=ptkYu1fdRIM\" class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"390\" src=\"https://www.youtube.com/embed/ptkYu1fdRIM?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent\" allowfullscreen=\"true\" sandbox=\"allow-same-origin allow-scripts allow-popups\"></iframe>",
+				src: "https://www.youtube.com/embed/ptkYu1fdRIM?version=3&rel=1&fs=1&autohide=2&showsearch=0&showinfo=1&iv_load_policy=1&wmode=transparent",
+				thumbnailUrl: "https://img.youtube.com/vi/ptkYu1fdRIM/mqdefault.jpg",
+				type: "youtube",
+				mediaType: "video",
+				width: 640
+			},
+			better_excerpt_no_html: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
 	},
 	{
@@ -91,8 +91,9 @@ const searchItems = [
 			discussion: {
 				comment_count: 42
 			},
-			canonical_image: {
-				uri: 'https://placekitten.com/600/400',
+			canonical_media: {
+				src: 'https://placekitten.com/600/400',
+				mediaType: 'image',
 				width: 300,
 				height: 200
 			},
@@ -115,18 +116,18 @@ const searchItems = [
 				name: 'Sue Smith',
 				email: 'sue@example.com'
 			},
-			content_images: [
-				{ src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info' },
-				{ src: 'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info' },
-				{ src: 'https://tedideas.files.wordpress.com/2016/11/new-kind11x17_2.jpg?w=720&quality=80&strip=info' },
-				{ src: 'https://tedideas.files.wordpress.com/2016/11/jesusgarcia_aiga_gotv_yourvotematterseventothem.jpg?w=720&quality=80&strip=info' },
+			images: [
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info', width: 720 },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info', width: 720 },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/new-kind11x17_2.jpg?w=720&quality=80&strip=info', width: 720 },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/jesusgarcia_aiga_gotv_yourvotematterseventothem.jpg?w=720&quality=80&strip=info', width: 720 },
 			],
 			discussion: {
 				comment_count: 99
 			},
 			date: '1976-09-15T10:12:00Z',
 			site: 'cats.wordpress.com',
-			short_excerpt: 'Every four years, the Get Out the Vote campaign invites graphic designers to make posters that rally US voters to go to the polls. Here, 14 posters that rock…'
+			better_excerpt_no_html: 'Every four years, the Get Out the Vote campaign invites graphic designers to make posters that rally US voters to go to the polls. Here, 14 posters that rock…'
 		}
 	},
 ];
