@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
 import PurchaseButton from './purchase-button';
 
 export const JetpackPluginItem = ( {
@@ -18,19 +18,21 @@ export const JetpackPluginItem = ( {
 	isActive,
 	translate = identity
 } ) => {
-	let plan;
-
-	if ( plugin.plan === 'premium' ) {
-		plan = <Button compact borderless className="plugins-wpcom__is-premium-plugin">
-			{ translate( 'Premium' ) }
-		</Button>;
-	} else if ( plugin.plan === 'business' ) {
-		plan = <Button compact borderless className="plugins-wpcom__is-business-plugin">
-			{ translate( 'Business' ) }
-		</Button>;
-	} else {
-		plan = null;
-	}
+	const translatePlan = {
+		premium: translate( 'Premium' ),
+		business: translate( 'Business' ),
+	};
+	const planClasses = classNames(
+		'button',
+		'is-compact',
+		'is-borderless',
+		`plugins-wpcom__is-${ plugin.plan }-plugin`
+	);
+	const plan = [ 'premium', 'business' ].includes( plugin.plan )
+		? <span className={ planClasses }>
+				{ translatePlan[ plugin.plan ] }
+			</span>
+		: null;
 
 	return (
 		<CompactCard className="plugins-wpcom__jetpack-plugin-item">
