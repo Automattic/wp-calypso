@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' );
+import Gravatar from 'components/gravatar';
 
 module.exports = React.createClass( {
 	displayName: 'UserItem',
