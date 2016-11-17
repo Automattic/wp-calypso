@@ -589,6 +589,20 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
+					{ jetpack && ! this.props.site.isModuleActive( 'verification-tools' ) &&
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ this.translate(
+								'Site Verification Services are disabled in Jetpack.'
+							) }
+						>
+							<NoticeAction href={ '//' + slug + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+								{ this.translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					}
+
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
 					</SectionHeader>
