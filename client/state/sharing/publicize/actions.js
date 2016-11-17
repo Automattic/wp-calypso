@@ -84,7 +84,7 @@ export function fetchConnection( siteId, connectionId ) {
 	return ( dispatch ) => {
 		dispatch( requestConnections( siteId ) );
 
-		return wpcom.undocumented().getSiteConnection( siteId, connectionId )
+		return wpcom.undocumented().site( siteId ).getConnection( connectionId )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,
