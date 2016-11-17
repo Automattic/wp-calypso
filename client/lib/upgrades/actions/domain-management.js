@@ -294,7 +294,7 @@ function addDnsOffice( domainName, token, onComplete ) {
 	wpcom.addDnsOffice( domainName, token, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_FETCH_COMPLETED,
+				type: ActionTypes.DNS_ADD_OFFICE_COMPLETED,
 				records: data && data.records,
 				domainName
 			} );
