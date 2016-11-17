@@ -32,14 +32,16 @@ export default class RefreshPostCard extends React.Component {
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
 		originalPost: PropTypes.object, // used for Discover only
-		showEntireExcerpt: PropTypes.bool
+		showEntireExcerpt: PropTypes.bool,
+		excerptAttribute: PropTypes.string
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
 		isSelected: false,
-		showEntireExcerpt: false
+		showEntireExcerpt: false,
+		excerptAttribute: 'better_excerpt_no_html'
 	};
 
 	propagateCardClick = () => {
@@ -98,7 +100,8 @@ export default class RefreshPostCard extends React.Component {
 			onCommentClick,
 			showPrimaryFollowButton,
 			isSelected,
-			showEntireExcerpt
+			showEntireExcerpt,
+			excerptAttribute
 		} = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
@@ -144,7 +147,7 @@ export default class RefreshPostCard extends React.Component {
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
-						{ showExcerpt && <div className="reader-post-card__excerpt">{ post.better_excerpt_no_html }</div> }
+						{ showExcerpt && <div className="reader-post-card__excerpt">{ post[ excerptAttribute ] }</div> }
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ post &&
 							<ReaderPostActions
