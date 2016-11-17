@@ -27,7 +27,18 @@ function getSiteDestination( dependencies ) {
 		return getCheckoutUrl( dependencies );
 	}
 
-	return 'https://' + dependencies.siteSlug;
+	let protocol = 'https';
+
+	/**
+	 * It is possible that non-wordpress.com sites are not HTTPS ready.
+	 *
+	 * Redirect them
+	 */
+	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+		protocol = 'http';
+	}
+
+	return protocol + '://' + dependencies.siteSlug;
 }
 
 function getPostsDestination( dependencies ) {
