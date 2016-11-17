@@ -12,7 +12,6 @@ import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_FAILURE,
 	THEMES_REQUEST_SUCCESS,
@@ -20,22 +19,11 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import reducer, {
-	items,
 	queryRequests,
 	queries,
 	themeRequests
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
-
-const twentyfifteen = {
-	id: 'twentyfifteen',
-	name: 'Twenty Fifteen',
-	author: 'the WordPress team',
-	screenshot: 'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
-	stylesheet: 'pub/twentyfifteen',
-	demo_uri: 'https://twentyfifteendemo.wordpress.com/',
-	author_uri: 'https://wordpress.org/'
-};
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -70,105 +58,12 @@ describe( 'reducer', () => {
 			'themeDetails',
 			'themesList',
 			// New reducers
-			//'items',
 			//'themeRequests',
 			//'queryRequests',
 			//'queries',
 			'currentTheme',
 			'themesUI'
 		] );
-	} );
-
-	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		it( 'should index received themes by site ID, and by theme ID', () => {
-			const state = items( undefined, {
-				type: THEMES_RECEIVE,
-				siteId: 1234567,
-				themes: [
-					twentyfifteen,
-					twentysixteen,
-					mood
-				]
-			} );
-
-			expect( state ).to.eql( {
-				1234567: {
-					twentyfifteen,
-					twentysixteen,
-					mood
-				}
-			} );
-		} );
-
-		it( 'should accumulate themes', () => {
-			const original = deepFreeze( {
-				1234567: { twentyfifteen }
-			} );
-			const state = items( original, {
-				type: THEMES_RECEIVE,
-				siteId: 1234567,
-				themes: [ twentysixteen, mood ]
-			} );
-
-			expect( state ).to.eql( {
-				1234567: {
-					twentyfifteen,
-					twentysixteen,
-					mood
-				}
-			} );
-		} );
-
-		it( 'should persist state', () => {
-			const original = deepFreeze( {
-				1234567: {
-					twentyfifteen,
-					twentysixteen
-				},
-				wpcom: {
-					mood
-				}
-			} );
-			const state = items( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				1234567: {
-					twentyfifteen,
-					twentysixteen
-				},
-				wpcom: {
-					mood
-				}
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				1234567: {
-					twentyfifteen,
-					twentysixteen
-				},
-				'invalid-string-key': {
-					mood
-				}
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#queryRequests()', () => {

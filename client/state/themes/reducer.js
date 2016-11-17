@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy, mapValues } from 'lodash';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,23 +26,9 @@ import {
 	getSerializedThemesQuery
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
-import { itemsSchema, queriesSchema } from './schema';
+import { queriesSchema } from './schema';
 import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
-
-/**
- * Tracks all known theme objects, indexed by ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const items = createReducer( {}, {
-	[ THEMES_RECEIVE ]: ( state, { themes, siteId } ) => {
-		const fetchedThemes = keyBy( themes, 'id' );
-		return { ...state, [ siteId ]: { ...( state[ siteId ] ), ...fetchedThemes } };
-	}
-}, itemsSchema );
 
 /**
  * Returns the updated site theme requests state after an action has been
@@ -160,7 +146,6 @@ export default combineReducers( {
 	themeDetails,
 	themesList,
 	// New reducers:
-	// items,
 	// themeRequests,
 	// queryRequests,
 	// queries,
