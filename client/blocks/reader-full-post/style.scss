@@ -82,11 +82,15 @@
 
 	.external-link .gridicons-external {
 		fill: darken( $gray, 10% );
-		top: 6px;
+		top: 5px;
 
 		@include breakpoint( ">660px" ) {
 			top: 3px;
 		}
+	}
+
+	@include breakpoint( ">660px" ) {
+		top: 47px;
 	}
 
 	.external-link {
