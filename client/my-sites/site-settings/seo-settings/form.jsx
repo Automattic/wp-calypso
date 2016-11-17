@@ -594,11 +594,11 @@ export const SeoForm = React.createClass( {
 							status="is-warning"
 							showDismiss={ false }
 							text={ this.translate(
-								'You must activate Site Verification module in Jetpack\'s dashboard for these changes to take effect.'
+								'Site Verification Services are disabled in Jetpack.'
 							) }
 						>
 							<NoticeAction href={ '//' + slug + '/wp-admin/admin.php?page=jetpack#/engagement' }>
-								{ this.translate( 'Activate Now' ) }
+								{ this.translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
 					}
