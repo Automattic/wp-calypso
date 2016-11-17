@@ -12,9 +12,9 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_CURRENT_REQUEST,
-	THEME_CURRENT_REQUEST_SUCCESS,
-	THEME_CURRENT_REQUEST_FAILURE,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -159,7 +159,7 @@ describe( 'actions', () => {
 				'threaded-comments',
 				'translation-ready'
 			],
-			preview_url: 'https://budzanowski.wordpress.com/?theme=pub/rebalance&hide_banners=true'
+			preview_url: 'https://unittest.wordpress.com/?theme=pub/rebalance&hide_banners=true'
 		};
 
 		const failureResponse = {
@@ -177,19 +177,19 @@ describe( 'actions', () => {
 				.reply( 404, failureResponse );
 		} );
 
-		it( 'should dispatch current theme request action when triggered', () => {
+		it( 'should dispatch active theme request action when triggered', () => {
 			requestActiveTheme( 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEME_CURRENT_REQUEST,
+				type: ACTIVE_THEME_REQUEST,
 				siteId: 2211667,
 			} );
 		} );
 
-		it( 'should dispatch current theme request success action when request completes', () => {
+		it( 'should dispatch active theme request success action when request completes', () => {
 			return requestActiveTheme( 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_CURRENT_REQUEST_SUCCESS,
+					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId: 2211667,
 					themeId: 'rebalance',
 					themeName: 'Rebalance',
@@ -202,10 +202,10 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch current theme request failure action when request completes', () => {
+		it( 'should dispatch active theme request failure action when request completes', () => {
 			return requestActiveTheme( 666 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_CURRENT_REQUEST_FAILURE,
+					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,
 					error: sinon.match( { message: 'Unknown blog' } ),
 				} );
