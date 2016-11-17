@@ -285,3 +285,26 @@
 		}
 	}
 }
+
+.plugins-wpcom__jetpack-category-header.card {
+	color: $gray;
+	font-size: 14px;
+	line-height: 15px;
+	padding-bottom: 11px;
+	padding-top: 3px;
+
+	@include breakpoint( '>480px' ) {
+		line-height: 28px;
+		padding-top: 11px;
+	}
+
+	.gridicon {
+		margin-right: 8px;
+		position: relative;
+		top: 5px;
+
+		@include breakpoint( '>480px' ) {
+			margin-right: 12px;
+		}
+	}
+}

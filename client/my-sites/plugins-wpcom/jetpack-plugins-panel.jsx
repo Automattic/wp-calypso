@@ -117,7 +117,10 @@ class JetpackPluginsPanel extends Component {
 
 			if ( plugins.length > 0 ) {
 				return <div key={ group.category }>
-					<SectionHeader label={ group.name } />
+					<CompactCard className="plugins-wpcom__jetpack-category-header">
+						<Gridicon icon={ group.icon } />
+						{ group.name }
+					</CompactCard>
 					{ plugins }
 				</div>;
 			}
@@ -183,7 +186,7 @@ class JetpackPluginsPanel extends Component {
 						</div>
 					</a>
 					<div className="plugins-wpcom__plugin-actions">
-						<Button className="plugins-wpcom__plugin-is-active plugin-is-active" compact borderless>
+						<Button className="plugins-wpcom__plugin-is-active is-active-plugin" compact borderless>
 							<Gridicon icon="checkmark" />{ translate( 'Active' ) }
 						</Button>
 					</div>
