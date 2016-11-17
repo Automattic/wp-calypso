@@ -95,9 +95,11 @@ class Plans extends Component {
 	}
 
 	redirect( path ) {
-		page.redirect( path + this.props.selectedSite.slug );
-		this.props.completeFlow();
-		this.redirecting = true;
+		if ( ! this.redirecting ) {
+			this.redirecting = true;
+			page.redirect( path );
+			this.props.completeFlow();
+		}
 	}
 
 	autoselectPlan() {
@@ -187,6 +189,7 @@ class Plans extends Component {
 								isInSignup={ ! this.props.hasPaidPlan }
 								isInJetpackConnect={ true }
 								onUpgradeClick={ this.selectPlan }
+								basePlansPath={ this.props.basePlansPath }
 								intervalType={ this.props.intervalType } />
 						</div>
 					</div>

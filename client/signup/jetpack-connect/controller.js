@@ -257,6 +257,7 @@ export default {
 				<Plans
 					context={ context }
 					destinationType={ context.params.destinationType }
+					basePlansPath={ '/jetpack/connect/plans' }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
