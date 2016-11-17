@@ -135,7 +135,7 @@ export class Step extends Component {
 
 	/*
 	 * A step belongs to a specific section. This datum is used by the "blank
-	 * exit" feature (cf. quitIfInvalidRoute in Step and Continue).
+	 * exit" feature (cf. Step.quitIfInvalidRoute).
 	 *
 	 * `setStepSection` has specific logic to deal with the fact that `step` and
 	 * `section` transitions are not synchronized. Notably, navigating to a
@@ -193,12 +193,22 @@ export class Step extends Component {
 		if ( ! hasContinue && hasJustNavigated &&
 				this.isDifferentSection( lastAction.path ) ) {
 			defer( () => {
-				debug( 'Step.quitIfInvalidRoute: quitting' );
+				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
 				this.context.quit( this.context );
 			} );
-		} else {
-			debug( 'Step.quitIfInvalidRoute: not quitting' );
 		}
+
+		// quit if we have a target but cant find it
+		defer( () => {
+			const { quit } = this.context;
+			const target = targetForSlug( this.props.target );
+			if ( this.props.target && ! target ) {
+				debug( 'Step.quitIfInvalidRoute: quitting (cannot find target)' );
+				quit( this.context );
+			} else {
+				debug( 'Step.quitIfInvalidRoute: not quitting' );
+			}
+		} );
 	}
 
 	isDifferentSection( path ) {
@@ -353,7 +363,6 @@ export class Continue extends Component {
 
 	componentDidMount() {
 		! this.props.hidden && this.addTargetListener();
-		this.quitIfInvalidRoute( this.props, this.context );
 	}
 
 	componentWillUnmount() {
@@ -369,23 +378,7 @@ export class Continue extends Component {
 	}
 
 	componentDidUpdate() {
-		this.quitIfInvalidRoute( this.props, this.context );
 		this.addTargetListener();
-	}
-
-	quitIfInvalidRoute( props ) {
-		debug( 'Continue.quitIfInvalidRoute' );
-		defer( () => {
-			const { quit } = this.context;
-			const target = targetForSlug( props.target );
-			// quit if we have a target but cant find it
-			if ( props.target && ! target ) {
-				debug( 'Continue.quitIfInvalidRoute: quitting' );
-				quit( this.context );
-			} else {
-				debug( 'Continue.quitIfInvalidRoute: not quitting' );
-			}
-		} );
 	}
 
 	onContinue = () => {
