@@ -38,6 +38,12 @@
 	}
 }
 
+.is-reader-page .follow-button {
+	border: 0;
+	border-radius: 0;
+	float: right;
+}
+
 // The header on top of the "Existing Feed"
 .section-header.following-edit__header {
 	height: 51px;

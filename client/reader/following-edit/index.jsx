@@ -8,7 +8,7 @@ import remove from 'lodash/remove';
 import classnames from 'classnames';
 
 // Internal dependencies
-import Main from 'components/main';
+import ReaderMain from 'components/reader-main';
 import Gridicon from 'components/gridicon';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
@@ -516,7 +516,7 @@ const FollowingEdit = React.createClass( {
 		}, 'following-edit' );
 
 		return (
-			<Main className={ containerClasses }>
+			<ReaderMain className={ containerClasses }>
 				<MobileBackToSidebar>
 					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
@@ -583,7 +583,7 @@ const FollowingEdit = React.createClass( {
 				}
 
 				{ hasNoSubscriptions ? <EmptyContent /> : null }
-			</Main>
+			</ReaderMain>
 		);
 	}
 

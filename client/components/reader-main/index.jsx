@@ -7,6 +7,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import Main from 'components/main';
+import config from 'config';
 
 /**
  * A specialization of `Main` that adds a class to the body of the document
@@ -16,7 +17,9 @@ import Main from 'components/main';
  */
 export default class ReaderMain extends React.Component {
 	componentWillMount() {
-		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
+		if ( config.isEnabled( 'reader/refresh/stream' ) ) {
+			document.querySelector( 'body' ).classList.add( 'is-reader-page' );
+		}
 	}
 
 	componentWillUnmount() {
