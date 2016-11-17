@@ -10,28 +10,22 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 
-class DomainSuggestionFlag extends React.Component {
-	render() {
-		const newTLDs = [ 'blog' ];
+function DomainSuggestionFlag( { domain, translate } ) {
+	const newTLDs = [ 'blog' ];
 
-		if ( newTLDs.some( ( tld ) => {
-			return endsWith( this.props.domain, tld );
-		} ) ) {
-			return (
-				<Notice
-					isCompact
-					status="is-success">
-					{ this.props.translate( 'New', { context: 'Domain suggestion flag' } ) }
-				</Notice>
-			);
-		}
-
-		return null;
+	if ( newTLDs.some(
+		( tld ) => endsWith( domain, tld ) && domain.substring( 0, domain.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
+	) ) {
+		return (
+			<Notice
+				isCompact
+				status="is-success">
+				{ translate( 'New', { context: 'Domain suggestion flag' } ) }
+			</Notice>
+		);
 	}
-}
 
-DomainSuggestionFlag.propTypes = {
-	domain: React.PropTypes.string.isRequired
-};
+	return null;
+}
 
 export default localize( DomainSuggestionFlag );
