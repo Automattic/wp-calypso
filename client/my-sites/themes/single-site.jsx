@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import SingleSiteThemeShowcase from './single-site-wpcom';
+import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import sitesFactory from 'lib/sites-list';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -53,7 +53,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	}
 
 	return (
-		<SingleSiteThemeShowcase { ...props }
+		<SingleSiteThemeShowcaseWpcom { ...props }
 			site={ site }
 			siteId={ site.ID }
 			options={ [
