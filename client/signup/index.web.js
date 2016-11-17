@@ -25,6 +25,7 @@ module.exports = function() {
 		page( '/jetpack/connect/install', jetpackConnectController.install );
 
 		page( '/jetpack/connect/personal', jetpackConnectController.personal );
+		page( '/jetpack/connect/personal/:intervalType', jetpackConnectController.personal );
 
 		page( '/jetpack/connect/premium', jetpackConnectController.premium );
 		page( '/jetpack/connect/premium/:intervalType', jetpackConnectController.premium );
