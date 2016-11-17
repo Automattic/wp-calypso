@@ -4,8 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import noop from 'lodash/noop';
-import times from 'lodash/times';
+import { noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,10 +60,9 @@ function refreshCardFactory( post ) {
 
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
-module.exports = React.createClass( {
-	displayName: 'ReaderFollowing',
+export default class ReaderStream extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		store: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		suppressSiteNameLink: React.PropTypes.bool,
@@ -76,52 +74,48 @@ module.exports = React.createClass( {
 		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
 		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
 		showMobileBackToSidebar: React.PropTypes.bool
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			showPostHeader: true,
-			suppressSiteNameLink: false,
-			showFollowInHeader: false,
-			onShowUpdates: noop,
-			className: '',
-			showDefaultEmptyContentIfMissing: true,
-			showPrimaryFollowButtonOnCards: true,
-			showMobileBackToSidebar: true
-		};
-	},
+	static defaultProps = {
+		showPostHeader: true,
+		suppressSiteNameLink: false,
+		showFollowInHeader: false,
+		onShowUpdates: noop,
+		className: '',
+		showDefaultEmptyContentIfMissing: true,
+		showPrimaryFollowButtonOnCards: true,
+		showMobileBackToSidebar: true
+	};
 
-	getInitialState: function() {
-		return this.getStateFromStores();
-	},
-
-	getStateFromStores: function( store ) {
+	getStateFromStores( store ) {
 		store = store || this.props.store;
 		return {
 			posts: store.get(),
 			updateCount: store.getUpdateCount(),
 			selectedIndex: store.getSelectedIndex()
 		};
-	},
+	}
 
-	updateState: function( store ) {
+	state = this.getStateFromStores();
+
+	updateState = ( store ) => {
 		this.setState( this.getStateFromStores( store ) );
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				this.showSelectedPost( { replaceHistory: true } );
 			}
 		}
-	},
+	}
 
-	_popstate: function() {
+	_popstate = () => {
 		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
-	},
+	}
 
 	cardClassForPost( post ) {
 		if ( this.props.cardFactory ) {
@@ -131,23 +125,18 @@ module.exports = React.createClass( {
 			}
 		}
 		return defaultCardFactory( post );
-	},
+	}
 
-	scrollToSelectedPost: function( animate ) {
-		let HEADER_OFFSET = -80, // a fixed position header means we can't just scroll the element into view.
-			selectedNode,
-			boundingClientRect,
-			documentElement,
-			windowTop,
-			scrollY;
-		selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
+	scrollToSelectedPost( animate ) {
+		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
+		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
 		if ( selectedNode ) {
-			documentElement = document.documentElement;
+			const documentElement = document.documentElement;
 			selectedNode.focus();
-			windowTop = ( window.pageYOffset || documentElement.scrollTop ) -
+			const windowTop = ( window.pageYOffset || documentElement.scrollTop ) -
 				( documentElement.clientTop || 0 );
-			boundingClientRect = selectedNode.getBoundingClientRect();
-			scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
+			const boundingClientRect = selectedNode.getBoundingClientRect();
+			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
@@ -158,9 +147,9 @@ module.exports = React.createClass( {
 				window.scrollTo( 0, scrollY );
 			}
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.props.store.on( 'change', this.updateState );
 		PostStore.on( 'change', this.updateState ); // should move this dep down into the individual items
 
@@ -173,9 +162,9 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'manual';
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.props.store.off( 'change', this.updateState );
 		PostStore.off( 'change', this.updateState );
 
@@ -188,20 +177,20 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'auto';
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.store !== this.props.store ) {
 			this.props.store.off( 'change', this.updateState );
 			nextProps.store.on( 'change', this.updateState );
 			this.updateState( nextProps.store );
 			this._list && this._list.reset();
 		}
-	},
+	}
 
-	showSelectedPost: function( options ) {
-		let postKey = this.props.store.getSelectedPost(),
-			mappedPost;
+	showSelectedPost = ( options ) => {
+		const postKey = this.props.store.getSelectedPost();
+
 		if ( !! postKey ) {
 			// gap
 			if ( postKey.isGap === true ) {
@@ -213,6 +202,7 @@ module.exports = React.createClass( {
 				return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
 			}
 			// normal
+			let mappedPost;
 			if ( !! postKey.feedId ) {
 				mappedPost = {
 					feed_ID: postKey.feedId,
@@ -226,9 +216,9 @@ module.exports = React.createClass( {
 			}
 			this.showFullPost( mappedPost, options );
 		}
-	},
+	}
 
-	toggleLikeOnSelectedPost: function() {
+	toggleLikeOnSelectedPost = () => {
 		const postKey = this.props.store.getSelectedPost();
 		let post;
 
@@ -249,42 +239,40 @@ module.exports = React.createClass( {
 		if ( LikeHelper.shouldShowLikes( post ) ) {
 			this.toggleLikeAction( post.site_ID, post.ID );
 		}
-	},
+	}
 
-	toggleLikeAction: function( siteId, postId ) {
+	toggleLikeAction( siteId, postId ) {
 		const liked = LikeStore.isPostLikedByCurrentUser( siteId, postId );
 		if ( liked === null ) {
 			// unknown... ignore for now
 			return;
 		}
 		LikeStoreActions[ liked ? 'unlikePost' : 'likePost' ]( siteId, postId );
-	},
+	}
 
-	isPostFullScreen: function() {
+	isPostFullScreen() {
 		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
-	},
+	}
 
-	goToTop: function() {
+	goToTop = () => {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
 			FeedStreamStoreActions.selectItem( this.props.store.id, 0 );
 		}
-	},
+	}
 
-	getVisibleItemIndexes: function() {
+	getVisibleItemIndexes() {
 		return this._list && this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } );
-	},
+	}
 
-	selectNextItem: function() {
-		let visibleIndexes = this.getVisibleItemIndexes(),
-			visibleIndex,
-			index,
-			i;
+	selectNextItem = () => {
+		const visibleIndexes = this.getVisibleItemIndexes();
+
 		if ( visibleIndexes && visibleIndexes.length > 0 ) {
-			index = visibleIndexes[ 0 ].index;
-			for ( i = 0; i < visibleIndexes.length; i++ ) {
-				visibleIndex = visibleIndexes[ i ];
+			let index = visibleIndexes[ 0 ].index;
+			for ( let i = 0; i < visibleIndexes.length; i++ ) {
+				const visibleIndex = visibleIndexes[ i ];
 				if ( visibleIndex.bounds.top > 0 ) {
 					index = visibleIndex.index;
 					break;
@@ -296,17 +284,14 @@ module.exports = React.createClass( {
 				FeedStreamStoreActions.selectItem( this.props.store.id, index );
 			}
 		}
-	},
+	}
 
-	selectPrevItem: function() {
-		let visibleIndexes = this.getVisibleItemIndexes(),
-			visibleIndex,
-			index,
-			i;
+	selectPrevItem = () => {
+		const visibleIndexes = this.getVisibleItemIndexes();
 		if ( visibleIndexes && visibleIndexes.length > 0 ) {
-			index = visibleIndexes[ 0 ].index;
-			for ( i = 0; i < visibleIndexes.length; i++ ) {
-				visibleIndex = visibleIndexes[ i ];
+			let index = visibleIndexes[ 0 ].index;
+			for ( let i = 0; i < visibleIndexes.length; i++ ) {
+				const visibleIndex = visibleIndexes[ i ];
 				if ( visibleIndex.bounds.top < 0 ) {
 					index = visibleIndex.index;
 					break;
@@ -318,9 +303,9 @@ module.exports = React.createClass( {
 				FeedStreamStoreActions.selectItem( this.props.store.id, index );
 			}
 		}
-	},
+	}
 
-	fetchNextPage: function( options ) {
+	fetchNextPage = ( options ) => {
 		if ( this.props.store.isLastPage() || this.props.store.isFetchingNextPage() ) {
 			return;
 		}
@@ -328,18 +313,18 @@ module.exports = React.createClass( {
 			this.props.trackScrollPage( this.props.store.getPage() + 1 );
 		}
 		FeedStreamStoreActions.fetchNextPage( this.props.store.id );
-	},
+	}
 
-	showUpdates: function() {
+	showUpdates = () => {
 		this.props.onUpdatesShown();
 		FeedStreamStoreActions.showUpdates( this.props.store.id );
 		if ( this._list ) {
 			this._list.scrollToTop();
 		}
-	},
+	}
 
-	renderLoadingPlaceholders: function() {
-		let count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
+	renderLoadingPlaceholders = () => {
+		const count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
 			placeholders = [];
 
 		times( count, function( i ) {
@@ -347,13 +332,13 @@ module.exports = React.createClass( {
 		} );
 
 		return placeholders;
-	},
+	}
 
-	getPostRef: function( postKey ) {
+	getPostRef = ( postKey ) => {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
-	},
+	}
 
-	showFullXPost: function( xMetadata ) {
+	showFullXPost( xMetadata ) {
 		if ( xMetadata.blogId && xMetadata.postId ) {
 			const mappedPost = {
 				site_ID: xMetadata.blogId,
@@ -363,9 +348,9 @@ module.exports = React.createClass( {
 		} else {
 			window.open( xMetadata.postURL );
 		}
-	},
+	}
 
-	showFullPost: function( post, options ) {
+	showFullPost( post, options ) {
 		options = options || {};
 		let hashtag = '';
 		if ( options.comments ) {
@@ -377,15 +362,12 @@ module.exports = React.createClass( {
 		} else {
 			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag );
 		}
-	},
+	}
 
-	renderPost: function( postKey, index ) {
-		let post,
-			postState,
-			itemKey,
-			content,
-			PostClass,
-			isSelected = index === this.state.selectedIndex;
+	renderPost = ( postKey, index ) => {
+		let postState,
+			PostClass;
+		const isSelected = index === this.state.selectedIndex;
 
 		if ( postKey.isGap ) {
 			return (
@@ -402,9 +384,9 @@ module.exports = React.createClass( {
 				);
 		}
 
-		post = PostStore.get( postKey );
+		const post = PostStore.get( postKey );
 		postState = post._state;
-		itemKey = this.getPostRef( postKey );
+		const itemKey = this.getPostRef( postKey );
 
 		if ( ! post || postState === 'minimal' ) {
 			FeedPostStoreActions.fetchPost( postKey );
@@ -413,16 +395,14 @@ module.exports = React.createClass( {
 
 		switch ( postState ) {
 			case 'pending':
-				content = <PostPlaceholder key={ 'feed-post-placeholder-' + itemKey } />;
-				break;
+				return <PostPlaceholder key={ 'feed-post-placeholder-' + itemKey } />;
 			case 'error':
-				content = <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
-				break;
+				return <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
 			default:
 				PostClass = this.cardClassForPost( post );
 				if ( PostClass === CrossPost ) {
 					const xMetadata = XPostHelper.getXPostMetadata( post );
-					content = React.createElement( CrossPost, {
+					return React.createElement( CrossPost, {
 						ref: itemKey,
 						key: itemKey,
 						post: post,
@@ -431,29 +411,28 @@ module.exports = React.createClass( {
 						xPostedTo: this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL ),
 						handleClick: this.showFullXPost
 					} );
-				} else {
-					content = React.createElement( PostClass, {
-						ref: itemKey,
-						key: itemKey,
-						post: post,
-						isSelected: isSelected,
-						xPostedTo: this.props.store.getSitesCrossPostedTo( post.URL ),
-						suppressSiteNameLink: this.props.suppressSiteNameLink,
-						showPostHeader: this.props.showPostHeader,
-						showFollowInHeader: this.props.showFollowInHeader,
-						handleClick: this.showFullPost,
-						showPrimaryFollowButtonOnCards: this.props.showPrimaryFollowButtonOnCards
-					} );
 				}
 
-		}
-		return content;
-	},
+				return React.createElement( PostClass, {
+					ref: itemKey,
+					key: itemKey,
+					post: post,
+					isSelected: isSelected,
+					xPostedTo: this.props.store.getSitesCrossPostedTo( post.URL ),
+					suppressSiteNameLink: this.props.suppressSiteNameLink,
+					showPostHeader: this.props.showPostHeader,
+					showFollowInHeader: this.props.showFollowInHeader,
+					handleClick: this.showFullPost,
+					showPrimaryFollowButtonOnCards: this.props.showPrimaryFollowButtonOnCards
+				} );
 
-	render: function() {
-		let store = this.props.store,
-			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			body, showingStream;
+		}
+	}
+
+	render() {
+		const store = this.props.store,
+			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 );
+		let body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
 			body = this.props.emptyContent;
@@ -494,5 +473,4 @@ module.exports = React.createClass( {
 			</CurrentMain>
 		);
 	}
-
-} );
+}
