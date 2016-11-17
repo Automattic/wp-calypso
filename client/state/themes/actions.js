@@ -20,8 +20,8 @@ import {
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_DETAILS_REQUEST,
-	THEME_CURRENT_REQUEST_SUCCESS,
 	THEME_CURRENT_REQUEST,
+	THEME_CURRENT_REQUEST_SUCCESS,
 	THEME_CURRENT_REQUEST_FAILURE,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
@@ -82,7 +82,7 @@ export function requestActiveTheme( siteId ) {
 			siteId,
 		} );
 
-		wpcom.undocumented().activeTheme( siteId )
+		return wpcom.undocumented().activeTheme( siteId )
 			.then( theme => {
 				debug( 'Received current theme', theme );
 				dispatch( {
