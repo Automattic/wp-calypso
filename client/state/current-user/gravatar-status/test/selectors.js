@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 		const currentUserId = 1;
 		const anotherUserId = 2;
 
-		it( 'returns false if user ID is not passed in', () => {
+		it( 'returns false if user ID is not passed in, or is false', () => {
 			const state = {
 				currentUser: {
 					gravatarStatus: {
@@ -57,6 +57,7 @@ describe( 'selectors', () => {
 				}
 			};
 			expect( getUserTempGravatar( state ) ).to.equal( false );
+			expect( getUserTempGravatar( state, false ) ).to.equal( false );
 		} );
 
 		it( 'returns false if the user ID passed is not the current user ID', () => {
