@@ -109,6 +109,7 @@ function renderPluginList( context, basePath ) {
 			? ' ' + capitalize( context.params.pluginFilter )
 			: ''
 		);
+
 	let baseAnalyticsPath = 'plugins';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';

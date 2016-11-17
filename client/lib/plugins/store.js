@@ -210,6 +210,9 @@ PluginsStore = {
 	// Get Plugins for a single site
 	getSitePlugins: function( site ) {
 		var storedList;
+		if ( ! site ) {
+			return [];
+		}
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
 			storedList = getPluginsBySiteFromStorage( site.ID );
 
