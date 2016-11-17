@@ -29,6 +29,17 @@ import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { queriesSchema } from './schema';
 import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
+import { createReducer } from 'state/utils';
+import {
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+} from 'state/action-types';
+
+export const activeThemes = createReducer( {}, {
+	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
+		...state,
+		[ siteId ]: theme.id
+	} )
+} );
 
 /**
  * Returns the updated site theme requests state after an action has been
