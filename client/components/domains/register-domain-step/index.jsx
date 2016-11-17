@@ -15,6 +15,7 @@ import page from 'page';
 import qs from 'qs';
 import { connect } from 'react-redux';
 import { endsWith } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -262,7 +263,7 @@ const RegisterDomainStep = React.createClass( {
 					onSearch={ this.onSearch }
 					onSearchChange={ this.onSearchChange }
 					onBlur={ this.save }
-					placeholder={ this.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+					placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
 					autoFocus={ true }
 					delaySearch={ true }
 					delayTimeout={ 1000 }
@@ -525,10 +526,13 @@ const RegisterDomainStep = React.createClass( {
 	showValidationErrorMessage: function( domain, error ) {
 		let message,
 			severity = 'error';
+		const lastIndexOfDot = domain.lastIndexOf( '.' ),
+			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot ),
+			translate = this.props.translate;
 
 		switch ( error.code ) {
 			case 'dotblog_domain':
-				message = this.translate(
+				message = translate(
 					'Coming soon! {{strong}}.blog{{/strong}} domains will be available on {{strong}}November 21st{{/strong}}.',
 					{
 						components: {
@@ -539,16 +543,29 @@ const RegisterDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'available_but_not_registrable':
-				const tldIndex = domain.lastIndexOf( '.' );
-				if ( tldIndex !== -1 ) {
-					message = this.translate(
+				if ( tld ) {
+					message = translate(
 						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
 						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 						{
-							args: { tld: domain.substring( tldIndex ) },
+							args: { tld },
 							components: {
 								strong: <strong />,
 								a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
+							}
+						}
+					);
+					severity = 'info';
+				}
+				break;
+			case 'tld_in_maintenance':
+				if ( tld ) {
+					message = translate(
+						'Domains ending with {{strong}}%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
+						{
+							args: { tld },
+							components: {
+								strong: <strong />
 							}
 						}
 					);
@@ -564,7 +581,7 @@ const RegisterDomainStep = React.createClass( {
 
 			case 'not_mappable_blacklisted_domain':
 				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
-					message = this.translate(
+					message = translate(
 						'Due to {{a1}}trademark policy{{/a1}}, ' +
 						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
 						'Please {{a2}}contact support{{/a2}} if you have any questions.',
@@ -577,53 +594,53 @@ const RegisterDomainStep = React.createClass( {
 						}
 					);
 				} else {
-					message = this.translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
+					message = translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
 				}
 				break;
 
 			case 'not_mappable_forbidden_subdomain':
-				message = this.translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
+				message = translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
 				break;
 
 			case 'not_mappable_invalid_tld':
 			case 'invalid_query':
-				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+				message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'not_mappable_mapped_domain':
-				message = this.translate( 'This domain is already mapped to a WordPress.com site.' );
+				message = translate( 'This domain is already mapped to a WordPress.com site.' );
 				break;
 
 			case 'not_mappable_restricted_domain':
-				message = this.translate(
+				message = translate(
 					'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
 				);
 				break;
 
 			case 'not_mappable_recently_mapped':
-				message = this.translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
+				message = translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
 					'Please try again later or contact support.' );
 				break;
 
 			// Generic error message when domain is not mappable without an explicit unmappability reason
 			case 'not_mappable':
-				message = this.translate( 'Sorry, this domain cannot be mapped.' );
+				message = translate( 'Sorry, this domain cannot be mapped.' );
 				break;
 
 			case 'empty_query':
-				message = this.translate( 'Please enter a domain name or keyword.' );
+				message = translate( 'Please enter a domain name or keyword.' );
 				break;
 
 			case 'empty_results':
-				message = this.translate( "We couldn't find any available domains for: %(domain)s", {
+				message = translate( "We couldn't find any available domains for: %(domain)s", {
 					args: { domain }
 				} );
 				break;
 
 			case 'server_error':
-				message = this.translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
+				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 				break;
 
 			default:
@@ -643,4 +660,4 @@ module.exports = connect( ( state, props ) => {
 		defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 		defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject )
 	};
-} )( RegisterDomainStep );
+} )( localize( RegisterDomainStep ) );
