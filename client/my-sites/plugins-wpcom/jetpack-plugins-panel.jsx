@@ -169,7 +169,7 @@ class JetpackPluginsPanel extends Component {
 								{ translate( 'Jetpack by WordPress.com' ) }
 							</div>
 							<div className="plugins-wpcom__plugin-description">
-								{ translate( 'Jetpack essential features are included on every plan' ) }
+								{ translate( 'Jetpack essential features are included with every plan' ) }
 							</div>
 						</div>
 					</div>
