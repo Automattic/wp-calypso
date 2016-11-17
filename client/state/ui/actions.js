@@ -8,6 +8,7 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
+	ISOMORPHIC_ID_INCREMENT,
 } from 'state/action-types';
 
 /**
@@ -65,5 +66,11 @@ export function setPreviewShowing( isShowing ) {
 	return {
 		type: PREVIEW_IS_SHOWING,
 		isShowing,
+	};
+}
+
+export function incrementIsomorphicId() {
+	return {
+		type: ISOMORPHIC_ID_INCREMENT,
 	};
 }

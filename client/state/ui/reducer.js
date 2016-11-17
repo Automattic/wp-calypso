@@ -12,6 +12,8 @@ import {
 	PREVIEW_IS_SHOWING,
 	SERIALIZE,
 	DESERIALIZE,
+	SERVER_DESERIALIZE,
+	ISOMORPHIC_ID_INCREMENT,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
@@ -71,12 +73,21 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
+export const currentIsomorphicId = createReducer( 0, {
+	[ ISOMORPHIC_ID_INCREMENT ]: state => state + 1,
+	// Since we want to keep server and client counts in sync, both renders need to
+	// start with the count at 0. So let's reset the count when the client picks up
+	// the state from the server.
+	[ SERVER_DESERIALIZE ]: () => 0
+} );
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
 	layoutFocus,
 	hasSidebar,
 	isPreviewShowing,
+	currentIsomorphicId,
 	queryArguments,
 	selectedSiteId,
 	guidedTour,

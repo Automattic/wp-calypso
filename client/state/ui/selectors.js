@@ -141,3 +141,7 @@ export function hasSidebar( state ) {
 	}
 	return get( getSection( state ), 'secondary', true );
 }
+
+export function getCurrentIsomorphicId( state ) {
+	return state.ui.currentIsomorphicId;
+}

@@ -17,6 +17,7 @@ import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
 import { isMobile } from 'lib/viewport';
+import addIsomorphicComponentId from 'components/isomorphic-id';
 
 /**
  * Internal variables
@@ -35,10 +36,6 @@ function keyListener( methodToCall, event ) {
 const Search = React.createClass( {
 
 	displayName: 'Search',
-
-	statics: {
-		instances: 0
-	},
 
 	propTypes: {
 		additionalClasses: PropTypes.string,
@@ -71,8 +68,7 @@ const Search = React.createClass( {
 		return {
 			keyword: this.props.initialValue || '',
 			isOpen: !! this.props.isOpen,
-			hasFocus: false,
-			instanceId: 0
+			hasFocus: false
 		};
 	},
 
@@ -164,16 +160,6 @@ const Search = React.createClass( {
 			// this hack makes autoFocus work correctly in Dropdown
 			setTimeout( () => this.focus(), 0 );
 		}
-
-		// Setting a unique instance ID lets each component instance have unique HTML id
-		// attributes, needed for proper ARIA support. Unfortunately, setting this before
-		// first render causes reconciliation errors when the component is server-rendered
-		// (it's tough to keep the server and client instance count sync'd). That's why
-		// we're only setting a unique ID after the client has mounted.
-		// eslint-disable-next-line react/no-did-mount-set-state
-		this.setState( {
-			instanceId: ++Search.instances
-		} );
 	},
 
 	scrollOverlay: function() {
@@ -331,14 +317,14 @@ const Search = React.createClass( {
 						? this.openListener
 						: null
 					}
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.props.componentId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
 					<input
 						type="search"
-						id={ 'search-component-' + this.state.instanceId }
+						id={ 'search-component-' + this.props.componentId }
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
@@ -380,7 +366,7 @@ const Search = React.createClass( {
 					onTouchTap={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.props.componentId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
 					<Gridicon icon="cross" className="search__close-icon" />
 				</div>
@@ -391,4 +377,4 @@ const Search = React.createClass( {
 	}
 } );
 
-module.exports = Search;
+module.exports = addIsomorphicComponentId( Search );
