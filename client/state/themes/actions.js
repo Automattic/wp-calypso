@@ -76,13 +76,13 @@ export function incrementThemesPage( site ) {
 }
 
 /**
-	* This action queries wpcom endpoint for active theme for site.
-	* If request success formation about active theme is stored in Redux themes subtree.
-	* In case of error, error is stored in Redux themes subtree.
-	*
-	* @param  {Object} siteId Site for which to check active theme
-	* @return {Object}        Redux thunk with request action
-	*/
+ * This action queries wpcom endpoint for active theme for site.
+ * If request success information about active theme is stored in Redux themes subtree.
+ * In case of error, error is stored in Redux themes subtree.
+ *
+ * @param  {Object} siteId Site for which to check active theme
+ * @return {Object}        Redux thunk with request action
+ */
 export function requestActiveTheme( siteId ) {
 	return dispatch => {
 		dispatch( {
