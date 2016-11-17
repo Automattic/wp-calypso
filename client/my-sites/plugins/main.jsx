@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import debugModule from 'debug';
 import classNames from 'classnames';
-import getOr from 'lodash/get';
 import some from 'lodash/some';
 import find from 'lodash/find';
 import isEmpty from 'lodash/isEmpty';
@@ -340,7 +339,7 @@ const PluginsMain = React.createClass( {
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite();
 
-		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
+		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }

@@ -44,6 +44,11 @@ module.exports = React.createClass( {
 
 	applyCoupon: function( event ) {
 		event.preventDefault();
+
+		analytics.tracks.recordEvent( 'calypso_checkout_coupon_submit', {
+			coupon_code: this.state.couponInputValue
+		} );
+
 		this.setState( {
 			userChangedCoupon: false,
 			hasSubmittedCoupon: true
