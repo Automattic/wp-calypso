@@ -12,10 +12,14 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
 	activateTheme,
+	requestActiveTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -118,6 +122,93 @@ describe( 'actions', () => {
 
 			return activateTheme( 'badTheme', 2211667, trackingData )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( themeActivationFailure );
+			} );
+		} );
+	} );
+
+	describe( '#requestActiveTheme', () => {
+		const successResponse = {
+			id: 'rebalance',
+			screenshot: 'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/rebalance/screenshot.png?ssl=1',
+			cost: {
+				currency: 'USD',
+				number: 0,
+				display: ''
+			},
+			version: '1.1.1',
+			download_url: 'https://public-api.wordpress.com/rest/v1/themes/download/rebalance.zip',
+			trending_rank: 17,
+			popularity_rank: 183,
+			launch_date: '2016-05-13',
+			name: 'Rebalance',
+			description: 'Rebalance is a new spin on the classic ' +
+				'Imbalance 2 portfolio theme. It is a simple, modern' +
+				'theme for photographers, artists, and graphic designers' +
+				'looking to showcase their work.',
+			tags: [
+				'responsive-layout',
+				'one-column',
+				'two-columns',
+				'three-columns',
+				'custom-background',
+				'custom-colors',
+				'custom-menu',
+				'featured-images',
+				'featured-content-with-pages',
+				'theme-options',
+				'threaded-comments',
+				'translation-ready'
+			],
+			preview_url: 'https://unittest.wordpress.com/?theme=pub/rebalance&hide_banners=true'
+		};
+
+		const failureResponse = {
+			status: 404,
+			code: 'unknown_blog',
+			message: 'Unknown blog'
+		};
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/rest/v1.1/sites/2211667/themes/mine' )
+				.reply( 200, successResponse )
+				.get( '/rest/v1.1/sites/666/themes/mine' )
+				.reply( 404, failureResponse );
+		} );
+
+		it( 'should dispatch active theme request action when triggered', () => {
+			requestActiveTheme( 2211667 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: ACTIVE_THEME_REQUEST,
+				siteId: 2211667,
+			} );
+		} );
+
+		it( 'should dispatch active theme request success action when request completes', () => {
+			return requestActiveTheme( 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: ACTIVE_THEME_REQUEST_SUCCESS,
+					siteId: 2211667,
+					themeId: 'rebalance',
+					themeName: 'Rebalance',
+					themeCost: {
+						currency: 'USD',
+						number: 0,
+						display: ''
+					}
+				} );
+			} );
+		} );
+
+		it( 'should dispatch active theme request failure action when request completes', () => {
+			return requestActiveTheme( 666 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: ACTIVE_THEME_REQUEST_FAILURE,
+					siteId: 666,
+					error: sinon.match( { message: 'Unknown blog' } ),
+				} );
 			} );
 		} );
 	} );

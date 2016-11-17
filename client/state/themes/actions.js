@@ -20,9 +20,9 @@ import {
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_DETAILS_REQUEST,
-	THEME_RECEIVE_CURRENT,
-	THEME_REQUEST_CURRENT,
-	THEME_REQUEST_CURRENT_FAILURE,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	THEMES_RECEIVE,
@@ -75,18 +75,26 @@ export function incrementThemesPage( site ) {
 	};
 }
 
-export function fetchCurrentTheme( siteId ) {
+/**
+ * This action queries wpcom endpoint for active theme for site.
+ * If request success information about active theme is stored in Redux themes subtree.
+ * In case of error, error is stored in Redux themes subtree.
+ *
+ * @param  {Object} siteId Site for which to check active theme
+ * @return {Object}        Redux thunk with request action
+ */
+export function requestActiveTheme( siteId ) {
 	return dispatch => {
 		dispatch( {
-			type: THEME_REQUEST_CURRENT,
+			type: ACTIVE_THEME_REQUEST,
 			siteId,
 		} );
 
-		wpcom.undocumented().activeTheme( siteId )
+		return wpcom.undocumented().activeTheme( siteId )
 			.then( theme => {
 				debug( 'Received current theme', theme );
 				dispatch( {
-					type: THEME_RECEIVE_CURRENT,
+					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId,
 					themeId: theme.id,
 					themeName: theme.name,
@@ -94,7 +102,7 @@ export function fetchCurrentTheme( siteId ) {
 				} );
 			} ).catch( error => {
 				dispatch( {
-					type: THEME_REQUEST_CURRENT_FAILURE,
+					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId,
 					error,
 				} );

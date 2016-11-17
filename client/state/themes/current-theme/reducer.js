@@ -13,9 +13,9 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_CLEAR_ACTIVATED,
-	THEME_RECEIVE_CURRENT,
-	THEME_REQUEST_CURRENT,
-	THEME_REQUEST_CURRENT_FAILURE,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
 } from 'state/action-types';
 
 export const initialState = fromJS( {
@@ -27,7 +27,7 @@ export const initialState = fromJS( {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case THEME_RECEIVE_CURRENT:
+		case ACTIVE_THEME_REQUEST_SUCCESS:
 			// Don't update if the site's theme remains the same.
 			// This way, we won't lose information obtained from and endpoint holding
 			// more information than `/v1.1/sites/example.wordpress.com/themes/mine`,
@@ -45,9 +45,9 @@ export default ( state = initialState, action ) => {
 				} );
 			}
 			return newState.setIn( [ 'requesting', action.siteId ], false );
-		case THEME_REQUEST_CURRENT:
+		case ACTIVE_THEME_REQUEST:
 			return state.setIn( [ 'requesting', action.siteId ], true );
-		case THEME_REQUEST_CURRENT_FAILURE:
+		case ACTIVE_THEME_REQUEST_FAILURE:
 			return state.setIn( [ 'requesting', action.siteId ], false );
 		case THEME_ACTIVATE_REQUEST:
 			return state.set( 'isActivating', true );

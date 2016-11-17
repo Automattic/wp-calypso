@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchCurrentTheme } from 'state/themes/actions';
+import { requestActiveTheme } from 'state/themes/actions';
 import { isRequestingCurrentTheme } from 'state/themes/current-theme/selectors';
 
 class QueryCurrentTheme extends Component {
@@ -29,7 +29,7 @@ class QueryCurrentTheme extends Component {
 
 	refresh( requestingCurrentTheme, siteId ) {
 		if ( ! requestingCurrentTheme ) {
-			this.props.fetchCurrentTheme( siteId );
+			this.props.requestActiveTheme( siteId );
 		}
 	}
 
@@ -42,12 +42,12 @@ QueryCurrentTheme.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	// connected props
 	requestingCurrentTheme: PropTypes.bool,
-	fetchCurrentTheme: PropTypes.func,
+	requestActiveTheme: PropTypes.func,
 };
 
 export default connect(
 	( state, props ) => (
 		{ requestingCurrentTheme: isRequestingCurrentTheme( state, props.site && props.site.ID ) }
 	),
-	{ fetchCurrentTheme }
+	{ requestActiveTheme }
 )( QueryCurrentTheme );
