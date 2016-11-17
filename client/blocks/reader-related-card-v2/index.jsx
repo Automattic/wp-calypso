@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { getPost } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
@@ -27,9 +26,9 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post, site } ) {
+function AuthorAndSiteFollow( { post } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
-	const authorAndSiteAreDifferent = site.title.toLowerCase() !== post.author.name.toLowerCase();
+	const authorAndSiteAreDifferent = post.site_name.toLowerCase() !== post.author.name.toLowerCase();
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl }>
@@ -41,7 +40,7 @@ function AuthorAndSiteFollow( { post, site } ) {
 				</span>
 				{ authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-site">
-					<a href={ siteUrl } className="reader-related-card-v2__link">{ site.title }</a>
+					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.site_name }</a>
 				</span>
 				}
 			</div>
@@ -82,7 +81,7 @@ function RelatedPostCardPlaceholder() {
 }
 
 /* eslint-disable no-unused-vars */
-export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
@@ -97,7 +96,7 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 
 	return (
 		<Card className={ classes }>
-			<AuthorAndSiteFollow post={ post } site={ site } />
+			<AuthorAndSiteFollow post={ post } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ partial( onPostClick, post ) } >
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
@@ -119,10 +118,8 @@ export default connect(
 	( state, ownProps ) => {
 		const { post } = ownProps;
 		const actualPost = getPost( state, post );
-		const site = actualPost && getSite( state, actualPost.site_ID );
 		return {
-			post: actualPost,
-			site
+			post: actualPost
 		};
 	}
 )( LocalizedRelatedPostCard );

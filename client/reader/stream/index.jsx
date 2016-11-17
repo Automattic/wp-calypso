@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { noop, times } from 'lodash';
+import { map, noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,8 @@ import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import FeedstoreActions from 'lib/feed-post-store/actions';
+import Gridicon from 'components/gridicon';
 import ListGap from 'reader/list-gap';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
@@ -29,11 +30,13 @@ import page from 'page';
 import PostUnavailable from './post-unavailable';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
+import SiteStore from 'lib/reader-site-store';
 import UpdateNotice from 'reader/update-notice';
 import PostBlocked from './post-blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
+import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -60,10 +63,31 @@ function refreshCardFactory( post ) {
 
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
+function injectRecommendations( posts, recs = [] ) {
+	if ( ! recs || recs.length === 0 ) {
+		return posts;
+	}
+	const items = [];
+	const itemsBetweenRecs = 5;
+	const recsPerBlock = 2;
+	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += itemsBetweenRecs, recIndex += recsPerBlock ) {
+		items.push.apply( items, posts.slice( postIndex, postIndex + itemsBetweenRecs ) );
+		// only insert recs if we have them and if we filled a full block of posts
+		if ( recIndex < recs.length && postIndex + itemsBetweenRecs < posts.length ) {
+			items.push( {
+				isRecommendationBlock: true,
+				recommendations: recs.slice( recIndex, recIndex + recsPerBlock )
+			} );
+		}
+	}
+	return items;
+}
+
 export default class ReaderStream extends React.Component {
 
 	static propTypes = {
 		store: React.PropTypes.object.isRequired,
+		recommendationsStore: React.PropTypes.object,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		suppressSiteNameLink: React.PropTypes.bool,
 		showPostHeader: React.PropTypes.bool,
@@ -87,10 +111,13 @@ export default class ReaderStream extends React.Component {
 		showMobileBackToSidebar: true
 	};
 
-	getStateFromStores( store ) {
-		store = store || this.props.store;
+	getStateFromStores( store = this.props.store, recommendationsStore = this.props.recommendationsStore ) {
+		const posts = store.get();
+		const recs = recommendationsStore ? recommendationsStore.get() : null;
+		const items = injectRecommendations( posts, recs );
 		return {
-			posts: store.get(),
+			items,
+			posts,
 			updateCount: store.getUpdateCount(),
 			selectedIndex: store.getSelectedIndex()
 		};
@@ -151,6 +178,7 @@ export default class ReaderStream extends React.Component {
 
 	componentDidMount() {
 		this.props.store.on( 'change', this.updateState );
+		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
 		PostStore.on( 'change', this.updateState ); // should move this dep down into the individual items
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
@@ -166,6 +194,7 @@ export default class ReaderStream extends React.Component {
 
 	componentWillUnmount() {
 		this.props.store.off( 'change', this.updateState );
+		this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
 		PostStore.off( 'change', this.updateState );
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
@@ -182,8 +211,12 @@ export default class ReaderStream extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.store !== this.props.store ) {
 			this.props.store.off( 'change', this.updateState );
+			this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
+
 			nextProps.store.on( 'change', this.updateState );
-			this.updateState( nextProps.store );
+			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
+
+			this.updateState( nextProps.store, nextProps.recommendationsStore );
 			this._list && this._list.reset();
 		}
 	}
@@ -196,11 +229,18 @@ export default class ReaderStream extends React.Component {
 			if ( postKey.isGap === true ) {
 				return this._selectedGap.handleClick();
 			}
+
+			// rec block
+			if ( postKey.isRecommendationBlock ) {
+				return;
+			}
+
 			// xpost
 			const post = PostStore.get( postKey );
 			if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
 				return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
 			}
+
 			// normal
 			let mappedPost;
 			if ( !! postKey.feedId ) {
@@ -313,6 +353,9 @@ export default class ReaderStream extends React.Component {
 			this.props.trackScrollPage( this.props.store.getPage() + 1 );
 		}
 		FeedStreamStoreActions.fetchNextPage( this.props.store.id );
+		if ( this.props.recommendationsStore ) {
+			FeedStreamStoreActions.fetchNextPage( this.props.recommendationsStore.id );
+		}
 	}
 
 	showUpdates = () => {
@@ -384,12 +427,29 @@ export default class ReaderStream extends React.Component {
 				);
 		}
 
+		if ( postKey.isRecommendationBlock ) {
+			return (
+				<div className="reader-stream__recommendation-block" key={ `recommendation-${ index }` }>
+					<h5 className="reader-stream__recommendation-block-header"><Gridicon icon="star" /> Recommended Posts</h5>
+					<div className="reader-stream__recommendation-block-posts">
+					{
+						map( postKey.recommendations, postKey => {
+							const post = PostStore.get( postKey );
+							const site = SiteStore.get( postKey.blogId );
+							return post && <RelatedPostCard key={ post.global_ID } post={ post } site={ site } />;
+						}	)
+					}
+					</div>
+				</div>
+			);
+		}
+
 		const post = PostStore.get( postKey );
 		postState = post._state;
 		const itemKey = this.getPostRef( postKey );
 
 		if ( ! post || postState === 'minimal' ) {
-			FeedPostStoreActions.fetchPost( postKey );
+			FeedstoreActions.fetchPost( postKey );
 			postState = 'pending';
 		}
 
@@ -445,7 +505,7 @@ export default class ReaderStream extends React.Component {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
-			items={ this.state.posts }
+			items={ this.state.items }
 			lastPage={ this.props.store.isLastPage() }
 			fetchingNextPage={ this.props.store.isFetchingNextPage() }
 			guessedItemHeight={ GUESSED_POST_HEIGHT }

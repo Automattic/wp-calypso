@@ -393,3 +393,32 @@
 	font-size: 12px;
 	line-height: 1;
 }
+
+.reader-stream__recommendation-block {
+	margin: 20px 0;
+	border-bottom: 1px solid lighten( $gray, 30% );
+}
+
+.reader-stream__recommendation-block-posts {
+	display: flex;
+	flex-direction: row;
+}
+
+.reader-stream__recommendation-block-header {
+	color: lighten( $gray, 10% );
+	font-weight: 400;
+	text-transform: uppercase;
+	margin-top: -12px;
+	.gridicon {
+		fill: lighten( $gray, 10% );
+		position: relative;
+			top: 5px;
+	}
+}
+
+.reader-stream__recommendation-block-posts .reader-related-card-v2 {
+	margin: 16px 0;
+	&:first-child {
+		margin-right: 30px;
+	}
+}

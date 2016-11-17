@@ -148,7 +148,10 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
+			recommendationsStore = feedStreamFactory( 'recommendations_posts' ),
 			mcKey = 'following';
+
+		recommendationsStore.perPage = 2;
 
 		ensureStoreLoading( followingStore, context );
 
@@ -163,6 +166,7 @@ module.exports = {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
 					store: followingStore,
+					recommendationsStore,
 					showPrimaryFollowButtonOnCards: false,
 					trackScrollPage: trackScrollPage.bind(
 						null,
