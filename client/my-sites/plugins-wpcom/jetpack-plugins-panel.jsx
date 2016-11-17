@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import {
-	map,
 	identity,
 	find
 } from 'lodash';
@@ -111,6 +110,19 @@ class JetpackPluginsPanel extends Component {
 		];
 	}
 
+	getJetpackPlugins() {
+		const groupedPlugins = jetpackPlugins.map( group => this.filterGroup( group ) ).filter( g => g );
+		if ( groupedPlugins.length ) {
+			return groupedPlugins;
+		}
+
+		return <div>
+			{ this.props.translate( 'No features match your search for %s.', {
+				args: [ this.state.searchTerm ]
+			} )}
+		</div>;
+	}
+
 	filterGroup( group ) {
 		if ( 'all' === this.state.selectedGroup || group.category === this.state.selectedGroup ) {
 			const plugins = group.plugins.map( ( plugin, j ) => this.filterPlugin( plugin, j ) ).filter( p => p );
@@ -197,7 +209,7 @@ class JetpackPluginsPanel extends Component {
 				</CompactCard>
 
 				<CompactCard className="plugins-wpcom__jetpack-plugins-list">
-					{ map( jetpackPlugins, group => this.filterGroup( group ) ) }
+					{ this.getJetpackPlugins() }
 				</CompactCard>
 
 			</div>
