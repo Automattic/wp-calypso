@@ -70,6 +70,7 @@
 		"manage/seo": true,
 		"manage/sharing": true,
 		"manage/site-settings/analytics": true,
+		"manage/site-settings/categories": true,
 		"manage/site-settings/delete-site": true,
 		"manage/stats": true,
 		"manage/stats/podcasts": true,
