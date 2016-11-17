@@ -17,10 +17,11 @@ class TaxonomyManagerListItem extends Component {
 		name: PropTypes.string,
 		translate: PropTypes.func,
 		onClick: PropTypes.func,
+		onDelete: PropTypes.func,
 	};
 
 	static defaultProps = {
-		onClick: () => {}
+		onClick: () => {},
 	};
 
 	constructor( props ) {
@@ -44,8 +45,15 @@ class TaxonomyManagerListItem extends Component {
 		this.props.onClick();
 	};
 
+	deleteItem= () => {
+		this.setState( {
+			popoverMenuOpen: false
+		} );
+		this.props.onDelete();
+	};
+
 	render() {
-		const { name, translate } = this.props;
+		const { onDelete, name, translate } = this.props;
 
 		return (
 			<div>
@@ -68,10 +76,12 @@ class TaxonomyManagerListItem extends Component {
 						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem>
-						<Gridicon icon="trash" size={ 18 } />
-						{ translate( 'Delete' ) }
-					</PopoverMenuItem>
+					{ onDelete &&
+						<PopoverMenuItem onClick={ this.deleteItem }>
+							<Gridicon icon="trash" size={ 18 } />
+							{ translate( 'Delete' ) }
+						</PopoverMenuItem>
+					}
 					<PopoverMenuItem>
 						<Gridicon icon="external" size={ 18 } />
 						{ translate( 'View Posts' ) }

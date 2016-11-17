@@ -26,7 +26,8 @@ import {
 	getEditedPostValue,
 	getEditedPostSlug,
 	isEditedPostDirty,
-	getPostPreviewUrl
+	getPostPreviewUrl,
+	getSitePostsByTerm
 } from '../selectors';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -1686,6 +1687,44 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( slug ).to.eql( '' );
+		} );
+	} );
+
+	describe( 'getSitePostsByTerm()', () => {
+		it( 'should return an array of post objects for the site matching the termId', () => {
+			const postObjects = {
+				2916284: {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						terms: {
+							category: [
+								{ ID: 10 }
+							]
+						}
+					},
+					'6c831c187ffef321eb43a67761a525a3': {
+						ID: 413,
+						site_ID: 2916284,
+						global_ID: '6c831c187ffef321eb43a67761a525a3',
+						title: 'Ribs &amp; Chicken'
+					}
+				}
+			};
+			const state = {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: postObjects[ 2916284 ]
+						} )
+					},
+				}
+			};
+
+			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) )
+				.to.have.members( [ postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ] ] );
 		} );
 	} );
 } );

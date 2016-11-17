@@ -22,7 +22,8 @@ import {
 	receiveTerms,
 	removeTerm,
 	requestSiteTerms,
-	updateTerm
+	updateTerm,
+	deleteTerm
 } from '../actions';
 import PostQueryManager from 'lib/query-manager/post';
 import TermQueryManager from 'lib/query-manager/term';
@@ -322,6 +323,84 @@ describe( 'actions', () => {
 							[ taxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ]
 						}
 					}
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'deleteTerm()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:ribs/delete` )
+				.reply( 200, { status: 'ok' } );
+		} );
+
+		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
+			const postObjects = {
+				[ siteId ]: {
+					'0fcb4eb16f493c19b627438fdc18d57c': {
+						ID: 120,
+						site_ID: siteId,
+						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
+						title: 'Steak &amp; Eggs',
+						terms: {
+							[ taxonomyName ]: [
+								{ ID: 10, name: 'ribs', slug: 'ribs' }
+							]
+						}
+					}
+				}
+			};
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( {
+							items: postObjects[ siteId ]
+						} )
+					},
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ taxonomyName ]: new TermQueryManager( {
+								items: {
+									5: { ID: 5, name: 'chicken', slug: 'chicken', parent: 0 },
+									10: { ID: 10, name: 'ribs', slug: 'ribs', parent: 5 },
+									15: { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 10 }
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			};
+			const getState = () => state;
+
+			return deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					terms: [ { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 5 } ],
+					query: undefined,
+					found: undefined
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_EDIT,
+					siteId: siteId,
+					postId: 120,
+					post: {
+						terms: {
+							[ taxonomyName ]: []
+						}
+					}
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					termId: 10
 				} );
 			} );
 		} );

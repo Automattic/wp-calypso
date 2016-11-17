@@ -21,6 +21,7 @@ import WindowScroller from 'react-virtualized/WindowScroller';
 import VirtualList from 'components/virtual-list';
 import ListItem from './list-item';
 import CompactCard from 'components/card/compact';
+import Dialog from 'components/dialog';
 import { decodeEntities } from 'lib/formatting';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -29,6 +30,7 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import { deleteTerm } from 'state/terms/actions';
 
 /**
  * Constants
@@ -56,7 +58,8 @@ export class TaxonomyManagerList extends Component {
 	};
 
 	state = {
-		requestedPages: [ 1 ]
+		requestedPages: [ 1 ],
+		itemToDelete: null
 	};
 
 	componentWillMount() {
@@ -87,11 +90,22 @@ export class TaxonomyManagerList extends Component {
 		return reduce( this.getTermChildren( item.ID ), ( memo, childItem ) => {
 			return memo + this.getItemHeight( childItem, true );
 		}, ITEM_HEIGHT );
-	}
+	};
 
 	getRowHeight = ( { index } ) => {
 		return this.getItemHeight( this.getItem( index ) );
-	}
+	};
+
+	closeDeleteDialog = ( action ) => {
+		if ( action === 'delete' ) {
+			const item = this.state.itemToDelete;
+			const { siteId, taxonomy } = this.props;
+			this.props.deleteTerm( siteId, taxonomy, item.ID, item.slug );
+		}
+		this.setState( {
+			itemToDelete: null
+		} );
+	};
 
 	getItem( index ) {
 		if ( this.props.terms ) {
@@ -107,11 +121,16 @@ export class TaxonomyManagerList extends Component {
 
 		const children = this.getTermChildren( item.ID );
 
-		const { translate, onTermClick } = this.props;
+		const { onTermClick, translate } = this.props;
 		const itemId = item.ID;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const onClick = () => {
 			onTermClick( item );
+		};
+		const onDelete = () => {
+			this.setState( {
+				itemToDelete: item
+			} );
 		};
 
 		return (
@@ -120,7 +139,7 @@ export class TaxonomyManagerList extends Component {
 					onClick={ onClick }
 					key={ itemId }
 					className="taxonomy-manager__list-item-card">
-					<ListItem name={ name } onClick={ onClick } />
+					<ListItem name={ name } onClick={ onClick } onDelete={ onDelete } />
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
@@ -153,10 +172,14 @@ export class TaxonomyManagerList extends Component {
 	}
 
 	render() {
-		const { loading, siteId, taxonomy, terms, lastPage, query } = this.props;
+		const { loading, siteId, taxonomy, terms, translate, lastPage, query } = this.props;
 		const classes = classNames( 'taxonomy-manager', {
 			'is-loading': loading
 		} );
+		const deleteDialogButtons = [
+			{ action: 'cancel', label: translate( 'Cancel' ) },
+			{ action: 'delete', label: translate( 'OK' ), isPrimary: true },
+		];
 
 		return (
 			<div className={ classes }>
@@ -186,6 +209,14 @@ export class TaxonomyManagerList extends Component {
 						/>
 				) }
 				</WindowScroller>
+
+				<Dialog
+					isVisible={ !! this.state.itemToDelete }
+					buttons={ deleteDialogButtons }
+					onClose={ this.closeDeleteDialog }
+				>
+					<p>{ translate( 'Are you sure you want to permanently delete this item?' ) }</p>
+				</Dialog>
 			</div>
 		);
 	}
@@ -202,4 +233,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		query
 	};
-} )( localize( TaxonomyManagerList ) );
+}, { deleteTerm } )( localize( TaxonomyManagerList ) );
