@@ -135,11 +135,11 @@ class JetpackPluginsPanel extends Component {
 			! this.state.searchTerm ||
 			-1 !== plugin.name.toLowerCase().indexOf( this.state.searchTerm.toLowerCase() )
 		) {
-			const isActive = some(
+			const isActive = some( [
 				'standard' === plugin.plan,
 				'premium' === plugin.plan && this.props.hasPremium,
 				'business' === plugin.plan && this.props.hasBusiness
-			);
+			] );
 
 			return <JetpackPluginItem
 				{ ...{
