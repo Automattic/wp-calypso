@@ -43,7 +43,11 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
-import { getSelectedSite } from 'state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'state/ui/selectors';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -140,7 +144,7 @@ const Checkout = React.createClass( {
 	redirectIfEmptyCart: function() {
 		let redirectTo = '/plans/';
 
-		const { selectedSite } = this.props
+		const { selectedSiteSlug } = this.props;
 
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
@@ -156,7 +160,7 @@ const Checkout = React.createClass( {
 		}
 
 		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSite.slug );
+			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
 		}
 
 		page.redirect( redirectTo );
@@ -185,7 +189,7 @@ const Checkout = React.createClass( {
 			receiptId = ':receiptId';
 
 		const receipt = this.props.transaction.step.data;
-		const { selectedSite } = this.props;
+		const { selectedSiteId, selectedSiteSlug } = this.props;
 
 		this.props.clearPurchases();
 
@@ -232,9 +236,9 @@ const Checkout = React.createClass( {
 
 			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			this.props.clearSitePlans( selectedSite.ID );
+			this.props.clearSitePlans( selectedSiteId );
 
-			return `/plans/${ selectedSite.slug }/thank-you`;
+			return `/plans/${ selectedSiteSlug }/thank-you`;
 		}
 
 		if ( receipt && receipt.receipt_id ) {
@@ -247,8 +251,8 @@ const Checkout = React.createClass( {
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSite.slug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSite.slug }/${ receiptId }`;
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 
 	content: function() {
@@ -310,18 +314,22 @@ const Checkout = React.createClass( {
 	}
 } );
 
-function mapStateToProps ( state ) {
+function mapStateToProps( state ) {
 	const cards = getStoredCards( state );
 	const selectedSite = getSelectedSite( state );
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSelectedSiteSlug( state );
 
 	return {
 		cards,
 		selectedSite,
-	}
+		selectedSiteId,
+		selectedSiteSlug,
+	};
 }
 
 module.exports = connect(
-	mapStateToProps,	
+	mapStateToProps,
 	{
 		clearPurchases,
 		clearSitePlans,
