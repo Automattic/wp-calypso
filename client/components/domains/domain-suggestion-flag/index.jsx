@@ -13,11 +13,9 @@ import Notice from 'components/notice';
 function DomainSuggestionFlag( { domain, translate } ) {
 	const newTLDs = [ 'blog' ];
 
-	if ( newTLDs.some( ( tld ) => {
-		const isSubdomain = domain.substring( 0, domain.length - ( tld.length + 1 ) ).indexOf( '.' ) > -1;
-
-		return endsWith( domain, tld ) && ! isSubdomain;
-	} ) ) {
+	if ( newTLDs.some(
+		( tld ) => endsWith( domain, tld ) && domain.substring( 0, domain.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
+	) ) {
 		return (
 			<Notice
 				isCompact
