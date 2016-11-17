@@ -12,6 +12,7 @@ import times from 'lodash/times';
  */
 import config from 'config';
 import ReaderMain from 'components/reader-main';
+import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
@@ -475,8 +476,10 @@ module.exports = React.createClass( {
 			showingStream = true;
 		}
 
+		const CurrentMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
+
 		return (
-			<ReaderMain className={ classnames( 'following', this.props.className ) }>
+			<CurrentMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar> }
@@ -488,7 +491,7 @@ module.exports = React.createClass( {
 					? <div className="infinite-scroll-end" />
 					: null
 				}
-			</ReaderMain>
+			</CurrentMain>
 		);
 	}
 
