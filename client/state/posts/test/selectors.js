@@ -113,7 +113,11 @@ describe( 'selectors', () => {
 				author: {
 					name: 'Badman <img onerror= />'
 				},
-				featured_image: 'https://example.com/logo.png'
+				post_thumbnail: {
+					URL: 'https://example.com/logo.png',
+					width: 700,
+					height: 200,
+				}
 			};
 
 			const normalizedPost = getNormalizedPost( deepFreeze( {
@@ -137,7 +141,9 @@ describe( 'selectors', () => {
 					name: 'Badman '
 				},
 				canonical_image: {
-					uri: 'https://example.com/logo.png'
+					uri: 'https://example.com/logo.png',
+					width: 700,
+					height: 200,
 				}
 			} );
 		} );
