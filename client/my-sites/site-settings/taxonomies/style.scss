@@ -2,10 +2,21 @@
 	font-size: 16px;
 	line-height: 24px;
 	color: $gray-dark;
+	padding-bottom: 10px;
 
 	&.is-loading {
 		@include placeholder;
 		width: 80px;
 		display: inline-block;
+	}
+}
+
+.taxonomies__card-content {
+	color: $gray;
+	font-size: 13px;
+
+	.gridicon {
+		padding-right: 5px;
+		vertical-align: top;
 	}
 }
