@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
 import { uniq, upperFirst } from 'lodash';
@@ -70,17 +71,6 @@ const SinglePlugin = React.createClass( {
 
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props;
-			{ selectedSite } = this.props;
-
-		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
-		if ( selectedSite && ! this.props.isJetpackSite( selectedSite.ID ) ) {
-			return {
-				accessError: false,
-				sites: [],
-				notInstalledSites: [],
-				plugin: null
-			};
-		}
 
 		const sites = uniq( props.sites.getSelectedOrAllWithPlugins() ),
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
@@ -307,7 +297,7 @@ const SinglePlugin = React.createClass( {
 
 		if (
 			selectedSite &&
-			! selectedSite.jetpack &&
+			! this.props.isJetpackSite( selectedSite.ID ) &&
 			! config.isEnabled( 'automated-transfer' )
 		) {
 			return (
@@ -362,7 +352,14 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		const installing = selectedSite && PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
+		const installing = (
+			selectedSite &&
+			PluginsLog.isInProgressAction(
+				selectedSite.ID,
+				this.state.plugin.slug,
+				'INSTALL_PLUGIN'
+			)
+		);
 
 		return (
 			<MainComponent>
