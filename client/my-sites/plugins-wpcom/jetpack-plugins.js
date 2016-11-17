@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
+import { identity } from 'lodash';
 
-const jetpackPlugins = [
+const jetpackPlugins = ( translate = identity ) => [
 	{
 		category: 'engagement',
 		name: translate( 'Engagement' ),

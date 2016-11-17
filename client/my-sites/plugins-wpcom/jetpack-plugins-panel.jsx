@@ -99,8 +99,8 @@ class JetpackPluginsPanel extends Component {
 		];
 	}
 
-	getJetpackPlugins() {
-		const groupedPlugins = jetpackPlugins.map( this.filterGroup ).filter( identity );
+	getJetpackPlugins( translatedPlugins ) {
+		const groupedPlugins = translatedPlugins.map( this.filterGroup ).filter( identity );
 		if ( groupedPlugins.length ) {
 			return groupedPlugins;
 		}
@@ -195,7 +195,7 @@ class JetpackPluginsPanel extends Component {
 				</CompactCard>
 
 				<CompactCard className="plugins-wpcom__jetpack-plugins-list">
-					{ this.getJetpackPlugins() }
+					{ this.getJetpackPlugins( jetpackPlugins( translate ) ) }
 				</CompactCard>
 
 			</div>
