@@ -22,7 +22,6 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import GraphProvider from 'lib/graph/GraphProvider';
 import createGraph from 'lib/graph';
-import GraphiQL from 'lib/graph/GraphiQL';
 
 const user = userFactory();
 const sites = sitesFactory();
@@ -100,17 +99,6 @@ module.exports = {
 		} else {
 			next();
 		}
-	},
-
-	graph: function( context ) {
-		const graph = createGraph( context.store );
-		renderWithReduxStore(
-			React.createElement( GraphProvider, { graph },
-				React.createElement( GraphiQL )
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
 	},
 
 	insights: function( context, next ) {

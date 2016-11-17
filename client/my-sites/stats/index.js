@@ -20,9 +20,6 @@ module.exports = function() {
 		page( '/stats/month', controller.siteSelection, controller.navigation, statsController.overview );
 		page( '/stats/year', controller.siteSelection, controller.navigation, statsController.overview );
 
-		// Doc
-		page( '/stats/graph', statsController.graph );
-
 		// Stat Insights Page
 		page( '/stats/insights/:site_id', controller.siteSelection, controller.navigation, statsController.insights );
 
