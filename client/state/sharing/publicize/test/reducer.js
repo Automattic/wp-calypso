@@ -11,9 +11,7 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
+	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
@@ -29,36 +27,30 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'reducer', () => {
 	describe( '#fetchingConnections()', () => {
 		it( 'should set fetching to true for fetching action', () => {
-			[ PUBLICIZE_CONNECTION_REQUEST, PUBLICIZE_CONNECTIONS_REQUEST ].map( ( type ) => {
-				const state = fetchingConnections( null, {
-					type,
-					siteId: 2916284,
-				} );
-
-				expect( state[ 2916284 ] ).to.be.true;
+			const state = fetchingConnections( null, {
+				type: PUBLICIZE_CONNECTIONS_REQUEST,
+				siteId: 2916284
 			} );
+
+			expect( state[ 2916284 ] ).to.be.true;
 		} );
 
 		it( 'should set fetching to false for received action', () => {
-			[ PUBLICIZE_CONNECTION_REQUEST_SUCCESS, PUBLICIZE_CONNECTIONS_RECEIVE ].map( ( type ) => {
-				const state = fetchingConnections( null, {
-					type,
-					siteId: 2916284,
-				} );
-
-				expect( state[ 2916284 ] ).to.be.false;
+			const state = fetchingConnections( null, {
+				type: PUBLICIZE_CONNECTIONS_RECEIVE,
+				siteId: 2916284
 			} );
+
+			expect( state[ 2916284 ] ).to.be.false;
 		} );
 
 		it( 'should set fetching to false for failed action', () => {
-			[ PUBLICIZE_CONNECTION_REQUEST_FAILURE, PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ].map( ( type ) => {
-				const state = fetchingConnections( null, {
-					type,
-					siteId: 2916284,
-				} );
-
-				expect( state[ 2916284 ] ).to.be.false;
+			const state = fetchingConnections( null, {
+				type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
+				siteId: 2916284
 			} );
+
+			expect( state[ 2916284 ] ).to.be.false;
 		} );
 
 		describe( 'persistence', () => {
@@ -87,126 +79,184 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#connections()', () => {
-		it( 'should index connections by ID', () => {
-			const state = connections( null, {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284,
-				data: {
-					connections: [ { ID: 1, site_ID: 2916284 } ]
-				}
-			} );
-
-			expect( state ).to.eql( {
-				1: { ID: 1, site_ID: 2916284 }
-			} );
-		} );
-
-		it( 'should accumulate connections for distinct sites', () => {
-			const state = connections( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 }
-			} ), {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 77203074,
-				data: {
-					connections: [ { ID: 2, site_ID: 77203074 } ]
-				}
-			} );
-
-			expect( state ).to.eql( {
-				1: { ID: 1, site_ID: 2916284 },
-				2: { ID: 2, site_ID: 77203074 }
-			} );
-		} );
-
-		it( 'should discard connections for the same site ID if no longer present', () => {
-			const state = connections( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 }
-			} ), {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284,
-				data: {
-					connections: [ { ID: 2, site_ID: 2916284 } ]
-				}
-			} );
-
-			expect( state ).to.eql( {
-				2: { ID: 2, site_ID: 2916284 }
-			} );
-		} );
-
-		it( 'should override previous connections of same ID', () => {
-			const connection = { ID: 1, site_ID: 2916284, foo: true };
-			let state = connections( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 }
-			} ), {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284,
-				data: {
-					connections: [ connection ]
-				}
-			} );
-
-			expect( state ).to.eql( {
-				1: connection
-			} );
-
-			state = connections( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 }
-			} ), {
-				type: PUBLICIZE_CONNECTION_RECEIVE,
-				connection,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				1: connection,
-			} );
-		} );
-
-		it( 'should add new connections', () => {
-			const existingConnection = { ID: 1, site_ID: 2916284 },
-				newConnection = { ID: 2, site_ID: 2916284 },
-				state = connections( deepFreeze( {
-					1: existingConnection
-				} ), {
-					type: PUBLICIZE_CONNECTION_CREATE,
-					connection: newConnection,
+		describe( 'PUBLICIZE_CONNECTIONS_RECEIVE', () => {
+			it( 'should index connections by ID', () => {
+				const state = connections( null, {
+					type: PUBLICIZE_CONNECTIONS_RECEIVE,
+					siteId: 2916284,
+					data: {
+						connections: [{ ID: 1, site_ID: 2916284 }]
+					}
 				} );
 
-			expect( state ).to.eql( {
-				1: existingConnection,
-				2: newConnection,
-			} );
-		} );
-
-		it( 'should remove deleted connections', () => {
-			const state = connections( deepFreeze( {
-				1: { ID: 1, site_ID: 2916284 },
-				2: { ID: 2, site_ID: 2916284 },
-			} ), {
-				type: PUBLICIZE_CONNECTION_DELETE,
-				connection: {
-					ID: 2,
-					site_ID: 2916284,
-				},
+				expect( state ).to.eql( {
+					1: { ID: 1, site_ID: 2916284 }
+				} );
 			} );
 
-			expect( state ).to.eql( {
-				1: { ID: 1, site_ID: 2916284 },
-			} );
-		} );
-
-		it( 'should update existing connections', () => {
-			const newConnection = { ID: 1, site_ID: 2916284 },
-				state = connections( deepFreeze( {
-					1: { ID: 1, site_ID: 77203074 },
+			it( 'should accumulate connections for distinct sites', () => {
+				const state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 2916284 }
 				} ), {
-					type: PUBLICIZE_CONNECTION_CREATE,
-					connection: newConnection,
+					type: PUBLICIZE_CONNECTIONS_RECEIVE,
+					siteId: 77203074,
+					data: {
+						connections: [{ ID: 2, site_ID: 77203074 }]
+					}
 				} );
 
-			expect( state ).to.eql( {
-				1: newConnection,
+				expect( state ).to.eql( {
+					1: { ID: 1, site_ID: 2916284 },
+					2: { ID: 2, site_ID: 77203074 }
+				} );
+			} );
+
+			it( 'should discard connections for the same site ID if no longer present', () => {
+				const state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 2916284 }
+				} ), {
+					type: PUBLICIZE_CONNECTIONS_RECEIVE,
+					siteId: 2916284,
+					data: {
+						connections: [{ ID: 2, site_ID: 2916284 }]
+					}
+				} );
+
+				expect( state ).to.eql( {
+					2: { ID: 2, site_ID: 2916284 }
+				} );
+			} );
+
+			it( 'should override previous connections of same ID', () => {
+				const connection = { ID: 1, site_ID: 2916284, foo: true };
+				const state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 2916284 }
+				} ), {
+					type: PUBLICIZE_CONNECTIONS_RECEIVE,
+					siteId: 2916284,
+					data: {
+						connections: [connection]
+					}
+				} );
+
+				expect( state ).to.eql( {
+					1: connection
+				} );
+			} );
+		} );
+
+		describe( 'PUBLICIZE_CONNECTION_CREATE', () => {
+			it( 'should add new connection', () => {
+				const existingConnection = { ID: 1, site_ID: 2916284 },
+					newConnection = { ID: 2, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: existingConnection
+					} ), {
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: existingConnection,
+					2: newConnection,
+				} );
+			} );
+
+			it( 'should update existing connections', () => {
+				const newConnection = { ID: 1, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ), {
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: newConnection,
+				} );
+			} );
+		} );
+
+		describe( 'PUBLICIZE_CONNECTION_DELETE', () => {
+			it( 'should remove deleted connections', () => {
+				const state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 2916284 },
+					2: { ID: 2, site_ID: 2916284 },
+				} ), {
+					type: PUBLICIZE_CONNECTION_DELETE,
+					connection: {
+						ID: 2,
+						site_ID: 2916284,
+					},
+				} );
+
+				expect( state ).to.eql( {
+					1: { ID: 1, site_ID: 2916284 },
+				} );
+			} );
+		} );
+
+		describe( 'PUBLICIZE_CONNECTION_RECEIVE', () => {
+			it( 'should add new connection', () => {
+				const existingConnection = { ID: 1, site_ID: 2916284 },
+					newConnection = { ID: 2, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: existingConnection,
+					} ), {
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: existingConnection,
+					2: newConnection,
+				} );
+			} );
+
+			it( 'should update existing connections', () => {
+				const newConnection = { ID: 1, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ), {
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: newConnection,
+				} );
+			} );
+		} );
+
+		describe( 'PUBLICIZE_CONNECTION_UPDATE', () => {
+			it( 'should add new connection', () => {
+				const existingConnection = { ID: 1, site_ID: 2916284 },
+					newConnection = { ID: 2, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: existingConnection,
+					} ), {
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: existingConnection,
+					2: newConnection,
+				} );
+			} );
+
+			it( 'should update existing connections', () => {
+				const newConnection = { ID: 1, site_ID: 2916284 },
+					state = connections( deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ), {
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					} );
+
+				expect( state ).to.eql( {
+					1: newConnection,
+				} );
 			} );
 		} );
 

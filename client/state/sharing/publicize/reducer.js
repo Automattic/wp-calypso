@@ -11,9 +11,6 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -51,9 +48,6 @@ export const sharePostStatus = createReducer( {}, {
  * has been made for the site.
  */
 export const fetchingConnections = createReducer( {}, {
-	[ PUBLICIZE_CONNECTION_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ PUBLICIZE_CONNECTION_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ PUBLICIZE_CONNECTION_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 	[ PUBLICIZE_CONNECTIONS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 	[ PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),

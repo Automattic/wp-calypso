@@ -13,24 +13,24 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	createSiteConnection,
 	deleteSiteConnection,
 	deleteConnection,
 	failCreateConnection,
-	failConnectionsRequest,
 	fetchConnection,
 	fetchConnections,
 	receiveConnections,
+	requestConnections,
+	requestConnectionsFailure,
+	requestConnectionsSuccess,
 	updateSiteConnection,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', ( done ) => {
 			fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).to.have.been.calledThrice;
 
 				const action = spy.getCall( 1 ).args[ 0 ];
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_RECEIVE );
@@ -94,8 +94,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchConnection()', () => {
-		const connection = { ID: 2, label: 'Facebook' };
-
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -109,17 +107,16 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
-			fetchConnection( 2916284, connection )( spy );
+			fetchConnection( 2916284, 2 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: PUBLICIZE_CONNECTION_REQUEST,
-				connectionId: 2,
+				type: PUBLICIZE_CONNECTIONS_REQUEST,
 				siteId: 2916284,
 			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', ( done ) => {
-			fetchConnection( 2916284, connection )( spy ).then( () => {
+			fetchConnection( 2916284, 2 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				const action1 = spy.getCall( 1 ).args[ 0 ];
@@ -128,21 +125,18 @@ describe( 'actions', () => {
 				expect( action1.connection ).to.eql( { ID: 2, site_ID: 2916284 } );
 
 				const action2 = spy.getCall( 2 ).args[ 0 ];
-				expect( action2.type ).to.equal( PUBLICIZE_CONNECTION_REQUEST_SUCCESS );
+				expect( action2.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS );
 				expect( action2.siteId ).to.equal( 2916284 );
-				expect( action2.connectionId ).to.equal( 2 );
-
 				done();
 			} ).catch( done );
 		} );
 
 		it( 'should dispatch fail action when request fails', ( done ) => {
-			fetchConnection( 77203074, connection )( spy ).then( () => {
+			fetchConnection( 77203074, 2 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledTwice;
 
 				const action = spy.getCall( 1 ).args[ 0 ];
-				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_REQUEST_FAILURE );
-				expect( action.error.label ).to.equal( 'Facebook' );
+				expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
 				expect( action.error.message ).to.equal( 'An active access token must be used to access publicize connections.' );
 				expect( action.siteId ).to.equal( 77203074 );
 
@@ -310,15 +304,37 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#failConnectionsRequest()', () => {
+	describe( 'requestConnections()', () => {
+		it( 'should return an action object', () => {
+			const action = requestConnections( 2916284 );
+
+			expect( action ).to.eql( {
+				type: PUBLICIZE_CONNECTIONS_REQUEST,
+				siteId: 2916284,
+			} );
+		} );
+	} );
+
+	describe( 'requestConnectionsFailure()', () => {
 		it( 'should return an action object', () => {
 			const error = new Error();
-			const action = failConnectionsRequest( 2916284, error );
+			const action = requestConnectionsFailure( 2916284, error );
 
 			expect( action ).to.eql( {
 				type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 				siteId: 2916284,
 				error
+			} );
+		} );
+	} );
+
+	describe( 'requestConnectionsSuccess()', () => {
+		it( 'should return an action object', () => {
+			const action = requestConnectionsSuccess( 2916284 );
+
+			expect( action ).to.eql( {
+				type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
+				siteId: 2916284,
 			} );
 		} );
 	} );
