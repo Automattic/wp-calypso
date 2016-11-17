@@ -18,7 +18,7 @@ import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { analyticsPath, analyticsPageTitle, isJetpack } = props;
+	const { isJetpack } = props;
 	const sites = sitesFactory();
 	const site = sites.getSelectedSite();
 
@@ -47,8 +47,6 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
-				analyticsPath={ analyticsPath }
-				analyticsPageTitle={ analyticsPageTitle }
 			/>
 		);
 	}
