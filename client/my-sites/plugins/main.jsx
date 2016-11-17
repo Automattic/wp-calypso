@@ -330,7 +330,7 @@ const PluginsMain = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( ! this.props.selectedSiteIsJetpack ) {
+		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
