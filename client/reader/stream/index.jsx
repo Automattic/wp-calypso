@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { map, noop, times } from 'lodash';
+import { defer, map, noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,20 +63,22 @@ function refreshCardFactory( post ) {
 
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
+	const ITEMS_BETWEEN_RECS = 5;
+	const RECS_PER_BLOCK = 2;
+
 function injectRecommendations( posts, recs = [] ) {
 	if ( ! recs || recs.length === 0 ) {
 		return posts;
 	}
 	const items = [];
-	const itemsBetweenRecs = 5;
-	const recsPerBlock = 2;
-	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += itemsBetweenRecs, recIndex += recsPerBlock ) {
-		items.push.apply( items, posts.slice( postIndex, postIndex + itemsBetweenRecs ) );
+
+	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += ITEMS_BETWEEN_RECS, recIndex += RECS_PER_BLOCK ) {
+		items.push.apply( items, posts.slice( postIndex, postIndex + ITEMS_BETWEEN_RECS ) );
 		// only insert recs if we have them and if we filled a full block of posts
-		if ( recIndex < recs.length && postIndex + itemsBetweenRecs < posts.length ) {
+		if ( recIndex < recs.length && postIndex + ITEMS_BETWEEN_RECS < posts.length ) {
 			items.push( {
 				isRecommendationBlock: true,
-				recommendations: recs.slice( recIndex, recIndex + recsPerBlock )
+				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK )
 			} );
 		}
 	}
@@ -114,6 +116,14 @@ export default class ReaderStream extends React.Component {
 	getStateFromStores( store = this.props.store, recommendationsStore = this.props.recommendationsStore ) {
 		const posts = store.get();
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
+		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
+		if ( recommendationsStore ) {
+			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / ITEMS_BETWEEN_RECS ) ) {
+				if ( ! recommendationsStore.isFetchingNextPage() ) {
+					defer( () => FeedStreamStoreActions.fetchNextPage( recommendationsStore.id ) );
+				}
+			}
+		}
 		const items = injectRecommendations( posts, recs );
 		return {
 			items,
@@ -353,9 +363,6 @@ export default class ReaderStream extends React.Component {
 			this.props.trackScrollPage( this.props.store.getPage() + 1 );
 		}
 		FeedStreamStoreActions.fetchNextPage( this.props.store.id );
-		if ( this.props.recommendationsStore ) {
-			FeedStreamStoreActions.fetchNextPage( this.props.recommendationsStore.id );
-		}
 	}
 
 	showUpdates = () => {
