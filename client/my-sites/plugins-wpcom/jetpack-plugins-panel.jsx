@@ -9,6 +9,7 @@ import {
 	includes,
 	matchesProperty,
 	overSome,
+	some,
 } from 'lodash';
 
 /**
@@ -30,7 +31,6 @@ import jetpackPlugins from './jetpack-plugins';
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
 		return group.category === category;
-
 	}
 
 	return true;
@@ -40,6 +40,12 @@ const searchPlugins = search => overSome(
 	( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
 	( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
 );
+
+const isPluginActive = ( plugin, hasBusiness, hasPremium ) => some( [
+	'standard' === plugin.plan,
+	'premium' === plugin.plan && hasPremium,
+	'business' === plugin.plan && hasBusiness,
+] );
 
 class JetpackPluginsPanel extends Component {
 
@@ -129,9 +135,7 @@ class JetpackPluginsPanel extends Component {
 					.filter( searchPlugins( search ) )
 					.map( plugin => ( {
 						...plugin,
-						isActive: 'standard' === plugin.plan ||
-							( 'premium' === plugin.plan && hasPremium ) ||
-							( 'business' === plugin.plan && hasBusiness ),
+						isActive: isPluginActive( plugin, hasPremium, hasBusiness ),
 					} ) )
 			} ) )
 			.filter( group => group.plugins.length > 0 );
@@ -199,7 +203,7 @@ class JetpackPluginsPanel extends Component {
 						</div>
 						) )
 					}
-					{ filteredPlugins.length ||
+					{ filteredPlugins.length === 0 &&
 						<div className="plugins-wpcom__empty-results">
 							{ translate( 'No features match your search for \'%s\'.', {
 								args: [ search ]
