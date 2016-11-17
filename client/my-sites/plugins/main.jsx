@@ -335,7 +335,7 @@ const PluginsMain = React.createClass( {
 				<Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<WpcomPluginPanel />
+					<WpcomPluginPanel category={ this.props.category } search={ this.props.search } />
 				</Main>
 			);
 		}

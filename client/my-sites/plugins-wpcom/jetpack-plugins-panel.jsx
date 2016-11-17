@@ -13,6 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import urlSearch from 'lib/mixins/url-search/component';
 import CompactCard from 'components/card/compact';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import Button from 'components/button';
@@ -37,30 +38,23 @@ class JetpackPluginsPanel extends Component {
 		translate: identity,
 	};
 
-	constructor( props ) {
-		super( props );
+	// constructor( props ) {
+	// 	super( props );
+	//
+	// 	this.state = {
+	// 		selectedGroup: 'all',
+	// 	};
+	// }
 
-		this.state = {
-			selectedGroup: 'all',
-			searchTerm: '',
-		};
-	}
-
-	onNavClick( group ) {
-		this.setState( {
-			selectedGroup: group,
-		} );
-	}
-
-	onNavSearch = searchTerm => {
-		this.setState( {
-			searchTerm,
-		} );
-	}
+	// onNavClick( group ) {
+	// 	this.setState( {
+	// 		selectedGroup: group,
+	// 	} );
+	// }
 
 	getSearchPlaceholder() {
-		const { translate } = this.props;
-		switch ( this.state.selectedGroup ) {
+		const { translate, category } = this.props;
+		switch ( category ) {
 			case 'all':
 				return translate( 'Search All…', { textOnly: true } );
 			case 'engagement':
@@ -74,45 +68,47 @@ class JetpackPluginsPanel extends Component {
 		}
 	}
 
-	getSelectedText() {
-		const found = find( this.getNavItems(), item => this.state.selectedGroup === item.key );
+	getSelectedText( category ) {
+		const found = find( this.getNavItems(), item => category === item.key );
 		return found ? found.title : '';
 	}
 
 	getNavItems() {
-		const { translate } = this.props;
+		const { translate, siteSlug } = this.props;
+		const siteFilter = siteSlug ? '/' + siteSlug : '';
+		const basePath = '/plugins/category';
 
 		return [
 			{
 				key: 'all',
 				title: translate( 'All', { context: 'Filter label for plugins list' } ),
-				onClick: () => this.onNavClick( 'all' ),
+				path: '/plugins' + siteFilter,
 			},
 			{
 				key: 'engagement',
 				title: translate( 'Engagement', { context: 'Filter label for plugins list' } ),
-				onClick: () => this.onNavClick( 'engagement' ),
+				path: basePath + '/engagement' + siteFilter,
 			},
 			{
 				key: 'security',
 				title: translate( 'Security', { context: 'Filter label for plugins list' } ),
-				onClick: () => this.onNavClick( 'security' ),
+				path: basePath + '/security' + siteFilter,
 			},
 			{
 				key: 'appearance',
 				title: translate( 'Appearance', { context: 'Filter label for plugins list' } ),
-				onClick: () => this.onNavClick( 'appearance' ),
+				path: basePath + '/appearance' + siteFilter,
 			},
 			{
 				key: 'writing',
 				title: translate( 'Writing', { context: 'Filter label for plugins list' } ),
-				onClick: () => this.onNavClick( 'writing' ),
+				path: basePath + '/writing' + siteFilter,
 			},
 		];
 	}
 
 	filterGroup( group ) {
-		if ( 'all' === this.state.selectedGroup || group.category === this.state.selectedGroup ) {
+		if ( 'all' === this.props.category || group.category === this.props.category ) {
 			const plugins = group.plugins.map( ( plugin, j ) => this.filterPlugin( plugin, j ) ).filter( p => p );
 
 			if ( plugins.length > 0 ) {
@@ -131,8 +127,8 @@ class JetpackPluginsPanel extends Component {
 
 	filterPlugin( plugin, pluginKey ) {
 		if (
-			! this.state.searchTerm ||
-			-1 !== plugin.name.toLowerCase().indexOf( this.state.searchTerm.toLowerCase() )
+			! this.props.search ||
+			-1 !== plugin.name.toLowerCase().indexOf( this.props.search.toLowerCase() )
 		) {
 			let isActive = false;
 			if (
@@ -155,14 +151,14 @@ class JetpackPluginsPanel extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, doSearch, category } = this.props;
 		return (
 			<div className="plugins-wpcom__jetpack-plugins-panel">
 
-				<SectionNav selectedText={ this.getSelectedText() }>
-					<NavTabs selectedText={ this.getSelectedText() }>
+				<SectionNav selectedText={ this.getSelectedText( category ) }>
+					<NavTabs selectedText={ this.getSelectedText( category ) }>
 						{ this.getNavItems().map( item =>
-							<NavItem { ...item } selected={ item.key === this.state.selectedGroup }>
+							<NavItem { ...item } selected={ item.key === category }>
 								{ item.title }
 							</NavItem>
 						) }
@@ -170,7 +166,7 @@ class JetpackPluginsPanel extends Component {
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ this.onNavSearch }
+						onSearch={ doSearch }
 						placeholder={ this.getSearchPlaceholder() }
 					/>
 				</SectionNav>
@@ -205,4 +201,4 @@ class JetpackPluginsPanel extends Component {
 	}
 }
 
-export default localize( JetpackPluginsPanel );
+export default localize( urlSearch( JetpackPluginsPanel ) );
