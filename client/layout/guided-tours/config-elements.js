@@ -417,25 +417,20 @@ export class Continue extends Component {
 
 		return (
 			<p className="guided-tours__actionstep-instructions">
-				<i>{ this.props.children || translate( 'Click to continue.' ) }</i>
+				<em>{ this.props.children || translate( 'Click to continue.' ) }</em>
 			</p>
 		);
 	}
 }
 
-export class ButtonRow extends Component {
-	constructor( props ) {
-		super( props );
-	}
-
-	render() {
-		return (
-			<div className={ this.props.single === true ? 'guided-tours__single-button-row' : 'guided-tours__choice-button-row' }>
-				{ this.props.children }
-			</div>
-		);
-	}
-}
+export const ButtonRow = ( { children } ) => {
+	const isSingleButton = React.Children.count( children ) === 1;
+	return (
+		<div className={ isSingleButton ? 'guided-tours__single-button-row' : 'guided-tours__choice-button-row' }>
+			{ children }
+		</div>
+	);
+};
 
 export class Link extends Component {
 	constructor( props ) {
