@@ -6,7 +6,7 @@ import { requestSitePost } from 'state/posts/actions';
 import { refreshByUid } from './utils';
 import createPostStatResolver from './post-stat';
 
-export const resolvePost = ( store, post ) => {
+export const resolvePost = ( store, post, context ) => {
 	if ( ! post ) {
 		return post;
 	}
@@ -16,7 +16,7 @@ export const resolvePost = ( store, post ) => {
 			siteId: post.site_ID,
 			postId: post.ID,
 			stat
-		} )
+		}, context )
 	};
 };
 
@@ -27,7 +27,7 @@ const createResolver = store => ( args, { uid } ) => {
 	} );
 	const state = store.getState();
 	const post = getSitePost( state, siteId, postId );
-	return resolvePost( store, post );
+	return resolvePost( store, post, { uid } );
 };
 
 export default createResolver;

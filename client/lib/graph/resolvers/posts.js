@@ -13,7 +13,7 @@ const createResolver = store => ( args, { uid } ) => {
 	} );
 	const state = store.getState();
 	const posts = getSitePostsForQuery( state, siteId, query );
-	return posts ? posts.map( post => resolvePost( store, post ) ) : posts;
+	return posts ? posts.map( post => resolvePost( store, post, { uid } ) ) : posts;
 };
 
 export default createResolver;

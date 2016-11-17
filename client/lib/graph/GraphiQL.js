@@ -10,7 +10,7 @@ export default class GraphiQLWrapper extends Component {
 	};
 
 	fetch = ( { query } ) => {
-		return this.context.graph.request( query );
+		return this.context.graph.request( query, { uid: 'graphiql' } );
 	};
 
 	render() {
