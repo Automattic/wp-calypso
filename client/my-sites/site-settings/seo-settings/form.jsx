@@ -475,11 +475,11 @@ export const SeoForm = React.createClass( {
 						status="is-warning"
 						showDismiss={ false }
 						text={ this.translate(
-							'You must activate SEO Tools module in Jetpack\'s dashboard for these changes to take effect.'
+							'SEO Tools module is disabled in Jetpack.'
 						) }
 					>
 						<NoticeAction href={ '//' + slug + '/wp-admin/admin.php?page=jetpack#/engagement' }>
-							{ this.translate( 'Activate Now' ) }
+							{ this.translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
 				}
