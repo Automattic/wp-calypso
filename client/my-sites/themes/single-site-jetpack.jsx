@@ -14,15 +14,12 @@ import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
-import sitesFactory from 'lib/sites-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 
 export default connectOptions(
 	( props ) => {
-		const { siteId, analyticsPath, analyticsPageTitle } = props;
-		const sites = sitesFactory();
-		const site = sites.getSelectedSite();
+		const { site, siteId, analyticsPath, analyticsPageTitle } = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 		if ( ! jetpackEnabled ) {

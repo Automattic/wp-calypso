@@ -32,6 +32,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	if ( isJetpack ) {
 		return (
 			<SingleSiteThemeShowcaseJetpack { ...props }
+				site={ site }
 				siteId={ site.ID }
 				options={ [
 					'customize',
@@ -53,6 +54,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 
 	return (
 		<SingleSiteThemeShowcase { ...props }
+			site={ site }
 			siteId={ site.ID }
 			options={ [
 				'customize',

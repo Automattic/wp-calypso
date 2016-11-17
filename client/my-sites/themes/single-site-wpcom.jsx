@@ -10,7 +10,6 @@ import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
-import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import QuerySitePurchases from 'components/data/query-site-purchases';
@@ -18,9 +17,7 @@ import ThemeShowcase from './theme-showcase';
 
 export default connectOptions(
 	( props ) => {
-		const { siteId, translate } = props;
-		const sites = sitesFactory();
-		const site = sites.getSelectedSite();
+		const { site, siteId, translate } = props;
 
 		return (
 			<ThemeShowcase { ...props } siteId={ siteId }>
