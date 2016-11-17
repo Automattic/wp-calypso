@@ -16,6 +16,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import * as DiscoverHelper from 'reader/discover/helper';
 import FeedPostStore from 'lib/feed-post-store';
 import smartSetState from 'lib/react-smart-set-state';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 class ReaderPostCardAdapter extends React.Component {
 
@@ -24,6 +25,10 @@ class ReaderPostCardAdapter extends React.Component {
 	}
 
 	onCommentClick = () => {
+		recordAction( 'click_comments' );
+		recordGaEvent( 'Clicked Post Comment Button' );
+		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', this.props.post );
+
 		this.props.handleClick && this.props.handleClick( this.props.post, { comments: true } );
 	}
 
