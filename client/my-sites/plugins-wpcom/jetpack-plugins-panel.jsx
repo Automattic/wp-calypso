@@ -4,9 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import {
-	map,
+	find,
 	identity,
-	find
+	includes,
+	overSome,
 } from 'lodash';
 import classNames from 'classnames';
 
@@ -95,51 +96,45 @@ class JetpackPluginsPanel extends Component {
 		];
 	}
 
-	filterGroup( group ) {
-		if ( 'all' === this.props.category || group.category === this.props.category ) {
-			const plugins = group.plugins.map( ( plugin, j ) => this.filterPlugin( plugin, j ) ).filter( p => p );
-
-			if ( plugins.length > 0 ) {
-				return <div key={ group.category }>
-					<CompactCard className="plugins-wpcom__jetpack-category-header">
-						<Gridicon icon={ group.icon } />
-						<span>
-							{ group.name }
-						</span>
-					</CompactCard>
-					{ plugins }
-				</div>;
-			}
-		}
-	}
-
-	filterPlugin( plugin, pluginKey ) {
-		if (
-			! this.props.search ||
-			-1 !== plugin.name.toLowerCase().indexOf( this.props.search.toLowerCase() )
-		) {
-			let isActive = false;
-			if (
-				'standard' === plugin.plan ||
-				( 'premium' === plugin.plan && this.props.hasPremium ) ||
-				( 'business' === plugin.plan && this.props.hasBusiness )
-			) {
-				isActive = true;
-			}
-
-			return <JetpackPluginItem
-				{ ...{
-					key: pluginKey,
-					plugin,
-					isActive,
-					siteSlug: this.props.siteSlug,
-				} }
-			/>;
-		}
-	}
-
 	render() {
-		const { translate, doSearch, category } = this.props;
+		const {
+			translate,
+			doSearch,
+			category,
+			siteSlug,
+			search,
+			hasPremium,
+			hasBusiness
+		} = this.props;
+
+		const filterGroup = category => group => {
+			if ( category && category !== 'all' ) {
+				return group.category === category;
+			}
+
+			return true;
+		};
+
+		const searchPlugins = search => overSome(
+			( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
+			( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
+		);
+
+		const filteredPlugins = jetpackPlugins
+			.filter( filterGroup( category ) )
+			.map( group => ( {
+				...group,
+				plugins: group.plugins
+					.filter( searchPlugins( search ) )
+					.map( plugin => ( {
+						...plugin,
+						isActive: 'standard' === plugin.plan ||
+							( 'premium' === plugin.plan && hasPremium ) ||
+							( 'business' === plugin.plan && hasBusiness ),
+					} ) )
+			} ) )
+			.filter( group => group.plugins.length > 0 );
+
 		return (
 			<div className="plugins-wpcom__jetpack-plugins-panel">
 
@@ -154,6 +149,7 @@ class JetpackPluginsPanel extends Component {
 					<Search
 						pinned
 						fitsContainer
+						delaySearch
 						onSearch={ doSearch }
 						placeholder={ this.getSearchPlaceholder() }
 					/>
@@ -181,7 +177,25 @@ class JetpackPluginsPanel extends Component {
 				</CompactCard>
 
 				<CompactCard className="plugins-wpcom__jetpack-plugins-list">
-					{ map( jetpackPlugins, group => this.filterGroup( group ) ) }
+					{ filteredPlugins.map( group => (
+					<div key={ group.category }>
+						<CompactCard className="plugins-wpcom__jetpack-category-header">
+							<Gridicon icon={ group.icon } />
+							<span>
+								{ group.name }
+							</span>
+						</CompactCard>
+						{ group.plugins.map( ( plugin, index ) => (
+						<JetpackPluginItem
+							{ ...{
+								key: index,
+								plugin,
+								siteSlug,
+							} }
+						/>
+						) ) }
+					</div>
+					) ) }
 				</CompactCard>
 
 			</div>

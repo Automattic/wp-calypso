@@ -15,7 +15,6 @@ import PurchaseButton from './purchase-button';
 export const JetpackPluginItem = ( {
 	plugin,
 	siteSlug,
-	isActive,
 	translate = identity
 } ) => {
 	let plan;
@@ -44,7 +43,7 @@ export const JetpackPluginItem = ( {
 				</div>
 			</a>
 			<div className="plugins-wpcom__plugin-actions">
-				<PurchaseButton { ...{ isActive: isActive, href: `/plans/${ siteSlug }` } } />
+				<PurchaseButton { ...{ isActive: plugin.isActive, href: `/plans/${ siteSlug }` } } />
 			</div>
 		</CompactCard>
 	);
@@ -53,7 +52,6 @@ export const JetpackPluginItem = ( {
 JetpackPluginItem.propTypes = {
 	plugin: PropTypes.object,
 	siteSlug: PropTypes.string,
-	isActive: PropTypes.bool,
 };
 
 export default localize( JetpackPluginItem );
