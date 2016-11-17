@@ -34,35 +34,39 @@ function checkForRedirect( site ) {
 	}
 }
 
-const SiteStream = React.createClass( {
+class SiteStream extends React.Component {
 
-	getDefaultProps() {
-		return { showBack: true };
-	},
+	static propTypes = {
+		siteId: React.PropTypes.number.isRequired
+	};
 
-	getInitialState() {
-		return this.getState();
-	},
+	static defaultProps = {
+		showBack: true
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.getState( props );
+		this.smartSetState = smartSetState;
+	}
 
 	componentDidMount() {
 		SiteStore.on( 'change', this.updateState );
 		FeedStore.on( 'change', this.updateState );
-	},
+	}
 
 	componentWillUnmount() {
 		SiteStore.off( 'change', this.updateState );
 		FeedStore.off( 'change', this.updateState );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.updateState( nextProps );
 		}
-	},
+	}
 
-	smartSetState: smartSetState,
-
-	getState( props = this.props ) {
+	getState = ( props = this.props ) => {
 		const { site, feed } = this.getSiteAndFeed( props.siteId );
 		checkForRedirect( site );
 
@@ -73,15 +77,15 @@ const SiteStream = React.createClass( {
 		};
 
 		return state;
-	},
+	}
 
-	updateState( props = this.props ) {
+	updateState = ( props = this.props ) => {
 		const state = this.getState( props );
 		checkForRedirect( state.site );
 		this.smartSetState( state );
-	},
+	}
 
-	getSiteAndFeed( siteId ) {
+	getSiteAndFeed = ( siteId ) => {
 		let site = SiteStore.get( siteId ),
 			feed;
 
@@ -105,9 +109,9 @@ const SiteStream = React.createClass( {
 		}
 
 		return { site, feed };
-	},
+	}
 
-	getTitle( site ) {
+	getTitle = ( site ) => {
 		if ( ! site ) {
 			return;
 		}
@@ -117,13 +121,13 @@ const SiteStream = React.createClass( {
 		} else if ( site.get( 'state' ) === SiteState.ERROR ) {
 			return this.props.translate( 'Error fetching site' );
 		}
-	},
+	}
 
-	goBack() {
+	goBack = () => {
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
 		}
-	},
+	}
 
 	render() {
 		const site = this.state.site,
@@ -156,7 +160,6 @@ const SiteStream = React.createClass( {
 
 		);
 	}
-
-} );
+}
 
 export default localize( SiteStream );
