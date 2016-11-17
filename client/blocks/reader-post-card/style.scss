@@ -464,7 +464,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 // Gallery cards
 .reader-post-card__gallery {
-	border: 1px solid lighten( $gray, 30% );
 	display: flex;
 	margin: 0 0 17px;
 	padding: 0;
