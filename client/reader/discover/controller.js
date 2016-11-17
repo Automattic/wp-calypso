@@ -33,7 +33,7 @@ export default {
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
 				store: feedStore,
-				siteId: blogId,
+				siteId: +blogId,
 				title: 'Discover',
 				trackScrollPage: trackScrollPage.bind(
 					null,
