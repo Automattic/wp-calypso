@@ -36,21 +36,9 @@ class JetpackPluginsPanel extends Component {
 
 	static defaultProps = {
 		translate: identity,
+		category: 'all',
+		search: '',
 	};
-
-	// constructor( props ) {
-	// 	super( props );
-	//
-	// 	this.state = {
-	// 		selectedGroup: 'all',
-	// 	};
-	// }
-
-	// onNavClick( group ) {
-	// 	this.setState( {
-	// 		selectedGroup: group,
-	// 	} );
-	// }
 
 	getSearchPlaceholder() {
 		const { translate, category } = this.props;

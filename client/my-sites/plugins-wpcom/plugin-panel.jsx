@@ -25,6 +25,8 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 export const PluginPanel = ( {
 	plan,
 	siteSlug,
+	category,
+	search,
 } ) => {
 	const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
 	const hasPremium = hasBusiness || isPremium( plan );
@@ -37,6 +39,8 @@ export const PluginPanel = ( {
 				siteSlug,
 				hasBusiness,
 				hasPremium,
+				category,
+				search,
 			} } />
 
 		</div>
