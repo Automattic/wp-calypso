@@ -6,7 +6,8 @@ import { localize } from 'i18n-calypso';
 import {
 	identity,
 	find,
-	matchesProperty
+	matchesProperty,
+	some
 } from 'lodash';
 
 /**
@@ -99,7 +100,7 @@ class JetpackPluginsPanel extends Component {
 	}
 
 	getJetpackPlugins() {
-		const groupedPlugins = jetpackPlugins.map( group => this.filterGroup( group ) ).filter( g => g );
+		const groupedPlugins = jetpackPlugins.map( this.filterGroup ).filter( identity );
 		if ( groupedPlugins.length ) {
 			return groupedPlugins;
 		}
@@ -111,9 +112,9 @@ class JetpackPluginsPanel extends Component {
 		</div>;
 	}
 
-	filterGroup( group ) {
+	filterGroup = group => {
 		if ( 'all' === this.state.selectedGroup || group.category === this.state.selectedGroup ) {
-			const plugins = group.plugins.map( ( plugin, j ) => this.filterPlugin( plugin, j ) ).filter( p => p );
+			const plugins = group.plugins.map( this.filterPlugin ).filter( p => p );
 
 			if ( plugins.length > 0 ) {
 				return <div key={ group.category }>
@@ -129,19 +130,16 @@ class JetpackPluginsPanel extends Component {
 		}
 	}
 
-	filterPlugin( plugin, pluginKey ) {
+	filterPlugin = ( plugin, pluginKey ) => {
 		if (
 			! this.state.searchTerm ||
 			-1 !== plugin.name.toLowerCase().indexOf( this.state.searchTerm.toLowerCase() )
 		) {
-			let isActive = false;
-			if (
-				'standard' === plugin.plan ||
-				( 'premium' === plugin.plan && this.props.hasPremium ) ||
-				( 'business' === plugin.plan && this.props.hasBusiness )
-			) {
-				isActive = true;
-			}
+			const isActive = some(
+				'standard' === plugin.plan,
+				'premium' === plugin.plan && this.props.hasPremium,
+				'business' === plugin.plan && this.props.hasBusiness
+			);
 
 			return <JetpackPluginItem
 				{ ...{
