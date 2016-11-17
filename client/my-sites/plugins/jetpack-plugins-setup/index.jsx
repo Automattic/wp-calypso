@@ -146,6 +146,11 @@ const PlansSetup = React.createClass( {
 	},
 
 	startNextPlugin( plugin ) {
+		// We're already installing.
+		if ( this.props.isInstalling ) {
+			return;
+		}
+
 		const install = this.props.installPlugin;
 		const site = this.props.selectedSite;
 
