@@ -40,8 +40,8 @@ describe( 'PluginsList', () => {
 
 		testRenderer = TestUtils.renderIntoDocument;
 
-		siteListMock = { getSelectedSite: () => sites[ 0 ] };
-		PluginsList = require( '../' );
+		siteListMock = { getSelectedSite: () => sites[ 0 ], get: () => sites };
+		PluginsList = require( '../' ).PluginsList;
 	} );
 
 	describe( 'rendering bulk actions', function() {

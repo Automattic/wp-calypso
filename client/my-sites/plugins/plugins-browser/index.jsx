@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
@@ -28,6 +27,8 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
 
 const PluginsBrowser = React.createClass( {
 
@@ -292,7 +293,7 @@ const PluginsBrowser = React.createClass( {
 				</MainComponent>
 			);
 		}
-		const selectedSite = this.props.sites.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		return (
 			<MainComponent>
@@ -310,10 +311,12 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		if ( this.state.accessError ||
-				( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() )
-			) {
+		const { selectedSite } = this.props;
+		const cantManage = selectedSite &&
+			this.props.isJetpackSite( selectedSite.ID ) &&
+			! this.props.canJetpackSiteManage( selectedSite.ID );
+
+		if ( this.state.accessError || cantManage ) {
 			return this.renderAccessError( selectedSite );
 		}
 
@@ -329,8 +332,12 @@ const PluginsBrowser = React.createClass( {
 } );
 
 export default connect(
-	null,
-	dispatch => bindActionCreators( {
+	state => ( {
+		selectedSite: getSelectedSite( state ),
+		isJetpackSite: siteId => isJetpackSite( state, siteId ),
+		canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+	} ),
+	{
 		recordTracksEvent
-	}, dispatch )
+	}
 )( PluginsBrowser );

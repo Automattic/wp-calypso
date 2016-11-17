@@ -12,7 +12,7 @@ return <PluginsList
 		header={ this.translate( 'Plugins' ) }
 		plugins={ this.getPlugins() }
 		sites={ this.props.sites }
-		selectedSite={ this.props.sites.getSelectedSite() }
+		selectedSite={ this.props.selectedSite }
 		isPlaceholder= { this.showPluginListPlaceholders( true ) } />;
 ```
 
