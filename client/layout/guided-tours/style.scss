@@ -100,10 +100,12 @@
 	color: lighten( $gray, 10 );
 	margin-bottom: 0;
 	font-style: italic;
+	line-height: 24px;
+	min-height: 24px;
 
 	.gridicon {
-		position: relative;
-		top: 7px;
+		vertical-align: middle;
+		margin-top: -4px;
 	}
 
 	.external-link {
@@ -113,10 +115,6 @@
 		padding-top: 12px;
 		margin-top: 16px;
 	}
-}
-
-.guided-tours__actionstep-instructions {
-	margin-top: -7px;
 }
 
 // style the pure text representation of the actionstep icon
