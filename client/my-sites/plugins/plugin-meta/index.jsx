@@ -24,7 +24,14 @@ import config from 'config';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
+import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
 import { userCan } from 'lib/site/utils';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import {
+	isBusiness,
+	isEnterprise
+} from 'lib/products-values';
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -50,6 +57,10 @@ export default React.createClass( {
 		}
 	},
 
+	hasBusinessPlan() {
+		return isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan );
+	},
+
 	renderActions() {
 		if ( ! this.props.selectedSite ) {
 			return (
@@ -73,11 +84,11 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( this.props.isInstalledOnSite === null ) {
+		if ( this.props.isInstalledOnSite === null && this.props.selectedSite.jetpack) {
 			return;
 		}
 
-		if ( this.props.isInstalledOnSite === false ) {
+		if ( this.props.isInstalledOnSite === false || ! this.props.selectedSite.jetpack ) {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 
@@ -121,8 +132,12 @@ export default React.createClass( {
 	},
 
 	getInstallButton() {
-		if ( this.hasInstallButton() ) {
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack && this.hasOrgInstallButton() ) {
 			return <PluginInstallButton { ...this.props } />;
+		}
+
+		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
+			return <WpcomPluginInstallButton disabled={ ! this.hasBusinessPlan() } />;
 		}
 	},
 
@@ -216,7 +231,7 @@ export default React.createClass( {
 		} );
 	},
 
-	hasInstallButton() {
+	hasOrgInstallButton() {
 		if ( this.props.selectedSite ) {
 			return ! this.props.isInstalledOnSite &&
 				userCan( 'manage_options', this.props.selectedSite ) &&
@@ -272,7 +287,7 @@ export default React.createClass( {
 
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
-			'has-button': this.hasInstallButton(),
+			'has-button': this.hasOrgInstallButton(),
 			'has-site': !! this.props.selectedSite,
 			'is-placeholder': !! this.props.isPlaceholder
 		} );
@@ -281,7 +296,7 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta">
-				<Card>
+				<Card style={ { margin: 0 } }>
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
 						<div className="plugin-meta__detail">
@@ -293,15 +308,32 @@ export default React.createClass( {
 						</div>
 						{ this.renderActions() }
 					</div>
-					{ ! this.props.isMock && <PluginInformation
-						plugin={ this.props.plugin }
-						isPlaceholder={ this.props.isPlaceholder }
-						site={ this.props.selectedSite }
-						pluginVersion={ plugin && plugin.version }
-						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-						hasUpdate={ this.getAvailableNewVersions().length > 0 } /> }
-
+					{ ! this.props.isMock && this.props.selectedSite.jetpack &&
+						<PluginInformation
+							plugin={ this.props.plugin }
+							isPlaceholder={ this.props.isPlaceholder }
+							site={ this.props.selectedSite }
+							pluginVersion={ plugin && plugin.version }
+							siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
+							hasUpdate={ this.getAvailableNewVersions().length > 0 }
+						/>
+					}
 				</Card>
+
+				{ ( this.props.selectedSite.jetpack || this.hasBusinessPlan() ) &&
+					<div style={ { marginBottom: 16 } } />
+				}
+
+				{ ! this.props.selectedSite.jetpack && ! this.hasBusinessPlan() &&
+					<UpgradeNudge
+						className="plugin-meta__upgrade_nudge"
+						feature={ FEATURE_UPLOAD_PLUGINS }
+						title={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
+						message={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
+						event={ 'calypso_plugins_page_upgrade_nudge' }
+					/>
+				}
+
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }
 			</div>

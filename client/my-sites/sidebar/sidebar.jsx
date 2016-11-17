@@ -252,6 +252,10 @@ export class MySitesSidebar extends Component {
 			pluginsLink = '/plugins' + this.siteSuffix(),
 			addPluginsLink;
 
+		if ( config.isEnabled( 'automated-transfer' ) ) {
+			addPluginsLink = '/plugins/browse' + this.siteSuffix();
+		}
+
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! this.isSingle() ) {
 				return null;

@@ -67,6 +67,10 @@
 	flex-grow: 1;
 }
 
+.plugin-meta__upgrade_nudge {
+	margin-top: 0 !important;
+}
+
 .plugin-meta__meta {
 	color: $gray;
 	white-space: pre;
