@@ -43,7 +43,7 @@ describe( 'EditGravatar', function() {
 	before( function() {
 		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
 		FilePicker = require( 'components/file-picker' );
-		Gravatar = require( 'components/gravatar' );
+		Gravatar = require( 'components/gravatar' ).default;
 		ImageEditor = require( 'blocks/image-editor' );
 	} );
 
