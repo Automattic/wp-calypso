@@ -290,12 +290,6 @@
 }
 
 .plugins-wpcom__jetpack-plugins-list {
-	padding: 16px;
-
-	> div:not(:first-child) {
-		margin-top: 16px;
-	}
-
 	.plugins-wpcom__plugin-name {
 		@include breakpoint( '>480px' ) {
 			font-size: 18px;
