@@ -58,9 +58,9 @@ describe( 'reducer', () => {
 			'themeDetails',
 			'themesList',
 			// New reducers
-			//'themeRequests',
-			//'queryRequests',
 			//'queries',
+			//'queryRequests',
+			//'themeRequests',
 			'currentTheme',
 			'themesUI'
 		] );
