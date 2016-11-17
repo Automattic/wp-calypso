@@ -11,7 +11,9 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_CONFIG_FETCH,
+	OLARK_CONFIG_RECEIVE,
 } from 'state/action-types';
 import {
 	STATUS_READY,
@@ -19,15 +21,41 @@ import {
 	OPERATOR_STATUS_AVAILABLE,
 	OPERATOR_STATUS_AWAY
 } from '../constants';
-import reducer, { status, requesting, operatorStatus } from '../reducer';
+import reducer, { config, status, requesting, operatorStatus } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'config',
 			'status',
 			'requesting',
 			'operatorStatus'
 		] );
+	} );
+
+	describe( '#config()', () => {
+		it( 'should default to empty object', () => {
+			const state = config( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+		it( 'should track when we request an olark configuration', () => {
+			const state = config( undefined, {
+				type: OLARK_CONFIG_FETCH,
+				context: 'TEST',
+			} );
+			expect( state ).to.eql( { TEST: { isFetching: true } } );
+		} );
+		it( 'should track when we receive an olark configuration', () => {
+			const options = {
+				group: 'testGroup',
+			};
+			const state = config( undefined, {
+				type: OLARK_CONFIG_RECEIVE,
+				context: 'TEST',
+				options,
+			} );
+			expect( state ).to.eql( { TEST: { isFetching: false, options } } );
+		} );
 	} );
 
 	describe( '#operatorStatus()', () => {
