@@ -36,7 +36,7 @@ class Office365 extends Component {
 				notices.error( error.message || this.props.translate( 'The DNS record has not been added.' ) );
 				this.setState( { submitting: false } );
 			} else {
-				notices.success( this.props.translate( 'The DNS records have been added.' ), {
+				notices.success( this.props.translate( 'All DNS records that Office 365 needs have been added.' ), {
 					duration: 5000
 				} );
 			}
@@ -50,7 +50,7 @@ class Office365 extends Component {
 			<form className="dns__office365">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ this.props.translate( 'Office 365 Verification Token' ) }</FormLabel>
+						<FormLabel>{ this.props.translate( 'Office 365 Verification Token - from the TXT record verification' ) }</FormLabel>
 						<FormTextInput
 							name="token"
 							isError={ ! isEmpty( this.state.token ) && ! isDataValid }
