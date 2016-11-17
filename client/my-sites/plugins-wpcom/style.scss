@@ -116,8 +116,10 @@
 
 .plugins-wpcom__panel button.is-active-plugin {
 	color: $alert-green;
+	cursor: default;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		color: $alert-green;
 	}
 }
@@ -214,7 +216,6 @@
 	.plugins-wpcom__plugin-name {
 		color: $gray-dark;
 		display: block;
-		font-weight: 600;
 		line-height: 21px;
 		overflow: hidden;
 		text-align: left;
@@ -225,7 +226,6 @@
 	.plugins-wpcom__plugin-description {
 		color: $gray;
 		font-size: 12px;
-		line-height: 1;
 		padding: 6px 0;
 
 		@include breakpoint( '>480px' ) {
@@ -252,16 +252,33 @@
 
 	.plugins-wpcom__is-premium-plugin,
 	.plugins-wpcom__is-business-plugin {
-		color: $alert-purple;
 		display: block;
 		@include breakpoint( '>480px' ) {
 			display: inline-block;
 			margin-left: 10px;
 		}
 	}
+	.plugins-wpcom__is-premium-plugin {
+		color: $alert-green;
+	}
+	.plugins-wpcom__is-business-plugin {
+		color: $alert-purple;
+	}
 }
 
 .plugins-wpcom__jetpack-main-plugin.card {
+	.plugins-wpcom__plugin-link {
+		display: flex;
+		.plugin-icon {
+			float: none;
+			flex-shrink: 0;
+		}
+		.plugins-wpcom__plugin-content {
+			flex-grow: 1;
+			overflow: hidden;
+		}
+	}
+
 	.plugins-wpcom__plugin-name {
 		@include breakpoint( '>480px' ) {
 			font-size: 24px;

@@ -34,7 +34,7 @@ export const JetpackPluginItem = ( {
 
 	return (
 		<CompactCard className="plugins-wpcom__jetpack-plugin-item">
-			<a href={ plugin.descriptionLink } className="plugins-wpcom__plugin-link">
+			<a href={ plugin.link } className="plugins-wpcom__plugin-link">
 				<div className="plugins-wpcom__plugin-name">
 					{ plugin.name }
 					{ plan }

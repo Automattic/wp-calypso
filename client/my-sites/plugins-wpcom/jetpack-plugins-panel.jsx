@@ -175,18 +175,20 @@ class JetpackPluginsPanel extends Component {
 					/>
 				</SectionNav>
 
-				<SectionHeader label={ translate( 'Plugin' ) } />
+				<SectionHeader label={ translate( 'Plugins' ) } />
 
 				<CompactCard className={ classNames( 'plugins-wpcom__jetpack-main-plugin', 'plugins-wpcom__jetpack-plugin-item' ) }>
-					<a href="" className="plugins-wpcom__plugin-link">
+					<div className="plugins-wpcom__plugin-link">
 						<PluginIcon image="//ps.w.org/jetpack/assets/icon-256x256.png" />
-						<div className="plugins-wpcom__plugin-name">
-							{ translate( 'Jetpack by WordPress.com' ) }
+						<div className="plugins-wpcom__plugin-content">
+							<div className="plugins-wpcom__plugin-name">
+								{ translate( 'Jetpack by WordPress.com' ) }
+							</div>
+							<div className="plugins-wpcom__plugin-description">
+								{ translate( 'Jetpack essential features are included on every plan' ) }
+							</div>
 						</div>
-						<div className="plugins-wpcom__plugin-description">
-							{ translate( 'Jetpack essential features are included on every plan' ) }
-						</div>
-					</a>
+					</div>
 					<div className="plugins-wpcom__plugin-actions">
 						<Button className="plugins-wpcom__plugin-is-active is-active-plugin" compact borderless>
 							<Gridicon icon="checkmark" />{ translate( 'Active' ) }

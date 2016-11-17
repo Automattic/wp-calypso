@@ -23,7 +23,7 @@ export const PurchaseButton = ( {
 	)
 	: (
 		<Button compact primary { ...{ href } }>
-			{ translate( 'Purchase' ) }
+			{ translate( 'Upgrade' ) }
 		</Button>
 	);
 
