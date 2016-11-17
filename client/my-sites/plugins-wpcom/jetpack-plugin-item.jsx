@@ -9,7 +9,6 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Button from 'components/button';
 import PurchaseButton from './purchase-button';
 
 export const JetpackPluginItem = ( {
@@ -17,26 +16,27 @@ export const JetpackPluginItem = ( {
 	siteSlug,
 	translate = identity
 } ) => {
-	let plan;
-
-	if ( plugin.plan === 'premium' ) {
-		plan = <Button compact borderless className="plugins-wpcom__is-premium-plugin">
-			{ translate( 'Premium' ) }
-		</Button>;
-	} else if ( plugin.plan === 'business' ) {
-		plan = <Button compact borderless className="plugins-wpcom__is-business-plugin">
-			{ translate( 'Business' ) }
-		</Button>;
-	} else {
-		plan = null;
-	}
+	const translatePlan = {
+		premium: translate( 'Premium' ),
+		business: translate( 'Business' ),
+	};
+	const planClasses = [
+		'button',
+		'is-compact',
+		'is-borderless',
+		`plugins-wpcom__is-${ plugin.plan }-plugin`,
+	].join( ' ' );
 
 	return (
 		<CompactCard className="plugins-wpcom__jetpack-plugin-item">
 			<a href={ plugin.link } className="plugins-wpcom__plugin-link">
 				<div className="plugins-wpcom__plugin-name">
 					{ plugin.name }
-					{ plan }
+					{ [ 'premium', 'business' ].includes( plugin.plan ) &&
+						<span className={ planClasses }>
+							{ translatePlan[ plugin.plan ] }
+						</span>
+					}
 				</div>
 				<div className="plugins-wpcom__plugin-description">
 					{ plugin.description }

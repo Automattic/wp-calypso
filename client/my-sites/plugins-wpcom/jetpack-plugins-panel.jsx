@@ -7,9 +7,9 @@ import {
 	find,
 	identity,
 	includes,
+	matchesProperty,
 	overSome,
 } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,6 +26,20 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
+
+const filterGroup = category => group => {
+	if ( category && category !== 'all' ) {
+		return group.category === category;
+
+	}
+
+	return true;
+};
+
+const searchPlugins = search => overSome(
+	( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
+	( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
+);
 
 class JetpackPluginsPanel extends Component {
 
@@ -58,7 +72,7 @@ class JetpackPluginsPanel extends Component {
 	}
 
 	getSelectedText( category ) {
-		const found = find( this.getNavItems(), item => category === item.key );
+		const found = find( this.getNavItems(), matchesProperty( 'key', category ) );
 		return found ? found.title : '';
 	}
 
@@ -107,20 +121,7 @@ class JetpackPluginsPanel extends Component {
 			hasBusiness
 		} = this.props;
 
-		const filterGroup = category => group => {
-			if ( category && category !== 'all' ) {
-				return group.category === category;
-			}
-
-			return true;
-		};
-
-		const searchPlugins = search => overSome(
-			( { name } ) => includes( name.toLocaleLowerCase(), search.toLocaleLowerCase() ),
-			( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
-		);
-
-		const filteredPlugins = jetpackPlugins
+		const filteredPlugins = jetpackPlugins( translate )
 			.filter( filterGroup( category ) )
 			.map( group => ( {
 				...group,
@@ -157,7 +158,7 @@ class JetpackPluginsPanel extends Component {
 
 				<SectionHeader label={ translate( 'Plugins' ) } />
 
-				<CompactCard className={ classNames( 'plugins-wpcom__jetpack-main-plugin', 'plugins-wpcom__jetpack-plugin-item' ) }>
+				<CompactCard className="plugins-wpcom__jetpack-main-plugin plugins-wpcom__jetpack-plugin-item">
 					<div className="plugins-wpcom__plugin-link">
 						<PluginIcon image="//ps.w.org/jetpack/assets/icon-256x256.png" />
 						<div className="plugins-wpcom__plugin-content">
@@ -177,25 +178,34 @@ class JetpackPluginsPanel extends Component {
 				</CompactCard>
 
 				<CompactCard className="plugins-wpcom__jetpack-plugins-list">
-					{ filteredPlugins.map( group => (
-					<div key={ group.category }>
-						<CompactCard className="plugins-wpcom__jetpack-category-header">
-							<Gridicon icon={ group.icon } />
-							<span>
-								{ group.name }
-							</span>
-						</CompactCard>
-						{ group.plugins.map( ( plugin, index ) => (
-						<JetpackPluginItem
-							{ ...{
-								key: index,
-								plugin,
-								siteSlug,
-							} }
-						/>
-						) ) }
-					</div>
-					) ) }
+					{ filteredPlugins.length > 0 &&
+						filteredPlugins.map( group => (
+						<div key={ group.category }>
+							<CompactCard className="plugins-wpcom__jetpack-category-header">
+								<Gridicon icon={ group.icon } />
+								<span>
+									{ group.name }
+								</span>
+							</CompactCard>
+							{ group.plugins.map( ( plugin, index ) => (
+							<JetpackPluginItem
+								{ ...{
+									key: index,
+									plugin,
+									siteSlug,
+								} }
+							/>
+							) ) }
+						</div>
+						) )
+					}
+					{ filteredPlugins.length ||
+						<div className="plugins-wpcom__empty-results">
+							{ translate( 'No features match your search for \'%s\'.', {
+								args: [ search ]
+							} )}
+						</div>
+					}
 				</CompactCard>
 
 			</div>

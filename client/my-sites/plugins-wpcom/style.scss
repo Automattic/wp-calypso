@@ -200,6 +200,10 @@
 	}
 }
 
+.plugins-wpcom__empty-results {
+	padding: 11px 16px;
+}
+
 .plugins-wpcom__jetpack-plugin-item.card {
 	display: flex;
 	flex-direction: row;
@@ -226,7 +230,7 @@
 	.plugins-wpcom__plugin-description {
 		color: $gray;
 		font-size: 12px;
-		padding: 6px 0;
+		padding: 2px 0;
 
 		@include breakpoint( '>480px' ) {
 			font-size: 14px;
@@ -289,13 +293,8 @@
 	}
 }
 
-.plugins-wpcom__jetpack-plugins-list {
-	padding: 16px;
-
-	> div:not(:first-child) {
-		margin-top: 16px;
-	}
-
+.plugins-wpcom__jetpack-plugins-list.card {
+	padding: 0;
 	.plugins-wpcom__plugin-name {
 		@include breakpoint( '>480px' ) {
 			font-size: 18px;
