@@ -38,22 +38,6 @@ const themeSchema = {
 	]
 };
 
-export const itemsSchema = {
-	type: 'object',
-	description: 'A site\'s themes',
-	patternProperties: {
-		// Site ID
-		'^(wpcom|\\d+)$': {
-			description: 'Themes, keyed by ID',
-			type: 'object',
-			patternProperties: {
-				'^\\w+$': themeSchema
-			}
-		}
-	},
-	additionalProperties: false
-};
-
 export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
