@@ -1,23 +1,30 @@
-var React = require( 'react' ),
-	page = require( 'page' ),
-	includes = require( 'lodash/includes' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import page from 'page';
+import { includes } from 'lodash';
+import { localize } from 'i18n-calypso';
 
-var DocumentHead = require( 'components/data/document-head' ),
-	FeedHeader = require( 'reader/feed-header' ),
-	FeedFeatured = require( './featured' ),
-	EmptyContent = require( './empty' ),
-	Stream = require( 'reader/stream' ),
-	HeaderBack = require( 'reader/header-back' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
-	FeedError = require( 'reader/feed-error' ),
-	FeedStore = require( 'lib/feed-store' ),
-	FeedStoreActions = require( 'lib/feed-store/actions' ),
-	FeedState = require( 'lib/feed-store/constants' ).state,
-	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
-	feedStreamFactory = require( 'lib/feed-stream-store' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+/**
+ * Internal dependencies
+ */
+import DocumentHead from 'components/data/document-head';
+import FeedHeader from 'reader/feed-header';
+import FeedFeatured from './featured';
+import EmptyContent from './empty';
+import Stream from 'reader/stream';
+import HeaderBack from 'reader/header-back';
+import SiteStore from 'lib/reader-site-store';
+import SiteStoreActions from 'lib/reader-site-store/actions';
+import { state as SiteState } from 'lib/reader-site-store/constants';
+import FeedError from 'reader/feed-error';
+import FeedStore from 'lib/feed-store';
+import FeedStoreActions from 'lib/feed-store/actions';
+import { state as FeedState } from 'lib/feed-store/constants';
+import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import feedStreamFactory from 'lib/feed-stream-store';
+import smartSetState from 'lib/react-smart-set-state';
 
 function checkForRedirect( site ) {
 	if ( site && site.get( 'prefer_feed' ) && site.get( 'feed_ID' ) ) {
@@ -27,55 +34,59 @@ function checkForRedirect( site ) {
 	}
 }
 
-const SiteStream = React.createClass( {
+class SiteStream extends React.Component {
 
-	getDefaultProps: function() {
-		return { showBack: true };
-	},
+	static propTypes = {
+		siteId: React.PropTypes.number.isRequired
+	};
 
-	getInitialState: function() {
-		return this.getState();
-	},
+	static defaultProps = {
+		showBack: true
+	};
 
-	componentDidMount: function() {
+	constructor( props ) {
+		super( props );
+		this.state = this.getState( props );
+		this.smartSetState = smartSetState;
+	}
+
+	componentDidMount() {
 		SiteStore.on( 'change', this.updateState );
 		FeedStore.on( 'change', this.updateState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SiteStore.off( 'change', this.updateState );
 		FeedStore.off( 'change', this.updateState );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			this.updateState( nextProps );
 		}
-	},
+	}
 
-	smartSetState: smartSetState,
-
-	getState: function( props = this.props ) {
+	getState = ( props = this.props ) => {
 		const { site, feed } = this.getSiteAndFeed( props.siteId );
 		checkForRedirect( site );
 
-		let state = {
+		const state = {
 			feed,
 			site,
 			title: props.title || this.getTitle( site )
 		};
 
 		return state;
-	},
+	}
 
-	updateState: function( props = this.props ) {
-		var state = this.getState( props );
+	updateState = ( props = this.props ) => {
+		const state = this.getState( props );
 		checkForRedirect( state.site );
 		this.smartSetState( state );
-	},
+	}
 
-	getSiteAndFeed: function( siteId ) {
-		var site = SiteStore.get( siteId ),
+	getSiteAndFeed = ( siteId ) => {
+		let site = SiteStore.get( siteId ),
 			feed;
 
 		if ( ! site ) {
@@ -98,34 +109,35 @@ const SiteStream = React.createClass( {
 		}
 
 		return { site, feed };
-	},
+	}
 
-	getTitle: function( site ) {
+	getTitle = ( site ) => {
 		if ( ! site ) {
 			return;
 		}
+
 		if ( site.get( 'state' ) === SiteState.COMPLETE ) {
 			return site.get( 'title' ) || site.get( 'domain' );
 		} else if ( site.get( 'state' ) === SiteState.ERROR ) {
-			return this.translate( 'Error fetching site' );
+			return this.props.translate( 'Error fetching site' );
 		}
-	},
+	}
 
-	goBack: function() {
+	goBack = () => {
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
 		}
-	},
+	}
 
-	render: function() {
-		var site = this.state.site,
-			title = this.state.title,
-			emptyContent = ( <EmptyContent /> ),
+	render() {
+		const site = this.state.site,
+			emptyContent = ( <EmptyContent /> );
+		let title = this.state.title,
 			featuredStore = null,
 			featuredContent = null;
 
 		if ( ! title ) {
-			title = this.translate( 'Loading Site' );
+			title = this.props.translate( 'Loading Site' );
 		}
 
 		if ( site && site.get( 'state' ) === SiteState.ERROR ) {
@@ -140,15 +152,14 @@ const SiteStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
-				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
+				<FeedHeader site={ site } feed={ this.state.feed } />
 				{ featuredContent }
 			</Stream>
 
 		);
 	}
+}
 
-} );
-
-module.exports = SiteStream;
+export default localize( SiteStream );
