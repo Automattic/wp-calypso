@@ -116,7 +116,6 @@ import removeStyles from './rule-content-remove-styles';
 import removeElementsBySelector from './rule-content-remove-elements-by-selector';
 import makeImagesSafe from './rule-content-make-images-safe';
 import makeEmbedsSafe from './rule-content-make-embeds-safe';
-import detectEmbeds from './rule-content-detect-embeds';
 import detectMedia from './rule-content-detect-media';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
 import detectPolls from './rule-content-detect-polls';
@@ -126,7 +125,6 @@ normalizePost.content = {
 	removeElementsBySelector,
 	makeImagesSafe,
 	makeEmbedsSafe,
-	detectEmbeds,
 	detectMedia,
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
