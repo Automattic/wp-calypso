@@ -291,20 +291,25 @@
 	font-size: 14px;
 	line-height: 15px;
 	padding-bottom: 11px;
-	padding-top: 3px;
+	padding-left: 50px;
+	padding-top: 11px;
+	position: relative;
 
 	@include breakpoint( '>480px' ) {
 		line-height: 28px;
-		padding-top: 11px;
+		padding-left: 60px;
 	}
 
 	.gridicon {
-		margin-right: 8px;
-		position: relative;
-		top: 5px;
+		height: 24px;
+		left: 16px;
+		position: absolute;
+		top: 6px;
+		width: 24px;
 
 		@include breakpoint( '>480px' ) {
-			margin-right: 12px;
+			left: 24px;
+			top: 11px;
 		}
 	}
 }

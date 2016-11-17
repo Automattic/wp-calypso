@@ -119,7 +119,9 @@ class JetpackPluginsPanel extends Component {
 				return <div key={ group.category }>
 					<CompactCard className="plugins-wpcom__jetpack-category-header">
 						<Gridicon icon={ group.icon } />
-						{ group.name }
+						<span>
+							{ group.name }
+						</span>
 					</CompactCard>
 					{ plugins }
 				</div>;
