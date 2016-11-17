@@ -66,7 +66,11 @@ export const queriesSchema = {
 					required: [ 'items', 'queries' ],
 					properties: {
 						items: {
-							type: 'object'
+							description: 'Themes, keyed by ID',
+							type: 'object',
+							patternProperties: {
+								'^\\w+$': themeSchema
+							}
 						},
 						queries: {
 							patternProperties: {
