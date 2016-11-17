@@ -26,10 +26,6 @@ export function isDiscoverPost( post ) {
 	return !! ( get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
 }
 
-export function isDiscoverPick( post ) {
-	return hasDiscoverSlug( post, 'pick' );
-}
-
 export function isDiscoverSitePick( post ) {
 	return hasDiscoverSlug( post, 'site-pick' );
 }
