@@ -21,6 +21,7 @@ import FollowButton from 'reader/follow-button';
 import PostGallery from './gallery';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
+import { isDiscoverSitePick } from 'reader/discover/helper';
 
 export default class RefreshPostCard extends React.Component {
 	static propTypes = {
@@ -41,10 +42,17 @@ export default class RefreshPostCard extends React.Component {
 	};
 
 	propagateCardClick = () => {
+		let customClickUrl;
+
+		// If it's a Discover site pick, open the site stream rather than a full post
+		if ( isDiscoverSitePick( this.props.post ) ) {
+			customClickUrl = `/read/blogs/${ +this.props.post.blog_ID }`;
+		}
+
 		// If we have an original post available (e.g. for a Discover pick), send the original post
 		// to the full post view
 		const postToOpen = this.props.originalPost ? this.props.originalPost : this.props.post;
-		this.props.onClick( postToOpen );
+		this.props.onClick( postToOpen, customClickUrl );
 	}
 
 	handleCardClick = ( event ) => {
