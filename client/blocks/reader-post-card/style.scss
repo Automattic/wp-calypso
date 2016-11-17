@@ -50,9 +50,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			justify-content: center;
 			flex-basis: auto;
 			flex-grow: 1;
-			margin-right: 20px;
+			margin-left: 20px;
 			max-width: 190px;
 			cursor: pointer;
+			order: 2;
 
 			@include breakpoint( ">960px" ) {
 				max-width: 250px;
@@ -88,9 +89,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				position: relative;
 					top: 0;
 				height: 225px;
-				margin-right: 0;
+				margin-left: 0;
 				margin-bottom: 0;
 				max-width: 100%;
+				order: inherit;
 
 				&::before {
 					content: '';
