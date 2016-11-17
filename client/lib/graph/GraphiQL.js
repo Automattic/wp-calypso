@@ -9,8 +9,8 @@ export default class GraphiQLWrapper extends Component {
 		graph: PropTypes.object.isRequired
 	};
 
-	fetch = ( { query } ) => {
-		return this.context.graph.request( query, { uid: 'graphiql' } );
+	fetch = ( { query, variables } ) => {
+		return this.context.graph.request( query, { uid: 'graphiql' }, variables );
 	};
 
 	render() {

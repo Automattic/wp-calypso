@@ -140,11 +140,11 @@ const StatsPostPerformance = React.createClass( {
 	}
 } );
 
-export default queryGraph( ( { site } ) => {
-	return `
+export default queryGraph(
+	`
+		query PostDetailsAndViewStat( $siteId: Int )
 		{
-			hello
-			posts( siteId: ${ site.ID }, query: { number: 1, status: "publish" } ) {
+			posts( siteId: $siteId, query: { number: 1, status: "publish" } ) {
 				ID
 				date
 				title
@@ -156,8 +156,13 @@ export default queryGraph( ( { site } ) => {
 				stat( stat: "views" )
 			}
 			requests {
-				posts( siteId: ${ site.ID }, query: { number: 1, status: "publish" } )
+				posts( siteId: $siteId, query: { number: 1, status: "publish" } )
 			}
 		}
-	`;
-} )( StatsPostPerformance );
+	`,
+	( { site } ) => {
+		return {
+			siteId: site.ID
+		};
+	}
+)( StatsPostPerformance );

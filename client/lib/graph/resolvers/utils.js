@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { debounce, now } from 'lodash';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ export const refreshWhenExpired = debounce(
 	( store, type, options, timeout, triggerRequest ) => {
 		const state = store.getState();
 		const request = getRequestIgnoringUid( state, type, options );
-		const refresh = ! request || ( now() - request.createdAt >= timeout );
+		const refresh = ! request || ( Date.now() - request.createdAt >= timeout );
 
 		if ( refresh ) {
 			if ( request ) {

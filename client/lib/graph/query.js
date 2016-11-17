@@ -9,7 +9,7 @@ import { isString, uniqueId } from 'lodash';
  */
 import { clearRequests } from 'state/requests/actions';
 
-const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
+const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( WrappedComponent ) => {
 	return class GraphQueryComponent extends Component {
 		state = {
 			results: null
@@ -48,10 +48,11 @@ const query = ( mapPropsToQuery ) => ( WrappedComponent ) => {
 			} else {
 				this.query = mapPropsToQuery( props );
 			}
+			this.variables = mapPropsToVariables( props );
 		}
 
 		request() {
-			this.context.graph.request( this.query, { uid: this.uid } )
+			this.context.graph.request( this.query, { uid: this.uid }, this.variables )
 				.then( results => {
 					this.setState( { results: results.data } );
 				} );

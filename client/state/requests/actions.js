@@ -1,15 +1,10 @@
 /**
- * External dependencies
- */
-import { now } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { REQUEST_ADD, REQUEST_REMOVE, REQUEST_CLEAR } from 'state/action-types';
 
 export function addRequest( uid, type, options = {} ) {
-	const createdAt = now();
+	const createdAt = Date.now();
 
 	return {
 		type: REQUEST_ADD,
