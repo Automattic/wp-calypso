@@ -6,8 +6,10 @@ import Immutable from 'immutable';
 import debounce from 'lodash/debounce';
 import remove from 'lodash/remove';
 import classnames from 'classnames';
+import config from 'config';
 
 // Internal dependencies
+import Main from 'components/main';
 import ReaderMain from 'components/reader-main';
 import Gridicon from 'components/gridicon';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
@@ -515,8 +517,10 @@ const FollowingEdit = React.createClass( {
 			'has-no-subscriptions': hasNoSubscriptions
 		}, 'following-edit' );
 
+		const CurrentMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
+
 		return (
-			<ReaderMain className={ containerClasses }>
+			<CurrentMain className={ containerClasses }>
 				<MobileBackToSidebar>
 					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
@@ -583,7 +587,7 @@ const FollowingEdit = React.createClass( {
 				}
 
 				{ hasNoSubscriptions ? <EmptyContent /> : null }
-			</ReaderMain>
+			</CurrentMain>
 		);
 	}
 
