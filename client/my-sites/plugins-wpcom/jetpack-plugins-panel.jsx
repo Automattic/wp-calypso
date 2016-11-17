@@ -5,9 +5,9 @@ import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import {
 	identity,
-	find
+	find,
+	matchesProperty
 } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -36,26 +36,14 @@ class JetpackPluginsPanel extends Component {
 		translate: identity,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		selectedGroup: 'all',
+		searchTerm: '',
+	};
 
-		this.state = {
-			selectedGroup: 'all',
-			searchTerm: '',
-		};
-	}
+	onNavClick = selectedGroup => this.setState( { selectedGroup } );
 
-	onNavClick( group ) {
-		this.setState( {
-			selectedGroup: group,
-		} );
-	}
-
-	onNavSearch = searchTerm => {
-		this.setState( {
-			searchTerm,
-		} );
-	}
+	onNavSearch = searchTerm => this.setState( { searchTerm } );
 
 	getSearchPlaceholder() {
 		const { translate } = this.props;
@@ -74,7 +62,7 @@ class JetpackPluginsPanel extends Component {
 	}
 
 	getSelectedText() {
-		const found = find( this.getNavItems(), item => this.state.selectedGroup === item.key );
+		const found = find( this.getNavItems(), matchesProperty( 'key', this.state.selectedGroup ) );
 		return found ? found.title : '';
 	}
 
@@ -189,7 +177,7 @@ class JetpackPluginsPanel extends Component {
 
 				<SectionHeader label={ translate( 'Plugins' ) } />
 
-				<CompactCard className={ classNames( 'plugins-wpcom__jetpack-main-plugin', 'plugins-wpcom__jetpack-plugin-item' ) }>
+				<CompactCard className="plugins-wpcom__jetpack-main-plugin plugins-wpcom__jetpack-plugin-item">
 					<div className="plugins-wpcom__plugin-link">
 						<PluginIcon image="//ps.w.org/jetpack/assets/icon-256x256.png" />
 						<div className="plugins-wpcom__plugin-content">
