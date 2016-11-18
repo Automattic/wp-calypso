@@ -7,13 +7,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import DnsAddNew from './dns-add-new';
-import Office365 from './office-365';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
+import Gridicon from 'components/gridicon';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
+import Office365 from './office-365';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
@@ -76,9 +78,12 @@ const Dns = React.createClass( {
 							selectedDomainName={ this.props.selectedDomainName } />
 					}
 
-					{ ! this.hasOffice() && <a className="dns__office-link" href="#" onClick={ this.office365Toggle }>{ this.state.addNew
+					{ ! this.hasOffice() && <Button borderless onClick={ this.office365Toggle }>
+						<Gridicon icon="mail" />{ ' ' }
+						{ this.state.addNew
+
 							? this.translate( 'Looking for Office 365 setup? Continue from here.' )
-							: this.translate( 'Add new DNS records' ) }</a>
+							: this.translate( 'Add new DNS records' ) }</Button>
 					}
 				</Card>
 			</Main>
