@@ -16,7 +16,7 @@ import { protectForm } from 'lib/protect-form';
     export default protectForm( MyComponent );
 ```
 
-The protect-form HoC provide a `markChanged` prop you can on the `onChange` even of your form like this:
+The protect-form HoC provides a `markChanged` prop you can call on the `onChange` event of your form like this:
 
 ```
 <form onChange={ this.props.markChanged } onSubmit={ this.handleSubmit }>
@@ -27,8 +27,8 @@ And then very important, you also need to to call the second prop `markSaved` wh
 ```
     submitForm( event ) {
         event.preventDefault();
-        this.saveSettings( this.state ).then(() => {
+        this.saveSettings( this.state ).then( () => {
             this.props.markSaved();
-        });
+        } );
     },
 ```

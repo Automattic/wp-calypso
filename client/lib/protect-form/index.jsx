@@ -23,7 +23,7 @@ export const protectForm = WrappedComponent => {
 
 		componentWillUnmount() {
 			window.removeEventListener( 'beforeunload', this.warnIfChanged );
-			formsChanged = without( formsChanged, this );
+			this.markSaved();
 		}
 
 		warnIfChanged = event => {
@@ -42,11 +42,7 @@ export const protectForm = WrappedComponent => {
 		};
 
 		markSaved = () => {
-			const index = formsChanged.indexOf( this );
-			if ( -1 === index ) {
-				return;
-			}
-			formsChanged.splice( index, 1 );
+			formsChanged = without( formsChanged, this );
 		}
 
 		render() {
@@ -58,7 +54,7 @@ export const protectForm = WrappedComponent => {
 				/>
 			);
 		}
-	}
+	};
 };
 
 export const checkFormHandler = ( context, next ) => {
