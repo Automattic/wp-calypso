@@ -1,5 +1,8 @@
-const dummyData = {
+export const dummyConfiguration = {
 	isUserEligible: true,
 };
 
-export default dummyData;
+export const dummyError = {
+	status: '400',
+	message: 'Just a dummy error',
+};
