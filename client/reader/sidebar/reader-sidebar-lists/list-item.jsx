@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import last from 'lodash/last';
 import classNames from 'classnames';
@@ -9,17 +9,9 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import ReaderSidebarHelper from '../helper';
 
-const ReaderSidebarListsListItem = React.createClass( {
-
-	propTypes: {
-		list: React.PropTypes.object.isRequired,
-		path: React.PropTypes.string.isRequired,
-		currentListOwner: React.PropTypes.string,
-		currentListSlug: React.PropTypes.string
-	},
+export class ReaderSidebarListsListItem extends Component {
 
 	componentDidMount() {
 		// Scroll to the current list
@@ -27,19 +19,11 @@ const ReaderSidebarListsListItem = React.createClass( {
 			const node = ReactDom.findDOMNode( this );
 			node.scrollIntoView();
 		}
-	},
+	}
 
 	render() {
 		const list = this.props.list;
 		const listRelativeUrl = `/read/list/${ list.owner }/${ list.slug }`;
-		let listManageUrl = `https://wordpress.com${ listRelativeUrl }/edit`;
-		let listRel = 'external';
-
-		if ( config.isEnabled( 'reader/list-management' ) ) {
-			listManageUrl = `${ listRelativeUrl }/edit`;
-			listRel = '';
-		}
-
 		const listManagementUrls = [
 			listRelativeUrl + '/tags',
 			listRelativeUrl + '/edit',
@@ -63,11 +47,16 @@ const ReaderSidebarListsListItem = React.createClass( {
 				<a className="sidebar__menu-item-label" href={ listRelativeUrl }>
 					<div className="sidebar__menu-item-listname">{ list.title }</div>
 				</a>
-				{ list.is_owner ? <a href={ listManageUrl } rel={ listRel } className="add-new">{ this.translate( 'Manage' ) }</a> : null }
 			</li>
 		);
 	}
-} );
+}
+
+ReaderSidebarListsListItem.propTypes = {
+	list: React.PropTypes.object.isRequired,
+	path: React.PropTypes.string.isRequired,
+	currentListOwner: React.PropTypes.string,
+	currentListSlug: React.PropTypes.string
+};
 
 export default ReaderSidebarListsListItem;
-
