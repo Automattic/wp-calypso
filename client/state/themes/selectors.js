@@ -183,12 +183,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		const itemsIgnoringPage = themes.getItemsIgnoringPage( query );
-		if ( ! itemsIgnoringPage ) {
-			return null;
-		}
-
-		return itemsIgnoringPage;
+		return themes.getItemsIgnoringPage( query );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
