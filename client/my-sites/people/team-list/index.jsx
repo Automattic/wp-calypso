@@ -112,7 +112,6 @@ var Team = React.createClass( {
 				key={ user.ID }
 				user={ user }
 				type="user"
-				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing } />
 		);
 	},
