@@ -190,7 +190,7 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<ButtonRow single={ true }>
+			<ButtonRow>
 				<Quit onClick={ scrollSidebarToTop } primary>
 					{ translate( "We're all done!" ) }
 				</Quit>

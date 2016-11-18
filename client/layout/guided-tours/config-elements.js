@@ -424,12 +424,11 @@ export class Continue extends Component {
 }
 
 export const ButtonRow = ( { children } ) => {
-	const isSingleButton = React.Children.count( children ) === 1;
-	return (
-		<div className={ isSingleButton ? 'guided-tours__single-button-row' : 'guided-tours__choice-button-row' }>
-			{ children }
-		</div>
-	);
+	const className = React.Children.count( children ) === 1
+		? 'guided-tours__single-button-row'
+		: 'guided-tours__choice-button-row';
+
+	return <div className={ className }>{ children }</div>;
 };
 
 export class Link extends Component {
