@@ -99,7 +99,7 @@ export default function urlPreview( WebPreview ) {
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteUrl: 'https://' + getSiteSlug( state, selectedSiteId ),
-			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ),
+			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 			previewUrl: getPreviewUrl( state ),
 		};
 	}

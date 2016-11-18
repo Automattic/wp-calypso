@@ -120,6 +120,15 @@ export default {
 		next();
 	},
 
+	personal( context ) {
+		const analyticsBasePath = '/jetpack/connect/personal',
+			analyticsPageTitle = 'Jetpack Connect Personal';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		jetpackConnectFirstStep( context, 'personal' );
+	},
+
 	premium( context ) {
 		const analyticsBasePath = '/jetpack/connect/premium',
 			analyticsPageTitle = 'Jetpack Connect Premium';
@@ -248,6 +257,7 @@ export default {
 				<Plans
 					context={ context }
 					destinationType={ context.params.destinationType }
+					basePlansPath={ '/jetpack/connect/plans' }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),

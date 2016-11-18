@@ -19,6 +19,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_HOST_BUNDLE,
@@ -91,10 +93,12 @@ function isFreeTrial( product ) {
 }
 
 function isPersonal( product ) {
+	var personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
+
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === PLAN_PERSONAL;
+	return ( personalProducts.indexOf( product.product_slug ) >= 0 );
 }
 
 function isPremium( product ) {
@@ -123,7 +127,7 @@ function isEnterprise( product ) {
 }
 
 function isJetpackPlan( product ) {
-	var jetpackProducts = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
+	var jetpackProducts = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
 
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -152,7 +156,7 @@ function isJetpackMonthlyPlan( product ) {
 function isMonthly( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
-	
+
 	return product.bill_period === PLAN_MONTHLY_PERIOD;
 }
 
