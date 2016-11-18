@@ -1,15 +1,21 @@
-var classnames = require( 'classnames' ),
-	React = require( 'react' ),
-	url = require( 'url' );
+/**
+ * External Dependencies
+ */
+import classnames from 'classnames';
+import React from 'react';
+import url from 'url';
 
-var Card = require( 'components/card' ),
-	ReaderFollowButton = require( 'reader/follow-button' ),
-	resizeImageUrl = require( 'lib/resize-image-url' ),
-	safeImageUrl = require( 'lib/safe-image-url' ),
-	Site = require( 'blocks/site' ),
-	feedState = require( 'lib/feed-store/constants' ).state;
+/**
+ * Internal Dependencies
+ */
+import Card from 'components/card';
+import ReaderFollowButton from 'reader/follow-button';
+import resizeImageUrl from 'lib/resize-image-url';
+import safeImageUrl from 'lib/safe-image-url';
+import Site from 'blocks/site';
+import { state as feedState } from 'lib/feed-store/constants';
 
-var FeedHeader = React.createClass( {
+const FeedHeader = React.createClass( {
 
 	getInitialState() {
 		return {
