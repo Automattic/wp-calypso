@@ -8,13 +8,13 @@ import includes from 'lodash/includes';
 /**
  * Internal Dependencies
  */
-var trailingslashit = require( './trailingslashit' ),
-	untrailingslashit = require( './untrailingslashit' );
+import trailingslashit from './trailingslashit';
+import untrailingslashit from './untrailingslashit';
 
 /**
  * Module variables
  */
-var statsLocationsByTab = {
+const statsLocationsByTab = {
 	day: '/stats/day/',
 	week: '/stats/week/',
 	month: '/stats/month/',
@@ -23,23 +23,21 @@ var statsLocationsByTab = {
 };
 
 function getSiteFragment( path ) {
-	const basePath = path.split( '?' )[0];
+	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
 	// There are 2 URL positions where we should look for the site fragment:
 	// last (most sections) and second-to-last (post ID is last in editor)
-
-	// Check last and second-to-last piece for site slug
+	//
+	// This block will check the second-to-last segment for a site fragment or
+	// site ID, and then will check the first-to-last segment for the same.
 	for ( let i = 2; i > 0; i-- ) {
-		const piece = pieces[ pieces.length - i ];
+		let piece = pieces[ pieces.length - i ];
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece;
 		}
-	}
 
-	// Check last and second-to-last piece for numeric site ID
-	for ( let i = 2; i > 0; i-- ) {
-		const piece = parseInt( pieces[ pieces.length - i ], 10 );
+		piece = parseInt( piece, 10 );
 		if ( Number.isSafeInteger( piece ) ) {
 			return piece;
 		}
@@ -66,8 +64,8 @@ function addSiteFragment( path, site ) {
 }
 
 function sectionify( path ) {
-	var basePath = path.split( '?' )[0],
-		site = getSiteFragment( basePath );
+	let basePath = path.split( '?' )[ 0 ];
+	const site = getSiteFragment( basePath );
 
 	if ( site ) {
 		basePath = trailingslashit( basePath ).replace( '/' + site + '/', '/' );
@@ -76,7 +74,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	var path = '/stats/insights/';
+	const path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;
@@ -86,8 +84,6 @@ function getStatsDefaultSitePage( slug ) {
 }
 
 function getStatsPathForTab( tab, siteIdOrSlug ) {
-	var path;
-
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -97,7 +93,7 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
 		return getStatsDefaultSitePage();
 	}
 
-	path = statsLocationsByTab[ tab ];
+	const path = statsLocationsByTab[ tab ];
 
 	if ( ! path ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );

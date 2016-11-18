@@ -51,7 +51,7 @@ export default React.createClass( {
 				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
-				href={ canLinkToProfile && '/people/edit/' + this.props.user.login + '/' + this.props.site.slug }
+				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
 				onClick={ canLinkToProfile && this.navigateToUser }>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
