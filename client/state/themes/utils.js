@@ -14,7 +14,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
 /**
  * Constants
  */
-const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
+const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
 
 export const oldShowcaseUrl = '//wordpress.com/themes/';
 
@@ -63,9 +63,9 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
 
 	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
 	if ( matches ) {
-		siteId = Number( matches[ 2 ] ) || undefined;
+		siteId = Number( matches[ 1 ] ) || undefined;
 		try {
-			query = JSON.parse( matches[ 3 ] );
+			query = JSON.parse( matches[ 2 ] );
 		} catch ( error ) {}
 	}
 
