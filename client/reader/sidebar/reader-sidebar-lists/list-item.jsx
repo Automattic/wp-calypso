@@ -36,9 +36,7 @@ export class ReaderSidebarListsListItem extends Component {
 
 		const classes = classNames(
 			{
-				'sidebar__menu-item has-buttons': true,
-				selected: isCurrentList || isActionButtonSelected,
-				'is-action-button-selected': isActionButtonSelected
+				selected: isCurrentList || isActionButtonSelected
 			}
 		);
 
