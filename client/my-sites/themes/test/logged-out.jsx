@@ -20,7 +20,7 @@ import useMockery from 'test/helpers/use-mockery';
 import {
 	incrementThemesPage,
 	query,
-	receiveThemes,
+	legacyReceiveThemes as receiveThemes,
 	receiveServerError
 } from 'state/themes/actions';
 
