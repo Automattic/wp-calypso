@@ -72,26 +72,25 @@ var FeedHeader = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes } >
-				<Card className="feed-header__site">
-					<div className="feed-header__image" style={ headerColor ? { backgroundColor: '#' + headerColor } : null }>
-						{ headerImageUrl ? <img src={ headerImageUrl } /> : null }
-					</div>
-
-					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
-
-					{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="feed-header__follow">
+			<div className={ classes }>
+				<div className="reader-feed-header__follow">
+					{ followerCount ? <span className="reader-feed-header__follow-count"> {
+					this.translate( '%s follower', '%s followers',
+					{ count: followerCount, args: [ this.numberFormat( followerCount ) ] } ) }
+					</span> : null }
+					{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
 						<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
 					</div> : null }
-				</Card>
-
-				<div className="feed-header__details">
-					<p className="feed-header__description">{ ( site && site.get( 'description' ) ) }</p>
-					{ followerCount ? <small className="feed-header__follow-count"> {
-						this.translate( '%s follower', '%s followers',
-						{ count: followerCount, args: [ this.numberFormat( followerCount ) ] } ) }
-						</small> : null }
 				</div>
+				<Card className="reader-feed-header__site">
+					<div className="reader-feed-header__image" style={ headerColor ? { backgroundColor: '#' + headerColor } : null }>
+						{ headerImageUrl ? <img src={ headerImageUrl } /> : null }
+					</div>
+					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
+					<div className="reader-feed-header__details">
+						<span className="reader-feed-header__description">{ ( site && site.get( 'description' ) ) }</span>
+					</div>
+				</Card>
 			</div>
 		);
 	}

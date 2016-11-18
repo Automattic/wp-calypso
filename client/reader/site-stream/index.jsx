@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import FeedHeader from 'reader/feed-header';
+import FeedHeader from 'blocks/reader-feed-header';
 import FeedFeatured from './featured';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
