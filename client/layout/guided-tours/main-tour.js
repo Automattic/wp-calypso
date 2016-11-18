@@ -6,6 +6,7 @@ import {
 	makeTour,
 	Tour,
 	Step,
+	ButtonRow,
 	Next,
 	Quit,
 	Continue,
@@ -28,8 +29,8 @@ const scrollSidebarToTop = () =>
 
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }>
-		<Step name="init" placement="right" className="guided-tours__step-first">
-			<p className="guided-tours__step-text">
+		<Step name="init" placement="right">
+			<p>
 				{
 					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
 											'and give you some ideas for what to do next.',
@@ -40,10 +41,10 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="my-sites"
@@ -51,7 +52,7 @@ export const MainTour = makeTour(
 			placement="below"
 			arrow="top-left"
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
 											"your site's content and design.",
@@ -62,17 +63,15 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<p className="guided-tours__actionstep-instructions">
-				<Continue icon="my-sites" target="my-sites" step="sidebar" click>
-					{
-						translate( 'Click the {{GridIcon/}} to continue.', {
-							components: {
-								GridIcon: <Gridicon icon="my-sites" size={ 24 } />,
-							}
-						} )
-					}
-				</Continue>
-			</p>
+			<Continue icon="my-sites" target="my-sites" step="sidebar" click>
+				{
+					translate( 'Click the {{GridIcon/}} to continue.', {
+						components: {
+							GridIcon: <Gridicon icon="my-sites" size={ 24 } />,
+						}
+					} )
+				}
+			</Continue>
 		</Step>
 
 		<Step name="sidebar"
@@ -80,24 +79,23 @@ export const MainTour = makeTour(
 			arrow="left-middle"
 			placement="beside"
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="click-preview" />
 				<Quit />
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="click-preview"
-			className="guided-tours__step-action"
 			target="site-card-preview"
 			arrow="top-left"
 			placement="below"
 			when={ selectedSiteIsPreviewable }
 			scrollContainer=".sidebar__region"
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
 						components: {
@@ -106,24 +104,22 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<p className="guided-tours__actionstep-instructions">
-				<Continue step="in-preview" target="site-card-preview" click>
-					{
-						translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
-							components: {
-								strong: <strong />,
-							},
-						} )
-					}
-				</Continue>
-			</p>
+			<Continue step="in-preview" target="site-card-preview" click>
+				{
+					translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
+						components: {
+							strong: <strong />,
+						},
+					} )
+				}
+			</Continue>
 		</Step>
 
 		<Step name="in-preview"
 			placement="center"
 			when={ selectedSiteIsPreviewable }
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( "This is your site's {{strong}}Preview{{/strong}}. From here you can see how your site looks to others.", {
 						components: {
@@ -132,34 +128,31 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="close-preview" />
 				<Quit />
 				<Continue step="close-preview" when={ previewIsNotShowing } hidden />
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="close-preview"
-			className="guided-tours__step-action"
 			target="web-preview__close"
 			arrow="left-top"
 			placement="beside"
 			when={ and( selectedSiteIsPreviewable, previewIsShowing ) }
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
-			<p className="guided-tours__actionstep-instructions">
-				<Continue step="themes" target="web-preview__close" when={ previewIsNotShowing }>
-					{
-						translate( 'Click the {{GridIcon/}} to continue.', {
-							components: {
-								GridIcon: <Gridicon icon="cross-small" size={ 24 } />,
-							}
-						} )
-					}
-				</Continue>
-			</p>
+			<Continue step="themes" target="web-preview__close" when={ previewIsNotShowing }>
+				{
+					translate( 'Click the {{GridIcon/}} to continue.', {
+						components: {
+							GridIcon: <Gridicon icon="cross-small" size={ 24 } />,
+						}
+					} )
+				}
+			</Continue>
 		</Step>
 
 		<Step name="themes"
@@ -170,7 +163,7 @@ export const MainTour = makeTour(
 			scrollContainer=".sidebar__region"
 			shouldScrollTo
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} ' +
 											"your theme's colors, fonts, and more.",
@@ -181,17 +174,14 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="finish" />
 				<Quit />
-			</div>
+			</ButtonRow>
 		</Step>
 
-		<Step name="finish"
-			placement="center"
-			className="guided-tours__step-finish"
-		>
-			<p className="guided-tours__step-text">
+		<Step name="finish" placement="center">
+			<p>
 				{
 					translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
 						components: {
@@ -200,11 +190,11 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<div className="guided-tours__single-button-row">
+			<ButtonRow>
 				<Quit onClick={ scrollSidebarToTop } primary>
 					{ translate( "We're all done!" ) }
 				</Quit>
-			</div>
+			</ButtonRow>
 			<Link href="https://learn.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
