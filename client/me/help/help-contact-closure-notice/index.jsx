@@ -24,9 +24,12 @@ const Closed = localize( ( { translate } ) =>
 			{ translate(
 				'Live chat is closed today for the US Thanksgiving holiday. To get in touch, please ' +
 				'submit a support request below and we will get to it as fast as we can. Live chat ' +
-				'will reopen on %(closed_end_date)s. Thank you!', {
+				'will reopen on {{strong}}%(closed_end_date)s{{/strong}}. Thank you!', {
 					args: {
 						closed_end_date: closedTo.format( 'dddd, MMMM Do, YYYY HH:mm' ),
+					},
+					components: {
+						strong: <strong />
 					}
 				}
 			) }
@@ -39,12 +42,16 @@ const Upcoming = localize( ( { translate } ) =>
 		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
 		<p>
 			{ translate(
-				'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s ' +
-				'for the US Thanksgiving holiday. If you need to get in touch with us that day, you’ll be able to submit a support ' +
-				'request from this page and we will get to it as fast as we can. Thank you!', {
+				'Live chat support will be closed from ' +
+				'{{strong}}%(closed_start_date)s{{/strong}} through {{strong}}%(closed_end_date)s{{/strong}} ' +
+				'for the US Thanksgiving holiday. If you need to get in touch with us that day, you’ll be able ' +
+				'to submit a support request from this page and we will get to it as fast as we can. Thank you!', {
 					args: {
 						closed_start_date: closedFrom.format( 'dddd, MMMM Do, YYYY HH:mm' ),
 						closed_end_date: closedTo.format( 'dddd, MMMM Do, YYYY HH:mm' ),
+					},
+					components: {
+						strong: <strong />
 					}
 				}
 			) }
