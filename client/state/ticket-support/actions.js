@@ -9,22 +9,10 @@ import {
 	TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
-export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
-	dispatch( { type: TICKET_SUPPORT_CONFIGURATION_REQUEST } );
-
-	return wpcom.undocumented().getKayakoConfiguration()
-		.then( ( settings ) => {
-			dispatch( ticketSupportConfigurationRequestSuccess( settings );
-		} )
-		.catch( ( error ) => {
-			dispatch( ticketSupportConfigurationRequestFailure( error );
-		} );
-};
-
-export const ticketSupportConfigurationRequestSuccess = ( settings ) => {
+export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 	return {
 		type: TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS,
-		...settings,
+		...configuration,
 	};
 };
 
@@ -33,4 +21,16 @@ export const ticketSupportConfigurationRequestFailure = ( error ) => {
 		type: TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
 		...error,
 	};
+};
+
+export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
+	dispatch( { type: TICKET_SUPPORT_CONFIGURATION_REQUEST } );
+
+	return wpcom.undocumented().getKayakoConfiguration()
+		.then( ( configuration ) => {
+			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
+		} )
+		.catch( ( error ) => {
+			dispatch( ticketSupportConfigurationRequestFailure( error ) );
+		} );
 };
