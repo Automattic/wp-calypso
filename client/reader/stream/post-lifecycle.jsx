@@ -14,7 +14,7 @@ import PostUnavailable from './post-unavailable';
 import CrossPost from './x-post';
 import XPostHelper from 'reader/xpost-helper';
 
-export default class PostSelector extends React.PureComponent {
+export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
 		postKey: PropTypes.object
 	}
@@ -25,7 +25,7 @@ export default class PostSelector extends React.PureComponent {
 
 	updatePost = ( props = this.props ) => {
 		const post = PostStore.get( props.postKey );
-		if ( post !== ( this.state && this.state.post ) ) {
+		if ( post !== this.state.post ) {
 			this.setState( { post } );
 		}
 		if ( ! post || post._state === 'minimal' ) {

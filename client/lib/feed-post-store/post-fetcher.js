@@ -21,7 +21,7 @@ assign( PostFetcher.prototype, {
 		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( postKey ) );
 
 		if ( ! this.batchQueued ) {
-			this.batchQueued = setTimeout( this.run.bind( this ), 0 );
+			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
 		}
 	},
 
