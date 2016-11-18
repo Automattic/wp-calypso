@@ -229,7 +229,7 @@ var TokenField = React.createClass( {
 
 	_onInputChange: function( event ) {
 		const text = event.value;
-		const separator = this.props.tokenizeOnSpace ? /[ ,]+/ : /,+/;
+		const separator = this.props.tokenizeOnSpace ? /[ ,\n\t]+/ : /[,\n\t]+/;
 		const items = text.split( separator );
 
 		if ( items.length > 1 ) {

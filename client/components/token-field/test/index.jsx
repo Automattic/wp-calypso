@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import map from 'lodash/map';
-import filter from 'lodash/filter';
-import { expect } from 'chai';
 import React from 'react';
+import { expect } from 'chai';
+import { filter, map } from 'lodash';
 import { test } from 'sinon';
 
 /**
@@ -93,7 +92,7 @@ describe( 'TokenField', function() {
 	}
 
 	function getSelectedSuggestion() {
-		var selectedSuggestions = getSuggestionsText( '.token-field__suggestion.is-selected' );
+		const selectedSuggestions = getSuggestionsText( '.token-field__suggestion.is-selected' );
 
 		return selectedSuggestions[ 0 ] || null;
 	}
@@ -411,6 +410,27 @@ describe( 'TokenField', function() {
 			sendKeyDown( keyCodes.enter );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'of' ] );
 			expect( getSelectedSuggestion() ).to.equal( null );
+		} );
+
+		it( 'should add multiple comma-separated tokens when pasting', function() {
+			setText( 'baz, quux, wut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
+			setText( 'wut,' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+		} );
+
+		it( 'should add multiple newline-separated tokens when pasting', function() {
+			setText( 'baz\nquux\nwut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( 'wut' );
+		} );
+
+		it( 'should add multiple tab-separated tokens when pasting', function() {
+			setText( 'baz\tquux\twut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( 'wut' );
 		} );
 	} );
 
