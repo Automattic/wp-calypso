@@ -29,7 +29,9 @@ function FeaturedImage( { image, href } ) {
 
 function AuthorAndSiteFollow( { post, site } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
-	const authorAndSiteAreDifferent = site.title.toLowerCase() !== post.author.name.toLowerCase();
+	const authorAndSiteAreDifferent = site &&
+		site.title && site.title.toLowerCase() !== post.author.name.toLowerCase();
+
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl }>
@@ -82,7 +84,8 @@ function RelatedPostCardPlaceholder() {
 }
 
 /* eslint-disable no-unused-vars */
-export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, site, lineClamp = 10,
+		onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
@@ -95,6 +98,9 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 		'has-thumbnail': !! featuredImage
 	} );
 
+	// TODO: is this okay?
+	const style = { WebkitLineClamp: lineClamp };
+
 	return (
 		<Card className={ classes }>
 			<AuthorAndSiteFollow post={ post } site={ site } />
@@ -104,7 +110,7 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 						onClick={ partial( onPostClick, post ) } /> }
 					<div className="reader-related-card-v2__site-info">
 						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-						<div className="reader-related-card-v2__excerpt post-excerpt">
+						<div className="reader-related-card-v2__excerpt post-excerpt" style={ style }>
 							{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
 						</div>
 					</div>

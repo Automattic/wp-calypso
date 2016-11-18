@@ -8,6 +8,30 @@
 	margin: 0;
 }
 
+.is-reader-page .search-stream__input-card.card {
+	box-shadow: 0 0 0 2px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+ }
+
+ .is-reader-page .search-stream .reader__content {
+	 display: flex;
+	 flex-wrap: wrap;
+ }
+
+.is-reader-page .search-stream__recommendation-list-item:nth-child(odd) {
+	margin-right: 0px; 
+ }
+
+ .is-reader-page .search-stream__recommendation-list-item {
+	 flex-basis: 30%;
+	 flex-grow: 0.5;
+	 margin-right: 45px; // TODO this isn't right
+	 padding-bottom: 10px; // TODO neither is this
+	 display: flex;
+	 list-style-type: none;
+	 border-top: 1px solid #c8d7e1;
+	 padding-top: 2px; // this seems to be necessary to create the line above
+ }
+
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
