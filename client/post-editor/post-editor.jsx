@@ -9,6 +9,7 @@ const ReactDom = require( 'react-dom' ),
 	throttle = require( 'lodash/throttle' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,7 +23,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
@@ -54,8 +54,9 @@ import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { protectForm } from 'lib/protect-form';
 
-const PostEditor = React.createClass( {
+export const PostEditor = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
@@ -65,13 +66,15 @@ const PostEditor = React.createClass( {
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
-		editPath: React.PropTypes.string
+		editPath: React.PropTypes.string,
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	_previewWindow: null,
 
 	mixins: [
-		protectForm.mixin,
 		observe( 'sites' )
 	],
 
@@ -123,9 +126,9 @@ const PostEditor = React.createClass( {
 		}
 
 		if ( nextState.isDirty || nextProps.dirty ) {
-			this.markChanged();
+			this.props.markChanged();
 		} else {
-			this.markSaved();
+			this.props.markSaved();
 		}
 	},
 
@@ -230,13 +233,13 @@ const PostEditor = React.createClass( {
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
 										onClick={ this.switchEditorVisualMode }
-										title={ this.translate( 'Edit with a visual editor' ) }>
-										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										title={ this.props.translate( 'Edit with a visual editor' ) }>
+										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
 									<SegmentedControlItem
 										selected={ mode === 'html' }
 										onClick={ this.switchEditorHtmlMode }
-										title={ this.translate( 'Edit the raw HTML code' ) }>
+										title={ this.props.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
 								</SegmentedControl>
@@ -510,7 +513,7 @@ const PostEditor = React.createClass( {
 		} else {
 			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
 			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
-			this.markSaved();
+			this.props.markSaved();
 			this.onClose();
 		}
 	},
@@ -801,4 +804,4 @@ export default connect(
 	},
 	null,
 	{ pure: false }
-)( PostEditor );
+)( protectForm( localize( PostEditor ) ) );

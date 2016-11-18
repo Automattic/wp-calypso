@@ -10,7 +10,7 @@ import debugFactory from 'debug';
  */
 import formBase from './form-base';
 import productsValues from 'lib/products-values';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'lib/protect-form';
 import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
@@ -19,11 +19,11 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-export default React.createClass( {
+export default protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormAnalytics',
 
-	mixins: [ protectForm.mixin, formBase ],
+	mixins: [ formBase ],
 
 	getInitialState() {
 		return {
@@ -103,7 +103,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.props.markChanged }>
 				{ this.renderNudge() }
 				<SectionHeader label={ this.translate( 'Analytics Settings' ) }>
 					<Button
@@ -198,4 +198,4 @@ export default React.createClass( {
 		// Only show Google Analytics for business users.
 		return this.form();
 	}
-} );
+} ) );

@@ -270,7 +270,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	// warn against navigating from changed, unsaved forms
-	page.exit( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
+	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
 
 	page( '*', function( context, next ) {
 		var path = context.pathname;

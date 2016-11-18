@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -17,12 +16,13 @@ var formBase = require( './form-base' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
+import { protectForm } from 'lib/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackProtect',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};
@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 
 	settings: function() {
 		return (
-			<form id="protect-settings" onChange={ this.markChanged } onSubmit={ this.handleSubmitForm }>
+			<form id="protect-settings" onChange={ this.props.markChanged } onSubmit={ this.handleSubmitForm }>
 				<FormLegend>{ this.translate( 'IP Address Whitelist' ) }</FormLegend>
 
 				<FormLabel>
@@ -112,7 +112,7 @@ module.exports = React.createClass( {
 	// updates the state when an error occurs
 	handleError: function() {
 		this.setState( { submittingForm: false } );
-		this.markSaved();
+		this.props.markSaved();
 	},
 
 	disableForm: function() {
@@ -175,4 +175,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

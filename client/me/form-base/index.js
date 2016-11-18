@@ -76,7 +76,7 @@ module.exports = {
 					notices.error( this.translate( 'There was a problem saving your changes.' ) );
 				}
 			} else {
-				this.markSaved();
+				this.props.markSaved && this.props.markSaved();
 
 				if ( this.state && this.state.redirect ) {
 					// Sometimes changes in settings require a url refresh to update the UI.
