@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { map, pickBy } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ const CurrentTheme = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	render() {
-		const { currentTheme, siteId } = this.props,
+		const { currentTheme, siteId, translate } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
@@ -49,7 +50,7 @@ const CurrentTheme = React.createClass( {
 				{ siteId && <QueryCurrentTheme siteId={ siteId } /> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
-						{ this.translate( 'Current Theme' ) }
+						{ translate( 'Current Theme' ) }
 					</span>
 					<span className="current-theme__name">
 						{ text }
@@ -73,7 +74,7 @@ const CurrentTheme = React.createClass( {
 	}
 } );
 
-const ConnectedCurrentTheme = connectOptions( CurrentTheme );
+const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
 const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
