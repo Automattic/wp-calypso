@@ -2,11 +2,21 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	getThemes,
+	getTheme,
+	getThemesForQuery,
+	isRequestingThemesForQuery,
+	getThemesFoundForQuery,
+	getThemesLastPageForQuery,
+	isThemesLastPageForQuery,
+	getThemesForQueryIgnoringPage,
+	isRequestingThemesForQueryIgnoringPage,
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
 	getThemeHelpUrl,
@@ -17,8 +27,541 @@ import {
 	isThemeActive,
 	isThemePurchased
 } from '../selectors';
+import ThemeQueryManager from 'lib/query-manager/theme';
+
+const twentyfifteen = {
+	id: 'twentyfifteen',
+	name: 'Twenty Fifteen',
+	author: 'the WordPress team',
+	screenshot: 'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/twentyfifteen/screenshot.png',
+	stylesheet: 'pub/twentyfifteen',
+	demo_uri: 'https://twentyfifteendemo.wordpress.com/',
+	author_uri: 'https://wordpress.org/'
+};
+
+const twentysixteen = {
+	id: 'twentysixteen',
+	name: 'Twenty Sixteen',
+	author: 'the WordPress team',
+	screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+	stylesheet: 'pub/twentysixteen',
+	demo_uri: 'https://twentysixteendemo.wordpress.com/',
+	author_uri: 'https://wordpress.org/'
+};
+
+const mood = {
+	id: 'mood',
+	name: 'Mood',
+	author: 'Automattic',
+	screenshot: 'mood.jpg',
+	price: '$20',
+	stylesheet: 'premium/mood',
+	demo_uri: 'https://mooddemo.wordpress.com/',
+	author_uri: 'https://wordpress.com/themes/'
+};
 
 describe( 'themes selectors', () => {
+	beforeEach( () => {
+		getThemes.memoizedSelector.cache.clear();
+		getTheme.memoizedSelector.cache.clear();
+		getThemesForQuery.memoizedSelector.cache.clear();
+		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
+		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
+	} );
+
+	describe( '#getThemes()', () => {
+		it( 'should return an array of theme objects for the site', () => {
+			const themeObjects = {
+				wpcom: {
+					mood
+				},
+				77203074: {
+					twentyfifteen,
+					twentysixteen
+				}
+			};
+			const state = {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: themeObjects.wpcom
+						} ),
+						77203074: new ThemeQueryManager( {
+							items: themeObjects[ 77203074 ]
+						} )
+					},
+
+				}
+			};
+
+			expect( getThemes( state, 77203074 ) ).to.have.members( values( themeObjects[ 77203074 ] ) );
+		} );
+	} );
+
+	describe( '#getTheme()', () => {
+		it( 'should return null if the theme is not known for the site', () => {
+			const theme = getTheme( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, 413 );
+
+			expect( theme ).to.be.null;
+		} );
+
+		it( 'should return the object for the site ID, theme ID pair', () => {
+			const theme = getTheme( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} )
+					}
+				}
+			}, 2916284, 'twentysixteen' );
+
+			expect( theme ).to.equal( twentysixteen );
+		} );
+	} );
+
+	describe( '#getThemesForQuery()', () => {
+		it( 'should return null if the site query is not tracked', () => {
+			const siteThemes = getThemesForQuery( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( siteThemes ).to.be.null;
+		} );
+
+		it( 'should return null if the query is not tracked to the query manager', () => {
+			const siteThemes = getThemesForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( siteThemes ).to.be.null;
+		} );
+
+		it( 'should return an array of normalized known queried themes', () => {
+			const siteThemes = getThemesForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ]
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( siteThemes ).to.eql( [ twentysixteen ] );
+		} );
+
+		it( 'should return null if we know the number of found items but the requested set hasn\'t been received', () => {
+			const siteThemes = getThemesForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentyfifteen
+							},
+							queries: {
+								'[["search","Fifteen"]]': {
+									itemKeys: [ 'twentyfifteen', undefined ],
+									found: 2
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Fifteen', number: 1, page: 2 } );
+
+			expect( siteThemes ).to.be.null;
+		} );
+	} );
+
+	describe( '#isRequestingThemesForQuery()', () => {
+		it( 'should return false if the site has not been queried', () => {
+			const isRequesting = isRequestingThemesForQuery( {
+				themes: {
+					queryRequests: {}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false if the site has not been queried for the specific query', () => {
+			const isRequesting = isRequestingThemesForQuery( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"Six"}': true
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if the site has been queried for the specific query', () => {
+			const isRequesting = isRequestingThemesForQuery( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"Sixteen"}': true
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+			const isRequesting = isRequestingThemesForQuery( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"Sixteen"}': false
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( 'getThemesFoundForQuery()', () => {
+		it( 'should return null if the site query is not tracked', () => {
+			const found = getThemesFoundForQuery( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( found ).to.be.null;
+		} );
+
+		it( 'should return the found items for a site query', () => {
+			const found = getThemesFoundForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 1
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( found ).to.equal( 1 );
+		} );
+
+		it( 'should return zero if in-fact there are zero items', () => {
+			const found = getThemesFoundForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {},
+							queries: {
+								'[["search","Umpteen"]]': {
+									itemKeys: [],
+									found: 0
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Umpteen' } );
+
+			expect( found ).to.equal( 0 );
+		} );
+	} );
+
+	describe( '#getThemesLastPageForQuery()', () => {
+		it( 'should return null if the site query is not tracked', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( lastPage ).to.be.null;
+		} );
+
+		it( 'should return the last page value for a site query', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'sixteen' ],
+									found: 1
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
+
+		it( 'should return the last page value for a site query, even if including page param', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty', page: 3, number: 1 } );
+
+			expect( lastPage ).to.equal( 7 );
+		} );
+
+		it( 'should return 1 if there are no found themes', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {},
+							queries: {
+								'[["search","Umpteen"]]': {
+									itemKeys: [],
+									found: 0
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Umpteen' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
+	} );
+
+	describe( '#isThemesLastPageForQuery()', () => {
+		it( 'should return null if the last page is not known', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, { search: 'Umpteen' } );
+
+			expect( isLastPage ).to.be.null;
+		} );
+
+		it( 'should return false if the query explicit value is not the last page', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty', page: 6, number: 1 } );
+
+			expect( isLastPage ).to.be.false;
+		} );
+
+		it( 'should return true if the query explicit value is the last page', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty', page: 7, number: 1 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
+
+		it( 'should return true if the query implicit value is the last page', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 1
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
+	} );
+
+	( '#getThemesForQueryIgnoringPage()', () => {
+		it( 'should return null if the query is not tracked', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					queries: {}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.be.null;
+		} );
+
+		it( 'should return null if the query manager has not received items for query', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.be.null;
+		} );
+
+		it( 'should return a concatenated array of all site themes ignoring page', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentyfifteen,
+								twentysixteen
+							},
+							queries: {
+								'[]': {
+									itemKeys: [ 'twentyfifteen', 'twentysixteen' ]
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.eql( [
+				twentyfifteen,
+				twentysixteen
+			] );
+		} );
+
+		it( 'should omit found items for which the requested result hasn\'t been received', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen', undefined ],
+									found: 2
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( themes ).to.eql( [
+				twentysixteen
+			] );
+		} );
+	} );
+
+	describe( 'isRequestingThemesForQueryIgnoringPage()', () => {
+		it( 'should return false if not requesting for query', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {}
+				}
+			}, 2916284, { search: 'twen' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true requesting for query at exact page', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"twen","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'twen', page: 4 } );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return true requesting for query without page specified', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"twen","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'twen' } );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
 	describe( '#getThemeDetailsUrl', () => {
 		it( 'given a theme and no site ID, should return the details URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
