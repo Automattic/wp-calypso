@@ -223,7 +223,7 @@ export default {
 	},
 
 	akismetLanding( context ) {
-		getPlansLandingPage( context, false, '/jetpack/connect/akismet' );
+		getPlansLandingPage( context, true, '/jetpack/connect/akismet' );
 	},
 
 	plansLanding( context ) {
