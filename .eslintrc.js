@@ -33,6 +33,8 @@ module.exports = {
 		'no-extra-semi': 1,
 		'no-multiple-empty-lines': [ 1, { max: 1 } ],
 		'no-multi-spaces': 1,
+		'no-restricted-imports': [ 1, 'lib/sites-list', 'lib/mixins/data-observe' ],
+		'no-restricted-modules': [ 1, 'lib/sites-list', 'lib/mixins/data-observe' ],
 		'no-shadow': 1,
 		'no-spaced-func': 1,
 		'no-trailing-spaces': 1,
