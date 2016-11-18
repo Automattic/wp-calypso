@@ -3,6 +3,7 @@
  */
 const debug = require( 'debug' )( 'calypso:jetpack-connect:actions' );
 import pick from 'lodash/pick';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
+import { JPC_PLANS_PAGE } from './constants';
 
 /**
  *  Local variables;
@@ -169,6 +171,20 @@ export default {
 					error: error
 				} );
 			} );
+		};
+	},
+	goToPlans( url ) {
+		return ( dispatch ) => {
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+			tracksEvent( dispatch, 'calypso_jpc_success_redirect', {
+				url: url,
+				type: 'plans_selection'
+			} );
+
+			page.redirect( JPC_PLANS_PAGE + urlToSlug( url ) );
 		};
 	},
 	goToRemoteAuth( url ) {
