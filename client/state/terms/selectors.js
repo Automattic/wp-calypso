@@ -166,3 +166,21 @@ export function getTerm( state, siteId, taxonomy, termId ) {
 
 	return term;
 }
+
+/**
+ * Returns the total count of terms for a specified query
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Object}  query    Terms query object
+ * @return {?Number}          Count terms
+ */
+export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
+	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	if ( ! manager ) {
+		return null;
+	}
+
+	return manager.getFound( query );
+}
