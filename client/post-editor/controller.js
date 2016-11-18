@@ -15,12 +15,12 @@ var ReactDom = require( 'react-dom' ),
  * Internal dependencies
  */
 var actions = require( 'lib/posts/actions' ),
-	PostEditor = require( './post-editor' ),
 	route = require( 'lib/route' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
 	userUtils = require( 'lib/user/utils' ),
 	analytics = require( 'lib/analytics' );
+import PostEditor from './post-editor';
 import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';

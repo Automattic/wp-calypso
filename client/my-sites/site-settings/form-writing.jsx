@@ -9,7 +9,7 @@ import { each, pick, map } from 'lodash';
  * Internal dependencies
  */
 import formBase from './form-base';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'lib/protect-form';
 import config from 'config';
 import PressThisLink from './press-this-link';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
@@ -30,7 +30,7 @@ import { isRequestingTermsForQuery, getTerms } from 'state/terms/selectors';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
 const SiteSettingsFormWriting = React.createClass( {
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		let writingAttributes = [
@@ -88,7 +88,7 @@ const SiteSettingsFormWriting = React.createClass( {
 			this.linkState( key ).requestChange( value );
 		} );
 
-		this.markChanged();
+		this.props.markChanged();
 	},
 
 	submitFormAndActivateCustomContentModule( event ) {
@@ -121,7 +121,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	render: function() {
 		const markdownSupported = this.state.markdown_supported;
 		return (
-			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.props.markChanged }>
 				{ config.isEnabled( 'manage/site-settings/categories' ) &&
 					<div className="site-settings__taxonomies">
 						<QueryTaxonomies siteId={ this.props.siteId } postType="post" />
@@ -246,4 +246,4 @@ export default connect(
 	{ requestPostTypes },
 	null,
 	{ pure: false }
-)( SiteSettingsFormWriting );
+)( protectForm( SiteSettingsFormWriting ) );
