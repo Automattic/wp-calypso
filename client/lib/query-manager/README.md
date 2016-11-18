@@ -38,6 +38,7 @@ Currently, the following implementations exist:
 - [`PaginatedQueryManager`](./paginated): An extendable class for managing paginated data
 - [`PostQueryManager`](./post): Manages paginated queries of post objects ([refer to API documentation for querying options](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/))
 - [`TermQueryManager`](./term): Manages paginated queries of term objects ([refer to API documentation for querying options](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/taxonomies/%24taxonomy/terms/))
+- [`ThemeQueryManager`](./theme): Manages paginated queries of theme objects
 
 ## Extending
 
@@ -48,7 +49,7 @@ Depending on the level of customization you need, you'll likely only need to imp
 
 Sometimes you may need to make further customizations. Some examples include:
 
-- `PostQueryManager` and `TermQueryManager` extend the [`QueryKey`](./key.js) implementation to remove default query values from the serialized query. The purpose of this is to ensure that queries are considered the same whether or not they include a default value. For example, including `page: 1` in a query should be counted the same if it were left out entirely.
+- `PostQueryManager`, `TermQueryManager`, and `ThemeQueryManager` extend the [`QueryKey`](./key.js) implementation to remove default query values from the serialized query. The purpose of this is to ensure that queries are considered the same whether or not they include a default value. For example, including `page: 1` in a query should be counted the same if it were left out entirely.
 
 ## More Information
 
