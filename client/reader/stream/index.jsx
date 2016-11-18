@@ -15,7 +15,6 @@ import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import FeedstoreActions from 'lib/feed-post-store/actions';
 import ListGap from 'reader/list-gap';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
@@ -26,7 +25,6 @@ import Post from './post';
 import CrossPost from './x-post';
 import RefreshPost from './refresh-post';
 import page from 'page';
-import PostUnavailable from './post-unavailable';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
 import UpdateNotice from 'reader/update-notice';
@@ -35,6 +33,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import RecommendationBlock from './recommendation-block';
+import PostLifecycle from './post-lifecycle';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -122,12 +121,19 @@ export default class ReaderStream extends React.Component {
 				}
 			}
 		}
-		const items = injectRecommendations( posts, recs );
+
+		let items = this.state && this.state.items;
+		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
+			items = injectRecommendations( posts, recs );
+		}
 		return {
 			items,
 			posts,
+			recs,
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex()
+			selectedIndex: store.getSelectedIndex(),
+			isFetchingNextPage: store.isFetchingNextPage(),
+			isLastPage: store.isLastPage()
 		};
 	}
 
@@ -152,7 +158,7 @@ export default class ReaderStream extends React.Component {
 		}
 	}
 
-	cardClassForPost( post ) {
+	cardClassForPost = ( post ) => {
 		if ( this.props.cardFactory ) {
 			const externalPostClass = this.props.cardFactory( post );
 			if ( externalPostClass ) {
@@ -187,7 +193,6 @@ export default class ReaderStream extends React.Component {
 	componentDidMount() {
 		this.props.store.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
-		PostStore.on( 'change', this.updateState ); // should move this dep down into the individual items
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
@@ -203,7 +208,6 @@ export default class ReaderStream extends React.Component {
 	componentWillUnmount() {
 		this.props.store.off( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
-		PostStore.off( 'change', this.updateState );
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
@@ -413,8 +417,6 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderPost = ( postKey, index ) => {
-		let postState,
-			PostClass;
 		const isSelected = index === this.state.selectedIndex;
 
 		if ( postKey.isGap ) {
@@ -436,50 +438,23 @@ export default class ReaderStream extends React.Component {
 			return <RecommendationBlock recommendations={ postKey.recommendations } key={ `recs-${ index }`} />;
 		}
 
-		const post = PostStore.get( postKey );
-		postState = post._state;
 		const itemKey = this.getPostRef( postKey );
 
-		if ( ! post || postState === 'minimal' ) {
-			FeedstoreActions.fetchPost( postKey );
-			postState = 'pending';
-		}
-
-		switch ( postState ) {
-			case 'pending':
-				return <PostPlaceholder key={ 'feed-post-placeholder-' + itemKey } />;
-			case 'error':
-				return <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
-			default:
-				PostClass = this.cardClassForPost( post );
-				if ( PostClass === CrossPost ) {
-					const xMetadata = XPostHelper.getXPostMetadata( post );
-					return React.createElement( CrossPost, {
-						ref: itemKey,
-						key: itemKey,
-						post: post,
-						isSelected: isSelected,
-						xMetadata: xMetadata,
-						xPostedTo: this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL ),
-						handleClick: this.showFullXPost
-					} );
-				}
-
-				return React.createElement( PostClass, {
-					ref: itemKey,
-					key: itemKey,
-					post: post,
-					isSelected: isSelected,
-					xPostedTo: this.props.store.getSitesCrossPostedTo( post.URL ),
-					suppressSiteNameLink: this.props.suppressSiteNameLink,
-					showPostHeader: this.props.showPostHeader,
-					showFollowInHeader: this.props.showFollowInHeader,
-					handleClick: this.showFullPost,
-					showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards,
-					showSiteName: this.props.showSiteNameOnCards
-				} );
-
-		}
+		return <PostLifecycle
+			key={ itemKey }
+			ref={ itemKey }
+			isSelected={ isSelected }
+			handleXPostClick={ this.showFullXPost }
+			handleClick={ this.showFullPost }
+			postKey={ postKey }
+			store={ this.props.store }
+			suppressSiteNameLink={ this.props.suppressSiteNameLink }
+			showPostHeader={ this.props.showPostHeader }
+			showFollowInHeader={ this.props.showFollowInHeader }
+			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
+			showSiteName={ this.props.showSiteNameOnCards }
+			cardClassForPost={ this.cardClassForPost }
+		/>;
 	}
 
 	render() {
@@ -498,8 +473,8 @@ export default class ReaderStream extends React.Component {
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
 			items={ this.state.items }
-			lastPage={ this.props.store.isLastPage() }
-			fetchingNextPage={ this.props.store.isFetchingNextPage() }
+			lastPage={ this.state.isLastPage }
+			fetchingNextPage={ this.state.isFetchingNextPage }
 			guessedItemHeight={ GUESSED_POST_HEIGHT }
 			fetchNextPage={ this.fetchNextPage }
 			getItemRef= { this.getPostRef }
