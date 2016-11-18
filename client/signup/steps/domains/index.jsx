@@ -198,6 +198,7 @@ const DomainsStep = React.createClass( {
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
+				includeDotBlogSubdomain={ abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain' }
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }

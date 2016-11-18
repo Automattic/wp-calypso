@@ -70,6 +70,15 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
+	domainDotBlogSubdomain: {
+		datestamp: '20161118',
+		variations: {
+			excludeDotBlogSubdomain: 90,
+			includeDotBlogSubdomain: 10,
+		},
+		defaultVariation: 'excludeDotBlogSubdomain',
+		allowAnyLocale: true,
+	},
 	paidNuxThankYouPage: {
 		datestamp: '20161114',
 		variations: {
