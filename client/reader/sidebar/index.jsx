@@ -176,12 +176,14 @@ export const ReaderSidebar = React.createClass( {
 							)
 						}
 
+						{ ! config.isEnabled( 'reader/refresh/stream' ) && (
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations', this.props.path, { 'sidebar-streams__recommendations': true } ) }>
 							<a href="/recommendations">
 								<Gridicon icon="thumbs-up" size={ 24 } />
 								<span className="menu-link-text">{ this.props.translate( 'Recommendations' ) }</span>
 							</a>
-						</li>
+						</li> )
+						}
 
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', this.props.path, { 'sidebar-activity__likes': true } ) }>
 							<a href="/activities/likes">
