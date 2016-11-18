@@ -55,22 +55,42 @@
 }
 
 .taxonomy-manager__label {
-	position: relative;
-	display: flex;
-	justify-content: space-between;
+	margin-left: 30px;
+	line-height: 18px;
 
 	.taxonomy-manager__list-item.is-placeholder & {
 		color: transparent;
 		background-color: lighten( $gray, 30% );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
+
+	.taxonomy-manager__default-label {
+		text-transform: uppercase;
+		color: $blue-medium;
+		font-size: 12px;
+		margin-left: 10px;
+	}
 }
 
-.taxonomy-manager__item .count {
-	margin: 16px 28px;
-	position: absolute;
-		right: 48px;
-		top: 0;
+.taxonomy-manager__item {
+	.taxonomy-manager__icon {
+		margin: 15px 20px 0;
+		position: absolute;
+			left: 0px;
+			top: 0;
+		color: $gray;
+	}
+
+	.count {
+		margin: 18px 28px;
+		position: absolute;
+			right: 48px;
+			top: 0;
+	}
+
+	&.is-default .taxonomy-manager__icon {
+		color: $blue-medium;
+	}
 }
 
 .taxonomy-manager .virtual-list__list-row.is-empty {

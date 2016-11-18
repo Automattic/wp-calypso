@@ -21,9 +21,11 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		onClick: PropTypes.func,
 		onDelete: PropTypes.func,
+		isDefault: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		isDefault: false,
 		onClick: () => {},
 	};
 
@@ -56,12 +58,21 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { onDelete, postCount, name, translate } = this.props;
+		const { isDefault, onDelete, postCount, name, translate } = this.props;
+		const className = classNames( 'taxonomy-manager__item', {
+			'is-default': isDefault
+		} );
 
 		return (
-			<div className="taxonomy-manager__item">
+			<div className={ className }>
+				<span className="taxonomy-manager__icon">
+					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
+				</span>
 				<span className="taxonomy-manager__label">
-					{ name }
+					<span>{ name }</span>
+					{ isDefault &&
+						<span className="taxonomy-manager__default-label">{ translate( 'default' ) }</span>
+					}
 				</span>
 				{ ! isUndefined( postCount ) && <Count count={ postCount } /> }
 				<Gridicon
