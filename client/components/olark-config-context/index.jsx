@@ -13,6 +13,7 @@ import { getOlarkConfigOptions } from 'state/ui/olark/selectors';
 import { OLARK_CONFIG_CONTEXTS } from 'lib/olark/constants';
 import olarkActions from 'lib/olark-store/actions';
 import olark from 'lib/olark';
+import QueryOlarkOperatorStatus from 'components/data/query-olark-operator-status';
 
 class OlarkConfigContext extends Component {
 	componentWillMount() {
@@ -41,7 +42,10 @@ class OlarkConfigContext extends Component {
 	}
 
 	render() {
-		return <QueryOlarkConfig supportContext={ this.props.supportContext } />;
+		return <div>
+			<QueryOlarkConfig supportContext={ this.props.supportContext } />
+			<QueryOlarkOperatorStatus supportContext={ this.props.supportContext } />
+		</div>;
 	}
 }
 
