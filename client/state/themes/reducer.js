@@ -19,18 +19,6 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
-} from 'state/action-types';
-import {
-	getSerializedThemesQuery
-} from './utils';
-import { createReducer, isValidStateWithSchema } from 'state/utils';
-import { queriesSchema } from './schema';
-import currentTheme from './current-theme/reducer';
-import themesUI from './themes-ui/reducer';
-import { createReducer } from 'state/utils';
-import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -38,7 +26,13 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { activeThemesSchema } from './schema';
+import {
+	getSerializedThemesQuery
+} from './utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { queriesSchema, activeThemesSchema } from './schema';
+import currentTheme from './current-theme/reducer';
+import themesUI from './themes-ui/reducer';
 
 export const activeThemes = createReducer( {}, {
 	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
