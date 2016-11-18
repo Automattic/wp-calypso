@@ -151,7 +151,7 @@ module.exports = {
 			recommendationsStore = feedStreamFactory( 'recommendations_posts' ),
 			mcKey = 'following';
 
-		recommendationsStore.perPage = 2;
+		recommendationsStore.perPage = 4;
 
 		ensureStoreLoading( followingStore, context );
 

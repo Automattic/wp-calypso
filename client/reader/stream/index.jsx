@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, map, noop, times } from 'lodash';
+import { defer, noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import FeedstoreActions from 'lib/feed-post-store/actions';
-import Gridicon from 'components/gridicon';
 import ListGap from 'reader/list-gap';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
@@ -30,13 +29,12 @@ import page from 'page';
 import PostUnavailable from './post-unavailable';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
-import SiteStore from 'lib/reader-site-store';
 import UpdateNotice from 'reader/update-notice';
 import PostBlocked from './post-blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
+import RecommendationBlock from './recommendation-block';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -435,20 +433,7 @@ export default class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isRecommendationBlock ) {
-			return (
-				<div className="reader-stream__recommendation-block" key={ `recommendation-${ index }` }>
-					<h5 className="reader-stream__recommendation-block-header"><Gridicon icon="star" /> Recommended Posts</h5>
-					<div className="reader-stream__recommendation-block-posts">
-					{
-						map( postKey.recommendations, postKey => {
-							const post = PostStore.get( postKey );
-							const site = SiteStore.get( postKey.blogId );
-							return post && <RelatedPostCard key={ post.global_ID } post={ post } site={ site } />;
-						}	)
-					}
-					</div>
-				</div>
-			);
+			return <RecommendationBlock recommendations={ postKey.recommendations } key={ `recs-${ index }`} />;
 		}
 
 		const post = PostStore.get( postKey );
