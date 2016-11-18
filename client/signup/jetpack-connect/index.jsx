@@ -15,6 +15,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -24,11 +25,13 @@ import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
 import StepHeader from '../step-header';
 import HelpButton from './help-button';
+import untrailingslashit from 'lib/route/untrailingslashit';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
 	goToRemoteAuth,
 	goToPluginInstall,
+	goToPlans,
 	goToPluginActivation,
 	checkUrl
 } from 'state/jetpack-connect/actions';
@@ -88,7 +91,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
-		return url;
+		return untrailingslashit( url );
 	},
 
 	onURLChange() {
@@ -100,11 +103,15 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		this.props.checkUrl(
-			this.state.currentUrl,
-			!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
-			this.props.type
-		);
+		if ( this.props.isRequestingSites ) {
+			this.waitingForSites = true;
+		} else {
+			this.props.checkUrl(
+				this.state.currentUrl,
+				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
+				this.props.type
+			);
+		}
 	},
 
 	installJetpack() {
@@ -139,6 +146,20 @@ const JetpackConnectMain = React.createClass( {
 		) {
 			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
+		if ( this.getStatus() === 'alreadyOwned' &&
+			! this.props.jetpackConnectSite.isRedirecting
+		) {
+			return this.props.goToPlans( this.state.currentUrl );
+		}
+
+		if ( this.waitingForSites && ! this.props.isRequestingSites ) {
+			this.waitingForSites = false;
+			this.props.checkUrl(
+				this.state.currentUrl,
+				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
+				this.props.type
+			);
+		}
 	},
 
 	isRedirecting() {
@@ -150,6 +171,10 @@ const JetpackConnectMain = React.createClass( {
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
 			return false;
+		}
+
+		if ( this.checkProperty( 'userOwnsSite' ) ) {
+			return 'alreadyOwned';
 		}
 
 		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
@@ -185,9 +210,6 @@ const JetpackConnectMain = React.createClass( {
 		}
 		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'notConnectedJetpack';
-		}
-		if ( this.checkProperty( 'userOwnsSite' ) ) {
-			return 'alreadyOwned';
 		}
 		if ( this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'alreadyConnected';
@@ -295,7 +317,7 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.waitingForSites }
 					isInstall={ this.isInstall() } />
 			</Card>
 		);
@@ -411,7 +433,8 @@ export default connect(
 
 		return {
 			jetpackConnectSite: getConnectingSite( state ),
-			getJetpackSiteByUrl: getJetpackSite
+			getJetpackSiteByUrl: getJetpackSite,
+			isRequestingSites: isRequestingSites( state )
 		};
 	},
 	dispatch => bindActionCreators( {
@@ -420,6 +443,7 @@ export default connect(
 		checkUrl,
 		dismissUrl,
 		goToRemoteAuth,
+		goToPlans,
 		goToPluginInstall,
 		goToPluginActivation
 	}, dispatch )

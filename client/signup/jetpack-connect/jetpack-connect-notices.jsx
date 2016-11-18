@@ -17,7 +17,7 @@ export default React.createClass( {
 		siteUrl: PropTypes.string
 	},
 
-	getNoticeValues( url ) {
+	getNoticeValues() {
 		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
@@ -74,16 +74,6 @@ export default React.createClass( {
 			noticeValues.status = 'is-success';
 			noticeValues.icon = 'status';
 			noticeValues.text = this.translate( 'This site is already connected!' );
-			return noticeValues;
-		}
-		if ( this.props.noticeType === 'alreadyOwned' ) {
-			noticeValues.status = 'is-success';
-			noticeValues.icon = 'status';
-			noticeValues.text = this.translate( '{{a}}Your site{{/a}} is already connected!', {
-				components: {
-					a: <a href={ '/stats/day/' + url } />
-				}
-			} );
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'wordpress.com' ) {
