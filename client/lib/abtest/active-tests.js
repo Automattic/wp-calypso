@@ -76,7 +76,8 @@ module.exports = {
 			excludeDotBlogSubdomain: 90,
 			includeDotBlogSubdomain: 10,
 		},
-		defaultVariation: 'excludeDotBlogSubdomain'
+		defaultVariation: 'excludeDotBlogSubdomain',
+		allowAnyLocale: true,
 	},
 	paidNuxThankYouPage: {
 		datestamp: '20161114',
