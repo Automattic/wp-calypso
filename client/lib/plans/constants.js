@@ -217,7 +217,7 @@ export const PLANS_LIST = {
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2000,
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
 			'Advanced security features to keep your site safe and sound.' +
@@ -258,7 +258,7 @@ export const PLANS_LIST = {
 		getTitle: () => i18n.translate( 'Premium' ),
 		getProductId: () => 2003,
 		getPathSlug: () => 'premium-monthly',
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
 			'Advanced security features to keep your site safe and sound.' +
 			' With daily backups, malware scanning, and spam defense.'		),
@@ -297,7 +297,7 @@ export const PLANS_LIST = {
 	[ PLAN_JETPACK_BUSINESS ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2001,
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate(
 			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
@@ -322,7 +322,7 @@ export const PLANS_LIST = {
 		getTitle: () => i18n.translate( 'Professional' ),
 		getProductId: () => 2004,
 		getPathSlug: () => 'professional-monthly',
-		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
+		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
 			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
 		),
