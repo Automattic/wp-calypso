@@ -7,7 +7,8 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
 import { OLARK_TIMEOUT_MS } from './constants';
 
@@ -53,6 +54,18 @@ export function operatorsAvailable() {
 export function operatorsAway() {
 	return {
 		type: OLARK_OPERATORS_AWAY
+	};
+}
+
+/**
+ * Returns an action object to be used in setting general chat availability
+ * @param {object} availability  An object containing the availibility of different areas for chat
+ * @return {Object}              Action object
+ */
+export function setChatAvailability( availability ) {
+	return {
+		type: OLARK_SET_AVAILABILITY,
+		availability,
 	};
 }
 

@@ -22,7 +22,7 @@ import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
-import { isOperatorsAvailable } from 'state/ui/olark/selectors';
+import { isOperatorsAvailable, isChatAvailable } from 'state/ui/olark/selectors';
 import olarkActions from 'lib/olark-store/actions';
 
 const user = userFactory();
@@ -355,7 +355,7 @@ const RemovePurchase = React.createClass( {
 
 export default connect(
 	( state ) => ( {
-		showChatLink: isOperatorsAvailable( state ),
+		showChatLink: isOperatorsAvailable( state ) && isChatAvailable( state, 'precancellation' ),
 	} ),
 	{ removePurchase }
 )( RemovePurchase );
