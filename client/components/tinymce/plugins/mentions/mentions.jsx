@@ -57,9 +57,7 @@ export class Mentions extends React.Component {
 		const position = this.getPosition();
 
 		editor.on( 'keyup', this.onKeyUp );
-		editor.on( 'click', () => {
-			this.setState( { showPopover: false } );
-		} );
+		editor.on( 'click', this.hidePopover );
 
 		this.left = position.left;
 		this.top = position.top;
@@ -82,6 +80,13 @@ export class Mentions extends React.Component {
 				this.updatePosition( currentPosition );
 			}
 		}
+	}
+
+	componentWillUnmount() {
+		const { editor } = this.props;
+
+		editor.off( 'keyup', this.onKeyUp );
+		editor.off( 'click', this.hidePopover );
 	}
 
 	getPosition() {
@@ -134,7 +139,7 @@ export class Mentions extends React.Component {
 
 	onKeyUp = ( { keyCode } ) => {
 		if ( includes( [ VK.ENTER, VK.SPACEBAR, VK.UP, VK.DOWN, 27 /* ESCAPE */ ], keyCode ) ) {
-			return this.setState( { showPopover: false } );
+			return this.hidePopover();
 		}
 
 		const query = this.getQueryText();
@@ -163,10 +168,12 @@ export class Mentions extends React.Component {
 		editor.getBody().focus();
 	}
 
+	hidePopover = () => {
+		this.setState( { showPopover: false } );
+	}
+
 	handleClose = () => {
-		this.setState( {
-			showPopover: false
-		} );
+		this.hidePopover();
 	}
 
 	render() {
@@ -180,10 +187,8 @@ export class Mentions extends React.Component {
 
 		return (
 			<div ref={ this.setPopoverContext }>
-				{ ( ( suggestions === null ) || ( suggestions.length > 1 ) ) &&
-					<QueryUsersSuggestions siteId={ siteId } />
-				}
-				{ ( matchingSuggestions !== null ) && ( matchingSuggestions.length > 0 ) && showPopover &&
+				<QueryUsersSuggestions siteId={ siteId } />
+				{ matchingSuggestions && ( matchingSuggestions.length > 0 ) && showPopover &&
 					<SuggestionList
 						query={ query }
 						suggestions={ matchingSuggestions }
