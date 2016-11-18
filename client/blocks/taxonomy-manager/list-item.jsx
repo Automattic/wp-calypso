@@ -59,15 +59,11 @@ class TaxonomyManagerListItem extends Component {
 		const { onDelete, postCount, name, translate } = this.props;
 
 		return (
-			<div>
+			<div className="taxonomy-manager__item">
 				<span className="taxonomy-manager__label">
 					{ name }
 				</span>
-				{ ! isUndefined( postCount ) &&
-					<span className="taxonomy-manager__count">
-						<Count count={ postCount } />
-					</span>
-				}
+				{ ! isUndefined( postCount ) && <Count count={ postCount } /> }
 				<Gridicon
 					icon="ellipsis"
 					className={ classNames( {
