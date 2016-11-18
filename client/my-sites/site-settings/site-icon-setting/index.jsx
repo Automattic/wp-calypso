@@ -53,7 +53,7 @@ function SiteIconSetting( { translate, siteId, isJetpack, customizerUrl, general
 				{ ...buttonProps }
 				className="site-icon-setting__change-button"
 				compact>
-				{ translate( 'Change' ) }
+				{ translate( 'Change', { context: 'verb' } ) }
 			</Button>
 		</FormFieldset>
 	);
