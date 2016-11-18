@@ -36,7 +36,7 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 					const search = value.toLowerCase();
 
 					const foundInTaxonomies = some( SEARCH_TAXONOMIES, ( taxonomy ) => (
-						some( theme.taxonomies[ 'theme_' + taxonomy ], ( { name } ) => (
+						theme.taxonomies && some( theme.taxonomies[ 'theme_' + taxonomy ], ( { name } ) => (
 							includes( name.toLowerCase(), search )
 						) )
 					) );
