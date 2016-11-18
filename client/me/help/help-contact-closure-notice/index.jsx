@@ -12,6 +12,7 @@ import i18n, { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
+import olarkStore from 'lib/olark-store';
 
 const closedFrom = i18n.moment( 'Thu, 24 Nov 2016 08:00:00 +0000' );
 const closedTo = i18n.moment( 'Fri, 25 Nov 2016 08:00:00 +0000' );
@@ -52,7 +53,30 @@ const Upcoming = localize( ( { translate } ) =>
 );
 
 export default class HelpContactClosureNotice extends Component {
+	constructor() {
+		super();
+		this.state = { olark: olarkStore.get() };
+	}
+
+	componentDidMount() {
+		this.updateOlarkState();
+		olarkStore.on( 'change', this.updateOlarkState );
+	}
+
+	componentWillUnmount() {
+		olarkStore.removeListener( 'change', this.updateOlarkState );
+	}
+
+	updateOlarkState = () => {
+		this.setState( { olark: olarkStore.get() } );
+	}
+
 	render() {
+		// Don't show notice if user isn't eligible for chat
+		if ( ! this.state.olark.isUserEligible ) {
+			return null;
+		}
+
 		// Closure period is over, don't show any notice
 		if ( i18n.moment().isAfter( closedTo ) ) {
 			return null;
