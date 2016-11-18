@@ -32,14 +32,52 @@ import themesUI from './themes-ui/reducer';
 import { createReducer } from 'state/utils';
 import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
+import { activeThemesSchema } from './schema';
 
 export const activeThemes = createReducer( {}, {
 	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
 		...state,
 		[ siteId ]: theme.id
-	} )
-} );
+	} ),
+	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
+		...state,
+		[ siteId ]: themeId
+	} ) },
+	activeThemesSchema
+ );
+
+/**
+ * Returns the updated theme active theme request state after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
+ * boolean reflecting whether a request for active theme is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function activeThemeRequest( state = {}, action ) {
+	switch ( action.type ) {
+		case ACTIVE_THEME_REQUEST:
+		case ACTIVE_THEME_REQUEST_SUCCESS:
+		case ACTIVE_THEME_REQUEST_FAILURE:
+			return {
+				...state,
+				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type
+			};
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
 
 /**
  * Returns the updated site theme requests state after an action has been

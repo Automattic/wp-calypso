@@ -76,3 +76,12 @@ export const queriesSchema = {
 	},
 	additionalProperties: false
 };
+
+export const activeThemesSchema = {
+	type: 'object',
+	patternProperties: {
+		'^(wpcom|\\d+)$': {
+			type: 'string'
+		}
+	}
+};
