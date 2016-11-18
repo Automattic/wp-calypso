@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { conforms, property } from 'lodash';
+import { conforms, omit, property } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -55,7 +55,16 @@ export function fetchThemes( site ) {
 
 		debug( 'Query params', queryParams );
 
-		return wpcom.undocumented().themes( site, queryParams )
+		const extendedQueryParams = omit(
+			{
+				...queryParams,
+				number: queryParams.perPage,
+				apiVersion: site.jetpack ? '1' : '1.2'
+			},
+			'perPage'
+		);
+
+		return wpcom.undocumented().themes( site ? site.ID : null, extendedQueryParams )
 			.then( themes => {
 				const responseTime = ( new Date().getTime() ) - startTime;
 				return dispatch( legacyReceiveThemes( themes, site, queryParams, responseTime ) );

@@ -1454,17 +1454,10 @@ Undocumented.prototype.getLocaleSuggestions = function( fn ) {
 	return this.wpcom.req.get( { path: '/locale-guess' }, fn );
 };
 
-Undocumented.prototype.themes = function( site, query, fn ) {
-	var path = site ? '/sites/' + site.ID + '/themes' : '/themes';
+Undocumented.prototype.themes = function( siteId, query, fn ) {
+	var path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );
-	return this.wpcom.req.get( path, {
-		search: query.search,
-		tier: query.tier,
-		filter: query.filter,
-		page: query.page,
-		number: query.perPage,
-		apiVersion: site.jetpack ? '1' : '1.2'
-	}, fn );
+	return this.wpcom.req.get( path, query, fn );
 };
 
 Undocumented.prototype.themeDetails = function( themeId, site, fn ) {
