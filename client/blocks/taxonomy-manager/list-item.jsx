@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,10 +12,12 @@ import { localize } from 'i18n-calypso';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
+import Count from 'components/count';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
 		name: PropTypes.string,
+		postCount: PropTypes.number,
 		translate: PropTypes.func,
 		onClick: PropTypes.func,
 		onDelete: PropTypes.func,
@@ -53,11 +56,18 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { onDelete, name, translate } = this.props;
+		const { onDelete, postCount, name, translate } = this.props;
 
 		return (
 			<div>
-				<span className="taxonomy-manager__label">{ name }</span>
+				<span className="taxonomy-manager__label">
+					{ name }
+				</span>
+				{ ! isUndefined( postCount ) &&
+					<span className="taxonomy-manager__count">
+						<Count count={ postCount } />
+					</span>
+				}
 				<Gridicon
 					icon="ellipsis"
 					className={ classNames( {
