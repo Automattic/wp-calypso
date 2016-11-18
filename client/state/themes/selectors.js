@@ -173,8 +173,8 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Post query object
- * @return {?Array}         Themes for the post query
+ * @param  {Object}  query  Theme query object
+ * @return {?Array}         Themes for the theme query
  */
 export const getThemesForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
@@ -200,7 +200,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Post query object
+ * @param  {Object}  query  Theme query object
  * @return {Boolean}        Whether themes are being requested
  */
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
