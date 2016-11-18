@@ -11,13 +11,15 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
 import { OLARK_TIMEOUT_MS } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 import {
+	setChatAvailability,
 	operatorsAvailable,
 	operatorsAway
 } from '../actions';
@@ -46,6 +48,17 @@ describe( 'actions', () => {
 		olarkTimeout = olarkActions.olarkTimeout;
 		olarkReady = olarkActions.olarkReady;
 		requestOlark = olarkActions.requestOlark;
+	} );
+
+	describe( '#setChatAvailability()', () => {
+		it( 'should return an action object', () => {
+			const sampleAvailablityObject = { dummyData: true };
+			const action = setChatAvailability( sampleAvailablityObject );
+			expect( action ).to.eql( {
+				type: OLARK_SET_AVAILABILITY,
+				availability: sampleAvailablityObject
+			} );
+		} );
 	} );
 
 	describe( '#olarkTimeout()', () => {

@@ -11,7 +11,8 @@ import {
 	OLARK_REQUEST,
 	OLARK_TIMEOUT,
 	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY
+	OLARK_OPERATORS_AWAY,
+	OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
 import {
 	STATUS_READY,
@@ -58,6 +59,21 @@ export function operatorStatus( state = OPERATOR_STATUS_AWAY, action ) {
 }
 
 /**
+ * Tracks olark availability
+ *
+ * @param  {String} state  Current state
+ * @param  {Object} action Action payload
+ * @return {String}        Updated state
+ */
+export function availability( state = {}, action ) {
+	switch ( action.type ) {
+		case OLARK_SET_AVAILABILITY:
+			return action.availability;
+	}
+	return state;
+}
+
+/**
  * Tracks olark fetching state
  *
  * @param  {Object} state  Current state
@@ -76,6 +92,7 @@ export function requesting( state = false, action ) {
 
 export default combineReducers( {
 	operatorStatus,
+	availability,
 	requesting,
 	status
 } );
