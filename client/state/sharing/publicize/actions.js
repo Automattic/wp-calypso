@@ -8,6 +8,9 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
+	PUBLICIZE_CONNECTION_REQUEST,
+	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -61,14 +64,24 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
  */
 export function fetchConnections( siteId ) {
 	return ( dispatch ) => {
-		dispatch( requestConnections( siteId ) );
+		dispatch( {
+			type: PUBLICIZE_CONNECTIONS_REQUEST,
+			siteId,
+		} );
 
 		return wpcom.undocumented().siteConnections( siteId )
 			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
-				dispatch( requestConnectionsSuccess( siteId ) );
+				dispatch( {
+					type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
+					siteId,
+				} );
 			} )
-			.catch( ( error ) => dispatch( requestConnectionsFailure( siteId, error ) ) );
+			.catch( ( error ) => dispatch( {
+				type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
+				siteId,
+				error
+			} ) );
 	};
 }
 
@@ -82,7 +95,11 @@ export function fetchConnections( siteId ) {
  */
 export function fetchConnection( siteId, connectionId ) {
 	return ( dispatch ) => {
-		dispatch( requestConnections( siteId ) );
+		dispatch( {
+			type: PUBLICIZE_CONNECTION_REQUEST,
+			connectionId,
+			siteId,
+		} );
 
 		return wpcom.undocumented().site( siteId ).getConnection( connectionId )
 			.then( ( connection ) => {
@@ -91,9 +108,18 @@ export function fetchConnection( siteId, connectionId ) {
 					connection,
 					siteId,
 				} );
-				dispatch( requestConnectionsSuccess( siteId ) );
+				dispatch( {
+					type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
+					connectionId,
+					siteId,
+				} );
 			} )
-			.catch( ( error ) => dispatch( requestConnectionsFailure( siteId, error ) ) );
+			.catch( ( error ) => dispatch( {
+				type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+				connectionId,
+				error,
+				siteId,
+			} ) );
 	};
 }
 
@@ -207,49 +233,5 @@ export function receiveConnections( siteId, data ) {
 		type: PUBLICIZE_CONNECTIONS_RECEIVE,
 		siteId,
 		data
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that a network request for
- * Publicize connections was triggered.
- *
- * @param  {Number} siteId Site ID
- * @return {Object}        Action object
- */
-export function requestConnections( siteId ) {
-	return {
-		type: PUBLICIZE_CONNECTIONS_REQUEST,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that a network request for
- * Publicize connections was successful.
- *
- * @param  {Number} siteId Site ID
- * @return {Object}        Action object
- */
-export function requestConnectionsSuccess( siteId ) {
-	return {
-		type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-		siteId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that a network request for
- * Publicize connections has failed.
- *
- * @param  {Number} siteId Site ID
- * @param  {Object} error  API response error
- * @return {Object}        Action object
- */
-export function requestConnectionsFailure( siteId, error ) {
-	return {
-		type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-		siteId,
-		error
 	};
 }

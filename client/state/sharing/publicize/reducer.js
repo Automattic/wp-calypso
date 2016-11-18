@@ -11,6 +11,9 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
+	PUBLICIZE_CONNECTION_REQUEST,
+	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -41,6 +44,12 @@ export const sharePostStatus = createReducer( {}, {
 	} } ),
 } );
 
+export const fetchingConnection = createReducer( {}, {
+	[ PUBLICIZE_CONNECTION_REQUEST ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: true } ),
+	[ PUBLICIZE_CONNECTION_REQUEST_SUCCESS ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: false } ),
+	[ PUBLICIZE_CONNECTION_REQUEST_FAILURE ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: false } ),
+} );
+
 /**
  * Track the current status for fetching connections. Maps site ID to the
  * fetching status for that site. Assigns `true` for currently fetching,
@@ -66,6 +75,7 @@ export const connections = createReducer( {}, {
 }, connectionsSchema );
 
 export default combineReducers( {
+	fetchingConnection,
 	fetchingConnections,
 	connections,
 	sharePostStatus
