@@ -32,6 +32,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
 	const authorAndSiteAreDifferent = siteName.toLowerCase() !== post.author.name.toLowerCase();
+
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl } onClick={ onSiteClick }>
@@ -83,8 +84,7 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
-/* eslint-enable no-unused-vars */
+export function RelatedPostCard( { post, site, siteId, lineClamp = 10, onPostClick = noop, onSiteClick = noop } ) {
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -97,9 +97,12 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 	const postClickTracker = partial( onPostClick, post );
 	const siteClickTracker = partial( onSiteClick, post );
 
+	// TODO: is this okay?
+	const style = { WebkitLineClamp: lineClamp };
+
 	return (
 		<Card className={ classes }>
-		{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ postClickTracker } >
@@ -107,7 +110,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 						onClick={ postClickTracker } /> }
 					<div className="reader-related-card-v2__site-info">
 						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-						<div className="reader-related-card-v2__excerpt post-excerpt">
+						<div className="reader-related-card-v2__excerpt post-excerpt" style={ style }>
 							{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
 						</div>
 					</div>

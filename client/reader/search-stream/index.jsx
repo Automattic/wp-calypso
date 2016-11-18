@@ -23,10 +23,25 @@ import { recordTrackForPost } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
+import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
+import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import config from 'config';
 
-const SearchCardAdapter = React.createClass( {
+function RecommendedPosts( { post, site, } ) {
+	if ( ! site ) {
+		site = { title: post.site_name, };
+	}
+
+	return (
+		<li className="search-stream__recommendation-list-item">
+			<RelatedPostCard key={ post.global_ID } post={ post } site={ site }
+				lineClamp={ 3 } />
+		</li>
+	);
+}
+
+const SearchCardAdapter = ( isRecommendations ) => React.createClass( {
 	getInitialState() {
 		return this.getStateFromStores();
 	},
@@ -75,7 +90,16 @@ const SearchCardAdapter = React.createClass( {
 
 	render() {
 		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
-		const CardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
+		let CardComponent;
+
+		if ( ! isRefreshedStream ) {
+			CardComponent = SearchCard;
+		} else if ( isRecommendations ) {
+			CardComponent = RecommendedPosts;
+		} else {
+			CardComponent = ReaderPostCard;
+		}
+
 		return <CardComponent
 			post={ this.props.post }
 			site={ this.props.site }
@@ -157,7 +181,7 @@ const SearchStream = React.createClass( {
 	},
 
 	cardFactory() {
-		return SearchCardAdapter;
+		return SearchCardAdapter( ! this.props.query );
 	},
 
 	render() {
@@ -172,6 +196,13 @@ const SearchStream = React.createClass( {
 		if ( ! searchPlaceholderText ) {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
+
+		let sugList = this.state.suggestions.map( ( query ) => <Suggestion suggestion={ query } /> );
+		sugList = sugList
+			.slice( 1 )
+			.reduce( function( xs, x ) {
+				return xs.concat( [ ', ', x ] );
+			}, [ sugList[ 0 ] ] );
 
 		return (
 			<Stream { ...this.props } store={ store }
@@ -192,6 +223,11 @@ const SearchStream = React.createClass( {
 						delayTimeout={ 500 }
 						placeholder={ searchPlaceholderText } />
 				</CompactCard>
+				{ ! this.props.query && (
+					<p className="search-stream__blank-suggestions">
+						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+					</p>
+				) }
 			</Stream>
 		);
 	}
