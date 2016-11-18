@@ -81,7 +81,6 @@ let Viewers = React.createClass( {
 				key={ viewer.ID }
 				user={ viewer }
 				type="viewer"
-				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
 				onRemove={ removeThisViewer }
 			/>
