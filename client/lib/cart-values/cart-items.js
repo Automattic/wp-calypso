@@ -32,7 +32,15 @@ var productsValues = require( 'lib/products-values' ),
 	sortProducts = require( 'lib/products-values/sort' ),
 	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
 
-import { PLAN_FREE } from 'lib/plans/constants';
+import {
+	PLAN_FREE,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY
+} from 'lib/plans/constants';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -507,13 +515,17 @@ function getItemForPlan( plan, properties ) {
 		case PLAN_PERSONAL:
 			return personalPlan( plan.product_slug, properties );
 		case 'value_bundle':
-		case 'jetpack_premium':
-		case 'jetpack_premium_monthly':
+		case PLAN_JETPACK_PREMIUM:
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return premiumPlan( plan.product_slug, properties );
+
+		case PLAN_JETPACK_PERSONAL:
+		case PLAN_JETPACK_PERSONAL_MONTHLY:
 			return premiumPlan( plan.product_slug, properties );
 
 		case 'business-bundle':
-		case 'jetpack_business':
-		case 'jetpack_business_monthly':
+		case PLAN_JETPACK_BUSINESS:
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
 			return businessPlan( plan.product_slug, properties );
 
 		default:

@@ -305,7 +305,7 @@ $plan-features-sidebar-width: 272px;
 	margin-bottom: 1.4em;
 
 	&.is-placeholder {
-		height: 36px;
+		height: 28px;
 
 		@include breakpoint( "<660px" ) {
 			height: auto;
@@ -376,10 +376,10 @@ $plan-features-sidebar-width: 272px;
 .plan-features__item-tip-info {
 	position: absolute;
 	right: 0;
-	top: 50%;
+	top: 14px;
 	width: 18px;
 	height: 18px;
-	margin-top: -9px;
+	margin-top: 0px;
 	color: lighten( $gray, 20% );
 	cursor: pointer;
 

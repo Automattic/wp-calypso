@@ -52,6 +52,9 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.props.type === 'premium' ) {
 			from = 'ad';
 		}
+		if ( this.props.type === 'personal' ) {
+			from = 'ad';
+		}
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from
 		} );
@@ -223,6 +226,14 @@ const JetpackConnectMain = React.createClass( {
 					'then purchase and activate your plan.' ),
 			};
 		}
+		if ( this.props.type === 'personal' ) {
+			return {
+				headerTitle: this.translate( 'Get Jetpack Personal' ),
+				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+					'then purchase and activate your plan.' ),
+			};
+
+		}
 		return {
 			headerTitle: this.translate( 'Connect a self-hosted WordPress' ),
 			headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
@@ -231,7 +242,10 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	isInstall() {
-		return this.props.type === 'install' || this.props.type === 'pro' || this.props.type === 'premium';
+		return this.props.type === 'install' ||
+			this.props.type === 'pro' ||
+			this.props.type === 'premium' ||
+			this.props.type === 'personal';
 	},
 
 	getInstructionsData( status ) {
