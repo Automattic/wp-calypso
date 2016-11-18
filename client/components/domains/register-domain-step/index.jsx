@@ -113,6 +113,7 @@ const RegisterDomainStep = React.createClass( {
 		domainsWithPlansOnly: React.PropTypes.bool,
 		isSignupStep: React.PropTypes.bool,
 		surveyVertical: React.PropTypes.string,
+		includeWordPressDotCom: React.PropTypes.bool,
 		includeDotBlogSubdomain: React.PropTypes.bool,
 	},
 
