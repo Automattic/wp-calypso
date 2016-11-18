@@ -2,27 +2,13 @@ const themeSchema = {
 	title: 'Theme',
 	type: 'object',
 	properties: {
-		id: {
-			type: 'string'
-		},
-		name: {
-			type: 'string'
-		},
-		author: {
-			type: 'string'
-		},
-		screenshot: {
-			type: 'string'
-		},
-		stylesheet: {
-			type: 'string'
-		},
-		demo_uri: {
-			type: 'string'
-		},
-		author_uri: {
-			type: 'string'
-		},
+		id: { type: 'string' },
+		name: { type: 'string' },
+		author: { type: 'string' },
+		screenshot: { type: 'string' },
+		stylesheet: { type: 'string' },
+		demo_uri: { type: 'string' },
+		author_uri: { type: 'string' },
 		price: {
 			type: 'string'
 		}
