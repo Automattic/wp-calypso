@@ -139,7 +139,7 @@ export class TaxonomyManagerList extends Component {
 					onClick={ onClick }
 					key={ itemId }
 					className="taxonomy-manager__list-item-card">
-					<ListItem name={ name } onClick={ onClick } onDelete={ onDelete } />
+					<ListItem name={ name } postCount={ item.post_count } onClick={ onClick } onDelete={ onDelete } />
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
