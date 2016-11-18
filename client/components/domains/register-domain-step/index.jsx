@@ -113,6 +113,8 @@ const RegisterDomainStep = React.createClass( {
 		domainsWithPlansOnly: React.PropTypes.bool,
 		isSignupStep: React.PropTypes.bool,
 		surveyVertical: React.PropTypes.string,
+		includeWordPressDotCom: React.PropTypes.bool,
+		includeDotBlogSubdomain: React.PropTypes.bool,
 	},
 
 	getDefaultProps: function() {
@@ -349,6 +351,7 @@ const RegisterDomainStep = React.createClass( {
 							query: domain,
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
+							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 							vendor: searchVendor,
 							vertical: this.props.surveyVertical,
 						},
