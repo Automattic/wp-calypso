@@ -23,7 +23,7 @@ Once items have been inserted into the query manager, they can then be retrieved
 - `removeItem( itemKey: string )` - Removes a single item, returning a new instance if changed
 - `removeItems( itemKeys: string[] )` - Removes items, returning a new instance if changed
 
-Under the hood, Query Manager reconciles any change to an item across all queries where that item is tracked. 
+Under the hood, Query Manager reconciles any change to an item across all queries where that item is tracked.
 
 ## Example
 
@@ -37,7 +37,7 @@ Currently, the following implementations exist:
 
 - [`PaginatedQueryManager`](./paginated): An extendable class for managing paginated data
 - [`PostQueryManager`](./post): Manages paginated queries of post objects ([refer to API documentation for querying options](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/))
-- [`TermQueryManager`](./pterm): Manages paginated queries of term objects ([refer to API documentation for querying options](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/taxonomies/%24taxonomy/terms/))
+- [`TermQueryManager`](./term): Manages paginated queries of term objects ([refer to API documentation for querying options](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/taxonomies/%24taxonomy/terms/))
 
 ## Extending
 
