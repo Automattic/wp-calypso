@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import config from 'config';
-import find from 'lodash/find';
-import includes from 'lodash/includes';
+import { find, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,7 +18,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
 import versionCompare from 'lib/version-compare';
 
-const PeopleSearch = React.createClass( { // eslint-disable-line react/prefer-es6-class
+const PeopleSearch = React.createClass( {
 	displayName: 'PeopleSearch',
 
 	mixins: [ UrlSearch ],
@@ -39,10 +38,6 @@ const PeopleSearch = React.createClass( { // eslint-disable-line react/prefer-es
 } );
 
 class PeopleNavTabs extends React.PureComponent {
-	constructor( props ) {
-		super( props );
-	}
-
 	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
@@ -62,10 +57,6 @@ class PeopleNavTabs extends React.PureComponent {
 }
 
 class PeopleSectionNav extends React.PureComponent {
-	constructor( props ) {
-		super( props );
-	}
-
 	canSearch() {
 		const { site, filter } = this.props;
 
@@ -89,26 +80,26 @@ class PeopleSectionNav extends React.PureComponent {
 	}
 
 	getFilters() {
-		const { site } = this.props,
-			siteFilter = ( site && site.slug ) ? site.slug : '',
+		const { translate } = this.props,
+			siteFilter = get( this.props, 'site.slug', '' ),
 			filters = [
 				{
-					title: this.props.translate( 'Team', { context: 'Filter label for people list' } ),
+					title: translate( 'Team', { context: 'Filter label for people list' } ),
 					path: '/people/team/' + siteFilter,
 					id: 'team'
 				},
 				{
-					title: this.props.translate( 'Followers', { context: 'Filter label for people list' } ),
+					title: translate( 'Followers', { context: 'Filter label for people list' } ),
 					path: '/people/followers/' + siteFilter,
 					id: 'followers'
 				},
 				{
-					title: this.props.translate( 'Email Followers', { context: 'Filter label for people list' } ),
+					title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
 					path: '/people/email-followers/' + siteFilter,
 					id: 'email-followers'
 				},
 				{
-					title: this.props.translate( 'Viewers', { context: 'Filter label for people list' } ),
+					title: translate( 'Viewers', { context: 'Filter label for people list' } ),
 					path: '/people/viewers/' + siteFilter,
 					id: 'viewers'
 				}
@@ -118,7 +109,7 @@ class PeopleSectionNav extends React.PureComponent {
 	}
 
 	getNavigableFilters() {
-		let allowedFilterIds = [ 'team' ]; // eslint-disable-line prefer-const
+		const allowedFilterIds = [ 'team' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );

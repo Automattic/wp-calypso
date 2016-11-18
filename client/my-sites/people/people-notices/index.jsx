@@ -12,6 +12,7 @@ import PeopleLog from 'lib/people/log-store';
 import PeopleActions from 'lib/people/actions';
 import Notice from 'components/notice';
 import { getSelectedSite } from 'state/ui/selectors';
+import { get } from 'lodash';
 
 const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 
@@ -56,8 +57,8 @@ const PeopleNotices = React.createClass( {
 	},
 
 	getState() {
-		const siteId = this.props.site && this.props.site.ID,
-			userId = this.props.user && this.props.user.ID;
+		const siteId = get( this.props, 'site.ID' ),
+			userId = get( this.props, 'user.ID' );
 
 		return {
 			errors: PeopleLog.getErrors( filterBy.bind( this, siteId, userId ) ),

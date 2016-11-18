@@ -16,10 +16,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 class PeopleListItem extends React.PureComponent {
-	constructor( props ) {
-		super( props );
-	}
-
 	navigateToUser() {
 		window.scrollTo( 0, 0 );
 		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
