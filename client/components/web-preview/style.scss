@@ -93,7 +93,8 @@
 
 .web-preview__close,
 .web-preview__external,
-.web-preview__device-button {
+.web-preview__device-button,
+.web-preview__seo-button {
 	color: $gray;
 	border-right: 1px solid lighten( $gray, 20% );
 	padding: 12px 16px;
@@ -136,15 +137,20 @@
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+}
 
-	&.web-preview__seo-button {
-		padding: 0 14px;
-		height: 100%;
+.web-preview__seo-button {
+	border-right: none;
+	padding: 0 14px;
+	height: 100%;
 
-		&.is-showing-device-switcher {
-			border-left: 1px solid lighten( $gray, 20% );
-			margin-left: 8px;
-		}
+	&.is-active {
+		color: $gray-dark;
+	}
+
+	&.is-showing-device-switcher {
+		border-left: 1px solid lighten( $gray, 20% );
+		margin-left: 8px;
 	}
 }
 
