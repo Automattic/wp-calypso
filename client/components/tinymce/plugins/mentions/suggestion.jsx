@@ -13,28 +13,24 @@ const getRegExpFor = function( type, textToHighlight ) {
 };
 
 const highlight = function( content, textToHighlight, type ) {
-	const matcher = getRegExpFor( type, textToHighlight ),
-		matches = matcher.exec( content );
+	const matcher = getRegExpFor( type, textToHighlight );
+	const matches = matcher.exec( content );
 
-	if ( matches ) {
-		const highlights = [];
-		let highlighted = false;
-
-		for ( let i = 1, length = matches.length; i < length; i++ ) {
-			let item = matches[ i ];
-
-			if ( textToHighlight.toLowerCase() === item.toLowerCase() && ! highlighted ) {
-				item = <strong className="mentions__highlight" key={ i }>{ matches[ i ] }</strong>;
-				highlighted = true;
-			}
-
-			highlights.push( item );
-		}
-
-		return highlights;
+	if ( ! matches ) {
+		return [ content ];
 	}
 
-	return [ content ];
+	return matches.map( ( item, i ) => {
+		if ( i === 0 ) {
+			return '';
+		}
+
+		if ( textToHighlight.toLowerCase() === item.toLowerCase() ) {
+			return <mark className="mentions__highlight" key={ i }>{ item }</mark>;
+		}
+
+		return item;
+	} );
 };
 
 const Suggestion = ( { avatarUrl, username, fullName, query } ) => {
