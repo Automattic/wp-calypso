@@ -130,6 +130,40 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
+function listDirectories( path ) {
+	try {
+		return fs.readdirSync( path ).filter( ( file ) => {
+			try {
+				return fs.statSync( fspath.join( path, file ) ).isDirectory();
+			}
+			catch (err) {
+				return false;
+			}
+		} )
+	}
+	catch (err) {
+		return [];
+	}
+}
+
+function findDirectoryWithName( startPath, name, depth = 2 ) {
+	if ( depth === 0 ) {
+		return [];
+	}
+
+	const children = listDirectories( startPath );
+
+	const matches = children
+		.filter( ( dir ) => dir === name )
+		.map( ( dir ) => fspath.join( startPath, dir ) );
+
+	if ( matches.length > 0 ) {
+		return matches;
+	}
+
+	return [].concat.apply( [], children.map( ( dir ) => findDirectoryWithName( fspath.join( startPath, dir ), name, depth - 1 ) ) );
+}
+
 /**
  * Given an object of { module: dependenciesArray }
  * it filters out modules that contain the world "docs/"
@@ -200,34 +234,75 @@ module.exports = function() {
 	// return the HTML content of a document (assumes that the document is in markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
+		let component = request.query.component;
 
-		if ( ! path ) {
+		if ( ! (path || component) ) {
 			response
 				.status( 400 )
-				.send( 'Need to provide a file path (e.g. path=client/devdocs/README.md)' );
+				.send( 'Need to provide a file path (e.g. path=client/devdocs/README.md) or component (e.g. component=author-selector)' );
 			return;
 		}
 
-		if ( ! /\.md$/.test( path ) ) {
-			path = fspath.join( path, 'README.md' );
+		// if we are getting readme contents, the old way ;)
+		if ( path ) {
+			if ( ! /\.md$/.test( path ) ) {
+				path = fspath.join( path, 'README.md' );
+			}
+
+			try {
+				path = fs.realpathSync( fspath.join( root, path ) );
+			} catch ( err ) {
+				path = null;
+			}
+
+			if ( ! path || path.substring( 0, root.length + 1 ) !== root + '/' ) {
+				response
+					.status( 404 )
+					.send( 'File does not exist' );
+				return;
+			}
+
+			const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
+
+			response.send( marked( fileContents ) );
 		}
 
-		try {
-			path = fs.realpathSync( fspath.join( root, path ) );
-		} catch ( err ) {
-			path = null;
+		if ( component ) {
+			// we need to search the entire component tree for this guy ... :(
+			try {
+				const basePath = fs.realpathSync( fspath.join( root, 'client' ) );
+				const results = [
+					fspath.join( basePath, 'blocks' ),
+					fspath.join( basePath, 'components' )
+				]
+					.map( ( search ) => findDirectoryWithName( search, component, 1 ) );
+				const files = [].concat.apply( [], results );
+
+				if ( files.length === 0 ) {
+					response
+						.status( 404 )
+						.send( 'Unable to find component' );
+					return;
+				}
+
+				const readme = fspath.join( files[ 0 ], 'README.md' );
+
+				if ( ! readme || readme.substring( 0, root.length + 1 ) !== root + '/' ) {
+					response
+						.status( 404 )
+						.send( 'Unable to find README for component' );
+					return;
+				}
+
+				response.send( fs.readFileSync( readme, { encoding: 'utf8' } ) );
+			}
+			catch ( err ) {
+				response
+					.status( 404 )
+					.send( 'Unable to find component' );
+				return;
+			}
 		}
-
-		if ( ! path || path.substring( 0, root.length + 1 ) !== root + '/' ) {
-			response
-				.status( 404 )
-				.send( 'File does not exist' );
-			return;
-		}
-
-		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
-
-		response.send( marked( fileContents ) );
 	} );
 
 	// return json for the components usage stats
