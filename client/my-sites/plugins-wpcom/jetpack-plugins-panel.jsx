@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import config from 'config';
 import { localize } from 'i18n-calypso';
 import {
 	find,
@@ -18,6 +19,7 @@ import {
 import urlSearch from 'lib/url-search';
 import CompactCard from 'components/card/compact';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import JetpackPluginItem from './jetpack-plugin-item';
@@ -27,6 +29,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
+import Tooltip from 'components/tooltip';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -48,6 +51,10 @@ const isPluginActive = ( plugin, hasBusiness, hasPremium ) => some( [
 ] );
 
 class JetpackPluginsPanel extends Component {
+
+	state = {
+		addPluginTooltip: false
+	};
 
 	static propTypes = {
 		siteSlug: PropTypes.string,
@@ -116,6 +123,10 @@ class JetpackPluginsPanel extends Component {
 		];
 	}
 
+	showPluginTooltip = () => this.setState( { addPluginTooltip: true } );
+
+	hidePluginTooltip = () => this.setState( { addPluginTooltip: false } );
+
 	render() {
 		const {
 			translate,
@@ -140,6 +151,8 @@ class JetpackPluginsPanel extends Component {
 			} ) )
 			.filter( group => group.plugins.length > 0 );
 
+		const browserUrl = [ '/plugins/browse', this.props.siteSlug ].join( '/' );
+
 		return (
 			<div className="plugins-wpcom__jetpack-plugins-panel">
 
@@ -160,7 +173,28 @@ class JetpackPluginsPanel extends Component {
 					/>
 				</SectionNav>
 
-				<SectionHeader label={ translate( 'Plugins' ) } />
+				<SectionHeader label={ translate( 'Plugins' ) }>
+					{ config.isEnabled( 'automated-transfer' ) &&
+						<ButtonGroup key="plugin-list-header__buttons-browser">
+							<Button
+								compact
+								href={ browserUrl }
+								onMouseEnter={ this.showPluginTooltip }
+								onMouseLeave={ this.hidePluginTooltip }
+								ref="addPluginButton"
+								aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
+								<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+								<Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
+								<Tooltip
+									isVisible={ this.state.addPluginTooltip }
+									context={ this.refs && this.refs.addPluginButton }
+									position="bottom">
+									{ translate( 'Browse all plugins' ) }
+								</Tooltip>
+							</Button>
+						</ButtonGroup>
+					}
+				</SectionHeader>
 
 				<CompactCard className="plugins-wpcom__jetpack-main-plugin plugins-wpcom__jetpack-plugin-item">
 					<div className="plugins-wpcom__plugin-link">
