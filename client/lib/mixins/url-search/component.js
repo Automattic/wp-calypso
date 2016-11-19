@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
@@ -12,29 +11,28 @@ import { doSearch, getSearchOpen } from './index';
 export default function( Component ) {
 	const componentName = Component.displayName || Component.name || '';
 
-	return React.createClass( {
-		displayName: 'Searchable' + componentName,
+	return class extends React.Component {
+		state = {
+			searchOpen: false
+		};
 
-		getInitialState() {
-			return {
-				searchOpen: false
-			};
-		},
+		displayName = 'Searchable' + componentName;
 
-		componentWillReceiveProps( nextProps ) {
-			if ( ! nextProps.search ) {
-				this.setState( {
-					searchOpen: false
-				} );
-			}
-		},
+		constructor(props) {
+			super(props);
+
+			this.doSearch = doSearch.bind( this );
+			this.getSearchOpen = getSearchOpen.bind( this );
+		}
+
+		componentWillReceiveProps = ( { search } ) => ! search && this.setState( { searchOpen: false } );
 
 		render() {
-			const props = assign( {}, this.props, {
-				doSearch: doSearch.bind( this ),
-				getSearchOpen: getSearchOpen.bind( this )
-			} );
-			return React.createElement( Component, props );
+			return <Component { ...{
+				...this.props,
+				doSearch: this.doSearch,
+				getSearchOpen: this.getSearch,
+			} } />
 		}
-	} );
+	};
 }
