@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React from 'react';
+import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
-import uniq from 'lodash/uniq';
-import upperFirst from 'lodash/upperFirst';
+import { uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,18 +70,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getSitesPlugin( nextProps ) {
-		const props = nextProps || this.props,
-			{ selectedSite } = this.props;
-
-		// .com sites can't install non .com plugins, if that's the case we don't retrieve any data from the store
-		if ( selectedSite && ! this.props.isJetpackSite( selectedSite.ID ) ) {
-			return {
-				accessError: false,
-				sites: [],
-				notInstalledSites: [],
-				plugin: null
-			};
-		}
+		const props = nextProps || this.props;
 
 		const sites = uniq( props.sites.getSelectedOrAllWithPlugins() ),
 			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
@@ -306,7 +295,11 @@ const SinglePlugin = React.createClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( selectedSite && ! this.props.isJetpackSite( selectedSite.ID ) ) {
+		if (
+			selectedSite &&
+			! this.props.isJetpackSite( selectedSite.ID ) &&
+			! config.isEnabled( 'automated-transfer' )
+		) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
@@ -316,7 +309,10 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		if ( this.state.accessError ) {
+		if (
+			this.state.accessError &&
+			( ! selectedSite || selectedSite.jetpack )
+		) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
@@ -356,7 +352,16 @@ const SinglePlugin = React.createClass( {
 			);
 		}
 
-		const installing = selectedSite && PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
+		const installing = (
+			selectedSite &&
+			PluginsLog.isInProgressAction(
+				selectedSite.ID,
+				this.state.plugin.slug,
+				'INSTALL_PLUGIN'
+			)
+		);
+
+		const isWpcom = selectedSite && ! this.props.isJetpackSite( selectedSite.ID );
 
 		return (
 			<MainComponent>
@@ -376,7 +381,7 @@ const SinglePlugin = React.createClass( {
 								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
 						isInstalling={ installing } />
-					{ plugin.wporg && <PluginSections plugin={ plugin } /> }
+					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
 					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
