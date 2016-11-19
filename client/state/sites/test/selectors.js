@@ -109,40 +109,6 @@ describe( 'selectors', () => {
 				}
 			} );
 		} );
-
-		it( 'should return a normalized site with Jetpack specific computed attributes when site is Jetpack', () => {
-			const site = getSite( {
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								name: 'WordPress.com Example Blog',
-								URL: 'https://example.com',
-								options: {
-									unmapped_url: 'https://example.wordpress.com',
-									file_mod_disabled: [ 'has_no_file_system_write_access' ]
-								},
-								jetpack: true
-							}
-						}
-					}
-				}, 2916284 ),
-				expectedProps = [
-					'canManage',
-					'canUpdateFiles',
-					'canAutoupdateFiles',
-					'hasJetpackMenus',
-					'hasJetpackThemes',
-					'isMainNetworkSite',
-					'isSecondaryNetworkSite',
-					'hasMinimumJetpackVersion',
-					'fileModDisabledReason'
-				];
-
-			expectedProps.forEach( ( prop ) => {
-				expect( site ).to.have.property( prop );
-			} );
-		} );
 	} );
 
 	describe( '#getSiteCollisions', () => {
@@ -2005,18 +1971,6 @@ describe( 'selectors', () => {
 
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
 			expect( reason ).to.deep.equal( [ 'Core autoupdates are explicitly disabled by a site administrator.' ] );
-		} );
-
-		it( 'it should return false if file_mod_disabled is not set', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true
-				}
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			expect( reason ).to.be.false;
 		} );
 	} );
 
