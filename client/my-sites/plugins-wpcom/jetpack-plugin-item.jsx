@@ -26,6 +26,7 @@ export const JetpackPluginItem = ( {
 		'is-borderless',
 		`plugins-wpcom__is-${ plugin.plan }-plugin`,
 	].join( ' ' );
+	const featureLink = plugin.feature ? `?feature=${ plugin.feature }` : '';
 
 	return (
 		<CompactCard className="plugins-wpcom__jetpack-plugin-item">
@@ -43,7 +44,10 @@ export const JetpackPluginItem = ( {
 				</div>
 			</a>
 			<div className="plugins-wpcom__plugin-actions">
-				<PurchaseButton { ...{ isActive: plugin.isActive, href: `/plans/${ siteSlug }` } } />
+				<PurchaseButton { ...{
+					isActive: plugin.isActive,
+					href: `/plans/${ siteSlug }${ featureLink }`
+				} } />
 			</div>
 		</CompactCard>
 	);
