@@ -67,6 +67,14 @@
 	flex-grow: 1;
 }
 
+.plugin-meta__upgrade_nudge .upgrade-nudge.card {
+	margin-top: 0;
+}
+
+.plugin-meta .card {
+	margin: 0;
+}
+
 .plugin-meta__meta {
 	color: $gray;
 	white-space: pre;

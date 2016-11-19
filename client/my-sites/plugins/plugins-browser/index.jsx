@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import config from 'config';
 import { connect } from 'react-redux';
 
 /**
@@ -31,8 +32,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
 
 const PluginsBrowser = React.createClass( {
-
-	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
 
 	visibleCategories: [ 'new', 'popular', 'featured' ],
@@ -312,11 +311,23 @@ const PluginsBrowser = React.createClass( {
 
 	render() {
 		const { selectedSite } = this.props;
-		const cantManage = selectedSite &&
-			this.props.isJetpackSite( selectedSite.ID ) &&
-			! this.props.canJetpackSiteManage( selectedSite.ID );
 
-		if ( this.state.accessError || cantManage ) {
+		const cantManage = (
+			selectedSite &&
+			this.props.isJetpackSite( selectedSite.ID ) &&
+			! this.props.canJetpackSiteManage( selectedSite.ID )
+		);
+
+		if (
+			( this.state.accessError || cantManage ) &&
+			(
+				// If automated transfer is _off_ then behave
+				// as normal. If it's on, then only show if we
+				// are getting an error on a Jetpack site
+				! config.isEnabled( 'automated-transfer' ) ||
+				( selectedSite && selectedSite.jetpack )
+			)
+		) {
 			return this.renderAccessError( selectedSite );
 		}
 

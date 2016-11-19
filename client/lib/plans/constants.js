@@ -58,6 +58,7 @@ export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_LIVE_COURSES = 'live-courses';
+export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -184,6 +185,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_LIVE_COURSES,
 			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		] ),
@@ -475,6 +477,12 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
 		)
+	},
+
+	[ FEATURE_UPLOAD_PLUGINS ]: {
+		getSlug: () => FEATURE_UPLOAD_PLUGINS,
+		getTitle: () => i18n.translate( 'Install plugins' ),
+		getDescription: () => i18n.translate( 'Install custom plugins on your site.' )
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
