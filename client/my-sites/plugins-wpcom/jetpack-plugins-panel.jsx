@@ -15,7 +15,7 @@ import {
 /**
  * Internal dependencies
  */
-import urlSearch from 'lib/mixins/url-search/component';
+import urlSearch from 'lib/mixins/url-search/url-search';
 import CompactCard from 'components/card/compact';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import Button from 'components/button';
