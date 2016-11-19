@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { doSearch, getSearchOpen } from './index';
+import { doSearch, getSearchOpen } from 'lib/mixins/url-search';
 
 export default function( Component ) {
 	const componentName = Component.displayName || Component.name || '';
