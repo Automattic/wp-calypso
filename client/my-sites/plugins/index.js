@@ -51,7 +51,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			nonJetpackRedirectTo( '/plugins' ),
-			pluginsController.plugins.bind( null, 'all' ),
+			pluginsController.plugin,
 		);
 
 		page( '/plugins',
