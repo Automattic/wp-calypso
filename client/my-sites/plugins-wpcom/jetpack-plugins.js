@@ -56,12 +56,14 @@ const jetpackPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/seo-tools/',
 				description: translate( 'Custom meta descriptions, social media previews, and more.' ),
 				plan: 'business',
+				feature: 'advanced-seo'
 			},
 			{
 				name: translate( 'Google Analytics' ),
 				link: 'https://support.wordpress.com/google-analytics/',
 				description: translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' ),
 				plan: 'business',
+				feature: 'google-analytics'
 			},
 		],
 	},
@@ -126,16 +128,11 @@ const jetpackPlugins = ( translate = identity ) => [
 				plan: 'standard',
 			},
 			{
-				name: translate( 'No Advertising' ),
-				link: 'https://support.wordpress.com/no-ads/',
-				description: translate( 'Faster image loading and editing.' ),
-				plan: 'premium',
-			},
-			{
 				name: translate( 'Custom Design' ),
 				link: 'https://support.wordpress.com/custom-design/',
 				description: translate( 'Customize your blog\'s look with custom fonts, a CSS editor, and more.' ),
 				plan: 'premium',
+				feature: 'advanced-design'
 			},
 		],
 	},
@@ -179,6 +176,7 @@ const jetpackPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/videopress/',
 				description: translate( 'Upload and host your video files on your site with VideoPress.' ),
 				plan: 'premium',
+				feature: 'video-upload'
 			},
 		],
 	},
