@@ -213,7 +213,7 @@
 		display: block;
 		flex-grow: 1;
 		font-size: 14px;
-		padding: 16px;
+		padding: 16px 0 16px 16px;
 		overflow: hidden;
 	}
 
@@ -273,6 +273,11 @@
 .plugins-wpcom__jetpack-main-plugin.card {
 	.plugins-wpcom__plugin-link {
 		display: flex;
+		padding: 16px 0 16px 16px;
+		@include breakpoint( '>660px' ) {
+			padding: 24px 0 24px 24px;
+		}
+
 		.plugin-icon {
 			float: none;
 			flex-shrink: 0;
@@ -295,6 +300,15 @@
 
 .plugins-wpcom__jetpack-plugins-list.card {
 	padding: 0;
+
+	.plugins-wpcom__jetpack-plugin-item.card {
+		&:hover {
+			//box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			//	0 1px 2px darken( $gray, 30% );
+			box-shadow: 0 0 0 1px $gray;
+		}
+	}
+
 	.plugins-wpcom__plugin-name {
 		@include breakpoint( '>480px' ) {
 			font-size: 18px;
