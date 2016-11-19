@@ -377,6 +377,9 @@
 
 // -------- Search --------
 .section-nav {
+	.search {
+		overflow: hidden;
+	}
 	@include breakpoint( "<480px" ) {
 		.search.is-expanded-to-container {
 			height: 46px;
