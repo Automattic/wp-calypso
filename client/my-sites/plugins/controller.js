@@ -93,6 +93,7 @@ function renderPluginList( context, basePath ) {
 				path: basePath,
 				context,
 				filter: context.params.pluginFilter,
+				category: context.params.category,
 				sites,
 				search
 			} )
