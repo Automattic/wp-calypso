@@ -62,7 +62,7 @@ export const getSite = createSelector(
 			return null;
 		}
 
-		let attributes = {
+		return {
 			...site,
 			...getComputedAttributes( site ),
 			hasConflict: isSiteConflicting( state, siteId ),
@@ -71,22 +71,6 @@ export const getSite = createSelector(
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
 		};
-
-		if ( attributes.jetpack ) {
-			attributes = Object.assign( attributes, {
-				canManage: canJetpackSiteManage( state, siteId ),
-				canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
-				canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
-				hasJetpackMenus: hasJetpackSiteJetpackMenus( state, siteId ),
-				hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
-				isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
-				isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
-				hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
-				fileModDisabledReason: getJetpackSiteUpdateFilesDisabledReasons( state, siteId )
-			} );
-		}
-
-		return attributes;
 	},
 	( state ) => state.sites.items
 );
@@ -897,10 +881,6 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 	}
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
-
-	if ( ! Array.isArray( fileModDisabled ) ) {
-		return false;
-	}
 
 	return compact( fileModDisabled.map( clue => {
 		if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
