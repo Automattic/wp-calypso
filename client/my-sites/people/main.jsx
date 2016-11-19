@@ -84,7 +84,7 @@ export default React.createClass( {
 			<Main>
 				<SidebarNavigation />
 				<div>
-					<PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } />
+					{ <PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } site={ site } /> }
 					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
