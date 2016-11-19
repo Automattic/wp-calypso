@@ -328,14 +328,21 @@ const PluginsMain = React.createClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
+		const {
+			category,
+			search,
+			selectedSite,
+		} = this.props;
 
 		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<WpcomPluginPanel />
+					<WpcomPluginPanel { ...{
+						category,
+						search,
+					} } />
 				</Main>
 			);
 		}
