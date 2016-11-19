@@ -361,6 +361,8 @@ const SinglePlugin = React.createClass( {
 			)
 		);
 
+		const isWpcom = selectedSite && ! this.props.isJetpackSite( selectedSite.ID );
+
 		return (
 			<MainComponent>
 				{ this.renderDocumentHead() }
@@ -379,7 +381,7 @@ const SinglePlugin = React.createClass( {
 								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
 						isInstalling={ installing } />
-					{ plugin.wporg && <PluginSections plugin={ plugin } /> }
+					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
 					{ this.renderSitesList( plugin ) }
 				</div>
 			</MainComponent>
