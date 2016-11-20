@@ -22,6 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
+import HelpContactClosureNotice from '../help-contact-closure-notice';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
@@ -220,6 +221,7 @@ export const HelpContactForm = React.createClass( {
 
 		return (
 			<div className="help-contact-form">
+				<HelpContactClosureNotice />
 				{ formDescription && ( <p>{ formDescription }</p> ) }
 
 				{ showHowCanWeHelpField && (
