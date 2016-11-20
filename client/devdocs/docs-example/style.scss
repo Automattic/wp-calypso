@@ -84,4 +84,13 @@
   li p {
 	margin-bottom: 0;
   }
+
+  p pre {
+	display: inline-block;
+	margin-bottom: 0;
+	padding: 0;
+	line-height: inherit;
+	font-size: inherit;
+	overflow: inherit;
+  }
 }
