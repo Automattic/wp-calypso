@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
 import { requestThemes } from 'state/themes/actions';
 import { isRequestingThemesForQuery } from 'state/themes/selectors';
 
@@ -17,7 +16,6 @@ class QueryThemes extends Component {
 		siteId: PropTypes.number,
 		query: PropTypes.object,
 		// Connected props
-		isJetpackSite: PropTypes.bool.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestThemes: PropTypes.func.isRequired,
 	}
@@ -36,11 +34,7 @@ class QueryThemes extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			let { siteId } = props;
-			if ( ! props.isJetpackSite ) {
-				siteId = 'wpcom';
-			}
-			props.requestThemes( siteId, props.query );
+			props.requestThemes( props.siteId, props.query );
 		}
 	}
 
@@ -51,8 +45,7 @@ class QueryThemes extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
-		isJetpackSite: !! isJetpackSite( state, siteId ),
-		isRequesting: isRequestingThemesForQuery( state, siteId || 'wpcom', query ),
+		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
 	} ),
 	{ requestThemes }
 )( QueryThemes );
