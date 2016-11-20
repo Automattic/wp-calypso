@@ -36,7 +36,7 @@ class QueryThemes extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			let siteId = { props };
+			let { siteId } = props;
 			if ( ! props.isJetpackSite ) {
 				siteId = 'wpcom';
 			}
