@@ -6,6 +6,8 @@ import RemarkableReactRenderer from 'remarkable-react';
 
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
+import Card from 'components/card';
+import Ribbon from 'components/ribbon';
 
 class Readme extends Component {
 	constructor( props ) {
@@ -81,7 +83,10 @@ class Readme extends Component {
 		return (
 			<div className="docs-example__readme-content">
 				<hr />
-				{ this.md.render( this.state.readmeHtml ) }
+				<Card>
+					<Ribbon>README.md</Ribbon>
+					{ this.md.render( this.state.readmeHtml ) }
+				</Card>
 			</div>
 		);
 	}

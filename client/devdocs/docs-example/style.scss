@@ -85,12 +85,21 @@
 	margin-bottom: 0;
   }
 
-  p pre {
-	display: inline-block;
-	margin-bottom: 0;
-	padding: 0;
-	line-height: inherit;
-	font-size: inherit;
-	overflow: inherit;
+  hr {
+	border-top: 4px double $gray-dark;
+	text-align: center;
+	margin-top: 1.5em;
   }
+
+  hr:after {
+	content: '\002665';
+	display: inline-block;
+	position: relative;
+	top: -15px;
+	padding: 0 10px;
+	background: $gray-light;
+	color: $blue-wordpress;
+	font-size: 18px;
+  }
+
 }
