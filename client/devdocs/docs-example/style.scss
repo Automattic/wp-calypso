@@ -64,12 +64,24 @@
 	}
 }
 
-.docs-example__readme_spinner {
+.docs-example__readme-spinner {
   margin: auto;
   width: 50px;
 }
 
-.docs-example__readme_loading_message {
+.docs-example__readme-loading-message {
   text-align: center;
   padding-bottom: 25px;
+}
+
+.docs-example__readme-content {
+  h1 {
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 32px;
+  }
+
+  li p {
+	margin-bottom: 0;
+  }
 }

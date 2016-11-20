@@ -106,6 +106,8 @@
     "react-virtualized": "7.9.1",
     "redux": "3.0.4",
     "redux-thunk": "1.0.0",
+    "remarkable": "1.7.1",
+    "remarkable-react": "0.0.2",
     "rtlcss": "2.0.5",
     "sanitize-html": "1.11.1",
     "semver": "5.1.0",

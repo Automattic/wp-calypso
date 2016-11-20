@@ -1,7 +1,8 @@
 /** External Dependencies */
 import React, { Component, PropTypes } from 'react';
 import request from 'superagent';
-import ReactMarkdown from 'react-markdown';
+import Remarkable from 'remarkable';
+import RemarkableReactRenderer from 'remarkable-react';
 
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
@@ -9,6 +10,12 @@ import Spinner from 'components/spinner';
 class Readme extends Component {
 	constructor( props ) {
 		super( props );
+
+		this.md = new Remarkable( {
+			linkify: true, // auto-convert things that look like links to <a> components
+			typographer: true // prettify quotes in the content
+		} );
+		this.md.renderer = new RemarkableReactRenderer();
 	}
 
 	componentWillMount() {
@@ -30,9 +37,7 @@ class Readme extends Component {
 			.then( ( { text } ) => {
 				this.setState( {
 					loading: false,
-					readmeHtml: (
-						<ReactMarkdown source={ text } escapeHtml={ true } />
-					)
+					readmeHtml: text
 				} );
 			} )
 			.catch( ( err ) => {
@@ -48,10 +53,10 @@ class Readme extends Component {
 			return (
 				<div>
 					<hr />
-					<div className="docs-example__readme_loading_message">
+					<div className="docs-example__readme-loading-message">
 						Loading readme, please wait
 					</div>
-					<Spinner className="docs-example__readme_spinner" size={ 50 } />
+					<Spinner className="docs-example__readme-spinner" size={ 50 } />
 				</div>
 			);
 		}
@@ -59,13 +64,25 @@ class Readme extends Component {
 		if ( this.state.error ) {
 			return (
 				<div>
-					An error has occurred loading the readme!
+					<p>An error has occurred loading the readme! The server
+						responded: { `${ this.state.error }` }</p>
+					<hr />
+					<p>
+						Reasons that you may be seeing this error:
+					</p>
+					<ul>
+						<li>Check that { `${ this.props.component }` }/README.md exists</li>
+						<li>Ensure the server is running</li>
+					</ul>
 				</div>
 			);
 		}
 
 		return (
-			this.state.readmeHtml
+			<div className="docs-example__readme-content">
+				<hr />
+				{ this.md.render( this.state.readmeHtml ) }
+			</div>
 		);
 	}
 }
