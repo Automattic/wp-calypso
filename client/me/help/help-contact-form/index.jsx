@@ -222,7 +222,10 @@ export const HelpContactForm = React.createClass( {
 
 		return (
 			<div className="help-contact-form">
-				<HelpContactClosureNotice />
+				<HelpContactClosureNotice
+					from="Thu, 24 Nov 2016 08:00:00 +0000"
+					to="Fri, 25 Nov 2016 08:00:00 +0000"
+				/>
 				{ formDescription && ( <p>{ formDescription }</p> ) }
 
 				{ showHowCanWeHelpField && (

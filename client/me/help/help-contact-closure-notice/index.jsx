@@ -14,10 +14,7 @@ import i18n, { localize } from 'i18n-calypso';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import olarkStore from 'lib/olark-store';
 
-const closedFrom = i18n.moment( 'Thu, 24 Nov 2016 08:00:00 +0000' );
-const closedTo = i18n.moment( 'Fri, 25 Nov 2016 08:00:00 +0000' );
-
-const Closed = localize( ( { translate } ) =>
+const Closed = localize( ( { translate, closedTo } ) =>
 	<div className="help-contact-closure-notice">
 		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
 		<p>
@@ -37,7 +34,7 @@ const Closed = localize( ( { translate } ) =>
 	</div>
 );
 
-const Upcoming = localize( ( { translate } ) =>
+const Upcoming = localize( ( { translate, closedFrom, closedTo } ) =>
 	<div className="help-contact-closure-notice">
 		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
 		<p>
@@ -60,8 +57,8 @@ const Upcoming = localize( ( { translate } ) =>
 );
 
 export default class HelpContactClosureNotice extends Component {
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 		this.state = { olark: olarkStore.get() };
 	}
 
@@ -79,6 +76,8 @@ export default class HelpContactClosureNotice extends Component {
 	}
 
 	render() {
+		const closedFrom = i18n.moment( this.props.from );
+		const closedTo = i18n.moment( this.props.to );
 		// Don't show notice if user isn't eligible for chat
 		if ( ! this.state.olark.isUserEligible ) {
 			return null;
@@ -91,9 +90,14 @@ export default class HelpContactClosureNotice extends Component {
 
 		// Closure period is upcoming
 		if ( i18n.moment().isBefore( closedFrom ) ) {
-			return <Upcoming />;
+			return <Upcoming closedFrom={ closedFrom } closedTo={ closedTo } />;
 		}
 
-		return <Closed />;
+		return <Closed closedFrom={ closedFrom } closedTo={ closedTo } />;
 	}
 }
+
+HelpContactClosureNotice.PropTypes = {
+	from: React.PropTypes.string.isRequired,
+	to: React.PropTypes.string.isRequired,
+};
