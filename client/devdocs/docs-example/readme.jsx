@@ -1,10 +1,14 @@
-/** External Dependencies */
+/**
+ * External Dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import request from 'superagent';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 
-/** Internal Dependencies */
+/**
+ * Internal Dependencies
+ */
 import Spinner from 'components/spinner';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
@@ -53,29 +57,33 @@ class Readme extends Component {
 	render() {
 		if ( this.state.loading ) {
 			return (
-				<div>
+				<div className="docs-example__readme-content">
 					<hr />
-					<div className="docs-example__readme-loading-message">
-						Loading readme, please wait
-					</div>
-					<Spinner className="docs-example__readme-spinner" size={ 50 } />
+					<Card>
+						<div className="docs-example__readme-loading-message">
+							Loading readme, please wait
+						</div>
+						<Spinner className="docs-example__readme-spinner" size={ 50 } />
+					</Card>
 				</div>
 			);
 		}
 
 		if ( this.state.error ) {
 			return (
-				<div>
-					<p>An error has occurred loading the readme! The server
-						responded: { `${ this.state.error }` }</p>
+				<div className="docs-example__readme-content">
 					<hr />
-					<p>
-						Reasons that you may be seeing this error:
-					</p>
-					<ul>
-						<li>Check that { `${ this.props.component }` }/README.md exists</li>
-						<li>Ensure the server is running</li>
-					</ul>
+					<Card>
+						<p>An error has occurred loading the readme! The server
+							responded: { `${ this.state.error }` }</p>
+						<p>
+							Reasons that you may be seeing this error:
+						</p>
+						<ul>
+							<li>Check that { `${ this.props.component }` }/README.md exists</li>
+							<li>Ensure the server is running</li>
+						</ul>
+					</Card>
 				</div>
 			);
 		}
