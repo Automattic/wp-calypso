@@ -230,7 +230,7 @@ export const isRequestingThemesForQueryIgnoringPage = createSelector(
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}        Whether request is in progress
  */
-export function isRequestingSiteTheme( state, siteId, themeId ) {
+export function isRequestingTheme( state, siteId, themeId ) {
 	if ( ! state.themes.themeRequests[ siteId ] ) {
 		return false;
 	}
