@@ -3,7 +3,7 @@ Spinner
 
 Spinner is a React component for rendering a loading indicator.
 
-<img src="https://cldup.com/H27NKdxFBN.gif" alt="Demo" />
+![Spinner Demo](https://cldup.com/H27NKdxFBN.gif)
 
 __Please exercise caution in deciding to use a spinner in your component.__ A lone spinner is a poor user-experience and conveys little context to what the user should expect from the page. Refer to [the _Reactivity and Loading States_ guide](https://github.com/Automattic/wp-calypso/blob/master/docs/reactivity.md) for more information on building fast interfaces and making the most of data already available to use.
 
@@ -24,22 +24,8 @@ React.createClass( {
 
 The following props can be passed to the Spinner component:
 
-### `size`
+| prop name | type   | required | default | comment |
+| --------- | ------ | :------: | ------: | ------- |
+| size      | Number | No       | 20      | The width and height, in pixels |
+| duration  | Number | No       | 3000    | The duration of a single revolution, in milliseconds |
 
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td>20</td></tr>
-</table>
-
-The width and height of the spinner, in pixels.
-
-### `duration`
-
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td>3000</td></tr>
-</table>
-
-The duration of a single spin animation, in milliseconds.
