@@ -18,6 +18,7 @@ import PluginsLog from 'lib/plugins/log-store';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
+import JetpackSite from 'lib/site/jetpack';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -28,7 +29,7 @@ import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -390,13 +391,18 @@ const SinglePlugin = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => ( {
-		wporgPlugins: state.plugins.wporg.items,
-		wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
-		selectedSite: getSelectedSite( state ),
-		isJetpackSite: siteId => isJetpackSite( state, siteId ),
-		canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
-	} ),
+	( state, props ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
+		return {
+			wporgPlugins: state.plugins.wporg.items,
+			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
+			selectedSite: site && isJetpackSite( state, selectedSiteId ) ? JetpackSite( site ) : site,
+			isJetpackSite: siteId => isJetpackSite( state, siteId ),
+			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+		};
+	},
 	{
 		recordGoogleEvent,
 		wporgFetchPluginData
