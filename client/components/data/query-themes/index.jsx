@@ -13,7 +13,10 @@ import { isRequestingThemesForQuery } from 'state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {
-		siteId: PropTypes.number,
+		siteId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.oneOf( [ 'wpcom' ] )
+		] ).isRequired,
 		query: PropTypes.object,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
