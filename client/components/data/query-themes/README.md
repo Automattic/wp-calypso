@@ -9,10 +9,12 @@ Render the component, passing `siteId` and `query`. It does not accept any child
 
 ```jsx
 import React from 'react';
+import { connect } from 'react-redux';
 import QueryThemes from 'components/data/query-themes';
 import Theme from 'components/theme';
+import { getThemesForQueryIgnoringPage } from 'state/themes/selectors';
 
-export default function MyThemesList( { themes } ) {
+function MyThemesList( { themes } ) {
 	return (
 		<div>
 			<QueryThemes
@@ -28,6 +30,12 @@ export default function MyThemesList( { themes } ) {
 		</div>
 	);
 }
+
+export default connect(
+	( state ) => ( {
+		themes: getThemesForQueryIgnoringPage( state, 3584907, { search: 'Automattic' } )
+	} )
+)( MyThemesList );
 ```
 
 ## Props
