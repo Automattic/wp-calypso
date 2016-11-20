@@ -153,8 +153,11 @@ function findDirectoryWithName( startPath, name, depth = 2 ) {
 
 	const children = listDirectories( startPath );
 
+	// this is quite likely the dumbest way to do this ... but it currently covers all existing cases
+	const singularName = name.substring( 0, name.length - 1 );
+
 	const matches = children
-		.filter( ( dir ) => dir === name )
+		.filter( ( dir ) => dir === name || dir === singularName )
 		.map( ( dir ) => fspath.join( startPath, dir ) );
 
 	if ( matches.length > 0 ) {
