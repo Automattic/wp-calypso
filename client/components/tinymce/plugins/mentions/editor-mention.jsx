@@ -8,7 +8,7 @@ const EditorMention = ( { username } ) => (
 );
 
 EditorMention.propTypes = {
-	username: React.PropTypes.string,
+	username: React.PropTypes.string.isRequired,
 };
 
 export default EditorMention;
