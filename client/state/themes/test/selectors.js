@@ -283,7 +283,7 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( 'getThemesFoundForQuery()', () => {
+	describe( '#getThemesFoundForQuery()', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const found = getThemesFoundForQuery( {
 				themes: {
@@ -491,7 +491,7 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	( '#getThemesForQueryIgnoringPage()', () => {
+	describe( '#getThemesForQueryIgnoringPage()', () => {
 		it( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage( {
 				themes: {
@@ -567,7 +567,7 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( 'isRequestingThemesForQueryIgnoringPage()', () => {
+	describe( '#isRequestingThemesForQueryIgnoringPage()', () => {
 		it( 'should return false if not requesting for query', () => {
 			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
 				themes: {
