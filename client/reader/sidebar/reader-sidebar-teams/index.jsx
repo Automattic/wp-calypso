@@ -9,20 +9,13 @@ import map from 'lodash/map';
  */
 import ReaderSidebarTeamsListItem from './list-item';
 
+const renderItems = ( teams, path ) => map( teams, team => <ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } /> );
+
 export class ReaderSidebarTeams extends Component {
 
-	constructor() {
-		super();
-		this.renderItems = this.renderItems.bind( this );
-	}
-
-	renderItems() {
-		const { path } = this.props;
-		return map( this.props.teams, function( team ) {
-			return (
-				<ReaderSidebarTeamsListItem key={ team.slug } team={ team } path={ path } />
-			);
-		} );
+	static propTypes = {
+		teams: React.PropTypes.array,
+		path: React.PropTypes.string.isRequired,
 	}
 
 	render() {
@@ -31,14 +24,9 @@ export class ReaderSidebarTeams extends Component {
 		}
 
 		return (
-			<div>{ this.renderItems() }</div>
+			<div>{ renderItems( this.props.teams, this.props.path ) }</div>
 		);
 	}
 }
-
-ReaderSidebarTeamsListItem.propTypes = {
-	teams: React.PropTypes.array,
-	path: React.PropTypes.string.isRequired,
-};
 
 export default ReaderSidebarTeams;

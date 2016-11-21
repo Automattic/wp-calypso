@@ -13,12 +13,19 @@ import ReaderSidebarTagsListItem from './list-item';
 
 export class ReaderSidebarTagsList extends Component {
 
-	constructor() {
-		super();
-		this.renderItems = this.renderItems.bind( this );
+	static propTypes = {
+		tags: React.PropTypes.array,
+		onUnfollow: React.PropTypes.func.isRequired,
+		path: React.PropTypes.string.isRequired,
+		currentTag: React.PropTypes.string,
+		translate: React.PropTypes.func,
 	}
 
-	renderItems() {
+	static defaultProps = {
+		translate: identity,
+	}
+
+	renderItems = () => {
 		const { path, onUnfollow, currentTag, tags } = this.props;
 		return map( tags, function( tag ) {
 			return (
@@ -45,17 +52,5 @@ export class ReaderSidebarTagsList extends Component {
 		);
 	}
 }
-
-ReaderSidebarTagsList.propTypes = {
-	tags: React.PropTypes.array,
-	onUnfollow: React.PropTypes.func.isRequired,
-	path: React.PropTypes.string.isRequired,
-	currentTag: React.PropTypes.string,
-	translate: React.PropTypes.func,
-};
-
-ReaderSidebarTagsList.defaultProps = {
-	translate: identity,
-};
 
 export default localize( ReaderSidebarTagsList );
