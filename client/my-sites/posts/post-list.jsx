@@ -1,20 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
-	debounce = require( 'lodash/debounce' ),
-	omit = require( 'lodash/omit' ),
-	isEqual = require( 'lodash/isEqual' );
+import React, { Component, PropTypes } from 'react';
+import { debounce, get, isEqual, map, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Post = require( './post' ),
+var Post = require( './post' ),
 	PostPlaceholder = require( './post-placeholder' ),
-	actions = require( 'lib/posts/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteList = require( 'components/infinite-list' ),
@@ -22,56 +16,63 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	route = require( 'lib/route' ),
 	mapStatus = route.mapPostStatus;
 
+import queryGraph from 'lib/graph/query';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
-var GUESSED_POST_HEIGHT = 250;
+const GUESSED_POST_HEIGHT = 250;
 
-var PostList = React.createClass( {
+class PostList extends Component {
+	static propTypes = {
+		context: PropTypes.object,
+		search: PropTypes.string,
+		sites: PropTypes.object,
+		statusSlug: PropTypes.string,
+		siteID: PropTypes.any,
+		author: PropTypes.number
+	};
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		page: 1
+	};
 
-	propTypes: {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		statusSlug: React.PropTypes.string,
-		siteID: React.PropTypes.any,
-		author: React.PropTypes.number
-	},
+	fetchNextPage = () => {
+		this.setState( {
+			page: this.state.page + 1
+		} );
+	};
 
-	render: function() {
+	render() {
 		return (
-			<PostListFetcher
-				siteID={ this.props.siteID }
+			<Posts
+				sites={ this.props.sites }
+				context={ this.props.context }
+				siteID={ this.props.sites.getSelectedSite().ID }
 				status={ mapStatus( this.props.statusSlug ) }
 				author={ this.props.author }
-				withImages={ true }
-				withCounts={ true }
-				search={ this.props.search }>
-				<Posts
-					{ ...omit( this.props, 'children' ) }
-				/>
-			</PostListFetcher>
+				search={ this.props.search }
+				page={ this.state.page }
+				fetchNextPage={ this.fetchNextPage }
+			/>
 		);
 	}
-} );
+}
 
-var Posts = React.createClass( {
+var PostsUnwrapped = React.createClass( {
 
 	propTypes: {
-		author: React.PropTypes.number,
-		context: React.PropTypes.object.isRequired,
-		hasRecentError: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		postImages: React.PropTypes.object.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
-		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
+		author: PropTypes.number,
+		context: PropTypes.object.isRequired,
+		hasRecentError: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		postImages: PropTypes.object.isRequired,
+		search: PropTypes.string,
+		siteID: PropTypes.any,
+		sites: PropTypes.object.isRequired,
+		statusSlug: PropTypes.string,
+		trackScrollPage: PropTypes.func.isRequired,
+		fetchNextPage: PropTypes.func.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -81,7 +82,6 @@ var Posts = React.createClass( {
 			lastPage: false,
 			page: 0,
 			postImages: {},
-			posts: [],
 			trackScrollPage: function() {}
 		};
 	},
@@ -95,7 +95,6 @@ var Posts = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		debug( 'Posts React component mounted.' );
 		this.debouncedAfterResize = debounce( this.afterResize, 300 );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
 	},
@@ -105,27 +104,26 @@ var Posts = React.createClass( {
 	},
 
 	shouldComponentUpdate: function( nextProps ) {
-		if ( nextProps.loading !== this.props.loading ) {
+		if ( get( nextProps.results, [ 'posts', 'requesting' ] ) !==  get( this.props.results, [ 'posts', 'requesting' ] ) ) {
 			return true;
 		}
 		if ( nextProps.hasRecentError !== this.props.hasRecentError ) {
 			return true;
 		}
-		if ( nextProps.lastPage !== this.props.lastPage ) {
+		if ( get( nextProps.results, [ 'posts', 'lastPage' ] ) !== get( this.props.results, [ 'posts', 'lastPage' ] ) ) {
 			return true;
 		}
-		if ( nextProps.statusSlug !== this.props.statusSlug ) {
-			return true;
-		}
-		if ( ! isEqual( nextProps.posts.map( post => post.ID ), this.props.posts.map( post => post.ID ) ) ) {
+		if ( ! isEqual(
+			map( get( nextProps.results, [ 'posts', 'items' ], [] ), post => post.ID ),
+			map( get( this.props.results, [ 'posts', 'items' ], [] ), post => post.ID )
+		) ) {
 			return true;
 		}
 		return false;
 	},
 
 	afterResize: function() {
-		var arePostsAtFullWidth = window.innerWidth >= 960;
-
+		const arePostsAtFullWidth = window.innerWidth >= 960;
 		if ( this.state.postsAtFullWidth !== arePostsAtFullWidth ) {
 			this.setState( {
 				postsAtFullWidth: arePostsAtFullWidth
@@ -134,17 +132,19 @@ var Posts = React.createClass( {
 	},
 
 	fetchPosts: function( options ) {
-		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
+		const loading = get( this.props.results, [ 'posts', 'requesting' ] );
+		const lastPage = get( this.props.results, [ 'posts', 'lastPage' ] );
+		if ( loading || this.props.page === lastPage || this.props.hasRecentError ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
-			this.props.trackScrollPage( this.props.page + 1 );
+			this.props.trackScrollPage( this.props.page );
 		}
-		actions.fetchNextPage();
+		this.props.fetchNextPage();
 	},
 
 	getNoContentMessage: function() {
-		var attributes, newPostLink;
+		let attributes, newPostLink;
 
 		if ( this.props.search ) {
 			return <NoResults
@@ -254,11 +254,12 @@ var Posts = React.createClass( {
 	},
 
 	render: function() {
-		var posts = this.props.posts,
-			placeholderCount = 1,
-			placeholders = [],
-			postList,
-			i;
+		const posts = get( this.props.results, [ 'posts', 'items' ], [] ) || [];
+		const loading = get( this.props.results, [ 'posts', 'requesting' ], false );
+		const lastPage = get( this.props.results, [ 'posts', 'lastPage' ] );
+		const placeholderCount = 1;
+		let placeholders = [];
+		let postList;
 
 		// posts have loaded, sites have loaded, and we have a site instance or are viewing all-sites
 		if ( posts.length && this.props.sites.initialized ) {
@@ -267,8 +268,8 @@ var Posts = React.createClass( {
 					key={ 'list-' + this.props.listId } // to reset scroll for new list
 					className="posts__list"
 					items={ posts }
-					lastPage={ this.props.lastPage }
-					fetchingNextPage={ this.props.loading }
+					lastPage={ this.props.page === lastPage }
+					fetchingNextPage={ loading }
 					guessedItemHeight={ GUESSED_POST_HEIGHT }
 					fetchNextPage={ this.fetchPosts }
 					getItemRef={ this.getPostRef }
@@ -277,8 +278,8 @@ var Posts = React.createClass( {
 				/>
 			);
 		} else {
-			if ( this.props.loading || ! this.props.sites.fetched ) {
-				for ( i = 0; i < placeholderCount; i++ ) {
+			if ( loading || ! this.props.sites.fetched ) {
+				for ( let i = 0; i < placeholderCount; i++ ) {
 					placeholders.push( <PostPlaceholder key={ 'placeholder-' + i } /> );
 				}
 			} else {
@@ -300,5 +301,53 @@ var Posts = React.createClass( {
 		);
 	}
 } );
+
+const Posts = queryGraph(
+	`
+		query PostList( $siteId: Int, $status: String, $author: Int, $search: String, $pages: [Int] )
+		{
+			posts( siteId: $siteId, query: { status: $status, author: $author, search: $search }, pages: $pages ) {
+				items {
+					ID
+					author {
+						name
+					}
+					canonical_image
+					capabilities {
+						edit_post
+					}
+					date
+					discussion {
+						comment_count
+						comments_open
+					}
+					excerpt
+					format
+					global_ID
+					password
+					like_count
+					likes_enabled
+					site_ID
+					status
+					title
+					type
+					URL
+				}
+				requesting
+				lastPage
+			}
+		}
+	`,
+	( { siteID: siteId, author, search, status, page } ) => {
+		return {
+			pages: range( 1, page + 1 ),
+			author,
+			siteId,
+			search,
+			status,
+		};
+	}
+)( PostsUnwrapped );
+
 
 module.exports = PostList;

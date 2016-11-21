@@ -32,8 +32,8 @@ const StatsPostPerformance = React.createClass( {
 
 	buildTabs( summaryUrl ) {
 		const { results } = this.props;
-		const post = get( results, [ 'posts', 0 ], false );
-		const viewCount = get( results, [ 'posts', 0, 'stat' ] );
+		const post = get( results, [ 'posts', 'items', 0 ], false );
+		const viewCount = get( results, [ 'posts', 'items', 0, 'stat' ] );
 		const tabClassName = 'is-post-summary';
 
 		const tabs = [
@@ -69,8 +69,8 @@ const StatsPostPerformance = React.createClass( {
 
 	render() {
 		const { site, results } = this.props;
-		const post = get( results, [ 'posts', 0 ], false );
-		const isLoadingPosts = ! site || get( results, [ 'requests', 'posts' ], false );
+		const post = get( results, [ 'posts', 'items', 0 ], false );
+		const isLoadingPosts = ! site || get( results, [ 'posts', 'requesting' ], false );
 		const postTime = post ? this.moment( post.date ) : this.moment();
 		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
 
@@ -145,18 +145,18 @@ export default queryGraph(
 		query PostDetailsAndViewStat( $siteId: Int )
 		{
 			posts( siteId: $siteId, query: { number: 1, status: "publish" } ) {
-				ID
-				date
-				title
-				URL
-				like_count
-				discussion {
-					comment_count
+				items {
+					ID
+					date
+					title
+					URL
+					like_count
+					discussion {
+						comment_count
+					}
+					stat( stat: "views" )
 				}
-				stat( stat: "views" )
-			}
-			requests {
-				posts( siteId: $siteId, query: { number: 1, status: "publish" } )
+				requesting
 			}
 		}
 	`,
