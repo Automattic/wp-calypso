@@ -71,7 +71,9 @@ class TaxonomyManagerListItem extends Component {
 				<span className="taxonomy-manager__label">
 					<span>{ name }</span>
 					{ isDefault &&
-						<span className="taxonomy-manager__default-label">{ translate( 'default' ) }</span>
+						<span className="taxonomy-manager__default-label">
+							{ translate( 'default', { context: 'label for terms marked as default' } ) }
+						</span>
 					}
 				</span>
 				{ ! isUndefined( postCount ) && <Count count={ postCount } /> }

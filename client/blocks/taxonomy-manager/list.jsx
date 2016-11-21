@@ -123,9 +123,9 @@ export class TaxonomyManagerList extends Component {
 		}
 
 		const children = this.getTermChildren( item.ID );
-		const { onTermClick, siteSettings, taxonomy, translate } = this.props;
+		const { onTermClick, defaultTerm, translate } = this.props;
 		const itemId = item.ID;
-		const isDefault = taxonomy === 'category' && get( siteSettings, [ 'default_category' ] ) === itemId;
+		const isDefault = defaultTerm === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const onClick = () => {
 			onTermClick( item );
@@ -234,14 +234,15 @@ export class TaxonomyManagerList extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
 	const { taxonomy, query } = ownProps;
+	const siteId = getSelectedSiteId( state );
+	const siteSettings = getSiteSettings( state, siteId );
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
-		siteSettings: getSiteSettings( state, siteId ),
+		defaultTerm: taxonomy === 'category' ? get( siteSettings, [ 'default_category' ] ) : false,
 		siteId,
 		query
 	};
