@@ -2,8 +2,9 @@
  * External Dependencies
  */
 import classnames from 'classnames';
-import React from 'react';
+import React, { Component } from 'react';
 import url from 'url';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -15,23 +16,17 @@ import safeImageUrl from 'lib/safe-image-url';
 import Site from 'blocks/site';
 import { state as feedState } from 'lib/feed-store/constants';
 
-const FeedHeader = React.createClass( {
+class FeedHeader extends Component {
 
-	getInitialState() {
-		return {
-			siteish: this.buildSiteish( this.props.site, this.props.feed )
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps = ( nextProps ) => {
 		if ( nextProps.site !== this.props.site || nextProps.feed !== this.props.feed ) {
 			this.setState( {
 				siteish: this.buildSiteish( nextProps.site, nextProps.feed )
 			} );
 		}
-	},
+	}
 
-	buildSiteish( site, feed ) {
+	buildSiteish = ( site, feed ) => {
 		// a siteish (site-ish) is our little lie to the <Site /> component
 		// If we only have a feed, we make up an object that looks enough like a site to pass muster
 		let siteish = site && site.toJS();
@@ -43,9 +38,13 @@ const FeedHeader = React.createClass( {
 			};
 		}
 		return siteish;
-	},
+	}
 
-	getFollowerCount: function( feed, site ) {
+	state = {
+		siteish: this.buildSiteish( this.props.site, this.props.feed )
+	}
+
+	getFollowerCount = ( feed, site ) => {
 		if ( site && site.get( 'subscribers_count' ) ) {
 			return site.get( 'subscribers_count' );
 		}
@@ -55,15 +54,16 @@ const FeedHeader = React.createClass( {
 		}
 
 		return null;
-	},
+	}
 
-	render: function() {
-		var site = this.props.site,
+	render() {
+		const site = this.props.site,
 			feed = this.props.feed,
 			headerImage = site && site.getIn( [ 'options', 'header_image' ] ),
 			headerColor = site && site.getIn( [ 'options', 'background_color' ] ),
-			followerCount = this.getFollowerCount( feed, site ),
-			headerImageUrl, classes;
+			followerCount = this.getFollowerCount( feed, site );
+
+		let headerImageUrl;
 
 		if ( headerImage && headerImage.get( 'width' ) > 300 ) {
 			headerImageUrl = resizeImageUrl(
@@ -72,7 +72,7 @@ const FeedHeader = React.createClass( {
 			);
 		}
 
-		classes = classnames( {
+		const classes = classnames( {
 			'reader-feed-header': true,
 			'is-placeholder': ! this.state.siteish
 		} );
@@ -81,8 +81,8 @@ const FeedHeader = React.createClass( {
 			<div className={ classes }>
 				<div className="reader-feed-header__follow">
 					{ followerCount ? <span className="reader-feed-header__follow-count"> {
-					this.translate( '%s follower', '%s followers',
-					{ count: followerCount, args: [ this.numberFormat( followerCount ) ] } ) }
+					this.props.translate( '%s follower', '%s followers',
+					{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
 					</span> : null }
 					{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
 						<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
@@ -100,7 +100,6 @@ const FeedHeader = React.createClass( {
 			</div>
 		);
 	}
+}
 
-} );
-
-module.exports = FeedHeader;
+export default localize( FeedHeader );
