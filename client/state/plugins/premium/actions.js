@@ -151,7 +151,7 @@ function activate( site, plugin, dispatch ) {
 	};
 
 	getPluginHandler( site, plugin.id ).activate().then( success ).catch( ( error ) => {
-		if ( ( error.name === 'ActivationErrorError' ) || ( error.name === 'ActivationError' ) ) {
+		if ( error.name === 'ActivationErrorError' || error.name === 'ActivationError' ) {
 			// Technically it failed, but only because it's already active.
 			success( plugin );
 			return;
