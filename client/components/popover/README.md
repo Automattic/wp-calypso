@@ -59,7 +59,7 @@ use this property if you want to add a cuestom css class to this root element.
 
 #### `showDelay { number } - default: 0 (false)`
 
-Adds a delay before to show the popober. Its value is defined in `milliseconds`.
+Adds a delay before to show the popover. Its value is defined in `milliseconds`.
 
 #### `onClose { func }`
 
@@ -69,7 +69,7 @@ is called.
 
 #### `onShow { func } - optional`
 
-This function will be executed when the popober is shown.
+This function will be executed when the popover is shown.
 
 
 PopoverMenu
@@ -77,6 +77,38 @@ PopoverMenu
 
 `PopoverMenu` is a component based on `Popover` used to show a menu of actions in a popover.
 It is fully keyboard accessible.
+
+
+PopoverMenuItem
+===============
+
+`PopoverMenuItem` is a component used to represent a single item in a `PopoverMenu`.
+
+### Properties
+
+#### `href { string } - optional`
+
+If set, `PopoverMenuItem` will be rendered as a link; otherwise, it will be rendered as a button.
+
+#### `className { string } - optional`
+
+Sets a custom className on the button or link.
+
+#### `isSelected { bool } - default: false`
+
+Defines whether or not the `PopoverMenuItem` is the currently selected one.
+
+#### `icon { string } - optional`
+
+If set, a `Gridicon` is rendered, where its `icon` prop is set to this value.
+
+#### `focusOnHover { bool } - default: true`
+
+Defines whether or not the `PopoverMenuItem` should receive the focus when it is hovered over.
+
+#### `children { node } - optional`
+
+The children to render inside of the `PopoverMenuItem`.
 
 
 ### `Popover` Usage

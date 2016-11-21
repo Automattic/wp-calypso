@@ -14,12 +14,14 @@ export default class PopoverMenuItem extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		className: PropTypes.string,
+		isSelected: PropTypes.bool,
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
 		children: PropTypes.node
 	};
 
 	static defaultProps = {
+		isSelected: false,
 		focusOnHover: true
 	};
 
@@ -28,8 +30,17 @@ export default class PopoverMenuItem extends Component {
 	}
 
 	render() {
-		const { className, href, focusOnHover, icon, children } = this.props;
-		const classes = classnames( 'popover__menu-item', className );
+		const {
+			children,
+			className,
+			focusOnHover,
+			href,
+			icon,
+			isSelected,
+		} = this.props;
+		const classes = classnames( 'popover__menu-item', className, {
+			'is-selected': isSelected
+		} );
 		const ItemComponent = href ? 'a' : 'button';
 
 		let hoverHandler;
@@ -42,7 +53,7 @@ export default class PopoverMenuItem extends Component {
 				role="menuitem"
 				onMouseOver={ hoverHandler }
 				tabIndex="-1"
-				{ ...omit( this.props, 'icon', 'focusOnHover' ) }
+				{ ...omit( this.props, 'icon', 'focusOnHover', 'isSelected' ) }
 				className={ classes }>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }
