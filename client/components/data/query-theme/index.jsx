@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestThemes } from 'state/themes/actions';
+import { requestTheme } from 'state/themes/actions';
 import { isRequestingTheme } from 'state/themes/selectors';
 
 class QueryTheme extends Component {
@@ -17,10 +17,11 @@ class QueryTheme extends Component {
 			PropTypes.number,
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ).isRequired,
+		themeId: PropTypes.string.isRequired,
 		query: PropTypes.object,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
-		requestThemes: PropTypes.func.isRequired,
+		requestTheme: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
@@ -37,7 +38,7 @@ class QueryTheme extends Component {
 
 	request( props ) {
 		if ( ! props.isRequesting ) {
-			props.requestThemes( props.siteId, props.query );
+			props.requestTheme( props.themeId, props.siteId );
 		}
 	}
 
@@ -47,8 +48,8 @@ class QueryTheme extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		isRequesting: isRequestingTheme( state, siteId, query ),
+	( state, { siteId, themeId } ) => ( {
+		isRequesting: isRequestingTheme( state, siteId, themeId ),
 	} ),
-	{ requestThemes }
+	{ requestTheme }
 )( QueryTheme );
