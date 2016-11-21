@@ -33,7 +33,7 @@ export default class RefreshPostCard extends React.Component {
 		showPrimaryFollowButton: PropTypes.bool,
 		originalPost: PropTypes.object, // used for Discover only
 		showEntireExcerpt: PropTypes.bool,
-		excerptAttribute: PropTypes.string
+		useBetterExcerpt: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -41,7 +41,7 @@ export default class RefreshPostCard extends React.Component {
 		onCommentClick: noop,
 		isSelected: false,
 		showEntireExcerpt: false,
-		excerptAttribute: 'better_excerpt_no_html'
+		useBetterExcerpt: true
 	};
 
 	propagateCardClick = () => {
@@ -101,7 +101,7 @@ export default class RefreshPostCard extends React.Component {
 			showPrimaryFollowButton,
 			isSelected,
 			showEntireExcerpt,
-			excerptAttribute
+			useBetterExcerpt
 		} = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
@@ -113,6 +113,7 @@ export default class RefreshPostCard extends React.Component {
 			'is-showing-entire-excerpt': showEntireExcerpt
 		} );
 		const showExcerpt = ! isPhotoOnly;
+		const excerptAttribute = useBetterExcerpt ? 'better_excerpt_no_html' : 'excerpt_no_html';
 		let title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/

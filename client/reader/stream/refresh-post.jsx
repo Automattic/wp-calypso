@@ -55,7 +55,7 @@ class ReaderPostCardAdapter extends React.Component {
 				isSelected={ this.props.isSelected }
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				showEntireExcerpt={ isDiscoverPost }
-				excerptAttribute={ isDiscoverPost ? 'excerpt_no_html' : 'better_excerpt_no_html' }>
+				useBetterExcerpt={ ! isDiscoverPost }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</ReaderPostCard>
