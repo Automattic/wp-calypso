@@ -43,7 +43,7 @@ assign( PostFetcher.prototype, {
 			const post = FeedPostStore.get( postKey );
 
 			if ( post && post._state !== 'minimal' ) {
-				throw new Error( post._state );
+				return;
 			}
 
 			this.onFetch( postKey );

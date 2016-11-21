@@ -20,14 +20,19 @@ export default class PostLifecycle extends React.PureComponent {
 	}
 
 	state = {
-		post: PostStore.get( this.props.postKey )
+		post: this.getPostFromStore()
 	}
 
-	updatePost = ( props = this.props ) => {
+	getPostFromStore( props = this.props ) {
 		const post = PostStore.get( props.postKey );
 		if ( ! post || post._state === 'minimal' ) {
 			defer( () => PostStoreActions.fetchPost( props.postKey ) );
 		}
+		return post;
+	}
+
+	updatePost = ( props = this.props ) => {
+		const post = this.getPostFromStore( props );
 		if ( post !== this.state.post ) {
 			this.setState( { post } );
 		}
