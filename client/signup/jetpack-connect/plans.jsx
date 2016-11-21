@@ -201,7 +201,7 @@ class Plans extends Component {
 			return this.selectFreeJetpackPlan();
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_29', {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_39', {
 				user: this.props.userId
 			} );
 		}
