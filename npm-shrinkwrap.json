@@ -3080,18 +3080,7 @@
       "version": "4.4.5"
     },
     "react-tap-event-plugin": {
-      "version": "1.0.0",
-      "dependencies": {
-        "core-js": {
-          "version": "1.2.7"
-        },
-        "fbjs": {
-          "version": "0.2.1"
-        },
-        "whatwg-fetch": {
-          "version": "0.9.0"
-        }
-      }
+      "version": "2.0.1"
     },
     "react-test-env": {
       "version": "0.2.0",
