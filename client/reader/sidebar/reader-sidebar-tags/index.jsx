@@ -1,8 +1,10 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -14,18 +16,23 @@ import TagActions from 'lib/reader-tags/actions';
 
 const stats = require( 'reader/stats' );
 
-const ReaderSidebarTags = React.createClass( {
+export class ReaderSidebarTags extends Component {
 
-	propTypes: {
-		tags: React.PropTypes.array,
-		path: React.PropTypes.string.isRequired,
-		isOpen: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		currentTag: React.PropTypes.string,
-		onTagExists: React.PropTypes.func
-	},
+	static propTypes = {
+		tags: PropTypes.array,
+		path: PropTypes.string.isRequired,
+		isOpen: PropTypes.bool,
+		onClick: PropTypes.func,
+		currentTag: PropTypes.string,
+		onTagExists: PropTypes.func,
+		translate: PropTypes.func,
+	}
 
-	followTag: function( tag ) {
+	static defaultProps = {
+		translate: identity,
+	}
+
+	followTag = ( tag ) => {
 		const subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
 			this.props.onTagExists( subscription );
@@ -37,9 +44,9 @@ const ReaderSidebarTags = React.createClass( {
 				tag: tag
 			} );
 		}
-	},
+	}
 
-	unfollowTag( event ) {
+	unfollowTag = ( event ) => {
 		const node = closest( event.target, '[data-tag-slug]', true );
 		event.preventDefault();
 		if ( node && node.dataset.tagSlug ) {
@@ -50,30 +57,33 @@ const ReaderSidebarTags = React.createClass( {
 			} );
 			TagActions.unfollow( { slug: node.dataset.tagSlug } );
 		}
-	},
+	}
 
-	handleAddClick() {
+	handleAddClick = () => {
 		stats.recordAction( 'follow_topic_open_input' );
 		stats.recordGaEvent( 'Clicked Add Topic to Open Input' );
 		stats.recordTrack( 'calypso_reader_add_tag_clicked' );
-	},
+	}
 
 	render() {
-		const tagCount = this.props.tags ? this.props.tags.length : 0;
+		const { tags, isOpen, translate, onClick } = this.props;
+		const tagCount = tags ? tags.length : 0;
 		return (
 			<ExpandableSidebarMenu
-				expanded={ this.props.isOpen }
-				title={ this.translate( 'Tags' ) }
+				expanded={ isOpen }
+				title={ translate( 'Tags' ) }
 				count={ tagCount }
-				addLabel={ this.translate( 'New tag name' ) }
-				addPlaceholder={ this.translate( 'Add any tag' ) }
+				addLabel={ translate( 'New tag name' ) }
+				addPlaceholder={ translate( 'Add any tag' ) }
 				onAddSubmit={ this.followTag }
 				onAddClick={ this.handleAddClick }
-				onClick={ this.props.onClick }>
+				onClick={ onClick }>
 					<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
 			</ExpandableSidebarMenu>
 		);
 	}
-} );
+}
 
-export default ReaderSidebarTags;
+
+
+export default localize( ReaderSidebarTags );

@@ -11,43 +11,42 @@ import SidebarMenu from 'layout/sidebar/menu';
 import ExpandableSidebarHeading from './expandable-heading';
 import ExpandableSidebarAddForm from './expandable-add-form';
 
-const ExpandableSidebarMenu = React.createClass( {
+export const ExpandableSidebarMenu = ( props ) => {
+	const { className, expanded, title, count, 
+		onClick, hideAddButton, addLabel, 
+		addPlaceholder, onAddClick, onAddSubmit } = props;
+	const classes = classNames(
+		className,
+		{
+			'is-toggle-open': !! expanded,
+			'is-togglable': true
+		}
+	);
+	return (
+		<SidebarMenu className={ classes }>
+			<ExpandableSidebarHeading title={ title } count={ count } onClick={ onClick } />
+			<ExpandableSidebarAddForm hideAddButton={ hideAddButton } addLabel={ addLabel } addPlaceholder={ addPlaceholder } onAddClick={ onAddClick } onAddSubmit={ onAddSubmit } />
+			<ul className="sidebar__menu-list">
+				{ props.children }
+			</ul>
+		</SidebarMenu>
+	);
+};
 
-	propTypes: {
-		title: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ).isRequired,
-		count: React.PropTypes.number,
-		addLabel: React.PropTypes.string,
-		addPlaceholder: React.PropTypes.string,
-		onAddSubmit: React.PropTypes.func,
-		onAddClick: React.PropTypes.func,
-		onClick: React.PropTypes.func
-	},
+ExpandableSidebarMenu.propTypes = {
+	title: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ).isRequired,
+	count: React.PropTypes.number,
+	addLabel: React.PropTypes.string,
+	addPlaceholder: React.PropTypes.string,
+	onAddSubmit: React.PropTypes.func,
+	onAddClick: React.PropTypes.func,
+	onClick: React.PropTypes.func,
+	hideAddButton: React.PropTypes.bool,
+};
 
-	getDefaultProps() {
-		return {
-			expanded: false
-		};
-	},
-
-	render() {
-		const classes = classNames(
-			this.props.className,
-			{
-				'is-toggle-open': !! this.props.expanded,
-				'is-togglable': true
-			}
-		);
-
-		return (
-			<SidebarMenu className={ classes }>
-				<ExpandableSidebarHeading title={ this.props.title } count={ this.props.count } onClick={ this.props.onClick } />
-				<ExpandableSidebarAddForm addLabel={ this.props.addLabel } addPlaceholder={ this.props.addPlaceholder } onAddClick={ this.props.onAddClick } onAddSubmit={ this.props.onAddSubmit } />
-				<ul className="sidebar__menu-list">
-					{ this.props.children }
-				</ul>
-			</SidebarMenu>
-		);
-	}
-} );
+ExpandableSidebarMenu.defaultProps = {
+	expanded: false,
+	hideAddButton: false,
+};
 
 export default ExpandableSidebarMenu;
