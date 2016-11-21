@@ -129,32 +129,34 @@ const FormGeneral = React.createClass( {
 
 	siteOptions() {
 		return (
-			<div>
-				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
-					<FormInput
-						name="blogname"
-						id="blogname"
-						type="text"
-						valueLink={ this.linkState( 'blogname' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
-						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
-					<FormInput
-						name="blogdescription"
-						type="text"
-						id="blogdescription"
-						valueLink={ this.linkState( 'blogdescription' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
-						onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
-					<FormSettingExplanation>
-						{ this.translate( 'In a few words, explain what this site is about.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+			<div className="site-settings__site-options">
+				<div className="site-settings__site-title-tagline">
+					<FormFieldset>
+						<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
+						<FormInput
+							name="blogname"
+							id="blogname"
+							type="text"
+							valueLink={ this.linkState( 'blogname' ) }
+							disabled={ this.state.fetchingSettings }
+							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
+							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
+						<FormInput
+							name="blogdescription"
+							type="text"
+							id="blogdescription"
+							valueLink={ this.linkState( 'blogdescription' ) }
+							disabled={ this.state.fetchingSettings }
+							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
+							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+						<FormSettingExplanation>
+							{ this.translate( 'In a few words, explain what this site is about.' ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+				</div>
 				<SiteIconSetting />
 			</div>
 		);

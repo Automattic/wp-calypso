@@ -144,7 +144,34 @@
 	}
 
 	fieldset.site-icon-setting {
-		margin-bottom: 24px;
+		@include breakpoint( ">660px" ) {
+			flex: 0 0 122px;
+			order: 1;
+			margin-bottom: 0;
+			padding-right: 24px;
+		}
+	}
+
+	.site-icon-setting__heading {
+		@include breakpoint( ">660px" ) {
+			justify-content: space-between;
+			white-space: nowrap;
+		}
+	}
+}
+
+.site-settings__site-options {
+	padding-bottom: 24px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+	}
+}
+
+.site-settings__site-title-tagline {
+	@include breakpoint( ">660px" ) {
+		flex: 0 1 100%;
+		order: 2;
 	}
 }
 
