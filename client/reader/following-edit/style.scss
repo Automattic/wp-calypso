@@ -45,7 +45,7 @@
 }
 
 .is-reader-page .search-card.card {
-	box-shadow: 0 0 0 2px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 }
 
 // The header on top of the "Existing Feed"
