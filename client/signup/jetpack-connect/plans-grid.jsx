@@ -43,6 +43,7 @@ export default React.createClass( {
 						<PlansFeaturesMain
 							site={ this.props.selectedSite || defaultJetpackSite }
 							isInSignup={ true }
+							isLandingPage={ ! this.props.selectedSite }
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
 							intervalType={ this.props.intervalType }

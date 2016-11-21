@@ -23,7 +23,8 @@ const PlanFeaturesActions = ( {
 	isPlaceholder = false,
 	isInSignup,
 	translate,
-	manageHref
+	manageHref,
+	isLandingPage
 } ) => {
 	let upgradeButton;
 	const classes = classNames(
@@ -43,17 +44,19 @@ const PlanFeaturesActions = ( {
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {
+		let buttonText = freePlan
+			? translate( 'Select Free', { context: 'button' } )
+			: translate( 'Upgrade', { context: 'verb' } );
+		if ( isLandingPage ) {
+			buttonText = translate( 'Select', { context: 'button' } );
+		}
 		upgradeButton = (
 			<Button
 				className={ classes }
 				onClick={ isPlaceholder ? noop : onUpgradeClick }
 				disabled={ isPlaceholder }
 			>
-				{
-					freePlan
-						? translate( 'Select Free', { context: 'button' } )
-						: translate( 'Upgrade', { context: 'verb' } )
-				}
+				{ buttonText }
 			</Button>
 		);
 	}
@@ -75,7 +78,8 @@ PlanFeaturesActions.propTypes = {
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
-	isPlaceholder: PropTypes.bool
+	isPlaceholder: PropTypes.bool,
+	isLandingPage: PropTypes.bool
 };
 
 export default localize( PlanFeaturesActions );
