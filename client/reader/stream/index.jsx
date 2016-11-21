@@ -35,6 +35,7 @@ import PostBlocked from './post-blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
+import { isDiscoverSitePick } from 'reader/discover/helper';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -78,7 +79,7 @@ module.exports = React.createClass( {
 		showMobileBackToSidebar: React.PropTypes.bool
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			showPostHeader: true,
 			suppressSiteNameLink: false,
@@ -91,11 +92,11 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores: function( store ) {
+	getStateFromStores( store ) {
 		store = store || this.props.store;
 		return {
 			posts: store.get(),
@@ -104,11 +105,11 @@ module.exports = React.createClass( {
 		};
 	},
 
-	updateState: function( store ) {
+	updateState( store ) {
 		this.setState( this.getStateFromStores( store ) );
 	},
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
@@ -117,7 +118,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	_popstate: function() {
+	_popstate() {
 		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
@@ -133,7 +134,7 @@ module.exports = React.createClass( {
 		return defaultCardFactory( post );
 	},
 
-	scrollToSelectedPost: function( animate ) {
+	scrollToSelectedPost( animate ) {
 		let HEADER_OFFSET = -80, // a fixed position header means we can't just scroll the element into view.
 			selectedNode,
 			boundingClientRect,
@@ -160,7 +161,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.props.store.on( 'change', this.updateState );
 		PostStore.on( 'change', this.updateState ); // should move this dep down into the individual items
 
@@ -175,7 +176,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.props.store.off( 'change', this.updateState );
 		PostStore.off( 'change', this.updateState );
 
@@ -190,7 +191,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.store !== this.props.store ) {
 			this.props.store.off( 'change', this.updateState );
 			nextProps.store.on( 'change', this.updateState );
@@ -199,7 +200,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	showSelectedPost: function( options ) {
+	showSelectedPost( options ) {
 		let postKey = this.props.store.getSelectedPost(),
 			mappedPost;
 		if ( !! postKey ) {
@@ -228,7 +229,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	toggleLikeOnSelectedPost: function() {
+	toggleLikeOnSelectedPost() {
 		const postKey = this.props.store.getSelectedPost();
 		let post;
 
@@ -251,7 +252,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	toggleLikeAction: function( siteId, postId ) {
+	toggleLikeAction( siteId, postId ) {
 		const liked = LikeStore.isPostLikedByCurrentUser( siteId, postId );
 		if ( liked === null ) {
 			// unknown... ignore for now
@@ -260,11 +261,11 @@ module.exports = React.createClass( {
 		LikeStoreActions[ liked ? 'unlikePost' : 'likePost' ]( siteId, postId );
 	},
 
-	isPostFullScreen: function() {
+	isPostFullScreen() {
 		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 	},
 
-	goToTop: function() {
+	goToTop() {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
@@ -272,11 +273,11 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getVisibleItemIndexes: function() {
+	getVisibleItemIndexes() {
 		return this._list && this._list.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } );
 	},
 
-	selectNextItem: function() {
+	selectNextItem() {
 		let visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
@@ -298,7 +299,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	selectPrevItem: function() {
+	selectPrevItem() {
 		let visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
@@ -320,7 +321,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	fetchNextPage: function( options ) {
+	fetchNextPage( options ) {
 		if ( this.props.store.isLastPage() || this.props.store.isFetchingNextPage() ) {
 			return;
 		}
@@ -330,7 +331,7 @@ module.exports = React.createClass( {
 		FeedStreamStoreActions.fetchNextPage( this.props.store.id );
 	},
 
-	showUpdates: function() {
+	showUpdates() {
 		this.props.onUpdatesShown();
 		FeedStreamStoreActions.showUpdates( this.props.store.id );
 		if ( this._list ) {
@@ -338,7 +339,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders() {
 		let count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
 			placeholders = [];
 
@@ -349,11 +350,11 @@ module.exports = React.createClass( {
 		return placeholders;
 	},
 
-	getPostRef: function( postKey ) {
+	getPostRef( postKey ) {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	},
 
-	showFullXPost: function( xMetadata ) {
+	showFullXPost( xMetadata ) {
 		if ( xMetadata.blogId && xMetadata.postId ) {
 			const mappedPost = {
 				site_ID: xMetadata.blogId,
@@ -365,7 +366,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	showFullPost: function( post, options ) {
+	showFullPost( post, options ) {
 		options = options || {};
 		let hashtag = '';
 		if ( options.comments ) {
@@ -379,7 +380,11 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderPost: function( postKey, index ) {
+	showSiteStream( post ) {
+		page.show( '/read/blogs/' + post.site_ID );
+	},
+
+	renderPost( postKey, index ) {
 		let post,
 			postState,
 			itemKey,
@@ -441,7 +446,7 @@ module.exports = React.createClass( {
 						suppressSiteNameLink: this.props.suppressSiteNameLink,
 						showPostHeader: this.props.showPostHeader,
 						showFollowInHeader: this.props.showFollowInHeader,
-						handleClick: this.showFullPost,
+						handleClick: isDiscoverSitePick( post ) ? this.showSiteStream : this.showFullPost,
 						showPrimaryFollowButtonOnCards: this.props.showPrimaryFollowButtonOnCards
 					} );
 				}
@@ -450,7 +455,7 @@ module.exports = React.createClass( {
 		return content;
 	},
 
-	render: function() {
+	render() {
 		let store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
 			body, showingStream;
