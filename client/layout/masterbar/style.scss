@@ -158,7 +158,13 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
+		color: $blue-wordpress;
 		display: none;
+
+		@include breakpoint( ">960px" ) {
+			display: block;
+			margin-right: 4px;
+		}
 	}
 
 	.is-support-user &,

@@ -96,7 +96,7 @@ const MasterbarLoggedIn = React.createClass( {
 					className="masterbar__item-new"
 					tooltip={ this.translate( 'Create a New Post', { textOnly: true } ) }
 				>
-					{ this.translate( 'New Post' ) }
+					{ this.translate( 'Write' ) }
 				</Publish>
 				<Item
 					tipTarget="me"
