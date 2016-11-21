@@ -14,7 +14,6 @@ import startsWith from 'lodash/startsWith';
 import page from 'page';
 import qs from 'qs';
 import { connect } from 'react-redux';
-import { endsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -129,12 +128,13 @@ const RegisterDomainStep = React.createClass( {
 
 		return {
 			clickedExampleSuggestion: false,
+			dotBlogNotice: true,
 			lastQuery: suggestion,
-			searchResults: null,
 			lastDomainSearched: null,
 			lastDomainError: null,
 			loadingResults: Boolean( suggestion ),
-			notice: null
+			notice: null,
+			searchResults: null
 		};
 	},
 
@@ -197,10 +197,24 @@ const RegisterDomainStep = React.createClass( {
 		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
 	},
 
+	dismissDotBlogNotice() {
+		this.setState( { dotBlogNotice: false } );
+	},
+
 	render: function() {
 		return (
 			<div className="register-domain-step">
 				{ this.searchForm() }
+				{ this.state.dotBlogNotice &&
+					<Notice
+						text={ this.props.translate(
+							'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
+							{ components: { strong: <strong /> } }
+						) }
+						status={ 'is-info' }
+						showDismiss={ true }
+						onDismissClick={ this.dismissDotBlogNotice } />
+				}
 				{ this.notices() }
 				{ this.content() }
 				{ this.queryDomainsSuggestions() }
@@ -313,12 +327,6 @@ const RegisterDomainStep = React.createClass( {
 		async.parallel(
 			[
 				callback => {
-					if ( endsWith( domain, '.blog' ) ) {
-						const error = { code: 'dotblog_domain' };
-						this.showValidationErrorMessage( domain, error );
-						return callback();
-					}
-
 					if ( ! domain.match( /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i ) ) {
 						return callback();
 					}
@@ -534,17 +542,6 @@ const RegisterDomainStep = React.createClass( {
 			translate = this.props.translate;
 
 		switch ( error.code ) {
-			case 'dotblog_domain':
-				message = translate(
-					'Coming soon! {{strong}}.blog{{/strong}} domains will be available on {{strong}}November 21st{{/strong}}.',
-					{
-						components: {
-							strong: <strong />
-						}
-					}
-				);
-				severity = 'info';
-				break;
 			case 'available_but_not_registrable':
 				if ( tld ) {
 					message = translate(
