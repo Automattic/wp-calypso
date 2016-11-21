@@ -14,6 +14,18 @@ import ReaderSidebarHelper from '../helper';
 
 export class ReaderSidebarTagsListItem extends Component {
 
+	static propTypes = {
+		tag: React.PropTypes.object.isRequired,
+		onUnfollow: React.PropTypes.func.isRequired,
+		path: React.PropTypes.string.isRequired,
+		currentTag: React.PropTypes.string,
+		translate: React.PropTypes.func,
+	}
+
+	static defaultProps = {
+		translate: identity,
+	}
+
 	componentDidMount() {
 		// Scroll to the current tag
 		if ( this.props.currentTag && this.props.tag.slug === this.props.currentTag ) {
@@ -38,18 +50,6 @@ export class ReaderSidebarTagsListItem extends Component {
 		);
 	}
 }
-
-ReaderSidebarTagsListItem.propTypes = {
-	tag: React.PropTypes.object.isRequired,
-	onUnfollow: React.PropTypes.func.isRequired,
-	path: React.PropTypes.string.isRequired,
-	currentTag: React.PropTypes.string,
-	translate: React.PropTypes.func,
-};
-
-ReaderSidebarTagsListItem.defaultProps = {
-	translate: identity,
-};
 
 export default localize( ReaderSidebarTagsListItem );
 

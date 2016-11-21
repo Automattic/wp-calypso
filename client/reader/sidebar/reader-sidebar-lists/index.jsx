@@ -14,19 +14,29 @@ import ReaderListsActions from 'lib/reader-lists/actions';
 const stats = require( 'reader/stats' );
 
 export class ReaderSidebarLists extends Component {
-	constructor() {
-		super();
-		this.createList = this.createList.bind( this );
-		this.handleAddClick = this.handleAddClick.bind( this );
+
+	static propTypes = {
+		lists: PropTypes.array,
+		path: PropTypes.string.isRequired,
+		isOpen: PropTypes.bool,
+		onClick: PropTypes.func,
+		currentListOwner: PropTypes.string,
+		currentListSlug: PropTypes.string,
+		translate: PropTypes.func,
 	}
-	createList( list ) {
+
+	static defaultProps = {
+		translate: identity,
+	}
+
+	createList = ( list ) => {
 		stats.recordAction( 'add_list' );
 		stats.recordGaEvent( 'Clicked Create List' );
 		stats.recordTrack( 'calypso_reader_create_list_clicked' );
 		ReaderListsActions.create( list );
 	}
 
-	handleAddClick() {
+	handleAddClick = () => {
 		stats.recordAction( 'add_list_open_input' );
 		stats.recordGaEvent( 'Clicked Add List to Open Input' );
 		stats.recordTrack( 'calypso_reader_add_list_clicked' );
@@ -53,19 +63,5 @@ export class ReaderSidebarLists extends Component {
 		);
 	}
 }
-
-ReaderSidebarLists.propTypes = {
-	lists: PropTypes.array,
-	path: PropTypes.string.isRequired,
-	isOpen: PropTypes.bool,
-	onClick: PropTypes.func,
-	currentListOwner: PropTypes.string,
-	currentListSlug: PropTypes.string,
-	translate: PropTypes.func,
-};
-
-ReaderSidebarLists.defaultProps = {
-	translate: identity,
-};
 
 export default localize( ReaderSidebarLists );

@@ -13,6 +13,18 @@ import ReaderSidebarListsListItem from './list-item';
 
 export class ReaderSidebarListsList extends React.Component {
 
+	static propTypes = {
+		lists: React.PropTypes.array,
+		path: React.PropTypes.string.isRequired,
+		currentListOwner: React.PropTypes.string,
+		currentListSlug: React.PropTypes.string,
+		translate: React.PropTypes.func,
+	};
+
+	static defaultProps = {
+		translate: identity,
+	}
+
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
 		return map( this.props.lists, function( list ) {
@@ -40,17 +52,5 @@ export class ReaderSidebarListsList extends React.Component {
 		);
 	}
 }
-
-ReaderSidebarListsList.propTypes = {
-	lists: React.PropTypes.array,
-	path: React.PropTypes.string.isRequired,
-	currentListOwner: React.PropTypes.string,
-	currentListSlug: React.PropTypes.string,
-	translate: React.PropTypes.func,
-};
-
-ReaderSidebarListsList.defaultProps = {
-	translate: identity,
-};
 
 export default localize( ReaderSidebarListsList );

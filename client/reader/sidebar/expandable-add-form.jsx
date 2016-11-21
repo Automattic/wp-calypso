@@ -13,17 +13,26 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 
 export class ExpandableSidebarAddForm extends Component {
-
-	constructor() {
-		super();
-		this.toggleAdd = this.toggleAdd.bind( this );
-		this.handleAddKeyDown = this.handleAddKeyDown.bind( this );
-		this.state = {
-			isAdding: false,
-		};
+	static propTypes = {
+		addLabel: PropTypes.string,
+		addPlaceholder: PropTypes.string,
+		onAddSubmit: PropTypes.func,
+		onAddClick: PropTypes.func,
+		hideAddButton: PropTypes.bool,
+		translate: PropTypes.func,
 	}
-	
-	toggleAdd() {
+
+	static defaultProps = {
+		onAddSubmit: noop,
+		onAddClick: noop,
+		translate: identity,
+	}
+
+	state = {
+		isAdding: false,
+	}
+
+	toggleAdd = () => {
 		if ( ! this.state.isAdding ) {
 			this.refs.menuAddInput.focus();
 			this.props.onAddClick();
@@ -31,7 +40,7 @@ export class ExpandableSidebarAddForm extends Component {
 		this.setState( { isAdding: ! this.state.isAdding } );
 	}
 
-	handleAddKeyDown( event ) {
+	handleAddKeyDown = ( event ) => {
 		const inputValue = this.refs.menuAddInput.value;
 		if ( event.keyCode === 13 && inputValue.length > 0 ) {
 			event.preventDefault();
@@ -40,6 +49,7 @@ export class ExpandableSidebarAddForm extends Component {
 			this.toggleAdd();
 		}
 	}
+
 	render() {
 		const { translate, addLabel, addPlaceholder } = this.props;
 		const classes = classNames(
@@ -69,20 +79,5 @@ export class ExpandableSidebarAddForm extends Component {
 		);
 	}
 }
-
-ExpandableSidebarAddForm.propTypes = {
-	addLabel: PropTypes.string,
-	addPlaceholder: PropTypes.string,
-	onAddSubmit: PropTypes.func,
-	onAddClick: PropTypes.func,
-	hideAddButton: PropTypes.bool,
-	translate: PropTypes.func,
-};
-
-ExpandableSidebarAddForm.defaultProps = {
-	onAddSubmit: noop,
-	onAddClick: noop,
-	translate: identity,
-};
 
 export default localize( ExpandableSidebarAddForm );

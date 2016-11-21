@@ -18,7 +18,21 @@ const stats = require( 'reader/stats' );
 
 export class ReaderSidebarTags extends Component {
 
-	followTag( tag ) {
+	static propTypes = {
+		tags: PropTypes.array,
+		path: PropTypes.string.isRequired,
+		isOpen: PropTypes.bool,
+		onClick: PropTypes.func,
+		currentTag: PropTypes.string,
+		onTagExists: PropTypes.func,
+		translate: PropTypes.func,
+	}
+
+	static defaultProps = {
+		translate: identity,
+	}
+
+	followTag = ( tag ) => {
 		const subscription = TagStore.getSubscription( TagActions.slugify( tag ) );
 		if ( subscription ) {
 			this.props.onTagExists( subscription );
@@ -32,7 +46,7 @@ export class ReaderSidebarTags extends Component {
 		}
 	}
 
-	unfollowTag( event ) {
+	unfollowTag = ( event ) => {
 		const node = closest( event.target, '[data-tag-slug]', true );
 		event.preventDefault();
 		if ( node && node.dataset.tagSlug ) {
@@ -45,7 +59,7 @@ export class ReaderSidebarTags extends Component {
 		}
 	}
 
-	handleAddClick() {
+	handleAddClick = () => {
 		stats.recordAction( 'follow_topic_open_input' );
 		stats.recordGaEvent( 'Clicked Add Topic to Open Input' );
 		stats.recordTrack( 'calypso_reader_add_tag_clicked' );
@@ -70,18 +84,6 @@ export class ReaderSidebarTags extends Component {
 	}
 }
 
-ReaderSidebarTags.propTypes = {
-	tags: PropTypes.array,
-	path: PropTypes.string.isRequired,
-	isOpen: PropTypes.bool,
-	onClick: PropTypes.func,
-	currentTag: PropTypes.string,
-	onTagExists: PropTypes.func,
-	translate: PropTypes.func,
-};
 
-ReaderSidebarTags.defaultProps = {
-	translate: identity,
-};
 
 export default localize( ReaderSidebarTags );
