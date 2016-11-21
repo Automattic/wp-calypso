@@ -20,6 +20,14 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS,
+	PUBLICIZE_CONNECTION_CREATE,
+	PUBLICIZE_CONNECTION_CREATE_FAILURE,
+	PUBLICIZE_CONNECTION_DELETE,
+	PUBLICIZE_CONNECTION_DELETE_FAILURE,
+	PUBLICIZE_CONNECTION_REFRESH,
+	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
+	PUBLICIZE_CONNECTION_UPDATE,
+	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -86,6 +94,55 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
+export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully connected.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
+		args: { service: error.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( translate( 'The %(service)s account was unable to be reconnected.', {
+		args: { service: error.label },
+		context: 'Sharing: Publicize reconnection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully updated.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
+		args: { service: error.label },
+		context: 'Sharing: Publicize reconnection confirmation'
+	} ) )
+);
+
 /**
  * Handler action type mapping
  */
@@ -102,6 +159,14 @@ export const handlers = {
 	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
+	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
+	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchError( translate( 'An error occurred while connecting the account.' ) ),
+	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
+	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
+	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
+	[ PUBLICIZE_CONNECTION_REFRESH_FAILURE ]: onPublicizeConnectionRefreshFailure,
+	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
+	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };

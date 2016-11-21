@@ -225,6 +225,20 @@ UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails
 };
 
 /**
+ * Returns a single site connection.
+ *
+ * @param  {Number}  connectionId The connection ID to get.
+ * @return {Promise}              A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.getConnection = function( connectionId ) {
+	debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
+	return this.wpcom.req.get( {
+		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
+		apiVersion: '1.1',
+	} );
+};
+
+/**
  * Expose `UndocumentedSite` module
  */
 module.exports = UndocumentedSite;

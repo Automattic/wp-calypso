@@ -10,6 +10,10 @@ import { keyBy, omit, omitBy } from 'lodash';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
+	PUBLICIZE_CONNECTION_RECEIVE,
+	PUBLICIZE_CONNECTION_REQUEST,
+	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
+	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -40,6 +44,12 @@ export const sharePostStatus = createReducer( {}, {
 	} } ),
 } );
 
+export const fetchingConnection = createReducer( {}, {
+	[ PUBLICIZE_CONNECTION_REQUEST ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: true } ),
+	[ PUBLICIZE_CONNECTION_REQUEST_SUCCESS ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: false } ),
+	[ PUBLICIZE_CONNECTION_REQUEST_FAILURE ]: ( state, { connectionId } ) => ( { ...state, [ connectionId ]: false } ),
+} );
+
 /**
  * Track the current status for fetching connections. Maps site ID to the
  * fetching status for that site. Assigns `true` for currently fetching,
@@ -49,7 +59,7 @@ export const sharePostStatus = createReducer( {}, {
 export const fetchingConnections = createReducer( {}, {
 	[ PUBLICIZE_CONNECTIONS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+	[ PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
 // Tracks all known connection objects, indexed by connection ID.
@@ -60,10 +70,12 @@ export const connections = createReducer( {}, {
 	} ),
 	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
 	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { connection: { ID } } ) => omit( state, ID ),
+	[ PUBLICIZE_CONNECTION_RECEIVE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
 	[ PUBLICIZE_CONNECTION_UPDATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
 }, connectionsSchema );
 
 export default combineReducers( {
+	fetchingConnection,
 	fetchingConnections,
 	connections,
 	sharePostStatus
