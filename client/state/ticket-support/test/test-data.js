@@ -1,5 +1,5 @@
 export const dummyConfiguration = {
-	isUserEligible: true,
+	is_user_eligible: true,
 };
 
 export const dummyError = {
