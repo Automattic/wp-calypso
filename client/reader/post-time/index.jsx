@@ -15,34 +15,34 @@ export default class PostTime extends PureComponent {
 	smartSetState = smartSetState;
 
 	componentWillMount() {
-		this._update();
+		this.update();
 	}
 
 	componentDidMount() {
-		ticker.on( 'tick', this._update );
+		ticker.on( 'tick', this.update );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		this._update( nextProps.date );
+		this.update( nextProps.date );
 	}
 
 	componentWillUnmount() {
-		ticker.off( 'tick', this._update );
+		ticker.off( 'tick', this.update );
 	}
 
-	_update = date => {
+	update = date => {
 		date = date || this.props.date;
 		this.smartSetState( {
-			ago: humanDate( date ),
-			full: moment( date ).format( 'llll' )
+			humanDate: humanDate( date ),
+			fullDate: moment( date ).format( 'llll' )
 		} );
 	}
 
 	render() {
 		const date = this.props.date;
 		return (
-			<time className={ this.props.className } dateTime={ date } title={ this.state.full } >
-				{ this.state.ago }
+			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate } >
+				{ this.state.humanDate }
 			</time>
 		);
 	}
