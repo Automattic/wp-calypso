@@ -39,8 +39,8 @@ describe( 'mapped-domain', () => {
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		const ReactInjection = require( 'react/lib/ReactInjection' );
-		ReactInjection.Class.injectMixin( require( 'i18n-calypso' ).mixin );
+		const ReactClass = require( 'react/lib/ReactClass' );
+		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
 		MappedDomain = require( '../mapped-domain.jsx' );
 	} );
 

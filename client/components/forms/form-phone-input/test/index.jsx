@@ -7,7 +7,7 @@ var expect = require( 'chai' ).expect,
 	useMockery = require( 'test/helpers/use-mockery' );
 
 describe( 'FormPhoneInput', function() {
-	var React, ReactDom, ReactInjection, TestUtils, i18n, mockCountriesList, mockCountriesListEmpty, FormPhoneInput, countries, container;
+	var React, ReactDom, ReactClass, TestUtils, i18n, mockCountriesList, mockCountriesListEmpty, FormPhoneInput, countries, container;
 
 	useFakeDom();
 	useMockery();
@@ -15,7 +15,7 @@ describe( 'FormPhoneInput', function() {
 	before( function() {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
-		ReactInjection = require( 'react/lib/ReactInjection' );
+		ReactClass = require( 'react/lib/ReactClass' );
 		TestUtils = require( 'react-addons-test-utils' );
 
 		i18n = require( 'i18n-calypso' );
@@ -24,7 +24,7 @@ describe( 'FormPhoneInput', function() {
 
 		countries = mockCountriesList.get();
 
-		ReactInjection.Class.injectMixin( i18n.mixin );
+		ReactClass.injection.injectMixin( i18n.mixin );
 		FormPhoneInput = require( 'components/forms/form-phone-input' );
 		container = getContainer();
 	} );
