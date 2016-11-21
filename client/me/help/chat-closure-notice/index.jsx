@@ -15,7 +15,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import olarkStore from 'lib/olark-store';
 
 const Closed = localize( ( { translate, closedTo } ) =>
-	<div className="help-contact-closure-notice">
+	<div className="chat-closure-notice">
 		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
 		<p>
 			{ translate(
@@ -35,7 +35,7 @@ const Closed = localize( ( { translate, closedTo } ) =>
 );
 
 const Upcoming = localize( ( { translate, closedFrom, closedTo } ) =>
-	<div className="help-contact-closure-notice">
+	<div className="chat-closure-notice">
 		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
 		<p>
 			{ translate(
@@ -56,7 +56,7 @@ const Upcoming = localize( ( { translate, closedFrom, closedTo } ) =>
 	</div>
 );
 
-export default class HelpContactClosureNotice extends Component {
+export default class ChatClosureNotice extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = { olark: olarkStore.get() };
@@ -97,7 +97,7 @@ export default class HelpContactClosureNotice extends Component {
 	}
 }
 
-HelpContactClosureNotice.PropTypes = {
+ChatClosureNotice.PropTypes = {
 	from: React.PropTypes.string.isRequired,
 	to: React.PropTypes.string.isRequired,
 };
