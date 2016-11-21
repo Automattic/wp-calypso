@@ -9,12 +9,10 @@ import { constant, times } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 
 describe( 'selectors', () => {
 	let getGuidedTourState;
 	let findEligibleTour;
-	let hasTourJustBeenVisible;
 
 	useFakeDom();
 
@@ -26,160 +24,6 @@ describe( 'selectors', () => {
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
-		hasTourJustBeenVisible = selectors.hasTourJustBeenVisible;
-	} );
-
-	describe( '#isConflictingWithFirstView', () => {
-		const now = Date.now();
-
-		const withEligibleFirstView = {
-			currentUser: {
-				id: 73705554
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' }
-				}
-			},
-			ui: {
-				actionLog: [ {
-					type: 'ROUTE_SET',
-					path: '/stats'
-				} ],
-				queryArguments: {
-					initial: {}
-				},
-				section: {
-					name: 'stats',
-					paths: [ '/stats' ]
-				}
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [],
-					'guided-tours-history': [],
-				},
-				lastFetchedTimestamp: 123456
-			}
-		};
-
-		const withFirstViewAndTourRequest = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				queryArguments: {
-					initial: {
-						tour: 'main'
-					}
-				}
-			}
-		};
-
-		const havingJustSeenTour = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				actionLog: [
-					...withEligibleFirstView.ui.actionLog,
-					{
-						type: 'FIRST_VIEW_HIDE',
-						view: 'stats',
-						timestamp: now - 120000,
-					},
-					{
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 30000,
-					}
-				],
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [ {
-						view: 'stats',
-						timestamp: now - 30000
-					} ]
-				},
-				lastFetchedTimestamp: now - 10000
-			}
-		};
-
-		const havingSeenTourEarlier = {
-			...withEligibleFirstView,
-			ui: {
-				...withEligibleFirstView.ui,
-				actionLog: [
-					...withEligibleFirstView.ui.actionLog,
-					{
-						type: 'FIRST_VIEW_HIDE',
-						view: 'stats',
-						timestamp: now - 120000,
-					},
-					{
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 120000,
-					}
-				],
-			},
-			preferences: {
-				remoteValues: {
-					firstViewHistory: [ {
-						view: 'stats',
-						timestamp: now - 120000
-					} ]
-				},
-				lastFetchedTimestamp: now - 10000
-			}
-		};
-
-		it( 'expects shouldViewBeVisible to work normally', () => {
-			expect( shouldViewBeVisible( withEligibleFirstView ) ).to.be.true;
-		} );
-
-		it( 'should short-circuit findEligibleTour', () => {
-			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
-			expect( findEligibleTour( havingJustSeenTour ) ).to.be.undefined;
-		} );
-
-		it( 'should reallow tours after a while', () => {
-			expect( findEligibleTour( havingSeenTourEarlier ) ).to.equal( 'stats' );
-		} );
-	} );
-
-	describe( '#hasTourJustBeenVisible', () => {
-		it( 'should return false when no tour has been seen', () => {
-			const state = { ui: { actionLog: [] } };
-			expect( hasTourJustBeenVisible( state ) ).to.be.undefined;
-		} );
-
-		it( 'should return true when a tour has just been seen', () => {
-			const now = 1478623930204;
-			const state = {
-				ui: {
-					actionLog: [ {
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 10000, // 10 seconds earlier
-					} ]
-				}
-			};
-			expect( hasTourJustBeenVisible( state, now ) ).to.be.true;
-		} );
-
-		it( 'should return false when a tour has been seen longer ago', () => {
-			const now = 1478623930204;
-			const state = {
-				ui: {
-					actionLog: [ {
-						type: 'GUIDED_TOUR_UPDATE',
-						shouldShow: false,
-						timestamp: now - 120000, // 2 minutes earlier
-					} ]
-				}
-			};
-			expect( hasTourJustBeenVisible( state, now ) ).to.be.falsey;
-		} );
 	} );
 
 	describe( '#getGuidedTourState()', () => {
