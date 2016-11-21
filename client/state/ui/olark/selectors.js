@@ -35,6 +35,16 @@ export function isRequestingOlark( state ) {
 }
 
 /**
+ * Returns if olark chat is available for the given context
+ * @param   {Object}  state     Global state tree
+ * @param   {object}  context   The chat context to check availability for
+ * @returns {Boolean}           true, when olark is requesting
+ */
+export function isChatAvailable( state, context ) {
+	return !! state.ui.olark.availability[ context ];
+}
+
+/**
  * Returns if olark operators are available.
  * @param   {Object}  state  Global state tree
  * @returns {Boolean}        true, when olark operators are available

@@ -24,6 +24,7 @@ import {
 	olarkReady,
 	operatorsAway,
 	operatorsAvailable,
+	setChatAvailability,
 } from 'state/ui/olark/actions';
 
 /**
@@ -157,6 +158,8 @@ const olark = {
 		} else {
 			this.showChatBox();
 		}
+
+		dispatch( setChatAvailability( wpcomOlarkConfig.availability ) );
 	},
 
 	updateOlarkGroupAndEligibility() {

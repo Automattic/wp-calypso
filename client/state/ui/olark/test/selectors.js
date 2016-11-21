@@ -10,6 +10,7 @@ import {
 	isOlarkReady,
 	isOperatorsAvailable,
 	isOlarkTimedOut,
+	isChatAvailable,
 	isRequestingOlark
 } from '../selectors';
 import {
@@ -20,6 +21,42 @@ import {
 } from '../constants';
 
 describe( 'selectors', () => {
+	describe( '#isChatAvailable()', () => {
+		it( 'should return true if chat is available', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {
+							testArea: true,
+						}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( true );
+		} );
+		it( 'should return false if chat is not available', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {
+							testArea: false,
+						}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( false );
+		} );
+		it( 'should return false if area does not exist', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( false );
+		} );
+	} );
 	describe( '#isOperatorsAvailable()', () => {
 		it( 'should return true if operators are available', () => {
 			const isAvailable = isOperatorsAvailable( {
