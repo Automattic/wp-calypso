@@ -223,6 +223,7 @@ export const HelpContactForm = React.createClass( {
 		return (
 			<div className="help-contact-form">
 				<ChatClosureNotice
+					reason="thanksgiving"
 					from="2016-11-24T08:00:00Z"
 					to="2016-11-25T08:00:00Z"
 				/>

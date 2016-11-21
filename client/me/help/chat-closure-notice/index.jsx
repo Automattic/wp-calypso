@@ -13,45 +13,17 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 import olarkStore from 'lib/olark-store';
+import { title, upcoming, closed } from './messages';
 
-const Closed = localize( ( { translate, closedTo } ) =>
+const Notice = localize( ( { translate, closedFrom, closedTo, reason } ) =>
 	<div className="chat-closure-notice">
-		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
+		<FormSectionHeading>{ title( { translate, closedFrom, closedTo, reason } ) }</FormSectionHeading>
 		<p>
-			{ translate(
-				'Live chat is closed today for the US Thanksgiving holiday. To get in touch, please ' +
-				'submit a support request below and we will get to it as fast as we can. Live chat ' +
-				'will reopen on {{strong}}%(closed_end_date)s{{/strong}}. Thank you!', {
-					args: {
-						closed_end_date: closedTo.format( 'dddd, MMMM Do, YYYY HH:mm' ),
-					},
-					components: {
-						strong: <strong />
-					}
-				}
-			) }
-		</p>
-	</div>
-);
-
-const Upcoming = localize( ( { translate, closedFrom, closedTo } ) =>
-	<div className="chat-closure-notice">
-		<FormSectionHeading>{ translate( 'Limited Support For Thanksgiving' ) }</FormSectionHeading>
-		<p>
-			{ translate(
-				'Live chat support will be closed from ' +
-				'{{strong}}%(closed_start_date)s{{/strong}} through {{strong}}%(closed_end_date)s{{/strong}} ' +
-				'for the US Thanksgiving holiday. If you need to get in touch with us that day, you’ll be able ' +
-				'to submit a support request from this page and we will get to it as fast as we can. Thank you!', {
-					args: {
-						closed_start_date: closedFrom.format( 'dddd, MMMM Do, YYYY HH:mm' ),
-						closed_end_date: closedTo.format( 'dddd, MMMM Do, YYYY HH:mm' ),
-					},
-					components: {
-						strong: <strong />
-					}
-				}
-			) }
+			{
+				i18n.moment().isBefore( closedFrom )
+					? upcoming( { translate, closedFrom, closedTo, reason } )
+					: closed( { translate, closedFrom, closedTo, reason } )
+			}
 		</p>
 	</div>
 );
@@ -88,12 +60,11 @@ export default class ChatClosureNotice extends Component {
 			return null;
 		}
 
-		// Closure period is upcoming
-		if ( i18n.moment().isBefore( closedFrom ) ) {
-			return <Upcoming closedFrom={ closedFrom } closedTo={ closedTo } />;
-		}
-
-		return <Closed closedFrom={ closedFrom } closedTo={ closedTo } />;
+		return <Notice
+			reason={ this.props.reason }
+			closedFrom={ closedFrom }
+			closedTo={ closedTo }
+		/>;
 	}
 }
 
