@@ -19,17 +19,12 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import {
-	GUIDED_TOUR_UPDATE,
-	ROUTE_SET,
-} from 'state/action-types';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
 import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
-import findOngoingTour from './find-ongoing-tour';
 
 const BLACKLISTED_SECTIONS = [
 	'signup',
@@ -108,6 +103,15 @@ const hasJustSeenTour = createSelector(
 );
 
 /*
+ * When applicable, returns the name of the tour that has been started and not
+ * yet finished or dimissed according to the action log.
+ */
+const findOngoingTour = state => {
+	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
+	return last && ( last.shouldShow === undefined ) && last.tour;
+};
+
+/*
  * Returns the name of the tour requested via URL query arguments if it hasn't
  * "just" been seen (i.e., in the current Calypso session).
  */
@@ -144,45 +148,17 @@ const findTriggeredTour = state => {
 	} );
 };
 
-const isSectionBlacklisted = state =>
-	includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
-
-export const hasTourJustBeenVisible = createSelector(
-	( state, now = Date.now() ) => {
-		const last = findLast( getActionLog( state ), {
-			type: GUIDED_TOUR_UPDATE,
-			shouldShow: false,
-		} );
-		// threshold is one minute
-		return last && ( now - last.timestamp ) < 60000;
-	},
-	getActionLog
-);
-
-const isConflictingWithOtherHelp = state =>
-	hasTourJustBeenVisible( state ) ||
-	shouldViewBeVisible( state );
-
-const shouldBailAllTours = state =>
-	isSectionBlacklisted( state );
-
-const shouldBailNewTours = state =>
-	isConflictingWithOtherHelp( state );
+const shouldBail = state => {
+	// bail if we're on a blacklisted page
+	return includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+};
 
 export const findEligibleTour = createSelector(
-	state => {
-		if ( shouldBailAllTours( state ) ) {
-			return;
-		}
-
-		return findOngoingTour( state ) ||
-			! shouldBailNewTours( state ) && (
-				findRequestedTour( state ) ||
-				findTriggeredTour( state )
-			) || undefined;
-	},
-	// Though other state selectors are used in `findEligibleTour`'s body,
-	// we're intentionally reducing the list of dependants to the following:
+	state => ! shouldBail( state ) && (
+		findOngoingTour( state ) ||
+		findRequestedTour( state ) ||
+		findTriggeredTour( state )
+	),
 	[ getActionLog, getToursHistory ]
 );
 
