@@ -195,7 +195,7 @@ export function clearActivated() {
 export function setBackPath( path ) {
 	return {
 		type: THEME_BACK_PATH_SET,
-		path: path,
+		path,
 	};
 }
 
