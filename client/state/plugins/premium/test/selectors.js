@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import selectors from '../selectors';
 // Example state data
-import { initSite, installingSite, finishedSite } from './examples';
+import { initSite, installingSite, finishedSite, configuringSite } from './examples';
 
 const state = deepFreeze( {
 	plugins: {
@@ -22,6 +22,7 @@ const state = deepFreeze( {
 				'start.site': initSite,
 				'installing.site': installingSite,
 				'finished.site': finishedSite,
+				'config.site': configuringSite
 			}
 		}
 	}
@@ -76,6 +77,28 @@ describe( 'Premium Plugin Selectors', function() {
 		} );
 	} );
 
+	describe( 'isInstalling', function() {
+		it( 'Should get `false` if the requested site is not in the current state', function() {
+			assert.equal( selectors.isInstalling( state, 'no.site' ), false );
+		} );
+
+		it( 'Should get `true` if there is a plugin installing on the requested site', function() {
+			assert.equal( selectors.isInstalling( state, 'installing.site' ), true );
+		} );
+
+		it( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', function() {
+			assert.equal( selectors.isInstalling( state, 'installing.site', 'akismet' ), true );
+		} );
+
+		it( 'Should get `true` if there is a plugin installing on the requested site, using whitelist', function() {
+			assert.equal( selectors.isInstalling( state, 'config.site', 'akismet' ), true );
+		} );
+
+		it( 'Should get `false` if all plugins on the requested site are either done or have errors', function() {
+			assert.equal( selectors.isInstalling( state, 'finished.site' ), false );
+		} );
+	} );
+
 	describe( 'getPluginsForSite', function() {
 		it( 'Should get `false` if the requested site is not in the current state', function() {
 			assert.equal( selectors.getPluginsForSite( state, 'no.site' ), false );
@@ -83,9 +106,9 @@ describe( 'Premium Plugin Selectors', function() {
 
 		it( 'Should get the list of plugins if the site exists in the current state', function() {
 			assert.equal( selectors.getPluginsForSite( state, 'start.site' ).length, 3 );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[0].slug, 'vaultpress' );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[1].slug, 'akismet' );
-			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[2].slug, 'polldaddy' );
+			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 0 ].slug, 'vaultpress' );
+			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 1 ].slug, 'akismet' );
+			assert.equal( selectors.getPluginsForSite( state, 'start.site' )[ 2 ].slug, 'polldaddy' );
 		} );
 	} );
 
