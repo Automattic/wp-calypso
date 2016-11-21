@@ -34,6 +34,7 @@ import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
 import RecommendationBlock from './recommendation-block';
 import PostLifecycle from './post-lifecycle';
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -60,19 +61,31 @@ function refreshCardFactory( post ) {
 
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
-	const ITEMS_BETWEEN_RECS = 5;
-	const RECS_PER_BLOCK = 2;
+const DEFAULT_ITEMS_BETWEEN_RECS = 4;
+const RECS_PER_BLOCK = 2;
+
+function getDistanceBetweenRecs() {
+	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
+	return Math.max( totalSubs, DEFAULT_ITEMS_BETWEEN_RECS );
+}
 
 function injectRecommendations( posts, recs = [] ) {
 	if ( ! recs || recs.length === 0 ) {
 		return posts;
 	}
+
+	const itemsBetweenRecs = getDistanceBetweenRecs();
+	// if we don't have enough posts to insert recs, don't bother
+	if ( posts.length < itemsBetweenRecs ) {
+		return posts;
+	}
+
 	const items = [];
 
-	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += ITEMS_BETWEEN_RECS, recIndex += RECS_PER_BLOCK ) {
-		items.push.apply( items, posts.slice( postIndex, postIndex + ITEMS_BETWEEN_RECS ) );
+	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += itemsBetweenRecs, recIndex += RECS_PER_BLOCK ) {
+		items.push.apply( items, posts.slice( postIndex, postIndex + itemsBetweenRecs ) );
 		// only insert recs if we have them and if we filled a full block of posts
-		if ( recIndex < recs.length && postIndex + ITEMS_BETWEEN_RECS < posts.length ) {
+		if ( recIndex < recs.length && postIndex + itemsBetweenRecs < posts.length ) {
 			items.push( {
 				isRecommendationBlock: true,
 				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK )
@@ -115,7 +128,7 @@ export default class ReaderStream extends React.Component {
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
-			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / ITEMS_BETWEEN_RECS ) ) {
+			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs() ) ) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
 					defer( () => FeedStreamStoreActions.fetchNextPage( recommendationsStore.id ) );
 				}
