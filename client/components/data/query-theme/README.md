@@ -14,7 +14,7 @@ import QueryTheme from 'components/data/query-theme';
 import Theme from 'components/theme';
 import { getThemeById } from 'state/themes/selectors';
 
-function MyThemesList( { themes } ) {
+function MyTheme( { themes } ) {
 	return (
 		<div>
 			<QueryTheme
@@ -32,7 +32,7 @@ export default connect(
 	( state, { themeId } ) => ( {
 		theme: getThemeById( state, themeId )
 	} )
-)( MyThemesList );
+)( MyTheme );
 ```
 
 ## Props
