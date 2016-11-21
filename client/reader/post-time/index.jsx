@@ -1,54 +1,49 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calyso:reader:post-time' ),
-	React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
-
+import React from 'react';
+import { PureComponent } from 'react';
+import moment from 'moment';
 /**
  * Internal dependencies
  */
-const smartSetState = require( 'lib/react-smart-set-state' ),
-	ticker = require( 'lib/ticker' ),
-	humanDate = require( 'lib/human-date' );
+import smartSetState from 'lib/react-smart-set-state';
+import ticker from 'lib/ticker';
+import humanDate from 'lib/human-date';
 
-var PostTime = React.createClass( {
+export default class PostTime extends PureComponent {
+	smartSetState = smartSetState;
 
-	mixins: [ PureRenderMixin ],
+	componentWillMount() {
+		this.update();
+	}
 
-	componentWillMount: function() {
-		this._update();
-	},
+	componentDidMount() {
+		ticker.on( 'tick', this.update );
+	}
 
-	componentDidMount: function() {
-		debug( 'listening for ticks' );
-		ticker.on( 'tick', this._update );
-	},
+	componentWillReceiveProps( nextProps ) {
+		this.update( nextProps.date );
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		this._update( nextProps.date );
-	},
+	componentWillUnmount() {
+		ticker.off( 'tick', this.update );
+	}
 
-	componentWillUnmount: function() {
-		ticker.off( 'tick', this._update );
-	},
-
-	smartSetState: smartSetState,
-
-	_update: function( date ) {
+	update = date => {
 		date = date || this.props.date;
-		this.smartSetState( { ago: humanDate( date ) } );
-	},
+		this.smartSetState( {
+			humanDate: humanDate( date ),
+			fullDate: moment( date ).format( 'llll' )
+		} );
+	}
 
-	render: function() {
-		var date = this.props.date;
+	render() {
+		const date = this.props.date;
 		return (
-			<time className={ this.props.className } dateTime={ date } title={ this.moment( date ).format( 'llll' ) } >
-				{ this.state.ago }
+			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate } >
+				{ this.state.humanDate }
 			</time>
 		);
 	}
-
-} );
-
-module.exports = PostTime;
+}
