@@ -1,8 +1,24 @@
-.site-icon-setting__controls {
+.form-label.site-icon-setting__heading {
 	display: flex;
 	align-items: center;
+
+	.info-popover {
+		margin-left: 8px;
+	}
+
+	.gridicon {
+		display: block;
+	}
+}
+
+.site-icon-setting__icon:hover .site-icon {
+	border-style: dashed;
+	border-color: $gray-dark;
+	opacity: 0.8;
 }
 
 .site-icon-setting__change-button {
-	margin-left: 8px;
+	min-width: 98px;
+	margin-top: 8px;
+	text-align: center;
 }
