@@ -373,30 +373,50 @@ export default React.createClass( {
 
 	unverifiedDomainsCanManage() {
 		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification && domain.currentUserCanManage );
+		const severity = domains.some( ( { registrationMoment } ) =>
+			registrationMoment && moment( registrationMoment )
+				.add( 2, 'days' )
+				.isAfter( moment() ) ) ? 'is-info' : 'is-error';
 
 		if ( domains.length === 0 ) {
 			return null;
 		}
 
 		if ( domains.length === 1 ) {
-			const domain = domains[ 0 ].name,
+			const domain = domains[ 0 ].name;
+			let fullMessage, compactMessage;
+			if ( severity === 'is-error' ) {
 				fullMessage = this.translate(
 					'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
 					{
 						components: { strong: <strong /> },
 						args: { domain }
-					} ),
-				compactMessage = this.translate(
-					'Issues with {{strong}}%(domain)s{{/strong}}.',
+					} );
+					compactMessage = this.translate(
+						'Issues with {{strong}}%(domain)s{{/strong}}.',
+						{
+							components: { strong: <strong /> },
+							args: { domain }
+						} );
+			} else if ( severity === 'is-info' ) {
+				fullMessage = this.translate(
+					'{{strong}}%(domain)s{{/strong}} needs to be verified. You should receive an email shortly with more information.',
 					{
 						components: { strong: <strong /> },
 						args: { domain }
 					} );
+				compactMessage = this.translate(
+					'Please verify {{strong}}%(domain)s{{/strong}}.',
+					{
+						components: { strong: <strong /> },
+						args: { domain }
+					} );
+			}
 
 			return (
 				<Notice
 					isCompact={ this.props.isCompact }
-					status="is-error"
+					status={ severity }
 					showDismiss={ false }
 					className="domain-warnings__notice"
 					key="unverified-domains-can-manage"
@@ -408,22 +428,44 @@ export default React.createClass( {
 			);
 		}
 
-		const fullContent = (
+		let fullContent, compactContent, compactNoticeText;
+
+		if ( severity === 'is-error' ) {
+			fullContent = (
+					<span>
+					{ this.translate( 'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.' ) }
+						<ul>
+						{ domains.map( ( { name } ) =>
+							<li key={ name }>{ name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, name ) }>{ this.translate( 'Fix' ) }</a></li>
+						) }
+					</ul>
+				</span>
+				);
+				compactNoticeText = this.translate( 'Issues with your domains.' );
+				compactContent = (
+					<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+						{ this.translate( 'Fix' ) }
+					</NoticeAction>
+				);
+		} else if ( severity === 'is-info' ) {
+			fullContent = (
 				<span>
-					{ this.translate( 'Some of your domains may be suspended because your email address is not verified:' ) }
+					{ this.translate( 'Please verify ownership of domains:' ) }
 					<ul>
 						{ domains.map( ( { name } ) =>
 							<li key={ name }>{ name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, name ) }>{ this.translate( 'Fix' ) }</a></li>
 						) }
 					</ul>
 				</span>
-			),
-			compactNoticeText = this.translate( 'Issues with your domains.' ),
+			);
+			compactNoticeText = this.translate( 'Verification required for domains.' );
 			compactContent = (
 				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
 					{ this.translate( 'Fix' ) }
 				</NoticeAction>
 			);
+		}
+
 
 		return (
 			<Notice
