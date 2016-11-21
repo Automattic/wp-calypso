@@ -338,7 +338,7 @@ export default class ReaderStream extends React.Component {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	}
 
-	showFullXPost( xMetadata ) {
+	showFullXPost = ( xMetadata ) => {
 		if ( xMetadata.blogId && xMetadata.postId ) {
 			const mappedPost = {
 				site_ID: xMetadata.blogId,
