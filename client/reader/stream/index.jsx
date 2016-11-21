@@ -448,7 +448,7 @@ export default class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isRecommendationBlock ) {
-			return <RecommendationBlock recommendations={ postKey.recommendations } key={ `recs-${ index }`} />;
+			return <RecommendationBlock recommendations={ postKey.recommendations } key={ `recs-${ index }` } />;
 		}
 
 		const itemKey = this.getPostRef( postKey );
