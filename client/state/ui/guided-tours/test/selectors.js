@@ -10,13 +10,19 @@ import { constant, times } from 'lodash';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
+import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'selectors', () => {
+	let clock;
 	let getGuidedTourState;
 	let findEligibleTour;
 	let hasTourJustBeenVisible;
 
 	useFakeDom();
+
+	useFakeTimers( fakeClock => {
+		clock = fakeClock;
+	} );
 
 	useMockery( mockery => {
 		mockery.registerSubstitute(
@@ -30,7 +36,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isConflictingWithFirstView', () => {
-		const now = Date.now();
+		const now = 1479741854095;
 
 		const withEligibleFirstView = {
 			currentUser: {
@@ -59,7 +65,7 @@ describe( 'selectors', () => {
 					firstViewHistory: [],
 					'guided-tours-history': [],
 				},
-				lastFetchedTimestamp: 123456
+				lastFetchedTimestamp: now
 			}
 		};
 
@@ -138,6 +144,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should short-circuit findEligibleTour', () => {
+			clock.tick( now );
 			expect( findEligibleTour( withFirstViewAndTourRequest ) ).to.be.undefined;
 			expect( findEligibleTour( havingJustSeenTour ) ).to.be.undefined;
 		} );
