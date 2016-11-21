@@ -22,7 +22,7 @@ import config from 'config';
 import { protectForm } from 'lib/protect-form';
 import notices from 'notices';
 import analytics from 'lib/analytics';
-import formFields from 'components/hoc/form-fields';
+import formFields from 'lib/form-fields';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
