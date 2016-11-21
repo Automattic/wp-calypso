@@ -7,6 +7,7 @@ import { isString, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
+import { makePromiseCancelable } from 'lib/promises';
 import { clearRequests } from 'state/requests/actions';
 
 const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( WrappedComponent ) => {
@@ -34,6 +35,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 		}
 
 		componentWillUnmount() {
+			this.cancelRequest();
 			this.unsubscribe && this.unsubscribe();
 			this.context.graph.store.dispatch( clearRequests( this.uid ) );
 		}
@@ -51,11 +53,22 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 			this.variables = mapPropsToVariables( props );
 		}
 
+		cancelRequest() {
+			this.cancelRequestPromise && this.cancelRequestPromise();
+		}
+
 		request() {
-			this.context.graph.request( this.query, { uid: this.uid }, this.variables )
+			this.cancelRequest();
+			const cancelablePromise = makePromiseCancelable(
+				this.context.graph.request( this.query, { uid: this.uid }, this.variables )
+			);
+			this.cancelRequestPromise = cancelablePromise.cancel;
+			cancelablePromise.promise
 				.then( results => {
 					this.setState( { results: results.data } );
-				} );
+					this.cancelRequestPromise = false;
+				} )
+				.catch( () => {} ); // avoid console warnings
 		}
 
 		render() {
