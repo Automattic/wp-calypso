@@ -41,7 +41,8 @@ class SiteStream extends React.Component {
 	};
 
 	static defaultProps = {
-		showBack: true
+		showBack: true,
+		className: 'is-site-stream',
 	};
 
 	constructor( props ) {

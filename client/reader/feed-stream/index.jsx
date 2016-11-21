@@ -16,7 +16,7 @@ var EmptyContent = require( './empty' ),
 var FeedStream = React.createClass( {
 
 	getDefaultProps: function() {
-		return { showBack: true };
+		return { showBack: true, className: 'is-site-stream' };
 	},
 
 	getInitialState: function() {
