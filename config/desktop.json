@@ -24,6 +24,7 @@
 		"help/courses": true,
 		"guided-tours": true,
 		"jetpack/connect": true,
+		"jetpack/personalPlan": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,
