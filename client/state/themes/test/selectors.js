@@ -10,6 +10,7 @@ import { values } from 'lodash';
 import {
 	getThemes,
 	getTheme,
+	isRequestingTheme,
 	getThemesForQuery,
 	isRequestingThemesForQuery,
 	getThemesFoundForQuery,
@@ -26,7 +27,6 @@ import {
 	getActiveTheme,
 	isThemeActive,
 	isThemePurchased,
-	isRequestingTheme
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
@@ -122,6 +122,46 @@ describe( 'themes selectors', () => {
 			}, 2916284, 'twentysixteen' );
 
 			expect( theme ).to.equal( twentysixteen );
+		} );
+	} );
+
+	describe( '#isRequestingTheme()', () => {
+		it( 'should return false if there are no active requests for site', () => {
+			const isRequesting = isRequestingTheme( {
+				themes: {
+					themeRequests: { }
+				}
+			}, 2916284, 'twentyfifteen' );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false if there is no active request for theme for site', () => {
+			const isRequesting = isRequestingTheme( {
+				themes: {
+					themeRequests: {
+						2916284: {
+							twentysixteen: true,
+						}
+					}
+				}
+			}, 2916284, 'twentyfifteen' );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if there is request ongoing for theme for site', () => {
+			const isRequesting = isRequestingTheme( {
+				themes: {
+					themeRequests: {
+						2916284: {
+							twentysixteen: true,
+						}
+					}
+				}
+			}, 2916284, 'twentysixteen' );
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
@@ -240,46 +280,6 @@ describe( 'themes selectors', () => {
 			}, 2916284, { search: 'Sixteen' } );
 
 			expect( isRequesting ).to.be.false;
-		} );
-	} );
-
-	describe( '#isRequestingTheme()', () => {
-		it( 'should return false if there are no active requests for site', () => {
-			const isRequesting = isRequestingTheme( {
-				themes: {
-					themeRequests: { }
-				}
-			}, 2916284, 'twentyfifteen' );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return false if there is no active request for theme for site', () => {
-			const isRequesting = isRequestingTheme( {
-				themes: {
-					themeRequests: {
-						2916284: {
-							twentysixteen: true,
-						}
-					}
-				}
-			}, 2916284, 'twentyfifteen' );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'should return true if there is request ongoing for theme for site', () => {
-			const isRequesting = isRequestingTheme( {
-				themes: {
-					themeRequests: {
-						2916284: {
-							twentysixteen: true,
-						}
-					}
-				}
-			}, 2916284, 'twentysixteen' );
-
-			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
