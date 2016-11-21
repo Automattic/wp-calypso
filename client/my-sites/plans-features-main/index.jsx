@@ -40,12 +40,12 @@ class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			hideFreePlan,
 			isInSignup,
+			isLandingPage,
 			basePlansPath,
 			selectedFeature
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
@@ -58,6 +58,7 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
@@ -78,6 +79,7 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
@@ -102,6 +104,7 @@ class PlansFeaturesMain extends Component {
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
 					basePlansPath={ basePlansPath }
 					selectedFeature={ selectedFeature }
 					intervalType={ intervalType }
@@ -336,6 +339,7 @@ class PlansFeaturesMain extends Component {
 PlansFeaturesMain.PropTypes = {
 	site: PropTypes.object,
 	isInSignup: PropTypes.bool,
+	isLandingPage: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,

@@ -129,7 +129,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, intervalType, site, basePlansPath
+			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -195,6 +195,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -284,7 +285,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { canPurchase, planProperties, isInSignup, site } = this.props;
+		const { canPurchase, isLandingPage, planProperties, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -314,6 +315,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 				</td>
@@ -496,7 +498,7 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick } = ownProps;
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage } = ownProps;
 		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
@@ -527,6 +529,7 @@ export default connect(
 
 				return {
 					isPlaceholder,
+					isLandingPage,
 					available: available,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
