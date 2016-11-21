@@ -4,37 +4,25 @@
  * External dependencies
  */
 import moment from 'moment';
-import { memoize, some, startsWith, takeRightWhile, find, findLast } from 'lodash';
+import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
-import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
 
-const getConfigForPath = memoize( path =>
-	find( FIRST_VIEW_CONFIG, entry =>
-		some( entry.paths, entryPath =>
-			startsWith( path, entryPath ) ) ) || false );
+export function getConfigForCurrentView( state ) {
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+	const path = currentRoute.path ? currentRoute.path : '';
+	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
 
-export const getConfigForCurrentView = createSelector(
-	state => {
-		const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-		if ( ! currentRoute ) {
-			return false;
-		}
-
-		const path = currentRoute.path ? currentRoute.path : '';
-		return getConfigForPath( path );
-	},
-	getActionLog
-);
+	return config || false;
+}
 
 export function isUserEligible( state, config ) {
 	const userStartDate = getCurrentUserDate( state );
@@ -93,9 +81,11 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
-	return ! findOngoingTour( state ) &&
-		firstViewConfig &&
-		isViewEnabled( state, firstViewConfig ) &&
+	if ( ! firstViewConfig ) {
+		return false;
+	}
+
+	return isViewEnabled( state, firstViewConfig ) &&
 		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
 }
