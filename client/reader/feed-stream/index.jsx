@@ -11,7 +11,7 @@ import localize from 'i18n-calypso';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
-import FeedHeader from 'reader/feed-header';
+import OldFeedHeader from 'reader/feed-header';
 import FeedStore from 'lib/feed-store';
 import FeedStoreActions from 'lib/feed-store/actions';
 import { state as FeedStoreState } from 'lib/feed-store/constants';
@@ -19,6 +19,8 @@ import FeedError from 'reader/feed-error';
 import HeaderBack from 'reader/header-back';
 import SiteStore from 'lib/reader-site-store';
 import { state as SiteState } from 'lib/reader-site-store/constants';
+import RefreshFeedHeader from 'blocks/reader-feed-header';
+import config from 'config';
 
 class FeedStream extends React.Component {
 
