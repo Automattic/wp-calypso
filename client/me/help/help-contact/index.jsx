@@ -29,6 +29,7 @@ import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import QueryOlark from 'components/data/query-olark';
+import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
@@ -506,6 +507,7 @@ const HelpContact = React.createClass( {
 					{ this.getView() }
 				</Card>
 				<QueryOlark />
+				<QueryTicketSupportConfiguration />
 			</Main>
 		);
 	}
