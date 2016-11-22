@@ -18,6 +18,7 @@ import Count from 'components/count';
 import Dialog from 'components/dialog';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSite } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { decodeEntities } from 'lib/formatting';
@@ -32,6 +33,8 @@ class TaxonomyManagerListItem extends Component {
 		siteId: PropTypes.number,
 		term: PropTypes.object,
 		translate: PropTypes.func,
+		siteUrl: PropTypes.string,
+		slug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -44,7 +47,9 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	togglePopoverMenu = event => {
-		event.stopPropagation && event.stopPropagation();
+		if ( event && event.stopPropagation ) {
+			event.stopPropagation();
+		}
 		this.setState( {
 			popoverMenuOpen: ! this.state.popoverMenuOpen
 		} );
@@ -83,6 +88,16 @@ class TaxonomyManagerListItem extends Component {
 			popoverMenuOpen: false
 		} );
 	};
+
+	getTaxonomyLink() {
+		const { taxonomy, siteUrl, term } = this.props;
+		let taxonomyBase = taxonomy;
+
+		if ( taxonomy === 'post_tag' ) {
+			taxonomyBase = 'tag';
+		}
+		return `${ siteUrl }/${ taxonomyBase }/${ term.slug }/`;
+	}
 
 	render() {
 		const { canSetAsDefault, isDefault, term, translate } = this.props;
@@ -132,7 +147,7 @@ class TaxonomyManagerListItem extends Component {
 					<PopoverMenuItem onClick={ this.deleteItem } icon="trash">
 						{ translate( 'Delete' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="external" >
+					<PopoverMenuItem href={ this.getTaxonomyLink() } icon="external">
 						{ translate( 'View Posts' ) }
 					</PopoverMenuItem>
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
@@ -161,11 +176,13 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
+		const siteUrl = get( getSite( state, siteId ), 'URL' );
 
 		return {
 			isDefault,
 			canSetAsDefault,
 			siteId,
+			siteUrl,
 		};
 	},
 	{ deleteTerm, saveSiteSettings }
