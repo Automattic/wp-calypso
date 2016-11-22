@@ -238,10 +238,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__tag {
-    overflow: hidden;
-    position: relative;
-    height: 20px;
-    width: 100%;
+	overflow: hidden;
+	position: relative;
+	height: 20px;
+	width: 100%;
 
 	&::after {
 		@include long-content-fade( $size: 10% );
@@ -249,10 +249,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__tag .gridicons-tag {
-    height: 18px;
-    margin: -4px 5px 0 0;
-    position: relative;
-    	top: 5px;
+	height: 18px;
+	margin: -4px 5px 0 0;
+	position: relative;
+		top: 5px;
 	width: 15px;
 	fill: lighten( $gray, 10% );
 }
@@ -350,14 +350,20 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	font-weight: 100;
 	margin-top: 9px;
 	word-break: break-word;
-	overflow: hidden;
-	max-height: 15px * 1.6 * 3;
 	position: relative;
+}
 
-	&::before {
-		@include long-content-fade( $size: 15px * 1.6 * 5 );
-		top: inherit;
-		height: 15px * 1.6;
+// If we're not showing the entire excerpt, clamp to 3 lines
+.reader-post-card.card:not(.is-showing-entire-excerpt) {
+	.reader-post-card__excerpt {
+		overflow: hidden;
+		max-height: 15px * 1.6 * 3;
+
+		&::before {
+			@include long-content-fade( $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
 	}
 }
 

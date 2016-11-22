@@ -31,13 +31,17 @@ export default class RefreshPostCard extends React.Component {
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
-		originalPost: PropTypes.object // used for Discover only
+		originalPost: PropTypes.object, // used for Discover only
+		showEntireExcerpt: PropTypes.bool,
+		useBetterExcerpt: PropTypes.bool
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
-		isSelected: false
+		isSelected: false,
+		showEntireExcerpt: false,
+		useBetterExcerpt: true
 	};
 
 	propagateCardClick = () => {
@@ -88,16 +92,28 @@ export default class RefreshPostCard extends React.Component {
 	}
 
 	render() {
-		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton, isSelected } = this.props;
+		const {
+			post,
+			originalPost,
+			site,
+			feed,
+			onCommentClick,
+			showPrimaryFollowButton,
+			isSelected,
+			showEntireExcerpt,
+			useBetterExcerpt
+		} = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoOnly,
 			'is-gallery': isGallery,
-			'is-selected': isSelected
+			'is-selected': isSelected,
+			'is-showing-entire-excerpt': showEntireExcerpt
 		} );
 		const showExcerpt = ! isPhotoOnly;
+		const excerptAttribute = useBetterExcerpt ? 'better_excerpt_no_html' : 'excerpt_no_html';
 		let title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/
@@ -132,7 +148,7 @@ export default class RefreshPostCard extends React.Component {
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
-						{ showExcerpt && <div className="reader-post-card__excerpt">{ post.better_excerpt_no_html }</div> }
+						{ showExcerpt && <div className="reader-post-card__excerpt">{ post[ excerptAttribute ] }</div> }
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ post &&
 							<ReaderPostActions
