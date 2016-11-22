@@ -8,10 +8,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import {
-	isRequestingTicketSupportConfiguration,
-} from 'state/ticket-support/is-requesting/selectors';
-
-import {
 	ticketSupportConfigurationRequest,
 } from 'state/ticket-support/configuration/actions';
 
@@ -26,8 +22,6 @@ class QueryTicketSupportConfiguration extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		requesting: isRequestingTicketSupportConfiguration( state ),
-	} ),
+	null,
 	{ ticketSupportConfigurationRequest }
 )( QueryTicketSupportConfiguration );
