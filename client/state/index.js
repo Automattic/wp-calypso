@@ -50,7 +50,7 @@ import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
 import themes from './themes/reducer';
-import ticketSupport from './ticketSupport/reducer';
+import ticketSupport from './ticket-support/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
