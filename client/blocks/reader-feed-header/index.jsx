@@ -95,6 +95,7 @@ class FeedHeader extends Component {
 					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ ( site && site.get( 'description' ) ) }</span>
+						<span className="reader-feed-header__byline">By First Last</span>
 					</div>
 				</Card>
 			</div>
