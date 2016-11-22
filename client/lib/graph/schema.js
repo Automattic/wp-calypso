@@ -43,6 +43,21 @@ export default `
 		lastPage: Int
 	}
 
+	# Object representing Posts Count by status
+	type PostsCount {
+		draft: Int
+		publish: Int
+		private: Int
+		future: Int
+		pending: Int
+	}
+
+	# Object representing PostsCounts by author
+	type PostsCounts {
+		mine: PostsCount
+		all: PostsCount
+	}
+
 	# Query object used to search for posts
 	input PostQuery {
 		status: String
@@ -62,5 +77,7 @@ export default `
 		posts( siteId: Int, query: PostQuery, pages: [Int] ): PostQueryResponse
 		# Query post stats by siteId, postId and stat name
 		postStat( siteId: Int, postId: Int, stat: String ): Int
+		# Query postCounts by siteId and postType
+		postsCount( siteId: Int, postType: String ): PostsCounts
 	}
 `;

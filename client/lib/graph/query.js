@@ -65,6 +65,9 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 			this.cancelRequestPromise = cancelablePromise.cancel;
 			cancelablePromise.promise
 				.then( results => {
+					if ( results.errors ) {
+						console.warn( results.errors ); // eslint-disable-line no-console
+					}
 					this.setState( { results: results.data } );
 					this.cancelRequestPromise = false;
 				} )
