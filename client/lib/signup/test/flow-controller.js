@@ -87,7 +87,7 @@ describe( 'flow-controller', function() {
 	describe( 'controlling a flow w/ dependencies', function() {
 		it( 'should call the apiRequestFunction callback with its dependencies', function( done ) {
 			signupFlowController = SignupFlowController( {
-				flowName: 'flow_with_async',
+				flowName: 'flow_with_dependencies',
 				onComplete: function( dependencies, destination ) {
 					assert.equal( destination, '/checkout/testsite.wordpress.com' );
 					done();
