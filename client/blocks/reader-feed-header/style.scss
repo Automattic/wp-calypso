@@ -31,13 +31,27 @@
 		font-family: $serif;
 		font-size: 21px;
 		font-weight: 600;
-		overflow: inherit;
+		height: 90px;
+		overflow: hidden;
+		position: relative;
 		text-align: center;
 		white-space: normal;
 
 		&::after {
 			background: none;
-			content:'';
+			content: '';
+			height: 22px;
+			@include long-content-fade( $size: 15% );
+			top: calc( 100% - 32px );
+
+			@include breakpoint( ">660px" ) {
+				@include long-content-fade( $size: 10% );
+				top: 0;
+			}
+		}
+
+		@include breakpoint( ">660px" ) {
+			height: 30px;
 		}
 	}
 
