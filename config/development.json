@@ -123,6 +123,7 @@
 		"post-editor/insert-menu": true,
 		"post-editor/media-advanced": false,
 		"press-this": true,
+		"profile": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,

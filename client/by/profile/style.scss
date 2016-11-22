@@ -1,0 +1,144 @@
+// These pages should span the full width of the page; no sidebar needed!
+.is-group-by .layout__content {
+	padding: 0;
+}
+
+.profile__loading {
+	text-align: center;
+}
+
+// Profile header
+// This contains the user's bio information
+.profile__banner {
+	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 repeat;
+	padding: 32px;
+	text-align: center;
+}
+
+// TODO: should we keep that since we are using Gravatar component?
+.profile__header .gravatar {
+	border: 4px solid $white;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.6 );
+	margin-bottom: 16px;
+	width: 100px;
+
+	@include breakpoint( ">480px" ) {
+		width: 150px;
+	}
+}
+
+.profile__display-name {
+	color: $white;
+	font-family: $serif;
+	font-size: 2.8rem;
+	line-height: 1.2;
+	margin-bottom: 8px;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__member-since {
+	color: $white;
+	font-family: $serif;
+	font-size: 1.6rem;
+	font-style: italic;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__about-me {
+	font-family: $serif;
+	line-height: 1.6;
+	margin: 0 auto;
+	max-width: 600px;
+	padding: 32px 16px;
+}
+
+// Sites
+// This contains the sites the user owns or has contributed to.
+@include breakpoint( ">480px" ) {
+	.profile__sites {
+		display: flex;
+		flex-wrap: wrap;
+		padding: 0 16px;
+	}
+
+	.profile__site-card {
+		padding: 8px 16px;
+		margin: 24px;
+		width: 30%;
+		width: calc(33% - 48px);
+		word-wrap: break-word;
+	}
+}
+
+.profile__site-title {
+	float: left;
+	width: 70%;
+	padding-bottom: 8px;
+}
+
+.profile__site-actions {
+	float: right;
+	width: 30%;
+	text-align: right;
+	padding-bottom: 8px;
+}
+
+.profile__remove-element {
+	display: block;
+	color: $gray-light;
+}
+
+.profile__site-type,
+.profile__remove-element {
+	display: none;
+}
+
+.profile__sites .follow-button {
+	background: none;
+	border: 0;
+	padding: 0;
+
+	.gridicon {
+		fill: $blue-wordpress;
+	}
+
+	.follow-button__label {
+		color: $blue-wordpress;
+	}
+
+	&:hover {
+		border-color: $gray-dark;
+
+		.gridicon {
+			fill: $gray-dark;
+		}
+
+		.follow-button__label {
+			color: $gray-dark
+		}
+	}
+
+	&.is-following {
+		border-color: $alert-green;
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+}
+
+.profile__site-header {
+	background: $blue-dark;
+	clear: both;
+	height: 64px;
+	margin-left: -16px;
+	width: calc(100% + 32px);
+}
+
+.profile__sites .site-icon {
+	margin: -16px auto 8px auto
+}

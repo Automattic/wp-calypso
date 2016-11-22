@@ -383,4 +383,14 @@ if ( config.isEnabled( 'happychat' ) ) {
 	} );
 }
 
+if ( config.isEnabled( 'profile' ) ) {
+	sections.push( {
+		name: 'profile',
+		paths: [ '/by' ],
+		module: 'by',
+		group: 'by',
+		secondary: true
+	} );
+}
+
 module.exports = sections;

@@ -75,6 +75,18 @@ export const getSite = createSelector(
 	( state ) => state.sites.items
 );
 
+export const getSites = state => {
+	const sites = state.sites.items;
+
+	if ( ! sites ) {
+		return [];
+	}
+
+	return Object.keys( sites ).map( siteId => {
+		return getSite( state, siteId );
+	} ).slice( 0, 12 );
+};
+
 /**
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site
  * exists in the set of sites with the same URL.
