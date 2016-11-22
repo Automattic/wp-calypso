@@ -22,18 +22,19 @@ import { getUserSuggestions } from 'state/users/suggestions/selectors';
 const VK = tinymce.util.VK;
 
 const getMatchingSuggestions = function( suggestions, query ) {
+	if ( ! query ) {
+		return suggestions.slice( 0, 10 );
+	}
+
 	let matchingSuggestions = suggestions;
 
-	if ( query ) {
+	matchingSuggestions = suggestions.filter( ( suggestion ) => {
 		// Start of string or preceded by a space.
 		const matcher = new RegExp( '^' + query + '| ' + query, 'ig' );
+		const name = suggestion.name || suggestion.user_login + ' ' + suggestion.display_name;
 
-		matchingSuggestions = suggestions.filter( ( suggestion ) => {
-			const name = suggestion.name || suggestion.user_login + ' ' + suggestion.display_name;
-
-			return matcher.test( name );
-		} );
-	}
+		return matcher.test( name );
+	} );
 
 	return matchingSuggestions.slice( 0, 10 );
 };
