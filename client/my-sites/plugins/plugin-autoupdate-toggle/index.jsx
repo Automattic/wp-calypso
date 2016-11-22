@@ -16,6 +16,13 @@ import i18n from 'i18n-calypso';
 
 class PluginAutopdateToggle extends React.Component {
 
+	constructor() {
+		super();
+		[ 'toggleAutoupdates', 'recordEvent' ].forEach(
+			( method ) => this[ method ] = this[ method ].bind( this )
+		);
+	}
+
 	toggleAutoupdates() {
 		if ( this.props.isMock || this.props.disabled ) {
 			return;
