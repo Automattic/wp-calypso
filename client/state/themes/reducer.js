@@ -35,7 +35,7 @@ import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
 
 /**
- * Returns the updated theme active theme request state after an action has been
+ * Returns the updated active theme request state after an action has been
  * dispatched. The state reflects a mapping of site ID to theme ID where
  * theme ID represents active theme for the site.
  *
