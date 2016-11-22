@@ -24,6 +24,8 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isOperatorsAvailable, isChatAvailable } from 'state/ui/olark/selectors';
 import olarkActions from 'lib/olark-store/actions';
+import olarkEvents from 'lib/olark-events';
+import analytics from 'lib/analytics';
 
 const user = userFactory();
 
@@ -56,6 +58,29 @@ const RemovePurchase = React.createClass( {
 		};
 	},
 
+	componentWillMount() {
+		olarkEvents.on( 'api.chat.onBeginConversation', this.recordChatStartedEvent );
+	},
+
+	componentWillUnmount() {
+		olarkEvents.off( 'api.chat.onBeginConversation', this.recordChatStartedEvent );
+	},
+
+	recordChatStartedEvent: () => {
+		this.recordChatEvent( 'calypso_precancellation_chat_begin' );
+	},
+
+	recordChatEvent( eventAction ) {
+		const purchase = getPurchase( this.props );
+		analytics.tracks.recordEvent( eventAction, {
+			survey_step: this.state.surveyStep,
+			purchase: purchase.productSlug,
+			is_plan: isPlan( purchase ),
+			is_domain_registration: isDomainRegistration( purchase ),
+			has_included_domain: hasIncludedDomain( purchase ),
+		} );
+	},
+
 	closeDialog() {
 		this.setState( {
 			isDialogVisible: false,
@@ -75,6 +100,7 @@ const RemovePurchase = React.createClass( {
 
 	openChat() {
 		olarkActions.expandBox();
+		this.recordChatEvent( 'calypso_precancellation_chat_click' );
 		this.setState( { isDialogVisible: false } );
 	},
 
