@@ -1,5 +1,5 @@
-Form Fields Higher Order Component
-==================================
+Track Form Higher Order Component
+=================================
 
 This HoC provides an alternative to `dirtyLinkedState` mixin for ES6 React component and functional components.
 
@@ -28,9 +28,11 @@ Usage
       </Form>
     );
   }
+
+  export default trackForm( MyComponent );
 ```
 
-This HoC exposes four props to the wrapped Component.
+This HoC exposes the following props:
 
 
 ### `fields`

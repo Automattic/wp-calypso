@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { NOTICE_CLEAR, NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { NOTICES_CLEAR, NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
 import { clearNotices, removeNotice, successNotice, errorNotice } from '../actions';
 
 describe( 'actions', function() {
@@ -60,7 +60,7 @@ describe( 'actions', function() {
 			const action = clearNotices();
 
 			expect( action ).to.eql( {
-				type: NOTICE_CLEAR
+				type: NOTICES_CLEAR
 			} );
 		} );
 	} );

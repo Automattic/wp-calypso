@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	NOTICE_CLEAR,
+	NOTICES_CLEAR,
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
 	ROUTE_SET
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 					2: { noticeId: 2, isPersistent: true }
 				} );
 				const state = items( original, {
-					type: NOTICE_CLEAR
+					type: NOTICES_CLEAR
 				} );
 
 				expect( state ).to.eql( {
@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 					2: { noticeId: 2, displayOnNextPage: true }
 				} );
 				const state = items( original, {
-					type: NOTICE_CLEAR
+					type: NOTICES_CLEAR
 				} );
 
 				expect( state ).to.eql( {

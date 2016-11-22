@@ -4,12 +4,12 @@
 import React, { Component } from 'react';
 import { union } from 'lodash';
 
-export const formFields = WrappedComponent => {
-	class FormFieldsComponent extends Component {
+export const trackForm = WrappedComponent => {
+	class TrackFormComponent extends Component {
 		state = {
 			dirtyFields: [],
 			fields: {}
-		}
+		};
 
 		updateFields = fields => {
 			const newState = {
@@ -27,7 +27,7 @@ export const formFields = WrappedComponent => {
 			this.setState( {
 				dirtyFields: []
 			} );
-		}
+		};
 
 		render() {
 			const { fields, dirtyFields } = this.state;
@@ -44,7 +44,7 @@ export const formFields = WrappedComponent => {
 		}
 	}
 
-	return FormFieldsComponent;
+	return TrackFormComponent;
 };
 
-export default formFields;
+export default trackForm;

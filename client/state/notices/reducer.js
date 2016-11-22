@@ -9,7 +9,7 @@ import reduce from 'lodash/reduce';
  * Internal dependencies
  */
 import {
-	NOTICE_CLEAR,
+	NOTICES_CLEAR,
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
 	ROUTE_SET
@@ -32,7 +32,7 @@ export const items = createReducer( {}, {
 
 		return omit( state, noticeId );
 	},
-	[ NOTICE_CLEAR ]: ( state ) => {
+	[ NOTICES_CLEAR ]: ( state ) => {
 		return reduce( state, ( memo, notice, noticeId ) => {
 			if ( ! notice.isPersistent && ! notice.displayOnNextPage ) {
 				return memo;

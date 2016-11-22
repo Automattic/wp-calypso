@@ -147,10 +147,10 @@ export function onSiteSettingsSaveFailed( dispatch, action ) {
 	let text;
 	switch ( action.error.error ) {
 		case 'invalid_ip':
-			text = translate( 'One of your IP Addresses was invalid. Please, try again.' );
+			text = translate( 'One of your IP Addresses was invalid. Please try again.' );
 			break;
 		default:
-			text = translate( 'There was a problem saving your changes. Please, try again.' );
+			text = translate( 'There was a problem saving your changes. Please try again.' );
 	}
 	dispatch( errorNotice( text ) );
 }
