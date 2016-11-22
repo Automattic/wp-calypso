@@ -163,9 +163,14 @@ assign( SignupFlowController.prototype, {
 			dependencies = steps[ step.stepName ].dependencies || [],
 			dependenciesFound = pick( SignupDependencyStore.get(), dependencies ),
 			dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length,
-			allStepsSubmitted = reject( SignupProgressStore.get(), {
+			currentSteps = this._flow.steps,
+			signupProgress = filter(
+				SignupProgressStore.get(),
+				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+			),
+			allStepsSubmitted = reject( signupProgress, {
 				status: 'in-progress'
-			} ).length === this._flow.steps.length;
+			} ).length === currentSteps.length;
 
 		return dependenciesSatisfied &&
 			! this._processingSteps[ step.stepName ] &&
