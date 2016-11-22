@@ -1,11 +1,15 @@
 /**
+ * External dependencies
+ */
+
+/**
  * Internal dependencies
  */
 import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
 import { makeNavigation, siteSelection } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut } from './controller';
+import { singleSite, multiSite, loggedOut, upload } from './controller';
 import { getSubjects } from './theme-filters';
 import validateFilters from './validate-filters';
 
@@ -32,6 +36,11 @@ export default function( router ) {
 				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
 				validateFilters, siteSelection, singleSite, makeNavigation, makeLayout
 			);
+			router(
+				'/design/upload/:site_id',
+				siteSelection, upload, makeNavigation, makeLayout
+			);
+			// TODO (seear): make `sites` middleware work for single-tree to allow /design/upload
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
 			router(

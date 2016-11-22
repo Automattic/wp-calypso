@@ -1,0 +1,29 @@
+.theme-upload__prompt {
+	display: block;
+	color: darken( $gray, 20 );
+}
+
+.theme-upload__instructions {
+	display: block;
+	font-style: italic;
+}
+
+.theme-upload__dropzone {
+	background-color: $gray-light;
+	border: 2px dashed $gray;
+	margin: 20px 0;
+
+	.file-picker {
+		color: darken( $gray, 20 );
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 180px;
+	}
+}
+
+.theme-upload__dropzone-icon {
+	color: $gray;
+}
+

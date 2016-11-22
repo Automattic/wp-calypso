@@ -12,6 +12,7 @@ import React from 'react';
 import SingleSiteComponent from 'my-sites/themes/single-site';
 import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
+import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 import {
@@ -54,6 +55,11 @@ function getProps( context ) {
 		search: context.query.s,
 		trackScrollPage: boundTrackScrollPage
 	};
+}
+
+export function upload( context, next ) {
+	context.primary = <Upload />;
+	next();
 }
 
 export function singleSite( context, next ) {

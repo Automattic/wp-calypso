@@ -103,6 +103,7 @@ var webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/empty-component' ), // Depends on BOM and interactions don't work without JS
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/thanks-modal$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/themes-site-selector-modal$/, 'components/empty-component' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/theme-upload$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/single-site$/, 'components/empty-component' ), // Depends on DOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/multi-site$/, 'components/empty-component' ), // Depends on DOM
 		new webpack.NormalModuleReplacementPlugin( /^state\/ui\/editor\/selectors$/, 'lodash/noop' ), // will never be called server-side
