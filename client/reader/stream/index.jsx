@@ -423,7 +423,8 @@ export default class ReaderStream extends React.Component {
 					showPostHeader: this.props.showPostHeader,
 					showFollowInHeader: this.props.showFollowInHeader,
 					handleClick: this.showFullPost,
-					showPrimaryFollowButtonOnCards: this.props.showPrimaryFollowButtonOnCards
+					showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards,
+					showSiteName: this.props.showSiteNameOnCards
 				} );
 
 		}

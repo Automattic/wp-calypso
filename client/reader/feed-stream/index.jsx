@@ -141,7 +141,7 @@ var FeedStream = React.createClass( {
 		}
 
 		return (
-			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false } showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />

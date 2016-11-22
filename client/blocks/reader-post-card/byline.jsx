@@ -27,11 +27,13 @@ class PostByline extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
 		feed: React.PropTypes.object,
-		isDiscoverPost: React.PropTypes.bool
+		isDiscoverPost: React.PropTypes.bool,
+		showSiteName: React.PropTypes.bool
 	}
 
 	static defaultProps = {
-		isDiscoverPost: false
+		isDiscoverPost: false,
+		showSiteName: true
 	}
 
 	recordTagClick = () => {
@@ -47,7 +49,7 @@ class PostByline extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed, isDiscoverPost } = this.props;
+		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
@@ -79,14 +81,14 @@ class PostByline extends React.Component {
 							{ post.author.name }
 						</ReaderAuthorLink>
 						}
-						{ shouldDisplayAuthor && ', ' }
-						<ReaderSiteStreamLink
+						{ shouldDisplayAuthor && showSiteName && ', ' }
+						{ showSiteName && <ReaderSiteStreamLink
 							className="reader-post-card__site reader-post-card__link"
 							feedId={ feedId }
 							siteId={ siteId }
 							post={ post }>
 							{ siteName }
-						</ReaderSiteStreamLink>
+						</ReaderSiteStreamLink> }
 					</div>
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date && post.URL &&
