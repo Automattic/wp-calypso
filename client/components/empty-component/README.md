@@ -13,6 +13,3 @@ plugins: [
 ],
 ```
 In the above example, on the server build, any occurrences of `/my-sites/themes/thanks-modal` will be replaced with the empty component.
-	
-NOTE: You will also need to add the replaced component to the list of ignored modules in the [SSR pragma checker](/server/pragma-checker/index.js).
-	

@@ -11,7 +11,6 @@ var webpack = require( 'webpack' ),
 /**
  * Internal dependencies
  */
-var	PragmaCheckPlugin = require( 'server/pragma-checker' );
 var config = require( 'config' );
 
 /**
@@ -111,10 +110,6 @@ var webpackConfig = {
 	],
 	externals: getExternals()
 };
-
-if ( process.env.CALYPSO_ENV === 'development' || process.env.CALYPSO_ENV === 'test' ) {
-	webpackConfig.plugins.push( new PragmaCheckPlugin );
-}
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
