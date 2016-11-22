@@ -24,8 +24,8 @@
  .is-reader-page .search-stream__recommendation-list-item {
 	 flex-basis: 30%;
 	 flex-grow: 0.5;
-	 margin-right: 45px; // TODO this isn't right
-	 padding-bottom: 10px; // TODO neither is this
+	 margin-right: 45px;
+	 padding-bottom: 10px;
 	 display: flex;
 	 list-style-type: none;
 	 border-top: 1px solid lighten( $gray, 20% );
