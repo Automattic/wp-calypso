@@ -61,12 +61,23 @@ function refreshCardFactory( post ) {
 
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
-const DEFAULT_ITEMS_BETWEEN_RECS = 4;
+const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
+const MAX_DISTANCE_BETWEEN_RECS = 49; // page size is 7, so 7 pages
 const RECS_PER_BLOCK = 2;
 
 function getDistanceBetweenRecs() {
+	// the distance between recs changes based on how many subscriptions the user has.
+	// We cap it at MAX_DISTANCE_BETWEEN_RECS.
+	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
+	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
+	// become a common user of the reader.
 	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
-	return Math.max( totalSubs, DEFAULT_ITEMS_BETWEEN_RECS );
+	return Math.min(
+		MAX_DISTANCE_BETWEEN_RECS,
+		Math.max(
+			( Math.log( totalSubs ) * Math.LOG2E * 5 ) - 6,
+			MIN_DISTANCE_BETWEEN_RECS )
+			);
 }
 
 function injectRecommendations( posts, recs = [] ) {
