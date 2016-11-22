@@ -27,7 +27,8 @@ class QueryTheme extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+		if ( this.props.siteId === nextProps.siteId &&
+			this.props.themeId === nextProps.themeId ) {
 			return;
 		}
 		this.request( nextProps );
