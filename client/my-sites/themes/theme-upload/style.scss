@@ -9,6 +9,7 @@
 }
 
 .theme-upload__dropzone {
+	position: relative;
 	background-color: $gray-light;
 	border: 2px dashed $gray;
 	margin: 20px 0;
