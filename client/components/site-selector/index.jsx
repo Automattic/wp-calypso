@@ -405,8 +405,8 @@ const SiteSelector = React.createClass( {
 					{ hiddenSitesCount > 0 && ! this.state.search &&
 						<span className="site-selector__hidden-sites-message">
 							{ this.translate(
-								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+								'%(hiddenSitesCount)d more hidden site.{{br/}}Use search to access it.',
+								'%(hiddenSitesCount)d more hidden sites.{{br/}}Use search to access them.',
 								{
 									count: hiddenSitesCount,
 									args: {
@@ -414,12 +414,6 @@ const SiteSelector = React.createClass( {
 									},
 									components: {
 										br: <br />,
-										a: <a
-											href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-											className="site-selector__manage-hidden-sites"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
 									}
 								}
 							) }
