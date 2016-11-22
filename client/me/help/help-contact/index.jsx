@@ -29,6 +29,7 @@ import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import { isTicketSupportEligible } from 'state/ticket-support/configuration/selectors';
+import { isRequestingTicketSupportConfiguration } from 'state/ticket-support/is-requesting/selectors';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
@@ -420,14 +421,14 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
-		const { isTicketSupportEligible } = this.props;
+		const { isRequestingTicketSupportConfiguration, isTicketSupportEligible } = this.props;
 
 		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || isTicketSupportEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
 		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
-		const showPreloadForm = ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut;
+		const showPreloadForm = ! ( olark.isOlarkReady && sitesInitialized ) && ! isRequestingTicketSupportConfiguration && ! this.props.olarkTimedOut;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -522,6 +523,7 @@ export default connect(
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
+			isRequestingTicketSupportConfiguration: isRequestingTicketSupportConfiguration( state ),
 			isTicketSupportEligible: isTicketSupportEligible( state ),
 		};
 	},
