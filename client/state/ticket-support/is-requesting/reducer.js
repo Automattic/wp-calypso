@@ -9,17 +9,10 @@ import {
 	TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
-const beginHandler = ( state ) => ( {
-	...state,
-	isRequesting: true,
-} );
+const beginHandler = () => true;
+const endHandler = () => false;
 
-const endHandler = ( state ) => ( {
-	...state,
-	isRequesting: false,
-} );
-
-const reducer = createReducer( {}, {
+const reducer = createReducer( false, {
 	[ TICKET_SUPPORT_CONFIGURATION_REQUEST ]: beginHandler,
 	[ TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS ]: endHandler,
 	[ TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE ]: endHandler,
