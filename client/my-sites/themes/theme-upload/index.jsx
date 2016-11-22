@@ -29,23 +29,21 @@ function upload( { translate } ) {
 	const uploadInstructionsText = translate(
 		"Make sure it's a single zip file, and upload it here."
 	);
+	const dropText = translate(
+		'Drop files or click here to upload'
+	);
 
 	return (
 		<div>
-			<HeaderCake onClick={ page.back }>
-				{ translate( 'Upload theme' ) }
-			</HeaderCake>
+			<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
 			<Card>
 				<span className="theme-upload__prompt">{ uploadPromptText }</span>
 				<span className="theme-upload__instructions">{ uploadInstructionsText }</span>
 				<div className="theme-upload__dropzone">
 					<DropZone onFilesDrop={ onFileSelect } />
-					<FilePicker accept="application/zip"
-								onPick={ onFileSelect } >
+					<FilePicker accept="application/zip" onPick={ onFileSelect } >
 						<Gridicon className="theme-upload__dropzone-icon" icon="cloud-upload" size={ 48 } />
-						<span className="theme-upload__dropzone-text">
-							{ translate( 'Drop files or click here to upload' ) }
-						</span>
+						<span className="theme-upload__dropzone-text">{ dropText }</span>
 					</FilePicker>
 				</div>
 			</Card>
