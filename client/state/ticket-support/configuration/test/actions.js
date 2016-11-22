@@ -24,7 +24,7 @@ import { dummyConfiguration, dummyError } from './test-data';
 import { useNock } from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'ticket-support actions', () => {
+describe( 'ticket-support/configuration actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 

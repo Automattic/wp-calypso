@@ -13,7 +13,7 @@ import {
 	TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-describe( 'ticketSupport reducer', () => {
+describe( 'ticket-support/configuration reducer', () => {
 	describe( '#TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS', () => {
 		it( 'should default to null', () => {
 			const defaultState = reducer( undefined, {} );
