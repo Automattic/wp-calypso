@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import url from 'url';
-import localize from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -49,13 +49,13 @@ class FeedStream extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.feedId !== this.props.feedId ) {
-			this.updateState();
+			this.updateState( nextProps );
 		}
 	}
 
-	getState = () => {
-		const feed = this.getFeed(),
-			site = this.getSite( feed ),
+	getState = ( props = this.props ) => {
+		const feed = this.getFeed( props ),
+			site = this.getSite( props ),
 			title = this.getTitle( feed, site );
 
 		return {
@@ -103,18 +103,18 @@ class FeedStream extends React.Component {
 		return title;
 	}
 
-	getFeed = () => {
-		const feed = FeedStore.get( this.props.feedId );
+	getFeed = ( props = this.props ) => {
+		const feed = FeedStore.get( props.feedId );
 
 		if ( ! feed ) {
-			FeedStoreActions.fetch( this.props.feedId );
+			FeedStoreActions.fetch( props.feedId );
 		}
 
 		return feed;
 	}
 
-	getSite = () => {
-		const feed = FeedStore.get( this.props.feedId );
+	getSite = ( props = this.props ) => {
+		const feed = FeedStore.get( props.feedId );
 		let site;
 
 		if ( feed && feed.blog_ID ) {
@@ -128,9 +128,9 @@ class FeedStream extends React.Component {
 		return site;
 	}
 
-	updateState = () => {
-		const feed = this.getFeed(),
-			site = this.getSite(),
+	updateState = ( props = this.props ) => {
+		const feed = this.getFeed( props ),
+			site = this.getSite( props ),
 			title = this.getTitle( feed, site ),
 			newState = {};
 
@@ -169,7 +169,6 @@ class FeedStream extends React.Component {
 			</Stream>
 		);
 	}
-
 }
 
 export default localize( FeedStream );
