@@ -59,8 +59,12 @@
 		line-height: 18px;
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis;
 		flex-grow: 1;
+		position: relative;
+
+		&::after {
+			@include long-content-fade();
+		}
 
 		.taxonomy-manager__list-item.is-placeholder & {
 			color: transparent;
@@ -89,6 +93,7 @@
 			display: block;
 			color: $gray;
 			transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			min-width: 24px;
 
 			&.is-active {
 				color: $blue-medium;
