@@ -23,6 +23,7 @@ import { removePurchase } from 'state/purchases/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isOperatorsAvailable, isChatAvailable } from 'state/ui/olark/selectors';
+import olarkApi from 'lib/olark-api';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
 import analytics from 'lib/analytics';
@@ -59,15 +60,18 @@ const RemovePurchase = React.createClass( {
 	},
 
 	componentWillMount() {
-		olarkEvents.on( 'api.chat.onBeginConversation', this.recordChatStartedEvent );
+		olarkEvents.on( 'api.chat.onBeginConversation', this.chatStarted );
 	},
 
 	componentWillUnmount() {
-		olarkEvents.off( 'api.chat.onBeginConversation', this.recordChatStartedEvent );
+		olarkEvents.off( 'api.chat.onBeginConversation', this.chatStarted );
 	},
 
-	recordChatStartedEvent: () => {
+	chatStarted: () => {
 		this.recordChatEvent( 'calypso_precancellation_chat_begin' );
+		olarkApi( 'api.chat.sendNotificationToOperator', {
+			body: 'Context: Precancellation'
+		} );
 	},
 
 	recordChatEvent( eventAction ) {
