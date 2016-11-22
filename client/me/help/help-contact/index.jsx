@@ -419,7 +419,9 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation, sitesInitialized, isSubmitting, isTicketSupportEligible } = this.state;
+		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const { isTicketSupportEligible } = this.props;
+
 		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || isTicketSupportEligible );
