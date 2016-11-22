@@ -20,7 +20,7 @@ import useMockery from 'test/helpers/use-mockery';
 import {
 	incrementThemesPage,
 	query,
-	receiveThemes,
+	legacyReceiveThemes,
 	receiveServerError
 } from 'state/themes/actions';
 
@@ -111,7 +111,7 @@ describe( 'logged-out', () => {
 		it( 'renders without error when themes are present', () => {
 			this.store.dispatch( query( this.queryParams ) );
 			this.store.dispatch( incrementThemesPage( false ) );
-			this.store.dispatch( receiveThemes( { themes: this.themes }, false, this.queryParams ) );
+			this.store.dispatch( legacyReceiveThemes( { themes: this.themes }, false, this.queryParams ) );
 
 			let markup;
 			assert.doesNotThrow( () => {
