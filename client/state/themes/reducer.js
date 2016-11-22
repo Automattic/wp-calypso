@@ -169,7 +169,6 @@ export const queries = ( () => {
 			[ siteId ]: nextManager
 		};
 	}
-	/* eslint-disable no-shadow */
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
@@ -190,7 +189,6 @@ export const queries = ( () => {
 			} );
 		}
 	} );
-	/* eslint-enable no-shadow */
 } )();
 
 export default combineReducers( {
