@@ -171,6 +171,7 @@ a.notice__action {
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
+	background: lighten( $gray, 28 );
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;
