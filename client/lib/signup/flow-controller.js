@@ -81,13 +81,12 @@ assign( SignupFlowController.prototype, {
 
 	_assertFlowHasValidDependencies: function() {
 		return every( pick( steps, this._flow.steps ), function( step ) {
-			var dependenciesNotProvided;
 			if ( ! step.dependencies ) {
 				return true;
 			}
 
 			const dependenciesFound = pick( SignupDependencyStore.get(), step.dependencies );
-			dependenciesNotProvided = difference( step.dependencies, keys( dependenciesFound ), this._getFlowProvidesDependencies() );
+			const dependenciesNotProvided = difference( step.dependencies, keys( dependenciesFound ), this._getFlowProvidesDependencies() );
 			if ( ! isEmpty( dependenciesNotProvided ) ) {
 
 				if ( this._flowName !== flows.defaultFlowName ) {
