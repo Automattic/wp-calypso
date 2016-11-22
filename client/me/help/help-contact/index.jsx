@@ -28,6 +28,7 @@ import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
+import { isTicketSupportEligible } from 'state/ticket-support/configuration/selectors';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
@@ -418,10 +419,10 @@ const HelpContact = React.createClass( {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const { olark, confirmation, sitesInitialized, isSubmitting, isTicketSupportEligible } = this.state;
 		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
-		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
+		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || isTicketSupportEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
 		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
 		const showPreloadForm = ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut;
@@ -518,7 +519,8 @@ export default connect(
 		return {
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatAvailable: isHappychatAvailable( state )
+			isHappychatAvailable: isHappychatAvailable( state ),
+			isTicketSupportEligible: isTicketSupportEligible( state ),
 		};
 	},
 	{ connectHappychat, openHappychat, sendHappychatMessage }
