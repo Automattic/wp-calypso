@@ -63,7 +63,7 @@ const webpackConfig = {
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.web.js', '.web.jsx', '.js', '.jsx' ],
 		root: [ path.join( __dirname, 'client' ) ],
 		modulesDirectories: [ 'node_modules' ],
 		alias: {
