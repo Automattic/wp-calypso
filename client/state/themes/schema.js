@@ -81,6 +81,7 @@ export const activeThemesSchema = {
 	type: 'object',
 	patternProperties: {
 		'^(wpcom|\\d+)$': {
+			description: 'Theme ID',
 			type: 'string'
 		}
 	}

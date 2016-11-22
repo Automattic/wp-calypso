@@ -34,6 +34,15 @@ import { queriesSchema, activeThemesSchema } from './schema';
 import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
 
+/**
+ * Returns the updated theme active theme request state after an action has been
+ * dispatched. The state reflects a mapping of site ID to theme ID where
+ * theme ID represents active theme for the site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
 export const activeThemes = createReducer( {}, {
 	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
 		...state,
@@ -47,15 +56,15 @@ export const activeThemes = createReducer( {}, {
  );
 
 /**
- * Returns the updated theme active theme request state after an action has been
- * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
- * boolean reflecting whether a request for active theme is in progress.
+ * Returns the updated active theme request state after an action has been
+ * dispatched. The state reflects a mapping of site ID to a boolean
+ * reflecting whether a request for active theme is in progress.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function activeThemeRequest( state = {}, action ) {
+export function activeThemeRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case ACTIVE_THEME_REQUEST:
 		case ACTIVE_THEME_REQUEST_SUCCESS:
@@ -160,7 +169,7 @@ export const queries = ( () => {
 			[ siteId ]: nextManager
 		};
 	}
-
+	/* eslint-disable no-shadow */
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
@@ -181,6 +190,7 @@ export const queries = ( () => {
 			} );
 		}
 	} );
+	/* eslint-enable no-shadow */
 } )();
 
 export default combineReducers( {
