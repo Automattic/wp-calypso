@@ -1,0 +1,132 @@
+.reader-feed-header {
+	margin: 0 auto;
+	margin-bottom: 40px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 20px;
+	}
+
+	.site__content {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+	}
+
+	.site .site-icon {
+		height: 96px !important;
+		margin-right: 0;
+		width: 96px !important;
+
+		&.is-blank {
+			display: none;
+		}
+	}
+
+	.site__info {
+		margin-top: 20px;
+		width: 100%;
+	}
+
+	.site__title {
+		font-family: $serif;
+		font-size: 21px;
+		font-weight: 600;
+		overflow: inherit;
+		text-align: center;
+		white-space: normal;
+
+		&::after {
+			background: none;
+			content:'';
+		}
+	}
+
+	.site__domain {
+		display: none;
+	}
+
+	.reader-feed-header__details {
+		font-size: 14px;
+		text-align: center;
+	}
+
+	.reader-feed-header__follow {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		margin-bottom: 15px;
+		position: static;
+		z-index: 1;
+
+		@include breakpoint( ">960px" ) {
+			justify-content: flex-end;
+			margin-bottom: 0;
+			position: relative;
+				top: 17px;
+		}
+	}
+
+	.reader-feed-header__follow-count {
+		color: lighten( $gray, 10% );
+		font-size: 14px;
+	}
+
+	.reader-feed-header__follow-button .follow-button {
+		margin-left: 20px;
+		padding: 0;
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+
+		.follow-button__label {
+			color: $blue-wordpress;
+
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
+
+		&.is-following {
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
+	}
+}
+
+.reader-feed-header .card {
+	background: none;
+	box-shadow: none;
+	padding: 0;
+
+	@include breakpoint( "<660px" ) {
+		box-sizing: border-box;
+		padding: 16px;
+	}
+
+	&.reader-feed-header__site {
+		margin: 0 auto;
+		width: 100%;
+	}
+}
+
+// Loading placeholder
+.reader-feed-header.is-placeholder {
+	pointer-events: none;
+	user-select: none;
+
+	.site__title,
+	.site__domain,
+	.feed-header__description,
+	.feed-header__follow-count {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
