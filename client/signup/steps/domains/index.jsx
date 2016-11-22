@@ -24,6 +24,12 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	signupUtils = require( 'signup/utils' ),
 	abtest = require( 'lib/abtest' ).abtest;
 
+/**
+ * Debug
+ */
+import debugModule from 'debug';
+const debug = debugModule( 'calypso:signup' );
+
 import Notice from 'components/notice';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
@@ -124,6 +130,10 @@ const DomainsStep = React.createClass( {
 					productSlug: suggestion.product_slug
 				} )
 				: undefined;
+
+		debug( 'Suggestion', suggestion );
+
+		registerDomainAnalytics.recordEvent( 'submitDomainStepSelection', suggestion, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
