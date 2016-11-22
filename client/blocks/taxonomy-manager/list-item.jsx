@@ -77,14 +77,17 @@ class TaxonomyManagerListItem extends Component {
 					}
 				</span>
 				{ ! isUndefined( postCount ) && <Count count={ postCount } /> }
-				<Gridicon
-					icon="ellipsis"
-					className={ classNames( {
-						'taxonomy-manager__list-item-toggle': true,
-						'is-active': this.state.popoverMenuOpen
-					} ) }
+				<span
+					className="taxonomy-manager__action-wrapper"
 					onClick={ this.togglePopoverMenu }
-					ref="popoverMenuButton" />
+					ref="popoverMenuButton">
+					<Gridicon
+						icon="ellipsis"
+						className={ classNames( {
+							'taxonomy-manager__list-item-toggle': true,
+							'is-active': this.state.popoverMenuOpen
+						} ) } />
+				</span>
 				<PopoverMenu
 					isVisible={ this.state.popoverMenuOpen }
 					onClose={ this.togglePopoverMenu }

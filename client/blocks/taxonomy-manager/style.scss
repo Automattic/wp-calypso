@@ -38,14 +38,17 @@
 	cursor: pointer;
 }
 
-.taxonomy-manager__list-item-toggle {
-	color: $gray;
+.taxonomy-manager__action-wrapper {
 	cursor: pointer;
 	font-size: 24px;
-	margin: 17px 28px;
+	padding: 10px 28px;
 	position: absolute;
 		right: 0;
 		top: 0;
+}
+
+.taxonomy-manager__list-item-toggle {
+	color: $gray;
 	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 	&.is-active {
