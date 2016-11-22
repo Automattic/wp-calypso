@@ -181,7 +181,8 @@ const SearchStream = React.createClass( {
 	},
 
 	cardFactory() {
-		return SearchCardAdapter( ! this.props.query );
+		const isRecommendations = ! this.props.query;
+		return SearchCardAdapter( isRecommendations );
 	},
 
 	render() {
