@@ -16,7 +16,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'index', function() {
 	let React,
 		ReactDom,
-		ReactInjection,
+		ReactClass,
 		DomainList,
 		TestUtils,
 		noticeTypes,
@@ -52,8 +52,8 @@ describe( 'index', function() {
 
 		noticeTypes = require( '../constants' );
 
-		ReactInjection = require( 'react/lib/ReactInjection' );
-		ReactInjection.Class.injectMixin( require( 'i18n-calypso' ).mixin );
+		ReactClass = require( 'react/lib/ReactClass' );
+		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
 
 		DomainList = require( '../' ).List;
 	} );
