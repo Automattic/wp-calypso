@@ -151,7 +151,7 @@ class SiteStream extends React.Component {
 		}
 
 		return (
-			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
+			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false } showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ site } feed={ this.state.feed } />
