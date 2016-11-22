@@ -33,7 +33,8 @@ export default class RefreshPostCard extends React.Component {
 		showPrimaryFollowButton: PropTypes.bool,
 		originalPost: PropTypes.object, // used for Discover only
 		showEntireExcerpt: PropTypes.bool,
-		useBetterExcerpt: PropTypes.bool
+		useBetterExcerpt: PropTypes.bool,
+		showSiteName: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -101,7 +102,8 @@ export default class RefreshPostCard extends React.Component {
 			showPrimaryFollowButton,
 			isSelected,
 			showEntireExcerpt,
-			useBetterExcerpt
+			useBetterExcerpt,
+			showSiteName
 		} = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
@@ -139,7 +141,7 @@ export default class RefreshPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				<PostByline post={ post } site={ site } feed={ feed } />
+				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }
