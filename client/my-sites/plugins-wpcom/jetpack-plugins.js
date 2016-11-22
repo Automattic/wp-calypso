@@ -111,7 +111,7 @@ const jetpackPlugins = ( translate = identity ) => [
 			},
 			{
 				name: translate( 'Extended Widgets' ),
-				link: 'https://support.wordpress.com/widgets-sidebars/',
+				link: 'https://support.wordpress.com/category/widgets-sidebars/',
 				description: translate( 'Eventbrite, Flickr, Google Calendar, and more.' ),
 				plan: 'standard',
 			},
@@ -123,7 +123,7 @@ const jetpackPlugins = ( translate = identity ) => [
 			},
 			{
 				name: translate( 'Photon CDN' ),
-				link: 'https://support.wordpress.com/photon/',
+				link: 'https://jetpack.com/support/photon/',
 				description: translate( 'Faster image loading and editing.' ),
 				plan: 'standard',
 			},
