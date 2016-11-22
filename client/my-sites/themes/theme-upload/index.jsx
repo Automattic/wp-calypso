@@ -20,6 +20,16 @@ const debug = debugFactory( 'calypso:themes:theme-upload' );
 const onFileSelect = function( files ) {
 	// files can be FileList object or array
 	debug( 'Chosen files:', files );
+	if ( files.length !== 1 ) {
+		debug( 'multiple files not allowed' );
+		return;
+	}
+	const file = files[ 0 ] || files.item( 0 );
+	if ( file.type !== 'application/zip' ) {
+		debug( 'file must be a zip' );
+		return;
+	}
+	debug( 'zip file:', file );
 };
 
 function upload( { translate } ) {
