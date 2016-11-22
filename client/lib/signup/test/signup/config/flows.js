@@ -6,13 +6,13 @@ var flows = {
 
 	flow_with_async: {
 		steps: [ 'userCreation', 'asyncStep' ],
-		destination: function( dependencies ) {
-			return '/checkout/' + dependencies.siteSlug;
-		}
 	},
 
 	flow_with_dependencies: {
-		steps: [ 'siteCreation', 'userCreation' ]
+		steps: [ 'siteCreation', 'userCreation' ],
+		destination: function( dependencies ) {
+			return '/checkout/' + dependencies.siteSlug;
+		}
 	},
 
 	invalid_flow_with_dependencies: {
