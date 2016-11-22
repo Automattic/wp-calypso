@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,7 +14,10 @@ var PayButton = require( './pay-button' ),
 	analytics = require( 'lib/analytics' ),
 	cartValues = require( 'lib/cart-values' );
 
+import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
+import PaymentChatButton from './payment-chat-button';
+import config from 'config';
 
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
@@ -30,6 +34,14 @@ var CreditCardPaymentBox = React.createClass( {
 
 	content: function() {
 		var cart = this.props.cart;
+
+		const showPaymentChatButton =
+			config.isEnabled( 'upgrades/presale-chat' ) &&
+			abtest( 'presaleChatButton' ) === 'showChatButton';
+
+		const paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
+			'credit-card-payment-box__switch-link-left': showPaymentChatButton
+		} );
 
 		return (
 			<form autoComplete="off" onSubmit={ this.props.onSubmit }>
@@ -50,8 +62,16 @@ var CreditCardPaymentBox = React.createClass( {
 						transactionStep={ this.props.transactionStep } />
 
 					{ cartValues.isPayPalExpressEnabled( cart )
-						? <a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
+						? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
 						: null
+					}
+
+					{
+						showPaymentChatButton &&
+						<PaymentChatButton
+							paymentType="credits"
+							cart={ this.props.cart }
+							transactionStep={ this.props.transactionStep } />
 					}
 				</div>
 			</form>

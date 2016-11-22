@@ -818,6 +818,29 @@
 	}
 }
 
+.credit-card-payment-box__switch-link-left {
+	@include breakpoint( ">960px" ) {
+		float: left;
+		padding-left: 20px
+	}
+}
+
+.checkout__payment-chat-button {
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
+
+	@include breakpoint( ">960px" ) {
+		float: right;
+	}
+}
+
+.credits-payment-box .checkout__payment-chat-button {
+	@include breakpoint( ">660px" ) {
+		float: right;
+	}
+}
+
 .checkout__domain-details-form-submit-button {
 	clear: both;
 }
