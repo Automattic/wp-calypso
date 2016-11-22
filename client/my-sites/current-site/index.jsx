@@ -142,6 +142,10 @@ const CurrentSite = React.createClass( {
 			site = this.props.sites.getPrimary();
 		}
 
+		if ( ! site ) {
+			return null;
+		}
+
 		return (
 			<Card className="current-site">
 				{ this.props.siteCount > 1 &&
