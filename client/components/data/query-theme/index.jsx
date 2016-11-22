@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { Component, PropTypes } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
 
 /**
@@ -18,7 +17,6 @@ class QueryTheme extends Component {
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ).isRequired,
 		themeId: PropTypes.string.isRequired,
-		query: PropTypes.object,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestTheme: PropTypes.func.isRequired,
@@ -29,8 +27,7 @@ class QueryTheme extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				shallowEqual( this.props.query, nextProps.query ) ) {
+		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}
 		this.request( nextProps );

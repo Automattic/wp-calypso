@@ -1,7 +1,7 @@
-Query Themes
+Query Theme
 ============
 
-Query Themes is a React component used in managing the fetching of themes queries.
+Query Theme is a React component used in managing the fetching of individual theme objects.
 
 ## Usage
 
@@ -12,16 +12,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QueryTheme from 'components/data/query-theme';
 import Theme from 'components/theme';
-import { getThemeById } from 'state/themes/selectors';
+import { getTheme } from 'state/themes/selectors';
 
-function MyTheme( { themes } ) {
+function MyTheme( { theme } ) {
 	return (
 		<div>
 			<QueryTheme
 				siteId={ 3584907 }
 				themeId={ 'twentysixteen' } />
 				<Theme
-					key={ theme.id }
 					theme={ theme } />
 			} }
 		</div>
@@ -29,8 +28,8 @@ function MyTheme( { themes } ) {
 }
 
 export default connect(
-	( state, { themeId } ) => ( {
-		theme: getThemeById( state, themeId )
+	( state ) => ( {
+		theme: getTheme( state, 3584907, 'twentysixteen' )
 	} )
 )( MyTheme );
 ```
