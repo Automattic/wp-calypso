@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 export function getCurrentTheme( state, siteId ) {
 	return state.themes.currentTheme.get( 'currentThemes' ).get( siteId );

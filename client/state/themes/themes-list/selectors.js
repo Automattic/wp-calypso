@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 export function isFetchingNextPage( state ) {
 	return state.themes.themesList.getIn( [ 'queryState', 'isFetchingNextPage' ] );

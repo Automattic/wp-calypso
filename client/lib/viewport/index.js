@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 // Determine whether a user is viewing calypso from a device within a
 // particular mobile-first responsive breakpoint, matching our existing media

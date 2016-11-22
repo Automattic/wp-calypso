@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 import curry from 'lodash/curry';
 import get from 'lodash/get';

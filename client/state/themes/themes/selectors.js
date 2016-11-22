@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 export function getThemes( state ) {
 	return state.themes.themes.get( 'themes' ).toJS();

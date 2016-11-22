@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 /**
  * Returns the current layout focus area

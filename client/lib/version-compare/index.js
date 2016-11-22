@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 /*eslint-disable */
 
 /**

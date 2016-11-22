@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 export const USER_SETTING_KEY = 'calypso_preferences';
 

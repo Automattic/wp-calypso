@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 import { isEnabled } from 'config';
 

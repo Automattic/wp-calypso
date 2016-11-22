@@ -1,4 +1,4 @@
-/** @ssr-ready **/
+
 
 /**
 * Functions for working with theme search filters. The filter syntax is
