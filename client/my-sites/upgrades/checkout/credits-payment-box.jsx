@@ -10,11 +10,13 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
-import CartCoupon from 'my-sites/upgrades/cart/cart-coupon'
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
+import PaymentChatButton from './payment-chat-button';
+import config from 'config';
 
 var CreditsPaymentBox = React.createClass( {
 	content: function() {
-		var cart = this.props.cart;
+		const { cart, transactionStep } = this.props;
 
 		return (
 			<form onSubmit={ this.props.onSubmit }>
@@ -43,7 +45,14 @@ var CreditsPaymentBox = React.createClass( {
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep } />
+						transactionStep={ transactionStep } />
+					{
+						config.isEnabled( 'upgrades/presale-chat' ) &&
+						<PaymentChatButton
+							paymentType="credits"
+							cart={ cart }
+							transactionStep={ transactionStep } />
+					}
 				</div>
 			</form>
 		);
