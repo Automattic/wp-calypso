@@ -43,6 +43,10 @@ export default function createBetterExcerpt( post ) {
 		return post;
 	}
 
+	// Create standard excerpt for Discover
+	post.excerpt_no_html = formatExcerpt( post.excerpt );
+
+	// Create better excerpt from the main post content
 	post.better_excerpt_no_html = post.better_excerpt = formatExcerpt( post.content );
 
 	// also make a shorter excerpt...
