@@ -166,7 +166,7 @@ assign( SignupFlowController.prototype, {
 			currentSteps = this._flow.steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
-				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+				_step => ( -1 !== currentSteps.indexOf( _step.stepName ) ),
 			),
 			allStepsSubmitted = reject( signupProgress, {
 				status: 'in-progress'
