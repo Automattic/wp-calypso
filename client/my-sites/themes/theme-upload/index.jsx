@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
@@ -53,7 +54,7 @@ class Upload extends React.Component {
 		);
 
 		return (
-			<div>
+			<Main>
 				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
 					<span className="theme-upload__prompt">{ uploadPromptText }</span>
@@ -69,7 +70,7 @@ class Upload extends React.Component {
 						</FilePicker>
 					</div>
 				</Card>
-			</div>
+			</Main>
 		);
 	}
 }
