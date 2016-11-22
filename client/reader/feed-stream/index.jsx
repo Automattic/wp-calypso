@@ -1,10 +1,12 @@
-var React = require( 'react' ),
+const React = require( 'react' ),
 	url = require( 'url' );
 
-var EmptyContent = require( './empty' ),
+const config = require( 'config' ),
+	EmptyContent = require( './empty' ),
 	DocumentHead = require( 'components/data/document-head' ),
 	Stream = require( 'reader/stream' ),
-	FeedHeader = require( 'blocks/reader-feed-header' ),
+	OldFeedHeader = require( 'reader/feed-header' ),
+	RefreshFeedHeader = require( 'blocks/reader-feed-header' ),
 	FeedStore = require( 'lib/feed-store' ),
 	FeedStoreActions = require( 'lib/feed-store/actions' ),
 	FeedStoreState = require( 'lib/feed-store/constants' ).state,
@@ -13,7 +15,7 @@ var EmptyContent = require( './empty' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state;
 
-var FeedStream = React.createClass( {
+const FeedStream = React.createClass( {
 
 	getDefaultProps: function() {
 		return { showBack: true, className: 'is-site-stream' };
@@ -139,6 +141,8 @@ var FeedStream = React.createClass( {
 		if ( feed && feed.state === FeedStoreState.ERROR ) {
 			return <FeedError sidebarTitle={ this.state.title } />;
 		}
+
+		const FeedHeader = config.isEnabled( 'reader/refresh/stream' ) ? RefreshFeedHeader : OldFeedHeader;
 
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>

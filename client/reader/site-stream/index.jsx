@@ -9,8 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import FeedHeader from 'blocks/reader-feed-header';
+import RefreshFeedHeader from 'blocks/reader-feed-header';
+import OldFeedHeader from 'reader/feed-header';
 import FeedFeatured from './featured';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
@@ -150,6 +152,8 @@ class SiteStream extends React.Component {
 			setTimeout( () => FeedStreamStoreActions.fetchNextPage( featuredStore.id ), 0 ); // timeout to prevent invariant violations
 			featuredContent = ( <FeedFeatured store={ featuredStore } /> );
 		}
+
+		const FeedHeader = config.isEnabled( 'reader/refresh/stream' ) ? RefreshFeedHeader : OldFeedHeader;
 
 		return (
 			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
