@@ -42,8 +42,11 @@ function upload( { translate } ) {
 				<div className="theme-upload__dropzone">
 					<DropZone onFilesDrop={ onFileSelect } />
 					<FilePicker accept="application/zip" onPick={ onFileSelect } >
-						<Gridicon className="theme-upload__dropzone-icon" icon="cloud-upload" size={ 48 } />
-						<span className="theme-upload__dropzone-text">{ dropText }</span>
+						<Gridicon
+							className="theme-upload__dropzone-icon"
+							icon="cloud-upload"
+							size={ 48 } />
+						{ dropText }
 					</FilePicker>
 				</div>
 			</Card>
