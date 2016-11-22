@@ -21,17 +21,16 @@ const getDomainTypeText = function( domain ) {
 	}
 };
 
-/*
- * TODO: Finish :)
- * - WordPress.com subdomains have already been stripped of TLD.
- * - Might need to account for mapped domains.
- */
 const getDomainTypeTextFromSearch = function( suggestion ) {
-	if ( suggestion.is_free && endsWith( suggestion.domain_name, '.blog' ) ) {
-		return 'DotBlog Subdomain';
+	if ( suggestion.is_free ) {
+		if ( endsWith( suggestion.domain_name, '.blog' ) ) {
+			return 'dotblog_subdomain';
+		}
+		return 'wpcom_subdomain';
 	}
-
-	return '';
+	else {
+		return 'domain_reg';
+	}
 };
 
 const EVENTS = {
@@ -152,7 +151,6 @@ const EVENTS = {
 
 		submitDomainStepSelection( suggestion, section ) {
 			const domainType = getDomainTypeTextFromSearch( suggestion );
-
 			analytics.ga.recordEvent(
 				'Domain Search',
 				`Submitted Domain Selection for a ${ domainType } on a Domain Registration`,
