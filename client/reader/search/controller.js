@@ -29,11 +29,12 @@ export default {
 		let store;
 		if ( searchSlug ) {
 			store = feedStreamFactory( 'search:' + searchSlug );
+			ensureStoreLoading( store, context );
 		} else if ( isRefresh ) {
 			// TODO confirm with greg which feed to actually use...
-			store = feedStreamFactory( 'cold_posts_1w' );
+			store = feedStreamFactory( 'recommendations_posts' );
+			ensureStoreLoading( store, context );
 		}
-		ensureStoreLoading( store, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		if ( searchSlug ) {
