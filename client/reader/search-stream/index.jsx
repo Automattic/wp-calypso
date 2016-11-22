@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { trim, sampleSize } from 'lodash';
+import { initial, flatMap, trim, sampleSize } from 'lodash';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
@@ -34,10 +34,10 @@ function RecommendedPosts( { post, site, } ) {
 	}
 
 	return (
-		<li className="search-stream__recommendation-list-item">
+		<div className="search-stream__recommendation-list-item">
 			<RelatedPostCard key={ post.global_ID } post={ post } site={ site }
 				lineClamp={ 3 } />
-		</li>
+		</div>
 	);
 }
 
@@ -197,12 +197,8 @@ const SearchStream = React.createClass( {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
-		let sugList = this.state.suggestions.map( ( query ) => <Suggestion suggestion={ query } /> );
-		sugList = sugList
-			.slice( 1 )
-			.reduce( function( xs, x ) {
-				return xs.concat( [ ', ', x ] );
-			}, [ sugList[ 0 ] ] );
+		const sugList = initial( flatMap( this.state.suggestions, query =>
+			[ <Suggestion suggestion={ query } />, ', ' ] ) );
 
 		return (
 			<Stream { ...this.props } store={ store }
