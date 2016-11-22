@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import isRequesting from './is-requsting/reducer';
+import isRequesting from './is-requesting/reducer';
 import configuration from './configuration/reducer';
 
 export default combineReducers( {
