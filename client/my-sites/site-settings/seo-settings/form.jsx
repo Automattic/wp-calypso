@@ -372,6 +372,7 @@ export const SeoForm = React.createClass( {
 			jetpackVersionSupportsSeo,
 		} = this.props;
 		const {
+			domain = '',
 			slug = '',
 			settings: {
 				blog_public = 1
@@ -397,7 +398,7 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const siteUrl = `https://${ slug }/`;
+		const siteUrl = `https://${ domain }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
@@ -476,7 +477,7 @@ export const SeoForm = React.createClass( {
 							'SEO Tools module is disabled in Jetpack.'
 						) }
 					>
-						<NoticeAction href={ '//' + slug + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+						<NoticeAction href={ '//' + domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
 							{ this.translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -595,7 +596,7 @@ export const SeoForm = React.createClass( {
 								'Site Verification Services are disabled in Jetpack.'
 							) }
 						>
-							<NoticeAction href={ '//' + slug + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+							<NoticeAction href={ '//' + domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
 								{ this.translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
