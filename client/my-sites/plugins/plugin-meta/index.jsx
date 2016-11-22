@@ -5,6 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -58,6 +59,9 @@ export default React.createClass( {
 	},
 
 	hasBusinessPlan() {
+		if ( ! this.props.selectedSite ) {
+			return false;
+		}
 		return isBusiness( this.props.selectedSite.plan ) || isEnterprise( this.props.selectedSite.plan );
 	},
 
@@ -308,7 +312,7 @@ export default React.createClass( {
 						</div>
 						{ this.renderActions() }
 					</div>
-					{ ! this.props.isMock && this.props.selectedSite.jetpack &&
+					{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
 						<PluginInformation
 							plugin={ this.props.plugin }
 							isPlaceholder={ this.props.isPlaceholder }
@@ -320,11 +324,11 @@ export default React.createClass( {
 					}
 				</Card>
 
-				{ ( this.props.selectedSite.jetpack || this.hasBusinessPlan() ) &&
+				{ ( get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() ) &&
 					<div style={ { marginBottom: 16 } } />
 				}
 
-				{ ! this.props.selectedSite.jetpack && ! this.hasBusinessPlan() &&
+				{ ! get( this.props.selectedSite, 'jetpack' ) && ! this.hasBusinessPlan() &&
 					<div className="plugin-meta__upgrade_nudge">
 						<UpgradeNudge
 							feature={ FEATURE_UPLOAD_PLUGINS }
