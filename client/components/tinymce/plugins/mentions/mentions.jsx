@@ -53,6 +53,7 @@ export class Mentions extends React.Component {
 		const { editor } = this.props;
 		const position = this.getPosition();
 
+		editor.on( 'keydown', this.onKeyDown );
 		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'click', this.hidePopover );
 
@@ -82,6 +83,7 @@ export class Mentions extends React.Component {
 	componentWillUnmount() {
 		const { editor } = this.props;
 
+		editor.off( 'keydown', this.onKeyDown );
 		editor.off( 'keyup', this.onKeyUp );
 		editor.off( 'click', this.hidePopover );
 	}
@@ -134,20 +136,43 @@ export class Mentions extends React.Component {
 		return null;
 	}
 
-	onKeyUp = ( { keyCode } ) => {
-		if ( includes( [ VK.ENTER, VK.SPACEBAR, VK.UP, VK.DOWN, 27 /* ESCAPE */ ], keyCode ) ) {
-			return this.hidePopover();
+	getSelectedSuggestionIndex() {
+		if ( ! this.matchingSuggestions ) {
+			return null;
 		}
 
-		const query = this.getQueryText();
+		if ( ! this.state.selectedSuggestionId ) {
+			return 0;
+		}
 
-		this.setState( {
-			showPopover: query !== null,
-			query,
-		} );
+		for ( let i = 0; i < this.matchingSuggestions.length; i++ ) {
+			if ( this.matchingSuggestions[ i ].ID === this.state.selectedSuggestionId ) {
+				return i;
+			}
+		}
+
+		return null;
 	}
 
-	handleClick = ( suggestion ) => {
+	getSuggestion = function() {
+		if ( ! this.matchingSuggestions ) {
+			return null;
+		}
+
+		if ( ! this.state.selectedSuggestionId && this.matchingSuggestions.length > 0 ) {
+			return this.matchingSuggestions[ 0 ];
+		}
+
+		for ( let i = 0; i < this.matchingSuggestions.length; i++ ) {
+			if ( this.matchingSuggestions[ i ].ID === this.state.selectedSuggestionId ) {
+				return this.matchingSuggestions[ i ];
+			}
+		}
+
+		return null;
+	}
+
+	insertSuggestion = ( suggestion ) => {
 		const { editor } = this.props;
 		const re = /@\S*/;
 		const markup = <EditorMention username={ suggestion.user_login } />;
@@ -165,6 +190,68 @@ export class Mentions extends React.Component {
 		editor.getBody().focus();
 	}
 
+	onKeyDown = ( e ) => {
+		const { keyCode } = e;
+
+		if ( includes( [ VK.DOWN, VK.UP ], keyCode ) ) {
+			const selectedIndex = this.getSelectedSuggestionIndex();
+			let nextIndex;
+
+			if ( selectedIndex !== null ) {
+				if ( keyCode === VK.DOWN ) {
+					nextIndex = selectedIndex + 1;
+
+					if ( nextIndex === this.matchingSuggestions.length ) {
+						nextIndex = 0;
+					}
+				} else {
+					nextIndex = selectedIndex - 1;
+
+					if ( nextIndex < 0 ) {
+						nextIndex = this.matchingSuggestions.length - 1;
+					}
+				}
+
+				// Cancel the cursor move.
+				e.preventDefault();
+
+				this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
+			}
+		}
+	}
+
+	onKeyUp = ( { keyCode } ) => {
+		if ( includes( [ VK.DOWN, VK.UP ], keyCode ) ) {
+			return;
+		}
+
+		if ( includes( [ VK.SPACEBAR, 27 /* ESCAPE */ ], keyCode ) ) {
+			return this.hidePopover();
+		}
+
+		if ( keyCode === VK.ENTER ) {
+			if ( ! this.state.showPopover || this.matchingSuggestions.length === 0 ) {
+				return;
+			}
+
+			const suggestion = this.getSuggestion();
+
+			if ( suggestion ) {
+				this.insertSuggestion( suggestion );
+			}
+
+			return this.hidePopover();
+		}
+
+		const query = this.getQueryText();
+
+		this.setState( {
+			showPopover: query !== null,
+			selectedSuggestionId: null,
+			query,
+		} );
+	}
+
 	hidePopover = () => {
 		this.setState( { showPopover: false } );
 	}
@@ -176,21 +263,28 @@ export class Mentions extends React.Component {
 	render() {
 		const { siteId, suggestions } = this.props;
 		const { query, showPopover, popoverContext } = this.state;
-		let matchingSuggestions = null;
+		let selectedSuggestionId;
 
-		if ( ( suggestions !== null ) && ( suggestions.length > 1 ) ) {
-			matchingSuggestions = getMatchingSuggestions( suggestions, query );
+		if ( suggestions && ( suggestions.length > 1 ) ) {
+			this.matchingSuggestions = getMatchingSuggestions( suggestions, query );
+
+			if ( this.state.selectedSuggestionId ) {
+				selectedSuggestionId = this.state.selectedSuggestionId;
+			} else if ( this.matchingSuggestions && this.matchingSuggestions.length > 0 ) {
+				selectedSuggestionId = this.matchingSuggestions[ 0 ].ID;
+			}
 		}
 
 		return (
 			<div ref={ this.setPopoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
-				{ matchingSuggestions && ( matchingSuggestions.length > 0 ) && showPopover &&
+				{ this.matchingSuggestions && ( this.matchingSuggestions.length > 0 ) && showPopover &&
 					<SuggestionList
 						query={ query }
-						suggestions={ matchingSuggestions }
+						suggestions={ this.matchingSuggestions }
+						selectedSuggestionId={ selectedSuggestionId }
 						popoverContext={ popoverContext }
-						onClick={ this.handleClick }
+						onClick={ this.insertSuggestion }
 						onClose={ this.handleClose } />
 				}
 			</div>

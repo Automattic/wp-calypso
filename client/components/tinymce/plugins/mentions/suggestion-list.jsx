@@ -10,7 +10,7 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Suggestion from './suggestion';
 
-const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick } ) =>
+const SuggestionList = ( { suggestions, selectedSuggestionId, query, popoverContext, onClose, onClick } ) =>
 	<PopoverMenu
 		className="mentions__suggestions"
 		context={ popoverContext }
@@ -22,6 +22,7 @@ const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick 
 				<PopoverMenuItem
 					className="mentions__suggestion"
 					key={ suggestion.ID }
+					isSelected={ suggestion.ID === selectedSuggestionId }
 					onClick={ onClick.bind( null, suggestion ) }>
 					<Suggestion
 						avatarUrl={ suggestion.image_URL }

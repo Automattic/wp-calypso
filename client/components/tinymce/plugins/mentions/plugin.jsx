@@ -12,6 +12,11 @@ import { Provider as ReduxProvider } from 'react-redux';
 import Mentions from './mentions';
 import { getSelectedSite } from 'state/ui/selectors';
 
+/**
+ * Module variables
+ */
+const VK = tinymce.util.VK;
+
 function mentions( editor ) {
 	const node = document.createElement( 'div' );
 	let isRendered = false;
@@ -37,6 +42,14 @@ function mentions( editor ) {
 		if ( isRendered && selectedSite && selectedSite.single_user_site ) {
 			ReactDom.unmountComponentAtNode( node );
 			isRendered = false;
+		}
+	} );
+
+	// Cancel Enter key press if the popover is visible.
+	// Doing this in the Mentions component is too late.
+	editor.on( 'keydown', ( e ) => {
+		if ( document.querySelector( '.mentions__suggestions' ) && ( e.keyCode === VK.ENTER ) ) {
+			e.preventDefault();
 		}
 	} );
 }

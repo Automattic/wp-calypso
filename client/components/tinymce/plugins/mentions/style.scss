@@ -21,6 +21,11 @@ $avatar-margin: 10px;
 .mentions__suggestion {
 	padding: 8px 10px;
 
+	&.is-selected .mentions__highlight,
+	&:hover .mentions__highlight {
+		color: white;
+	}
+
 	@include breakpoint( ">480px" ) {
 		line-height: 24px;
 	}
