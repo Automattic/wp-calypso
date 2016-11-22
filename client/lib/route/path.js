@@ -28,16 +28,18 @@ function getSiteFragment( path ) {
 
 	// There are 2 URL positions where we should look for the site fragment:
 	// last (most sections) and second-to-last (post ID is last in editor)
-	//
-	// This block will check the second-to-last segment for a site fragment or
-	// site ID, and then will check the first-to-last segment for the same.
+
+	// Check last and second-to-last piece for site slug
 	for ( let i = 2; i > 0; i-- ) {
-		let piece = pieces[ pieces.length - i ];
+		const piece = pieces[ pieces.length - i ];
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece;
 		}
+	}
 
-		piece = parseInt( piece, 10 );
+	// Check last and second-to-last piece for numeric site ID
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = parseInt( pieces[ pieces.length - i ], 10 );
 		if ( Number.isSafeInteger( piece ) ) {
 			return piece;
 		}
@@ -64,7 +66,7 @@ function addSiteFragment( path, site ) {
 }
 
 function sectionify( path ) {
-	let basePath = path.split( '?' )[ 0 ];
+	let basePath = path.split( '?' )[ 0 ];
 	const site = getSiteFragment( basePath );
 
 	if ( site ) {

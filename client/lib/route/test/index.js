@@ -248,16 +248,6 @@ describe( 'route', function() {
 				).to.be.false;
 			} );
 		} );
-		describe( 'for people paths', function() {
-			it( 'should return a site when viewing username with a dot', () => {
-				expect(
-					route.getSiteFragment( '/people/edit/example.com/user.name' )
-				).to.equal( 'example.com' );
-				expect(
-					route.getSiteFragment( '/people/edit/123456/user.name' )
-				).to.equal( 123456 );
-			} );
-		} );
 	} );
 
 	describe( 'addSiteFragment', function() {
