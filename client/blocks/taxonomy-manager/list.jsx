@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import {
+	get,
 	includes,
 	filter,
 	map,
@@ -24,7 +25,9 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import { decodeEntities } from 'lib/formatting';
 import QueryTerms from 'components/data/query-terms';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
@@ -120,9 +123,9 @@ export class TaxonomyManagerList extends Component {
 		}
 
 		const children = this.getTermChildren( item.ID );
-
-		const { onTermClick, translate } = this.props;
+		const { onTermClick, defaultTerm, translate } = this.props;
 		const itemId = item.ID;
+		const isDefault = defaultTerm === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const onClick = () => {
 			onTermClick( item );
@@ -139,7 +142,13 @@ export class TaxonomyManagerList extends Component {
 					onClick={ onClick }
 					key={ itemId }
 					className="taxonomy-manager__list-item-card">
-					<ListItem name={ name } postCount={ item.post_count } onClick={ onClick } onDelete={ onDelete } />
+					<ListItem
+						name={ name }
+						postCount={ item.post_count }
+						isDefault={ isDefault }
+						onClick={ onClick }
+						onDelete={ onDelete }
+					/>
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
@@ -180,6 +189,7 @@ export class TaxonomyManagerList extends Component {
 			{ action: 'cancel', label: translate( 'Cancel' ) },
 			{ action: 'delete', label: translate( 'OK' ), isPrimary: true },
 		];
+		const hasDefaultSetting = taxonomy === 'category';
 
 		return (
 			<div className={ classes }>
@@ -190,6 +200,7 @@ export class TaxonomyManagerList extends Component {
 						taxonomy={ taxonomy }
 						query={ { ...query, page } } />
 				) ) }
+				{ hasDefaultSetting && <QuerySiteSettings siteId={ siteId } /> }
 
 				<WindowScroller>
 					{ ( { height, scrollTop } ) => (
@@ -223,13 +234,15 @@ export class TaxonomyManagerList extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
 	const { taxonomy, query } = ownProps;
+	const siteId = getSelectedSiteId( state );
+	const siteSettings = getSiteSettings( state, siteId );
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
+		defaultTerm: taxonomy === 'category' ? get( siteSettings, [ 'default_category' ] ) : false,
 		siteId,
 		query
 	};
