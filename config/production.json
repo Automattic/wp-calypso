@@ -100,7 +100,8 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
-		"upgrades/removal-survey": true
+		"upgrades/removal-survey": true,
+		"upgrades/precancellation-chat": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "3.3",
