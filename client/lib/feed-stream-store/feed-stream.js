@@ -175,32 +175,44 @@ assign( FeedStream.prototype, {
 			post._state !== 'minimal';
 	},
 
-	selectNextItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex + 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
-			} else {
-				this.selectNextItem( nextIndex );
-			}
+	selectNextItem: function( ) {
+		if ( this.selectedIndex == null ) {
+			return;
 		}
+		let nextIndex = this.selectedIndex + 1;
+		const numPosts = this.postKeys.length;
+		while ( nextIndex < numPosts && ! this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
+			nextIndex++;
+		}
+
+		if ( nextIndex === numPosts ) {
+			return;
+		}
+
+		this.selectedIndex = nextIndex;
+		this.emitChange();
 	},
 
-	selectPrevItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex - 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
-			} else {
-				this.selectPrevItem( nextIndex );
-			}
+	selectPrevItem: function() {
+		if ( ! this.selectedIndex ) {
+			return;
 		}
+		let nextIndex = this.selectedIndex - 1;
+		while ( nextIndex >= 0 && ! this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
+			nextIndex--;
+		}
+
+		this.selectedIndex = nextIndex;
+		this.emitChange();
 	},
 
 	selectItem: function( selectedIndex ) {
-		this.selectNextItem( selectedIndex - 1 );
+		if ( selectedIndex >= 0 &&
+			selectedIndex < this.postKeys.length &&
+			this._isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+			this.selectedIndex = selectedIndex;
+			this.emit( 'change' );
+		}
 	},
 
 	getLastItemWithDate: function() {

@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, noop, times } from 'lodash';
+import { defer, lastIndexOf, noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -333,40 +333,48 @@ export default class ReaderStream extends React.Component {
 
 	selectNextItem = () => {
 		const visibleIndexes = this.getVisibleItemIndexes();
+		const { items, posts } = this.state;
 
+		// This is slightly magical...
+		// When a user tries to select the "next" item, we really want to select
+		// the next item if and only if the currently selected item is at the top of the
+		// screen. If the currently selected item is off screen, we'd rather select the item
+		// at the top of the screen, rather than the strictly "next" item. This is so a user can
+		// pick an item with the keyboard shortcuts, then scroll down a bit, then hit `next` again
+		// and have it pick the item at the top of the screen, rather than the item we scrolled past
 		if ( visibleIndexes && visibleIndexes.length > 0 ) {
+			// default to the first item in the visible list. this item is likely off screen when the user
+			// is scrolled down the page
 			let index = visibleIndexes[ 0 ].index;
+
+			// walk down the list of "visible" items, looking for the first item whose top extent is on screen
 			for ( let i = 0; i < visibleIndexes.length; i++ ) {
 				const visibleIndex = visibleIndexes[ i ];
-				if ( visibleIndex.bounds.top > 0 ) {
+				// skip items whose top are off screen or are recommendation blocks
+				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
 					index = visibleIndex.index;
 					break;
 				}
 			}
-			if ( index === this.state.selectedIndex ) {
-				FeedStreamStoreActions.selectNextItem( this.props.store.id, index );
+			// find the index of the post / gap in the posts array.
+			// Start the search from the index in the items array, which has to be equal to or larger than
+			// the index in the posts array.
+			// Use lastIndexOf to walk the array from right to left
+			const indexInPosts = lastIndexOf( posts, items[ index ], index );
+			if ( indexInPosts === this.state.selectedIndex ) {
+				FeedStreamStoreActions.selectNextItem( this.props.store.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.store.id, index );
+				FeedStreamStoreActions.selectItem( this.props.store.id, indexInPosts );
 			}
 		}
 	}
 
 	selectPrevItem = () => {
-		const visibleIndexes = this.getVisibleItemIndexes();
-		if ( visibleIndexes && visibleIndexes.length > 0 ) {
-			let index = visibleIndexes[ 0 ].index;
-			for ( let i = 0; i < visibleIndexes.length; i++ ) {
-				const visibleIndex = visibleIndexes[ i ];
-				if ( visibleIndex.bounds.top < 0 ) {
-					index = visibleIndex.index;
-					break;
-				}
-			}
-			if ( index === this.state.selectedIndex ) {
-				FeedStreamStoreActions.selectPrevItem( this.props.store.id, index );
-			} else {
-				FeedStreamStoreActions.selectItem( this.props.store.id, index );
-			}
+		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
+		// currently has a selected item. Otherwise do nothing.
+		// We avoid the magic here because we expect users to enter the flow using next, not previous.
+		if ( this.state.selectedIndex > 0 ) {
+			FeedStreamStoreActions.selectPrevItem( this.props.store.id );
 		}
 	}
 
@@ -430,7 +438,13 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderPost = ( postKey, index ) => {
-		const isSelected = index === this.state.selectedIndex;
+		const selectedPostKey = this.props.store.getSelectedPost();
+		const isSelected = selectedPostKey &&
+			selectedPostKey.postId === postKey.postId &&
+			(
+				selectedPostKey.blogId === postKey.blogId ||
+				selectedPostKey.feedId === postKey.feedId
+			);
 
 		if ( postKey.isGap ) {
 			return (
