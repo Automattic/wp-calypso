@@ -27,7 +27,7 @@ var StreamHeader = React.createClass( {
 		} );
 
 		return (
-			<Card className={ classes } >
+			<Card className={ classes }>
 				{ this.props.icon ?
 				<span className="stream-header__icon">
 					{ this.props.icon }
