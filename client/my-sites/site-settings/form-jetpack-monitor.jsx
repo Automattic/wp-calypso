@@ -154,7 +154,7 @@ module.exports = protectForm( React.createClass( {
 				<Button
 					compact
 					primary
-					onClick={ this.handleSubmitForm }
+					onClick={ this.saveSettings }
 					>
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 				</Button>
