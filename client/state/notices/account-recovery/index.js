@@ -10,9 +10,6 @@ import { errorNotice } from 'state/notices/actions';
 import { dispatchError } from '../utils';
 
 import {
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
 const getUpdateErrorMessage = ( target ) => {
@@ -37,12 +34,11 @@ const getDeleteErrorMessage = ( target ) => {
 	}
 };
 
-const handlers = {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]: dispatchError(
-		translate( 'An error occurred while fetching your account recovery settings.' )
-	),
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: ( dispatch, { target } ) => dispatch( errorNotice( getUpdateErrorMessage( target ) ) ),
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: ( dispatch, { target } ) => dispatch( errorNotice( getDeleteErrorMessage( target ) ) ),
-};
+export const onAccountRecoverySettingsFetchFailed = dispatchError(
+	translate( 'An error occurred while fetching your account recovery settings.' )
+);
 
-export default handlers;
+export const onAccountRecoverySettingsUpdateFailed = ( dispatch, { target } ) => dispatch( errorNotice( getUpdateErrorMessage( target ) ) );
+
+export const onAccountRecoverySettingsDeleteFailed = ( dispatch, { target } ) => dispatch( errorNotice( getDeleteErrorMessage( target ) ) );
+
