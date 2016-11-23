@@ -112,6 +112,17 @@
 	}
 }
 
+// Refresh Feed and Site Stream
+.is-reader-page .card.header-cake {
+
+	@include breakpoint( ">960px" ) {
+		background: none;
+		box-shadow: none;
+		position: relative;
+			top: 68px;
+		z-index: 2;
+	}
+}
 
 // WPcom Reblogs
 .wpcom-reblog-snapshot {
