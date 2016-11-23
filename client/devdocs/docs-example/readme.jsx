@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import request from 'superagent';
 import Remarkable from 'remarkable';
 import RemarkableReactRenderer from 'remarkable-react';
 
@@ -12,6 +11,7 @@ import RemarkableReactRenderer from 'remarkable-react';
 import Spinner from 'components/spinner';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
+import DocService from 'devdocs/service';
 
 class Readme extends Component {
 	constructor( props ) {
@@ -38,20 +38,20 @@ class Readme extends Component {
 		this.setState( {
 			loading: true
 		} );
-		request.get( '/devdocs/service/content' )
-			.query( { component } )
-			.then( ( { text } ) => {
+		DocService.readme( component, ( error, readmeHtml ) => {
+			if ( error ) {
 				this.setState( {
 					loading: false,
-					readmeHtml: text
+					error
 				} );
-			} )
-			.catch( ( err ) => {
-				this.setState( {
-					loading: false,
-					error: err
-				} );
+				return;
+			}
+
+			this.setState( {
+				loading: false,
+				readmeHtml
 			} );
+		} );
 	};
 
 	render() {
