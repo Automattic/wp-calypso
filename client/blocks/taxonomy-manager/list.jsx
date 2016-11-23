@@ -71,7 +71,7 @@ export class TaxonomyManagerList extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.terms !== this.props.terms ) {
-			this.termIds = map( this.props.terms, 'ID' );
+			this.termIds = map( newProps.terms, 'ID' );
 		}
 	}
 
