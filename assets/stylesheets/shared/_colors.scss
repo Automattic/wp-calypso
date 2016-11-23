@@ -5,9 +5,11 @@ $blue-medium:            #00aadc;
 $blue-dark:              #005082;
 
 // Grays
-$gray:                   #8F9EAE;
+$gray:                   #87a6bc;
 $gray-light:             lighten( $gray, 33% ); //#f3f6f8
 $gray-dark:              darken( $gray, 38% ); //#2e4453
+
+$gray-text:              #687582;
 
 // $gray color functions:
 // lighten( $gray, 10% )
