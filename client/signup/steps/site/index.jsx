@@ -119,7 +119,9 @@ module.exports = React.createClass( {
 	},
 
 	setFormState: function( state ) {
-		this.setState( { form: state } );
+		if ( this.isMounted() ) {
+			this.setState( { form: state } );
+		}
 	},
 
 	resetAnalyticsData: function() {

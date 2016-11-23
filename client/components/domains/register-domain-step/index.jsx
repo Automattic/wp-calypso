@@ -309,7 +309,9 @@ const RegisterDomainStep = React.createClass( {
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
-		this.setState( { lastQuery: searchQuery }, this.save );
+		if ( this.isMounted() ) {
+			this.setState( { lastQuery: searchQuery }, this.save );
+		}
 
 		if ( ! domain || ! this.state.loadingResults ) {
 			// the search was cleared or the domain contained only spaces
@@ -318,11 +320,13 @@ const RegisterDomainStep = React.createClass( {
 
 		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
 
-		this.setState( {
-			lastDomainSearched: domain,
-			searchResults: [],
-			lastDomainError: null
-		} );
+		if ( this.isMounted() ) {
+			this.setState( {
+				lastDomainSearched: domain,
+				searchResults: [],
+				lastDomainError: null
+			} );
+		}
 
 		async.parallel(
 			[
@@ -400,10 +404,12 @@ const RegisterDomainStep = React.createClass( {
 					return suggestion.domain_name;
 				} );
 
-				this.setState( {
-					searchResults: suggestions,
-					loadingResults: false
-				}, this.save );
+				if ( this.isMounted() ) {
+					this.setState( {
+						searchResults: suggestions,
+						loadingResults: false
+					}, this.save );
+				}
 			}
 		);
 	},
