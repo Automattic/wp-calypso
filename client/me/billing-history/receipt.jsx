@@ -104,7 +104,9 @@ module.exports = React.createClass( {
 		var transaction = this.props.transaction,
 			text;
 
-		if ( 'NOT STORED' === transaction.cc_type.toUpperCase() ) {
+		if ( transaction.pay_part === 'paypal_express' ) {
+			text = this.translate( 'PayPal' );
+		} else if ( 'NOT STORED' === transaction.cc_type.toUpperCase() ) {
 			text = this.translate( 'Credit Card' );
 		} else {
 			text = transaction.cc_type.toUpperCase() + this.translate( ' ending in ' ) + transaction.cc_num;
