@@ -1,4 +1,4 @@
-.is-group-reader .card.stream-header {
+.is-group-reader .card.list-stream__header {
 	min-height: 72px;
 	padding: 24px 144px 24px 24px;
 
@@ -21,7 +21,7 @@
 	}
 }
 
-.stream-header__icon {
+.list-stream__header-icon {
 	position: absolute;
 		top: 12px;
 		left: 12px;
@@ -45,27 +45,27 @@
 	}
 }
 
-.stream-header__title {
+.list-stream__header-title {
 	color: $gray-dark;
 	font-size: 16px;
 }
 
-.stream-header__description {
+.list-stream__header-description {
 	margin: 0;
 	color: $gray;
 }
 
-.stream-header__follow {
+.list-stream__header-follow {
 	position: absolute;
 		right: 10px;
 		top: 15px;
 }
 
-.stream-header.is-placeholder {
+.list-stream__header.is-placeholder {
 	pointer-events: none;
 	user-select: none;
 
-	.stream-header__title,
+	.list-stream__header-title,
 	.follow-button,
 	.follow-button__label {
 		color: transparent;
@@ -73,7 +73,7 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
-	.stream-header__title {
+	.list-stream__header-title {
 		margin-right: 25%;
 	}
 
@@ -83,13 +83,13 @@
 	}
 }
 
-.stream-header__edit {
+.list-stream__header-edit {
 
-	.stream-header__action-label {
+	.list-stream__header-action-label {
 		display: none;
 	}
 
-	.stream-header__action-icon svg {
+	.list-stream__header-action-icon svg {
 		fill: $gray;
 		position: absolute;
 		margin: auto;
