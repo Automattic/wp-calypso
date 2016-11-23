@@ -19,6 +19,10 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -26,9 +30,57 @@ import {
 	getSerializedThemesQuery
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
-import { queriesSchema } from './schema';
+import { queriesSchema, activeThemesSchema } from './schema';
 import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
+
+/**
+ * Returns the updated active theme state after an action has been
+ * dispatched. The state reflects a mapping of site ID to theme ID where
+ * theme ID represents active theme for the site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const activeThemes = createReducer( {}, {
+	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
+		...state,
+		[ siteId ]: theme.id
+	} ),
+	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
+		...state,
+		[ siteId ]: themeId
+	} ) },
+	activeThemesSchema
+ );
+
+/**
+ * Returns the updated active theme request state after an action has been
+ * dispatched. The state reflects a mapping of site ID to a boolean
+ * reflecting whether a request for active theme is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function activeThemeRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case ACTIVE_THEME_REQUEST:
+		case ACTIVE_THEME_REQUEST_SUCCESS:
+		case ACTIVE_THEME_REQUEST_FAILURE:
+			return {
+				...state,
+				[ action.siteId ]: ACTIVE_THEME_REQUEST === action.type
+			};
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
 
 /**
  * Returns the updated site theme requests state after an action has been
@@ -117,7 +169,6 @@ export const queries = ( () => {
 			[ siteId ]: nextManager
 		};
 	}
-
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
