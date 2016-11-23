@@ -981,7 +981,11 @@ describe( 'themes selectors', () => {
 
 	describe( '#getActiveTheme', () => {
 		it( 'given no site, should return null', () => {
-			const activeTheme = getActiveTheme( {} );
+			const activeTheme = getActiveTheme( {
+				themes: {
+					activeTheme: {}
+				}
+			} );
 
 			expect( activeTheme ).to.be.null;
 		} );
@@ -1004,13 +1008,17 @@ describe( 'themes selectors', () => {
 
 	describe( '#isRequestingActiveTheme', () => {
 		it( 'given empty state, should return false', () => {
-			const activeTheme = isRequestingActiveTheme( {} );
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {}
+				}
+			} );
 
-			expect( activeTheme ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'given no active request, should return false', () => {
-			const requestStatus = isRequestingActiveTheme( {
+			const isRequesting = isRequestingActiveTheme( {
 				themes: {
 					activeThemeRequests: {
 						2916284: false
@@ -1020,15 +1028,12 @@ describe( 'themes selectors', () => {
 			2916284
 		);
 
-			expect( requestStatus ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'given pending action request, should return true', () => {
-			const activationStatus = isRequestingActiveTheme( {
+			const isRequesting = isRequestingActiveTheme( {
 				themes: {
-					activeThemes: {
-						2916284: 'twentysixteen'
-					},
 					activeThemeRequests: {
 						2916284: true
 					}
@@ -1037,7 +1042,7 @@ describe( 'themes selectors', () => {
 			2916284
 		);
 
-			expect( activationStatus ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
