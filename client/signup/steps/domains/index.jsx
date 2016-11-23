@@ -125,6 +125,8 @@ const DomainsStep = React.createClass( {
 				} )
 				: undefined;
 
+		registerDomainAnalytics.recordEvent( 'submitDomainStepSelection', suggestion, 'signup' );
+
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
