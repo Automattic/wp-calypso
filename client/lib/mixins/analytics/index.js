@@ -28,7 +28,6 @@ const getDomainTypeTextFromSearch = function( suggestion ) {
 		}
 		return 'wpcom_subdomain';
 	}
-
 	return 'domain_reg';
 };
 
