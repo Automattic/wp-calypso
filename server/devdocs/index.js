@@ -130,23 +130,34 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
+/**
+ * Gets a list of subdirectories from a given path
+ * @param {string} path The path to get the list from
+ * @returns {Array} The list of subdirectories
+ */
 function listDirectories( path ) {
 	try {
 		return fs.readdirSync( path ).filter( ( file ) => {
 			try {
 				return fs.statSync( fspath.join( path, file ) ).isDirectory();
-			}
-			catch (err) {
+			} catch ( err ) {
 				return false;
 			}
-		} )
-	}
-	catch (err) {
+		} );
+	} catch ( err ) {
 		return [];
 	}
 }
 
+/**
+ * Recursively searches a path for a subdirectory with a given name
+ * @param {string} startPath The path to start searching from
+ * @param {string} name The name to search for
+ * @param {Number} depth The depth to go down, default is 2 levels, -1 for infinite
+ * @returns {Array} List of paths that matched the name
+ */
 function findDirectoryWithName( startPath, name, depth = 2 ) {
+	// stop searching once we exceed our depth
 	if ( depth === 0 ) {
 		return [];
 	}
@@ -164,7 +175,12 @@ function findDirectoryWithName( startPath, name, depth = 2 ) {
 		return matches;
 	}
 
-	return [].concat.apply( [], children.map( ( dir ) => findDirectoryWithName( fspath.join( startPath, dir ), name, depth - 1 ) ) );
+	// flatten the results
+	return [].concat.apply( [],
+		children.map( ( dir ) =>
+			findDirectoryWithName( fspath.join( startPath, dir ), name, depth - 1 )
+		)
+	);
 }
 
 /**
@@ -237,9 +253,9 @@ module.exports = function() {
 	// return the HTML content of a document (assumes that the document is in markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
-		let component = request.query.component;
+		const component = request.query.component;
 
-		if ( ! (path || component) ) {
+		if ( ! ( path || component ) ) {
 			response
 				.status( 400 )
 				.send( 'Need to provide a file path (e.g. path=client/devdocs/README.md) or component (e.g. component=author-selector)' );
@@ -298,12 +314,10 @@ module.exports = function() {
 				}
 
 				response.send( fs.readFileSync( readme, { encoding: 'utf8' } ) );
-			}
-			catch ( err ) {
+			} catch ( err ) {
 				response
 					.status( 404 )
 					.send( 'Unable to find component' );
-				return;
 			}
 		}
 	} );
