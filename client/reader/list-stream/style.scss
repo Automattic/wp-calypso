@@ -1,8 +1,12 @@
 .is-group-reader .card.list-stream__header {
 	min-height: 48px;
+	margin-top: 24px;
+	padding: 0 14px 14px 14px;
 
-	@include breakpoint( "<660px" ) {
-		padding-right: 72px;
+	@include breakpoint( ">660px" ) {
+		padding-left: 0;
+		padding-right: 0;
+		margin-top: 0;
 	}
 
 	&.has-description {
@@ -15,7 +19,6 @@
 
 	box-shadow: none;
 	border-bottom: 1px solid lighten( $gray, 30 );
-	padding: 0 0 6px 0;
 	display: flex;
 }
 
