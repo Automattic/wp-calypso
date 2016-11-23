@@ -28,9 +28,8 @@ const getDomainTypeTextFromSearch = function( suggestion ) {
 		}
 		return 'wpcom_subdomain';
 	}
-	else {
-		return 'domain_reg';
-	}
+
+	return 'domain_reg';
 };
 
 const EVENTS = {
