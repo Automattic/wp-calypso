@@ -21,10 +21,6 @@ const debug = debugFactory( 'calypso:themes:theme-upload' );
 
 class Upload extends React.Component {
 
-	constructor( props ) {
-		super( props );
-	}
-
 	onFileSelect = ( files ) => {
 		const { translate } = this.props;
 		const errorMessage = translate( 'Please drop a single zip file' );
@@ -33,6 +29,7 @@ class Upload extends React.Component {
 			notices.error( errorMessage );
 			return;
 		}
+		// Supplied param can be an array or a FileList
 		const file = files[ 0 ] || files.item( 0 );
 		if ( file.type !== 'application/zip' ) {
 			notices.error( errorMessage );
