@@ -62,7 +62,8 @@ class FeedHeader extends Component {
 
 		const classes = classnames( {
 			'reader-feed-header': true,
-			'is-placeholder': ! this.state.siteish
+			'is-placeholder': ! this.state.siteish,
+			'has-back-button': this.props.hasBackButton,
 		} );
 
 		return (
