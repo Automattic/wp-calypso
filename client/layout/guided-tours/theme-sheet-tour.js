@@ -28,7 +28,7 @@ export const ThemeSheetTour = makeTour(
 	<Tour name="theme" version="20160812" path="/theme" when={ and( isNewUser, isEnabled( 'guided-tours/theme', isDesktop ) ) }>
 		<Step name="init" placement="right" next="live-preview" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
-				{ 'This page shows all the details about a specific theme design. Can I show you around?' }
+				{ 'This page shows all the details about a specific theme design. May I show you around?' }
 			</p>
 			<div className="guided-tours__choice-button-row">
 				<Next step="live-preview">{ translate( "Let's go!" ) }</Next>
@@ -43,7 +43,7 @@ export const ThemeSheetTour = makeTour(
 			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
-				{ 'Here you can see the design live.' }
+				{ 'Here you can see the design in action in a demo site.' }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
 				<Continue step="close-preview" target="theme-sheet-preview" click />
@@ -58,7 +58,7 @@ export const ThemeSheetTour = makeTour(
 			next="pick-activate"
 		>
 			<p className="guided-tours__step-text">
-				{ 'This is the live demo. Take a look around! Then tap here to close.' }
+				{ 'This is the live demo. Take a look around, see if the design suits you! Then tap here to close.' }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
 				<Continue when={ not( previewIsShowing ) } step="pick-activate" />
