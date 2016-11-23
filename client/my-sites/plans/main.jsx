@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -28,8 +27,7 @@ const Plans = React.createClass( {
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
-		selectedSiteId: React.PropTypes.number,
-		sitePlans: React.PropTypes.object.isRequired
+		selectedSiteId: React.PropTypes.number
 	},
 
 	getDefaultProps() {
@@ -76,7 +74,6 @@ const Plans = React.createClass( {
 
 					<div id="plans" className="plans has-sidebar">
 						<UpgradesNavigation
-							sitePlans={ this.props.sitePlans }
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
@@ -104,7 +101,6 @@ export default connect(
 		return {
 			isPlaceholder,
 			plans: getPlans( state ),
-			sitePlans: isPlaceholder ? {} : getPlansBySiteId( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: selectedSiteId
 		};

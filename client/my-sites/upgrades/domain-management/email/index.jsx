@@ -35,7 +35,6 @@ const Email = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		sitePlans: React.PropTypes.object.isRequired,
 		user: React.PropTypes.object.isRequired,
 		googleAppsUsers: React.PropTypes.array.isRequired,
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
@@ -68,8 +67,7 @@ const Email = React.createClass( {
 			<UpgradesNavigation
 				path={ this.props.context.path }
 				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
-				sitePlans={ this.props.sitePlans } />
+				selectedSite={ this.props.selectedSite } />
 		);
 	},
 
