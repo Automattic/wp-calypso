@@ -1,38 +1,41 @@
 /**
- * Extenal dependencies
+ * External dependencies
  */
-var express = require( 'express' ),
-	fs = require( 'fs' ),
-	fspath = require( 'path' ),
-	marked = require( 'marked' ),
-	lunr = require( 'lunr' ),
-	find = require( 'lodash/find' ),
-	escapeHTML = require( 'lodash/escape' );
+
+import express from 'express';
+import fs from 'fs';
+import fspath from 'path';
+import marked from 'marked';
+import lunr from 'lunr';
+import { find, escape as escapeHTML } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var	config = require( 'config' ),
-	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	searchIndex = require( 'devdocs/search-index' ),
+import config from 'config';
+import searchIndex from 'devdocs/search-index';
+import componentsUsageStats from 'devdocs/components-usage-stats.json';
+
+const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	componentsUsageStats = require( 'devdocs/components-usage-stats.json' );
+	documents = searchIndex.documents;
 
 /**
  * Constants
  */
-var SNIPPET_PAD_LENGTH = 40;
-var DEFAULT_SNIPPET_LENGTH = 100;
+const SNIPPET_PAD_LENGTH = 40;
+const DEFAULT_SNIPPET_LENGTH = 100;
 
-/*
+/**
  * Query the index using lunr.
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
+ * @param {object} query The search query for lunr
+ * @returns {array} The results from the query
  */
 function queryDocs( query ) {
-	var results = docsIndex.search( query ).map( function( result ) {
-		var doc = documents[result.ref],
+	return docsIndex.search( query ).map( ( result ) => {
+		const doc = documents[ result.ref ],
 			snippet = makeSnippet( doc, query );
 
 		return {
@@ -41,18 +44,16 @@ function queryDocs( query ) {
 			snippet: snippet
 		};
 	} );
-
-	return results;
 }
 
-/*
+/**
  * Return an array of results based on the provided filenames
+ * @param {array} filePaths An array of file paths
+ * @returns {array} The results from the the docs
  */
 function listDocs( filePaths ) {
-	var results = filePaths.map( function( path ) {
-		var doc = find( documents, function( entry ) {
-			return entry.path === path;
-		} );
+	return filePaths.map( ( path ) => {
+		const doc = find( documents, ( entry ) => entry.path === path );
 
 		if ( doc ) {
 			return {
@@ -68,20 +69,20 @@ function listDocs( filePaths ) {
 			snippet: ''
 		};
 	} );
-	return results;
 }
 
-/*
+/**
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
+ * @param {object} doc The document to extract the snippet from
+ * @param {object} query The query to be searched for
+ * @returns {string} A snippet from the document
  */
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
 	const termRegexMatchers = lunr.tokenizer( query )
-		.map( function( term ) {
-			return escapeRegexString( term );
-		} );
+		.map( ( term ) => escapeRegexString( term ) );
 	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
 	const termRegex = new RegExp( termRegexString, 'gi' );
 	const snippets = [];
@@ -90,7 +91,7 @@ function makeSnippet( doc, query ) {
 	// find up to 4 matches in the document and extract snippets to be joined together
 	// TODO: detect when snippets overlap and merge them.
 	while ( ( match = termRegex.exec( doc.body ) ) !== null && snippets.length < 4 ) {
-		const matchStr = match[1],
+		const matchStr = match[ 1 ],
 			index = match.index + 1,
 			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
 			after = doc.body.substring( index + matchStr.length, index + matchStr.length + SNIPPET_PAD_LENGTH );
@@ -103,19 +104,29 @@ function makeSnippet( doc, query ) {
 
 	if ( snippets.length ) {
 		return '…' + snippets.join( ' … ' ) + '…';
-	};
+	}
 
 	return defaultSnippet( doc );
 }
 
+/**
+ * Escapes a string
+ * @param {string} str The string to escape
+ * @returns {string} An escaped string
+ */
 function escapeRegexString( str ) {
 	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
-	var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
+	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
 	return str.replace( matchOperatorsRe, '\\$&' );
 }
 
+/**
+ * Generate a standardized snippet
+ * @param {object} doc The document from which to generate the snippet
+ * @returns {string} The snippet
+ */
 function defaultSnippet( doc ) {
-	var content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
+	const content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
 	return escapeHTML( content ) + '…';
 }
 
@@ -130,22 +141,22 @@ function defaultSnippet( doc ) {
  */
 function reduceComponentsUsageStats( modulesWithDependences ) {
 	return Object.keys( modulesWithDependences )
-		.filter( function( moduleName ) {
-			return moduleName.indexOf( 'components/' ) === 0 &&
-				moduleName.indexOf( '/docs' ) === -1;
-		} )
-		.reduce( function( target, moduleName ) {
-			var name = moduleName.replace( 'components/', '' );
+		.filter( ( moduleName ) =>
+			moduleName.indexOf( 'components/' ) === 0 &&
+				moduleName.indexOf( '/docs' ) === -1
+		)
+		.reduce( ( target, moduleName ) => {
+			const name = moduleName.replace( 'components/', '' );
 			target[ name ] = modulesWithDependences[ moduleName ];
 			return target;
 		}, {} );
 }
 
 module.exports = function() {
-	var app = express();
+	const app = express();
 
 	// this middleware enforces access control
-	app.use( '/devdocs/service', function( request, response, next ) {
+	app.use( '/devdocs/service', ( request, response, next ) => {
 		if ( ! config.isEnabled( 'devdocs' ) ) {
 			response.status( 404 );
 			next( 'Not found' );
@@ -155,8 +166,8 @@ module.exports = function() {
 	} );
 
 	// search the documents using a search phrase "q"
-	app.get( '/devdocs/service/search', function( request, response ) {
-		var query = request.query.q;
+	app.get( '/devdocs/service/search', ( request, response ) => {
+		const query = request.query.q;
 
 		if ( ! query ) {
 			response
@@ -171,8 +182,8 @@ module.exports = function() {
 	} );
 
 	// return a listing of documents from filenames supplied in the "files" parameter
-	app.get( '/devdocs/service/list', function( request, response ) {
-		var files = request.query.files;
+	app.get( '/devdocs/service/list', ( request, response ) => {
+		const files = request.query.files;
 
 		if ( ! files ) {
 			response
@@ -187,7 +198,7 @@ module.exports = function() {
 	} );
 
 	// return the HTML content of a document (assumes that the document is in markdown format)
-	app.get( '/devdocs/service/content', function( request, response ) {
+	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
 
 		if ( ! path ) {
@@ -220,8 +231,8 @@ module.exports = function() {
 	} );
 
 	// return json for the components usage stats
-	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
-		var usageStats = reduceComponentsUsageStats( componentsUsageStats );
+	app.get( '/devdocs/service/components-usage-stats', ( request, response ) => {
+		const usageStats = reduceComponentsUsageStats( componentsUsageStats );
 		response.json( usageStats );
 	} );
 
