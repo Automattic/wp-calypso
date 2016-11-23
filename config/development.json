@@ -43,6 +43,7 @@
 		"dev/test-helper": true,
 		"guided-tours": true,
 		"guided-tours/main": true,
+	    "guided-tours/design-showcase": true,
 		"guided-tours/themes": false,
 		"help": true,
 		"help/courses": true,
