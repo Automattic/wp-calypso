@@ -15,7 +15,7 @@ import FeaturedImage from './featured-image';
 class FeaturedVideo extends React.Component {
 
 	static propTypes = {
-		thumbnailUrl: React.PropTypes.string,
+		thumbnailUrlPromise: React.PropTypes.object,
 		autoplayIframe: React.PropTypes.string,
 		iframe: React.PropTypes.string,
 		videoEmbed: React.PropTypes.object,
@@ -24,8 +24,13 @@ class FeaturedVideo extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			preferThumbnail: true
+			preferThumbnail: true,
+			thumbnailUrl: null,
 		};
+
+		this.props.thumbnailUrlPromise
+			.then( url => this.setState( { thumbnailUrl: url } ) )
+			.catch( () => this.setState( { preferThumbnail: false } ) );
 	}
 
 	setVideoSizingStrategy = ( videoEmbed ) => {
@@ -63,12 +68,12 @@ class FeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate } = this.props;
+		const { thumbnailUrlPromise, autoplayIframe, iframe, translate } = this.props;
 		const preferThumbnail = this.state.preferThumbnail;
 
-		if ( preferThumbnail && thumbnailUrl ) {
+		if ( preferThumbnail && thumbnailUrlPromise ) {
 			return (
-				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick } >
+				<FeaturedImage imageUri={ this.state.thumbnailUrl } onClick={ this.handleThumbnailClick } >
 					<img className="reader-post-card__play-icon"
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
@@ -80,7 +85,7 @@ class FeaturedVideo extends React.Component {
 		/* eslint-disable react/no-danger */
 		return (
 			<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
-				dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
+				dangerouslySetInnerHTML={ { __html: this.state.thumbnailUrl ? autoplayIframe : iframe } }
 			/>
 		);
 		/* eslint-enable-line react/no-danger */
