@@ -15,13 +15,19 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_FAILURE,
 	THEMES_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
 import reducer, {
 	queryRequests,
 	queries,
-	themeRequests
+	themeRequests,
+	activeThemes,
+	activeThemeRequests,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
@@ -61,6 +67,7 @@ describe( 'reducer', () => {
 			//'queries',
 			//'queryRequests',
 			//'themeRequests',
+			//'activeThemeRequests',
 			'currentTheme',
 			'themesUI'
 		] );
@@ -70,7 +77,7 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		// TODO: Delete test? no site-specific search?
@@ -81,7 +88,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' }
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				'2916284:{"search":"Hello"}': true
 			} );
 		} );
@@ -92,7 +99,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' }
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				'{"search":"Hello"}': true
 			} );
 		} );
@@ -108,7 +115,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello W' }
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				'2916284:{"search":"Hello"}': true,
 				'2916284:{"search":"Hello W"}': true
 			} );
@@ -125,7 +132,7 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				'2916284:{"search":"Mood"}': false
 			} );
 		} );
@@ -138,7 +145,7 @@ describe( 'reducer', () => {
 				error: new Error()
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				'2916284:{"search":"Hello"}': false
 			} );
 		} );
@@ -150,7 +157,7 @@ describe( 'reducer', () => {
 
 			const state = queryRequests( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should never load persisted state', () => {
@@ -160,7 +167,7 @@ describe( 'reducer', () => {
 
 			const state = queryRequests( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -168,7 +175,7 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should track theme query request success', () => {
@@ -182,7 +189,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.be.an.instanceof( ThemeQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Mood' } ) ).to.eql( [ mood ] );
+			expect( state[ 2916284 ].getItems( { search: 'Mood' } ) ).to.deep.equal( [ mood ] );
 		} );
 
 		it( 'should accumulate query request success', () => {
@@ -234,7 +241,7 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: {
 					data: {
 						items: {
@@ -276,7 +283,7 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: new ThemeQueryManager( {
 					items: {
 						twentysixteen
@@ -298,7 +305,7 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -306,7 +313,7 @@ describe( 'reducer', () => {
 		it( 'should default to an empty object', () => {
 			const state = themeRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should map site ID, theme ID to true value if request in progress', () => {
@@ -316,7 +323,7 @@ describe( 'reducer', () => {
 				themeId: 841
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: {
 					841: true
 				}
@@ -334,7 +341,7 @@ describe( 'reducer', () => {
 				themeId: 413
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: {
 					841: true,
 					413: true
@@ -353,7 +360,7 @@ describe( 'reducer', () => {
 				themeId: 841
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: {
 					841: false
 				}
@@ -371,7 +378,7 @@ describe( 'reducer', () => {
 				themeId: 841
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).to.deep.equal( {
 				2916284: {
 					841: false
 				}
@@ -387,7 +394,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'never loads persisted state', () => {
@@ -399,7 +406,170 @@ describe( 'reducer', () => {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#activeThemes()', () => {
+		it( 'should default to an empty object', () => {
+			const state = activeThemes( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should track active theme request success', () => {
+			const state = activeThemes( deepFreeze( {} ), {
+				type: ACTIVE_THEME_REQUEST_SUCCESS,
+				siteId: 2211667,
+				themeId: 'rebalance',
+				themeName: 'Rebalance',
+				themeCost: {
+					currency: 'USD',
+					number: 0,
+					display: ''
+				}
+			} );
+
+			expect( state ).to.have.keys( [ '2211667' ] );
+			expect( state ).to.deep.equal( { 2211667: 'rebalance' } );
+		} );
+
+		it( 'should track active theme request success and overwrite old theme', () => {
+			const state = activeThemes( deepFreeze( { 2211667: 'rebalance' } ), {
+				type: ACTIVE_THEME_REQUEST_SUCCESS,
+				siteId: 2211667,
+				themeId: 'twentysixteen',
+				themeName: 'Twentysixteen',
+				themeCost: {
+					currency: 'USD',
+					number: 0,
+					display: ''
+				}
+			} );
+
+			expect( state ).to.have.keys( [ '2211667' ] );
+			expect( state ).to.deep.equal( { 2211667: 'twentysixteen' } );
+		} );
+
+		it( 'should track theme activate request success', () => {
+			const state = activeThemes( deepFreeze( {} ), {
+				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				theme: { id: 'twentysixteen' },
+				siteId: 2211888,
+			} );
+
+			expect( state ).to.have.keys( [ '2211888' ] );
+			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+		} );
+
+		it( 'should persist state', () => {
+			const state = activeThemes( { 2211888: 'twentysixteen' }, { type: SERIALIZE } );
+
+			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+		} );
+
+		it( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				2211888: 'twentysixteen'
+			} );
+
+			const state = activeThemes( original, { type: DESERIALIZE } );
+			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: 1234
+			} );
+
+			const state = activeThemes( original, { type: DESERIALIZE } );
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#activeThemeRequests', () => {
+		it( 'should default to an empty object', () => {
+			const state = activeThemeRequests( undefined, {} );
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should map site ID to true value if request in progress', () => {
+			const state = activeThemeRequests( deepFreeze( {} ), {
+				type: ACTIVE_THEME_REQUEST,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = activeThemeRequests(
+				deepFreeze( {
+					2916284: true
+				} ),
+				{
+					type: ACTIVE_THEME_REQUEST,
+					siteId: 2916285,
+				}
+			);
+
+			expect( state ).to.deep.equal( {
+				2916284: true,
+				2916285: true,
+			} );
+		} );
+
+		it( 'should map site ID to false value if request finishes successfully', () => {
+			const state = activeThemeRequests(
+				deepFreeze( {
+					2916284: true
+				} ),
+				{
+					type: ACTIVE_THEME_REQUEST_SUCCESS,
+					siteId: 2916284,
+					themeId: 'twentysixteen',
+				}
+			);
+
+			expect( state ).to.deep.equal( {
+				2916284: false
+			} );
+		} );
+
+		it( 'should map site ID to false value if request finishes with failure', () => {
+			const state = activeThemeRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: ACTIVE_THEME_REQUEST_FAILURE,
+				siteId: 2916284,
+				error: 'Unknown blog',
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: false
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = activeThemeRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = activeThemeRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 } );
