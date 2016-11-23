@@ -1,7 +1,7 @@
 /**
  * Extenal dependencies
  */
-var express = require( 'express' ),
+const express = require( 'express' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
 	marked = require( 'marked' ),
@@ -12,7 +12,7 @@ var express = require( 'express' ),
 /**
  * Internal dependencies
  */
-var	config = require( 'config' ),
+const config = require( 'config' ),
 	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
@@ -22,8 +22,8 @@ var	config = require( 'config' ),
 /**
  * Constants
  */
-var SNIPPET_PAD_LENGTH = 40;
-var DEFAULT_SNIPPET_LENGTH = 100;
+const SNIPPET_PAD_LENGTH = 40;
+const DEFAULT_SNIPPET_LENGTH = 100;
 
 /*
  * Query the index using lunr.
@@ -31,8 +31,8 @@ var DEFAULT_SNIPPET_LENGTH = 100;
  * and also because lunr.js is designed to be memory resident
  */
 function queryDocs( query ) {
-	var results = docsIndex.search( query ).map( function( result ) {
-		var doc = documents[result.ref],
+	const results = docsIndex.search( query ).map( function( result ) {
+		const doc = documents[ result.ref ],
 			snippet = makeSnippet( doc, query );
 
 		return {
@@ -49,8 +49,8 @@ function queryDocs( query ) {
  * Return an array of results based on the provided filenames
  */
 function listDocs( filePaths ) {
-	var results = filePaths.map( function( path ) {
-		var doc = find( documents, function( entry ) {
+	const results = filePaths.map( function( path ) {
+		const doc = find( documents, function( entry ) {
 			return entry.path === path;
 		} );
 
@@ -90,7 +90,7 @@ function makeSnippet( doc, query ) {
 	// find up to 4 matches in the document and extract snippets to be joined together
 	// TODO: detect when snippets overlap and merge them.
 	while ( ( match = termRegex.exec( doc.body ) ) !== null && snippets.length < 4 ) {
-		const matchStr = match[1],
+		const matchStr = match[ 1 ],
 			index = match.index + 1,
 			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
 			after = doc.body.substring( index + matchStr.length, index + matchStr.length + SNIPPET_PAD_LENGTH );
@@ -103,19 +103,19 @@ function makeSnippet( doc, query ) {
 
 	if ( snippets.length ) {
 		return '…' + snippets.join( ' … ' ) + '…';
-	};
+	}
 
 	return defaultSnippet( doc );
 }
 
 function escapeRegexString( str ) {
 	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
-	var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
+	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
 	return str.replace( matchOperatorsRe, '\\$&' );
 }
 
 function defaultSnippet( doc ) {
-	var content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
+	const content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
 	return escapeHTML( content ) + '…';
 }
 
@@ -135,14 +135,14 @@ function reduceComponentsUsageStats( modulesWithDependences ) {
 				moduleName.indexOf( '/docs' ) === -1;
 		} )
 		.reduce( function( target, moduleName ) {
-			var name = moduleName.replace( 'components/', '' );
+			const name = moduleName.replace( 'components/', '' );
 			target[ name ] = modulesWithDependences[ moduleName ];
 			return target;
 		}, {} );
 }
 
 module.exports = function() {
-	var app = express();
+	const app = express();
 
 	// this middleware enforces access control
 	app.use( '/devdocs/service', function( request, response, next ) {
@@ -156,7 +156,7 @@ module.exports = function() {
 
 	// search the documents using a search phrase "q"
 	app.get( '/devdocs/service/search', function( request, response ) {
-		var query = request.query.q;
+		const query = request.query.q;
 
 		if ( ! query ) {
 			response
@@ -172,7 +172,7 @@ module.exports = function() {
 
 	// return a listing of documents from filenames supplied in the "files" parameter
 	app.get( '/devdocs/service/list', function( request, response ) {
-		var files = request.query.files;
+		const files = request.query.files;
 
 		if ( ! files ) {
 			response
@@ -221,7 +221,7 @@ module.exports = function() {
 
 	// return json for the components usage stats
 	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
-		var usageStats = reduceComponentsUsageStats( componentsUsageStats );
+		const usageStats = reduceComponentsUsageStats( componentsUsageStats );
 		response.json( usageStats );
 	} );
 
