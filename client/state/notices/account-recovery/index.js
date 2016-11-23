@@ -9,9 +9,6 @@ import { translate } from 'i18n-calypso';
 import { errorNotice } from 'state/notices/actions';
 import { dispatchError } from '../utils';
 
-import {
-} from 'state/action-types';
-
 const getUpdateErrorMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
