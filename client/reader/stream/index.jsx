@@ -34,6 +34,7 @@ import PostBlocked from './post-blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
+import Quote from 'blocks/reader-quote';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -413,7 +414,7 @@ export default class ReaderStream extends React.Component {
 					} );
 				}
 
-				return React.createElement( PostClass, {
+				const postElement = React.createElement( PostClass, {
 					ref: itemKey,
 					key: itemKey,
 					post: post,
@@ -426,6 +427,16 @@ export default class ReaderStream extends React.Component {
 					showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards,
 					showSiteName: this.props.showSiteNameOnCards
 				} );
+
+				if ( index % 5 === 3 ) {
+					return (
+						<div key={ itemKey }>
+							<Quote />
+							{ postElement }
+						</div>
+					);
+				}
+				return postElement;
 
 		}
 	}
