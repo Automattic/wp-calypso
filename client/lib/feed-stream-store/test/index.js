@@ -125,7 +125,7 @@ describe( 'FeedPostList', function() {
 	} );
 
 	describe( 'Selected index', function() {
-		var fetcherStub, store, feedPostStoreStub;
+		var fetcherStub, store, feedPostStoreStub, fakePosts;
 		beforeEach( function() {
 			fetcherStub = sinon.stub();
 			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
@@ -136,12 +136,13 @@ describe( 'FeedPostList', function() {
 					return post;
 				}
 			} );
-			store.receivePage( 'test', null, { posts: [
+			fakePosts = [
 				{ feed_ID: 1, ID: 1 },
 				{ feed_ID: 1, ID: 2 },
 				{ feed_ID: 1, ID: 3 },
-				{ feed_ID: 1, ID: 4 } ]
-			} );
+				{ feed_ID: 1, ID: 4 }
+			];
+			store.receivePage( 'test', null, { posts: fakePosts } );
 		} );
 		afterEach( function() {
 			FeedPostStore.get.restore();
@@ -154,41 +155,50 @@ describe( 'FeedPostList', function() {
 
 		it( 'should select the next item', function() {
 			feedPostStoreStub.returns( {} );
-			store.selectNextItem( -1 );
-			expect( store.getSelectedIndex() ).to.equal( 0 );
+			store.selectItem( 0 );
+			store.selectNextItem();
+			expect( store.getSelectedIndex() ).to.equal( 1 );
 		} );
 
 		it( 'should select the next valid post', function() {
 			feedPostStoreStub
-				.onCall( 0 ).returns( { _state: 'error'} )
-				.onCall( 1 ).returns( { _state: 'minimal' } )
-				.onCall( 2 ).returns( {} )
-				.onCall( 3 ).returns( {} );
-			store.selectNextItem( -1 );
-			expect( store.getSelectedIndex() ).to.equal( 2 );
+				.onCall( 0 ).returns( {} )
+				.onCall( 1 ).returns( { _state: 'error'} )
+				.onCall( 2 ).returns( { _state: 'minimal' } )
+				.onCall( 3 ).returns( {} )
+				.onCall( 4 ).returns( {} );
+			store.selectItem( 0 );
+			store.selectNextItem();
+			expect( store.getSelectedIndex() ).to.equal( 3 );
 		} );
 
 		it( 'should be able to select a gap', function() {
+			fakePosts[1].isGap = true;
 			feedPostStoreStub
 				.onCall( 0 ).returns( { _state: 'error'} )
-				.onCall( 1 ).returns( { isGap: true } )
+				.onCall( 1 ).returns( {} )
 				.onCall( 2 ).returns( {} )
 				.onCall( 3 ).returns( {} );
-			store.selectNextItem( -1 );
+			store.selectItem( 1 );
 			expect( store.getSelectedIndex() ).to.equal( 1 );
 		} );
 
 		it( 'should select the prev item', function() {
 			feedPostStoreStub.returns( {} );
-			store.selectPrevItem( 3 );
+			store.selectItem( 3 );
+			expect( store.getSelectedIndex() ).to.equal( 3 );
+			store.selectPrevItem();
 			expect( store.getSelectedIndex() ).to.equal( 2 );
 		} );
 
 		it( 'should select the prev valid post', function() {
 			feedPostStoreStub
-				.onCall( 0 ).returns( { _state: 'error' } )
-				.onCall( 1 ).returns( {} );
-			store.selectPrevItem( 3 );
+				.onCall( 0 ).returns( {} )
+				.onCall( 1 ).returns( { _state: 'error' } )
+				.onCall( 2 ).returns( {} );
+			store.selectItem( 3 );
+			expect( store.getSelectedIndex() ).to.equal( 3 );
+			store.selectPrevItem();
 			expect( store.getSelectedIndex() ).to.equal( 1 );
 		} );
 	} );

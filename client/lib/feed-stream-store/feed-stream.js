@@ -4,6 +4,8 @@
 var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:feed-store:post-list-store' ),
 	filter = require( 'lodash/filter' ),
+	findIndex = require( 'lodash/findIndex' ),
+	findLastIndex = require( 'lodash/findLastIndex' ),
 	forEach = require( 'lodash/forEach' ),
 	map = require( 'lodash/map' ),
 	moment = require( 'moment' ),
@@ -176,34 +178,25 @@ assign( FeedStream.prototype, {
 	},
 
 	selectNextItem: function( ) {
-		if ( this.selectedIndex == null ) {
+		if ( this.selectedIndex === -1 ) {
 			return;
 		}
-		let nextIndex = this.selectedIndex + 1;
-		const numPosts = this.postKeys.length;
-		while ( nextIndex < numPosts && ! this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-			nextIndex++;
+		const nextIndex = findIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex + 1 );
+		if ( nextIndex !== -1 ) {
+			this.selectedIndex = nextIndex;
+			this.emitChange();
 		}
-
-		if ( nextIndex === numPosts ) {
-			return;
-		}
-
-		this.selectedIndex = nextIndex;
-		this.emitChange();
 	},
 
 	selectPrevItem: function() {
-		if ( ! this.selectedIndex ) {
+		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
 			return;
 		}
-		let nextIndex = this.selectedIndex - 1;
-		while ( nextIndex >= 0 && ! this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-			nextIndex--;
+		const prevIndex = findLastIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex - 1 );
+		if ( prevIndex !== -1 ) {
+			this.selectedIndex = prevIndex;
+			this.emitChange();
 		}
-
-		this.selectedIndex = nextIndex;
-		this.emitChange();
 	},
 
 	selectItem: function( selectedIndex ) {
