@@ -1,18 +1,12 @@
 .is-group-reader .card.list-stream__header {
-	min-height: 72px;
-	padding: 24px 144px 24px 24px;
+	min-height: 48px;
 
 	@include breakpoint( "<660px" ) {
 		padding-right: 72px;
 	}
 
-	&.has-icon {
-		padding-left: 72px;
-	}
-
 	&.has-description {
-		padding-top: 13px;
-		padding-bottom: 13px;
+		padding-bottom: 18px;
 	}
 
 	&:hover {
@@ -20,30 +14,28 @@
 	}
 
 	box-shadow: none;
+	border-bottom: 1px solid lighten( $gray, 30 );
+	padding: 0 0 6px 0;
+	display: flex;
 }
 
 .list-stream__header-icon {
-	position: absolute;
-		top: 12px;
-		left: 12px;
-	height: 48px;
-	width: 48px;
+	height: 24px;
+	width: 24px;
 	background: lighten( $gray, 20 );
 	text-align: center;
+	padding: 2px;
 
 	.gridicon {
 		fill: $white;
 		height: 24px;
 		width: 24px;
-		position: relative;
-			top: 12px;
 	}
+}
 
-	.gridicon__tag {
-		transform: rotate( -45deg );
-		top: 11px;
-		left: 1px;
-	}
+.list-stream__header-details {
+	margin-left: 10px;
+	margin-top: 2px;
 }
 
 .list-stream__header-title {
@@ -80,11 +72,11 @@
 
 	.gridicon {
 		display: none;
-		border: 1px solid red;
 	}
 }
 
 .list-stream__header-edit {
+	margin-left: auto;
 
 	.list-stream__header-action-label {
 		display: none;
@@ -92,10 +84,5 @@
 
 	.list-stream__header-action-icon svg {
 		fill: $gray;
-		position: absolute;
-		margin: auto;
-		top: 0;
-		bottom: 0;
-		right: 24px;
 	}
 }
