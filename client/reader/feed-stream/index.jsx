@@ -1,29 +1,61 @@
-const React = require( 'react' ),
-	url = require( 'url' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import url from 'url';
+import { localize } from 'i18n-calypso';
 
-const config = require( 'config' ),
-	EmptyContent = require( './empty' ),
-	DocumentHead = require( 'components/data/document-head' ),
-	Stream = require( 'reader/stream' ),
-	OldFeedHeader = require( 'reader/feed-header' ),
-	RefreshFeedHeader = require( 'blocks/reader-feed-header' ),
-	FeedStore = require( 'lib/feed-store' ),
-	FeedStoreActions = require( 'lib/feed-store/actions' ),
-	FeedStoreState = require( 'lib/feed-store/constants' ).state,
-	FeedError = require( 'reader/feed-error' ),
-	HeaderBack = require( 'reader/header-back' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state;
+/**
+ * Internal dependencies
+ */
+import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
+import Stream from 'reader/stream';
+import OldFeedHeader from 'reader/feed-header';
+import FeedStore from 'lib/feed-store';
+import FeedStoreActions from 'lib/feed-store/actions';
+import { state as FeedStoreState } from 'lib/feed-store/constants';
+import FeedError from 'reader/feed-error';
+import HeaderBack from 'reader/header-back';
+import SiteStore from 'lib/reader-site-store';
+import { state as SiteState } from 'lib/reader-site-store/constants';
+import RefreshFeedHeader from 'blocks/reader-feed-header';
+import config from 'config';
 
-const FeedStream = React.createClass( {
+class FeedStream extends React.Component {
 
-	getDefaultProps: function() {
-		return { showBack: true, className: 'is-site-stream' };
-	},
+	static propTypes = {
+		feedId: React.PropTypes.number.isRequired
+	};
 
-	getInitialState: function() {
-		var feed = this.getFeed(),
-			site = this.getSite( feed ),
+	static defaultProps = {
+		showBack: true
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.getState( props );
+	}
+
+	componentDidMount() {
+		FeedStore.on( 'change', this.updateState );
+		SiteStore.on( 'change', this.updateState );
+	}
+
+	componentWillUnmount() {
+		FeedStore.off( 'change', this.updateState );
+		SiteStore.off( 'change', this.updateState );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.feedId !== this.props.feedId ) {
+			this.updateState( nextProps );
+		}
+	}
+
+	getState = ( props = this.props ) => {
+		const feed = this.getFeed( props ),
+			site = this.getSite( props ),
 			title = this.getTitle( feed, site );
 
 		return {
@@ -31,33 +63,17 @@ const FeedStream = React.createClass( {
 			feed,
 			site
 		};
-	},
+	}
 
-	componentDidMount: function() {
-		FeedStore.on( 'change', this.updateState );
-		SiteStore.on( 'change', this.updateState );
-	},
-
-	componentWillUnmount: function() {
-		FeedStore.off( 'change', this.updateState );
-		SiteStore.off( 'change', this.updateState );
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.feedId !== this.props.feedId ) {
-			this.updateState();
-		}
-	},
-
-	getTitle: function( feed, site ) {
-		var title;
+	getTitle = ( feed, site ) => {
+		let title;
 
 		if ( ! feed && ! site ) {
-			return this.translate( 'Loading Feed' );
+			return this.props.translate( 'Loading Feed' );
 		}
 
 		if ( feed.state === FeedStoreState.ERROR ) {
-			title = this.translate( 'Error fetching feed' );
+			title = this.props.translate( 'Error fetching feed' );
 		} else if ( feed.state === FeedStoreState.COMPLETE ) {
 			title = feed.name;
 		}
@@ -81,25 +97,26 @@ const FeedStream = React.createClass( {
 		}
 
 		if ( ! title ) {
-			title = this.translate( 'Loading Feed' );
+			title = this.props.translate( 'Loading Feed' );
 		}
 
 		return title;
-	},
+	}
 
-	getFeed: function() {
-		var feed = FeedStore.get( this.props.feedId );
+	getFeed = ( props = this.props ) => {
+		const feed = FeedStore.get( props.feedId );
 
 		if ( ! feed ) {
-			FeedStoreActions.fetch( this.props.feedId );
+			FeedStoreActions.fetch( props.feedId );
 		}
 
 		return feed;
-	},
+	}
 
-	getSite: function() {
-		var feed = FeedStore.get( this.props.feedId ),
-			site;
+	getSite = ( props = this.props ) => {
+		const feed = FeedStore.get( props.feedId );
+		let site;
+
 		if ( feed && feed.blog_ID ) {
 			// this comes in via a meta request, so don't bother querying it
 			site = SiteStore.get( feed.blog_ID );
@@ -109,11 +126,11 @@ const FeedStream = React.createClass( {
 		}
 
 		return site;
-	},
+	}
 
-	updateState: function() {
-		var feed = this.getFeed(),
-			site = this.getSite(),
+	updateState = ( props = this.props ) => {
+		const feed = this.getFeed( props ),
+			site = this.getSite( props ),
 			title = this.getTitle( feed, site ),
 			newState = {};
 
@@ -132,10 +149,10 @@ const FeedStream = React.createClass( {
 		if ( Object.keys( newState ).length > 0 ) {
 			this.setState( newState );
 		}
-	},
+	}
 
-	render: function() {
-		var feed = FeedStore.get( this.props.feedId ),
+	render() {
+		const feed = FeedStore.get( this.props.feedId ),
 			emptyContent = ( <EmptyContent /> );
 
 		if ( feed && feed.state === FeedStoreState.ERROR ) {
@@ -146,13 +163,12 @@ const FeedStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false } showSiteNameOnCards={ false }>
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />
 			</Stream>
 		);
 	}
+}
 
-} );
-
-module.exports = FeedStream;
+export default localize( FeedStream );
