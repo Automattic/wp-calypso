@@ -5,6 +5,7 @@ import React from 'react';
 import async from 'async';
 import flatten from 'lodash/flatten';
 import reject from 'lodash/reject';
+import omit from 'lodash/omit';
 import find from 'lodash/find';
 import uniqBy from 'lodash/uniqBy';
 import times from 'lodash/times';
@@ -130,6 +131,7 @@ const RegisterDomainStep = React.createClass( {
 			clickedExampleSuggestion: false,
 			dotBlogNotice: true,
 			lastQuery: suggestion,
+			lastSurveyVertical: this.props.surveyVertical,
 			lastDomainSearched: null,
 			lastDomainError: null,
 			loadingResults: Boolean( suggestion ),
@@ -166,7 +168,13 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
+			let state = omit( this.props.initialState, 'lastSurveyVertical' );
+
+			if ( this.props.initialState.lastSurveyVertical !== this.props.surveyVertical ) {
+				state.loadingResults = true;
+			}
+
+			this.setState( state );
 		}
 	},
 
