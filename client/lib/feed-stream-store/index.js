@@ -200,6 +200,9 @@ function getStoreForRecommendedPosts( storeId ) {
 			case 'cold_posts_topics':
 				query.algorithm = 'read:recommendations:posts/es/6';
 				break;
+			case 'custom_recs_posts_with_images':
+				query.algorithm = 'read:recommendations:posts/es/7';
+				break;
 			default:
 				query.algorithm = 'read:recommendations:posts/es/1';
 		}
@@ -248,6 +251,8 @@ function feedStoreFactory( storeId ) {
 	} else if ( storeId === 'recommendations_posts' ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( startsWith( storeId, 'cold_posts' ) ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( startsWith( storeId, 'custom_recs' ) ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );
