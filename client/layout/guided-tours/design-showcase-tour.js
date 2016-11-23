@@ -41,7 +41,12 @@ export const DesignShowcaseTour = makeTour(
 		name="designShowcase"
 		version="20161123"
 		path="/design"
-		when={ and( isNewUser, isEnabled( 'guided-tours/design-showcase', isDesktop ) ) }
+		when={ and(
+			isNewUser,
+			isEnabled( 'guided-tours/design-showcase', isDesktop ),
+			selectedSiteIsCustomizable,
+			not( inSection( 'customize' ) ),
+			) }
 		>
 		<Step name="init" placement="right" next="filter">
 			<p>
@@ -79,25 +84,32 @@ export const DesignShowcaseTour = makeTour(
 
 		<Step name="theme-options"
 			target=".theme__more-button"
-			arrow="top-right"
+			arrow="top-left"
 			placement="below"
 			next="customize"
 		>
 			<p>
 				{ 'From here you can access all the theme options.' }
 			</p>
-			<Continue step="customize" target=".theme__more-button" click />
+			<Continue step="finish" target=".theme__more-button" click />
 		</Step>
 
-		<Step name="customize"
-			target=".theme__more-button-menu-item"
+		<Step name="finish"
+			target=".popover"
 			placement="below"
 			arrow="top-left"
-			when={ and( selectedSiteIsCustomizable, not( inSection( 'customize' ) ) ) }
 		>
 			<p>
-				To customize further the design you have chosen, click on <strong>Try & Customize</strong>.
+				This menu provides more information about a theme.
+				To see a demo site with this theme, click <strong>Live demo</strong>.
+				To explore this theme with your own site, click <strong>Try & Customize</strong>.
 			</p>
+			<ButtonRow>
+				<Quit primary>
+					We're all done!
+				</Quit>
+			</ButtonRow>
 		</Step>
+
 	</Tour>
 );
