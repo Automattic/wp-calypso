@@ -2,7 +2,6 @@
  * External dependencies
  */
 import moment from 'moment';
-import debugFactory from 'debug';
 import {
 	find,
 	get,
@@ -32,7 +31,6 @@ import SitesList from 'lib/sites-list';
  * Module vars
  */
 const sitesList = SitesList();
-const debug = debugFactory( 'calypso:plans' ); // eslint-disable-line no-unused-vars
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function isFreePlan( plan ) {
