@@ -292,8 +292,8 @@ JetpackSite.prototype.fetchMonitorSettings = function( callback ) {
 	}
 };
 
-JetpackSite.prototype.updateMonitorSettings = function( emailNotifications, callback ) {
-	wpcom.undocumented().updateMonitorSettings( this.ID, emailNotifications, function( error, data ) {
+JetpackSite.prototype.updateMonitorSettings = function( emailNotifications, wpNoteNotifications, callback ) {
+	wpcom.undocumented().updateMonitorSettings( this.ID, emailNotifications, wpNoteNotifications, function( error, data ) {
 		if ( error ) {
 			debug( 'error updating Jetpack Monitor settings', error );
 			callback && callback( error );

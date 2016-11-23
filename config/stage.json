@@ -96,6 +96,7 @@
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"settings/security/monitor/wp-note": true,
 		"settings/security/scan": true,
 		"support-user": true,
 		"sync-handler": true,
