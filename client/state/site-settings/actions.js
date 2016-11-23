@@ -12,6 +12,7 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE
 } from 'state/action-types';
+import { normalizeSettings } from './utils';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.
@@ -60,7 +61,7 @@ export function requestSiteSettings( siteId ) {
 		return wpcom.undocumented().settings( siteId )
 			.then( ( { name, description, settings } ) => {
 				const savedSettings = {
-					...settings,
+					...( normalizeSettings( settings ) ),
 					blogname: name,
 					blogdescription: description
 				};
@@ -92,7 +93,7 @@ export function saveSiteSettings( siteId, settings ) {
 
 		return wpcom.undocumented().settings( siteId, 'post', settings )
 			.then( ( { updated } ) => {
-				dispatch( updateSiteSettings( siteId, updated ) );
+				dispatch( updateSiteSettings( siteId, normalizeSettings( updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId
