@@ -180,7 +180,7 @@ function getStoreForRecommendedPosts( storeId ) {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
-		perPage: 5
+		perPage: 6,
 	} );
 
 	function fetcher( query, callback ) {
