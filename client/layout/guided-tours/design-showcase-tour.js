@@ -54,7 +54,7 @@ export const DesignShowcaseTour = makeTour(
 		</Step>
 
 		<Step name="filter"
-			target="themes-tier-dropdown"
+			target=".themes-magic-search-card .segmented-control"
 			placement="beside"
 			arrow="right-top"
 			next="search"
@@ -66,7 +66,7 @@ export const DesignShowcaseTour = makeTour(
 		</Step>
 
 		<Step name="search"
-			target=".themes__search-card .search-open__icon"
+			target=".themes-magic-search-card .search__icon-navigation"
 			arrow="top-left"
 			placement="below"
 			next="theme-options"
@@ -79,7 +79,7 @@ export const DesignShowcaseTour = makeTour(
 
 		<Step name="theme-options"
 			target=".theme__more-button"
-			arrow="top-left"
+			arrow="top-right"
 			placement="below"
 			next="customize"
 		>
@@ -90,13 +90,13 @@ export const DesignShowcaseTour = makeTour(
 		</Step>
 
 		<Step name="customize"
-			target=".current-theme__customize"
-			placement="beside"
-			arrow="right-middle"
+			target=".theme__more-button-menu-item"
+			placement="below"
+			arrow="top-left"
 			when={ and( selectedSiteIsCustomizable, not( inSection( 'customize' ) ) ) }
 		>
 			<p>
-				{ 'To customize further the design you have chosen, click on customize.' }
+				To customize further the design you have chosen, click on <strong>Try & Customize</strong>.
 			</p>
 		</Step>
 	</Tour>
