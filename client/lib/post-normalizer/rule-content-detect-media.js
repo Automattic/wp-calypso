@@ -3,6 +3,7 @@
  */
 import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'get-video-id';
+import request from 'superagent';
 
 /**
  * Internal Dependencies
@@ -69,7 +70,7 @@ const getAutoplayIframe = ( iframe ) => {
 	const metadata = getEmbedMetadata( iframe.src );
 	if ( metadata && metadata.service === 'youtube' ) {
 		const autoplayIframe = iframe.cloneNode();
-		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
+		if ( ! includes( autoplayIframe.src, '?' ) ) {
 			autoplayIframe.src += '?autoplay=1';
 		} else {
 			autoplayIframe.src += '&autoplay=1';
@@ -94,6 +95,23 @@ const getThumbnailUrl = ( iframe ) => {
 	}
 
 	return null;
+}
+
+const getThumbnailUrlPromise = ( iframe ) => {
+	if ( includes( iframe.src, 'youtube' ) ) {
+		const videoId = getEmbedMetadata( iframe.src ).id;
+		const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
+
+		return Promise.resolve( thumbnailUrl );
+	} else if ( includes( iframe.src, 'vimeo' ) ) {
+		const videoId = getEmbedMetadata( iframe.src ).id;
+		const fetchUrl = `https://vimeo.com/api/v2/video/${ videoId }.json`;
+
+		return request.get( fetchUrl )
+			.then( resp => Promise.resolve( resp.body[ 0 ].thumbnail_large ) )
+			.catch( err => Promise.reject( err ) );
+	}
+	return Promise.reject();
 };
 
 const getEmbedType = ( iframe ) => {
@@ -138,7 +156,7 @@ const detectEmbed = ( iframe ) => {
 		height: height,
 		mediaType: 'video',
 		autoplayIframe: getAutoplayIframe( iframe ),
-		thumbnailUrl: getThumbnailUrl( iframe ),
+		thumbnailUrlPromise: getThumbnailUrlPromise( iframe ),
 	};
 };
 
