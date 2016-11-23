@@ -71,6 +71,12 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			// Note: This component assumes that site plans data is already present in the state tree
+			// (used by the getCurrentPlan and isRequestingSitePlans selectors).
+			// At the time of implementation, the only parent component that uses this
+			// component is my-sites/upgrades/domain-search/domain-search, which
+			// handles data fetching through the `fetchSitePlans` action.
+			// To avoid redundant AJAX requests, we're hence not rendering <QuerySitePlans /> locally.
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 			selectedSiteSlug: getSiteSlug( state, selectedSiteId )
