@@ -32,7 +32,7 @@ const DEFAULT_SNIPPET_LENGTH = 100;
  * and also because lunr.js is designed to be memory resident
  */
 function queryDocs( query ) {
-	return docsIndex.search( query ).map( function( result ) {
+	return docsIndex.search( query ).map( ( result ) => {
 		const doc = documents[ result.ref ],
 			snippet = makeSnippet( doc, query );
 
@@ -48,10 +48,8 @@ function queryDocs( query ) {
  * Return an array of results based on the provided filenames
  */
 function listDocs( filePaths ) {
-	return filePaths.map( function( path ) {
-		const doc = find( documents, function( entry ) {
-			return entry.path === path;
-		} );
+	return filePaths.map( ( path ) => {
+		const doc = find( documents, ( entry ) => entry.path === path );
 
 		if ( doc ) {
 			return {
@@ -77,9 +75,7 @@ function listDocs( filePaths ) {
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
 	const termRegexMatchers = lunr.tokenizer( query )
-		.map( function( term ) {
-			return escapeRegexString( term );
-		} );
+		.map( ( term ) => escapeRegexString( term ) );
 	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
 	const termRegex = new RegExp( termRegexString, 'gi' );
 	const snippets = [];
@@ -128,11 +124,11 @@ function defaultSnippet( doc ) {
  */
 function reduceComponentsUsageStats( modulesWithDependences ) {
 	return Object.keys( modulesWithDependences )
-		.filter( function( moduleName ) {
-			return moduleName.indexOf( 'components/' ) === 0 &&
-				moduleName.indexOf( '/docs' ) === -1;
-		} )
-		.reduce( function( target, moduleName ) {
+		.filter( ( moduleName ) =>
+			moduleName.indexOf( 'components/' ) === 0 &&
+				moduleName.indexOf( '/docs' ) === -1
+		)
+		.reduce( ( target, moduleName ) => {
 			const name = moduleName.replace( 'components/', '' );
 			target[ name ] = modulesWithDependences[ moduleName ];
 			return target;
@@ -143,7 +139,7 @@ module.exports = function() {
 	const app = express();
 
 	// this middleware enforces access control
-	app.use( '/devdocs/service', function( request, response, next ) {
+	app.use( '/devdocs/service', ( request, response, next ) => {
 		if ( ! config.isEnabled( 'devdocs' ) ) {
 			response.status( 404 );
 			next( 'Not found' );
@@ -153,7 +149,7 @@ module.exports = function() {
 	} );
 
 	// search the documents using a search phrase "q"
-	app.get( '/devdocs/service/search', function( request, response ) {
+	app.get( '/devdocs/service/search', ( request, response ) => {
 		const query = request.query.q;
 
 		if ( ! query ) {
@@ -169,7 +165,7 @@ module.exports = function() {
 	} );
 
 	// return a listing of documents from filenames supplied in the "files" parameter
-	app.get( '/devdocs/service/list', function( request, response ) {
+	app.get( '/devdocs/service/list', ( request, response ) => {
 		const files = request.query.files;
 
 		if ( ! files ) {
@@ -185,7 +181,7 @@ module.exports = function() {
 	} );
 
 	// return the HTML content of a document (assumes that the document is in markdown format)
-	app.get( '/devdocs/service/content', function( request, response ) {
+	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
 
 		if ( ! path ) {
@@ -218,7 +214,7 @@ module.exports = function() {
 	} );
 
 	// return json for the components usage stats
-	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
+	app.get( '/devdocs/service/components-usage-stats', ( request, response ) => {
 		const usageStats = reduceComponentsUsageStats( componentsUsageStats );
 		response.json( usageStats );
 	} );
