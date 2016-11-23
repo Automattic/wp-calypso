@@ -168,7 +168,7 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			let state = omit( this.props.initialState, 'lastSurveyVertical' );
+			const state = omit( this.props.initialState, 'lastSurveyVertical' );
 
 			if ( this.props.initialState.lastSurveyVertical !== this.props.surveyVertical ) {
 				state.loadingResults = true;
