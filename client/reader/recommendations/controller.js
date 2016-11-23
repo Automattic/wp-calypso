@@ -78,8 +78,8 @@ export default {
 				break;
 			default:
 				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts';
-				RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' );
-				mcKey = 'recommendations_posts';
+				RecommendedPostsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
+				mcKey = 'custom_recs_posts_with_images';
 		}
 
 		ensureStoreLoading( RecommendedPostsStore, context );
