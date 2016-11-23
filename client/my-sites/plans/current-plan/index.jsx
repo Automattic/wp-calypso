@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import {
-	getPlansBySite,
 	getCurrentPlan,
-	isCurrentPlanExpiring
+	isCurrentPlanExpiring,
+	isRequestingSitePlans
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -33,14 +33,14 @@ class CurrentPlan extends Component {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
-		sitePlans: PropTypes.object,
+		isRequestingSitePlans: PropTypes.bool,
 		context: PropTypes.object
 	};
 
 	isLoading() {
-		const { selectedSite, sitePlans } = this.props;
+		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 
-		return ! selectedSite || ! sitePlans.hasLoadedFromServer;
+		return ! selectedSite || isRequestingPlans;
 	}
 
 	getHeaderWording( plan ) {
@@ -95,7 +95,6 @@ class CurrentPlan extends Component {
 		const {
 			selectedSite,
 			selectedSiteId,
-			sitePlans,
 			context,
 			currentPlan,
 			isExpiring,
@@ -114,7 +113,6 @@ class CurrentPlan extends Component {
 				{ selectedSiteId && ! isJetpack && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<PlansNavigation
-					sitePlans={ sitePlans }
 					path={ context.path }
 					selectedSite={ selectedSite }
 				/>
@@ -151,11 +149,11 @@ export default connect(
 		return {
 			selectedSite,
 			selectedSiteId,
-			sitePlans: getPlansBySite( state, selectedSite ),
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 			isJetpack: isJetpackSite( state, selectedSiteId ),
+			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 			domains: getDecoratedSiteDomains( state, selectedSiteId ),
 			hasDomainsLoaded: ! isRequestingSiteDomains( state, selectedSiteId )
 		};

@@ -27,7 +27,6 @@ const PopoverCart = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		sitePlans: React.PropTypes.object.isRequired,
 		onToggle: React.PropTypes.func.isRequired,
 		closeSectionNavMobilePanel: React.PropTypes.func,
 		visible: React.PropTypes.bool.isRequired,
@@ -114,10 +113,7 @@ const PopoverCart = React.createClass( {
 
 		return (
 			<div>
-				<CartTrialAd
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-					sitePlans={ this.props.sitePlans } />
+				<CartTrialAd cart={ this.props.cart } />
 
 				<CartPlanAd
 					cart={ this.props.cart }

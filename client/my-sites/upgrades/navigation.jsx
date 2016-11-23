@@ -24,8 +24,7 @@ const PlansNavigation = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired,
-		sitePlans: React.PropTypes.object.isRequired
+		] ).isRequired
 	},
 
 	getInitialState() {
@@ -112,7 +111,6 @@ const PlansNavigation = React.createClass( {
 
 		return (
 			<PopoverCart
-				sitePlans={ this.props.sitePlans }
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.toggleCartVisibility }
