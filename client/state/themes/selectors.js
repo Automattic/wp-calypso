@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, split } from 'lodash';
+import { includes, isEqual, omit, some, get } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -237,6 +237,23 @@ export function isRequestingTheme( state, siteId, themeId ) {
 }
 
 /**
+ * Returns true if a request is in progress for the site active theme, or
+ * false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether request is in progress
+ */
+export function isRequestingActiveTheme( state, siteId ) {
+	const activeThemeRequests = get( state, 'themes.activeThemeRequests', null );
+	if ( ! activeThemeRequests ) {
+		return false;
+	}
+
+	return get( activeThemeRequests, siteId, false );
+}
+
+/**
  * Returns the URL for a given theme's details sheet.
  *
  * @param  {Object}  state  Global state tree
@@ -373,41 +390,21 @@ export function getThemeSignupUrl( state, theme ) {
 /**
  * Returns the currently active theme on a given site.
  *
- * DON'T USE YET! This relies on a site object's options.theme_slug attr. If you trigger my-sites' siteSelection
- * middleware during theme activation, it will fetch the current site fresh from the API even though that
- * theme_slug attr might not have been updated on the server yet -- and you'll end up with the old themeId!
- * This happens in particular after purchasing a premium theme in single-site mode since after a theme purchase,
- * the checkout-thank-you component always redirects to the theme showcase for the current site.
- * One possible fix would be to get rid of that redirect (related: https://github.com/Automattic/wp-calypso/issues/8262).
- *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  siteId  Site ID
- * @return {?String}         Theme ID
+ * @return {Stirng}          Theme ID
  */
 export function getActiveTheme( state, siteId ) {
-	if ( ! siteId ) {
+	const activeThemes = get( state, 'themes.activeThemes', null );
+	if ( ! activeThemes ) {
 		return null;
 	}
 
-	const slug = getSiteOption( state, siteId, 'theme_slug' );
-
-	if ( isJetpackSite( state, siteId ) ) {
-		return slug;
-	}
-
-	// On WPCOM sites, themes slugs are prefixed with `pub/`, `premium/` etc.
-	const slugParts = split( slug, '/', 2 );
-	if ( slugParts.length < 2 ) {
-		return null;
-	}
-
-	return slugParts[ 1 ];
+	return get( activeThemes, siteId, null );
 }
 
 /**
  * Returns whether the theme is currently active on the given site.
- *
- * DON'T USE YET! This relies on the getActiveTheme() selector; see its JSDoc.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
