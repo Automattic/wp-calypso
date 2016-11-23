@@ -1,23 +1,24 @@
 /**
- * Extenal dependencies
+ * External dependencies
  */
-const express = require( 'express' ),
-	fs = require( 'fs' ),
-	fspath = require( 'path' ),
-	marked = require( 'marked' ),
-	lunr = require( 'lunr' ),
-	find = require( 'lodash/find' ),
-	escapeHTML = require( 'lodash/escape' );
+
+import express from 'express';
+import fs from 'fs';
+import fspath from 'path';
+import marked from 'marked';
+import lunr from 'lunr';
+import { find, escape as escapeHTML } from 'lodash';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' ),
-	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
-	searchIndex = require( 'devdocs/search-index' ),
+import config from 'config';
+import searchIndex from 'devdocs/search-index';
+import componentsUsageStats from 'devdocs/components-usage-stats.json';
+
+const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents,
-	componentsUsageStats = require( 'devdocs/components-usage-stats.json' );
+	documents = searchIndex.documents;
 
 /**
  * Constants
@@ -31,7 +32,7 @@ const DEFAULT_SNIPPET_LENGTH = 100;
  * and also because lunr.js is designed to be memory resident
  */
 function queryDocs( query ) {
-	const results = docsIndex.search( query ).map( function( result ) {
+	return docsIndex.search( query ).map( function( result ) {
 		const doc = documents[ result.ref ],
 			snippet = makeSnippet( doc, query );
 
@@ -41,15 +42,13 @@ function queryDocs( query ) {
 			snippet: snippet
 		};
 	} );
-
-	return results;
 }
 
 /*
  * Return an array of results based on the provided filenames
  */
 function listDocs( filePaths ) {
-	const results = filePaths.map( function( path ) {
+	return filePaths.map( function( path ) {
 		const doc = find( documents, function( entry ) {
 			return entry.path === path;
 		} );
@@ -68,7 +67,6 @@ function listDocs( filePaths ) {
 			snippet: ''
 		};
 	} );
-	return results;
 }
 
 /*
