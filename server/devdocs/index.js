@@ -26,10 +26,12 @@ const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 const SNIPPET_PAD_LENGTH = 40;
 const DEFAULT_SNIPPET_LENGTH = 100;
 
-/*
+/**
  * Query the index using lunr.
  * We store the documents and index in memory for speed,
  * and also because lunr.js is designed to be memory resident
+ * @param {object} query The search query for lunr
+ * @returns {array} The results from the query
  */
 function queryDocs( query ) {
 	return docsIndex.search( query ).map( ( result ) => {
@@ -44,8 +46,10 @@ function queryDocs( query ) {
 	} );
 }
 
-/*
+/**
  * Return an array of results based on the provided filenames
+ * @param {array} filePaths An array of file paths
+ * @returns {array} The results from the the docs
  */
 function listDocs( filePaths ) {
 	return filePaths.map( ( path ) => {
@@ -67,10 +71,13 @@ function listDocs( filePaths ) {
 	} );
 }
 
-/*
+/**
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
+ * @param {object} doc The document to extract the snippet from
+ * @param {object} query The query to be searched for
+ * @returns {string} A snippet from the document
  */
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
@@ -102,12 +109,22 @@ function makeSnippet( doc, query ) {
 	return defaultSnippet( doc );
 }
 
+/**
+ * Escapes a string
+ * @param {string} str The string to escape
+ * @returns {string} An escaped string
+ */
 function escapeRegexString( str ) {
 	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
 	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
 	return str.replace( matchOperatorsRe, '\\$&' );
 }
 
+/**
+ * Generate a standardized snippet
+ * @param {object} doc The document from which to generate the snippet
+ * @returns {string} The snippet
+ */
 function defaultSnippet( doc ) {
 	const content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
 	return escapeHTML( content ) + '…';
