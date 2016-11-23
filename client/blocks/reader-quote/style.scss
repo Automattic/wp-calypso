@@ -1,0 +1,19 @@
+.reader-quote {
+	text-align: center;
+    width: 60%;
+    margin: 32px auto;
+    color: lighten( $gray, 10% );
+}
+
+.reader-quote__author {
+    text-align: right;
+    font-size: 18px;
+    font-style: italic;
+}
+
+.reader-quote__content {
+	font-size: 20px;
+    font-weight: 700;
+    font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
+    font-style: oblique;
+}
