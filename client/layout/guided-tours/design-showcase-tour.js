@@ -1,6 +1,9 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+import {
+	overEvery as and,
+	negate as not,
+} from 'lodash';
 import { isDesktop } from 'lib/viewport';
 
 import {
@@ -11,196 +14,90 @@ import {
 	Next,
 	Quit,
 	Continue,
-	Link,
+	// Link,
 } from 'layout/guided-tours/config-elements';
 import {
+	inSection,
 	// isNewUser,
 	isEnabled,
-	selectedSiteIsPreviewable,
+	themeFilterChosen,
+	themeSearchResultsFound,
+	// selectedSiteIsPreviewable,
 	selectedSiteIsCustomizable,
-	previewIsNotShowing,
-	previewIsShowing,
+	// previewIsNotShowing,
+	// previewIsShowing,
 } from 'state/ui/guided-tours/contexts';
-import { getScrollableSidebar } from 'layout/guided-tours/positioning';
-import Gridicon from 'components/gridicon';
-import scrollTo from 'lib/scroll-to';
+// import { getScrollableSidebar } from 'layout/guided-tours/positioning';
+// import Gridicon from 'components/gridicon';
+// import scrollTo from 'lib/scroll-to';
 
-const scrollSidebarToTop = () =>
-	scrollTo( { y: 0, container: getScrollableSidebar() } );
+// const scrollSidebarToTop = () =>
+// 	scrollTo( { y: 0, container: getScrollableSidebar() } );
 
 const isNewUser = () => true;
 
 export const DesignShowcaseTour = makeTour(
-	<Tour name="designShowcase" version="20161123" path="/design" when={ and( isNewUser, isEnabled( 'guided-tours/design-showcase', isDesktop ) ) }>
-		<Step name="init" placement="right">
+	<Tour
+		name="designShowcase"
+		version="20161123"
+		path="/design"
+		when={ and( isNewUser, isEnabled( 'guided-tours/design-showcase', isDesktop ) ) }
+		>
+		<Step name="init" placement="right" next="filter">
 			<p>
-				{
-					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
-											'and give you some ideas for what to do next.',
-						{
-							components: {
-								strong: <strong />,
-							}
-						} )
-				}
+				{ 'From this page you can change the design of your site. Want to see how to search for your ideal style?' }
 			</p>
 			<ButtonRow>
-				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
+				<Next step="filter">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
-		<Step name="my-sites"
-			target="my-sites"
-			placement="below"
-			arrow="top-left"
-		>
-			<p>
-				{
-					translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
-											"your site's content and design.",
-						{
-							components: {
-								strong: <strong />,
-							}
-						} )
-				}
-			</p>
-			<Continue icon="my-sites" target="my-sites" step="sidebar" click>
-				{
-					translate( 'Click the {{GridIcon/}} to continue.', {
-						components: {
-							GridIcon: <Gridicon icon="my-sites" size={ 24 } />,
-						}
-					} )
-				}
-			</Continue>
-		</Step>
-
-		<Step name="sidebar"
-			target="sidebar"
-			arrow="left-middle"
+		<Step name="filter"
+			target="themes-tier-dropdown"
 			placement="beside"
+			arrow="right-top"
+			next="search"
 		>
 			<p>
-				{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
+				{ 'Do you want to see only free themes? Try changing to free here.' }
 			</p>
-			<ButtonRow>
-				<Next step="click-preview" />
-				<Quit />
-			</ButtonRow>
+			<Continue when={ themeFilterChosen( 'free' ) } step="search" hidden />
 		</Step>
 
-		<Step name="click-preview"
-			target="site-card-preview"
+		<Step name="search"
+			target=".themes__search-card .search-open__icon"
 			arrow="top-left"
 			placement="below"
-			when={ selectedSiteIsPreviewable }
-			scrollContainer=".sidebar__region"
+			next="theme-options"
 		>
 			<p>
-				{
-					translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
-						components: {
-							strong: <strong />,
-						}
-					} )
-				}
+				{ 'Search for a specific feature, style or theme here. Try something — for example “business”.' }
 			</p>
-			<Continue step="in-preview" target="site-card-preview" click>
-				{
-					translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
-						components: {
-							strong: <strong />,
-						},
-					} )
-				}
-			</Continue>
+			<Continue when={ themeSearchResultsFound } step="theme-options" hidden />
 		</Step>
 
-		<Step name="in-preview"
-			placement="center"
-			when={ selectedSiteIsPreviewable }
+		<Step name="theme-options"
+			target=".theme__more-button"
+			arrow="top-left"
+			placement="below"
+			next="customize"
 		>
 			<p>
-				{
-					translate( "This is your site's {{strong}}Preview{{/strong}}. From here you can see how your site looks to others.", {
-						components: {
-							strong: <strong />,
-						}
-					} )
-				}
+				{ 'From here you can access all the theme options.' }
 			</p>
-			<ButtonRow>
-				<Next step="close-preview" />
-				<Quit />
-				<Continue step="close-preview" when={ previewIsNotShowing } hidden />
-			</ButtonRow>
+			<Continue step="customize" target=".theme__more-button" click />
 		</Step>
 
-		<Step name="close-preview"
-			target="web-preview__close"
-			arrow="left-top"
+		<Step name="customize"
+			target=".current-theme__customize"
 			placement="beside"
-			when={ and( selectedSiteIsPreviewable, previewIsShowing ) }
+			arrow="right-middle"
+			when={ and( selectedSiteIsCustomizable, not( inSection( 'customize' ) ) ) }
 		>
 			<p>
-				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
+				{ 'To customize further the design you have chosen, click on customize.' }
 			</p>
-			<Continue step="themes" target="web-preview__close" when={ previewIsNotShowing }>
-				{
-					translate( 'Click the {{GridIcon/}} to continue.', {
-						components: {
-							GridIcon: <Gridicon icon="cross-small" size={ 24 } />,
-						}
-					} )
-				}
-			</Continue>
-		</Step>
-
-		<Step name="themes"
-			target="themes"
-			arrow="top-left"
-			placement="below"
-			when={ selectedSiteIsCustomizable }
-			scrollContainer=".sidebar__region"
-			shouldScrollTo
-		>
-			<p>
-				{
-					translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} ' +
-											"your theme's colors, fonts, and more.",
-						{
-							components: {
-								strong: <strong />,
-							}
-						} )
-				}
-			</p>
-			<ButtonRow>
-				<Next step="finish" />
-				<Quit />
-			</ButtonRow>
-		</Step>
-
-		<Step name="finish" placement="center">
-			<p>
-				{
-					translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
-						components: {
-							strong: <strong />,
-						}
-					} )
-				}
-			</p>
-			<ButtonRow>
-				<Quit onClick={ scrollSidebarToTop } primary>
-					{ translate( "We're all done!" ) }
-				</Quit>
-			</ButtonRow>
-			<Link href="https://learn.wordpress.com">
-				{ translate( 'Learn more about WordPress.com' ) }
-			</Link>
 		</Step>
 	</Tour>
 );
