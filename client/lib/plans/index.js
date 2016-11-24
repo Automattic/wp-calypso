@@ -2,11 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import {
-	get,
-	includes,
-	invoke
-} from 'lodash';
+import { get, includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,12 +20,10 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
-import SitesList from 'lib/sites-list';
 
 /**
  * Module vars
  */
-const sitesList = SitesList();
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function isFreePlan( plan ) {
@@ -56,26 +50,12 @@ export function getFeatureTitle( feature ) {
 	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
-export function getSitePlanSlug( siteID ) {
-	let site;
-	if ( siteID ) {
-		site = sitesList.getSite( siteID );
-	} else {
-		site = sitesList.getSelectedSite();
-	}
-	return get( site, 'plan.product_slug' );
-}
-
 export function getPlanPath( plan ) {
 	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
 export function planHasFeature( plan, feature ) {
 	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
-}
-
-export function hasFeature( feature, siteID ) {
-	return planHasFeature( getSitePlanSlug( siteID ), feature );
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
