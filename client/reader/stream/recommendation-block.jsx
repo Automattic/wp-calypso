@@ -19,7 +19,7 @@ export default class RecommendationBlock extends React.PureComponent {
 	updatePosts = ( props = this.props ) => {
 		const posts = map( props.recommendations, PostStore.get.bind( PostStore ) );
 		if ( some( posts, ( post, i ) => post !== this.state.posts[ i ] ) ) {
-			this.setState( posts );
+			this.setState( { posts } );
 		}
 	}
 

@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, lastIndexOf, noop, times } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -91,19 +91,22 @@ function injectRecommendations( posts, recs = [] ) {
 		return posts;
 	}
 
-	const items = [];
+	let recIndex = 0;
 
-	for ( let postIndex = 0, recIndex = 0; postIndex < posts.length; postIndex += itemsBetweenRecs, recIndex += RECS_PER_BLOCK ) {
-		items.push.apply( items, posts.slice( postIndex, postIndex + itemsBetweenRecs ) );
-		// only insert recs if we have them and if we filled a full block of posts
-		if ( recIndex < recs.length && postIndex + itemsBetweenRecs < posts.length ) {
-			items.push( {
+	return flatMap( posts, ( post, index ) => {
+		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
+			const recBlock = {
 				isRecommendationBlock: true,
 				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK )
-			} );
+			};
+			recIndex += RECS_PER_BLOCK;
+			return [
+				recBlock,
+				post
+			];
 		}
-	}
-	return items;
+		return post;
+	} );
 }
 
 export default class ReaderStream extends React.Component {
