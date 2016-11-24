@@ -3,7 +3,6 @@
  */
 import moment from 'moment';
 import {
-	find,
 	get,
 	includes,
 	invoke
@@ -65,19 +64,6 @@ export function getSitePlanSlug( siteID ) {
 		site = sitesList.getSelectedSite();
 	}
 	return get( site, 'plan.product_slug' );
-}
-
-export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
-	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
-	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
-}
-
-export function getUpgradePlanSlugFromPath( path, siteID ) {
-	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
-	return find( Object.keys( PLANS_LIST ), planKey => (
-		( planKey === path || getPlanPath( planKey ) === path ) &&
-		canUpgradeToPlan( planKey, site )
-	) );
 }
 
 export function getPlanPath( plan ) {

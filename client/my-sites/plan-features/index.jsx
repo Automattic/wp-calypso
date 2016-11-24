@@ -17,10 +17,14 @@ import PlanFeaturesItem from './item';
 import Popover from 'components/popover';
 import PlanFeaturesActions from './actions';
 import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
-import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
+import {
+	canUpgradeToPlan,
+	getPlanDiscountedRawPrice,
+	getPlansBySiteId,
+	isCurrentUserCurrentPlanOwner
+} from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import {
 	getPlanRawPrice,
 	getPlan,
@@ -43,7 +47,6 @@ import {
 import { isFreePlan } from 'lib/plans';
 import {
 	getPlanPath,
-	canUpgradeToPlan,
 	applyTestFiltersToPlansList
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -517,7 +520,7 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const available = isInSignup ? true : canUpgradeToPlan( plan ) && canPurchase;
+				const available = isInSignup ? true : canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
@@ -575,4 +578,3 @@ export default connect(
 		recordTracksEvent
 	}
 )( localize( PlanFeatures ) );
-
