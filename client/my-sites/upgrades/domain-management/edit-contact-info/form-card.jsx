@@ -28,6 +28,8 @@ import paths from 'my-sites/upgrades/paths';
 import upgradesActions from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
+import Gridicon from 'components/gridicon';
+import support from 'lib/url/support';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -207,6 +209,23 @@ class EditContactInfoFormCard extends React.Component {
 								textOnly: true
 							} )
 						} ) }
+					</div>
+
+					<div className="edit-contact-info__terms">
+						<Gridicon icon="info-outline" size={ 18 } />
+						<p>
+							{ translate(
+								'By clicking Save Contact Info, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and ' +
+								'authorize Automattic or the relevant third party registrar to act as your ' +
+								'{{daLink}}Designated Agent{{/daLink}} to approve a Change of Registrant on your behalf.',
+								{
+									components: {
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+										daLink: <a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
+									}
+								}
+							) }
+						</p>
 					</div>
 
 					<FormFooter>

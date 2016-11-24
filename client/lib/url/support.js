@@ -18,6 +18,7 @@ export default {
 	CALYPSO_COURSES: '/help/courses',
 	CREATE: `${ root }/create`,
 	CUSTOM_DNS: `${ root }/domains/custom-dns`,
+	DESIGNATED_AGENT: `${ root }/update-contact-information/`,
 	DOMAIN_HELPER_PREFIX: `${ root }/domain-helper/?host=`,
 	DOMAINS: `${ root }/domains`,
 	EMAIL_FORWARDING: `${ root }/email-forwarding`,

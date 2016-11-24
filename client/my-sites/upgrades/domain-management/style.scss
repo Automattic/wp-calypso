@@ -26,7 +26,6 @@
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
 	display: flex;
-	justify-content: flex-end;
 
 	@include breakpoint('>480px') {
 		padding: 24px;
@@ -57,6 +56,14 @@
 			order: 2;
 		}
 	}
+}
+
+.primary-domain-actions {
+	justify-content: flex-end;
+}
+
+.domain-management-form-footer {
+	justify-content: flex-start;
 }
 
 .domain-management-header__children {
@@ -366,6 +373,23 @@ input[type=radio].domain-management-list-item__radio {
 		.state {
 			margin-left: 14px;
 		}
+	}
+}
+
+.edit-contact-info__terms {
+	color: darken( $gray, 10% );
+	margin: 16px 0;
+	padding: 0;
+	text-align: left;
+
+	p {
+		font-size: 12px;
+		font-weight: 100;
+		margin-left: 24px;
+	}
+
+	.gridicon {
+		float: left;
 	}
 }
 
