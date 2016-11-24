@@ -24,20 +24,21 @@ class QueryThemes extends Component {
 	}
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				isEqual( this.props.query, nextProps.query ) ) {
-			return;
-		}
-		this.request( nextProps );
+	shouldComponentUpdate( nextProps ) {
+		return this.props.siteId !== nextProps.siteId ||
+			! isEqual( this.props.query, nextProps.query );
 	}
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestThemes( props.siteId, props.query );
+	componentDidUpdate() {
+		this.request();
+	}
+
+	request() {
+		if ( ! this.props.isRequesting ) {
+			this.props.requestThemes( this.props.siteId, this.props.query );
 		}
 	}
 
