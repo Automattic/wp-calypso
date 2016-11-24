@@ -4,8 +4,18 @@ This component is used to display an install bar for automated transfers.
 
 ```js
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
+
+render: function() {
+	return (
+		<div className="plugin-meta">
+			<PluginAutomatedTransfer
+				plugin={ plugin }
+			/>
+		</div>
+	);
+}
 ```
 
 #### Props:
 
-* `lorem` : (any) Ipsum.
+* `plugin`: a plugin object.
