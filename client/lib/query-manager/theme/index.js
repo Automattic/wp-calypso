@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { every, some, includes, startsWith } from 'lodash';
+import { every, some, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
+import { isPremium } from './util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 const SEARCH_TAXONOMIES = [ 'subject', 'feature', 'color', 'style', 'column', 'layout' ];
@@ -61,10 +62,8 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 					if ( ! value ) {
 						return true;
 					}
-					// TODO: Use isPremium() helper here once its module has fewer dependencies (SSR!)
 					const queryingForPremium = value === 'premium';
-					const isPremiumTheme = startsWith( theme.stylesheet, 'premium/' );
-					return queryingForPremium === isPremiumTheme;
+					return queryingForPremium === isPremium( theme );
 			}
 
 			return true;
