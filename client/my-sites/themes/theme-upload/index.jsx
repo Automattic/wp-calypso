@@ -29,7 +29,8 @@ class Upload extends React.Component {
 			notices.error( errorMessage );
 			return;
 		}
-		// Supplied param can be an array or a FileList
+
+		// DropZone supplies an array, FilePicker supplies a FileList
 		const file = files[ 0 ] || files.item( 0 );
 		if ( file.type !== 'application/zip' ) {
 			notices.error( errorMessage );
