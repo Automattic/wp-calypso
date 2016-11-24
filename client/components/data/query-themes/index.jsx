@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { Component, PropTypes } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ class QueryThemes extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
-				shallowEqual( this.props.query, nextProps.query ) ) {
+				isEqual( this.props.query, nextProps.query ) ) {
 			return;
 		}
 		this.request( nextProps );
