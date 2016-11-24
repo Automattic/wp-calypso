@@ -3,6 +3,7 @@
  */
 import { map, compact, includes, some, filter } from 'lodash';
 import getVideoId from 'get-video-id';
+import request from 'superagent';
 
 /**
  * Internal Dependencies
@@ -90,11 +91,10 @@ const getThumbnailUrlPromise = ( iframe ) => {
 		return Promise.resolve( thumbnailUrl );
 	} else if ( includes( iframe.src, 'vimeo' ) ) {
 		const videoId = getVideoId( iframe.src );
-		const fetchUrl = `http://vimeo.com/api/v2/video/${ videoId }.json`;
+		const fetchUrl = `https://vimeo.com/api/v2/video/${ videoId }.json`;
 
-		return fetch( fetchUrl, { method: 'get' } )
-			.then( resp => resp.json() )
-			.then( resp => Promise.resolve( resp[ 0 ].thumbnail_large ) )
+		return request.get( fetchUrl )
+			.then( resp => Promise.resolve( resp.body[ 0 ].thumbnail_large ) )
 			.catch( err => Promise.reject( err ) );
 	}
 	return Promise.reject();
