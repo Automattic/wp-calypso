@@ -155,9 +155,7 @@ var DomainSearch = React.createClass( {
 } );
 
 module.exports = connect(
-	function( state ) {
-		return {
-			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-		};
-	}
+	( state ) => ( {
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+	} )
 )( DomainSearch );
