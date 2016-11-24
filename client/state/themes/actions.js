@@ -33,6 +33,11 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_RECEIVE_SERVER_ERROR,
+	THEME_UPLOAD_START,
+	THEME_UPLOAD_SUCCESS,
+	THEME_UPLOAD_FAILURE,
+	THEME_UPLOAD_CLEAR,
+	THEME_UPLOAD_PROGRESS,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -425,5 +430,46 @@ export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId
+	};
+}
+
+export function uploadTheme( siteId, file ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_UPLOAD_START,
+			siteId,
+		} );
+		return wpcom.undocumented().uploadTheme( siteId, file, ( event ) => {
+			dispatch( {
+				type: THEME_UPLOAD_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total
+			} );
+		} )
+			.then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_UPLOAD_SUCCESS,
+					siteId,
+					themeId: theme.id,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_UPLOAD_FAILURE,
+					siteId,
+					error
+				} );
+			} );
+	};
+}
+
+export function clearThemeUpload( siteId ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_UPLOAD_CLEAR,
+			siteId,
+		} );
 	};
 }

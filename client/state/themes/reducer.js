@@ -248,7 +248,7 @@ export default combineReducers( {
 	themeDetails,
 	themesList,
 	// New reducers:
-	// queries,
+	queries,
 	// queryRequests,
 	// themeRequests,
 	// activationRequests,
