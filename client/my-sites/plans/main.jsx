@@ -18,7 +18,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -29,7 +28,6 @@ const Plans = React.createClass( {
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
-		selectedSiteId: React.PropTypes.number,
 		displayJetpackPlans: React.PropTypes.bool
 	},
 
@@ -64,7 +62,6 @@ const Plans = React.createClass( {
 	render() {
 		const {
 			selectedSite,
-			selectedSiteId,
 			translate,
 			displayJetpackPlans
 		} = this.props;
@@ -88,7 +85,6 @@ const Plans = React.createClass( {
 							selectedSite={ selectedSite } />
 
 						<QueryPlans />
-						<QuerySitePlans siteId={ selectedSiteId } />
 
 						<PlansFeaturesMain
 							site={ selectedSite }
@@ -116,7 +112,6 @@ export default connect(
 			isPlaceholder,
 			plans: getPlans( state ),
 			selectedSite: getSelectedSite( state ),
-			selectedSiteId: selectedSiteId,
 			displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite
 		};
 	}
