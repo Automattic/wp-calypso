@@ -1,7 +1,10 @@
 .is-group-reader .card.list-stream__header {
+	box-shadow: none;
+	border-bottom: 1px solid lighten( $gray, 30% );
+	display: flex;
 	min-height: 48px;
 	margin-top: 24px;
-	padding: 0 14px 14px 14px;
+	padding: 0 14px 14px;
 
 	@include breakpoint( ">660px" ) {
 		padding-left: 0;
@@ -16,22 +19,19 @@
 	&:hover {
 		cursor: default;
 	}
-
-	box-shadow: none;
-	border-bottom: 1px solid lighten( $gray, 30 );
-	display: flex;
 }
 
 .list-stream__header-icon {
-	height: 24px;
-	width: 24px;
-	background: lighten( $gray, 20 );
+	height: 48px;
+	width: 48px;
+	background: lighten( $gray, 20% );
 	text-align: center;
-	padding: 2px;
 
 	.gridicon {
 		fill: $white;
 		height: 24px;
+		position: relative;
+			top: 12px;
 		width: 24px;
 	}
 }
@@ -83,7 +83,12 @@
 		display: none;
 	}
 
-	.list-stream__header-action-icon svg {
+	.list-stream__header-action-icon .gridicon {
 		fill: $gray;
+		margin: auto;
+		position: relative;
+			bottom: 0;
+			top: 15px;
+			right: -6px;
 	}
 }
