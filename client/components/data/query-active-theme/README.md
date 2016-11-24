@@ -1,11 +1,11 @@
-Query Theme
-============
+Query Active Theme
+==================
 
-Query Active Theme is a React component used in managing the fetching sites active theme data: themeId, themeName and themeCost object.
+Query Active Theme is a React component used in managing fetching of a given site's active theme ID.
 
 ## Usage
 
-Render the component, passing `siteId` . It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```
 import React from 'react';
@@ -16,9 +16,8 @@ import { getActiveTheme } from 'state/themes/selectors';
 function MyActiveTheme( { activeTheme } ) {
 	return (
 		<div>
-			<QueryActiveTheme siteId={ 3584907 } >
-				<div> My site active theme ID: {activeTheme}.</div>
-			} }
+			<QueryActiveTheme siteId={ 3584907 } />
+			<div>My site active theme ID: {activeTheme}.</div>
 		</div>
 	);
 }
