@@ -5,7 +5,7 @@ import React from 'react';
 import async from 'async';
 import flatten from 'lodash/flatten';
 import reject from 'lodash/reject';
-import omit from 'lodash/omit';
+import clone from 'lodash/clone';
 import find from 'lodash/find';
 import uniqBy from 'lodash/uniqBy';
 import times from 'lodash/times';
@@ -131,7 +131,6 @@ const RegisterDomainStep = React.createClass( {
 			clickedExampleSuggestion: false,
 			dotBlogNotice: true,
 			lastQuery: suggestion,
-			lastSurveyVertical: this.props.surveyVertical,
 			lastDomainSearched: null,
 			lastDomainError: null,
 			loadingResults: Boolean( suggestion ),
@@ -168,10 +167,12 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			const state = omit( this.props.initialState, 'lastSurveyVertical' );
+			const state = clone( this.props.initialState );
 
-			if ( this.props.initialState.lastSurveyVertical !== this.props.surveyVertical ) {
+			if ( state.lastSurveyVertical &&
+				( state.lastSurveyVertical !== this.props.surveyVertical ) ) {
 				state.loadingResults = true;
+				delete state.lastSurveyVertical;
 			}
 
 			this.setState( state );
@@ -317,7 +318,7 @@ const RegisterDomainStep = React.createClass( {
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
-		this.setState( { lastQuery: searchQuery }, this.save );
+		this.setState( { lastQuery: searchQuery, lastSurveyVertical: this.props.surveyVertical }, this.save );
 
 		if ( ! domain || ! this.state.loadingResults ) {
 			// the search was cleared or the domain contained only spaces
