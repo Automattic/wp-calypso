@@ -1,5 +1,4 @@
 .following-edit {
-
 	ul {
 		list-style-type: none;
 		margin: 0;
@@ -146,9 +145,10 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 70px;
+			top: 71px;
 		width: 100%;
 		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
+		box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 
 		&.is-compact {
 			padding: 16px 24px;
