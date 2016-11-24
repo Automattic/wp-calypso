@@ -34,7 +34,7 @@ module.exports = function() {
 	}
 
 	if ( config.isEnabled( 'manage/site-settings/categories' ) ) {
-		page( '/settings/taxonomies/:site_id/:taxonomy', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.taxonomies );
+		page( '/settings/taxonomies/:taxonomy/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.taxonomies );
 	}
 
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );
