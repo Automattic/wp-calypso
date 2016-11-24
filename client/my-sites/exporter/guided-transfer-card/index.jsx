@@ -15,7 +15,9 @@ import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
+import SUPPORT_URLS from 'lib/url/support';
 
 const Feature = ( { children } ) =>
 	<li className="guided-transfer-card__feature-list-item">
@@ -35,9 +37,9 @@ const UnavailableInfo = localize( ( { translate } ) =>
 	<div className="guided-transfer-card__unavailable-notice">
 		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
 		<InfoPopover className="guided-transfer-card__unavailable-info-icon" position="left">
-			{ translate( `Guided Transfer is unavailable at the moment. We'll
-				be back as soon as possible! In the meantime, you can transfer your
-				WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
+			{ translate( "Guided Transfer is unavailable at the moment. We'll " +
+				'be back as soon as possible! In the meantime, you can transfer your ' +
+				'WordPress.com blog elsewhere by following {{a}}these steps{{/a}}',
 				{ components: {
 					a: <a href="https://move.wordpress.com/" />
 				} } ) }
@@ -51,6 +53,7 @@ class GuidedTransferCard extends Component {
 			translate,
 			isAvailable,
 			siteId,
+			cost,
 		} = this.props;
 
 		return <div>
@@ -62,9 +65,11 @@ class GuidedTransferCard extends Component {
 							{ translate( 'Guided Transfer' ) }
 						</h1>
 						<h2 className="guided-transfer-card__subtitle">
-							<span className="guided-transfer-card__price">$129</span>
-							&nbsp;
-							{ translate( 'One-time expense' ) }
+							{ translate( '{{cost/}} One-time expense', {
+								components: {
+									cost: <span className="guided-transfer-card__price">{ cost }</span>
+								}
+							} ) }
 						</h2>
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
@@ -86,8 +91,8 @@ class GuidedTransferCard extends Component {
 							'site{{/strong}} to a self-hosted WordPress.org installation with ' +
 							'one of our hosting partners.', { components: { strong: <strong /> } }
 						) }
-						<br/>
-						<a href="https://en.support.wordpress.com/guided-transfer/" >
+						<br />
+						<a href={ SUPPORT_URLS.GUIDED_TRANSFER } >
 							{ translate( 'Learn more.' ) }
 						</a>
 					</div>
@@ -97,7 +102,7 @@ class GuidedTransferCard extends Component {
 						<Feature>
 							{ translate( 'Switch your domain over {{link}}and more!{{/link}}', {
 								components: {
-									link: <a href="https://en.support.wordpress.com/guided-transfer/" />
+									link: <a href={ SUPPORT_URLS.GUIDED_TRANSFER } />
 								}
 							} ) }
 						</Feature>
@@ -109,6 +114,7 @@ class GuidedTransferCard extends Component {
 }
 
 const mapStateToProps = state => ( {
+	cost: getProductDisplayCost( state, 'guided_transfer' ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 	isAvailable: isGuidedTransferAvailableForAllSites( state, getSelectedSiteId( state ) ),
