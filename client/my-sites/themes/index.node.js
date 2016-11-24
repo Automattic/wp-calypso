@@ -18,10 +18,12 @@ export default function( router ) {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?$`, fetchThemeDataWithCaching, loggedOut, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, fetchThemeData, loggedOut, makeLayout );
+			router( '/design/upload/*', makeLayout );
 			router( '/design/*', fetchThemeData, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, makeLayout );
+			router( '/design/upload/*', makeLayout );
 			router( '/design/*', makeLayout ); // Needed so direct hits don't result in a 404.
 		}
 	}
