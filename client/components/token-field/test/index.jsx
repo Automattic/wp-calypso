@@ -423,12 +423,6 @@ describe( 'TokenField', function() {
 			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
 		} );
 
-		it( 'should add multiple newline-separated tokens when pasting', function() {
-			setText( 'baz\nquux\nwut' );
-			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( 'wut' );
-		} );
-
 		it( 'should add multiple tab-separated tokens when pasting', function() {
 			setText( 'baz\tquux\twut' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
@@ -436,31 +430,31 @@ describe( 'TokenField', function() {
 		} );
 
 		it( 'should not duplicate tokens when pasting', function() {
-			setText( 'baz \tbaz,  quux \nquux,quux , wut  \twut, wut' );
+			setText( 'baz \tbaz,  quux \tquux,quux , wut  \twut, wut' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
 			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
 		} );
 
 		it( 'should skip empty tokens at the beginning of a paste', function() {
-			setText( ',  ,\n \t  ,,baz, quux' );
+			setText( ',  ,\t \t  ,,baz, quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
 			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
 		} );
 
 		it( 'should skip empty tokens at the beginning of a paste', function() {
-			setText( ',  ,\n \t  ,,baz, quux' );
+			setText( ',  ,\t \t  ,,baz, quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
 			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
 		} );
 
 		it( 'should skip empty tokens in the middle of a paste', function() {
-			setText( 'baz,  ,\n \t  ,,quux' );
+			setText( 'baz,  ,\t \t  ,,quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
 			expect( textInputNode.prop( 'value' ) ).to.equal( 'quux' );
 		} );
 
 		it( 'should skip empty tokens at the end of a paste', function() {
-			setText( 'baz, quux,  ,\n \t  ,,   ' );
+			setText( 'baz, quux,  ,\t \t  ,,   ' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
 			expect( textInputNode.prop( 'value' ) ).to.equal( '   ' );
 		} );
