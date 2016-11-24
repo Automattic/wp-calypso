@@ -29,6 +29,7 @@ import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
+import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { userCan } from 'lib/site/utils';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -36,8 +37,6 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
-
-import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -350,7 +349,7 @@ export default React.createClass( {
 				</Card>
 
 				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() &&
-					<PluginAutomatedTransfer />
+					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 
 				{ ( get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&

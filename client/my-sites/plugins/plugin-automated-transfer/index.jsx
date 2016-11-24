@@ -44,6 +44,16 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	testChangeState = () => {
+		const { transferStep } = this.state;
+		switch ( transferStep ) {
+			case 'start': this.setState( { transferStep: 'setup' } ); break;
+			case 'setup': this.setState( { transferStep: 'leaving' } ); break;
+			case 'leaving': this.setState( { transferStep: 'complete' } ); break;
+			case 'complete': this.setState( { transferStep: 'start' } ); break;
+		}
+	}
+
 	render() {
 		const { plugin } = this.props;
 		const { transferStep } = this.state;
@@ -53,8 +63,13 @@ class PluginAutomatedTransfer extends Component {
 				showDismiss={ false }
 				icon={ transferStep === 'complete' ? 'checkmark' : 'sync' }
 				className="plugin-automated-transfer"
-				text={ this.setNoticeText( plugin.name ) }
-			/>
+			>
+				{ this.setNoticeText( plugin.name ) }
+
+				<a onClick={ this.testChangeState }>
+					[Change State]
+				</a>
+			</Notice>
 		);
 	}
 
