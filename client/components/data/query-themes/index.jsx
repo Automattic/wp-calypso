@@ -17,10 +17,11 @@ class QueryThemes extends Component {
 			PropTypes.number,
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ).isRequired,
+		// A theme query. Note that on Jetpack sites, only the `search` argument is supported.
 		query: PropTypes.shape( {
 			// The search string
 			search: PropTypes.string,
-			// The tier to look for -- 'free', 'premium', or '' (for all themes). Doesn't work on Jetpack sites
+			// The tier to look for -- 'free', 'premium', or '' (for all themes)
 			tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 			// Comma-separated list of filters; see my-sites/themes/theme-filters
 			filter: PropTypes.string,
