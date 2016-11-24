@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getMyPostCounts, getAllPostCounts } from 'state/posts/counts/selectors';
+import {
+	getMyPostCounts,
+	getAllPostCounts,
+	isRequestingPostCounts
+} from 'state/posts/counts/selectors';
 import { requestPostCounts } from 'state/posts/counts/actions';
 import { refreshByUid } from './utils';
 
@@ -14,7 +18,8 @@ const createResolver = store => ( args, { uid } ) => {
 
 	return {
 		mine: () => getMyPostCounts( state, siteId, postType ),
-		all: () => getAllPostCounts( state, siteId, postType )
+		all: () => getAllPostCounts( state, siteId, postType ),
+		requesting: () => isRequestingPostCounts( state, siteId, postType )
 	};
 };
 

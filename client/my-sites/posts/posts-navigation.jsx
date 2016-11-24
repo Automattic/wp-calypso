@@ -42,9 +42,10 @@ const PostsNavigation = React.createClass( {
 	mixins: [ URLSearch ],
 
 	render() {
-		/* if ( this.state.loading ) {
+		const loading = get( this.props.results, [ 'postsCount', 'requesting' ], true );
+		if ( loading ) {
 			return ( <SectionNav /> );
-		} */
+		}
 
 		let author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
@@ -109,7 +110,7 @@ const PostsNavigation = React.createClass( {
 		const counts = get( this.props.results, [ 'postsCount', authorKey ], {} );
 
 		for ( status in this.filterStatuses ) {
-			if ( 'undefined' === typeof counts[ status ] && 'publish' !== status ) {
+			if ( counts && ! counts[ status ] && 'publish' !== status ) {
 				continue;
 			}
 
@@ -119,7 +120,7 @@ const PostsNavigation = React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = false !== counts[ status ]
+			let count = counts && false !== counts[ status ]
 				? counts[ status ]
 				: false;
 
@@ -148,7 +149,7 @@ const PostsNavigation = React.createClass( {
 
 		// set selectedText as `published` as default
 		selectedText = selectedText || 'published';
-		selectedCount = selectedCount || counts.publish;
+		selectedCount = selectedCount || ( counts && counts.publish );
 
 		let tabs = (
 			<NavTabs
@@ -229,11 +230,16 @@ export default compose(
 					mine {
 						publish
 						draft
+						trash
+						future
 					}
 					all {
 						publish
 						draft
+						trash
+						future
 					}
+					requesting
 				}
 			}
 		`,

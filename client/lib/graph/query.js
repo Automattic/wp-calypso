@@ -28,9 +28,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 		}
 
 		componentDidMount() {
-			this.unsubscribe = this.context.graph.store.subscribe( () => {
-				this.request();
-			} );
+			this.unsubscribe = this.context.graph.store.subscribe( this.request );
 			this.request();
 		}
 
@@ -42,6 +40,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 
 		componentWillReceiveProps( newProps ) {
 			this.buildQuery( newProps );
+			this.request();
 		}
 
 		buildQuery( props ) {
@@ -57,7 +56,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 			this.cancelRequestPromise && this.cancelRequestPromise();
 		}
 
-		request() {
+		request = () => {
 			this.cancelRequest();
 			const cancelablePromise = makePromiseCancelable(
 				this.context.graph.request( this.query, { uid: this.uid }, this.variables )
@@ -72,7 +71,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 					this.cancelRequestPromise = false;
 				} )
 				.catch( () => {} ); // avoid console warnings
-		}
+		};
 
 		render() {
 			return (

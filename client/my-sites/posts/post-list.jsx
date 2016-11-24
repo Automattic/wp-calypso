@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import { debounce, get, isEqual, map, range } from 'lodash';
+import React, { Component, PropTypes } from 'react';
+import { debounce, get, isEqual, map, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,13 +44,13 @@ class PostList extends Component {
 	render() {
 		return (
 			<Posts
-				sites={ this.props.sites }
+				sites={ this.props.sites }
 				context={ this.props.context }
 				siteID={ this.props.sites.getSelectedSite().ID }
 				status={ mapStatus( this.props.statusSlug ) }
 				author={ this.props.author }
 				search={ this.props.search }
-				page={ this.state.page }
+				page={ this.state.page }
 				fetchNextPage={ this.fetchNextPage }
 			/>
 		);
@@ -66,7 +66,6 @@ var PostsUnwrapped = React.createClass( {
 		lastPage: PropTypes.bool.isRequired,
 		loading: PropTypes.bool.isRequired,
 		page: PropTypes.number.isRequired,
-		postImages: PropTypes.object.isRequired,
 		search: PropTypes.string,
 		siteID: PropTypes.any,
 		sites: PropTypes.object.isRequired,
@@ -81,7 +80,6 @@ var PostsUnwrapped = React.createClass( {
 			loading: false,
 			lastPage: false,
 			page: 0,
-			postImages: {},
 			trackScrollPage: function() {}
 		};
 	},
@@ -223,13 +221,12 @@ var PostsUnwrapped = React.createClass( {
 	},
 
 	renderPost: function( post, index ) {
-		const postImages = this.props.postImages[ post.global_ID ];
 		const renderedPost = (
 			<Post
 				ref={ post.global_ID }
 				key={ post.global_ID }
 				post={ post }
-				postImages={ postImages }
+				postImages={ post.images }
 				sites={ this.props.sites }
 				fullWidthPost={ this.state.postsAtFullWidth }
 				path={ route.sectionify( this.props.context.pathname ) }
@@ -304,15 +301,14 @@ var PostsUnwrapped = React.createClass( {
 
 const Posts = queryGraph(
 	`
-		query PostList( $siteId: Int, $status: String, $author: Int, $search: String, $pages: [Int] )
+		query PostList( $siteId: Int, $query: PostQuery, $pages: [Int] )
 		{
-			posts( siteId: $siteId, query: { status: $status, author: $author, search: $search }, pages: $pages ) {
+			posts( siteId: $siteId, query: $query, pages: $pages ) {
 				items {
 					ID
 					author {
 						name
 					}
-					canonical_image
 					capabilities {
 						edit_post
 					}
@@ -322,6 +318,7 @@ const Posts = queryGraph(
 						comments_open
 					}
 					excerpt
+					featured_image
 					format
 					global_ID
 					password
@@ -332,6 +329,12 @@ const Posts = queryGraph(
 					title
 					type
 					URL
+					images( minWidth: 72, minHeight: 72 ) {
+						featured_image
+						images {
+							src
+						}
+					}
 				}
 				requesting
 				lastPage
@@ -341,10 +344,13 @@ const Posts = queryGraph(
 	( { siteID: siteId, author, search, status, page } ) => {
 		return {
 			pages: range( 1, page + 1 ),
-			author,
+			query: {
+				author: author || undefined,
+				search: search || undefined,
+				status,
+				order_by: 'date',
+			},
 			siteId,
-			search,
-			status,
 		};
 	}
 )( PostsUnwrapped );

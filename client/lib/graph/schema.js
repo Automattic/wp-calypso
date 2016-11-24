@@ -10,19 +10,31 @@ export default `
 		name: String
 	}
 
+	# Object containing post capabilities
 	type PostCapabilities {
 		edit_post: Boolean
+	}
+
+	# Object representing a post's attachment
+	type PostImage {
+		src: String
+	}
+
+	# Object containing post images
+	type PostImages {
+		featured_image: String
+		images: [PostImage]
 	}
 
 	# Object representing a Post
 	type Post {
 		ID: Int!
 		author: PostAuthor
-		canonical_image: String
 		capabilities: PostCapabilities
 		date: String
 		discussion: PostDiscussion
 		excerpt: String
+		featured_image: String
 		format: String
 		global_ID: String
 		password: String
@@ -34,6 +46,7 @@ export default `
 		type: String
 		URL: String
 		stat( stat: String ): Int
+		images( minWidth: Int, minHeight: Int ): PostImages
 	}
 
 	# Object representing a Query Post Response
@@ -50,12 +63,14 @@ export default `
 		private: Int
 		future: Int
 		pending: Int
+		trash: Int
 	}
 
 	# Object representing PostsCounts by author
 	type PostsCounts {
 		mine: PostsCount
 		all: PostsCount
+		requesting: Boolean
 	}
 
 	# Query object used to search for posts
@@ -65,6 +80,7 @@ export default `
 		author: Int
 		search: String
 		status: String
+		order_by: String
 	}
 
 	# Root Query Object
