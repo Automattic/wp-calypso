@@ -309,11 +309,11 @@ input[type=radio].domain-management-list-item__radio {
 	margin: 5px 0;
 }
 
-.edit-contact-info-form-card__form-content {
+.edit-contact-info__form-content {
 	margin-bottom: 20px;
 	overflow: auto;
 
-	.edit-contact-info-field {
+	.edit-contact-info__form-field {
 		margin-top: 15px;
 		position: relative;
 
@@ -339,7 +339,7 @@ input[type=radio].domain-management-list-item__radio {
 			margin-top: 0;
 		}
 
-		.edit-contact-info-field {
+		.edit-contact-info__form-field {
 			float: left;
 			width: 100%;
 		}
