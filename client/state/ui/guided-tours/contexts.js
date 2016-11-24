@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 import config from 'config';
 import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';

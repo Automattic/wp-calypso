@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /* eslint-disable react/no-danger  */
 // FIXME!!!^ we want to ensure we have sanitised data…
 
