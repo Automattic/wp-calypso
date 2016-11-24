@@ -31,32 +31,24 @@ function getCourses() {
 			),
 			schedule: [
 				{
-					date: i18n.moment( new Date( 'Tues, 8 Nov 2016 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/41e6b07223685cefd746f627e8486654'
-				},
-				{
-					date: i18n.moment( new Date( 'Thur, 10 Nov 2016 21:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/ee792031a8a1ac46cde7dc3c8da9331e'
-				},
-				{
-					date: i18n.moment( new Date( 'Tues, 15 Nov 2016 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/77c70936e27841fdc5b9141539e44ee6'
-				},
-				{
-					date: i18n.moment( new Date( 'Thur, 17 Nov 2016 21:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/54616e2abdab5bc0c5b9141539e44ee6'
-				},
-				{
-					date: i18n.moment( new Date( 'Tues, 22 Nov 2016 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/55cfed1ec7ebbe7a66858a512be5123a'
-				},
-				{
-					date: i18n.moment( new Date( 'Tues, 29 Nov 2016 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/5befd4070efdbacdd746f627e8486654'
-				},
-				{
 					date: i18n.moment( new Date( 'Thur, 1 Dec 2016 21:00:00 +0000' ) ),
 					registrationUrl: 'https://zoom.us/webinar/register/2b9f02639a37b3c034538d7d4481ef37'
+				},
+				{
+					date: i18n.moment( new Date( 'Tues, 6 Dec 2016 17:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/c94f4ef4fe99f8d98c34be5db4a05ad8'
+				},
+				{
+					date: i18n.moment( new Date( 'Thur, 8 Dec 2016 21:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/a69213fc2d8c050bc5b9141539e44ee6'
+				},
+				{
+					date: i18n.moment( new Date( 'Tues, 13 Dec 2016 17:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/7822f4075ca71dbf8c34be5db4a05ad8'
+				},
+				{
+					date: i18n.moment( new Date( 'Thur, 15 Dec 2016 21:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/6fbbf535429502c78c34be5db4a05ad8'
 				},
 			],
 			videos: [
