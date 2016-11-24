@@ -1006,46 +1006,6 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#isRequestingActiveTheme', () => {
-		it( 'given empty state, should return false', () => {
-			const isRequesting = isRequestingActiveTheme( {
-				themes: {
-					activeThemeRequests: {}
-				}
-			} );
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'given no active request, should return false', () => {
-			const isRequesting = isRequestingActiveTheme( {
-				themes: {
-					activeThemeRequests: {
-						2916284: false
-					}
-				}
-			},
-			2916284
-		);
-
-			expect( isRequesting ).to.be.false;
-		} );
-
-		it( 'given pending action request, should return true', () => {
-			const isRequesting = isRequestingActiveTheme( {
-				themes: {
-					activeThemeRequests: {
-						2916284: true
-					}
-				}
-			},
-			2916284
-		);
-
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
-
 	describe( '#isThemeActive', () => {
 		it( 'given no theme and no site, should return false', () => {
 			const isActive = isThemeActive(
@@ -1103,6 +1063,46 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isActive ).to.be.true;
+		} );
+	} );
+
+	describe( '#isRequestingActiveTheme', () => {
+		it( 'given empty state, should return false', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {}
+				}
+			} );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'given no active request, should return false', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {
+						2916284: false
+					}
+				}
+			},
+			2916284
+		);
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'given pending action request, should return true', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {
+						2916284: true
+					}
+				}
+			},
+			2916284
+		);
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
