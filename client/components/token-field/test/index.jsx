@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import map from 'lodash/map';
-import filter from 'lodash/filter';
-import { expect } from 'chai';
 import React from 'react';
+import { expect } from 'chai';
+import { filter, map } from 'lodash';
 import { test } from 'sinon';
 
 /**
@@ -93,7 +92,7 @@ describe( 'TokenField', function() {
 	}
 
 	function getSelectedSuggestion() {
-		var selectedSuggestions = getSuggestionsText( '.token-field__suggestion.is-selected' );
+		const selectedSuggestions = getSuggestionsText( '.token-field__suggestion.is-selected' );
 
 		return selectedSuggestions[ 0 ] || null;
 	}
@@ -411,6 +410,53 @@ describe( 'TokenField', function() {
 			sendKeyDown( keyCodes.enter );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'of' ] );
 			expect( getSelectedSuggestion() ).to.equal( null );
+		} );
+	} );
+
+	describe( 'adding multiple tokens when pasting', function() {
+		it( 'should add multiple comma-separated tokens when pasting', function() {
+			setText( 'baz, quux, wut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
+			setText( 'wut,' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+		} );
+
+		it( 'should add multiple tab-separated tokens when pasting', function() {
+			setText( 'baz\tquux\twut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( 'wut' );
+		} );
+
+		it( 'should not duplicate tokens when pasting', function() {
+			setText( 'baz \tbaz,  quux \tquux,quux , wut  \twut, wut' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
+		} );
+
+		it( 'should skip empty tokens at the beginning of a paste', function() {
+			setText( ',  ,\t \t  ,,baz, quux' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
+		} );
+
+		it( 'should skip empty tokens at the beginning of a paste', function() {
+			setText( ',  ,\t \t  ,,baz, quux' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
+		} );
+
+		it( 'should skip empty tokens in the middle of a paste', function() {
+			setText( 'baz,  ,\t \t  ,,quux' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( 'quux' );
+		} );
+
+		it( 'should skip empty tokens at the end of a paste', function() {
+			setText( 'baz, quux,  ,\t \t  ,,   ' );
+			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
+			expect( textInputNode.prop( 'value' ) ).to.equal( '   ' );
 		} );
 	} );
 

@@ -3,6 +3,8 @@
  */
 var take = require( 'lodash/take' ),
 	clone = require( 'lodash/clone' ),
+	uniq = require( 'lodash/uniq' ),
+	last = require( 'lodash/last' ),
 	map = require( 'lodash/map' ),
 	difference = require( 'lodash/difference' ),
 	React = require( 'react' ),
@@ -226,8 +228,16 @@ var TokenField = React.createClass( {
 	},
 
 	_onInputChange: function( event ) {
+		const text = event.value;
+		const separator = this.props.tokenizeOnSpace ? /[ ,\t]+/ : /[,\t]+/;
+		const items = text.split( separator );
+
+		if ( items.length > 1 ) {
+			this._addNewTokens( items.slice( 0, -1 ) );
+		}
+
 		this.setState( {
-			incompleteTokenValue: event.value,
+			incompleteTokenValue: last( items ) || '',
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false
 		} );
@@ -463,17 +473,28 @@ var TokenField = React.createClass( {
 		} );
 	},
 
-	_addNewToken: function( token ) {
-		var newValue;
+	_addNewTokens: function( tokens ) {
+		const tokensToAdd = uniq(
+			tokens
+				.map( this.props.saveTransform )
+				.filter( Boolean )
+				.filter( token => ! this._valueContainsToken( token ) )
+		);
+		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
-		token = this.props.saveTransform( token );
-
-		if ( ! this._valueContainsToken( token ) ) {
-			newValue = clone( this.props.value );
-			newValue.splice( this._getIndexOfInput(), 0, token );
-
+		if ( tokensToAdd.length > 0 ) {
+			const newValue = clone( this.props.value );
+			newValue.splice.apply(
+				newValue,
+				[ this._getIndexOfInput(), 0 ].concat( tokensToAdd )
+			);
+			debug( '_addNewTokens: onChange', newValue );
 			this.props.onChange( newValue );
 		}
+	},
+
+	_addNewToken: function( token ) {
+		this._addNewTokens( [ token ] );
 
 		this.setState( {
 			incompleteTokenValue: '',
