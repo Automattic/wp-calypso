@@ -250,6 +250,7 @@ export const PLANS_LIST = {
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -289,7 +290,8 @@ export const PLANS_LIST = {
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
-			FEATURE_SPAM_AKISMET_PLUS
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
