@@ -123,10 +123,7 @@ var DomainSearch = React.createClass( {
 		} else {
 			content = (
 				<span>
-					<FreeTrialNotice
-						cart={ this.props.cart }
-						sitePlans={ this.props.sitePlans }
-						selectedSite={ selectedSite } />
+					<FreeTrialNotice cart={ this.props.cart } />
 
 					<div className="domain-search__content">
 						<UpgradesNavigation
