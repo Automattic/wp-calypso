@@ -17,7 +17,19 @@ class QueryThemes extends Component {
 			PropTypes.number,
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ).isRequired,
-		query: PropTypes.object,
+		query: PropTypes.shape( {
+			// The search string
+			search: PropTypes.string,
+			// The tier to look for -- 'free', 'premium', or '' (for all themes). Doesn't work on Jetpack sites
+			tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+			// Comma-separated list of filters; see my-sites/themes/theme-filters
+			filter: PropTypes.string,
+			// Which page of the results list to display
+			page: PropTypes.number,
+			// How many results per page
+			number: PropTypes.number
+
+		} ),
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestThemes: PropTypes.func.isRequired,
