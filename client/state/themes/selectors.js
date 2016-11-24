@@ -41,10 +41,10 @@ export const getThemes = createSelector(
 /**
  * Returns a theme object by site ID, theme ID pair.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
  * @param  {String}  themeId Theme ID
- * @return {?Object}        Theme object
+ * @return {?Object}         Theme object
  */
 export const getTheme = createSelector(
 	( state, siteId, themeId ) => {
