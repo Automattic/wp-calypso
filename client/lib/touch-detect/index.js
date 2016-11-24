@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * Module exports.
  */

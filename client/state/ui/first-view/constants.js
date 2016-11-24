@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 import { isEnabled } from 'config';
 
 export const FIRST_VIEW_CONFIG = [
