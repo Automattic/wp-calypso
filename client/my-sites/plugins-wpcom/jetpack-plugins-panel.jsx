@@ -97,27 +97,27 @@ class JetpackPluginsPanel extends Component {
 		return [
 			{
 				key: 'all',
-				title: translate( 'All', { context: 'Filter label for plugins list' } ),
+				title: translate( 'All' ),
 				path: '/plugins' + siteFilter,
 			},
 			{
 				key: 'engagement',
-				title: translate( 'Engagement', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Engagement' ),
 				path: basePath + '/engagement' + siteFilter,
 			},
 			{
 				key: 'security',
-				title: translate( 'Security', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Security' ),
 				path: basePath + '/security' + siteFilter,
 			},
 			{
 				key: 'appearance',
-				title: translate( 'Appearance', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Appearance' ),
 				path: basePath + '/appearance' + siteFilter,
 			},
 			{
 				key: 'writing',
-				title: translate( 'Writing', { context: 'Filter label for plugins list' } ),
+				title: translate( 'Writing' ),
 				path: basePath + '/writing' + siteFilter,
 			},
 		];
