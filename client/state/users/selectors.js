@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * Returns a user object by user ID.
  *

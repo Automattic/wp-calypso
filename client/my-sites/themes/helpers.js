@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * DEPRECATED. Use client/state/themes/selectors instead.
  */

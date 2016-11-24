@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 export const DEFAULT_THEME_QUERY = {
 	search: '',
 	tier: '',

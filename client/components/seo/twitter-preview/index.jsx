@@ -1,4 +1,3 @@
-/** @ssr-ready **/
 import React, { PropTypes, PureComponent } from 'react';
 
 const baseDomain = url =>
