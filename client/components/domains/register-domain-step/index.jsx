@@ -201,20 +201,24 @@ const RegisterDomainStep = React.createClass( {
 		this.setState( { dotBlogNotice: false } );
 	},
 
+	dotBlogNotice() {
+		return this.state.dotBlogNotice && ! this.props.isSignupStep &&
+			<Notice
+				text={ this.props.translate(
+					'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
+					{ components: { strong: <strong /> } }
+				) }
+				status={ 'is-info' }
+				showDismiss={ true }
+				onDismissClick={ this.dismissDotBlogNotice }
+			/>;
+	},
+
 	render: function() {
 		return (
 			<div className="register-domain-step">
 				{ this.searchForm() }
-				{ this.state.dotBlogNotice &&
-					<Notice
-						text={ this.props.translate(
-							'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
-							{ components: { strong: <strong /> } }
-						) }
-						status={ 'is-info' }
-						showDismiss={ true }
-						onDismissClick={ this.dismissDotBlogNotice } />
-				}
+				{ this.dotBlogNotice() }
 				{ this.notices() }
 				{ this.content() }
 				{ this.queryDomainsSuggestions() }
