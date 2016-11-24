@@ -16,6 +16,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 const CartTrialAd = React.createClass( {
 	propTypes: {
@@ -23,28 +24,30 @@ const CartTrialAd = React.createClass( {
 		// connected props
 		currentPlan: React.PropTypes.object,
 		isRequestingSitePlans: React.PropTypes.bool,
-		selectedSiteSlug: React.PropTypes.string
+		siteId: React.PropTypes.number,
+		siteSlug: React.PropTypes.string
 	},
 
 	addPlanAndRedirect( event ) {
 		event.preventDefault();
 		addItem( cartItems.planItem( this.props.currentPlan.productSlug ) );
-		page( `/checkout/${ this.props.selectedSiteSlug }` );
+		page( `/checkout/${ this.props.siteSlug }` );
 	},
 
 	render() {
-		const { cart, currentPlan, isRequestingSitePlans: isRequestingPlans } = this.props,
+		const { cart, currentPlan, isRequestingSitePlans: isRequestingPlans, siteId } = this.props,
 			isDataLoading = isRequestingPlans || ! cart.hasLoadedFromServer;
 
 		if ( isDataLoading ||
 			! currentPlan.freeTrial ||
 			cartItems.getDomainRegistrations( cart ).length !== 1 ||
 			cartItems.hasPlan( cart ) ) {
-			return null;
+			return <QuerySitePlans siteId={ siteId } />;
 		}
 
 		return (
 			<CartAd>
+				<QuerySitePlans siteId={ siteId } />
 				{
 					i18n.translate( 'You are currently on day %(days)d of your {{strong}}%(planName)s trial{{/strong}}.', {
 						components: { strong: <strong /> },
@@ -71,11 +74,12 @@ const CartTrialAd = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+		const siteId = getSelectedSiteId( state );
 		return {
-			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-			selectedSiteSlug: getSiteSlug( state, selectedSiteId )
+			currentPlan: getCurrentPlan( state, siteId ),
+			isRequestingSitePlans: isRequestingSitePlans( state, siteId ),
+			siteId,
+			siteSlug: getSiteSlug( state, siteId )
 		};
 	}
 )( CartTrialAd );
