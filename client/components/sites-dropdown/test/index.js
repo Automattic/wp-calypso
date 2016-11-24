@@ -23,104 +23,129 @@ describe( 'index', function() {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 	} );
 
-	let SitesDropdown;
+	describe( 'mapStateToProps', function() {
+		let mapStateToProps;
 
-	before( function() {
-		SitesDropdown = require( '../index.jsx' );
-	} );
-
-	describe( 'component rendering', function() {
-		it( 'should render a dropdown component initially closed', function() {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.be.true;
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.be.false;
+		before( function() {
+			mapStateToProps = require( '../index.jsx' ).mapStateToProps;
 		} );
 
-		it( 'should toggle the dropdown, when it is clicked', function() {
-			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
-			const sitesDropdown = shallow( <SitesDropdown /> );
-
-			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
-
-			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.be.true;
-
-			toggleOpenSpy.restore();
-		} );
-	} );
-
-	describe( 'component state', function() {
-		it( "should initially consider as selected the user's primary site, when is not specified something different", function() {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'primary.wordpress.com' );
-		} );
-
-		it( 'should initially consider as selected the site whose id is passed as `selectedSiteId` prop', function() {
-			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 42 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'foo.wordpress.com' );
-		} );
-	} );
-
-	describe( 'selectSite', function() {
-		it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
-			const setStateSpy = sinon.spy();
-			const siteSelectedSpy = sinon.spy();
-			const fakeContext = {
-				setState: setStateSpy,
-				props: {
-					onSiteSelect: siteSelectedSpy
+		it( 'should map component "selectedSiteId" ownProp to "primarySite" prop', function() {
+			const state = {
+				sites: {
+					items: {
+						1: {
+							ID: 1,
+							URL: 'http://primary.wordpress.com'
+						},
+						42: {
+							ID: 42,
+							URL: 'http://foo.wordpress.com'
+						}
+					}
 				}
 			};
 
-			SitesDropdown.prototype.selectSite.call( fakeContext, 'foobar' );
+			const ownProps = {
+				selectedSiteId: 42
+			};
 
-			sinon.assert.calledOnce( siteSelectedSpy );
-			sinon.assert.calledWith( siteSelectedSpy, 'foobar' );
+			const { primarySite } = mapStateToProps( state, ownProps );
 
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteSlug: 'foobar' } );
+			expect( primarySite.slug ).to.be.equal( 'foo.wordpress.com' );
 		} );
 	} );
 
-	describe( 'onClose', function() {
-		it( 'should set `open` state property to false', function() {
-			const setStateSpy = sinon.spy();
-			const fakeContext = {
-				setState: setStateSpy,
-				props: {
-					onClose: noop
-				}
-			};
+	describe( 'SitesDropdown', function() {
+		let SitesDropdown;
 
-			SitesDropdown.prototype.onClose.call( fakeContext );
-
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false } );
+		before( function() {
+			SitesDropdown = require( '../index.jsx' ).SitesDropdown;
 		} );
 
-		it( 'should run the component `onClose` hook, when it is provided', function() {
-			const onCloseSpy = sinon.spy();
-			const fakeContext = {
-				setState: noop,
-				props: {
-					onClose: onCloseSpy
-				}
-			};
+		describe( 'component rendering', function() {
+			it( 'should render a dropdown component initially closed', function() {
+				const sitesDropdown = shallow( <SitesDropdown /> );
+				expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.be.true;
+				expect( sitesDropdown.hasClass( 'is-open' ) ).to.be.false;
+			} );
 
-			SitesDropdown.prototype.onClose.call( fakeContext );
-			sinon.assert.calledOnce( onCloseSpy );
+			it( 'should toggle the dropdown, when it is clicked', function() {
+				const toggleDropdownSpy = sinon.spy( SitesDropdown.prototype, 'toggleDropdown' );
+				const sitesDropdown = shallow( <SitesDropdown /> );
+
+				sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
+
+				sinon.assert.calledOnce( toggleDropdownSpy );
+				expect( sitesDropdown.hasClass( 'is-open' ) ).to.be.true;
+
+				toggleDropdownSpy.restore();
+			} );
 		} );
-	} );
 
-	describe( 'getSelectedSite', function() {
-		it( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
-			const fakeState = {
-				selectedSiteSlug: 'foo.wordpress.com'
-			};
-			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-			expect( selectedSite ).to.be.eql( {
-				ID: 42,
-				slug: 'foo.wordpress.com'
+		describe( 'component state', function() {
+			it( "should initially consider as selected the user's primary site, when is not specified something different", function() {
+				const sitesDropdown = shallow( <SitesDropdown /> );
+				expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'primary.wordpress.com' );
+			} );
+
+			it( 'should initially consider as selected the site that is passed as `primarySite` prop', function() {
+				const primarySite = {
+					slug: 'foo.wordpress.com'
+				};
+				const sitesDropdown = shallow( <SitesDropdown primarySite={ primarySite } /> );
+				expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'foo.wordpress.com' );
+			} );
+		} );
+
+		describe( 'selectSite', function() {
+			it( 'should update the `selectedSiteSlug`, and `open` state properties', function() {
+				const setStateSpy = sinon.spy();
+				const siteSelectedSpy = sinon.spy();
+				const fakeContext = {
+					setState: setStateSpy,
+					props: {
+						onSiteSelect: siteSelectedSpy
+					}
+				};
+
+				SitesDropdown.prototype.selectSite.call( fakeContext, 'foobar' );
+
+				sinon.assert.calledOnce( siteSelectedSpy );
+				sinon.assert.calledWith( siteSelectedSpy, 'foobar' );
+
+				sinon.assert.calledOnce( setStateSpy );
+				sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteSlug: 'foobar' } );
+			} );
+		} );
+
+		describe( 'onClose', function() {
+			it( 'should set `open` state property to false', function() {
+				const setStateSpy = sinon.spy();
+				const fakeContext = {
+					setState: setStateSpy,
+					props: {
+						onClose: noop
+					}
+				};
+
+				SitesDropdown.prototype.onClose.call( fakeContext );
+
+				sinon.assert.calledOnce( setStateSpy );
+				sinon.assert.calledWith( setStateSpy, { open: false } );
+			} );
+
+			it( 'should run the component `onClose` hook, when it is provided', function() {
+				const onCloseSpy = sinon.spy();
+				const fakeContext = {
+					setState: noop,
+					props: {
+						onClose: onCloseSpy
+					}
+				};
+
+				SitesDropdown.prototype.onClose.call( fakeContext );
+				sinon.assert.calledOnce( onCloseSpy );
 			} );
 		} );
 	} );
