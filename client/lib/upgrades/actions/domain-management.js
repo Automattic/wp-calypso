@@ -193,8 +193,8 @@ function fetchWhois( domainName ) {
 	} );
 }
 
-function updateWhois( domainName, contactInformation, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, ( error, data ) => {
+function updateWhois( domainName, contactInformation, transferLock, onComplete ) {
+	wpcom.updateWhois( domainName, contactInformation, transferLock, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_UPDATE_COMPLETED,

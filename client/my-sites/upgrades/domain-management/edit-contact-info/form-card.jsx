@@ -20,6 +20,8 @@ import FormCountrySelect from 'my-sites/upgrades/components/form/country-select'
 import FormFooter from 'my-sites/upgrades/domain-management/components/form-footer';
 import FormStateSelect from 'my-sites/upgrades/components/form/state-select';
 import FormInput from 'my-sites/upgrades/components/form/input';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import ValidationErrorList from 'notices/validation-error-list';
 import countriesListBuilder from 'lib/countries-list';
 import formState from 'lib/form-state';
@@ -50,7 +52,8 @@ class EditContactInfoFormCard extends React.Component {
 			form: null,
 			notice: null,
 			formSubmitting: false,
-			hasUnmounted: false
+			hasUnmounted: false,
+			transferLock: true
 		};
 	}
 
@@ -66,7 +69,8 @@ class EditContactInfoFormCard extends React.Component {
 
 		this.setState( {
 			form: this.formStateController.getInitialState(),
-			hasUnmounted: false
+			hasUnmounted: false,
+			transferLock: true
 		} );
 	}
 
@@ -211,6 +215,26 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
+					<div>
+						<FormLabel>
+							<FormCheckbox
+								name="transfer-lock-opt-out"
+								disabled={ this.state.formSubmitting }
+								onChange={ this.onTransferLockOptOutChange } />
+							<span>
+								{ translate(
+									'Opt-out of the {{link}}60-day transfer lock{{/link}}.',
+									{
+										components: {
+											link:
+												<a href={ support.UPDATE_CONTACT_INFORMATION } target="_blank" rel="noopener noreferrer" />
+										}
+									}
+								) }
+							</span>
+						</FormLabel>
+					</div>
+
 					<div className="edit-contact-info__terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
@@ -279,6 +303,10 @@ class EditContactInfoFormCard extends React.Component {
 			name,
 			value
 		} );
+	}
+
+	onTransferLockOptOutChange = ( event ) => {
+		this.setState( { transferLock: ! event.target.checked } );
 	}
 
 	isCountryField( name ) {
