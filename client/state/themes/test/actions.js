@@ -319,10 +319,9 @@ describe( 'actions', () => {
 
 			const fakeGetState = () => ( {
 				themes: {
-					currentTheme: Map( {
-						currentThemes: Map().set( 2211667, {
-							id: 'twentyfifteen'
-						} ) } ),
+					activeThemes: {
+						2211667: 'twentyfifteen'
+					},
 					themesList: Map( {
 						query: Map( {
 							search: 'simple, white'

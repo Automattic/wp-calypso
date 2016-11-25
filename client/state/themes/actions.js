@@ -38,8 +38,8 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getCurrentTheme } from './current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getActiveTheme } from 'state/themes/selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeById } from './themes/selectors';
 
@@ -396,14 +396,14 @@ export function themeActivated( theme, siteId, source = 'unknown', purchased = f
 			theme,
 			siteId,
 		};
-		const previousTheme = getCurrentTheme( getState(), siteId );
+		const previousThemeId = getActiveTheme( getState(), siteId );
 		const queryParams = getState().themes.themesList.get( 'query' );
 
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
 				theme: theme.id,
-				previous_theme: previousTheme.id,
+				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
 				search_term: queryParams.get( 'search' ) || null
