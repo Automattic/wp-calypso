@@ -71,10 +71,10 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	domainDotBlogSubdomain: {
-		datestamp: '20161118',
+		datestamp: '20161125',
 		variations: {
-			excludeDotBlogSubdomain: 90,
-			includeDotBlogSubdomain: 10,
+			excludeDotBlogSubdomain: 50,
+			includeDotBlogSubdomain: 50,
 		},
 		defaultVariation: 'excludeDotBlogSubdomain',
 		allowAnyLocale: true,
