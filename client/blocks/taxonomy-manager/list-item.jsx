@@ -126,22 +126,18 @@ class TaxonomyManagerListItem extends Component {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
-					<PopoverMenuItem onClick={ this.editItem }>
-						<Gridicon icon="pencil" size={ 18 } />
+					<PopoverMenuItem onClick={ this.editItem } icon="pencil">
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem onClick={ this.deleteItem }>
-						<Gridicon icon="trash" size={ 18 } />
+					<PopoverMenuItem onClick={ this.deleteItem } icon="trash">
 						{ translate( 'Delete' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem>
-						<Gridicon icon="external" size={ 18 } />
+					<PopoverMenuItem icon="external" >
 						{ translate( 'View Posts' ) }
 					</PopoverMenuItem>
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
-						<PopoverMenuItem onClick={ this.setAsDefault }>
-							<Gridicon icon="checkmark-circle" size={ 18 } />
+						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
 							{ translate( 'Set as default' ) }
 						</PopoverMenuItem>
 					}
