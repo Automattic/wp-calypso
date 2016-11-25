@@ -5,7 +5,6 @@ import React from 'react';
 import async from 'async';
 import flatten from 'lodash/flatten';
 import reject from 'lodash/reject';
-import clone from 'lodash/clone';
 import find from 'lodash/find';
 import uniqBy from 'lodash/uniqBy';
 import times from 'lodash/times';
@@ -167,7 +166,7 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			const state = clone( this.props.initialState );
+			const state = { ...this.props.initialState };
 
 			if ( state.lastSurveyVertical &&
 				( state.lastSurveyVertical !== this.props.surveyVertical ) ) {
