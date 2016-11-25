@@ -16,7 +16,8 @@ import {
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getSerializedThemesQueryWithoutPage
- } from './utils';
+} from './utils';
+import { isPremium } from 'lib/query-manager/theme/util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -411,6 +412,21 @@ export function getActiveTheme( state, siteId ) {
  */
 export function isThemeActive( state, themeId, siteId ) {
 	return getActiveTheme( state, siteId ) === themeId;
+}
+
+/**
+ * Whether a WPCOM theme given by its ID is premium.
+ *
+ * Note that we aren't using this selector yet since the necessary reducer (queries)
+ * isn't wired yet!
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {Object} themeId Theme ID
+ * @return {Boolean}        True if the theme is premium
+ */
+export function isThemePremium( state, themeId ) {
+	const theme = getTheme( state, 'wpcom', themeId );
+	return isPremium( theme );
 }
 
 /**
