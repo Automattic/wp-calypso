@@ -54,7 +54,6 @@ export class Mentions extends React.Component {
 		const { editor } = this.props;
 		const position = this.getPosition();
 
-		editor.on( 'keydown', this.onKeyDown );
 		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'click', this.hidePopover );
 
@@ -66,6 +65,15 @@ export class Mentions extends React.Component {
 		// Update position of popover if going from invisible to visible state.
 		if ( ! this.state.showPopover && nextState.showPopover ) {
 			this.updatePosition();
+			this.props.editor.on( 'keydown', this.onKeyDown );
+
+			return;
+		}
+
+		// Visible to invisible state.
+		if ( this.state.showPopover && ! nextState.showPopover ) {
+			this.props.editor.off( 'keydown', this.onKeyDown );
+
 			return;
 		}
 
