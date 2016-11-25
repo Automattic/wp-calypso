@@ -24,22 +24,7 @@ React.createClass( {
 
 Below is a list of supported props. With the exception of `className`, any other props passed will be transferred to the rendered `<FormButton />` component.
 
-### `text`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>
-</table>
-
-The text to copy to the user's clipboard upon clicking the button.
-
-### `onCopy`
-
-<table>
-	<tr><td>Type</td><td>Function</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>lodash/noop</code></td></tr>
-</table>
-
-Function to invoke after the text has been copied to the user's clipboard. This will not be triggered if the a prompt is shown in place of direct clipboard copy, in cases where the browser does not grant clipboard access.
+| prop   | type     | required | default     | comment |
+| ------ | :------: | :------: | ----------- | ------- |
+| text   | string   | No       | undefined   | The text to copy to the user's clipboard upon clicking the button |
+| opCopy | function | No       | lodash/noop | Function to invoke after the text has been copied to the user's clipboard. This will not be triggered if the prompt is show in place of a direct clipboard copy, in cases where the browser does no grant clipboard access |
