@@ -102,4 +102,22 @@
 	font-size: 18px;
   }
 
+  table {
+	border-collapse: collapse;
+	border-spacing: 0;
+
+	th {
+	  padding-top: 11px;
+	  padding-bottom: 11px;
+	  background-color: $blue-light;
+	  color: white;
+	}
+
+	td, th {
+	  border: 1px solid $gray;
+	  text-align: left;
+	  padding: 8px;
+	}
+  }
+
 }
