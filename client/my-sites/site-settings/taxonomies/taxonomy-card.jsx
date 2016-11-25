@@ -18,7 +18,7 @@ import QueryTerms from 'components/data/query-terms';
 import Gridicon from 'components/gridicon';
 
 const TaxonomyCard = ( { count, labels, site, taxonomy } ) => {
-	const settingsLink = site ? `/settings/taxonomies/${ site.slug }/${ taxonomy }` : null;
+	const settingsLink = site ? `/settings/taxonomies/${ taxonomy }/${ site.slug }` : null;
 	const isLoading = ! labels.name || isUndefined( count );
 	const classes = classNames( 'taxonomies__card-title', {
 		'is-loading': isLoading
