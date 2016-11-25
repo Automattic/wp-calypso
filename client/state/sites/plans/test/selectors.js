@@ -18,8 +18,11 @@ import {
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
-	isSitePlanDiscounted
+	isSitePlanDiscounted,
+	getSitePlanSlug,
+	hasFeature
 } from '../selectors';
+import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {
@@ -652,6 +655,130 @@ describe( 'selectors', () => {
 
 		it( 'should return true if user is a plan owner', () => {
 			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSitePlanSlug()', () => {
+		it( 'should return null if no plan data is found for the given siteId', () => {
+			expect( getSitePlanSlug(
+				{
+					sites: {
+						plans: {
+							2916284: {}
+						}
+					}
+				},
+				2916284
+			) ).to.be.null;
+		} );
+
+		it( 'should return the given site\'s current plan\'s product slug', () => {
+			expect( getSitePlanSlug(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_PREMIUM
+								} ]
+							}
+						}
+					}
+				},
+				2916284
+			) ).to.equal( PLAN_PREMIUM );
+		} );
+	} );
+
+	describe( '#hasFeature()', () => {
+		it( 'should return false if no siteId is given', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				null,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if no feature is given', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				2916284
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if no plan data is found for the given siteId', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if the site\'s current plan doesn\'t include the specified feature', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_PREMIUM
+								} ]
+							}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return true if the site\'s current plan includes the specified feature', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.true;
 		} );
 	} );
 } );
