@@ -25,6 +25,7 @@ import {
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
 	getActiveTheme,
+	isRequestingActiveTheme,
 	isThemeActive,
 	isThemePurchased,
 } from '../selectors';
@@ -980,45 +981,25 @@ describe( 'themes selectors', () => {
 
 	describe( '#getActiveTheme', () => {
 		it( 'given no site, should return null', () => {
-			const activeTheme = getActiveTheme( {} );
+			const activeTheme = getActiveTheme( {
+				themes: {
+					activeTheme: {}
+				}
+			} );
 
 			expect( activeTheme ).to.be.null;
 		} );
 
-		it( 'given a wpcom site, should return its currently active theme', () => {
+		it( 'given a site, should return its currently active theme', () => {
 			const activeTheme = getActiveTheme(
 				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								options: {
-									theme_slug: 'premium/mood'
-								}
-							}
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen'
 						}
 					}
-				}, 2916284
-			);
-
-			expect( activeTheme ).to.equal( 'mood' );
-		} );
-
-		it( 'given a Jetpack site, should return its currently active theme', () => {
-			const activeTheme = getActiveTheme(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								jetpack: true,
-								options: {
-									theme_slug: 'twentysixteen'
-								}
-							}
-						}
-					}
-				}, 77203074
+				},
+				2916284
 			);
 
 			expect( activeTheme ).to.equal( 'twentysixteen' );
@@ -1029,17 +1010,12 @@ describe( 'themes selectors', () => {
 		it( 'given no theme and no site, should return false', () => {
 			const isActive = isThemeActive(
 				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								options: {
-									theme_slug: 'premium/mood'
-								}
-							}
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen'
 						}
 					}
-				}
+				},
 			);
 
 			expect( isActive ).to.be.false;
@@ -1048,14 +1024,9 @@ describe( 'themes selectors', () => {
 		it( 'given a theme but no site, should return false', () => {
 			const isActive = isThemeActive(
 				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								options: {
-									theme_slug: 'premium/mood'
-								}
-							}
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen'
 						}
 					}
 				}, 'mood'
@@ -1067,33 +1038,25 @@ describe( 'themes selectors', () => {
 		it( 'given a theme and a site on which it isn\'t active, should return false', () => {
 			const isActive = isThemeActive(
 				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								options: {
-									theme_slug: 'premium/mood'
-								}
-							}
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen'
 						}
 					}
-				}, 'twentysixteen', 2916284
+				},
+				'mood',
+				2916284
 			);
 
 			expect( isActive ).to.be.false;
 		} );
 
-		it( 'given a theme and a wpcom site on which it is active, should return true', () => {
+		it( 'given a theme and a site on which it is active, should return true', () => {
 			const isActive = isThemeActive(
 				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								options: {
-									theme_slug: 'premium/mood'
-								}
-							}
+					themes: {
+						activeThemes: {
+							2916284: 'mood'
 						}
 					}
 				}, 'mood', 2916284
@@ -1101,25 +1064,45 @@ describe( 'themes selectors', () => {
 
 			expect( isActive ).to.be.true;
 		} );
+	} );
 
-		it( 'given a theme and a Jetpack site on which it is active, should return true', () => {
-			const isActive = isThemeActive(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								jetpack: true,
-								options: {
-									theme_slug: 'twentysixteen'
-								}
-							}
-						}
+	describe( '#isRequestingActiveTheme', () => {
+		it( 'given empty state, should return false', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {}
+				}
+			} );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'given no active request, should return false', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {
+						2916284: false
 					}
-				}, 'twentysixteen', 77203074
-			);
+				}
+			},
+			2916284
+		);
 
-			expect( isActive ).to.be.true;
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'given pending action request, should return true', () => {
+			const isRequesting = isRequestingActiveTheme( {
+				themes: {
+					activeThemeRequests: {
+						2916284: true
+					}
+				}
+			},
+			2916284
+		);
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
