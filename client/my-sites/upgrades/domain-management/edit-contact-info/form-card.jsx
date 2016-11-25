@@ -4,6 +4,7 @@
 import React from 'react';
 import {
 	endsWith,
+	includes,
 	omit
 } from 'lodash';
 import page from 'page';
@@ -32,6 +33,7 @@ import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
 import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
+import { registrar as registrarNames } from 'lib/domains/constants';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -39,7 +41,7 @@ const wpcom = wp.undocumented();
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
 		contactInformation: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
+		selectedDomain: React.PropTypes.object.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
@@ -81,7 +83,7 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	validate = ( formValues, onComplete ) => {
-		wpcom.validateDomainContactInformation( formValues, [ this.props.selectedDomainName ], ( error, data ) => {
+		wpcom.validateDomainContactInformation( formValues, [ this.props.selectedDomain.name ], ( error, data ) => {
 			if ( error ) {
 				onComplete( error );
 			} else {
@@ -120,8 +122,35 @@ class EditContactInfoFormCard extends React.Component {
 		}
 	}
 
+	renderTransferLockOptOut() {
+		return (
+			<div>
+				<FormLabel>
+					<FormCheckbox
+						name="transfer-lock-opt-out"
+						disabled={ this.state.formSubmitting }
+						value={ formState.getFieldValue( this.state.form, 'transfer-lock-opt-out' ) }
+						onChange={ this.onCheckboxChange } />
+					<span>
+						{ this.props.translate(
+							'Opt-out of the {{link}}60-day transfer lock{{/link}}.',
+							{
+								components: {
+									link:
+										<a href={ support.UPDATE_CONTACT_INFORMATION } target="_blank" rel="noopener noreferrer" />
+								}
+							}
+						) }
+					</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
 	render() {
-		const { translate } = this.props;
+		const { translate } = this.props,
+			{ OPENHRS, OPENSRS } = registrarNames;
+
 		return (
 			<Card>
 				<form>
@@ -215,25 +244,7 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
-					<div>
-						<FormLabel>
-							<FormCheckbox
-								name="transfer-lock-opt-out"
-								disabled={ this.state.formSubmitting }
-								onChange={ this.onTransferLockOptOutChange } />
-							<span>
-								{ translate(
-									'Opt-out of the {{link}}60-day transfer lock{{/link}}.',
-									{
-										components: {
-											link:
-												<a href={ support.UPDATE_CONTACT_INFORMATION } target="_blank" rel="noopener noreferrer" />
-										}
-									}
-								) }
-							</span>
-						</FormLabel>
-					</div>
+					{ includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ) && this.renderTransferLockOptOut() }
 
 					<div className="edit-contact-info__terms">
 						<Gridicon icon="info-outline" size={ 18 } />
@@ -289,7 +300,7 @@ class EditContactInfoFormCard extends React.Component {
 	hasFaxField() {
 		const NETHERLANDS_TLD = '.nl';
 
-		return endsWith( this.props.selectedDomainName, NETHERLANDS_TLD );
+		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD );
 	}
 
 	onChange = ( event ) => {
@@ -322,7 +333,7 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	goToContactsPrivacy = () => {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomain.name ) );
 	}
 
 	saveContactInfo = ( event ) => {
@@ -339,21 +350,25 @@ class EditContactInfoFormCard extends React.Component {
 				this.setState( { formSubmitting: false } );
 				return;
 			}
-			upgradesActions.updateWhois( this.props.selectedDomainName, formState.getAllFieldValues( this.state.form ), ( error, data ) => {
-				this.setState( { formSubmitting: false } );
-				if ( data && data.success ) {
-					this.props.successNotice( this.props.translate(
-						'The contact info has been updated. ' +
-						'There may be a short delay before the changes show up in the public records.'
-					) );
-				} else if ( error && error.message ) {
-					notices.error( error.message );
-				} else {
-					notices.error( this.props.translate(
-						'There was a problem updating your contact info. ' +
-						'Please try again later or contact support.' ) );
+			upgradesActions.updateWhois(
+				this.props.selectedDomain.name,
+				formState.getAllFieldValues( this.state.form ),
+				( error, data ) => {
+					this.setState( { formSubmitting: false } );
+					if ( data && data.success ) {
+						this.props.successNotice( this.props.translate(
+							'The contact info has been updated. ' +
+							'There may be a short delay before the changes show up in the public records.'
+						) );
+					} else if ( error && error.message ) {
+						notices.error( error.message );
+					} else {
+						notices.error( this.props.translate(
+							'There was a problem updating your contact info. ' +
+							'Please try again later or contact support.' ) );
+					}
 				}
-			} );
+			);
 		} );
 	}
 }

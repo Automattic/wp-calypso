@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
+import { registrar as registrarNames } from 'lib/domains/constants';
 
 const EditContactInfo = React.createClass( {
 	propTypes: {
@@ -51,13 +53,14 @@ const EditContactInfo = React.createClass( {
 	},
 
 	getCard() {
-		const domain = getSelectedDomain( this.props );
+		const domain = getSelectedDomain( this.props ),
+			{ OPENHRS, OPENSRS } = registrarNames;
 
 		if ( ! domain.currentUserCanManage ) {
 			return <NonOwnerCard { ...this.props } />;
 		}
 
-		if ( ! domain.isWhoisEditable ) {
+		if ( ! includes( [ OPENHRS, OPENSRS ], domain.registrar ) && domain.privateDomain ) {
 			return <EditContactInfoPrivacyEnabledCard />;
 		}
 
@@ -66,7 +69,7 @@ const EditContactInfo = React.createClass( {
 				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
 					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
-					selectedDomainName={ this.props.selectedDomainName }
+					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite } />
 			</div>
 		);
