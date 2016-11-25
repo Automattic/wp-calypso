@@ -4,7 +4,9 @@
 import get from 'lodash/get';
 
 /**
- * Returns true if the module is currently active.
+ * Returns true if the module is currently active. False otherwise.
+ * Returns null if the status for the queried site and module is unknown.
+ *
  * @param  {Object}  state       Global state tree
  * @param  {String}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
@@ -15,7 +17,8 @@ export function isModuleActive( state, siteId, moduleSlug ) {
 }
 
 /**
- * Returns true if we are currently making a request to activate a module.
+ * Returns true if we are currently making a request to activate a module. False otherwise
+ * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
  * @param  {String}  siteId      The ID of the site we're querying
@@ -27,7 +30,8 @@ export function isActivatingModule( state, siteId, moduleSlug ) {
 }
 
 /**
- * Returns true if we are currently making a request to deactivate a module.
+ * Returns true if we are currently making a request to deactivate a module. False otherwise
+ * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
  * @param  {String}  siteId      The ID of the site we're querying
@@ -36,4 +40,17 @@ export function isActivatingModule( state, siteId, moduleSlug ) {
  */
 export function isDeactivatingModule( state, siteId, moduleSlug ) {
 	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
+}
+
+/**
+ * Returns true if we are currently making a request to get the list of Jetpack
+ * modules on the site. False otherwise.
+ * Returns null if the status for queried site and module is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {String}  siteId The ID of the site we're querying
+ * @return {?Boolean}         Whether the list is being requested
+ */
+export function isFetchingModules( state, siteId ) {
+	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, 'fetchingModules' ], null );
 }
