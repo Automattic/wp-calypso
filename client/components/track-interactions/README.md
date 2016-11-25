@@ -48,14 +48,15 @@ clicking yields:
 **`mapPropsToAction`** (function): for cases where `fields` isn't flexible enough:
 
 ```js
-const mapPropsToAction = props => ( {
-	name: props.theme.id,
-	isCurrentTheme: props.theme.id === getCurrentTheme( state ),
+const mapPropsToAction = ( state, { theme, isActive } ) => ( {
+	name: theme.id,
+	isActive
 } );
 
 <TrackInteractions mapPropsToAction={ mapPropsToAction }>
 	<ThemeMoreButton
 		theme={ { id: 'twentysixteen', author: 'The WordPress team' } }
+		isActive
 		options={ options } />
 </TrackInteractions>
 ```
