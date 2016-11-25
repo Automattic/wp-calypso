@@ -27,6 +27,7 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isThemeActive,
+	isThemePremium,
 	isThemePurchased,
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -1103,6 +1104,67 @@ describe( 'themes selectors', () => {
 		);
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isPremium()', () => {
+		it( 'given no theme object, should return false', () => {
+			const premium = isThemePremium(
+				{
+					themes: {
+						queries: {}
+					}
+				}
+			);
+			expect( premium ).to.be.false;
+		} );
+
+		it( 'given the ID of a theme that doesn\'t exist, should return false', () => {
+			const premium = isThemePremium(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				'twentyumpteen'
+			);
+			expect( premium ).to.be.false;
+		} );
+
+		it( 'given the ID of a free theme, should return false', () => {
+			const premium = isThemePremium(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				'twentysixteen'
+			);
+			expect( premium ).to.be.false;
+		} );
+
+		it( 'given the ID of a premium theme, should return false', () => {
+			const premium = isThemePremium(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				},
+				'mood'
+			);
+			expect( premium ).to.be.true;
 		} );
 	} );
 

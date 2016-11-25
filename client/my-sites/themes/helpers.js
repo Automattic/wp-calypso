@@ -16,16 +16,6 @@ import config from 'config';
 import { sectionify } from 'lib/route/path';
 import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
-export function getSignupUrl( theme ) {
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
-
-	if ( isPremium( theme ) ) {
-		url += '&premium=true';
-	}
-
-	return url;
-}
-
 export function getPreviewUrl( theme, site ) {
 	if ( site && site.jetpack ) {
 		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
