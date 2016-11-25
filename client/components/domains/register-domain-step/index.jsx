@@ -166,7 +166,15 @@ const RegisterDomainStep = React.createClass( {
 		lastSearchTimestamp = null; // reset timer
 
 		if ( this.props.initialState ) {
-			this.setState( this.props.initialState );
+			const state = { ...this.props.initialState };
+
+			if ( state.lastSurveyVertical &&
+				( state.lastSurveyVertical !== this.props.surveyVertical ) ) {
+				state.loadingResults = true;
+				delete state.lastSurveyVertical;
+			}
+
+			this.setState( state );
 		}
 	},
 
@@ -313,7 +321,7 @@ const RegisterDomainStep = React.createClass( {
 	onSearch: function( searchQuery ) {
 		const domain = getFixedDomainSearch( searchQuery );
 
-		this.setState( { lastQuery: searchQuery }, this.save );
+		this.setState( { lastQuery: searchQuery, lastSurveyVertical: this.props.surveyVertical }, this.save );
 
 		if ( ! domain || ! this.state.loadingResults ) {
 			// the search was cleared or the domain contained only spaces
