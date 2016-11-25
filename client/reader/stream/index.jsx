@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,12 +72,10 @@ function getDistanceBetweenRecs() {
 	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
 	// become a common user of the reader.
 	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
-	return Math.min(
-		MAX_DISTANCE_BETWEEN_RECS,
-		Math.max(
-			( Math.log( totalSubs ) * Math.LOG2E * 5 ) - 6,
-			MIN_DISTANCE_BETWEEN_RECS )
-			);
+	return clamp(
+		Math.floor( ( Math.log( totalSubs ) * Math.LOG2E * 5 ) - 6 ),
+		MIN_DISTANCE_BETWEEN_RECS,
+		MAX_DISTANCE_BETWEEN_RECS );
 }
 
 function injectRecommendations( posts, recs = [] ) {
