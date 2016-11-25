@@ -1,0 +1,14 @@
+.adminbar.card.is-compact {
+	display: inline-flex;
+	margin-top: 64px;
+	padding: 0 8px;
+
+	.button {
+		margin: 0 4px;
+	}
+}
+
+.adminbar__main-menu .button {
+	display: block;
+	margin: 0 16px 0 8px;
+}
