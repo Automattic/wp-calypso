@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import HeaderCake from 'components/header-cake';
 import TaxonomyManager from 'blocks/taxonomy-manager';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import DocumentHead from 'components/data/document-head';
 
 const Taxonomies = ( { labels, postType, site, taxonomy } ) => {
 	const goBack = () => {
@@ -20,7 +22,8 @@ const Taxonomies = ( { labels, postType, site, taxonomy } ) => {
 	};
 
 	return (
-		<div className="main main-column" role="main">
+		<div className="main main-col	umn" role="main">
+			<DocumentHead title={ i18n.translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) } />
 			<HeaderCake onClick={ goBack }>
 				<h1>{ labels.name }</h1>
 			</HeaderCake>
