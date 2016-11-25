@@ -25,7 +25,9 @@ import {
 } from 'state/themes/selectors';
 import { isActiveTheme as isActive } from 'state/themes/current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -37,6 +39,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getPurchaseUrl,
+		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		hideForTheme: ( state, theme, siteId ) =>
 			! theme.price || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
 	}
@@ -46,8 +49,13 @@ const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateTheme,
-	hideForTheme: ( state, theme, siteId ) =>
-		isActive( state, theme.id, siteId ) || ( theme.price && ! isPurchased( state, theme.id, siteId ) )
+	hideForTheme: ( state, theme, siteId ) => (
+		isActive( state, theme.id, siteId ) || (
+			theme.price &&
+			! isPurchased( state, theme.id, siteId ) &&
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		)
+	)
 };
 
 const customize = {

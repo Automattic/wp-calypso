@@ -32,6 +32,7 @@ import { getForumUrl } from 'my-sites/themes/helpers';
 import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
+import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
@@ -431,6 +432,7 @@ const ThemeSheet = React.createClass( {
 			<Main className="theme__sheet">
 				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				{ siteID && <QuerySitePlans siteId={ siteID } /> }
 				<DocumentHead
 					title={ title }
 					meta={ metas }
