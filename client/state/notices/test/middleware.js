@@ -9,10 +9,9 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
+import { dispatchSuccess, dispatchError } from '../utils';
 import noticesMiddleware, {
 	handlers,
-	dispatchError,
-	dispatchSuccess,
 	onPostDeleteFailure,
 	onPostRestoreFailure,
 	onPostSaveSuccess

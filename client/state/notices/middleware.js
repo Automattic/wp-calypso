@@ -10,7 +10,9 @@ import { truncate } from 'lodash';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import {
-	ACCOUNT_RECOVERY_FETCH_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -31,17 +33,13 @@ import {
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
-/**
- * Utility
- */
+import { dispatchSuccess, dispatchError } from './utils';
 
-export function dispatchSuccess( message ) {
-	return ( dispatch ) => dispatch( successNotice( message ) );
-}
-
-export function dispatchError( message ) {
-	return ( dispatch ) => dispatch( errorNotice( message ) );
-}
+import {
+	onAccountRecoverySettingsFetchFailed,
+	onAccountRecoverySettingsUpdateFailed,
+	onAccountRecoverySettingsDeleteFailed,
+} from './account-recovery';
 
 /**
  * Handlers
@@ -148,7 +146,9 @@ export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dis
  */
 
 export const handlers = {
-	[ ACCOUNT_RECOVERY_FETCH_FAILED ]: dispatchError( translate( 'An error occurred while fetching for your account recovery settings.' ) ),
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]: onAccountRecoverySettingsFetchFailed,
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: onAccountRecoverySettingsUpdateFailed,
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: onAccountRecoverySettingsDeleteFailed,
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},
@@ -168,7 +168,7 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE ]: onPublicizeConnectionUpdate,
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
-	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
+	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
 };
 
 /**
