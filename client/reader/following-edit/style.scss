@@ -128,6 +128,10 @@
 	}
 }
 
+.is-reader-page .following-edit__subscribe-form .card.is-search-result {
+	top: 71px;
+	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+}
 
 // Add to Following
 .following-edit__subscribe-form {
@@ -145,10 +149,9 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 71px;
+			top: 70px;
 		width: 100%;
 		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
-		box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 
 		&.is-compact {
 			padding: 16px 24px;
