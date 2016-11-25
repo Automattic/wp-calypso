@@ -14,7 +14,7 @@ import ThemesList from 'components/themes-list';
 import analytics from 'lib/analytics';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import { isActiveTheme } from 'state/themes/current-theme/selectors';
+import { isThemeActive } from 'state/themes/selectors';
 import { isThemePurchased } from 'state/themes/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
@@ -33,10 +33,9 @@ const ThemesSelection = React.createClass( {
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
 		// connected props
-		siteSlug: React.PropTypes.string,
 		queryParams: PropTypes.object.isRequired,
 		themesList: PropTypes.array.isRequired,
-		isActiveTheme: React.PropTypes.func,
+		isThemeActive: React.PropTypes.func,
 		isThemePurchased: React.PropTypes.func,
 	},
 
@@ -71,7 +70,7 @@ const ThemesSelection = React.createClass( {
 
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isActiveTheme( theme.id ) ) {
+		if ( ! this.props.isThemeActive( theme.id ) ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
@@ -100,7 +99,7 @@ const ThemesSelection = React.createClass( {
 						onScreenshotClick={ this.onScreenshotClick }
 						getScreenshotUrl={ this.props.getScreenshotUrl }
 						getActionLabel={ this.props.getActionLabel }
-						isActive={ this.props.isActiveTheme }
+						isActive={ this.props.isThemeActive }
 						isPurchased={ this.props.isThemePurchased } />
 				</ThemesData>
 			</div>
@@ -111,7 +110,7 @@ const ThemesSelection = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
+		isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 		isThemePurchased: themeId => (
 			// Note: This component assumes that purchase and data is already present in the state tree
 			// (used by the isThemePurchased selector). At the time of implementation there's no caching
