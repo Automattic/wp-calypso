@@ -31,7 +31,6 @@ export default {
 			store = feedStreamFactory( 'search:' + searchSlug );
 			ensureStoreLoading( store, context );
 		} else if ( isRefresh ) {
-			// TODO confirm with greg which feed to actually use...
 			store = feedStreamFactory( 'recommendations_posts' );
 			ensureStoreLoading( store, context );
 		}
