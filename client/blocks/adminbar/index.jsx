@@ -47,6 +47,7 @@ class AdminBar extends Component {
 					onClose={ this.hideWpMenu }
 					isVisible={ isWpMenuVisible }
 					context={ popoverContext }
+					position="top left"
 				>
 					<Button borderless>
 						<Gridicon icon="my-sites" /> My Sites
