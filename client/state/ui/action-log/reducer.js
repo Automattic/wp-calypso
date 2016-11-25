@@ -9,7 +9,7 @@ import { takeRight } from 'lodash';
 import {
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
-	THEMES_RECEIVE,
+	LEGACY_THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 } from 'state/action-types';
@@ -17,7 +17,7 @@ import {
 const relevantTypes = {
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
-	THEMES_RECEIVE,
+	LEGACY_THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 };

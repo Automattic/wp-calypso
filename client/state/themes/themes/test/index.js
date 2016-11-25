@@ -1,19 +1,19 @@
 import { assert } from 'chai';
 import { createStore } from 'redux';
 
-import { THEMES_RECEIVE } from 'state/action-types';
+import { LEGACY_THEMES_RECEIVE } from 'state/action-types';
 import reducer from '../reducer';
 
 describe( 'themes', () => {
 	const actionReceiveThemes = {
-		type: THEMES_RECEIVE,
+		type: LEGACY_THEMES_RECEIVE,
 		themes: [
 			{ id: 'bold-news' },
 			{ id: 'picard' }
 		]
 	};
 	const actionReceiveMoreThemes = {
-		type: THEMES_RECEIVE,
+		type: LEGACY_THEMES_RECEIVE,
 		themes: [
 			{ id: 'picard' },
 			{ id: 'hue' }
@@ -37,7 +37,7 @@ describe( 'themes', () => {
 		} );
 	} );
 
-	context( 'when THEMES_RECEIVE is received', () => {
+	context( 'when LEGACY_THEMES_RECEIVE is received', () => {
 		beforeEach( () => {
 			store.dispatch( actionReceiveThemes );
 		} );

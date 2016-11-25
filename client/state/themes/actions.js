@@ -17,6 +17,7 @@ import {
 	THEME_DETAILS_REQUEST,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
+	LEGACY_THEMES_RECEIVE,
 	// New action names
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -153,7 +154,7 @@ const isFirstPageOfSearch = conforms( {
 export function legacyReceiveThemes( data, site, queryParams, responseTime ) {
 	return ( dispatch, getState ) => {
 		const themeAction = {
-			type: THEMES_RECEIVE,
+			type: LEGACY_THEMES_RECEIVE,
 			siteId: site.ID,
 			isJetpack: !! site.jetpack,
 			wasJetpack: isJetpackSite( getState(), site.ID ),
