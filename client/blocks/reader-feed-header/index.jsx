@@ -61,7 +61,8 @@ class FeedHeader extends Component {
 			feed = this.props.feed,
 			headerImage = site && site.getIn( [ 'options', 'header_image' ] ),
 			headerColor = site && site.getIn( [ 'options', 'background_color' ] ),
-			followerCount = this.getFollowerCount( feed, site );
+			followerCount = this.getFollowerCount( feed, site ),
+			ownerDisplayName = site && site.get( 'owner_display_name' );
 
 		let headerImageUrl;
 
@@ -95,7 +96,17 @@ class FeedHeader extends Component {
 					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ ( site && site.get( 'description' ) ) }</span>
-						<span className="reader-feed-header__byline">By First Last</span>
+						{ ownerDisplayName && <span className="reader-feed-header__byline">
+							{ this.props.translate(
+								'by %(author)s',
+								{
+									args: {
+										author: ownerDisplayName
+									}
+								}
+							)
+						}
+						</span> }
 					</div>
 				</Card>
 			</div>
