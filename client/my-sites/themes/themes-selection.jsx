@@ -16,8 +16,10 @@ import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { isThemePurchased } from 'state/themes/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import {
 	getFilter,
 	getSortedFilterTerms,
@@ -163,10 +165,15 @@ export default connect(
 	( state, { siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
 		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
-		// Note: This component assumes that purchase data is already present in the state tree
-		// (used by the isThemePurchased selector). At the time of implementation there's no caching
-		// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
-		// redundant AJAX requests, we're not rendering the query component locally.
-		isThemePurchased: themeId => isThemePurchased( state, themeId, siteId )
+		isThemePurchased: themeId => (
+			// Note: This component assumes that purchase and data is already present in the state tree
+			// (used by the isThemePurchased selector). At the time of implementation there's no caching
+			// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
+			// redundant AJAX requests, we're not rendering the query component locally.
+			isThemePurchased( state, themeId, siteId ) ||
+			// The same is true for the `hasFeature` selector, which relies on the presence of
+			// a `<QuerySitePlans />` component in a parent component.
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		)
 	} )
 )( ThemesSelection );
