@@ -32,7 +32,7 @@ describe( 'actions', () => {
 
 	describe( 'receiveSiteSettings()', () => {
 		it( 'should return an action object', () => {
-			const settings = { default_category: 'cat' };
+			const settings = { settingKey: 'cat' };
 			const action = receiveSiteSettings( 2916284, settings );
 
 			expect( action ).to.eql( {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 
 	describe( 'updateSiteSettings()', () => {
 		it( 'should return an action object', () => {
-			const settings = { default_category: 'cat' };
+			const settings = { settingKey: 'cat' };
 			const action = updateSiteSettings( 2916284, settings );
 
 			expect( action ).to.eql( {
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 				.reply( 200, {
 					name: 'blog name',
 					description: 'blog description',
-					settings: { default_category: 'cat' }
+					settings: { settingKey: 'cat' }
 				} )
 				.get( '/rest/v1.1/sites/2916285/settings' )
 				.reply( 403, {
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 					receiveSiteSettings( 2916284, {
 						blogname: 'blog name',
 						blogdescription: 'blog description',
-						default_category: 'cat'
+						settingKey: 'cat'
 					} )
 				);
 			} );
@@ -130,7 +130,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action and an optimistic update when thunk triggered', () => {
-			saveSiteSettings( 2916284, { default_category: 'chicken' } )( spy );
+			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_SAVE,
@@ -138,7 +138,7 @@ describe( 'actions', () => {
 			} );
 			expect( spy ).to.have.been.calledWith(
 				updateSiteSettings( 2916284, {
-					default_category: 'chicken'
+					settingKey: 'chicken'
 				} )
 			);
 		} );
