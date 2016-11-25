@@ -11,7 +11,8 @@ import { translate } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
-import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import { getForumUrl, trackClick } from './helpers';
+import { getThemeDetailsUrl, getThemeCustomizeUrl } from 'state/themes/selectors';
 import {
 	isActivating,
 	hasActivated,
@@ -60,14 +61,14 @@ const ThanksModal = React.createClass( {
 	renderWpcomInfo() {
 		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
-				a: <a href={ getDetailsUrl( this.props.currentTheme, this.props.site ) }
-					onClick={ this.onLinkClick( 'features' ) }/>
+				a: <a href={ this.props.detailsUrl }
+					onClick={ this.onLinkClick( 'features' ) } />
 			}
 		} );
 		const customize = translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
-				a: <a href={ getCustomizeUrl( this.props.currentTheme, this.props.site ) }
-					onClick={ this.onLinkClick( 'customize' ) }/>
+				a: <a href={ this.props.customizeUrl }
+					onClick={ this.onLinkClick( 'customize' ) } />
 			}
 		} );
 		return (
@@ -79,7 +80,7 @@ const ThanksModal = React.createClass( {
 				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
 						a: <a href={ getForumUrl( this.props.currentTheme ) }
-							onClick={ this.onLinkClick( 'support' ) }/>
+							onClick={ this.onLinkClick( 'support' ) } />
 					}
 				} ) }
 			</li>
@@ -94,7 +95,7 @@ const ThanksModal = React.createClass( {
 					{ translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
 							a: <a href={ themeUri }
-								onClick={ this.onLinkClick( 'org theme' ) }/>
+								onClick={ this.onLinkClick( 'org theme' ) } />
 						}
 					} ) }
 				</li>
@@ -109,7 +110,7 @@ const ThanksModal = React.createClass( {
 					{ translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
 							a: <a href={ authorUri }
-								onClick={ this.onLinkClick( 'org author' ) }/>
+								onClick={ this.onLinkClick( 'org author' ) } />
 						}
 					} ) }
 				</li>
@@ -123,7 +124,7 @@ const ThanksModal = React.createClass( {
 				{ translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							onClick={ this.onLinkClick( 'org forum' ) }/>
+							onClick={ this.onLinkClick( 'org forum' ) } />
 					}
 				} ) }
 			</li>
@@ -192,10 +193,16 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => ( {
-		isActivating: isActivating( state ),
-		hasActivated: hasActivated( state ),
-		currentTheme: getCurrentTheme( state, props.site ? props.site.ID : null )
-	} ),
+	( state, props ) => {
+		const currentTheme = getCurrentTheme( state, props.site && props.site.ID );
+
+		return {
+			currentTheme,
+			detailsUrl: props.site && getThemeDetailsUrl( state, currentTheme, props.site.ID ),
+			customizeUrl: props.site && getThemeCustomizeUrl( state, currentTheme, props.site.ID ),
+			isActivating: isActivating( state ),
+			hasActivated: hasActivated( state ),
+		};
+	},
 	{ clearActivated }
 )( ThanksModal );
