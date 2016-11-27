@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
@@ -148,10 +149,13 @@ module.exports = {
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
-			recommendationsStore = feedStreamFactory( 'recommendations_posts' ),
 			mcKey = 'following';
 
-		recommendationsStore.perPage = 4;
+		let recommendationsStore = null;
+		if ( config.isEnabled( 'reader/refresh/stream' ) ) {
+			recommendationsStore = feedStreamFactory( 'recommendations_posts' );
+			recommendationsStore.perPage = 4;
+		}
 
 		ensureStoreLoading( followingStore, context );
 

@@ -32,7 +32,7 @@ import PostBlocked from './post-blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
-import RecommendationBlock from './recommendation-block';
+import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 
@@ -474,7 +474,7 @@ export default class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isRecommendationBlock ) {
-			return <RecommendationBlock recommendations={ postKey.recommendations } key={ `recs-${ index }` } />;
+			return <RecommendedPosts recommendations={ postKey.recommendations } key={ `recs-${ index }` } />;
 		}
 
 		const itemKey = this.getPostRef( postKey );

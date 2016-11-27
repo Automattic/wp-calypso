@@ -11,7 +11,7 @@ import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import PostStore from 'lib/feed-post-store';
 import Gridicon from 'components/gridicon';
 
-export default class RecommendationBlock extends React.PureComponent {
+export default class RecommendedPosts extends React.PureComponent {
 	state = {
 		posts: map( this.props.recommendations, PostStore.get.bind( PostStore ) )
 	}
@@ -37,9 +37,9 @@ export default class RecommendationBlock extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="reader-stream__recommendation-block">
-				<h5 className="reader-stream__recommendation-block-header"><Gridicon icon="star" /> Recommended Posts</h5>
-				<div className="reader-stream__recommendation-block-posts">
+			<div className="reader-stream__recommended-posts">
+				<h5 className="reader-stream__recommended-posts-header"><Gridicon icon="star" /> Recommended Posts</h5>
+				<div className="reader-stream__recommended-posts-posts">
 					{ map( this.state.posts, post => <RelatedPostCard key={ post.global_ID } post={ post } /> ) }
 				</div>
 			</div>
