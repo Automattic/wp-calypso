@@ -38,6 +38,11 @@ const UpgradeBanners = () =>
 			title="Upgrade to a Personal Plan!"
 		/>
 		<UpgradeBanner
+			href="#"
+			list={ [ 'Live chat support', 'No advertising' ] }
+			title="Upgrade to a Personal Plan!"
+		/>
+		<UpgradeBanner
 			color="#855DA6"
 			description="Live chat support and no advertising."
 			href="#"

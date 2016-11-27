@@ -65,6 +65,7 @@ class UpgradeBanner extends Component {
 			callToActionButton,
 			description,
 			href,
+			list,
 			title
 		} = this.props;
 
@@ -77,18 +78,28 @@ class UpgradeBanner extends Component {
 					<div className="upgrade-banner__description">
 						{ description }
 					</div>
+					{ list &&
+						<ul className="upgrade-banner__list">
+							{ list.map( ( item, key ) =>
+								<li key={ key }>
+									<Gridicon icon="checkmark" size={ 18 } />
+									{ item }
+								</li>
+							) }
+						</ul>
+					}
 				</div>
 				{ ! button &&
 					<div className="upgrade-banner__action">
-						{ callToActionButton ?
-							<Button
-								compact
-								href={ href }
-								onClick={ this.handleClick }
-								primary
-							>
-								{ callToAction }
-							</Button>
+						{ callToActionButton
+							? <Button
+									compact
+									href={ href }
+									onClick={ this.handleClick }
+									primary
+								>
+									{ callToAction }
+								</Button>
 							: callToAction }
 					</div>
 				}

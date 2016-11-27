@@ -68,6 +68,21 @@
 		width: 100%;
 	}
 
+	.upgrade-banner__list {
+		color: $gray;
+		font-size: 12px;
+		list-style: none;
+		margin: 0;
+
+		li {
+			margin: 6px 0;
+		}
+
+		.gridicon {
+			display: none;
+		}
+	}
+
 	.upgrade-banner__action {
 		align-self: center;
 		color: $blue-wordpress;
@@ -106,6 +121,14 @@
 
 		.upgrade-banner__info {
 			width: auto;
+		}
+
+		.upgrade-banner__list {
+			.gridicon {
+				display: inline;
+				margin-right: 12px;
+				vertical-align: bottom;
+			}
 		}
 
 		.upgrade-banner__action {
