@@ -72,10 +72,17 @@ function getDistanceBetweenRecs() {
 	// This lets the distance between recs grow quickly as you add subs early on, and slow down as you
 	// become a common user of the reader.
 	const totalSubs = FeedSubscriptionStore.getTotalSubscriptions();
-	return clamp(
+	if ( totalSubs <= 0 ) {
+		// 0 means either we don't know yet, or the user actually has zero subs.
+		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
+		// push recs to the max.
+		return MAX_DISTANCE_BETWEEN_RECS;
+	}
+	const distance = clamp(
 		Math.floor( ( Math.log( totalSubs ) * Math.LOG2E * 5 ) - 6 ),
 		MIN_DISTANCE_BETWEEN_RECS,
 		MAX_DISTANCE_BETWEEN_RECS );
+	return distance;
 }
 
 function injectRecommendations( posts, recs = [] ) {

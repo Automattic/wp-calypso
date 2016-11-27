@@ -26,21 +26,21 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post } ) {
+function AuthorAndSiteFollow( { post, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const authorAndSiteAreDifferent = post.site_name.toLowerCase() !== post.author.name.toLowerCase();
 	return (
 		<div className="reader-related-card-v2__meta">
-			<a href={ siteUrl }>
+			<a href={ siteUrl } onClick={ onSiteClick }>
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card-v2__byline">
 				<span className="reader-related-card-v2__byline-author">
-					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.author.name }</a>
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.author.name }</a>
 				</span>
 				{ authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-site">
-					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.site_name }</a>
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.site_name }</a>
 				</span>
 				}
 			</div>
@@ -80,9 +80,7 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-/* eslint-disable no-unused-vars */
 export function RelatedPostCard( { post, onPostClick = noop, onSiteClick = noop } ) {
-// onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
@@ -93,14 +91,16 @@ export function RelatedPostCard( { post, onPostClick = noop, onSiteClick = noop 
 	const classes = classnames( 'reader-related-card-v2', {
 		'has-thumbnail': !! featuredImage
 	} );
+	const postClickTracker = partial( onPostClick, post );
+	const siteClickTracker = partial( onSiteClick, post );
 
 	return (
 		<Card className={ classes }>
-			<AuthorAndSiteFollow post={ post } />
+			<AuthorAndSiteFollow post={ post } onSiteClick={ siteClickTracker } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
-				onClick={ partial( onPostClick, post ) } >
+				onClick={ postClickTracker } >
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
-						onClick={ partial( onPostClick, post ) } /> }
+						onClick={ postClickTracker } /> }
 					<div className="reader-related-card-v2__site-info">
 						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
 						<div className="reader-related-card-v2__excerpt post-excerpt">
