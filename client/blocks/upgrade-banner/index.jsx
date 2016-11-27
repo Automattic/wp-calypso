@@ -50,6 +50,7 @@ class UpgradeBanner extends Component {
 
 	bannerContent() {
 		const {
+			color,
 			description,
 			icon,
 			title
@@ -57,7 +58,15 @@ class UpgradeBanner extends Component {
 
 		return (
 			<div className="upgrade-banner__content">
-				<Gridicon className="upgrade-banner__icon" icon={ icon } size={ 18 } />
+				<div
+					className="upgrade-banner__icon"
+					style={ color ? { background: color } : {} }
+				>
+					<Gridicon
+						icon={ icon }
+						size={ 18 }
+					/>
+				</div>
 				<div className="upgrade-banner__info">
 					<div className="upgrade-banner__title">
 						{ title }

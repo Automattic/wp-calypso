@@ -9,8 +9,11 @@
 		border-radius: 50%;
 		color: white;
 		flex-shrink: 0;
+		height: 24px;
 		margin-right: 16px;
 		padding: 6px;
+		text-align: center;
+		width: 24px;
 	}
 
 	.upgrade-banner__info {
@@ -31,18 +34,17 @@
 	&.card {
 		border-left: 3px solid $alert-yellow;
 		display: flex;
-		margin: 16px 0;
 		padding: 12px 16px;
+
+		.upgrade-banner__icon {
+			top: 4px;
+			margin-top: -2px;
+		}
 	}
 
 	&.button {
 		display: inline-flex;
 		margin-bottom: 16px;
 		text-align: left;
-
-		.upgrade-banner__icon {
-			margin-top: 0;
-			top: 0;
-		}
 	}
 }
