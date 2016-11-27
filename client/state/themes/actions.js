@@ -183,12 +183,6 @@ export function legacyReceiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-export function clearActivated() {
-	return {
-		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
 	return {
@@ -417,4 +411,18 @@ export function themeActivated( theme, siteId, source = 'unknown', purchased = f
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
+}
+
+/**
+ * Returns an action object to be used in signalling that theme activated status
+ * for site should be cleared
+ *
+ * @param  {Number}   siteId    Site ID
+ * @return {Object}        Action object
+ */
+export function clearActivated( siteId ) {
+	return {
+		type: THEME_CLEAR_ACTIVATED,
+		siteId
+	};
 }
