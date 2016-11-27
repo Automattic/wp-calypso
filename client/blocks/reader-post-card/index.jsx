@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate } from 'lodash';
+import { noop, truncate, trim } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -115,7 +115,7 @@ export default class RefreshPostCard extends React.Component {
 			'is-showing-entire-excerpt': showEntireExcerpt
 		} );
 		const showExcerpt = ! isPhotoOnly;
-		const excerptAttribute = useBetterExcerpt ? 'better_excerpt_no_html' : 'excerpt_no_html';
+		const excerptAttribute = useBetterExcerpt && trim( post.better_excerpt_no_html ) ? 'better_excerpt_no_html' : 'excerpt_no_html';
 		let title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/
