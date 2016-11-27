@@ -1,65 +1,111 @@
-.upgrade-banner {
+.upgrade-banner__content {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
+}
+
+.upgrade-banner__icon,
+.upgrade-banner__icon-circle {
+	border-radius: 50%;
+	flex-shrink: 0;
+	height: 24px;
+	margin-right: 16px;
+	text-align: center;
+	width: 24px;
+}
+
+.upgrade-banner__icon {
+	color: $alert-yellow;
+}
+
+.upgrade-banner__icon-circle {
+	align-self: center;
+	background-color: $alert-yellow;
+	color: white;
+}
+
+.upgrade-banner__info {
+	flex-grow: 1;
+	line-height: 1.4;
+}
+
+.upgrade-banner__title {
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.upgrade-banner__description {
+	color: $gray;
+	font-size: 12px;
+}
+
+.upgrade-banner.card {
+	border-left: 3px solid $alert-yellow;
+	display: flex;
+	padding: 12px 6px 12px 12px;
+
 	.upgrade-banner__content {
-		align-items: center;
-		display: flex;
-		flex-grow: 1;
+		flex-wrap: wrap;
+	}
+
+	.upgrade-banner__icon,
+	.upgrade-banner__icon-circle {
+		top: 4px;
+		margin-top: -2px;
 	}
 
 	.upgrade-banner__icon {
-		background-color: $alert-yellow;
-		border-radius: 50%;
-		color: white;
-		flex-shrink: 0;
-		height: 24px;
-		margin-right: 16px;
+		display: block;
+	}
+
+	.upgrade-banner__icon-circle {
+		display: none;
 		padding: 4px;
-		text-align: center;
-		width: 24px;
 	}
 
-	.upgrade-banner__info {
-		line-height: 1.4;
-	}
-
-	.upgrade-banner__title {
-		color: $gray-dark;
-		font-size: 14px;
-		font-weight: 500;
-	}
-
-	.upgrade-banner__description {
-		color: $gray;
+	.upgrade-banner__action {
+		align-self: center;
+		color: $blue-wordpress;
 		font-size: 12px;
+		margin-top: 8px;
+		text-align: right;
+		text-transform: uppercase;
 	}
 
-	&.card {
-		border-left: 3px solid $alert-yellow;
+	.upgrade-banner__link-indicator {
+		align-items: center;
+		color: $blue-wordpress;
 		display: flex;
+	}
+
+	@include breakpoint( ">480px" ) {
 		padding: 12px 16px;
 
+		.upgrade-banner__content {
+			flex-wrap: nowrap;
+		}
+
 		.upgrade-banner__icon {
-			top: 4px;
-			margin-top: -2px;
+			display: none;
+		}
+
+		.upgrade-banner__icon-circle {
+			display: block;
 		}
 
 		.upgrade-banner__action {
-			align-self: center;
-			color: $blue-wordpress;
-			font-size: 12px;
 			margin: 0 8px;
-			text-transform: uppercase;
-		}
-
-		.upgrade-banner__link-indicator {
-			align-items: center;
-			color: $blue-wordpress;
-			display: flex;
 		}
 	}
+}
 
-	&.button {
-		display: inline-flex;
-		margin-bottom: 16px;
-		text-align: left;
+.upgrade-banner.button {
+	display: inline-flex;
+	margin-bottom: 16px;
+	text-align: left;
+
+	.upgrade-banner__icon-circle {
+		padding: 4px;
 	}
 }

@@ -50,23 +50,14 @@ class UpgradeBanner extends Component {
 
 	bannerContent() {
 		const {
-			color,
+			button,
+			callToAction,
 			description,
-			icon,
 			title
 		} = this.props;
 
 		return (
 			<div className="upgrade-banner__content">
-				<div
-					className="upgrade-banner__icon"
-					style={ color ? { background: color } : {} }
-				>
-					<Gridicon
-						icon={ icon }
-						size={ 18 }
-					/>
-				</div>
 				<div className="upgrade-banner__info">
 					<div className="upgrade-banner__title">
 						{ title }
@@ -75,6 +66,11 @@ class UpgradeBanner extends Component {
 						{ description }
 					</div>
 				</div>
+				{ ! button &&
+					<div className="upgrade-banner__action">
+						{ callToAction }
+					</div>
+				}
 			</div>
 		);
 	}
@@ -95,6 +91,7 @@ class UpgradeBanner extends Component {
 			className,
 			color,
 			href,
+			icon,
 		} = this.props;
 
 		const classes = classNames( className, 'upgrade-banner' );
@@ -106,6 +103,15 @@ class UpgradeBanner extends Component {
 					href={ href }
 					onClick={ this.handleClick }
 				>
+					<div
+						className="upgrade-banner__icon-circle"
+						style={ color ? { background: color } : {} }
+					>
+						<Gridicon
+							icon={ icon }
+							size={ 18 }
+						/>
+					</div>
 					{ this.bannerContent() }
 				</Button>
 			);
@@ -118,8 +124,25 @@ class UpgradeBanner extends Component {
 				onClick={ this.handleClick }
 				style={ color ? { borderLeftColor: color } : {} }
 			>
+				<div
+					className="upgrade-banner__icon"
+					style={ color ? { color } : {} }
+				>
+					<Gridicon
+						icon={ icon }
+						size={ 18 }
+					/>
+				</div>
+				<div
+					className="upgrade-banner__icon-circle"
+					style={ color ? { background: color } : {} }
+				>
+					<Gridicon
+						icon={ icon }
+						size={ 18 }
+					/>
+				</div>
 				{ this.bannerContent() }
-				{ this.bannerAction() }
 				<div className="upgrade-banner__link-indicator">
 					<Gridicon icon="chevron-right" />
 				</div>
