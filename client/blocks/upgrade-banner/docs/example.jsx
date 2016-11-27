@@ -23,6 +23,11 @@ const UpgradeBanners = () =>
 			title="Upgrade to a Personal Plan!"
 		/>
 		<UpgradeBanner
+			callToAction="Upgrade for $9.99"
+			description="Live chat support and no advertising."
+			title="Upgrade to a Personal Plan!"
+		/>
+		<UpgradeBanner
 			color="#855DA6"
 			description="Live chat support and no advertising."
 			icon="trophy"

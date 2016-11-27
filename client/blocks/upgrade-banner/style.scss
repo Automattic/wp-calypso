@@ -12,7 +12,7 @@
 		flex-shrink: 0;
 		height: 24px;
 		margin-right: 16px;
-		padding: 6px;
+		padding: 4px;
 		text-align: center;
 		width: 24px;
 	}
@@ -42,9 +42,17 @@
 			margin-top: -2px;
 		}
 
+		.upgrade-banner__action {
+			align-self: center;
+			color: $blue-wordpress;
+			font-size: 12px;
+			margin: 0 8px;
+			text-transform: uppercase;
+		}
+
 		.upgrade-banner__link-indicator {
 			align-items: center;
-			color: $blue-medium;
+			color: $blue-wordpress;
 			display: flex;
 		}
 	}

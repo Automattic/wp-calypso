@@ -80,8 +80,11 @@ class UpgradeBanner extends Component {
 	}
 
 	bannerAction() {
+		const { callToAction } = this.props;
+
 		return (
 			<div className="upgrade-banner__action">
+				{ callToAction }
 			</div>
 		);
 	}
