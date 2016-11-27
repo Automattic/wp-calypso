@@ -1,7 +1,8 @@
 .upgrade-banner {
 	.upgrade-banner__content {
-		display: flex;
 		align-items: center;
+		display: flex;
+		flex-grow: 1;
 	}
 
 	.upgrade-banner__icon {
@@ -39,6 +40,12 @@
 		.upgrade-banner__icon {
 			top: 4px;
 			margin-top: -2px;
+		}
+
+		.upgrade-banner__link-indicator {
+			align-items: center;
+			color: $blue-medium;
+			display: flex;
 		}
 	}
 

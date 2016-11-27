@@ -81,7 +81,8 @@ class UpgradeBanner extends Component {
 
 	bannerAction() {
 		return (
-			<div className="upgrade-banner__action"></div>
+			<div className="upgrade-banner__action">
+			</div>
 		);
 	}
 
@@ -116,6 +117,9 @@ class UpgradeBanner extends Component {
 			>
 				{ this.bannerContent() }
 				{ this.bannerAction() }
+				<div className="upgrade-banner__link-indicator">
+					<Gridicon icon="chevron-right" />
+				</div>
 			</Card>
 		);
 	}
