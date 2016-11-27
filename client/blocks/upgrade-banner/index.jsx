@@ -39,20 +39,32 @@ class UpgradeBanner extends Component {
 	}
 
 	handleClick = () => {
-		const { event, onClick } = this.props;
+		const {
+			event,
+			href,
+			onClick,
+		} = this.props;
+
 		if ( event ) {
 			analytics.tracks.recordEvent( 'calypso_upgrade_banner_cta_click', {
 				cta_name: event,
 			} );
 		}
+
 		onClick();
+
+		if ( href ) {
+			window.location.href( href );
+		}
 	}
 
 	bannerContent() {
 		const {
 			button,
 			callToAction,
+			callToActionButton,
 			description,
+			href,
 			title
 		} = this.props;
 
@@ -68,19 +80,18 @@ class UpgradeBanner extends Component {
 				</div>
 				{ ! button &&
 					<div className="upgrade-banner__action">
-						{ callToAction }
+						{ callToActionButton ?
+							<Button
+								compact
+								href={ href }
+								onClick={ this.handleClick }
+								primary
+							>
+								{ callToAction }
+							</Button>
+							: callToAction }
 					</div>
 				}
-			</div>
-		);
-	}
-
-	bannerAction() {
-		const { callToAction } = this.props;
-
-		return (
-			<div className="upgrade-banner__action">
-				{ callToAction }
 			</div>
 		);
 	}
@@ -88,13 +99,18 @@ class UpgradeBanner extends Component {
 	render() {
 		const {
 			button,
+			callToActionButton,
 			className,
 			color,
 			href,
 			icon,
 		} = this.props;
 
-		const classes = classNames( className, 'upgrade-banner' );
+		const classes = classNames(
+			'upgrade-banner',
+			className,
+			{ 'has-call-to-action-button': callToActionButton }
+		);
 
 		if ( button ) {
 			return (
@@ -120,8 +136,8 @@ class UpgradeBanner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ href }
-				onClick={ this.handleClick }
+				href={ callToActionButton ? null : href }
+				onClick={ callToActionButton ? noop : this.handleClick }
 				style={ color ? { borderLeftColor: color } : {} }
 			>
 				<div
@@ -143,9 +159,6 @@ class UpgradeBanner extends Component {
 					/>
 				</div>
 				{ this.bannerContent() }
-				<div className="upgrade-banner__link-indicator">
-					<Gridicon icon="chevron-right" />
-				</div>
 			</Card>
 		);
 	}

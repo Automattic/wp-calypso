@@ -64,6 +64,10 @@
 		padding: 4px;
 	}
 
+	.upgrade-banner__info {
+		width: 100%;
+	}
+
 	.upgrade-banner__action {
 		align-self: center;
 		color: $blue-wordpress;
@@ -73,10 +77,16 @@
 		text-transform: uppercase;
 	}
 
-	.upgrade-banner__link-indicator {
+	.card__link-indicator {
 		align-items: center;
 		color: $blue-wordpress;
 		display: flex;
+	}
+
+	&:hover {
+		.card__link-indicator {
+			color: $blue-dark;
+		}
 	}
 
 	@include breakpoint( ">480px" ) {
@@ -94,8 +104,19 @@
 			display: block;
 		}
 
+		.upgrade-banner__info {
+			width: auto;
+		}
+
 		.upgrade-banner__action {
 			margin: 0 8px;
+		}
+	}
+
+	&.has-call-to-action-button {
+		.upgrade-banner__action {
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 }
