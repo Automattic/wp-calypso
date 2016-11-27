@@ -353,23 +353,48 @@ class EditContactInfoFormCard extends React.Component {
 			upgradesActions.updateWhois(
 				this.props.selectedDomain.name,
 				formState.getAllFieldValues( this.state.form ),
-				( error, data ) => {
-					this.setState( { formSubmitting: false } );
-					if ( data && data.success ) {
-						this.props.successNotice( this.props.translate(
-							'The contact info has been updated. ' +
-							'There may be a short delay before the changes show up in the public records.'
-						) );
-					} else if ( error && error.message ) {
-						notices.error( error.message );
-					} else {
-						notices.error( this.props.translate(
-							'There was a problem updating your contact info. ' +
-							'Please try again later or contact support.' ) );
-					}
-				}
+				this.onWhoisUpdate
 			);
 		} );
+	}
+
+	onWhoisUpdate = ( error, data ) => {
+		this.setState( { formSubmitting: false } );
+		if ( data && data.success ) {
+			const { OPENHRS, OPENSRS, WWD } = registrarNames;
+			let message;
+
+			switch ( this.props.selectedDomain.registrar ) {
+				case OPENHRS:
+					message = this.props.translate(
+						'The contact info has been updated. ' +
+						'There may be a short delay before the changes show up in the public records.'
+					);
+					break;
+
+				case WWD:
+				case OPENSRS:
+				default:
+					message = this.props.translate(
+						'Request confirmed - per ICANN regulations, before the changes are final, ' +
+						'they must be accepted by the new registrant, and then the old one. ' +
+						'To start this process, an email has been sent to {{strong}}%(email)s{{/strong}}.',
+						{
+							args: { email: formState.getFieldValue( this.state.form, 'email' ) },
+							components: { strong: <strong /> }
+						}
+					);
+					break;
+			}
+
+			this.props.successNotice( message );
+		} else if ( error && error.message ) {
+			notices.error( error.message );
+		} else {
+			notices.error( this.props.translate(
+				'There was a problem updating your contact info. ' +
+				'Please try again later or contact support.' ) );
+		}
 	}
 }
 
