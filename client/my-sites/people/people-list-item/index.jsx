@@ -15,6 +15,10 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
 
+const browserWindow = 'undefined' === typeof window
+    ? window
+    : { scrollTo: identity };
+
 class PeopleListItem extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -25,7 +29,7 @@ class PeopleListItem extends PureComponent {
 	};
 
 	navigateToUser = () => {
-		window.scrollTo( 0, 0 );
+		browserWindow.scrollTo( 0, 0 );
 		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
 	};
 
