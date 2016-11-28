@@ -127,6 +127,17 @@ export function getThemesFoundForQuery( state, siteId, query ) {
 }
 
 /**
+ * Returns last query used.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {String}         Last quer
+ */
+export function getLastQuery( state, siteId ) {
+	return get( state.themes.lastQuery, siteId, '' );
+}
+
+/**
  * Returns the last queryable page of themes for the given query, or null if the
  * total number of queryable themes if unknown.
  *
