@@ -12,12 +12,15 @@ import { translate } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getForumUrl, trackClick } from './helpers';
-import { getThemeDetailsUrl, getThemeCustomizeUrl } from 'state/themes/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
+	getActiveTheme,
+	getTheme,
+	getThemeDetailsUrl,
+	getThemeCustomizeUrl,
 	isActivating,
-	hasActivated,
-	getCurrentTheme
-} from 'state/themes/current-theme/selectors';
+	hasActivated
+} from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 
 const ThanksModal = React.createClass( {
@@ -193,15 +196,21 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
-		const currentTheme = getCurrentTheme( state, props.site && props.site.ID );
+	( state, { site } ) => {
+		if ( ! site ) {
+			return {};
+		}
+
+		const siteIdOrWpcom = isJetpackSite( state, site.ID ) ? site.ID : 'wpcom';
+		const currentThemeId = getActiveTheme( state, site.ID );
+		const currentTheme = getTheme( state, siteIdOrWpcom, currentThemeId );
 
 		return {
 			currentTheme,
-			detailsUrl: props.site && getThemeDetailsUrl( state, currentTheme, props.site.ID ),
-			customizeUrl: props.site && getThemeCustomizeUrl( state, currentTheme, props.site.ID ),
-			isActivating: isActivating( state ),
-			hasActivated: hasActivated( state ),
+			detailsUrl: getThemeDetailsUrl( state, currentTheme, site.ID ),
+			customizeUrl: getThemeCustomizeUrl( state, currentTheme, site.ID ),
+			isActivating: isActivating( state, site.ID ),
+			hasActivated: hasActivated( state, site.ID )
 		};
 	},
 	{ clearActivated }
