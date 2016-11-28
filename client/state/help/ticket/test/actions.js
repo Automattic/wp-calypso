@@ -45,7 +45,7 @@ describe( 'ticket-support/configuration actions', () => {
 
 			assert.deepEqual( action, {
 				type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-				...dummyError,
+				error: dummyError,
 			} );
 		} );
 	} );
@@ -89,7 +89,7 @@ describe( 'ticket-support/configuration actions', () => {
 			action.then( () => {
 				assert( spy.calledWith( sinon.match( {
 					type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-					...dummyError,
+					error: dummyError,
 				} ) ) );
 			} );
 		} );

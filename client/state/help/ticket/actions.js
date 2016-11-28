@@ -19,7 +19,7 @@ export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 export const ticketSupportConfigurationRequestFailure = ( error ) => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-		...error,
+		error,
 	};
 };
 
