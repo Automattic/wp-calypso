@@ -12,6 +12,7 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 
@@ -21,6 +22,7 @@ export default connectOptions(
 
 		return (
 			<ThemeShowcase { ...props } siteId={ siteId }>
+				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<SidebarNavigation />
 				<ThanksModal

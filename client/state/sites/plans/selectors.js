@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import find from 'lodash/find';
-import get from 'lodash/get';
+import { find, get, includes } from 'lodash';
 import debugFactory from 'debug';
 import moment from 'moment';
 
@@ -13,6 +12,7 @@ import { initialSiteState } from './reducer';
 import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
 import createSelector from 'lib/create-selector';
+import { PLANS_LIST } from 'lib/plans/constants';
 
 /**
  * Module dependencies
@@ -200,4 +200,32 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
 
 	return get( currentPlan, 'userIsOwner', false );
+}
+
+/**
+ * Returns a site's current plan's product slug
+ *
+ * @param  {Object}  state   Global State tree
+ * @param  {Number}  siteId  Site ID
+ * @return {String}          The site's current plan's product slug
+ */
+export function getSitePlanSlug( state, siteId ) {
+	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
+}
+
+// Duplicated from lib/plans. Proper solution in https://github.com/Automattic/wp-calypso/pull/9635
+function planHasFeature( plan, feature ) {
+	return includes( get( PLANS_LIST[ plan ], 'getFeatures', () => [] )(), feature );
+}
+
+/**
+ * Whether a site's current plan includes a given feature
+ *
+ * @param  {Object}  state   Global State tree
+ * @param  {Number}  siteId  Site ID
+ * @param  {String}  feature The feature we're looking for
+ * @return {Boolean}         True if the site's current plan includes the feature
+ */
+export function hasFeature( state, siteId, feature ) {
+	return planHasFeature( getSitePlanSlug( state, siteId ), feature );
 }
