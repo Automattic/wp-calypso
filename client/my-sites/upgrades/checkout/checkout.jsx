@@ -238,7 +238,9 @@ const Checkout = React.createClass( {
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
 
-			return `/plans/${ selectedSiteSlug }/thank-you`;
+			return selectedSiteSlug
+				? `/plans/${ selectedSiteSlug }/thank-you`
+				: '/plans/';
 		}
 
 		if ( receipt && receipt.receipt_id ) {
@@ -248,6 +250,10 @@ const Checkout = React.createClass( {
 				receiptId: receiptId,
 				purchases: this.getPurchasesFromReceipt()
 			} );
+		}
+
+		if ( ! selectedSiteSlug ) {
+			return '/checkout/';
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
