@@ -2,13 +2,17 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { noop } from 'lodash';
+import { connect } from 'react-redux';
+import {
+	noop,
+	size,
+} from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
@@ -41,21 +45,17 @@ class UpgradeBanner extends Component {
 	handleClick = () => {
 		const {
 			event,
-			href,
 			onClick,
 		} = this.props;
 
 		if ( event ) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_banner_cta_click', {
-				cta_name: event,
-			} );
+			this.props.recordTracksEvent(
+				'calypso_upgrade_banner_cta_click',
+				{ cta_name: event }
+			);
 		}
 
 		onClick();
-
-		if ( href ) {
-			window.location.href( href );
-		}
 	}
 
 	bannerContent() {
@@ -80,7 +80,7 @@ class UpgradeBanner extends Component {
 							{ description }
 						</div>
 					}
-					{ list &&
+					{ size( list ) > 0 &&
 						<ul className="upgrade-banner__list">
 							{ list.map( ( item, key ) =>
 								<li key={ key }>
@@ -178,4 +178,4 @@ class UpgradeBanner extends Component {
 
 }
 
-export default UpgradeBanner;
+export default connect( null, { recordTracksEvent } )( UpgradeBanner );
