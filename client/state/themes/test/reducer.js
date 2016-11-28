@@ -21,6 +21,7 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_CLEAR_ACTIVATED,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -31,6 +32,7 @@ import reducer, {
 	activeThemes,
 	activationRequests,
 	activeThemeRequests,
+	completedActivationRequests,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
@@ -71,6 +73,7 @@ describe( 'reducer', () => {
 			//'queryRequests',
 			//'themeRequests',
 			//'activeThemeRequests',
+			//'completedActivationRequests',
 			'currentTheme',
 			'themesUI'
 		] );
@@ -568,6 +571,54 @@ describe( 'reducer', () => {
 
 		it( 'never loads persisted state', () => {
 			const state = activationRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#completedActivationRequests()', () => {
+		it( 'should default to an empty object', () => {
+			const state = completedActivationRequests( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should track theme activate request success', () => {
+			const state = completedActivationRequests( deepFreeze( {} ), {
+				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				siteId: 2211667,
+			} );
+
+			expect( state ).to.have.keys( [ '2211667' ] );
+			expect( state ).to.deep.equal( { 2211667: true } );
+		} );
+
+		it( 'should track theme clear activated', () => {
+			const state = completedActivationRequests( deepFreeze( { 2211667: true } ), {
+				type: THEME_CLEAR_ACTIVATED,
+				siteId: 2211667,
+			} );
+
+			expect( state ).to.have.keys( [ '2211667' ] );
+			expect( state ).to.deep.equal( { 2211667: false } );
+		} );
+
+		it( 'never persists state', () => {
+			const state = completedActivationRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = completedActivationRequests( deepFreeze( {
 				2916284: true
 			} ), {
 				type: DESERIALIZE
