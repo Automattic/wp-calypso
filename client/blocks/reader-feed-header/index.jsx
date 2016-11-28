@@ -62,7 +62,7 @@ class FeedHeader extends Component {
 			headerImage = site && site.getIn( [ 'options', 'header_image' ] ),
 			headerColor = site && site.getIn( [ 'options', 'background_color' ] ),
 			followerCount = this.getFollowerCount( feed, site ),
-			ownerDisplayName = site && site.get( 'owner_display_name' );
+			ownerDisplayName = site && site.getIn( [ 'owner', 'name' ] );
 
 		let headerImageUrl;
 
