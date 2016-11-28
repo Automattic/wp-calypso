@@ -58,9 +58,9 @@ export const activeThemes = createReducer( {}, {
  );
 
  /**
- * Returns the updated active theme activation state after an action has been
+ * Returns the updated theme activation state after an action has been
  * dispatched. The state reflects a mapping of site ID to a boolean
- * reflecting whether a theme activation action is in progress.
+ * reflecting whether a theme is being activated on that site.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
