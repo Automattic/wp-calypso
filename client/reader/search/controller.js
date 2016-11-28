@@ -31,7 +31,7 @@ export default {
 			store = feedStreamFactory( 'search:' + searchSlug );
 			ensureStoreLoading( store, context );
 		} else if ( isRefresh ) {
-			store = feedStreamFactory( 'recommendations_posts' );
+			store = feedStreamFactory( 'custom_recs_posts_with_images' );
 			ensureStoreLoading( store, context );
 		}
 
