@@ -221,20 +221,21 @@ const SearchStream = React.createClass( {
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<CompactCard className="search-stream__input-card">
-					<SearchInput
-						initialValue={ this.props.query }
-						onSearch={ this.updateQuery }
-						autoFocus={ ! this.props.query }
-						delaySearch={ true }
-						delayTimeout={ 500 }
-						placeholder={ searchPlaceholderText } />
-				</CompactCard>
-				{ ! this.props.query && (
+				<div className="search-stream__fixed-area">
+					<CompactCard className="search-stream__input-card">
+						<SearchInput
+							initialValue={ this.props.query }
+							onSearch={ this.updateQuery }
+							autoFocus={ ! this.props.query }
+							delaySearch={ true }
+							delayTimeout={ 500 }
+							placeholder={ searchPlaceholderText } />
+					</CompactCard>
 					<p className="search-stream__blank-suggestions">
 						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
 					</p>
-				) }
+					<hr className="search-stream__fixed-area-separator" />
+				</div>
 			</Stream>
 		);
 	}

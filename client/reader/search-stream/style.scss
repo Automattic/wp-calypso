@@ -8,6 +8,28 @@
 	margin: 0;
 }
 
+.search-stream__fixed-area-separator {
+	margin-top: 31px;
+	margin-bottom: 0;
+}
+
+.is-reader-page .search-stream .reader-post-card.card {
+	width: 100%;
+}
+
+.is-reader-page .search-stream__fixed-area {
+	background-color: $white;
+	position: fixed;
+	top: 0px;
+	padding-top: 75px;
+	z-index: 20;
+	width: 830px;
+}
+
+.is-reader-page .search-stream .reader__content {
+	padding-top: 100px;
+}
+
 .is-reader-page .search-stream__input-card.card {
 	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
  }
