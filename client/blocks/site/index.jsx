@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ export default React.createClass( {
 			isSelected: false,
 
 			homeLink: false,
+			showHomeIcon: true, // if homeLink is enabled
 			enableActions: false
 		};
 	},
@@ -54,7 +55,9 @@ export default React.createClass( {
 		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
-		enableActions: React.PropTypes.bool
+		enableActions: React.PropTypes.bool,
+		homeLink: React.PropTypes.bool,
+		showHomeIcon: React.PropTypes.bool
 	},
 
 	getInitialState() {
@@ -238,7 +241,7 @@ export default React.createClass( {
 								</div>
 								<div className="site__domain">{ site.domain }</div>
 							</div>
-							{ this.props.homeLink &&
+							{ this.props.homeLink && this.props.showHomeIcon &&
 								<span className="site__home">
 									<Gridicon icon="house" size={ 18 } />
 								</span>
