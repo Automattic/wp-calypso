@@ -415,6 +415,28 @@ export function isThemeActive( state, themeId, siteId ) {
 }
 
 /**
+ * Returns whether the theme activation action is currently ongoing on the site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @return {Boolean}         True if theme activation is ongoing
+ */
+export function isActivating( state, siteId ) {
+	return get( state.themes.activationRequests, siteId, false );
+}
+
+/**
+ * Returns whether the theme activation action has finished on the site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @return {Boolean}         True if the theme activation has finished
+ */
+export function hasActivated( state, siteId ) {
+	return get( state.themes.completedActivationRequests, siteId, false );
+}
+
+/**
  * Whether a WPCOM theme given by its ID is premium.
  *
  * Note that we aren't using this selector yet since the necessary reducer (queries)
