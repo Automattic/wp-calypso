@@ -84,7 +84,7 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-export function RelatedPostCard( { post, site, siteId, lineClamp = 10, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -97,9 +97,6 @@ export function RelatedPostCard( { post, site, siteId, lineClamp = 10, onPostCli
 	const postClickTracker = partial( onPostClick, post );
 	const siteClickTracker = partial( onSiteClick, post );
 
-	// TODO: is this okay?
-	const style = { WebkitLineClamp: lineClamp };
-
 	return (
 		<Card className={ classes }>
 			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
@@ -110,7 +107,7 @@ export function RelatedPostCard( { post, site, siteId, lineClamp = 10, onPostCli
 						onClick={ postClickTracker } /> }
 					<div className="reader-related-card-v2__site-info">
 						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-						<div className="reader-related-card-v2__excerpt post-excerpt" style={ style }>
+						<div className="reader-related-card-v2__excerpt post-excerpt">
 							{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
 						</div>
 					</div>
