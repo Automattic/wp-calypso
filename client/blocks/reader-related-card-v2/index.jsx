@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { getPost } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
@@ -26,9 +28,10 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post, onSiteClick } ) {
+function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
-	const authorAndSiteAreDifferent = post.site_name.toLowerCase() !== post.author.name.toLowerCase();
+	const siteName = ( site && site.title ) || post.site_name;
+	const authorAndSiteAreDifferent = siteName.toLowerCase() !== post.author.name.toLowerCase();
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl } onClick={ onSiteClick }>
@@ -40,7 +43,7 @@ function AuthorAndSiteFollow( { post, onSiteClick } ) {
 				</span>
 				{ authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-site">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.site_name }</a>
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ siteName }</a>
 				</span>
 				}
 			</div>
@@ -80,7 +83,7 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-export function RelatedPostCard( { post, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
 /* eslint-enable no-unused-vars */
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
@@ -96,7 +99,8 @@ export function RelatedPostCard( { post, onPostClick = noop, onSiteClick = noop 
 
 	return (
 		<Card className={ classes }>
-			<AuthorAndSiteFollow post={ post } onSiteClick={ siteClickTracker } />
+		{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ postClickTracker } >
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
@@ -118,8 +122,12 @@ export default connect(
 	( state, ownProps ) => {
 		const { post } = ownProps;
 		const actualPost = getPost( state, post );
+		const siteId = post && post.site_ID;
+		const site = siteId && getSite( state, siteId );
 		return {
-			post: actualPost
+			post: actualPost,
+			site,
+			siteId
 		};
 	}
 )( LocalizedRelatedPostCard );
