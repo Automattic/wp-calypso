@@ -43,7 +43,8 @@ export const DesignShowcaseTour = makeTour(
 		path="/design"
 		when={ and(
 			isNewUser,
-			isEnabled( 'guided-tours/design-showcase', isDesktop ),
+			isEnabled( 'guided-tours/design-showcase' ),
+			isDesktop,
 			selectedSiteIsCustomizable,
 			not( inSection( 'customize' ) ),
 			) }
