@@ -2,9 +2,7 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:media' ),
-	assign = require( 'lodash/assign' ),
-	uniqueId = require( 'lodash/uniqueId' ),
-	path = require( 'path' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies
@@ -89,46 +87,6 @@ MediaActions.fetchNextPage = function( siteId ) {
 	} );
 };
 
-MediaActions.createTransientMedia = function( id, file, date ) {
-	const transientMedia = { ID: id, 'transient': true };
-
-	if ( date ) {
-		transientMedia.date = date;
-	}
-
-	if ( 'string' === typeof file ) {
-		// Generate from string
-		assign( transientMedia, {
-			file: file,
-			title: path.basename( file ),
-			extension: MediaUtils.getFileExtension( file ),
-			mime_type: MediaUtils.getMimeType( file )
-		} );
-	} else {
-		// Handle the case where a an object has been passed that wraps a
-		// Blob and contains a fileName
-		const fileContents = file.fileContents || file;
-		const fileName = file.fileName || file.name;
-
-		// Generate from window.File object
-		const fileUrl = window.URL.createObjectURL( fileContents );
-
-		assign( transientMedia, {
-			URL: fileUrl,
-			guid: fileUrl,
-			file: fileName,
-			title: file.title || path.basename( fileName ),
-			extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
-			mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
-			// Size is not an API media property, though can be useful for
-			// validation purposes if known
-			size: fileContents.size
-		} );
-	}
-
-	return transientMedia;
-};
-
 MediaActions.add = function( siteId, files ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
@@ -145,15 +103,16 @@ MediaActions.add = function( siteId, files ) {
 	const baseTime = Date.now() + ONE_YEAR_IN_MILLISECONDS;
 
 	return files.reduce( ( lastUpload, file, i ) => {
-		// Generate a fake transient media item that can be rendered into the list
-		// immediately, even before the media has persisted to the server
-		const id = uniqueId( 'media-' );
-
 		// Assign a date such that the first item will be the oldest at the
 		// time of upload, as this is expected order when uploads finish
-		const mediaDate = new Date( baseTime - ( files.length - i ) ).toISOString();
+		const date = new Date( baseTime - ( files.length - i ) ).toISOString();
 
-		const transientMedia = MediaActions.createTransientMedia( id, file, mediaDate );
+		// Generate a fake transient item that can be used immediately, even
+		// before the media has persisted to the server
+		const transientMedia = { date, ...MediaUtils.createTransientMedia( file ) };
+		if ( file.ID ) {
+			transientMedia.ID = file.ID;
+		}
 
 		Dispatcher.handleViewAction( {
 			type: 'CREATE_MEDIA_ITEM',
@@ -162,7 +121,7 @@ MediaActions.add = function( siteId, files ) {
 		} );
 
 		// Abort upload if file fails to pass validation.
-		if ( MediaValidationStore.getErrors( siteId, id ).length ) {
+		if ( MediaValidationStore.getErrors( siteId, transientMedia.ID ).length ) {
 			return Promise.resolve();
 		}
 
@@ -195,7 +154,7 @@ MediaActions.add = function( siteId, files ) {
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
 			// resolve before starting this item's upload
-			const action = { type: 'RECEIVE_MEDIA_ITEM', id, siteId };
+			const action = { type: 'RECEIVE_MEDIA_ITEM', id: transientMedia.ID, siteId };
 			return wpcom.site( siteId )[ addHandler ]( {}, file ).then( ( data ) => {
 				Dispatcher.handleServerAction( Object.assign( action, {
 					data: data.media[ 0 ]
@@ -242,9 +201,9 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 	if ( item.media ) {
 		// Show a fake transient media item that can be rendered into the list immediately,
 		// even before the media has persisted to the server
-		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media ) };
+		updateAction.data = { ...newItem, ...MediaUtils.createTransientMedia( item.media ), ID: mediaId };
 	} else if ( editMediaFile && item.media_url ) {
-		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media_url ) };
+		updateAction.data = { ...newItem, ...MediaUtils.createTransientMedia( item.media_url ), ID: mediaId };
 	}
 
 	if ( editMediaFile && updateAction.data ) {
