@@ -96,6 +96,17 @@ export const getThemesForQuery = createSelector(
 );
 
 /**
+ * Returns last query used.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {String}         Last quer
+ */
+export function getLastQuery( state, siteId ) {
+	return get( state.themes.lastQuery, siteId, '' );
+}
+
+/**
  * Returns true if currently requesting themes for the themes query, or false
  * otherwise.
  *
@@ -124,17 +135,6 @@ export function getThemesFoundForQuery( state, siteId, query ) {
 	}
 
 	return state.themes.queries[ siteId ].getFound( query );
-}
-
-/**
- * Returns last query used.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {String}         Last quer
- */
-export function getLastQuery( state, siteId ) {
-	return get( state.themes.lastQuery, siteId, '' );
 }
 
 /**
