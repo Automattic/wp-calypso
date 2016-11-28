@@ -4,6 +4,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import AutoDirection from 'components/auto-direction';
+
 const PostExcerpt = React.createClass( {
 
 	propTypes: {
@@ -26,7 +28,12 @@ const PostExcerpt = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes } dangerouslySetInnerHTML={{ __html: this.props.content }}></div> //eslint-disable-line react/no-danger
+			<AutoDirection>
+				<div className={ classes }
+					dangerouslySetInnerHTML={ { __html: this.props.content } } // eslint-disable-line react/no-danger
+				>
+				</div>
+			</AutoDirection>
 		);
 	}
 } );

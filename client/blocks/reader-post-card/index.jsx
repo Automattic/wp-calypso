@@ -10,6 +10,7 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
+import AutoDirection from 'components/auto-direction';
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostActions from 'blocks/reader-post-actions';
@@ -152,10 +153,12 @@ export default class RefreshPostCard extends React.Component {
 					{ ! isGallery && featuredAsset }
 					{ isGallery && <PostGallery post={ post } /> }
 					<div className="reader-post-card__post-details">
-						<h1 className="reader-post-card__title">
-							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
-						</h1>
-						{ showExcerpt && <div className="reader-post-card__excerpt">{ post[ excerptAttribute ] }</div> }
+						<AutoDirection>
+							<h1 className="reader-post-card__title">
+								<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
+							</h1>
+						</AutoDirection>
+						{ showExcerpt && <AutoDirection><div className="reader-post-card__excerpt">{ post[ excerptAttribute ] }</div></AutoDirection> }
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ post &&
 							<ReaderPostActions
