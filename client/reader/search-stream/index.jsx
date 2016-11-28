@@ -27,6 +27,7 @@ import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import config from 'config';
+import StickyPanel from 'components/sticky-panel';
 
 const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
 
@@ -221,20 +222,22 @@ const SearchStream = React.createClass( {
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<CompactCard className="search-stream__input-card">
-					<SearchInput
-						initialValue={ this.props.query }
-						onSearch={ this.updateQuery }
-						autoFocus={ ! this.props.query }
-						delaySearch={ true }
-						delayTimeout={ 500 }
-						placeholder={ searchPlaceholderText } />
-				</CompactCard>
-				{ ! this.props.query && (
-					<p className="search-stream__blank-suggestions">
-						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
-					</p>
-				) }
+				<StickyPanel className="search-stream__sticky-panel">
+					<CompactCard className="search-stream__input-card">
+						<SearchInput
+							initialValue={ this.props.query }
+							onSearch={ this.updateQuery }
+							autoFocus={ ! this.props.query }
+							delaySearch={ true }
+							delayTimeout={ 500 }
+							placeholder={ searchPlaceholderText } />
+					</CompactCard>
+					{ ! this.props.query && (
+						<p className="search-stream__blank-suggestions">
+							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+						</p>
+					) }
+				</StickyPanel>
 			</Stream>
 		);
 	}

@@ -8,6 +8,12 @@
 	margin: 0;
 }
 
+.search-stream__sticky-panel.is-sticky .sticky-panel__content {
+	padding-top: 70px;
+	padding-bottom: 20px;
+	background-color: $white;
+}
+
 .is-reader-page .search-stream__input-card.card {
 	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
  }
