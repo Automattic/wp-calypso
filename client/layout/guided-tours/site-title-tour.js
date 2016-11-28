@@ -15,6 +15,7 @@ import {
 	selectedSiteHasDefaultSiteTitle,
 	userIsOlderThan,
 	isEnabled,
+	userCanEditSettingsOfSelectedSite,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
 
@@ -28,7 +29,8 @@ export const SiteTitleTour = makeTour(
 		when={ and(
 						isEnabled( 'guided-tours/site-title' ),
 						selectedSiteHasDefaultSiteTitle,
-						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS )
+						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS ),
+						userCanEditSettingsOfSelectedSite,
 					)
 		}>
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
