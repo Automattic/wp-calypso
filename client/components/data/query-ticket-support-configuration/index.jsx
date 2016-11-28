@@ -11,9 +11,15 @@ import {
 	ticketSupportConfigurationRequest,
 } from 'state/ticket-support/configuration/actions';
 
+import {
+	isRequestingTicketSupportConfiguration,
+} from 'state/help/ticket/selectors';
+
 class QueryTicketSupportConfiguration extends Component {
 	componentWillMount() {
-		this.props.ticketSupportConfigurationRequest();
+		if ( ! this.props.isRequestingTicketSupportConfiguration ) {
+			this.props.ticketSupportConfigurationRequest();
+		}
 	}
 
 	render() {
@@ -22,6 +28,8 @@ class QueryTicketSupportConfiguration extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		isRequestingTicketSupportConfiguration: isRequestingTicketSupportConfiguration( state ),
+	} ),
 	{ ticketSupportConfigurationRequest }
 )( QueryTicketSupportConfiguration );
