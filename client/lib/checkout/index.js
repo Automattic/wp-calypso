@@ -23,5 +23,5 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 		url = '/design/';
 	}
 
-	return url + siteSlug;
+	return siteSlug ? url + siteSlug : url;
 }
