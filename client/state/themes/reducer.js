@@ -220,6 +220,13 @@ export const queries = ( () => {
 	} );
 } )();
 
+export const lastQuery = createReducer( {}, {
+	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => ( {
+		...state,
+		[ siteId ]: query
+	} )
+} );
+
 export default combineReducers( {
 	// Old reducers:
 	themes,
@@ -228,6 +235,7 @@ export default combineReducers( {
 	// New reducers:
 	// queries,
 	// queryRequests,
+	// lastQuery
 	// themeRequests,
 	// activationRequests,
 	currentTheme,
