@@ -414,6 +414,14 @@ export function isThemeActive( state, themeId, siteId ) {
 	return getActiveTheme( state, siteId ) === themeId;
 }
 
+// export function isActivating( state, siteId ) {
+// 	return state.themes.currentTheme.get( 'isActivating' );
+// }
+
+export function hasActivated( state, siteId ) {
+	return get( state.themes.completedActivationRequests, siteId, false );
+}
+
 /**
  * Whether a WPCOM theme given by its ID is premium.
  *
