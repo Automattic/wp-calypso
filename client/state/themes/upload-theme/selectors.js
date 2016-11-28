@@ -8,10 +8,10 @@ import { get } from 'lodash';
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Boolean} -- True if upload is in progress
+ * @return {Boolean} -- True if upload is in progress
  */
 export function isUploadInProgress( state, siteId ) {
-	return get( state.themes.uploadTheme.inProgress, siteId );
+	return get( state.themes.uploadTheme.inProgress, siteId, false );
 }
 
 /**
@@ -19,10 +19,10 @@ export function isUploadInProgress( state, siteId ) {
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Boolean} -- True if upload has completed
+ * @return {Boolean} -- True if upload has completed
  */
 export function isUploadComplete( state, siteId ) {
-	return !! get( state.themes.uploadTheme.uploadedTheme, siteId );
+	return !! get( state.themes.uploadTheme.uploadedTheme, siteId, false );
 }
 
 /**
@@ -30,10 +30,10 @@ export function isUploadComplete( state, siteId ) {
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Boolean} -- True if upload has failed
+ * @return {Boolean} -- True if upload has failed
  */
 export function hasUploadFailed( state, siteId ) {
-	return !! get( state.themes.uploadTheme.uploadError, siteId );
+	return !! get( state.themes.uploadTheme.uploadError, siteId, false );
 }
 
 /**
@@ -88,7 +88,7 @@ export function getUploadProgressLoaded( state, siteId ) {
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Boolean} -- True install is in progress
+ * @return {Boolean} -- True install is in progress
  */
 export function isInstallInProgress( state, siteId ) {
 	return getUploadProgressTotal( state, siteId ) ===
