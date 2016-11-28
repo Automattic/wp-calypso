@@ -26,7 +26,7 @@ function createGraph( store ) {
 		let promise;
 		if ( process.env.NODE_ENV === 'development' ) {
 			promise = graphql( schema, query, root, context, variables );
-		} else {
+		} else {
 			promise = execute( parsedQuery, root, context );
 		}
 

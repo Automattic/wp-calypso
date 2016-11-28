@@ -31,7 +31,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 		}
 
 		componentDidMount() {
-			const throttledRequest = throttle( this.request, THROTTLE_DELAY, { leading: true } );
+			const throttledRequest = throttle( this.request, THROTTLE_DELAY, { leading: true } );
 			this.unsubscribe = this.context.graph.store.subscribe( throttledRequest );
 			this.request();
 		}

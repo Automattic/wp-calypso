@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isArray, isPlainObject, isFunction } from 'lodash';
+import { isArray, isPlainObject, isFunction } from 'lodash';
 
 const resolveNode = ( node, resolver, context ) => {
 	let resolved = resolver;
