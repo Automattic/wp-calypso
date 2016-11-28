@@ -14,9 +14,9 @@ import {
 } from '../actions';
 
 import {
-	TICKET_SUPPORT_CONFIGURATION_REQUEST,
-	TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS,
-	TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
+	HELP_TICKET_CONFIGURATION_REQUEST,
+	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
+	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import { dummyConfiguration, dummyError } from './test-data';
@@ -29,22 +29,22 @@ describe( 'ticket-support/configuration actions', () => {
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
-		it( 'should return TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS', () => {
+		it( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
 			const action = ticketSupportConfigurationRequestSuccess( dummyConfiguration );
 
 			assert.deepEqual( action, {
-				type: TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS,
+				type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 				...dummyConfiguration,
 			} );
 		} );
 	} );
 
 	describe( '#ticketSupportConfigurationRequestFailure', () => {
-		it( 'should return TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE', () => {
+		it( 'should return HELP_TICKET_CONFIGURATION_REQUEST_FAILURE', () => {
 			const action = ticketSupportConfigurationRequestFailure( dummyError );
 
 			assert.deepEqual( action, {
-				type: TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
+				type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 				...dummyError,
 			} );
 		} );
@@ -63,11 +63,11 @@ describe( 'ticket-support/configuration actions', () => {
 		it( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: TICKET_SUPPORT_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
 
 			action.then( () => {
 				assert( spy.calledWith( {
-					type: TICKET_SUPPORT_CONFIGURATION_REQUEST_SUCCESS,
+					type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 					...dummyConfiguration,
 				} ) );
 			} );
@@ -84,11 +84,11 @@ describe( 'ticket-support/configuration actions', () => {
 		it( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: TICKET_SUPPORT_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
 
 			action.then( () => {
 				assert( spy.calledWith( sinon.match( {
-					type: TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
+					type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 					...dummyError,
 				} ) ) );
 			} );
