@@ -28,7 +28,7 @@ import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
-import { isTicketSupportEligible, isTicketSupportConfigurationReady } from 'state/ticket-support/configuration/selectors';
+import { isTicketSupportEligible, isTicketSupportConfigurationReady } from 'state/help/ticket/selectors';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
