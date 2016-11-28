@@ -75,9 +75,11 @@ class UpgradeBanner extends Component {
 					<div className="upgrade-banner__title">
 						{ title }
 					</div>
-					<div className="upgrade-banner__description">
-						{ description }
-					</div>
+					{ description &&
+						<div className="upgrade-banner__description">
+							{ description }
+						</div>
+					}
 					{ list &&
 						<ul className="upgrade-banner__list">
 							{ list.map( ( item, key ) =>

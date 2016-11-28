@@ -36,8 +36,9 @@
 }
 
 .upgrade-banner__description {
-	color: $gray;
+	color: $gray-dark;
 	font-size: 12px;
+	margin-top: 3px;
 }
 
 .upgrade-banner.card {
@@ -69,13 +70,17 @@
 	}
 
 	.upgrade-banner__list {
-		color: $gray;
+		color: $gray-dark;
 		font-size: 12px;
 		list-style: none;
 		margin: 0;
 
 		li {
 			margin: 6px 0;
+
+			.gridicon {
+				color: $gray;
+			}
 		}
 
 		.gridicon {
@@ -99,6 +104,12 @@
 	}
 
 	&:hover {
+		transition: all 100ms ease-in-out;
+
+		&.is-card-link {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+		}
+
 		.card__link-indicator {
 			color: $blue-dark;
 		}
@@ -132,7 +143,7 @@
 		}
 
 		.upgrade-banner__action {
-			margin: 0 8px;
+			margin: 0 -6px 0 8px;
 		}
 	}
 
