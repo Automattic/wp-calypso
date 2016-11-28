@@ -20,8 +20,8 @@ import {
 	inSection,
 	// isNewUser,
 	isEnabled,
-	themeFilterChosen,
-	themeSearchResultsFound,
+	// themeFilterChosen,
+	// themeSearchResultsFound,
 	// selectedSiteIsPreviewable,
 	selectedSiteIsCustomizable,
 	// previewIsNotShowing,
@@ -49,26 +49,14 @@ export const DesignShowcaseTour = makeTour(
 			not( inSection( 'customize' ) ),
 			) }
 		>
-		<Step name="init" placement="right" next="filter">
+		<Step name="init" placement="right" next="search">
 			<p>
 				{ 'From this page you can change the design of your site. Want to see how to search for your ideal style?' }
 			</p>
 			<ButtonRow>
-				<Next step="filter">{ translate( "Let's go!" ) }</Next>
+				<Next step="search">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</ButtonRow>
-		</Step>
-
-		<Step name="filter"
-			target=".themes-magic-search-card .segmented-control"
-			placement="beside"
-			arrow="right-top"
-			next="search"
-		>
-			<p>
-				{ 'Do you want to see only free themes? Try changing to free here.' }
-			</p>
-			<Continue when={ themeFilterChosen( 'free' ) } step="search" hidden />
 		</Step>
 
 		<Step name="search"
@@ -78,19 +66,22 @@ export const DesignShowcaseTour = makeTour(
 			next="theme-options"
 		>
 			<p>
-				{ 'Search for a specific feature, style or theme here. Try something — for example “business”.' }
+				{ 'Here you can search the theme and apply filters.' }
 			</p>
-			<Continue when={ themeSearchResultsFound } step="theme-options" hidden />
+			<ButtonRow>
+				<Next step="theme-options">{ translate( "Next" ) }</Next>
+				<Quit>{ translate( 'Close' ) }</Quit>
+			</ButtonRow>
 		</Step>
 
 		<Step name="theme-options"
 			target=".theme__more-button"
-			arrow="top-left"
-			placement="below"
-			next="customize"
+			arrow="right-top"
+			placement="beside"
+			next="finish"
 		>
 			<p>
-				{ 'From here you can access all the theme options.' }
+				{ 'Here you can access all the extra theme options.' }
 			</p>
 			<Continue step="finish" target=".theme__more-button" click />
 		</Step>
@@ -101,13 +92,12 @@ export const DesignShowcaseTour = makeTour(
 			arrow="top-left"
 		>
 			<p>
-				This menu provides more information about a theme.
-				To see a demo site with this theme, click <strong>Live demo</strong>.
+				This menu has everything you can do with a theme.
 				To explore this theme with your own site, click <strong>Try & Customize</strong>.
 			</p>
 			<ButtonRow>
 				<Quit primary>
-					We're all done!
+					{ translate( "We're all done!" ) }
 				</Quit>
 			</ButtonRow>
 		</Step>
