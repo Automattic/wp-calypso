@@ -2,13 +2,16 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { isString, uniqueId } from 'lodash';
+import { isString, uniqueId, throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { makePromiseCancelable } from 'lib/promises';
 import { clearRequests } from 'state/requests/actions';
+import parse from './executor/parse';
+
+const THROTTLE_DELAY = 50;
 
 const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( WrappedComponent ) => {
 	return class GraphQueryComponent extends Component {
@@ -28,7 +31,8 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 		}
 
 		componentDidMount() {
-			this.unsubscribe = this.context.graph.store.subscribe( this.request );
+			const throttledRequest = throttle( this.request, THROTTLE_DELAY, { leading: true } );
+			this.unsubscribe = this.context.graph.store.subscribe( throttledRequest );
 			this.request();
 		}
 
@@ -50,6 +54,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 				this.query = mapPropsToQuery( props );
 			}
 			this.variables = mapPropsToVariables( props );
+			this.parsedQuery = parse( this.query, this.variables );
 		}
 
 		cancelRequest() {
@@ -59,7 +64,7 @@ const query = ( mapPropsToQuery, mapPropsToVariables = () => ( {} ) ) => ( Wrapp
 		request = () => {
 			this.cancelRequest();
 			const cancelablePromise = makePromiseCancelable(
-				this.context.graph.request( this.query, { uid: this.uid }, this.variables )
+				this.context.graph.request( this.query, { uid: this.uid }, this.variables, this.parsedQuery )
 			);
 			this.cancelRequestPromise = cancelablePromise.cancel;
 			cancelablePromise.promise

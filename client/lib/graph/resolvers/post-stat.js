@@ -12,6 +12,7 @@ const createResolver = store => ( args ) => {
 	} );
 	const state = store.getState();
 	const statValue = getPostStat( state, stat, siteId, postId );
+
 	return statValue;
 };
 

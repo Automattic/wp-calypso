@@ -7,6 +7,7 @@ import createPostsResolver from './resolvers/posts';
 import createPostStatResolver from './resolvers/post-stat';
 import createPostsCountResolver from './resolvers/posts-count';
 import graphqlSchema from './schema';
+import execute from './executor';
 
 function createGraph( store ) {
 	const schema = buildSchema( graphqlSchema );
@@ -21,8 +22,15 @@ function createGraph( store ) {
 		postsCount: createPostsCountResolver( store ),
 	};
 
-	const request = ( query, context, variables ) => {
-		return graphql( schema, query, root, context, variables );
+	const request = ( query, context, variables, parsedQuery ) => {
+		let promise;
+		if ( process.env.NODE_ENV === 'development' ) {
+			promise = graphql( schema, query, root, context, variables );
+		} else {
+			promise = execute( parsedQuery, root, context );
+		}
+
+		return promise;
 	};
 
 	return {
