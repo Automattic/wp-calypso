@@ -31,7 +31,6 @@ import {
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE,
-	TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -142,15 +141,6 @@ export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dis
 	} ) )
 );
 
-// TODO:
-// Ideally, this error should not be shown if the live chat support is configured properly.
-// However, at the moment the olark-related data is not fully in the redux store, so there
-// is no clean way to access it in this middleware. Once it is in, we should rewrite this function
-// to take that into account.
-const onTicketSupportConfigurationRequestFailure = dispatchError(
-	translate( 'There is an error while configuring the email support form.' )
-);
-
 /**
  * Handler action type mapping
  */
@@ -179,7 +169,6 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
-	[ TICKET_SUPPORT_CONFIGURATION_REQUEST_FAILURE ]: onTicketSupportConfigurationRequestFailure,
 };
 
 /**

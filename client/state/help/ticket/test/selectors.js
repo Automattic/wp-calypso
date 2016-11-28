@@ -10,6 +10,7 @@ import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	isRequestingTicketSupportConfiguration,
+	hasRequestError,
 } from '../selectors';
 
 describe( 'ticket-support/configuration/selectors', () => {
@@ -19,16 +20,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 				isReady: false,
 				isRequesting: false,
 				isUserEligible: false,
-			},
-		},
-	};
-
-	const requestingState = {
-		help: {
-			ticket: {
-				isReady: false,
-				isRequesting: true,
-				isUserEligible: false,
+				requestError: false,
 			},
 		},
 	};
@@ -39,6 +31,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 				isReady: true,
 				isRequesting: false,
 				isUserEligible: true,
+				requestError: false,
 			},
 		},
 	};
@@ -64,12 +57,26 @@ describe( 'ticket-support/configuration/selectors', () => {
 	} );
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
-		it( 'should return false', () => {
-			assert.isFalse( isRequestingTicketSupportConfiguration( uninitState ) );
-		} );
-
 		it( 'should return true', () => {
-			assert.isTrue( isRequestingTicketSupportConfiguration( requestingState ) );
+			assert.isTrue( isRequestingTicketSupportConfiguration( {
+				help: {
+					ticket: {
+						isRequesting: true,
+					},
+				},
+			} ) );
+		} );
+	} );
+
+	describe( '#hasRequestError', () => {
+		it( 'should return true', () => {
+			assert.isTrue( hasRequestError( {
+				help: {
+					ticket: {
+						requestError: true,
+					},
+				},
+			} ) );
 		} );
 	} );
 } );

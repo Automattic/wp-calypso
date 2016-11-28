@@ -12,6 +12,7 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
 const isRequesting = createReducer( false, {
@@ -29,8 +30,16 @@ const isReady = createReducer( false, {
 	[ HELP_TICKET_CONFIGURATION_REQUEST_FAILURE ]: () => true,
 } );
 
+const requestError = createReducer( false, {
+	[ HELP_TICKET_CONFIGURATION_REQUEST ]: () => false,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: () => false,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_FAILURE ]: () => true,
+	[ HELP_TICKET_CONFIGURATION_DISMISS_ERROR ]: () => false,
+} );
+
 export default combineReducers( {
 	isReady,
 	isRequesting,
 	isUserEligible,
+	requestError,
 } );

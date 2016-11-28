@@ -9,3 +9,7 @@ export const isTicketSupportConfigurationReady = ( state ) => {
 export const isRequestingTicketSupportConfiguration = ( state ) => {
 	return state.help.ticket.isRequesting;
 };
+
+export const hasRequestError = ( state ) => {
+	return state.help.ticket.requestError;
+};

@@ -11,12 +11,14 @@ import {
 	ticketSupportConfigurationRequest,
 	ticketSupportConfigurationRequestSuccess,
 	ticketSupportConfigurationRequestFailure,
+	ticketSupportConfigurationDismissError,
 } from '../actions';
 
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
 import { dummyConfiguration, dummyError } from './test-data';
@@ -91,6 +93,16 @@ describe( 'ticket-support/configuration actions', () => {
 					type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 					error: dummyError,
 				} ) ) );
+			} );
+		} );
+	} );
+
+	describe( '#ticketSupportConfigurationDismissError', () => {
+		it( 'should return HELP_TICKET_CONFIGURATION_DISMISS_ERROR', () => {
+			const action = ticketSupportConfigurationDismissError();
+
+			assert.deepEqual( action, {
+				type: HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 			} );
 		} );
 	} );

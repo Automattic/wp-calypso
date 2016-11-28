@@ -7,6 +7,7 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
 export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
@@ -33,4 +34,8 @@ export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
 		.catch( ( error ) => {
 			dispatch( ticketSupportConfigurationRequestFailure( error ) );
 		} );
+};
+
+export const ticketSupportConfigurationDismissError = () => {
+	return { type: HELP_TICKET_CONFIGURATION_DISMISS_ERROR };
 };
