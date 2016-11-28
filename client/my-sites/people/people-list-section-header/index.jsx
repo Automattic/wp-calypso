@@ -16,7 +16,7 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Tooltip from 'components/tooltip';
 
-class PeopleSectionHeader extends Component {
+export class PeopleSectionHeader extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		label: React.PropTypes.string.isRequired,
@@ -30,12 +30,9 @@ class PeopleSectionHeader extends Component {
 		isFollower: false,
 	};
 
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			addPeopleTooltip: false
-		};
-	}
+	state = {
+		addPeopleTooltip: false,
+	};
 
 	showAddTooltip = () => {
 		this.setState( { addPeopleTooltip: true } );
@@ -102,5 +99,4 @@ class PeopleSectionHeader extends Component {
 	}
 }
 
-export { PeopleSectionHeader };
 export default localize( PeopleSectionHeader );
