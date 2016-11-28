@@ -11,6 +11,10 @@
 	}
 }
 
+.site-icon-setting__icon {
+	cursor: pointer;
+}
+
 .site-icon-setting__icon:hover .site-icon {
 	border-style: dashed;
 	border-color: $gray-dark;
