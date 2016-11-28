@@ -15,9 +15,6 @@ import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PeopleListSectionHeader', function() {
 	let configMock,
-		ReactInjection,
-		translations,
-		translate,
 		PeopleListSectionHeader,
 		SectionHeader;
 
@@ -31,13 +28,6 @@ describe( 'PeopleListSectionHeader', function() {
 	} );
 
 	before( function() {
-		ReactInjection = require( 'react/lib/ReactInjection' );
-		translations = [];
-		translate = function() {
-			translations.push( Array.from( arguments ) );
-		};
-		ReactInjection.Class.injectMixin( { translate: translate } );
-
 		SectionHeader = require( 'components/section-header' );
 		PeopleListSectionHeader = require( '..' ).PeopleSectionHeader;
 	} );
