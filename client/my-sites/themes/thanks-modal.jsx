@@ -37,7 +37,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	onCloseModal() {
-		this.props.clearActivated();
+		this.props.clearActivated( this.props.site.ID );
 		this.setState( { show: false } );
 	},
 

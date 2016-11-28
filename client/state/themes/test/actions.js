@@ -15,6 +15,7 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_CLEAR_ACTIVATED,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
@@ -25,6 +26,7 @@ import {
 } from 'state/action-types';
 import {
 	themeActivated,
+	clearActivated,
 	activateTheme,
 	requestActiveTheme,
 	receiveTheme,
@@ -331,6 +333,16 @@ describe( 'actions', () => {
 
 			themeActivated( { id: 'twentysixteen' }, 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
+		} );
+	} );
+
+	describe( '#clearActivated()', () => {
+		it( 'should return an action object', () => {
+			const action = clearActivated( 22116677 );
+			expect( action ).to.eql( {
+				type: THEME_CLEAR_ACTIVATED,
+				siteId: 22116677
+			} );
 		} );
 	} );
 
