@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +14,11 @@ import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -27,7 +32,9 @@ class SiteIconSetting extends Component {
 		siteId: PropTypes.number,
 		isJetpack: PropTypes.bool,
 		customizerUrl: PropTypes.string,
-		generalOptionsUrl: PropTypes.string
+		generalOptionsUrl: PropTypes.string,
+		onEditSelectedMedia: PropTypes.func,
+		resetAllImageEditorState: PropTypes.func
 	};
 
 	state = {
@@ -40,11 +47,17 @@ class SiteIconSetting extends Component {
 
 	showModal = () => this.toggleModal( true );
 
-	setSiteIcon = ( media ) => {
-		// [TODO]: Handle setting site icon
-		console.log( media ); // eslint-disable-line no-console
+	editSelectedMedia = ( media ) => {
+		if ( media ) {
+			this.props.onEditSelectedMedia();
+		} else {
+			this.hideModal();
+		}
+	};
 
+	setSiteIcon = ( error, blob ) => {
 		this.hideModal();
+		this.props.resetAllImageEditorState();
 	};
 
 	preloadModal() {
@@ -104,8 +117,12 @@ class SiteIconSetting extends Component {
 									isVisible />
 							) }
 							siteId={ siteId }
-							onClose={ this.setSiteIcon }
+							onClose={ this.editSelectedMedia }
 							enabledFilters={ [ 'images' ] }
+							imageEditorProps={ {
+								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+								onDone: this.setSiteIcon
+							} }
 							visible
 							single />
 					</MediaLibrarySelectedData>
@@ -115,13 +132,19 @@ class SiteIconSetting extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		siteId,
-		isJetpack: isJetpackSite( state, siteId ),
-		customizerUrl: getCustomizerUrl( state, siteId ),
-		generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' )
-	};
-} )( localize( SiteIconSetting ) );
+		return {
+			siteId,
+			isJetpack: isJetpackSite( state, siteId ),
+			customizerUrl: getCustomizerUrl( state, siteId ),
+			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' )
+		};
+	},
+	{
+		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+		resetAllImageEditorState
+	}
+)( localize( SiteIconSetting ) );
