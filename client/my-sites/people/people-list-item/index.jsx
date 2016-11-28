@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import omit from 'lodash/omit';
 import identity from 'lodash/identity';
@@ -12,14 +13,14 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
-import analytics from 'lib/analytics';
 import config from 'config';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const browserWindow = 'undefined' === typeof window
     ? window
     : { scrollTo: identity };
 
-class PeopleListItem extends PureComponent {
+export class PeopleListItem extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
@@ -30,7 +31,7 @@ class PeopleListItem extends PureComponent {
 
 	navigateToUser = () => {
 		browserWindow.scrollTo( 0, 0 );
-		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
+		this.props.recordGoogleEvent( 'People', 'Clicked User Profile From Team List' );
 	};
 
 	userHasPromoteCapability = () => {
@@ -56,7 +57,7 @@ class PeopleListItem extends PureComponent {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove', 'translate', 'moment', 'numberFormat' ) }
+				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove', 'translate', 'moment', 'numberFormat', 'recordGoogleEvent' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
@@ -77,5 +78,9 @@ class PeopleListItem extends PureComponent {
 	}
 }
 
-export { PeopleListItem };
-export default localize( PeopleListItem );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	},
+)( localize( PeopleListItem ) );
