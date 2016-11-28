@@ -188,7 +188,10 @@ const ThanksModal = React.createClass( {
 		];
 
 		return (
-			<Dialog className="themes-thanks-modal" isVisible={ this.props.isActivating || this.props.hasActivated } buttons={ buttons } onClose={ this.onCloseModal } >
+			<Dialog className="themes-thanks-modal"
+				isVisible={ this.props.isActivating || this.props.hasActivated }
+				buttons={ buttons }
+				onClose={ this.onCloseModal } >
 				{ this.props.hasActivated ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
