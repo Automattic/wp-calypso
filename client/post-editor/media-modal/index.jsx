@@ -59,7 +59,8 @@ export const EditorMediaModal = React.createClass( {
 			labels: Object.freeze( {} ),
 			setView: noop,
 			resetView: noop,
-			view: ModalViews.LIST
+			view: ModalViews.LIST,
+			imageEditorProps: {}
 		};
 	},
 
@@ -411,6 +412,7 @@ export const EditorMediaModal = React.createClass( {
 			case ModalViews.IMAGE_EDITOR:
 				const {
 					site,
+					imageEditorProps,
 					mediaLibrarySelectedItems: items
 				} = this.props;
 
@@ -423,6 +425,7 @@ export const EditorMediaModal = React.createClass( {
 						media={ media }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
+						{ ...imageEditorProps }
 					/>
 				);
 				break;
