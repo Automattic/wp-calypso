@@ -11,11 +11,6 @@ import { noop } from 'lodash';
 import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
-import { getCustomizeUrl } from 'my-sites/themes/helpers';
-import { userCan } from 'lib/site/utils';
-import Tooltip from 'components/tooltip';
-import ExternalLink from 'components/external-link';
-import analytics from 'lib/analytics';
 
 export default React.createClass( {
 	displayName: 'Site',
@@ -39,8 +34,7 @@ export default React.createClass( {
 			isSelected: false,
 
 			homeLink: false,
-			showHomeIcon: true, // if homeLink is enabled
-			enableActions: false
+			showHomeIcon: true // if homeLink is enabled
 		};
 	},
 
@@ -55,16 +49,8 @@ export default React.createClass( {
 		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
-		enableActions: React.PropTypes.bool,
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool
-	},
-
-	getInitialState() {
-		return {
-			showActions: false,
-			cogTooltip: false
-		};
 	},
 
 	onSelect( event ) {
@@ -84,100 +70,6 @@ export default React.createClass( {
 		this.props.onMouseLeave( event, this.props.site.slug );
 	},
 
-	enableCogTooltip() {
-		this.setState( { cogTooltip: true } );
-	},
-
-	disableCogTooltip() {
-		this.setState( { cogTooltip: false } );
-	},
-
-	renderCog() {
-		const site = this.props.site;
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<a
-				className="site__cog"
-				href={ `/settings/general/${ site.slug }` }
-				onClick={ this.onSettingsClick }
-				onMouseEnter={ this.enableCogTooltip }
-				onMouseLeave={ this.disableCogTooltip }
-				ref="cogButton"
-			>
-				<Gridicon icon="cog" />
-				<Tooltip
-					context={ this.refs && this.refs.cogButton }
-					isVisible={ this.state.cogTooltip }
-					position="bottom"
-				>
-					{ this.translate( 'Site settings' ) }
-				</Tooltip>
-			</a>
-		);
-	},
-
-	renderEditIcon() {
-		if ( ! userCan( 'manage_options', this.props.site ) ) {
-			return <SiteIcon site={ this.props.site } />;
-		}
-
-		let url = getCustomizeUrl( null, this.props.site ) + '&autofocus[section]=title_tagline';
-
-		if ( ! this.props.site.jetpack && this.props.site.options ) {
-			url = this.props.site.options.admin_url + 'options-general.php';
-		}
-
-		/* eslint-disable react/jsx-no-target-blank */
-		return (
-			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
-				<SiteIcon site={ this.props.site } />
-				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
-			</ExternalLink>
-		);
-		/* eslint-enable react/jsx-no-target-blank */
-	},
-
-	getHref() {
-		if ( this.state.showMoreActions || ! this.props.site ) {
-			return null;
-		}
-
-		return this.props.homeLink ? this.props.site.URL : this.props.href;
-	},
-
-	closeActions() {
-		this.setState( { showMoreActions: false } );
-	},
-
-	toggleActions() {
-		if ( ! this.state.showMoreActions ) {
-			analytics.mc.bumpStat( 'calypso_site_card', 'toggle_button' );
-		}
-		this.setState( { showMoreActions: ! this.state.showMoreActions } );
-	},
-
-	onEditIconClick( event ) {
-		const site = this.props.site;
-
-		if ( event ) {
-			analytics.mc.bumpStat( 'calypso_site_card', 'edit_icon' );
-		}
-
-		if ( event && site && ! site.icon ) {
-			analytics.mc.bumpStat( 'calypso_site_card', 'edit_default_icon' );
-		}
-	},
-
-	onSettingsClick( event ) {
-		if ( event ) {
-			analytics.mc.bumpStat( 'calypso_site_card', 'settings' );
-		}
-	},
-
 	render() {
 		const site = this.props.site;
 
@@ -193,78 +85,60 @@ export default React.createClass( {
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
 			'is-selected': this.props.isSelected,
-			'is-highlighted': this.props.isHighlighted,
-			'is-toggled': this.state.showMoreActions,
-			'has-edit-capabilities': userCan( 'manage_options', site )
+			'is-highlighted': this.props.isHighlighted
 		} );
 
 		return (
 			<div className={ siteClass }>
-				{ ! this.state.showMoreActions
-					? <a className="site__content"
-							href={ this.props.homeLink ? site.URL : this.props.href }
-							data-tip-target={ this.props.tipTarget }
-							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
-							title={ this.props.homeLink
-								? this.translate( 'View this site' )
-								: this.translate( 'Select this site' )
-							}
-							onTouchTap={ this.onSelect }
-							onClick={ this.props.onClick }
-							onMouseEnter={ this.onMouseEnter }
-							onMouseLeave={ this.onMouseLeave }
-							aria-label={ this.props.homeLink && site.is_previewable
-								? this.translate( 'Open site %(domain)s in a preview', {
-									args: { domain: site.domain }
-								} )
-								: this.translate( 'Open site %(domain)s in new tab', {
-									args: { domain: site.domain }
-								} )
-							}
-						>
-							<SiteIcon site={ site } />
-							<div className="site__info">
-								<div className="site__title">
-									{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-									{ this.props.site.is_private &&
-										<span className="site__badge">
-											<Gridicon icon="lock" size={ 14 } />
-										</span>
-									}
-									{ site.options && site.options.is_redirect &&
-										<span className="site__badge">
-											<Gridicon icon="block" size={ 14 } />
-										</span>
-									}
-									{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-									{ site.title }
-								</div>
-								<div className="site__domain">{ site.domain }</div>
-							</div>
-							{ this.props.homeLink && this.props.showHomeIcon &&
-								<span className="site__home">
-									<Gridicon icon="house" size={ 18 } />
+				<a className="site__content"
+					href={ this.props.homeLink ? site.URL : this.props.href }
+					data-tip-target={ this.props.tipTarget }
+					target={ this.props.externalLink && '_blank' }
+					title={ this.props.homeLink
+						? this.translate( 'View this site' )
+						: this.translate( 'Select this site' )
+					}
+					onTouchTap={ this.onSelect }
+					onClick={ this.props.onClick }
+					onMouseEnter={ this.onMouseEnter }
+					onMouseLeave={ this.onMouseLeave }
+					aria-label={ this.props.homeLink && site.is_previewable
+						? this.translate( 'Open site %(domain)s in a preview', {
+							args: { domain: site.domain }
+						} )
+						: this.translate( 'Open site %(domain)s in new tab', {
+							args: { domain: site.domain }
+						} )
+					}
+				>
+					<SiteIcon site={ site } />
+					<div className="site__info">
+						<div className="site__title">
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							{ this.props.site.is_private &&
+								<span className="site__badge">
+									<Gridicon icon="lock" size={ 14 } />
 								</span>
 							}
-						</a>
-					: <div className="site__content">
-							{ this.renderEditIcon() }
-							<div className="site__actions">
-								{ this.renderCog() }
-							</div>
+							{ site.options && site.options.is_redirect &&
+								<span className="site__badge">
+									<Gridicon icon="block" size={ 14 } />
+								</span>
+							}
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ site.title }
 						</div>
-				}
+						<div className="site__domain">{ site.domain }</div>
+					</div>
+					{ this.props.homeLink && this.props.showHomeIcon &&
+						<span className="site__home">
+							<Gridicon icon="house" size={ 18 } />
+						</span>
+					}
+				</a>
 				{ this.props.indicator
 					? <SiteIndicator site={ site } />
 					: null
-				}
-				{ this.props.enableActions &&
-					<button
-						className="site__toggle-more-options"
-						onClick={ this.toggleActions }
-					>
-						<Gridicon icon="ellipsis" size={ 24 } />
-					</button>
 				}
 			</div>
 		);
