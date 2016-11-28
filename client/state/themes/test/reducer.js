@@ -27,6 +27,7 @@ import {
 import reducer, {
 	queryRequests,
 	queries,
+	lastQuery,
 	themeRequests,
 	activeThemes,
 	activationRequests,
@@ -309,6 +310,51 @@ describe( 'reducer', () => {
 			const state = queries( original, { type: DESERIALIZE } );
 
 			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#lastQuery()', () => {
+		it( 'should default to an empty object', () => {
+			const state = lastQuery( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should store last query', () => {
+			const state = lastQuery( deepFreeze( {} ), {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Sixteen' },
+			} );
+
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state ).to.deep.equal( {
+				2916284: {
+					search: 'Sixteen'
+				}
+			} );
+		} );
+
+		it( 'should overwrite last query with new query', () => {
+			const state = lastQuery(
+				deepFreeze( {
+					2916284: {
+						search: 'Sixteen'
+					}
+				} ),
+				{
+					type: THEMES_REQUEST_SUCCESS,
+					siteId: 2916284,
+					query: { search: 'orange color' },
+				}
+			);
+
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state ).to.deep.equal( {
+				2916284: {
+					search: 'orange color'
+				}
+			} );
 		} );
 	} );
 
