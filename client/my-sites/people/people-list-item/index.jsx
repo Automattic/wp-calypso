@@ -69,7 +69,7 @@ export class PeopleListItem extends PureComponent {
 				this.props.onRemove &&
 				<div className="people-list-item__actions">
 					<button className="button is-link people-list-item__remove-button" onClick={ this.props.onRemove }>
-						{ this.props.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
+						{ this.props.translate( 'Remove' ) }
 					</button>
 				</div>
 				}
