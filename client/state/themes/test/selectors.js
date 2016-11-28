@@ -12,6 +12,7 @@ import {
 	getTheme,
 	isRequestingTheme,
 	getThemesForQuery,
+	getLastQuery,
 	isRequestingThemesForQuery,
 	getThemesFoundForQuery,
 	getThemesLastPageForQuery,
@@ -234,6 +235,33 @@ describe( 'themes selectors', () => {
 			}, 2916284, { search: 'Fifteen', number: 1, page: 2 } );
 
 			expect( siteThemes ).to.be.null;
+		} );
+	} );
+
+	describe( '#getLastQuery', () => {
+		it( 'given no site, should return empty string', () => {
+			const query = getLastQuery( {
+				themes: {
+					lastQuery: {}
+				}
+			} );
+
+			expect( query ).to.equal( '' );
+		} );
+
+		it( 'given a site, should return last used query', () => {
+			const query = getLastQuery(
+				{
+					themes: {
+						lastQuery: {
+							2916284: 'theme that has this thing and does not have the other one'
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( query ).to.equal( 'theme that has this thing and does not have the other one' );
 		} );
 	} );
 
