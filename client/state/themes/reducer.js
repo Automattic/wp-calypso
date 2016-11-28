@@ -19,7 +19,9 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
@@ -54,6 +56,33 @@ export const activeThemes = createReducer( {}, {
 	} ) },
 	activeThemesSchema
  );
+
+ /**
+ * Returns the updated theme activation state after an action has been
+ * dispatched. The state reflects a mapping of site ID to a boolean
+ * reflecting whether a theme is being activated on that site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function activationRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case THEME_ACTIVATE_REQUEST:
+		case THEME_ACTIVATE_REQUEST_SUCCESS:
+		case THEME_ACTIVATE_REQUEST_FAILURE:
+			return {
+				...state,
+				[ action.siteId ]: THEME_ACTIVATE_REQUEST === action.type
+			};
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
 
 /**
  * Returns the updated active theme request state after an action has been
@@ -200,6 +229,7 @@ export default combineReducers( {
 	// queries,
 	// queryRequests,
 	// themeRequests,
+	// activationRequests,
 	currentTheme,
 	themesUI
 } );

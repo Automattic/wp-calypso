@@ -18,7 +18,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -27,6 +29,7 @@ import reducer, {
 	queries,
 	themeRequests,
 	activeThemes,
+	activationRequests,
 	activeThemeRequests,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -483,6 +486,93 @@ describe( 'reducer', () => {
 			} );
 
 			const state = activeThemes( original, { type: DESERIALIZE } );
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#activationRequests', () => {
+		it( 'should default to an empty object', () => {
+			const state = activationRequests( undefined, {} );
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should map site ID to true value if request in progress', () => {
+			const state = activationRequests( deepFreeze( {} ), {
+				type: THEME_ACTIVATE_REQUEST,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = activationRequests(
+				deepFreeze( {
+					2916284: true
+				} ),
+				{
+					type: THEME_ACTIVATE_REQUEST,
+					siteId: 2916285,
+				}
+			);
+
+			expect( state ).to.deep.equal( {
+				2916284: true,
+				2916285: true,
+			} );
+		} );
+
+		it( 'should map site ID to false value if request finishes successfully', () => {
+			const state = activationRequests(
+				deepFreeze( {
+					2916284: true
+				} ),
+				{
+					type: THEME_ACTIVATE_REQUEST_SUCCESS,
+					siteId: 2916284,
+					theme: { id: 'twentysixteen' },
+				}
+			);
+
+			expect( state ).to.deep.equal( {
+				2916284: false
+			} );
+		} );
+
+		it( 'should map site ID to false value if request finishes with failure', () => {
+			const state = activationRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: THEME_ACTIVATE_REQUEST_FAILURE,
+				siteId: 2916284,
+				themeId: 'twentysixteen',
+				error: 'Unknown blog',
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: false
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = activationRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = activationRequests( deepFreeze( {
+				2916284: true
+			} ), {
+				type: DESERIALIZE
+			} );
+
 			expect( state ).to.deep.equal( {} );
 		} );
 	} );
