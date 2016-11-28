@@ -77,9 +77,8 @@ describe( 'reducer', () => {
 			'activeThemeRequests',
 			'activationRequests',
 			'completedActivationRequests',
-			'currentTheme',
 			'themesUI',
-			'uploadTheme',
+			'uploadTheme'
 		] );
 	} );
 
