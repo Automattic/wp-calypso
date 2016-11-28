@@ -41,8 +41,12 @@
 	align-self: center;
 	display: flex;
 	flex-direction: column;
-	margin-left: 10px;
-	width: calc(100% - 90px);
+	margin: 0 10px;
+	width: calc( 100% - 15px);
+
+	@include breakpoint( ">660px" ) {
+		width: calc( 100% - 165px );
+	}
 }
 
 .list-stream__header-title {
@@ -59,6 +63,7 @@
 .list-stream__header-description {
 	height: 22px;
 	overflow: hidden;
+	position: relative;
 
 	&:after {
 		@include long-content-fade( $size: 15% );
@@ -66,9 +71,14 @@
 }
 
 .list-stream__header-follow {
-	position: absolute;
-		top: 8px;
-		right: 0;
+	align-items: stretch;
+	display: flex;
+	margin-left: auto;
+	z-index: 1;
+
+	.follow-button {
+		padding: 0;
+	}
 }
 
 .list-stream__header.is-placeholder {
