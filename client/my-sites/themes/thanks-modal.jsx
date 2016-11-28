@@ -18,8 +18,8 @@ import {
 	getTheme,
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
-	isActivating,
-	hasActivated
+	isActivatingTheme,
+	hasActivatedTheme
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 
@@ -181,18 +181,19 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
-		const visitSiteText = this.props.hasActivated ? translate( 'Visit site' ) : translate( 'Activating theme…' );
+		const { currentTheme, hasActivated, isActivating } = this.props;
+		const visitSiteText = hasActivated ? translate( 'Visit site' ) : translate( 'Activating theme…' );
 		const buttons = [
 			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
+			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! hasActivated, onClick: this.visitSite },
 		];
 
 		return (
 			<Dialog className="themes-thanks-modal"
-				isVisible={ this.props.isActivating || this.props.hasActivated }
+				isVisible={ isActivating || hasActivated }
 				buttons={ buttons }
 				onClose={ this.onCloseModal } >
-				{ this.props.hasActivated ? this.renderContent() : this.renderLoading() }
+				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
 	},
@@ -212,8 +213,8 @@ export default connect(
 			currentTheme,
 			detailsUrl: getThemeDetailsUrl( state, currentTheme, site.ID ),
 			customizeUrl: getThemeCustomizeUrl( state, currentTheme, site.ID ),
-			isActivating: isActivating( state, site.ID ),
-			hasActivated: hasActivated( state, site.ID )
+			isActivating: isActivatingTheme( state, site.ID ),
+			hasActivated: hasActivatedTheme( state, site.ID )
 		};
 	},
 	{ clearActivated }
