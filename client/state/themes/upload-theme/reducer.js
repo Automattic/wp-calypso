@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,9 +17,7 @@ import {
 } from 'state/action-types';
 
 const clearState = function( state, { siteId } ) {
-	const newState = Object.assign( {}, state );
-	delete newState[ siteId ];
-	return newState;
+	return omit( state, siteId );
 };
 
 // Returns a func that sets state to be the specified action property,
