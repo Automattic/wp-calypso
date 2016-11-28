@@ -8,12 +8,20 @@
 	margin: 0;
 }
 
+.search-stream__fixed-area-separator {
+	margin-top: 31px;
+	margin-bottom: 0;
+}
+
+.is-reader-page .search-stream .reader-post-card.card {
+	width: 100%;
+}
+
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
 	top: 0px;
 	padding-top: 75px;
-	padding-bottom: 20px;
 	z-index: 20;
 	width: 830px;
 }

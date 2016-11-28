@@ -231,11 +231,10 @@ const SearchStream = React.createClass( {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText } />
 					</CompactCard>
-					{ ! this.props.query && (
-						<p className="search-stream__blank-suggestions">
-							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
-						</p>
-					) }
+					<p className="search-stream__blank-suggestions">
+						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+					</p>
+					<hr className="search-stream__fixed-area-separator" />
 				</div>
 			</Stream>
 		);
