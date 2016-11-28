@@ -93,7 +93,14 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__image" style={ headerColor ? { backgroundColor: '#' + headerColor } : null }>
 						{ headerImageUrl ? <img src={ headerImageUrl } /> : null }
 					</div>
-					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
+					{ this.state.siteish &&
+						<Site
+							site={ this.state.siteish }
+							homeLink={ true }
+							showHomeIcon={ false }
+							href={ this.state.siteish.URL }
+							indicator={ false } />
+					}
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ ( site && site.get( 'description' ) ) }</span>
 						{ ownerDisplayName && <span className="reader-feed-header__byline">
