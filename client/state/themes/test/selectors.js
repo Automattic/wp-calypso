@@ -27,6 +27,8 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isThemeActive,
+	isActivating,
+	hasActivated,
 	isThemePremium,
 	isThemePurchased,
 } from '../selectors';
@@ -1064,6 +1066,60 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isActive ).to.be.true;
+		} );
+	} );
+
+	describe( '#isActivating', () => {
+		it( 'given no site, should return false', () => {
+			const activating = isActivating( {
+				themes: {
+					activationRequests: {}
+				}
+			} );
+
+			expect( activating ).to.be.false;
+		} );
+
+		it( 'given a site, should return true if theme is currently activated', () => {
+			const activating = isActivating(
+				{
+					themes: {
+						activationRequests: {
+							2916284: true
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( activating ).to.be.true;
+		} );
+	} );
+
+	describe( '#hasActivated', () => {
+		it( 'given no site, should return false', () => {
+			const activated = hasActivated( {
+				themes: {
+					completedActivationRequests: {}
+				}
+			} );
+
+			expect( activated ).to.be.false;
+		} );
+
+		it( 'given a site, should return true if theme has been activated', () => {
+			const activated = hasActivated(
+				{
+					themes: {
+						completedActivationRequests: {
+							2916284: true
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( activated ).to.be.true;
 		} );
 	} );
 
