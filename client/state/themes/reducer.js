@@ -34,7 +34,6 @@ import {
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { queriesSchema, activeThemesSchema } from './schema';
-import currentTheme from './current-theme/reducer';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
 
@@ -271,7 +270,6 @@ export default combineReducers( {
 	activeThemeRequests,
 	activationRequests,
 	completedActivationRequests,
-	currentTheme,
 	themesUI,
-	uploadTheme,
+	uploadTheme
 } );
