@@ -66,7 +66,7 @@ export const ThemesList = React.createClass( {
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.loading !== this.props.loading ||
 			! isEqual( nextProps.themes, this.props.themes ) ||
-			( nextProps.getButtonOptions, this.props.getButtonOptions ) ||
+			( nextProps.getButtonOptions !== this.props.getButtonOptions ) ||
 			( nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
