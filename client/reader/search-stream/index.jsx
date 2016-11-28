@@ -37,8 +37,7 @@ function RecommendedPosts( { post, site } ) {
 
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site }
-				lineClamp={ 3 } />
+			<RelatedPostCard post={ post } site={ site } />
 		</div>
 	);
 }
