@@ -114,6 +114,12 @@ module.exports = function() {
 	);
 
 	page(
+		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransferToOtherUser
+	);
+
+	page(
 		paths.domainManagementRoot(),
 		controller.siteSelection,
 		controller.sites

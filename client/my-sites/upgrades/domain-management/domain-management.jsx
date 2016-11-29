@@ -12,5 +12,6 @@ module.exports = {
 	PrivacyProtection: require( './privacy-protection' ),
 	SiteRedirect: require( './site-redirect' ),
 	TransferOut: require( './transfer/transfer-out' ),
+	TransferToOtherUser: require( './transfer/transfer-to-other-user' ),
 	Transfer: require( './transfer' )
 };
