@@ -8,6 +8,9 @@ import { combineReducers } from 'redux';
  */
 import {
 	READER_TAG_IMAGES_RECEIVE,
+	READER_TAG_IMAGES_REQUEST,
+	READER_TAG_IMAGES_REQUEST_SUCCESS,
+	READER_TAG_IMAGES_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -30,6 +33,30 @@ export function items( state = [], action ) {
 			return [];
 	}
 
+	return state;
+}
+
+/**
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a request is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export function requesting( state = {}, action ) {
+	switch ( action.type ) {
+		case READER_TAG_IMAGES_REQUEST:
+		case READER_TAG_IMAGES_REQUEST_SUCCESS:
+		case READER_TAG_IMAGES_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
 	return state;
 }
 
