@@ -8,6 +8,10 @@ import React from 'react';
  */
 import ThemeShowcase from './theme-showcase';
 import { connectOptions } from './theme-options';
+import sitesFactory from 'lib/sites-list';
+
+const sites = sitesFactory();
+const site = sites.getSelectedSite();
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
@@ -21,6 +25,7 @@ export default props => (
 		'support',
 		'help'
 	] }
+	site={ site }
 	defaultOption="signup"
 	getScreenshotOption={ function() {
 		return 'info';

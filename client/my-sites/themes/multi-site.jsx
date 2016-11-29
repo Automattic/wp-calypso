@@ -10,6 +10,10 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
+import sitesFactory from 'lib/sites-list';
+
+const sites = sitesFactory();
+const site = sites.getSelectedSite();
 
 const MultiSiteThemeShowcase = connectOptions(
 	( props ) => (
@@ -33,6 +37,7 @@ export default ( props ) => (
 			'support',
 			'help',
 		] }
+		site={ site }
 		defaultOption="activate"
 		secondaryOption="tryandcustomize"
 		getScreenshotOption={ function() {
