@@ -63,9 +63,9 @@ const Theme = React.createClass( {
 
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
-			! isEqual( nextProps.buttonContents, this.props.buttonContents ) ||
 			( nextProps.active !== this.props.active ) ||
 			( nextProps.purchased !== this.props.purchased ) ||
+			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
