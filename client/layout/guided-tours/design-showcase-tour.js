@@ -93,7 +93,7 @@ export const DesignShowcaseTour = makeTour(
 		>
 			<p>
 				This menu has everything you can do with a theme.
-				To explore this theme with your own site, click <strong>Try & Customize</strong>.
+				Try it out!
 			</p>
 			<ButtonRow>
 				<Quit primary>
