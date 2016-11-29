@@ -125,5 +125,14 @@ module.exports = {
 		defaultVariation: 'showPlansAfterAuth',
 		allowExistingUsers: true
 	},
-};
 
+	presaleChatButton: {
+		datestamp: '20161129',
+		variations: {
+			showChatButton: 80,
+			original: 20
+		},
+		defaultVariation: 'original',
+		allowAnyLocale: true,
+	},
+};
