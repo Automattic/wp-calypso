@@ -1,6 +1,6 @@
 # Reader Stream Header
 
-The header for a stream in the reader
+The header for a stream in the Reader.
 
 ## Props
 

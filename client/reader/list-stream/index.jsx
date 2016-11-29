@@ -13,12 +13,12 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 import ListMissing from './missing';
-import StreamHeader from 'reader/stream-header';
+import OldStreamHeader from 'reader/stream-header';
+import ListStreamHeader from './header';
 import { followList, unfollowList } from 'state/reader/lists/actions';
 import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
 import QueryReaderList from 'components/data/query-reader-list';
-
-const stats = require( 'reader/stats' );
+import * as stats from 'reader/stats';
 
 const ListStream = React.createClass( {
 
@@ -61,6 +61,8 @@ const ListStream = React.createClass( {
 		if ( this.props.isMissing ) {
 			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
 		}
+
+		const StreamHeader = config.isEnabled( 'reader/refresh/stream' ) ? ListStreamHeader : OldStreamHeader;
 
 		return (
 			<Stream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>

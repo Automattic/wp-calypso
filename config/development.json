@@ -127,7 +127,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/list-management": true,
+		"reader/list-management": false,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/refresh/stream": true,

@@ -94,7 +94,7 @@
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/list-management": true,
+		"reader/list-management": false,
 		"republicize": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
