@@ -71,7 +71,7 @@ const PostSharing = React.createClass( {
 					'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
 				} ) }
 			>
-				<SocialLogo icon={ connection.service }/>
+				<SocialLogo icon={ connection.service === 'google_plus' ? 'google-plus' : connection.service }/>
 				<div className="posts__post-share-service-account-name">
 					<span>{ connection && connection.external_display }</span>
 				</div>
