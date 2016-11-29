@@ -37,15 +37,14 @@ export function hasUploadFailed( state, siteId ) {
 }
 
 /**
- * Returns the theme details object from a successfully
- * uploaded theme.
+ * Returns the ID of a successfully uploaded theme.
  *
  * @param {Object} state -- Global state tree
  * @param {Number} siteId -- Site ID
- * @return {?Object} -- Uploaded theme details
+ * @return {?Object} -- Uploaded theme ID
  */
-export function getUploadedTheme( state, siteId ) {
-	return get( state.themes.uploadTheme.uploadedTheme, siteId );
+export function getUploadedThemeId( state, siteId ) {
+	return get( state.themes.uploadTheme.uploadedThemeId, siteId );
 }
 
 /**

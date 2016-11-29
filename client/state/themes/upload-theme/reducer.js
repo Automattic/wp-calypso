@@ -16,10 +16,10 @@ import {
 	THEME_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
-export const uploadedTheme = createReducer( {}, {
-	[ THEME_UPLOAD_SUCCESS ]: ( state, { siteId, theme } ) => ( {
+export const uploadedThemeId = createReducer( {}, {
+	[ THEME_UPLOAD_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
 		...state,
-		[ siteId ]: theme,
+		[ siteId ]: themeId,
 	} ),
 	[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
@@ -72,7 +72,7 @@ export const inProgress = createReducer( {}, {
 } );
 
 export default combineReducers( {
-	uploadedTheme,
+	uploadedThemeId,
 	uploadError,
 	progressLoaded,
 	progressTotal,

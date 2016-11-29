@@ -14,21 +14,14 @@ import {
 	THEME_UPLOAD_PROGRESS,
 } from 'state/action-types';
 import {
-	uploadedTheme,
+	uploadedThemeId,
 	uploadError,
 	progressLoaded,
 	progressTotal,
 	inProgress,
 } from '../reducer';
 
-const theme = {
-	id: 'twentysixteen',
-	name: 'Twenty Sixteen',
-	author: 'the WordPress team',
-	screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
-	stylesheet: 'pub/twentysixteen',
-	author_uri: 'https://wordpress.org/'
-};
+const themeId ='twentysixteen';
 
 const error = {
 	type: 'error',
@@ -37,23 +30,23 @@ const error = {
 
 const siteId = 2916284;
 
-describe( 'uploadedTheme', () => {
+describe( 'uploadedThemeId', () => {
 	it( 'should default to an empty object', () => {
-		const state = uploadedTheme( undefined, {} );
+		const state = uploadedThemeId( undefined, {} );
 		expect( state ).to.deep.equal( {} );
 	} );
 
-	it( 'should contain theme details after successful upload', () => {
-		const state = uploadedTheme( {}, {
+	it( 'should contain theme id after successful upload', () => {
+		const state = uploadedThemeId( {}, {
 			type: THEME_UPLOAD_SUCCESS,
 			siteId,
-			theme,
+			themeId,
 		} );
-		expect( state[ siteId ] ).to.deep.equal( theme );
+		expect( state[ siteId ] ).to.deep.equal( themeId );
 	} );
 
 	it( 'should be empty after failed upload', () => {
-		const state = uploadedTheme( {}, {
+		const state = uploadedThemeId( {}, {
 			type: THEME_UPLOAD_FAILURE,
 			siteId,
 			error,
@@ -62,8 +55,8 @@ describe( 'uploadedTheme', () => {
 	} );
 
 	it( 'should be empty after clear', () => {
-		const state = uploadedTheme( {
-			siteId: theme,
+		const state = uploadedThemeId( {
+			siteId: themeId,
 		}, {
 			type: THEME_UPLOAD_CLEAR,
 			siteId,
@@ -91,7 +84,7 @@ describe( 'uploadError', () => {
 		const state = uploadError( {}, {
 			type: THEME_UPLOAD_SUCCESS,
 			siteId,
-			theme,
+			themeId,
 		} );
 		expect( state[ siteId ] ).to.be.undefined;
 	} );
@@ -179,7 +172,7 @@ describe( 'inProgress', () => {
 		const state = inProgress( {}, {
 			type: THEME_UPLOAD_SUCCESS,
 			siteId,
-			theme,
+			themeId,
 		} );
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
