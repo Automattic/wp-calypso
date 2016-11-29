@@ -13,8 +13,7 @@ import EmptyContent from './empty';
 import ReaderTags from 'lib/reader-tags/tags';
 import ReaderTagActions from 'lib/reader-tags/actions';
 import TagSubscriptions from 'lib/reader-tags/subscriptions';
-import StreamHeader from 'reader/stream-header';
-import HeaderBack from 'reader/header-back';
+import TagStreamHeader from './header';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 
@@ -93,11 +92,8 @@ const TagStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
-				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
-				<StreamHeader
-					isPlaceholder={ false }
-					icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }
+				<TagStreamHeader
 					title={ title }
 					showFollow={ this.state.canFollow }
 					following={ this.state.subscribed }
