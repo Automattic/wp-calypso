@@ -299,6 +299,11 @@ const PlansSetup = React.createClass( {
 					{ translate( 'Manual Installation' ) }
 				</NoticeAction>
 			);
+			if ( plugin.error.code === 'already_registered' ) {
+				statusProps.status = 'is-info';
+				statusProps.text = translate( 'This plugin is already registered with another plan.' );
+				delete statusProps.children;
+			}
 		} else {
 			statusProps.icon = 'plugins';
 			statusProps.status = 'is-info';
@@ -342,13 +347,10 @@ const PlansSetup = React.createClass( {
 		return null;
 	},
 
-	renderErrorMessage() {
+	renderErrorMessage( plugins ) {
 		let noticeText;
 		const { translate } = this.props;
-		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		const pluginsWithErrors = filter( plugins, ( item ) => {
-			return ( item.error !== null );
-		} );
+		const pluginsWithErrors = this.addWporgDataToPlugins( plugins );
 
 		const tracksData = {};
 		pluginsWithErrors.map( ( item ) => {
@@ -398,7 +400,7 @@ const PlansSetup = React.createClass( {
 		}
 
 		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
-			return ( item.error !== null );
+			return ( item.error !== null ) && ( item.error.code !== 'already_registered' );
 		} );
 
 		if ( pluginsWithErrors.length ) {
