@@ -8,7 +8,6 @@ import { mapValues } from 'lodash';
  * Internal dependencies
  */
 import themes from './themes/reducer';
-import themeDetails from './theme-details/reducer';
 import themesList from './themes-list/reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
 import {
@@ -259,7 +258,6 @@ export const lastQuery = createReducer( {}, {
 export default combineReducers( {
 	// Old reducers:
 	themes,
-	themeDetails,
 	themesList,
 	// New reducers:
 	queries,
