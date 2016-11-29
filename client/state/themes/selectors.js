@@ -421,7 +421,7 @@ export function isThemeActive( state, themeId, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme activation is ongoing
  */
-export function isActivating( state, siteId ) {
+export function isActivatingTheme( state, siteId ) {
 	return get( state.themes.activationRequests, siteId, false );
 }
 
@@ -432,7 +432,7 @@ export function isActivating( state, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme activation has finished
  */
-export function hasActivated( state, siteId ) {
+export function hasActivatedTheme( state, siteId ) {
 	return get( state.themes.completedActivationRequests, siteId, false );
 }
 

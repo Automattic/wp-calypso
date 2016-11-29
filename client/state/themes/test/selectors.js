@@ -27,8 +27,8 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isThemeActive,
-	isActivating,
-	hasActivated,
+	isActivatingTheme,
+	hasActivatedTheme,
 	isThemePremium,
 	isThemePurchased,
 } from '../selectors';
@@ -1069,9 +1069,9 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#isActivating', () => {
+	describe( '#isActivatingTheme', () => {
 		it( 'given no site, should return false', () => {
-			const activating = isActivating( {
+			const activating = isActivatingTheme( {
 				themes: {
 					activationRequests: {}
 				}
@@ -1081,7 +1081,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		it( 'given a site, should return true if theme is currently activated', () => {
-			const activating = isActivating(
+			const activating = isActivatingTheme(
 				{
 					themes: {
 						activationRequests: {
@@ -1096,9 +1096,9 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#hasActivated', () => {
+	describe( '#hasActivatedTheme', () => {
 		it( 'given no site, should return false', () => {
-			const activated = hasActivated( {
+			const activated = hasActivatedTheme( {
 				themes: {
 					completedActivationRequests: {}
 				}
@@ -1108,7 +1108,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		it( 'given a site, should return true if theme has been activated', () => {
-			const activated = hasActivated(
+			const activated = hasActivatedTheme(
 				{
 					themes: {
 						completedActivationRequests: {
