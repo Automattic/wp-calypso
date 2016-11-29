@@ -14,6 +14,12 @@
 .taxonomies__card-content {
 	color: $gray;
 	font-size: 13px;
+	white-space: nowrap;
+	overflow: hidden;
+
+	&:after {
+		@include long-content-fade();
+	}
 
 	.gridicon {
 		padding-right: 5px;
