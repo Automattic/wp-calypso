@@ -25,9 +25,14 @@ import {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_TAG_IMAGES_RECEIVE:
+			let images = action.images;
+			if ( state[ action.tag ] ) 	{
+				images = state[ action.tag ].concat( action.images );
+			}
+
 			return {
 				...state,
-				[ action.tag ]: action.images
+				[ action.tag ]: images
 			};
 
 		// Always return default state - we don't want to serialize images yet
