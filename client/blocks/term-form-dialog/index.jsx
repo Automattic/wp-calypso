@@ -32,7 +32,8 @@ class TermFormDialog extends Component {
 		selectedParent: [],
 		isTopLevel: true,
 		isValid: false,
-		error: null
+		error: null,
+		saving: false
 	};
 
 	static propTypes = {
@@ -56,15 +57,14 @@ class TermFormDialog extends Component {
 		showDialog: false
 	};
 
-	state = {
-		saving: false
-	};
-
 	onSearch = searchTerm => {
 		this.setState( { searchTerm: searchTerm } );
 	};
 
 	closeDialog = () => {
+		if ( this.state.saving ) {
+			return;
+		}
 		this.setState( this.constructor.initialState );
 		this.props.onClose();
 	};
