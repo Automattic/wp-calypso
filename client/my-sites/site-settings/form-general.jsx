@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { compose } from 'redux';
 import page from 'page';
-import { omit } from 'lodash';
+import { flowRight, omit } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -125,7 +124,7 @@ class SiteSettingsFormGeneral extends Component {
 			//If we have any fields that the user has updated,
 			//do not wipe out those fields from the poll update.
 			newState = omit( newState, nextProps.dirtyFields );
-			return nextProps.updateFields( newState );
+			nextProps.updateFields( newState );
 		}
 	}
 
@@ -796,7 +795,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 }
 
-const reduxWrap = connect(
+const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isRequestingSettings = isRequestingSiteSettings( state, siteId );
@@ -809,8 +808,8 @@ const reduxWrap = connect(
 	{ clearNotices, saveSiteSettings }
 );
 
-export default compose(
-	reduxWrap,
+export default flowRight(
+	connectComponent,
 	localize,
 	trackForm,
 	protectForm
