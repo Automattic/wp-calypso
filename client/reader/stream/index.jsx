@@ -418,21 +418,14 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderLoadingPlaceholders = () => {
-		const count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
-			placeholders = [];
+		const count = this.state.posts.length ? 2 : this.props.store.getPerPage();
 
-		times( count, ( i ) => {
-			let placeholder;
+		return times( count, ( i ) => {
 			if ( this.props.placeholderFactory ) {
-				placeholder = this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
+				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
 			}
-			if ( ! placeholder ) {
-				placeholder = <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
-			}
-			placeholders.push( placeholder );
+			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
 		} );
-
-		return placeholders;
 	}
 
 	getPostRef = ( postKey ) => {
