@@ -102,9 +102,9 @@ module.exports = function() {
 	);
 
 	page(
-		paths.domainManagementTransfer( ':site', ':domain' ),
+		paths.domainManagementTransferOut( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementTransfer
+		domainManagementController.domainManagementTransferOut
 	);
 
 	page(
