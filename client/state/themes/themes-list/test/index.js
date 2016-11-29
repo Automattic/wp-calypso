@@ -4,13 +4,13 @@ import { createStore } from 'redux';
 import {
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
-	THEMES_RECEIVE
+	LEGACY_THEMES_RECEIVE
 } from 'state/action-types';
 import reducer from '../reducer';
 
 describe( 'themes-list', () => {
 	const actionReceiveThemes = {
-		type: THEMES_RECEIVE,
+		type: LEGACY_THEMES_RECEIVE,
 		queryParams: {
 			id: 1
 		},
@@ -22,7 +22,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionReceiveMoreThemes = {
-		type: THEMES_RECEIVE,
+		type: LEGACY_THEMES_RECEIVE,
 		queryParams: {
 			id: 1
 		},
@@ -33,7 +33,7 @@ describe( 'themes-list', () => {
 	};
 
 	const actionReceiveEvenMoreThemes = {
-		type: THEMES_RECEIVE,
+		type: LEGACY_THEMES_RECEIVE,
 		queryParams: {
 			id: 2
 		},
@@ -119,7 +119,7 @@ describe( 'themes-list', () => {
 		} );
 	} );
 
-	context( 'when THEMES_RECEIVE is received', () => {
+	context( 'when LEGACY_THEMES_RECEIVE is received', () => {
 		beforeEach( () => {
 			store.dispatch( actionQueryThemes );
 			store.dispatch( actionReceiveThemes );
@@ -132,7 +132,7 @@ describe( 'themes-list', () => {
 		} );
 	} );
 
-	context( 'when two THEMES_RECEIVE are received out of order', () => {
+	context( 'when two LEGACY_THEMES_RECEIVE are received out of order', () => {
 		beforeEach( () => {
 			store.dispatch( actionQueryThemes ); // first query, query ID of 1
 			store.dispatch( actionQueryAnotherTheme ); // second query, ID 2

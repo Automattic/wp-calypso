@@ -11,7 +11,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEMES_RECEIVE
+	LEGACY_THEMES_RECEIVE
 } from 'state/action-types';
 
 export const initialState = fromJS( {
@@ -27,7 +27,7 @@ function add( newThemes, themes ) {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case THEMES_RECEIVE: {
+		case LEGACY_THEMES_RECEIVE: {
 			const isCurrentSite = action.siteId === state.get( 'currentSiteId' );
 			const isNewSite = action.isJetpack && ! isCurrentSite;
 			const currentThemes = isNewSite ? new Map() : state.get( 'themes' );
