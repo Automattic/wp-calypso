@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -44,7 +44,9 @@ const UpgradeNudge = React.createClass( {
 			jetpack: false,
 			feature: false,
 			compact: false,
-			shouldDisplay: null
+			shouldDisplay: null,
+			site: null,
+			translate: identity,
 		};
 	},
 
@@ -138,12 +140,8 @@ const UpgradeNudge = React.createClass( {
 	}
 } );
 
-function mapStateToProps( state ) {
-	const site = getSelectedSite( state );
-
-	return {
-		site,
-	};
-}
-
-export default connect( mapStateToProps )( localize( UpgradeNudge ) );
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+	} )
+)( localize( UpgradeNudge ) );
