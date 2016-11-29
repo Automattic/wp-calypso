@@ -15,7 +15,7 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
 
-import { sampleSuccessResponse } from '../sample_responses';
+const sampleSuccessResponse = require( './sample-responses.json' );
 
 describe( 'actions', () => {
 	let receiveTagImages, requestTagImages;
@@ -30,12 +30,14 @@ describe( 'actions', () => {
 
 	describe( '#receiveTagImages()', () => {
 		it( 'should return an action object', () => {
-			const images = {};
-			const action = receiveTagImages( images );
+			const images = [];
+			const tag = 'banana';
+			const action = receiveTagImages( tag, images );
 
 			expect( action ).to.eql( {
 				type: READER_TAG_IMAGES_RECEIVE,
-				images
+				images,
+				tag
 			} );
 		} );
 	} );
@@ -62,11 +64,11 @@ describe( 'actions', () => {
 					data: sampleSuccessResponse
 				} );
 
-				// @todo
-				// expect( dispatchSpy ).to.have.been.calledWith( {
-				// 	type: READER_TAG_IMAGES_RECEIVE,
-				// 	images: [ ]
-				// } );
+				expect( dispatchSpy ).to.have.been.calledWith( {
+					type: READER_TAG_IMAGES_RECEIVE,
+					images: sampleSuccessResponse.images,
+					tag: 'banana'
+				} );
 			} ).catch( ( err ) => {
 				assert.fail( err, undefined, 'errback should not have been called' );
 			} );

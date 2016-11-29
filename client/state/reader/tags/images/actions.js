@@ -22,12 +22,14 @@ const debug = debugModule( 'calypso:redux:reader-tags-images' );
 /**
  * Returns an action object to signal that image objects have been received.
  *
+ * @param {String} tag The tag slug the images are for
  * @param  {Array}  images Images received
  * @return {Object} Action object
  */
-export function receiveTagImages( images ) {
+export function receiveTagImages( tag, images ) {
 	return {
 		type: READER_TAG_IMAGES_RECEIVE,
+		tag,
 		images
 	};
 }
@@ -54,7 +56,7 @@ export function requestTagImages( tag, limit = 1 ) {
 
 		return wpcom.undocumented().readTagImages( query )
 		.then( ( data ) => {
-			dispatch( receiveTagImages( data.images ) );
+			dispatch( receiveTagImages( tag, data.images ) );
 
 			dispatch( {
 				type: READER_TAG_IMAGES_REQUEST_SUCCESS,

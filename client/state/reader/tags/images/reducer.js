@@ -22,15 +22,18 @@ import {
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export function items( state = [], action ) {
+export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_TAG_IMAGES_RECEIVE:
-			return state.concat( action.images );
+			return {
+				...state,
+				[ action.tag ]: action.images
+			};
 
 		// Always return default state - we don't want to serialize images yet
 		case SERIALIZE:
 		case DESERIALIZE:
-			return [];
+			return {};
 	}
 
 	return state;
@@ -49,9 +52,10 @@ export function requesting( state = {}, action ) {
 		case READER_TAG_IMAGES_REQUEST:
 		case READER_TAG_IMAGES_REQUEST_SUCCESS:
 		case READER_TAG_IMAGES_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
+			return {
+				...state,
 				[ action.tag ]: action.type === READER_TAG_IMAGES_REQUEST
-			} );
+			};
 
 		case SERIALIZE:
 		case DESERIALIZE:
