@@ -15,7 +15,7 @@ import {
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
-	THEMES_RECEIVE,
+	LEGACY_THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from 'state/action-types';
 
@@ -67,7 +67,7 @@ export default ( state = initialState, action ) => {
 		case THEMES_QUERY:
 			return query( state, action.params );
 
-		case THEMES_RECEIVE:
+		case LEGACY_THEMES_RECEIVE:
 			if (
 				( action.queryParams.id === state.getIn( [ 'query', 'id' ] ) ) ||
 				action.wasJetpack

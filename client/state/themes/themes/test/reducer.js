@@ -13,7 +13,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	SERVER_DESERIALIZE,
-	THEMES_RECEIVE,
+	LEGACY_THEMES_RECEIVE,
 } from 'state/action-types';
 import reducer, { initialState } from '../reducer';
 
@@ -124,7 +124,7 @@ describe( 'themes reducer', () => {
 			siteId: 87654321
 		} );
 		const newState = reducer( state, {
-			type: THEMES_RECEIVE,
+			type: LEGACY_THEMES_RECEIVE,
 			themes: [
 				twentysixteen
 			],
