@@ -11,8 +11,8 @@ import startsWith from 'lodash/startsWith';
  */
 import ThemeSheetComponent from './main';
 import {
-	receiveThemeDetails,
-	receiveThemeDetailsFailure,
+	receiveTheme,
+	requestThemeFailure,
 	setBackPath
 } from 'state/themes/actions';
 import wpcom from 'lib/wp';
@@ -35,7 +35,7 @@ export function fetchThemeDetailsData( context, next ) {
 
 	if ( theme ) {
 		debug( 'found theme!', theme.id );
-		context.store.dispatch( receiveThemeDetails( theme ) );
+		context.store.dispatch( receiveTheme( theme, 'wpcom' ) );
 		context.renderCacheKey = context.path + theme.timestamp;
 		return next();
 	}
@@ -45,13 +45,13 @@ export function fetchThemeDetailsData( context, next ) {
 			debug( 'caching', themeSlug );
 			themeDetails.timestamp = Date.now();
 			themeDetailsCache.set( themeSlug, themeDetails );
-			context.store.dispatch( receiveThemeDetails( themeDetails ) );
+			context.store.dispatch( receiveTheme( themeDetails, 'wpcom' ) );
 			context.renderCacheKey = context.path + themeDetails.timestamp;
 			next();
 		} )
 		.catch( error => {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			context.store.dispatch( receiveThemeDetailsFailure( themeSlug, error ) );
+			context.store.dispatch( requestThemeFailure( 'wpcom', themeSlug, error ) );
 			context.renderCacheKey = 'theme not found';
 			next();
 		} );
