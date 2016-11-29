@@ -450,18 +450,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: -3px;
 
 	&:first-child {
-		margin-right: 15px;
+		margin-right: 10px;
 
-		@include breakpoint( "<660px" ) {
-			margin-right: 10px;
+		@include breakpoint( ">660px" ) {
+			margin-right: 15px;
 		}
 	}
 
 	&:last-child {
-		margin-left: 15px;
+		margin-left: 10px;
 
-		@include breakpoint( "<660px" ) {
-			margin-left: 10px;
+		@include breakpoint( ">660px" ) {
+			margin-left: 15px;
 		}
 	}
 
