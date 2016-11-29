@@ -52,7 +52,7 @@ export const DesignShowcaseTour = makeTour(
 			next="theme-options"
 		>
 			<p>
-				{ 'Here you can search the theme and apply filters.' }
+				{ 'Here you can search for themes and apply filters.' }
 			</p>
 			<ButtonRow>
 				<Next step="theme-options">{ translate( "Next" ) }</Next>
