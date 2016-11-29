@@ -446,7 +446,8 @@ function domainRedemption( properties ) {
 }
 
 function googleApps( properties ) {
-	var item = domainItem( 'gapps', properties.meta ? properties.meta : properties.domain );
+	const productSlug = properties.product_slug || 'gapps',
+		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
