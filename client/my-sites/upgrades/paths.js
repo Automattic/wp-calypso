@@ -82,7 +82,7 @@ function domainManagementPrimaryDomain( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'primary-domain' );
 }
 
-function domainManagementTransfer( siteName, domainName ) {
+function domainManagementTransferOut( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'transfer' );
 }
 
@@ -107,6 +107,6 @@ module.exports = {
 	domainManagementRoot,
 	domainManagementRedirectSettings,
 	domainManagementPrimaryDomain,
-	domainManagementTransfer,
+	domainManagementTransferOut,
 	getSectionName
 };

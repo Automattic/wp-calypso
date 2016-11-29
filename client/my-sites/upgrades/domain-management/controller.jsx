@@ -301,7 +301,7 @@ module.exports = {
 		page.redirect( '/domains/manage' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
 	},
 
-	domainManagementTransfer( pageContext ) {
+	domainManagementTransferOut( pageContext ) {
 		setTitle(
 			i18n.translate( 'Transfer Domain' ),
 			pageContext
@@ -309,7 +309,7 @@ module.exports = {
 
 		renderWithReduxStore(
 			<TransferData
-				component={ DomainManagement.Transfer }
+				component={ DomainManagement.TransferOut }
 				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
 			document.getElementById( 'primary' ),

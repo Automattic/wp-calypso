@@ -13,10 +13,10 @@ import Main from 'components/main';
 import NonOwnerCard from 'my-sites/upgrades/domain-management/components/domain/non-owner-card';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
-import IcannVerification from 'my-sites/upgrades/domain-management/transfer/icann-verification';
-import Locked from 'my-sites/upgrades/domain-management/transfer/locked';
-import Unlocked from 'my-sites/upgrades/domain-management/transfer/unlocked';
-import TransferProhibited from 'my-sites/upgrades/domain-management/transfer/transfer-prohibited';
+import IcannVerification from './icann-verification.jsx';
+import Locked from './locked.jsx';
+import Unlocked from './unlocked.jsx';
+import TransferProhibited from './transfer-prohibited.jsx';
 import omit from 'lodash/omit';
 
 const Transfer = React.createClass( {
