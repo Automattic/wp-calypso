@@ -563,18 +563,6 @@ function getDomainMappings( cart ) {
 }
 
 /**
- * Retrieves all the Google Apps items in the specified shopping cart.
- *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-function getGoogleApps( cart ) {
-	return getAll( cart ).filter( function( cartItem ) {
-		return ( cartItem.product_slug === 'gapps' ) || ( cartItem.product_slug === 'gapps_extra_license' );
-	} );
-}
-
-/**
  * Returns a renewal CartItem object with the given properties and product slug.
  *
  * @param {String} product - the product object
@@ -784,7 +772,6 @@ module.exports = {
 	getDomainRegistrations,
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
-	getGoogleApps,
 	getIncludedDomain,
 	getItemForPlan,
 	getRenewalItemFromCartItem,
