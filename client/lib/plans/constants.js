@@ -525,8 +525,10 @@ export const FEATURES_LIST = {
 			components: {
 				strong: <strong />
 			}
-		} ),		getDescription: () => i18n.translate(
-			'Storage space for adding images and documents to your website.'
+		} ),
+		getDescription: () => i18n.translate(
+			"With increased storage space you'll be able to upload " +
+			'more images, videos, audio, and documents to your website.'
 		)
 	},
 
@@ -538,7 +540,7 @@ export const FEATURES_LIST = {
 			}
 		} ),
 		getDescription: () => i18n.translate(
-			"With increased storage space you'll be able to upload " +
+			'With increased storage space you\'ll be able to upload ' +
 			'more images, videos, audio, and documents to your website.'
 		)
 	},
