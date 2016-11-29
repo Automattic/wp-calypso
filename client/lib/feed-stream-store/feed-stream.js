@@ -4,6 +4,8 @@
 var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:feed-store:post-list-store' ),
 	filter = require( 'lodash/filter' ),
+	findIndex = require( 'lodash/findIndex' ),
+	findLastIndex = require( 'lodash/findLastIndex' ),
 	forEach = require( 'lodash/forEach' ),
 	map = require( 'lodash/map' ),
 	moment = require( 'moment' ),
@@ -175,32 +177,35 @@ assign( FeedStream.prototype, {
 			post._state !== 'minimal';
 	},
 
-	selectNextItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex + 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
-			} else {
-				this.selectNextItem( nextIndex );
-			}
+	selectNextItem: function( ) {
+		if ( this.selectedIndex === -1 ) {
+			return;
+		}
+		const nextIndex = findIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex + 1 );
+		if ( nextIndex !== -1 ) {
+			this.selectedIndex = nextIndex;
+			this.emitChange();
 		}
 	},
 
-	selectPrevItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex - 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
-			} else {
-				this.selectPrevItem( nextIndex );
-			}
+	selectPrevItem: function() {
+		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
+			return;
+		}
+		const prevIndex = findLastIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex - 1 );
+		if ( prevIndex !== -1 ) {
+			this.selectedIndex = prevIndex;
+			this.emitChange();
 		}
 	},
 
 	selectItem: function( selectedIndex ) {
-		this.selectNextItem( selectedIndex - 1 );
+		if ( selectedIndex >= 0 &&
+			selectedIndex < this.postKeys.length &&
+			this._isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+			this.selectedIndex = selectedIndex;
+			this.emit( 'change' );
+		}
 	},
 
 	getLastItemWithDate: function() {

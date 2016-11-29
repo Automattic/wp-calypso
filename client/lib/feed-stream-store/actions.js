@@ -123,19 +123,17 @@ FeedStreamActions = {
 		} );
 	},
 
-	selectNextItem: function( id, selectedIndex ) {
+	selectNextItem: function( id ) {
 		Dispatcher.handleViewAction( {
 			type: ActionType.SELECT_NEXT_ITEM,
-			id: id,
-			selectedIndex: selectedIndex
+			id: id
 		} );
 	},
 
-	selectPrevItem: function( id, selectedIndex ) {
+	selectPrevItem: function( id ) {
 		Dispatcher.handleViewAction( {
 			type: ActionType.SELECT_PREV_ITEM,
-			id: id,
-			selectedIndex: selectedIndex
+			id: id
 		} );
 	},
 
