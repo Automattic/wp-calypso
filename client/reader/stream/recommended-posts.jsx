@@ -55,7 +55,7 @@ export class RecommendedPosts extends React.PureComponent {
 					{
 						map(
 							this.state.posts,
-							post => <li className="reader-stream__recommended-posts-item"><RelatedPostCard key={ post.global_ID } post={ post } onPostClick={ this.handlePostClick } onSiteClick={ this.handleSiteClick } /></li>
+							post => <li className="reader-stream__recommended-posts-item" key={ post.global_ID }><RelatedPostCard post={ post } onPostClick={ this.handlePostClick } onSiteClick={ this.handleSiteClick } /></li>
 						)
 					}
 				</ul>
