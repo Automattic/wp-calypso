@@ -3,7 +3,8 @@
 		animation: spinning-sync-icon linear 2s infinite;
 		transform-origin: center;
 	}
-	.gridicons-checkmark g {
+	.gridicons-checkmark g,
+	.gridicons-notice g {
 		transform: rotate( 0deg );
 	}
 }
