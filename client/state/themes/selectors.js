@@ -100,10 +100,10 @@ export const getThemesForQuery = createSelector(
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {String}         Last quer
+ * @return {Object}         Last query
  */
-export function getLastQuery( state, siteId ) {
-	return get( state.themes.lastQuery, siteId, '' );
+export function getLastThemeQuery( state, siteId ) {
+	return get( state.themes.lastQuery, siteId, {} );
 }
 
 /**

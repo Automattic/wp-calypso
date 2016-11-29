@@ -12,7 +12,7 @@ import {
 	getTheme,
 	isRequestingTheme,
 	getThemesForQuery,
-	getLastQuery,
+	getLastThemeQuery,
 	isRequestingThemesForQuery,
 	getThemesFoundForQuery,
 	getThemesLastPageForQuery,
@@ -238,30 +238,30 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#getLastQuery', () => {
-		it( 'given no site, should return empty string', () => {
-			const query = getLastQuery( {
+	describe( '#getLastThemeQuery', () => {
+		it( 'given no site, should return empty object', () => {
+			const query = getLastThemeQuery( {
 				themes: {
 					lastQuery: {}
 				}
 			} );
 
-			expect( query ).to.equal( '' );
+			expect( query ).to.deep.equal( {} );
 		} );
 
 		it( 'given a site, should return last used query', () => {
-			const query = getLastQuery(
+			const query = getLastThemeQuery(
 				{
 					themes: {
 						lastQuery: {
-							2916284: 'theme that has this thing and does not have the other one'
+							2916284: { search: 'theme that has this thing and does not have the other one' }
 						}
 					}
 				},
 				2916284
 			);
 
-			expect( query ).to.equal( 'theme that has this thing and does not have the other one' );
+			expect( query ).to.deep.equal( { search: 'theme that has this thing and does not have the other one' } );
 		} );
 	} );
 
