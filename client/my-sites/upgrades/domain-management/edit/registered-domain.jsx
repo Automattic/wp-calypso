@@ -186,7 +186,7 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	transferNavItem() {
-		const path = paths.domainManagementTransferOut(
+		const path = paths.domainManagementTransfer(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
