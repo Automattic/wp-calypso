@@ -164,7 +164,7 @@ export default class ReaderStream extends React.Component {
 			recs,
 			updateCount: store.getUpdateCount(),
 			selectedIndex: store.getSelectedIndex(),
-			isFetchingNextPage: store.isFetchingNextPage(),
+			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage()
 		};
 	}
