@@ -4,7 +4,6 @@
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { includes, find } from 'lodash';
 
 /**
@@ -208,10 +207,5 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			uploadTheme,
-			clearThemeUpload,
-		}, dispatch );
-	},
+	{ uploadTheme, clearThemeUpload },
 )( localize( Upload ) );
