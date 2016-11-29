@@ -40,6 +40,7 @@ export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
+export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
@@ -111,15 +112,15 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => [
+		getFeatures: () => compact ( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
-			FEATURE_3GB_STORAGE,
+			isEnabled( 'plans/6gb-personal-plan' ) ? FEATURE_6GB_STORAGE : FEATURE_3GB_STORAGE,
 			FEATURE_NO_ADS
-		],
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -514,6 +515,17 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_3GB_STORAGE,
 		getTitle: () => i18n.translate( '3GB Storage Space' ),
 		getDescription: () => i18n.translate(
+			'Storage space for adding images and documents to your website.'
+		)
+	},
+
+	[ FEATURE_6GB_STORAGE ]: {
+		getSlug: () => FEATURE_6GB_STORAGE,
+		getTitle: () => i18n.translate( '{{strong}}6GB{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),		getDescription: () => i18n.translate(
 			'Storage space for adding images and documents to your website.'
 		)
 	},
