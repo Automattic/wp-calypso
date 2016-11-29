@@ -14,27 +14,13 @@ import {
 	Next,
 	Quit,
 	Continue,
-	// Link,
 } from 'layout/guided-tours/config-elements';
 import {
 	inSection,
-	// isNewUser,
+	isNewUser,
 	isEnabled,
-	// themeFilterChosen,
-	// themeSearchResultsFound,
-	// selectedSiteIsPreviewable,
 	selectedSiteIsCustomizable,
-	// previewIsNotShowing,
-	// previewIsShowing,
 } from 'state/ui/guided-tours/contexts';
-// import { getScrollableSidebar } from 'layout/guided-tours/positioning';
-// import Gridicon from 'components/gridicon';
-// import scrollTo from 'lib/scroll-to';
-
-// const scrollSidebarToTop = () =>
-// 	scrollTo( { y: 0, container: getScrollableSidebar() } );
-
-const isNewUser = () => true;
 
 export const DesignShowcaseTour = makeTour(
 	<Tour
