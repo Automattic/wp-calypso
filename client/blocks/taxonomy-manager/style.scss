@@ -36,7 +36,10 @@
 
 .taxonomy-manager__list-item-card {
 	cursor: pointer;
-	padding: 0 !important;
+}
+
+.taxonomy-manager__list-item-card.card.is-compact {
+	padding: 0;
 }
 
 .taxonomy-manager__item {
@@ -84,21 +87,20 @@
 		margin: 18px 2px;
 	}
 
-	.taxonomy-manager__action-wrapper {
-		cursor: pointer;
-		font-size: 24px;
-		padding: 15px 28px;
-
-		.taxonomy-manager__item-toggle {
-			display: block;
+	.ellipsis-menu {
+		.ellipsis-menu__toggle.button.is-borderless {
+			cursor: pointer;
+			font-size: 24px;
 			color: $gray;
-			transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			padding: 15px 24px;
 			min-width: 24px;
-
-			&.is-active {
-				color: $blue-medium;
-				transform: rotate( 90deg );
+			.gridicon {
+				top: 2px;
 			}
+		}
+
+		&.is-menu-visible .ellipsis-menu__toggle.button.is-borderless {
+			color: $blue-medium;
 		}
 	}
 }
