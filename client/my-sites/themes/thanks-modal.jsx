@@ -201,20 +201,22 @@ const ThanksModal = React.createClass( {
 
 export default connect(
 	( state, { site } ) => {
+		let siteIdOrWpcom;
 		if ( ! site ) {
-			return {};
+			siteIdOrWpcom = 'wpcom';
+		} else {
+			siteIdOrWpcom = isJetpackSite( state, site.ID ) ? site.ID : 'wpcom';
 		}
 
-		const siteIdOrWpcom = isJetpackSite( state, site.ID ) ? site.ID : 'wpcom';
-		const currentThemeId = getActiveTheme( state, site.ID );
+		const currentThemeId = getActiveTheme( state, site && site.ID );
 		const currentTheme = getTheme( state, siteIdOrWpcom, currentThemeId );
 
 		return {
 			currentTheme,
-			detailsUrl: getThemeDetailsUrl( state, currentTheme, site.ID ),
-			customizeUrl: getThemeCustomizeUrl( state, currentTheme, site.ID ),
-			isActivating: isActivatingTheme( state, site.ID ),
-			hasActivated: hasActivatedTheme( state, site.ID )
+			detailsUrl: getThemeDetailsUrl( state, currentTheme, site && site.ID ),
+			customizeUrl: getThemeCustomizeUrl( state, currentTheme, site && site.ID ),
+			isActivating: isActivatingTheme( state, site && site.ID ),
+			hasActivated: hasActivatedTheme( state, site && site.ID )
 		};
 	},
 	{ clearActivated }

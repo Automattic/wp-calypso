@@ -272,6 +272,15 @@ export function requestThemes( siteId, query = {} ) {
 	};
 }
 
+export function requestThemeFailure( siteId, themeId, error ) {
+	return {
+		type: THEME_REQUEST_FAILURE,
+		siteId,
+		themeId,
+		error
+	};
+}
+
 /**
  * Triggers a network request to fetch a specific theme from a site.
  *
@@ -315,12 +324,9 @@ export function requestTheme( themeId, siteId ) {
 				themeId
 			} );
 		} ).catch( ( error ) => {
-			dispatch( {
-				type: THEME_REQUEST_FAILURE,
-				siteId,
-				themeId,
-				error
-			} );
+			dispatch(
+				requestThemeFailure( siteId, themeId, error )
+			);
 		} );
 	};
 }
