@@ -66,4 +66,5 @@ export function requesting( state = {}, action ) {
 
 export default combineReducers( {
 	items,
+	requesting
 } );

@@ -14,18 +14,15 @@ import {
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_RECEIVE,
 } from 'state/action-types';
+import { receiveTagImages, requestTagImages } from '../actions';
 
 const sampleSuccessResponse = require( './sample-responses.json' );
 
 describe( 'actions', () => {
-	let receiveTagImages, requestTagImages;
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-		const actions = require( '../actions' );
-		receiveTagImages = actions.receiveTagImages;
-		requestTagImages = actions.requestTagImages;
 	} );
 
 	describe( '#receiveTagImages()', () => {
