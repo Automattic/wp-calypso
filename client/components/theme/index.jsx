@@ -4,7 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import { every, has, isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,44 +61,11 @@ const Theme = React.createClass( {
 		actionLabel: React.PropTypes.string
 	},
 
-	areButtonContentsEqual( nextButtonContents, buttonContents ) {
-		if ( ! isEqual( Object.keys( nextButtonContents ), Object.keys( buttonContents ) ) ) {
-			return false;
-		}
-
-		return every( buttonContents, ( option, name ) => {
-			const nextOption = nextButtonContents[ name ];
-			if ( ! isEqual( Object.keys( nextOption ), Object.keys( option ) ) ) {
-				return false;
-			}
-
-			// No need to compare scalar option attributes like label or header
-			// since they're guaranteed to be always the same for a given option.
-
-			// To compare getUrl attrs, we invoke them, passing theme as param.
-			if ( has( option.getUrl ) ) {
-				// We assume that there already has been a check ensuring that nextProps.theme === this.props.theme
-				if ( option.getUrl( this.props.theme ) !== nextOption.getUrl( this.props.theme ) ) {
-					return false;
-				}
-			}
-
-			// We have no way of comparing the options' action attributes directly since
-			// they're functions, so checking for === equality would return false if
-			// the reference has changed, even if the action has semantically remained unchanged.
-			// OTOH, the action attr is only ever "semantically" changed when its binding to
-			// siteId changes (see theme-options.js), and that case should be covered
-			// by the full re-render that happens when switching between sites.
-
-			return true;
-		} );
-	},
-
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
 			( nextProps.purchased !== this.props.purchased ) ||
-			! this.areButtonContentsEqual( nextProps.buttonContents, this.props.buttonContents ) ||
+			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
