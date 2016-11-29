@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import analytics from 'lib/analytics';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const UpgradeNudge = React.createClass( {
@@ -51,14 +51,17 @@ const UpgradeNudge = React.createClass( {
 	},
 
 	handleClick() {
-		if ( this.props.event || this.props.feature ) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-				cta_name: this.props.event,
-				cta_feature: this.props.feature,
+		const { event, feature, onClick } = this.props;
+
+		if ( event || feature ) {
+			this.props.recordGoogleEvent( 'calypso_upgrade_nudge_cta_click', {
+				cta_name: event,
+				cta_feature: feature,
 				cta_size: 'regular'
 			} );
 		}
-		this.props.onClick();
+
+		onClick();
 	},
 
 	shouldDisplay() {
@@ -143,5 +146,6 @@ const UpgradeNudge = React.createClass( {
 export default connect(
 	state => ( {
 		site: getSelectedSite( state ),
-	} )
+	} ),
+	{ recordGoogleEvent }
 )( localize( UpgradeNudge ) );
