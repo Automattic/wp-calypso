@@ -16,7 +16,6 @@ import ThemesSelection from './themes-selection';
 import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
@@ -223,12 +222,9 @@ const ThemeShowcase = React.createClass( {
 } );
 
 export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			siteSlug: getSiteSlug( state, siteId ),
-			queryParams: getQueryParams( state ),
-			themesList: getThemesList( state ),
-		};
-	}
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state ),
+	} )
 )( localize( ThemeShowcase ) );

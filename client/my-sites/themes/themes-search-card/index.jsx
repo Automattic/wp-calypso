@@ -25,7 +25,7 @@ const ThemesSearchCard = React.createClass( {
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired,
+		] ),
 		onSearch: React.PropTypes.func.isRequired,
 		search: React.PropTypes.string
 	},
