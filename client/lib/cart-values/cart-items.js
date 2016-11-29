@@ -446,7 +446,8 @@ function domainRedemption( properties ) {
 }
 
 function googleApps( properties ) {
-	var item = domainItem( 'gapps', properties.meta ? properties.meta : properties.domain );
+	const productSlug = properties.product_slug || 'gapps',
+		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -559,18 +560,6 @@ function getDomainRegistrations( cart ) {
  */
 function getDomainMappings( cart ) {
 	return filter( getAll( cart ), { product_slug: 'domain_map' } );
-}
-
-/**
- * Retrieves all the Google Apps items in the specified shopping cart.
- *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-function getGoogleApps( cart ) {
-	return getAll( cart ).filter( function( cartItem ) {
-		return ( cartItem.product_slug === 'gapps' ) || ( cartItem.product_slug === 'gapps_extra_license' );
-	} );
 }
 
 /**
@@ -783,7 +772,6 @@ module.exports = {
 	getDomainRegistrations,
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
-	getGoogleApps,
 	getIncludedDomain,
 	getItemForPlan,
 	getRenewalItemFromCartItem,
