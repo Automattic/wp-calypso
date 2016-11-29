@@ -108,7 +108,7 @@ export default React.createClass( {
 		if ( this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugin-meta__actions">
-					<Button className="" compact borderless>
+					<Button className="plugin-meta__active" compact borderless>
 						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
 					</Button>
 				</div>

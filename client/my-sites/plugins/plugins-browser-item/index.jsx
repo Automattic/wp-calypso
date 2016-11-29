@@ -46,10 +46,7 @@ const PluginsBrowserListElement = React.createClass( {
 	},
 
 	isWpcomPreinstalled: function() {
-		const installedPlugins = [
-			'Jetpack by WordPress.com',
-			'Akismet',
-		];
+		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet' ];
 
 		if ( ! this.props.site ) {
 			return false;
