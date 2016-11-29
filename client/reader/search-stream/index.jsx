@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { trim, sampleSize } from 'lodash';
+import { initial, flatMap, trim, sampleSize } from 'lodash';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
@@ -23,24 +23,39 @@ import { recordTrackForPost } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
+import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
+import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import config from 'config';
+import StickyPanel from 'components/sticky-panel';
 
-const SearchCardAdapter = React.createClass( {
-	getInitialState() {
-		return this.getStateFromStores();
-	},
+const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
+
+function RecommendedPosts( { post, site } ) {
+	if ( ! site ) {
+		site = { title: post.site_name, };
+	}
+
+	return (
+		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
+			<RelatedPostCard post={ post } site={ site } />
+		</div>
+	);
+}
+
+const SearchCardAdapter = ( isRecommendations ) => class extends Component {
+	state = this.getStateFromStores();
 
 	getStateFromStores( props = this.props ) {
 		return {
 			site: SiteStore.get( props.post.site_ID ),
 			feed: props.post.feed_ID ? FeedStore.get( props.post.feed_ID ) : null
 		};
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.setState( this.getStateFromStores( nextProps ) );
-	},
+	}
 
 	onCardClick( props, event ) {
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -62,20 +77,28 @@ const SearchCardAdapter = React.createClass( {
 
 		event.preventDefault();
 		this.props.handleClick( this.props.post, {} );
-	},
+	}
 
 	onRefreshCardClick( post ) {
 		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
 		this.props.handleClick( post, {} );
-	},
+	}
 
 	onCommentClick() {
 		this.props.handleClick( this.props.post, { comments: true } );
-	},
+	}
 
 	render() {
-		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
-		const CardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
+		let CardComponent;
+
+		if ( ! isRefreshedStream ) {
+			CardComponent = SearchCard;
+		} else if ( isRecommendations ) {
+			CardComponent = RecommendedPosts;
+		} else {
+			CardComponent = ReaderPostCard;
+		}
+
 		return <CardComponent
 			post={ this.props.post }
 			site={ this.props.site }
@@ -85,7 +108,7 @@ const SearchCardAdapter = React.createClass( {
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 		/>;
 	}
-} );
+};
 
 const emptyStore = {
 	get() {
@@ -157,7 +180,19 @@ const SearchStream = React.createClass( {
 	},
 
 	cardFactory() {
-		return SearchCardAdapter;
+		const isRecommendations = ! this.props.query;
+		return SearchCardAdapter( isRecommendations );
+	},
+
+	placeholderFactory( { key, ...rest } ) {
+		if ( isRefreshedStream && ! this.props.query ) {
+			return (
+				<div className="search-stream__recommendation-list-item" key={ key }>
+					<RelatedPostCard { ...rest } />
+				</div>
+			);
+		}
+		return null;
 	},
 
 	render() {
@@ -173,6 +208,9 @@ const SearchStream = React.createClass( {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
+		const sugList = initial( flatMap( this.state.suggestions, query =>
+			[ <Suggestion suggestion={ query } />, ', ' ] ) );
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
@@ -180,18 +218,26 @@ const SearchStream = React.createClass( {
 				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
+				placeholderFactory={ this.placeholderFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<CompactCard className="search-stream__input-card">
-					<SearchInput
-						initialValue={ this.props.query }
-						onSearch={ this.updateQuery }
-						autoFocus={ ! this.props.query }
-						delaySearch={ true }
-						delayTimeout={ 500 }
-						placeholder={ searchPlaceholderText } />
-				</CompactCard>
+				<StickyPanel className="search-stream__sticky-panel">
+					<CompactCard className="search-stream__input-card">
+						<SearchInput
+							initialValue={ this.props.query }
+							onSearch={ this.updateQuery }
+							autoFocus={ ! this.props.query }
+							delaySearch={ true }
+							delayTimeout={ 500 }
+							placeholder={ searchPlaceholderText } />
+					</CompactCard>
+					{ ! this.props.query && (
+						<p className="search-stream__blank-suggestions">
+							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+						</p>
+					) }
+				</StickyPanel>
 			</Stream>
 		);
 	}
