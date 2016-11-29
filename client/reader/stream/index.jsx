@@ -128,7 +128,9 @@ export default class ReaderStream extends React.Component {
 		className: React.PropTypes.string,
 		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
 		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
-		showMobileBackToSidebar: React.PropTypes.bool
+		showMobileBackToSidebar: React.PropTypes.bool,
+		cardFactory: React.PropTypes.func,
+		placeholderFactory: React.PropTypes.func,
 	}
 
 	static defaultProps = {
@@ -416,14 +418,14 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderLoadingPlaceholders = () => {
-		const count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
-			placeholders = [];
+		const count = this.state.posts.length ? 2 : this.props.store.getPerPage();
 
-		times( count, function( i ) {
-			placeholders.push( <PostPlaceholder key={ 'feed-post-placeholder-' + i } /> );
+		return times( count, ( i ) => {
+			if ( this.props.placeholderFactory ) {
+				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
+			}
+			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
 		} );
-
-		return placeholders;
 	}
 
 	getPostRef = ( postKey ) => {

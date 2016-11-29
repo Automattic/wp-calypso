@@ -32,6 +32,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
 	const authorAndSiteAreDifferent = siteName.toLowerCase() !== post.author.name.toLowerCase();
+
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl } onClick={ onSiteClick }>
@@ -84,7 +85,6 @@ function RelatedPostCardPlaceholder() {
 }
 
 export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
-/* eslint-enable no-unused-vars */
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -99,7 +99,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 
 	return (
 		<Card className={ classes }>
-		{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ postClickTracker } >

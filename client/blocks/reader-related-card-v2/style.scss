@@ -443,7 +443,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		overflow : hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
-		-webkit-line-clamp: 10;
 		-webkit-box-orient: vertical;
 		max-height: none;
 	}
@@ -507,4 +506,3 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: 20px;
 	padding-top: 20px;
 }
-
