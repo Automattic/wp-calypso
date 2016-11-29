@@ -458,12 +458,13 @@ export default class ReaderStream extends React.Component {
 
 	renderPost = ( postKey, index ) => {
 		const selectedPostKey = this.props.store.getSelectedPost();
-		const isSelected = selectedPostKey &&
+		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			(
 				selectedPostKey.blogId === postKey.blogId ||
 				selectedPostKey.feedId === postKey.feedId
-			);
+			)
+		);
 
 		if ( postKey.isGap ) {
 			return (
