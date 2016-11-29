@@ -11,5 +11,6 @@ module.exports = {
 	PrimaryDomain: require( './primary-domain' ),
 	PrivacyProtection: require( './privacy-protection' ),
 	SiteRedirect: require( './site-redirect' ),
-	TransferOut: require( './transfer/transfer-out' )
+	TransferOut: require( './transfer/transfer-out' ),
+	Transfer: require( './transfer' )
 };

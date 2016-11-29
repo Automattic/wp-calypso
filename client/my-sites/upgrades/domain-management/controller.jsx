@@ -301,6 +301,23 @@ module.exports = {
 		page.redirect( '/domains/manage' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
 	},
 
+	domainManagementTransfer( pageContext ) {
+		setTitle(
+			i18n.translate( 'Transfer Domain' ),
+			pageContext
+		);
+
+		renderWithReduxStore(
+			<TransferData
+				component={ DomainManagement.Transfer }
+				selectedDomainName={ pageContext.params.domain }
+				sites={ sites }
+			/>,
+			document.getElementById( 'primary' ),
+			pageContext.store
+		);
+	},
+
 	domainManagementTransferOut( pageContext ) {
 		setTitle(
 			i18n.translate( 'Transfer Domain' ),

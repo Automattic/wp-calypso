@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const startsWith = require( 'lodash/startsWith' );
+import startsWith from 'lodash/startsWith';
+import filter from 'lodash/filter';
 
 function domainManagementRoot() {
 	return '/domains/manage';
@@ -82,8 +83,16 @@ function domainManagementPrimaryDomain( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'primary-domain' );
 }
 
+function domainManagementTransfer( siteName, domainName, transferType = '' ) {
+	return domainManagementEdit( siteName, domainName, filter( [ 'transfer', transferType ] ).join( '/' ) );
+}
+
 function domainManagementTransferOut( siteName, domainName ) {
-	return domainManagementEdit( siteName, domainName, 'transfer' );
+	return domainManagementTransfer( siteName, domainName, 'out' );
+}
+
+function domainManagementTransferToAnotherUser( siteName, domainName ) {
+	return domainManagementTransfer( siteName, domainName, 'other-user' );
 }
 
 function getSectionName( pathname ) {
@@ -107,6 +116,8 @@ module.exports = {
 	domainManagementRoot,
 	domainManagementRedirectSettings,
 	domainManagementPrimaryDomain,
+	domainManagementTransfer,
 	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser,
 	getSectionName
 };
