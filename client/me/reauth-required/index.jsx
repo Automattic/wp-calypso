@@ -188,7 +188,6 @@ module.exports = React.createClass( {
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
-							ref="code"
 							valueLink={ this.linkState( 'code' ) } />
 
 						{ this.renderFailedValidationMsg() }
