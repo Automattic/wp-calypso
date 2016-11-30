@@ -40,9 +40,7 @@ const TagStreamHeader = ( { isPlaceholder, title, showFollow, following, onFollo
 				<h1 className="tag-stream__header-image-title">{ title }</h1>
 				{ tagImage &&
 					<div className="tag-stream__header-image-byline">
-						{ translate( 'Photo by' ) }&nbsp;
-						<a href={ tagImage.blog_url } rel="author external">{ tagImage.author }</a>,
-						<a href={ tagImage.blog_url } rel="external">{ tagImage.blog_title }</a>
+						<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span> <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="author external">{ tagImage.author }</a>, <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="external">{ tagImage.blog_title }</a>
 					</div>
 				}
 			</div>

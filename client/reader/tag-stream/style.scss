@@ -1,16 +1,78 @@
+.tag-stream__header {
+	display: flex;
+	flex-direction: column;
+}
+
+.tag-stream__header .follow-button {
+	padding: 0;
+
+	@include breakpoint( "<660px" ) {
+		margin: 12px 10px 0 0;
+	}
+}
+
+.tag-stream__header .follow-button__label {
+
+	@include breakpoint( "<660px" ) {
+		display: inline;
+	}
+}
+
 .tag-stream__header-image {
-	background-color: $gray-light;
+	background: url("http://lorempixel.com/400/200/") lighten( $gray, 30% ); // Temporary placeholder image
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: right center;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
 	min-height: 140px;
+	margin-top: 15px;
+	padding: 10px;
 	position: relative;
+	z-index: 0;
+
+	&::before {
+		content: '';
+		background: linear-gradient( to bottom, rgba( 0, 0, 0, 0 ) 36%, rgba( 0, 0, 0, 0.37 ) 73%, rgba( 0, 0, 0, 1 ) 100% );
+		height: 140px;
+		opacity: .4;
+		position: absolute;
+			bottom: 0;
+			left: 0;
+		width: 100%;
+		z-index: 1;
+	}
 }
 
 .tag-stream__header-image-title {
-	text-align: center;
+	color: $white;
 	font-size: 28px;
+	padding-top: 42px;
+	text-align: center;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 }
 
 .tag-stream__header-image-byline {
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	color: $white;
+	font-size: 12px;
+	margin: 0 10px 0 auto;
+	padding-top: 30px;
+	z-index: 2;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 }
+
+.tag-stream__header-image-byline-label {
+	opacity: .5;
+}
+
+.tag-stream__header-image-byline-link,
+.tag-stream__header-image-byline-link:visited {
+	color: $white;
+	opacity: .8;
+}
+
+.tag-stream__header-image-byline-link:hover {
+	color: $white;
+}
+
