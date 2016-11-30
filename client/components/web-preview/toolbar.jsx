@@ -85,9 +85,8 @@ export const PreviewToolbar = props => {
 				key={ 'back-to-preview' }
 				className={ classNames(
 					'web-preview__device-button',
-					'web-preview__back-to-preview-button', {
-						'is-active': currentDevice !== 'seo'
-					}
+					'web-preview__back-to-preview-button',
+					{ 'is-active': 'seo' !== currentDevice }
 				) }
 				onClick={ partial( setDeviceViewport, 'phone' ) }
 			>
