@@ -21,7 +21,7 @@
 }
 
 .domain-management-form-footer,
-.primary-domain-actions {
+.primary-domain__actions {
 	border-top: 1px solid $gray-light;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
@@ -58,7 +58,7 @@
 	}
 }
 
-.primary-domain-actions {
+.primary-domain__actions {
 	justify-content: flex-end;
 }
 
