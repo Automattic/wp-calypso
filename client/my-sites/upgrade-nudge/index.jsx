@@ -2,8 +2,10 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,17 +13,13 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import analytics from 'lib/analytics';
-import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
-const sites = sitesList();
-
-export default React.createClass( {
-
-	displayName: 'UpgradeNudge',
+const UpgradeNudge = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
@@ -33,7 +31,8 @@ export default React.createClass( {
 		jetpack: React.PropTypes.bool,
 		compact: React.PropTypes.bool,
 		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
-		shouldDisplay: React.PropTypes.func
+		shouldDisplay: React.PropTypes.func,
+		site: React.PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -45,23 +44,28 @@ export default React.createClass( {
 			jetpack: false,
 			feature: false,
 			compact: false,
-			shouldDisplay: null
+			shouldDisplay: null,
+			site: null,
+			translate: identity,
 		};
 	},
 
 	handleClick() {
-		if ( this.props.event || this.props.feature ) {
-			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-				cta_name: this.props.event,
-				cta_feature: this.props.feature,
+		const { event, feature, onClick, recordTracksEvent: recordTracks } = this.props;
+
+		if ( event || feature ) {
+			recordTracks( 'calypso_upgrade_nudge_cta_click', {
+				cta_name: event,
+				cta_feature: feature,
 				cta_size: 'regular'
 			} );
 		}
-		this.props.onClick();
+
+		onClick();
 	},
 
-	shouldDisplay( site ) {
-		const { feature, jetpack, shouldDisplay } = this.props;
+	shouldDisplay() {
+		const { feature, jetpack, shouldDisplay, site } = this.props;
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
@@ -84,12 +88,11 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { site, translate } = this.props;
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
-
-		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
-		if ( ! this.shouldDisplay( site ) ) {
+		if ( ! this.shouldDisplay() ) {
 			return null;
 		}
 
@@ -107,7 +110,7 @@ export default React.createClass( {
 					<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
 					<div className="upgrade-nudge__info">
 						<span className="upgrade-nudge__title">
-							{ this.props.title || this.translate( 'Upgrade to Premium' ) }
+							{ this.props.title || translate( 'Upgrade to Premium' ) }
 						</span>
 						<span className="upgrade-nudge__message" >
 							{ this.props.message }
@@ -122,7 +125,7 @@ export default React.createClass( {
 				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } size={ 18 } />
 				<div className="upgrade-nudge__info">
 					<span className="upgrade-nudge__title">
-						{ this.props.title || this.translate( 'Upgrade to Premium' ) }
+						{ this.props.title || translate( 'Upgrade to Premium' ) }
 					</span>
 					<span className="upgrade-nudge__message" >
 						{ this.props.message }
@@ -139,3 +142,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( UpgradeNudge ) );
