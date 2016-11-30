@@ -51,12 +51,10 @@
 	}
 
 	.upgrade-banner__icons {
-		align-items: center;
 		display: flex;
 	}
 
 	.upgrade-banner__icon-plan {
-		align-items: center;
 		display: flex;
 		margin-right: 16px;
 
@@ -136,6 +134,11 @@
 
 		.upgrade-banner__content {
 			flex-wrap: nowrap;
+		}
+
+		.upgrade-banner__icons,
+		.upgrade-banner__icon-plan {
+			align-items: center;
 		}
 
 		.upgrade-banner__icon {
