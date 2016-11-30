@@ -91,7 +91,14 @@ export class PluginActivateToggle extends Component {
 PluginActivateToggle.propTypes = {
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
+	notices: React.PropTypes.object,
 	isMock: PropTypes.bool,
+	disabled: React.PropTypes.bool,
+};
+
+PluginActivateToggle.defaultProps = {
+	isMock: false,
+	disabled: false,
 };
 
 export default connect(
