@@ -146,18 +146,22 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
-	renderTransferTerms() {
+	renderTransferTerms( saveButtonLabel ) {
 		return (
 			<div className="edit-contact-info__terms">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>
 					{ this.props.translate(
-						'By clicking Save Contact Info, you agree to the ' +
+						'By clicking {{strong}}%(saveButtonLabel)s{{/strong}}, you agree to the ' +
 						'{{draLink}}applicable Domain Registration Agreement{{/draLink}} and confirm that the Transferee has ' +
 						'agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as ' +
 						'your {{supportLink}}Designated Agent{{/supportLink}}.',
 						{
+							args: {
+								saveButtonLabel
+							},
 							components: {
+								strong: <strong />,
 								draLink: <a href={ support.DOMAIN_REGISTRATION_AGREEMENTS } target="_blank" rel="noopener noreferrer" />,
 								supportLink: <a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
 							}
@@ -171,7 +175,8 @@ class EditContactInfoFormCard extends React.Component {
 	render() {
 		const { translate } = this.props,
 			{ OPENHRS, OPENSRS } = registrarNames,
-			isTucowsDomain = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
+			isTucowsDomain = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
+			saveButtonLabel = translate( 'Save Contact Info' );
 
 		return (
 			<Card>
@@ -267,13 +272,13 @@ class EditContactInfoFormCard extends React.Component {
 					</div>
 
 					{ isTucowsDomain && this.renderTransferLockOptOut() }
-					{ isTucowsDomain && this.renderTransferTerms() }
+					{ isTucowsDomain && this.renderTransferTerms( saveButtonLabel ) }
 
 					<FormFooter>
 						<FormButton
 							disabled={ this.state.formSubmitting }
 							onClick={ this.saveContactInfo }>
-							{ translate( 'Save Contact Info' ) }
+							{ saveButtonLabel }
 						</FormButton>
 
 						<FormButton
