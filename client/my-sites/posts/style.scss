@@ -30,19 +30,27 @@
 	.posts__post-share-services {
 		flex: 2; 
 		flex-direction: column;
-		justify-content: space-around;
+		justify-content: flex-start;
 		display: flex;
 		flex-wrap: wrap;
-		margin-left: 24px;
+		margin: 16px 0 0 20px;
 	}
+
+	.posts__post-share-services-header {
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
 	.posts__post-share-service {
 		cursor: pointer;
-		padding: 4px;
 		display: flex;
 		justify-content: left;
-		flex: 1;
-		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		padding: 0 0 12px 4px;
 		color: lighten( $gray, 20% );
+		.social-logo {
+			padding-left: 4px;
+		}
+
 		&.is-active {
 			color: black;
 
