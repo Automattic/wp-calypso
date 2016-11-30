@@ -33,7 +33,6 @@ export const EditorInsertMenuTour = makeTour(
 		<Step
 			arrow="left-top"
 			name="init"
-			next="hidden-step"
 			placement="beside"
 			target=".post_editor__insert-menu-guided-tour-anchor"
 		>
@@ -50,6 +49,5 @@ export const EditorInsertMenuTour = makeTour(
 				<Quit primary>{ translate( 'Close' ) }</Quit>
 			</ButtonRow>
 		</Step>
-		<Step name="hidden-step" />
 	</Tour>
 );
