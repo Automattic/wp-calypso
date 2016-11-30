@@ -11,8 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import ReaderFollowButton from 'reader/follow-button';
-import resizeImageUrl from 'lib/resize-image-url';
-import safeImageUrl from 'lib/safe-image-url';
 import Site from 'blocks/site';
 import { state as feedState } from 'lib/feed-store/constants';
 
@@ -59,19 +57,8 @@ class FeedHeader extends Component {
 	render() {
 		const site = this.props.site,
 			feed = this.props.feed,
-			headerImage = site && site.getIn( [ 'options', 'header_image' ] ),
-			headerColor = site && site.getIn( [ 'options', 'background_color' ] ),
 			followerCount = this.getFollowerCount( feed, site ),
 			ownerDisplayName = site && site.getIn( [ 'owner', 'name' ] );
-
-		let headerImageUrl;
-
-		if ( headerImage && headerImage.get( 'width' ) > 300 ) {
-			headerImageUrl = resizeImageUrl(
-				safeImageUrl( headerImage.get( 'url' ) ),
-				{ w: 600 }
-			);
-		}
 
 		const classes = classnames( {
 			'reader-feed-header': true,
@@ -90,9 +77,6 @@ class FeedHeader extends Component {
 					</div> : null }
 				</div>
 				<Card className="reader-feed-header__site">
-					<div className="reader-feed-header__image" style={ headerColor ? { backgroundColor: '#' + headerColor } : null }>
-						{ headerImageUrl ? <img src={ headerImageUrl } /> : null }
-					</div>
 					{ this.state.siteish &&
 						<Site
 							site={ this.state.siteish }
