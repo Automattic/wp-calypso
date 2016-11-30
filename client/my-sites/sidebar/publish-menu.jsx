@@ -55,12 +55,11 @@ const PublishMenu = React.createClass( {
 
 		const items = [
 			{
-				name: 'post',
+				slug: 'post',
 				label: this.translate( 'Blog Posts' ),
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
-				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
 				buttonLink: site ? '/post/' + site.slug : '/post',
@@ -68,11 +67,10 @@ const PublishMenu = React.createClass( {
 				showOnAllMySites: true,
 			},
 			{
-				name: 'page',
+				slug: 'page',
 				label: this.translate( 'Pages' ),
 				className: 'pages',
 				capability: 'edit_pages',
-				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
 				buttonLink: site ? '/page/' + site.slug : '/page',
@@ -83,11 +81,10 @@ const PublishMenu = React.createClass( {
 
 		if ( config.isEnabled( 'manage/media' ) ) {
 			items.push( {
-				name: 'media',
+				slug: 'media',
 				label: this.translate( 'Media' ),
 				className: 'media-section',
 				capability: 'upload_files',
-				queryable: true,
 				config: 'manage/media',
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -112,7 +109,7 @@ const PublishMenu = React.createClass( {
 		}
 
 		// Hide the sidebar link for media
-		if ( 'attachment' === menuItem.name ) {
+		if ( 'attachment' === menuItem.slug ) {
 			return null;
 		}
 
@@ -124,21 +121,21 @@ const PublishMenu = React.createClass( {
 		}
 
 		let link;
-		if ( ( ! isEnabled || ! menuItem.queryable ) && site.options ) {
+		if ( ( ! isEnabled ) && site.options ) {
 			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
 		} else {
 			link = menuItem.link + this.props.siteSuffix;
 		}
 
 		let preload;
-		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
+		if ( includes( [ 'post', 'page' ], menuItem.slug ) ) {
 			preload = 'posts-pages';
 		} else {
 			preload = 'posts-custom';
 		}
 
 		let icon;
-		switch ( menuItem.name ) {
+		switch ( menuItem.slug ) {
 			case 'post': icon = 'posts'; break;
 			case 'page': icon = 'pages'; break;
 			case 'jetpack-portfolio': icon = 'folder'; break;
@@ -153,11 +150,11 @@ const PublishMenu = React.createClass( {
 
 		return (
 			<SidebarItem
-				key={ menuItem.name }
+				key={ menuItem.slug }
 				label={ menuItem.label }
 				className={ className }
 				link={ link }
-				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
+				onNavigate={ this.onNavigate.bind( this, menuItem.slug ) }
 				icon={ icon }
 				preloadSectionName={ preload }
 			>
@@ -172,16 +169,16 @@ const PublishMenu = React.createClass( {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
 		return map( customPostTypes, ( postType, postTypeSlug ) => {
 			let buttonLink;
-			if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
+			if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
 			}
 
 			return {
-				name: postType.name,
+				name: postType.label,
+				slug: postType.slug,
 				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-				className: postType.name,
+				className: postType.slug,
 				config: 'manage/custom-post-types',
-				queryable: postType.api_queryable,
 
 				//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
 				//version isn't up-to-date), silently assume we don't have the capability to edit this CPT.
@@ -189,8 +186,8 @@ const PublishMenu = React.createClass( {
 
 				// Required to build the menu item class name. Must be discernible from other
 				// items' paths in the same section for item highlighting to work properly.
-				link: '/types/' + postType.name,
-				wpAdminLink: 'edit.php?post_type=' + postType.name,
+				link: '/types/' + postType.slug,
+				wpAdminLink: 'edit.php?post_type=' + postType.slug,
 				showOnAllMySites: false,
 				buttonLink
 			};
@@ -220,8 +217,8 @@ export default connect( ( state ) => {
 
 	return {
 		postTypes,
-		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
-			return getEditorPath( state, siteId, null, postTypeSlug );
+		postTypeLinks: mapValues( postTypes, ( { slug } ) => {
+			return getEditorPath( state, siteId, null, slug );
 		} )
 	};
 }, null, null, { pure: false } )( PublishMenu );

@@ -39,8 +39,9 @@ export function requestPostTypes( siteId ) {
 			siteId
 		} );
 
-		return wpcom.withLocale().site( siteId ).postTypesList().then( ( { post_types: types } ) => {
-			dispatch( receivePostTypes( siteId, types ) );
+		return wpcom.undocumented().site( siteId ).postTypes()
+		.then( ( data ) => {
+			dispatch( receivePostTypes( siteId, data ) );
 			dispatch( {
 				type: POST_TYPES_REQUEST_SUCCESS,
 				siteId
