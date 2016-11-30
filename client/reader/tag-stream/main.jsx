@@ -96,7 +96,7 @@ const TagStream = React.createClass( {
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
-					title={ title }
+					tag={ this.props.tag }
 					showFollow={ this.state.canFollow }
 					following={ this.state.subscribed }
 					onFollowToggle={ this.toggleFollowing } />
