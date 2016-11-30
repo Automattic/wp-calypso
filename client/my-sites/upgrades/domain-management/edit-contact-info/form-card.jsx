@@ -147,9 +147,32 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
+	renderTransferTerms() {
+		return (
+			<div className="edit-contact-info__terms">
+				<Gridicon icon="info-outline" size={ 18 } />
+				<p>
+					{ this.props.translate(
+						'By clicking Save Contact Info, you agree to the ' +
+						'{{draLink}}applicable Domain Registration Agreement{{/draLink}} and confirm that the Transferee has ' +
+						'agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as ' +
+						'your {{supportLink}}Designated Agent{{/supportLink}}.',
+						{
+							components: {
+								draLink: <a href={ support.DOMAIN_REGISTRATION_AGREEMENTS } target="_blank" rel="noopener noreferrer" />,
+								supportLink: <a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
+							}
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	render() {
 		const { translate } = this.props,
-			{ OPENHRS, OPENSRS } = registrarNames;
+			{ OPENHRS, OPENSRS } = registrarNames,
+			isTucowsDomain = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
 
 		return (
 			<Card>
@@ -244,24 +267,8 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
-					{ includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ) && this.renderTransferLockOptOut() }
-
-					<div className="edit-contact-info__terms">
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>
-							{ translate(
-								'By clicking Save Contact Info, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and ' +
-								'authorize Automattic or the relevant third party registrar to act as your ' +
-								'{{daLink}}Designated Agent{{/daLink}} to approve a Change of Registrant on your behalf.',
-								{
-									components: {
-										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-										daLink: <a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
-									}
-								}
-							) }
-						</p>
-					</div>
+					{ isTucowsDomain && this.renderTransferLockOptOut() }
+					{ isTucowsDomain && this.renderTransferTerms() }
 
 					<FormFooter>
 						<FormButton
