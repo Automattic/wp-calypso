@@ -97,3 +97,19 @@
 	color: $white;
 }
 
+// Back button in Tag streams
+
+.is-reader-page .card.header-cake {
+	padding: 0;
+
+	@include breakpoint( ">960px" ) {
+		background: none;
+		box-shadow: none;
+		position: relative;
+			top: 32px;
+	}
+
+	.button.header-cake__back {
+		padding: 0;
+	}
+}
