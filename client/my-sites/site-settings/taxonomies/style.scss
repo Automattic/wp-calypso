@@ -18,11 +18,15 @@
 	overflow: hidden;
 
 	&:after {
-		@include long-content-fade();
+		@include long-content-fade( $size: 40% );
 	}
 
 	.gridicon {
 		padding-right: 5px;
 		vertical-align: top;
 	}
+}
+
+.site-settings__taxonomies .card__link-indicator {
+	z-index: z-index( '.site-settings__taxonomies', '.card__link-indicator' );
 }
