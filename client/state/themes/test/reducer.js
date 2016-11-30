@@ -68,7 +68,6 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			// Old reducers
 			'themes',
-			'themeDetails',
 			'themesList',
 			// New reducers
 			'queries',
