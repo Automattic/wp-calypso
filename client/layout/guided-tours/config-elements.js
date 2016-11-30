@@ -96,6 +96,7 @@ export class Step extends Component {
 		] ),
 		when: PropTypes.func,
 		scrollContainer: PropTypes.string,
+		style: PropTypes.object,
 	};
 
 	static contextTypes = contextTypes;
@@ -287,8 +288,10 @@ export class Step extends Component {
 			} ),
 		].filter( Boolean );
 
+		const style = { ...this.props.style, ...stepCoords };
+
 		return (
-			<Card className={ classNames( ...classes ) } style={ stepCoords } >
+			<Card className={ classNames( ...classes ) } style={ style } >
 				{ children }
 			</Card>
 		);

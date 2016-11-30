@@ -104,6 +104,7 @@ export const ThemeSheetTour = makeTour(
 			target=".theme__sheet-action-bar .header-cake__back.button"
 			placement="beside"
 			arrow="left-top"
+			style={ { marginTop: '-15px' } }
 		>
 			<p>
 				{ translate( 'That\'s it! You can return to our design showcase anytime through here.' ) }
