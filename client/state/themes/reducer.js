@@ -242,6 +242,21 @@ export const queries = ( () => {
 	} );
 } )();
 
+/**
+ * Returns the updated themes last query state.
+ * The state reflects a mapping of site Id to last query that was issued on that site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const lastQuery = createReducer( {}, {
+	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => ( {
+		...state,
+		[ siteId ]: query
+	} )
+} );
+
 export default combineReducers( {
 	// Old reducers:
 	themes,
@@ -250,6 +265,7 @@ export default combineReducers( {
 	// New reducers:
 	// queries,
 	// queryRequests,
+	// lastQuery
 	// themeRequests,
 	// activationRequests,
 	currentTheme,

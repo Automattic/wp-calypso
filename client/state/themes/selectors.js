@@ -96,6 +96,17 @@ export const getThemesForQuery = createSelector(
 );
 
 /**
+ * Returns last query used.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Object}         Last query
+ */
+export function getLastThemeQuery( state, siteId ) {
+	return get( state.themes.lastQuery, siteId, {} );
+}
+
+/**
  * Returns true if currently requesting themes for the themes query, or false
  * otherwise.
  *
