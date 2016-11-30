@@ -17,6 +17,8 @@ import TagStreamHeader from './header';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import HeaderBack from 'reader/header-back';
+import StreamHeader from 'reader/stream-header'; // pre-refresh
+import config from 'config';
 
 const TagStream = React.createClass( {
 
@@ -95,11 +97,20 @@ const TagStream = React.createClass( {
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
-				<TagStreamHeader
-					tag={ this.props.tag }
-					showFollow={ this.state.canFollow }
-					following={ this.state.subscribed }
-					onFollowToggle={ this.toggleFollowing } />
+				{ config.isEnabled( 'reader/refresh/stream' )
+					? <TagStreamHeader
+						tag={ this.props.tag }
+						showFollow={ this.state.canFollow }
+						following={ this.state.subscribed }
+						onFollowToggle={ this.toggleFollowing } />
+					: <StreamHeader
+						isPlaceholder={ false }
+						icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }
+						title={ title }
+						showFollow={ this.state.canFollow }
+						following={ this.state.subscribed }
+						onFollowToggle={ this.toggleFollowing } />
+				}
 			</Stream>
 		);
 	}
