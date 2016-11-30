@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import { overEvery as and } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,14 +15,20 @@ import {
 	Tour,
 	Quit,
 } from 'layout/guided-tours/config-elements';
-import { isEnabled } from 'state/ui/guided-tours/contexts';
+import {
+	isEnabled,
+	inSection,
+} from 'state/ui/guided-tours/contexts';
 
 export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
-		path="/post/"
+		path="/"
 		version="20161129"
-		when={ isEnabled( 'post-editor/insert-menu' ) }
+		when={ and(
+			isEnabled( 'post-editor/insert-menu' ),
+			inSection( 'post-editor' )
+		) }
 	>
 		<Step
 			arrow="left-top"
