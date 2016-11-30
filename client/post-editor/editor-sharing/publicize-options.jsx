@@ -25,11 +25,8 @@ import { isJetpackModuleActive } from 'state/sites/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections, isRequestingSharePost, sharePostFailure, sharePostSuccessMessage  } from 'state/sharing/publicize/selectors';
-import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
-import config from 'config';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
 const EditorSharingPublicizeOptions = React.createClass( {
 	connectionPopupMonitor: false,
@@ -183,23 +180,6 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		);
 	},
 
-	republicizePost() {
-		const skipped = PostMetadata.publicizeSkipped( this.props.post );
-		const message = PostMetadata.publicizeMessage( this.props.post );
-		this.props.sharePost( this.props.siteId, this.props.post.ID, skipped, message );
-	},
-
-	renderRepublicize() {
-		return (
-			<Button
-				className="button editor-sharing__publicize-share-button"
-				disabled={ ( this.props.connections.length - PostMetadata.publicizeSkipped( this.props.post ).length < 1 ) || this.props.requesting }
-				onClick={ this.republicizePost }
-			>
-				{ this.translate( 'Share' ) }
-			</Button>
-		);
-	},
 	dismissRepublicizeMessage: function() {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
@@ -241,15 +221,6 @@ const EditorSharingPublicizeOptions = React.createClass( {
 				{ this.renderServices() }
 				{ this.renderAddNewButton() }
 				{ this.renderMessage() }
-				{ this.props.requesting && <Notice isCompact status="is-warning">{ this.translate( 'Hang tight, socializing your media...' ) }</Notice> }
-				{ this.props.success && <Notice isCompact status="is-success" text={ this.translate( 'It went out! Your social media is on fire!' ) }><NoticeAction onClick={ this.dismissRepublicizeMessage }>{ this.translate( 'X' ) }</NoticeAction></Notice> }
-				{ this.props.failure && <Notice isCompact status="is-error" text={ this.translate( 'Something went wrong. Please dont be mad.' ) }><NoticeAction onClick={ this.dismissRepublicizeMessage }>{ this.translate( 'X' ) }</NoticeAction></Notice> }
-				{
-					config.isEnabled( 'republicize' ) &&
-					this.props.post &&
-					( this.props.post.status === 'publish' ) &&
-					this.renderRepublicize()
-				}
 			</div>
 		);
 	}
@@ -269,11 +240,8 @@ export default connect(
 		return {
 			siteId,
 			isPublicizeEnabled,
-			connections: getSiteUserConnections( state, siteId, userId ),
-			requesting: isRequestingSharePost( state, siteId, postId ),
-			failed: sharePostFailure( state, siteId, postId ),
-			success: sharePostSuccessMessage( state, siteId, postId )
+			connections: getSiteUserConnections( state, siteId, userId )
 		};
 	},
-	{ requestConnections, sharePost, dismissShareConfirmation }
+	{ requestConnections }
 )( EditorSharingPublicizeOptions );
