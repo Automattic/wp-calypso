@@ -17,7 +17,7 @@ import {
 
 class QueryTicketSupportConfiguration extends Component {
 	componentWillMount() {
-		if ( ! this.props.isRequestingTicketSupportConfiguration ) {
+		if ( ! this.props.isRequesting ) {
 			this.props.ticketSupportConfigurationRequest();
 		}
 	}
@@ -29,7 +29,7 @@ class QueryTicketSupportConfiguration extends Component {
 
 export default connect(
 	( state ) => ( {
-		isRequestingTicketSupportConfiguration: isRequestingTicketSupportConfiguration( state ),
+		isRequesting: isRequestingTicketSupportConfiguration( state ),
 	} ),
 	{ ticketSupportConfigurationRequest }
 )( QueryTicketSupportConfiguration );
