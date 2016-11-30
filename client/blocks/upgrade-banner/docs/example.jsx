@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { PLAN_PERSONAL } from 'lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 import UpgradeBanner from 'blocks/upgrade-banner';
 
 const UpgradeBanners = () =>
@@ -39,9 +39,9 @@ const UpgradeBanners = () =>
 			title="Upgrade to a Personal Plan!"
 		/>
 		<UpgradeBanner
-			href="#"
+			feature={ FEATURE_ADVANCED_SEO }
 			list={ [ 'Live chat support', 'No advertising' ] }
-			plan={ PLAN_PERSONAL }
+			plan={ PLAN_BUSINESS }
 			title="Upgrade to a Personal Plan!"
 		/>
 		<UpgradeBanner

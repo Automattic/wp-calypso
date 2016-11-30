@@ -13,6 +13,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getValidFeatureKeys } from 'lib/plans';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
@@ -28,18 +30,21 @@ class UpgradeBanner extends Component {
 		color: PropTypes.string,
 		description: PropTypes.string,
 		event: PropTypes.string,
+		feature: React.PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
 		href: PropTypes.string,
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.string,
+		siteSlug: PropTypes.string,
 		title: PropTypes.string,
 	}
 
 	static defaultProps = {
 		button: false,
 		callToActionButton: false,
+		feature: false,
 		icon: 'star',
 		onClick: noop,
 	}
@@ -47,14 +52,17 @@ class UpgradeBanner extends Component {
 	handleClick = () => {
 		const {
 			event,
+			feature,
 			onClick,
 		} = this.props;
 
 		if ( event ) {
 			this.props.recordTracksEvent(
-				'calypso_upgrade_banner_cta_click',
-				{ cta_name: event }
-			);
+				'calypso_upgrade_banner_cta_click', {
+					cta_name: event,
+					cta_feature: feature,
+					cta_size: 'regular'
+				} );
 		}
 
 		onClick();
@@ -105,13 +113,27 @@ class UpgradeBanner extends Component {
 		);
 	}
 
+	getHref() {
+		const {
+			href,
+			feature,
+			siteSlug,
+		} = this.props;
+		if ( ! href && siteSlug ) {
+			if ( feature ) {
+				return `/plans/${ siteSlug }?feature=${ feature }`;
+			}
+			return `/plans/${ siteSlug }`;
+		}
+		return href;
+	}
+
 	bannerContent() {
 		const {
 			button,
 			callToAction,
 			callToActionButton,
 			description,
-			href,
 			list,
 			title
 		} = this.props;
@@ -143,7 +165,7 @@ class UpgradeBanner extends Component {
 						{ callToActionButton
 							? <Button
 									compact
-									href={ href }
+									href={ this.getHref() }
 									onClick={ this.handleClick }
 									primary
 								>
@@ -162,7 +184,6 @@ class UpgradeBanner extends Component {
 			callToActionButton,
 			className,
 			color,
-			href,
 		} = this.props;
 
 		const classes = classNames(
@@ -175,7 +196,7 @@ class UpgradeBanner extends Component {
 			return (
 				<Button
 					className={ classes }
-					href={ href }
+					href={ this.getHref() }
 					onClick={ this.handleClick }
 				>
 					{ this.getIcon() }
@@ -187,7 +208,7 @@ class UpgradeBanner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ callToActionButton ? null : href }
+				href={ callToActionButton ? null : this.getHref() }
 				onClick={ callToActionButton ? noop : this.handleClick }
 				style={ color ? { borderLeftColor: color } : {} }
 			>
@@ -199,4 +220,7 @@ class UpgradeBanner extends Component {
 
 }
 
-export default connect( null, { recordTracksEvent } )( UpgradeBanner );
+export default connect(
+	state => ( { siteSlug: getSelectedSiteSlug( state ) } ),
+	{ recordTracksEvent }
+)( UpgradeBanner );
