@@ -2,7 +2,7 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { omit, omitBy } from 'lodash';
+import { omit, omitBy, split } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,20 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
 /**
  * Utility
  */
+
+/**
+ * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
+ *
+ * @param  {String}  stylesheet Theme stylesheet
+ * @return {?String}            Theme ID
+ */
+export function getThemeIdFromStylesheet( stylesheet ) {
+	const [ , slug ] = split( stylesheet, '/', 2 );
+	if ( ! slug ) {
+		return stylesheet;
+	}
+	return slug;
+}
 
 /**
  * Returns a normalized themes query, excluding any values which match the
