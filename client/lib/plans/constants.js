@@ -112,7 +112,7 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => compact ( [
+		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -120,7 +120,7 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			isEnabled( 'plans/6gb-personal-plan' ) ? FEATURE_6GB_STORAGE : FEATURE_3GB_STORAGE,
 			FEATURE_NO_ADS
-		] ),
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
