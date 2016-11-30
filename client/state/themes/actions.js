@@ -433,6 +433,14 @@ export function clearActivated( siteId ) {
 	};
 }
 
+/**
+ * Triggers a theme upload to the given site.
+ *
+ * @param {Number} siteId -- Site to upload to
+ * @param {File} file -- the theme zip to upload
+ *
+ * @return {Function} the action function
+ */
 export function uploadTheme( siteId, file ) {
 	return dispatch => {
 		dispatch( {
@@ -465,11 +473,17 @@ export function uploadTheme( siteId, file ) {
 	};
 }
 
+/**
+ * Clears any state remaining from a previous
+ * theme upload to the given site.
+ *
+ * @param {Number} siteId -- site to clear state for
+ *
+ * @return {Object} the action object to dispatch
+ */
 export function clearThemeUpload( siteId ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_UPLOAD_CLEAR,
-			siteId,
-		} );
+	return {
+		type: THEME_UPLOAD_CLEAR,
+		siteId,
 	};
 }
