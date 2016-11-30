@@ -122,9 +122,9 @@ export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
 	return arrow || 'none';
 }
 
-export function getStepPosition( { placement = 'center', targetSlug, shouldScrollTo = false } ) {
+export function getStepPosition( { placement = 'center', targetSlug, shouldScrollTo = false, scrollContainer = null } ) {
 	const target = targetForSlug( targetSlug );
-	const scrollDiff = shouldScrollTo ? scrollIntoView( target ) : 0;
+	const scrollDiff = shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;
 	const rect = target && target.getBoundingClientRect
 		? target.getBoundingClientRect()
 		: global.window.document.body.getBoundingClientRect();
@@ -156,8 +156,9 @@ function validatePlacement( placement, target ) {
 		: placement;
 }
 
-function scrollIntoView( target ) {
-	const container = getScrollableSidebar();
+function scrollIntoView( target, scrollContainer ) {
+	// TODO(lsinger: consider replacing with http://yiminghe.me/dom-scroll-into-view/
+	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = viewport.isMobile() ? document.documentElement.clientHeight : container.clientHeight;
 

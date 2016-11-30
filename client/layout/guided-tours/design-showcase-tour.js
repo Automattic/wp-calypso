@@ -64,10 +64,12 @@ export const DesignShowcaseTour = makeTour(
 		</Step>
 
 		<Step name="theme-options"
-			target=".theme__more-button"
-			arrow="right-top"
-			placement="beside"
+			target=".card.theme:nth-child(4) .theme__more-button"
+			arrow="top-left"
+			placement="below"
 			next="finish"
+			scrollContainer="body"
+			shouldScrollTo
 		>
 			<p>
 				{ 'Here you can access all the extra theme options.' }
