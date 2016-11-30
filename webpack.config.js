@@ -67,7 +67,8 @@ const webpackConfig = {
 		root: [ path.join( __dirname, 'client' ) ],
 		modulesDirectories: [ 'node_modules' ],
 		alias: {
-			'react-virtualized': 'react-virtualized/dist/commonjs'
+			'react-virtualized': 'react-virtualized/dist/commonjs',
+			'social-logos/example': 'social-logos/build/example'
 		}
 	},
 	resolveLoader: {
