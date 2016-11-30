@@ -52,13 +52,15 @@ describe( 'actions', () => {
 			const request = requestTagImages( 'banana' )( dispatchSpy );
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: READER_TAG_IMAGES_REQUEST
+				type: READER_TAG_IMAGES_REQUEST,
+				tag: 'banana'
 			} );
 
 			return request.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_TAG_IMAGES_REQUEST_SUCCESS,
-					data: sampleSuccessResponse
+					data: sampleSuccessResponse,
+					tag: 'banana'
 				} );
 
 				expect( dispatchSpy ).to.have.been.calledWith( {

@@ -45,6 +45,7 @@ export function requestTagImages( tag, limit = 1 ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: READER_TAG_IMAGES_REQUEST,
+			tag
 		} );
 
 		const query = {
@@ -60,12 +61,14 @@ export function requestTagImages( tag, limit = 1 ) {
 
 			dispatch( {
 				type: READER_TAG_IMAGES_REQUEST_SUCCESS,
+				tag,
 				data
 			} );
 		},
 		( error ) => {
 			dispatch( {
 				type: READER_TAG_IMAGES_REQUEST_FAILURE,
+				tag,
 				error
 			} );
 		}
