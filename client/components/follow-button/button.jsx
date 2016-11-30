@@ -13,7 +13,8 @@ const FollowButton = React.createClass( {
 		iconSize: PropTypes.number,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 		disabled: PropTypes.bool,
-		followLabel: PropTypes.string
+		followLabel: PropTypes.string,
+		followingLabel: PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -54,7 +55,7 @@ const FollowButton = React.createClass( {
 
 		if ( this.props.following ) {
 			menuClasses.push( 'is-following' );
-			label = this.strings.FOLLOWING;
+			label = this.props.followingLabel ? this.props.followingLabel : this.strings.FOLLOWING;
 		}
 
 		if ( this.props.disabled ) {
