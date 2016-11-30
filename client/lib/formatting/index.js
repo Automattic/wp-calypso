@@ -7,12 +7,11 @@ import stripTags from 'striptags';
 /**
  * Internal Dependencies
  */
-import warn from 'lib/warn';
 import decode from './decode-entities';
 
 function decodeEntities( text ) {
-	if ( text === undefined || text === false || text === null ) {
-		warn( 'Don\'t call `decodeEntities` with an `undefined`, `false`, or `null` value.' );
+	// Bypass decode if text doesn't include entities
+	if ( 'string' !== typeof text || -1 === text.indexOf( '&' ) ) {
 		return text;
 	}
 
