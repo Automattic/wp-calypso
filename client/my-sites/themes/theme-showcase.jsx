@@ -15,7 +15,6 @@ import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
 import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
@@ -56,11 +55,13 @@ const optionShape = PropTypes.shape( {
 const ThemeShowcase = React.createClass( {
 	propTypes: {
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+		search: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
+		siteSlug: PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -224,7 +225,5 @@ const ThemeShowcase = React.createClass( {
 export default connect(
 	( state, { siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
-		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state ),
 	} )
 )( localize( ThemeShowcase ) );

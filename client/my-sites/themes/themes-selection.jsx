@@ -13,6 +13,7 @@ import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
 import analytics from 'lib/analytics';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { isThemePurchased } from 'state/themes/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -27,14 +28,14 @@ const ThemesSelection = React.createClass( {
 		search: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		getOptions: React.PropTypes.func,
-		queryParams: PropTypes.object.isRequired,
-		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
 		// connected props
 		siteSlug: React.PropTypes.string,
+		queryParams: PropTypes.object.isRequired,
+		themesList: PropTypes.array.isRequired,
 		isActiveTheme: React.PropTypes.func,
 		isThemePurchased: React.PropTypes.func,
 	},
@@ -120,6 +121,8 @@ export default connect(
 			// The same is true for the `hasFeature` selector, which relies on the presence of
 			// a `<QuerySitePlans />` component in a parent component.
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-		)
+		),
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state ),
 	} )
 )( ThemesSelection );
