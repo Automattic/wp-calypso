@@ -129,9 +129,16 @@ const PostSharing = React.createClass( {
 				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( `Something went wrong. Please don't be mad.` ) }</Notice> }
 				<div className={ classes }>
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
-					<h3 className="posts__post-share-title">
-						{ this.translate( 'Share the post and spread the word!' ) }
-					</h3>
+					<h4 className="posts__post-share-title">
+						{ this.translate( 'Publicize your content' ) }
+					</h4>
+					<div className="posts__post-share-subtitle">
+						{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}', {
+							components: {
+								a: <a href={ '/sharing/' + this.props.siteId } />
+							}
+						} ) }
+					</div>
 					<div className="posts__post-share-main">
 						<div className="posts__post-share-form">
 							{ this.renderMessage() }
