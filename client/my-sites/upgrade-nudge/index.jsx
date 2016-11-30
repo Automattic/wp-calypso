@@ -16,7 +16,7 @@ import Gridicon from 'components/gridicon';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
 const UpgradeNudge = React.createClass( {
@@ -51,10 +51,10 @@ const UpgradeNudge = React.createClass( {
 	},
 
 	handleClick() {
-		const { event, feature, onClick } = this.props;
+		const { event, feature, onClick, recordTracksEvent: recordTracks } = this.props;
 
 		if ( event || feature ) {
-			this.props.recordGoogleEvent( 'calypso_upgrade_nudge_cta_click', {
+			recordTracks( 'calypso_upgrade_nudge_cta_click', {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: 'regular'
@@ -92,7 +92,7 @@ const UpgradeNudge = React.createClass( {
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
 		let href = this.props.href;
 
-		if ( ! this.shouldDisplay( site ) ) {
+		if ( ! this.shouldDisplay() ) {
 			return null;
 		}
 
@@ -147,5 +147,5 @@ export default connect(
 	state => ( {
 		site: getSelectedSite( state ),
 	} ),
-	{ recordGoogleEvent }
+	{ recordTracksEvent }
 )( localize( UpgradeNudge ) );
