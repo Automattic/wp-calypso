@@ -378,6 +378,7 @@ class EditContactInfoFormCard extends React.Component {
 
 			switch ( this.props.selectedDomain.registrar ) {
 				case OPENHRS:
+				case OPENSRS:
 					message = this.props.translate(
 						'The contact info has been updated. ' +
 						'There may be a short delay before the changes show up in the public records.'
@@ -385,7 +386,6 @@ class EditContactInfoFormCard extends React.Component {
 					break;
 
 				case WWD:
-				case OPENSRS:
 				default:
 					message = this.props.translate(
 						'Request confirmed - per ICANN regulations, before the changes are final, ' +
