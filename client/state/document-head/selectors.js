@@ -6,6 +6,7 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
@@ -59,25 +60,28 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Formatted title
  */
-export function getDocumentHeadFormattedTitle( state ) {
-	let title = '';
+export const getDocumentHeadFormattedTitle = createSelector(
+	( state ) => {
+		let title = '';
 
-	const unreadCount = getDocumentHeadCappedUnreadCount( state );
-	if ( unreadCount ) {
-		title += `(${ unreadCount }) `;
-	}
+		const unreadCount = getDocumentHeadCappedUnreadCount( state );
+		if ( unreadCount ) {
+			title += `(${ unreadCount }) `;
+		}
 
-	title += compact( [
-		getDocumentHeadTitle( state ),
-		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
-	] ).join( ' ‹ ' );
+		title += compact( [
+			getDocumentHeadTitle( state ),
+			isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
+		] ).join( ' ‹ ' );
 
-	if ( title ) {
-		title = decodeEntities( title ) + ' — ';
-	}
+		if ( title ) {
+			title = decodeEntities( title ) + ' — ';
+		}
 
-	return title + 'WordPress.com';
-}
+		return title + 'WordPress.com';
+	},
+	( state ) => state.documentHead
+);
 
 /**
  * Returns an array of document meta objects as set by the DocumentHead
