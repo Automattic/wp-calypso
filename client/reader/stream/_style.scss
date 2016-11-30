@@ -402,6 +402,8 @@ $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-stream__recommended-posts {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	padding-bottom: 12px;
 
 	@include breakpoint( "<660px" ) {
 		margin: 0 15px;
@@ -413,18 +415,20 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
-	margin-bottom: 20px;
+	margin: 13px 0 17px;
 	position: relative;
 	text-transform: uppercase;
 
 	.gridicon {
 		fill: lighten( $gray, 10% );
+		margin-right: -2px;
 		position: relative;
+			left: -2px;
 			top: 5px;
 	}
 }
 
-.reader-stream__recommended-posts-posts {
+.reader-stream__recommended-posts-list {
 	display: flex;
 	flex-direction: row;
 	margin: 0;
@@ -443,7 +447,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 }
 
-.reader-stream__recommended-posts-item {
+.reader-stream__recommended-posts-list-item {
 	flex-basis: 0;
 	flex-grow: 1;
 	list-style-type: none;
@@ -503,6 +507,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	.has-thumbnail {
 
+		.reader-related-card-v2__meta {
+			margin-bottom: 15px;
+		}
+
+		.reader-related-card-v2__meta .follow-button {
+			margin-top: -7px;
+		}
+
+		.reader-related-card-v2__meta .gravatar {
+			margin: 3px 8px 0 0;
+		}
+
 		.reader-related-card-v2__site-info {
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
@@ -528,7 +544,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__featured-image {
-		margin: 4px 0 19px;
+		border: 1px solid lighten( $gray, 30% );
+		margin: 4px 0 17px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
 			margin: 0 15px 0 0;

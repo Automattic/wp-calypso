@@ -51,11 +51,11 @@ export class RecommendedPosts extends React.PureComponent {
 		return (
 			<div className="reader-stream__recommended-posts">
 				<h1 className="reader-stream__recommended-posts-header"><Gridicon icon="star" />&nbsp;{ this.props.translate( 'Recommended Posts' ) }</h1>
-				<ul className="reader-stream__recommended-posts-posts">
+				<ul className="reader-stream__recommended-posts-list">
 					{
 						map(
 							this.state.posts,
-							post => <li className="reader-stream__recommended-posts-item" key={ post.global_ID }><RelatedPostCard post={ post } onPostClick={ this.handlePostClick } onSiteClick={ this.handleSiteClick } /></li>
+							post => <li className="reader-stream__recommended-posts-list-item" key={ post.global_ID }><RelatedPostCard post={ post } onPostClick={ this.handlePostClick } onSiteClick={ this.handleSiteClick } /></li>
 						)
 					}
 				</ul>
