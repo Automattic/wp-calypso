@@ -38,6 +38,7 @@ const TagStreamHeader = ( { tag, tagImage, isPlaceholder, showFollow, following,
 				<div className="tag-stream__header-follow">
 					<FollowButton
 						followLabel={ translate( 'Follow Tag' ) }
+						followingLabel={ translate( 'Following Tag' ) }
 						iconSize={ 24 }
 						following={ following }
 						onFollowToggle={ onFollowToggle } />
