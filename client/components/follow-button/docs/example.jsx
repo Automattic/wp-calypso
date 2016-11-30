@@ -27,6 +27,10 @@ export default React.createClass( {
 				<Card compact>
 					<FollowButton disabled={ true } />
 				</Card>
+				<Card compact>
+					<h3>With custom label</h3>
+					<FollowButton followLabel="Follow Tag" />
+				</Card>
 			</div>
 		);
 	}
