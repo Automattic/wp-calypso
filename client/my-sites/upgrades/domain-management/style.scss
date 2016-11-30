@@ -382,15 +382,15 @@ input[type=radio].domain-management-list-item__radio {
 	padding: 0;
 	text-align: left;
 
-	p {
-		font-size: 12px;
-		font-weight: 100;
-		margin-left: 24px;
-	}
-
 	.gridicon {
 		float: left;
 	}
+}
+
+.edit-contact-info__terms-copy {
+	font-size: 12px;
+	font-weight: 100;
+	margin-left: 24px;
 }
 
 .add-google-apps-card {

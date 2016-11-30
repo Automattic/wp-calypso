@@ -150,7 +150,7 @@ class EditContactInfoFormCard extends React.Component {
 		return (
 			<div className="edit-contact-info__terms">
 				<Gridicon icon="info-outline" size={ 18 } />
-				<p>
+				<p className="edit-contact-info__terms-copy">
 					{ this.props.translate(
 						'By clicking {{strong}}%(saveButtonLabel)s{{/strong}}, you agree to the ' +
 						'{{draLink}}applicable Domain Registration Agreement{{/draLink}} and confirm that the Transferee has ' +
