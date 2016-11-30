@@ -148,6 +148,9 @@ const PostSharing = React.createClass( {
 								{ this.translate( 'Connected services' ) }
 							</h5>
 							{ this.renderServices() }
+							<Button href={ '/sharing/' + this.props.siteId } compact={ true } className="posts__post-share-services-add">
+								{ this.translate( 'Add account' ) }
+							</Button>
 						</div>
 					</div>
 				</div>
