@@ -999,5 +999,5 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 		return null;
 	}
 	const slug = getSiteSlug( state, siteId );
-	return site.name === 'Site Title' || slug.indexOf( site.name ) === 0;
+	return site.name === i18n.translate( 'Site Title' ) || slug.indexOf( site.name ) === 0;
 };
