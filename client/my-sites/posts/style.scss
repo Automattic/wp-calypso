@@ -16,18 +16,30 @@
 
 .posts__list {
 
-	.posts__post-share-services {
+	.posts__post-share-main {
+		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		display: flex;
 		flex-direction: row;
+		padding: 0 24px 24px;
+	}
+
+	.posts__post-share-form {
+		flex: 3;
+	}
+
+	.posts__post-share-services {
+		flex: 2; 
+		flex-direction: column;
 		justify-content: space-around;
 		display: flex;
 		flex-wrap: wrap;
-		border-bottom: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		margin-left: 24px;
 	}
 	.posts__post-share-service {
 		cursor: pointer;
 		padding: 4px;
 		display: flex;
-		justify-content: center;
+		justify-content: left;
 		flex: 1;
 		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		color: lighten( $gray, 20% );
@@ -430,7 +442,6 @@
 
 .post .posts__post-share {
 	margin: 0;
-	padding: 0 24px 24px;
 	animation: appear .3s ease-in-out;
 	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
