@@ -30,7 +30,7 @@ import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
+import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const SinglePlugin = React.createClass( {
@@ -395,10 +395,15 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const site = getSelectedSite( state );
 
+		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
+		const selectedSite = site && isJetpackSite( state, selectedSiteId )
+			? JetpackSite( getRawSite( state, selectedSiteId ) )
+			: site;
+
 		return {
 			wporgPlugins: state.plugins.wporg.items,
 			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
-			selectedSite: site && isJetpackSite( state, selectedSiteId ) ? JetpackSite( site ) : site,
+			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
 		};
