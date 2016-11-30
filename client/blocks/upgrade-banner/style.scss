@@ -50,10 +50,26 @@
 		flex-wrap: wrap;
 	}
 
+	.upgrade-banner__icons {
+		align-items: center;
+		display: flex;
+	}
+
+	.upgrade-banner__icon-plan {
+		align-items: center;
+		display: flex;
+		margin-right: 16px;
+
+		.plan-icon {
+			height: 32px;
+			width: 32px;
+		}
+	}
+
 	.upgrade-banner__icon,
 	.upgrade-banner__icon-circle {
-		top: 4px;
 		margin-top: -2px;
+		top: 4px;
 	}
 
 	.upgrade-banner__icon {

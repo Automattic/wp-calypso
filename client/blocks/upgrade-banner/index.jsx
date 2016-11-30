@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import PlanIcon from 'components/plans/plan-icon';
 
 class UpgradeBanner extends Component {
 
@@ -31,6 +32,7 @@ class UpgradeBanner extends Component {
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
+		plan: PropTypes.string,
 		price: PropTypes.string,
 		title: PropTypes.string,
 	}
@@ -56,6 +58,51 @@ class UpgradeBanner extends Component {
 		}
 
 		onClick();
+	}
+
+	getIcon() {
+		const {
+			button,
+			color,
+			icon,
+			plan,
+		} = this.props;
+
+		if ( plan ) {
+			return (
+				<div className="upgrade-banner__icon-plan">
+					<PlanIcon plan={ plan } />
+				</div>
+			);
+		}
+
+		if ( button ) {
+			return (
+				<div
+					className="upgrade-banner__icon-circle"
+					style={ color ? { background: color } : {} }
+				>
+					<Gridicon icon={ icon } size={ 18 } />
+				</div>
+			);
+		}
+
+		return (
+			<div className="upgrade-banner__icons">
+				<div
+					className="upgrade-banner__icon"
+					style={ color ? { color } : {} }
+				>
+					<Gridicon icon={ icon } size={ 18 } />
+				</div>
+				<div
+					className="upgrade-banner__icon-circle"
+					style={ color ? { background: color } : {} }
+				>
+					<Gridicon icon={ icon } size={ 18 } />
+				</div>
+			</div>
+		);
 	}
 
 	bannerContent() {
@@ -116,7 +163,6 @@ class UpgradeBanner extends Component {
 			className,
 			color,
 			href,
-			icon,
 		} = this.props;
 
 		const classes = classNames(
@@ -132,15 +178,7 @@ class UpgradeBanner extends Component {
 					href={ href }
 					onClick={ this.handleClick }
 				>
-					<div
-						className="upgrade-banner__icon-circle"
-						style={ color ? { background: color } : {} }
-					>
-						<Gridicon
-							icon={ icon }
-							size={ 18 }
-						/>
-					</div>
+					{ this.getIcon() }
 					{ this.bannerContent() }
 				</Button>
 			);
@@ -153,24 +191,7 @@ class UpgradeBanner extends Component {
 				onClick={ callToActionButton ? noop : this.handleClick }
 				style={ color ? { borderLeftColor: color } : {} }
 			>
-				<div
-					className="upgrade-banner__icon"
-					style={ color ? { color } : {} }
-				>
-					<Gridicon
-						icon={ icon }
-						size={ 18 }
-					/>
-				</div>
-				<div
-					className="upgrade-banner__icon-circle"
-					style={ color ? { background: color } : {} }
-				>
-					<Gridicon
-						icon={ icon }
-						size={ 18 }
-					/>
-				</div>
+				{ this.getIcon() }
 				{ this.bannerContent() }
 			</Card>
 		);
