@@ -458,8 +458,12 @@
 }
 
 .posts__post-share-title {
-	margin: 24px 0 24px 0;
-	font-weight: bold;
+	margin: 24px 0 0 0;
+	font-weight: 600;
+}
+
+.posts__post-share-subtitle {
+	margin-bottom: 24px;
 }
 
 .post-controls {
