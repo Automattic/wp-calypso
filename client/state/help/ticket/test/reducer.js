@@ -7,7 +7,7 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { dummyConfiguration } from './test-data';
+import { dummyConfiguration, dummyError } from './test-data';
 
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
@@ -24,7 +24,7 @@ describe( 'ticket-support/configuration reducer', () => {
 			isReady: false,
 			isRequesting: false,
 			isUserEligible: false,
-			requestError: false,
+			requestError: null,
 		} );
 	} );
 
@@ -47,24 +47,25 @@ describe( 'ticket-support/configuration reducer', () => {
 		assert.isFalse( state.isRequesting );
 	} );
 
-	it( 'should also set isReady as true and requestError as true on failed requests', () => {
-		const state = reducer( undefined, {
+	it( 'should leave isReady as it is and requestError as the error on failed requests', () => {
+		const state = reducer( { isReady: false }, {
 			type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+			error: dummyError,
 		} );
 
-		assert.isTrue( state.isReady );
+		assert.isFalse( state.isReady );
 		assert.isFalse( state.isRequesting );
-		assert.isTrue( state.requestError );
+		assert.deepEqual( state.requestError, dummyError );
 	} );
 
-	const requestErrorState = { requestError: true };
+	const requestErrorState = { requestError: dummyError };
 
-	it( 'should set requestError as false on receiving the dismiss action', () => {
+	it( 'should clear reqeustError on receiving the dismiss action', () => {
 		const state = reducer( requestErrorState, {
 			type: HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 		} );
 
-		assert.isFalse( state.requestError );
+		assert.isNull( state.requestError );
 	} );
 
 	it( 'should set requestError as false on receiving the new request', () => {
@@ -72,7 +73,7 @@ describe( 'ticket-support/configuration reducer', () => {
 			type: HELP_TICKET_CONFIGURATION_REQUEST,
 		} );
 
-		assert.isFalse( state.requestError );
+		assert.isNull( state.requestError );
 	} );
 
 	it( 'should set requestError as false on receiving the successful action', () => {
@@ -81,6 +82,6 @@ describe( 'ticket-support/configuration reducer', () => {
 			...dummyConfiguration,
 		} );
 
-		assert.isFalse( state.requestError );
+		assert.isNull( state.requestError );
 	} );
 } );

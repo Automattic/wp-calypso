@@ -27,14 +27,13 @@ const isUserEligible = createReducer( false, {
 
 const isReady = createReducer( false, {
 	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: () => true,
-	[ HELP_TICKET_CONFIGURATION_REQUEST_FAILURE ]: () => true,
 } );
 
-const requestError = createReducer( false, {
-	[ HELP_TICKET_CONFIGURATION_REQUEST ]: () => false,
-	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: () => false,
-	[ HELP_TICKET_CONFIGURATION_REQUEST_FAILURE ]: () => true,
-	[ HELP_TICKET_CONFIGURATION_DISMISS_ERROR ]: () => false,
+const requestError = createReducer( null, {
+	[ HELP_TICKET_CONFIGURATION_REQUEST ]: () => null,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS ]: () => null,
+	[ HELP_TICKET_CONFIGURATION_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ HELP_TICKET_CONFIGURATION_DISMISS_ERROR ]: () => null,
 } );
 
 export default combineReducers( {
