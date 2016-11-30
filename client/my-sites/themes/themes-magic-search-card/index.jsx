@@ -250,10 +250,7 @@ class ThemesMagicSearchCard extends React.Component {
 ThemesMagicSearchCard.propTypes = {
 	tier: PropTypes.string,
 	select: PropTypes.func.isRequired,
-	site: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.bool
-	] ).isRequired,
+	site: PropTypes.object,
 	onSearch: PropTypes.func.isRequired,
 	search: PropTypes.string,
 	translate: PropTypes.func.isRequired,

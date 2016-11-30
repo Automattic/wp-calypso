@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import pickBy from 'lodash/pickBy';
 
 /**
@@ -12,10 +13,18 @@ import pickBy from 'lodash/pickBy';
 import Main from 'components/main';
 import ThemePreview from './theme-preview';
 import ThemesSelection from './themes-selection';
+import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
-import { addTracking } from './helpers';
+import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
+import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
+import buildUrl from 'lib/mixins/url-search/build-url';
+import { getSiteSlug } from 'state/sites/selectors';
+import config from 'config';
+
+const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
+	? require( './themes-magic-search-card' )
+	: require( './themes-search-card' );
 
 const themesMeta = {
 	'': {
@@ -46,17 +55,20 @@ const optionShape = PropTypes.shape( {
 const ThemeShowcase = React.createClass( {
 	propTypes: {
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+		search: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
+		siteSlug: PropTypes.string,
 	},
 
 	getDefaultProps() {
 		return {
 			selectedSite: false,
-			tier: ''
+			tier: '',
+			search: '',
 		};
 	},
 
@@ -67,8 +79,39 @@ const ThemeShowcase = React.createClass( {
 		};
 	},
 
+	prependFilterKeys() {
+		const { filter } = this.props;
+		if ( filter ) {
+			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+		}
+		return '';
+	},
+
+	doSearch( searchBoxContent ) {
+		const filter = getSortedFilterTerms( searchBoxContent );
+		const searchString = stripFilters( searchBoxContent );
+		this.updateUrl( this.props.tier || 'all', filter, searchString );
+	},
+
 	togglePreview( theme ) {
 		this.setState( { showPreview: ! this.state.showPreview, previewingTheme: theme } );
+	},
+
+	updateUrl( tier, filter, searchString = this.props.search ) {
+		const { siteSlug, vertical } = this.props;
+
+		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
+		const verticalSection = vertical ? `/${ vertical }` : '';
+		const tierSection = tier === 'all' ? '' : `/${ tier }`;
+		const filterSection = filter ? `/filter/${ filter }` : '';
+
+		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		page( buildUrl( url, searchString ) );
+	},
+
+	onTierSelect( { value: tier } ) {
+		trackClick( 'search bar filter', tier );
+		this.updateUrl( tier, this.props.filter );
 	},
 
 	onPrimaryPreviewButtonClick( theme ) {
@@ -104,7 +147,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { options, getScreenshotOption, secondaryOption, tier } = this.props;
+		const { site, options, getScreenshotOption, secondaryOption, tier, search } = this.props;
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -136,7 +179,15 @@ const ThemeShowcase = React.createClass( {
 						onSecondaryButtonClick={ this.onSecondaryPreviewButtonClick }
 					/>
 				}
-				<ThemesSelection search={ this.props.search }
+				<StickyPanel>
+					<ThemesSearchCard
+						site={ site }
+						onSearch={ this.doSearch }
+						search={ this.prependFilterKeys() + search }
+						tier={ tier }
+						select={ this.onTierSelect } />
+				</StickyPanel>
+				<ThemesSelection
 					siteId={ this.props.siteId }
 					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
@@ -160,6 +211,7 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
+					search={ search }
 					tier={ this.props.tier }
 					filter={ this.props.filter }
 					vertical={ this.props.vertical }
@@ -171,8 +223,7 @@ const ThemeShowcase = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		queryParams: getQueryParams( state ),
-		themesList: getThemesList( state ),
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
 	} )
 )( localize( ThemeShowcase ) );
