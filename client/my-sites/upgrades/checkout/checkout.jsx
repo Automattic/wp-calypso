@@ -240,7 +240,7 @@ const Checkout = React.createClass( {
 
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
-				: '/plans/';
+				: '/checkout/thank-you/plans';
 		}
 
 		if ( receipt && receipt.receipt_id ) {
@@ -253,7 +253,7 @@ const Checkout = React.createClass( {
 		}
 
 		if ( ! selectedSiteSlug ) {
-			return '/checkout/';
+			return '/checkout/thank-you/features';
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
