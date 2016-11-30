@@ -187,6 +187,8 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
+		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
+
 		if ( this.props.calypsoStartedConnection ) {
 			this.redirect( CALYPSO_REDIRECTION_PAGE );
 		} else {
