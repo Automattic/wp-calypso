@@ -16,7 +16,15 @@ import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
-		const { isMock, disabled, site, plugin, notices } = this.props;
+		const {
+			isMock,
+			disabled,
+			site,
+			plugin,
+			notices,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent
+		} = this.props;
 		if ( isMock || disabled ) {
 			return;
 		}
@@ -25,14 +33,14 @@ export class PluginActivateToggle extends Component {
 		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
 
 		if ( plugin.active ) {
-			this.props.recordGoogleEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			this.props.recordTracksEvent( 'calypso_plugin_deactivate_click', {
+			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
+			recordEvent( 'calypso_plugin_deactivate_click', {
 				site: site.ID,
 				plugin: plugin.slug
 			} );
 		} else {
-			this.props.recordGoogleEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			this.props.recordTracksEvent( 'calypso_plugin_activate_click', {
+			recordGAEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
+			recordEvent( 'calypso_plugin_activate_click', {
 				site: site.ID,
 				plugin: plugin.slug
 			} );
