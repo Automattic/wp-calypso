@@ -20,6 +20,10 @@
 		strong {
 			color: $white;
 		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.gridicon[height="16"] {
