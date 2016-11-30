@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 import compact from 'lodash/compact';
 
 /**
@@ -12,24 +11,12 @@ import compact from 'lodash/compact';
 import { trackClick } from './helpers';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
-import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
-import buildUrl from 'lib/mixins/url-search/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import { isThemePurchased } from 'state/themes/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import {
-	getFilter,
-	getSortedFilterTerms,
-	stripFilters,
-} from './theme-filters.js';
-import config from 'config';
-
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
-	? require( './themes-magic-search-card' )
-	: require( './themes-search-card' );
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -41,34 +28,20 @@ const ThemesSelection = React.createClass( {
 		search: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		getOptions: React.PropTypes.func,
-		queryParams: PropTypes.object.isRequired,
-		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
 		// connected props
 		siteSlug: React.PropTypes.string,
+		queryParams: PropTypes.object.isRequired,
+		themesList: PropTypes.array.isRequired,
 		isActiveTheme: React.PropTypes.func,
 		isThemePurchased: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return { search: '' };
-	},
-
-	doSearch( searchBoxContent ) {
-		const filter = getSortedFilterTerms( searchBoxContent );
-		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier || 'all', filter, searchString );
-	},
-
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {
@@ -96,23 +69,6 @@ const ThemesSelection = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_last_page_scroll' );
 	},
 
-	onTierSelect( { value: tier } ) {
-		trackClick( 'search bar filter', tier );
-		this.updateUrl( tier, this.props.filter );
-	},
-
-	updateUrl( tier, filter, searchString = this.props.search ) {
-		const { siteSlug, vertical } = this.props;
-
-		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
-		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier === 'all' ? '' : `/${ tier }`;
-		const filterSection = filter ? `/filter/${ filter }` : '';
-
-		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		page( buildUrl( url, searchString ) );
-	},
-
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
 		if ( ! this.props.isActiveTheme( theme.id ) ) {
@@ -131,14 +87,6 @@ const ThemesSelection = React.createClass( {
 
 		return (
 			<div className="themes__selection">
-				<StickyPanel>
-					<ThemesSearchCard
-						site={ site }
-						onSearch={ this.doSearch }
-						search={ this.prependFilterKeys() + this.props.search }
-						tier={ this.props.tier }
-						select={ this.onTierSelect } />
-				</StickyPanel>
 				<ThemesData
 					site={ site }
 					isMultisite={ ! this.props.siteId } // Not the same as `! site` !
@@ -163,7 +111,6 @@ const ThemesSelection = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId ),
 		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
 		isThemePurchased: themeId => (
 			// Note: This component assumes that purchase and data is already present in the state tree
@@ -174,6 +121,8 @@ export default connect(
 			// The same is true for the `hasFeature` selector, which relies on the presence of
 			// a `<QuerySitePlans />` component in a parent component.
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-		)
+		),
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state ),
 	} )
 )( ThemesSelection );

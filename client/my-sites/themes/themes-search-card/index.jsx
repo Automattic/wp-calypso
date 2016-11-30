@@ -22,10 +22,7 @@ const ThemesSearchCard = React.createClass( {
 	propTypes: {
 		tier: React.PropTypes.string,
 		select: React.PropTypes.func.isRequired,
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
+		site: React.PropTypes.object,
 		onSearch: React.PropTypes.func.isRequired,
 		search: React.PropTypes.string
 	},
