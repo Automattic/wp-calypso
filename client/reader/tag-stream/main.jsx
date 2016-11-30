@@ -16,6 +16,7 @@ import TagSubscriptions from 'lib/reader-tags/subscriptions';
 import TagStreamHeader from './header';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
+import HeaderBack from 'reader/header-back';
 
 const TagStream = React.createClass( {
 
@@ -93,6 +94,7 @@ const TagStream = React.createClass( {
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					title={ title }
 					showFollow={ this.state.canFollow }
