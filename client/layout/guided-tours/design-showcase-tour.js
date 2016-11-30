@@ -22,6 +22,8 @@ import {
 	selectedSiteIsCustomizable,
 } from 'state/ui/guided-tours/contexts';
 
+const isAbTestInVariant = function() {};
+
 export const DesignShowcaseTour = makeTour(
 	<Tour
 		name="designShowcase"
@@ -33,6 +35,7 @@ export const DesignShowcaseTour = makeTour(
 			isDesktop,
 			selectedSiteIsCustomizable,
 			not( inSection( 'customize' ) ),
+			isAbTestInVariant( 'designShowcaseTour', 'enabled' ),
 			) }
 		>
 		<Step name="init" placement="right" next="search">
