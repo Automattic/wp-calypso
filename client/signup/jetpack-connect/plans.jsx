@@ -273,7 +273,7 @@ class Plans extends Component {
 				}
 				<PlansGrid
 					{ ...this.props }
-					basePlansPath={ this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect' }
+					basePlansPath={ this.props.showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
 					onSelect={ this.props.showFirst || this.props.isLanding ? this.storeSelectedPlan : this.selectPlan } />
 			</div>
 		);
