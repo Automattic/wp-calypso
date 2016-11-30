@@ -32,7 +32,8 @@ class TermFormDialog extends Component {
 		selectedParent: [],
 		isTopLevel: true,
 		isValid: false,
-		error: null
+		error: null,
+		saving: false
 	};
 
 	static propTypes = {
@@ -61,6 +62,9 @@ class TermFormDialog extends Component {
 	};
 
 	closeDialog = () => {
+		if ( this.state.saving ) {
+			return;
+		}
 		this.setState( this.constructor.initialState );
 		this.props.onClose();
 	};
@@ -101,18 +105,23 @@ class TermFormDialog extends Component {
 
 	saveTerm = () => {
 		const term = this.getFormValues();
-		if ( ! this.isValid() ) {
+		if ( ! this.isValid() || this.state.saving ) {
 			return;
 		}
 
+		this.setState( { saving: true } );
 		const { siteId, taxonomy } = this.props;
 		const isNew = ! this.props.term;
 		const savePromise = isNew
 			? this.props.addTerm( siteId, taxonomy, term )
 			: this.props.updateTerm( siteId, taxonomy, this.props.term.ID, this.props.term.slug, term );
 
-		savePromise.then( this.props.onSuccess );
-		this.closeDialog();
+		savePromise
+			.then( savedTerm => {
+				this.setState( { saving: false } );
+				this.props.onSuccess( savedTerm );
+				this.closeDialog();
+			} );
 	};
 
 	constructor( props ) {
@@ -232,14 +241,15 @@ class TermFormDialog extends Component {
 		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } = this.props;
 		const { name, description } = this.state;
 		const isNew = ! term;
+		const submitLabel = isNew ? translate( 'Add' ) : translate( 'Update' );
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
 		}, {
 			action: isNew ? 'add' : 'update',
-			label: isNew ? translate( 'Add' ) : translate( 'Update' ),
+			label: this.state.saving ? translate( 'Saving…' ) : submitLabel,
 			isPrimary: true,
-			disabled: ! this.state.isValid,
+			disabled: ! this.state.isValid || this.state.saving,
 			onClick: this.saveTerm
 		} ];
 
