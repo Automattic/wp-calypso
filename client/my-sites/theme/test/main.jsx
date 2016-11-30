@@ -8,8 +8,8 @@ import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
 import {
-	receiveThemeDetails,
-	receiveThemeDetailsFailure,
+	receiveTheme,
+	requestThemeFailure,
 } from 'state/themes/actions';
 
 /**
@@ -77,7 +77,7 @@ describe( 'main', function() {
 
 		it( "doesn't throw an exception with theme data", function() {
 			const store = createReduxStore();
-			store.dispatch( receiveThemeDetails( this.themeData ) );
+			store.dispatch( receiveTheme( this.themeData, 'wpcom' ) );
 			const layout = (
 				<ReduxProvider store={ store }>
 					<this.ThemeSheetComponent id={ 'twentysixteen' } />
@@ -92,7 +92,7 @@ describe( 'main', function() {
 
 		it( "doesn't throw an exception with invalid theme data", function() {
 			const store = createReduxStore();
-			store.dispatch( receiveThemeDetailsFailure( 'invalidthemeid', 'not found' ) );
+			store.dispatch( requestThemeFailure( 'wpcom', 'invalidthemeid', 'not found' ) );
 			const layout = (
 				<ReduxProvider store={ store }>
 					<this.ThemeSheetComponent id={ 'invalidthemeid' } />
@@ -106,4 +106,3 @@ describe( 'main', function() {
 		} );
 	} );
 } );
-

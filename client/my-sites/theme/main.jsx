@@ -522,6 +522,10 @@ const ThemeSheetWithOptions = ( props ) => {
 };
 
 const themeDetailsFromTheme = ( theme ) => {
+	if ( theme.error ) {
+		return theme;
+	}
+
 	return {
 		name: theme.name,
 		author: theme.author,
@@ -570,7 +574,7 @@ export default connect(
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = selectedSite ? getTheme( state, selectedSite.ID, id ) : getTheme( state, 'wpcom', id );
-		const themeDetails = theme ? themeDetailsFromTheme( theme ) : {};
+		const themeDetails = theme && themeDetailsFromTheme( theme );
 		return {
 			...themeDetails,
 			id,

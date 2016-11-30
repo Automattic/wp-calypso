@@ -226,6 +226,10 @@ export const queries = ( () => {
 		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes );
 		},
+		[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => {
+			const theme = [ { id: themeId, error } ];
+			return applyToManager( state, siteId, 'receive', true, theme );
+		},
 		[ SERIALIZE ]: ( state ) => {
 			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 		},
