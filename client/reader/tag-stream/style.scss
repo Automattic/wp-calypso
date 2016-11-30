@@ -1,4 +1,15 @@
 .tag-stream__header-image {
-	background-color: $gray-light; // test style
-	margin-top: 60px;
+	background-color: $gray-light;
+	min-height: 140px;
+}
+
+.tag-stream__header-image-title {
+	text-align: center;
+	font-size: 28px;
+}
+
+.tag-stream__header-image-byline {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
 }
