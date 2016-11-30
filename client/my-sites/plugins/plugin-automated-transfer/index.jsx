@@ -27,26 +27,20 @@ class PluginAutomatedTransfer extends Component {
 		transferStep: 'start',
 	}
 
-	setNoticeText = ( pluginName = '' ) => {
+	getNoticeText = ( pluginName = '' ) => {
 		const { translate } = this.props;
 		const { transferStep } = this.state;
 
 		switch ( transferStep ) {
-			case 'start': return translate( 'Installing %s…', {
-				args: pluginName,
-				comment: 'Installing plugin…',
-			} );
+			case 'start': return translate( 'Installing %s…', { args: pluginName } );
 			case 'setup': return translate( 'Now configuring your site. This may take a few minutes.' );
 			case 'leaving': return translate( "Don't leave quite yet! Just a bit longer." );
 			case 'conflicts': return translate( 'Sorry, we found some conflicts to fix before proceding.' );
-			case 'complete': return translate( 'Successfully installed %s!', {
-				args: pluginName,
-				context: 'Successfully installed plugin!',
-			} );
+			case 'complete': return translate( 'Successfully installed %s!', { args: pluginName } );
 		}
 	}
 
-	setStatus = transferStep => {
+	getStatus = transferStep => {
 		switch ( transferStep ) {
 			case 'conflicts': return 'is-error';
 			case 'complete': return 'is-success';
@@ -54,7 +48,7 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
-	setIcon = transferStep => {
+	getIcon = transferStep => {
 		switch ( transferStep ) {
 			case 'conflicts': return 'notice';
 			case 'complete': return 'checkmark';
@@ -62,6 +56,7 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	// TESTING
 	testChangeState = () => {
 		const { transferStep } = this.state;
 		switch ( transferStep ) {
@@ -79,11 +74,11 @@ class PluginAutomatedTransfer extends Component {
 
 		return (
 			<Notice
-				icon={ this.setIcon( transferStep ) }
+				icon={ this.getIcon( transferStep ) }
 				className="plugin-automated-transfer"
 				showDismiss={ false }
-				status={ this.setStatus( transferStep ) }
-				text={ this.setNoticeText( plugin.name ) }
+				status={ this.getStatus( transferStep ) }
+				text={ this.getNoticeText( plugin.name ) }
 			>
 				<NoticeAction href="#" onClick={ this.testChangeState }>
 					{ transferStep === 'conflicts'
