@@ -18,7 +18,7 @@ export default {
 	CALYPSO_COURSES: '/help/courses',
 	CREATE: `${ root }/create`,
 	CUSTOM_DNS: `${ root }/domains/custom-dns`,
-	DESIGNATED_AGENT: `${ root }/?page_id=124050`,
+	DESIGNATED_AGENT: `${ root }/designated-agent/`,
 	DOMAIN_HELPER_PREFIX: `${ root }/domain-helper/?host=`,
 	DOMAIN_REGISTRATION_AGREEMENTS: `${ root }/domain-registration-agreements/`,
 	DOMAINS: `${ root }/domains`,
