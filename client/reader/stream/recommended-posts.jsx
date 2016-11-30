@@ -50,7 +50,9 @@ export class RecommendedPosts extends React.PureComponent {
 	render() {
 		return (
 			<div className="reader-stream__recommended-posts">
-				<h1 className="reader-stream__recommended-posts-header"><Gridicon icon="star" />&nbsp;{ this.props.translate( 'Recommended Posts' ) }</h1>
+				<h1 className="reader-stream__recommended-posts-header">
+					<Gridicon icon="thumbs-up" size={ 18 }/>&nbsp;{ this.props.translate( 'Recommended Posts' ) }
+				</h1>
 				<ul className="reader-stream__recommended-posts-list">
 					{
 						map(
