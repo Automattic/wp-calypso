@@ -136,6 +136,7 @@ const PostSharing = React.createClass( {
 						<div className="posts__post-share-form">
 							{ this.renderMessage() }
 							<Button
+								primary={ true }
 								onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
 								disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
 							>
@@ -143,7 +144,7 @@ const PostSharing = React.createClass( {
 							</Button>
 						</div>
 						<div className="posts__post-share-services">
-							<h5 className="editor-sharing__message-heading">
+							<h5 className="posts__post-share-services-header">
 								{ this.translate( 'Connected services' ) }
 							</h5>
 							{ this.renderServices() }
