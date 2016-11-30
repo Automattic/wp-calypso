@@ -30,7 +30,8 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import {
-	getSerializedThemesQuery
+	getSerializedThemesQuery,
+	getThemeIdFromStylesheet
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { queriesSchema, activeThemesSchema } from './schema';
@@ -47,9 +48,9 @@ import uploadTheme from './upload-theme/reducer';
  * @return {Object}        Updated state
  */
 export const activeThemes = createReducer( {}, {
-	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
+	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
 		...state,
-		[ siteId ]: theme.id
+		[ siteId ]: getThemeIdFromStylesheet( themeStylesheet )
 	} ),
 	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
 		...state,

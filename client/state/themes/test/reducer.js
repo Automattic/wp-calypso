@@ -508,7 +508,7 @@ describe( 'reducer', () => {
 		it( 'should track theme activate request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
 				type: THEME_ACTIVATE_REQUEST_SUCCESS,
-				theme: { id: 'twentysixteen' },
+				themeStylesheet: 'twentysixteen',
 				siteId: 2211888,
 			} );
 
@@ -583,7 +583,7 @@ describe( 'reducer', () => {
 				{
 					type: THEME_ACTIVATE_REQUEST_SUCCESS,
 					siteId: 2916284,
-					theme: { id: 'twentysixteen' },
+					themeStylesheet: 'twentysixteen',
 				}
 			);
 
