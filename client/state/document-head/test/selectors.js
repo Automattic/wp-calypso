@@ -16,6 +16,10 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+	beforeEach( () => {
+		getDocumentHeadFormattedTitle.memoizedSelector.cache.clear();
+	} );
+
 	describe( '#getDocumentHeadTitle()', () => {
 		it( 'should return the currently set title', () => {
 			const title = getDocumentHeadTitle( {
