@@ -70,7 +70,7 @@
 	margin-top: 42px;
 	text-align: center;
 	text-transform: capitalize;
-	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+	text-shadow: 0 1px rgba( 0, 0, 0, .3 );
 	z-index: 2;
 }
 
@@ -78,7 +78,7 @@
     color: $white;
     font-size: 12px;
     text-align: right;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	text-shadow: 0 1px rgba(0, 0, 0, .3);
 	transform: translateY( 150% );
     z-index: 2;
 }
