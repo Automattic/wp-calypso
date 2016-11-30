@@ -157,7 +157,7 @@ function validatePlacement( placement, target ) {
 }
 
 function scrollIntoView( target, scrollContainer ) {
-	// TODO(lsinger: consider replacing with http://yiminghe.me/dom-scroll-into-view/
+	// TODO(lsinger): consider replacing with http://yiminghe.me/dom-scroll-into-view/
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = viewport.isMobile() ? document.documentElement.clientHeight : container.clientHeight;

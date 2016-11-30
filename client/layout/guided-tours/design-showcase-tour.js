@@ -21,6 +21,7 @@ import {
 	isEnabled,
 	selectedSiteIsCustomizable,
 } from 'state/ui/guided-tours/contexts';
+import Gridicon from 'components/gridicon';
 
 const isAbTestInVariant = function() {};
 
@@ -65,8 +66,7 @@ export const DesignShowcaseTour = makeTour(
 
 		<Step name="theme-options"
 			target=".card.theme:nth-child(4) .theme__more-button"
-			arrow="top-left"
-			placement="below"
+			placement="beside"
 			next="finish"
 			scrollContainer="body"
 			shouldScrollTo
@@ -74,16 +74,23 @@ export const DesignShowcaseTour = makeTour(
 			<p>
 				{ 'Here you can access all the extra theme options.' }
 			</p>
-			<Continue step="finish" target=".theme__more-button" click />
+			<Continue step="finish" target=".card.theme:nth-child(4) .theme__more-button" click>
+				{
+					translate( 'Click the {{GridIcon/}} to continue.', {
+						components: {
+							GridIcon: <Gridicon icon="ellipsis" size={ 24 } />,
+						}
+					} )
+				}
+			</Continue>
 		</Step>
 
 		<Step name="finish"
 			target=".popover"
-			placement="below"
-			arrow="top-left"
+			placement="beside"
 		>
 			<p>
-				This menu has everything you can do with a theme.
+				This menu contains everything you can do with a theme.
 				Try it out!
 			</p>
 			<ButtonRow>
