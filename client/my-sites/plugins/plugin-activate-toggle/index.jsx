@@ -37,7 +37,7 @@ export class PluginActivateToggle extends Component {
 				plugin: plugin.slug
 			} );
 		}
-	}
+	};
 
 	render() {
 		const { site, plugin, isMock, disabled, translate } = this.props;
