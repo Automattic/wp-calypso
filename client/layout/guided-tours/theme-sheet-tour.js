@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
+	ButtonRow,
 	Continue,
 	Next,
 	Quit,
@@ -17,7 +18,6 @@ import {
 	makeTour,
 } from 'layout/guided-tours/config-elements';
 import {
-	inSection,
 	isEnabled,
 	isNewUser,
 	previewIsShowing,
@@ -25,15 +25,15 @@ import {
 import { isDesktop } from 'lib/viewport';
 
 export const ThemeSheetTour = makeTour(
-	<Tour name="theme" version="20160812" path="/theme" when={ and( isNewUser, isEnabled( 'guided-tours/theme', isDesktop ) ) }>
+	<Tour name="theme" version="20161129" path="/theme" when={ and( isEnabled( 'guided-tours/theme' ), isNewUser, isDesktop ) }>
 		<Step name="init" placement="right" next="live-preview" className="guided-tours__step-first">
-			<p className="guided-tours__step-text">
-				{ 'This page shows all the details about a specific theme design. May I show you around?' }
+			<p>
+				{ translate( 'This page shows all the details about a specific theme design. May I show you around?' ) }
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="live-preview">{ translate( "Let's go!" ) }</Next>
-				<Quit>{ translate( 'No thanks.' ) }</Quit>
-			</div>
+				<Quit>{ translate( 'No, thanks' ) }</Quit>
+			</ButtonRow>
 		</Step>
 
 		<Step name="live-preview"
@@ -42,27 +42,47 @@ export const ThemeSheetTour = makeTour(
 			arrow="top-left"
 			next="close-preview"
 		>
-			<p className="guided-tours__step-text">
-				{ 'Here you can see the design in action in a demo site.' }
+			<p>
+				{ translate( 'Here you can see the design in action in a demo site.' ) }
 			</p>
-			<p className="guided-tours__actionstep-instructions">
-				<Continue step="close-preview" target="theme-sheet-preview" click />
+			<ButtonRow>
+				<Continue step="try-viewport" target="theme-sheet-preview" click />
+			</ButtonRow>
+		</Step>
+
+		<Step name="try-viewport"
+			target=".web-preview.is-visible"
+			placement="middle"
+			when={ previewIsShowing }
+		>
+			<p>
+				{ translate(
+					'This is the live demo. You can also see what the design ' +
+					'will look like on mobile devices by clicking on the phone ' +
+					'or tablet icons in the toolbar.'
+				) }
 			</p>
+			<ButtonRow>
+				<Next step="close-preview" />
+			</ButtonRow>
 		</Step>
 
 		<Step name="close-preview"
 			target=".web-preview.is-visible [data-tip-target='web-preview__close']"
-			arrow="left-top"
 			placement="beside"
+			arrow="left-top"
 			when={ previewIsShowing }
 			next="pick-activate"
 		>
-			<p className="guided-tours__step-text">
-				{ 'This is the live demo. Take a look around, see if the design suits you! Then tap here to close.' }
+			<p>
+				{ translate(
+					'Take a look around, see if the design suits you! Then ' +
+					'close the preview to return.'
+				) }
 			</p>
-			<p className="guided-tours__actionstep-instructions">
-				<Continue when={ not( previewIsShowing ) } step="pick-activate" />
-			</p>
+			<ButtonRow>
+				<Continue when={ not( previewIsShowing ) } step="pick-activate" icon="cross" />
+			</ButtonRow>
 		</Step>
 
 		<Step name="pick-activate"
@@ -71,24 +91,26 @@ export const ThemeSheetTour = makeTour(
 			placement="below"
 			next="back-to-list"
 		>
-			<p className="guided-tours__step-text">
-				{ 'This will activate the design you’re currently seeing on your site.' }
+			<p>
+				{ translate( 'This will activate the design you’re currently seeing on your site.' ) }
 			</p>
-			<div className="guided-tours__choice-button-row">
-				<Next step="back-to-list" />
+			<ButtonRow>
+				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
 				<Quit />
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="back-to-list"
 			target=".theme__sheet-action-bar .header-cake__back.button"
 			placement="beside"
 			arrow="left-top"
-			when={ inSection( 'theme' ) }
 		>
-			<p className="guided-tours__step-text">
-				{ 'You can go back to the themes list here.' }
+			<p>
+				{ translate( 'That\'s it! You can return to our design showcase anytime through here.' ) }
 			</p>
+			<ButtonRow>
+				<Quit primary={ true }>{ translate( 'Done' ) }</Quit>
+			</ButtonRow>
 		</Step>
 	</Tour>
 );
