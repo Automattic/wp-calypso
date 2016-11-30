@@ -14,12 +14,16 @@ import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { some } from 'lodash';
 
 var CreditsPaymentBox = React.createClass( {
 	content: function() {
 		const { cart, transactionStep } = this.props;
+		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
+			hasBusinessPlanInCart &&
 			abtest( 'presaleChatButton' ) === 'showChatButton';
 
 		return (
