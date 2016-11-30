@@ -30,7 +30,7 @@ import utils from 'lib/site/utils';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { isJetpackSite, isRequestingSites, getRawSite } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -508,6 +508,11 @@ export default connect(
 		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
 
+		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
+		const selectedSite = site && isJetpackSite( state, siteId )
+			? JetpackSite( getRawSite( state, siteId ) )
+			: site;
+
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
@@ -517,7 +522,7 @@ export default connect(
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
-			selectedSite: site && isJetpackSite( state, siteId ) ? JetpackSite( site ) : site,
+			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			siteId
 		};
