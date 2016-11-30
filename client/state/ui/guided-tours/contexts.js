@@ -62,3 +62,7 @@ export const userCanEditSettingsOfSelectedSite = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
 };
+
+export const isAbTestInVariant = ( testName, variant ) => () => {
+	return abtest( testName ) === variant;
+};
