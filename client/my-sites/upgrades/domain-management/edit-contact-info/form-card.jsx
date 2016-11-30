@@ -129,8 +129,7 @@ class EditContactInfoFormCard extends React.Component {
 					<FormCheckbox
 						name="transfer-lock-opt-out"
 						disabled={ this.state.formSubmitting }
-						value={ formState.getFieldValue( this.state.form, 'transfer-lock-opt-out' ) }
-						onChange={ this.onCheckboxChange } />
+						onChange={ this.onTransferLockOptOutChange } />
 					<span>
 						{ this.props.translate(
 							'Opt-out of the {{link}}60-day transfer lock{{/link}}.',
@@ -360,6 +359,7 @@ class EditContactInfoFormCard extends React.Component {
 			upgradesActions.updateWhois(
 				this.props.selectedDomain.name,
 				formState.getAllFieldValues( this.state.form ),
+				this.state.transferLock,
 				this.onWhoisUpdate
 			);
 		} );
