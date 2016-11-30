@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import { get, head } from 'lodash';
+import { get } from 'lodash';
 
 /**
- * Returns the first image available for a given tag.
+ * Returns the all images available for a given tag.
  *
  * @param  {Object}  state  Global state tree
  * @param  {String}  tag 	Tag
  * @return {Object} Image
  */
-export function getFirstImageForTag( state, tag ) {
+export function getTagImages( state, tag ) {
 	const items = get( state, 'reader.tags.images.items' );
 
 	if ( ! items || ! items[ tag ] ) {
 		return undefined;
 	}
 
-	return head( state.reader.tags.images.items[ tag ] );
+	return state.reader.tags.images.items[ tag ];
 }
 
 /**
