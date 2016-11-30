@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import userModule from 'lib/user';
-import stripHTML from 'lib/formatting';
+import { stripHTML } from 'lib/formatting';
 
 const user = userModule();
 
@@ -42,7 +42,7 @@ const getContent = ( reactElement ) => {
 };
 
 // Adopted from from: https://github.com/twitter/RTLtextarea/blob/master/src/RTLText.module.js#L25
-const RTLCharRanges = [
+const rtlCharacterRanges = [
 	{
 		name: 'Hebrew',
 		start: 0x590,
@@ -105,7 +105,7 @@ const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
 const isRTLCharacter = ( character ) => {
 	const characterCode = character.charCodeAt( 0 );
-	return RTLCharRanges.some( range => range.start <= characterCode && range.end >= characterCode );
+	return rtlCharacterRanges.some( range => range.start <= characterCode && range.end >= characterCode );
 };
 
 /***
