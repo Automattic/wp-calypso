@@ -23,7 +23,7 @@ import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
 import HelpContactClosureNotice from '../help-contact-closure-notice';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -77,7 +77,7 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteSlug: this.getSiteSlug()
+			siteSlug: this.getSiteId()
 		};
 	},
 
@@ -93,21 +93,22 @@ export const HelpContactForm = React.createClass( {
 		this.props.valueLink.requestChange( this.state );
 	},
 
-	getSiteSlug() {
-		if ( this.props.selectedSiteSlug ) {
-			return this.props.selectedSiteSlug;
+	getSiteId() {
+		if ( this.props.selectedSiteId ) {
+			return this.props.selectedSiteId;
 		}
 
 		const primarySite = sites.getPrimary();
 		if ( primarySite ) {
-			return primarySite.slug;
+			return primarySite.ID;
 		}
 
 		return null;
 	},
 
 	setSite( siteSlug ) {
-		this.setState( { siteSlug } );
+		const site = sites.getSite( siteSlug );
+		this.setState( { siteId: site.ID } );
 	},
 
 	trackClickStats( selectionName, selectedOption ) {
@@ -242,7 +243,7 @@ export const HelpContactForm = React.createClass( {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selected={ this.state.siteSlug }
+							selectedSiteId={ this.state.siteId }
 							onSiteSelect={ this.setSite } />
 					</div>
 				) }
@@ -268,8 +269,10 @@ export const HelpContactForm = React.createClass( {
 	}
 } );
 
-export default connect( ( state ) => {
+const mapStateToProps = ( state ) => {
 	return {
-		selectedSiteSlug: getSelectedSiteSlug( state )
+		selectedSiteId: getSelectedSiteId( state )
 	};
-} )( localize( HelpContactForm ) );
+};
+
+export default connect( mapStateToProps )( localize( HelpContactForm ) );
