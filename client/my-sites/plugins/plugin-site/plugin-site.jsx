@@ -1,27 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginSiteJetpack = require( 'my-sites/plugins/plugin-site-jetpack' ),
-	PluginSiteNetwork = require( 'my-sites/plugins/plugin-site-network' );
+import PluginSiteJetpack from 'my-sites/plugins/plugin-site-jetpack';
+import PluginSiteNetwork from 'my-sites/plugins/plugin-site-network';
 
-module.exports = React.createClass( {
-
-	displayName: 'PluginSite',
-
-	render: function() {
-		if ( ! this.props.site ) {
-			return null;
-		}
-
-		if ( this.props.site.jetpack && this.props.secondarySites && this.props.secondarySites.length ) {
-			return <PluginSiteNetwork { ...this.props } />;
-		}
-
-		return <PluginSiteJetpack { ...this.props } />;
+const PluginSite = ( props ) => {
+	if ( ! props.site ) {
+		return null;
 	}
-} );
+
+	if ( props.site.jetpack && props.secondarySites && props.secondarySites.length ) {
+		return <PluginSiteNetwork { ...props } />;
+	}
+
+	return <PluginSiteJetpack { ...props } />;
+};
+
+export default PluginSite;
