@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getThemeIdFromStylesheet,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getDeserializedThemesQueryDetails,
@@ -14,6 +15,23 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( '#getThemeIdFromStylesheet()', () => {
+		it( 'should return undefined when given no argument', () => {
+			const themeId = getThemeIdFromStylesheet();
+			expect( themeId ).to.be.undefined;
+		} );
+
+		it( 'should return the argument if it doesn\'t contain a slash (/)', () => {
+			const themeId = getThemeIdFromStylesheet( 'twentysixteen' );
+			expect( themeId ).to.equal( 'twentysixteen' );
+		} );
+
+		it( 'should return argument\'s part after the slash if it does contain a slash (/)', () => {
+			const themeId = getThemeIdFromStylesheet( 'pub/twentysixteen' );
+			expect( themeId ).to.equal( 'twentysixteen' );
+		} );
+	} );
+
 	describe( '#getNormalizedThemesQuery()', () => {
 		it( 'should exclude default values', () => {
 			const query = getNormalizedThemesQuery( {

@@ -313,7 +313,7 @@ describe( 'actions', () => {
 					],
 				},
 				type: THEME_ACTIVATE_REQUEST_SUCCESS,
-				theme: { id: 'twentysixteen' },
+				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
 
@@ -331,7 +331,7 @@ describe( 'actions', () => {
 				}
 			} );
 
-			themeActivated( { id: 'twentysixteen' }, 2211667 )( spy, fakeGetState );
+			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );

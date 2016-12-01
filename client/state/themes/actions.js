@@ -46,7 +46,7 @@ import {
 import { getCurrentTheme } from './current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeById } from './themes/selectors';
+import { getThemeIdFromStylesheet } from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -367,7 +367,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				dispatch( themeActivated( theme, siteId, source, purchased ) );
+				const themeStylesheet = theme.stylesheet || themeId; // Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
 			.catch( error => {
 				dispatch( {
@@ -382,23 +383,20 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 /**
  * Returns an action thunk to be used in signalling that a theme has been activated
- * on a given site.
+ * on a given site. Careful, this action is different from most others here in that
+ * expects a theme stylesheet string (not just a theme ID).
  *
- * @param  {Object}   theme     Theme object
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
+ * @param  {Number}   siteId          Site ID
+ * @param  {String}   source          The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased       Whether the theme has been purchased prior to activation
+ * @return {Function}                 Action thunk
  */
-export function themeActivated( theme, siteId, source = 'unknown', purchased = false ) {
+export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
-		if ( typeof theme !== 'object' ) {
-			theme = getThemeById( getState(), theme );
-		}
-
 		const action = {
 			type: THEME_ACTIVATE_REQUEST_SUCCESS,
-			theme,
+			themeStylesheet,
 			siteId,
 		};
 		const previousTheme = getCurrentTheme( getState(), siteId );
@@ -407,7 +405,7 @@ export function themeActivated( theme, siteId, source = 'unknown', purchased = f
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
-				theme: theme.id,
+				theme: getThemeIdFromStylesheet( themeStylesheet ),
 				previous_theme: previousTheme.id,
 				source: source,
 				purchased: purchased,

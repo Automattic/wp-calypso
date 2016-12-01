@@ -233,8 +233,7 @@ var Customize = React.createClass( {
 					this.setState( { iframeLoaded: true } );
 					break;
 				case 'activated':
-					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					Actions.activated( themeSlug, site, this.props.themeActivated );
+					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
 				case 'purchased':
 					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
