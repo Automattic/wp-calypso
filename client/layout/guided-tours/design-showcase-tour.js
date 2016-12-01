@@ -59,8 +59,8 @@ export const DesignShowcaseTour = makeTour(
 				{ 'Here you can search for themes and apply filters.' }
 			</p>
 			<ButtonRow>
-				<Next step="theme-options">{ translate( "Next" ) }</Next>
-				<Quit>{ translate( 'Close' ) }</Quit>
+				<Next step="theme-options" />
+				<Quit />
 			</ButtonRow>
 		</Step>
 
