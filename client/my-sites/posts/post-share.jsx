@@ -24,6 +24,7 @@ import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import FormToggle from 'components/forms/form-toggle/compact';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -71,6 +72,7 @@ const PostSharing = React.createClass( {
 					'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
 				} ) }
 			>
+				<FormToggle checked={ ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 ) }/>
 				<SocialLogo icon={ connection.service === 'google_plus' ? 'google-plus' : connection.service }/>
 				<div className="posts__post-share-service-account-name">
 					<span>{ connection && connection.external_display }</span>
@@ -130,16 +132,27 @@ const PostSharing = React.createClass( {
 					<h3 className="posts__post-share-title">
 						{ this.translate( 'Share the post and spread the word!' ) }
 					</h3>
-					<div className="posts__post-share-services">
-						{ this.renderServices() }
+					<div className="posts__post-share-main">
+						<div className="posts__post-share-form">
+							{ this.renderMessage() }
+							<Button
+								primary={ true }
+								onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
+								disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
+							>
+								{ this.translate( 'Share post' ) }
+							</Button>
+						</div>
+						<div className="posts__post-share-services">
+							<h5 className="posts__post-share-services-header">
+								{ this.translate( 'Connected services' ) }
+							</h5>
+							{ this.renderServices() }
+							<Button href={ '/sharing/' + this.props.siteId } compact={ true } className="posts__post-share-services-add">
+								{ this.translate( 'Add account' ) }
+							</Button>
+						</div>
 					</div>
-					{ this.renderMessage() }
-					<Button
-						onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
-						disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
-					>
-						{ this.translate( 'Share post' ) }
-					</Button>
 				</div>
 				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 			</div>
