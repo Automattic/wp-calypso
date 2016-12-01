@@ -24,6 +24,14 @@ import {
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop, isMobile } from 'lib/viewport';
 
+const PickActivateStep = () => (
+	<p>
+		{ translate(
+			'This will activate the design you’re currently seeing on your site.'
+		) }
+	</p>
+);
+
 export const ThemeSheetTour = makeTour(
 	<Tour name="theme"
 		version="20161129"
@@ -57,24 +65,7 @@ export const ThemeSheetTour = makeTour(
 				{ translate( 'Here you can see the design in action in a demo site.' ) }
 			</p>
 			<ButtonRow>
-				<Continue step="try-viewport" target="theme-sheet-preview" click />
-			</ButtonRow>
-		</Step>
-
-		<Step name="try-viewport"
-			target=".web-preview.is-visible"
-			placement="middle"
-			when={ previewIsShowing }
-		>
-			<p>
-				{ translate(
-					'This is the live demo. You can also see what the design ' +
-					'will look like on mobile devices by clicking on the phone ' +
-					'or tablet icons in the toolbar.'
-				) }
-			</p>
-			<ButtonRow>
-				<Next step="close-preview" />
+				<Continue step="close-preview" target="theme-sheet-preview" click />
 			</ButtonRow>
 		</Step>
 
@@ -86,8 +77,7 @@ export const ThemeSheetTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Take a look around, see if the design suits you! Then ' +
-					'close the preview to return.'
+					'This is the live demo. Take a look around, see if the design suits you! Then close the preview to return.'
 				) }
 			</p>
 			<ButtonRow>
@@ -96,31 +86,45 @@ export const ThemeSheetTour = makeTour(
 		</Step>
 
 		<Step name="theme-docs"
-			target=".theme__sheet-content p:nth-child(2)"
+			target=".theme__sheet-content .section-nav-tab:last-child"
 			placement="beside"
 			arrow="left-top"
-			scrollContainer="body"
-			shouldScrollTo
-		>
-			<p>Here be docs. Here be docs. Here be docs. Here be docs. Here be docs. </p>
-			<ButtonRow>
-				<Next step="pick-activate" />
-			</ButtonRow>
-		</Step>
-
-		<Step name="pick-activate"
-			target=".theme__sheet-primary-button"
-			arrow="top-left"
-			placement="below"
-			next="back-to-list"
-			scrollContainer="body"
-			shouldScrollTo
 		>
 			<p>
 				{ translate(
-					'This will activate the design you’re currently seeing on your site.'
+					'There\'s more to your theme than meets the eye! Unlock its ' +
+					'full potential, discover its features — everything is ' +
+					'in the documentation.'
 				) }
 			</p>
+			<ButtonRow>
+				<Next step="pick-activate-wide" />
+			</ButtonRow>
+		</Step>
+
+		<Step name="pick-activate-wide"
+			target=".theme__sheet-primary-button"
+			arrow="top-left"
+			placement="below"
+			when={ isDesktop }
+			next="pick-activate-narrow"
+		>
+			<PickActivateStep />
+			<ButtonRow>
+				<Next step="pick-activate-narrow">{ translate( 'Got it' ) }</Next>
+				<Continue step="pick-activate-narrow" target=".theme__sheet-primary-button" click hidden />
+				<Quit />
+			</ButtonRow>
+		</Step>
+
+		<Step name="pick-activate-narrow"
+			target=".theme__sheet-primary-button"
+			arrow="top-right"
+			placement="below"
+			next="back-to-list"
+			when={ not( isDesktop ) }
+		>
+			<PickActivateStep />
 			<ButtonRow>
 				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
 				<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
