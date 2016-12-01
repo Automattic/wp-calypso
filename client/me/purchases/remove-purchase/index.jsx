@@ -67,7 +67,7 @@ const RemovePurchase = React.createClass( {
 		olarkEvents.off( 'api.chat.onBeginConversation', this.chatStarted );
 	},
 
-	chatStarted: () => {
+	chatStarted() {
 		this.recordChatEvent( 'calypso_precancellation_chat_begin' );
 		olarkApi( 'api.chat.sendNotificationToOperator', {
 			body: 'Context: Precancellation'
