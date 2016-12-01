@@ -79,15 +79,15 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ showSEO &&
+			{ showDeviceSwitcher &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
 				className={ classNames(
 					'web-preview__device-button',
-					'web-preview__back-to-preview-button', {
-					'is-active': currentDevice !== 'seo'
-				} ) }
+					'web-preview__back-to-preview-button',
+					{ 'is-active': 'seo' !== currentDevice }
+				) }
 				onClick={ partial( setDeviceViewport, 'phone' ) }
 			>
 				<Gridicon icon="phone" />
@@ -97,11 +97,11 @@ export const PreviewToolbar = props => {
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
-						'web-preview__seo-button',
-						'web-preview__device-button', {
-						'is-active': 'seo' === currentDevice,
-						'is-showing-device-switcher': showDeviceSwitcher
-					} ) }
+						'web-preview__seo-button', {
+							'is-active': 'seo' === currentDevice,
+							'is-showing-device-switcher': showDeviceSwitcher
+						}
+					) }
 					onClick={ selectSeoPreview }
 				>
 					<Gridicon icon="globe" />
