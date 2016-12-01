@@ -13,7 +13,7 @@ import SocialLogo from 'social-logos';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
 import { isJetpackModuleActive } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -29,6 +29,7 @@ import FormToggle from 'components/forms/form-toggle/compact';
 
 const PostSharing = React.createClass( {
 	propTypes: {
+		siteSlug: PropTypes.string,
 		site: PropTypes.object,
 		post: PropTypes.object,
 		siteId: PropTypes.number,
@@ -136,7 +137,7 @@ const PostSharing = React.createClass( {
 					<div className="posts__post-share-subtitle">
 						{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}', {
 							components: {
-								a: <a href={ '/sharing/' + this.props.siteId } />
+								a: <a href={ '/sharing/' + this.props.siteSlug } />
 							}
 						} ) }
 					</div>
@@ -164,7 +165,7 @@ const PostSharing = React.createClass( {
 						</div>
 					}
 					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'No social accounts connected' ) }>
-						<NoticeAction href={ '/sharing/' + this.props.siteId }>
+						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
 						</NoticeAction>
 					</Notice> }
@@ -186,6 +187,7 @@ export default connect(
 		);
 
 		return {
+			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isPublicizeEnabled,
 			connections: getSiteUserConnections( state, siteId, userId ),
