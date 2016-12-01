@@ -45,10 +45,9 @@
 .taxonomy-manager__item {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
 
 	.taxonomy-manager__icon {
-		margin: 15px;
+		padding: 15px;
 		color: $gray;
 		.gridicon {
 			display: block;
@@ -59,7 +58,7 @@
 	}
 
 	.taxonomy-manager__label {
-		line-height: 18px;
+		line-height: 54px;
 		white-space: nowrap;
 		overflow: hidden;
 		flex-grow: 1;
