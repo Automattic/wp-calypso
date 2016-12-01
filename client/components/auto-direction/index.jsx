@@ -11,13 +11,23 @@ import { stripHTML } from 'lib/formatting';
 
 const user = userModule();
 
+const RTL_THRESHOLD = 0.5;
+const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
+
 /***
  * Gets text content from react element in case that's a leaf element
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
 const getContent = ( reactElement ) => {
+	if ( ! reactElement ) {
+		return null;
+	}
 	const { props } = reactElement;
+
+	if ( ! props ) {
+		return null;
+	}
 
 	// The child is a text node
 	if ( typeof props.children === 'string' ) {
@@ -28,7 +38,7 @@ const getContent = ( reactElement ) => {
 	if ( typeof props.dangerouslySetInnerHTML === 'object' ) {
 		// Strip tags because we're only interested in the text, not markup
 		return props.dangerouslySetInnerHTML.__html
-			? stripHTML( props.dangerouslySetInnerHTML.__html )
+			? stripHTML( props.dangerouslySetInnerHTML.__html.substring( 0, Math.floor( MAX_LENGTH_OF_TEXT_TO_EXAMINE * 1.25 ) ) )
 			: '';
 	}
 
@@ -100,13 +110,17 @@ const rtlCharacterRanges = [
 	},
 ];
 
-const RTL_THRESHOLD = 0.5;
-const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
+
 
 const isRTLCharacter = ( character ) => {
 	const characterCode = character.charCodeAt( 0 );
 	return rtlCharacterRanges.some( range => range.start <= characterCode && range.end >= characterCode );
 };
+
+const whitespaceRe = /[\s\-\_0-9]/u;
+const isNeutralCharacter = ( character ) => {
+	return whitespaceRe.test( character );
+}
 
 /***
  * Gets the main directionality in a text
@@ -117,12 +131,21 @@ const isRTLCharacter = ( character ) => {
  */
 const getTextMainDirection = ( text ) => {
 	let rtlCount = 0;
+	let countedCharacters = 0;
 	const examinedLength = Math.min( MAX_LENGTH_OF_TEXT_TO_EXAMINE, text.length );
 	for ( let i = 0; i < examinedLength; i++ ) {
+		if ( isNeutralCharacter( text[ i ] ) ) {
+			continue;
+		}
 		rtlCount += isRTLCharacter( text[ i ] ) ? 1 : 0;
+		countedCharacters++;
 	}
 
-	return ( rtlCount / examinedLength > RTL_THRESHOLD ) ? 'rtl' : 'ltr';
+	if ( countedCharacters === 0 ) {
+		return user.isRTL() ? 'rtl' : 'ltr';
+	}
+
+	return ( rtlCount / countedCharacters > RTL_THRESHOLD ) ? 'rtl' : 'ltr';
 };
 
 /***
@@ -154,9 +177,13 @@ const setChildDirection = ( child ) => {
 		return child;
 	}
 
-	return React.cloneElement( child, {
-		children: React.Children.map( child.props.children, setChildDirection )
-	} );
+	if ( child && child.props.children ) {
+		return React.cloneElement( child, {
+			children: React.Children.map( child.props.children, setChildDirection )
+		} );
+	}
+
+	return child;
 };
 
 /***
