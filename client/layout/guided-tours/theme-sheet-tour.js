@@ -83,7 +83,6 @@ export const ThemeSheetTour = makeTour(
 			placement="beside"
 			arrow="left-top"
 			when={ previewIsShowing }
-			next="pick-activate"
 		>
 			<p>
 				{ translate(
@@ -92,7 +91,20 @@ export const ThemeSheetTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-				<Continue when={ not( previewIsShowing ) } step="pick-activate" icon="cross" />
+				<Continue when={ not( previewIsShowing ) } step="theme-docs" icon="cross" />
+			</ButtonRow>
+		</Step>
+
+		<Step name="theme-docs"
+			target=".theme__sheet-content p:nth-child(2)"
+			placement="beside"
+			arrow="left-top"
+			scrollContainer="body"
+			shouldScrollTo
+		>
+			<p>Here be docs. Here be docs. Here be docs. Here be docs. Here be docs. </p>
+			<ButtonRow>
+				<Next step="pick-activate" />
 			</ButtonRow>
 		</Step>
 
@@ -101,6 +113,8 @@ export const ThemeSheetTour = makeTour(
 			arrow="top-left"
 			placement="below"
 			next="back-to-list"
+			scrollContainer="body"
+			shouldScrollTo
 		>
 			<p>
 				{ translate(
