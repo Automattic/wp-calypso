@@ -317,20 +317,6 @@ module.exports = React.createClass( {
 			) );
 		}
 
-		if ( config.isEnabled( 'republicize' ) && post && ( post.status === 'publish' ) ) {
-			metaItems.push(
-				<a
-					className={ classNames( {
-						'post__comments': true,
-					} ) }
-					title={ this.translate( 'Share' ) }
-					onClick={ () => this.setState( { showShare: ! this.state.showShare } ) }
-				>
-				<Gridicon icon="speaker" size={ 24 } />
-				</a>
-			);
-		}
-
 		if ( metaItems.length ) {
 			footerMetaItems = metaItems.map( function( item, i ) {
 				const itemKey = 'meta-' + postId + '-' + i;
@@ -378,6 +364,10 @@ module.exports = React.createClass( {
 		this.analyticsEvents.commentIconClick();
 	},
 
+	toggleShare() {
+		this.setState( { showShare: ! this.state.showShare } );
+	},
+
 	render() {
 		const site = this.getSite();
 
@@ -405,6 +395,7 @@ module.exports = React.createClass( {
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
+					onToggleShare={ this.toggleShare }
 					site={ site }
 				/>
 				<ReactCSSTransitionGroup

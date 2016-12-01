@@ -108,6 +108,16 @@ module.exports = React.createClass( {
 				onClick: this.viewStats,
 				icon: 'stats-alt'
 			} );
+
+			if ( config.isEnabled( 'republicize' ) ) {
+				availableControls.push( {
+					text: this.translate( 'Share' ),
+					className: 'post-controls__share',
+					onClick: this.props.onToggleShare,
+					icon: 'share'
+				} );
+			}
+
 		} else if ( post.status !== 'trash' ) {
 			parsed = url.parse( post.URL, true );
 			parsed.query.preview = 'true';
