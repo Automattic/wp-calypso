@@ -11,7 +11,7 @@ import range from 'lodash/range';
 import size from 'lodash/size';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import WindowScroller from 'react-virtualized/WindowScroller';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 
 /**
  * Internal dependencies
@@ -112,9 +112,14 @@ class PostTypeList extends Component {
 		return <PostItem key="placeholder" />;
 	}
 
-	renderPostRow( { index } ) {
+	renderPostRow( { key, style, index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostItem key={ globalId } globalId={ globalId } />;
+
+		return (
+			<div key={ key } style={ style } className="post-type-list__item">
+				<PostItem globalId={ globalId } />
+			</div>
+		);
 	}
 
 	render() {
@@ -142,7 +147,7 @@ class PostTypeList extends Component {
 						{ ( { height, scrollTop } ) => (
 							<AutoSizer disableHeight>
 								{ ( { width } ) => (
-									<VirtualScroll
+									<List
 										autoHeight
 										scrollTop={ scrollTop }
 										height={ height }

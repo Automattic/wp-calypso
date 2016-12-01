@@ -126,14 +126,19 @@ export class TaxonomyManagerList extends Component {
 		);
 	}
 
-	renderRow = ( { index } ) => {
+	renderRow = ( { key, style, index } ) => {
 		const item = this.getItem( index );
 		if ( item ) {
-			return this.renderItem( item );
+			const renderedItem = this.renderItem( item );
+			if ( renderedItem ) {
+				return React.cloneElement( renderedItem, { key, style } );
+			}
+
+			return;
 		}
 
 		return (
-			<CompactCard className="taxonomy-manager__list-item is-placeholder">
+			<CompactCard key={ key } style={ style } className="taxonomy-manager__list-item is-placeholder">
 				<span className="taxonomy-manager__label">
 					{ this.props.translate( 'Loading…' ) }
 				</span>

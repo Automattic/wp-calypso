@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 import {
 	debounce,
 	difference,
@@ -110,7 +110,7 @@ const TermTreeSelectorList = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.virtualScroll.forceUpdateGrid();
 		}
 
 		if ( this.props.terms !== prevProps.terms ) {
@@ -124,7 +124,6 @@ const TermTreeSelectorList = React.createClass( {
 		}
 
 		this.virtualScroll.recomputeRowHeights();
-		this.virtualScroll.forceUpdate();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
@@ -367,14 +366,19 @@ const TermTreeSelectorList = React.createClass( {
 		}
 	},
 
-	renderRow( { index } ) {
+	renderRow( { key, style, index } ) {
 		const item = this.getItem( index );
 		if ( item ) {
-			return this.renderItem( item );
+			const renderedItem = this.renderItem( item );
+			if ( renderedItem ) {
+				return React.cloneElement( renderedItem, { key, style } );
+			}
+
+			return;
 		}
 
 		return (
-			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
+			<div key={ key } style={ style } className="term-tree-selector__list-item is-placeholder">
 				<label>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
@@ -414,7 +418,7 @@ const TermTreeSelectorList = React.createClass( {
 						searchTerm={ this.state.searchTerm }
 						onSearch={ this.onSearch } />
 				) }
-				<VirtualScroll
+				<List
 					ref={ this.setVirtualScrollRef }
 					width={ this.getResultsWidth() }
 					height={ isCompact ? this.getCompactContainerHeight() : 300 }

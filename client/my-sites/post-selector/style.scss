@@ -64,6 +64,7 @@ input[type=checkbox].post-selector__input {
 }
 
 .post-selector__list-item {
+	box-sizing: border-box;
 	position: relative;
 	padding: 2px 8px;
 	font-size: 13px;

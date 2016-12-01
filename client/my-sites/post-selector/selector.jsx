@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
@@ -115,7 +115,7 @@ const PostSelectorPosts = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.virtualScroll.forceUpdateGrid();
 		}
 
 		if ( this.props.posts !== prevProps.posts ) {
@@ -363,18 +363,24 @@ const PostSelectorPosts = React.createClass( {
 		);
 	},
 
-	renderRow( { index } ) {
+	renderRow( { key, style, index } ) {
 		const item = this.getItem( index );
 		if ( item ) {
-			return this.renderItem( item );
+			const renderedItem = this.renderItem( item );
+			if ( renderedItem ) {
+				return React.cloneElement( renderedItem, { key, style } );
+			}
+
+			return;
 		}
 
 		return (
-			<div key="placeholder" className="post-selector__list-item is-placeholder">
+			<div key={ key } style={ style } className="post-selector__list-item is-placeholder">
 				<label>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						disabled
+						checked={ false }
 						className="post-selector__input" />
 					<span className="post-selector__label">
 						{ this.translate( 'Loading…' ) }
@@ -416,7 +422,7 @@ const PostSelectorPosts = React.createClass( {
 						key={ JSON.stringify( query ) }
 						disableHeight={ isCompact }>
 						{ ( { height, width } ) => (
-							<VirtualScroll
+							<List
 								ref={ this.setVirtualScrollRef }
 								width={ width }
 								height={ isCompact ? this.getCompactContainerHeight() : height }
