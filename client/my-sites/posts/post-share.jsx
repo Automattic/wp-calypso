@@ -107,6 +107,9 @@ const PostSharing = React.createClass( {
 	dismiss: function() {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
+	sharePost: function() {
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -149,7 +152,7 @@ const PostSharing = React.createClass( {
 								{ this.renderMessage() }
 								<Button
 									primary={ true }
-									onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
+									onClick={ this.sharePost }
 									disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
 								>
 									{ this.translate( 'Share post' ) }
