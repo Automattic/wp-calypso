@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import pick from 'lodash/pick';
-import merge from 'lodash/merge';
+import { pick, merge, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import updates from './updates/reducer';
 import mediaStorage from './media-storage/reducer';
 import {
 	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_ICON_SET,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -108,7 +108,7 @@ export function items( state = {}, action ) {
 				return memo;
 			}, {} );
 
-		case THEME_ACTIVATE_REQUEST_SUCCESS:
+		case THEME_ACTIVATE_REQUEST_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
@@ -123,6 +123,25 @@ export function items( state = {}, action ) {
 					}
 				} )
 			};
+		}
+
+		case SITE_ICON_SET: {
+			const { siteId, iconUrl } = action;
+			const site = state[ siteId ];
+			if ( ! site || get( site.icon, 'img' ) === iconUrl ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					icon: {
+						img: iconUrl,
+						ico: iconUrl
+					}
+				} )
+			};
+		}
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, sitesSchema ) ) {
