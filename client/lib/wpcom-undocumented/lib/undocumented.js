@@ -1489,6 +1489,24 @@ Undocumented.prototype.activateTheme = function( themeId, siteId, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.uploadTheme = function( siteId, file, onProgress ) {
+	debug( '/sites/:site_id/themes/new' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const req = this.wpcom.req.post( {
+			path: '/sites/' + siteId + '/themes/new',
+			formData: [
+				[ 'zip[]', file ]
+			]
+		}, resolver );
+
+		req.upload.onprogress = onProgress;
+	} );
+};
+
 Undocumented.prototype.emailForwards = function( domain, callback ) {
 	return this.wpcom.req.get( '/domains/' + domain + '/email', function( error, response ) {
 		if ( error ) {
