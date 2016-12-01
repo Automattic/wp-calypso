@@ -190,6 +190,9 @@ $z-layers: (
 		'.following-edit__subscribe-form .card.is-search-result': 35,
 		'.following-edit__subscribe-form .search': 36
 	),
+	'.site-settings__taxonomies': (
+		'.card__link-indicator': 1
+	),
 
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
