@@ -22,7 +22,7 @@ import {
 	isNewUser,
 	previewIsShowing,
 } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+import { isDesktop, isMobile } from 'lib/viewport';
 
 export const ThemeSheetTour = makeTour(
 	<Tour name="theme"
@@ -31,7 +31,7 @@ export const ThemeSheetTour = makeTour(
 		when={ and(
 			isEnabled( 'guided-tours/theme' ),
 			isNewUser,
-			isDesktop
+			not( isMobile )
 			) }
 	>
 		<Step name="init" placement="right" next="live-preview">
