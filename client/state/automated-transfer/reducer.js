@@ -14,7 +14,7 @@ import { createReducer } from 'state/utils';
 export const status = createReducer( {}, {
 	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( state, action ) => ( {
 		...state,
-		[ action.siteId ]: { status: action.automatedTransferStatus },
+		[ action.siteId ]: action.automatedTransferStatus,
 	} ),
 }, automatedTransferStatusSchema );
 

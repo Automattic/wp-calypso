@@ -1,12 +1,11 @@
 export const automatedTransferStatusSchema = {
 	type: 'object',
-	additionalProperties: false,
-	patternProperties: {
-		'^\\d+$': {
-			type: 'object',
-			properties: {
-				status: { type: 'string' },
+	properties: {
+		status: {
+			type: 'string',
+			patternProperties: {
+				'^\\d+$': { type: 'string' },
 			},
-		}
+		},
 	},
 };

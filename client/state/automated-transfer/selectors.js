@@ -1,4 +1,4 @@
 export function getAutomatedTransferStatus( state, siteId ) {
-	const at = state.automatedTransfer[ siteId ];
-	return at ? at.status : null;
+	const status = state.automatedTransfer.status[ siteId ];
+	return status || null;
 }

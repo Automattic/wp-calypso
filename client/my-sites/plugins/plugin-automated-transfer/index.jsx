@@ -2,19 +2,23 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
 class PluginAutomatedTransfer extends Component {
 
 	static propTypes = {
-		translate: PropTypes.func,
 		plugin: PropTypes.object,
+		transferStep: PropTypes.string,
+		translate: PropTypes.func,
 	}
 
 	static defaultProps = {
@@ -23,13 +27,8 @@ class PluginAutomatedTransfer extends Component {
 		},
 	}
 
-	state = {
-		transferStep: 'start',
-	}
-
 	getNoticeText = ( pluginName = '' ) => {
-		const { translate } = this.props;
-		const { transferStep } = this.state;
+		const { transferStep, translate } = this.props;
 
 		switch ( transferStep ) {
 			case 'start': return translate( 'Installing %s…', { args: pluginName } );
@@ -56,21 +55,12 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
-	// TESTING
-	testChangeState = () => {
-		const { transferStep } = this.state;
-		switch ( transferStep ) {
-			case 'start': this.setState( { transferStep: 'setup' } ); break;
-			case 'setup': this.setState( { transferStep: 'leaving' } ); break;
-			case 'leaving': this.setState( { transferStep: 'conflicts' } ); break;
-			case 'conflicts': this.setState( { transferStep: 'complete' } ); break;
-			case 'complete': this.setState( { transferStep: 'start' } ); break;
-		}
-	}
-
 	render() {
-		const { plugin, translate } = this.props;
-		const { transferStep } = this.state;
+		const { plugin, transferStep, translate } = this.props;
+
+		if ( ! transferStep ) {
+			return null;
+		}
 
 		return (
 			<Notice
@@ -80,16 +70,23 @@ class PluginAutomatedTransfer extends Component {
 				status={ this.getStatus( transferStep ) }
 				text={ this.getNoticeText( plugin.name ) }
 			>
-				<NoticeAction href="#" onClick={ this.testChangeState }>
-					{ transferStep === 'conflicts'
-							? translate( 'View Conflicts' )
-							: 'Test Change State' // TESTING
-					}
-				</NoticeAction>
+				{ transferStep === 'conflicts' &&
+					<NoticeAction href="#">
+						{ translate( 'View Conflicts' ) }
+					</NoticeAction>
+				}
 			</Notice>
 		);
 	}
 
 }
 
-export default localize( PluginAutomatedTransfer );
+const mapStateToProps = state => {
+	const site = getSelectedSiteId( state );
+	const status = getAutomatedTransferStatus( state, site );
+	return {
+		transferStep: status,
+	};
+};
+
+export default connect( mapStateToProps )( localize( PluginAutomatedTransfer ) );
