@@ -191,6 +191,18 @@ class Upload extends React.Component {
 	}
 }
 
+Upload.propTypes = {
+	siteId: React.PropTypes.number,
+	inProgress: React.PropTypes.bool,
+	complete: React.PropTypes.bool,
+	failed: React.PropTypes.bool,
+	uploadedTheme: React.PropTypes.object,
+	error: React.PropTypes.object,
+	progressTotal: React.PropTypes.number,
+	progressLoaded: React.PropTypes.number,
+	installing: React.PropTypes.bool,
+};
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
