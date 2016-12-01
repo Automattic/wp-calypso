@@ -116,6 +116,9 @@ const emptyStore = {
 	isLastPage() {
 		return true;
 	},
+	isFetchingNextPage() {
+		return false;
+	},
 	getUpdateCount() {
 		return 0;
 	},
