@@ -7,7 +7,6 @@ import uniqueId from 'lodash/uniqueId';
  * Internal dependencies
  */
 import {
-	NOTICES_CLEAR,
 	NOTICE_CREATE,
 	NOTICE_REMOVE
 } from 'state/action-types';
@@ -33,17 +32,6 @@ export function createNotice( status, text, options = {} ) {
 	return {
 		type: NOTICE_CREATE,
 		notice: notice
-	};
-}
-
-/**
- * Return an action that clears all the non persistent notices
- *
- * @return {Object} Action
- */
-export function clearNotices() {
-	return {
-		type: NOTICES_CLEAR
 	};
 }
 

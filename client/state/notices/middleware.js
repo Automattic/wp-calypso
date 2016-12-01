@@ -152,7 +152,7 @@ export function onSiteSettingsSaveFailed( dispatch, action ) {
 		default:
 			text = translate( 'There was a problem saving your changes. Please try again.' );
 	}
-	dispatch( errorNotice( text ) );
+	dispatch( errorNotice( text, { id: 'site-settings-save' } ) );
 }
 
 /**
@@ -183,7 +183,7 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!' ) ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!', { id: 'site-settings-save' } ) ),
 	[ SITE_SETTINGS_SAVE_FAILURE ]: onSiteSettingsSaveFailed
 };
 

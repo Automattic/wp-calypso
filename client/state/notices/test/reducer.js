@@ -8,7 +8,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	NOTICES_CLEAR,
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
 	ROUTE_SET
@@ -66,36 +65,6 @@ describe( 'reducer', () => {
 				} );
 
 				expect( state ).to.equal( original );
-			} );
-		} );
-
-		context( 'NOTICE_CLEAR', () => {
-			it( 'should preserve persistent notices', () => {
-				const original = deepFreeze( {
-					1: { noticeId: 1 },
-					2: { noticeId: 2, isPersistent: true }
-				} );
-				const state = items( original, {
-					type: NOTICES_CLEAR
-				} );
-
-				expect( state ).to.eql( {
-					2: { noticeId: 2, isPersistent: true }
-				} );
-			} );
-
-			it( 'should preserve notices to be displayed on next page', () => {
-				const original = deepFreeze( {
-					1: { noticeId: 1 },
-					2: { noticeId: 2, displayOnNextPage: true }
-				} );
-				const state = items( original, {
-					type: NOTICES_CLEAR
-				} );
-
-				expect( state ).to.eql( {
-					2: { noticeId: 2, displayOnNextPage: true }
-				} );
 			} );
 		} );
 

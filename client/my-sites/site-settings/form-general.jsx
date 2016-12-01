@@ -39,7 +39,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import { isRequestingSiteSettings, isSavingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { clearNotices } from 'state/notices/actions';
+import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 
@@ -173,7 +173,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	submitForm() {
 		const { fields, site, clearDirtyFields } = this.props;
-		this.props.clearNotices();
+		this.props.removeNotice( 'site-settings-save' );
 		this.props.saveSiteSettings( site.ID, fields )
 			.then( () => {
 				clearDirtyFields();
@@ -805,7 +805,7 @@ const connectComponent = connect(
 			isRequestingSettings, isSavingSettings, settings
 		};
 	},
-	{ clearNotices, saveSiteSettings }
+	{ removeNotice, saveSiteSettings }
 );
 
 export default flowRight(
