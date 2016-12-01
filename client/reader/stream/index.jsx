@@ -62,7 +62,7 @@ function refreshCardFactory( post ) {
 const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
-const MAX_DISTANCE_BETWEEN_RECS = 49; // page size is 7, so 7 pages
+const MAX_DISTANCE_BETWEEN_RECS = 30;
 const RECS_PER_BLOCK = 2;
 
 function getDistanceBetweenRecs() {
