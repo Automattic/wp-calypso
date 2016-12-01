@@ -133,7 +133,7 @@
 		"reader/refresh/stream": true,
 		"reader/search": true,
 		"reader/start": true,
-		"reader/tags-with-elasticsearch": true,
+		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
