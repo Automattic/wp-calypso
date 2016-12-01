@@ -63,8 +63,6 @@ const DomainsStep = React.createClass( {
 
 		SignupActions.saveSignupStep( stepData );
 
-		const isPurchasingItem = Boolean( suggestion.product_slug );
-
 		defer( () => {
 			this.submitWithDomain();
 		} );
