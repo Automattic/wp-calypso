@@ -6,7 +6,7 @@ This component is used to display a plugin activation toggle.
 #### How to use:
 
 ```js
-var PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' );
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 
 render: function() {
 	return (

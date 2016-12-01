@@ -1,10 +1,12 @@
-module.exports = {
+export default {
 	site: {
 		slug: 'test',
 		domain: '',
 		name: ''
 	},
-	plugin: { slug: 'test' },
+	plugin: {
+		slug: 'test'
+	},
 	notices: {
 		completed: [],
 		errors: []

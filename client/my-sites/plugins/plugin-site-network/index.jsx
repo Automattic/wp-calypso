@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var FoldableCard = require( 'components/foldable-card' ),
-	CompactCard = require( 'components/card/compact' ),
-	AllSites = require( 'my-sites/all-sites' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
-	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
-	PluginUpdateIndicator = require( 'my-sites/plugins/plugin-site-update-indicator' ),
-	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
-	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' ),
-	PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' ),
-	Site = require( 'blocks/site' );
+import FoldableCard from 'components/foldable-card';
+import CompactCard from 'components/card/compact';
+import AllSites from 'my-sites/all-sites';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
+import Site from 'blocks/site';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteNetwork',
 
