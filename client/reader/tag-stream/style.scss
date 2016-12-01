@@ -77,10 +77,12 @@
 .tag-stream__header-image-byline {
 	color: $white;
 	font-size: 12px;
+	font-weight: 500;
 	text-align: right;
 	text-shadow: 0 1px rgba(0, 0, 0, .3);
 	transform: translateY( 150% );
 	z-index: 2;
+	-webkit-font-smoothing: antialiased;
 }
 
 .tag-stream__header-image-byline-label {
@@ -90,7 +92,7 @@
 .tag-stream__header-image-byline-link,
 .tag-stream__header-image-byline-link:visited {
 	color: $white;
-	opacity: .8;
+	opacity: .9;
 }
 
 .tag-stream__header-image-byline-link:hover {
