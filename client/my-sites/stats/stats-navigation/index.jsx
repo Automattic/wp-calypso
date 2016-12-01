@@ -9,6 +9,7 @@ var React = require( 'react' );
 var SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
+	QueryFollowerCounts = require( 'components/data/query-follower-counts' ),
 	siteStatsStickyTabActions = require( 'lib/site-stats-sticky-tab/actions' );
 
 module.exports = React.createClass( {
@@ -43,6 +44,7 @@ module.exports = React.createClass( {
 
 		return (
 			<SectionNav selectedText={ sectionTitles[ activeSection ] }>
+				{ this.props.site && <QueryFollowerCounts siteId={ this.props.site.ID } /> }
 				<NavTabs label={ this.translate( 'Stats' ) }>
 					<NavItem path={ '/stats/insights' + siteFragment } selected={ activeSection === 'insights' }>{ sectionTitles.insights }</NavItem>
 					<NavItem path={ '/stats/day' + siteFragment } selected={ activeSection === 'day' }>{ sectionTitles.day }</NavItem>
