@@ -106,13 +106,20 @@
 // Back button in Tag streams
 
 .is-reader-page .card.header-cake {
+	background: none;
+	box-shadow: none;
 	padding: 0;
+	position: relative;
+		left: -3px;
+		top: 8px;
 
-	@include breakpoint( ">960px" ) {
-		background: none;
-		box-shadow: none;
-		position: relative;
-			top: 8px;
+	@include breakpoint( "<660px" ) {
+		left: 13px;
+		top: 20px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		top: 14px;
 	}
 
 	.button.header-cake__back {
