@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' ),
-	PluginsStore = require( 'lib/plugins/store' ),
-	Rating = require( 'components/rating/' ),
-	analytics = require( 'lib/analytics' );
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginsStore from 'lib/plugins/store';
+import Rating from 'components/rating/';
+import analytics from 'lib/analytics';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
-module.exports = React.createClass( {
-
-	displayName: 'PluginsBrowserListElement',
+const PluginsBrowserListElement = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
@@ -43,9 +45,19 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	isWpcomPreinstalled: function() {
+		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet' ];
+
+		if ( ! this.props.site ) {
+			return false;
+		}
+
+		return ! this.props.isJetpackSite && includes( installedPlugins, this.props.plugin.name );
+	},
+
 	renderInstalledIn: function() {
 		var sites = this.getSites();
-		if ( sites && sites.length > 0 ) {
+		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
 						{ this.translate( 'Installed' ) }
@@ -89,3 +101,13 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+
+		return {
+			isJetpackSite: isJetpackSite( state, selectedSiteId ),
+		};
+	}
+)( PluginsBrowserListElement );
