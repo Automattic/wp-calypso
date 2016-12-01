@@ -21,9 +21,9 @@ import {
 	getThemeDetailsUrl as getDetailsUrl,
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl,
+	isThemeActive as isActive,
 	isThemePurchased as isPurchased
 } from 'state/themes/selectors';
-import { isActiveTheme as isActive } from 'state/themes/current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';

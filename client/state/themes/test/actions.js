@@ -313,16 +313,15 @@ describe( 'actions', () => {
 					],
 				},
 				type: THEME_ACTIVATE_REQUEST_SUCCESS,
-				theme: { id: 'twentysixteen' },
+				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
 
 			const fakeGetState = () => ( {
 				themes: {
-					currentTheme: Map( {
-						currentThemes: Map().set( 2211667, {
-							id: 'twentyfifteen'
-						} ) } ),
+					activeThemes: {
+						2211667: 'twentyfifteen'
+					},
 					themesList: Map( {
 						query: Map( {
 							search: 'simple, white'
@@ -331,7 +330,7 @@ describe( 'actions', () => {
 				}
 			} );
 
-			themeActivated( { id: 'twentysixteen' }, 2211667 )( spy, fakeGetState );
+			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
 	} );

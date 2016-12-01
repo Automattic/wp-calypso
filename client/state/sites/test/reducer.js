@@ -226,10 +226,7 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: THEME_ACTIVATE_REQUEST_SUCCESS,
 				siteId: 2916284,
-				theme: {
-					name: 'Twenty Sixteen',
-					stylesheet: 'pub/twentysixteen'
-				}
+				themeStylesheet: 'pub/twentysixteen'
 			} );
 
 			expect( state ).to.eql( {

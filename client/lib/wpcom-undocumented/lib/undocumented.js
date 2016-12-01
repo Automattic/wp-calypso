@@ -1467,12 +1467,30 @@ Undocumented.prototype.themes = function( siteId, query, fn ) {
 	return this.wpcom.req.get( path, query, fn );
 };
 
-Undocumented.prototype.themeDetails = function( themeId, site, fn ) {
-	const sitePath = site ? `/sites/${ site }` : '';
+Undocumented.prototype.themeDetails = function( themeId, siteId, fn ) {
+	const sitePath = siteId ? `/sites/${ siteId }` : '';
 	const path = `${ sitePath }/themes/${ themeId }`;
 	debug( path );
+
 	return this.wpcom.req.get( path, {
-		apiVersion: '1.2',
+		apiVersion: '1.2'
+	}, fn );
+};
+
+/*
+ * Hack! Calling the theme modify endpoint without specifying an action will return the full details for a theme.
+ * FIXME In the long run, we should try to enable the /sites/${ siteId }/themes/${ theme } endpoint for Jetpack
+ * sites so we can delete this method and use the regular `themeDetails` for Jetpack sites, too.
+*/
+Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
+	const path = `/sites/${ siteId }/themes`;
+	debug( path );
+
+	return this.wpcom.req.post( {
+		path,
+		body: {
+			themes: themeId
+		}
 	}, fn );
 };
 
