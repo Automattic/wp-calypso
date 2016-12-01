@@ -43,6 +43,11 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'state/ui/selectors';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -139,6 +144,8 @@ const Checkout = React.createClass( {
 	redirectIfEmptyCart: function() {
 		let redirectTo = '/plans/';
 
+		const { selectedSiteSlug } = this.props;
+
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
 			return false;
@@ -153,7 +160,7 @@ const Checkout = React.createClass( {
 		}
 
 		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl( this.state.previousCart, this.props.sites.getSelectedSite().slug );
+			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
 		}
 
 		page.redirect( redirectTo );
@@ -182,6 +189,7 @@ const Checkout = React.createClass( {
 			receiptId = ':receiptId';
 
 		const receipt = this.props.transaction.step.data;
+		const { selectedSiteId, selectedSiteSlug } = this.props;
 
 		this.props.clearPurchases();
 
@@ -228,9 +236,11 @@ const Checkout = React.createClass( {
 
 			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
-			this.props.clearSitePlans( this.props.sites.getSelectedSite().ID );
+			this.props.clearSitePlans( selectedSiteId );
 
-			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
+			return selectedSiteSlug
+				? `/plans/${ selectedSiteSlug }/thank-you`
+				: '/checkout/thank-you/plans';
 		}
 
 		if ( receipt && receipt.receipt_id ) {
@@ -242,13 +252,17 @@ const Checkout = React.createClass( {
 			} );
 		}
 
+		if ( ! selectedSiteSlug ) {
+			return '/checkout/thank-you/features';
+		}
+
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`
-			: `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 
 	content: function() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -306,12 +320,22 @@ const Checkout = React.createClass( {
 	}
 } );
 
+function mapStateToProps( state ) {
+	const cards = getStoredCards( state );
+	const selectedSite = getSelectedSite( state );
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSelectedSiteSlug( state );
+
+	return {
+		cards,
+		selectedSite,
+		selectedSiteId,
+		selectedSiteSlug,
+	};
+}
+
 module.exports = connect(
-	function( state ) {
-		return {
-			cards: getStoredCards( state )
-		};
-	},
+	mapStateToProps,
 	{
 		clearPurchases,
 		clearSitePlans,
