@@ -25,10 +25,21 @@ import {
 import { isDesktop } from 'lib/viewport';
 
 export const ThemeSheetTour = makeTour(
-	<Tour name="theme" version="20161129" path="/theme" when={ and( isEnabled( 'guided-tours/theme' ), isNewUser, isDesktop ) }>
-		<Step name="init" placement="right" next="live-preview" className="guided-tours__step-first">
+	<Tour name="theme"
+		version="20161129"
+		path="/theme"
+		when={ and(
+			isEnabled( 'guided-tours/theme' ),
+			isNewUser,
+			isDesktop
+			) }
+	>
+		<Step name="init" placement="right" next="live-preview">
 			<p>
-				{ translate( 'This page shows all the details about a specific theme design. May I show you around?' ) }
+				{ translate(
+					'This page shows all the details about a specific theme ' +
+					'design. May I show you around?'
+				) }
 			</p>
 			<ButtonRow>
 				<Next step="live-preview">{ translate( "Let's go!" ) }</Next>
@@ -92,7 +103,9 @@ export const ThemeSheetTour = makeTour(
 			next="back-to-list"
 		>
 			<p>
-				{ translate( 'This will activate the design you’re currently seeing on your site.' ) }
+				{ translate(
+					'This will activate the design you’re currently seeing on your site.'
+				) }
 			</p>
 			<ButtonRow>
 				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
@@ -104,13 +117,15 @@ export const ThemeSheetTour = makeTour(
 			target=".theme__sheet-action-bar .header-cake__back.button"
 			placement="beside"
 			arrow="left-top"
-			style={ { marginTop: '-15px' } }
+			style={ { marginTop: '-15px' } }
 		>
 			<p>
-				{ translate( 'That\'s it! You can return to our design showcase anytime through here.' ) }
+				{ translate(
+					'That\'s it! You can return to our design showcase anytime through here.'
+				) }
 			</p>
 			<ButtonRow>
-				<Quit primary={ true }>{ translate( 'Done' ) }</Quit>
+				<Quit primary>{ translate( 'Done' ) }</Quit>
 			</ButtonRow>
 		</Step>
 	</Tour>
