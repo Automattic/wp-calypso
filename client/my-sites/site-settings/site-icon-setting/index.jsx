@@ -158,6 +158,9 @@ class SiteIconSetting extends Component {
 								onDone: this.setSiteIcon
 							} }
 							visible
+							labels={ {
+								confirm: translate( 'Continue' )
+							} }
 							single />
 					</MediaLibrarySelectedData>
 				) }
