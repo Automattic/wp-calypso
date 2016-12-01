@@ -101,7 +101,8 @@
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
-		"upgrades/precancellation-chat": true
+		"upgrades/precancellation-chat": true,
+		"upgrades/presale-chat": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",
