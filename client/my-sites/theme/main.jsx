@@ -43,7 +43,7 @@ import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getTheme, isThemeReceiveError } from 'state/themes/selectors';
+import { getTheme, getThemeRequestError } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
@@ -576,8 +576,7 @@ export default connect(
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		let themeDetails;
 		if ( ! theme ) {
-			themeDetails = isThemeReceiveError( state, id, siteIdOrWpcom )
-				? { error: 'Theme Error', id } : null;
+			themeDetails = getThemeRequestError( state, id, siteIdOrWpcom );
 		} else {
 			themeDetails = themeDetailsFromTheme( theme );
 		}

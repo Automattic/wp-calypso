@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { map, mapValues, zipObject } from 'lodash';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -244,24 +244,12 @@ export const queries = ( () => {
 	} );
 } )();
 
-export const themesReceiveError = ( () => {
-	const receive = ( state, { siteId, themes } ) => ( {
+export const themeRequestsError = createReducer( {}, {
+	[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
 		...state,
-		[ siteId ]: Object.assign(
-			{},
-			state[ siteId ],
-			zipObject( themes, map( themes, () => false ) )
-		)
-	} );
-	return createReducer( {}, {
-		[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId } ) => ( {
-			...state,
-			[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: true } )
-		} ),
-		[ THEMES_RECEIVE ]: receive,
-		[ THEMES_REQUEST_SUCCESS ]: receive
-	} );
-} )();
+		[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: { error } } )
+	} ),
+} );
 
 /**
  * Returns the updated themes last query state.
@@ -287,7 +275,7 @@ export default combineReducers( {
 	// queryRequests,
 	// lastQuery
 	themeRequests,
-	themesReceiveError,
+	themeRequestsError,
 	activeThemes,
 	activeThemeRequests,
 	activationRequests,
