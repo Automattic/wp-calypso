@@ -10,6 +10,7 @@ import {
 	Quit,
 	Continue,
 	Link,
+	ButtonRow,
 } from 'layout/guided-tours/config-elements';
 import {
 	selectedSiteHasDefaultSiteTitle,
@@ -35,16 +36,16 @@ export const SiteTitleTour = makeTour(
 						isAbTestInVariant( 'siteTitleTour', 'enabled' )
 					)
 		}>
-		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
-			<p className="guided-tours__step-text">
+		<Step name="init" placement="right" next="click-settings">
+			<p>
 				{
 					translate( "Hey there! We noticed you haven't changed the title of your site yet. Want to change it? " )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="click-settings">{ translate( 'Yes, please!' ) }</Next>
 				<Quit>{ translate( 'No thanks' ) }</Quit>
-			</div>
+			</ButtonRow>
 		</Step>
 
 		<Step name="click-settings"
@@ -54,18 +55,16 @@ export const SiteTitleTour = makeTour(
 			scrollContainer=".sidebar__region"
 			shouldScrollTo
 		>
-			<div className="guided-tours__actionstep-instructions">
-				<Continue target="settings" step="site-title-input" click>
-					{
-						translate( 'Click {{strong}}{{GridIcon/}} Settings{{/strong}} to continue.', {
-							components: {
-								GridIcon: <Gridicon icon="cog" size={ 24 } />,
-								strong: <strong />,
-							}
-						} )
-					}
-				</Continue>
-			</div>
+			<Continue target="settings" step="site-title-input" click>
+				{
+					translate( 'Click {{strong}}{{GridIcon/}} Settings{{/strong}} to continue.', {
+						components: {
+							GridIcon: <Gridicon icon="cog" size={ 24 } />,
+							strong: <strong />,
+						}
+					} )
+				}
+			</Continue>
 		</Step>
 
 		<Step name="site-title-input"
@@ -73,16 +72,16 @@ export const SiteTitleTour = makeTour(
 			arrow="top-left"
 			placement="below"
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( 'You can change the site title here. The site title appears in places like the top ' +
 						'of your web browser and in search results.' )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="site-tagline-input">{ translate( 'Looks Good' ) }</Next>
-				<Quit>Cancel</Quit>
-			</div>
+				<Quit>{ translate( 'Cancel' ) }</Quit>
+			</ButtonRow>
 		</Step>
 
 		<Step name="site-tagline-input"
@@ -90,38 +89,32 @@ export const SiteTitleTour = makeTour(
 			arrow="top-left"
 			placement="below"
 		>
-			<p className="guided-tours__step-text">
+			<p>
 				{
 					translate( 'This is the tagline of your site. It should explain what your site is about in few words. ' +
 						'It usually appears right bellow your site title.' )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
+			<ButtonRow>
 				<Next step="click-save">{ translate( 'Continue' ) }</Next>
-				<Quit>Cancel</Quit>
-			</div>
+				<Quit>{ translate( 'Cancel' ) }</Quit>
+			</ButtonRow>
 		</Step>
 
 		<Step name="click-save"
 			target="settings-site-profile-save"
 			arrow="top-right"
 			placement="below"
-			next="site-title"
 		>
-			<div className="guided-tours__actionstep-instructions">
-				<Continue target="settings-site-profile-save" step="finish" click>
-					{
-						translate( "Don't forget to save your new settings!" )
-					}
-				</Continue>
-			</div>
+			<Continue target="settings-site-profile-save" step="finish" click>
+				{
+					translate( "Don't forget to save your new settings!" )
+				}
+			</Continue>
 		</Step>
 
-		<Step name="finish"
-			placement="center"
-			className="guided-tours__step-finish"
-		>
-			<p className="guided-tours__step-text">
+		<Step name="finish"	placement="center">
+			<p>
 				{
 					translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
 						components: {
@@ -130,11 +123,9 @@ export const SiteTitleTour = makeTour(
 					} )
 				}
 			</p>
-			<div className="guided-tours__single-button-row">
-				<Quit primary>
-					{ translate( "We're all done!" ) }
-				</Quit>
-			</div>
+			<ButtonRow>
+				<Quit primary>{ translate( "We're all done!" ) }</Quit>
+			</ButtonRow>
 			<Link href="https://learn.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
