@@ -65,6 +65,7 @@
 		"oauth": true,
 		"olark": true,
 		"persist-redux": true,
+		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
 		"press-this": false,
 		"preview-layout": true,
