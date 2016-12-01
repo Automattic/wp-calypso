@@ -949,11 +949,15 @@ describe( 'index', function() {
 		}
 
 		it( 'removes tags but inserts spaces between p tags', function( done ) {
-			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four ', done );
+			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four', done );
 		} );
 
 		it( 'turns br tags into spaces', function( done ) {
-			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three ', done );
+			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three', done );
+		} );
+
+		it( 'trims whitespace from the excerpt', function( done ) {
+			assertExcerptBecomes( '<p> </p><p>one</p><p>two</p><p>three</p><p>four</p><p> </p>', 'one two three four', done );
 		} );
 	} );
 } );
