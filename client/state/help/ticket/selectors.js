@@ -10,6 +10,6 @@ export const isRequestingTicketSupportConfiguration = ( state ) => {
 	return state.help.ticket.isRequesting;
 };
 
-export const hasRequestError = ( state ) => {
+export const getRequestError = ( state ) => {
 	return state.help.ticket.requestError;
 };

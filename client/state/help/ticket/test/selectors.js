@@ -13,6 +13,8 @@ import {
 	hasRequestError,
 } from '../selectors';
 
+import { dummyError } from './test-data';
+
 describe( 'ticket-support/configuration/selectors', () => {
 	const uninitState = {
 		help: {
@@ -68,15 +70,17 @@ describe( 'ticket-support/configuration/selectors', () => {
 		} );
 	} );
 
-	describe( '#hasRequestError', () => {
-		it( 'should return true', () => {
-			assert.isTrue( hasRequestError( {
+	describe( '#getRequestError', () => {
+		it( 'should return the error object', () => {
+			const errorState = {
 				help: {
 					ticket: {
-						requestError: true,
+						requestError: dummyError,
 					},
 				},
-			} ) );
+			};
+
+			assert.deepEqual( hasRequestError( errorState ), dummyError );
 		} );
 	} );
 } );
