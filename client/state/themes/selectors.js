@@ -476,3 +476,11 @@ export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
 	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
+
+export function isThemeReceiveError( state, themeId, siteId ) {
+	const themes = get( state.themes.themesReceiveError, siteId, false );
+	if ( ! themes ) {
+		return false;
+	}
+	return get( themes, themeId, false );
+}
