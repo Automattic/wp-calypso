@@ -10,7 +10,7 @@ import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	isRequestingTicketSupportConfiguration,
-	hasRequestError,
+	getTicketSupportRequestError,
 } from '../selectors';
 
 import { dummyError } from './test-data';
@@ -70,7 +70,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 		} );
 	} );
 
-	describe( '#getRequestError', () => {
+	describe( '#getTicketSupportRequestError', () => {
 		it( 'should return the error object', () => {
 			const errorState = {
 				help: {
@@ -80,7 +80,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 				},
 			};
 
-			assert.deepEqual( hasRequestError( errorState ), dummyError );
+			assert.deepEqual( getTicketSupportRequestError( errorState ), dummyError );
 		} );
 	} );
 } );
