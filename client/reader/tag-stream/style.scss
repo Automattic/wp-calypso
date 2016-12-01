@@ -1,10 +1,16 @@
 .tag-stream__header {
 	display: flex;
 	flex-direction: column;
+
+	&.has-back-button {
+		margin-top: -27px;
+	}
 }
 
 .tag-stream__header .follow-button {
 	padding: 0;
+	position: relative;
+		top: 2px;
 
 	@include breakpoint( "<660px" ) {
 		margin: 12px 10px 0 0;
@@ -106,7 +112,7 @@
 		background: none;
 		box-shadow: none;
 		position: relative;
-			top: 32px;
+			top: 8px;
 	}
 
 	.button.header-cake__back {
