@@ -17,6 +17,7 @@ import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -31,7 +32,7 @@ function FeaturedImage( { image, href } ) {
 function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
-	const authorAndSiteAreDifferent = siteName.toLowerCase() !== post.author.name.toLowerCase();
+	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 
 	return (
 		<div className="reader-related-card-v2__meta">
@@ -39,14 +40,14 @@ function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card-v2__byline">
+				{ authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-author">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.author.name }</a>
 				</span>
-				{ authorAndSiteAreDifferent &&
+				}
 				<span className="reader-related-card-v2__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ siteName }</a>
 				</span>
-				}
 			</div>
 			<FollowButton siteUrl={ post.site_URL } />
 		</div>

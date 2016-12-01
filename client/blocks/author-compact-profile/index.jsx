@@ -2,6 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { numberFormat, localize } from 'i18n-calypso';
+import { has } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -10,11 +13,8 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
 import { getStreamUrl } from 'reader/route';
-import { numberFormat } from 'i18n-calypso';
-import { has } from 'lodash';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -38,7 +38,7 @@ const AuthorCompactProfile = React.createClass( {
 		}
 
 		const hasAuthorName = has( author, 'name' );
-		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === author.name.toLowerCase();
+		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( 'author-compact-profile', {
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
 			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
