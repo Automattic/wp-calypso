@@ -57,7 +57,10 @@ export class Tour extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		version: PropTypes.string,
-		path: PropTypes.string,
+		path: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.arrayOf( PropTypes.string )
+		] ),
 		when: PropTypes.func,
 	};
 
