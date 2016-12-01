@@ -28,14 +28,16 @@ describe( 'actions', () => {
 
 	describe( '#receivePostTypes()', () => {
 		it( 'should return an action object', () => {
-			const action = receivePostTypes( 2916284, [
-				{ name: 'post', label: 'Posts' }
-			] );
+			const action = receivePostTypes( 2916284, {
+				post: { slug: 'post', label: 'Posts' }
+			} );
 
 			expect( action ).to.eql( {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
-				types: [ { name: 'post', label: 'Posts' } ]
+				types: {
+					post: { slug: 'post', label: 'Posts' }
+				}
 			} );
 		} );
 	} );
@@ -44,15 +46,12 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/sites/2916284/post-types' )
+				.get( '/wp/v2/sites/2916284/types?context=edit' )
 				.reply( 200, {
-					found: 2,
-					post_types: [
-						{ name: 'post', label: 'Posts' },
-						{ name: 'page', label: 'Pages' }
-					]
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
 				} )
-				.get( '/rest/v1.1/sites/77203074/post-types' )
+				.get( '/wp/v2/sites/77203074/types?context=edit' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
@@ -70,10 +69,10 @@ describe( 'actions', () => {
 
 		it( 'should dispatch receive action when request completes', () => {
 			return requestPostTypes( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( receivePostTypes( 2916284, [
-					{ name: 'post', label: 'Posts' },
-					{ name: 'page', label: 'Pages' }
-				] ) );
+				expect( spy ).to.have.been.calledWith( receivePostTypes( 2916284, {
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
+				} ) );
 			} );
 		} );
 

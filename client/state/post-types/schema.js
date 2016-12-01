@@ -6,9 +6,8 @@ export const items = {
 			type: 'object',
 			additionalProperties: {
 				type: 'object',
-				required: [ 'name' ],
+				required: [ 'slug' ],
 				properties: {
-					name: { type: 'string' },
 					slug: { type: 'string' },
 					labels: { type: 'object' },
 					description: { type: 'string' },
