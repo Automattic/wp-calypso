@@ -372,11 +372,11 @@ export class Continue extends Component {
 	}
 
 	componentDidMount() {
-		! this.props.hidden && this.addTargetListener();
+		this.addTargetListener();
 	}
 
 	componentWillUnmount() {
-		! this.props.hidden && this.removeTargetListener();
+		this.removeTargetListener();
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {

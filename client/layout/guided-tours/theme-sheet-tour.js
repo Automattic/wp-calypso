@@ -109,6 +109,7 @@ export const ThemeSheetTour = makeTour(
 			</p>
 			<ButtonRow>
 				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
+				<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
 				<Quit />
 			</ButtonRow>
 		</Step>
@@ -117,7 +118,7 @@ export const ThemeSheetTour = makeTour(
 			target=".theme__sheet-action-bar .header-cake__back.button"
 			placement="beside"
 			arrow="left-top"
-			style={ { marginTop: '-15px' } }
+			style={ { marginTop: '-15px', zIndex: 1 } }
 		>
 			<p>
 				{ translate(
