@@ -155,6 +155,10 @@
 	padding: 0;
 }
 
+.plugin-meta__actions .plugin-meta__active {
+	color: $alert-green;
+}
+
 a.plugin-meta__settings-link {
 	color: $gray;
 	display: block;
