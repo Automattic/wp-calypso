@@ -220,6 +220,15 @@ export const queries = ( () => {
 			[ siteId ]: nextManager
 		};
 	}
+	const deserialize = ( state ) => {
+		if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+			return {};
+		}
+
+		return mapValues( state, ( { data, options } ) => {
+			return new ThemeQueryManager( data, options );
+		} );
+	};
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
@@ -234,24 +243,8 @@ export const queries = ( () => {
 		[ SERIALIZE ]: ( state ) => {
 			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 		},
-		[ DESERIALIZE ]: ( state ) => {
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-				return {};
-			}
-
-			return mapValues( state, ( { data, options } ) => {
-				return new ThemeQueryManager( data, options );
-			} );
-		},
-		[ SERVER_DESERIALIZE ]: ( state ) => {
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-				return {};
-			}
-
-			return mapValues( state, ( { data, options } ) => {
-				return new ThemeQueryManager( data, options );
-			} );
-		}
+		[ DESERIALIZE ]: deserialize,
+		[ SERVER_DESERIALIZE ]: deserialize,
 	} );
 } )();
 
