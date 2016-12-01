@@ -67,17 +67,17 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			// Old reducers
 			'themes',
-			'themeDetails',
 			'themesList',
 			// New reducers
 			'queries',
 			//'queryRequests',
-			//'themeRequests',
-			//'activeThemeRequests',
-			//'completedActivationRequests',
-			'currentTheme',
+			'themeRequests',
+			'activeThemes',
+			'activeThemeRequests',
+			'activationRequests',
+			'completedActivationRequests',
 			'themesUI',
-			'uploadTheme',
+			'uploadTheme'
 		] );
 	} );
 

@@ -12,7 +12,7 @@ import titlecase from 'to-title-case';
 /**
  * Internal dependencies
  */
-import QueryThemeDetails from 'components/data/query-theme-details';
+import QueryTheme from 'components/data/query-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -31,19 +31,19 @@ import { isUserPaid } from 'state/purchases/selectors';
 import { getForumUrl } from 'my-sites/themes/helpers';
 import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryCurrentTheme from 'components/data/query-current-theme';
+import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isActiveTheme } from 'state/themes/current-theme/selectors';
+import { isThemeActive } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
@@ -430,7 +430,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
+				<QueryTheme themeId={ this.props.id } siteId={ siteID ? siteID : 'wpcom' } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
 				<DocumentHead
@@ -439,7 +439,7 @@ const ThemeSheet = React.createClass( {
 					link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
-				{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
+				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
 				<ThanksModal
 					site={ this.props.selectedSite }
 					source={ 'details' } />
@@ -521,6 +521,27 @@ const ThemeSheetWithOptions = ( props ) => {
 	);
 };
 
+const themeDetailsFromTheme = ( theme ) => {
+	if ( theme.error ) {
+		return theme;
+	}
+
+	return {
+		name: theme.name,
+		author: theme.author,
+		price: theme.price,
+		screenshot: theme.screenshot,
+		screenshots: theme.screenshots,
+		description: theme.description,
+		descriptionLong: theme.description_long,
+		supportDocumentation: theme.support_documentation || undefined,
+		download: theme.download_uri || undefined,
+		taxonomies: theme.taxonomies,
+		stylesheet: theme.stylesheet,
+		demo_uri: theme.demo_uri,
+	};
+};
+
 export default connect(
 	/*
 	 * A number of the props that this mapStateToProps function computes are used
@@ -551,8 +572,8 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const themeDetails = getThemeDetails( state, id );
-
+		const theme = selectedSite ? getTheme( state, selectedSite.ID, id ) : getTheme( state, 'wpcom', id );
+		const themeDetails = theme && themeDetailsFromTheme( theme );
 		return {
 			...themeDetails,
 			id,
@@ -562,7 +583,7 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
-			isActive: selectedSite && isActiveTheme( state, id, selectedSite.ID )
+			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID )
 		};
 	}
 )( ThemeSheetWithOptions );
