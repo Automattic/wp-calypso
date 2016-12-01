@@ -18,11 +18,14 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -42,6 +45,7 @@ class Upload extends React.Component {
 
 	static propTypes = {
 		siteId: React.PropTypes.number,
+		selectedSite: React.PropTypes.object,
 		inProgress: React.PropTypes.bool,
 		complete: React.PropTypes.bool,
 		failed: React.PropTypes.bool,
@@ -205,13 +209,12 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const { translate, inProgress, complete, failed } = this.props;
-		// TODO (seear): Add in <QueryActiveTheme> component when it is ready
-		// to get the ThanksModal working properly
+		const { translate, inProgress, complete, failed, siteId, selectedSite } = this.props;
 		return (
 			<Main>
+				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal
-					site={ this.props.selectedSite }
+					site={ selectedSite }
 					source={ 'details' } />
 				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
@@ -246,6 +249,7 @@ export default connect(
 		const themeId = getUploadedThemeId( state, siteId );
 		return {
 			siteId,
+			selectedSite: getSelectedSite( state ),
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
