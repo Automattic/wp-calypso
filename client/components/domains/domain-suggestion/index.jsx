@@ -32,7 +32,7 @@ const DomainSuggestion = React.createClass( {
 			<div
 				className={ classes }
 				onClick={ this.props.onButtonClick }
-				aria-role="button"
+				role="button"
 				data-e2e-domain={ this.props.domain }>
 				<div className="domain-suggestion__content">
 					{ children }
