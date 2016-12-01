@@ -15,6 +15,7 @@ import { getFirstImageForTag } from 'state/reader/tags/images/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { decodeEntities } from 'lib/formatting';
+import Gridicon from 'components/gridicon';
 
 const TAG_HEADER_WIDTH = 830;
 
@@ -46,7 +47,9 @@ const TagStreamHeader = ( { tag, tagImage, isPlaceholder, showFollow, following,
 			}
 
 			<div className="tag-stream__header-image" style={ imageStyle }>
-				<h1 className="tag-stream__header-image-title">{ tag }</h1>
+				<h1 className="tag-stream__header-image-title">
+					<Gridicon icon="tag" size={ 24 } />{ tag }
+				</h1>
 				{ tagImage &&
 					<div className="tag-stream__header-image-byline">
 						<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span> <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="author external">{ decodeEntities( tagImage.author ) }</a>, <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="external">{ decodeEntities( tagImage.blog_title ) }</a>

@@ -63,6 +63,14 @@
 	}
 }
 
+.tag-stream__header-image .gridicon.gridicons-tag {
+	fill: $white;
+	position: relative;
+		right: 6px;
+		top: 2px;
+	z-index: 2;
+}
+
 .tag-stream__header-image-title {
 	color: $white;
 	font-size: 28px;
