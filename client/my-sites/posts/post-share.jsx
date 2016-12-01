@@ -157,7 +157,22 @@ const PostSharing = React.createClass( {
 							} ) }
 						</div>
 					</div>
-					{ this.hasConnections() &&
+					{ this.hasConnections() && <div>
+						<div>
+							{ this.props.connections
+								.filter( connection => connection.status === 'broken' )
+								.map( connection => <Notice
+									key={ connection.keyring_connection_ID }
+									status="is-warning"
+									showDismiss={ false }
+									text={ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+								>
+									<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
+										{ this.translate( 'Reconnect' ) }
+									</NoticeAction>
+								</Notice> )
+							}
+						</div>
 						<div className="posts__post-share-main">
 							<div className="posts__post-share-form">
 								{ this.renderMessage() }
@@ -180,7 +195,7 @@ const PostSharing = React.createClass( {
 								</Button>
 							</div>
 						</div>
-					}
+					</div> }
 					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'No social accounts connected' ) }>
 						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
