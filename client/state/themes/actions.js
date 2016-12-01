@@ -276,22 +276,34 @@ export function requestThemes( siteId, query = {} ) {
  */
 export function requestTheme( themeId, siteId ) {
 	return ( dispatch ) => {
-		let siteIdToQuery;
-
-		if ( siteId === 'wpcom' ) {
-			siteIdToQuery = null;
-		} else {
-			siteIdToQuery = siteId;
-		}
-
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
 			themeId
 		} );
 
-		return wpcom.undocumented().themeDetails( themeId, siteIdToQuery ).then( ( theme ) => {
-			dispatch( receiveTheme( theme, siteId ) );
+		if ( siteId === 'wpcom' ) {
+			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: THEME_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+		}
+
+		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
+		// the regular themeDetails() method for Jetpack sites yet.
+		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( theme ) => {
+			dispatch( receiveThemes( theme.themes, siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
