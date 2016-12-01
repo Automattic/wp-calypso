@@ -45,13 +45,7 @@ class TaxonomyManagerListItem extends Component {
 		showDeleteDialog: false,
 	};
 
-	editItem = closeMenu => {
-		closeMenu();
-		this.props.onClick();
-	};
-
-	deleteItem = closeMenu => {
-		closeMenu();
+	deleteItem = () => {
 		this.setState( {
 			showDeleteDialog: true
 		} );
@@ -67,8 +61,7 @@ class TaxonomyManagerListItem extends Component {
 		} );
 	};
 
-	setAsDefault = closeMenu => {
-		closeMenu();
+	setAsDefault = () => {
 		const { canSetAsDefault, siteId, term } = this.props;
 		if ( canSetAsDefault ) {
 			this.props.saveSiteSettings( siteId, { default_category: term.ID } );
@@ -110,8 +103,8 @@ class TaxonomyManagerListItem extends Component {
 					}
 				</span>
 				{ ! isUndefined( term.post_count ) && <Count count={ term.post_count } /> }
-				<EllipsisMenu position={ 'bottom left' }>
-					<PopoverMenuItem onClick={ this.editItem }>
+				<EllipsisMenu position="bottom left">
+					<PopoverMenuItem onClick={ onClick }>
 						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
