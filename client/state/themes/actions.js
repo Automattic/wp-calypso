@@ -33,6 +33,11 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_RECEIVE_SERVER_ERROR,
+	THEME_UPLOAD_START,
+	THEME_UPLOAD_SUCCESS,
+	THEME_UPLOAD_FAILURE,
+	THEME_UPLOAD_CLEAR,
+	THEME_UPLOAD_PROGRESS,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -425,5 +430,60 @@ export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId
+	};
+}
+
+/**
+ * Triggers a theme upload to the given site.
+ *
+ * @param {Number} siteId -- Site to upload to
+ * @param {File} file -- the theme zip to upload
+ *
+ * @return {Function} the action function
+ */
+export function uploadTheme( siteId, file ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_UPLOAD_START,
+			siteId,
+		} );
+		return wpcom.undocumented().uploadTheme( siteId, file, ( event ) => {
+			dispatch( {
+				type: THEME_UPLOAD_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total
+			} );
+		} )
+			.then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_UPLOAD_SUCCESS,
+					siteId,
+					themeId: theme.id,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_UPLOAD_FAILURE,
+					siteId,
+					error
+				} );
+			} );
+	};
+}
+
+/**
+ * Clears any state remaining from a previous
+ * theme upload to the given site.
+ *
+ * @param {Number} siteId -- site to clear state for
+ *
+ * @return {Object} the action object to dispatch
+ */
+export function clearThemeUpload( siteId ) {
+	return {
+		type: THEME_UPLOAD_CLEAR,
+		siteId,
 	};
 }
