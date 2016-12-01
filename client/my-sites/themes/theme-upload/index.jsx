@@ -37,6 +37,18 @@ const debug = debugFactory( 'calypso:themes:theme-upload' );
 
 class Upload extends React.Component {
 
+	static propTypes = {
+		siteId: React.PropTypes.number,
+		inProgress: React.PropTypes.bool,
+		complete: React.PropTypes.bool,
+		failed: React.PropTypes.bool,
+		uploadedTheme: React.PropTypes.object,
+		error: React.PropTypes.object,
+		progressTotal: React.PropTypes.number,
+		progressLoaded: React.PropTypes.number,
+		installing: React.PropTypes.bool,
+	};
+
 	constructor( props ) {
 		super( props );
 		const { siteId, inProgress } = this.props;
@@ -59,10 +71,10 @@ class Upload extends React.Component {
 	}
 
 	successMessage() {
-		const { translate, uploadedTheme: theme } = this.props;
+		const { translate, uploadedTheme } = this.props;
 		notices.success( translate( 'Successfully uploaded theme %(name)s', {
 			args: {
-				name: theme.name
+				name: uploadedTheme.name
 			}
 		} ) );
 	}
@@ -190,18 +202,6 @@ class Upload extends React.Component {
 		);
 	}
 }
-
-Upload.propTypes = {
-	siteId: React.PropTypes.number,
-	inProgress: React.PropTypes.bool,
-	complete: React.PropTypes.bool,
-	failed: React.PropTypes.bool,
-	uploadedTheme: React.PropTypes.object,
-	error: React.PropTypes.object,
-	progressTotal: React.PropTypes.number,
-	progressLoaded: React.PropTypes.number,
-	installing: React.PropTypes.bool,
-};
 
 export default connect(
 	( state ) => {
