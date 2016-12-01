@@ -43,10 +43,10 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getCurrentTheme } from './current-theme/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeById } from './themes/selectors';
+import { getThemeIdFromStylesheet } from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -281,22 +281,34 @@ export function requestThemes( siteId, query = {} ) {
  */
 export function requestTheme( themeId, siteId ) {
 	return ( dispatch ) => {
-		let siteIdToQuery;
-
-		if ( siteId === 'wpcom' ) {
-			siteIdToQuery = null;
-		} else {
-			siteIdToQuery = siteId;
-		}
-
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
 			themeId
 		} );
 
-		return wpcom.undocumented().themeDetails( themeId, siteIdToQuery ).then( ( theme ) => {
-			dispatch( receiveTheme( theme, siteId ) );
+		if ( siteId === 'wpcom' ) {
+			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: THEME_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+		}
+
+		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
+		// the regular themeDetails() method for Jetpack sites yet.
+		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( theme ) => {
+			dispatch( receiveThemes( theme.themes, siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
@@ -367,7 +379,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				dispatch( themeActivated( theme, siteId, source, purchased ) );
+				const themeStylesheet = theme.stylesheet || themeId; // Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
 			.catch( error => {
 				dispatch( {
@@ -382,33 +395,30 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 /**
  * Returns an action thunk to be used in signalling that a theme has been activated
- * on a given site.
+ * on a given site. Careful, this action is different from most others here in that
+ * expects a theme stylesheet string (not just a theme ID).
  *
- * @param  {Object}   theme     Theme object
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
+ * @param  {Number}   siteId          Site ID
+ * @param  {String}   source          The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased       Whether the theme has been purchased prior to activation
+ * @return {Function}                 Action thunk
  */
-export function themeActivated( theme, siteId, source = 'unknown', purchased = false ) {
+export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
-		if ( typeof theme !== 'object' ) {
-			theme = getThemeById( getState(), theme );
-		}
-
 		const action = {
 			type: THEME_ACTIVATE_REQUEST_SUCCESS,
-			theme,
+			themeStylesheet,
 			siteId,
 		};
-		const previousTheme = getCurrentTheme( getState(), siteId );
+		const previousThemeId = getActiveTheme( getState(), siteId );
 		const queryParams = getState().themes.themesList.get( 'query' );
 
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
-				theme: theme.id,
-				previous_theme: previousTheme.id,
+				theme: getThemeIdFromStylesheet( themeStylesheet ),
+				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
 				search_term: queryParams.get( 'search' ) || null

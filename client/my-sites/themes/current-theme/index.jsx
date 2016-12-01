@@ -14,8 +14,10 @@ import Card from 'components/card';
 import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
-import { getCurrentTheme } from 'state/themes/current-theme/selectors';
-import QueryCurrentTheme from 'components/data/query-current-theme';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryTheme from 'components/data/query-theme';
 
 /**
  * Show current active theme for a site, with
@@ -37,7 +39,7 @@ const CurrentTheme = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	render() {
-		const { currentTheme, siteId, translate } = this.props,
+		const { currentTheme, currentThemeId, siteId, siteIdOrWpcom, translate } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
@@ -47,7 +49,8 @@ const CurrentTheme = React.createClass( {
 
 		return (
 			<Card className="current-theme">
-				{ siteId && <QueryCurrentTheme siteId={ siteId } /> }
+				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+				{ currentThemeId && <QueryTheme siteId={ siteIdOrWpcom } themeId={ currentThemeId } /> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
@@ -76,8 +79,10 @@ const CurrentTheme = React.createClass( {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
+const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId, siteIdOrWpcom } ) => (
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
+		currentThemeId={ currentThemeId }
+		siteIdOrWpcom={ siteIdOrWpcom }
 		siteId={ siteId }
 		options={ [
 			'customize',
@@ -88,7 +93,13 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 );
 
 export default connect(
-	( state, { siteId } ) => ( {
-		currentTheme: getCurrentTheme( state, siteId )
-	} )
+	( state, { siteId } ) => {
+		const currentThemeId = getActiveTheme( state, siteId );
+		const siteIdOrWpcom = isJetpackSite( state, siteId ) ? siteId : 'wpcom';
+		return {
+			currentThemeId,
+			currentTheme: getTheme( state, siteIdOrWpcom, currentThemeId ),
+			siteIdOrWpcom
+		};
+	}
 )( CurrentThemeWithOptions );

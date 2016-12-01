@@ -13,6 +13,7 @@ import titlecase from 'to-title-case';
  * Internal dependencies
  */
 import QueryThemeDetails from 'components/data/query-theme-details';
+import QueryTheme from 'components/data/query-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -25,18 +26,18 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import { getForumUrl } from 'my-sites/themes/helpers';
 import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryCurrentTheme from 'components/data/query-current-theme';
+import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isActiveTheme } from 'state/themes/current-theme/selectors';
+import { isThemeActive } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -406,7 +407,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId } = this.props;
+		const { name: themeName, description, currentUserId, siteIdOrWpcom } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
@@ -431,6 +432,7 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="theme__sheet">
 				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
+				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
 				<DocumentHead
@@ -439,7 +441,7 @@ const ThemeSheet = React.createClass( {
 					link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
-				{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
+				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
 				<ThanksModal
 					site={ this.props.selectedSite }
 					source={ 'details' } />
@@ -548,6 +550,7 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+		const siteIdOrWpcom = ( selectedSite && isJetpackSite( state, selectedSite.ID ) ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
@@ -558,11 +561,12 @@ export default connect(
 			id,
 			selectedSite,
 			siteSlug,
+			siteIdOrWpcom,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
-			isActive: selectedSite && isActiveTheme( state, id, selectedSite.ID )
+			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID )
 		};
 	}
 )( ThemeSheetWithOptions );
