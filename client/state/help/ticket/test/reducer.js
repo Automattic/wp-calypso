@@ -39,7 +39,7 @@ describe( 'ticket-support/configuration reducer', () => {
 	it( 'should set isUserEligible as is and isReady to true', () => {
 		const state = reducer( undefined, {
 			type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-			...dummyConfiguration,
+			configuration: dummyConfiguration,
 		} );
 
 		assert.isTrue( state.isReady );
@@ -79,7 +79,7 @@ describe( 'ticket-support/configuration reducer', () => {
 	it( 'should set requestError as false on receiving the successful action', () => {
 		const state = reducer( requestErrorState, {
 			type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-			...dummyConfiguration,
+			configuration: dummyConfiguration,
 		} );
 
 		assert.isNull( state.requestError );

@@ -13,7 +13,7 @@ import {
 export const ticketSupportConfigurationRequestSuccess = ( configuration ) => {
 	return {
 		type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-		...configuration,
+		configuration,
 	};
 };
 

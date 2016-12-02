@@ -36,7 +36,7 @@ describe( 'ticket-support/configuration actions', () => {
 
 			assert.deepEqual( action, {
 				type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-				...dummyConfiguration,
+				configuration: dummyConfiguration,
 			} );
 		} );
 	} );
@@ -70,7 +70,7 @@ describe( 'ticket-support/configuration actions', () => {
 			action.then( () => {
 				assert( spy.calledWith( {
 					type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-					...dummyConfiguration,
+					configuration: dummyConfiguration,
 				} ) );
 			} );
 		} );
