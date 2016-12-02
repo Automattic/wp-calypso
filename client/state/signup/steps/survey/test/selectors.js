@@ -12,7 +12,7 @@ describe( 'selectors', () => {
 	it( 'should return empty string as a default state', () => {
 		expect( getSurveyVertical( { signup: undefined } ) ).to.be.eql( '' );
 		expect( getSurveyOtherText( { signup: undefined } ) ).to.be.eql( '' );
-		expect( getSurveySiteType( { signup: undefined } ) ).to.be.eql( '' );
+		expect( getSurveySiteType( { signup: undefined } ) ).to.be.eql( 'site' );
 	} );
 
 	it( 'should return chosen vertical from the state', () => {
