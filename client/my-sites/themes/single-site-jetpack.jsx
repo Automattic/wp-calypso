@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
- import React, { PropTypes } from 'react';
- import pickBy from 'lodash/pickBy';
+import React, { PropTypes } from 'react';
+import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
