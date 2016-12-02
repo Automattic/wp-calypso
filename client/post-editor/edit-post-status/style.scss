@@ -5,8 +5,9 @@
 	justify-content: space-between;
 
 	.gridicon {
+		margin-top: 2px;
 		margin-left: 4px;
-		vertical-align: middle;
+		vertical-align: top;
 	}
 }
 
@@ -42,8 +43,8 @@
 	.gridicon {
 		color: $gray;
 		margin-left: -2px;
-		margin-right: 8px;
-		vertical-align: bottom;
+		margin-right: 6px;
+		vertical-align: top;
 	}
 
 	&:hover,
