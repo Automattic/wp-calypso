@@ -3,7 +3,7 @@
 	margin-bottom: 40px;
 
 	@include breakpoint( "<660px" ) {
-		margin: 20px 0 0;
+		margin: 20px 0 20px;
 	}
 
 	.site__content {
@@ -129,6 +129,7 @@
 
 	&.reader-feed-header__site {
 		margin: 0 auto;
+		padding: 0;
 		width: 100%;
 	}
 }

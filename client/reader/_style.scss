@@ -113,7 +113,7 @@
 }
 
 // Refresh Site Stream with Back button
-.is-reader-page .reader-feed-header {
+.is-reader-page .is-site-stream .reader-feed-header {
 	display: flex;
 	flex-direction: column;
 
@@ -123,7 +123,7 @@
 		.reader-feed-header__site {
 
 			@include breakpoint( "<960px" ) {
-				margin-top: -35px;
+				margin-top: -20px;
 			}
 		}
 
@@ -150,7 +150,7 @@
 	}
 }
 
-.is-reader-page .card.header-cake {
+.is-reader-page .is-site-stream .card.header-cake {
 	background: none;
 	box-shadow: none;
 	padding: 0;
