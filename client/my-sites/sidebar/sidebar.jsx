@@ -31,6 +31,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { userCan } from 'lib/site/utils';
 
 /**
  * Module variables
@@ -155,14 +156,12 @@ export class MySitesSidebar extends Component {
 	}
 
 	ads() {
-		var site = this.getSelectedSite(),
-			adsLink = '/ads/earnings' + this.siteSuffix();
-
-		if ( ! site || ! site.options.wordads ) {
-			return null;
-		}
+		const site = this.getSelectedSite();
+		const adsLink = '/ads/earnings' + this.siteSuffix();
+		const canManageAds = site && site.options.wordads && userCan( 'manage_options', site );
 
 		return (
+			canManageAds &&
 			<SidebarItem
 				label={ site.jetpack ? 'AdControl' : 'WordAds' }
 				className={ this.itemLinkClass( '/ads', 'rads' ) }
