@@ -825,9 +825,15 @@
 	}
 }
 
+.checkout__payment-chat-button-icon {
+	color: $blue-wordpress;
+	margin-right: 5px;
+}
+
 .checkout__payment-chat-button {
 	@include breakpoint( "<660px" ) {
 		width: 100%;
+		text-align: center;
 	}
 
 	@include breakpoint( ">960px" ) {
