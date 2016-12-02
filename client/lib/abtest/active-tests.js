@@ -122,8 +122,8 @@ module.exports = {
 	noSurveyStep: {
 		datestamp: '20161202',
 		variations: {
-			showSurveyStep: 5,
-			hideSurveyStep: 95,
+			showSurveyStep: 50,
+			hideSurveyStep: 50,
 		},
 		defaultVariation: 'showSurveyStep',
 		allowAnyLocale: true,
