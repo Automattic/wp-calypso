@@ -3,6 +3,7 @@
 */
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
+import { over } from 'lodash';
 
 /**
 * Internal dependencies
@@ -60,7 +61,7 @@ const PopoverMenu = React.createClass( {
 		let onClick = boundOnClose;
 
 		if ( child.props.onClick ) {
-			onClick = child.props.onClick.bind( null, boundOnClose );
+			onClick = over( [ child.props.onClick, boundOnClose ] );
 		}
 
 		return React.cloneElement( child, {
