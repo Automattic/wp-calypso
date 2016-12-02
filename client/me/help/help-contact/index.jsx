@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import config from 'config';
 import Main from 'components/main';
 import Card from 'components/card';
+import Notice from 'components/notice';
 import OlarkChatbox from 'components/olark-chatbox';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
@@ -420,7 +421,7 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
-		const { isTicketSupportConfigurationReady, isTicketSupportEligible } = this.props;
+		const { isTicketSupportConfigurationReady, isTicketSupportEligible, ticketSupportRequestError } = this.props;
 
 		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
@@ -429,7 +430,9 @@ const HelpContact = React.createClass( {
 		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
 
 		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
-		const showPreloadForm = ! sitesInitialized || ! isTicketSupportConfigurationReady || ! olarkReadyOrTimedOut;
+		const ticketReadyOrError = isTicketSupportConfigurationReady || null !== ticketSupportRequestError;
+
+		const showPreloadForm = ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut ;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -500,7 +503,20 @@ const HelpContact = React.createClass( {
 		// Hide the olark widget in the bottom right corner.
 		olarkActions.hideBox();
 
-		return <HelpContactForm { ...contactFormProps } />;
+		const shouldShowTicketRequestErrorNotice = ! showChatVariation && null !== ticketSupportRequestError;
+
+		return (
+			<div>
+				{ shouldShowTicketRequestErrorNotice &&
+					<Notice
+						status='is-error'
+						text={ this.translate( 'An error occurred while requesting for email support settings. Please try again later.' ) }
+						showDismiss={ false }
+					/>
+				}
+				<HelpContactForm { ...contactFormProps } />
+			</div>
+		);
 	},
 
 	render: function() {
