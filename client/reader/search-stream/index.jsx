@@ -56,7 +56,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 		this.setState( this.getStateFromStores( nextProps ) );
 	}
 
-	onCardClick( props, event ) {
+	onCardClick = ( props, event ) => {
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
@@ -78,12 +78,12 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 		this.props.handleClick( this.props.post, {} );
 	}
 
-	onRefreshCardClick( post ) {
-		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
+	onRefreshCardClick = ( post ) => {
+		recordTrackForPost( 'calypso_reader_searchcard_clicked', post );
 		this.props.handleClick( post, {} );
 	}
 
-	onCommentClick() {
+	onCommentClick = () => {
 		this.props.handleClick( this.props.post, { comments: true } );
 	}
 
