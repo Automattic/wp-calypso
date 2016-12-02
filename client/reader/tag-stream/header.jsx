@@ -33,26 +33,23 @@ class TagStreamHeader extends React.Component {
 		hasBackButton: React.PropTypes.bool
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			tag: props.tag,
-			tagImages: props.tagImages
-		};
-		this.pickNewTagImage( props );
+	static defaultProps = {
+		tagImages: []
 	}
+
+	pickTagImage = ( props = this.props ) => {
+		return sample( props.tagImages );
+	}
+
+	state = {
+		tag: this.props.tag,
+		tagImages: this.props.tagImages,
+		chosenTagImage: this.pickTagImage()
+	};
 
 	componentWillReceiveProps( nextProps ) {
-		this.pickNewTagImage( nextProps );
-	}
-
-	pickNewTagImage = ( props = this.props ) => {
-		if ( this.state && this.state.tagImages !== props.tagImages ) {
-			this.state = {
-				tag: props.tag,
-				tagImages: props.tagImages,
-				chosenTagImage: sample( props.tagImages )
-			};
+		if ( nextProps.tagImages !== this.props.tagImages ) {
+			this.setState( { chosenTagImage: this.pickTagImage( nextProps ) } );
 		}
 	}
 
