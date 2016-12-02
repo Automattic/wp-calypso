@@ -112,15 +112,67 @@
 	}
 }
 
-// Refresh Feed and Site Stream
-.is-reader-page .card.header-cake {
+// Refresh Site Stream with Back button
+.is-reader-page .reader-feed-header {
+	display: flex;
+	flex-direction: column;
 
-	@include breakpoint( ">960px" ) {
-		background: none;
-		box-shadow: none;
-		position: relative;
-			top: 68px;
-		z-index: 2;
+	&.has-back-button {
+		margin-top: -27px;
+
+		.reader-feed-header__site {
+
+			@include breakpoint( "<960px" ) {
+				margin-top: -35px;
+			}
+		}
+
+		.reader-feed-header__follow {
+
+			@include breakpoint( "<960px" ) {
+				justify-content: flex-end;
+				position: relative;
+					top: -4px;
+			}
+
+			@include breakpoint( "<660px" ) {
+				top: 12px;
+				right: 15px;
+			}
+		}
+
+		.reader-feed-header__follow-count {
+
+			@include breakpoint( "<960px" ) {
+				display: none;
+			}
+		}
+	}
+}
+
+.is-reader-page .card.header-cake {
+	background: none;
+	box-shadow: none;
+	padding: 0;
+	position: relative;
+		left: -3px;
+		top: 20px;
+
+	@include breakpoint( "<960px" ) {
+		top: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		left: 13px;
+		top: 16px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		top: 10px;
+	}
+
+	.button.header-cake__back {
+		padding: 0;
 	}
 }
 

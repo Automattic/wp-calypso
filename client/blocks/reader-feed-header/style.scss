@@ -3,7 +3,7 @@
 	margin-bottom: 40px;
 
 	@include breakpoint( "<660px" ) {
-		margin-top: 20px;
+		margin: 20px 0 0;
 	}
 
 	.site__content {
@@ -31,7 +31,6 @@
 		font-family: $serif;
 		font-size: 21px;
 		font-weight: 600;
-		height: 90px;
 		overflow: hidden;
 		position: relative;
 		text-align: center;
@@ -70,7 +69,7 @@
 		justify-content: center;
 		margin-bottom: 15px;
 		position: static;
-		z-index: 1;
+		z-index: z-index( 'root', '.reader-feed-header__follow' );
 
 		@include breakpoint( ">960px" ) {
 			justify-content: flex-end;
