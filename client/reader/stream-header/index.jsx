@@ -2,7 +2,7 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' );
 
 var Card = require( 'components/card' ),
-	FollowButton = require( 'components/follow-button/button' ),
+	FollowButton = require( 'blocks/follow-button/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	isExternal = require( 'lib/url' ).isExternal;
 
