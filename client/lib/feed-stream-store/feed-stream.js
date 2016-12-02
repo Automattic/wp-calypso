@@ -1,7 +1,15 @@
 /**
  * External Dependencies
  */
-import { assign, filter, findIndex, findLastIndex, forEach, map, noop, get } from 'lodash';
+import {
+	filter,
+	findIndex,
+	findLastIndex,
+	forEach,
+	get,
+	map,
+	noop
+} from 'lodash';
 import moment from 'moment';
 import url from 'url';
 import debugFactory from 'debug';
@@ -41,7 +49,7 @@ export default class FeedStream {
 
 		this.id = spec.id;
 
-		assign( this, {
+		Object.assign( this, {
 			id: spec.id,
 			postKeys: [], // an array of keys, as determined by the key maker,
 			pendingPostKeys: [],
@@ -171,7 +179,7 @@ export default class FeedStream {
 			post._state !== 'minimal';
 	}
 
-	selectNextItem( ) {
+	selectNextItem() {
 		if ( this.selectedIndex === -1 ) {
 			return;
 		}
