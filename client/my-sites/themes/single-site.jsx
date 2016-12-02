@@ -53,23 +53,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	}
 
 	return (
-		<SingleSiteThemeShowcaseWpcom { ...props }
-			site={ site }
-			siteId={ site.ID }
-			options={ [
-				'customize',
-				'preview',
-				'purchase',
-				'activate',
-				'tryandcustomize',
-				'separator',
-				'info',
-				'support',
-				'help'
-			] }
-			defaultOption="activate"
-			secondaryOption="tryandcustomize"
-			source="showcase" />
+		<SingleSiteThemeShowcaseWpcom { ...props } />
 	);
 };
 

@@ -14,7 +14,7 @@ import { addTracking } from './helpers';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 
-const MultiSiteThemeShowcase = connectOptions( React.createClass( {
+const ThemesSelectionWithSiteSelector = React.createClass( {
 	propTypes: {
 		getScreenshotOption: PropTypes.func,
 	},
@@ -23,14 +23,8 @@ const MultiSiteThemeShowcase = connectOptions( React.createClass( {
 		const { getScreenshotOption, search, options } = this.props;
 
 		return (
-			<div>
-				<ThemesSiteSelectorModal { ...this.props } sourcePath="/design">
-					<ThemeShowcase source="showcase">
-						<SidebarNavigation />
-					</ThemeShowcase>
-				</ThemesSiteSelectorModal>
+			<ThemesSiteSelectorModal { ...this.props } sourcePath="/design">
 				<ThemesSelection
-					siteId={ this.props.siteId }
 					selectedSite={ false }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -59,10 +53,57 @@ const MultiSiteThemeShowcase = connectOptions( React.createClass( {
 					vertical={ this.props.vertical }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
+			</ThemesSiteSelectorModal>
+		);
+	}
+} );
+
+const ConnectedThemesSelection = connectOptions( ThemesSelectionWithSiteSelector );
+
+export const MultiSiteThemeShowcase = ( props ) => (
+	<div>
+		<ThemeShowcase source="showcase">
+			<SidebarNavigation />
+		</ThemeShowcase>
+		<ConnectedThemesSelection { ...props }
+			options={ [
+				'preview',
+				'purchase',
+				'activate',
+				'tryandcustomize',
+				'separator',
+				'info',
+				'support',
+				'help',
+			] }
+			defaultOption="activate"
+			secondaryOption="tryandcustomize"
+			getScreenshotOption={ function() {
+				return 'info';
+			} } />
+	</div>
+);
+
+/*const MultiSiteThemeShowcase = React.createClass( {
+	propTypes: {
+		getScreenshotOption: PropTypes.func,
+	},
+
+	render() {
+		const { getScreenshotOption, search, options } = this.props;
+
+		return (
+			<div>
+				<ThemeShowcase source="showcase">
+					<SidebarNavigation />
+				</ThemeShowcase>
+				{ connectOptions( <ThemesSiteSelectorModal { ...this.props } sourcePath="/design">
+
+				</ThemesSiteSelectorModal> ) }
 			</div>
 		);
 	}
-} ) );
+} );
 
 export default ( props ) => (
 	<MultiSiteThemeShowcase { ...props }
@@ -81,4 +122,4 @@ export default ( props ) => (
 		getScreenshotOption={ function() {
 			return 'info';
 		} } />
-);
+);*/

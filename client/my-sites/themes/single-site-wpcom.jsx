@@ -19,6 +19,8 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 
+const ThemesSelectionConnected = connectOptions( ThemesSelection );
+
 const SingleSiteThemeShowcaseWpcom = React.createClass( {
 	propTypes: {
 		getScreenshotOption: PropTypes.func,
@@ -44,8 +46,24 @@ const SingleSiteThemeShowcaseWpcom = React.createClass( {
 						event="themes_custom_design"
 						/>
 				</ThemeShowcase>
-				<ThemesSelection
-					siteId={ this.props.siteId }
+				<ThemesSelectionConnected
+					site={ site }
+					siteId={ siteId }
+					options={ [
+						'customize',
+						'preview',
+						'purchase',
+						'activate',
+						'tryandcustomize',
+						'separator',
+						'info',
+						'support',
+						'help'
+					] }
+					defaultOption="activate"
+					secondaryOption="tryandcustomize"
+					source="showcase"
+
 					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -79,4 +97,4 @@ const SingleSiteThemeShowcaseWpcom = React.createClass( {
 	}
 } );
 
-export default connectOptions( SingleSiteThemeShowcaseWpcom );
+export default SingleSiteThemeShowcaseWpcom;
