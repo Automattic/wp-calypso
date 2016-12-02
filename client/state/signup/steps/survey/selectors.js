@@ -12,5 +12,5 @@ export function getSurveyOtherText( state ) {
 }
 
 export function getSurveySiteType( state ) {
-	return get( state, 'signup.steps.survey.siteType', 'site' );
+	return get( state, 'signup.steps.survey.siteType', '' );
 }

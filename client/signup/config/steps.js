@@ -15,7 +15,7 @@ module.exports = {
 		props: {
 			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
 		},
-		//providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
+		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
 
 	themes: {
@@ -67,7 +67,7 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		dependencies: [ 'theme', 'surveyQuestion' ],
 		delayApiRequestUntilComplete: true
 	},
 
