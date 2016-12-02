@@ -33,7 +33,6 @@ export const sitesSchema = {
 				is_private: { type: 'boolean' },
 				is_following: { type: 'boolean' },
 				options: { type: 'object' },
-				meta: { type: 'object' },
 				user_can_manage: { type: 'boolean' },
 				is_vip: { type: 'boolean' },
 				is_multisite: { type: 'boolean' },
@@ -45,7 +44,7 @@ export const sitesSchema = {
 				},
 				plan: {
 					type: 'object',
-					required: [ 'product_id', 'product_slug', 'expired' ],
+					required: [ 'product_id', 'product_slug' ],
 					properties: {
 						product_id: { type: 'number' },
 						product_slug: { type: 'string' },
