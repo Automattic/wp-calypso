@@ -43,7 +43,7 @@ import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getTheme, isThemeReceiveError } from 'state/themes/selectors';
+import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
@@ -573,15 +573,8 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getTheme( state, siteIdOrWpcom, id );
-		let themeDetails;
-		if ( ! theme ) {
-			themeDetails = isThemeReceiveError( state, id, siteIdOrWpcom )
-				? { error: 'Theme Error', id } : null;
-		} else {
-			themeDetails = themeDetailsFromTheme( theme );
-		}
-
+		const theme = selectedSite ? getTheme( state, selectedSite.ID, id ) : getTheme( state, 'wpcom', id );
+		const themeDetails = theme && themeDetailsFromTheme( theme );
 		return {
 			...themeDetails,
 			id,
