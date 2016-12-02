@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
+	getSiteSettingsSaveRequestStatus,
 	getSiteSettings
 } from '../selectors';
 
@@ -58,8 +59,8 @@ describe( 'selectors', () => {
 		it( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
-					saving: {
-						2916284: true
+					saveRequests: {
+						2916284: { saving: true, status: 'pending' }
 					}
 				}
 			};
@@ -71,8 +72,8 @@ describe( 'selectors', () => {
 		it( 'should return false if the site settings are not saving', () => {
 			const state = {
 				siteSettings: {
-					saving: {
-						2916284: false
+					saveRequests: {
+						2916284: { saving: false, status: 'success' }
 					}
 				}
 			};
@@ -84,14 +85,68 @@ describe( 'selectors', () => {
 		it( 'should return true if the site settings are saving', () => {
 			const state = {
 				siteSettings: {
-					saving: {
-						2916284: true
+					saveRequests: {
+						2916284: { saving: true, status: 'pending' }
 					}
 				}
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
 			expect( isSaving ).to.be.true;
+		} );
+	} );
+
+	describe( 'getSiteSettingsSaveRequestStatus()', () => {
+		it( 'should return undefined if the site is not attached', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: true, status: 'pending' }
+					}
+				}
+			};
+			const status = getSiteSettingsSaveRequestStatus( state, 2916285 );
+
+			expect( status ).to.be.undefined;
+		} );
+
+		it( 'should return success if the save request status is success', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'success' }
+					}
+				}
+			};
+			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
+
+			expect( status ).to.eql( 'success' );
+		} );
+
+		it( 'should return error if the save request status is error', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'error' }
+					}
+				}
+			};
+			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
+
+			expect( status ).to.eql( 'error' );
+		} );
+
+		it( 'should return pending if the save request status is pending', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: true, status: 'pending' }
+					}
+				}
+			};
+			const isSaving = getSiteSettingsSaveRequestStatus( state, 2916284 );
+
+			expect( isSaving ).to.eql( 'pending' );
 		} );
 	} );
 

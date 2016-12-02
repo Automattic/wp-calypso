@@ -183,7 +183,7 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!', { id: 'site-settings-save' } ) ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!' ), { id: 'site-settings-save' } ),
 	[ SITE_SETTINGS_SAVE_FAILURE ]: onSiteSettingsSaveFailed
 };
 

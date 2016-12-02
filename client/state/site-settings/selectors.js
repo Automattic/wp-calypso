@@ -22,7 +22,18 @@ export function isRequestingSiteSettings( state, siteId ) {
  * @return {Boolean}        Whether site settings is being requested
  */
 export function isSavingSiteSettings( state, siteId ) {
-	return get( state.siteSettings.saving, [ siteId ], false );
+	return get( state.siteSettings.saveRequests, [ siteId, 'saving' ], false );
+}
+
+/**
+ * Returns the status of the last site settings save request
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {String}         The request status (peding, success or error)
+ */
+export function getSiteSettingsSaveRequestStatus( state, siteId ) {
+	return get( state.siteSettings.saveRequests, [ siteId, 'status' ] );
 }
 
 /**

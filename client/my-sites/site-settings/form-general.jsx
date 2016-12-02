@@ -37,7 +37,12 @@ import SiteIconSetting from './site-icon-setting';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
-import { isRequestingSiteSettings, isSavingSiteSettings, getSiteSettings } from 'state/site-settings/selectors';
+import {
+	getSiteSettingsSaveRequestStatus,
+	isRequestingSiteSettings,
+	isSavingSiteSettings,
+	getSiteSettings
+} from 'state/site-settings/selectors';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -126,6 +131,14 @@ class SiteSettingsFormGeneral extends Component {
 			newState = omit( newState, nextProps.dirtyFields );
 			nextProps.updateFields( newState );
 		}
+
+		if (
+			this.props.isSavingSettings &&
+			! nextProps.isSavingSettings &&
+			nextProps.saveRequestStatus === 'success' ) {
+			nextProps.clearDirtyFields();
+			nextProps.markSaved();
+		}
 	}
 
 	onRecordEvent( eventAction ) {
@@ -172,13 +185,9 @@ class SiteSettingsFormGeneral extends Component {
 	};
 
 	submitForm() {
-		const { fields, site, clearDirtyFields } = this.props;
+		const { fields, site } = this.props;
 		this.props.removeNotice( 'site-settings-save' );
-		this.props.saveSiteSettings( site.ID, fields )
-			.then( () => {
-				clearDirtyFields();
-				this.props.markSaved();
-			} );
+		this.props.saveSiteSettings( site.ID, fields );
 	}
 
 	onChangeField( field ) {
@@ -800,9 +809,10 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const isRequestingSettings = isRequestingSiteSettings( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
+		const saveRequestStatus = getSiteSettingsSaveRequestStatus( state, siteId );
 		const settings = getSiteSettings( state, siteId );
 		return {
-			isRequestingSettings, isSavingSettings, settings
+			isRequestingSettings, isSavingSettings, saveRequestStatus, settings
 		};
 	},
 	{ removeNotice, saveSiteSettings }
