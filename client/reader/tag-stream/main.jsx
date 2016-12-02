@@ -94,7 +94,7 @@ const TagStream = React.createClass( {
 		const title = decodeURIComponent( this.state.title );
 
 		return (
-			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true }>
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				{ config.isEnabled( 'reader/refresh/stream' )

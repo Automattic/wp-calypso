@@ -53,7 +53,7 @@ class ReaderPostCardAdapter extends React.Component {
 				onClick={ this.onClick }
 				onCommentClick={ this.onCommentClick }
 				isSelected={ this.props.isSelected }
-				showPrimaryFollowButton={ this.props.showPrimaryFollowButton }
+				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				showEntireExcerpt={ isDiscoverPost }
 				useBetterExcerpt={ ! isDiscoverPost }
 				showSiteName={ this.props.showSiteName }>
