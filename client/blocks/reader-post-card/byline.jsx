@@ -20,6 +20,7 @@ import {
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
 class PostByline extends React.Component {
 
@@ -55,7 +56,7 @@ class PostByline extends React.Component {
 		const primaryTag = post && post.primary_tag;
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const hasAuthorName = has( post, 'author.name' );
-		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === post.author.name.toLowerCase();
+		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
