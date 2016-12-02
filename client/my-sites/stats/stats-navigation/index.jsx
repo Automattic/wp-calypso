@@ -11,6 +11,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
+import FollowersCount from 'blocks/followers-count';
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -42,6 +43,7 @@ class StatsNavigation extends Component {
 			year: translate( 'Years' )
 		};
 
+
 		return (
 			<SectionNav selectedText={ sectionTitles[ section ] }>
 				<NavTabs label={ translate( 'Stats' ) }>
@@ -61,6 +63,7 @@ class StatsNavigation extends Component {
 						{ sectionTitles.year }
 					</NavItem>
 				</NavTabs>
+				<FollowersCount />
 			</SectionNav>
 		);
 	}
