@@ -49,7 +49,7 @@ class OlarkChatButton extends Component {
 	}
 
 	render() {
-		const { className, isAvailable, title, borderless } = this.props;
+		const { className, isAvailable, children, borderless } = this.props;
 		const classes = classnames( className, 'olark-chat-button', 'button', {
 			'is-borderless': !! borderless
 		} );
@@ -60,7 +60,7 @@ class OlarkChatButton extends Component {
 
 		return (
 			<button className={ classes } onClick={ this.openChat }>
-				{ title }
+				{ children }
 			</button>
 		);
 	}
