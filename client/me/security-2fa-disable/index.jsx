@@ -12,7 +12,7 @@ import FormButton from 'components/forms/form-button';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import Security2faStatus from 'me/security-2fa-status';
 import Security2faCodePrompt from 'me/security-2fa-code-prompt';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice } from 'state/notices/actions';
 
 class Security2faDisable extends Component {
@@ -20,6 +20,8 @@ class Security2faDisable extends Component {
 		onFinished: PropTypes.func.isRequired,
 		userSettings: PropTypes.object.isRequired,
 		translate: PropTypes.func,
+		recordGoogleEvent: PropTypes.func,
+		successNotice: PropTypes.func,
 	}
 
 	constructor() {
@@ -30,7 +32,7 @@ class Security2faDisable extends Component {
 	}
 
 	onRevealCodePrompt = () => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On Disable Two-Step Authentication Button' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On Disable Two-Step Authentication Button' );
 		this.setState( { showingCodePrompt: true } );
 	}
 
@@ -159,7 +161,10 @@ class Security2faDisable extends Component {
 
 export default connect(
 	null,
-	{ successNotice },
+	{
+		successNotice,
+		recordGoogleEvent
+	},
 	null,
 	{ pure: false }
 )( localize( Security2faDisable ) );
