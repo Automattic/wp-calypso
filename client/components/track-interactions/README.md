@@ -48,9 +48,9 @@ clicking yields:
 **`mapPropsToAction`** (function): for cases where `fields` isn't flexible enough:
 
 ```js
-const mapPropsToAction = ( state, { theme } ) => ( {
+const mapPropsToAction = ( state, { theme, isActive } ) => ( {
 	name: theme.id,
-	isActiveTheme: isThemeActive( state, theme.id, getSelectedSiteId( state ) ),
+	isActive
 } );
 
 <TrackInteractions mapPropsToAction={ mapPropsToAction }>
