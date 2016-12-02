@@ -30,7 +30,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
 import { canCurrentUser } from 'state/current-user/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { abtest } from 'lib/abtest';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 class DomainToPlanNudge extends Component {
@@ -65,8 +64,7 @@ class DomainToPlanNudge extends Component {
 			rawPrice &&       //plans info has loaded
 			site &&           //site exists
 			site.wpcom_url && //has a mapped domain
-			hasFreePlan &&    //has a free wpcom plan
-			abtest( 'domainToPersonalPlanNudge3' ) === 'nudge';
+			hasFreePlan;      //has a free wpcom plan
 	}
 
 	personalCheckout = () => {
