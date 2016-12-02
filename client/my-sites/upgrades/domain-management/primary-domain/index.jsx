@@ -152,7 +152,7 @@ const PrimaryDomain = React.createClass( {
 						) }
 					</Notice>
 
-					<section className="primary-domain-actions">
+					<section className="primary-domain__actions">
 						<button
 							className="button is-primary"
 							disabled={ this.state.loading }

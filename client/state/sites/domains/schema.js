@@ -33,6 +33,7 @@ export const itemsSchema = {
 					pendingRegistration: { type: 'boolean' },
 					pendingRegistrationTime: { type: 'string' },
 					pointsToWpcom: { type: 'boolean' },
+					registrar: { type: 'string' },
 					registrationDate: { type: 'string' },
 					type: { type: 'string' }
 				}
