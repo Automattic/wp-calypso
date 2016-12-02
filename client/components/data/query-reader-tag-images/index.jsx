@@ -8,12 +8,12 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingTagImages } from 'state/reader/tags/images/selectors';
+import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
 import { requestTagImages } from 'state/reader/tags/images/actions';
 
 class QueryReaderTagImages extends Component {
 	componentWillMount() {
-		if ( this.props.isRequestingTagImages || ! this.props.tag ) {
+		if ( ! this.props.shouldRequestTagImages || ! this.props.tag ) {
 			return;
 		}
 
@@ -26,7 +26,7 @@ class QueryReaderTagImages extends Component {
 }
 
 QueryReaderTagImages.propTypes = {
-	isRequestingTagImages: PropTypes.bool,
+	shouldRequestTagImages: PropTypes.bool,
 	requestTagImages: PropTypes.func
 };
 
@@ -37,7 +37,7 @@ QueryReaderTagImages.defaultProps = {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			isRequestingTagImages: isRequestingTagImages( state, ownProps.tag )
+			shouldRequestTagImages: shouldRequestTagImages( state, ownProps.tag )
 		};
 	},
 	( dispatch ) => {
