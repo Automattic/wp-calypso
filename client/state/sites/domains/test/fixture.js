@@ -43,6 +43,7 @@ export const DOMAIN_PRIMARY = {
 	pendingRegistrationTime: '',
 	isPrimary: true,
 	isPrivate: false,
+	registrar: '',
 	registrationDate: 'March 9, 2016',
 	type: 'MAPPED',
 	isWPCOMDomain: false
@@ -76,6 +77,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingRegistrationTime: '',
 	isPrimary: false,
 	isPrivate: false,
+	registrar: '',
 	registrationDate: '',
 	type: 'WPCOM',
 	isWPCOMDomain: true
@@ -110,6 +112,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	pending_registration_time: '',
 	primary_domain: true,
 	private_domain: false,
+	registrar: '',
 	registration_date: 'March 9, 2016',
 	type: 'mapping',
 	wpcom_domain: false
@@ -140,6 +143,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	pending_registration_time: '',
 	primary_domain: false,
 	private_domain: false,
+	registrar: '',
 	registration_date: '',
 	type: 'wpcom',
 	wpcom_domain: true

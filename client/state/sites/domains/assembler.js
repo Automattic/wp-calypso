@@ -30,6 +30,7 @@ export const createSiteDomainObject = domain => {
 		pendingRegistration: Boolean( domain.pending_registration ),
 		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
+		registrar: String( domain.registrar ),
 		registrationDate: String( domain.registration_date ),
 		type: getDomainType( domain )
 	};

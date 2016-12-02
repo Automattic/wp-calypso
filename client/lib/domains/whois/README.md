@@ -29,5 +29,5 @@ To interact with the store, use the actions made available in [`domain-managemen
 import * as upgradesActions from 'lib/upgrades/actions';
 
 upgradesActions.fetchWhois( 'example.wordpress.com' );
-upgradesActions.updateWhois( 'example.wordpress.com', contactInformationData, onCompleteCallback );
+upgradesActions.updateWhois( 'example.wordpress.com', contactInformationData, true, onCompleteCallback );
 ```

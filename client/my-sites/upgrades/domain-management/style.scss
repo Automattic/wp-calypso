@@ -21,12 +21,11 @@
 }
 
 .domain-management-form-footer,
-.primary-domain-actions {
+.primary-domain__actions {
 	border-top: 1px solid $gray-light;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
 	display: flex;
-	justify-content: flex-end;
 
 	@include breakpoint('>480px') {
 		padding: 24px;
@@ -57,6 +56,14 @@
 			order: 2;
 		}
 	}
+}
+
+.primary-domain__actions {
+	justify-content: flex-end;
+}
+
+.domain-management-form-footer {
+	justify-content: flex-start;
 }
 
 .domain-management-header__children {
@@ -309,11 +316,11 @@ input[type=radio].domain-management-list-item__radio {
 	margin: 5px 0;
 }
 
-.edit-contact-info-form-card__form-content {
+.edit-contact-info__form-content {
 	margin-bottom: 20px;
 	overflow: auto;
 
-	.edit-contact-info-field {
+	.edit-contact-info__form-field {
 		margin-top: 15px;
 		position: relative;
 
@@ -339,7 +346,7 @@ input[type=radio].domain-management-list-item__radio {
 			margin-top: 0;
 		}
 
-		.edit-contact-info-field {
+		.edit-contact-info__form-field {
 			float: left;
 			width: 100%;
 		}
@@ -367,6 +374,23 @@ input[type=radio].domain-management-list-item__radio {
 			margin-left: 14px;
 		}
 	}
+}
+
+.edit-contact-info__terms {
+	color: darken( $gray, 10% );
+	margin: 16px 0;
+	padding: 0;
+	text-align: left;
+
+	.gridicon {
+		float: left;
+	}
+}
+
+.edit-contact-info__terms-copy {
+	font-size: 12px;
+	font-weight: 100;
+	margin-left: 24px;
 }
 
 .add-google-apps-card {

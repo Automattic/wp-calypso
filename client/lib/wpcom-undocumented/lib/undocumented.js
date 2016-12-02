@@ -1688,13 +1688,14 @@ Undocumented.prototype.fetchWhois = function( domainName, fn ) {
  * @param {Object} [whois]
  * @param {Function} [fn]
  */
-Undocumented.prototype.updateWhois = function( domainName, whois, fn ) {
+Undocumented.prototype.updateWhois = function( domainName, whois, transferLock, fn ) {
 	debug( '/domains/:domainName/whois' );
 	return this.wpcom.req.post( {
 		path: `/domains/${ domainName }/whois`,
 		apiVersion: '1.1',
 		body: {
-			whois: whois
+			whois,
+			transfer_lock: transferLock
 		}
 	}, fn );
 };
