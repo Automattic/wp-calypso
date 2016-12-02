@@ -41,7 +41,7 @@ export function receiveTagImages( tag, images ) {
  * @param  {Integer} limit Maximum number of results to return
  * @return {Function} Action thunk
  */
-export function requestTagImages( tag, limit = 10 ) {
+export function requestTagImages( tag, limit = 5 ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: READER_TAG_IMAGES_REQUEST,
