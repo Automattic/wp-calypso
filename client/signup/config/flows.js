@@ -267,6 +267,11 @@ const Flows = {
 	getFlow( flowName, currentStepName = '' ) {
 		let flow = Flows.getFlows()[ flowName ];
 
+		// if the flow couldn't be found, return early
+		if ( ! flow ) {
+			return flow;
+		}
+
 		if ( user.get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
@@ -307,6 +312,15 @@ const Flows = {
 			return;
 		}
 
+		/**
+		 * This is called onn Signup start (page initialization),
+		 * before the steps are rendered. Used if there is a need
+		 * to filter the first step in the flow.
+		 */
+		if ( stepName === '' ) {
+			abtest( 'noSurveyStep' );
+		}
+
 		if ( 'main' === flowName ) {
 			if ( 'survey' === stepName ) {
 				abtest( 'siteTitleStep' );
@@ -330,8 +344,14 @@ const Flows = {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
+				console.log('inserting');
 				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
 			}
+		}
+
+		// no matter the flow
+		if ( getABTestVariation( 'noSurveyStep' ) === 'hideSurveyStep' ) {
+			return Flows.removeStepFromFlow( 'survey', flow );
 		}
 
 		return flow;
@@ -368,6 +388,15 @@ const Flows = {
 		}
 
 		return flow;
+	},
+
+	removeStepFromFlow( stepName, flow ) {
+		return {
+			...flow,
+			steps: flow.steps.filter( ( step ) => {
+				return step !== stepName;
+			} )
+		};
 	}
 };
 

@@ -118,4 +118,14 @@ module.exports = {
 		defaultVariation: 'original',
 		allowAnyLocale: true,
 	},
+
+	noSurveyStep: {
+		datestamp: '20161202',
+		variations: {
+			showSurveyStep: 5,
+			hideSurveyStep: 95,
+		},
+		defaultVariation: 'hideSurveyStep', // TODO fix
+		allowAnyLocale: true,
+	}
 };
