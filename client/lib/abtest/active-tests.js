@@ -89,16 +89,6 @@ module.exports = {
 		allowExistingUsers: false
 	},
 
-	gSuiteOnSignup: {
-		datestamp: '20161025',
-		variations: {
-			original: 50,
-			removed: 50
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true
-	},
-
 	jetpackConnectPlansFirst: {
 		datestamp: '20161024',
 		variations: {
