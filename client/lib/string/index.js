@@ -15,8 +15,8 @@
  * @returns
  */
 export function areEqualIgnoringWhitespaceAndCase( a, b ) {
-	a = a.replace( /[\s'."]/g, '' );
-	b = b.replace( /[\s'."]/g, '' );
+	a = a.replace( /[\s'.\-_"]/g, '' );
+	b = b.replace( /[\s'.\-_"]/g, '' );
 	return a.toLowerCase() === b.toLowerCase();
 }
 
