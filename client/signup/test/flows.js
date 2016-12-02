@@ -54,13 +54,17 @@ describe( 'Signup Flows Configuration', () => {
 
 		const ABTestMock = {
 			abtest: noop,
-			getABTestVariation: noop,
+			getABTestVariation: () => {
+				return null;
+			},
 		};
 
 		const getABTestVariationSpy = sinon.stub( ABTestMock, 'getABTestVariation' );
 
 		getABTestVariationSpy.onCall( 0 ).returns( 'notSiteTitle' );
-		getABTestVariationSpy.onCall( 1 ).returns( 'showSiteTitleStep' );
+		getABTestVariationSpy.onCall( 1 ).returns( 'notSiteTitle' );
+		getABTestVariationSpy.onCall( 2 ).returns( 'showSiteTitleStep' );
+		getABTestVariationSpy.onCall( 3 ).returns( 'showSiteTitleStep' );
 
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'lib/abtest', ABTestMock );
@@ -72,17 +76,20 @@ describe( 'Signup Flows Configuration', () => {
 			sinon.stub( flows, 'insertStepIntoFlow', ( stepName, flow ) => {
 				return flow;
 			} );
+			sinon.stub( flows, 'removeStepFromFlow', ( stepName, flow ) => {
+				return flow;
+			} );
 		} );
 
 		it( 'should return flow unmodified if not in main flow', () => {
 			assert.equal( flows.getABTestFilteredFlow( 'test', 'testflow' ), 'testflow' );
-			assert.equal( getABTestVariationSpy.callCount, 0 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
+			assert.equal( flows.removeStepFromFlow.callCount, 0 );
 		} );
 
 		it( 'should check AB variation in main flow', () => {
 			assert.equal( flows.getABTestFilteredFlow( 'main', 'testflow' ), 'testflow' );
-			assert.equal( getABTestVariationSpy.callCount, 1 );
+			assert.equal( getABTestVariationSpy.callCount, 3 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
 
@@ -93,7 +100,7 @@ describe( 'Signup Flows Configuration', () => {
 			};
 
 			assert.equal( flows.getABTestFilteredFlow( 'main', myFlow ), myFlow );
-			assert.equal( getABTestVariationSpy.callCount, 2 );
+			assert.equal( getABTestVariationSpy.callCount, 4 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 1 );
 		} );
 	} );
