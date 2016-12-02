@@ -19,10 +19,13 @@ import Gridicon from 'components/gridicon';
 
 const TAG_HEADER_WIDTH = 830;
 
-const TagStreamHeader = ( { tag, tagImage, isPlaceholder, showFollow, following, onFollowToggle, translate } ) => {
+const TagStreamHeader = (
+		{ tag, tagImage, isPlaceholder, showFollow, following, onFollowToggle, translate, hasBackButton }
+	) => {
 	const classes = classnames( {
 		'tag-stream__header': true,
-		'is-placeholder': isPlaceholder
+		'is-placeholder': isPlaceholder,
+		'has-back-button': hasBackButton
 	} );
 	const imageStyle = {};
 
@@ -65,7 +68,8 @@ TagStreamHeader.propTypes = {
 	tag: React.PropTypes.string,
 	showFollow: React.PropTypes.bool,
 	following: React.PropTypes.bool,
-	onFollowToggle: React.PropTypes.func
+	onFollowToggle: React.PropTypes.func,
+	hasBackButton: React.PropTypes.bool
 };
 
 export default connect(

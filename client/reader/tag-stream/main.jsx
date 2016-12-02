@@ -102,7 +102,8 @@ const TagStream = React.createClass( {
 						tag={ this.props.tag }
 						showFollow={ this.state.canFollow }
 						following={ this.state.subscribed }
-						onFollowToggle={ this.toggleFollowing } />
+						onFollowToggle={ this.toggleFollowing }
+						hasBackButton={ this.props.showBack } />
 					: <StreamHeader
 						isPlaceholder={ false }
 						icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }
