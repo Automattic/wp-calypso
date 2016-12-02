@@ -1,10 +1,16 @@
 .tag-stream__header {
 	display: flex;
 	flex-direction: column;
+
+	&.has-back-button {
+		margin-top: -27px;
+	}
 }
 
 .tag-stream__header .follow-button {
 	padding: 0;
+	position: relative;
+		top: 2px;
 
 	@include breakpoint( "<660px" ) {
 		margin: 12px 10px 0 0;
@@ -106,3 +112,26 @@
 	color: $white;
 }
 
+// Back button in Tag streams
+
+.is-reader-page .card.header-cake {
+	background: none;
+	box-shadow: none;
+	padding: 0;
+	position: relative;
+		left: -3px;
+		top: 8px;
+
+	@include breakpoint( "<660px" ) {
+		left: 13px;
+		top: 20px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		top: 14px;
+	}
+
+	.button.header-cake__back {
+		padding: 0;
+	}
+}
