@@ -30,6 +30,7 @@ import reducer, {
 	queries,
 	lastQuery,
 	themeRequests,
+	themeRequestsError,
 	activeThemes,
 	activationRequests,
 	activeThemeRequests,
@@ -455,6 +456,112 @@ describe( 'reducer', () => {
 			const state = themeRequests( deepFreeze( {
 				2916284: {
 					841: true
+				}
+			} ), {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#themeRequestsError()', () => {
+		it( 'should default to an empty object', () => {
+			const state = themeRequestsError( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should map site ID, theme ID to null value if request was successful', () => {
+			const state = themeRequestsError( deepFreeze( {} ), {
+				type: THEME_REQUEST_SUCCESS,
+				siteId: 2916284,
+				themeId: 841
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					841: null
+				}
+			} );
+		} );
+
+		it( 'should map site ID, theme ID to error object if request finishes with failure', () => {
+			const state = themeRequestsError( deepFreeze( {} ), {
+				type: THEME_REQUEST_FAILURE,
+				siteId: 2916284,
+				themeId: 'vivaro',
+				error: 'Request error'
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					vivaro: {
+						error: 'Request error'
+					}
+				}
+			} );
+		} );
+
+		it( 'should switch from error to null after successful request after a failure', () => {
+			const state = themeRequestsError( deepFreeze( {
+				2916284: {
+					pinboard: {
+						error: 'Request Error'
+					}
+				}
+			} ), {
+				type: THEME_REQUEST_SUCCESS,
+				siteId: 2916284,
+				themeId: 'pinboard'
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					pinboard: null
+				}
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = themeRequestsError( deepFreeze( {
+				2916284: {
+					twentysixteennnnn: {
+						error: 'No such theme!'
+					}
+				}
+			} ), {
+				type: THEME_REQUEST_SUCCESS,
+				siteId: 2916284,
+				themeId: 'twentysixteen'
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					twentysixteen: null,
+					twentysixteennnnn: {
+						error: 'No such theme!'
+					}
+				}
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = themeRequestsError( deepFreeze( {
+				2916284: {
+					twentysixteen: null
+				}
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = themeRequestsError( deepFreeze( {
+				2916284: {
+					twentysixteen: null
 				}
 			} ), {
 				type: DESERIALIZE

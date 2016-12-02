@@ -10,6 +10,7 @@ import { values } from 'lodash';
 import {
 	getThemes,
 	getTheme,
+	getThemeRequestsError,
 	isRequestingTheme,
 	getThemesForQuery,
 	getLastThemeQuery,
@@ -127,6 +128,36 @@ describe( 'themes selectors', () => {
 			}, 2916284, 'twentysixteen' );
 
 			expect( theme ).to.equal( twentysixteen );
+		} );
+	} );
+
+	describe( '#getThemesRequestError()', () => {
+		it( 'should return null if thre is not request error storred for that theme on site', () => {
+			const error = getThemeRequestsError( {
+				themes: {
+					themeRequestsError: {}
+				}
+			}, 'twentysixteen', 413 );
+
+			expect( error ).to.be.null;
+		} );
+
+		it( 'should return the error object for the site ID, theme ID pair', () => {
+			const error = getThemeRequestsError( {
+				themes: {
+					themeRequestsError: {
+						2916284: {
+							twentysixteen: {
+								error: 'Request error'
+							}
+						}
+					}
+				}
+			}, 'twentysixteen', 2916284, );
+
+			expect( error ).to.deep.equal( {
+				error: 'Request error'
+			} );
 		} );
 	} );
 

@@ -162,6 +162,26 @@ export function themeRequests( state = {}, action ) {
 }
 
 /**
+ * Returns the updated site theme requests error state after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
+ * object describing request error. If there is no error null is storred.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const themeRequestsError = createReducer( {}, {
+	[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
+		...state,
+		[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: { error } } )
+	} ),
+	[ THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
+		...state,
+		[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: null } )
+	} )
+} );
+
+/**
  * Returns the updated theme query requesting state after an action has been
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
@@ -267,6 +287,7 @@ export default combineReducers( {
 	// queryRequests,
 	// lastQuery
 	themeRequests,
+	// themeRequestsError
 	activeThemes,
 	activeThemeRequests,
 	activationRequests,
