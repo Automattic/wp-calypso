@@ -67,12 +67,8 @@ export const getTheme = createSelector(
  * @param  {Number}  siteId  Site ID
  * @return {Object}          error object if present or null otherwise
  */
-export function getThemeRequestsError( state, themeId, siteId ) {
-	const themes = get( state.themes.themeRequestsError, siteId, null );
-	if ( ! themes ) {
-		return null;
-	}
-	return get( themes, themeId, null );
+export function getThemeRequestErrors( state, themeId, siteId ) {
+	return get( state.themes.themeRequestErrors, [ siteId, themeId ], null );
 }
 
 /**

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { mapValues } from 'lodash';
+import { mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -170,14 +170,17 @@ export function themeRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const themeRequestsError = createReducer( {}, {
+export const themeRequestErrors = createReducer( {}, {
 	[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => ( {
 		...state,
-		[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: { error } } )
+		[ siteId ]: {
+			...state[ siteId ],
+			[ themeId ]: error
+		}
 	} ),
 	[ THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
 		...state,
-		[ siteId ]: Object.assign( {}, state[ siteId ], { [ themeId ]: null } )
+		[ siteId ]: omit( state[ siteId ], themeId ),
 	} )
 } );
 
@@ -287,7 +290,7 @@ export default combineReducers( {
 	// queryRequests,
 	// lastQuery
 	themeRequests,
-	// themeRequestsError
+	// themeRequestErrors
 	activeThemes,
 	activeThemeRequests,
 	activationRequests,

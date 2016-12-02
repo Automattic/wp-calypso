@@ -10,7 +10,7 @@ import { values } from 'lodash';
 import {
 	getThemes,
 	getTheme,
-	getThemeRequestsError,
+	getThemeRequestErrors,
 	isRequestingTheme,
 	getThemesForQuery,
 	getLastThemeQuery,
@@ -133,9 +133,9 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemesRequestError()', () => {
 		it( 'should return null if thre is not request error storred for that theme on site', () => {
-			const error = getThemeRequestsError( {
+			const error = getThemeRequestErrors( {
 				themes: {
-					themeRequestsError: {}
+					themeRequestErrors: {}
 				}
 			}, 'twentysixteen', 413 );
 
@@ -143,21 +143,17 @@ describe( 'themes selectors', () => {
 		} );
 
 		it( 'should return the error object for the site ID, theme ID pair', () => {
-			const error = getThemeRequestsError( {
+			const error = getThemeRequestErrors( {
 				themes: {
-					themeRequestsError: {
+					themeRequestErrors: {
 						2916284: {
-							twentysixteen: {
-								error: 'Request error'
-							}
+							twentysixteen: 'Request error'
 						}
 					}
 				}
 			}, 'twentysixteen', 2916284, );
 
-			expect( error ).to.deep.equal( {
-				error: 'Request error'
-			} );
+			expect( error ).to.equal( 'Request error' );
 		} );
 	} );
 

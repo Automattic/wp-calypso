@@ -30,7 +30,7 @@ import reducer, {
 	queries,
 	lastQuery,
 	themeRequests,
-	themeRequestsError,
+	themeRequestErrors,
 	activeThemes,
 	activationRequests,
 	activeThemeRequests,
@@ -465,29 +465,27 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#themeRequestsError()', () => {
+	describe( '#themeRequestErrors()', () => {
 		it( 'should default to an empty object', () => {
-			const state = themeRequestsError( undefined, {} );
+			const state = themeRequestErrors( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		it( 'should map site ID, theme ID to null value if request was successful', () => {
-			const state = themeRequestsError( deepFreeze( {} ), {
+		it( 'should create empyt mapping on success if previous state was empty', () => {
+			const state = themeRequestErrors( deepFreeze( {} ), {
 				type: THEME_REQUEST_SUCCESS,
 				siteId: 2916284,
-				themeId: 841
+				themeId: 'twentysixteen'
 			} );
 
 			expect( state ).to.deep.equal( {
-				2916284: {
-					841: null
-				}
+				2916284: {}
 			} );
 		} );
 
-		it( 'should map site ID, theme ID to error object if request finishes with failure', () => {
-			const state = themeRequestsError( deepFreeze( {} ), {
+		it( 'should map site ID, theme ID to error if request finishes with failure', () => {
+			const state = themeRequestErrors( deepFreeze( {} ), {
 				type: THEME_REQUEST_FAILURE,
 				siteId: 2916284,
 				themeId: 'vivaro',
@@ -496,15 +494,13 @@ describe( 'reducer', () => {
 
 			expect( state ).to.deep.equal( {
 				2916284: {
-					vivaro: {
-						error: 'Request error'
-					}
+					vivaro: 'Request error'
 				}
 			} );
 		} );
 
-		it( 'should switch from error to null after successful request after a failure', () => {
-			const state = themeRequestsError( deepFreeze( {
+		it( 'should switch from error to no mapping after successful request after a failure', () => {
+			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
 					pinboard: {
 						error: 'Request Error'
@@ -517,37 +513,32 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {
-				2916284: {
-					pinboard: null
-				}
+				2916284: {}
 			} );
 		} );
 
 		it( 'should accumulate mappings', () => {
-			const state = themeRequestsError( deepFreeze( {
+			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
-					twentysixteennnnn: {
-						error: 'No such theme!'
-					}
+					twentysixteennnnn: 'No such theme!'
 				}
 			} ), {
-				type: THEME_REQUEST_SUCCESS,
+				type: THEME_REQUEST_FAILURE,
 				siteId: 2916284,
-				themeId: 'twentysixteen'
+				themeId: 'twentysixteen',
+				error: 'System error'
 			} );
 
 			expect( state ).to.deep.equal( {
 				2916284: {
-					twentysixteen: null,
-					twentysixteennnnn: {
-						error: 'No such theme!'
-					}
+					twentysixteennnnn: 'No such theme!',
+					twentysixteen: 'System error'
 				}
 			} );
 		} );
 
 		it( 'never persists state', () => {
-			const state = themeRequestsError( deepFreeze( {
+			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
 					twentysixteen: null
 				}
@@ -559,7 +550,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state', () => {
-			const state = themeRequestsError( deepFreeze( {
+			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
 					twentysixteen: null
 				}
