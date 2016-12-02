@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import OlarkChatButton from 'components/olark-chat-button';
+import Gridicon from 'components/gridicon';
 
 export default localize( ( { cart, translate, paymentType, transactionStep } ) => {
 	const { products } = cart;
@@ -23,7 +24,9 @@ export default localize( ( { cart, translate, paymentType, transactionStep } ) =
 				payment_type: paymentType,
 				transaction_step: transactionStep,
 				product_slug: productSlug,
-			} }
-			title={ translate( 'Need help? Chat with us' ) } />
+			} }>
+				<Gridicon icon="chat" className="checkout__payment-chat-button-icon" />
+				{ translate( 'Need help? Chat with us' ) }
+		</OlarkChatButton>
 	);
 } );
