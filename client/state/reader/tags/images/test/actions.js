@@ -42,7 +42,7 @@ describe( 'actions', () => {
 	describe( '#requestTagImages', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/tags/banana/images?number=10' )
+				.get( '/rest/v1.2/read/tags/banana/images?number=5' )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
 		} );
 

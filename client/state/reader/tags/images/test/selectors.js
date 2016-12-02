@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getTagImages,
-	isRequestingTagImages
+	shouldRequestTagImages
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -56,15 +56,19 @@ describe( 'selectors', () => {
 						images: {
 							requesting: {
 								banana: true,
-								feijoa: false
+								feijoa: false,
+							},
+							items: {
+								pants: [ { url: 'foo' } ]
 							}
 						}
 					}
 				}
 			};
-			expect( isRequestingTagImages( state, 'banana' ) ).to.equal( true );
-			expect( isRequestingTagImages( state, 'feijoa' ) ).to.equal( false );
-			expect( isRequestingTagImages( state, 'unknown' ) ).to.equal( false );
+			expect( shouldRequestTagImages( state, 'banana' ) ).to.equal( false );
+			expect( shouldRequestTagImages( state, 'feijoa' ) ).to.equal( true );
+			expect( shouldRequestTagImages( state, 'unknown' ) ).to.equal( true );
+			expect( shouldRequestTagImages( state, 'pants' ) ).to.equal( false );
 		} );
 	} );
 } );
