@@ -89,7 +89,10 @@ class TagStreamHeader extends React.Component {
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
-							<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span> <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="author external">{ decodeEntities( tagImage.author ) }</a>, <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="external">{ decodeEntities( tagImage.blog_title ) }</a>
+							<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by ' ) }</span>
+							<a href={ tagImage.post_url } className="tag-stream__header-image-byline-link" rel="author external">
+								{ decodeEntities( tagImage.author ) }
+							</a>
 						</div>
 					}
 				</div>
