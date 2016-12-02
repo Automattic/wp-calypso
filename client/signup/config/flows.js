@@ -344,7 +344,6 @@ const Flows = {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				console.log('inserting');
 				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
 			}
 		}

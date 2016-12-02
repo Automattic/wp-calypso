@@ -125,7 +125,7 @@ module.exports = {
 			showSurveyStep: 5,
 			hideSurveyStep: 95,
 		},
-		defaultVariation: 'hideSurveyStep', // TODO fix
+		defaultVariation: 'hideSurveyStep',
 		allowAnyLocale: true,
 	}
 };
