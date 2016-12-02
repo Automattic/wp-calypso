@@ -26,8 +26,7 @@ import {
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE,
-	SERVER_DESERIALIZE
+	DESERIALIZE
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -235,15 +234,6 @@ export const queries = ( () => {
 			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 		},
 		[ DESERIALIZE ]: ( state ) => {
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-				return {};
-			}
-
-			return mapValues( state, ( { data, options } ) => {
-				return new ThemeQueryManager( data, options );
-			} );
-		},
-		[ SERVER_DESERIALIZE ]: ( state ) => {
 			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
 				return {};
 			}
