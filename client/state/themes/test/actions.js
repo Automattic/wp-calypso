@@ -3,7 +3,6 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { Map } from 'immutable';
 
 /**
  * Internal dependencies
@@ -441,11 +440,11 @@ describe( 'actions', () => {
 					activeThemes: {
 						2211667: 'twentyfifteen'
 					},
-					themesList: Map( {
-						query: Map( {
+					lastQuery: {
+						2211667: {
 							search: 'simple, white'
-						} )
-					} )
+						}
+					}
 				}
 			} );
 
