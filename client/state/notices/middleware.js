@@ -30,7 +30,7 @@ import {
 	PUBLICIZE_CONNECTION_REFRESH_FAILURE,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-	SITE_FRONT_PAGE_SET_FAILURE
+	SITE_FRONT_PAGE_SET_FAILURE,
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
