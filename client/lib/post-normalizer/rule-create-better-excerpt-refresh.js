@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { forEach } from 'lodash';
+import { forEach, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -33,7 +33,7 @@ export function formatExcerpt( content ) {
 		}
 	);
 
-	const betterExcerpt = dom.textContent;
+	const betterExcerpt = trim( dom.textContent );
 	dom.innerHTML = '';
 	return betterExcerpt;
 }
