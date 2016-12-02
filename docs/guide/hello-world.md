@@ -177,6 +177,7 @@ var React = require( 'react' ),
 Then remove the `console.log` call and enter the following instead:
 
 ```javascript
+var React = require( 'react' );
 helloWorld() {
 	const Main = require( 'my-sites/hello-world/main' );
 
