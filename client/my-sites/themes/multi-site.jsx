@@ -23,13 +23,15 @@ const MultiSiteThemeShowcase = connectOptions( React.createClass( {
 		const { getScreenshotOption, search, options } = this.props;
 
 		return (
-			<ThemesSiteSelectorModal { ...this.props } sourcePath="/design">
-				<ThemeShowcase source="showcase">
-					<SidebarNavigation />
-				</ThemeShowcase>
+			<div>
+				<ThemesSiteSelectorModal { ...this.props } sourcePath="/design">
+					<ThemeShowcase source="showcase">
+						<SidebarNavigation />
+					</ThemeShowcase>
+				</ThemesSiteSelectorModal>
 				<ThemesSelection
 					siteId={ this.props.siteId }
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ false }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;
@@ -57,7 +59,7 @@ const MultiSiteThemeShowcase = connectOptions( React.createClass( {
 					vertical={ this.props.vertical }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
-			</ThemesSiteSelectorModal>
+			</div>
 		);
 	}
 } ) );

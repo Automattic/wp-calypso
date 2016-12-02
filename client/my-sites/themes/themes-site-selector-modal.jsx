@@ -23,7 +23,7 @@ const OPTION_SHAPE = PropTypes.shape( {
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
-		children: PropTypes.arrayOf( PropTypes.element ),
+		children: PropTypes.element,
 		options: PropTypes.objectOf( OPTION_SHAPE ),
 		defaultOption: OPTION_SHAPE,
 		secondaryOption: OPTION_SHAPE,
