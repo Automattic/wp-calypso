@@ -313,11 +313,11 @@ const Flows = {
 		}
 
 		/**
-		 * This is called onn Signup start (page initialization),
+		 * This is called on Signup start (page initialization),
 		 * before the steps are rendered. Used if there is a need
 		 * to filter the first step in the flow.
 		 */
-		if ( stepName === '' ) {
+		if ( '' === stepName ) {
 			abtest( 'noSurveyStep' );
 		}
 
