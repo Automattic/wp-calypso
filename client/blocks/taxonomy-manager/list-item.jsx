@@ -10,7 +10,7 @@ import { get, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
+import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Gridicon from 'components/gridicon';
@@ -42,29 +42,11 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	state = {
-		popoverMenuOpen: false,
 		showDeleteDialog: false,
-	};
-
-	togglePopoverMenu = event => {
-		if ( event && event.stopPropagation ) {
-			event.stopPropagation();
-		}
-		this.setState( {
-			popoverMenuOpen: ! this.state.popoverMenuOpen
-		} );
-	};
-
-	editItem = () => {
-		this.setState( {
-			popoverMenuOpen: false
-		} );
-		this.props.onClick();
 	};
 
 	deleteItem = () => {
 		this.setState( {
-			popoverMenuOpen: false,
 			showDeleteDialog: true
 		} );
 	};
@@ -84,9 +66,6 @@ class TaxonomyManagerListItem extends Component {
 		if ( canSetAsDefault ) {
 			this.props.saveSiteSettings( siteId, { default_category: term.ID } );
 		}
-		this.setState( {
-			popoverMenuOpen: false
-		} );
 	};
 
 	getTaxonomyLink() {
@@ -100,7 +79,7 @@ class TaxonomyManagerListItem extends Component {
 	}
 
 	render() {
-		const { canSetAsDefault, isDefault, term, translate } = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
 		const name = decodeEntities( term.name ) || translate( 'Untitled' );
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
@@ -112,10 +91,10 @@ class TaxonomyManagerListItem extends Component {
 
 		return (
 			<div className={ className }>
-				<span className="taxonomy-manager__icon">
+				<span className="taxonomy-manager__icon" onClick={ onClick }>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
-				<span className="taxonomy-manager__label">
+				<span className="taxonomy-manager__label" onClick={ onClick }>
 					<span>{ name }</span>
 					{ isDefault &&
 						<span className="taxonomy-manager__default-label">
@@ -124,24 +103,9 @@ class TaxonomyManagerListItem extends Component {
 					}
 				</span>
 				{ ! isUndefined( term.post_count ) && <Count count={ term.post_count } /> }
-				<span
-					className="taxonomy-manager__action-wrapper"
-					onClick={ this.togglePopoverMenu }
-					ref="popoverMenuButton">
-					<Gridicon
-						icon="ellipsis"
-						className={ classNames( {
-							'taxonomy-manager__list-item-toggle': true,
-							'is-active': this.state.popoverMenuOpen
-						} ) } />
-				</span>
-				<PopoverMenu
-					isVisible={ this.state.popoverMenuOpen }
-					onClose={ this.togglePopoverMenu }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					<PopoverMenuItem onClick={ this.editItem } icon="pencil">
+				<EllipsisMenu position="bottom left">
+					<PopoverMenuItem onClick={ onClick }>
+						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem onClick={ this.deleteItem } icon="trash">
@@ -156,8 +120,7 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Set as default' ) }
 						</PopoverMenuItem>
 					}
-				</PopoverMenu>
-
+				</EllipsisMenu>
 				<Dialog
 					isVisible={ this.state.showDeleteDialog }
 					buttons={ deleteDialogButtons }

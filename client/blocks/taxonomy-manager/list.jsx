@@ -112,7 +112,6 @@ export class TaxonomyManagerList extends Component {
 		return (
 			<div key={ 'term-wrapper-' + itemId } className="taxonomy-manager__list-item">
 				<CompactCard
-					onClick={ onClick }
 					key={ itemId }
 					className="taxonomy-manager__list-item-card">
 					<ListItem onClick={ onClick } taxonomy={ taxonomy } term={ item } />

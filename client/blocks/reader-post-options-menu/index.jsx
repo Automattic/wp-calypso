@@ -99,12 +99,10 @@ const ReaderPostOptionsMenu = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ), this.props.post );
 	},
 
-	editPost( closeMenu ) {
+	editPost() {
 		const post = this.props.post,
 			site = SiteStore.get( this.props.post.site_ID );
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
-
-		closeMenu();
 
 		if ( site && site.get( 'slug' ) ) {
 			editUrl = PostUtils.getEditURL( post, site.toJS() );
