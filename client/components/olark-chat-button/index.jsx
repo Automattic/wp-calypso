@@ -43,7 +43,7 @@ class OlarkChatButton extends Component {
 	recordChatEvent( eventAction ) {
 		const { chatContext, tracksData } = this.props;
 		analytics.tracks.recordEvent( eventAction, {
-			...{ tracksData },
+			...tracksData,
 			chat_context: chatContext,
 		} );
 	}
