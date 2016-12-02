@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 			// New reducers
 			'queries',
 			//'queryRequests',
-			'themeRequestsError',
+			'themesReceiveError',
 			'themeRequests',
 			'activeThemes',
 			'activeThemeRequests',

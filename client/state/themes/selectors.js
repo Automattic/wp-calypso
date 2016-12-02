@@ -477,18 +477,10 @@ export function isThemePurchased( state, themeId, siteId ) {
 	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
 
-/**
- * Returns theme request error object
- *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @param  {Number}  siteId  Site ID
- * @return {Object}          error object if present or null otherwise
- */
-export function getThemeRequestError( state, themeId, siteId ) {
-	const themes = get( state.themes.themeRequestsError, siteId, false );
+export function isThemeReceiveError( state, themeId, siteId ) {
+	const themes = get( state.themes.themesReceiveError, siteId, false );
 	if ( ! themes ) {
-		return null;
+		return false;
 	}
-	return get( themes, themeId, null );
+	return get( themes, themeId, false );
 }
