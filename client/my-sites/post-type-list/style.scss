@@ -29,3 +29,7 @@
 	max-height: 100%;
 	max-width: none;
 }
+
+.post-type-list__item:last-child .card.is-compact.post-item {
+	margin-bottom: 0;
+}

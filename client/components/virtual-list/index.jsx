@@ -4,7 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
@@ -55,7 +55,7 @@ export class VirtualList extends Component {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.virtualScroll.forceUpdateGrid();
 		}
 
 		if ( this.props.items !== prevProps.items ) {
@@ -69,7 +69,6 @@ export class VirtualList extends Component {
 		}
 
 		this.virtualScroll.recomputeRowHeights();
-		this.virtualScroll.forceUpdate();
 	}
 
 	getPageForIndex( index ) {
@@ -150,13 +149,13 @@ export class VirtualList extends Component {
 		}
 	};
 
-	renderRow = props => {
+	renderRow = ( { key, style, ...props } ) => {
 		const element = this.props.renderRow( props );
 		if ( ! element ) {
 			return element;
 		}
 		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
-		return React.cloneElement( element, { ref: setRowRef } );
+		return React.cloneElement( element, { ref: setRowRef, key, style } );
 	};
 
 	render() {
@@ -170,7 +169,7 @@ export class VirtualList extends Component {
 			<AutoSizer disableHeight>
 				{ ( { width } ) => (
 					<div className={ classes }>
-						<VirtualScroll
+						<List
 							ref={ this.setVirtualScrollRef }
 							onRowsRendered={ this.setRequestedPages }
 							rowCount={ rowCount }

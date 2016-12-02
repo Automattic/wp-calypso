@@ -531,7 +531,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000588"
+      "version": "1.0.30000590"
     },
     "caseless": {
       "version": "0.11.0"
@@ -2838,9 +2838,6 @@
     "percentage-regex": {
       "version": "3.0.0"
     },
-    "performance-now": {
-      "version": "0.2.0"
-    },
     "phone": {
       "version": "1.0.8",
       "from": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e",
@@ -2998,9 +2995,6 @@
     "querystring-es3": {
       "version": "0.2.1"
     },
-    "raf": {
-      "version": "3.3.0"
-    },
     "randomatic": {
       "version": "1.1.6"
     },
@@ -3093,7 +3087,7 @@
       }
     },
     "react-virtualized": {
-      "version": "7.9.1",
+      "version": "8.5.3",
       "dependencies": {
         "classnames": {
           "version": "2.2.5"
