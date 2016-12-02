@@ -5,17 +5,15 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import ThemePreview from './theme-preview';
-import ThemesSelection from './themes-selection';
 import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { addTracking, trackClick } from './helpers';
+import { trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
@@ -60,7 +58,6 @@ const ThemeShowcase = React.createClass( {
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
-		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 	},
 
@@ -147,7 +144,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, secondaryOption, tier, search } = this.props;
+		const { site, options, secondaryOption, tier, search } = this.props;
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -187,36 +184,6 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
-				<ThemesSelection
-					siteId={ this.props.siteId }
-					selectedSite={ this.props.selectedSite }
-					getScreenshotUrl={ function( theme ) {
-						if ( ! getScreenshotOption( theme ).getUrl ) {
-							return null;
-						}
-						return getScreenshotOption( theme ).getUrl( theme );
-					} }
-					onScreenshotClick={ function( theme ) {
-						if ( ! getScreenshotOption( theme ).action ) {
-							return;
-						}
-						getScreenshotOption( theme ).action( theme );
-					} }
-					getActionLabel={ function( theme ) {
-						return getScreenshotOption( theme ).label;
-					} }
-					getOptions={ function( theme ) {
-						return pickBy(
-							addTracking( options ),
-							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
-						); } }
-					trackScrollPage={ this.props.trackScrollPage }
-					search={ search }
-					tier={ this.props.tier }
-					filter={ this.props.filter }
-					vertical={ this.props.vertical }
-					queryParams={ this.props.queryParams }
-					themesList={ this.props.themesList } />
 			</Main>
 		);
 	}
