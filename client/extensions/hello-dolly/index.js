@@ -44,7 +44,11 @@ const render = ( context ) => {
 				/>
 				<FAQItem
 					question="Have more questions?"
-					answer="Let's talk! Visit the Calypso GitHub repository and open an issue."
+					answer={ [
+						'Let\'s talk! Visit the ',
+						<a href="https://github.com/Automattic/wp-calypso/" key="go-repo">Calypso GitHub repository</a>,
+						' and open an issue.'
+					] }
 				/>
 			</FAQ>
 		</Main>
