@@ -39,7 +39,7 @@ const render = ( context ) => {
 					answer={ [
 						'You can browse our docs without leaving the running application, just go to the Devdocs section. ',
 						'Tip: press the keys "gd" to navigate there from any page! ',
-						<a href="https://github.com/Automattic/wp-calypso/tree/master/client/extensions" key="go-devdocs">Go to Devdocs</a>
+						<a href="/devdocs" key="go-devdocs">Go to Devdocs</a>
 					] }
 				/>
 				<FAQItem
