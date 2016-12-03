@@ -52,19 +52,19 @@ export class Mentions extends React.Component {
 
 	componentDidMount() {
 		const { editor } = this.props;
-		const position = this.getPosition();
+		const { left, top } = this.getPosition();
 
 		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'click', this.hidePopover );
 
-		this.left = position.left;
-		this.top = position.top;
+		this.left = left;
+		this.top = top;
 	}
 
 	componentWillUpdate( nextProps, nextState ) {
 		// Update position of popover if going from invisible to visible state.
 		if ( ! this.state.showPopover && nextState.showPopover ) {
-			this.updatePosition();
+			this.updatePosition( nextState );
 			this.props.editor.on( 'keydown', this.onKeyDown );
 
 			return;
@@ -84,7 +84,7 @@ export class Mentions extends React.Component {
 			const isLineAfter = ( this.top < currentPosition.top ) && ( this.left > currentPosition.left );
 
 			if ( isLineBefore || isLineAfter ) {
-				this.updatePosition( currentPosition );
+				this.updatePosition( nextState, currentPosition );
 			}
 		}
 	}
@@ -97,33 +97,53 @@ export class Mentions extends React.Component {
 		editor.off( 'click', this.hidePopover );
 	}
 
-	getPosition() {
-		let left, top;
+	getPosition( { query } = this.state ) {
 		const { editor } = this.props;
-		const nodePosition = tinymce.$( editor.selection.getNode() ).offset();
-		const rectList = editor.selection.getRng().getClientRects();
+		const range = editor.selection.getRng();
+		const mentionRange = document.createRange();
+
+		// Set range to start at beginning of mention in order to get accurate positioning values.
+		mentionRange.setStart( range.startContainer, range.startOffset - query.length );
+		mentionRange.setEnd( range.endContainer, range.endOffset );
+
+		const rectList = mentionRange.getClientRects();
 
 		if ( rectList.length > 0 ) {
-			left = rectList[ 0 ].left;
-			top = rectList[ 0 ].top + rectList[ 0 ].height;
-		} else {
-			left = nodePosition.left;
-			top = nodePosition.top;
+			const index = rectList.length - 1;
+
+			return {
+				left: rectList[ index ].left,
+				top: rectList[ index ].top,
+			};
 		}
 
-		return { left: left, top: top };
+		const nodePosition = tinymce.$( editor.selection.getNode() ).offset();
+
+		return {
+			left: nodePosition.left,
+			top: nodePosition.top,
+		};
 	}
 
-	updatePosition( position = this.getPosition() ) {
+	updatePosition( state, { left, top } = this.getPosition( state ) ) {
 		const { editor, node } = this.props;
-		const selectedNode = editor.selection.getNode();
-		const nodePosition = tinymce.$( selectedNode ).offset();
 		const mceToolbar = tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ];
+		const range = editor.selection.getRng();
+		const rectList = range.getClientRects();
+		let height;
 
-		this.left = position.left;
-		this.top = position.top;
-		node.style.left = this.left + 'px';
-		node.style.top = nodePosition.top + mceToolbar.offsetHeight + selectedNode.offsetHeight + 'px';
+		if ( rectList.length > 0 ) {
+			height = rectList[ 0 ].height;
+		} else {
+			height = editor.selection.getNode().offsetHeight;
+		}
+
+		this.left = left;
+		this.top = top;
+
+		node.style.left = `${ this.left }px`;
+		// 10 is the top position of .mentions__suggestions .popover__inner, which hasn't rendered yet.
+		node.style.top = `${ mceToolbar.offsetHeight + this.top + height - 10 }px`;
 	}
 
 	setPopoverContext = ( popoverContext ) => {
