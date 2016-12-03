@@ -39,7 +39,9 @@ function checkForRedirect( site ) {
 class SiteStream extends React.Component {
 
 	static propTypes = {
-		siteId: React.PropTypes.number.isRequired
+		siteId: React.PropTypes.number.isRequired,
+		className: React.PropTypes.string,
+		showBack: React.PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -156,7 +158,12 @@ class SiteStream extends React.Component {
 		const FeedHeader = config.isEnabled( 'reader/refresh/stream' ) ? RefreshFeedHeader : OldFeedHeader;
 
 		return (
-			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false } showSiteNameOnCards={ false }>
+			<Stream
+				{ ...this.props }
+				listName={ title }
+				emptyContent={ emptyContent }
+				showPostHeader={ false }
+				showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ site } feed={ this.state.feed } hasBackButton={ this.props.showBack } />

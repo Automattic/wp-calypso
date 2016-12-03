@@ -25,11 +25,14 @@ import config from 'config';
 class FeedStream extends React.Component {
 
 	static propTypes = {
-		feedId: React.PropTypes.number.isRequired
+		feedId: React.PropTypes.number.isRequired,
+		className: React.PropTypes.string,
+		showBack: React.PropTypes.bool
 	};
 
 	static defaultProps = {
-		showBack: true
+		showBack: true,
+		className: 'is-site-stream',
 	};
 
 	constructor( props ) {
@@ -162,10 +165,15 @@ class FeedStream extends React.Component {
 		const FeedHeader = config.isEnabled( 'reader/refresh/stream' ) ? RefreshFeedHeader : OldFeedHeader;
 
 		return (
-			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false } showSiteNameOnCards={ false }>
+			<Stream
+				{ ...this.props }
+				listName={ this.state.title }
+				emptyContent={ emptyContent }
+				showPostHeader={ false }
+				showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
-				<FeedHeader feed={ feed } site={ this.state.site } hasBackButton={ this.props.showBack }/>
+				<FeedHeader feed={ feed } site={ this.state.site } hasBackButton={ this.props.showBack } />
 			</Stream>
 		);
 	}
