@@ -1,13 +1,13 @@
 {
-	"name": "hello-world",
+	"name": "hello-dolly",
 	"author": "Automattic",
-	"description": "Hello, world!",
+	"description": "Hello, Dolly!",
 	"version": "0.0.1",
 	"env": [ "development", "wpcalypso" ],
 	"section": {
-		"name": "hello-world",
-		"paths": [ "/hello-world" ],
-		"module": "hello-world",
+		"name": "hello-dolly",
+		"paths": [ "/hello-dolly" ],
+		"module": "hello-dolly",
 		"group": "sites",
 		"secondary": true,
 		"enableLoggedOut": true
