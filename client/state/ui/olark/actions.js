@@ -9,6 +9,7 @@ import {
 	OLARK_OPERATORS_AVAILABLE,
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
+	OLARK_SET_LOCALE,
 } from 'state/action-types';
 import { OLARK_TIMEOUT_MS } from './constants';
 
@@ -66,6 +67,18 @@ export function setChatAvailability( availability ) {
 	return {
 		type: OLARK_SET_AVAILABILITY,
 		availability,
+	};
+}
+
+/**
+ * Returns an action object to be used in setting the olark locale
+ * @param {object} locale  The locale assigned to the user for use with olark
+ * @return {Object}        Action object
+ */
+export function setOlarkLocale( locale ) {
+	return {
+		type: OLARK_SET_LOCALE,
+		locale,
 	};
 }
 

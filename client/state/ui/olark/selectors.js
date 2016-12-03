@@ -52,3 +52,12 @@ export function isChatAvailable( state, context ) {
 export function isOperatorsAvailable( state ) {
 	return state.ui.olark.operatorStatus === OPERATOR_STATUS_AVAILABLE;
 }
+
+/**
+ * Returns the assigned olark locale.
+ * @param   {Object}  state  Global state tree
+ * @returns {string}         The assigned locale when olark is configured
+ */
+export function getOlarkLocale( state ) {
+	return state.ui.olark.locale;
+}
