@@ -1,8 +1,13 @@
 # Extensions
 
-Welcome to Calypso! This is the place where you can write your own extensions for your WordPress plugins. Extensions are setup to function in a semi-isolated environment, with their own url path and code chunk magic (using webpack) to assure code is loaded only when needed. Think of extensions as individual "apps" you can access in Calypso to interact with your plugin functionality in a focused way. At the moment, extensions are generated at build time.
+Welcome to Calypso! This is the place where you can write your own extensions for your WordPress plugins. Extensions are set up to function in a semi-isolated environment, with their own URL path and code chunk magic (using webpack) to assure code is loaded only when needed. Think of extensions as individual "apps" you can access in Calypso to interact with your plugin functionality in a focused way. At the moment, extensions are generated at build time.
 
-Before you get started we encourage you to get familiar with our development values, code reviewing practice, components and data approach, and the rest of the docs we have. Every folder in the project should have a readme describing its purpose.
+Before you get started we encourage you to get familiar with our [development values], [code-reviewing practice][prs], components and [data approach], and the [rest of the docs][docs] we have. Every folder in the project should have a README describing its purpose.
+
+[development values]: https://wpcalypso.wordpress.com/devdocs/docs/guide/0-values.md
+[data approach]: https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md
+[docs]: https://wpcalypso.wordpress.com/devdocs
+[prs]: https://wpcalypso.wordpress.com/devdocs/.github/CONTRIBUTING.md#pull-requests
 
 ## Defining a new section
 
@@ -22,9 +27,9 @@ Create a new directory within `/client/extensions` with your plugin name. Add a 
 }
 ```
 
-This definition will generate a new `hello-world.js` bundle using `/client/extensions/hello-world/index.js` as the entry path. The “paths” array specifies at which route your bundle will be served.
+This definition will generate a new `hello-world.js` bundle using `/client/extensions/hello-world/index.js` as the entry path. The `paths` array specifies at which route your bundle will be served.
 
-The rest of the attributes handle different configuration settings: “group” is used to attach your section to one of the top-level areas (sites, reader, me, editor); “secondary” is used to determine whether the sidebar should be shown for your section or not.
+The rest of the attributes handle different configuration settings: `group` is used to attach your section to one of the top-level areas (sites, reader, me, editor); `secondary` is used to determine whether the sidebar should be shown for your section or not.
 
 ## Basic rendering
 
@@ -36,7 +41,7 @@ export default function() {
 }
 ```
 
-At the moment we use a simple routing interface with `page.js`. There are a few useful middlewares you can leverage, like `siteSelection` and `navigation`. It’s important to note Calypso is designed to be multisite from the start. Our urls in general look like `/:section/:filter/:site`, with site usually being the last piece of the url. If you remove the site fragment you get what we call the "all-sites url". How a section handles the all-sites url is up to them. Some areas, like stats, posts, pages, plugins, will show resources from across all your sites. Other sections, like “settings” for example, would display a site picker if you try to access them without a site in the url bar. That is what `siteSelection` does, force the user to pick a site to access a section.
+At the moment we use a simple routing interface with `page.js`. There are a few useful middleware functions you can leverage, like `siteSelection` and `navigation`. It’s important to note Calypso is designed to be multi-site from the start. Our URLs in general look like `/:section/:filter/:site`, with the site usually being the last piece of the URL. If you remove the site fragment you get what we call the "all-sites URL". How a section handles the all-sites URL is up to itself. Some areas, like Stats, Posts, Pages, Plugins, will show resources from across all your sites. Other sections, like Settings for example, would display a site picker if you try to access them without a site in the URL bar. That is what `siteSelection` does: it forces the user to pick a site to access a section.
 
 `renderHelloWorld` in this case is the one you need to create and is responsible for rendering your section:
 
@@ -54,4 +59,4 @@ const renderHelloWorld = ( context ) => {
 
 ## State
 
-Calypso has almost transitioned to a single state store provided by Redux. Your extension would have access to the state tree and the possibility of adding a sub-tree. This is a work in progress and we need to figure out what are the requirements and safeguards we need to put in place.
+Calypso has almost transitioned to a single-state store provided by Redux. The end scenario is that your extension would have access to the entire state tree and would be allowed to add a sub-tree. This is a work in progress and we need to figure out what are the requirements and safeguards we need to put in place.
