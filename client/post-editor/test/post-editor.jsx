@@ -180,6 +180,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
@@ -203,6 +204,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
