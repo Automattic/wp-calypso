@@ -17,10 +17,12 @@ import FAQItem from 'components/faq/faq-item';
 
 const render = ( context ) => {
 	renderWithReduxStore( (
-		<Main className="hello-world__main">
-			<SectionHeader label="Hello, World!">🌞</SectionHeader>
+		<Main className="hello-dolly__main">
+			<SectionHeader label="Hello, Dolly!">🐑</SectionHeader>
 			<Card>
-				<p>This section is the home for the <strong>Hello World</strong> extension.</p>
+				<p style={ { fontSize: 18, fontWeight: 300 } }>This is not just an extension, it symbolizes the hope and enthusiasm of an entire generation summed up in two words sung most famously by Louis Armstrong.</p>
+				<hr />
+				<p>This section is the home for the <strong>Hello Dolly</strong> extension.</p>
 				<p>Extensions are set up to function in a semi-isolated environment, with their own URL path and code-chunk magic (using the power of webpack) to assure code is loaded only when needed. Think of extensions as individual "apps" you can access in Calypso to interact with your plugin functionality in a focused way.</p>
 			</Card>
 			<FAQ>
@@ -50,5 +52,5 @@ const render = ( context ) => {
 };
 
 export default function() {
-	page( '/hello-world/:site?', siteSelection, navigation, render );
+	page( '/hello-dolly/:site?', siteSelection, navigation, render );
 }
