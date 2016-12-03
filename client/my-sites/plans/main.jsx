@@ -63,7 +63,7 @@ const Plans = React.createClass( {
 			displayJetpackPlans
 		} = this.props;
 
-		if ( this.props.isPlaceholder ) {
+		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
@@ -98,13 +98,11 @@ const Plans = React.createClass( {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const isPlaceholder = ! selectedSiteId;
 
 		const jetpackSite = isJetpackSite( state, selectedSiteId );
 		const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 
 		return {
-			isPlaceholder,
 			selectedSite: getSelectedSite( state ),
 			displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite
 		};
