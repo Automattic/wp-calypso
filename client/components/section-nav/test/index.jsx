@@ -84,7 +84,7 @@ describe( 'section-nav', function() {
 			}, ( <p>placeholder</p> ) );
 			const tree = TestUtils.renderIntoDocument( elem );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );
@@ -99,15 +99,15 @@ describe( 'section-nav', function() {
 			const tree = TestUtils.renderIntoDocument( elem );
 
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );
