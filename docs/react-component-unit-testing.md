@@ -52,9 +52,12 @@ When a user for example clicks an element does the component react like it shoul
 Example test from `client/components/Accordion`
 
 ```javascript
-var tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+import { shallow } from 'enzyme';
 
-TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
+const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+
+wrapper.find( '.accordion__toggle' ).simulate( 'click' );
+);
 
 function finishTest( isExpanded ) {
 	expect( isExpanded ).to.be.ok;
