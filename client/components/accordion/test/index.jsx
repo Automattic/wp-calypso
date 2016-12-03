@@ -3,12 +3,11 @@
  */
 import { expect } from 'chai';
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Gridicon from 'components/gridicon';
 import Accordion from '../';
 
@@ -42,14 +41,12 @@ describe( 'Accordion', function() {
 	} );
 
 	context( 'events', () => {
-		useFakeDom();
-
 		function simulateClick( wrapper ) {
 			wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 		}
 
 		it( 'should toggle when clicked', function() {
-			const wrapper = mount( <Accordion title="Section">Content</Accordion> );
+			const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
 			simulateClick( wrapper );
 
@@ -57,7 +54,7 @@ describe( 'Accordion', function() {
 		} );
 
 		it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-			const wrapper = mount( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+			const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
 			simulateClick( wrapper );
 
@@ -72,7 +69,7 @@ describe( 'Accordion', function() {
 		} );
 
 		it( 'should always use the initialExpanded prop, if specified', function( done ) {
-			const wrapper = mount(
+			const wrapper = shallow(
 				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
 			);
 
