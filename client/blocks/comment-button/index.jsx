@@ -28,14 +28,6 @@ const CommentButton = React.createClass( {
 		};
 	},
 
-	onClick( event ) {
-		event.preventDefault();
-	},
-
-	onTap() {
-		this.props.onClick();
-	},
-
 	render() {
 		let label;
 		const containerTag = this.props.tagName,
@@ -70,8 +62,7 @@ const CommentButton = React.createClass( {
 		return React.createElement(
 			containerTag, {
 				className: 'comment-button',
-				onTouchTap: this.onTap,
-				onClick: this.onClick
+				onClick: this.prop.onClick
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
 		);
