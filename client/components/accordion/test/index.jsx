@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
 import { shallow, mount } from 'enzyme';
 
 /**
@@ -46,14 +44,14 @@ describe( 'Accordion', function() {
 	context( 'events', () => {
 		useFakeDom();
 
-		function simulateTouchTap( wrapper ) {
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( wrapper.find( '.accordion__toggle' ).node ) );
+		function simulateClick( wrapper ) {
+			wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 		}
 
 		it( 'should toggle when clicked', function() {
 			const wrapper = mount( <Accordion title="Section">Content</Accordion> );
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
 		} );
@@ -61,7 +59,7 @@ describe( 'Accordion', function() {
 		it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
 			const wrapper = mount( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			function finishTest( isExpanded ) {
 				expect( isExpanded ).to.be.true;
@@ -78,7 +76,7 @@ describe( 'Accordion', function() {
 				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
 			);
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			function finishTest( isExpanded ) {
 				expect( isExpanded ).to.be.false;
