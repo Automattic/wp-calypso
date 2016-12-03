@@ -22,6 +22,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
@@ -325,6 +327,8 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
+				<QueryPlans />
+				<QuerySitePlans siteId={ site.ID } />
 				{ this.getPlanFeatures() }
 
 				{
