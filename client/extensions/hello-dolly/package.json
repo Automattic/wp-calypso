@@ -3,7 +3,7 @@
 	"author": "Automattic",
 	"description": "Hello, Dolly!",
 	"version": "0.0.1",
-	"env": [ "development", "wpcalypso" ],
+	"env_id": [ "development", "wpcalypso" ],
 	"section": {
 		"name": "hello-dolly",
 		"paths": [ "/hello-dolly" ],
