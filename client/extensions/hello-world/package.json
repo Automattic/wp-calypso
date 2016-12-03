@@ -3,6 +3,7 @@
 	"author": "Automattic",
 	"description": "Hello, world!",
 	"version": "0.0.1",
+	"env": [ "development", "wpcalypso" ],
 	"section": {
 		"name": "hello-world",
 		"paths": [ "/hello-world" ],
