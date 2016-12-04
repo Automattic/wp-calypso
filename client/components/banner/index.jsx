@@ -24,6 +24,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import PlanIcon from 'components/plans/plan-icon';
+import PlanPrice from 'my-sites/plan-price';
 
 class Banner extends Component {
 
@@ -38,6 +39,7 @@ class Banner extends Component {
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		plan: PropTypes.string,
+		price: PropTypes.oneOf( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		siteSlug: PropTypes.string,
 		title: PropTypes.string.isRequired,
 	}
@@ -113,8 +115,11 @@ class Banner extends Component {
 			callToAction,
 			description,
 			list,
+			price,
 			title,
 		} = this.props;
+
+		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
 			<div className="banner__content">
@@ -138,16 +143,27 @@ class Banner extends Component {
 						</ul>
 					}
 				</div>
-				{ callToAction &&
+				{ ( callToAction || price ) &&
 					<div className="banner__action">
-						<Button
-							compact
-							href={ this.getHref() }
-							onClick={ this.handleClick }
-							primary
-						>
-							{ callToAction }
-						</Button>
+						{ size( prices ) === 1 &&
+							<PlanPrice rawPrice={ prices[ 0 ] } />
+						}
+						{ size( prices ) === 2 &&
+							<div className="banner__prices">
+								<PlanPrice rawPrice={ prices[ 0 ] } original />
+								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
+							</div>
+						}
+						{ callToAction &&
+							<Button
+								compact
+								href={ this.getHref() }
+								onClick={ this.handleClick }
+								primary
+							>
+								{ callToAction }
+							</Button>
+						}
 					</div>
 				}
 			</div>

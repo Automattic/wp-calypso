@@ -21,7 +21,6 @@ const BannerExample = () =>
 			title="Banner unrelated to any plan"
 		/>
 		<Banner
-			callToAction="Upgrade for $9.99"
 			description="Live chat support and no advertising."
 			href="#"
 			plan={ PLAN_PERSONAL }
@@ -35,9 +34,11 @@ const BannerExample = () =>
 			title="Upgrade to a Premium Plan!"
 		/>
 		<Banner
+			callToAction="Upgrade for $9.99"
 			feature={ FEATURE_ADVANCED_SEO }
 			list={ [ 'Live chat support', 'No advertising' ] }
 			plan={ PLAN_BUSINESS }
+			price={ [ 10.99, 9.99 ] }
 			title="Upgrade to a Business Plan!"
 		/>
 	</div>;

@@ -160,9 +160,33 @@
 	align-self: center;
 	font-size: 12px;
 	margin: 8px 0 0 0;
-	text-align: center;
+	text-align: left;
+	width: 100%;
+
+	.banner__prices {
+		display: flex;
+		justify-content: flex-start;
+
+		.plan-price {
+			margin-bottom: 0;
+		}
+
+		.plan-price.is-discounted,
+		.plan-price.is-discounted .plan-price__currency-symbol {
+			color: $gray-dark;
+		}
+
+		.has-call-to-action & .plan-price {
+			margin-bottom: 8px;
+		}
+	}
 
 	@include breakpoint( ">480px" ) {
 		margin: 0 -6px 0 8px;
+		text-align: right;
+		width: auto;
+		.banner__prices {
+			justify-content: flex-end;
+		}
 	}
 }

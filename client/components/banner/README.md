@@ -12,6 +12,7 @@ This component renders a customizable banner.
 - *icon* - the component icon.
 - *list* - a list of the upgrade features.
 - *plan* - PlanSlug of the plan that upgrade leads to.
+- *price* - one or two (original/discounted) upgrade prices.
 - *title* - (required) the banner title.
 
 ## Usage:
@@ -32,6 +33,7 @@ render() {
 			icon="star"
 			list={ [ 'A feature', 'Another feature' ] }
 			plan={ PLAN_BUSINESS }
+			prices={ [ 10.99, 9.99 ] }
 			title="Upgrade to a better plan!"
 		/>
 	);
