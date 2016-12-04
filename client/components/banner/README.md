@@ -5,7 +5,6 @@ This component renders a customizable banner.
 ## Props:
 
 - *callToAction* - shows a CTA text.
-- *color* - changes the accent color.
 - *description* - the banner description.
 - *event* - event to distinguish the nudge in tracks. Used as `cta_name` event property.
 - *feature* - slug of the feature to highlight in the plans compare card.

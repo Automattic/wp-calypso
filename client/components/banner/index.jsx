@@ -12,6 +12,11 @@ import {
 /**
  * Internal dependencies
  */
+import {
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getValidFeatureKeys } from 'lib/plans';
@@ -25,7 +30,6 @@ class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
-		color: PropTypes.string,
 		description: PropTypes.string,
 		event: PropTypes.string,
 		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
@@ -40,7 +44,6 @@ class Banner extends Component {
 
 	static defaultProps = {
 		feature: false,
-		icon: 'star',
 		onClick: noop,
 	}
 
@@ -81,12 +84,11 @@ class Banner extends Component {
 
 	getIcon() {
 		const {
-			color,
 			icon,
 			plan,
 		} = this.props;
 
-		if ( plan ) {
+		if ( plan && ! icon ) {
 			return (
 				<div className="banner__icon-plan">
 					<PlanIcon plan={ plan } />
@@ -96,16 +98,10 @@ class Banner extends Component {
 
 		return (
 			<div className="banner__icons">
-				<div
-					className="banner__icon"
-					style={ color ? { color } : {} }
-				>
+				<div className="banner__icon">
 					<Gridicon icon={ icon } size={ 18 } />
 				</div>
-				<div
-					className="banner__icon-circle"
-					style={ color ? { backgroundColor: color } : {} }
-				>
+				<div className="banner__icon-circle">
 					<Gridicon icon={ icon } size={ 18 } />
 				</div>
 			</div>
@@ -142,19 +138,18 @@ class Banner extends Component {
 						</ul>
 					}
 				</div>
-				<div className="banner__action">
-					{ callToAction
-						? <Button
-								compact
-								href={ this.getHref() }
-								onClick={ this.handleClick }
-								primary
-							>
-								{ callToAction }
-							</Button>
-						: callToAction
-					}
-				</div>
+				{ callToAction &&
+					<div className="banner__action">
+						<Button
+							compact
+							href={ this.getHref() }
+							onClick={ this.handleClick }
+							primary
+						>
+							{ callToAction }
+						</Button>
+					</div>
+				}
 			</div>
 		);
 	}
@@ -163,13 +158,16 @@ class Banner extends Component {
 		const {
 			callToAction,
 			className,
-			color,
+			plan,
 		} = this.props;
 
 		const classes = classNames(
 			'banner',
 			className,
-			{ 'has-call-to-action': callToAction }
+			{ 'has-call-to-action': callToAction },
+			{ 'is-upgrade-personal': PLAN_PERSONAL === plan },
+			{ 'is-upgrade-premium': PLAN_PREMIUM === plan },
+			{ 'is-upgrade-business': PLAN_BUSINESS === plan },
 		);
 
 		return (
@@ -177,7 +175,6 @@ class Banner extends Component {
 				className={ classes }
 				href={ callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
-				style={ color ? { borderLeftColor: color } : {} }
 			>
 				{ this.getIcon() }
 				{ this.getContent() }
