@@ -60,6 +60,18 @@ export const getTheme = createSelector(
 );
 
 /**
+ * Returns theme request error object
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID
+ * @param  {Number}  siteId  Site ID
+ * @return {Object}          error object if present or null otherwise
+ */
+export function getThemeRequestErrors( state, themeId, siteId ) {
+	return get( state.themes.themeRequestErrors, [ siteId, themeId ], null );
+}
+
+/**
  * Returns an array of normalized themes for the themes query, or null if no
  * themes have been received.
  *
