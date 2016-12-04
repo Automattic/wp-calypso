@@ -12,7 +12,7 @@ import startsWith from 'lodash/startsWith';
 import ThemeSheetComponent from './main';
 import {
 	receiveTheme,
-	requestThemeFailure,
+	themeRequestFailure,
 	setBackPath
 } from 'state/themes/actions';
 import wpcom from 'lib/wp';
@@ -51,7 +51,7 @@ export function fetchThemeDetailsData( context, next ) {
 		} )
 		.catch( error => {
 			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			context.store.dispatch( requestThemeFailure( 'wpcom', themeSlug, error ) );
+			context.store.dispatch( themeRequestFailure( 'wpcom', themeSlug, error ) );
 			context.renderCacheKey = 'theme not found';
 			next();
 		} );

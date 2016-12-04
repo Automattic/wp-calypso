@@ -223,7 +223,7 @@ export function requestThemes( siteId, query = {} ) {
 	};
 }
 
-export function requestThemeFailure( siteId, themeId, error ) {
+export function themeRequestFailure( siteId, themeId, error ) {
 	return {
 		type: THEME_REQUEST_FAILURE,
 		siteId,
@@ -276,7 +276,7 @@ export function requestTheme( themeId, siteId ) {
 			} );
 		} ).catch( ( error ) => {
 			dispatch(
-				requestThemeFailure( siteId, themeId, error )
+				themeRequestFailure( siteId, themeId, error )
 			);
 		} );
 	};

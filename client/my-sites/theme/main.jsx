@@ -36,7 +36,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive } from 'state/themes/selectors';
+import { isThemeActive, getThemeRequestErrors } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -569,11 +569,13 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = selectedSite ? getTheme( state, selectedSite.ID, id ) : getTheme( state, 'wpcom', id );
+		const theme = getTheme( state, siteIdOrWpcom, id );
+		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 		const themeDetails = theme ? themeDetailsFromTheme( theme ) : {};
 		return {
 			...themeDetails,
 			id,
+			error,
 			selectedSite,
 			siteSlug,
 			siteIdOrWpcom,
