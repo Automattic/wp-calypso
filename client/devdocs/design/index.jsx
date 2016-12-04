@@ -68,6 +68,7 @@ import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
+import Banner from 'components/banner/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -114,6 +115,7 @@ let DesignAssets = React.createClass( {
 					filter={ filter }
 				>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
+					<Banner />
 					<BulkSelect />
 					<ButtonGroups />
 					<Buttons componentUsageStats={ componentsUsageStats.button } />
