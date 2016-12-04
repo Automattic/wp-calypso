@@ -8,10 +8,10 @@ import React, { PropTypes } from 'react';
  */
 import userModule from 'lib/user';
 import { stripHTML } from 'lib/formatting';
+import { isRTLCharacter, isLTRCharacter } from './direction';
 
 const user = userModule();
 
-const RTL_THRESHOLD = 0.5;
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
 /***
@@ -51,77 +51,6 @@ const getContent = ( reactElement ) => {
 	return null;
 };
 
-// Adopted from from: https://github.com/twitter/RTLtextarea/blob/master/src/RTLText.module.js#L25
-const rtlCharacterRanges = [
-	{
-		name: 'Hebrew',
-		start: 0x590,
-		end: 0x5FF
-	},
-	{
-		name: 'Arabic',
-		start: 0x600,
-		end: 0x6FF
-	},
-	{
-		name: 'Syriac',
-		start: 0x700,
-		end: 0x74F
-	},
-	{
-		name: 'Arabic Supplement',
-		start: 0x750,
-		end: 0x77F
-	},
-	{
-		name: 'Thaana',
-		start: 0x780,
-		end: 0x7BF
-	},
-	{
-		name: 'N\'Ko',
-		start: 0x7C0,
-		end: 0x7FF
-	},
-	{
-		name: 'Samaritan',
-		start: 0x800,
-		end: 0x83F
-	},
-	{
-		name: 'Arabic Extended-A',
-		start: 0x8A0,
-		end: 0x8FF
-	},
-	{
-		name: 'Hebrew presentation forms',
-		start: 0xFB1D,
-		end: 0xFB4F
-	},
-	{
-		name: 'Arabic presentation forms A',
-		start: 0xFB50,
-		end: 0xFDFF
-	},
-	{
-		name: 'Arabic presentation forms B',
-		start: 0xFE70,
-		end: 0xFEFF
-	},
-];
-
-
-
-const isRTLCharacter = ( character ) => {
-	const characterCode = character.charCodeAt( 0 );
-	return rtlCharacterRanges.some( range => range.start <= characterCode && range.end >= characterCode );
-};
-
-const whitespaceRe = /[\s\-\_0-9]/u;
-const isNeutralCharacter = ( character ) => {
-	return whitespaceRe.test( character );
-}
-
 /***
  * Gets the main directionality in a text
  * It returns what kind of characters we had the most, RTL or LTR according to some ratio
@@ -131,21 +60,22 @@ const isNeutralCharacter = ( character ) => {
  */
 const getTextMainDirection = ( text ) => {
 	let rtlCount = 0;
-	let countedCharacters = 0;
+	let ltrCount = 0;
+
 	const examinedLength = Math.min( MAX_LENGTH_OF_TEXT_TO_EXAMINE, text.length );
 	for ( let i = 0; i < examinedLength; i++ ) {
-		if ( isNeutralCharacter( text[ i ] ) ) {
-			continue;
+		if ( isRTLCharacter( text[ i ] ) ) {
+			rtlCount++;
+		} else if ( isLTRCharacter( text[ i ] ) ) {
+			ltrCount++;
 		}
-		rtlCount += isRTLCharacter( text[ i ] ) ? 1 : 0;
-		countedCharacters++;
 	}
 
-	if ( countedCharacters === 0 ) {
+	if ( ( rtlCount + ltrCount ) === 0 ) {
 		return user.isRTL() ? 'rtl' : 'ltr';
 	}
 
-	return ( rtlCount / countedCharacters > RTL_THRESHOLD ) ? 'rtl' : 'ltr';
+	return rtlCount > ltrCount ? 'rtl' : 'ltr';
 };
 
 /***
