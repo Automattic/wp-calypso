@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { omit } from 'lodash';
 
 export default React.createClass( {
 
@@ -16,9 +15,9 @@ export default React.createClass( {
 	},
 
 	render() {
-		const inheritProps = omit( this.props, [ 'count' ] );
+		const { count, ...inheritProps } = this.props;
 		return (
-			<span className="count" { ...inheritProps }>{ this.numberFormat( this.props.count ) }</span>
+			<span className="count" { ...inheritProps }>{ this.numberFormat( count ) }</span>
 		);
 	}
 } );
