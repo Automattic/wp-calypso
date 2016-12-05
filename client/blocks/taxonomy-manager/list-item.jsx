@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined, noop } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -139,7 +139,6 @@ class TaxonomyManagerListItem extends Component {
 					context={ this.refs && this.refs.count }
 					isVisible={ this.state.showTooltip }
 					position="left"
-					onClose={ noop }
 				>
 					{ this.tooltipText() }
 				</Tooltip>
