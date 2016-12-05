@@ -43,6 +43,11 @@ const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 let savedContactForm = null;
 
+const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
+const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
+const SUPPORT_TICKET = 'SUPPORT_TICKET';
+const SUPPORT_FORUM = 'SUPPORT_FORUM';
+
 const HelpContact = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
@@ -402,7 +407,7 @@ const HelpContact = React.createClass( {
 			return false;
 		}
 
-		if ( !isEn ) {
+		if ( ! isEn ) {
 			return false;
 		}
 
@@ -415,24 +420,118 @@ const HelpContact = React.createClass( {
 		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
 	},
 
+	getSupportVariation: function() {
+		const { olark } = this.state;
+		const { isTicketSupportEligible } = this.props;
+
+		if ( this.shouldUseHappychat() ) {
+			return SUPPORT_HAPPYCHAT;
+		}
+
+		if ( olark.isUserEligible && olark.isOperatorAvailable ) {
+			return SUPPORT_LIVECHAT;
+		}
+
+		if ( olark.details.isConversing || isTicketSupportEligible ) {
+			return SUPPORT_TICKET;
+		}
+
+		return SUPPORT_FORUM;
+	},
+
+	getContactFormPropsVariation: function( variationSlug ) {
+		const { isSubmitting } = this.state;
+		const moreThanOneSite = sites.get().length > 1;
+
+		switch ( variationSlug ) {
+			case SUPPORT_HAPPYCHAT:
+				const isDev = ( ( config( 'env' ) === 'development' ) || ( config( 'env_id' ) === 'stage' ) );
+				return {
+					onSubmit: this.startHappychat,
+					buttonLabel: isDev ? 'Happychat' : this.translate( 'Chat with us' ),
+					showSubjectField: false,
+					showHowCanWeHelpField: true,
+					showHowYouFeelField: true,
+					showSiteField: moreThanOneSite,
+				};
+
+			case SUPPORT_LIVECHAT:
+				return {
+					onSubmit: this.startChat,
+					buttonLabel: this.translate( 'Chat with us' ),
+					showSubjectField: false,
+					showHowCanWeHelpField: true,
+					showHowYouFeelField: true,
+					showSiteField: moreThanOneSite,
+				};
+
+			case SUPPORT_TICKET:
+				return {
+					onSubmit: this.submitKayakoTicket,
+					buttonLabel: isSubmitting ? this.translate( 'Sending email' ) : this.translate( 'Email us' ),
+					showSubjectField: true,
+					showHowCanWeHelpField: true,
+					showHowYouFeelField: true,
+					showSiteField: moreThanOneSite,
+				};
+
+			case SUPPORT_FORUM:
+			default:
+				return {
+					onSubmit: this.submitSupportForumsTopic,
+					buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
+					formDescription: this.translate(
+						'Post a new question in our {{strong}}public forums{{/strong}}, ' +
+						'where it may be answered by helpful community members, ' +
+						'by submitting the form below. ' +
+						'{{strong}}Please do not{{/strong}} provide financial or ' +
+						'contact information when submitting this form.',
+						{
+							components: {
+								strong: <strong />
+							}
+						} ),
+					showSubjectField: true,
+					showHowCanWeHelpField: false,
+					showHowYouFeelField: false,
+					showSiteField: false,
+				};
+		}
+	},
+
+	getContactFormCommonProps: function() {
+		const { olark, isSubmitting } = this.state;
+		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
+
+		return {
+			disabled: isSubmitting,
+			showHelpLanguagePrompt: showHelpLanguagePrompt,
+			valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
+		};
+	},
+
+	shouldShowTicketRequestErrorNotice: function( variationSlug ) {
+		const { ticketSupportRequestError } = this.props;
+
+		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null !== ticketSupportRequestError;
+	},
+
+	shouldShowPreloadForm: function() {
+		const { olark, sitesInitialized } = this.state;
+		const { isTicketSupportConfigurationReady, ticketSupportRequestError } = this.props;
+
+		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
+		const ticketReadyOrError = isTicketSupportConfigurationReady || null !== ticketSupportRequestError;
+
+		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
+	},
+
 	/**
 	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView: function() {
-		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
-		const { isTicketSupportConfigurationReady, isTicketSupportEligible, ticketSupportRequestError } = this.props;
-
-		const showHappychatVariation = this.shouldUseHappychat();
-		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
-		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || isTicketSupportEligible );
-		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
-		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
-
-		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
-		const ticketReadyOrError = isTicketSupportConfigurationReady || null !== ticketSupportRequestError;
-
-		const showPreloadForm = ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut ;
+		const { olark, confirmation } = this.state;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -442,7 +541,7 @@ const HelpContact = React.createClass( {
 			return <HelpContactClosed />;
 		}
 
-		if ( showPreloadForm ) {
+		if ( this.shouldShowPreloadForm() ) {
 			return (
 				<div className="help-contact__placeholder">
 					<h4 className="help-contact__header">Loading contact form</h4>
@@ -461,55 +560,21 @@ const HelpContact = React.createClass( {
 			return <OlarkChatbox />;
 		}
 
-		const contactFormProps = Object.assign(
-			{
-				disabled: isSubmitting,
-				showSubjectField: showKayakoVariation || showForumsVariation,
-				showHowCanWeHelpField: showKayakoVariation || showChatVariation,
-				showHowYouFeelField: showKayakoVariation || showChatVariation,
-				showSiteField: ( showKayakoVariation || showChatVariation ) && ( sites.get().length > 1 ),
-				showHelpLanguagePrompt: showHelpLanguagePrompt,
-				valueLink: { value: savedContactForm, requestChange: ( contactForm ) => savedContactForm = contactForm }
-			},
-			showChatVariation && {
-				onSubmit: this.startChat,
-				buttonLabel: this.translate( 'Chat with us' )
-			},
-			showKayakoVariation && {
-				onSubmit: this.submitKayakoTicket,
-				buttonLabel: isSubmitting ? this.translate( 'Sending email' ) : this.translate( 'Email us' )
-			},
-			showForumsVariation && {
-				onSubmit: this.submitSupportForumsTopic,
-				buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
-				formDescription: this.translate(
-					'Post a new question in our {{strong}}public forums{{/strong}}, ' +
-					'where it may be answered by helpful community members, ' +
-					'by submitting the form below. ' +
-					'{{strong}}Please do not{{/strong}} provide financial or ' +
-					'contact information when submitting this form.',
-					{
-						components: {
-							strong: <strong />
-						}
-					} )
-			},
-			showHappychatVariation && {
-				onSubmit: this.startHappychat,
-				buttonLabel: ( ( config( 'env' ) === 'development' ) || ( config( 'env_id' ) === 'stage' ) ) ? 'Happychat' : this.translate( 'Chat with us' )
-			}
-		);
-
 		// Hide the olark widget in the bottom right corner.
 		olarkActions.hideBox();
 
-		const shouldShowTicketRequestErrorNotice = ! showChatVariation && null !== ticketSupportRequestError;
+		const supportVariation = this.getSupportVariation();
+
+		const contactFormProps = Object.assign(
+			this.getContactFormCommonProps(),
+			this.getContactFormPropsVariation( supportVariation ),
+		);
 
 		return (
 			<div>
-				{ shouldShowTicketRequestErrorNotice &&
+				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
-						status='is-warning'
+						status="is-warning"
 						text={ this.translate( 'We had trouble loading the support information for your account. ' +
 							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
