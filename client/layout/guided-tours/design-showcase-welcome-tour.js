@@ -29,18 +29,18 @@ const anyThemeMoreButtonClicked = state => {
 
 const isAbTestInVariant = function() {};
 
-export const DesignShowcaseTour = makeTour(
+export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
-		name="designShowcase"
+		name="designShowcaseWelcome"
 		version="20161123"
 		path="/design"
 		when={ and(
 			isNewUser,
-			isEnabled( 'guided-tours/design-showcase' ),
+			isEnabled( 'guided-tours/design-showcase-welcome' ),
 			isDesktop,
 			selectedSiteIsCustomizable,
 			not( inSection( 'customize' ) ),
-			isAbTestInVariant( 'designShowcaseTour', 'enabled' ),
+			isAbTestInVariant( 'designShowcaseWelcomeTour', 'enabled' ),
 			) }
 		>
 		<Step name="init" placement="right" next="search">

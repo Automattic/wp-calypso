@@ -22,7 +22,7 @@
 		"community-translator": true,
 		"desktop-promo": true,
 		"guided-tours": true,
-		"guided-tours/design-showcase": true,
+		"guided-tours/design-showcase-welcome": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
