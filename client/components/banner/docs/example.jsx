@@ -52,7 +52,7 @@ const BannerExample = () =>
 			dismissPreferenceName="devdocs-banner-example"
 			dismissTemporary
 			list={ [ 'Live chat support', 'No advertising' ] }
-			plan={ PLAN_PERSONAL }
+			plan={ PLAN_BUSINESS }
 			title="Upgrade to a Business Plan!"
 		/>
 	</div>;
