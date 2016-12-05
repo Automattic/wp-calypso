@@ -8,7 +8,7 @@ import createSelector from 'lib/create-selector';
  * Internal dependencies
  */
 import config from 'config';
-import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { isPremiumTheme, oldShowcaseUrl } from './utils';
 import {
@@ -338,6 +338,27 @@ export function getThemeHelpUrl( state, theme, siteId ) {
 	}
 
 	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+}
+
+/**
+ * Returns the URL for a given theme's demo page.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {?Number} siteId Site ID to optionally use as context
+ * @return {?String}        Theme demo URL
+ */
+export function getThemePreviewUrl( state, theme, siteId ) {
+	if ( ! get( theme, 'demo_uri' ) ) {
+		return null;
+	}
+
+	if ( isJetpackSite( state, siteId ) ) {
+		return getSiteAdminUrl( state, siteId, 'customize.php' ) + '?theme=' +
+			theme.id + '&return=' + encodeURIComponent( window.location );
+	}
+
+	return `${ theme.demo_uri }?demo=true&iframe=true&theme_preview=true`;
 }
 
 /**
