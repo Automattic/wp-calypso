@@ -33,6 +33,8 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_RECEIVE_SERVER_ERROR,
+	THEME_SHOW_PREVIEW,
+	THEME_HIDE_PREVIEW,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
@@ -439,6 +441,38 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
+		siteId
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that a given theme should be
+ * previewed.
+ *
+ * @param  {String}  themeId Theme ID
+ * @param  {?Number} siteId  Site ID
+ * @return {Object}          Action object
+ */
+export function showThemePreview( themeId, siteId ) {
+	return {
+		type: THEME_SHOW_PREVIEW,
+		theme: themeId,
+		siteId
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that the theme preview should
+ * be hidden.
+ *
+ * @param  {String}  themeId Theme ID
+ * @param  {?Number} siteId  Site ID
+ * @return {Object}          Action object
+ */
+export function hideThemePreview( themeId, siteId ) {
+	return {
+		type: THEME_HIDE_PREVIEW,
+		theme: themeId,
 		siteId
 	};
 }
