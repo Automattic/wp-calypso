@@ -273,6 +273,16 @@ export function isRequestingActiveTheme( state, siteId ) {
 }
 
 /**
+ * Returns the theme that is currently being previewed.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        ID of the theme that is being previewed, or null if none is
+ */
+export function getPreviewedTheme( state ) {
+	return state.themes.themePreview;
+}
+
+/**
  * Returns the URL for a given theme's details sheet.
  *
  * @param  {Object}  state  Global state tree
