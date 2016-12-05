@@ -8,7 +8,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 // Overrides 30px top margin, moves first card closer to top of stream
 .is-reader-page .following.main .card.reader-post-card:nth-child(2) {
-	
+
 	@include breakpoint( ">480px" ) {
 		margin-top: -18px;
 	}
@@ -117,7 +117,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 						bottom: 0;
 						left: 0;
 					width: 100%;
-					z-index: 1;
+					z-index: z-index( 'root', '.reader-post-card__featured-image' );
 				}
 			}
 
@@ -142,11 +142,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 					bottom: 22px;
 					left: 20px;
 				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-				z-index: 2;
 				white-space: nowrap;
 				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
 				overflow: hidden;
+				z-index: z-index( 'root', '.reader-post-card__title' );
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
