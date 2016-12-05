@@ -132,11 +132,10 @@
 			@include breakpoint( "<960px" ) {
 				justify-content: flex-end;
 				position: relative;
-					top: -4px;
+					top: 12px;
 			}
 
 			@include breakpoint( "<660px" ) {
-				top: 12px;
 				right: 15px;
 			}
 		}
@@ -159,16 +158,15 @@
 		top: 20px;
 
 	@include breakpoint( "<960px" ) {
-		top: 0;
+		top: 15px;
 	}
 
 	@include breakpoint( "<660px" ) {
 		left: 13px;
-		top: 16px;
 	}
 
 	@include breakpoint( "<480px" ) {
-		top: 10px;
+		top: 9px;
 	}
 
 	.button.header-cake__back {
