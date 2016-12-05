@@ -351,6 +351,27 @@ export function getThemeHelpUrl( state, theme, siteId ) {
 }
 
 /**
+ * Returns the URL for a given theme's demo site.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {?Number} siteId Site ID to optionally use as context
+ * @return {?String}        Theme demo site URL
+ */
+export function getThemeDemoUrl( state, theme, siteId ) {
+	if ( ! get( theme, 'demo_uri' ) ) {
+		return null;
+	}
+
+	if ( isJetpackSite( state, siteId ) ) {
+		return getSiteAdminUrl( state, siteId, 'customize.php' ) + '?theme=' +
+			theme.id + '&return=' + encodeURIComponent( window.location );
+	}
+
+	return theme.demo_uri;
+}
+
+/**
  * Returns the URL for a given theme's preview page.
  *
  * @param  {Object}  state  Global state tree
