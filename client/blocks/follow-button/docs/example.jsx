@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import FollowButton from 'components/follow-button/button';
+import FollowButton from 'blocks/follow-button/button';
 import Card from 'components/card/compact';
 
 export default React.createClass( {
