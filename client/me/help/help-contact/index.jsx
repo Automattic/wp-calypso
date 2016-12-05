@@ -477,7 +477,6 @@ const HelpContact = React.createClass( {
 					showSiteField: moreThanOneSite,
 				};
 
-			case SUPPORT_FORUM:
 			default:
 				return {
 					onSubmit: this.submitSupportForumsTopic,
