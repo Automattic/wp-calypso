@@ -234,7 +234,7 @@
 
 	.notes {
 		background: $gray-light;
-		margin: 40px -20px -20px;
+		margin: 40px -20px 40px;
 		border-top: 1px solid #e9eff3;
 		padding: 20px;
 
@@ -260,6 +260,10 @@
 
 		:last-child {
 			margin-bottom: 5px;
+		}
+
+		&:last-child {
+			margin-bottom: -20px;
 		}
 	}
 }
