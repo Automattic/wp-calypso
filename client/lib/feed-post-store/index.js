@@ -83,7 +83,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case FeedPostActionType.RECEIVE_FEED_POST:
 			if ( action.error ) {
 				const error = {
-					statusCode: action.error.statusCode,
+					status_code: action.error.statusCode ? action.error.statusCode : -1,
 					errorCode: '-',
 					message: action.error.toString()
 				};
@@ -210,7 +210,7 @@ function receivePost( feedId, postId, post ) {
 		return;
 	}
 
-	if ( post.errors || post.statusCode === 404 ) {
+	if ( post.errors || post.status_code === 404 ) {
 		receiveError( feedId, postId, post );
 	} else {
 		normalizePost( feedId, postId, post );
@@ -222,7 +222,7 @@ function receiveBlogPost( blogId, postId, post ) {
 		return;
 	}
 
-	if ( post.errors || post.statusCode === 404 ) {
+	if ( post.errors || post.status_code === 404 ) {
 		post.site_ID = blogId;
 		post.ID = postId;
 		post.is_external = false;
@@ -234,8 +234,8 @@ function receiveBlogPost( blogId, postId, post ) {
 
 function receiveError( feedId, postId, error ) {
 	let statusCode, errorCode, message;
-	if ( error.statusCode ) {
-		statusCode = error.statusCode;
+	if ( error.status_code ) {
+		statusCode = error.status_code;
 
 		if ( error.errors ) {
 			errorCode = error.errors.error;
