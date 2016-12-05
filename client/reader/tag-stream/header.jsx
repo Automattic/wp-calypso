@@ -10,7 +10,7 @@ import { sample } from 'lodash';
 /**
  * Internal dependencies
  */
-import FollowButton from 'blocks/follow-button/button';
+import FollowButton from 'components/follow-button/button';
 import QueryReaderTagImages from 'components/data/query-reader-tag-images';
 import { getTagImages } from 'state/reader/tags/images/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
