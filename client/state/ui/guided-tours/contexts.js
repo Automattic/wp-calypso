@@ -1,6 +1,7 @@
 import config from 'config';
 import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { abtest } from 'lib/abtest';
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
@@ -30,3 +31,6 @@ export const selectedSiteIsPreviewable = state =>
 
 export const selectedSiteIsCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+
+export const isAbTestInVariant = ( testName, variant ) => () =>
+	abtest( testName ) === variant;
