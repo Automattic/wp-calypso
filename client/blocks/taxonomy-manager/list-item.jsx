@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
+import { get, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ import { getSite } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { decodeEntities } from 'lib/formatting';
+import Tooltip from 'components/tooltip';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -43,6 +44,7 @@ class TaxonomyManagerListItem extends Component {
 
 	state = {
 		showDeleteDialog: false,
+		showTooltip: false
 	};
 
 	deleteItem = () => {
@@ -78,6 +80,29 @@ class TaxonomyManagerListItem extends Component {
 		return `${ siteUrl }/${ taxonomyBase }/${ term.slug }/`;
 	}
 
+	tooltipText = () => {
+		const { postCount, name, translate } = this.props;
+		return translate(
+			'%(postCount)d \'%(name)s\' post',
+			'%(postCount)d \'%(name)s\' posts',
+			{
+				count: postCount,
+				args: {
+					postCount,
+					name
+				}
+			}
+		);
+	};
+
+	showTooltip = () => {
+		this.setState( { showTooltip: true } );
+	};
+
+	hideTooltip = () => {
+		this.setState( { showTooltip: false } );
+	};
+
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
 		const name = decodeEntities( term.name ) || translate( 'Untitled' );
@@ -97,12 +122,25 @@ class TaxonomyManagerListItem extends Component {
 				<span className="taxonomy-manager__label" onClick={ onClick }>
 					<span>{ name }</span>
 					{ isDefault &&
-						<span className="taxonomy-manager__default-label">
+					<span className="taxonomy-manager__default-label">
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
 						</span>
 					}
 				</span>
-				{ ! isUndefined( term.post_count ) && <Count count={ term.post_count } /> }
+				{ ! isUndefined( term.post_count ) && <Count
+					ref="count"
+					count={ term.post_count }
+					onMouseEnter={ this.showTooltip }
+					onMouseLeave={ this.hideTooltip }
+				/> }
+				<Tooltip
+					context={ this.refs && this.refs.count }
+					isVisible={ this.state.showTooltip }
+					position="left"
+					onClose={ noop }
+				>
+					{ this.tooltipText() }
+				</Tooltip>
 				<EllipsisMenu position="bottom left">
 					<PopoverMenuItem onClick={ onClick }>
 						<Gridicon icon="pencil" size={ 18 } />
@@ -116,9 +154,9 @@ class TaxonomyManagerListItem extends Component {
 					</PopoverMenuItem>
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
-						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
-							{ translate( 'Set as default' ) }
-						</PopoverMenuItem>
+					<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
+						{ translate( 'Set as default' ) }
+					</PopoverMenuItem>
 					}
 				</EllipsisMenu>
 				<Dialog
