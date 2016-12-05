@@ -1,3 +1,10 @@
+@import 'plugins/wplink/style';
+@import 'plugins/calypso-alert/style';
+@import 'plugins/insert-menu/style';
+@import 'plugins/wpcom-help/style';
+@import 'plugins/wpcom-charmap/style';
+@import 'plugins/contact-form/style';
+
 .tinymce {
 	display: none;
 
@@ -229,6 +236,8 @@
 .mce-toolbar .mce-btn-group .mce-wpcom-icon-button.mce-contact-form .gridicon {
 	margin-left: 4px;
 }
+
+@import 'plugins/advanced/style';
 
 /*------------------------------------------------------------------------------
 	TinyMCE and Quicklinks toolbars
