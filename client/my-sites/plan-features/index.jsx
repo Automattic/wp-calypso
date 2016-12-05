@@ -434,7 +434,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { canPurchase, planProperties, isInSignup, site } = this.props;
+		const { canPurchase, planProperties, isInSignup, isLandingPage, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -462,6 +462,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 				</td>
