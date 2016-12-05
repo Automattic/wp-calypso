@@ -62,7 +62,7 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<Continue icon="my-sites" target="my-sites" step="sidebar" click />
+			<Continue click icon="my-sites" step="sidebar" target="my-sites" />
 		</Step>
 
 		<Step name="sidebar"
@@ -95,7 +95,7 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<Continue step="in-preview" target="site-card-preview" click>
+			<Continue click step="in-preview" target="site-card-preview">
 				{
 					translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
 						components: {
@@ -122,7 +122,7 @@ export const MainTour = makeTour(
 			<ButtonRow>
 				<Next step="close-preview" />
 				<Quit />
-				<Continue step="close-preview" when={ previewIsNotShowing } hidden />
+				<Continue hidden step="close-preview" when={ previewIsNotShowing } />
 			</ButtonRow>
 		</Step>
 
@@ -135,7 +135,7 @@ export const MainTour = makeTour(
 			<p>
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
-			<Continue step="themes" icon="cross-small" target="web-preview__close" when={ previewIsNotShowing } />
+			<Continue icon="cross-small" step="themes" target="web-preview__close" when={ previewIsNotShowing } />
 		</Step>
 
 		<Step name="themes"
