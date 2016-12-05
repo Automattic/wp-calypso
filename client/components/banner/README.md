@@ -20,7 +20,9 @@ This component renders a customizable banner.
 - *title* - (required) the banner title.
 
 If `href` is not provided, `feature` can auto-generate it.
+
 If `callToAction` is provided, `href` and `onClick` are not applied to the whole banner, but to the `callToAction` button only.
+
 If `dismissPreferenceName` is provided, `href` is only applied if `callToAction` is provided.
 
 ## Usage:
