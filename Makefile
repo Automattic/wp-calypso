@@ -74,8 +74,7 @@ CLIENT_STYLE_FILES = $(shell \
 		-type f \
 		-name 'style.scss' \
 )
-# the cut here limits the filename to the hash. md5sum emits the hash and some spaces followed by a dash
-CLIENT_STYLE_FILES_HASH = $(shell echo $(CLIENT_STYLE_FILES) | $(HASH) | cut -b 1-32).hash
+CLIENT_STYLE_FILES_HASH = $(shell echo $(CLIENT_STYLE_FILES) | $(HASH)).hash
 
 # variables
 NODE_ENV ?= development
