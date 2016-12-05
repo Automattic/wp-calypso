@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import {
@@ -6,6 +9,9 @@ import {
 } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 
+/**
+ * Internal dependencies
+ */
 import {
 	makeTour,
 	Tour,
