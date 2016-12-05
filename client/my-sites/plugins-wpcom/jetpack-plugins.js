@@ -104,17 +104,17 @@ const jetpackPlugins = ( translate = identity ) => [
 				plan: 'standard',
 			},
 			{
+				name: translate( 'Extended Customizer' ),
+				link: 'https://support.wordpress.com/customizer/',
+				description: translate( 'Edit colors and backgrounds.' ),
+				plan: 'standard',
+			},
+			{
 				name: translate( 'Custom Design' ),
 				link: 'https://support.wordpress.com/custom-design/',
 				description: translate( 'Customize your blog\'s look with custom fonts, a CSS editor, and more.' ),
 				plan: 'premium',
 				feature: 'advanced-design'
-			},
-			{
-				name: translate( 'Extended Customizer' ),
-				link: 'https://support.wordpress.com/customizer/',
-				description: translate( 'Edit colors and backgrounds.' ),
-				plan: 'standard',
 			},
 			{
 				name: translate( 'Extended Widgets' ),
