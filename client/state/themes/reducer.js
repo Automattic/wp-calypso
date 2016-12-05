@@ -8,7 +8,6 @@ import { mapValues, omit } from 'lodash';
  * Internal dependencies
  */
 import themes from './themes/reducer';
-import themeDetails from './theme-details/reducer';
 import themesList from './themes-list/reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
 import {
@@ -260,6 +259,10 @@ export const queries = ( () => {
 		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes );
 		},
+		[ THEME_REQUEST_FAILURE ]: ( state, { siteId, themeId, error } ) => {
+			const theme = [ { id: themeId, error } ];
+			return applyToManager( state, siteId, 'receive', true, theme );
+		},
 		[ SERIALIZE ]: ( state ) => {
 			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 		},
@@ -286,7 +289,6 @@ export const lastQuery = createReducer( {}, {
 export default combineReducers( {
 	// Old reducers:
 	themes,
-	themeDetails,
 	themesList,
 	// New reducers:
 	queries,
