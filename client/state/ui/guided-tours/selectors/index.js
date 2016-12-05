@@ -6,6 +6,7 @@ import {
 	difference,
 	find,
 	findLast,
+	flatMap,
 	get,
 	includes,
 	map,
@@ -38,11 +39,15 @@ const BLACKLISTED_SECTIONS = [
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const relevantFeatures = map( GuidedToursConfig.meta, ( tourMeta, key ) => ( {
-	tour: key,
-	path: tourMeta.path,
-	when: tourMeta.when,
-} ) );
+const mappable = x => ! Array.isArray( x ) ? [ x ] : x;
+
+const relevantFeatures = flatMap( GuidedToursConfig.meta, ( tourMeta, key ) => (
+	mappable( tourMeta.path ).map( path => ( {
+		tour: key,
+		when: tourMeta.when,
+		path,
+	} ) )
+) );
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has
