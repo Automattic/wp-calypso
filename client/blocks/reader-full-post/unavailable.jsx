@@ -4,16 +4,19 @@
 import React from 'react';
 import config from 'config';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ReaderMain from 'components/reader-main';
 import DocumentHead from 'components/data/document-head';
+import ReaderFullPostBack from './back';
 
-const ReaderFullPostUnavailable = ( { post, translate } ) => {
+const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	return (
 		<ReaderMain className="reader-full-post reader-full-post__unavailable">
+			<ReaderFullPostBack onBackClick={ onBackClick } />
 			<DocumentHead title={ translate( 'Post unavailable' ) } />
 				<div className="reader-full-post__content">
 					<div className="reader-full-post__story">
@@ -29,7 +32,12 @@ const ReaderFullPostUnavailable = ( { post, translate } ) => {
 };
 
 ReaderFullPostUnavailable.propTypes = {
-	post: React.PropTypes.object.isRequired
+	post: React.PropTypes.object.isRequired,
+	onBackClick: React.PropTypes.func.isRequired
+};
+
+ReaderFullPostUnavailable.defaultProps = {
+	onBackClick: noop
 };
 
 export default localize( ReaderFullPostUnavailable );

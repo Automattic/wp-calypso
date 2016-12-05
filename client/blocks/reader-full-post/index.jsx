@@ -14,8 +14,6 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import ReaderMain from 'components/reader-main';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
@@ -54,6 +52,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
 import DocumentHead from 'components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
+import ReaderFullPostBack from './back';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -241,7 +240,7 @@ export class FullPostView extends React.Component {
 		const { post, site, feed } = this.props;
 
 		if ( post._state === 'error' ) {
-			return <ReaderFullPostUnavailable post={ post } />;
+			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
 		const siteName = siteNameFromSiteAndPost( site, post );
@@ -273,12 +272,7 @@ export class FullPostView extends React.Component {
 				}
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
-				<div className="reader-full-post__back-container">
-					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
-						<Gridicon icon="arrow-left" />
-						<span className="reader-full-post__back-label">{ translate( 'Back' ) }</span>
-					</Button>
-				</div>
+				<ReaderFullPostBack onBackClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink icon={ true } href={ post.URL } onClick={ this.handleVisitSiteClick } target="_blank">
 						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
