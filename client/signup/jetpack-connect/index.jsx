@@ -14,7 +14,11 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import {
+	getGlobalSelectedPlan,
+	getConnectingSite,
+	getJetpackSiteByUrl
+} from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
@@ -227,34 +231,36 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getTexts() {
-		if ( this.props.type === 'install' ) {
-			return {
-				headerTitle: this.translate( 'Install Jetpack' ),
-				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
-					'to your self-hosted WordPress site.' ),
-			};
-		}
-		if ( this.props.type === 'pro' ) {
+		const { type, selectedPlan } = this.props;
+
+		if ( type === 'pro' || selectedPlan === 'jetpack_business' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Professional' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
-		if ( this.props.type === 'premium' ) {
+		if ( type === 'premium' || selectedPlan === 'jetpack_premium' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Premium' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
-		if ( this.props.type === 'personal' ) {
+		if ( type === 'personal' || selectedPlan === 'jetpack_personal' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Personal' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
+		}
 
+		if ( type === 'install' ) {
+			return {
+				headerTitle: this.translate( 'Install Jetpack' ),
+				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+					'to your self-hosted WordPress site.' ),
+			};
 		}
 		return {
 			headerTitle: this.translate( 'Connect a self-hosted WordPress' ),
@@ -434,7 +440,8 @@ export default connect(
 		return {
 			jetpackConnectSite: getConnectingSite( state ),
 			getJetpackSiteByUrl: getJetpackSite,
-			isRequestingSites: isRequestingSites( state )
+			isRequestingSites: isRequestingSites( state ),
+			selectedPlan: getGlobalSelectedPlan( state )
 		};
 	},
 	dispatch => bindActionCreators( {
