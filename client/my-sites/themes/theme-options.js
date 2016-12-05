@@ -10,7 +10,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { activateTheme } from 'state/themes/actions';
+import { activateTheme, showThemePreview } from 'state/themes/actions';
 import {
 	isPremiumTheme as isPremium
 } from 'state/themes/utils';
@@ -77,12 +77,11 @@ const tryandcustomize = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
-// This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
-// respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
+	action: showThemePreview,
 	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
