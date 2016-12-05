@@ -22,7 +22,7 @@ export default localize( ( { cart, translate, paymentType, transactionStep } ) =
 			chatContext="presale"
 			tracksData={ {
 				payment_type: paymentType,
-				transaction_step: transactionStep.name,
+				transaction_step: transactionStep && transactionStep.name,
 				product_slug: productSlug,
 			} }>
 				<Gridicon icon="chat" className="checkout__payment-chat-button-icon" />
