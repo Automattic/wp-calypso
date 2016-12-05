@@ -351,12 +351,12 @@ export function getThemeHelpUrl( state, theme, siteId ) {
 }
 
 /**
- * Returns the URL for a given theme's demo page.
+ * Returns the URL for a given theme's preview page.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Object}  theme  Theme object
  * @param  {?Number} siteId Site ID to optionally use as context
- * @return {?String}        Theme demo URL
+ * @return {?String}        Theme preview URL
  */
 export function getThemePreviewUrl( state, theme, siteId ) {
 	if ( ! get( theme, 'demo_uri' ) ) {
