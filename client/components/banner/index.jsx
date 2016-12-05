@@ -22,6 +22,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getValidFeatureKeys } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
+import DismissibleCard from 'blocks/dismissible-card';
 import Gridicon from 'components/gridicon';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
@@ -32,6 +33,8 @@ class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		dismissPreferenceName: PropTypes.string,
+		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
 		href: PropTypes.string,
@@ -39,12 +42,13 @@ class Banner extends Component {
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		plan: PropTypes.string,
-		price: PropTypes.oneOf( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		siteSlug: PropTypes.string,
 		title: PropTypes.string.isRequired,
 	}
 
 	static defaultProps = {
+		dismissTemporary: false,
 		feature: false,
 		onClick: noop,
 	}
@@ -174,6 +178,8 @@ class Banner extends Component {
 		const {
 			callToAction,
 			className,
+			dismissPreferenceName,
+			dismissTemporary,
 			plan,
 		} = this.props;
 
@@ -184,7 +190,21 @@ class Banner extends Component {
 			{ 'is-upgrade-personal': PLAN_PERSONAL === plan },
 			{ 'is-upgrade-premium': PLAN_PREMIUM === plan },
 			{ 'is-upgrade-business': PLAN_BUSINESS === plan },
+			{ 'is-dismissible': dismissPreferenceName }
 		);
+
+		if ( dismissPreferenceName ) {
+			return (
+				<DismissibleCard
+					className={ classes }
+					preferenceName={ dismissPreferenceName }
+					temporary={ dismissTemporary }
+				>
+					{ this.getIcon() }
+					{ this.getContent() }
+				</DismissibleCard>
+			);
+		}
 
 		return (
 			<Card

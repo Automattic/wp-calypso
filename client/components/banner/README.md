@@ -6,6 +6,8 @@ This component renders a customizable banner.
 
 - *callToAction* - shows a CTA text.
 - *description* - the banner description.
+- *dismissPreferenceName*: the user preference name that we store a boolean against, prefixed with 'dismissible-card-' to avoid namespace collisions.
+- *dismissTemporary*: when true, clicking on the cross will dismiss the card for the current page load.
 - *event* - event to distinguish the nudge in tracks. Used as `cta_name` event property.
 - *feature* - slug of the feature to highlight in the plans compare card.
 - *href* - the component target URL.

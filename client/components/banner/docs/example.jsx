@@ -41,6 +41,15 @@ const BannerExample = () =>
 			price={ [ 10.99, 9.99 ] }
 			title="Upgrade to a Business Plan!"
 		/>
+		<Banner
+			callToAction="Upgrade for $9.99"
+			description="Live chat support and no advertising."
+			dismissPreferenceName="devdocs-banner-example"
+			dismissTemporary
+			href="#"
+			plan={ PLAN_PERSONAL }
+			title="Upgrade to a Personal Plan!"
+		/>
 	</div>;
 
 export default BannerExample;
