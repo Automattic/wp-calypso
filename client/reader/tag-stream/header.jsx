@@ -63,10 +63,18 @@ class TagStreamHeader extends React.Component {
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;
 
+		let authorText;
+		let authorLink;
 		if ( tagImage ) {
 			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, { resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }` } );
 			const safeCssUrl = cssSafeUrl( imageUrl );
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
+
+			authorText = <span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span>;
+			authorLink = <a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
+												className="tag-stream__header-image-byline-link" rel="author">
+											{ decodeEntities( tagImage.author ) }
+										</a>;
 		}
 
 		return (
@@ -89,10 +97,12 @@ class TagStreamHeader extends React.Component {
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
-							<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by ' ) }</span>
-							<a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` } className="tag-stream__header-image-byline-link" rel="author">
-								{ decodeEntities( tagImage.author ) }
-							</a>
+							{ translate( '{{authorText/}} {{authorLink/}}', {
+								components: {
+									authorText,
+									authorLink
+								}
+							} ) }
 						</div>
 					}
 				</div>
@@ -108,3 +118,6 @@ export default connect(
 		};
 	}
 )( localize( TagStreamHeader ) );
+
+/*							components: {
+} */
