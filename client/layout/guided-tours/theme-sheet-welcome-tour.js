@@ -18,6 +18,7 @@ import {
 	makeTour,
 } from 'layout/guided-tours/config-elements';
 import {
+	isAbTestInVariant,
 	isEnabled,
 	isNewUser,
 	previewIsShowing,
@@ -32,15 +33,16 @@ const PickActivateStep = () => (
 	</p>
 );
 
-export const ThemeSheetTour = makeTour(
+export const ThemeSheetWelcomeTour = makeTour(
 	<Tour name="theme"
 		version="20161129"
 		path="/theme"
 		when={ and(
 			isEnabled( 'guided-tours/theme' ),
 			isNewUser,
-			not( isMobile )
-			) }
+			not( isMobile ),
+			isAbTestInVariant( 'themeSheetWelcomeTour', 'enabled' )
+		) }
 	>
 		<Step name="init" placement="right" next="live-preview">
 			<p>
