@@ -61,7 +61,7 @@ const jetpackConnectFirstStep = ( context, type ) => {
 	);
 };
 
-const getPlansLandingPage = ( context, hideFreePlan, path ) => {
+const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 	const PlansLanding = require( './plans-landing' ),
 		analyticsPageTitle = 'Plans',
 		basePath = route.sectionify( context.path ),
@@ -80,6 +80,7 @@ const getPlansLandingPage = ( context, hideFreePlan, path ) => {
 			destinationType={ context.params.destinationType }
 			intervalType={ context.params.intervalType }
 			isLanding={ true }
+			landingType={ landingType }
 			basePlansPath={ path }
 			hideFreePlan={ hideFreePlan } />,
 		document.getElementById( 'primary' ),
@@ -219,15 +220,15 @@ export default {
 	},
 
 	vaultpressLanding( context ) {
-		getPlansLandingPage( context, true, '/jetpack/connect/vaultpress' );
+		getPlansLandingPage( context, true, '/jetpack/connect/vaultpress', 'vaultpress' );
 	},
 
 	akismetLanding( context ) {
-		getPlansLandingPage( context, true, '/jetpack/connect/akismet' );
+		getPlansLandingPage( context, true, '/jetpack/connect/akismet', 'akismet' );
 	},
 
 	plansLanding( context ) {
-		getPlansLandingPage( context, false, '/jetpack/connect/store' );
+		getPlansLandingPage( context, false, '/jetpack/connect/store', 'jetpack' );
 	},
 
 	plansSelection( context ) {

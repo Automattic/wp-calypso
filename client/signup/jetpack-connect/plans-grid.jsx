@@ -22,6 +22,11 @@ export default React.createClass( {
 		if ( this.props.isLanding ) {
 			headerText = this.translate( 'Pick a plan that\'s right for you.' );
 			subheaderText = '';
+
+			if ( this.props.landingType === 'vaultpress' ) {
+				headerText = this.translate( 'Select your VaultPress plan.' );
+				subheaderText = this.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
+			}
 		}
 		return (
 			<StepHeader
