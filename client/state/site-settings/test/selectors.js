@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
+	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveRequestStatus,
 	getSiteSettings
 } from '../selectors';
@@ -144,9 +145,50 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isSaving = getSiteSettingsSaveRequestStatus( state, 2916284 );
+			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
-			expect( isSaving ).to.eql( 'pending' );
+			expect( status ).to.eql( 'pending' );
+		} );
+	} );
+
+	describe( 'isSiteSettingsSaveSuccessful()', () => {
+		it( 'should return false if the site is not attached', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: true, status: 'pending' }
+					}
+				}
+			};
+			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916285 );
+
+			expect( isSuccessful ).to.be.false;
+		} );
+
+		it( 'should return true if the save request status is success', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'success' }
+					}
+				}
+			};
+			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
+
+			expect( isSuccessful ).to.be.true;
+		} );
+
+		it( 'should return false if the save request status is error', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'error' }
+					}
+				}
+			};
+			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
+
+			expect( isSuccessful ).to.be.false;
 		} );
 	} );
 

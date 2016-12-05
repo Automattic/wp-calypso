@@ -46,3 +46,14 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 export function getSiteSettings( state, siteId ) {
 	return get( state.siteSettings.items, [ siteId ], null );
 }
+
+/**
+ * Returns true fi the save site settings requests is successful
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}         Whether the requests is successful or not
+ */
+export function isSiteSettingsSaveSuccessful( state, siteId ) {
+	return getSiteSettingsSaveRequestStatus( state, siteId ) === 'status';
+}

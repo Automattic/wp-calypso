@@ -38,9 +38,9 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import {
-	getSiteSettingsSaveRequestStatus,
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
+	isSiteSettingsSaveSuccessful,
 	getSiteSettings
 } from 'state/site-settings/selectors';
 import { saveSiteSettings } from 'state/site-settings/actions';
@@ -73,9 +73,11 @@ class SiteSettingsFormGeneral extends Component {
 		};
 
 		if ( settings.jetpack_relatedposts_allowed ) {
-			formSettings.jetpack_relatedposts_enabled = ( settings.jetpack_relatedposts_enabled ) ? 1 : 0;
-			formSettings.jetpack_relatedposts_show_headline = settings.jetpack_relatedposts_show_headline;
-			formSettings.jetpack_relatedposts_show_thumbnails = settings.jetpack_relatedposts_show_thumbnails;
+			Object.assign( formSettings, {
+				jetpack_relatedposts_enabled: ( settings.jetpack_relatedposts_enabled ) ? 1 : 0,
+				jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
+				jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
+			} );
 		}
 
 		if ( settings.holidaysnow ) {
@@ -135,7 +137,8 @@ class SiteSettingsFormGeneral extends Component {
 		if (
 			this.props.isSavingSettings &&
 			! nextProps.isSavingSettings &&
-			nextProps.saveRequestStatus === 'success' ) {
+			nextProps.isSaveRequestSuccessful
+		) {
 			nextProps.clearDirtyFields();
 			nextProps.markSaved();
 		}
@@ -302,9 +305,9 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	trackUpgradeClick = () => {
+	trackUpgradeClick() {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'settings_site_address' } );
-	};
+	}
 
 	languageOptions() {
 		const { fields, isRequestingSettings, site, translate } = this.props;
@@ -809,10 +812,10 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const isRequestingSettings = isRequestingSiteSettings( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
-		const saveRequestStatus = getSiteSettingsSaveRequestStatus( state, siteId );
+		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
 		return {
-			isRequestingSettings, isSavingSettings, saveRequestStatus, settings
+			isRequestingSettings, isSavingSettings, isSaveRequestSuccessful, settings
 		};
 	},
 	{ removeNotice, saveSiteSettings }
