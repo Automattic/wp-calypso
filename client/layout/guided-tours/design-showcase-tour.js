@@ -22,7 +22,6 @@ import {
 	selectedSiteIsCustomizable,
 	userHasInteractedWithComponent,
 } from 'state/ui/guided-tours/contexts';
-import Gridicon from 'components/gridicon';
 
 const anyThemeMoreButtonClicked = state => {
 	return userHasInteractedWithComponent( 'ThemeMoreButton' )( state );
@@ -79,15 +78,12 @@ export const DesignShowcaseTour = makeTour(
 			<p>
 				{ 'Here you can access all the extra theme options.' }
 			</p>
-			<Continue step="finish" target=".card.theme:nth-child(4) .theme__more-button" when={ anyThemeMoreButtonClicked } >
-				{
-					translate( 'Click the {{GridIcon/}} to continue.', {
-						components: {
-							GridIcon: <Gridicon icon="ellipsis" size={ 24 } />,
-						}
-					} )
-				}
-			</Continue>
+			<Continue
+				icon="ellipsis"
+				step="finish"
+				target=".card.theme:nth-child(4) .theme__more-button"
+				when={ anyThemeMoreButtonClicked }
+			/>
 		</Step>
 
 		<Step name="finish"
