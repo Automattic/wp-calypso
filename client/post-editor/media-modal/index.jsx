@@ -88,6 +88,7 @@ export const EditorMediaModal = React.createClass( {
 
 	componentWillUnmount() {
 		this.props.resetView();
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 	},
 
 	getDefaultState: function( props ) {
