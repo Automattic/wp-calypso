@@ -521,7 +521,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	);
 };
 
-const themeDetailsFromTheme = ( theme ) => {
+const getThemeDerailsFromTheme = ( theme ) => {
 	return {
 		name: theme.name,
 		author: theme.author,
@@ -571,7 +571,7 @@ export default connect(
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const themeDetails = theme ? themeDetailsFromTheme( theme ) : {};
+		const themeDetails = theme ? getThemeDerailsFromTheme( theme ) : {};
 		return {
 			...themeDetails,
 			id,
