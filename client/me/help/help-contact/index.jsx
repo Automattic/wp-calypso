@@ -509,8 +509,9 @@ const HelpContact = React.createClass( {
 			<div>
 				{ shouldShowTicketRequestErrorNotice &&
 					<Notice
-						status='is-error'
-						text={ this.translate( 'An error occurred while requesting for email support settings. Please try again later.' ) }
+						status='is-warning'
+						text={ this.translate( 'We had trouble loading the support information for your account. ' +
+							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
 					/>
 				}
