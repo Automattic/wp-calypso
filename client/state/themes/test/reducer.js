@@ -73,6 +73,7 @@ describe( 'reducer', () => {
 			'queries',
 			//'queryRequests',
 			'themeRequests',
+			'themeRequestErrors',
 			'activeThemes',
 			'activeThemeRequests',
 			'activationRequests',
