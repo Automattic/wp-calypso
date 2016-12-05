@@ -46,9 +46,7 @@ export default React.createClass( {
 
 	getExportPath() {
 		const { site } = this.props;
-		return site.jetpack
-			? `${ site.options.admin_url }export.php`
-			: `/settings/export/${ site.slug }`;
+		return `/settings/export/${ site.slug }`;
 	},
 
 	render() {

@@ -2,17 +2,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import i18n from 'i18n-calypso';
+//import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+//import EmptyContent from 'components/empty-content';
 import ExporterContainer from 'my-sites/exporter';
 
 export default class SiteSettingsExport extends Component {
 	render() {
-		if ( this.props.site.jetpack ) {
+		/*if ( this.props.site.jetpack ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-jetpack.svg"
@@ -23,7 +23,7 @@ export default class SiteSettingsExport extends Component {
 					actionTarget="_blank"
 				/>
 			);
-		}
+		}*/
 
 		return <ExporterContainer site={ this.props.site } />;
 	}
