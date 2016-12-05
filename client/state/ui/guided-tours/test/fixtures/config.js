@@ -37,7 +37,7 @@ export const StatsTour = makeTour(
 );
 
 export const TestTour = makeTour(
-	<Tour name="test" version="test" path="/test" when={ () => true } />
+	<Tour name="test" version="test" path={ [ '/test', '/foo' ] } when={ () => true } />
 );
 
 export default combineTours( {
