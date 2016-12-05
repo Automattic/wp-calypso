@@ -70,8 +70,10 @@ export class Tour extends Component {
 	render() {
 		const { children } = this.props;
 		const { step } = this.context;
-		const nextStep = find( children, stepComponent =>
-			stepComponent.props.name === step );
+		const nextStep = Array.isArray( children )
+			? find( children, stepComponent =>
+				stepComponent.props.name === step )
+			: children;
 
 		return nextStep || null;
 	}
