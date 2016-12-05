@@ -53,6 +53,7 @@ import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
 import DocumentHead from 'components/data/document-head';
+import ReaderFullPostUnavailable from './unavailable';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -211,6 +212,10 @@ export class FullPostView extends React.Component {
 	}
 
 	parseEmoji() {
+		if ( ! this.refs.article ) {
+			return;
+		}
+
 		twemoji.parse( this.refs.article, {
 			base: config( 'twemoji_cdn_url' )
 		} );
@@ -234,6 +239,11 @@ export class FullPostView extends React.Component {
 
 	render() {
 		const { post, site, feed } = this.props;
+
+		if ( post._state === 'error' ) {
+			return <ReaderFullPostUnavailable post={ post } />;
+		}
+
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const classes = { 'reader-full-post': true };
 		const showRelatedPosts = ! post.is_external && post.site_ID;
