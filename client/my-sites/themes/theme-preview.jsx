@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import WebPreview from 'components/web-preview';
 import Button from 'components/button';
 import { getPreviewUrl } from './helpers';
 
-export default React.createClass( {
+const ThemePreview = React.createClass( {
 	displayName: 'ThemePreview',
 
 	propTypes: {
@@ -78,3 +79,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		theme: getPreviewedTheme( state )
+	} )
+)( ThemePreview );
