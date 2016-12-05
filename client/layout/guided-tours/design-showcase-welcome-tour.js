@@ -16,6 +16,7 @@ import {
 	Continue,
 } from 'layout/guided-tours/config-elements';
 import {
+	isAbTestInVariant,
 	inSection,
 	isNewUser,
 	isEnabled,
@@ -26,8 +27,6 @@ import {
 const anyThemeMoreButtonClicked = state => {
 	return userHasInteractedWithComponent( 'ThemeMoreButton' )( state );
 };
-
-const isAbTestInVariant = function() {};
 
 export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
