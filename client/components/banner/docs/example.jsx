@@ -16,26 +16,31 @@ import Banner from 'components/banner';
 
 const BannerExample = () =>
 	<div>
+		<Banner title="Banner unrelated to any plan"/>
 		<Banner
-			icon="info-outline"
+			description="And with a description."
+			icon="star"
 			title="Banner unrelated to any plan"
 		/>
 		<Banner
-			description="Live chat support and no advertising."
 			href="#"
 			plan={ PLAN_PERSONAL }
 			title="Upgrade to a Personal Plan!"
 		/>
 		<Banner
-			description="Live chat support and no advertising."
 			href="#"
-			icon="trophy"
 			plan={ PLAN_PREMIUM }
 			title="Upgrade to a Premium Plan!"
 		/>
 		<Banner
+			href="#"
+			plan={ PLAN_BUSINESS }
+			title="Upgrade to a Business Plan!"
+		/>
+		<Banner
 			callToAction="Upgrade for $9.99"
 			feature={ FEATURE_ADVANCED_SEO }
+			href="#"
 			list={ [ 'Live chat support', 'No advertising' ] }
 			plan={ PLAN_BUSINESS }
 			price={ [ 10.99, 9.99 ] }
@@ -46,9 +51,9 @@ const BannerExample = () =>
 			description="Live chat support and no advertising."
 			dismissPreferenceName="devdocs-banner-example"
 			dismissTemporary
-			href="#"
+			list={ [ 'Live chat support', 'No advertising' ] }
 			plan={ PLAN_PERSONAL }
-			title="Upgrade to a Personal Plan!"
+			title="Upgrade to a Business Plan!"
 		/>
 	</div>;
 

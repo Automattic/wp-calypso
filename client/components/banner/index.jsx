@@ -105,10 +105,10 @@ class Banner extends Component {
 		return (
 			<div className="banner__icons">
 				<div className="banner__icon">
-					<Gridicon icon={ icon } size={ 18 } />
+					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
 				</div>
 				<div className="banner__icon-circle">
-					<Gridicon icon={ icon } size={ 18 } />
+					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
 				</div>
 			</div>
 		);
