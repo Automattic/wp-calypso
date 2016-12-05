@@ -12,7 +12,6 @@
 	}
 }
 
-
 .search-stream .search {
 	margin: 0;
 }
@@ -35,6 +34,11 @@
 	width: 830px;
 }
 
+// Custom breakpoints needed to match Related Posts
+$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
+$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
+
+// Recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	padding-top: 100px;
 }
@@ -44,31 +48,62 @@
  }
 
  .is-reader-page .search-stream .reader__content {
-	 display: flex;
-	 flex-wrap: wrap;
- }
-
- .search-stream  .reader-related-card-v2__title {
-	 padding-top: 15px;
+	display: flex;
+	flex-flow: wrap;
  }
 
  .is-reader-page .search-stream__blank-suggestions {
 	 margin-bottom: -15px;
  }
 
-.is-reader-page .search-stream__recommendation-list-item:nth-child(odd) {
-	margin-right: 0px;
- }
-
  .is-reader-page .search-stream__recommendation-list-item {
-	 flex-basis: 30%;
-	 flex-grow: 0.5;
-	 margin-right: 45px;
-	 display: flex;
-	 list-style-type: none;
-	 border-top: 1px solid lighten( $gray, 20% );
-	 padding-top: 14px;
-	 padding-bottom: 12px;
+	box-sizing: border-box;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	display: flex;
+	flex-basis: calc( 50% - 15px );
+	margin: 0 15px 0 0;
+	padding: 20px 0;
+
+	&:nth-child( 2n+0 ) {
+		flex-basis: calc( 50% - 15px );
+		margin: 0 0 0 15px;
+	}
+
+	 .has-thumbnail {
+
+		.reader-related-card-v2__post {
+			max-height: 220px;
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				max-height: 170px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				max-height: 170px;
+			}
+		}
+	}
+
+	.reader-related-card-v2__site-info {
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			margin-top: 35px;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			margin-top: 35px;
+		}
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		flex-basis: 100%;
+		margin-right: 0;
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-small} {
+		flex-basis: 100%;
+		margin-right: 0;
+	}
  }
 
 .search-stream__input-card.card {
