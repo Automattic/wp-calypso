@@ -21,6 +21,7 @@ import debugFactory from 'debug';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import Gridicon from 'components/gridicon';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import { tourBranching } from './config-parsing';
@@ -408,6 +409,14 @@ export class Continue extends Component {
 		}
 	}
 
+	defaultMessage() {
+		return this.props.icon
+			? translate( 'Click the {{icon/}} to continue.', {
+				components: { icon: <Gridicon icon={ this.props.icon } size={ 24 } /> }
+			} )
+			: translate( 'Click to continue.' );
+	}
+
 	render() {
 		if ( this.props.hidden ) {
 			return null;
@@ -415,7 +424,7 @@ export class Continue extends Component {
 
 		return (
 			<p className="guided-tours__actionstep-instructions">
-				<em>{ this.props.children || translate( 'Click to continue.' ) }</em>
+				<em>{ this.props.children || this.defaultMessage() }</em>
 			</p>
 		);
 	}
