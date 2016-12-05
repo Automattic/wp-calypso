@@ -42,10 +42,16 @@ class SiteIconSetting extends Component {
 	};
 
 	state = {
-		isModalVisible: false
+		isModalVisible: false,
+		hasToggledModal: false
 	};
 
-	toggleModal = ( isModalVisible ) => this.setState( { isModalVisible } );
+	toggleModal = ( isModalVisible ) => {
+		this.setState( {
+			isModalVisible,
+			hasToggledModal: true
+		} );
+	};
 
 	hideModal = () => this.toggleModal( false );
 
@@ -60,9 +66,6 @@ class SiteIconSetting extends Component {
 	};
 
 	setSiteIcon = ( error, blob ) => {
-		this.hideModal();
-		this.props.resetAllImageEditorState();
-
 		if ( error || ! blob ) {
 			return;
 		}
@@ -92,6 +95,9 @@ class SiteIconSetting extends Component {
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
+
+		this.hideModal();
+		this.props.resetAllImageEditorState();
 	};
 
 	preloadModal() {
@@ -100,7 +106,7 @@ class SiteIconSetting extends Component {
 
 	render() {
 		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } = this.props;
-		const { isModalVisible } = this.state;
+		const { isModalVisible, hasToggledModal } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
@@ -141,14 +147,14 @@ class SiteIconSetting extends Component {
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
-				{ isIconManagementEnabled && isModalVisible && (
+				{ isIconManagementEnabled && hasToggledModal && (
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
 							require="post-editor/media-modal"
 							placeholder={ (
 								<Dialog
 									additionalClassNames="editor-media-modal"
-									isVisible />
+									isVisible={ isModalVisible } />
 							) }
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
@@ -157,7 +163,7 @@ class SiteIconSetting extends Component {
 								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
 								onDone: this.setSiteIcon
 							} }
-							visible
+							visible={ isModalVisible }
 							labels={ {
 								confirm: translate( 'Continue' )
 							} }
