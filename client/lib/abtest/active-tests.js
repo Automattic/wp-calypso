@@ -71,14 +71,6 @@ module.exports = {
 		defaultVariation: 'excludeDotBlogSubdomain',
 		allowAnyLocale: true,
 	},
-	paidNuxThankYouPage: {
-		datestamp: '20161114',
-		variations: {
-			original: 50,
-			emailNudgeOnTop: 50,
-		},
-		defaultVariation: 'original',
-	},
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {

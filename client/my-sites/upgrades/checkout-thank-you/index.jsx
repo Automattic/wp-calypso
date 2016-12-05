@@ -54,7 +54,6 @@ import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
-import { abtest } from 'lib/abtest';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -116,13 +115,11 @@ const CheckoutThankYou = React.createClass( {
 			return null;
 		}
 
-		const emailNudgeOnTop = abtest( 'paidNuxThankYouPage' ) === 'emailNudgeOnTop';
-
 		return (
 			<Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
-				status={ emailNudgeOnTop ? 'is-warning' : '' }
+				status="is-warning"
 				>
 				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 					'Please check your email to confirm your address.', {
@@ -188,7 +185,6 @@ const CheckoutThankYou = React.createClass( {
 
 		const userCreatedMoment = moment( this.props.userDate );
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
-		const emailNudgeOnTop = abtest( 'paidNuxThankYouPage' ) === 'emailNudgeOnTop';
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
 		if ( ! purchases && ! this.isGenericReceipt() ) {
@@ -204,9 +200,8 @@ const CheckoutThankYou = React.createClass( {
 		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
-					{ emailNudgeOnTop ? this.renderConfirmationNotice() : null }
+					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
-					{ ! emailNudgeOnTop ? this.renderConfirmationNotice() : null }
 				</Main>
 			);
 		}
