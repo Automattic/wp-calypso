@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getForumUrl, trackClick } from './helpers';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	getActiveTheme,
 	getTheme,
@@ -200,15 +201,17 @@ const ThanksModal = React.createClass( {
 
 export default connect(
 	( state, { site } ) => {
+
+		const siteIdOrWpcom = ( site && isJetpackSite( state, site.ID ) ) ? site.ID : 'wpcom';
 		const currentThemeId = site && getActiveTheme( state, site.ID );
-		const currentTheme = currentThemeId && getTheme( state, site.ID, currentThemeId );
+		const currentTheme = currentThemeId && getTheme( state, siteIdOrWpcom, currentThemeId );
 
 		return {
 			currentTheme,
-			detailsUrl: getThemeDetailsUrl( state, currentTheme, site && site.ID ),
-			customizeUrl: getThemeCustomizeUrl( state, currentTheme, site && site.ID ),
-			isActivating: isActivatingTheme( state, site && site.ID ),
-			hasActivated: hasActivatedTheme( state, site && site.ID )
+			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
+			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
+			isActivating: site ? isActivatingTheme( state, site.ID ) : false,
+			hasActivated: site ? hasActivatedTheme( state, site.ID ) : false
 		};
 	},
 	{ clearActivated }
