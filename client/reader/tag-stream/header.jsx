@@ -63,14 +63,14 @@ class TagStreamHeader extends React.Component {
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;
 
-		let authorText;
+		let photoByWrapper;
 		let authorLink;
 		if ( tagImage ) {
 			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, { resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }` } );
 			const safeCssUrl = cssSafeUrl( imageUrl );
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
 
-			authorText = <span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span>;
+			photoByWrapper = ( <span className="tag-stream__header-image-byline-label" /> );
 			authorLink = <a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
 												className="tag-stream__header-image-byline-link" rel="author">
 											{ decodeEntities( tagImage.author ) }
@@ -97,9 +97,9 @@ class TagStreamHeader extends React.Component {
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
-							{ translate( '{{authorText/}} {{authorLink/}}', {
+							{ translate( '{{photoByWrapper}}Photo by{{/photoByWrapper}} {{authorLink/}}', {
 								components: {
-									authorText,
+									photoByWrapper,
 									authorLink
 								}
 							} ) }
