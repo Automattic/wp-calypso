@@ -18,6 +18,7 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+// Necessary for ThanksModal (QueryTheme not needed, since we've stored upload details)
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
@@ -215,7 +216,7 @@ class Upload extends React.Component {
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal
 					site={ selectedSite }
-					source={ 'details' } />
+					source="upload" />
 				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
 					{ ! inProgress && ! complete && this.renderDropZone() }
@@ -227,11 +228,7 @@ class Upload extends React.Component {
 	}
 }
 
-const ConnectedUpload = connectOptions(
-	( props ) => (
-		<Upload { ...props } />
-	)
-);
+const ConnectedUpload = connectOptions( Upload );
 
 const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
