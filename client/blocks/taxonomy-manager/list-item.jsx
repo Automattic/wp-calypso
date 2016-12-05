@@ -154,9 +154,9 @@ class TaxonomyManagerListItem extends Component {
 					</PopoverMenuItem>
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
-					<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
-						{ translate( 'Set as default' ) }
-					</PopoverMenuItem>
+						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
+							{ translate( 'Set as default' ) }
+						</PopoverMenuItem>
 					}
 				</EllipsisMenu>
 				<Dialog
