@@ -26,6 +26,8 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	THEME_SHOW_PREVIEW,
+	THEME_HIDE_PREVIEW,
 	SERIALIZE,
 	DESERIALIZE,
 	SERVER_DESERIALIZE
@@ -269,6 +271,19 @@ export const queries = ( () => {
 } )();
 
 /**
+ * Returns the updated theme preview state. The state reflects whether a theme
+ * is currently being previewed or not.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const themePreview = createReducer( null, {
+	[ THEME_SHOW_PREVIEW ]: ( state, { theme } ) => ( theme ),
+	[ THEME_HIDE_PREVIEW ]: () => ( null )
+} );
+
+/**
  * Returns the updated themes last query state.
  * The state reflects a mapping of site Id to last query that was issued on that site.
  *
@@ -298,6 +313,7 @@ export default combineReducers( {
 	activeThemeRequests,
 	activationRequests,
 	completedActivationRequests,
+	themePreview,
 	themesUI,
 	uploadTheme
 } );

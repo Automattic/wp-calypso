@@ -78,6 +78,7 @@ describe( 'reducer', () => {
 			'activeThemeRequests',
 			'activationRequests',
 			'completedActivationRequests',
+			'themePreview',
 			'themesUI',
 			'uploadTheme'
 		] );
