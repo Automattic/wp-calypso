@@ -170,7 +170,7 @@ export default class FeedStream {
 		return this._isFetchingNextPage;
 	}
 
-	_isValidPostOrGap( postKey ) {
+	isValidPostOrGap( postKey ) {
 		if ( postKey.isGap === true ) {
 			return true;
 		}
@@ -183,7 +183,7 @@ export default class FeedStream {
 		if ( this.selectedIndex === -1 ) {
 			return;
 		}
-		const nextIndex = findIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex + 1 );
+		const nextIndex = findIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1 );
 		if ( nextIndex !== -1 ) {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
@@ -194,7 +194,7 @@ export default class FeedStream {
 		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
 			return;
 		}
-		const prevIndex = findLastIndex( this.postKeys, this._isValidPostOrGap, this.selectedIndex - 1 );
+		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
 		if ( prevIndex !== -1 ) {
 			this.selectedIndex = prevIndex;
 			this.emitChange();
@@ -204,7 +204,7 @@ export default class FeedStream {
 	selectItem( selectedIndex ) {
 		if ( selectedIndex >= 0 &&
 			selectedIndex < this.postKeys.length &&
-			this._isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
 			this.selectedIndex = selectedIndex;
 			this.emitChange();
 		}
@@ -317,7 +317,7 @@ export default class FeedStream {
 	 * @returns {*} - null or post object
 	 * @private
 	 */
-	_getPostFromMetadata( postWrapper ) {
+	getPostFromMetadata( postWrapper ) {
 		if ( postWrapper && get( postWrapper, 'meta.data.discover_original_post' ) ) {
 			return postWrapper.meta.data.discover_original_post;
 		} else if ( postWrapper && get( postWrapper, 'meta.data.post' ) ) {
@@ -328,7 +328,7 @@ export default class FeedStream {
 		return null;
 	}
 
-	_addXPost( postURL, xPostedBy ) {
+	addXPost( postURL, xPostedBy ) {
 		if ( this.xPostedByURL[ postURL ] ) {
 			let sites = this.xPostedByURL[ postURL ];
 			sites = sites.filter( function( site ) {
@@ -350,7 +350,7 @@ export default class FeedStream {
 	 */
 	filterFollowedXPosts( posts ) {
 		return posts.filter( ( postWrapper ) => {
-			const post = this._getPostFromMetadata( postWrapper );
+			const post = this.getPostFromMetadata( postWrapper );
 			//note that the post hasn't been normalized yet.
 			if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
 				const xPostMetadata = XPostHelper.getXPostMetadata( post );
@@ -367,11 +367,11 @@ export default class FeedStream {
 					siteURL: post.site_URL,
 					siteName: siteName
 				};
-				this._addXPost( xPostMetadata.postURL, xPostedBy );
+				this.addXPost( xPostMetadata.postURL, xPostedBy );
 				// also keep track of origin comment urls, so we can roll up
 				// multiple x-posts from a single origin comment.
 				if ( xPostMetadata.commentURL ) {
-					this._addXPost( xPostMetadata.commentURL, xPostedBy );
+					this.addXPost( xPostMetadata.commentURL, xPostedBy );
 					return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
 				}
 				if ( ! isFollowing ) {
