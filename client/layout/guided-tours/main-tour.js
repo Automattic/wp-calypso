@@ -21,7 +21,6 @@ import {
 	previewIsShowing,
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
-import Gridicon from 'components/gridicon';
 import scrollTo from 'lib/scroll-to';
 
 const scrollSidebarToTop = () =>
@@ -63,15 +62,7 @@ export const MainTour = makeTour(
 						} )
 				}
 			</p>
-			<Continue icon="my-sites" target="my-sites" step="sidebar" click>
-				{
-					translate( 'Click the {{GridIcon/}} to continue.', {
-						components: {
-							GridIcon: <Gridicon icon="my-sites" size={ 24 } />,
-						}
-					} )
-				}
-			</Continue>
+			<Continue icon="my-sites" target="my-sites" step="sidebar" click />
 		</Step>
 
 		<Step name="sidebar"
@@ -144,15 +135,7 @@ export const MainTour = makeTour(
 			<p>
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
-			<Continue step="themes" target="web-preview__close" when={ previewIsNotShowing }>
-				{
-					translate( 'Click the {{GridIcon/}} to continue.', {
-						components: {
-							GridIcon: <Gridicon icon="cross-small" size={ 24 } />,
-						}
-					} )
-				}
-			</Continue>
+			<Continue step="themes" icon="cross-small" target="web-preview__close" when={ previewIsNotShowing } />
 		</Step>
 
 		<Step name="themes"
