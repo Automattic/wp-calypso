@@ -13,6 +13,7 @@ import {
 	OLARK_OPERATORS_AVAILABLE,
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
+	OLARK_SET_LOCALE,
 } from 'state/action-types';
 import {
 	STATUS_READY,
@@ -74,6 +75,21 @@ export function availability( state = {}, action ) {
 }
 
 /**
+ * Tracks the assigned olark locale
+ *
+ * @param  {String} state  Current state
+ * @param  {Object} action Action payload
+ * @return {String}        Updated state
+ */
+export function locale( state = {}, action ) {
+	switch ( action.type ) {
+		case OLARK_SET_LOCALE:
+			return action.locale;
+	}
+	return state;
+}
+
+/**
  * Tracks olark fetching state
  *
  * @param  {Object} state  Current state
@@ -94,5 +110,6 @@ export default combineReducers( {
 	operatorStatus,
 	availability,
 	requesting,
+	locale,
 	status
 } );

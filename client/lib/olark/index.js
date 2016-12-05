@@ -25,6 +25,7 @@ import {
 	operatorsAway,
 	operatorsAvailable,
 	setChatAvailability,
+	setOlarkLocale,
 } from 'state/ui/olark/actions';
 
 /**
@@ -160,6 +161,7 @@ const olark = {
 		}
 
 		dispatch( setChatAvailability( wpcomOlarkConfig.availability ) );
+		wpcomOlarkConfig.locale && dispatch( setOlarkLocale( wpcomOlarkConfig.locale ) );
 	},
 
 	updateOlarkGroupAndEligibility() {
