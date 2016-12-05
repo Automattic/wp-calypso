@@ -12,7 +12,6 @@ import titlecase from 'to-title-case';
 /**
  * Internal dependencies
  */
-import QueryThemeDetails from 'components/data/query-theme-details';
 import QueryTheme from 'components/data/query-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -37,14 +36,14 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive } from 'state/themes/selectors';
+import { isThemeActive, getThemeRequestErrors } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
@@ -346,7 +345,7 @@ const ThemeSheet = React.createClass( {
 				secondaryButtonLabel={ showSecondaryButton ? secondaryOption.label : null }
 				onSecondaryButtonClick={ this.onSecondaryButtonClick }
 				getSecondaryButtonHref={ showSecondaryButton ? secondaryOption.getUrl : null }
-				/>
+			/>
 		);
 	},
 
@@ -431,7 +430,6 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
@@ -523,6 +521,23 @@ const ThemeSheetWithOptions = ( props ) => {
 	);
 };
 
+const getThemeDerailsFromTheme = ( theme ) => {
+	return {
+		name: theme.name,
+		author: theme.author,
+		price: theme.price,
+		screenshot: theme.screenshot,
+		screenshots: theme.screenshots,
+		description: theme.description,
+		descriptionLong: theme.description_long,
+		supportDocumentation: theme.support_documentation || undefined,
+		download: theme.download_uri || undefined,
+		taxonomies: theme.taxonomies,
+		stylesheet: theme.stylesheet,
+		demo_uri: theme.demo_uri,
+	};
+};
+
 export default connect(
 	/*
 	 * A number of the props that this mapStateToProps function computes are used
@@ -554,11 +569,13 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const themeDetails = getThemeDetails( state, id );
-
+		const theme = getTheme( state, siteIdOrWpcom, id );
+		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+		const themeDetails = theme ? getThemeDerailsFromTheme( theme ) : {};
 		return {
 			...themeDetails,
 			id,
+			error,
 			selectedSite,
 			siteSlug,
 			siteIdOrWpcom,
