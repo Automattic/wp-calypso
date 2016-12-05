@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -186,8 +187,8 @@ const HelpContact = React.createClass( {
 			this.setState( {
 				isSubmitting: false,
 				confirmation: {
-					title: this.translate( 'We\'re on it!' ),
-					message: this.translate(
+					title: this.props.translate( 'We\'re on it!' ),
+					message: this.props.translate(
 						'We\'ve received your message, and you\'ll hear back from ' +
 						'one of our Happiness Engineers shortly.'
 					)
@@ -221,8 +222,8 @@ const HelpContact = React.createClass( {
 			this.setState( {
 				isSubmitting: false,
 				confirmation: {
-					title: this.translate( 'Got it!' ),
-					message: this.translate(
+					title: this.props.translate( 'Got it!' ),
+					message: this.props.translate(
 						'Your message has been submitted to our ' +
 						'{{a}}community forums{{/a}}',
 						{
@@ -357,9 +358,9 @@ const HelpContact = React.createClass( {
 		}
 
 		if ( isAvailable ) {
-			notices.success( this.translate( 'Our Happiness Engineers have returned, chat with us.' ) );
+			notices.success( this.props.translate( 'Our Happiness Engineers have returned, chat with us.' ) );
 		} else {
-			notices.warning( this.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ) );
+			notices.warning( this.props.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ) );
 		}
 	},
 
@@ -369,7 +370,7 @@ const HelpContact = React.createClass( {
 		if ( ! isUserEligible || isOlarkReady ) {
 			return;
 		}
-		notices.warning( this.translate(
+		notices.warning( this.props.translate(
 			'Our chat tools did not load. If you have an adblocker ' +
 			'please disable it and refresh this page.'
 		) );
@@ -441,6 +442,7 @@ const HelpContact = React.createClass( {
 
 	getContactFormPropsVariation: function( variationSlug ) {
 		const { isSubmitting } = this.state;
+		const { translate } = this.props;
 		const moreThanOneSite = sites.get().length > 1;
 
 		switch ( variationSlug ) {
@@ -448,7 +450,7 @@ const HelpContact = React.createClass( {
 				const isDev = ( ( config( 'env' ) === 'development' ) || ( config( 'env_id' ) === 'stage' ) );
 				return {
 					onSubmit: this.startHappychat,
-					buttonLabel: isDev ? 'Happychat' : this.translate( 'Chat with us' ),
+					buttonLabel: isDev ? 'Happychat' : translate( 'Chat with us' ),
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -458,7 +460,7 @@ const HelpContact = React.createClass( {
 			case SUPPORT_LIVECHAT:
 				return {
 					onSubmit: this.startChat,
-					buttonLabel: this.translate( 'Chat with us' ),
+					buttonLabel: translate( 'Chat with us' ),
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -468,7 +470,7 @@ const HelpContact = React.createClass( {
 			case SUPPORT_TICKET:
 				return {
 					onSubmit: this.submitKayakoTicket,
-					buttonLabel: isSubmitting ? this.translate( 'Sending email' ) : this.translate( 'Email us' ),
+					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
 					showSubjectField: true,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -479,8 +481,8 @@ const HelpContact = React.createClass( {
 			default:
 				return {
 					onSubmit: this.submitSupportForumsTopic,
-					buttonLabel: isSubmitting ? this.translate( 'Asking in the forums' ) : this.translate( 'Ask in the forums' ),
-					formDescription: this.translate(
+					buttonLabel: isSubmitting ? translate( 'Asking in the forums' ) : translate( 'Ask in the forums' ),
+					formDescription: translate(
 						'Post a new question in our {{strong}}public forums{{/strong}}, ' +
 						'where it may be answered by helpful community members, ' +
 						'by submitting the form below. ' +
@@ -575,7 +577,7 @@ const HelpContact = React.createClass( {
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) &&
 					<Notice
 						status="is-warning"
-						text={ this.translate( 'We had trouble loading the support information for your account. ' +
+						text={ this.props.translate( 'We had trouble loading the support information for your account. ' +
 							'Please check your internet connection and reload the page, or try again later.' ) }
 						showDismiss={ false }
 					/>
@@ -588,7 +590,7 @@ const HelpContact = React.createClass( {
 	render: function() {
 		return (
 			<Main className="help-contact">
-				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
+				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.props.translate( 'Contact Us' ) }</HeaderCake>
 				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
@@ -612,4 +614,4 @@ export default connect(
 		};
 	},
 	{ connectHappychat, openHappychat, sendHappychatMessage }
-)( HelpContact );
+)( localize( HelpContact ) );
