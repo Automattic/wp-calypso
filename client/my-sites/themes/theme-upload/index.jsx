@@ -16,11 +16,17 @@ import Gridicon from 'components/gridicon';
 import FilePicker from 'components/file-picker';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
+import Button from 'components/button';
+import ThanksModal from 'my-sites/themes/thanks-modal';
+// Necessary for ThanksModal (QueryTheme not needed, since we've stored upload details)
+import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -32,6 +38,7 @@ import {
 	isInstallInProgress,
 } from 'state/themes/upload-theme/selectors';
 import { getTheme } from 'state/themes/selectors';
+import { connectOptions } from 'my-sites/themes/theme-options';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -39,6 +46,7 @@ class Upload extends React.Component {
 
 	static propTypes = {
 		siteId: React.PropTypes.number,
+		selectedSite: React.PropTypes.object,
 		inProgress: React.PropTypes.bool,
 		complete: React.PropTypes.bool,
 		failed: React.PropTypes.bool,
@@ -173,8 +181,15 @@ class Upload extends React.Component {
 		);
 	}
 
+	onActivateClick = () => {
+		const { activate } = this.props.options;
+		activate.action( this.props.uploadedTheme );
+	};
+
 	renderTheme() {
-		const { uploadedTheme: theme, translate } = this.props;
+		const { uploadedTheme: theme, translate, options } = this.props;
+		const { tryandcustomize, activate } = options;
+
 		return (
 			<div className="theme-upload__theme-sheet">
 				<span className="theme-upload__theme-name">{ theme.name }</span>
@@ -184,14 +199,24 @@ class Upload extends React.Component {
 				</span>
 				<img src={ theme.screenshot } />
 				<span className="theme-upload__description">{ theme.description }</span>
+				<Button href={ tryandcustomize.getUrl( theme ) }>
+					{ tryandcustomize.label }
+				</Button>
+				<Button primary onClick={ this.onActivateClick }>
+					{ activate.label }
+				</Button>
 			</div>
 		);
 	}
 
 	render() {
-		const { translate, inProgress, complete, failed } = this.props;
+		const { translate, inProgress, complete, failed, siteId, selectedSite } = this.props;
 		return (
 			<Main>
+				<QueryActiveTheme siteId={ siteId } />
+				<ThanksModal
+					site={ selectedSite }
+					source="upload" />
 				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
 					{ ! inProgress && ! complete && this.renderDropZone() }
@@ -203,12 +228,25 @@ class Upload extends React.Component {
 	}
 }
 
+const ConnectedUpload = connectOptions( Upload );
+
+const UploadWithOptions = ( props ) => {
+	const { siteId, uploadedTheme } = props;
+	return (
+		<ConnectedUpload { ...props }
+			siteId={ siteId }
+			theme={ uploadedTheme }
+			options={ [ 'tryandcustomize', 'activate' ] } />
+	);
+};
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		return {
 			siteId,
+			selectedSite: getSelectedSite( state ),
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
@@ -220,4 +258,4 @@ export default connect(
 		};
 	},
 	{ uploadTheme, clearThemeUpload },
-)( localize( Upload ) );
+)( localize( UploadWithOptions ) );
