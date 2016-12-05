@@ -118,6 +118,3 @@ export default connect(
 		};
 	}
 )( localize( TagStreamHeader ) );
-
-/*							components: {
-} */
