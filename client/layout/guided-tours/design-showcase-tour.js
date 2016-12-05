@@ -20,8 +20,13 @@ import {
 	isNewUser,
 	isEnabled,
 	selectedSiteIsCustomizable,
+	userHasInteractedWithComponent,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
+
+const anyThemeMoreButtonClicked = state => {
+	return userHasInteractedWithComponent( 'ThemeMoreButton' )( state );
+};
 
 const isAbTestInVariant = function() {};
 
@@ -74,7 +79,7 @@ export const DesignShowcaseTour = makeTour(
 			<p>
 				{ 'Here you can access all the extra theme options.' }
 			</p>
-			<Continue step="finish" target=".card.theme:nth-child(4) .theme__more-button" click>
+			<Continue step="finish" target=".card.theme:nth-child(4) .theme__more-button" when={ anyThemeMoreButtonClicked } >
 				{
 					translate( 'Click the {{GridIcon/}} to continue.', {
 						components: {
