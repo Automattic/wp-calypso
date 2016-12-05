@@ -423,7 +423,7 @@ const HelpContact = React.createClass( {
 
 	getSupportVariation: function() {
 		const { olark } = this.state;
-		const { isTicketSupportEligible } = this.props;
+		const { ticketSupportEligible } = this.props;
 
 		if ( this.shouldUseHappychat() ) {
 			return SUPPORT_HAPPYCHAT;
@@ -433,7 +433,7 @@ const HelpContact = React.createClass( {
 			return SUPPORT_LIVECHAT;
 		}
 
-		if ( olark.details.isConversing || isTicketSupportEligible ) {
+		if ( olark.details.isConversing || ticketSupportEligible ) {
 			return SUPPORT_TICKET;
 		}
 
@@ -519,10 +519,10 @@ const HelpContact = React.createClass( {
 
 	shouldShowPreloadForm: function() {
 		const { olark, sitesInitialized } = this.state;
-		const { isTicketSupportConfigurationReady, ticketSupportRequestError } = this.props;
+		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
 		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
-		const ticketReadyOrError = isTicketSupportConfigurationReady || null !== ticketSupportRequestError;
+		const ticketReadyOrError = ticketSupportConfigurationReady || null !== ticketSupportRequestError;
 
 		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
 	},
@@ -607,8 +607,8 @@ export default connect(
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
-			isTicketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			isTicketSupportEligible: isTicketSupportEligible( state ),
+			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
+			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 		};
 	},
