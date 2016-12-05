@@ -4,7 +4,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, identity, mapValues, pick, pickBy } from 'lodash';
+import { has, identity, mapValues, pick, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -133,7 +133,6 @@ const ALL_THEME_OPTIONS = {
 	help
 };
 
-const ALL_THEME_ACTIONS = { activate: activateTheme }; // All theme related actions available.
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
@@ -168,7 +167,11 @@ export const connectOptions = connect(
 				: {}
 		) );
 	},
-	( dispatch, { siteId, source = 'unknown' } ) => {
+	( dispatch, { options: optionNames, siteId, source = 'unknown' } ) => {
+		const options = pickBy(
+			pick( ALL_THEME_OPTIONS, optionNames ),
+			'action'
+		);
 		let mapAction;
 
 		if ( siteId ) {
@@ -178,14 +181,14 @@ export const connectOptions = connect(
 		}
 
 		return bindActionCreators(
-			mapValues( ALL_THEME_ACTIONS, action => mapAction( action ) ),
+			mapValues( options, ( { action } ) => mapAction( action ) ),
 			dispatch
 		);
 	},
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( actions, name ) ) {
+			if ( has( option, 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;
