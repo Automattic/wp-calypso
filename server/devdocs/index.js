@@ -8,6 +8,7 @@ import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
+import { parse as reactParser } from 'react-docgen';
 
 /**
  * Internal dependencies
@@ -131,6 +132,60 @@ function defaultSnippet( doc ) {
 }
 
 /**
+ + * Gets a list of subdirectories from a given path
+ + * @param {string} path The path to get the list from
+ + * @returns {Array} The list of subdirectories
+ + */
+function listDirectories( path ) {
+	try {
+		return fs.readdirSync( path ).filter( ( file ) => {
+			try {
+				return fs.statSync( fspath.join( path, file ) ).isDirectory();
+			} catch ( err ) {
+				return false;
+			}
+		} );
+	} catch ( err ) {
+		return [];
+	}
+}
+
+/**
+ * Recursively searches a path for a subdirectory with a given name
+ * @param {string} startPath The path to start searching from
+ * @param {string} name The name to search for
+ * @param {Number} depth The depth to go down, default is 2 levels, -1 for infinite
+ * @returns {Array} List of paths that matched the name
+ */
+function findDirectoryWithName( startPath, name, depth = 2 ) {
+	// stop searching once we exceed our depth
+	if ( depth === 0 ) {
+		return [];
+	}
+
+	const children = listDirectories( startPath );
+
+	// this is quite likely the dumbest way to do this ... but it currently covers all existing
+	// cases
+	const singularName = name.substring( 0, name.length - 1 );
+
+	const matches = children
+		.filter( ( dir ) => dir === name || dir === singularName )
+		.map( ( dir ) => fspath.join( startPath, dir ) );
+
+	if ( matches.length > 0 ) {
+		return matches;
+	}
+
+	// flatten the results
+	return [].concat.apply( [],
+		children.map( ( dir ) =>
+			findDirectoryWithName( fspath.join( startPath, dir ), name, depth - 1 )
+		)
+	);
+}
+
+/**
  * Given an object of { module: dependenciesArray }
  * it filters out modules that contain the world "docs/"
  * and that are not components (i.e. they don't start with "components/").
@@ -195,6 +250,52 @@ module.exports = function() {
 		}
 
 		response.json( listDocs( files.split( ',' ) ) );
+	} );
+
+	app.get( '/devdocs/service/component', ( request, response ) => {
+		const component = request.query.component;
+
+		if ( ! component ) {
+			response
+				.status( 400 )
+				.send( 'Need to provide a component name (e.g. component=author-selector)' );
+			return;
+		}
+
+		// todo: make DRY
+		// we need to search the entire component tree for this guy ... :(
+		try {
+			const basePath = fs.realpathSync( fspath.join( root, 'client' ) );
+			const results = [
+				fspath.join( basePath, 'blocks' ),
+				fspath.join( basePath, 'components' )
+			]
+				.map( ( search ) => findDirectoryWithName( search, component, 1 ) );
+			const files = [].concat.apply( [], results );
+
+			if ( files.length === 0 ) {
+				response
+					.status( 404 )
+					.send( 'Unable to find component' );
+				return;
+			}
+
+			const file = fspath.join( files[ 0 ], 'index.jsx' );
+
+			if ( ! file || file.substring( 0, root.length + 1 ) !== root + '/' ) {
+				response
+					.status( 404 )
+					.send( 'Unable to find index.jsx for component' );
+				return;
+			}
+
+			response.send( reactParser( fs.readFileSync( file, { encoding: 'utf8' } ) ) );
+		} catch ( err ) {
+			console.error( err );
+			response
+				.status( 500 )
+				.send( 'Unable to find component' );
+		}
 	} );
 
 	// return the HTML content of a document (assumes that the document is in markdown format)
