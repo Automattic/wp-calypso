@@ -39,6 +39,10 @@ export function blogPost( context ) {
 		basePath = '/read/blogs/:blog_id/posts/:post_id',
 		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
+	let referral;
+	if ( context.query.ref_blog && context.query.ref_post ) {
+		referral = { blogId: context.query.ref_blog, postId: context.query.ref_post };
+	}
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	ReactDom.render(
@@ -47,6 +51,7 @@ export function blogPost( context ) {
 				blogId: blogId,
 				postId: postId,
 				context: context,
+				referral: referral,
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
