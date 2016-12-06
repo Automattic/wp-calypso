@@ -102,6 +102,24 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
 	return this.wpcom.req.post( { path: '/sites/' + siteId + '/jetpack/modules/' + moduleSlug }, {}, { active: false }, fn );
 };
 
+/*
+ * Retrieve the settings of a Jetpack module with moduleSlug on the site with id siteId
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( {
+		path: '/sites/' + siteId + '/jetpack/rest-api/',
+		body: {
+			path: '/module/' + moduleSlug
+		}
+	}, fn );
+};
+
 /**
  * Update WordPress core install on the site with id siteId
  *
