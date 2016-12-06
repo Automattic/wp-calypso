@@ -19,10 +19,10 @@ import {
 	ButtonRow,
 } from 'layout/guided-tours/config-elements';
 import {
-	selectedSiteHasDefaultSiteTitle,
-	userIsOlderThan,
+	hasSelectedSiteDefaultSiteTitle,
+	isUserOlderThan,
 	isEnabled,
-	userCanEditSettingsOfSelectedSite,
+	canUserEditSettingsOfSelectedSite,
 	isAbTestInVariant,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
@@ -36,9 +36,9 @@ export const SiteTitleTour = makeTour(
 		path=""
 		when={ and(
 						isEnabled( 'guided-tours/site-title' ),
-						selectedSiteHasDefaultSiteTitle,
-						userCanEditSettingsOfSelectedSite,
-						userIsOlderThan( TWO_DAYS_IN_MILLISECONDS ),
+						hasSelectedSiteDefaultSiteTitle,
+						canUserEditSettingsOfSelectedSite,
+						isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
 						isAbTestInVariant( 'siteTitleTour', 'enabled' )
 					)
 		}>

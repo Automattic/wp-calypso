@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser, canCurrentUser } from 'state/current-user/selectors';
@@ -30,7 +31,7 @@ export const isNewUser = state => {
 	return userAge ? userAge <= WEEK_IN_MILLISECONDS : false;
 };
 
-export const userIsOlderThan = age => state => {
+export const isUserOlderThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
 	return userAge ? userAge >= age : false;
 };
@@ -47,12 +48,12 @@ export const isSelectedSiteCustomizable = state =>
 export const isAbTestInVariant = ( testName, variant ) => () =>
 	abtest( testName ) === variant;
 
-export const selectedSiteHasDefaultSiteTitle = state => {
+export const hasSelectedSiteDefaultSiteTitle = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
 };
 
-export const userCanEditSettingsOfSelectedSite = state => {
+export const canUserEditSettingsOfSelectedSite = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
 };
