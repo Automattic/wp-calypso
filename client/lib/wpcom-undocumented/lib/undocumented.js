@@ -2106,6 +2106,32 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
 		}, fn );
 };
 
+Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onProgress ) {
+	debug( '/sites/:site_id/automated-transfers/initiate' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const req = this.wpcom.req.post( {
+			path: `/sites/${ siteId }/automated-transfers/initiate`,
+			formData: [
+				[ 'theme[]', theme ],
+				[ 'plugin', plugin ]
+			]
+		}, resolver );
+
+		req.upload.onprogress = onProgress;
+	} );
+};
+
+Undocumented.prototype.transferStatus = function( siteId, transferId ) {
+	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
+	return this.wpcom.req.get( {
+		path: `/sites/${ siteId }/automated-transfer/status/${ transferId }`
+	} );
+};
+
 /**
  * Expose `Undocumented` module
  */
