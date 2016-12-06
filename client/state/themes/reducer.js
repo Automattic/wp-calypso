@@ -313,7 +313,7 @@ export default combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
-	// lastQuery
+	lastQuery,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,
