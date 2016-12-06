@@ -425,7 +425,7 @@ export default class FullPostFluxContainer extends React.Component {
 
 		let referralPost;
 		if ( props.referral ) {
-			referralPost = PostStore.get( props.referral )
+			referralPost = PostStore.get( props.referral );
 			if ( ! referralPost ) {
 				fetchPost( props.referral );
 			}
