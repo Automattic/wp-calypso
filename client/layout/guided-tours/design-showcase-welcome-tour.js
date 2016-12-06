@@ -7,7 +7,6 @@ import {
 	overEvery as and,
 	negate as not,
 } from 'lodash';
-import { isDesktop } from 'lib/viewport';
 
 /**
  * Internal dependencies
@@ -27,12 +26,11 @@ import {
 	isNewUser,
 	isEnabled,
 	selectedSiteIsCustomizable,
-	userHasInteractedWithComponent,
+	hasUserInteractedWithComponent,
 } from 'state/ui/guided-tours/contexts';
+import { isDesktop } from 'lib/viewport';
 
-const anyThemeMoreButtonClicked = state => {
-	return userHasInteractedWithComponent( 'ThemeMoreButton' )( state );
-};
+const anyThemeMoreButtonClicked = hasUserInteractedWithComponent( 'ThemeMoreButton' );
 
 export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
@@ -46,8 +44,8 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			selectedSiteIsCustomizable,
 			not( inSection( 'customize' ) ),
 			isAbTestInVariant( 'designShowcaseWelcomeTour', 'enabled' ),
-			) }
-		>
+		) }
+	>
 		<Step name="init" placement="right" next="search">
 			<p>
 				{ 'From this page you can change the design of your site. Want to see how to search for your ideal style?' }

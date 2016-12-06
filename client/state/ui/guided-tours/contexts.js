@@ -30,7 +30,7 @@ export const isNewUser = state => {
 	return ( Date.now() - creation ) <= WEEK_IN_MILLISECONDS;
 };
 
-export const userHasInteractedWithComponent = componentName => state =>
+export const hasUserInteractedWithComponent = componentName => state =>
 	getLastAction( state ).component === componentName;
 
 export const isSelectedSitePreviewable = state =>

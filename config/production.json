@@ -19,7 +19,6 @@
 		"community-translator": true,
 		"desktop-promo": true,
 		"guided-tours": true,
-		"guided-tours/design-showcase-welcome": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
