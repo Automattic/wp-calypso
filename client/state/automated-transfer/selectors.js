@@ -1,4 +1,8 @@
+/**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
 export function getAutomatedTransferStatus( state, siteId ) {
-	const status = state.automatedTransfer.status[ siteId ];
-	return status || null;
+	return get( state, [ 'automatedTransfer', 'status', siteId ], null );
 }

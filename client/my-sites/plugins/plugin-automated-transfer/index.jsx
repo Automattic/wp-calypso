@@ -17,7 +17,7 @@ class PluginAutomatedTransfer extends Component {
 
 	static propTypes = {
 		plugin: PropTypes.object,
-		transferStep: PropTypes.string,
+		status: PropTypes.string,
 		translate: PropTypes.func,
 	}
 
@@ -28,9 +28,9 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	getNoticeText = ( pluginName = '' ) => {
-		const { transferStep, translate } = this.props;
+		const { status, translate } = this.props;
 
-		switch ( transferStep ) {
+		switch ( status ) {
 			case 'start': return translate( 'Installing %s…', { args: pluginName } );
 			case 'setup': return translate( 'Now configuring your site. This may take a few minutes.' );
 			case 'leaving': return translate( "Don't leave quite yet! Just a bit longer." );
@@ -39,16 +39,16 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
-	getStatus = transferStep => {
-		switch ( transferStep ) {
+	getStatus = status => {
+		switch ( status ) {
 			case 'conflicts': return 'is-error';
 			case 'complete': return 'is-success';
 			default: return 'is-info';
 		}
 	}
 
-	getIcon = transferStep => {
-		switch ( transferStep ) {
+	getIcon = status => {
+		switch ( status ) {
 			case 'conflicts': return 'notice';
 			case 'complete': return 'checkmark';
 			default: return 'sync';
@@ -56,21 +56,21 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	render() {
-		const { plugin, transferStep, translate } = this.props;
+		const { plugin, status, translate } = this.props;
 
-		if ( ! transferStep ) {
+		if ( ! status ) {
 			return null;
 		}
 
 		return (
 			<Notice
-				icon={ this.getIcon( transferStep ) }
+				icon={ this.getIcon( status ) }
 				className="plugin-automated-transfer"
 				showDismiss={ false }
-				status={ this.getStatus( transferStep ) }
+				status={ this.getStatus( status ) }
 				text={ this.getNoticeText( plugin.name ) }
 			>
-				{ transferStep === 'conflicts' &&
+				{ status === 'conflicts' &&
 					<NoticeAction href="#">
 						{ translate( 'View Conflicts' ) }
 					</NoticeAction>
@@ -84,9 +84,7 @@ class PluginAutomatedTransfer extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSiteId( state );
 	const status = getAutomatedTransferStatus( state, site );
-	return {
-		transferStep: status,
-	};
+	return { status };
 };
 
 export default connect( mapStateToProps )( localize( PluginAutomatedTransfer ) );
