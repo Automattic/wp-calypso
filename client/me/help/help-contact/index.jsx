@@ -514,7 +514,7 @@ const HelpContact = React.createClass( {
 	shouldShowTicketRequestErrorNotice: function( variationSlug ) {
 		const { ticketSupportRequestError } = this.props;
 
-		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null !== ticketSupportRequestError;
+		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null != ticketSupportRequestError;
 	},
 
 	shouldShowPreloadForm: function() {
@@ -522,7 +522,7 @@ const HelpContact = React.createClass( {
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
 		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
-		const ticketReadyOrError = ticketSupportConfigurationReady || null !== ticketSupportRequestError;
+		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
 		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
 	},
