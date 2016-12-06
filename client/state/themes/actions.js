@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { conforms, map, omit, property } from 'lodash';
+import { conforms, map, omit, property, delay } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -35,6 +35,12 @@ import {
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_INITIATE_PROGRESS,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_STATUS_SUCCESS,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -463,5 +469,85 @@ export function clearThemeUpload( siteId ) {
 	return {
 		type: THEME_UPLOAD_CLEAR,
 		siteId,
+	};
+}
+
+export function initiateThemeTransfer( siteId, file ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_TRANSFER_INITIATE_REQUEST,
+			siteId,
+		} );
+		return wpcom.undocumented().initiateTransfer( siteId, null, file, ( event ) => {
+			dispatch( {
+				type: THEME_TRANSFER_INITIATE_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total,
+			} );
+		} )
+			.then( ( { transfer_id } ) => {
+				dispatch( themeTransferStatus( siteId, transfer_id ) );
+				dispatch( {
+					type: THEME_TRANSFER_INITIATE_SUCCESS,
+					siteId,
+					transferId: transfer_id,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_TRANSFER_INITIATE_FAILURE,
+					siteId,
+					error,
+				} );
+			} );
+	};
+}
+
+function poll( func, timeout = 10000, interval = 1000 ) {
+	const limit = Date.now() + timeout;
+
+	const checkCondition = ( resolve, reject ) => {
+		const result = func();
+		if ( result ) {
+			resolve( result );
+		} else if ( Date.now() < limit ) {
+			delay( checkCondition, interval, resolve, reject );
+		} else {
+			reject( new Error( 'Timed out' ) );
+		}
+	};
+
+	return new Promise( checkCondition );
+}
+
+export function themeTransferStatus( siteId, transferId ) {
+	return dispatch => {
+		poll( () => {
+			let complete = false;
+			wpcom.undocumented().transferStatus( siteId, transferId )
+				.then( ( { status, message, themeId } ) => {
+					dispatch( {
+						type: THEME_TRANSFER_STATUS_SUCCESS,
+						siteId,
+						transferId,
+						status,
+						message,
+						themeId,
+					} );
+					complete = ( status === 'complete' );
+				} )
+				.catch( ( error ) => {
+					dispatch( {
+						type: THEME_TRANSFER_STATUS_FAILURE,
+						siteId,
+						transferId,
+						error,
+					} );
+					// Don't poll again after an error
+					complete = true;
+				} );
+			return complete;
+		} );
 	};
 }
