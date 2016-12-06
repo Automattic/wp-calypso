@@ -28,6 +28,7 @@ describe( 'main', function() {
 			mockery.registerMock( 'my-sites/themes/thanks-modal', EmptyComponent );
 			mockery.registerMock( 'my-sites/themes/themes-site-selector-modal', EmptyComponent );
 			mockery.registerMock( 'components/data/query-user-purchases', EmptyComponent );
+			mockery.registerMock( 'components/data/query-site-purchases', EmptyComponent );
 			mockery.registerMock( 'lib/analytics', {} );
 			mockery.registerMock( 'my-sites/themes/helpers', {
 				isPremium: noop,
