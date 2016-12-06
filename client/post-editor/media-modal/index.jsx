@@ -28,6 +28,7 @@ import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
+import { receiveMediaItems } from 'state/media/actions';
 
 export const EditorMediaModal = React.createClass( {
 	propTypes: {
@@ -208,7 +209,7 @@ export const EditorMediaModal = React.createClass( {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true, this.props.receiveMediaItems );
 	},
 
 	onImageEditorDone( error, blob, imageEditorProps ) {
@@ -236,7 +237,7 @@ export const EditorMediaModal = React.createClass( {
 			}
 		};
 
-		MediaActions.update( site.ID, item, true );
+		MediaActions.update( site.ID, item, true, this.props.receiveMediaItems );
 
 		resetAllImageEditorState();
 
@@ -473,6 +474,7 @@ export default connect(
 	} ),
 	{
 		setView: setEditorMediaModalView,
-		resetView: resetMediaModalView
+		resetView: resetMediaModalView,
+		receiveMediaItems
 	}
 )( EditorMediaModal );

@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	MEDIA_ITEMS_RECEIVE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
@@ -198,11 +199,100 @@ describe( 'reducer', () => {
 			scripts: {},
 			styles: {}
 		};
+		const mediaUpdateAction = {
+			type: MEDIA_ITEMS_RECEIVE,
+			siteId: 12345678,
+			data: {
+				media: [
+					{ ID: 1 },
+					{ ID: 7 },
+				]
+			}
+		};
+		const anotherShortcodeData = {
+			...shortcodeData,
+			shortcode: '[gallery ids="4,5,6"]'
+		};
 
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should remove gallery shortcodes that have media updates', () => {
+			const state = items( {
+				12345678: {
+					test_shortcode: shortcodeData,
+					another_shortcode: anotherShortcodeData
+				}
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: anotherShortcodeData
+				}
+			} );
+		} );
+
+		it( 'should remove gallery shortcodes that have a single media update', () => {
+			const state = items( {
+				12345678: {
+					test_shortcode: shortcodeData,
+					another_shortcode: anotherShortcodeData
+				}
+			}, {
+				...mediaUpdateAction,
+				data: { ID: 1 }
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: anotherShortcodeData
+				}
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes other than the gallery one', () => {
+			const shortcodes = {
+				test_shortcode: { ...shortcodeData, shortcode: '[anothergallery ids="1,2,3"]' },
+				another_shortcode: { ...anotherShortcodeData, shortcode: '[testgallery ids="1,2,3"]' },
+			};
+			const state = items( {
+				12345678: shortcodes
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: shortcodes
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes that don\'t have id attribute specified', () => {
+			const shortcodes = {
+				test_shortcode: { ...shortcodeData, shortcode: '[gallery columns="2"]' },
+				another_shortcode: { ...anotherShortcodeData, shortcode: '[gallery]' },
+			};
+			const state = items( {
+				12345678: shortcodes
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: shortcodes
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes that don\'t have media updates', () => {
+			const state = items( {
+				12345678: {
+					another_shortcode: anotherShortcodeData
+				}
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: anotherShortcodeData
+				}
+			} );
 		} );
 
 		it( 'should index shortcodes by site ID', () => {

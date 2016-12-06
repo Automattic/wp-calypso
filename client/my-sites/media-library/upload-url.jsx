@@ -4,6 +4,7 @@
 import React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,10 +13,9 @@ import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
 import Gridicon from 'components/gridicon';
+import { receiveMediaItems } from 'state/media/actions';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryUploadUrl',
-
+const MediaLibraryUploadUrl = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		onAddMedia: React.PropTypes.func,
@@ -49,7 +49,7 @@ export default React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, this.state.value );
+		MediaActions.add( this.props.site.ID, this.state.value, this.props.receiveMediaItems );
 
 		this.replaceState( this.getInitialState() );
 		this.props.onAddMedia();
@@ -102,3 +102,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		receiveMediaItems
+	}
+)( MediaLibraryUploadUrl );
