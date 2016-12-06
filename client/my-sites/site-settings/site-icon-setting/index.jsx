@@ -14,8 +14,10 @@ import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
+import { saveSiteSettings } from 'state/site-settings/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { setSiteIcon } from 'state/sites/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -27,7 +29,7 @@ import InfoPopover from 'components/info-popover';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import { isItemBeingUploaded } from 'lib/media/utils';
+import { isItemBeingUploaded, url as getMediaUrl } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 
 class SiteIconSetting extends Component {
@@ -76,22 +78,36 @@ class SiteIconSetting extends Component {
 			return;
 		}
 
+		// Upload media using a manually generated ID so that we can continue
+		// to reference it within this function
 		const transientMediaId = uniqueId( 'site-icon' );
-
 		MediaActions.add( siteId, {
 			ID: transientMediaId,
 			fileName: `cropped-${ selectedItem.file }`,
 			fileContents: blob
 		} );
 
+		// Avoid calling to component instance within progress check closure
+		// below since component may have been unmounted in time since upload
+		const {
+			saveSiteSettings: dispatchSaveSiteSettings,
+			setSiteIcon: dispatchSetSiteIcon
+		} = this.props;
+
+		dispatchSetSiteIcon( siteId, getMediaUrl( MediaStore.get( siteId, transientMediaId ) ) );
+
 		const checkUploadComplete = () => {
-			const transientMedia = MediaStore.get( siteId, transientMediaId );
-			if ( isItemBeingUploaded( transientMedia ) ) {
+			// MediaStore tracks pointers from transient media to the persisted
+			// copy, so if our request is for a media which is not transient,
+			// we can assume the upload has finished.
+			const media = MediaStore.get( siteId, transientMediaId );
+			if ( isItemBeingUploaded( media ) ) {
 				return;
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			alert( transientMedia.ID );
+			dispatchSetSiteIcon( siteId, getMediaUrl( media ) );
+			dispatchSaveSiteSettings( siteId, { site_icon: media.ID } );
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
@@ -188,6 +204,8 @@ export default connect(
 	},
 	{
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		resetAllImageEditorState
+		resetAllImageEditorState,
+		saveSiteSettings,
+		setSiteIcon
 	}
 )( localize( SiteIconSetting ) );
