@@ -28,12 +28,12 @@ const timeSinceUserRegistration = state => {
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 export const isNewUser = state => {
 	const userAge = timeSinceUserRegistration( state );
-	return userAge ? userAge <= WEEK_IN_MILLISECONDS : false;
+	return ! isNaN( userAge ) ? userAge <= WEEK_IN_MILLISECONDS : false;
 };
 
 export const isUserOlderThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
-	return userAge ? userAge >= age : false;
+	return ! isNaN( userAge ) ? userAge >= age : false;
 };
 
 export const hasUserInteractedWithComponent = componentName => state =>
