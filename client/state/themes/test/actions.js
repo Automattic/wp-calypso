@@ -22,7 +22,8 @@ import {
 	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE
+	THEMES_REQUEST_FAILURE,
+	THEME_TRANSFER_STATUS_SUCCESS,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -32,7 +33,8 @@ import {
 	receiveTheme,
 	receiveThemes,
 	requestThemes,
-	requestTheme
+	requestTheme,
+	themeTransferStatus,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -478,6 +480,28 @@ describe( 'actions', () => {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,
 					error: sinon.match( { message: 'Unknown blog' } ),
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#themeTransferStatus', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/1' )
+				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } );
+		} );
+
+		it( 'should dispatch success on status complete', () => {
+			themeTransferStatus( 2211667, 1 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_SUCCESS,
+					siteId: 2211667,
+					transferId: 1,
+					status: 'complete',
+					message: 'all done',
+					themeId: 'mood',
 				} );
 			} );
 		} );

@@ -540,6 +540,6 @@ const pollStatus = ( dispatch, siteId, transferId, interval, endTime ) => {
 
 export function themeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	return dispatch => {
-		pollStatus( dispatch, siteId, transferId, interval, Date.now() + timeout );
+		return pollStatus( dispatch, siteId, transferId, interval, Date.now() + timeout );
 	};
 }
