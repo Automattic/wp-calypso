@@ -23,6 +23,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
 	getThemeHelpUrl,
+	getThemePreviewUrl,
 	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
@@ -911,6 +912,71 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
+	describe( '#getThemePreviewUrl', () => {
+		it( 'given no theme, should return null', () => {
+			const previewUrl = getThemePreviewUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				}
+			);
+			expect( previewUrl ).to.be.null;
+		} );
+
+		it( 'given a theme and a wpcom site ID, should return the demo URL', () => {
+			const previewUrl = getThemePreviewUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				},
+				{
+					id: 'mood',
+					demo_uri: 'https://mooddemo.wordpress.com/'
+				},
+				2916284
+			);
+			expect( previewUrl ).to.equal( 'https://mooddemo.wordpress.com/?demo=true&iframe=true&theme_preview=true' );
+		} );
+
+		// FIXME: In implementation, get rid of `window` dependency.
+		it.skip( 'given a theme and Jetpack site ID, should return the demo URL', () => {
+			const previewUrl = getThemePreviewUrl(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
+							}
+						}
+					}
+				},
+				{
+					id: 'twentysixteen',
+					demo_uri: 'https://twentysixteendemo.wordpress.com/'
+				},
+				77203074
+			);
+			expect( previewUrl ).to.equal( 'https://twentysixteendemo.wordpress.com/?demo=true&iframe=true&theme_preview=true' );
+		} );
+	} );
+
 	describe( '#getThemePurchaseUrl', () => {
 		it( 'given a free theme and a wpcom site ID, should return null', () => {
 			const purchaseUrl = getThemePurchaseUrl(
@@ -957,13 +1023,21 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeCustomizeUrl', () => {
 		it( 'given no theme and no site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl( {} );
+			const customizeUrl = getThemeCustomizeUrl( {
+				sites: {
+					items: {}
+				}
+			} );
 			expect( customizeUrl ).to.equal( '/customize/' );
 		} );
 
 		it( 'given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
-				{},
+				{
+					sites: {
+						items: {}
+					}
+				},
 				{
 					id: 'twentysixteen',
 					stylesheet: 'pub/twentysixteen'
