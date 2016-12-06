@@ -27,6 +27,7 @@ import {
 } from 'state/action-types';
 import reducer, {
 	queryRequests,
+	queryRequestErrors,
 	queries,
 	lastQuery,
 	themeRequests,
@@ -176,6 +177,101 @@ describe( 'reducer', () => {
 			} );
 
 			const state = queryRequests( original, { type: DESERIALIZE } );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#queryRequestErrors()', () => {
+		it( 'should default to an empty object', () => {
+			const state = queryRequestErrors( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should create empty mapping on success if previous state was empty', () => {
+			const state = queryRequestErrors( deepFreeze( {} ), {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Twenty' }
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {}
+			} );
+		} );
+
+		it( 'should map site ID, query to error if request finishes with failure', () => {
+			const state = queryRequestErrors( deepFreeze( {} ), {
+				type: THEMES_REQUEST_FAILURE,
+				siteId: 2916284,
+				query: { search: 'Twenty' },
+				error: 'Request error'
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					'2916284:{"search":"Twenty"}': 'Request error'
+				}
+			} );
+		} );
+
+		it( 'should reset error state after successful request after a failure', () => {
+			const state = queryRequestErrors( deepFreeze( {
+				2916284: {
+					'2916284:{"search":"Twenty"}': 'Request Error'
+				}
+			} ), {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { search: 'Twenty' }
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {}
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = queryRequestErrors( deepFreeze( {
+				2916284: {
+					'2916284:{"blerch":"Twenty"}': 'Invalid query!'
+				}
+			} ), {
+				type: THEMES_REQUEST_FAILURE,
+				siteId: 2916284,
+				query: { search: 'Twenty' },
+				error: 'System error'
+			} );
+
+			expect( state ).to.deep.equal( {
+				2916284: {
+					'2916284:{"blerch":"Twenty"}': 'Invalid query!',
+					'2916284:{"search":"Twenty"}': 'System error'
+				}
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = queryRequestErrors( deepFreeze( {
+				2916284: {
+					'2916284:{"search":"Twenty"}': null
+				}
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = queryRequestErrors( deepFreeze( {
+				2916284: {
+					'2916284:{"search":"Twenty"}': null
+				}
+			} ), {
+				type: DESERIALIZE
+			} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
@@ -502,9 +598,7 @@ describe( 'reducer', () => {
 		it( 'should switch from error to no mapping after successful request after a failure', () => {
 			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
-					pinboard: {
-						error: 'Request Error'
-					}
+					pinboard: 'Request Error'
 				}
 			} ), {
 				type: THEME_REQUEST_SUCCESS,
