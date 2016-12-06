@@ -48,6 +48,7 @@ import LikeStore from 'lib/like-store/like-store';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
+import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
@@ -238,7 +239,7 @@ export class FullPostView extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed } = this.props;
+		const { post, site, feed, referralPost } = this.props;
 
 		if ( post._state === 'error' ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -309,7 +310,7 @@ export class FullPostView extends React.Component {
 
 					</div>
 					<article className="reader-full-post__story" ref="article">
-						<ReaderFullPostHeader post={ post } />
+						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
 							<FeaturedImage src={ post.featured_image } />
@@ -388,15 +389,17 @@ const ConnectedFullPostView = connect(
 			is_external: isExternal
 		} = ownProps.post;
 
-		const props = {
-			referral: ownProps.referral
-		};
+		const props = { };
 
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
+		}
+
+		if ( ownProps.referral ) {
+			props.referralPost = getPostBySiteAndId( state, ownProps.referral.blogId, ownProps.referral.postId );
 		}
 		return props;
 	},
@@ -420,15 +423,22 @@ export default class FullPostFluxContainer extends React.Component {
 			postId: props.postId
 		};
 
+		let referralPost;
+		if ( props.referral ) {
+			referralPost = PostStore.get( props.referral )
+			if ( ! referralPost ) {
+				fetchPost( props.referral );
+			}
+		}
+
 		const post = PostStore.get( postKey );
 
 		if ( ! post ) {
 			fetchPost( postKey );
 		}
-
 		return {
 			post,
-			referral: props.referral
+			referralPost
 		};
 	}
 
@@ -453,7 +463,7 @@ export default class FullPostFluxContainer extends React.Component {
 			? <ConnectedFullPostView
 					onClose={ this.props.onClose }
 					post={ this.state.post }
-					referral={ this.props.referral } />
+					referralPost={ this.state.referralPost } />
 			: null;
 	}
 }
