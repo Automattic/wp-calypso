@@ -17,8 +17,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'state';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
-import { THEMES_REQUEST_SUCCESS } from 'state/action-types';
-import { receiveThemes, receiveServerError } from 'state/themes/actions';
+import { THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE } from 'state/action-types';
+import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
 describe( 'logged-out', () => {
@@ -124,7 +124,12 @@ describe( 'logged-out', () => {
 		} );
 
 		it( 'renders without error when theme fetch fails', () => {
-			this.store.dispatch( receiveServerError( 'Error' ) ); // FIXME: Use new error action
+			this.store.dispatch( {
+				type: THEMES_REQUEST_FAILURE,
+				siteId: 'wpcom',
+				query: {},
+				error: 'Error'
+			} );
 
 			let markup;
 			assert.doesNotThrow( () => {

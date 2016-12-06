@@ -23,7 +23,6 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEMES_RECEIVE_SERVER_ERROR,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_UPLOAD_START,
@@ -52,13 +51,6 @@ import {
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
-export function receiveServerError( error ) {
-	return {
-		type: THEMES_RECEIVE_SERVER_ERROR,
-		error: error
-	};
-}
-
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
 	return {
@@ -66,8 +58,6 @@ export function setBackPath( path ) {
 		path,
 	};
 }
-
-// New actions
 
 /**
  * Returns an action object to be used in signalling that a theme object has
