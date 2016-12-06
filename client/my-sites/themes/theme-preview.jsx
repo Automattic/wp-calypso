@@ -3,14 +3,16 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import WebPreview from 'components/web-preview';
 import Button from 'components/button';
-import { getPreviewUrl } from './helpers';
+import { hideThemePreview } from 'state/themes/actions';
+import { getPreviewedTheme, getThemePreviewUrl } from 'state/themes/selectors';
+import { getThemeById } from 'state/themes/themes/selectors';
 
 const ThemePreview = React.createClass( {
 	displayName: 'ThemePreview',
@@ -39,12 +41,12 @@ const ThemePreview = React.createClass( {
 
 	onPrimaryButtonClick() {
 		this.props.onPrimaryButtonClick( this.props.theme );
-		this.props.onClose();
+		this.props.hidePreview();
 	},
 
 	onSecondaryButtonClick() {
 		this.props.onSecondaryButtonClick( this.props.theme );
-		this.props.onClose();
+		this.props.hidePreview();
 	},
 
 	renderSecondaryButton() {
@@ -60,17 +62,17 @@ const ThemePreview = React.createClass( {
 	},
 
 	render() {
-		const previewUrl = getPreviewUrl( this.props.theme );
+		const { hidePreview, previewUrl, theme } = this.props;
 		const buttonHref = this.props.getPrimaryButtonHref ? this.props.getPrimaryButtonHref( this.props.theme ) : null;
 
 		return (
 			<WebPreview
-				showPreview={ this.props.showPreview }
+				showPreview={ !! theme }
 				showExternal={ this.props.showExternal }
 				showSEO={ false }
-				onClose={ this.props.onClose }
+				onClose={ hidePreview }
 				previewUrl={ previewUrl }
-				externalUrl={ this.props.theme.demo_uri } >
+				externalUrl={ get( theme, 'demo_uri' ) } >
 				{ this.renderSecondaryButton() }
 				<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
 					{ this.props.primaryButtonLabel }
@@ -81,7 +83,13 @@ const ThemePreview = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
-		theme: getPreviewedTheme( state )
-	} )
+	( state ) => {
+		const themeId = getPreviewedTheme( state );
+		const theme = getThemeById( state, themeId );
+		return {
+			theme,
+			previewUrl: getThemePreviewUrl( state, theme )
+		};
+	},
+	{ hidePreview: hideThemePreview }
 )( ThemePreview );

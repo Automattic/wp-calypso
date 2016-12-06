@@ -167,18 +167,14 @@ const ThemeShowcase = React.createClass( {
 				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ this.props.children }
-				{ this.state.showPreview &&
-					<ThemePreview showPreview={ this.state.showPreview }
-						theme={ this.state.previewingTheme }
-						onClose={ this.togglePreview }
-						primaryButtonLabel={ primaryOption.label }
-						getPrimaryButtonHref={ primaryOption.getUrl }
-						onPrimaryButtonClick={ this.onPrimaryPreviewButtonClick }
-						secondaryButtonLabel={ secondaryOption ? secondaryOption.label : null }
-						getSecondaryButtonHref={ secondaryOption ? secondaryOption.getUrl : null }
-						onSecondaryButtonClick={ this.onSecondaryPreviewButtonClick }
-					/>
-				}
+				<ThemePreview
+					primaryButtonLabel={ primaryOption.label }
+					getPrimaryButtonHref={ primaryOption.getUrl }
+					onPrimaryButtonClick={ this.onPrimaryPreviewButtonClick }
+					secondaryButtonLabel={ secondaryOption ? secondaryOption.label : null }
+					getSecondaryButtonHref={ secondaryOption ? secondaryOption.getUrl : null }
+					onSecondaryButtonClick={ this.onSecondaryPreviewButtonClick }
+				/>
 				<StickyPanel>
 					<ThemesSearchCard
 						site={ site }
