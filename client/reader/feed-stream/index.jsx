@@ -172,8 +172,8 @@ class FeedStream extends React.Component {
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title } ) } />
-				{ this.props.showBack && <HeaderBack /> }
-				<FeedHeader feed={ feed } site={ this.state.site } hasBackButton={ this.props.showBack } />
+				{ ! config.isEnabled( 'reader/refresh/stream' ) && this.props.showBack && <HeaderBack /> }
+				<FeedHeader feed={ feed } site={ this.state.site } showBack={ this.props.showBack } />
 			</Stream>
 		);
 	}

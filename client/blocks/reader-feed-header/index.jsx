@@ -13,8 +13,13 @@ import Card from 'components/card';
 import ReaderFollowButton from 'reader/follow-button';
 import Site from 'blocks/site';
 import { state as feedState } from 'lib/feed-store/constants';
+import HeaderBack from 'reader/header-back';
 
 class FeedHeader extends Component {
+
+	static propTypes = {
+		showBack: React.PropTypes.bool
+	};
 
 	componentWillReceiveProps = ( nextProps ) => {
 		if ( nextProps.site !== this.props.site || nextProps.feed !== this.props.feed ) {
@@ -63,11 +68,12 @@ class FeedHeader extends Component {
 		const classes = classnames( {
 			'reader-feed-header': true,
 			'is-placeholder': ! this.state.siteish,
-			'has-back-button': this.props.hasBackButton,
+			'has-back-button': this.props.showBack,
 		} );
 
 		return (
 			<div className={ classes }>
+				{ this.props.showBack && <HeaderBack /> }
 				<div className="reader-feed-header__follow">
 					{ followerCount ? <span className="reader-feed-header__follow-count"> {
 					this.props.translate( '%s follower', '%s followers',
