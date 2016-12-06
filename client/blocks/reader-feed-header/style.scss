@@ -1,6 +1,11 @@
 .reader-feed-header {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
 	margin: 0 auto;
 	margin-bottom: 40px;
+	position: relative;
+	z-index: z-index( 'root', '.reader-feed-header' );
 
 	@include breakpoint( "<660px" ) {
 		margin: 20px 0 20px;
@@ -69,7 +74,7 @@
 		justify-content: center;
 		margin-bottom: 15px;
 		position: static;
-		z-index: z-index( 'root', '.reader-feed-header__follow' );
+		z-index: z-index( '.reader-feed-header', '.reader-feed-header__follow' );
 
 		@include breakpoint( ">960px" ) {
 			justify-content: flex-end;
@@ -77,6 +82,10 @@
 			position: relative;
 				top: 17px;
 		}
+	}
+
+	.reader-feed-header__site {
+		z-index: z-index( '.reader-feed-header', '.reader-feed-header__site' );
 	}
 
 	.reader-feed-header__follow-count {

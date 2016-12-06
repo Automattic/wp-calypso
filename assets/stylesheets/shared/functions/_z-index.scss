@@ -47,7 +47,7 @@ $z-layers: (
 		'.reader-post-card__featured-image': 0,
 		'.reader-post-card__title': 0,
 		'.reader-list-gap__button': 1,
-		'.reader-feed-header__follow' : 0,
+		'.reader-feed-header': 0,
 		'.post-trends__title': 1,
 		'.plugin-item__label': 1,
 		'.wp-editor-tools': 1,
@@ -141,6 +141,10 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'#habla_window_div.habla_window_div_base': 99999999 //olark
+	),
+	'.reader-feed-header': (
+		'.reader-feed-header__follow': 1,
+		'.reader-feed-header__site': 0
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,
