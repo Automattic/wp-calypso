@@ -114,8 +114,6 @@
 
 // Refresh Site Stream with Back button
 .is-reader-page .is-site-stream .reader-feed-header {
-	display: flex;
-	flex-direction: column;
 
 	&.has-back-button {
 		margin-top: -27px;
@@ -171,6 +169,7 @@
 
 	.button.header-cake__back {
 		padding: 0;
+		position: relative;
 	}
 }
 
