@@ -598,9 +598,7 @@ describe( 'reducer', () => {
 		it( 'should switch from error to no mapping after successful request after a failure', () => {
 			const state = themeRequestErrors( deepFreeze( {
 				2916284: {
-					pinboard: {
-						error: 'Request Error'
-					}
+					pinboard: 'Request Error'
 				}
 			} ), {
 				type: THEME_REQUEST_SUCCESS,
