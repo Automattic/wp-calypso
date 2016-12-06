@@ -29,7 +29,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
-import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -37,7 +36,13 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive, isThemePurchased, getThemeRequestErrors, getThemeForumUrl } from 'state/themes/selectors';
+import {
+	isThemeActive,
+	isThemePremium,
+	isThemePurchased,
+	getThemeRequestErrors,
+	getThemeForumUrl
+} from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -271,7 +276,7 @@ const ThemeSheet = React.createClass( {
 			return null;
 		}
 
-		const description = isPremium( this.props )
+		const description = this.props.isPremium
 			? i18n.translate( 'Get in touch with the theme author' )
 			: i18n.translate( 'Get help from volunteers and staff' );
 
@@ -356,16 +361,16 @@ const ThemeSheet = React.createClass( {
 		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
 		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
 		//   The <ThemeDownloadCard /> component can handle that case.
-		if ( isPremium( this.props ) || ( this.props.isJetpack && ! this.props.download ) ) {
+		if ( this.props.isPremium || ( this.props.isJetpack && ! this.props.download ) ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, isPurchased } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isLoggedIn && ! isActive ) {
-			if ( isPremium( this.props ) && ! isPurchased ) { // purchase
+			if ( isPremium && ! isPurchased ) { // purchase
 				return i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
@@ -419,7 +424,7 @@ const ThemeSheet = React.createClass( {
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
 			price = '';
-		} else if ( ! isPremium( this.props ) ) {
+		} else if ( ! this.props.isPremium ) {
 			price = i18n.translate( 'Free' );
 		}
 
@@ -533,7 +538,7 @@ const ConnectedThemeSheet = connectOptions(
 );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, isActive, isLoggedIn, isPurchased } = props;
+	const { selectedSite: site, isActive, isLoggedIn, isPremium, isPurchased } = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
@@ -542,7 +547,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
-	} else if ( isPremium( props ) && ! isPurchased ) {
+	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
 		defaultOption = 'activate';
@@ -613,6 +618,7 @@ export default connect(
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
+			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && (
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
