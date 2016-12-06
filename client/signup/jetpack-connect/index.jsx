@@ -233,21 +233,21 @@ const JetpackConnectMain = React.createClass( {
 	getTexts() {
 		const { type, selectedPlan } = this.props;
 
-		if ( type === 'pro' || selectedPlan === 'jetpack_business' ) {
+		if ( type === 'pro' || selectedPlan === 'jetpack_business' || selectedPlan === 'jetpack_business_monthly' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Professional' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
-		if ( type === 'premium' || selectedPlan === 'jetpack_premium' ) {
+		if ( type === 'premium' || selectedPlan === 'jetpack_premium' || selectedPlan === 'jetpack_premium_monthly' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Premium' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
-		if ( type === 'personal' || selectedPlan === 'jetpack_personal' ) {
+		if ( type === 'personal' || selectedPlan === 'jetpack_personal' || selectedPlan === 'jetpack_personal_monthly' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Personal' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
