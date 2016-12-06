@@ -21,6 +21,7 @@ import FollowButton from 'reader/follow-button';
 import PostGallery from './gallery';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
+import * as DiscoverHelper from 'reader/discover/helper';
 
 export default class RefreshPostCard extends React.Component {
 	static propTypes = {
@@ -127,7 +128,11 @@ export default class RefreshPostCard extends React.Component {
 
 		let followUrl;
 		if ( showPrimaryFollowButton ) {
-			followUrl = feed ? feed.feed_URL : post.site_URL;
+			if ( DiscoverHelper.isDiscoverPost( post ) ) {
+				followUrl = DiscoverHelper.getSourceFollowUrl( post );
+			} else {
+				followUrl = feed ? feed.feed_URL : post.site_URL;
+			}
 		}
 
 		let featuredAsset;
@@ -141,8 +146,8 @@ export default class RefreshPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
-				{ showPrimaryFollowButton && <FollowButton siteUrl={ followUrl } /> }
+				<PostByline post={ originalPost ? originalPost : post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }
 					{ isGallery && <PostGallery post={ post } /> }
