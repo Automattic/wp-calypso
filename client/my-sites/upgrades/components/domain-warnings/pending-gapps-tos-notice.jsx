@@ -44,7 +44,9 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 
 	getGappsLoginUrl( email, domain ) {
-		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1`;
+		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel' +
+			'&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }' +
+			'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1`;
 	},
 
 	getNoticeSeverity() {
@@ -81,7 +83,14 @@ const PendingGappsTosNotice = React.createClass( {
 
 	generateLogInClickHandler( { domainName, user, severity, isMultipleDomains } ) {
 		return () => {
-			this.recordEvent( 'pendingAccountLogInClick', { siteSlug: this.props.siteSlug, domainName, user, severity, isMultipleDomains, section: this.props.section } );
+			this.recordEvent( 'pendingAccountLogInClick', {
+				domainName,
+				isMultipleDomains,
+				severity,
+				user,
+				section: this.props.section,
+				siteSlug: this.props.siteSlug
+			} );
 		};
 	},
 
@@ -122,8 +131,8 @@ const PendingGappsTosNotice = React.createClass( {
 	oneDomainNotice() {
 		const severity = this.getNoticeSeverity(),
 			exclamation = this.getExclamation( severity ),
-			domainName = this.props.domains[0].name,
-			users = this.props.domains[0].googleAppsSubscription.pendingUsers;
+			domainName = this.props.domains[ 0 ].name,
+			users = this.props.domains[ 0 ].googleAppsSubscription.pendingUsers;
 
 		return (
 			<Notice
@@ -132,8 +141,10 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ this.props.translate(
-					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
-					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite ' +
+						'and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite ' +
+						'and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					{
 						count: users.length,
 						args: { exclamation, emails: users.join( ', ' ) },
@@ -141,8 +152,8 @@ const PendingGappsTosNotice = React.createClass( {
 					}
 				) }>
 				<NoticeAction
-					href={ this.getGappsLoginUrl( users[0], domainName ) }
-					onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: false } ) }
+					href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
+					onClick={ this.generateLogInClickHandler( { domainName, user: users[ 0 ], severity, isMultipleDomains: false } ) }
 					external>
 						{ this.props.translate( 'Log in' ) }
 				</NoticeAction>
@@ -160,7 +171,8 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
 				{ this.props.translate(
-					'%(exclamation)s To activate your new email addresses, please log in to G Suite and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					'%(exclamation)s To activate your new email addresses, please log in to G Suite ' +
+						'and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
 						args: { exclamation },
 						components: { learnMoreLink }
@@ -171,8 +183,13 @@ const PendingGappsTosNotice = React.createClass( {
 						return <li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 						<strong>{ users.join( ', ' ) } </strong>
 							<a
-								href={ this.getGappsLoginUrl( users[0], domainName ) }
-								onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: true } ) }
+								href={ this.getGappsLoginUrl( users[ 0 ], domainName ) }
+								onClick={ this.generateLogInClickHandler( {
+									domainName,
+									severity,
+									isMultipleDomains: true,
+									user: users[ 0 ]
+								} ) }
 								target="_blank"
 								rel="noopener noreferrer">
 									{ this.props.translate( 'Log in' ) }
