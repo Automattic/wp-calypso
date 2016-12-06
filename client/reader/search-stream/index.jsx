@@ -175,10 +175,15 @@ const SearchStream = React.createClass( {
 	},
 
 	updateQuery( newValue ) {
+		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
+	},
+
+	scrollToTop() {
+		window.scrollTo( 0, 0 );
 	},
 
 	cardFactory() {
@@ -229,6 +234,7 @@ const SearchStream = React.createClass( {
 						<SearchInput
 							initialValue={ this.props.query }
 							onSearch={ this.updateQuery }
+							onSearchClose={ this.scrollToTop }
 							autoFocus={ ! this.props.query }
 							delaySearch={ true }
 							delayTimeout={ 500 }
