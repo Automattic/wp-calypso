@@ -357,7 +357,7 @@ export class FullPostView extends React.Component {
 							{ shouldShowComments( post )
 								? <Comments ref="commentsList"
 										post={ post }
-										initialSize={ 25 }
+										initialSize={ 10 }
 										pageSize={ 25 }
 										onCommentsUpdate={ this.checkForCommentAnchor } />
 								: null
