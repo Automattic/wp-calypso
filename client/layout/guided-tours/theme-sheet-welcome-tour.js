@@ -21,24 +21,24 @@ import {
 	isAbTestInVariant,
 	isEnabled,
 	isNewUser,
-	previewIsShowing,
+	isPreviewShowing,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop, isMobile } from 'lib/viewport';
 
-const PickActivateStep = () => (
+const PickActivateStepText = () => (
 	<p>
-		{ translate(
-			'This will activate the design you’re currently seeing on your site.'
-		) }
+		{
+			'This would activate the design you\'re currently seeing on your site.'
+		}
 	</p>
 );
 
 export const ThemeSheetWelcomeTour = makeTour(
-	<Tour name="theme"
+	<Tour name="themeSheetWelcomeTour"
 		version="20161129"
 		path="/theme"
 		when={ and(
-			isEnabled( 'guided-tours/theme' ),
+			isEnabled( 'guided-tours/theme-sheet-welcome' ),
 			isNewUser,
 			not( isMobile ),
 			isAbTestInVariant( 'themeSheetWelcomeTour', 'enabled' )
@@ -46,10 +46,10 @@ export const ThemeSheetWelcomeTour = makeTour(
 	>
 		<Step name="init" placement="right" next="live-preview">
 			<p>
-				{ translate(
-					'This page shows all the details about a specific theme ' +
-					'design. May I show you around?'
-				) }
+				{
+					'This page shows all the details about a specific theme. ' +
+					'May I show you around?'
+				}
 			</p>
 			<ButtonRow>
 				<Next step="live-preview">{ translate( "Let's go!" ) }</Next>
@@ -64,7 +64,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			next="close-preview"
 		>
 			<p>
-				{ translate( 'Here you can see the design in action in a demo site.' ) }
+				{ 'Here you can see the design in action in a demo site.' }
 			</p>
 			<ButtonRow>
 				<Continue step="close-preview" target="theme-sheet-preview" click />
@@ -75,15 +75,15 @@ export const ThemeSheetWelcomeTour = makeTour(
 			target=".web-preview.is-visible [data-tip-target='web-preview__close']"
 			placement="beside"
 			arrow="left-top"
-			when={ previewIsShowing }
+			when={ isPreviewShowing }
 		>
 			<p>
-				{ translate(
+				{
 					'This is the live demo. Take a look around, see if the design suits you! Then close the preview to return.'
-				) }
+				}
 			</p>
 			<ButtonRow>
-				<Continue when={ not( previewIsShowing ) } step="theme-docs" icon="cross" />
+				<Continue when={ not( isPreviewShowing ) } step="theme-docs" icon="cross" />
 			</ButtonRow>
 		</Step>
 
@@ -93,11 +93,11 @@ export const ThemeSheetWelcomeTour = makeTour(
 			arrow="left-top"
 		>
 			<p>
-				{ translate(
+				{
 					'There\'s more to your theme than meets the eye! Unlock its ' +
 					'full potential, discover its features — everything is ' +
 					'in the documentation.'
-				) }
+				}
 			</p>
 			<ButtonRow>
 				<Next step="pick-activate-wide" />
@@ -111,7 +111,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			when={ isDesktop }
 			next="pick-activate-narrow"
 		>
-			<PickActivateStep />
+			<PickActivateStepText />
 			<ButtonRow>
 				<Next step="pick-activate-narrow">{ translate( 'Got it' ) }</Next>
 				<Continue step="pick-activate-narrow" target=".theme__sheet-primary-button" click hidden />
@@ -126,7 +126,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 			next="back-to-list"
 			when={ not( isDesktop ) }
 		>
-			<PickActivateStep />
+			<PickActivateStepText />
 			<ButtonRow>
 				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
 				<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
@@ -141,9 +141,9 @@ export const ThemeSheetWelcomeTour = makeTour(
 			style={ { marginTop: '-15px', zIndex: 1 } }
 		>
 			<p>
-				{ translate(
+				{
 					'That\'s it! You can return to our design showcase anytime through here.'
-				) }
+				}
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( 'Done' ) }</Quit>
