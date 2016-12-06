@@ -132,8 +132,8 @@ module.exports = {
 	siteTitleTour: {
 		datestamp: '20161130',
 		variations: {
-			disabled: 50,
-			enabled: 50,
+			disabled: 1,
+			enabled: 0,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
