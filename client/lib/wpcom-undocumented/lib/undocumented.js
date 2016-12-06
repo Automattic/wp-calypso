@@ -120,6 +120,26 @@ Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug
 	}, fn );
 };
 
+/*
+ * Update the settings of a Jetpack module with moduleSlug on the site with id siteId to the specified settings
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {object} [settings]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlug, settings, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post( {
+		path: '/sites/' + siteId + '/jetpack/rest-api/',
+		query: {
+			path: '/module/' + moduleSlug
+		},
+		body: settings
+	}, fn );
+};
+
 /**
  * Update WordPress core install on the site with id siteId
  *
