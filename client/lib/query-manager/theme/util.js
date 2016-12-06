@@ -28,7 +28,7 @@ export function isPremium( theme ) {
  * @return {Boolean}       Whether theme matches query
  */
 
-export function matchThemeByQuery( query, theme ) {
+export function isThemeMatchingQuery( query, theme ) {
 	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
 	return every( queryWithDefaults, ( value, key ) => {
 		switch ( key ) {

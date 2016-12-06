@@ -44,7 +44,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeIdFromStylesheet } from './utils';
-import { matchThemeByQuery } from 'lib/query-manager/theme/util';
+import { isThemeMatchingQuery } from 'lib/query-manager/theme/util';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -205,14 +205,14 @@ export function requestThemes( siteId, query = {} ) {
 		} );
 
 		function filterThemesForJetpack( themes, query ) {
-			return filter( themes, theme => matchThemeByQuery( theme, query ) );
+			return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
 		}
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
 			dispatch( receiveThemes( themes, siteId ) );
 
 			let filteredThemes = themes;
-			if ( siteIdToQuery ) {
+			if ( siteId !== 'wpcom' ) {
 				filteredThemes = filterThemesForJetpack( themes, query );
 			}
 

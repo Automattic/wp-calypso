@@ -3,14 +3,14 @@
  */
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
-import { matchThemeByQuery } from './util';
+import { isThemeMatchingQuery } from './util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
-	matches = matchThemeByQuery;
+	matches = isThemeMatchingQuery;
 }
 
 ThemeQueryManager.QueryKey = ThemeQueryKey;
