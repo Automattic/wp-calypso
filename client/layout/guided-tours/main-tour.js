@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import {
 	makeTour,
 	Tour,
@@ -15,10 +21,10 @@ import {
 import {
 	isNewUser,
 	isEnabled,
-	selectedSiteIsPreviewable,
-	selectedSiteIsCustomizable,
-	previewIsNotShowing,
-	previewIsShowing,
+	isSelectedSitePreviewable,
+	isSelectedSiteCustomizable,
+	isPreviewNotShowing,
+	isPreviewShowing,
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
@@ -83,7 +89,7 @@ export const MainTour = makeTour(
 			target="site-card-preview"
 			arrow="top-left"
 			placement="below"
-			when={ selectedSiteIsPreviewable }
+			when={ isSelectedSitePreviewable }
 			scrollContainer=".sidebar__region"
 		>
 			<p>
@@ -108,7 +114,7 @@ export const MainTour = makeTour(
 
 		<Step name="in-preview"
 			placement="center"
-			when={ selectedSiteIsPreviewable }
+			when={ isSelectedSitePreviewable }
 		>
 			<p>
 				{
@@ -122,7 +128,7 @@ export const MainTour = makeTour(
 			<ButtonRow>
 				<Next step="close-preview" />
 				<Quit />
-				<Continue hidden step="close-preview" when={ previewIsNotShowing } />
+				<Continue hidden step="close-preview" when={ isPreviewNotShowing } />
 			</ButtonRow>
 		</Step>
 
@@ -130,19 +136,19 @@ export const MainTour = makeTour(
 			target="web-preview__close"
 			arrow="left-top"
 			placement="beside"
-			when={ and( selectedSiteIsPreviewable, previewIsShowing ) }
+			when={ and( isSelectedSitePreviewable, isPreviewShowing ) }
 		>
 			<p>
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
-			<Continue icon="cross-small" step="themes" target="web-preview__close" when={ previewIsNotShowing } />
+			<Continue icon="cross-small" step="themes" target="web-preview__close" when={ isPreviewNotShowing } />
 		</Step>
 
 		<Step name="themes"
 			target="themes"
 			arrow="top-left"
 			placement="below"
-			when={ selectedSiteIsCustomizable }
+			when={ isSelectedSiteCustomizable }
 			scrollContainer=".sidebar__region"
 			shouldScrollTo
 		>
