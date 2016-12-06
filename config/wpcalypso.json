@@ -26,6 +26,7 @@
 		"dev/test-helper": true,
 		"guided-tours": true,
 		"guided-tours/main": false,
+		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/themes": true,
 		"help": true,
 		"help/courses": true,
