@@ -82,7 +82,7 @@ class TaxonomyManagerListItem extends Component {
 
 	tooltipText = () => {
 		const { term, translate } = this.props;
-		const name = decodeEntities( term.name ) || translate( 'Untitled' );
+		const name = this.name();
 		const postCount = term.post_count;
 		return translate(
 			'%(postCount)d \'%(name)s\' post',
@@ -105,9 +105,13 @@ class TaxonomyManagerListItem extends Component {
 		this.setState( { showTooltip: false } );
 	};
 
+	name = () => {
+		const { term, translate } = this.props;
+		return decodeEntities( term.name ) || translate( 'Untitled' );
+	};
+
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
-		const name = decodeEntities( term.name ) || translate( 'Untitled' );
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -122,7 +126,7 @@ class TaxonomyManagerListItem extends Component {
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				<span className="taxonomy-manager__label" onClick={ onClick }>
-					<span>{ name }</span>
+					<span>{ this.name() }</span>
 					{ isDefault &&
 					<span className="taxonomy-manager__default-label">
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
