@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { conforms, omit, property } from 'lodash';
+import { conforms, filter, omit, property } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -44,6 +44,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
 import { getThemeIdFromStylesheet } from './utils';
+import { matchThemeByQuery } from 'lib/query-manager/theme/util';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -186,7 +187,7 @@ export function receiveThemes( themes, siteId ) {
  * @return {Function}             Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		let siteIdToQuery, queryWithApiVersion;
 
 		if ( siteId === 'wpcom' ) {
@@ -197,20 +198,32 @@ export function requestThemes( siteId, query = {} ) {
 			queryWithApiVersion = { ...query, apiVersion: '1' };
 		}
 
+		const isJetpack = isJetpackSite( getState(), siteId );
+
 		dispatch( {
 			type: THEMES_REQUEST,
 			siteId,
 			query
 		} );
 
+		function filterThemesForJetpack( themes, query ) {
+			return filter( themes, theme => matchThemeByQuery( theme, query ) );
+		}
+
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
 			dispatch( receiveThemes( themes, siteId ) );
+
+			let filteredThemes = themes;
+			if ( isJetpack ) {
+				filteredThemes = filterThemesForJetpack( themes, query );
+			}
+
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
+				themes: filteredThemes,
 				siteId,
 				query,
 				found,
-				themes
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
@@ -336,7 +349,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				const themeStylesheet = theme.stylesheet || themeId; // Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
 			.catch( error => {
