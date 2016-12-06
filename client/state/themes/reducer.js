@@ -312,6 +312,7 @@ export const lastQuery = createReducer( {}, {
 export default combineReducers( {
 	queries,
 	queryRequests,
+	queryRequestErrors,
 	// lastQuery
 	themeRequests,
 	themeRequestErrors,

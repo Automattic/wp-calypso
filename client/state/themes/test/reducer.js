@@ -69,6 +69,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'queries',
 			'queryRequests',
+			'queryRequestErrors',
 			// 'lastQuery',
 			'themeRequests',
 			'themeRequestErrors',
