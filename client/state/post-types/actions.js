@@ -39,8 +39,7 @@ export function requestPostTypes( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().site( siteId ).postTypes()
-		.then( ( data ) => {
+		return wpcom.undocumented().site( siteId ).postTypes().then( ( data ) => {
 			dispatch( receivePostTypes( siteId, data ) );
 			dispatch( {
 				type: POST_TYPES_REQUEST_SUCCESS,
