@@ -26,6 +26,7 @@ import {
 	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
+	getThemeForumUrl,
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isThemeActive,
@@ -1034,6 +1035,42 @@ describe( 'themes selectors', () => {
 			} );
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
+		} );
+	} );
+
+	describe( '#getThemeForumUrl', () => {
+		it( 'given a free theme, should return the general themes forum URL', () => {
+			const forumUrl = getThemeForumUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				'twentysixteen'
+			);
+
+			expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
+		} );
+
+		it( 'given a premium theme, should return the specific theme forum URL', () => {
+			const forumUrl = getThemeForumUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				},
+				'mood'
+			);
+
+			expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
 		} );
 	} );
 
