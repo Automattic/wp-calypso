@@ -26,6 +26,7 @@ import {
 	isAbTestInVariant,
 } from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
+import { isDesktop } from 'lib/viewport';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 
@@ -36,6 +37,7 @@ export const SiteTitleTour = makeTour(
 		path="/stats"
 		when={ and(
 						isEnabled( 'guided-tours/site-title' ),
+						isDesktop,
 						hasSelectedSiteDefaultSiteTitle,
 						canUserEditSettingsOfSelectedSite,
 						isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
