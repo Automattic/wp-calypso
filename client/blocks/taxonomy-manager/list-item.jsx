@@ -22,6 +22,7 @@ import { getSite } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { decodeEntities } from 'lib/formatting';
+import Tooltip from 'components/tooltip';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -43,6 +44,7 @@ class TaxonomyManagerListItem extends Component {
 
 	state = {
 		showDeleteDialog: false,
+		showTooltip: false
 	};
 
 	deleteItem = () => {
@@ -78,9 +80,38 @@ class TaxonomyManagerListItem extends Component {
 		return `${ siteUrl }/${ taxonomyBase }/${ term.slug }/`;
 	}
 
+	tooltipText = () => {
+		const { term, translate } = this.props;
+		const name = this.getName();
+		const postCount = term.post_count;
+		return translate(
+			'%(postCount)d \'%(name)s\' post',
+			'%(postCount)d \'%(name)s\' posts',
+			{
+				count: postCount,
+				args: {
+					postCount,
+					name
+				}
+			}
+		);
+	};
+
+	showTooltip = () => {
+		this.setState( { showTooltip: true } );
+	};
+
+	hideTooltip = () => {
+		this.setState( { showTooltip: false } );
+	};
+
+	getName = () => {
+		const { term, translate } = this.props;
+		return decodeEntities( term.name ) || translate( 'Untitled' );
+	};
+
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
-		const name = decodeEntities( term.name ) || translate( 'Untitled' );
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -95,14 +126,26 @@ class TaxonomyManagerListItem extends Component {
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				<span className="taxonomy-manager__label" onClick={ onClick }>
-					<span>{ name }</span>
+					<span>{ this.getName() }</span>
 					{ isDefault &&
-						<span className="taxonomy-manager__default-label">
+					<span className="taxonomy-manager__default-label">
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
 						</span>
 					}
 				</span>
-				{ ! isUndefined( term.post_count ) && <Count count={ term.post_count } /> }
+				{ ! isUndefined( term.post_count ) && <Count
+					ref="count"
+					count={ term.post_count }
+					onMouseEnter={ this.showTooltip }
+					onMouseLeave={ this.hideTooltip }
+				/> }
+				<Tooltip
+					context={ this.refs && this.refs.count }
+					isVisible={ this.state.showTooltip }
+					position="left"
+				>
+					{ this.tooltipText() }
+				</Tooltip>
 				<EllipsisMenu position="bottom left">
 					<PopoverMenuItem onClick={ onClick }>
 						<Gridicon icon="pencil" size={ 18 } />
