@@ -85,7 +85,7 @@ export const SiteTitleTour = makeTour(
 				}
 			</p>
 			<ButtonRow>
-				<Next step="site-tagline-input">{ translate( 'Looks Good' ) }</Next>
+				<Next step="site-tagline-input">{ translate( 'Looks Good!' ) }</Next>
 				<Quit>{ translate( 'Cancel' ) }</Quit>
 			</ButtonRow>
 		</Step>
@@ -102,7 +102,7 @@ export const SiteTitleTour = makeTour(
 				}
 			</p>
 			<ButtonRow>
-				<Next step="click-save">{ translate( 'Continue' ) }</Next>
+				<Next step="click-save">{ translate( 'Great!' ) }</Next>
 				<Quit>{ translate( 'Cancel' ) }</Quit>
 			</ButtonRow>
 		</Step>
@@ -114,7 +114,7 @@ export const SiteTitleTour = makeTour(
 		>
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{
-					translate( "Don't forget to save your new settings!" )
+					translate( "Don't forget to save your changes." )
 				}
 			</Continue>
 		</Step>
