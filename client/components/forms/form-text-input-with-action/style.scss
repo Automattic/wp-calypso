@@ -1,0 +1,76 @@
+.form-text-input-with-action {
+	@extend %form-field;
+	display: flex;
+	padding: 0;
+
+	&.is-focused {
+		border-color: $blue-wordpress;
+		outline: none;
+		box-shadow: 0 0 0 2px $blue-light;
+
+		&.is-valid {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+		}
+	}
+
+	&.is-disabled {
+		background: $gray-light;
+		border-color: lighten( $gray, 30% );
+		color: lighten( $gray, 10% );
+		opacity: 1;
+		-webkit-text-fill-color: lighten( $gray, 10% );
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: lighten( $gray, 10% );
+		}
+	}
+
+	&.is-valid {
+		border-color: $alert-green;
+	}
+
+	&.is-valid:hover {
+		border-color: darken( $alert-green, 10 );
+	}
+
+	&.is-error {
+		border-color: $alert-red;
+	}
+
+	&.is-error:hover {
+		border-color: darken( $alert-red, 10 );
+	}
+}
+
+.form-text-input-with-action__button.is-compact {
+	flex: 0 0 auto;
+	margin: 4px;
+	text-transform: none;
+}
+
+input[type="text"].form-text-input-with-action__input {
+	flex: 1 1 0;
+	border: none;
+	min-width: 0;
+}
+
+input[type="text"].form-text-input-with-action__input:focus {
+	border: none;
+	box-shadow: none;
+}
