@@ -122,11 +122,6 @@
 
 	@include breakpoint( ">480px" ) {
 		max-width: 360px;
-
-		&:hover {
-			box-shadow: 0 0 0 1px $gray,
-						0 2px 4px lighten( $gray, 20% );
-		}
 	}
 
 	@include breakpoint( ">660px" ) {
@@ -149,6 +144,11 @@
 .example-components__main {
 	cursor: pointer;
 	width: 100%;
+
+	&:hover > div {
+		box-shadow: 0 0 0 1px $gray,
+					0 2px 4px lighten( $gray, 20% );
+	}
 }
 
 .example-components__browser-chrome {
