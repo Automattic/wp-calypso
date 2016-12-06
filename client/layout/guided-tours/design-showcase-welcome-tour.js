@@ -35,7 +35,7 @@ const anyThemeMoreButtonClicked = hasUserInteractedWithComponent( 'ThemeMoreButt
 export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
 		name="designShowcaseWelcome"
-		version="20161123"
+		version="20161206"
 		path="/design"
 		when={ and(
 			isNewUser,

@@ -72,10 +72,10 @@ module.exports = {
 		allowAnyLocale: true,
 	},
 	designShowcaseWelcomeTour: {
-		datestamp: '20161130',
+		datestamp: '20161206',
 		variations: {
-			enabled: 50,
-			disabled: 50,
+			enabled: 0,
+			disabled: 100,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
