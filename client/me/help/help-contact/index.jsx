@@ -443,7 +443,7 @@ const HelpContact = React.createClass( {
 	getContactFormPropsVariation: function( variationSlug ) {
 		const { isSubmitting } = this.state;
 		const { translate } = this.props;
-		const moreThanOneSite = sites.get().length > 1;
+		const hasMoreThanOneSite = sites.get().length > 1;
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
@@ -454,7 +454,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
-					showSiteField: moreThanOneSite,
+					showSiteField: hasMoreThanOneSite,
 				};
 
 			case SUPPORT_LIVECHAT:
@@ -464,7 +464,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
-					showSiteField: moreThanOneSite,
+					showSiteField: hasMoreThanOneSite,
 				};
 
 			case SUPPORT_TICKET:
@@ -474,7 +474,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: true,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
-					showSiteField: moreThanOneSite,
+					showSiteField: hasMoreThanOneSite,
 				};
 
 			default:
