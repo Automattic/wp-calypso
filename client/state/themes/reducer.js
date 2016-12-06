@@ -212,6 +212,35 @@ export function queryRequests( state = {}, action ) {
 }
 
 /**
+ * Returns the updated query request error state after an action has been
+ * dispatched. The state reflects a mapping of site ID, query ID pairing to an
+ * object containing the request error. If there is no error null is stored.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const queryRequestErrors = createReducer( {}, {
+	[ THEMES_REQUEST_FAILURE ]: ( state, { siteId, query, error } ) => {
+		const serializedQuery = getSerializedThemesQuery( query, siteId );
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ serializedQuery ]: error
+			}
+		};
+	},
+	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
+		const serializedQuery = getSerializedThemesQuery( query, siteId );
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], serializedQuery ),
+		};
+	}
+} );
+
+/**
  * Returns the updated theme query state after an action has been dispatched.
  * The state reflects a mapping of serialized query key to an array of theme IDs
  * for the query, if a query response was successfully received.
