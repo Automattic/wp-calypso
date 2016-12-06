@@ -226,7 +226,6 @@ export const PostEditor = React.createClass( {
 										/>
 									: null
 								}
-								<div className="post_editor__insert-menu-guided-tour-anchor" />
 								<SegmentedControl className="editor__switch-mode" compact={ true }>
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
