@@ -187,7 +187,7 @@ export function receiveThemes( themes, siteId ) {
  * @return {Function}             Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		let siteIdToQuery, queryWithApiVersion;
 
 		if ( siteId === 'wpcom' ) {
@@ -197,8 +197,6 @@ export function requestThemes( siteId, query = {} ) {
 			siteIdToQuery = siteId;
 			queryWithApiVersion = { ...query, apiVersion: '1' };
 		}
-
-		const isJetpack = isJetpackSite( getState(), siteId );
 
 		dispatch( {
 			type: THEMES_REQUEST,
@@ -214,7 +212,7 @@ export function requestThemes( siteId, query = {} ) {
 			dispatch( receiveThemes( themes, siteId ) );
 
 			let filteredThemes = themes;
-			if ( isJetpack ) {
+			if ( siteIdToQuery ) {
 				filteredThemes = filterThemesForJetpack( themes, query );
 			}
 
