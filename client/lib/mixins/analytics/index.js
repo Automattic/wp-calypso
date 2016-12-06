@@ -642,6 +642,22 @@ const EVENTS = {
 						section
 					}
 				);
+			},
+
+			fixPendingEmailSiteNoticeClick( siteSlug ) {
+				analytics.ga.recordEvent(
+					'Domain Management',
+					'Clicked "Fix" link in site notice for email requiring action',
+					'Site',
+					siteSlug
+				);
+
+				analytics.tracks.recordEvent(
+					'calypso_domain_management_google_apps_site_fix_click',
+					{
+						site_slug: siteSlug
+					}
+				);
 			}
 		},
 

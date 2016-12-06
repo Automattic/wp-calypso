@@ -10,6 +10,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
+import paths from 'my-sites/upgrades/paths';
 
 const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />,
 	strong = <strong />;
@@ -83,6 +84,40 @@ const PendingGappsTosNotice = React.createClass( {
 		};
 	},
 
+	generateFixClickHandler() {
+		return () => {
+			this.recordEvent( 'fixPendingEmailSiteNoticeClick', this.props.siteSlug );
+		};
+	},
+
+	compactNotice() {
+		const severity = this.getNoticeSeverity(),
+			href = this.props.domains.length === 1
+				? paths.domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
+				: paths.domainManagementEmail( this.props.siteSlug );
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				status={ `is-${ severity }` }
+				showDismiss={ false }
+				key="pending-gapps-tos-acceptance-domain-compact"
+				text={ this.translate(
+					'Email requires action',
+					'Emails require action',
+					{
+						count: this.props.domains.length
+					}
+				) }>
+				<NoticeAction
+					href={ href }
+					onClick={ this.generateFixClickHandler() }>
+						{ this.translate( 'Fix' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
 	oneDomainNotice() {
 		const severity = this.getNoticeSeverity(),
 			exclamation = this.getExclamation( severity ),
@@ -149,6 +184,10 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 
 	render() {
+		if ( this.props.isCompact ) {
+			return this.compactNotice();
+		}
+
 		switch ( this.props.domains.length ) {
 			case 0:
 				return null;
