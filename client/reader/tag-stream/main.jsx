@@ -100,6 +100,7 @@ const TagStream = React.createClass( {
 				{ config.isEnabled( 'reader/refresh/stream' )
 					? <TagStreamHeader
 						tag={ this.props.tag }
+						title={ title }
 						showFollow={ this.state.canFollow }
 						following={ this.state.subscribed }
 						onFollowToggle={ this.toggleFollowing }

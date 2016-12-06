@@ -24,8 +24,8 @@ const TAG_HEADER_HEIGHT = 140;
 class TagStreamHeader extends React.Component {
 
 	static propTypes = {
-		isPlaceholder: React.PropTypes.bool,
 		tag: React.PropTypes.string,
+		title: React.PropTypes.string,
 		showFollow: React.PropTypes.bool,
 		following: React.PropTypes.bool,
 		onFollowToggle: React.PropTypes.func,
@@ -54,10 +54,9 @@ class TagStreamHeader extends React.Component {
 	}
 
 	render() {
-		const { tag, isPlaceholder, showFollow, following, onFollowToggle, translate, hasBackButton } = this.props;
+		const { tag, title, showFollow, following, onFollowToggle, translate, hasBackButton } = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
-			'is-placeholder': isPlaceholder,
 			'has-back-button': hasBackButton
 		} );
 		const imageStyle = {};
@@ -71,10 +70,12 @@ class TagStreamHeader extends React.Component {
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
 
 			photoByWrapper = ( <span className="tag-stream__header-image-byline-label" /> );
-			authorLink = <a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
-												className="tag-stream__header-image-byline-link" rel="author">
-											{ decodeEntities( tagImage.author ) }
-										</a>;
+			const authorHref = `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }`;
+			authorLink = (
+				<a href={ authorHref } className="tag-stream__header-image-byline-link" rel="author">
+					{ decodeEntities( tagImage.author ) }
+				</a>
+			);
 		}
 
 		return (
@@ -93,7 +94,7 @@ class TagStreamHeader extends React.Component {
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />{ tag }
+						<Gridicon icon="tag" size={ 24 } />{ title }
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
