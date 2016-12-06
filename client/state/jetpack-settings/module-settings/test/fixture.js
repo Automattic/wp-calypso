@@ -11,3 +11,16 @@ export const moduleSettings = {
 		}
 	}
 };
+
+export const requests = {
+	12345678: {
+		'module-a': {
+			requesting: false,
+			updating: true,
+		},
+		'module-b': {
+			requesting: true,
+			updating: false
+		}
+	}
+};
