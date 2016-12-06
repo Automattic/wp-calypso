@@ -18,6 +18,8 @@ function hasDiscoverSlug( post, searchSlug ) {
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
 }
 
+export const discoverBlogId = config( 'discover_blog_id' );
+
 export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }

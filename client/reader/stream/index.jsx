@@ -444,17 +444,18 @@ export default class ReaderStream extends React.Component {
 		}
 	}
 
-	showFullPost( post, options ) {
-		options = options || {};
-		let hashtag = '';
-		if ( options.comments ) {
-			hashtag += '#comments';
+	showFullPost( post, options = {} ) {
+		const hashtag = options.comments ? '#comments' : '';
+		let query = '';
+		if ( post.referral ) {
+			const { blogId, postId } = post.referral;
+			query = '?ref_blog=' + blogId + '&ref_post=' + postId;
 		}
 		const method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag );
+			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag + query );
 		} else {
-			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag );
+			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag + query );
 		}
 	}
 

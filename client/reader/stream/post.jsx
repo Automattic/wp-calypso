@@ -196,6 +196,10 @@ const Post = React.createClass( {
 		// For Discover posts (but not site picks), open the original post in full post view
 		if ( this.state.originalPost ) {
 			postToOpen = this.state.originalPost;
+
+			if ( postToOpen ) {
+				postToOpen.referral = { blogId: DiscoverHelper.discoverBlogId, postId: this.props.ID }
+			}
 		}
 
 		this.props.handleClick( postToOpen, options );
