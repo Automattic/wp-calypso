@@ -28,7 +28,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
-import { getForumUrl } from 'my-sites/themes/helpers';
 import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryActiveTheme from 'components/data/query-active-theme';
@@ -37,7 +36,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive, isThemePurchased, getThemeRequestErrors } from 'state/themes/selectors';
+import { isThemeActive, isThemePurchased, getThemeRequestErrors, getThemeForumUrl } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -278,7 +277,7 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Have a question about this theme?' ) }
 					<small>{ description }</small>
 				</div>
-				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
+				<Button primary={ isPrimary } href={ this.props.forumUrl }>Visit forum</Button>
 			</Card>
 		);
 	},
@@ -601,6 +600,7 @@ export default connect(
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
+			forumUrl: getThemeForumUrl( state, id )
 		};
 	}
 )( ThemeSheetWithOptions );
