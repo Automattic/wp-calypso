@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -28,7 +29,7 @@ const PendingGappsTosNotice = React.createClass( {
 	getDefaultProps() {
 		return {
 			isCompact: false
-		}
+		};
 	},
 
 	componentDidMount() {
@@ -68,13 +69,13 @@ const PendingGappsTosNotice = React.createClass( {
 
 		switch ( severity ) {
 			case 'warning':
-				return this.translate( 'Attention!', translationOptions );
+				return this.props.translate( 'Attention!', translationOptions );
 
 			case 'error':
-				return this.translate( 'Urgent!', translationOptions );
+				return this.props.translate( 'Urgent!', translationOptions );
 
 			default:
-				return this.translate( 'You\'re almost there!', translationOptions );
+				return this.props.translate( 'You\'re almost there!', translationOptions );
 		}
 	},
 
@@ -102,7 +103,7 @@ const PendingGappsTosNotice = React.createClass( {
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain-compact"
-				text={ this.translate(
+				text={ this.props.translate(
 					'Email requires action',
 					'Emails require action',
 					{
@@ -112,7 +113,7 @@ const PendingGappsTosNotice = React.createClass( {
 				<NoticeAction
 					href={ href }
 					onClick={ this.generateFixClickHandler() }>
-						{ this.translate( 'Fix' ) }
+						{ this.props.translate( 'Fix' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -130,7 +131,7 @@ const PendingGappsTosNotice = React.createClass( {
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
-				text={ this.translate(
+				text={ this.props.translate(
 					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					{
@@ -143,7 +144,7 @@ const PendingGappsTosNotice = React.createClass( {
 					href={ this.getGappsLoginUrl( users[0], domainName ) }
 					onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: false } ) }
 					external>
-						{ this.translate( 'Log in' ) }
+						{ this.props.translate( 'Log in' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -158,7 +159,7 @@ const PendingGappsTosNotice = React.createClass( {
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
-				{ this.translate(
+				{ this.props.translate(
 					'%(exclamation)s To activate your new email addresses, please log in to G Suite and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
 						args: { exclamation },
@@ -174,7 +175,7 @@ const PendingGappsTosNotice = React.createClass( {
 								onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: true } ) }
 								target="_blank"
 								rel="noopener noreferrer">
-									{ this.translate( 'Log in' ) }
+									{ this.props.translate( 'Log in' ) }
 							</a>
 						</li>;
 					} )
@@ -201,4 +202,4 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 } );
 
-export default PendingGappsTosNotice;
+export default localize( PendingGappsTosNotice );
