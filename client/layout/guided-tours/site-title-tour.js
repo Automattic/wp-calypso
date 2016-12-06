@@ -33,7 +33,7 @@ export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
 		version="20161010"
-		path=""
+		path="/stats"
 		when={ and(
 						isEnabled( 'guided-tours/site-title' ),
 						hasSelectedSiteDefaultSiteTitle,
