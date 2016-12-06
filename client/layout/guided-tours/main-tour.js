@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import {
 	makeTour,
 	Tour,
