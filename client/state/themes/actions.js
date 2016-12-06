@@ -504,50 +504,42 @@ export function initiateThemeTransfer( siteId, file ) {
 	};
 }
 
-function poll( func, timeout = 10000, interval = 1000 ) {
-	const limit = Date.now() + timeout;
-
-	const checkCondition = ( resolve, reject ) => {
-		const result = func();
-		if ( result ) {
-			resolve( result );
-		} else if ( Date.now() < limit ) {
-			delay( checkCondition, interval, resolve, reject );
-		} else {
-			reject( new Error( 'Timed out' ) );
-		}
-	};
-
-	return new Promise( checkCondition );
-}
-
-export function themeTransferStatus( siteId, transferId ) {
-	return dispatch => {
-		poll( () => {
-			let complete = false;
-			wpcom.undocumented().transferStatus( siteId, transferId )
-				.then( ( { status, message, themeId } ) => {
-					dispatch( {
-						type: THEME_TRANSFER_STATUS_SUCCESS,
-						siteId,
-						transferId,
-						status,
-						message,
-						themeId,
-					} );
-					complete = ( status === 'complete' );
-				} )
-				.catch( ( error ) => {
-					dispatch( {
-						type: THEME_TRANSFER_STATUS_FAILURE,
-						siteId,
-						transferId,
-						error,
-					} );
-					// Don't poll again after an error
-					complete = true;
-				} );
-			return complete;
+const pollStatus = ( dispatch, siteId, transferId, interval, endTime ) => {
+	if ( Date.now() > endTime ) {
+		// timed-out, stop polling
+		return dispatch( {
+			type: THEME_TRANSFER_STATUS_FAILURE,
+			siteId,
+			transferId,
+			error: 'client timeout',
 		} );
+	}
+	return wpcom.undocumented().transferStatus( siteId, transferId )
+		.then( ( { status, message, themeId } ) => {
+			dispatch( {
+				type: THEME_TRANSFER_STATUS_SUCCESS,
+				siteId,
+				transferId,
+				status,
+				message,
+				themeId,
+			} );
+			if ( status !== 'complete' ) {
+				delay( pollStatus, interval, dispatch, siteId, transferId, interval, endTime );
+			}
+		} )
+		.catch( ( error ) => {
+			dispatch( {
+				type: THEME_TRANSFER_STATUS_FAILURE,
+				siteId,
+				transferId,
+				error,
+			} );
+		} );
+};
+
+export function themeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+	return dispatch => {
+		pollStatus( dispatch, siteId, transferId, interval, Date.now() + timeout );
 	};
 }
