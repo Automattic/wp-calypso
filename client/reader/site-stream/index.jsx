@@ -166,7 +166,7 @@ class SiteStream extends React.Component {
 				showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
-				<FeedHeader site={ site } feed={ this.state.feed } hasBackButton={ this.props.showBack } />
+				<FeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
 				{ featuredContent }
 			</Stream>
 
