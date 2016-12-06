@@ -14,7 +14,7 @@ var Dispatcher = require( 'dispatcher' ),
 	FeedStoreActionTypes = require( 'lib/feed-store/constants' ).action;
 
 var FeedSubscriptionActions = {
-	follow: function( url, fetchMeta ) {
+	follow: function( url, fetchMeta = true ) {
 		var meta;
 
 		if ( ! url ) {
