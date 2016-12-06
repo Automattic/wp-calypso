@@ -8,7 +8,7 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 	let url = '/plans/';
 
 	if ( cartItems.hasRenewalItem( cart ) ) {
-		let renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+		const renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 
 		return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 	}
@@ -23,5 +23,5 @@ export function getExitCheckoutUrl( cart, siteSlug ) {
 		url = '/design/';
 	}
 
-	return url + siteSlug;
+	return siteSlug ? url + siteSlug : url;
 }
