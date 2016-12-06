@@ -407,6 +407,21 @@ export function getThemeSignupUrl( state, theme ) {
 }
 
 /**
+ * Returns the URL for a premium theme's dedicated forum, or for the general themes
+ * forum for a free theme.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID
+ * @return {?String}         Theme forum URL
+ */
+export function getThemeForumUrl( state, themeId ) {
+	if ( isThemePremium( state, themeId ) ) {
+		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
+	}
+	return '//en.forums.wordpress.com/forum/themes';
+}
+
+/**
  * Returns the currently active theme on a given site.
  *
  * This selector previously worked using data from sites subtree.
