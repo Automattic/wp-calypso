@@ -16,6 +16,21 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { isEnabled } from 'state/ui/guided-tours/contexts';
 
+class RepositioningStep extends Step {
+
+	componentDidMount() {
+		super.componentDidMount();
+		this.interval = setInterval( () => {
+			this.onScrollOrResize();
+		}, 2000 );
+	}
+
+	componentWillUnmount() {
+		super.componentWillUnmount();
+		clearInterval( this.interval );
+	}
+}
+
 export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
@@ -23,11 +38,11 @@ export const EditorInsertMenuTour = makeTour(
 		version="20161129"
 		when={ isEnabled( 'post-editor/insert-menu' ) }
 	>
-		<Step
+		<RepositioningStep
 			arrow="left-top"
 			name="init"
 			placement="beside"
-			target=".post_editor__insert-menu-guided-tour-anchor"
+			target=".mce-wpcom-insert-menu"
 		>
 			<p>
 				{ translate(
@@ -41,6 +56,6 @@ export const EditorInsertMenuTour = makeTour(
 			<ButtonRow>
 				<Quit primary>{ translate( 'Close' ) }</Quit>
 			</ButtonRow>
-		</Step>
+		</RepositioningStep>
 	</Tour>
 );
