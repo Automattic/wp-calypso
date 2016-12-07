@@ -9,14 +9,14 @@ import { overEvery as and } from 'lodash';
  * Internal dependencies
  */
 import {
-	makeTour,
-	Tour,
-	Step,
-	Next,
-	Quit,
+	ButtonRow,
 	Continue,
 	Link,
-	ButtonRow,
+	makeTour,
+	Next,
+	Quit,
+	Step,
+	Tour,
 } from 'layout/guided-tours/config-elements';
 import {
 	hasSelectedSiteDefaultSiteTitle,
