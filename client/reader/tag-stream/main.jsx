@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { has, trim } from 'lodash';
+import { has } from 'lodash';
 import twemoji from 'twemoji';
 import emojiText from 'emoji-text';
 
@@ -99,9 +99,9 @@ const TagStream = React.createClass( {
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( twemoji.test( title ) ) {
-			imageSearchString = trim( emojiText.convert( title, {
-				delimiter: ' '
-			} ) );
+			imageSearchString = emojiText.convert( title, {
+				delimiter: ''
+			} );
 		}
 
 		return (
