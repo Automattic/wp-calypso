@@ -8,7 +8,13 @@ import createSelector from 'lib/create-selector';
  * Internal dependencies
  */
 import config from 'config';
-import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteOption,
+	isJetpackSite,
+	canJetpackSiteManage,
+	hasJetpackSiteJetpackThemesExtendedFeatures
+} from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { isPremiumTheme, oldShowcaseUrl } from './utils';
 import {
@@ -285,7 +291,8 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
 		return null;
 	}
 
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( isJetpackSite( state, siteId ) &&
+		! ( canJetpackSiteManage( state, siteId ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) ) ) {
 		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + theme.id;
 	}
 
