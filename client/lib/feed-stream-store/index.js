@@ -12,7 +12,9 @@ import FeedStream from './feed-stream';
 import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
-import wpcomUndoc from 'lib/wpcom-undocumented';
+import wpcom from 'lib/wp';
+
+const wpcomUndoc = wpcom.undocumented();
 
 function feedKeyMaker( post ) {
 	return {
