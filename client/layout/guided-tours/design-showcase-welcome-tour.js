@@ -57,7 +57,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 		</Step>
 
 		<Step name="search"
-			target=".themes-magic-search-card .search__icon-navigation"
+			target=".themes-magic-search-card .search__icon-navigation, .themes__search-card .search__icon-navigation"
 			arrow="top-left"
 			placement="below"
 			next="theme-options"
