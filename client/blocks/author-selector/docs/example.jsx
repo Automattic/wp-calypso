@@ -11,13 +11,14 @@ import AuthorSelector from '../';
 import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-function AuthorSelectorExample( { primarySiteId, displayName } ) {
+function AuthorSelectorExample( { primarySiteId, displayName, ...props } ) {
 	return (
 		<Card>
 			<AuthorSelector
 				siteId={ primarySiteId }
 				allowSingleUser
 				popoverPosition="bottom"
+				{ ...props }
 			>
 				<span>You are { displayName } </span>
 			</AuthorSelector>

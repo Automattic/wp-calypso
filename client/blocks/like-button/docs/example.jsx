@@ -1,7 +1,7 @@
 /**
 * External dependencies
 */
-import React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
@@ -43,11 +43,27 @@ const LikeButtons = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
+	defaultProps: {
+		tagName: 'a',
+		likeCount: 0,
+		isShowingOff: false
+	},
+
 	render() {
+		if (this.props.isShowingOff) {
+			return (
+				<div>
+					<Card compact>
+						<SimpleLikeButtonContainer { ...this.props } />
+					</Card>
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="a" likeCount={ 0 } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={ 0 } { ...this.props } />
 				</Card>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } />
