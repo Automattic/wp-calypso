@@ -273,8 +273,8 @@ export function requestTheme( themeId, siteId ) {
 
 		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
 		// the regular themeDetails() method for Jetpack sites yet.
-		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( theme ) => {
-			dispatch( receiveThemes( theme.themes, siteId ) );
+		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( { themes } ) => {
+			dispatch( receiveThemes( themes, siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
