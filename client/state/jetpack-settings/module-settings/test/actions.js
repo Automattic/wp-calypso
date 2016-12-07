@@ -39,7 +39,7 @@ describe( 'actions', () => {
 					.query( {
 						path: '/module/' + moduleSlug
 					} )
-					.reply( 200, settings, {
+					.reply( 200, { data: settings }, {
 						'Content-Type': 'application/json'
 					} );
 			} );

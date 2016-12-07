@@ -112,12 +112,7 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
  */
 Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( {
-		path: '/jetpack-blogs/' + siteId + '/rest-api/',
-		body: {
-			path: '/module/' + moduleSlug
-		}
-	}, fn );
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/module/' + moduleSlug }, fn );
 };
 
 /*
@@ -133,9 +128,7 @@ Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlu
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post( {
 		path: '/jetpack-blogs/' + siteId + '/rest-api/',
-		query: {
-			path: '/module/' + moduleSlug
-		},
+		query: { path: '/module/' + moduleSlug },
 		body: settings
 	}, fn );
 };
