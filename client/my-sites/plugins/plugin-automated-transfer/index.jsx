@@ -4,10 +4,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { AUTOMATED_TRANSFER_STATUS } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import Notice from 'components/notice';
@@ -29,36 +31,40 @@ class PluginAutomatedTransfer extends Component {
 
 	getNoticeText = ( pluginName = '' ) => {
 		const { status, translate } = this.props;
+		const { START, SETUP, LEAVING, CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
 
 		switch ( status ) {
-			case 'start': return translate( 'Installing %s…', { args: pluginName } );
-			case 'setup': return translate( 'Now configuring your site. This may take a few minutes.' );
-			case 'leaving': return translate( "Don't leave quite yet! Just a bit longer." );
-			case 'conflicts': return translate( 'Sorry, we found some conflicts to fix before proceding.' );
-			case 'complete': return translate( 'Successfully installed %s!', { args: pluginName } );
+			case START: return translate( 'Installing %s…', { args: pluginName } );
+			case SETUP : return translate( 'Now configuring your site. This may take a few minutes.' );
+			case LEAVING: return translate( "Don't leave quite yet! Just a bit longer." );
+			case CONFLICTS: return translate( 'Sorry, we found some conflicts to fix before proceding.' );
+			case COMPLETE: return translate( 'Successfully installed %s!', { args: pluginName } );
 		}
 	}
 
 	getStatus = status => {
+		const { CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
 		switch ( status ) {
-			case 'conflicts': return 'is-error';
-			case 'complete': return 'is-success';
+			case CONFLICTS: return 'is-error';
+			case COMPLETE: return 'is-success';
 			default: return 'is-info';
 		}
 	}
 
 	getIcon = status => {
+		const { CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
 		switch ( status ) {
-			case 'conflicts': return 'notice';
-			case 'complete': return 'checkmark';
+			case CONFLICTS: return 'notice';
+			case COMPLETE: return 'checkmark';
 			default: return 'sync';
 		}
 	}
 
 	render() {
 		const { plugin, status, translate } = this.props;
+		const { CONFLICTS } = AUTOMATED_TRANSFER_STATUS;
 
-		if ( ! status ) {
+		if ( ! status || ! includes( AUTOMATED_TRANSFER_STATUS, status ) ) {
 			return null;
 		}
 
@@ -70,7 +76,7 @@ class PluginAutomatedTransfer extends Component {
 				status={ this.getStatus( status ) }
 				text={ this.getNoticeText( plugin.name ) }
 			>
-				{ status === 'conflicts' &&
+				{ CONFLICTS === status &&
 					<NoticeAction href="#">
 						{ translate( 'View Conflicts' ) }
 					</NoticeAction>
