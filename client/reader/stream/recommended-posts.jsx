@@ -26,12 +26,16 @@ export class RecommendedPosts extends React.PureComponent {
 	}
 
 	handlePostClick = ( post ) => {
-		stats.recordTrackForPost( 'calypso_reader_in_stream_rec_post_clicked', post );
+		stats.recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
+			recommendation_source: 'in-stream',
+		} );
 		stats.recordAction( 'in_stream_rec_post_click' );
 	}
 
 	handleSiteClick = ( post ) => {
-		stats.recordTrackForPost( 'calypso_reader_in_stream_rec_site_clicked', post );
+		stats.recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
+			recommendation_source: 'in-stream',
+		} );
 		stats.recordAction( 'in_stream_rec_site_click' );
 	}
 

@@ -101,7 +101,8 @@ const RecommendedForYou = React.createClass( {
 		recordAction( 'click_site_on_recommended_for_you' );
 		recordGaEvent( 'Clicked Site on Recommended For You' );
 		recordTrack( 'calypso_reader_recommended_site_clicked', {
-			clicked_url: clickedUrl
+			clicked_url: clickedUrl,
+			recommendation_source: 'recommendations-page',
 		} );
 	},
 

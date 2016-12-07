@@ -19,7 +19,7 @@ import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
-import { recordTrackForPost } from 'reader/stats';
+import { recordTrackForPost, recordAction } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
@@ -31,13 +31,28 @@ import config from 'config';
 const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
 
 function RecommendedPosts( { post, site } ) {
+	function handlePostClick() {
+		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
+			recommendation_source: 'empty-search',
+		} );
+		recordAction( 'search_page_rec_post_click' );
+	}
+
+	function handleSiteClick() {
+		recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
+			recommendation_source: 'empty-search',
+		} );
+		recordAction( 'search_page_rec_site_click' );
+	}
+
 	if ( ! site ) {
 		site = { title: post.site_name, };
 	}
 
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site } />
+			<RelatedPostCard post={ post } site={ site }
+				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } />
 		</div>
 	);
 }

@@ -116,6 +116,7 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_searchcard_clicked' )
 	.add( 'calypso_reader_author_link_clicked' )
 	.add( 'calypso_reader_permalink_click' )
+	.add( 'calypso_reader_recommended_post_clicked' )
 ;
 
 export function recordTracksRailcar( action, eventName, railcar ) {
