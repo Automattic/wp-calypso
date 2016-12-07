@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import { has } from 'lodash';
+import twemoji from 'twemoji';
+import emojiText from 'emoji-text';
 
 /**
  * Internal Dependencies
@@ -93,6 +95,15 @@ const TagStream = React.createClass( {
 		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
 		const title = decodeURIComponent( this.state.title );
 
+		let imageSearchString = this.props.tag;
+
+		// If the tag contains emoji, convert to text equivalent
+		if ( twemoji.test( title ) ) {
+			imageSearchString = emojiText.convert( title, {
+				delimiter: ''
+			} );
+		}
+
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true }>
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
@@ -100,6 +111,8 @@ const TagStream = React.createClass( {
 				{ config.isEnabled( 'reader/refresh/stream' )
 					? <TagStreamHeader
 						tag={ this.props.tag }
+						title={ title }
+						imageSearchString={ imageSearchString }
 						showFollow={ this.state.canFollow }
 						following={ this.state.subscribed }
 						onFollowToggle={ this.toggleFollowing }
