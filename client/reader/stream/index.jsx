@@ -14,7 +14,7 @@ import ReaderMain from 'components/reader-main';
 import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
-import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import ListGap from 'reader/list-gap';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
@@ -484,7 +484,10 @@ export default class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isRecommendationBlock ) {
-			return <RecommendedPosts recommendations={ postKey.recommendations } key={ `recs-${ index }` } />;
+			return <RecommendedPosts
+				recommendations={ postKey.recommendations }
+				storeId={ this.props.recommendationsStore.id }
+				key={ `recs-${ index }` } />;
 		}
 
 		const itemKey = this.getPostRef( postKey );

@@ -1,10 +1,16 @@
-import moment from 'moment';
-import i18n from 'i18n-calypso';
+/**
+ * External Dependencies
+ */
+ import moment from 'moment';
+ import i18n from 'i18n-calypso';
 
+/**
+ * Internal Dependencies
+ */
 import analytics from 'lib/analytics';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 
 export function ensureStoreLoading( store, context ) {
 	if ( store.getPage() === 1 ) {

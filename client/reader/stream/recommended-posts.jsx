@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { map, some } from 'lodash';
+import { map, partial, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,6 +12,12 @@ import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import PostStore from 'lib/feed-post-store';
 import Gridicon from 'components/gridicon';
 import * as stats from 'reader/stats';
+import Button from 'components/button';
+import { dismissPost } from 'lib/feed-stream-store/actions';
+
+function dismissRecommendation( storeId, post ) {
+	dismissPost( storeId, post );
+}
 
 export class RecommendedPosts extends React.PureComponent {
 	state = {
@@ -61,7 +67,17 @@ export class RecommendedPosts extends React.PureComponent {
 					{
 						map(
 							this.state.posts,
-							post => <li className="reader-stream__recommended-posts-list-item" key={ post.global_ID }><RelatedPostCard post={ post } onPostClick={ this.handlePostClick } onSiteClick={ this.handleSiteClick } /></li>
+							post => ( <li className="reader-stream__recommended-posts-list-item" key={ post.global_ID }>
+								<Button borderless title={ this.props.translate( 'Dismiss this recommendation' ) }
+									className="reader-stream__recommended-post-dismiss"
+									onClick={ partial( dismissRecommendation, this.props.storeId, post ) }>
+									<Gridicon icon="cross" size={ 14 } />
+								</Button>
+								<RelatedPostCard
+									post={ post }
+									onPostClick={ this.handlePostClick }
+									onSiteClick={ this.handleSiteClick } />
+							</li> )
 						)
 					}
 				</ul>

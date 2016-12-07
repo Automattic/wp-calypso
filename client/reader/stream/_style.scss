@@ -452,6 +452,22 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex-grow: 1;
 	list-style-type: none;
 	margin-top: -3px;
+	position: relative;
+
+	.reader-stream__recommended-post-dismiss {
+		position: absolute;
+			top: -40px;
+			right: 0;
+		padding-left: 24px;
+		padding-bottom: 0;
+
+		.gridicon {
+			fill: lighten( $gray, 10% );
+			width: 14px;
+			height: 14px;
+			top: 0;
+		}
+	}
 
 	&:first-child {
 		margin-right: 10px;

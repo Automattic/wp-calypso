@@ -11,6 +11,7 @@ import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import SiteStoreActions from 'lib/reader-site-store/actions';
+import wpcom from 'lib/wp';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -176,4 +177,16 @@ export function receiveGap( id, gap, error, data ) {
 		error: error,
 		data: data
 	} );
+}
+
+export function dismissPost( id, post ) {
+	Dispatcher.handleViewAction( {
+		type: ActionType.DISMISS_FEED_STREAM_POST,
+		postKey: {
+			blogId: post.site_ID,
+			postId: post.ID
+		},
+		id
+	} );
+	wpcom.undocumented().me().dimissSite( post.site_ID );
 }

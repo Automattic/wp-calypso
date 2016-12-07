@@ -24,7 +24,7 @@ import FeedError from 'reader/feed-error';
 import FeedStore from 'lib/feed-store';
 import FeedStoreActions from 'lib/feed-store/actions';
 import { state as FeedState } from 'lib/feed-store/constants';
-import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import smartSetState from 'lib/react-smart-set-state';
 

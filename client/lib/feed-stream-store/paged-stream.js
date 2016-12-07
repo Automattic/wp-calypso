@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, forEach, map } from 'lodash';
+import { assign, filter, forEach, map, remove, shuffle } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
@@ -82,8 +82,8 @@ export default class PagedStream {
 			case ActionTypes.SELECT_PREV_ITEM:
 				this.selectPrevItem( action.selectedIndex );
 				break;
-			case ActionTypes.CHANGE_QUERY:
-				this.resetQuery( action.query );
+			case ActionTypes.DISMISS_FEED_STREAM_POST:
+				this.dismissPostsFromSite( action.postKey.blogId );
 				break;
 		}
 	}
@@ -190,7 +190,7 @@ export default class PagedStream {
 	}
 
 	setIsFetchingNextPage( val ) {
-		this.isFetchingNextPage = val;
+		this._isFetchingNextPage = val;
 		this.emitChange();
 	}
 
@@ -246,6 +246,20 @@ export default class PagedStream {
 			this.page++;
 			this.emitChange();
 		}
+	}
+
+	dismissPostsFromSite( blogId ) {
+		const removed = remove( this.postKeys, { blogId } );
+		if ( removed.length === 0 ) {
+			return; // nothing changed
+		}
+		// reshuffle what we have
+		this.postKeys = shuffle( this.postKeys );
+		// remove from the keyed index
+		forEach( removed, ( { postId } ) => {
+			this.postById[ postId ] = false;
+		} );
+		this.emitChange();
 	}
 }
 

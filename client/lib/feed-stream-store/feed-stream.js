@@ -21,7 +21,7 @@ import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import FeedStreamActions from './actions';
+import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';

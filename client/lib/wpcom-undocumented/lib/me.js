@@ -217,6 +217,20 @@ UndocumentedMe.prototype.unblockSite = function( site, callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.dismissSite = function( site, callback ) {
+	const args = {
+		path: '/me/dismiss/sites/' + encodeURIComponent( site ) + '/new',
+	};
+	return this.wpcom.req.post( args, callback );
+};
+
+UndocumentedMe.prototype.undismissSite = function( site, callback ) {
+	const args = {
+		path: '/me/dismiss/sites/' + encodeURIComponent( site ) + '/delete',
+	};
+	return this.wpcom.req.post( args, callback );
+};
+
 UndocumentedMe.prototype.devices = function( callback ) {
 	var args = {
 		apiVersion: '1.1',
