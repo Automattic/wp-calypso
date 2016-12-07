@@ -54,7 +54,7 @@ class TagStreamHeader extends React.Component {
 	}
 
 	render() {
-		const { tag, isPlaceholder, showFollow, following, onFollowToggle, translate, hasBackButton } = this.props;
+		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, hasBackButton, imageSearchString } = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
@@ -79,7 +79,7 @@ class TagStreamHeader extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<QueryReaderTagImages tag={ tag } />
+				<QueryReaderTagImages tag={ imageSearchString } />
 				{ showFollow &&
 					<div className="tag-stream__header-follow">
 						<FollowButton
@@ -93,7 +93,7 @@ class TagStreamHeader extends React.Component {
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />{ tag }
+						<Gridicon icon="tag" size={ 24 } />{ title }
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
@@ -114,7 +114,7 @@ class TagStreamHeader extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			tagImages: getTagImages( state, ownProps.tag )
+			tagImages: getTagImages( state, ownProps.imageSearchString )
 		};
 	}
 )( localize( TagStreamHeader ) );
