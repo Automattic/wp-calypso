@@ -46,13 +46,12 @@ export const SiteTitleTour = makeTour(
 	>
 		<Step name="init" placement="right" next="click-settings">
 			<p>
-				{
-					translate( "Hey there! We noticed you haven't changed the title of your site yet. Want to change it? " )
-				}
+				Hey there! We noticed you haven't changed the title of your site yet.
+				Want to change it?
 			</p>
 			<ButtonRow>
-				<Next step="click-settings">{ translate( 'Yes, please!' ) }</Next>
-				<Quit>{ translate( 'No thanks' ) }</Quit>
+				<Next step="click-settings">Yes, please!</Next>
+				<Quit>No thanks</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -64,14 +63,7 @@ export const SiteTitleTour = makeTour(
 			shouldScrollTo
 		>
 			<Continue target="settings" step="site-title-input" click>
-				{
-					translate( 'Click {{strong}}{{Gridicon/}} Settings{{/strong}} to continue.', {
-						components: {
-							Gridicon: <Gridicon icon="cog" size={ 24 } />,
-							strong: <strong />,
-						}
-					} )
-				}
+				Click <strong><Gridicon icon="cog" size={ 24 } /> Settings</strong> to continue.
 			</Continue>
 		</Step>
 
@@ -81,14 +73,12 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<p>
-				{
-					translate( 'You can change the site title here. The site title appears in places like the top ' +
-						'of your web browser and in search results.' )
-				}
+				You can change the site title here. The site title appears in places
+				like the top of your web browser and in search results.
 			</p>
 			<ButtonRow>
-				<Next step="site-tagline-input">{ translate( 'Looks Good!' ) }</Next>
-				<Quit>{ translate( 'Cancel' ) }</Quit>
+				<Next step="site-tagline-input">Looks Good!</Next>
+				<Quit>Cancel</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -98,14 +88,12 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<p>
-				{
-					translate( 'This is the tagline of your site. It should explain what your site is about in few words. ' +
-						'It usually appears right bellow your site title.' )
-				}
+				This is the tagline of your site. It should explain what your site
+				is about in few words. It usually appears right bellow your site title.
 			</p>
 			<ButtonRow>
-				<Next step="click-save">{ translate( 'Great!' ) }</Next>
-				<Quit>{ translate( 'Cancel' ) }</Quit>
+				<Next step="click-save">Great!</Next>
+				<Quit>Cancel</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -115,21 +103,14 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<Continue target="settings-site-profile-save" step="finish" click>
-				{
-					translate( "Don't forget to save your changes." )
-				}
+				Don't forget to save your changes.
 			</Continue>
 		</Step>
 
 		<Step name="finish" placement="center">
 			<p>
-				{
-					translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
-						components: {
-							strong: <strong />,
-						}
-					} )
-				}
+				<strong>That's it!</strong>
+				Your visitors can now easily identify your website by its title.
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( "We're all done!" ) }</Quit>
