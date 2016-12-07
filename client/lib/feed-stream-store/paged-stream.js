@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, forEach, map, remove, shuffle } from 'lodash';
+import { assign, filter, findIndex, forEach, map } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
@@ -249,16 +249,19 @@ export default class PagedStream {
 	}
 
 	dismissPostsFromSite( blogId ) {
-		const removed = remove( this.postKeys, { blogId } );
-		if ( removed.length === 0 ) {
-			return; // nothing changed
+		let indexToRemove;
+		const newPostKeys = [ ...this.postKeys ];
+		while ( -1 !== ( indexToRemove = findIndex( newPostKeys, { blogId } ) ) ) {
+			let removedItem;
+			if ( indexToRemove !== newPostKeys.length - 1 ) {
+				// pop the last item off the end and insert in the place of the current thing
+				[ removedItem ] = newPostKeys.splice( indexToRemove, 1, newPostKeys.pop() );
+			} else {
+				removedItem = newPostKeys.pop();
+			}
+			this.postById[ removedItem.postId ] = false;
 		}
-		// reshuffle what we have
-		this.postKeys = shuffle( this.postKeys );
-		// remove from the keyed index
-		forEach( removed, ( { postId } ) => {
-			this.postById[ postId ] = false;
-		} );
+		this.postKeys = newPostKeys;
 		this.emitChange();
 	}
 }
