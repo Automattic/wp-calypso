@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import wrapWithClickOutside from 'react-click-outside';
 
 /**
  * Internal dependencies
@@ -29,9 +30,21 @@ class PluginAutomatedTransfer extends Component {
 		},
 	}
 
+	state = {
+		clickOutside: false,
+	}
+
+	componentWillReceiveProps() {
+		this.setState( { clickOutside: false } );
+	}
+
 	getNoticeText = ( pluginName = '' ) => {
 		const { status, translate } = this.props;
 		const { START, SETUP, LEAVING, CONFLICTS, COMPLETE } = transferStates;
+
+		if ( this.state.clickOutside ) {
+			return translate( "Don't leave quite yet! Just a bit longer." );
+		}
 
 		switch ( status ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: pluginName } } );
@@ -44,6 +57,9 @@ class PluginAutomatedTransfer extends Component {
 
 	getStatus = status => {
 		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( this.state.clickOutside ) {
+			return 'is-info';
+		}
 		switch ( status ) {
 			case CONFLICTS: return 'is-error';
 			case COMPLETE: return 'is-success';
@@ -53,10 +69,22 @@ class PluginAutomatedTransfer extends Component {
 
 	getIcon = status => {
 		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( this.state.clickOutside ) {
+			return 'sync';
+		}
 		switch ( status ) {
 			case CONFLICTS: return 'notice';
 			case COMPLETE: return 'checkmark';
 			default: return 'sync';
+		}
+	}
+
+	handleClickOutside( event ) {
+		const { status } = this.props;
+		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( CONFLICTS !== status && COMPLETE !== status ) {
+			event.preventDefault();
+			this.setState( { clickOutside: true } );
 		}
 	}
 
@@ -95,4 +123,4 @@ const mapStateToProps = state => {
 	return { status };
 };
 
-export default connect( mapStateToProps )( localize( PluginAutomatedTransfer ) );
+export default connect( mapStateToProps )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );
