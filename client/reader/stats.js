@@ -1,9 +1,13 @@
-import assign from 'lodash/assign';
+/**
+ * External Dependencies
+ */
+import { assign, partial } from 'lodash';
 import debugFactory from 'debug';
-import partial from 'lodash/partial';
 
+/**
+ * Internal Dependencies
+ */
 import { mc, ga, tracks } from 'lib/analytics';
-
 import SubscriptionStore from 'lib/reader-feed-subscriptions';
 
 const debug = debugFactory( 'calypso:reader:stats' );
@@ -23,7 +27,7 @@ export function recordPermalinkClick( where, post ) {
 		reader_actions: 'visited_post_permalink',
 		reader_permalink_source: where
 	} );
-	recordGaEvent( 'Clicked Post Permalink', where )
+	recordGaEvent( 'Clicked Post Permalink', where );
 	const trackEvent = 'calypso_reader_permalink_click';
 	const args = {
 		source: where
@@ -116,6 +120,8 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_searchcard_clicked' )
 	.add( 'calypso_reader_author_link_clicked' )
 	.add( 'calypso_reader_permalink_click' )
+	.add( 'calypso_reader_recommended_post_clicked' )
+	.add( 'calypso_reader_recommended_site_clicked' )
 ;
 
 export function recordTracksRailcar( action, eventName, railcar ) {
