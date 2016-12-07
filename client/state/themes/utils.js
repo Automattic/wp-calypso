@@ -2,7 +2,7 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { filter, omit, omitBy, split } from 'lodash';
+import { filter, get, mapKeys, omit, omitBy, split } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,24 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
 /**
  * Utility
  */
+
+ /**
+  * Normalizes a theme obtained from the WordPress.com REST API
+  *
+  * @param  {Object} theme  Themes object
+  * @return {Object}        Normalized theme object
+  */
+export function normalizeWpcomTheme( theme ) {
+	const attributesMap = {
+		description_long: 'descriptionLong',
+		support_documentation: 'supportDocumentation',
+		download_uri: 'download'
+	};
+
+	return mapKeys( theme, ( value, key ) => (
+		get( attributesMap, key, key )
+	) );
+}
 
 /**
  * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
