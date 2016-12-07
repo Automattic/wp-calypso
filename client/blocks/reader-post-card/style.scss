@@ -350,6 +350,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	cursor: pointer;
 	font-size: 18px;
 	font-weight: 700;
+	display: block;
 
 	&:hover {
 		color: $gray-dark;
@@ -377,6 +378,22 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 		&::before {
 			@include long-content-fade( $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+
+	.reader-post-card__excerpt[direction=rtl] {
+		&::before {
+			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+
+	.reader-post-card__excerpt[direction=ltr] {
+		&::before {
+			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
 			height: 15px * 1.6;
 		}
