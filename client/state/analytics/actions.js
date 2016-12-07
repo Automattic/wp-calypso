@@ -1,15 +1,22 @@
+/**
+ * External dependencies
+ */
 import curry from 'lodash/curry';
 import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 import merge from 'lodash/merge';
 import property from 'lodash/property';
 
+/**
+ * Internal dependencies
+ */
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP
 } from 'state/action-types';
+import { hasAlreadyBeenRecorded } from './selectors';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -50,11 +57,24 @@ export const recordEvent = ( service, args ) => ( {
 	}
 } );
 
+export const recordEventOnce = ( eventId, service, args ) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! hasAlreadyBeenRecorded( state, eventId ) ) {
+		dispatch( recordEvent( service, { eventId, ...args } ) );
+	}
+};
+
 export const recordGoogleEvent = ( category, action, label, value ) =>
 	recordEvent( 'ga', { category, action, label, value } );
 
 export const recordTracksEvent = ( name, properties ) =>
 	recordEvent( 'tracks', { name, properties } );
+
+export const recordGoogleEventOnce = ( eventId, category, action, label, value ) =>
+	recordEventOnce( eventId, 'ga', { category, action, label, value } );
+
+export const recordTracksEventOnce = ( eventId, name, properties ) =>
+	recordEventOnce( eventId, 'tracks', { name, properties } );
 
 export const recordPageView = ( url, title, service ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
