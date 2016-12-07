@@ -3,7 +3,12 @@
  */
 import config from 'config';
 import { abtest } from 'lib/abtest';
-import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSectionName,
+	getSelectedSite,
+	getSelectedSiteId,
+	isPreviewShowing as isPreviewShowingSelector,
+} from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser, canCurrentUser } from 'state/current-user/selectors';
 import { hasDefaultSiteTitle } from 'state/sites/selectors';

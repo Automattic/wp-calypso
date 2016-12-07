@@ -65,9 +65,9 @@ export const SiteTitleTour = makeTour(
 		>
 			<Continue target="settings" step="site-title-input" click>
 				{
-					translate( 'Click {{strong}}{{GridIcon/}} Settings{{/strong}} to continue.', {
+					translate( 'Click {{strong}}{{Gridicon/}} Settings{{/strong}} to continue.', {
 						components: {
-							GridIcon: <Gridicon icon="cog" size={ 24 } />,
+							Gridicon: <Gridicon icon="cog" size={ 24 } />,
 							strong: <strong />,
 						}
 					} )
@@ -121,7 +121,7 @@ export const SiteTitleTour = makeTour(
 			</Continue>
 		</Step>
 
-		<Step name="finish"	placement="center">
+		<Step name="finish" placement="center">
 			<p>
 				{
 					translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
