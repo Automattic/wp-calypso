@@ -377,6 +377,11 @@ export function editedPostHasContent( state, siteId, postId ) {
 		!! editedPost &&
 		(
 			some( [ 'title', 'excerpt' ], ( field ) => editedPost[ field ] && !! editedPost[ field ].trim() ) ||
+			/*
+			 * We don't yet have the notion of post's raw content in the Redux state so we rely on post content attribute here
+			 * when we do, we'll want it to reflect the Flux implementation's emptiness check
+			 * where raw content is preferred to the content property if available
+			 */
 			! isEmptyContent( editedPost.content )
 		)
 	);

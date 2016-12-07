@@ -1029,10 +1029,10 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
  * @return {Boolean} true if the site's permalinks are editable
  */
 export function areSitePermalinksEditable( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site || ! site.options || ! site.options.permalink_structure ) {
+	const permalinkStructure = getSiteOption( state, siteId, 'permalink_structure' );
+	if ( ! permalinkStructure ) {
 		return false;
 	}
 
-	return /\/\%postname\%\/?/.test( site.options.permalink_structure );
+	return /\/\%postname\%\/?/.test( permalinkStructure );
 }
