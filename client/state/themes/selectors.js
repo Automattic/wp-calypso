@@ -292,7 +292,11 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
 	}
 
 	if ( isJetpackSite( state, siteId ) &&
-		! ( canJetpackSiteManage( state, siteId ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) ) ) {
+		! (
+			config.isEnabled( 'manage/themes/details/jetpack' ) &&
+			canJetpackSiteManage( state, siteId ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+		) ) {
 		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + theme.id;
 	}
 
