@@ -208,6 +208,8 @@ export function requestThemes( siteId, query = {} ) {
 
 			let filteredThemes = themes;
 			if ( siteId !== 'wpcom' ) {
+				// A Jetpack site's themes endpoint ignores the query, returning an unfiltered list of all installed themes instead,
+				// So we have to filter on the client side instead.
 				filteredThemes = filterThemesForJetpack( themes, query );
 			}
 
