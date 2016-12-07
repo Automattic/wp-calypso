@@ -102,7 +102,8 @@ function injectRecommendations( posts, recs = [] ) {
 		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
-				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK )
+				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
+				index: recIndex
 			};
 			recIndex += RECS_PER_BLOCK;
 			return [
@@ -489,6 +490,7 @@ export default class ReaderStream extends React.Component {
 		if ( postKey.isRecommendationBlock ) {
 			return <RecommendedPosts
 				recommendations={ postKey.recommendations }
+				index={ postKey.index }
 				storeId={ this.props.recommendationsStore.id }
 				key={ `recs-${ index }` } />;
 		}
