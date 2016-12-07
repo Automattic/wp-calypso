@@ -44,7 +44,12 @@ import {
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeIdFromStylesheet, filterThemesForJetpack, normalizeWpcomTheme } from './utils';
+import {
+	getThemeIdFromStylesheet,
+	filterThemesForJetpack,
+	normalizeWpcomTheme,
+	normalizeWporgTheme
+} from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -260,7 +265,7 @@ export function requestTheme( themeId, siteId ) {
 
 		if ( siteId === 'wporg' ) {
 			return wporg.fetchThemeInformation( themeId ).then( ( theme ) => {
-				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
 				dispatch( {
 					type: THEME_REQUEST_SUCCESS,
 					siteId,
