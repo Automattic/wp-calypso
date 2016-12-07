@@ -40,16 +40,22 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 // Recommendations in Search
 .is-reader-page .search-stream .reader__content {
-	padding-top: 100px;
+	display: flex;
+	flex-flow: wrap;
+	margin-top: 80px;
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		flex-flow: initial;
+		flex-direction: column;
+	}
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 130px;
+	}
 }
 
 .is-reader-page .search-stream__input-card.card {
 	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
- }
-
- .is-reader-page .search-stream .reader__content {
-	display: flex;
-	flex-flow: wrap;
  }
 
  .is-reader-page .search-stream__blank-suggestions {
@@ -61,12 +67,42 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border-bottom: 1px solid lighten( $gray, 20% );
 	display: flex;
 	flex-basis: calc( 50% - 15px );
-	margin: 0 15px 0 0;
+	margin: 0 0 0 15px;
 	padding: 20px 0;
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		flex-basis: 100%;
+		margin: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-basis: calc( 50% - 30px );
+		margin: 0 15px 0;
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-small}  {
+		flex-basis: 100%;
+		margin: 0 15px 0;
+	}
 
 	&:nth-child( 2n+0 ) {
 		flex-basis: calc( 50% - 15px );
-		margin: 0 0 0 15px;
+		margin: 0 15px 0 0;
+
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			flex-basis: 100%;
+			margin: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			flex-basis: calc( 50% - 30px );
+			margin: 0 15px 0;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			flex-basis: 100%;
+			margin: 0 15px 0;
+		}
 	}
 
 	 .has-thumbnail {
@@ -84,25 +120,34 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 	}
 
+	.reader-related-card-v2__featured-image {
+		margin: 0 0 19px;
+
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			margin: 0 15px 0 0;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			margin: 0 15px 0 0;
+		}
+	}
+
 	.reader-related-card-v2__site-info {
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin-top: 35px;
+			margin-top: 45px;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin-top: 35px;
+			margin-top: 45px;
 		}
 	}
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-basis: 100%;
-		margin-right: 0;
-	}
+	.reader-related-card-v2__meta .follow-button {
 
-	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-basis: 100%;
-		margin-right: 0;
+		@include breakpoint( "<480px" ) {
+			margin-right: 0;
+		}
 	}
  }
 
