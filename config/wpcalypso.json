@@ -27,6 +27,7 @@
 		"guided-tours": true,
 		"guided-tours/main": false,
 		"guided-tours/design-showcase-welcome": true,
+		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"guided-tours/themes": true,
 		"help": true,

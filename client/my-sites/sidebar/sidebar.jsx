@@ -497,7 +497,8 @@ export class MySitesSidebar extends Component {
 				link={ siteSettingsLink }
 				onNavigate={ this.onNavigate }
 				icon="cog"
-				preloadSectionName="settings" />
+				preloadSectionName="settings"
+				tipTarget="settings" />
 		);
 	}
 
