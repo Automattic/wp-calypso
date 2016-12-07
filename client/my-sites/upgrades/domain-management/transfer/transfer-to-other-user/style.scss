@@ -1,7 +1,8 @@
-.transfer-to-other-user {
-
-}
 .transfer-to-other-user__select {
-	width: 300px;
 	margin-top: 20px;
+	width: 100%;
+	@include breakpoint('>480px') {
+		width: 300px;
+	}
+
 }

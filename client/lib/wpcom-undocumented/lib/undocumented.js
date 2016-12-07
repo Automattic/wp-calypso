@@ -1670,6 +1670,10 @@ Undocumented.prototype.declineTransfer = function( domainName, fn ) {
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
+Undocumented.prototype.transferToUser = function( siteId, domainName, targetUserId, fn ) {
+	return this.wpcom.req.post( '/sites/' + siteId +'/domains/' + domainName + '/transfer-to-user/' + targetUserId, fn );
+};
+
 /*
  * Retrieves WHOIS data for given domain.
  *
