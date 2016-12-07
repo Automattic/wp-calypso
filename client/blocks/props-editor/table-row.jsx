@@ -2,7 +2,7 @@
  * External Dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -11,6 +11,9 @@ import classnames from 'classnames';
 
 import Gridicon from 'components/gridicon';
 
+/**
+ * A row for the props-editor table
+ */
 class TableRow extends PureComponent {
 	componentWillMount() {
 		this.setState( {
@@ -32,6 +35,9 @@ class TableRow extends PureComponent {
 		this.editorRef = null;
 	}
 
+	/**
+	 * Makes it so that a user may edit the current value on the table
+	 */
 	makeEditable = () => {
 		this.setState( {
 			editing: true
@@ -42,12 +48,20 @@ class TableRow extends PureComponent {
 		} );
 	};
 
+	/**
+	 * Updates the value, given an event from react
+	 * @param {SyntheticEvent} event The event with the new content
+	 */
 	updateValue = ( event ) => {
 		this.setState( {
 			value: event.target.textContent
 		} );
 	};
 
+	/**
+	 * Called when the user presses enter and we want to stop editing
+	 * @param {SyntheticEvent} event The event from the keyboard
+	 */
 	blurish = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			if ( this.editorRef ) {
@@ -56,6 +70,9 @@ class TableRow extends PureComponent {
 		}
 	};
 
+	/**
+	 * Called when the user leaves the input on the row, it calls the callback passed via props with the new value.
+	 */
 	setValue = () => {
 		this.setState( {
 			editing: false
@@ -66,6 +83,9 @@ class TableRow extends PureComponent {
 		} );
 	};
 
+	/**
+	 * Resets the value back to the defaultValue
+	 */
 	resetValue = () => {
 		if ( this.editorRef ) {
 			this.editorRef.blur();
@@ -77,6 +97,10 @@ class TableRow extends PureComponent {
 		} );
 	};
 
+	/**
+	 * Stores the ref to the div that is editable
+	 * @param {Ref} ref The ref to the editable div
+	 */
 	editor = ( ref ) => {
 		this.editorRef = ref;
 	};
@@ -132,5 +156,47 @@ class TableRow extends PureComponent {
 		);
 	}
 }
+
+TableRow.propTypes = {
+	/**
+	 * The prop's default value
+	 */
+	defaultValue: PropTypes.any,
+
+	/**
+	 * A description of the prop
+	 */
+	description: PropTypes.string,
+
+	/**
+	 * If the type is a container type (such as an array), this is the type that it holds
+	 */
+	holds: PropTypes.string,
+
+	/**
+	 * The name of the prop
+	 */
+	name: PropTypes.string.isRequired,
+
+	/**
+	 * Called when the user edits the current value
+	 */
+	onChange: PropTypes.func,
+
+	/**
+	 * Whether or not the prop is required
+	 */
+	required: PropTypes.bool,
+
+	/**
+	 * The type of the prop, a string from just after `PropTypes.`
+	 */
+	type: PropTypes.string.isRequired,
+
+	/**
+	 * The starting value of the prop
+	 */
+	value: PropTypes.any.isRequired
+};
 
 export default TableRow;
