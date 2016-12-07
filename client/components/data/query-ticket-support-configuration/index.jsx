@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import {
 	ticketSupportConfigurationRequest,
-} from 'state/ticket-support/configuration/actions';
+} from 'state/help/ticket/actions';
 
 import {
 	isRequestingTicketSupportConfiguration,

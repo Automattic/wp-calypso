@@ -1,5 +1,9 @@
+/**
+ * Internal dependencies
+ */
 import config from 'config';
-import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
+import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite } from 'state/ui/selectors';
+import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 
@@ -9,11 +13,11 @@ export const inSection = sectionName => state =>
 export const isEnabled = feature => () =>
 	config.isEnabled( feature );
 
-export const previewIsNotShowing = state =>
-	! isPreviewShowing( state );
+export const isPreviewNotShowing = state =>
+	! isPreviewShowingSelector( state );
 
-export const previewIsShowing = state =>
-	isPreviewShowing( state );
+export const isPreviewShowing = state =>
+	isPreviewShowingSelector( state );
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 export const isNewUser = state => {
@@ -26,10 +30,13 @@ export const isNewUser = state => {
 	return ( Date.now() - creation ) <= WEEK_IN_MILLISECONDS;
 };
 
-export const selectedSiteIsPreviewable = state =>
+export const hasUserInteractedWithComponent = componentName => state =>
+	getLastAction( state ).component === componentName;
+
+export const isSelectedSitePreviewable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
 
-export const selectedSiteIsCustomizable = state =>
+export const isSelectedSiteCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
 
 export const isAbTestInVariant = ( testName, variant ) => () =>

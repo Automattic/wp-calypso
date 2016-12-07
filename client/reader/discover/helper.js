@@ -77,5 +77,11 @@ export function getSourceFollowUrl( post ) {
 	if ( isInternalDiscoverPost( post ) ) {
 		followUrl = get( post, 'discover_metadata.attribution.blog_url' );
 	}
+
+	// If it's a site pick, try the permalink
+	if ( ! followUrl && isDiscoverSitePick( post ) ) {
+		followUrl = get( post, 'discover_metadata.permalink' );
+	}
+
 	return followUrl || '';
 }

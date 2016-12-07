@@ -1,14 +1,10 @@
-var _loadedViaHistory = false;
+let _loadedViaHistory = false;
 
 module.exports = {
 	start: function() {
-		window.addEventListener( 'popstate', function() {
-			_loadedViaHistory = true;
-		} );
-		setTimeout( function() {
-			window.addEventListener( 'popstate', function() {
-				_loadedViaHistory = false;
-			} );
+		// add a popstate listener that sets the flag
+		window.addEventListener( 'popstate', function( event ) {
+			_loadedViaHistory = !! event.state;
 		} );
 	},
 	loadedViaHistory: function() {

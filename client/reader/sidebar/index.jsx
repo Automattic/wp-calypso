@@ -103,10 +103,13 @@ export const ReaderSidebar = React.createClass( {
 	},
 
 	highlightNewTag( tag ) {
-		defer( function() {
-			page( '/tag/' + tag.slug );
-			window.scrollTo( 0, 0 );
-		} );
+		const tagUrl = `/tag/${ tag.slug }`;
+		if ( tagUrl !== page.current ) {
+			defer( function() {
+				page( tagUrl );
+				window.scrollTo( 0, 0 );
+			} );
+		}
 	},
 
 	openExpandableMenuForCurrentTagOrList() {

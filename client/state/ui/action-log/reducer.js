@@ -7,6 +7,7 @@ import { takeRight } from 'lodash';
  * Internal dependencies
  */
 import {
+	COMPONENT_INTERACTION_TRACKED,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	LEGACY_THEMES_RECEIVE,
@@ -15,6 +16,7 @@ import {
 } from 'state/action-types';
 
 const relevantTypes = {
+	COMPONENT_INTERACTION_TRACKED,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	LEGACY_THEMES_RECEIVE,

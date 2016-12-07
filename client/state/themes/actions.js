@@ -12,9 +12,6 @@ import {
 	// Old action names
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
-	THEME_DETAILS_RECEIVE,
-	THEME_DETAILS_RECEIVE_FAILURE,
-	THEME_DETAILS_REQUEST,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
 	LEGACY_THEMES_RECEIVE,
@@ -95,52 +92,6 @@ export function incrementThemesPage( site ) {
 	return {
 		type: THEMES_INCREMENT_PAGE,
 		site: site
-	};
-}
-
-export function fetchThemeDetails( id, site ) {
-	return dispatch => {
-		dispatch( {
-			type: THEME_DETAILS_REQUEST,
-			themeId: id
-		} );
-
-		wpcom.undocumented().themeDetails( id, site )
-			.then( themeDetails => {
-				debug( 'Received theme details', themeDetails );
-				dispatch( receiveThemeDetails( themeDetails ) );
-			} )
-			.catch( error => {
-				dispatch( receiveThemeDetailsFailure( id, error ) );
-			} );
-	};
-}
-
-export function receiveThemeDetails( theme ) {
-	return {
-		type: THEME_DETAILS_RECEIVE,
-		themeId: theme.id,
-		themeName: theme.name,
-		themeAuthor: theme.author,
-		themePrice: theme.price,
-		themeScreenshot: theme.screenshot,
-		themeScreenshots: theme.screenshots,
-		themeDescription: theme.description,
-		themeDescriptionLong: theme.description_long,
-		themeSupportDocumentation: theme.support_documentation || undefined,
-		themeDownload: theme.download_uri || undefined,
-		themeTaxonomies: theme.taxonomies,
-		themeStylesheet: theme.stylesheet,
-		themeDemoUri: theme.demo_uri
-	};
-}
-
-export function receiveThemeDetailsFailure( id, error ) {
-	debug( `Received error for theme ${ id }:`, error );
-	return {
-		type: THEME_DETAILS_RECEIVE_FAILURE,
-		themeId: id,
-		error: error,
 	};
 }
 
@@ -272,6 +223,15 @@ export function requestThemes( siteId, query = {} ) {
 	};
 }
 
+export function themeRequestFailure( siteId, themeId, error ) {
+	return {
+		type: THEME_REQUEST_FAILURE,
+		siteId,
+		themeId,
+		error
+	};
+}
+
 /**
  * Triggers a network request to fetch a specific theme from a site.
  *
@@ -315,12 +275,9 @@ export function requestTheme( themeId, siteId ) {
 				themeId
 			} );
 		} ).catch( ( error ) => {
-			dispatch( {
-				type: THEME_REQUEST_FAILURE,
-				siteId,
-				themeId,
-				error
-			} );
+			dispatch(
+				themeRequestFailure( siteId, themeId, error )
+			);
 		} );
 	};
 }

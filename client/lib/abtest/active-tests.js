@@ -71,6 +71,15 @@ module.exports = {
 		defaultVariation: 'excludeDotBlogSubdomain',
 		allowAnyLocale: true,
 	},
+	designShowcaseWelcomeTour: {
+		datestamp: '20161206',
+		variations: {
+			enabled: 0,
+			disabled: 100,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {

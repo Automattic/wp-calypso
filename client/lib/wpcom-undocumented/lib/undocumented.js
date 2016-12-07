@@ -132,9 +132,9 @@ Undocumented.prototype.fetchMonitorSettings = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId }, fn );
 };
 
-Undocumented.prototype.updateMonitorSettings = function( siteId, emailNotifications, fn ) {
+Undocumented.prototype.updateMonitorSettings = function( siteId, emailNotifications, wpNoteNotifications, fn ) {
 	debug( '/jetpack-blogs/:site_id: query' );
-	return this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId }, {}, { email_notifications: emailNotifications }, fn );
+	return this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId }, {}, { email_notifications: emailNotifications, wp_note_notifications: wpNoteNotifications }, fn );
 };
 
 /**

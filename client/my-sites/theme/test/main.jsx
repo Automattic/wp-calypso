@@ -8,8 +8,8 @@ import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
 import {
-	receiveThemeDetails,
-	receiveThemeDetailsFailure,
+	receiveTheme,
+	themeRequestFailure,
 } from 'state/themes/actions';
 
 /**
@@ -28,6 +28,7 @@ describe( 'main', function() {
 			mockery.registerMock( 'my-sites/themes/thanks-modal', EmptyComponent );
 			mockery.registerMock( 'my-sites/themes/themes-site-selector-modal', EmptyComponent );
 			mockery.registerMock( 'components/data/query-user-purchases', EmptyComponent );
+			mockery.registerMock( 'components/data/query-site-purchases', EmptyComponent );
 			mockery.registerMock( 'lib/analytics', {} );
 			mockery.registerMock( 'my-sites/themes/helpers', {
 				isPremium: noop,
@@ -77,7 +78,7 @@ describe( 'main', function() {
 
 		it( "doesn't throw an exception with theme data", function() {
 			const store = createReduxStore();
-			store.dispatch( receiveThemeDetails( this.themeData ) );
+			store.dispatch( receiveTheme( this.themeData ) );
 			const layout = (
 				<ReduxProvider store={ store }>
 					<this.ThemeSheetComponent id={ 'twentysixteen' } />
@@ -92,7 +93,7 @@ describe( 'main', function() {
 
 		it( "doesn't throw an exception with invalid theme data", function() {
 			const store = createReduxStore();
-			store.dispatch( receiveThemeDetailsFailure( 'invalidthemeid', 'not found' ) );
+			store.dispatch( themeRequestFailure( 'wpcom', 'invalidthemeid', 'not found' ) );
 			const layout = (
 				<ReduxProvider store={ store }>
 					<this.ThemeSheetComponent id={ 'invalidthemeid' } />
@@ -106,4 +107,3 @@ describe( 'main', function() {
 		} );
 	} );
 } );
-

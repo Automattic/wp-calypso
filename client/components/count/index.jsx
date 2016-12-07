@@ -15,8 +15,9 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { count, ...inheritProps } = this.props;
 		return (
-			<span className="count">{ this.numberFormat( this.props.count ) }</span>
+			<span className="count" { ...inheritProps }>{ this.numberFormat( count ) }</span>
 		);
 	}
 } );

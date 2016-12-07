@@ -251,7 +251,7 @@ export class Step extends Component {
 
 	setStepPosition( props, shouldScrollTo ) {
 		const { placement, target } = props;
-		const stepPos = getStepPosition( { placement, targetSlug: target, shouldScrollTo } );
+		const stepPos = getStepPosition( { placement, targetSlug: target, shouldScrollTo, scrollContainer: this.scrollContainer } );
 		const stepCoords = posToCss( stepPos );
 		this.setState( { stepPos, stepCoords } );
 	}

@@ -959,5 +959,9 @@ describe( 'index', function() {
 		it( 'trims whitespace from the excerpt', function( done ) {
 			assertExcerptBecomes( '<p> </p><p>one</p><p>two</p><p>three</p><p>four</p><p> </p>', 'one two three four', done );
 		} );
+
+		it( 'removes tables from the content', function( done ) {
+			assertExcerptBecomes( '<p>test</p><table><tr><td>in a table</td></tr></table><p>more</p>', 'test more', done );
+		} );
 	} );
 } );

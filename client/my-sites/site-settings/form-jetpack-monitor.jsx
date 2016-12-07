@@ -36,7 +36,8 @@ module.exports = protectForm( React.createClass( {
 	resetState: function() {
 		this.replaceState( {
 			togglingModule: false,
-			emailNotifications: false
+			emailNotifications: false,
+			wpNoteNotifications: false
 		} );
 	},
 
@@ -46,7 +47,8 @@ module.exports = protectForm( React.createClass( {
 		site.fetchMonitorSettings( ( function( error, data ) {
 			if ( ! error ) {
 				this.setState( {
-					emailNotifications: data.settings.email_notifications
+					emailNotifications: data.settings.email_notifications,
+					wpNoteNotifications: data.settings.wp_note_notifications
 				} );
 			} else {
 				debug( 'error getting Monitor settings', error );
@@ -83,7 +85,7 @@ module.exports = protectForm( React.createClass( {
 	saveSettings: function() {
 		this.setState( { submitingForm: true } );
 		notices.clearNotices( 'notices' );
-		this.props.site.updateMonitorSettings( this.state.emailNotifications, ( function( error ) {
+		this.props.site.updateMonitorSettings( this.state.emailNotifications, this.state.wpNoteNotifications, ( function( error ) {
 			if ( error ) {
 				this.handleError();
 				notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
@@ -99,22 +101,45 @@ module.exports = protectForm( React.createClass( {
 		return (
 			<div>
 				<p>{ this.translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
+				{ this.settingsMonitorEmailCheckbox() }
+				{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
+			</div>
+		);
+	},
+
+	settingsMonitorEmailCheckbox: function() {
+		return (
+			<FormLabel>
+				<FormCheckbox
+					disabled={ this.disableForm() }
+					onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
+					id="jetpack_monitor_email"
+					checkedLink={ this.linkState( 'emailNotifications' ) }
+					name="jetpack_monitor_email" />
+				<span>
+					{ this.translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
+						components: {
+							a: <a href="/me/account" onClick={ this.recordEvent.bind( this, 'Clicked on Monitor Link to WordPress.com Email Address' ) } />
+						}
+					} ) }
+				</span>
+			</FormLabel>
+		);
+	},
+
+	settingsMonitorWpNoteCheckbox: function() {
+		return (
 				<FormLabel>
 					<FormCheckbox
 						disabled={ this.disableForm() }
-						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
-						id="jetpack_monitor_email"
-						checkedLink={ this.linkState( 'emailNotifications' ) }
-						name="jetpack_monitor_email" />
+						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor wp-note checkbox' ) }
+						id="jetpack_monitor_wp_note"
+						checkedLink={ this.linkState( 'wpNoteNotifications' ) }
+						name="jetpack_monitor_wp_note" />
 					<span>
-						{ this.translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
-							components: {
-								a: <a href="/me/account" onClick={ this.recordEvent.bind( this, 'Clicked on Monitor Link to WordPress.com Email Address' ) } />
-							}
-						} ) }
+						{ this.translate( 'Send notifications via WordPress.com notification.' ) }
 					</span>
 				</FormLabel>
-			</div>
 		);
 	},
 

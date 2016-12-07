@@ -83,7 +83,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case FeedPostActionType.RECEIVE_FEED_POST:
 			if ( action.error ) {
 				const error = {
-					status_code: -1,
+					status_code: action.error.statusCode ? action.error.statusCode : -1,
 					errorCode: '-',
 					message: action.error.toString()
 				};

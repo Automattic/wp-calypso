@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { has, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
@@ -29,9 +28,10 @@ import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
+import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -46,6 +46,7 @@ export class MySitesSidebar extends Component {
 		path: PropTypes.string,
 		sites: PropTypes.object,
 		currentUser: PropTypes.object,
+		isJetpack: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -501,23 +502,19 @@ export class MySitesSidebar extends Component {
 	}
 
 	wpAdmin() {
-		var site = this.getSelectedSite(),
-			currentUser = this.props.currentUser;
+		var site = this.getSelectedSite();
 
 		if ( ! site.options ) {
 			return null;
 		}
 
-		// only skip wpadmin for non-vip
-		if ( ! site.is_vip ) {
-			// safety check for nested attribute
-			if ( ! has( currentUser, 'meta.data.flags.active_flags' ) ) {
-				return null;
-			}
+		// Ignore Jetpack sites as they've opted into this interface.
+		if ( this.props.isJetpack ) {
+			return null;
+		}
 
-			if ( ! includes( currentUser.meta.data.flags.active_flags, 'wpcom-use-wpadmin-flows' ) ) {
-				return null;
-			}
+		if ( ! this.useWPAdminFlows() ) {
+			return null;
 		}
 
 		return (
@@ -529,6 +526,26 @@ export class MySitesSidebar extends Component {
 				</a>
 			</li>
 		);
+	}
+
+	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
+	useWPAdminFlows() {
+		const site = this.getSelectedSite();
+		const currentUser = this.props.currentUser;
+		const userRegisteredDate = new Date( currentUser.date );
+		const cutOffDate = new Date( '2015-09-07' );
+
+		// VIP sites should always show a WP Admin link regardless of the current user.
+		if ( site.is_vip ) {
+			return true;
+		}
+
+		// User registered before the cut-off date of September 7, 2015 and we want to support them as legacy users.
+		if ( userRegisteredDate < cutOffDate ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	trackWpadminClick = () => {
@@ -771,7 +788,8 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		currentUser: getCurrentUser( state ),
-		customizeUrl: getCustomizeUrl( state, null, selectedSiteId )
+		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
+		isJetpack: isJetpackSite( state, selectedSiteId )
 	};
 }
 

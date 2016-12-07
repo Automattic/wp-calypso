@@ -22,7 +22,7 @@ export function formatExcerpt( content ) {
 
 	// Ditch any photo captions with the wp-caption-text class, styles, scripts
 	forEach(
-		dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ),
+		dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, table' ),
 		removeElement
 	);
 

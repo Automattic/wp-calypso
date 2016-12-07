@@ -12,7 +12,6 @@ import titlecase from 'to-title-case';
 /**
  * Internal dependencies
  */
-import QueryThemeDetails from 'components/data/query-theme-details';
 import QueryTheme from 'components/data/query-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -35,17 +34,20 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive } from 'state/themes/selectors';
+import { isThemeActive, isThemePurchased, getThemeRequestErrors } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -66,6 +68,7 @@ const ThemeSheet = React.createClass( {
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
+		isPurchased: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -322,9 +325,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultOptionLabel() {
-		const { defaultOption, isActive, isLoggedIn, price } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPurchased } = this.props;
 		if ( isLoggedIn && ! isActive ) {
-			if ( price ) { // purchase
+			if ( isPremium( this.props ) && ! isPurchased ) { // purchase
 				return i18n.translate( 'Pick this design' );
 			} // else: activate
 			return i18n.translate( 'Activate this design' );
@@ -346,7 +349,7 @@ const ThemeSheet = React.createClass( {
 				secondaryButtonLabel={ showSecondaryButton ? secondaryOption.label : null }
 				onSecondaryButtonClick={ this.onSecondaryButtonClick }
 				getSecondaryButtonHref={ showSecondaryButton ? secondaryOption.getUrl : null }
-				/>
+			/>
 		);
 	},
 
@@ -376,7 +379,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive ) {
+		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
 			price = '';
 		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
@@ -431,9 +434,9 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
 				<DocumentHead
 					title={ title }
@@ -491,7 +494,7 @@ const ConnectedThemeSheet = connectOptions(
 );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, isActive, price, isLoggedIn } = props;
+	const { selectedSite: site, isActive, isLoggedIn, isPurchased } = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
@@ -500,7 +503,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
-	} else if ( price ) {
+	} else if ( isPremium( props ) && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
 		defaultOption = 'activate';
@@ -521,6 +524,23 @@ const ThemeSheetWithOptions = ( props ) => {
 			secondaryOption="tryandcustomize"
 			source="showcase-sheet" />
 	);
+};
+
+const getThemeDetailsFromTheme = ( theme ) => {
+	return {
+		name: theme.name,
+		author: theme.author,
+		price: theme.price,
+		screenshot: theme.screenshot,
+		screenshots: theme.screenshots,
+		description: theme.description,
+		descriptionLong: theme.description_long,
+		supportDocumentation: theme.support_documentation || undefined,
+		download: theme.download_uri || undefined,
+		taxonomies: theme.taxonomies,
+		stylesheet: theme.stylesheet,
+		demo_uri: theme.demo_uri,
+	};
 };
 
 export default connect(
@@ -554,11 +574,13 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const themeDetails = getThemeDetails( state, id );
-
+		const theme = getTheme( state, siteIdOrWpcom, id );
+		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+		const themeDetails = theme ? getThemeDetailsFromTheme( theme ) : {};
 		return {
 			...themeDetails,
 			id,
+			error,
 			selectedSite,
 			siteSlug,
 			siteIdOrWpcom,
@@ -566,7 +588,11 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
-			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID )
+			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
+			isPurchased: selectedSite && (
+				isThemePurchased( state, id, selectedSite.ID ) ||
+				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
+			),
 		};
 	}
 )( ThemeSheetWithOptions );

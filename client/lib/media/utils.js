@@ -4,8 +4,7 @@
 import url from 'url';
 import path from 'path';
 import photon from 'photon';
-import includes from 'lodash/includes';
-import omitBy from 'lodash/omitBy';
+import { includes, omitBy, uniqueId } from 'lodash';
 import { isUri } from 'valid-url';
 
 /**
@@ -497,6 +496,52 @@ const MediaUtils = {
 		}
 
 		return !! item.transient;
+	},
+
+	/**
+	 * Returns an object describing a transient media item which can be used in
+	 * optimistic rendering prior to media persistence to server.
+	 *
+	 * @param  {(String|Object|Blob|File)} file URL or File object
+	 * @return {Object}                         Transient media object
+	 */
+	createTransientMedia( file ) {
+		const transientMedia = {
+			'transient': true,
+			ID: uniqueId( 'media-' )
+		};
+
+		if ( 'string' === typeof file ) {
+			// Generate from string
+			Object.assign( transientMedia, {
+				file: file,
+				title: path.basename( file ),
+				extension: MediaUtils.getFileExtension( file ),
+				mime_type: MediaUtils.getMimeType( file )
+			} );
+		} else {
+			// Handle the case where a an object has been passed that wraps a
+			// Blob and contains a fileName
+			const fileContents = file.fileContents || file;
+			const fileName = file.fileName || file.name;
+
+			// Generate from window.File object
+			const fileUrl = window.URL.createObjectURL( fileContents );
+
+			Object.assign( transientMedia, {
+				URL: fileUrl,
+				guid: fileUrl,
+				file: fileName,
+				title: file.title || path.basename( fileName ),
+				extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
+				mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
+				// Size is not an API media property, though can be useful for
+				// validation purposes if known
+				size: fileContents.size
+			} );
+		}
+
+		return transientMedia;
 	}
 };
 
