@@ -34,11 +34,11 @@ class PluginAutomatedTransfer extends Component {
 		const { START, SETUP, LEAVING, CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
 
 		switch ( status ) {
-			case START: return translate( 'Installing %s…', { args: pluginName } );
+			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: pluginName } } );
 			case SETUP : return translate( 'Now configuring your site. This may take a few minutes.' );
 			case LEAVING: return translate( "Don't leave quite yet! Just a bit longer." );
 			case CONFLICTS: return translate( 'Sorry, we found some conflicts to fix before proceding.' );
-			case COMPLETE: return translate( 'Successfully installed %s!', { args: pluginName } );
+			case COMPLETE: return translate( 'Successfully installed %(plugin)s!', { args: { plugin: pluginName } } );
 		}
 	}
 
@@ -78,7 +78,9 @@ class PluginAutomatedTransfer extends Component {
 			>
 				{ CONFLICTS === status &&
 					<NoticeAction href="#">
-						{ translate( 'View Conflicts' ) }
+						{ translate( 'View Conflicts', {
+							comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
+						} ) }
 					</NoticeAction>
 				}
 			</Notice>
