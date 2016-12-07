@@ -130,9 +130,9 @@ module.exports = {
 	},
 
 	siteTitleTour: {
-		datestamp: '20161130',
+		datestamp: '20161207',
 		variations: {
-			disabled: 1,
+			disabled: 100,
 			enabled: 0,
 		},
 		defaultVariation: 'disabled',

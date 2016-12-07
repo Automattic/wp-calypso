@@ -33,7 +33,7 @@ const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
-		version="20161010"
+		version="20161207"
 		path="/stats"
 		when={ and(
 			isEnabled( 'guided-tours/site-title' ),
