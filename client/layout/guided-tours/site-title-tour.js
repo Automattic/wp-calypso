@@ -36,14 +36,14 @@ export const SiteTitleTour = makeTour(
 		version="20161010"
 		path="/stats"
 		when={ and(
-						isEnabled( 'guided-tours/site-title' ),
-						isDesktop,
-						hasSelectedSiteDefaultSiteTitle,
-						canUserEditSettingsOfSelectedSite,
-						isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
-						isAbTestInVariant( 'siteTitleTour', 'enabled' )
-					)
-		}>
+			isEnabled( 'guided-tours/site-title' ),
+			isDesktop,
+			hasSelectedSiteDefaultSiteTitle,
+			canUserEditSettingsOfSelectedSite,
+			isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
+			isAbTestInVariant( 'siteTitleTour', 'enabled' )
+		) }
+	>
 		<Step name="init" placement="right" next="click-settings">
 			<p>
 				{
