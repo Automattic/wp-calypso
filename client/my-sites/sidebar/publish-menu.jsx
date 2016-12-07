@@ -108,8 +108,8 @@ const PublishMenu = React.createClass( {
 			return null;
 		}
 
-		// Hide the sidebar link for media
-		if ( 'attachment' === menuItem.slug ) {
+		// Skip media and feedback post types
+		if ( includes( [ 'attachment', 'feedback' ], menuItem.slug ) ) {
 			return null;
 		}
 
