@@ -29,6 +29,7 @@ import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'my-sites/plugins-wpcom/plugin-install-button';
+import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { userCan } from 'lib/site/utils';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
@@ -346,6 +347,10 @@ export default React.createClass( {
 						/>
 					}
 				</Card>
+
+				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() &&
+					<PluginAutomatedTransfer plugin={ this.props.plugin } />
+				}
 
 				{ ( get( this.props.selectedSite, 'jetpack' ) || this.hasBusinessPlan() || this.isWpcomPreinstalled() ) &&
 					<div style={ { marginBottom: 16 } } />
