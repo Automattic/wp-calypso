@@ -199,6 +199,7 @@ const Post = React.createClass( {
 
 			if ( postToOpen ) {
 				postToOpen.referral = { blogId: DiscoverHelper.discoverBlogId, postId: this.props.ID }
+
 			}
 		}
 

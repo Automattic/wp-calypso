@@ -103,7 +103,7 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 				postId: post.discover_metadata.featured_post_wpcom_data.post_id
 			} );
 			if ( originalPost ) {
-				originalPost.referral = { blogId: DiscoverHelper.discoverBlogId, postId: post.ID }
+				originalPost.referral = { blogId: DiscoverHelper.discoverBlogId, postId: post.ID };
 			}
 		}
 
