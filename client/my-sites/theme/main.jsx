@@ -426,7 +426,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId, siteIdOrWpcom } = this.props;
+		const { name: themeName, description, currentUserId, isJetpack, siteIdOrWpcom } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
@@ -451,6 +451,7 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="theme__sheet">
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
+				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
