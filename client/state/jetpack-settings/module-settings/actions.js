@@ -28,7 +28,8 @@ export const fetchModuleSettings = ( siteId, moduleSlug ) => {
 		} );
 
 		return wp.undocumented().fetchJetpackModuleSettings( siteId, moduleSlug )
-			.then( ( settings ) => {
+			.then( ( response ) => {
+				const settings = response.data || {};
 				dispatch( {
 					type: JETPACK_MODULE_SETTINGS_RECEIVE,
 					siteId,
