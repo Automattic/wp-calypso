@@ -26,7 +26,14 @@ import {
 class ReaderPostCardAdapter extends React.Component {
 
 	onClick = ( postToOpen ) => {
-		this.props.handleClick && this.props.handleClick( postToOpen );
+		const propagatePost = { ...postToOpen };
+		if ( isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
+			propagatePost.referral = {
+				blogId: discoverBlogId,
+				postId: this.props.post.ID
+			};
+		}
+		this.props.handleClick && this.props.handleClick( propagatePost );
 	}
 
 	onCommentClick = () => {
