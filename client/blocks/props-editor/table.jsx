@@ -2,12 +2,18 @@
  * External Dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 import TableRow from './table-row';
 
 class Table extends PureComponent {
 
+	/**
+	 * Returns a function to be called when a row updates the current value
+	 * @param {string} name The name of the prop that will be updated
+	 * @param {string} type The type of the prop that will be update
+	 * @return {function} A function to be used in a row's callback
+	 */
 	updated = ( name, type ) => ( value ) => {
 		if ( this.props.onUpdate ) {
 			this.props.onUpdate( type, name, value );
@@ -43,5 +49,17 @@ class Table extends PureComponent {
 		);
 	}
 }
+
+Table.propTypes = {
+	/**
+	 * An array of props
+	 */
+	props: PropTypes.arrayOf( PropTypes.object ),
+
+	/**
+	 * Function called whenever a prop's current value changes
+	 */
+	onUpdate: PropTypes.func
+};
 
 export default Table;
