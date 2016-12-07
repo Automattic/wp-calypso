@@ -577,6 +577,7 @@ export default connect(
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+
 		return {
 			...theme,
 			id,

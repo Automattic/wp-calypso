@@ -130,6 +130,62 @@ describe( 'themes selectors', () => {
 
 			expect( theme ).to.equal( twentysixteen );
 		} );
+
+		context( 'on a Jetpack site', () => {
+			it( 'with a theme not found on WP.org, should return the theme object', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+
+				const theme = getTheme( {
+					themes: {
+						queries: {
+							2916284: new ThemeQueryManager( {
+								items: { twentyseventeen: jetpackTheme }
+							} )
+						}
+					}
+				}, 2916284, 'twentyseventeen' );
+
+				expect( theme ).to.deep.equal( jetpackTheme );
+			} );
+
+			it( 'with a theme found on WP.org, should return an object with some attrs merged from WP.org', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+				const wporgTheme = {
+					demo_uri: 'https://wp-themes.com/twentyseventeen',
+					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+					taxonomies: {
+						theme_feature: {
+							'custom-header': 'Custom Header'
+						}
+					}
+				};
+				const theme = getTheme( {
+					themes: {
+						queries: {
+							2916284: new ThemeQueryManager( {
+								items: { twentyseventeen: jetpackTheme }
+							} ),
+							wporg: new ThemeQueryManager( {
+								items: { twentyseventeen: wporgTheme }
+							} ),
+						}
+					}
+				}, 2916284, 'twentyseventeen' );
+
+				expect( theme ).to.deep.equal( {
+					...jetpackTheme,
+					...wporgTheme
+				} );
+			} );
+		} );
 	} );
 
 	describe( '#getThemesRequestError()', () => {

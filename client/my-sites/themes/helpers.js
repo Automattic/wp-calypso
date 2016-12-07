@@ -16,11 +16,7 @@ import config from 'config';
 import { sectionify } from 'lib/route/path';
 import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
-export function getPreviewUrl( theme, site ) {
-	if ( site && site.jetpack ) {
-		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
-	}
-
+export function getPreviewUrl( theme ) {
 	return `${ theme.demo_uri }?demo=true&iframe=true&theme_preview=true`;
 }
 
