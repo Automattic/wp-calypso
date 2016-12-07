@@ -148,7 +148,7 @@ export default class RefreshPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				<PostByline post={ originalPost ? originalPost : post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }
