@@ -2,11 +2,12 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { omit, omitBy, split } from 'lodash';
+import { filter, omit, omitBy, split } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isThemeMatchingQuery } from 'lib/query-manager/theme/util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -109,4 +110,16 @@ export function isPremiumTheme( theme ) {
 	// contains the correct price even if the user has already purchased that
 	// theme, or if they have an upgrade that includes all premium themes).
 	return !! ( theme.cost && theme.cost.number );
+}
+
+/**
+ * Returns a filtered themes array. Filtering is done based particular themes
+ * matching provided query
+ *
+ * @param  {Array}  themes Array of themes objects
+ * @param  {Object} query  Themes query
+ * @return {String}        Serialized themes query
+ */
+export function filterThemesForJetpack( themes, query ) {
+	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { conforms, filter, omit, property } from 'lodash';
+import { conforms, omit, property } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -43,8 +43,7 @@ import {
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeIdFromStylesheet } from './utils';
-import { isThemeMatchingQuery } from 'lib/query-manager/theme/util';
+import { getThemeIdFromStylesheet, filterThemesForJetpack } from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -203,10 +202,6 @@ export function requestThemes( siteId, query = {} ) {
 			siteId,
 			query
 		} );
-
-		function filterThemesForJetpack( themes, query ) {
-			return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
-		}
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
 			dispatch( receiveThemes( themes, siteId ) );
