@@ -109,8 +109,7 @@ export const SiteTitleTour = makeTour(
 
 		<Step name="finish" placement="center">
 			<p>
-				<strong>That's it!</strong>
-				Your visitors can now easily identify your website by its title.
+				<strong>That's it!</strong> Your visitors can now easily identify your website by its title.
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( "We're all done!" ) }</Quit>
