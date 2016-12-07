@@ -43,7 +43,7 @@ import {
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeIdFromStylesheet } from './utils';
+import { getThemeIdFromStylesheet, filterThemesForJetpack } from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -205,12 +205,18 @@ export function requestThemes( siteId, query = {} ) {
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
 			dispatch( receiveThemes( themes, siteId ) );
+
+			let filteredThemes = themes;
+			if ( siteId !== 'wpcom' ) {
+				filteredThemes = filterThemesForJetpack( themes, query );
+			}
+
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
+				themes: filteredThemes,
 				siteId,
 				query,
 				found,
-				themes
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
@@ -336,7 +342,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				const themeStylesheet = theme.stylesheet || themeId; // Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
 			.catch( error => {
