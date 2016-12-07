@@ -25,6 +25,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasStaticFrontPage } from 'state/sites/selectors';
 import {
 	isFrontPage,
@@ -113,6 +114,10 @@ const Page = React.createClass( {
 	},
 
 	getSetAsHomepageItem: function() {
+		if ( ! this.props.selectedSiteId ) {
+			return null;
+		}
+
 		const isPublished = this.props.page.status === 'publish';
 
 		if ( ! isPublished || this.props.isFrontPage ||
@@ -414,6 +419,7 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			selectedSiteId: getSelectedSiteId( state ),
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
