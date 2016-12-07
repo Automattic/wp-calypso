@@ -50,6 +50,18 @@
 			margin-bottom: 0;
 		}
 	}
+	code {
+		font-size: 14px;
+		padding: 1px 4px;
+		border-radius: 2px;
+		background: $gray-light;
+	}
+	> code {
+		display: block;
+		margin-bottom: 16px;
+		padding: 8px;
+		border-radius: 0;
+	}
 }
 
 .plugin-sections__read-more {
