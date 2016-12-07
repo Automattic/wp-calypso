@@ -268,7 +268,8 @@ module.exports = function() {
 			const basePath = fs.realpathSync( fspath.join( root, 'client' ) );
 			const results = [
 				fspath.join( basePath, 'blocks' ),
-				fspath.join( basePath, 'components' )
+				fspath.join( basePath, 'components' ),
+				fspath.join( basePath, 'my-sites' )
 			]
 				.map( ( search ) => findDirectoryWithName( search, component, 1 ) );
 			const files = [].concat.apply( [], results );
@@ -289,7 +290,16 @@ module.exports = function() {
 				return;
 			}
 
-			response.send( reactParser( fs.readFileSync( file, { encoding: 'utf8' } ) ) );
+			const componentJSON = reactParser( fs.readFileSync( file, { encoding: 'utf8' } ) );
+			const exampleFile = fspath.join( files[ 0 ], 'docs', 'example.jsx' );
+			const regex = new RegExp( `^${ fspath.join( root, 'client' ) }/(.*)/index.jsx` );
+			componentJSON.includePath = file.replace( regex, '$1' );
+
+			if ( fs.statSync( exampleFile ).isFile() ) {
+				componentJSON.example = reactParser( fs.readFileSync( exampleFile, { encoding: 'utf8' } ) );
+			}
+
+			response.send( componentJSON );
 		} catch ( err ) {
 			console.error( err );
 			response
