@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	normalizeWpcomTheme,
+	normalizeWporgTheme,
 	getThemeIdFromStylesheet,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
@@ -47,6 +48,31 @@ describe( 'utils', () => {
 				stylesheet: 'premium/mood',
 				demo_uri: 'https://mooddemo.wordpress.com/',
 				author_uri: 'https://wordpress.com/themes/'
+			} );
+		} );
+	} );
+
+	describe( '#normalizeWporgTheme()', () => {
+		it( 'should return an empty object when given no argument', () => {
+			const normalizedTheme = normalizeWporgTheme();
+			expect( normalizedTheme ).to.deep.equal( {} );
+		} );
+		it( 'should rename some keys', () => {
+			const normalizedTheme = normalizeWporgTheme( {
+				slug: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'wordpressdotorg',
+				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
+				preview_url: 'https://wp-themes.com/twentyfifteen',
+				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip'
+			} );
+			expect( normalizedTheme ).to.deep.equal( {
+				id: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'wordpressdotorg',
+				screenshot: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
+				demo_uri: 'https://wp-themes.com/twentyfifteen',
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip'
 			} );
 		} );
 	} );

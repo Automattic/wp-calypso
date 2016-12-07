@@ -2,7 +2,7 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { filter, get, mapKeys, omit, omitBy, split } from 'lodash';
+import { filter, get, map, mapKeys, omit, omitBy, split } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +37,36 @@ export function normalizeWpcomTheme( theme ) {
 	return mapKeys( theme, ( value, key ) => (
 		get( attributesMap, key, key )
 	) );
+}
+
+/**
+ * Normalizes a theme obtained from the WordPress.org REST API
+ *
+ * @param  {Object} theme  Themes object
+ * @return {Object}        Normalized theme object
+ */
+export function normalizeWporgTheme( theme ) {
+	const attributesMap = {
+		slug: 'id',
+		preview_url: 'demo_uri',
+		screenshot_url: 'screenshot',
+		download_link: 'download'
+	};
+
+	const normalizedTheme = mapKeys( theme, ( value, key ) => (
+		get( attributesMap, key, key )
+	) );
+
+	if ( ! normalizedTheme.tags ) {
+		return normalizedTheme;
+	}
+
+	return {
+		...omit( normalizedTheme, 'tags' ),
+		taxonomies: { theme_feature: map( normalizedTheme.tags,
+			( name, slug ) => ( { name, slug } )
+		) }
+	};
 }
 
 /**
