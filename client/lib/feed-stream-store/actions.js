@@ -188,7 +188,7 @@ export function dismissPost( id, post ) {
 		},
 		id
 	} );
-	wpcom.undocumented().me().dimissSite( post.site_ID );
+	wpcom.undocumented().me().dismissSite( post.site_ID );
 }
 
 export function shufflePosts( id ) {
