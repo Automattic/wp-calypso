@@ -5,20 +5,19 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import ReactDom from 'react-dom';
 import classNames from 'classnames';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PostUtils from 'lib/posts/utils';
-import SiteUtils from 'lib/site/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { areSitePermalinksEditable } from 'state/sites/selectors';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
@@ -35,6 +34,7 @@ class EditorTitle extends Component {
 		onChange: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
+		siteId: PropTypes.number,
 		tabIndex: PropTypes.number,
 		translate: PropTypes.func
 	};
@@ -50,23 +50,21 @@ class EditorTitle extends Component {
 		}
 
 		// If next post is new, or the next site is different, focus title
-		const { isNew, site } = this.props;
+		const { isNew, siteId } = this.props;
 		if ( ( isNew && ! prevProps.isNew ) ||
-				( isNew && get( prevProps.site, 'ID' ) !== get( site, 'ID' ) ) ) {
+				( isNew && prevProps.siteId !== siteId ) ) {
 			const input = ReactDom.findDOMNode( this.refs.titleInput );
 			input.focus();
 		}
 	}
 
 	onChange = event => {
-		if ( ! this.props.post ) {
-			return;
-		}
-
-		this.props.editPost( this.props.site.ID, this.props.post.ID, {
-			title: event.target.value.replace( REGEXP_NEWLINES, ' ' )
+		const { siteId, editedPostId } = this.props;
+		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
+		this.props.editPost( siteId, editedPostId, {
+			title: newTitle
 		} );
-		this.props.onChange( event );
+		this.props.onChange( newTitle );
 	};
 
 	resizeAfterNewlineInput = event => {
@@ -88,8 +86,7 @@ class EditorTitle extends Component {
 	};
 
 	render() {
-		const { post, site, isNew, tabIndex, translate } = this.props;
-		const isPermalinkEditable = SiteUtils.isPermalinkEditable( site );
+		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 
 		const classes = classNames( 'editor-title', {
 			'is-loading': ! post
@@ -111,7 +108,7 @@ class EditorTitle extends Component {
 						onInput={ this.resizeAfterNewlineInput }
 						onBlur={ this.onBlur }
 						autoFocus={ isNew && ! isMobile() }
-						value={ post ? post.title : '' }
+						value={ post && post.title ? post.title : '' }
 						aria-label={ translate( 'Edit title' ) }
 						ref="titleInput"
 						rows="1" />
@@ -123,15 +120,18 @@ class EditorTitle extends Component {
 
 export default connect(
 	state => {
-		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
 		const editedPostId = getEditorPostId( state );
-		const post = getEditedPost( state, site.ID, editedPostId );
+		const post = getEditedPost( state, siteId, editedPostId );
 		const isNew = isEditorNewPost( state );
 
 		return {
+			editedPostId,
+			isPermalinkEditable,
 			isNew,
 			post,
-			site
+			siteId
 		};
 	},
 	{ editPost }

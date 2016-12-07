@@ -1020,3 +1020,19 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
 	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
 };
+
+/**
+ * Determines if site's permalinks are editable
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} true if the site's permalinks are editable
+ */
+export function areSitePermalinksEditable( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site || ! site.options || ! site.options.permalink_structure ) {
+		return false;
+	}
+
+	return /\/\%postname\%\/?/.test( site.options.permalink_structure );
+}
