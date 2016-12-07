@@ -137,7 +137,7 @@ export default class ReaderStream extends React.Component {
 		showPostHeader: true,
 		suppressSiteNameLink: false,
 		showFollowInHeader: false,
-		onShowUpdates: noop,
+		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
@@ -412,6 +412,9 @@ export default class ReaderStream extends React.Component {
 	showUpdates = () => {
 		this.props.onUpdatesShown();
 		FeedStreamStoreActions.showUpdates( this.props.store.id );
+		if ( this.props.recommendationsStore ) {
+			FeedStreamStoreActions.shufflePosts( this.props.recommendationsStore.id );
+		}
 		if ( this._list ) {
 			this._list.scrollToTop();
 		}

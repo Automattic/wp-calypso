@@ -190,3 +190,10 @@ export function dismissPost( id, post ) {
 	} );
 	wpcom.undocumented().me().dimissSite( post.site_ID );
 }
+
+export function shufflePosts( id ) {
+	Dispatcher.handleViewAction( {
+		type: ActionType.SHUFFLE_POSTS,
+		id
+	} );
+}
