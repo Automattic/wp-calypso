@@ -8,6 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import wporg from 'lib/wporg';
 import {
 	// Old action names
 	THEME_BACK_PATH_SET,
@@ -256,6 +257,24 @@ export function requestTheme( themeId, siteId ) {
 			siteId,
 			themeId
 		} );
+
+		if ( siteId === 'wporg' ) {
+			return wporg.fetchThemeInformation( themeId ).then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: THEME_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+		}
 
 		if ( siteId === 'wpcom' ) {
 			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
