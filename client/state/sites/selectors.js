@@ -999,5 +999,6 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 		return null;
 	}
 	const slug = getSiteSlug( state, siteId );
-	return site.name === i18n.translate( 'Site Title' ) || slug.indexOf( site.name ) === 0;
+	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
+	return site.name === i18n.translate( 'Site Title' ) || slug.startsWith( site.name );
 };
