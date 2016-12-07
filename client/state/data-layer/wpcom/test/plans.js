@@ -14,7 +14,7 @@ import {
 
 import {
 	requestPlans,
-} from '../plans-request';
+} from '../plans';
 
 import {
 	ACTION_PLANS_REQUEST_SUCCESS,
