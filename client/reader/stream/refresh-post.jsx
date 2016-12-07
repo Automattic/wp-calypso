@@ -13,10 +13,15 @@ import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import * as DiscoverHelper from 'reader/discover/helper';
 import FeedPostStore from 'lib/feed-post-store';
 import smartSetState from 'lib/react-smart-set-state';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import {
+	isDiscoverPost,
+	isDiscoverSitePick,
+	getSourceData as getDiscoverSourceData,
+	discoverBlogId
+ } from 'reader/discover/helper';
 
 class ReaderPostCardAdapter extends React.Component {
 
@@ -40,7 +45,7 @@ class ReaderPostCardAdapter extends React.Component {
 			site_ID: siteId,
 			is_external: isExternal
 		} = this.props.post;
-		const isDiscoverPost = this.props.post && DiscoverHelper.isDiscoverPost( this.props.post );
+		const _isDiscoverPost = isDiscoverPost( this.props.post );
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
@@ -54,8 +59,8 @@ class ReaderPostCardAdapter extends React.Component {
 				onCommentClick={ this.onCommentClick }
 				isSelected={ this.props.isSelected }
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-				showEntireExcerpt={ isDiscoverPost }
-				useBetterExcerpt={ ! isDiscoverPost }
+				showEntireExcerpt={ _isDiscoverPost }
+				useBetterExcerpt={ ! _isDiscoverPost }
 				showSiteName={ this.props.showSiteName }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
@@ -89,23 +94,10 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 
 	getStateFromStores( props = this.props ) {
 		const post = props.post;
-		const isDiscoverPost = post && DiscoverHelper.isDiscoverPost( post );
-		let isDiscoverSitePick = false;
-		if ( isDiscoverPost ) {
-			isDiscoverSitePick = post && DiscoverHelper.isDiscoverSitePick( post );
-		}
+		const nonSiteDiscoverPick = isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 
 		// If it's a discover post (but not a site pick), we want the original post too
-		let originalPost;
-		if ( isDiscoverPost && ! isDiscoverSitePick && get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' ) ) {
-			originalPost = FeedPostStore.get( {
-				blogId: post.discover_metadata.featured_post_wpcom_data.blog_id,
-				postId: post.discover_metadata.featured_post_wpcom_data.post_id
-			} );
-			if ( originalPost ) {
-				originalPost.referral = { blogId: DiscoverHelper.discoverBlogId, postId: post.ID };
-			}
-		}
+		const originalPost = nonSiteDiscoverPick ? FeedPostStore.get( getDiscoverSourceData( post ) ) : null;
 
 		return {
 			originalPost
