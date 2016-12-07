@@ -113,12 +113,12 @@ export function isPremiumTheme( theme ) {
 }
 
 /**
- * Returns a filtered themes array. Filtering is done based particular themes
+ * Returns a filtered themes array. Filtering is done based on particular themes
  * matching provided query
  *
  * @param  {Array}  themes Array of themes objects
  * @param  {Object} query  Themes query
- * @return {String}        Serialized themes query
+ * @return {Array}         Filtered themes
  */
 export function filterThemesForJetpack( themes, query ) {
 	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
