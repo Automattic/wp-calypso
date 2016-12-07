@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, startsWith } from 'lodash';
+import { forEach, startsWith, random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -202,6 +202,7 @@ function getStoreForRecommendedPosts( storeId ) {
 				break;
 			case 'custom_recs_posts_with_images':
 				query.algorithm = 'read:recommendations:posts/es/7';
+				query.seed = random( 0 , 10000 );
 				break;
 			default:
 				query.algorithm = 'read:recommendations:posts/es/1';
