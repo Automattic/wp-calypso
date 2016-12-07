@@ -23,15 +23,7 @@ import {
 	isNewUser,
 	isPreviewShowing,
 } from 'state/ui/guided-tours/contexts';
-import { isDesktop, isMobile } from 'lib/viewport';
-
-const PickActivateStepText = () => (
-	<p>
-		{
-			'This would activate the design you\'re currently seeing on your site.'
-		}
-	</p>
-);
+import { isDesktop } from 'lib/viewport';
 
 export const ThemeSheetWelcomeTour = makeTour(
 	<Tour name="themeSheetWelcomeTour"
@@ -40,7 +32,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 		when={ and(
 			isEnabled( 'guided-tours/theme-sheet-welcome' ),
 			isNewUser,
-			not( isMobile ),
+			isDesktop,
 			isAbTestInVariant( 'themeSheetWelcomeTour', 'enabled' )
 		) }
 	>
@@ -108,25 +100,13 @@ export const ThemeSheetWelcomeTour = makeTour(
 			target=".theme__sheet-primary-button"
 			arrow="top-left"
 			placement="below"
-			when={ isDesktop }
-			next="pick-activate-narrow"
-		>
-			<PickActivateStepText />
-			<ButtonRow>
-				<Next step="pick-activate-narrow">{ translate( 'Got it' ) }</Next>
-				<Continue step="pick-activate-narrow" target=".theme__sheet-primary-button" click hidden />
-				<Quit />
-			</ButtonRow>
-		</Step>
-
-		<Step name="pick-activate-narrow"
-			target=".theme__sheet-primary-button"
-			arrow="top-right"
-			placement="below"
 			next="back-to-list"
-			when={ not( isDesktop ) }
 		>
-			<PickActivateStepText />
+			<p>
+				{
+					'This would activate the design you\'re currently seeing on your site.'
+				}
+			</p>
 			<ButtonRow>
 				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
 				<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
