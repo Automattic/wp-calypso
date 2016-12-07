@@ -55,5 +55,5 @@ export function getSiteSettings( state, siteId ) {
  * @return {Boolean}         Whether the requests is successful or not
  */
 export function isSiteSettingsSaveSuccessful( state, siteId ) {
-	return getSiteSettingsSaveRequestStatus( state, siteId ) === 'status';
+	return getSiteSettingsSaveRequestStatus( state, siteId ) === 'success';
 }

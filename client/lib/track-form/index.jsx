@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, union } from 'lodash';
+import { union } from 'lodash';
 
 export const trackForm = WrappedComponent => {
 	class TrackFormComponent extends Component {
@@ -11,7 +11,7 @@ export const trackForm = WrappedComponent => {
 			fields: {}
 		};
 
-		updateFields = ( fields, callback = noop ) => {
+		updateFields = ( fields, callback ) => {
 			const newState = {
 				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
 				fields: {
