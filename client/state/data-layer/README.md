@@ -101,3 +101,9 @@ There could be special middleware running on the desktop platform which invokes 
 **These also need not handle every possible action type**.
 This system is incremental and can replace pieces of the data synchronization system.
 In some cases it might be appropriate for a certain middleware to only handle one type of data; this is fine.
+
+## File Structure
+
+Since this middleware mirrors the WordPres.com API its files should also mirror its structure. For example, the file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts`.
+
+Each file should be responsible for a single WordPress.com endpoint. If multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that action.
