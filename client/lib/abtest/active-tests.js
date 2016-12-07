@@ -127,5 +127,15 @@ module.exports = {
 		},
 		defaultVariation: 'showSurveyStep',
 		allowAnyLocale: true,
-	}
+	},
+
+	siteTitleTour: {
+		datestamp: '20161207',
+		variations: {
+			disabled: 100,
+			enabled: 0,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 };

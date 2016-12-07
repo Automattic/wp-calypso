@@ -2,10 +2,16 @@
  * Internal dependencies
  */
 import config from 'config';
-import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite } from 'state/ui/selectors';
-import { getLastAction } from 'state/ui/action-log/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
+import {
+	getSectionName,
+	getSelectedSite,
+	getSelectedSiteId,
+	isPreviewShowing as isPreviewShowingSelector,
+} from 'state/ui/selectors';
+import { getLastAction } from 'state/ui/action-log/selectors';
+import { getCurrentUser, canCurrentUser } from 'state/current-user/selectors';
+import { hasDefaultSiteTitle } from 'state/sites/selectors';
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
@@ -19,15 +25,21 @@ export const isPreviewNotShowing = state =>
 export const isPreviewShowing = state =>
 	isPreviewShowingSelector( state );
 
+const timeSinceUserRegistration = state => {
+	const user = getCurrentUser( state );
+	const registrationDate = user && Date.parse( user.date );
+	return registrationDate ? ( Date.now() - registrationDate ) : false;
+};
+
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 export const isNewUser = state => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return false;
-	}
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
+};
 
-	const creation = Date.parse( user.date );
-	return ( Date.now() - creation ) <= WEEK_IN_MILLISECONDS;
+export const isUserOlderThan = age => state => {
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge >= age : false;
 };
 
 export const hasUserInteractedWithComponent = componentName => state =>
@@ -41,3 +53,13 @@ export const isSelectedSiteCustomizable = state =>
 
 export const isAbTestInVariant = ( testName, variant ) => () =>
 	abtest( testName ) === variant;
+
+export const hasSelectedSiteDefaultSiteTitle = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+};
+
+export const canUserEditSettingsOfSelectedSite = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
+};

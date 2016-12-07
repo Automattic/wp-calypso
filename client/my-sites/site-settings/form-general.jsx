@@ -140,7 +140,8 @@ const FormGeneral = React.createClass( {
 							valueLink={ this.linkState( 'blogname' ) }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
+							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) }
+							data-tip-target="site-title-input" />
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
@@ -151,7 +152,8 @@ const FormGeneral = React.createClass( {
 							valueLink={ this.linkState( 'blogdescription' ) }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) }
+							data-tip-target="site-tagline-input" />
 						<FormSettingExplanation>
 							{ this.translate( 'In a few words, explain what this site is about.' ) }
 						</FormSettingExplanation>
@@ -573,7 +575,7 @@ const FormGeneral = React.createClass( {
 						compact={ true }
 						onClick={ this.handleSubmitForm }
 						primary={ true }
-
+						data-tip-target="settings-site-profile-save"
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm

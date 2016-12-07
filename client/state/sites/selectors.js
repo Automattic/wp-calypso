@@ -14,6 +14,7 @@ import {
 	some,
 	split,
 	includes,
+	startsWith,
 } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -985,3 +986,20 @@ export function getCustomizerUrl( state, siteId ) {
 		'return': returnUrl
 	}, adminUrl );
 }
+
+/*
+ * Returns true if the site has unchanged site title
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Boolean} True if site title is default, false otherwise.
+ */
+export const hasDefaultSiteTitle = ( state, siteId ) => {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+	const slug = getSiteSlug( state, siteId );
+	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
+	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
+};
