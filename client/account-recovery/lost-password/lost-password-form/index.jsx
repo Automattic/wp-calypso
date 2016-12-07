@@ -88,7 +88,7 @@ export class LostPasswordFormComponent extends Component {
 							value={ userLogin }
 							disabled={ isSubmitting } />
 					</FormLabel>
-					<a href="/account-recovery/username" className="lost-password-form__forgot-username-link">
+					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
 						{ translate( 'Forgot your username?' ) }
 					</a>
 					<Button
