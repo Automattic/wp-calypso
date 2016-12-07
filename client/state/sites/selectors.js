@@ -14,6 +14,7 @@ import {
 	some,
 	split,
 	includes,
+	startsWith,
 } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -1000,5 +1001,5 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	}
 	const slug = getSiteSlug( state, siteId );
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
-	return site.name === i18n.translate( 'Site Title' ) || slug.startsWith( site.name );
+	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
 };
