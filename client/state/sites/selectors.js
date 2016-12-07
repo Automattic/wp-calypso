@@ -741,6 +741,23 @@ export function hasJetpackSiteJetpackThemes( state, siteId ) {
 }
 
 /**
+ * Determines if the Jetpack plugin of a Jetpack Site has extend themes management features.
+ * Returns null if the site is not known or is not a Jetpack site.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {?Boolean} true if the site has Jetpack extended themes management features
+ */
+export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	return versionCompare( siteJetpackVersion, '4.4.2' ) >= 0;
+}
+
+/**
  * Determines if a site is the main site in a Network
  * True if it is either in a non multi-site configuration
  * or if its url matches the `main_network_site` url option.
