@@ -27,18 +27,19 @@ export const isPreviewShowing = state =>
 
 const timeSinceUserRegistration = state => {
 	const user = getCurrentUser( state );
-	return user ? ( Date.now() - Date.parse( user.date ) ) : false;
+	const registrationDate = user && Date.parse( user.date );
+	return registrationDate ? ( Date.now() - registrationDate ) : false;
 };
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 export const isNewUser = state => {
 	const userAge = timeSinceUserRegistration( state );
-	return ! isNaN( userAge ) ? userAge <= WEEK_IN_MILLISECONDS : false;
+	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
 };
 
 export const isUserOlderThan = age => state => {
 	const userAge = timeSinceUserRegistration( state );
-	return ! isNaN( userAge ) ? userAge >= age : false;
+	return userAge !== false ? userAge >= age : false;
 };
 
 export const hasUserInteractedWithComponent = componentName => state =>
