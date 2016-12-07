@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import filter from 'lodash/filter';
 import range from 'lodash/range';
+import get from 'lodash/get';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -400,7 +401,8 @@ const PlansSetup = React.createClass( {
 		}
 
 		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
-			return ( item.error !== null ) && ( item.error.code !== 'already_registered' );
+			const errorCode = get( item, 'error.code', null );
+			return errorCode && errorCode !== 'already_registered';
 		} );
 
 		if ( pluginsWithErrors.length ) {

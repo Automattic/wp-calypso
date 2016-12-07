@@ -3,6 +3,7 @@
  */
 const wpcom = require( 'lib/wp' );
 import keys from 'lodash/keys';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -241,7 +242,7 @@ function configure( site, plugin, dispatch ) {
 	}
 
 	return site.getOption( { option_name: option }, ( getError, getData ) => {
-		if ( getData.option_value && getData.option_value === optionValue ) {
+		if ( get( getData, 'option_value' ) === optionValue ) {
 			// Already registered with this key
 			dispatch( {
 				type: PLUGIN_SETUP_FINISH,
