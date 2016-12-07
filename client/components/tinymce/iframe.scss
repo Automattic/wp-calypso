@@ -31,13 +31,14 @@ a:active {
 }
 
 code {
-	background: lighten( $gray, 30% );
+	background: $gray-light;
 	font-family: $code;
-	padding: 4px 8px;
+	padding: 1px 4px;
+	border-radius: 2px;
 }
 
 pre {
-	background: lighten( $gray, 34% );
+	background: $gray-light;
 	font-family: $code;
 	padding: 8px;
 

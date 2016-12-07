@@ -223,7 +223,17 @@
 	}
 
 	pre {
+		font-family: $code;
+		font-size: 14px;
 		white-space: pre-wrap;
+		padding: 8px;
+	}
+
+	code {
+		font-size: 14px;
+		background: $gray-light;
+		padding: 1px 4px;
+		border-radius: 2px;
 	}
 
 	blockquote {
@@ -234,8 +244,9 @@
 
 	.notes {
 		background: $gray-light;
-		margin: 40px -20px -20px;
+		margin: 40px -20px 40px;
 		border-top: 1px solid #e9eff3;
+		border-bottom: 1px solid #e9eff3;
 		padding: 20px;
 
 		font-size: 13px;
@@ -260,6 +271,11 @@
 
 		:last-child {
 			margin-bottom: 5px;
+		}
+
+		&:last-child {
+			margin-bottom: -20px;
+			border-bottom: 0;
 		}
 	}
 }
