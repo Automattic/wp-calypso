@@ -73,7 +73,11 @@ const DomainsStep = React.createClass( {
 	},
 
 	getThemeSlug: function() {
-		return this.props.queryObject ? this.props.queryObject.theme : undefined;
+		if ( this.props.queryObject && this.props.queryObject.theme ) {
+			return this.props.queryObject.theme;
+		}
+
+		return 'developer' === this.props.flowName ? 'twentysixteen' : undefined;
 	},
 
 	getThemeArgs: function() {
@@ -149,8 +153,17 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
+	getSuggestion: function() {
+		if ( this.props.queryObject && this.props.queryObject.new ) {
+			return this.props.queryObject.new;
+		}
+
+		return 'developer' === this.props.flowName ? 'calypsodev' : '';
+	},
+
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		const isDeveloperFlow = Boolean( 'developer' === this.props.flowName );
 
 		return (
 			<RegisterDomainStep
@@ -162,16 +175,18 @@ const DomainsStep = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! isDeveloperFlow }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
 				includeDotBlogSubdomain={ ( this.props.flowName === 'subdomain' ) ||
 					( abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain' ) }
 				isSignupStep
-				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				showExampleSuggestions={ ! isDeveloperFlow }
+				suggestionQuantity={ isDeveloperFlow ? 1 : undefined }
+				initialSuggestionQuantity={ isDeveloperFlow ? 0 : undefined }
+				suggestion={ this.getSuggestion() } />
 		);
 	},
 
