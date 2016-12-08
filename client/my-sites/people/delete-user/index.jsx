@@ -21,8 +21,9 @@ const Card = require( 'components/card' ),
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
 import Gravatar from 'components/gravatar';
+import { localize } from 'i18n-calypso';
 
-module.exports = React.createClass( {
+const DeleteUser = React.createClass( {
 	displayName: 'DeleteUser',
 
 	mixins: [ PureRenderMixin ],
@@ -44,11 +45,12 @@ module.exports = React.createClass( {
 	},
 
 	getRemoveText: function() {
+		const { translate } = this.props;
 		if ( ! this.props.user || ! this.props.user.name ) {
-			return this.translate( 'Remove User' );
+			return translate( 'Remove User' );
 		}
 
-		return this.translate( 'Remove %(username)s', {
+		return translate( 'Remove %(username)s', {
 			args: {
 				username: this.props.user.name,
 			}
@@ -56,11 +58,12 @@ module.exports = React.createClass( {
 	},
 
 	getDeleteText: function() {
+		const { translate } = this.props;
 		if ( ! this.props.user || ! this.props.user.name ) {
-			return this.translate( 'Delete User' );
+			return translate( 'Delete User' );
 		}
 
-		return this.translate( 'Delete %(username)s', {
+		return translate( 'Delete %(username)s', {
 			args: {
 				username: this.props.user.name,
 			}
@@ -68,7 +71,7 @@ module.exports = React.createClass( {
 	},
 
 	handleRadioChange: function( event ) {
-		let name = event.currentTarget.name,
+		const name = event.currentTarget.name,
 			value = event.currentTarget.value,
 			updateObj = {};
 
@@ -85,27 +88,28 @@ module.exports = React.createClass( {
 	},
 
 	removeUser: function() {
+		const { translate } = this.props;
 		accept( (
 			<div>
 				<p>
 				{
-					this.props.user && this.props.user.name ?
-					this.translate(
+					this.props.user && this.props.user.name
+					? translate(
 						'If you remove %(username)s, that user will no longer be able to access this site, ' +
 						'but any content that was created by %(username)s will remain on the site.', {
 							args: {
 								username: this.props.user.name
 							}
 						}
-					) :
-					this.translate(
+					)
+					: translate(
 						'If you remove this user, he or she will no longer be able to access this site, ' +
 						'but any content that was created by this user will remain on the site.'
 					)
 				}
 				</p>
 				<p>
-					{ this.translate( 'Would you still like to remove this user?' ) }
+					{ translate( 'Would you still like to remove this user?' ) }
 				</p>
 			</div>
 			),
@@ -117,7 +121,7 @@ module.exports = React.createClass( {
 					analytics.ga.recordEvent( 'People', 'Clicked Cancel Remove User on Edit User Network Site' );
 				}
 			},
-			this.translate( 'Remove' )
+			translate( 'Remove' )
 		);
 		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	},
@@ -138,16 +142,18 @@ module.exports = React.createClass( {
 	},
 
 	getAuthorSelectPlaceholder: function() {
+		const { translate } = this.props;
 		return (
 			<span className="delete-user__select-placeholder">
-				{ this.translate( 'select a user' ) }
+				{ translate( 'select a user' ) }
 			</span>
 		);
 	},
 
 	getTranslatedAssignLabel: function() {
 		const ignoreContext = this.refs ? this.refs.reassignLabel : undefined;
-		return this.translate( 'Attribute all content to {{AuthorSelector/}}', {
+		const { translate } = this.props;
+		return translate( 'Attribute all content to {{AuthorSelector/}}', {
 			components: {
 				AuthorSelector: (
 					<AuthorSelector
@@ -159,14 +165,16 @@ module.exports = React.createClass( {
 						popoverPosition="top left"
 					>
 						{
-							this.state.reassignUser ?
-							<span>
-								<Gravatar size={ 26 } user={ this.state.reassignUser } />
-								<span className="delete-user__reassign-user-name">
-									{ this.state.reassignUser.name }
+							this.state.reassignUser
+							? (
+								<span>
+									<Gravatar size={ 26 } user={ this.state.reassignUser } />
+									<span className="delete-user__reassign-user-name">
+										{ this.state.reassignUser.name }
+									</span>
 								</span>
-							</span> :
-							this.getAuthorSelectPlaceholder()
+							)
+							: this.getAuthorSelectPlaceholder()
 						}
 					</AuthorSelector>
 				)
@@ -183,8 +191,9 @@ module.exports = React.createClass( {
 	},
 
 	renderSingleSite: function() {
+		const { translate } = this.props;
 		return (
-			<Card className="delete-user">
+			<Card className="delete-user__single-site">
 				<form onSubmit={ this.deleteUser }>
 					<FormSectionHeading>
 						{ this.getDeleteText() }
@@ -192,16 +201,16 @@ module.exports = React.createClass( {
 
 					<p className="delete-user__explanation">
 						{
-							this.props.user.name ?
-							this.translate(
+							this.props.user.name
+							? translate(
 								'You have the option of reassigning all content created by ' +
 								'%(username)s, or deleting the content entirely.', {
 									args: {
 										username: this.props.user.name,
 									}
 								}
-							) :
-							this.translate(
+							)
+							: translate(
 								'You have the option of reassigning all content created by ' +
 								'this user, or deleting the content entirely.'
 							)
@@ -232,15 +241,15 @@ module.exports = React.createClass( {
 
 							<span>
 								{
-									this.props.user.name ?
-									this.translate(
+									this.props.user.name
+									? translate(
 										'Delete all content created by %(username)s', {
 											args: {
 												username: this.props.user.name ? this.props.user.name : '',
 											}
 										}
-									) :
-									this.translate(
+									)
+									: translate(
 										'Delete all content created by this user'
 									)
 								}
@@ -250,7 +259,7 @@ module.exports = React.createClass( {
 
 					<FormButtonsBar>
 						<FormButton disabled={ this.isDeleteButtonDisabled() } >
-							{ this.translate( 'Delete user', { context: 'Button label' } ) }
+							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>
@@ -260,8 +269,10 @@ module.exports = React.createClass( {
 
 	renderMultisite: function() {
 		return (
-			<CompactCard className="delete-user" >
-				<a className="edit-team-member-form__remove-user" onClick={ this.removeUser }>
+			<CompactCard className="delete-user__multisite" >
+				<a
+					className="delete-user__remove-user"
+					onClick={ this.removeUser }>
 					<Gridicon icon="trash" />
 					{ this.getRemoveText() }
 				</a>
@@ -281,3 +292,5 @@ module.exports = React.createClass( {
 		return this.props.isMultisite ? this.renderMultisite() : this.renderSingleSite();
 	}
 } );
+
+export default localize( DeleteUser );
