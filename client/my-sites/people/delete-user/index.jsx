@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -146,6 +146,7 @@ module.exports = React.createClass( {
 	},
 
 	getTranslatedAssignLabel: function() {
+		const ignoreContext = this.refs ? this.refs.reassignLabel : undefined;
 		return this.translate( 'Attribute all content to {{AuthorSelector/}}', {
 			components: {
 				AuthorSelector: (
@@ -154,6 +155,8 @@ module.exports = React.createClass( {
 						siteId={ this.props.siteId }
 						onSelect={ this.onSelectAuthor }
 						exclude={ [ this.props.user.ID ] }
+						ignoreContext={ ignoreContext }
+						popoverPosition="top left"
 					>
 						{
 							this.state.reassignUser ?
@@ -206,7 +209,7 @@ module.exports = React.createClass( {
 					</p>
 
 					<FormFieldset>
-						<FormLabel>
+						<FormLabel ref="reassignLabel">
 							<FormRadio
 								name="radioOption"
 								onChange={ this.handleRadioChange }
