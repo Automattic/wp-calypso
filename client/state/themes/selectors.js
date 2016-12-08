@@ -292,6 +292,17 @@ export function isRequestingActiveTheme( state, siteId ) {
 }
 
 /**
+ * Whether a theme is present in the WordPress.org Theme Directory
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  themeId Theme ID
+ * @return {Boolean}         Whether theme is in WP.org theme directory
+ */
+export function isWporgTheme( state, themeId ) {
+	return !! getTheme( state, 'wporg', themeId );
+}
+
+/**
  * Returns the URL for a given theme's details sheet.
  *
  * @param  {Object}  state  Global state tree
