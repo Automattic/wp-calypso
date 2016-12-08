@@ -72,6 +72,10 @@ const PlansSetup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
 	},
 
+	trackManagePlans() {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
+	},
+
 	trackContactSupport() {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
 	},
@@ -263,73 +267,94 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderStatus( plugin ) {
+		if ( plugin.error ) {
+			return this.renderStatusError( plugin );
+		}
+
 		const { translate } = this.props;
 		const statusProps = {
 			isCompact: true,
 			status: 'is-info',
 			showDismiss: false,
+			icon: 'plugins',
 		};
 
-		if ( plugin.error ) {
-			statusProps.status = 'is-error';
-			switch ( plugin.status ) {
-				case 'install':
-					statusProps.text = translate(
-						'An error occurred when installing %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					);
-					break;
-				case 'activate':
-					statusProps.text = translate(
-						'An error occurred when activating %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					);
-					break;
-				case 'configure':
-					statusProps.text = translate(
-						'An error occurred when configuring %(plugin)s.',
-						{ args: { plugin: plugin.name } }
-					);
-					break;
-				default:
-					statusProps.text = plugin.error.message || translate( 'An error occured.' );
-					break;
-			}
-			statusProps.children = (
-				<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] } onClick={ this.trackManualInstall }>
-					{ translate( 'Manual Installation' ) }
-				</NoticeAction>
+		switch ( plugin.status ) {
+			case 'done':
+				// Done doesn't use a notice
+				return (
+					<div className="plugin-item__finished">
+						{ translate( 'Successfully installed & configured.' ) }
+					</div>
+				);
+			case 'activate':
+			case 'configure':
+				return <Notice { ...statusProps } text={ translate( 'Almost done' ) } />;
+			case 'install':
+				return <Notice { ...statusProps } text={ translate( 'Working…' ) } />;
+			case 'wait':
+			default:
+				return <Notice { ...statusProps } text={ translate( 'Waiting to install' ) } />;
+		}
+	},
+
+	renderStatusError( plugin ) {
+		const { translate } = this.props;
+
+		// This state isn't quite an error
+		if ( plugin.error.code === 'already_registered' ) {
+			return (
+				<Notice
+					showDismiss={ false }
+					isCompact={ true }
+					status="is-info"
+					text={ translate( 'This plugin is already registered with another plan.' ) }
+				>
+					<NoticeAction key="notice_action" href="/me/purchases" onClick={ this.trackManagePlans }>
+						{ translate( 'Manage Plans' ) }
+					</NoticeAction>
+				</Notice>
 			);
-			if ( plugin.error.code === 'already_registered' ) {
-				statusProps.status = 'is-info';
-				statusProps.text = translate( 'This plugin is already registered with another plan.' );
-				delete statusProps.children;
-			}
-		} else {
-			statusProps.icon = 'plugins';
-			statusProps.status = 'is-info';
-			switch ( plugin.status ) {
-				case 'done':
-					// Done doesn't use a notice
-					return (
-						<div className="plugin-item__finished">
-							{ translate( 'Successfully installed & configured.' ) }
-						</div>
-					);
-				case 'activate':
-				case 'configure':
-					statusProps.text = translate( 'Almost done' );
-					break;
-				case 'install':
-					statusProps.text = translate( 'Working…' );
-					break;
-				case 'wait':
-				default:
-					statusProps.text = translate( 'Waiting to install' );
-			}
 		}
 
-		return ( <Notice { ...statusProps } /> );
+		const statusProps = {
+			isCompact: true,
+			status: 'is-error',
+			showDismiss: false,
+		};
+		statusProps.children = (
+			<NoticeAction key="notice_action" href={ helpLinks[ plugin.slug ] } onClick={ this.trackManualInstall }>
+				{ translate( 'Manual Installation' ) }
+			</NoticeAction>
+		);
+
+		switch ( plugin.status ) {
+			case 'install':
+				return (
+					<Notice { ...statusProps } text={ translate(
+						'An error occurred when installing %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					) } />
+				);
+			case 'activate':
+				return (
+					<Notice { ...statusProps } text={ translate(
+						'An error occurred when activating %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					) } />
+				);
+			case 'configure':
+				return (
+					<Notice { ...statusProps } text={ translate(
+						'An error occurred when configuring %(plugin)s.',
+						{ args: { plugin: plugin.name } }
+					) } />
+				);
+			default:
+				return (
+					<Notice { ...statusProps } text={ plugin.error.message || translate( 'An error occured.' ) } />
+				);
+		}
 	},
 
 	renderActions( plugin ) {
