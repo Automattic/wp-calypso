@@ -80,7 +80,7 @@ export const queriesSchema = {
 export const activeThemesSchema = {
 	type: 'object',
 	patternProperties: {
-		'^(wpcom|\\d+)$': {
+		'^\\d+$': {
 			description: 'Theme ID',
 			type: 'string'
 		}
