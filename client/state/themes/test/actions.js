@@ -343,6 +343,63 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
+
+		context( 'with the WP.org API', () => {
+			useNock( ( nock ) => {
+				nock( 'https://api.wordpress.org' )
+					.persist()
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyseventeen' )
+					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyumpteen' )
+					.reply( 404, {
+						error: 'not_found',
+						message: 'Not found'
+					} );
+			} );
+
+			it( 'should dispatch request action when thunk triggered', () => {
+				requestTheme( 'twentyseventeen', 'wporg' )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_REQUEST,
+					siteId: 'wporg',
+					themeId: 'twentyseventeen'
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentyseventeen', 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentyseventeen', name: 'Twenty Seventeen' } )
+						],
+						siteId: 'wporg'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestTheme( 'twentyseventeen', 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_SUCCESS,
+						siteId: 'wporg',
+						themeId: 'twentyseventeen'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch fail action when request fails', () => {
+				return requestTheme( 'twentyumpteen', 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_FAILURE,
+						siteId: 'wporg',
+						themeId: 'twentyumpteen',
+						error: sinon.match( { message: 'Not Found' } )
+					} );
+				} );
+			} );
+		} );
 	} );
 
 	describe( '#themeActivated()', () => {
