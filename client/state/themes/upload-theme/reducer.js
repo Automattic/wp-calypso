@@ -14,6 +14,12 @@ import {
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_INITIATE_PROGRESS,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/action-types';
 
 export const uploadedThemeId = createReducer( {}, {
@@ -21,8 +27,13 @@ export const uploadedThemeId = createReducer( {}, {
 		...state,
 		[ siteId ]: themeId,
 	} ),
+	[ THEME_TRANSFER_STATUS_RECEIVE ]: ( state, { siteId, themeId } ) => ( {
+		...state,
+		[ siteId ]: themeId,
+	} ),
 	[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 } );
 
 export const uploadError = createReducer( {}, {
@@ -30,8 +41,17 @@ export const uploadError = createReducer( {}, {
 		...state,
 		[ siteId ]: error,
 	} ),
+	[ THEME_TRANSFER_STATUS_FAILURE ]: ( state, { siteId, error } ) => ( {
+		...state,
+		[ siteId ]: error,
+	} ),
+	[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId, error } ) => ( {
+		...state,
+		[ siteId ]: error,
+	} ),
 	[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 } );
 
 export const progressLoaded = createReducer( {}, {
@@ -39,8 +59,13 @@ export const progressLoaded = createReducer( {}, {
 		...state,
 		[ siteId ]: loaded,
 	} ),
+	[ THEME_TRANSFER_INITIATE_PROGRESS ]: ( state, { siteId, loaded } ) => ( {
+		...state,
+		[ siteId ]: loaded,
+	} ),
 	[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 } );
 
 export const progressTotal = createReducer( {}, {
@@ -48,12 +73,21 @@ export const progressTotal = createReducer( {}, {
 		...state,
 		[ siteId ]: total,
 	} ),
+	[ THEME_TRANSFER_INITIATE_PROGRESS ]: ( state, { siteId, total } ) => ( {
+		...state,
+		[ siteId ]: total,
+	} ),
 	[ THEME_UPLOAD_CLEAR ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( omit( state, siteId ) ),
 } );
 
 export const inProgress = createReducer( {}, {
 	[ THEME_UPLOAD_START ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: true,
+	} ),
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: true,
 	} ),
@@ -66,6 +100,14 @@ export const inProgress = createReducer( {}, {
 		[ siteId ]: false,
 	} ),
 	[ THEME_UPLOAD_FAILURE ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: false,
+	} ),
+	[ THEME_TRANSFER_INITIATE_SUCCESS ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: false,
+	} ),
+	[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: false,
 	} ),
