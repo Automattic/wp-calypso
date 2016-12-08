@@ -40,6 +40,7 @@ export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
+export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
@@ -117,7 +118,7 @@ export const PLANS_LIST = {
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
-			FEATURE_3GB_STORAGE,
+			isEnabled( 'plans/6gb-personal-plan' ) ? FEATURE_6GB_STORAGE : FEATURE_3GB_STORAGE,
 			FEATURE_NO_ADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -518,6 +519,19 @@ export const FEATURES_LIST = {
 		)
 	},
 
+	[ FEATURE_6GB_STORAGE ]: {
+		getSlug: () => FEATURE_6GB_STORAGE,
+		getTitle: () => i18n.translate( '{{strong}}6GB{{/strong}} Storage Space', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate(
+			"With increased storage space you'll be able to upload " +
+			'more images, videos, audio, and documents to your website.'
+		)
+	},
+
 	[ FEATURE_13GB_STORAGE ]: {
 		getSlug: () => FEATURE_13GB_STORAGE,
 		getTitle: () => i18n.translate( '{{strong}}13GB{{/strong}} Storage Space', {
@@ -526,7 +540,7 @@ export const FEATURES_LIST = {
 			}
 		} ),
 		getDescription: () => i18n.translate(
-			"With increased storage space you'll be able to upload " +
+			'With increased storage space you\'ll be able to upload ' +
 			'more images, videos, audio, and documents to your website.'
 		)
 	},
