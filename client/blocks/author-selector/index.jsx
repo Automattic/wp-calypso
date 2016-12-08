@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import debugModule from 'debug';
-import { trim, noop } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,18 +34,13 @@ const SwitcherShell = React.createClass( {
 		totalUsers: React.PropTypes.number,
 		usersCurrentOffset: React.PropTypes.number,
 		allowSingleUser: React.PropTypes.bool,
-		popoverPosition: React.PropTypes.string
+		popoverPosition: React.PropTypes.string,
+		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.func } )
 	},
 
 	getInitialState: function() {
 		return {
 			showAuthorMenu: false
-		};
-	},
-
-	getDefaultProps() {
-		return {
-			ignoreContext: noop
 		};
 	},
 
