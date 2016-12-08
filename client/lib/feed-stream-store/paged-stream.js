@@ -248,6 +248,7 @@ export default class PagedStream {
 		}
 	}
 
+	// pop the last item off the end and insert in the place of the dismissed post
 	dismissPost( postKey ) {
 		const indexToRemove = findIndex( this.postKeys, postKey );
 		if ( indexToRemove === -1 ) {
