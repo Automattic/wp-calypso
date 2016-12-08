@@ -29,6 +29,7 @@ import {
 	getThemeForumUrl,
 	getActiveTheme,
 	isRequestingActiveTheme,
+	isWporgTheme,
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -1372,6 +1373,45 @@ describe( 'themes selectors', () => {
 		);
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isWporgTheme()', () => {
+		it( 'should return false if theme is not found on WP.org', () => {
+			const isWporg = isWporgTheme( {
+				themes: {
+					queries: {
+					}
+				}
+			}, 'twentyseventeen' );
+
+			expect( isWporg ).to.be.false;
+		} );
+
+		it( 'should return true if theme is found on WP.org', () => {
+			const wporgTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'wordpressdotorg',
+				demo_uri: 'https://wp-themes.com/twentyseventeen',
+				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+				taxonomies: {
+					theme_feature: {
+						'custom-header': 'Custom Header'
+					}
+				}
+			};
+			const isWporg = isWporgTheme( {
+				themes: {
+					queries: {
+						wporg: new ThemeQueryManager( {
+							items: { twentyseventeen: wporgTheme }
+						} ),
+					}
+				}
+			}, 'twentyseventeen' );
+
+			expect( isWporg ).to.be.true;
 		} );
 	} );
 
