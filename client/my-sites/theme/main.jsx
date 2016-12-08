@@ -339,7 +339,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderDownload() {
-		if ( isPremium( this.props ) ) {
+		// Don't render download button:
+		// * If it's a premium theme
+		// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
+		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
+		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
+		//   The <ThemeDownloadCard /> component can handle that case.
+		if ( isPremium( this.props ) || ( this.props.isJetpack && ! this.props.download ) ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
