@@ -122,6 +122,7 @@
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
+		"plans/6gb-personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/image-editor": true,
 		"post-editor/insert-menu": true,
