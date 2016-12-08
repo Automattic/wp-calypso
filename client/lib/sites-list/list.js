@@ -6,7 +6,8 @@ var debug = require( 'debug' )( 'calypso:sites-list' ),
 	assign = require( 'lodash/assign' ),
 	find = require( 'lodash/find' ),
 	isEmpty = require( 'lodash/isEmpty' ),
-	some = require( 'lodash/some' );
+	some = require( 'lodash/some' ),
+	Dispatcher = require( 'dispatcher' );
 
 /**
  * Internal dependencies
@@ -17,7 +18,8 @@ var wpcom = require( 'lib/wp' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
-	userUtils = require( 'lib/user/utils' );
+	userUtils = require( 'lib/user/utils' ),
+	receiveSites = require( 'state/sites/actions' ).receiveSites;
 
 /**
  * SitesList component
@@ -83,6 +85,7 @@ SitesList.prototype.fetch = function() {
 			return;
 		}
 
+		Dispatcher.handleViewAction( receiveSites( data.sites ) );
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );

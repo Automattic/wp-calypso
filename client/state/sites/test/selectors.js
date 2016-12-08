@@ -11,6 +11,7 @@ import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
+	getPrimarySite,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -109,6 +110,73 @@ describe( 'selectors', () => {
 					unmapped_url: 'https://example.wordpress.com'
 				}
 			} );
+		} );
+	} );
+
+	describe( '#getPrimarySite', () => {
+		it( 'should return null if there are no sites', () => {
+			const primarySite = getPrimarySite( {
+				sites: {
+					items: {}
+				}
+			} );
+
+			expect( primarySite ).to.be.null;
+		} );
+
+		it( 'should return the normalized primary site if there is one', () => {
+			const primarySite = getPrimarySite( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: true
+						},
+					}
+				}
+			} );
+
+			expect( primarySite ).to.eql( {
+				ID: 77203199,
+				URL: 'https://example.com',
+				is_primary: true,
+				domain: 'example.com',
+				hasConflict: false,
+				is_customizable: false,
+				is_previewable: false,
+				options: {
+					default_post_format: 'standard'
+				},
+				slug: 'example.com',
+				title: 'example.com'
+			} );
+		} );
+
+		it( 'should return null if there is no primary site', () => {
+			const primarySite = getPrimarySite( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: false
+						},
+					}
+				}
+			} );
+
+			expect( primarySite ).to.be.null;
 		} );
 	} );
 

@@ -86,6 +86,22 @@ export function getJetpackComputedAttributes( state, siteId ) {
 }
 
 /**
+ * Returns a the primary site object.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Object}         The primary site object
+ */
+export function getPrimarySite( state ) {
+	const site = find( state.sites.items, 'is_primary' );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return getSite( state, site.ID );
+}
+
+/**
  * Returns a filtered array of WordPress.com site IDs where a Jetpack site
  * exists in the set of sites with the same URL.
  *
