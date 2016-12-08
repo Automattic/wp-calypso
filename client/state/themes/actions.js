@@ -504,42 +504,48 @@ export function initiateThemeTransfer( siteId, file ) {
 	};
 }
 
-const pollStatus = ( dispatch, siteId, transferId, interval, endTime ) => {
-	if ( Date.now() > endTime ) {
-		// timed-out, stop polling
-		return dispatch( {
-			type: THEME_TRANSFER_STATUS_FAILURE,
-			siteId,
-			transferId,
-			error: 'client timeout',
-		} );
-	}
-	return wpcom.undocumented().transferStatus( siteId, transferId )
-		.then( ( { status, message, themeId } ) => {
-			dispatch( {
-				type: THEME_TRANSFER_STATUS_SUCCESS,
-				siteId,
-				transferId,
-				status,
-				message,
-				themeId,
-			} );
-			if ( status !== 'complete' ) {
-				delay( pollStatus, interval, dispatch, siteId, transferId, interval, endTime );
-			}
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: THEME_TRANSFER_STATUS_FAILURE,
-				siteId,
-				transferId,
-				error,
-			} );
-		} );
-};
-
 export function themeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+	const endTime = Date.now() + timeout;
 	return dispatch => {
-		return pollStatus( dispatch, siteId, transferId, interval, Date.now() + timeout );
+		const pollStatus = ( resolve, reject ) => {
+			if ( Date.now() > endTime ) {
+				// timed-out, stop polling
+				dispatch( {
+					type: THEME_TRANSFER_STATUS_FAILURE,
+					siteId,
+					transferId,
+					error: 'client timeout',
+				} );
+				return reject( 'client timeout' );
+			}
+			return wpcom.undocumented().transferStatus( siteId, transferId )
+				.then( ( { status, message, themeId } ) => {
+					dispatch( {
+						type: THEME_TRANSFER_STATUS_SUCCESS,
+						siteId,
+						transferId,
+						status,
+						message,
+						themeId,
+					} );
+					if ( status === 'complete' ) {
+						// finished, stop polling
+						return resolve();
+					}
+					// poll again
+					return delay( pollStatus, interval, resolve, reject );
+				} )
+				.catch( ( error ) => {
+					dispatch( {
+						type: THEME_TRANSFER_STATUS_FAILURE,
+						siteId,
+						transferId,
+						error,
+					} );
+					return reject( error );
+				} );
+		};
+
+		return new Promise( pollStatus );
 	};
 }

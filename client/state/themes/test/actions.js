@@ -24,6 +24,7 @@ import {
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
 	THEME_TRANSFER_STATUS_SUCCESS,
+	THEME_TRANSFER_STATUS_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -488,8 +489,13 @@ describe( 'actions', () => {
 	describe( '#themeTransferStatus', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
 				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/1' )
+				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/2' ).thrice()
+				.reply( 200, { status: 'stuck', message: 'jammed' } )
+				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/3' ).twice()
+				.reply( 200, { status: 'progress', message: 'in progress' } )
+				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/3' )
 				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } );
 		} );
 
@@ -499,6 +505,42 @@ describe( 'actions', () => {
 					type: THEME_TRANSFER_STATUS_SUCCESS,
 					siteId: 2211667,
 					transferId: 1,
+					status: 'complete',
+					message: 'all done',
+					themeId: 'mood',
+				} );
+			} );
+		} );
+
+		it( 'should time-out if status never complete', ( done ) => {
+			themeTransferStatus( 2211667, 2, 10, 25 )( spy ).catch( () => {
+				done();
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_FAILURE,
+					siteId: 2211667,
+					transferId: 2,
+					error: 'client timeout',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch status update', ( done ) => {
+			themeTransferStatus( 2211667, 3, 20 )( spy ).then( () => {
+				done();
+				// Two 'progress' then a 'complete'
+				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_SUCCESS,
+					siteId: 2211667,
+					transferId: 3,
+					status: 'progress',
+					message: 'in progress',
+					themeId: undefined,
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_SUCCESS,
+					siteId: 2211667,
+					transferId: 3,
 					status: 'complete',
 					message: 'all done',
 					themeId: 'mood',
