@@ -55,15 +55,15 @@ export function fetchNextPage( id ) {
 }
 
 export function receivePage( id, error, data ) {
-		// Process metadata. Yes, this is weird.
-		// The idea here is that we're getting posts back as metadata, so we should process them the same way we would have
-		// if they came back via the standard post::fetch action. Rather than trying to make the post store deal with any
-		// action type that _might_ have meta, we teach the stores that know they're using meta how to forward it on.
-		//
-		// This also lets other stores that are interested in posts pick them up. Handling it internally to the post store
-		// would rob them of that chance.
-		//
-		// TODO add a new action that receives an array of posts, so we can batch up this change and only emit once
+	// Process metadata. Yes, this is weird.
+	// The idea here is that we're getting posts back as metadata, so we should process them the same way we would have
+	// if they came back via the standard post::fetch action. Rather than trying to make the post store deal with any
+	// action type that _might_ have meta, we teach the stores that know they're using meta how to forward it on.
+	//
+	// This also lets other stores that are interested in posts pick them up. Handling it internally to the post store
+	// would rob them of that chance.
+	//
+	// TODO add a new action that receives an array of posts, so we can batch up this change and only emit once
 	if ( ! error && data && data.posts ) {
 		forEach( data.posts, function( post ) {
 			if ( post && get( post, 'meta.data.discover_original_post' ) ) {
