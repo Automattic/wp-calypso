@@ -447,9 +447,17 @@ export function getThemeSignupUrl( state, theme ) {
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
+ * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId ) {
+export function getThemeForumUrl( state, themeId, siteId ) {
+	if ( isJetpackSite( state, siteId ) ) {
+		if ( isWporgTheme( state, themeId ) ) {
+			return '//wordpress.org/support/theme/' + themeId;
+		}
+		return null;
+	}
+
 	if ( isThemePremium( state, themeId ) ) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}
