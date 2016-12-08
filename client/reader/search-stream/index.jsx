@@ -206,6 +206,33 @@ const SearchStream = React.createClass( {
 		return SearchCardAdapter( isRecommendations );
 	},
 
+	handleStreamMounted( c ) {
+		this.streamRef = c;
+		if ( this.searchBoxRef && this.streamRef ) {
+			this.searchBoxRef.width = this.streamRef.width;
+		}
+	},
+
+	handleSearchBoxMounted( c ) {
+		this.searchBoxRef = c;
+		if ( this.searchBoxRef && this.streamRef ) {
+			this.searchBoxRef.width = this.streamRef.width;
+		}
+	},
+
+	componentDidMount() {
+		this.resizeListener = window.addEventListener( 'resize', () => {
+			if ( this.searchBoxRef && this.streamRef ) {
+				const width = this.streamRef.getClientRects()[ 0 ].width;
+				this.searchBoxRef.style.width = `${ width }px`;
+			}
+		} );
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.resizeListener );
+	},
+
 	placeholderFactory( { key, ...rest } ) {
 		if ( isRefreshedStream && ! this.props.query ) {
 			return (
@@ -244,7 +271,8 @@ const SearchStream = React.createClass( {
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<div className="search-stream__fixed-area">
+				<div ref={ this.handleStreamMounted } />
+				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							initialValue={ this.props.query }
