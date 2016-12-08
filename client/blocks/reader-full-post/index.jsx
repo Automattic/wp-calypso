@@ -389,7 +389,7 @@ const ConnectedFullPostView = connect(
 			is_external: isExternal
 		} = ownProps.post;
 
-		const props = { };
+		const props = {};
 
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
