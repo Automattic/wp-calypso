@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	normalizeWpcomTheme,
 	getThemeIdFromStylesheet,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
@@ -15,6 +16,41 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( '#normalizeWpcomTheme()', () => {
+		it( 'should return an empty object when given no argument', () => {
+			const normalizedTheme = normalizeWpcomTheme();
+			expect( normalizedTheme ).to.deep.equal( {} );
+		} );
+		it( 'should rename some keys', () => {
+			const normalizedTheme = normalizeWpcomTheme( {
+				id: 'mood',
+				name: 'Mood',
+				author: 'Automattic',
+				description: 'Mood is a business theme with positive vibe...',
+				description_long: '<p>Say hello to <em>Mood</em>, a business theme with a positive vibe...',
+				support_documentation: '<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
+				screenshot: 'mood.jpg',
+				price: '$20',
+				stylesheet: 'premium/mood',
+				demo_uri: 'https://mooddemo.wordpress.com/',
+				author_uri: 'https://wordpress.com/themes/'
+			} );
+			expect( normalizedTheme ).to.deep.equal( {
+				id: 'mood',
+				name: 'Mood',
+				author: 'Automattic',
+				description: 'Mood is a business theme with positive vibe...',
+				descriptionLong: '<p>Say hello to <em>Mood</em>, a business theme with a positive vibe...',
+				supportDocumentation: '<h2>Getting started</h2>↵<p>When you first activate <em>Mood</em>,...',
+				screenshot: 'mood.jpg',
+				price: '$20',
+				stylesheet: 'premium/mood',
+				demo_uri: 'https://mooddemo.wordpress.com/',
+				author_uri: 'https://wordpress.com/themes/'
+			} );
+		} );
+	} );
+
 	describe( '#getThemeIdFromStylesheet()', () => {
 		it( 'should return undefined when given no argument', () => {
 			const themeId = getThemeIdFromStylesheet();
