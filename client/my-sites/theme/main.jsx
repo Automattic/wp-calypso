@@ -266,6 +266,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderThemeForumCard( isPrimary = false ) {
+		if ( ! this.props.forumUrl ) {
+			return null;
+		}
+
 		const description = isPremium( this.props )
 			? i18n.translate( 'Get in touch with the theme author' )
 			: i18n.translate( 'Get help from volunteers and staff' );
@@ -606,7 +610,7 @@ export default connect(
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
-			forumUrl: getThemeForumUrl( state, id )
+			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID )
 		};
 	}
 )( ThemeSheetWithOptions );
