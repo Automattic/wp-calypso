@@ -72,7 +72,7 @@ export const getTheme = createSelector(
 		}
 		return {
 			...theme,
-			...pick( wporgTheme, [ 'demo_uri', 'download' ] )
+			...pick( wporgTheme, [ 'demo_uri', 'download', 'taxonomies' ] )
 		};
 	},
 	( state ) => state.themes.queries
