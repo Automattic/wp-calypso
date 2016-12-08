@@ -73,15 +73,17 @@ class FeedHeader extends Component {
 
 		return (
 			<div className={ classes }>
-				{ this.props.showBack && <HeaderBack /> }
-				<div className="reader-feed-header__follow">
-					{ followerCount ? <span className="reader-feed-header__follow-count"> {
-					this.props.translate( '%s follower', '%s followers',
-					{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
-					</span> : null }
-					{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
-						<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
-					</div> : null }
+				<div className="reader-feed-header__back-and-follow">
+					{ this.props.showBack && <HeaderBack /> }
+					<div className="reader-feed-header__follow">
+						{ followerCount ? <span className="reader-feed-header__follow-count"> {
+						this.props.translate( '%s follower', '%s followers',
+						{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
+						</span> : null }
+						{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
+							<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
+						</div> : null }
+					</div>
 				</div>
 				<Card className="reader-feed-header__site">
 					{ this.state.siteish &&

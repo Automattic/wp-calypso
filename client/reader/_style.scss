@@ -112,62 +112,48 @@
 	}
 }
 
-// Refresh Site Stream with Back button
-.is-reader-page .is-site-stream .reader-feed-header {
+// Back button in Reader FeedHeader
+.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
 
-	&.has-back-button {
-		margin-top: -27px;
+	@include breakpoint( "<660px" ) {
+		right: 13px;
+	}
 
-		.reader-feed-header__site {
+	@include breakpoint( "<480px" ) {
+		right: 0;
+	}
 
-			@include breakpoint( "<960px" ) {
-				margin-top: -20px;
-			}
-		}
+	// Drops Follow count in FeedHeader if Back button exists
+	.reader-feed-header__follow-count {
 
-		.reader-feed-header__follow {
-
-			@include breakpoint( "<960px" ) {
-				justify-content: flex-end;
-				position: relative;
-					top: 12px;
-			}
-
-			@include breakpoint( "<660px" ) {
-				right: 15px;
-			}
-		}
-
-		.reader-feed-header__follow-count {
-
-			@include breakpoint( "<960px" ) {
-				display: none;
-			}
+		@include breakpoint( "<960px" ) {
+			display: none;
 		}
 	}
 }
 
-.is-reader-page .is-site-stream .card.header-cake {
-	background: none;
-	box-shadow: none;
-	padding: 0;
-	position: relative;
-		left: -3px;
-		top: 20px;
+.is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
 
-	@include breakpoint( "<960px" ) {
-		top: 15px;
-	}
+	.card.header-cake {
+		background: none;
+		box-shadow: none;
+		flex: 1;
+		margin-right: 100px;
+		position: relative;
+			top: 4px;
+		z-index: z-index( '.reader-feed-header__back-and-follow', '.card.header-cake' );
 
-	@include breakpoint( "<660px" ) {
-		left: 13px;
-	}
+		@include breakpoint( "<960px" ) {
+			margin-top: 0;
+		}
 
-	@include breakpoint( "<480px" ) {
-		top: 9px;
+		@include breakpoint( "<480px" ) {
+			left: 0;
+		}
 	}
 
 	.button.header-cake__back {
+		overflow: visible;
 		padding: 0;
 		position: relative;
 	}
