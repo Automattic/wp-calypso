@@ -69,7 +69,9 @@ class SiteSettingsFormGeneral extends Component {
 			jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 			amp_is_supported: settings.amp_is_supported,
-			amp_is_enabled: settings.amp_is_enabled
+			amp_is_enabled: settings.amp_is_enabled,
+
+			holidaysnow: !! settings.holidaysnow
 		};
 
 		if ( settings.jetpack_relatedposts_allowed ) {
@@ -78,10 +80,6 @@ class SiteSettingsFormGeneral extends Component {
 				jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
 				jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
 			} );
-		}
-
-		if ( settings.holidaysnow ) {
-			formSettings.holidaysnow = settings.holidaysnow;
 		}
 
 		// handling `gmt_offset` and `timezone_string` values
@@ -118,20 +116,23 @@ class SiteSettingsFormGeneral extends Component {
 			holidaysnow: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
-		} );
-		this.props.clearDirtyFields();
-		this.props.updateFields( this.getFormSettings( this.props.settings ) );
+		}, false );
+		this.props.updateFields( this.getFormSettings( this.props.settings ), false );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this._showWarning( nextProps.site );
+
+		if ( nextProps.siteId !== this.props.siteId ) {
+			nextProps.clearDirtyFields();
+		}
 
 		if ( nextProps.settings !== this.props.settings ) {
 			let newState = this.getFormSettings( nextProps.settings );
 			//If we have any fields that the user has updated,
 			//do not wipe out those fields from the poll update.
 			newState = omit( newState, nextProps.dirtyFields );
-			nextProps.updateFields( newState );
+			nextProps.updateFields( newState, false );
 		}
 
 		if (
@@ -176,6 +177,13 @@ class SiteSettingsFormGeneral extends Component {
 			currentTargetValue = event.currentTarget.value;
 
 		this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
+	};
+
+	handleCheckbox = event => {
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = this.props.fields[ currentTargetName ];
+
+		this.props.updateFields( { [ currentTargetName ]: ! currentTargetValue } );
 	};
 
 	handleSubmitForm = event => {
@@ -390,7 +398,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	handleAmpToggle = () => {
 		const { fields, updateFields } = this.props;
-		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
+		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, true, () => {
 			this.submitForm();
 			this.onRecordEvent( 'Clicked AMP Toggle' );
 		} );
@@ -494,8 +502,8 @@ class SiteSettingsFormGeneral extends Component {
 								<FormLabel>
 									<FormCheckbox
 										name="jetpack_relatedposts_show_headline"
-										value={ fields.jetpack_relatedposts_show_headline }
-										onChange={ this.onChangeField( 'jetpack_relatedposts_show_headline' ) } />
+										checked={ fields.jetpack_relatedposts_show_headline }
+										onChange={ this.handleCheckbox } />
 									<span>
 										{ translate(
 											'Show a "Related" header to more clearly separate the related section from posts'
@@ -507,8 +515,8 @@ class SiteSettingsFormGeneral extends Component {
 								<FormLabel>
 									<FormCheckbox
 										name="jetpack_relatedposts_show_thumbnails"
-										value={ fields.jetpack_relatedposts_show_thumbnails }
-										onChange={ this.onChangeField( 'jetpack_relatedposts_show_thumbnails' ) } />
+										checked={ fields.jetpack_relatedposts_show_thumbnails }
+										onChange={ this.handleCheckbox } />
 									<span>{ translate( 'Use a large and visually striking layout' ) }</span>
 								</FormLabel>
 							</li>
@@ -550,8 +558,8 @@ class SiteSettingsFormGeneral extends Component {
 							<FormLabel>
 								<FormCheckbox
 									name="jetpack_sync_non_public_post_stati"
-									value={ fields.jetpack_sync_non_public_post_stati }
-									onChange={ this.onChangeField( 'jetpack_sync_non_public_post_stati' ) }
+									checked={ fields.jetpack_sync_non_public_post_stati }
+									onChange={ this.handleCheckbox }
 								/>
 								<span>{ translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
 								<FormSettingExplanation isIndented>
@@ -604,9 +612,10 @@ class SiteSettingsFormGeneral extends Component {
 				<ul>
 					<li>
 						<FormLabel>
-							<FormCheckbox name="holidaysnow"
-								value={ fields.holidaysnow }
-								onChange={ this.onChangeField( 'holidaysnow' ) }
+							<FormCheckbox
+								name="holidaysnow"
+								checked={ !! fields.holidaysnow }
+								onChange={ this.handleCheckbox }
 							/>
 							<span>{ translate( 'Show falling snow on my blog until January 4th.' ) }</span>
 						</FormLabel>
@@ -815,7 +824,11 @@ const connectComponent = connect(
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
 		return {
-			isRequestingSettings, isSavingSettings, isSaveRequestSuccessful, settings
+			isRequestingSettings,
+			isSavingSettings,
+			isSaveRequestSuccessful,
+			settings,
+			siteId
 		};
 	},
 	{ removeNotice, saveSiteSettings }

@@ -11,9 +11,11 @@ export const trackForm = WrappedComponent => {
 			fields: {}
 		};
 
-		updateFields = ( fields, callback ) => {
+		updateFields = ( fields, updateDirtyFields = true, callback ) => {
 			const newState = {
-				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
+				dirtyFields: updateDirtyFields
+					? union( this.state.dirtyFields, Object.keys( fields ) )
+					: this.state.dirtyFields,
 				fields: {
 					...this.state.fields,
 					...fields
