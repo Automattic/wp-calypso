@@ -14,7 +14,7 @@ class QueryTheme extends Component {
 	static propTypes = {
 		siteId: PropTypes.oneOfType( [
 			PropTypes.number,
-			PropTypes.oneOf( [ 'wpcom' ] )
+			PropTypes.oneOf( [ 'wpcom', 'wporg' ] )
 		] ).isRequired,
 		themeId: PropTypes.string.isRequired,
 		// Connected props
