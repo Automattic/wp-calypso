@@ -175,10 +175,10 @@ const flows = {
 	},
 
 	developer: {
-		steps: [ 'domains-only', 'user' ],
+		steps: [ 'themes', 'site', 'user' ],
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
-		lastModified: '2016-12-06'
+		lastModified: '2015-11-23'
 	},
 
 	pressable: {
