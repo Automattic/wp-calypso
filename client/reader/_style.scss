@@ -116,10 +116,6 @@
 .is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
 
 	@include breakpoint( "<660px" ) {
-		right: 13px;
-	}
-
-	@include breakpoint( "<480px" ) {
 		right: 0;
 	}
 
@@ -147,7 +143,7 @@
 			margin-top: 0;
 		}
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<660px" ) {
 			left: 0;
 		}
 	}
