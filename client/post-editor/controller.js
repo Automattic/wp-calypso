@@ -20,6 +20,7 @@ var actions = require( 'lib/posts/actions' ),
 	user = require( 'lib/user' )(),
 	userUtils = require( 'lib/user/utils' ),
 	analytics = require( 'lib/analytics' );
+import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -130,6 +131,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'type'
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );
+		postAttributes.title = decodeEntities( postAttributes.title );
 
 		actions.startEditingNew( siteId, {
 			type: 'post',
