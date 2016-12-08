@@ -28,7 +28,7 @@ export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
 		// Site ID
-		'^(wpcom|\\d+)$': {
+		'^(wpcom|wporg|\\d+)$': {
 			type: 'object',
 			properties: {
 				data: {
