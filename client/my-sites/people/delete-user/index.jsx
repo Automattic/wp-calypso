@@ -165,7 +165,6 @@ const DeleteUser = React.createClass( {
 						onSelect={ this.onSelectAuthor }
 						exclude={ [ this.props.user.ID ] }
 						ignoreContext={ this.reassignLabel }
-						popoverPosition="top left"
 					>
 						{
 							this.state.reassignUser
