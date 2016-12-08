@@ -81,6 +81,10 @@ const DeleteUser = React.createClass( {
 		analytics.ga.recordEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
 	},
 
+	setReassignLabel( label ) {
+		this.reassignLabel = label;
+	},
+
 	onSelectAuthor: function( author ) {
 		this.setState( {
 			reassignUser: author
@@ -151,7 +155,6 @@ const DeleteUser = React.createClass( {
 	},
 
 	getTranslatedAssignLabel: function() {
-		const ignoreContext = this.refs ? this.refs.reassignLabel : undefined;
 		const { translate } = this.props;
 		return translate( 'Attribute all content to {{AuthorSelector/}}', {
 			components: {
@@ -161,7 +164,7 @@ const DeleteUser = React.createClass( {
 						siteId={ this.props.siteId }
 						onSelect={ this.onSelectAuthor }
 						exclude={ [ this.props.user.ID ] }
-						ignoreContext={ ignoreContext }
+						ignoreContext={ this.reassignLabel }
 						popoverPosition="top left"
 					>
 						{
@@ -218,7 +221,7 @@ const DeleteUser = React.createClass( {
 					</p>
 
 					<FormFieldset>
-						<FormLabel ref="reassignLabel">
+						<FormLabel ref={ this.setReassignLabel }>
 							<FormRadio
 								name="radioOption"
 								onChange={ this.handleRadioChange }
