@@ -57,12 +57,16 @@ export const EditorInsertMenuTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'{{strong}}Add Media{{/strong}} has moved to a new button.',
-					{ components: { strong: <strong /> } }
+					'{{strong}}Add Media{{/strong}} has moved to a new button.', {
+						components: { strong: <strong /> },
+						comment: 'Title of the Guided Tour for the Editor Insert Menu button.'
+					}
 				) }
 			</p>
 			<p>
-				{ translate( 'Click here to see everything you can add.' ) }
+				{ translate( 'Click here to see everything you can add.', {
+					comment: 'Description of the Guided Tour for the Editor Insert Menu button.'
+				} ) }
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( 'Close' ) }</Quit>
