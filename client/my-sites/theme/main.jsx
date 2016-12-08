@@ -237,7 +237,7 @@ const ThemeSheet = React.createClass( {
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
-				{ this.renderRelatedThemes() }
+				{ ! this.props.isJetpack && this.renderRelatedThemes() }
 			</div>
 		);
 	},
