@@ -400,6 +400,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+// 3 line excerpt for thumbnail cards
+.reader-post-card.card.has-thumbnail:not(.is-gallery) {
+	.reader-post-card__excerpt {
+		max-height: 15px * 1.6 * 3;
+	}
+}
+
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
 	font-size: 14px;
