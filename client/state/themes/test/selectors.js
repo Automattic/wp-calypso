@@ -664,7 +664,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeDetailsUrl', () => {
-		it( 'given a theme and no site ID, should return the details URL', () => {
+		it( 'given a theme and no site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -684,7 +684,7 @@ describe( 'themes selectors', () => {
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen' );
 		} );
 
-		it( 'given a theme and wpcom site ID, should return the details URL', () => {
+		it( 'given a theme and wpcom site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
 				{
 					sites: {
@@ -705,29 +705,93 @@ describe( 'themes selectors', () => {
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
 		} );
 
-		it( 'given a theme and Jetpack site ID, should return the details URL', () => {
-			const detailsUrl = getThemeDetailsUrl(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									admin_url: 'https://example.net/wp-admin/'
+		context( 'given a theme and a Jetpack site ID', () => {
+			context( 'with JP version < 4.4.2', () => {
+				it( 'should return the site\'s wp-admin theme details URL', () => {
+					const detailsUrl = getThemeDetailsUrl(
+						{
+							sites: {
+								items: {
+									77203074: {
+										ID: 77203074,
+										URL: 'https://example.net',
+										jetpack: true,
+										options: {
+											admin_url: 'https://example.net/wp-admin/',
+											jetpack_version: '4.4.1'
+										}
+									}
 								}
 							}
-						}
-					}
-				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
-				77203074
-			);
-			expect( detailsUrl ).to.equal( 'https://example.net/wp-admin/themes.php?theme=twentysixteen' );
+						},
+						{
+							id: 'twentysixteen',
+							stylesheet: 'pub/twentysixteen'
+						},
+						77203074
+					);
+					expect( detailsUrl ).to.equal( 'https://example.net/wp-admin/themes.php?theme=twentysixteen' );
+				} );
+			} );
+
+			context( 'with JP version >= 4.4.2', () => {
+				context( 'with Jetpack Manage turned off', () => {
+					it( 'should return the site\'s wp-admin theme details URL', () => {
+						const detailsUrl = getThemeDetailsUrl(
+							{
+								sites: {
+									items: {
+										77203074: {
+											ID: 77203074,
+											URL: 'https://example.net',
+											jetpack: true,
+											options: {
+												admin_url: 'https://example.net/wp-admin/',
+												jetpack_version: '4.4.2',
+												active_modules: []
+											}
+										}
+									}
+								}
+							},
+							{
+								id: 'twentysixteen',
+								stylesheet: 'pub/twentysixteen'
+							},
+							77203074
+						);
+						expect( detailsUrl ).to.equal( 'https://example.net/wp-admin/themes.php?theme=twentysixteen' );
+					} );
+				} );
+
+				context( 'with Jetpack Manage not explicitly turned off', () => {
+					it( 'should return the Calypso theme sheet URL', () => {
+						const detailsUrl = getThemeDetailsUrl(
+							{
+								sites: {
+									items: {
+										77203074: {
+											ID: 77203074,
+											URL: 'https://example.net',
+											jetpack: true,
+											options: {
+												admin_url: 'https://example.net/wp-admin/',
+												jetpack_version: '4.4.2'
+											}
+										}
+									}
+								}
+							},
+							{
+								id: 'twentysixteen',
+								stylesheet: 'pub/twentysixteen'
+							},
+							77203074
+						);
+						expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.net' );
+					} );
+				} );
+			} );
 		} );
 	} );
 

@@ -153,11 +153,17 @@ const ThemeSheet = React.createClass( {
 		if ( this.isLoaded() ) {
 			return this.props.screenshots[ 0 ];
 		}
-		return '';
+		return null;
 	},
 
 	renderScreenshot() {
-		const img = <img className="theme__sheet-img" src={ this.getFullLengthScreenshot() + '?=w680' } />;
+		let screenshot;
+		if ( this.props.isJetpack ) {
+			screenshot = this.props.screenshot;
+		} else {
+			screenshot = this.getFullLengthScreenshot();
+		}
+		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
 		return (
 			<div className="theme__sheet-screenshot">
 				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
@@ -166,7 +172,7 @@ const ThemeSheet = React.createClass( {
 						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
 					</span>
 				</a>
-				{ this.getFullLengthScreenshot() && img }
+				{ img }
 			</div>
 		);
 	},
@@ -208,11 +214,21 @@ const ThemeSheet = React.createClass( {
 		}[ section ];
 	},
 
+	renderDescription() {
+		if ( this.props.descriptionLong ) {
+			return (
+				<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
+			);
+		}
+		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
+		return <div>{ this.props.description }</div>;
+	},
+
 	renderOverviewTab() {
 		return (
 			<div>
 				<Card className="theme__sheet-content">
-					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
+					{ this.renderDescription() }
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
@@ -553,7 +569,8 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const siteIdOrWpcom = ( selectedSite && isJetpackSite( state, selectedSite.ID ) ) ? selectedSite.ID : 'wpcom';
+		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
+		const siteIdOrWpcom = isJetpack ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
@@ -565,6 +582,7 @@ export default connect(
 			error,
 			selectedSite,
 			siteSlug,
+			isJetpack,
 			siteIdOrWpcom,
 			backPath,
 			currentUserId,
