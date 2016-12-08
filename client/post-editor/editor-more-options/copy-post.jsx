@@ -114,7 +114,10 @@ class EditorMoreOptionsCopyPost extends Component {
 
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-} ) )( localize( EditorMoreOptionsCopyPost ) );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} )( localize( EditorMoreOptionsCopyPost ) );
