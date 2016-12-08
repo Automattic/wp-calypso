@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import debugModule from 'debug';
-import trim from 'lodash/trim';
+import { trim, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,6 +40,12 @@ const SwitcherShell = React.createClass( {
 	getInitialState: function() {
 		return {
 			showAuthorMenu: false
+		};
+	},
+
+	getDefaultProps() {
+		return {
+			ignoreContext: noop
 		};
 	},
 
@@ -89,7 +95,8 @@ const SwitcherShell = React.createClass( {
 					position={ this.props.popoverPosition }
 					context={ this.refs && this.refs.authorSelectorChevron }
 					onKeyDown={ this._onKeyDown }
-					className="author-selector__popover popover">
+					className="author-selector__popover popover"
+					ignoreContext={ this.props.ignoreContext } >
 					{ ( this.props.fetchOptions.search || users.length > 10 ) &&
 						<Search
 							onSearch={ this._onSearch }
