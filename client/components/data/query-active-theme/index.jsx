@@ -12,10 +12,7 @@ import { isRequestingActiveTheme } from 'state/themes/selectors';
 
 class QueryActiveTheme extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.oneOf( [ 'wpcom' ] )
-		] ).isRequired,
+		siteId: PropTypes.number.isRequired,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestActiveTheme: PropTypes.func.isRequired,
