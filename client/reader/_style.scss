@@ -386,3 +386,17 @@
 .following-edit .foldable-card.is-expanded .gridicon {
 	transform: rotate( 0deg );
 }
+
+/* = Infinite scroll end (shown at end of streams)
+ --------------------------------------------------------------- */
+
+.is-reader-page .infinite-scroll-end {
+	&:before {
+		border-bottom: none;
+	}
+
+  	&:after {
+    	background-color: inherit;
+    	margin-top: 20px;
+	}
+}
