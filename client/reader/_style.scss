@@ -112,6 +112,48 @@
 	}
 }
 
+// Back button in Reader FeedHeader
+.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
+
+	@include breakpoint( "<660px" ) {
+		right: 0;
+	}
+
+	// Drops Follow count in FeedHeader if Back button exists
+	.reader-feed-header__follow-count {
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
+}
+
+.is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
+
+	.card.header-cake {
+		background: none;
+		box-shadow: none;
+		flex: 1;
+		margin-right: 100px;
+		position: relative;
+			top: 4px;
+		z-index: z-index( '.reader-feed-header__back-and-follow', '.card.header-cake' );
+
+		@include breakpoint( "<960px" ) {
+			margin-top: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			left: 0;
+		}
+	}
+
+	.button.header-cake__back {
+		overflow: visible;
+		padding: 0;
+		position: relative;
+	}
+}
 
 // WPcom Reblogs
 .wpcom-reblog-snapshot {
@@ -166,7 +208,6 @@
 		}
 	}
 }
-
 
 // Post Card Footer
 // Where things like reading time, embed counts,
