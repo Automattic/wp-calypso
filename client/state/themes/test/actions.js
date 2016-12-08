@@ -229,19 +229,19 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestTheme()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.2/themes/twentysixteen' )
-				.reply( 200, { id: 'twentysixteen', name: 'Twenty Sixteen' } )
-				.get( '/rest/v1.2/themes/twentyumpteen' )
-				.reply( 404, {
-					error: 'unknown_theme',
-					message: 'Unknown theme'
-				} );
-		} );
-
 		context( 'with a wpcom site', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.2/themes/twentysixteen' )
+					.reply( 200, { id: 'twentysixteen', name: 'Twenty Sixteen' } )
+					.get( '/rest/v1.2/themes/twentyumpteen' )
+					.reply( 404, {
+						error: 'unknown_theme',
+						message: 'Unknown theme'
+					} );
+			} );
+
 			it( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentysixteen', 'wpcom' )( spy );
 
@@ -285,9 +285,63 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
+
 		context( 'with a Jetpack site', () => {
-			// TODO!
-			// But do we have a theme details endpoint on Jetpack sites at all?
+			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/sites/77203074/themes', { themes: 'twentyfifteen' } )
+					.reply( 200, { themes: [ { id: 'twentyfifteen', name: 'Twenty Fifteen' } ] } )
+					.post( '/rest/v1.1/sites/77203074/themes', { themes: 'twentyumpteen' } )
+					.reply( 404, {
+						error: 'unknown_theme',
+						message: 'Unknown theme'
+					} );
+			} );
+
+			it( 'should dispatch request action when thunk triggered', () => {
+				requestTheme( 'twentyfifteen', 77203074 )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_REQUEST,
+					siteId: 77203074,
+					themeId: 'twentyfifteen'
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentyfifteen', 77203074 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentyfifteen', name: 'Twenty Fifteen' } )
+						],
+						siteId: 77203074
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestTheme( 'twentyfifteen', 77203074 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_SUCCESS,
+						siteId: 77203074,
+						themeId: 'twentyfifteen'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch fail action when request fails', () => {
+				return requestTheme( 'twentyumpteen', 77203074 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEME_REQUEST_FAILURE,
+						siteId: 77203074,
+						themeId: 'twentyumpteen',
+						error: sinon.match( { message: 'Unknown theme' } )
+					} );
+				} );
+			} );
 		} );
 	} );
 
