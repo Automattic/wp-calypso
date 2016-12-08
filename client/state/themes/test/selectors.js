@@ -1160,38 +1160,120 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeForumUrl', () => {
-		it( 'given a free theme, should return the general themes forum URL', () => {
-			const forumUrl = getThemeForumUrl(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentysixteen }
-							} )
+		context( 'on a WP.com site', () => {
+			it( 'given a free theme, should return the general themes forum URL', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
-					}
-				},
-				'twentysixteen'
-			);
+					},
+					'twentysixteen'
+				);
 
-			expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
+			} );
+
+			it( 'given a premium theme, should return the specific theme forum URL', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
+						}
+					},
+					'mood'
+				);
+
+				expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+			} );
 		} );
 
-		it( 'given a premium theme, should return the specific theme forum URL', () => {
-			const forumUrl = getThemeForumUrl(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood }
-							} )
+		context( 'on a Jetpack site', () => {
+			it( 'given a theme that\'s not found on WP.org, should return null', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
+						}
+					},
+					'twentysixteen',
+					77203074
+				);
+
+				expect( forumUrl ).to.be.null;
+			} );
+
+			it( 'given a theme that\'s found on WP.org, should return the correspoding WP.org theme forum URL', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+				const wporgTheme = {
+					demo_uri: 'https://wp-themes.com/twentyseventeen',
+					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+					taxonomies: {
+						theme_feature: {
+							'custom-header': 'Custom Header'
 						}
 					}
-				},
-				'mood'
-			);
+				};
 
-			expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {
+								77203074: new ThemeQueryManager( {
+									items: { twentyseventeen: jetpackTheme }
+								} ),
+								wporg: new ThemeQueryManager( {
+									items: { twentyseventeen: wporgTheme }
+								} )
+							}
+						}
+					},
+					'twentyseventeen',
+					77203074
+				);
+
+				expect( forumUrl ).to.equal( '//wordpress.org/support/theme/twentyseventeen' );
+			} );
 		} );
 	} );
 
