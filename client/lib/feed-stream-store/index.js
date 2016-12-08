@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import { startsWith } from 'lodash';
+import { startsWith, forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Dispatcher = require( 'dispatcher' ),
-	FeedStream = require( './feed-stream' ),
-	PagedStream = require( './paged-stream' ),
-	FeedStreamCache = require( './feed-stream-cache' ),
-	analytics = require( 'lib/analytics' ),
-	forEach = require( 'lodash/forEach' ),
-	wpcomUndoc = require( 'lib/wp' ).undocumented();
+import config from 'config';
+import Dispatcher from 'dispatcher';
+import FeedStream from './feed-stream';
+import PagedStream from './paged-stream';
+import FeedStreamCache from './feed-stream-cache';
+import analytics from 'lib/analytics';
+import wpcom from 'lib/wp';
+
+const wpcomUndoc = wpcom.undocumented();
 
 function feedKeyMaker( post ) {
 	return {
@@ -69,14 +70,14 @@ function trainTracksProxyForStream( stream, callback ) {
 }
 
 function getStoreForFeed( storeId ) {
-	var feedId = storeId.split( ':' )[ 1 ],
-		fetcher = function fetchFeedById( query, callback ) {
-			query.ID = feedId;
-			wpcomUndoc.readFeedPosts( query, callback );
-		};
+	const feedId = storeId.split( ':' )[ 1 ];
+	const fetcher = function fetchFeedById( query, callback ) {
+		query.ID = feedId;
+		wpcomUndoc.readFeedPosts( query, callback );
+	};
 	return new FeedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: feedKeyMaker,
 		onNextPageFetch: addMetaToNextPageFetch
 	} );
@@ -92,27 +93,26 @@ function getStoreForTag( storeId ) {
 	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
 		return new PagedStream( {
 			id: storeId,
-			fetcher: fetcher,
+			fetcher,
 			keyMaker: siteKeyMaker,
 			perPage: 5
 		} );
-	} else {
-		return new FeedStream( {
-			id: storeId,
-			fetcher: fetcher,
-			keyMaker: mixedKeyMaker,
-			onGapFetch: limitSiteParams,
-			onUpdateFetch: limitSiteParams,
-			dateProperty: 'tagged_on'
-		} );
 	}
+	return new FeedStream( {
+		id: storeId,
+		fetcher,
+		keyMaker: mixedKeyMaker,
+		onGapFetch: limitSiteParams,
+		onUpdateFetch: limitSiteParams,
+		dateProperty: 'tagged_on'
+	} );
 }
 
 function getStoreForSearch( storeId ) {
 	const slug = storeId.split( ':' )[ 1 ];
 	const stream = new PagedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: siteKeyMaker,
 		perPage: 5
 	} );
@@ -127,17 +127,17 @@ function getStoreForSearch( storeId ) {
 }
 
 function getStoreForList( storeId ) {
-	var listKey = storeId.split( ':' )[ 1 ],
-		[ listOwner, ...listSlug ] = listKey.split( '-' ),
-		fetcher = function( query, callback ) {
-			query.owner = listOwner;
-			query.slug = listSlug.join( '-' );
-			wpcomUndoc.readListPosts( query, callback );
-		};
+	const listKey = storeId.split( ':' )[ 1 ];
+	const [ listOwner, ...listSlug ] = listKey.split( '-' );
+	const fetcher = function( query, callback ) {
+		query.owner = listOwner;
+		query.slug = listSlug.join( '-' );
+		wpcomUndoc.readListPosts( query, callback );
+	};
 
 	return new FeedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: mixedKeyMaker,
 		onGapFetch: limitSiteParams,
 		onUpdateFetch: limitSiteParams
@@ -145,15 +145,15 @@ function getStoreForList( storeId ) {
 }
 
 function getStoreForSite( storeId ) {
-	var siteId = storeId.split( ':' )[ 1 ],
-		fetcher = function( query, callback ) {
-			query.site = siteId;
-			wpcomUndoc.readSitePosts( query, callback );
-		};
+	const siteId = storeId.split( ':' )[ 1 ];
+	const fetcher = function( query, callback ) {
+		query.site = siteId;
+		wpcomUndoc.readSitePosts( query, callback );
+	};
 
 	return new FeedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: siteKeyMaker,
 		onGapFetch: limitSiteParams,
 		onUpdateFetch: limitSiteParams
@@ -161,14 +161,14 @@ function getStoreForSite( storeId ) {
 }
 
 function getStoreForFeatured( storeId ) {
-	var siteId = storeId.split( ':' )[ 1 ],
-		fetcher = function( query, callback ) {
-			wpcomUndoc.readSiteFeatured( siteId, query, callback );
-		};
+	const siteId = storeId.split( ':' )[ 1 ];
+	const fetcher = function( query, callback ) {
+		wpcomUndoc.readSiteFeatured( siteId, query, callback );
+	};
 
 	return new FeedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: siteKeyMaker,
 		onGapFetch: limitSiteParams,
 		onUpdateFetch: limitSiteParams
@@ -178,13 +178,13 @@ function getStoreForFeatured( storeId ) {
 function getStoreForRecommendedPosts( storeId ) {
 	const stream = new PagedStream( {
 		id: storeId,
-		fetcher: fetcher,
+		fetcher,
 		keyMaker: siteKeyMaker,
 		perPage: 6,
 	} );
 
 	function fetcher( query, callback ) {
-		switch( storeId ) {
+		switch ( storeId ) {
 			case 'cold_posts':
 				query.algorithm = 'read:recommendations:posts/es/2';
 				break;
@@ -219,7 +219,7 @@ function getStoreForRecommendedPosts( storeId ) {
 }
 
 function feedStoreFactory( storeId ) {
-	var store = FeedStreamCache.get( storeId );
+	let store = FeedStreamCache.get( storeId );
 
 	if ( store ) {
 		return store;
@@ -276,4 +276,4 @@ function feedStoreFactory( storeId ) {
 	return store;
 }
 
-module.exports = feedStoreFactory;
+export default feedStoreFactory;
