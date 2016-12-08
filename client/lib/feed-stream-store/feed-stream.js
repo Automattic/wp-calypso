@@ -21,7 +21,7 @@ import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import FeedStreamActions from './actions';
+import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
@@ -53,7 +53,7 @@ export default class FeedStream {
 			id: spec.id,
 			postKeys: [], // an array of keys, as determined by the key maker,
 			pendingPostKeys: [],
-			postById: {},
+			postById: new Set(),
 			errors: [],
 			fetcher: spec.fetcher,
 			page: 1,
@@ -387,7 +387,7 @@ export default class FeedStream {
 	filterNewPosts( posts ) {
 		const postById = this.postById;
 		posts = filter( posts, function( post ) {
-			return ! ( post.ID in postById );
+			return ! ( postById.has( post.ID ) );
 		} );
 		posts = this.filterFollowedXPosts( posts );
 		return map( posts, this.keyMaker );
@@ -427,7 +427,7 @@ export default class FeedStream {
 		if ( postKeys.length ) {
 			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				postById[ postKey.postId ] = true;
+				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 			this.page++;
@@ -466,7 +466,7 @@ export default class FeedStream {
 
 		const postById = this.postById;
 		forEach( this.pendingPostKeys, function( postKey ) {
-			postById[ postKey.postId ] = true;
+			postById.add( postKey.postId );
 		} );
 
 		const mostRecentPostDate = moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] );
