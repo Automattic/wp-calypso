@@ -62,7 +62,7 @@ const CommentButton = React.createClass( {
 		return React.createElement(
 			containerTag, {
 				className: 'comment-button',
-				onClick: this.prop.onClick
+				onClick: this.props.onClick
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
 		);
