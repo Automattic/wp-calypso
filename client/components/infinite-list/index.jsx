@@ -10,7 +10,6 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
 import InfiniteListActions from 'lib/infinite-list/actions';
 import InfiniteListPositionsStore from 'lib/infinite-list/positions-store';
 import InfiniteListScrollStore from 'lib/infinite-list/scroll-store';
@@ -56,12 +55,9 @@ module.exports = React.createClass( {
 
 	componentWillMount() {
 		const url = page.current;
-		let newState, scrollPosition;
 
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			newState = InfiniteListPositionsStore.get( url );
-			scrollPosition = InfiniteListScrollStore.get( url );
-		}
+		let newState = InfiniteListPositionsStore.get( url );
+		const scrollPosition = InfiniteListScrollStore.get( url );
 
 		if ( newState && scrollPosition ) {
 			debug( 'overriding scrollTop:', scrollPosition );
@@ -98,10 +94,7 @@ module.exports = React.createClass( {
 			this._setContainerY( this.state.scrollTop );
 		}
 
-		// only override browser history scroll if navigated via history
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			this._overrideHistoryScroll();
-		}
+		this._overrideHistoryScroll();
 		debug( 'setting scrollTop:', this.state.scrollTop );
 		this.updateScroll( {
 			triggeredByScroll: false
@@ -146,10 +139,7 @@ module.exports = React.createClass( {
 			this._scrollContainer = this.props.context || window;
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 
-			// only override browser history scroll if navigated via history
-			if ( detectHistoryNavigation.loadedViaHistory() ) {
-				this._overrideHistoryScroll();
-			}
+			this._overrideHistoryScroll();
 		}
 
 		// we may have guessed item heights wrong - now we have real heights
