@@ -351,8 +351,9 @@ const PlansSetup = React.createClass( {
 					) } />
 				);
 			default:
+				const errorMessage = get( plugin, 'error.message', '' ).replace( /<.[^<>]*?>/g, '' );
 				return (
-					<Notice { ...statusProps } text={ plugin.error.message || translate( 'An error occured.' ) } />
+					<Notice { ...statusProps } text={ errorMessage || translate( 'An error occured.' ) } />
 				);
 		}
 	},
