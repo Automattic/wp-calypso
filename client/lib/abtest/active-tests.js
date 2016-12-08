@@ -99,6 +99,7 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowAnyLocale: true,
+		allowExistingUsers: true,
 	},
 
 	noSurveyStep: {
