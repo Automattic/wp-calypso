@@ -43,6 +43,7 @@ class Tooltip extends Component {
 			'popover',
 			'tooltip',
 			`is-${ this.props.position }`,
+			`is-${ this.props.status }`,
 			this.props.className
 		);
 
