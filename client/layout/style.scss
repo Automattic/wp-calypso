@@ -57,6 +57,10 @@
 			padding-left: 0;
 		}
 	}
+
+	.layout:not( .focus-content ) .layout__content {
+		z-index: z-index( 'root', '.layout__content' );
+	}
 }
 
 .layout__primary {
