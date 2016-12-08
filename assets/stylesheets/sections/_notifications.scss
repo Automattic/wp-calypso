@@ -8,7 +8,6 @@
 		right: 0;
 		bottom: 0;
 	min-width: 400px;
-	z-index: z-index( 'root', '#wpnt-notes-panel2' );
 
 	@include breakpoint( "<480px" ) {
 		width: 100%;
