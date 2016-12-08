@@ -36,7 +36,7 @@ class Banner extends Component {
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
-		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
+		feature: PropTypes.oneOf( [ ...getValidFeatureKeys() ] ),
 		href: PropTypes.string,
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),
@@ -49,7 +49,6 @@ class Banner extends Component {
 
 	static defaultProps = {
 		dismissTemporary: false,
-		feature: false,
 		onClick: noop,
 	}
 
