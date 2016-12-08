@@ -319,13 +319,16 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderFeaturesCard() {
-		const { siteSlug, taxonomies } = this.props;
+		const { isJetpack, siteSlug, taxonomies } = this.props;
 		const themeFeatures = taxonomies && taxonomies.theme_feature instanceof Array
 		? taxonomies.theme_feature.map( function( item ) {
 			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
 			return (
 				<li key={ 'theme-features-item-' + item.slug }>
-					<a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+					{ isJetpack
+						? <a>{ item.name }</a>
+						: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+					}
 				</li>
 			);
 		} ) : [];
