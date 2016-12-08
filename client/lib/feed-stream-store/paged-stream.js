@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, findIndex, forEach, map } from 'lodash';
+import { assign, filter, findIndex, forEach, last, map } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
@@ -38,7 +38,7 @@ export default class PagedStream {
 			id: spec.id,
 			postKeys: [], // an array of keys, as determined by the key maker,
 			pendingPostKeys: [],
-			postById: {},
+			postById: new Set(),
 			errors: [],
 			fetcher: spec.fetcher,
 			page: 1,
@@ -83,7 +83,7 @@ export default class PagedStream {
 				this.selectPrevItem( action.selectedIndex );
 				break;
 			case ActionTypes.DISMISS_FEED_STREAM_POST:
-				this.dismissPostsFromSite( action.postKey.blogId );
+				this.dismissPost( action.postKey );
 				break;
 		}
 	}
@@ -197,7 +197,7 @@ export default class PagedStream {
 	filterNewPosts( posts ) {
 		const postById = this.postById;
 		posts = filter( posts, function( post ) {
-			return ! ( post.ID in postById );
+			return ! ( postById.has( post.ID ) );
 		} );
 		return map( posts, this.keyMaker );
 	}
@@ -240,7 +240,7 @@ export default class PagedStream {
 		if ( postKeys.length ) {
 			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				postById[ postKey.postId ] = true;
+				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 			this.page++;
@@ -248,19 +248,17 @@ export default class PagedStream {
 		}
 	}
 
-	dismissPostsFromSite( blogId ) {
-		let indexToRemove;
-		const newPostKeys = [ ...this.postKeys ];
-		while ( -1 !== ( indexToRemove = findIndex( newPostKeys, { blogId } ) ) ) {
-			let removedItem;
-			if ( indexToRemove !== newPostKeys.length - 1 ) {
-				// pop the last item off the end and insert in the place of the current thing
-				[ removedItem ] = newPostKeys.splice( indexToRemove, 1, newPostKeys.pop() );
-			} else {
-				removedItem = newPostKeys.pop();
-			}
-			this.postById[ removedItem.postId ] = false;
+	dismissPost( postKey ) {
+		const indexToRemove = findIndex( this.postKeys, postKey );
+		if ( indexToRemove === -1 ) {
+			return;
 		}
+		const newPostKeys = [ ...this.postKeys ];
+		const lastItem = last( newPostKeys );
+		const removedItem = newPostKeys[ indexToRemove ];
+		newPostKeys[ indexToRemove ] = lastItem;
+		newPostKeys.pop();
+		this.postById.delete( removedItem.postId );
 		this.postKeys = newPostKeys;
 		this.emitChange();
 	}
