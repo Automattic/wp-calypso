@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import { overEvery as and } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +15,12 @@ import {
 	Tour,
 	Quit,
 } from 'layout/guided-tours/config-elements';
-import { isEnabled } from 'state/ui/guided-tours/contexts';
+import {
+	isEnabled,
+	isUserOlderThan,
+} from 'state/ui/guided-tours/contexts';
+
+const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 
 class RepositioningStep extends Step {
 
@@ -29,6 +35,7 @@ class RepositioningStep extends Step {
 		super.componentWillUnmount();
 		clearInterval( this.interval );
 	}
+
 }
 
 export const EditorInsertMenuTour = makeTour(
@@ -36,13 +43,17 @@ export const EditorInsertMenuTour = makeTour(
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
 		version="20161129"
-		when={ isEnabled( 'post-editor/insert-menu' ) }
+		when={ and(
+			isEnabled( 'post-editor/insert-menu' ),
+			isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
+		) }
 	>
 		<RepositioningStep
 			arrow="left-top"
 			name="init"
 			placement="beside"
 			target=".mce-wpcom-insert-menu"
+			style={ { animationDelay: '10s' } }
 		>
 			<p>
 				{ translate(
