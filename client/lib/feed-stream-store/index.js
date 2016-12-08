@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, startsWith } from 'lodash';
+import { forEach, startsWith, random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -202,6 +202,22 @@ function getStoreForRecommendedPosts( storeId ) {
 				break;
 			case 'custom_recs_posts_with_images':
 				query.algorithm = 'read:recommendations:posts/es/7';
+
+				/* Seed FAQ:
+				 * Q: What does it do?
+				 * A: It throws a little randomness into the Elasticsearch query so that users
+				 * don't see the same recommendations every time:
+				 * https://www.elastic.co/guide/en/elasticsearch/guide/current/random-scoring.html
+				 *
+				 * Q: How did we pick this range?
+				 * A: It's big enough that the same user probably won't get repeats too frequently
+				 * and small enough that we aren't going cause overflows anywhere.
+				 *
+				 * Q: How often do we change the seed?
+				 * A: We change the seed each time the store is generated. Practically speaking
+				 * that means each time the page is refreshed.
+				 */
+				query.seed = random( 0, 10000 );
 				break;
 			default:
 				query.algorithm = 'read:recommendations:posts/es/1';
