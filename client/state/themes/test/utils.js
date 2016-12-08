@@ -64,7 +64,11 @@ describe( 'utils', () => {
 				author: 'wordpressdotorg',
 				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				preview_url: 'https://wp-themes.com/twentyfifteen',
-				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip'
+				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				tags: {
+					'custom-header': 'Custom Header',
+					'two-columns': 'Two Columns'
+				}
 			} );
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'twentyfifteen',
@@ -72,7 +76,13 @@ describe( 'utils', () => {
 				author: 'wordpressdotorg',
 				screenshot: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				demo_uri: 'https://wp-themes.com/twentyfifteen',
-				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip'
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				taxonomies: {
+					theme_feature: [
+						{ slug: 'custom-header', name: 'Custom Header' },
+						{ slug: 'two-columns', name: 'Two Columns' }
+					]
+				}
 			} );
 		} );
 	} );
