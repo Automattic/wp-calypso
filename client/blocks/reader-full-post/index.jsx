@@ -48,7 +48,6 @@ import LikeStore from 'lib/like-store/like-store';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
-import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
@@ -398,9 +397,6 @@ const ConnectedFullPostView = connect(
 			props.feed = getFeed( state, feedId );
 		}
 
-		if ( ownProps.referral ) {
-			props.referralPost = getPostBySiteAndId( state, ownProps.referral.blogId, ownProps.referral.postId );
-		}
 		return props;
 	},
 	{ setSection }
