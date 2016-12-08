@@ -271,7 +271,14 @@ const PlansSetup = React.createClass( {
 			return this.renderStatusError( plugin );
 		}
 
-		const { translate } = this.props;
+		if ( 'done' === plugin.status ) {
+			return (
+				<div className="plugin-item__finished">
+					{ this.getStatusText( plugin ) }
+				</div>
+			);
+		}
+
 		const statusProps = {
 			isCompact: true,
 			status: 'is-info',
@@ -279,22 +286,22 @@ const PlansSetup = React.createClass( {
 			icon: 'plugins',
 		};
 
+		return <Notice { ...statusProps } text={ this.getStatusText( plugin ) } />;
+	},
+
+	getStatusText( plugin ) {
+		const { translate } = this.props;
 		switch ( plugin.status ) {
 			case 'done':
-				// Done doesn't use a notice
-				return (
-					<div className="plugin-item__finished">
-						{ translate( 'Successfully installed & configured.' ) }
-					</div>
-				);
+				return translate( 'Successfully installed & configured.' );
 			case 'activate':
 			case 'configure':
-				return <Notice { ...statusProps } text={ translate( 'Almost done' ) } />;
+				return translate( 'Almost done' );
 			case 'install':
-				return <Notice { ...statusProps } text={ translate( 'Working…' ) } />;
+				return translate( 'Working…' );
 			case 'wait':
 			default:
-				return <Notice { ...statusProps } text={ translate( 'Waiting to install' ) } />;
+				return translate( 'Waiting to install' );
 		}
 	},
 
