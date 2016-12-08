@@ -233,7 +233,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/themes/twentysixteen' )
-				.reply( 200, { id: 'twentysixteen', title: 'Twenty Sixteen' } )
+				.reply( 200, { id: 'twentysixteen', name: 'Twenty Sixteen' } )
 				.get( '/rest/v1.2/themes/twentyumpteen' )
 				.reply( 404, {
 					error: 'unknown_theme',
@@ -257,7 +257,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_RECEIVE,
 						themes: [
-							sinon.match( { id: 'twentysixteen', title: 'Twenty Sixteen' } )
+							sinon.match( { id: 'twentysixteen', name: 'Twenty Sixteen' } )
 						],
 						siteId: 'wpcom'
 					} );
