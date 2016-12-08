@@ -37,6 +37,7 @@ import {
 	canJetpackSiteAutoUpdateFiles,
 	hasJetpackSiteJetpackMenus,
 	hasJetpackSiteJetpackThemes,
+	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
 	getJetpackSiteRemoteManagementURL,
@@ -1672,6 +1673,52 @@ describe( 'selectors', () => {
 
 			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
 			expect( hasThemes ).to.equal( true );
+		} );
+	} );
+
+	describe( '#hasJetpackSiteJetpackThemesExtendedFeatures()', () => {
+		it( 'it should return `null` if the given site is not a Jetpack site', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me'
+				}
+			} );
+
+			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+			expect( hasThemesExtendedFeatures ).to.be.null;
+		} );
+
+		it( 'it should return `false` if jetpack version is smaller than 4.4.2', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '4.4.1'
+					}
+				}
+			} );
+
+			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+			expect( hasThemesExtendedFeatures ).to.be.false;
+		} );
+
+		it( 'it should return `true` if jetpack version is greater or equal to 4.4.2', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '4.4.2'
+					}
+				}
+			} );
+
+			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+			expect( hasThemesExtendedFeatures ).to.be.true;
 		} );
 	} );
 
