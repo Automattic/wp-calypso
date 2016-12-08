@@ -487,12 +487,12 @@ export function initiateThemeTransfer( siteId, file ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
-				dispatch( themeTransferStatus( siteId, transfer_id ) );
 				dispatch( {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: transfer_id,
 				} );
+				themeTransferStatus( siteId, transfer_id )( dispatch );
 			} )
 			.catch( error => {
 				dispatch( {

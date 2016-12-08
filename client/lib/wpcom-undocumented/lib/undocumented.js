@@ -2113,22 +2113,26 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 			error ? rejectPromise( error ) : resolve( data );
 		};
 
-		const req = this.wpcom.req.post( {
-			path: `/sites/${ siteId }/automated-transfers/initiate`,
-			formData: [
-				[ 'theme[]', theme ],
-				[ 'plugin', plugin ]
-			]
-		}, resolver );
+		const post = {
+			path: `/sites/${ siteId }/automated-transfers/initiate`
+		};
 
-		req.upload.onprogress = onProgress;
+		if ( plugin ) {
+			post.body = { plugin };
+		}
+		if ( theme ) {
+			post.fromData = [ [ 'theme', theme ] ];
+		}
+
+		const req = this.wpcom.req.post( post, resolver );
+		req && ( req.upload.onprogress = onProgress );
 	} );
 };
 
 Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
 	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/automated-transfer/status/${ transferId }`
+		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
 	} );
 };
 
