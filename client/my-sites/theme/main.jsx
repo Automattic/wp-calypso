@@ -156,6 +156,17 @@ const ThemeSheet = React.createClass( {
 		return null;
 	},
 
+	renderPreviewButton() {
+		return (
+			<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
+				<Gridicon icon="themes" size={ 18 } />
+				<span className="theme__sheet-preview-link-text">
+					{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
+				</span>
+			</a>
+		);
+	},
+
 	renderScreenshot() {
 		let screenshot;
 		if ( this.props.isJetpack ) {
@@ -166,12 +177,7 @@ const ThemeSheet = React.createClass( {
 		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
 		return (
 			<div className="theme__sheet-screenshot">
-				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
-					<Gridicon icon="themes" size={ 18 } />
-					<span className="theme__sheet-preview-link-text">
-						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
-					</span>
-				</a>
+				{ this.props.demo_uri && this.renderPreviewButton() }
 				{ img }
 			</div>
 		);
