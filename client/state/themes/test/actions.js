@@ -27,6 +27,7 @@ import {
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_INITIATE_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -598,4 +599,27 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
+
+	describe( '#initiateThemeTransfer', () => {
+		const siteId = '2211667';
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
+				.reply( 400, 'some problem' );
+		} );
+
+		it( 'should dispatch failure on error', () => {
+			initiateThemeTransfer( siteId, {} )( spy ).catch( () => {
+				expect( spy ).to.have.been.calledOnce;
+
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: THEME_TRANSFER_INITIATE_FAILURE,
+					siteId,
+				} );
+				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
+			} );
+		} );
+	} );
+
 } );
