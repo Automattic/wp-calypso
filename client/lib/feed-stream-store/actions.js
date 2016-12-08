@@ -44,7 +44,7 @@ export function fetchNextPage( id ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionType.FETCH_NEXT_PAGE,
-		id: id
+		id
 	} );
 
 	const params = getNextPageParams( store );
@@ -101,47 +101,47 @@ export function receivePage( id, error, data ) {
 
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_PAGE,
-		id: id,
-		error: error,
-		data: data
+		id,
+		error,
+		data
 	} );
 }
 
 export function receiveUpdates( id, error, data ) {
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_UPDATES,
-		id: id,
-		error: error,
-		data: data
+		id,
+		error,
+		data
 	} );
 }
 
 export function showUpdates( id ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SHOW_UPDATES,
-		id: id
+		id
 	} );
 }
 
 export function selectNextItem( id ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SELECT_NEXT_ITEM,
-		id: id
+		id
 	} );
 }
 
 export function selectPrevItem( id ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SELECT_PREV_ITEM,
-		id: id
+		id
 	} );
 }
 
 export function selectItem( id, selectedIndex ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SELECT_ITEM,
-		id: id,
-		selectedIndex: selectedIndex
+		id,
+		selectedIndex
 	} );
 }
 
@@ -153,8 +153,8 @@ export function fillGap( id, gap ) {
 
 	Dispatcher.handleViewAction( {
 		type: ActionType.FILL_GAP,
-		id: id,
-		gap: gap
+		id,
+		gap
 	} );
 
 	const params = {
@@ -172,10 +172,10 @@ export function fillGap( id, gap ) {
 export function receiveGap( id, gap, error, data ) {
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_GAP,
-		id: id,
-		gap: gap,
-		error: error,
-		data: data
+		id,
+		gap,
+		error,
+		data
 	} );
 }
 
