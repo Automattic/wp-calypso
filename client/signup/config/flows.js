@@ -198,7 +198,15 @@ const flows = {
 		destination: getSiteDestination,
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
 		lastModified: '2016-11-14'
-	}
+	},
+
+	userfirst: {
+		steps: [ 'user' ],
+		destination: '/start',
+		description: 'User-first signup flow',
+		lastModified: '2016-11-29',
+		autoContinue: true,
+	},
 };
 
 if ( config( 'env' ) === 'development' ) {
