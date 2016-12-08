@@ -25,6 +25,7 @@ import SectionHeader from 'components/section-header';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import page from 'page';
+import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
 
 const wpcom = wp.undocumented();
 
@@ -168,7 +169,8 @@ class TransferOtherUser extends React.Component {
 	renderSection() {
 		const { selectedDomainName: domainName, translate, users } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
-			{ currentUserCanManage } = getSelectedDomain( this.props );
+			{ currentUserCanManage } = getSelectedDomain( this.props ),
+			saveButtonLabel = this.props.translate( 'Transfer Domain' );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
@@ -195,7 +197,8 @@ class TransferOtherUser extends React.Component {
 							) ) }
 						</FormSelect>
 					</FormFieldset>
-					<FormButton onClick={ this.handleTransferDomain }>{ translate( 'Transfer Domain' ) }</FormButton>
+					<DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } />
+					<FormButton onClick={ this.handleTransferDomain }>{ saveButtonLabel }</FormButton>
 				</Card>
 				{ this.renderDialog() }
 			</div>
