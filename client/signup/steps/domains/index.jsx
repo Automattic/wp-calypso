@@ -20,8 +20,9 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	{ getSurveyVertical } = require( 'state/signup/steps/survey/selectors.js' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
-	signupUtils = require( 'signup/utils' ),
-	abtest = require( 'lib/abtest' ).abtest;
+	signupUtils = require( 'signup/utils' );
+
+import { abtest, getABTestVariation } from 'lib/abtest';
 
 import Notice from 'components/notice';
 
@@ -152,6 +153,12 @@ const DomainsStep = React.createClass( {
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
+		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' ) ||
+			(
+				getABTestVariation( 'noSurveyStep' ) === 'showSurveyStep' &&
+				abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain'
+			);
+
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -166,8 +173,7 @@ const DomainsStep = React.createClass( {
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
-				includeDotBlogSubdomain={ ( this.props.flowName === 'subdomain' ) ||
-					( abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain' ) }
+				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }

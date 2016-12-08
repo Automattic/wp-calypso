@@ -63,7 +63,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	domainDotBlogSubdomain: {
-		datestamp: '20161125',
+		datestamp: '20161208',
 		variations: {
 			excludeDotBlogSubdomain: 50,
 			includeDotBlogSubdomain: 50,
