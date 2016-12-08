@@ -370,11 +370,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 }
 
-// If we're not showing the entire excerpt, clamp to 3 lines
+// If we're not showing the entire excerpt, clamp to 2 lines
 .reader-post-card.card:not(.is-showing-entire-excerpt) {
 	.reader-post-card__excerpt {
 		overflow: hidden;
-		max-height: 15px * 1.6 * 3;
+		max-height: 15px * 1.6 * 2;
 
 		&::before {
 			@include long-content-fade( $size: 15px * 1.6 * 5 );
