@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, partial } from 'lodash';
+import { assign, partial, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -122,13 +122,14 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_permalink_click' )
 	.add( 'calypso_reader_recommended_post_clicked' )
 	.add( 'calypso_reader_recommended_site_clicked' )
+	.add( 'calypso_reader_recommended_post_dismissed' )
 ;
 
-export function recordTracksRailcar( action, eventName, railcar ) {
+export function recordTracksRailcar( action, eventName, railcar, overrides = {} ) {
 	// flatten the railcar down into the event props
 	recordTrack( action, Object.assign( {
 		action: eventName.replace( 'calypso_reader_', '' )
-	}, railcar ) );
+	}, railcar, overrides ) );
 }
 
 export const recordTracksRailcarRender = partial( recordTracksRailcar, 'calypso_traintracks_render' );
@@ -143,7 +144,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 		is_jetpack: post.is_jetpack
 	}, additionalProps ) );
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
-		recordTracksRailcarInteract( eventName, post.railcar );
+		// check for overrides for the railcar
+		recordTracksRailcarInteract( eventName, post.railcar, pick( additionalProps, [ 'ui_position', 'ui_algo' ] ) );
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
 	}

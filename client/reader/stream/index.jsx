@@ -14,7 +14,7 @@ import ReaderMain from 'components/reader-main';
 import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
-import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import ListGap from 'reader/list-gap';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
@@ -102,7 +102,8 @@ function injectRecommendations( posts, recs = [] ) {
 		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
-				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK )
+				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
+				index: recIndex
 			};
 			recIndex += RECS_PER_BLOCK;
 			return [
@@ -137,7 +138,7 @@ export default class ReaderStream extends React.Component {
 		showPostHeader: true,
 		suppressSiteNameLink: false,
 		showFollowInHeader: false,
-		onShowUpdates: noop,
+		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
@@ -412,6 +413,9 @@ export default class ReaderStream extends React.Component {
 	showUpdates = () => {
 		this.props.onUpdatesShown();
 		FeedStreamStoreActions.showUpdates( this.props.store.id );
+		if ( this.props.recommendationsStore ) {
+			FeedStreamStoreActions.shufflePosts( this.props.recommendationsStore.id );
+		}
 		if ( this._list ) {
 			this._list.scrollToTop();
 		}
@@ -484,7 +488,11 @@ export default class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isRecommendationBlock ) {
-			return <RecommendedPosts recommendations={ postKey.recommendations } key={ `recs-${ index }` } />;
+			return <RecommendedPosts
+				recommendations={ postKey.recommendations }
+				index={ postKey.index }
+				storeId={ this.props.recommendationsStore.id }
+				key={ `recs-${ index }` } />;
 		}
 
 		const itemKey = this.getPostRef( postKey );
