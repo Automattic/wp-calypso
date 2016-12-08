@@ -496,7 +496,9 @@ describe( 'actions', () => {
 				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/3' ).twice()
 				.reply( 200, { status: 'progress', message: 'in progress' } )
 				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/3' )
-				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } );
+				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.get( '/rest/v1.1/sites/2211667/automated-transfer/status/4' )
+				.reply( 400, 'something wrong' );
 		} );
 
 		it( 'should dispatch success on status complete', () => {
@@ -545,6 +547,17 @@ describe( 'actions', () => {
 					message: 'all done',
 					themeId: 'mood',
 				} );
+			} );
+		} );
+
+		it( 'should dispatch failure on receipt of error', () => {
+			themeTransferStatus( 2211667, 4 )( spy ).catch( () => {
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: THEME_TRANSFER_STATUS_FAILURE,
+					siteId: 2211667,
+					transferId: 4,
+				} );
+				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
 			} );
 		} );
 	} );
