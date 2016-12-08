@@ -44,11 +44,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex-flow: wrap;
 	margin-top: 80px;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-flow: initial;
-		flex-direction: column;
-	}
-
 	@include breakpoint( ">660px" ) {
 		margin-top: 130px;
 	}
@@ -111,11 +106,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			max-height: 220px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				max-height: 170px;
+				max-height: 160px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 170px;
+				max-height: 160px;
 			}
 		}
 
