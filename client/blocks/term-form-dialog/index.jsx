@@ -184,8 +184,7 @@ class TermFormDialog extends Component {
 		const matchingTerm = find( this.props.terms, ( term ) => {
 			return (
 				term.name.toLowerCase() === lowerCasedTermName &&
-				( ! this.props.term || term.ID !== this.props.term.ID ) &&
-				( ! this.props.isHierarchical || ( term.parent === values.parent ) )
+				( ! this.props.term || term.ID !== this.props.term.ID )
 			);
 		} );
 
