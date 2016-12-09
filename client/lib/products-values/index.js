@@ -217,6 +217,13 @@ function isDomainMapping( product ) {
 	return product.product_slug === 'domain_map';
 }
 
+function isDomainMappingNotMappedToWordPressDotCom( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'domain_map' && product.mappedDomainHasWpcomNameServers;
+}
+
 function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -349,6 +356,7 @@ module.exports = {
 	isCustomDesign,
 	isDependentProduct,
 	isDomainMapping,
+	isDomainMappingNotMappedToWordPressDotCom,
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
