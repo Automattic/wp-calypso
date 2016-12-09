@@ -44,7 +44,7 @@ const searchPlugins = search => overSome(
 	( { description } ) => includes( description.toLocaleLowerCase(), search.toLocaleLowerCase() )
 );
 
-const isPluginActive = ( plugin, hasBusiness, hasPremium ) => some( [
+const isPluginActive = ( plugin, hasPremium, hasBusiness ) => some( [
 	'standard' === plugin.plan,
 	'premium' === plugin.plan && hasPremium,
 	'business' === plugin.plan && hasBusiness,
