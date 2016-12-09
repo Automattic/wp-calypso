@@ -8,6 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -320,8 +321,11 @@ const ThemeSheet = React.createClass( {
 
 	renderFeaturesCard() {
 		const { isJetpack, siteSlug, taxonomies } = this.props;
-		const themeFeatures = taxonomies && taxonomies.theme_feature instanceof Array
-		? taxonomies.theme_feature.map( function( item ) {
+		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
+			return null;
+		}
+
+		const themeFeatures = taxonomies.theme_feature.map( function( item ) {
 			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
 			return (
 				<li key={ 'theme-features-item-' + item.slug }>
@@ -331,7 +335,7 @@ const ThemeSheet = React.createClass( {
 					}
 				</li>
 			);
-		} ) : [];
+		} );
 
 		return (
 			<div>
