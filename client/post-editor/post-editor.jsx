@@ -3,10 +3,8 @@
  */
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:post-editor' ),
-	page = require( 'page' ),
-	debounce = require( 'lodash/debounce' ),
-	throttle = require( 'lodash/throttle' );
+	page = require( 'page' );
+import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -133,7 +131,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		debug( 'PostEditor react component mounted.' );
 		// if content is passed in, e.g., through url param
 		if ( this.state.post && this.state.post.content ) {
 			this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
@@ -188,7 +185,7 @@ export const PostEditor = React.createClass( {
 		if ( this.state.post ) {
 			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
-			hasAutosave = ( this.state.post.meta && this.state.post.meta.data && this.state.post.meta.data.autosave );
+			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
 		return (
 			<div className="post-editor">
@@ -414,7 +411,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	onEditorContentChange: function() {
-		debug( 'editor content changed' );
 		this.debouncedSaveRawContent();
 		this.debouncedAutosave();
 	},
