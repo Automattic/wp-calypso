@@ -362,13 +362,19 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  */
 export function installWpcomThemeOnJetpack( siteId, themeId ) {
 	return ( dispatch ) => {
+
+		//Add -wpcom suffix. This suffix tels the endpoint that we want to
+		//install WordPress.com theme. Without the suffix endpoint would look
+		//for theme in .org
+		const wpcomThemeId = themeId + '-wpcom';
+
 		dispatch( {
 			type: THEME_INSTALL_ON_JETPACK_REQUEST,
 			siteId,
 			themeId
 		} );
 
-		return wpcom.undocumented().installWpcomThemeOnJetpack( themeId, siteId )
+		return wpcom.undocumented().installThemeOnJetpack( wpcomThemeId, siteId )
 			.then( ( ) => {
 				dispatch( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
