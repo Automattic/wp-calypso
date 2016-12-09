@@ -2110,7 +2110,7 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *
- * @param {int|string} siteId -- the ID of the site
+ * @param {int} siteId -- the ID of the site
  * @param {string} [plugin] -- .org plugin slug
  * @param {File} [theme] -- theme zip to upload
  * @param {Function} [onProgress] -- called with upload progress status
@@ -2143,7 +2143,7 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 /**
  * Fetch the status of an Automated Transfer.
  *
- * @param {int|string} siteId -- the ID of the site being transferred
+ * @param {int} siteId -- the ID of the site being transferred
  * @param {int} transferId -- ID of the specific transfer
  *
  * @returns {Promise} promise for handling result
