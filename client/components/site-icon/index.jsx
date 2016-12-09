@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { parse as parseUrl } from 'url';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,6 +71,6 @@ const SiteIcon = React.createClass( {
 	}
 } );
 
-export default connect( ( state, { siteId } ) => (
-	siteId ? { site: getSite( state, siteId ) } : {}
-) )( SiteIcon );
+export default connect( ( state, { site, siteId } ) => ( {
+	site: getSite( state, get( site, 'ID', siteId ) ) || site
+} ) )( SiteIcon );
