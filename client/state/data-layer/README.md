@@ -72,6 +72,14 @@ The list of handlers will be called in sequence in the order given in the list i
 Even when there is only one handler the value of the exported key should be a list - a singleton list in this case.
 
 ```js
+/**
+ * Spline Handler API code
+ * state/data-layer/wpcom/splines/index.js
+ *
+ * Requests splines and reticulations from API
+ * and feeds the responses back into Calypso
+ */
+
 const requestSplines = ( { dispatch }, action ) => {
 	…
 };
