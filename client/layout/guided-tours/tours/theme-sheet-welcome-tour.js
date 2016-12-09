@@ -21,8 +21,8 @@ import {
 	isAbTestInVariant,
 	isEnabled,
 	isNewUser,
-	isPreviewShowing,
 } from 'state/ui/guided-tours/contexts';
+import { isPreviewShowing } from 'state/ui/selectors';
 import { isDesktop } from 'lib/viewport';
 
 export const ThemeSheetWelcomeTour = makeTour(
