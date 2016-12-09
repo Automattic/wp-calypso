@@ -28,7 +28,7 @@ const camelCaseToSlug = ( name ) => {
 /**
  * Wraps fs.readFile in a Promise
  * @param {string} filePath The path to of the file to read
- * @return {Promise} The promise that the file will be read
+ * @return {string} The file contents
  */
 const readFile = ( filePath ) => {
 	return fs.readFileSync( filePath, { encoding: 'utf8' } );
@@ -64,6 +64,9 @@ const parseDocument = ( docObj ) => {
 	try {
 		const parsed = reactDocgen.parse( docObj.document );
 		parsed.includePath = docObj.includePath;
+		if ( parsed.displayName ) {
+			parsed.slug = camelCaseToSlug( parsed.displayName );
+		}
 		return parsed;
 	} catch ( error ) {
 		// skipping, probably because the file couldn't be parsed for many reasons (there are lots of them!)
@@ -72,73 +75,20 @@ const parseDocument = ( docObj ) => {
 };
 
 /**
- * Causes a side effect in `index`. Unconditionally appends `currentIndex` to `index[ name ]`, even if
- * `index[ name ]` is undefined
- * @param {string} name The index of `index`
- * @param {Number} currentIndex The current index to append to `index`
- * @param {Array} index The array to apply side effects to
- */
-const applyIndex = ( name, currentIndex, index ) => {
-	index[ name ] = [ currentIndex ].concat( index[ name ] || [] );
-};
-
-/**
- * Sort an object keys alphabetically
- * @param {Object} obj The object whose keys are to be sorted
- * @return {Object} The sorted object
- */
-const sortObjectByPropertyName = (obj) => {
-	return Object.keys( obj )
-		.sort()
-		.reduce( ( accumulator, current ) => {
-			accumulator[ current ] = obj[ current ];
-			return accumulator;
-		}, {});
-};
-
-/**
  * Creates an index of the files
  * @param {Array} parsed
  * @return {{data: Array, index: {displayName: {}, slug: {}, includePath: {}}}}
  */
 const createIndex = ( parsed ) => {
-	const final = {
-		data: [],
-		index: {
-			displayName: {},
-			includePath: {},
-			slug: {}
-		}
-	};
-
-	let currentIndex = 0;
-	parsed.forEach( ( component ) => {
+	return parsed.filter( ( component ) => {
 		if ( ! component ) {
-			return;
+			return false;
 		}
 
 		const displayName = component.displayName;
-		const slug = camelCaseToSlug( displayName );
-		const includePath = component.includePath;
 
-		if ( displayName === undefined || displayName === '' ) {
-			return;
-		}
-
-		final.data[ currentIndex ] = component;
-		applyIndex( displayName, currentIndex, final.index.displayName );
-		applyIndex( slug, currentIndex, final.index.slug );
-		applyIndex( includePath, currentIndex, final.index.includePath );
-
-		currentIndex++;
+		return ! ( displayName === undefined || displayName === '' );
 	} );
-
-	// for human readability, not strictly necessary
-	final.index.displayName = sortObjectByPropertyName( final.index.displayName );
-	final.index.includePath = sortObjectByPropertyName( final.index.includePath );
-	final.index.slug = sortObjectByPropertyName( final.index.slug );
-
-	return final;
 };
 
 /**
@@ -162,8 +112,10 @@ const main = ( () => {
 		process.exit( 1 );
 	}
 
-	let documents = fileList.map( processFile );
-	documents = documents.map( parseDocument );
-	documents = createIndex( documents );
+	const documents = createIndex(
+		fileList
+			.map( processFile )
+			.map( parseDocument )
+	);
 	writeFile( documents );
 } )();
