@@ -22,8 +22,8 @@ import {
 import JetpackPluginsPanel from './jetpack-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
-import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import Banner from 'components/banner';
 
 export const PluginPanel = ( {
 	plan,
@@ -41,14 +41,11 @@ export const PluginPanel = ( {
 			<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 
 			{ config.isEnabled( 'automated-transfer' ) && ! hasBusiness &&
-				<div className="plugins-wpcom__upgrade-nudge">
-					<UpgradeNudge
-						feature={ FEATURE_UPLOAD_PLUGINS }
-						title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
-						message={ translate( 'Upgrade to the Business plan to install plugins.' ) }
-						event={ 'calypso_plugins_page_upgrade_nudge' }
-					/>
-				</div>
+				<Banner
+					feature={ FEATURE_UPLOAD_PLUGINS }
+					plan={ PLAN_BUSINESS }
+					title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
+				/>
 			}
 
 			<JetpackPluginsPanel { ...{
