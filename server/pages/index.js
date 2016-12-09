@@ -18,7 +18,7 @@ import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
 import { serverRender } from 'render';
-import { createReduxStore } from 'state';
+import createReduxStore from 'state';
 
 const debug = debugFactory( 'calypso:pages' );
 

@@ -51,7 +51,7 @@ var config = require( 'config' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	createReduxStore = require( 'state' );
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -163,25 +163,8 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	createReduxStoreFromPersistedInitialState( reduxStoreReady );
-}
+	const reduxStore = createReduxStore( window.initialReduxState );
 
-function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
-
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore
-	} );
-
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
-	);
-
-	debug( 'Main layout rendered.' );
-}
-
-function reduxStoreReady( reduxStore ) {
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
@@ -426,6 +409,21 @@ function reduxStoreReady( reduxStore ) {
 
 	detectHistoryNavigation.start();
 	page.start();
+}
+
+function renderLayout( reduxStore ) {
+	const Layout = require( 'controller' ).ReduxWrappedLayout;
+
+	const layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
+
+	ReactDom.render(
+		layoutElement,
+		document.getElementById( 'wpcom' )
+	);
+
+	debug( 'Main layout rendered.' );
 }
 
 window.AppBoot = function() {
