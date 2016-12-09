@@ -112,8 +112,8 @@ module.exports = {
 	presaleChatButton: {
 		datestamp: '20161129',
 		variations: {
-			showChatButton: 50,
-			original: 50
+			showChatButton: 80,
+			original: 20
 		},
 		defaultVariation: 'original',
 		allowAnyLocale: true,
