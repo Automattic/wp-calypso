@@ -108,6 +108,18 @@ module.exports = function() {
 	);
 
 	page(
+		paths.domainManagementTransferOut( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransferOut
+	);
+
+	page(
+		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransferToOtherUser
+	);
+
+	page(
 		paths.domainManagementRoot(),
 		controller.siteSelection,
 		controller.sites

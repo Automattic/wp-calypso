@@ -79,7 +79,7 @@ const ContactsPrivacyCard = React.createClass( {
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ paths.domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) } />
+								a: <a href={ paths.domainManagementTransferOut( this.props.selectedSite.slug, this.props.selectedDomainName ) } />
 							}
 						}
 					) }

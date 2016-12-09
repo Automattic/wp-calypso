@@ -55,7 +55,7 @@ const RegisteredDomain = React.createClass( {
 		const { hasPrivacyProtection, privateDomain, name, pendingTransfer } = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
-			transferPath = paths.domainManagementTransfer( slug, name );
+			transferPath = paths.domainManagementTransferOut( slug, name );
 
 		if ( pendingTransfer ) {
 			return this.getLabel( {
