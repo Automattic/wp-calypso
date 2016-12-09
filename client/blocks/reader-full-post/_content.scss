@@ -160,7 +160,8 @@
 	}
 
 	.wp-caption-text,
-	figure figcaption {
+	figure figcaption,
+	figure .caption {
 		padding: 12px;
 		margin: 0;
 		font-size: 13px;
