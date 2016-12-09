@@ -263,6 +263,8 @@ export class FullPostView extends React.Component {
 			classes[ 'feed-' + post.feed_ID ] = true;
 		}
 
+		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
+
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
@@ -275,7 +277,7 @@ export class FullPostView extends React.Component {
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<ReaderFullPostBack onBackClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
-					<ExternalLink icon={ true } href={ post.URL } onClick={ this.handleVisitSiteClick } target="_blank">
+					<ExternalLink icon={ true } href={ externalHref } onClick={ this.handleVisitSiteClick } target="_blank">
 						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
 					</ExternalLink>
 				</div>
