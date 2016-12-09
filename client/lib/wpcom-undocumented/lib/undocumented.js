@@ -2107,6 +2107,55 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
 };
 
 /**
+ * Initiate the Automated Transfer process, uploading a theme and/or selecting
+ * a community plugin.
+ *
+ * @param {int} siteId -- the ID of the site
+ * @param {string} [plugin] -- .org plugin slug
+ * @param {File} [theme] -- theme zip to upload
+ * @param {Function} [onProgress] -- called with upload progress status
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onProgress ) {
+	debug( '/sites/:site_id/automated-transfers/initiate' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const post = {
+			path: `/sites/${ siteId }/automated-transfers/initiate`
+		};
+
+		if ( plugin ) {
+			post.body = { plugin };
+		}
+		if ( theme ) {
+			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		const req = this.wpcom.req.post( post, resolver );
+		req && ( req.upload.onprogress = onProgress );
+	} );
+};
+
+/**
+ * Fetch the status of an Automated Transfer.
+ *
+ * @param {int} siteId -- the ID of the site being transferred
+ * @param {int} transferId -- ID of the specific transfer
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.transferStatus = function( siteId, transferId ) {
+	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
+	return this.wpcom.req.get( {
+		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
+	} );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
