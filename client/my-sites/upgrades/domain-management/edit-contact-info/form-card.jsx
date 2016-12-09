@@ -31,9 +31,9 @@ import paths from 'my-sites/upgrades/paths';
 import upgradesActions from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
-import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
+import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -146,32 +146,6 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
-	renderTransferTerms( saveButtonLabel ) {
-		return (
-			<div className="edit-contact-info__terms">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p className="edit-contact-info__terms-copy">
-					{ this.props.translate(
-						'By clicking {{strong}}%(saveButtonLabel)s{{/strong}}, you agree to the ' +
-						'{{draLink}}applicable Domain Registration Agreement{{/draLink}} and confirm that the Transferee has ' +
-						'agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as ' +
-						'your {{supportLink}}Designated Agent{{/supportLink}}.',
-						{
-							args: {
-								saveButtonLabel
-							},
-							components: {
-								strong: <strong />,
-								draLink: <a href={ support.DOMAIN_REGISTRATION_AGREEMENTS } target="_blank" rel="noopener noreferrer" />,
-								supportLink: <a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
-							}
-						}
-					) }
-				</p>
-			</div>
-		);
-	}
-
 	render() {
 		const { translate } = this.props,
 			{ OPENHRS, OPENSRS } = registrarNames,
@@ -272,7 +246,7 @@ class EditContactInfoFormCard extends React.Component {
 					</div>
 
 					{ isTucowsDomain && this.renderTransferLockOptOut() }
-					{ isTucowsDomain && this.renderTransferTerms( saveButtonLabel ) }
+					{ isTucowsDomain && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
 
 					<FormFooter>
 						<FormButton

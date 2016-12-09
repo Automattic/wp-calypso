@@ -11,7 +11,7 @@ import SectionHeader from 'components/section-header';
 import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
-import { displayRequestTransferCodeResponseNotice } from 'my-sites/upgrades/domain-management/transfer/shared';
+import { displayRequestTransferCodeResponseNotice } from './shared';
 import support from 'lib/url/support';
 
 const Locked = React.createClass( {
