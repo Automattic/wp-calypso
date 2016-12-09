@@ -171,7 +171,7 @@ export function themeRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function wpcomThemeOnJetpackInstallRequests( state = {}, action ) {
+export function installThemeOnJetpackRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case THEME_INSTALL_ON_JETPACK_REQUEST:
 		case THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS:

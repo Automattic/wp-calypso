@@ -22,6 +22,9 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
+	THEME_INSTALL_ON_JETPACK_REQUEST,
+	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -35,6 +38,7 @@ import reducer, {
 	activeThemes,
 	activationRequests,
 	activeThemeRequests,
+	installThemeOnJetpackRequests,
 	completedActivationRequests,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -810,6 +814,110 @@ describe( 'reducer', () => {
 		it( 'never loads persisted state', () => {
 			const state = activationRequests( deepFreeze( {
 				2916284: true
+			} ), {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( '#installThemeOnJetpackRequests()', () => {
+		it( 'should default to an empty object', () => {
+			const state = installThemeOnJetpackRequests( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'should map site ID, theme ID to true value if request in progress', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {} ), {
+				type: THEME_INSTALL_ON_JETPACK_REQUEST,
+				siteId: 'sitewithjetpack.com',
+				themeId: 'karuna'
+			} );
+
+			expect( state ).to.deep.equal( {
+				'sitewithjetpack.com': {
+					karuna: true
+				}
+			} );
+		} );
+
+		it( 'should accumulate mappings', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {
+				'sitewithjetpack.com': {
+					karuna: true
+				}
+			} ), {
+				type: THEME_INSTALL_ON_JETPACK_REQUEST,
+				siteId: 'anothersitewithjetpack.com',
+				themeId: 'pinboard'
+			} );
+
+			expect( state ).to.deep.equal( {
+				'sitewithjetpack.com': {
+					karuna: true
+				},
+				'anothersitewithjetpack.com': {
+					pinboard: true
+				}
+			} );
+		} );
+
+		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {
+				'sitewithjetpack.com': {
+					karuna: true
+				}
+			} ), {
+				type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+				siteId: 'sitewithjetpack.com',
+				themeId: 'karuna'
+			} );
+
+			expect( state ).to.deep.equal( {
+				'sitewithjetpack.com': {
+					karuna: false
+				}
+			} );
+		} );
+
+		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {
+				'sitewithjetpack.com': {
+					karuna: true
+				}
+			} ), {
+				type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+				siteId: 'sitewithjetpack.com',
+				themeId: 'karuna',
+				error: { message: 'The theme is already installed' }
+			} );
+
+			expect( state ).to.deep.equal( {
+				'sitewithjetpack.com': {
+					karuna: false
+				}
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {
+				'sitewithjetpack.com': {
+					karuna: true
+				}
+			} ), {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		it( 'never loads persisted state', () => {
+			const state = installThemeOnJetpackRequests( deepFreeze( {
+				'sitewithjetpack.com': {
+					karuna: false
+				}
 			} ), {
 				type: DESERIALIZE
 			} );
