@@ -22,9 +22,9 @@ It's a hard mess to contain and keep tidy and adds dramatic burden to maintainin
 
 ### redux-thunk
 
-As we started using Redux for our data backend we realized the benefit of describing data mutations over direct mutation.
+As we started using Redux for our data backend we realized the benefit of describing data mutations over directly mutating that state in memory.
 Unfortunately Redux leaves a gap in terms of asynchronous data updates.
-`redux-thunk` brought us a way to separate those asynchronous pieces from our components and live within the Redux ecosystem.
+`redux-thunk` brought us a way to separate those asynchronous pieces from our components and still live within that Redux ecosystem.
 
 On the bright side, `redux-thunk` solves our needs as they relate to components.
 Individual components need only call `this.props.fetchSplines()` if they need a list of splines.
@@ -36,7 +36,7 @@ There is no way of introspecting those thunks as they pass through the Redux mid
 Their intentions are opaque.
 
 Further, we are still left in a situation where our data synchronization is decentralized and redundant.
-Each thunk action creator must dispatch the API requests and handle the possible network errors, which inevitably leads to the same kind of duplication on approximately-equal-while-implemented-slightly-differently functions.
+Each thunk action creator must dispatch the API requests and handle the possible network errors which inevitably leads to the same kind of duplication on approximately-equal-while-implemented-slightly-differently functions.
 
 ## Goals and characteristics
 
@@ -52,13 +52,15 @@ It may determine that some actions, such as submitting a post or comment, justif
 
 This middleware should break the tight coupling between Calypso's internal data structure and that presented by the APIs or backends which supply it.
 Components should ideally not need to know that some parts of related data (such as a site's settings or plan subscriptions) comes from distinct API endpoints.
-Instead the components should be able to request that they require such data the the middleware will intercept the request to fulfill it accordingly.
+Instead the components should be able to request that they require such data and the middleware will intercept the request to fulfill it accordingly.
 
 ## Implementation
 
 The data layer _intercepts_ Redux actions.
-Once it does this the action will be dropped entirely.
-This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain.
+Once it has performed its behavior, this action will be dropped entirely from the dispatch path.
+This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain. For example, we could start polling from the WP-API for posts but leave all other requests up to the WordPress.com API.
+Note that we can still allow multiple functions within the same middleware to handle the same action.
+The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given action types.
 
 Each middleware intercepts given Redux actions and will correspondingly dispatch new follow-up actions to actually handle their requests.
 The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions.
@@ -96,14 +98,19 @@ const handlers = mergeHandlers(
 
 Note that **these middlewares are not restricted to making HTTP requests**.
 A middleware might end up communicating over a `WebSocket`, making `HTTP` requests, reading from a local JSON file, or doing any other operation permitted in JavaScript.
-There could be special middleware running on the desktop platform which invokes code which is only possible in the desktop environment, for example.
+There could be special middleware running on the desktop platform which invokes code which is only possible in the desktop environment, for example, such as saving data to a file on the local computer.
 
 **These also need not handle every possible action type**.
-This system is incremental and can replace pieces of the data synchronization system.
+This is a gradual system and can be built to only replace small pieces of the much bigger data synchronization system.
 In some cases it might be appropriate for a certain middleware to only handle one type of data; this is fine.
 
 ## File Structure
 
-Since this middleware mirrors the WordPres.com API its files should also mirror its structure. For example, the file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts`.
+The data middleware is the gateway which performs the mapping between what is natural in Calypso/JavaScript and what is natural on the other side of the data requests.
+This is the place to couple files and functions to the structure of the associated system.
 
-Each file should be responsible for a single WordPress.com endpoint. If multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that action.
+For example, the WordPress.com API middleware mirrors the WordPres.com API and its files should thus mirror the API's structure. The file which handles requests to the `/sites/[ siteID ]/posts` endpoint should live at `state/data-layer/wpcom/sites/posts/index.js` and the file which handles requests to the `/me` endpoint should live at `state/data-layer/wpcom/me/index.js`.
+Each file should be responsible for a single WordPress.com endpoint, and if multiple endpoints need to be polled in response to some Redux action, then we should have one file for each endpoint and both will listen for that same action.
+
+The key principle in this directory is to match the appropriate structures and norms of each possible data provider.
+This makes it easier to navigate the code when answering questions like, "where is the code which polls the posts endpoint?"
