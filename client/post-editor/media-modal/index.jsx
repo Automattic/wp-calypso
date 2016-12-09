@@ -20,7 +20,7 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	Dialog = require( 'components/dialog' ),
 	accept = require( 'lib/accept' );
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
@@ -447,7 +447,7 @@ export default connect(
 		view: getMediaModalView( state ),
 		// [TODO]: Migrate toward dropping incoming site prop, accepting only
 		// siteId and forcing descendant components to access via state
-		site: site || getSelectedSite( state, siteId )
+		site: site || getSite( state, siteId )
 	} ),
 	{
 		setView: setEditorMediaModalView,
