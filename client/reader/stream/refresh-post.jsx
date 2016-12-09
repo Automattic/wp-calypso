@@ -27,7 +27,7 @@ class ReaderPostCardAdapter extends React.Component {
 
 	onClick = ( postToOpen ) => {
 		let referredPost;
-		if ( isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
+		if ( this.props.originalPost && isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
 			referredPost = { ...postToOpen,
 				referral: {
 					blogId: discoverBlogId,
