@@ -74,7 +74,7 @@
 		"reader/search": true,
 		"resume-editing": true,
 		"republicize": false,
-		"rubberband-scroll-disable": true,
+		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
