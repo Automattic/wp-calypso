@@ -71,6 +71,29 @@ The data layer provides `mergeHandlers()` as a utility to support this.
 The list of handlers will be called in sequence in the order given in the list itself and in the order in which the different handlers are merged.
 Even when there is only one handler the value of the exported key should be a list - a singleton list in this case.
 
+### Handlers
+
+The handlers are functions which take two arguments and whose return value, if any, is ignored.
+The type of a handler follows:
+
+```js
+// middlewareHandler :: ReduxStore -> ReduxAction -> Any
+const myHandler = ( store, action ) => { … }
+```
+
+Note that the Redux store incorporates four methods, two of which are likely to be used here.
+
+```js
+const {
+	dispatch, // issues new action dispatches
+	getState, // returns the current application state
+	replaceReducers, // please oh please don't use here
+	subscribe, // attaches event listeners to store updates
+} = store;
+```
+
+Let's look at a full example:
+
 ```js
 /**
  * Spline Handler API code
@@ -81,7 +104,10 @@ Even when there is only one handler the value of the exported key should be a li
  */
 
 const requestSplines = ( { dispatch }, action ) => {
-	…
+	wpcom
+		.splines( action.splineId )
+		.then( splines => dispatch( addSplines( splines ) ) )
+		.catch( handleErrors )
 };
 
 const invalidateExisting = ( { dispatch } ) => {
