@@ -516,7 +516,7 @@ export function themeTransferStatus( siteId, transferId, interval = 3000, timeou
 					transferId,
 					error: 'client timeout',
 				} );
-				return reject( 'client timeout' );
+				return resolve();
 			}
 			return wpcom.undocumented().transferStatus( siteId, transferId )
 				.then( ( { status, message, themeId } ) => {
@@ -536,16 +536,18 @@ export function themeTransferStatus( siteId, transferId, interval = 3000, timeou
 					return delay( pollStatus, interval, resolve, reject );
 				} )
 				.catch( ( error ) => {
-					dispatch( {
-						type: THEME_TRANSFER_STATUS_FAILURE,
-						siteId,
-						transferId,
-						error,
-					} );
 					return reject( error );
 				} );
 		};
 
-		return new Promise( pollStatus );
+		const poll = new Promise( pollStatus );
+		return poll.catch( ( error ) => {
+			dispatch( {
+				type: THEME_TRANSFER_STATUS_FAILURE,
+				siteId,
+				transferId,
+				error,
+			} );
+		} );
 	};
 }

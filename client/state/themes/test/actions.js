@@ -521,7 +521,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should time-out if status never complete', ( done ) => {
-			themeTransferStatus( siteId, 2, 10, 25 )( spy ).catch( () => {
+			themeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
 				done();
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
@@ -557,7 +557,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure on receipt of error', () => {
-			themeTransferStatus( siteId, 4 )( spy ).catch( () => {
+			themeTransferStatus( siteId, 4 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
@@ -622,4 +622,35 @@ describe( 'actions', () => {
 		} );
 	} );
 
+	describe( '#initiateThemeTransfer', () => {
+		const siteId = '2211667';
+
+		let nockScope;
+		useNock( ( nock ) => {
+			nockScope = nock( 'https://public-api.wordpress.com:443' )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
+				.reply( 200, 'something up' )
+				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
+				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } );
+		} );
+
+		it( 'should do something on status failure', () => {
+			initiateThemeTransfer( siteId, {} )( spy ).then( () => {
+				expect( spy ).to.have.been.calledTwice;
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_INITIATE_REQUEST,
+					siteId,
+				} );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_INITIATE_SUCCESS,
+					siteId,
+					transferId: 1,
+				} );
+
+				expect( nockScope.isDone() ).to.be.true;
+			} );
+		} );
+	} );
 } );
