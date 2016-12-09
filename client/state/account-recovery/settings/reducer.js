@@ -50,7 +50,7 @@ const isDeleting = createReducer( {}, {
 	} ),
 } );
 
-const data = createReducer( {}, {
+const data = createReducer( null, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
 		...state,
 		email,
