@@ -20,6 +20,9 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
+	THEME_INSTALL_ON_JETPACK_REQUEST,
+	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
@@ -148,6 +151,34 @@ export function themeRequests( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
 					[ action.themeId ]: THEME_REQUEST === action.type
+				} )
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated Jetpack site wpcom theme install requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
+ * boolean reflecting whether a request for the theme install is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function wpcomThemeOnJetpackInstallRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case THEME_INSTALL_ON_JETPACK_REQUEST:
+		case THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS:
+		case THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ action.themeId ]: THEME_INSTALL_ON_JETPACK_REQUEST === action.type
 				} )
 			} );
 
@@ -314,6 +345,7 @@ export default combineReducers( {
 	queryRequests,
 	queryRequestErrors,
 	lastQuery,
+	wpcomThemeOnJetpackInstallRequests,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,
