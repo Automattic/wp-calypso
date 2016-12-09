@@ -8,7 +8,8 @@ const fs = require( 'fs' ),
 	path = require( 'path' ),
 	async = require( 'async' ),
 	reactDocgen = require( 'react-docgen' ),
-	root = path.dirname( path.join( __dirname, '..', '..' ) );
+	root = path.dirname( path.join( __dirname, '..', '..' ) ),
+	pathSwap = new RegExp(path.sep, 'g');
 
 /**
  * Converts a camel cased string into a slug
@@ -41,13 +42,15 @@ const readFile = ( filePath ) => {
  */
 const processFile = ( filePath ) => {
 	const filename = path.basename( filePath );
-	const includePath = new RegExp(`^client\/(.*?)\/${ filename }$`);
+	const includePathRegEx = new RegExp(`^client${ path.sep }(.*?)${ path.sep }${ filename }$`);
+	const includePathSuffix = ( filename === 'index.jsx' ? '' : path.sep + path.basename( filename, '.jsx' ) );
+	const includePath = ( includePathRegEx.exec( filePath )[1] + includePathSuffix ).replace( pathSwap, '/' ) ;
 	try {
 		const usePath = path.isAbsolute( filePath ) ? filePath : path.join( process.cwd(), filePath );
 		const document = readFile( usePath );
 		return {
 			document,
-			includePath: includePath.exec( filePath )[1]
+			includePath
 		};
 	} catch ( error ) {
 		console.log(`Skipping ${ filePath } due to fs error: ${ error }`);
