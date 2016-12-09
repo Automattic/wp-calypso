@@ -151,9 +151,11 @@ class TaxonomyManagerListItem extends Component {
 						<Gridicon icon="pencil" size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem onClick={ this.deleteItem } icon="trash">
-						{ translate( 'Delete' ) }
-					</PopoverMenuItem>
+					{ ( ! canSetAsDefault || ! isDefault ) &&
+						<PopoverMenuItem onClick={ this.deleteItem } icon="trash">
+							{ translate( 'Delete' ) }
+						</PopoverMenuItem>
+					}
 					<PopoverMenuItem href={ this.getTaxonomyLink() } icon="external">
 						{ translate( 'View Posts' ) }
 					</PopoverMenuItem>
