@@ -1671,7 +1671,7 @@ Undocumented.prototype.declineTransfer = function( domainName, fn ) {
 };
 
 Undocumented.prototype.transferToUser = function( siteId, domainName, targetUserId, fn ) {
-	return this.wpcom.req.post( '/sites/' + siteId +'/domains/' + domainName + '/transfer-to-user/' + targetUserId, fn );
+	return this.wpcom.req.post( '/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId, fn );
 };
 
 /*

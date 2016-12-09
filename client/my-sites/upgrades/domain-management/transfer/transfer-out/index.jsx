@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import IcannVerification from './icann-verification.jsx';
 import Locked from './locked.jsx';
 import Unlocked from './unlocked.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
-import omit from 'lodash/omit';
 
 const Transfer = React.createClass( {
 	propTypes: {
