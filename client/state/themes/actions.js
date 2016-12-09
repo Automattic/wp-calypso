@@ -472,6 +472,14 @@ export function clearThemeUpload( siteId ) {
 	};
 }
 
+/**
+ * Start an Automated Transfer with an uploaded theme.
+ *
+ * @param {Number} siteId -- the site to transfer
+ * @param {File} file -- theme zip to upload
+ *
+ * @returns {Promise} for testing purposes only
+ */
 export function initiateThemeTransfer( siteId, file ) {
 	return dispatch => {
 		dispatch( {
@@ -504,30 +512,54 @@ export function initiateThemeTransfer( siteId, file ) {
 	};
 }
 
+// receive a transfer status
+function transferStatus( siteId, transferId, status, message, themeId ) {
+	return {
+		type: THEME_TRANSFER_STATUS_SUCCESS,
+		siteId,
+		transferId,
+		status,
+		message,
+		themeId,
+	};
+}
+
+// receive a transfer status error
+function transferStatusFailure( siteId, transferId, error ) {
+	return {
+		type: THEME_TRANSFER_STATUS_FAILURE,
+		siteId,
+		transferId,
+		error,
+	};
+}
+
+/**
+ * Make API calls to the transfer status endpoint until a status complete is received,
+ * or an error is received, or the timeout is reached.
+ *
+ * The returned promise is only for testing purposes, and therefore is never rejected,
+ * to avoid unhandled rejections in production.
+ *
+ * @param {Number} siteId -- the site being transferred
+ * @param {Number} transferId -- the specific transfer
+ * @param {Number} [interval] -- time between poll attemps
+ * @param {Number} [timeout] -- time to wait for 'complete' status before bailing
+ *
+ * @return {Promise} for testing purposes only
+ */
 export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return dispatch => {
 		const pollStatus = ( resolve, reject ) => {
 			if ( Date.now() > endTime ) {
 				// timed-out, stop polling
-				dispatch( {
-					type: THEME_TRANSFER_STATUS_FAILURE,
-					siteId,
-					transferId,
-					error: 'client timeout',
-				} );
+				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
 				return resolve();
 			}
 			return wpcom.undocumented().transferStatus( siteId, transferId )
 				.then( ( { status, message, themeId } ) => {
-					dispatch( {
-						type: THEME_TRANSFER_STATUS_SUCCESS,
-						siteId,
-						transferId,
-						status,
-						message,
-						themeId,
-					} );
+					dispatch( transferStatus( siteId, transferId, status, message, themeId ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
 						return resolve();
@@ -536,16 +568,11 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					return delay( pollStatus, interval, resolve, reject );
 				} )
 				.catch( ( error ) => {
-					dispatch( {
-						type: THEME_TRANSFER_STATUS_FAILURE,
-						siteId,
-						transferId,
-						error,
-					} );
+					dispatch( transferStatusFailure( siteId, transferId, error ) );
+					// error, stop polling
 					return resolve();
 				} );
 		};
-
 		return new Promise( pollStatus );
 	};
 }

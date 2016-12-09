@@ -2106,6 +2106,17 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
 		}, fn );
 };
 
+/**
+ * Initiate the Automated Transfer process, uploading a theme and/or selecting
+ * a community plugin.
+ *
+ * @param {int|string} siteId -- the ID of the site
+ * @param {string} [plugin] -- .org plugin slug
+ * @param {File} [theme] -- theme zip to upload
+ * @param {Function} [onProgress] -- called with upload progress status
+ *
+ * @returns {Promise} promise for handling result
+ */
 Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onProgress ) {
 	debug( '/sites/:site_id/automated-transfers/initiate' );
 	return new Promise( ( resolve, rejectPromise ) => {

@@ -580,7 +580,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch success', () => {
-			initiateThemeTransfer( siteId, {} )( spy ).then( () => {
+			initiateThemeTransfer( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				expect( spy ).to.have.been.calledWith( {
@@ -599,7 +599,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure on error', () => {
-			initiateThemeTransfer( siteId, {} )( spy ).catch( () => {
+			initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledOnce;
 
 				expect( spy ).to.have.been.calledWithMatch( {
