@@ -22,7 +22,12 @@ import {
 	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE
+	THEMES_REQUEST_FAILURE,
+	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_INITIATE_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -32,7 +37,9 @@ import {
 	receiveTheme,
 	receiveThemes,
 	requestThemes,
-	requestTheme
+	requestTheme,
+	pollThemeTransferStatus,
+	initiateThemeTransfer,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -479,6 +486,127 @@ describe( 'actions', () => {
 					siteId: 666,
 					error: sinon.match( { message: 'Unknown blog' } ),
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#pollThemeTransferStatus', () => {
+		const siteId = '2211667';
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
+				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/2` ).thrice()
+				.reply( 200, { status: 'stuck', message: 'jammed' } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` ).twice()
+				.reply( 200, { status: 'progress', message: 'in progress' } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` )
+				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/4` )
+				.reply( 400, 'something wrong' );
+		} );
+
+		it( 'should dispatch success on status complete', () => {
+			pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_RECEIVE,
+					siteId,
+					transferId: 1,
+					status: 'complete',
+					message: 'all done',
+					themeId: 'mood',
+				} );
+			} );
+		} );
+
+		it( 'should time-out if status never complete', ( done ) => {
+			pollThemeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
+				done();
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_FAILURE,
+					siteId,
+					transferId: 2,
+					error: 'client timeout',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch status update', ( done ) => {
+			pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
+				done();
+				// Two 'progress' then a 'complete'
+				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_RECEIVE,
+					siteId: siteId,
+					transferId: 3,
+					status: 'progress',
+					message: 'in progress',
+					themeId: undefined,
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_STATUS_RECEIVE,
+					siteId: siteId,
+					transferId: 3,
+					status: 'complete',
+					message: 'all done',
+					themeId: 'mood',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch failure on receipt of error', () => {
+			pollThemeTransferStatus( siteId, 4 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: THEME_TRANSFER_STATUS_FAILURE,
+					siteId,
+					transferId: 4,
+				} );
+				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
+			} );
+		} );
+	} );
+
+	describe( '#initiateThemeTransfer', () => {
+		const siteId = '2211667';
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
+				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
+				.reply( 400, 'some problem' );
+		} );
+
+		it( 'should dispatch success', () => {
+			initiateThemeTransfer( siteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledThrice;
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_INITIATE_REQUEST,
+					siteId,
+				} );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_TRANSFER_INITIATE_SUCCESS,
+					siteId,
+					transferId: 1,
+				} );
+
+				expect( spy ).to.have.been.calledWith( sinon.match.func );
+			} );
+		} );
+
+		it( 'should dispatch failure on error', () => {
+			initiateThemeTransfer( siteId )( spy ).catch( () => {
+				expect( spy ).to.have.been.calledOnce;
+
+				expect( spy ).to.have.been.calledWithMatch( {
+					type: THEME_TRANSFER_INITIATE_FAILURE,
+					siteId,
+				} );
+				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
 			} );
 		} );
 	} );
