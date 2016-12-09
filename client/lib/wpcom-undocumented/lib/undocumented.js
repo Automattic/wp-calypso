@@ -1495,14 +1495,14 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 };
 
 /**
- * Install WordPress.com theme on Jetpack site
+ * Install .org or .com theme on Jetpack site
  *
  * @param {String}    siteId   The site ID
- * @param {Object}    themeId  WordPress.com theme with -wpcom suffix
+ * @param {Object}    themeId  WordPress.com theme needs -wpcom suffix
  * @param {Function}  fn       The callback function
  * @returns {Promise} promise
  */
-Undocumented.prototype.installWpcomThemeOnJetpack = function( siteId, themeId, fn ) {
+Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
 	const sitePath = `/sites/${ siteId }`;
 	const themePath = `/themes/${ themeId }`;
 	const path = sitePath + themePath + '/install';
