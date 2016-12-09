@@ -26,78 +26,49 @@ const camelCaseToSlug = ( name ) => {
 };
 
 /**
- * Async.Map over items, in a Promise fashion
- * @param {Array} items The items to iterate over
- * @param {func} func The function to call
- * @return {Promise} A promise that they will be iterated over
- */
-const map = ( items, func ) => {
-	return new Promise( ( resolve, reject ) => {
-		async.map( items, func, ( error, results ) => {
-			if ( error ) {
-				reject( error );
-			} else {
-				resolve( results );
-			}
-		} );
-	} );
-};
-
-/**
  * Wraps fs.readFile in a Promise
  * @param {string} filePath The path to of the file to read
  * @return {Promise} The promise that the file will be read
  */
 const readFile = ( filePath ) => {
-	return new Promise( ( resolve, reject ) => {
-		fs.readFile( filePath, { encoding: 'utf8' }, ( error, data ) => {
-			if ( error ) {
-				reject( error );
-			} else {
-				resolve( data );
-			}
-		} );
-	} );
+	return fs.readFileSync( filePath, { encoding: 'utf8' } );
 };
 
 /**
  * Calculates a filepath's include path and begins reading the file for parsing
  * Calls back with null, if an error occurs or an object if it succeeds
  * @param {string} filePath The path to read
- * @param {func} cb The callback for when the function has completed
  */
-const processFile = ( filePath, cb ) => {
+const processFile = ( filePath ) => {
 	const filename = path.basename( filePath );
 	const includePath = new RegExp(`^client\/(.*?)\/${ filename }$`);
 	try {
 		const usePath = path.isAbsolute( filePath ) ? filePath : path.join( process.cwd(), filePath );
 		const document = readFile( usePath );
-		cb( null, {
+		return {
 			document,
 			includePath: includePath.exec( filePath )[1]
-		} );
-		return;
+		};
 	} catch ( error ) {
 		console.log(`Skipping ${ filePath } due to fs error: ${ error }`);
 	}
-	cb( null, null );
+	return null;
 };
 
 /**
  * Given a processed file object, parses the file for proptypes and calls the callback
  * Calls back with null on any error, or a parsed object if it succeeds
  * @param {Object} docObj The processed document object
- * @param {func} cb The callback when it has completed
  */
-const processDocumentPromise = ( docObj, cb ) => {
-	docObj.document.then( ( document ) => {
-		const parsed = reactDocgen.parse( document );
+const parseDocument = ( docObj ) => {
+	try {
+		const parsed = reactDocgen.parse( docObj.document );
 		parsed.includePath = docObj.includePath;
-		cb(null, parsed)
-	} ).catch( ( error ) => {
+		return parsed;
+	} catch ( error ) {
 		// skipping, probably because the file couldn't be parsed for many reasons (there are lots of them!)
-		cb(null, null);
-	} );
+		return null;
+	}
 };
 
 /**
@@ -178,7 +149,7 @@ const writeFile = ( contents ) => {
 	fs.writeFileSync( path.join( root, 'server/devdocs/proptypes-index.json' ), JSON.stringify( contents ) );
 };
 
-const main = (() => {
+const main = ( () => {
 	const fileList = process
 		.argv
 		.splice( 2, process.argv.length )
@@ -191,8 +162,8 @@ const main = (() => {
 		process.exit( 1 );
 	}
 
-	map( fileList, processFile )
-		.then( ( documents ) => map( documents, processDocumentPromise ) )
-		.then( ( parsed ) => createIndex( parsed ) )
-		.then( writeFile );
+	let documents = fileList.map( processFile );
+	documents = documents.map( parseDocument );
+	documents = createIndex( documents );
+	writeFile( documents );
 } )();
