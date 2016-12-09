@@ -16,8 +16,6 @@ Fetches plans
 
 > Action creators are exactly that—functions that create actions.
 
-### plansRequest()
-
 ### plansReceiveAction( plans )
 
 ### plansRequestSuccessAction()
@@ -27,6 +25,8 @@ Fetches plans
 ### plansSerializeAction()
 
 ### plansDeserializeAction()
+
+### requestPlans()
 
 ```es6
 import {
