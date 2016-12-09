@@ -94,7 +94,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card-v2', {
 		'has-thumbnail': !! featuredImage,
-		'has-excerpt': post.excerpt.length > 1
+		'has-excerpt': post.excerpt && post.excerpt.length > 1
 	} );
 	const postClickTracker = partial( onPostClick, post );
 	const siteClickTracker = partial( onSiteClick, post );
