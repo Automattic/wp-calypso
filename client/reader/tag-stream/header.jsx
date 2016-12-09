@@ -54,7 +54,7 @@ class TagStreamHeader extends React.Component {
 	}
 
 	render() {
-		const { tag, isPlaceholder, showFollow, following, onFollowToggle, translate, showBack } = this.props;
+		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, showBack, imageSearchString } = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
@@ -63,15 +63,23 @@ class TagStreamHeader extends React.Component {
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;
 
+		let photoByWrapper;
+		let authorLink;
 		if ( tagImage ) {
 			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, { resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }` } );
 			const safeCssUrl = cssSafeUrl( imageUrl );
 			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
+
+			photoByWrapper = ( <span className="tag-stream__header-image-byline-label" /> );
+			authorLink = <a href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
+												className="tag-stream__header-image-byline-link" rel="author">
+											{ decodeEntities( tagImage.author ) }
+										</a>;
 		}
 
 		return (
 			<div className={ classes }>
-				<QueryReaderTagImages tag={ tag } />
+				<QueryReaderTagImages tag={ imageSearchString } />
 				{ showFollow &&
 					<div className="tag-stream__header-follow">
 						<FollowButton
@@ -85,11 +93,16 @@ class TagStreamHeader extends React.Component {
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />{ tag }
+						<Gridicon icon="tag" size={ 24 } />{ title }
 					</h1>
 					{ tagImage &&
 						<div className="tag-stream__header-image-byline">
-							<span className="tag-stream__header-image-byline-label">{ translate( 'Photo by' ) }</span> <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="author external">{ decodeEntities( tagImage.author ) }</a>, <a href={ tagImage.blog_url } className="tag-stream__header-image-byline-link" rel="external">{ decodeEntities( tagImage.blog_title ) }</a>
+							{ translate( '{{photoByWrapper}}Photo by{{/photoByWrapper}} {{authorLink/}}', {
+								components: {
+									photoByWrapper,
+									authorLink
+								}
+							} ) }
 						</div>
 					}
 				</div>
@@ -101,7 +114,7 @@ class TagStreamHeader extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			tagImages: getTagImages( state, ownProps.tag )
+			tagImages: getTagImages( state, ownProps.imageSearchString )
 		};
 	}
 )( localize( TagStreamHeader ) );
