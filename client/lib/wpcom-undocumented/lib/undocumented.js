@@ -2140,6 +2140,14 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 	} );
 };
 
+/**
+ * Fetch the status of an Automated Transfer.
+ *
+ * @param {int|string} siteId -- the ID of the site being transferred
+ * @param {int} transferId -- ID of the specific transfer
+ *
+ * @returns {Promise} promise for handling result
+ */
 Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
 	return this.wpcom.req.get( {
