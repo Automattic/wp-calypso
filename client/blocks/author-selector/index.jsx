@@ -1,30 +1,31 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:author-selector' ),
-	trim = require( 'lodash/trim' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import debugModule from 'debug';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Popover = require( 'components/popover' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	SiteUsersFetcher = require( 'components/site-users-fetcher' ),
-	UserItem = require( 'components/user' ),
-	Gridicon = require( 'components/gridicon' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	UsersActions = require( 'lib/users/actions' ),
-	Search = require( 'components/search' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch;
+import Popover from 'components/popover';
+import PopoverMenuItem from 'components/popover/menu-item';
+import SiteUsersFetcher from 'components/site-users-fetcher';
+import UserItem from 'components/user';
+import Gridicon from 'components/gridicon';
+import InfiniteList from 'components/infinite-list';
+import UsersActions from 'lib/users/actions';
+import Search from 'components/search';
+import { hasTouch } from 'lib/touch-detect';
 
 /**
  * Module variables
  */
-var instance = 0, SwitcherShell;
+const debug = debugModule( 'calypso:author-selector' );
+let instance = 0;
 
-SwitcherShell = React.createClass( {
+const SwitcherShell = React.createClass( {
 	displayName: 'AuthorSwitcherShell',
 	propTypes: {
 		users: React.PropTypes.array,
@@ -33,7 +34,8 @@ SwitcherShell = React.createClass( {
 		totalUsers: React.PropTypes.number,
 		usersCurrentOffset: React.PropTypes.number,
 		allowSingleUser: React.PropTypes.bool,
-		popoverPosition: React.PropTypes.string
+		popoverPosition: React.PropTypes.string,
+		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.func } )
 	},
 
 	getInitialState: function() {
@@ -64,8 +66,8 @@ SwitcherShell = React.createClass( {
 	},
 
 	render: function() {
-		var users = this.props.users,
-			infiniteListKey = this.props.fetchNameSpace + this.instance;
+		const { users, fetchNameSpace } = this.props;
+		const infiniteListKey = fetchNameSpace + this.instance;
 
 		if ( ! this._userCanSelectAuthor() ) {
 			return <span>{ this.props.children }</span>;
@@ -88,31 +90,34 @@ SwitcherShell = React.createClass( {
 					position={ this.props.popoverPosition }
 					context={ this.refs && this.refs.authorSelectorChevron }
 					onKeyDown={ this._onKeyDown }
-					className="author-selector__popover popover">
-					{ this.props.fetchOptions.search || users.length > 10 ?
+					className="author-selector__popover popover"
+					ignoreContext={ this.props.ignoreContext } >
+					{ ( this.props.fetchOptions.search || users.length > 10 ) &&
 						<Search
 							onSearch={ this._onSearch }
 							placeholder={ this.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
 							ref="authorSelectorSearch"
-						/> :
-					null }
-					{ this.props.fetchInitialized && ! users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ?
-						this._noUsersFound() :
-						<InfiniteList
-							items={ users }
-							key={ infiniteListKey }
-							className="author-selector__infinite-list"
-							ref={ this._setListContext }
-							context={ this.state.listContext }
-							fetchingNextPage={ this.props.fetchingUsers }
-							guessedItemHeight={ 42 }
-							lastPage={ this._isLastPage() }
-							fetchNextPage={ this._fetchNextPage }
-							getItemRef={ this._getAuthorItemGUID }
-							renderLoadingPlaceholders={ this._renderLoadingAuthors }
-							renderItem={ this._renderAuthor }>
-						</InfiniteList>
+						/>
+					}
+					{ this.props.fetchInitialized && ! users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers
+						? this._noUsersFound()
+						: (
+							<InfiniteList
+								items={ users }
+								key={ infiniteListKey }
+								className="author-selector__infinite-list"
+								ref={ this._setListContext }
+								context={ this.state.listContext }
+								fetchingNextPage={ this.props.fetchingUsers }
+								guessedItemHeight={ 42 }
+								lastPage={ this._isLastPage() }
+								fetchNextPage={ this._fetchNextPage }
+								getItemRef={ this._getAuthorItemGUID }
+								renderLoadingPlaceholders={ this._renderLoadingAuthors }
+								renderItem={ this._renderAuthor }>
+							</InfiniteList>
+						)
 					}
 				</Popover>
 			</span>
@@ -120,7 +125,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_isLastPage: function() {
-		var usersLength = this.props.users.length;
+		let usersLength = this.props.users.length;
 		if ( this.props.exclude ) {
 			usersLength += this.props.excludedUsers.length;
 		}
@@ -135,7 +140,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_userCanSelectAuthor: function() {
-		var users = this.props.users;
+		const { users } = this.props;
 
 		if ( this.props.fetchOptions.search ) {
 			return true;
@@ -156,7 +161,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_onClose: function( event ) {
-		var toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
+		const toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
 
 		if ( event && toggleElement.contains( event.target ) ) {
 			// let _toggleShowAuthor() handle this case
@@ -169,7 +174,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_renderAuthor: function( author ) {
-		var authorGUID = this._getAuthorItemGUID( author );
+		const authorGUID = this._getAuthorItemGUID( author );
 		return (
 			<PopoverMenuItem
 				className="author-selector__menu-item"
@@ -177,7 +182,7 @@ SwitcherShell = React.createClass( {
 				focusOnHover={ false }
 				key={ authorGUID }
 				tabIndex="-1">
-				<UserItem user={ author }/>
+				<UserItem user={ author } />
 			</PopoverMenuItem>
 		);
 	},
@@ -202,7 +207,7 @@ SwitcherShell = React.createClass( {
 	},
 
 	_fetchNextPage: function() {
-		var fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: this.props.users.length } );
+		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: this.props.users.length } );
 		debug( 'fetching next batch of authors' );
 		UsersActions.fetchUsers( fetchOptions );
 	},
@@ -254,12 +259,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var searchString = this.state.search || '',
-			fetchOptions;
-
+		let searchString = this.state.search || '';
 		searchString = trim( searchString );
 
-		fetchOptions = {
+		const fetchOptions = {
 			siteId: this.props.siteId,
 			order: 'ASC',
 			order_by: 'display_name',
