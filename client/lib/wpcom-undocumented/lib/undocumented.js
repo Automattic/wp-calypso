@@ -1494,6 +1494,25 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 	}, fn );
 };
 
+/**
+ * Install a theme from WordPress.org or WordPress.com on the given Jetpack site.
+ * Whether the theme is installed from .com or .org is controlled by the themeId string
+ * if it has a -wpcom suffix, .com is used.
+ *
+ * @param {String}    siteId   The site ID
+ * @param {String}    themeId  WordPress.com theme with -wpcom suffix, WordPress.org otherwise
+ * @param {Function}  fn       The callback function
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
+	const path = `/sites/${ siteId }/themes/${ themeId }/install`;
+	debug( path );
+
+	return this.wpcom.req.post( {
+		path,
+	}, fn );
+};
+
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
