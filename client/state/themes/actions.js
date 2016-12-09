@@ -492,7 +492,7 @@ export function initiateThemeTransfer( siteId, file ) {
 					siteId,
 					transferId: transfer_id,
 				} );
-				themeTransferStatus( siteId, transfer_id )( dispatch );
+				pollThemeTransferStatus( siteId, transfer_id )( dispatch );
 			} )
 			.catch( error => {
 				dispatch( {
@@ -504,7 +504,7 @@ export function initiateThemeTransfer( siteId, file ) {
 	};
 }
 
-export function themeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return dispatch => {
 		const pollStatus = ( resolve, reject ) => {
@@ -536,18 +536,16 @@ export function themeTransferStatus( siteId, transferId, interval = 3000, timeou
 					return delay( pollStatus, interval, resolve, reject );
 				} )
 				.catch( ( error ) => {
-					return reject( error );
+					dispatch( {
+						type: THEME_TRANSFER_STATUS_FAILURE,
+						siteId,
+						transferId,
+						error,
+					} );
+					return resolve();
 				} );
 		};
 
-		const poll = new Promise( pollStatus );
-		return poll.catch( ( error ) => {
-			dispatch( {
-				type: THEME_TRANSFER_STATUS_FAILURE,
-				siteId,
-				transferId,
-				error,
-			} );
-		} );
+		return new Promise( pollStatus );
 	};
 }

@@ -38,7 +38,7 @@ import {
 	receiveThemes,
 	requestThemes,
 	requestTheme,
-	themeTransferStatus,
+	pollThemeTransferStatus,
 	initiateThemeTransfer,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -490,7 +490,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#themeTransferStatus', () => {
+	describe( '#pollThemeTransferStatus', () => {
 		const siteId = '2211667';
 
 		useNock( ( nock ) => {
@@ -508,7 +508,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch success on status complete', () => {
-			themeTransferStatus( siteId, 1 )( spy ).then( () => {
+			pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_SUCCESS,
 					siteId,
@@ -521,7 +521,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should time-out if status never complete', ( done ) => {
-			themeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
+			pollThemeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
 				done();
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
@@ -533,7 +533,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch status update', ( done ) => {
-			themeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
+			pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				done();
 				// Two 'progress' then a 'complete'
 				expect( spy ).to.have.been.calledThrice;
@@ -557,7 +557,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure on receipt of error', () => {
-			themeTransferStatus( siteId, 4 )( spy ).then( () => {
+			pollThemeTransferStatus( siteId, 4 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
