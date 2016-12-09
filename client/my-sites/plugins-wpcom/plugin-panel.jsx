@@ -44,7 +44,7 @@ export const PluginPanel = ( {
 				<div className="plugins-wpcom__upgrade-nudge">
 					<UpgradeNudge
 						feature={ FEATURE_UPLOAD_PLUGINS }
-						title={ translate( 'Upgrade to the Business plan to install third-party plugins.' ) }
+						title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
 						message={ translate( 'Upgrade to the Business plan to install plugins.' ) }
 						event={ 'calypso_plugins_page_upgrade_nudge' }
 					/>
