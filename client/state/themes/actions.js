@@ -36,6 +36,9 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_INSTALL_ON_JETPACK_REQUEST,
+	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -347,6 +350,41 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
+}
+
+/**
+ * Triggers a network request to install WordPress.com theme on Jetpack site.
+ * Requires Jetpack 4.4
+ *
+ * @param  {String}   siteId    Jetpack Site ID
+ * @param  {String}   themeId   Theme ID
+ * @return {Function}           Action thunk
+ */
+export function installWpcomThemeOnJetpack( siteId, themeId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: THEME_INSTALL_ON_JETPACK_REQUEST,
+			siteId,
+			themeId
+		} );
+
+		return wpcom.undocumented().installWpcomThemeOnJetpack( themeId, siteId )
+			.then( ( ) => {
+				dispatch( {
+					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+	};
 }
 
 /**
