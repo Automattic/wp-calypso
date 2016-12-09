@@ -17,8 +17,7 @@ const themeSchema = {
 		'id',
 		'name',
 		'author',
-		'screenshot',
-		'author_uri'
+		'screenshot'
 	]
 };
 
