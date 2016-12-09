@@ -18,8 +18,6 @@ const themeSchema = {
 		'name',
 		'author',
 		'screenshot',
-		'stylesheet',
-		'demo_uri',
 		'author_uri'
 	]
 };
