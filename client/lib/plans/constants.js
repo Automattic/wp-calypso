@@ -118,7 +118,7 @@ export const PLANS_LIST = {
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
-			isEnabled( 'plans/6gb-personal-plan' ) ? FEATURE_6GB_STORAGE : FEATURE_3GB_STORAGE,
+			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
