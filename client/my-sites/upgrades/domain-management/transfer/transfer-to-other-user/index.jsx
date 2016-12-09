@@ -91,8 +91,8 @@ class TransferOtherUser extends React.Component {
 			.then( () => {
 				this.setState( { disableDialogButtons: false } );
 				this.props.successNotice( successMessage, { duration: 4000, isPersistent: true } );
-				page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 				closeDialog();
+				page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 			}, err => {
 				this.setState( { disableDialogButtons: false } );
 				this.props.errorNotice( err.message || defaultErrorMessage );
