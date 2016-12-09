@@ -126,11 +126,11 @@ Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug
  */
 Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlug, settings, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.post( {
-		path: '/jetpack-blogs/' + siteId + '/rest-api/',
-		query: { path: '/module/' + moduleSlug },
-		body: settings
-	}, fn );
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/module/' + moduleSlug, body: settings },
+		fn
+	);
 };
 
 /**
