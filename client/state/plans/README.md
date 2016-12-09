@@ -18,8 +18,6 @@ Fetches plans
 
 ### plansReceiveAction( plans )
 
-### plansRequestAction()
-
 ### plansRequestSuccessAction()
 
 ### plansRequestFailureAction( error )
@@ -28,15 +26,17 @@ Fetches plans
 
 ### plansDeserializeAction()
 
+### requestPlans()
+
 ```es6
 import {
 	plansReceiveAction,
-	plansRequestAction,
 	plansRequestSuccessAction,
-	plansRequestFailureAction
+	plansRequestFailureAction,
+	requestPlans,
 } from 'state/plans/actions';
 
-dispatch( plansRequestAction() );
+dispatch( requestPlans() );
 
 wpcom
 .plans()
