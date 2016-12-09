@@ -63,7 +63,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	display: flex;
 	flex-basis: calc( 50% - 15px );
 	margin: 0 0 0 15px;
-	padding: 16px 0 32px 0;
+	padding: 18px 0 12px 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-basis: 100%;
@@ -138,11 +138,23 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 	}
 
+	.reader-related-card-v2__meta {
+		margin-bottom: 16px;
+	}
+
 	.reader-related-card-v2__meta .follow-button {
 
 		@include breakpoint( "<480px" ) {
 			margin-right: 0;
 		}
+	}
+
+	.reader-related-card-v2__meta .gravatar {
+		margin: 2px 8px 0 0;
+	}
+
+	.reader-related-card-v2__meta .reader-related-card-v2__byline-site {
+		margin-top: -2px;
 	}
  }
 
