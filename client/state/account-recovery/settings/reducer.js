@@ -9,9 +9,7 @@ import { combineReducers } from 'redux';
 import { createReducer } from 'state/utils';
 
 import {
-	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -22,70 +20,35 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
-const createActionInProgressReducer = ( initiateActions, finishActions, actionTargetCheck = () => true ) => {
-	const initiateCallback = ( state, action ) => {
-		if ( actionTargetCheck( action ) ) {
-			return true;
-		}
+const isUpdating = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: true,
+	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
+} );
 
-		return state;
-	};
-
-	const finishCallback = ( state, action ) => {
-		if ( actionTargetCheck( action ) ) {
-			return false;
-		}
-
-		return state;
-	};
-
-	const initiateHandlers = initiateActions.reduce(
-		( accumulator, actionType ) => ( { ...accumulator, [ actionType ]: initiateCallback } ),
-		{}
-	);
-	const finishHandlers = finishActions.reduce(
-		( accumulator, actionType ) => ( { ...accumulator, [ actionType ]: finishCallback } ),
-		{}
-	);
-
-	return createReducer( false, {
-		...initiateHandlers,
-		...finishHandlers,
-	} );
-};
-
-const isFetching = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH ],
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]
-);
-
-const phoneActionTargetCheck = ( { target } ) => ( 'phone' === target );
-
-const isUpdatingPhone = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
-	phoneActionTargetCheck
-);
-
-const isDeletingPhone = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
-	phoneActionTargetCheck
-);
-
-const emailActionTargetCheck = ( { target } ) => ( 'email' === target );
-
-const isUpdatingEmail = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
-	emailActionTargetCheck
-);
-
-const isDeletingEmail = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
-	emailActionTargetCheck
-);
+const isDeleting = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: true,
+	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
+} );
 
 const data = createReducer( {}, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
@@ -120,10 +83,7 @@ const data = createReducer( {}, {
 } );
 
 export default combineReducers( {
-	isFetching,
-	isUpdatingPhone,
-	isDeletingPhone,
-	isUpdatingEmail,
-	isDeletingEmail,
 	data,
+	isUpdating,
+	isDeleting,
 } );

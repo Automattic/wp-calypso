@@ -11,61 +11,22 @@ import settings from './settings/reducer';
 
 import { createReducer } from 'state/utils';
 
-import {
-	ACCOUNT_RECOVERY_FETCH,
-	ACCOUNT_RECOVERY_FETCH_SUCCESS,
-	ACCOUNT_RECOVERY_FETCH_FAILED,
+import settings from './settings/reducer';
 
-	ACCOUNT_RECOVERY_PHONE_UPDATE,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+import {
+	ACCOUNT_RECOVERY_SETTINGS_FETCH,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'state/action-types';
 
-const createActionInProgressReducer = ( initiateActions, finishActions ) => {
-	const trueFunc = () => true;
-	const falseFunc = () => false;
-
-	const initiateHandlers = initiateActions.reduce(
-		( accumulator, actionType ) => ( { ...accumulator, [ actionType ]: trueFunc } ),
-		{}
-	);
-	const finishHandlers = finishActions.reduce(
-		( accumulator, actionType ) => ( { ...accumulator, [ actionType ]: falseFunc } ),
-		{}
-	);
-
-	return createReducer( false, {
-		...initiateHandlers,
-		...finishHandlers,
-	} );
-};
-
-const isFetching = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_FETCH ],
-	[ ACCOUNT_RECOVERY_FETCH_SUCCESS, ACCOUNT_RECOVERY_FETCH_FAILED ]
-);
-
-const isUpdatingPhone = createActionInProgressReducer(
-	[ ACCOUNT_RECOVERY_PHONE_UPDATE ],
-	[ ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS, ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED ]
-);
-
-const data = createReducer( {}, {
-	[ ACCOUNT_RECOVERY_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
-		...state,
-		email,
-		emailValidated: email_validated,
-		phone,
-		phoneValidated: phone_validated
-	} ),
-
-	[ ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS ]: ( state, { phone } ) => ( {
-		...state,
-		phone,
-	} ),
+const isFetchingSettings = createReducer( false, {
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH ]: () => true,
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: () => false,
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]: () => false,
 } );
 
 export default combineReducers( {
 	settings,
 	reset,
+	isFetchingSettings,
 } );

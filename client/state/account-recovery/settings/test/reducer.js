@@ -8,9 +8,7 @@ import { assert } from 'chai';
  */
 
 import {
-	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -22,23 +20,15 @@ import {
 } from 'state/action-types';
 
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
-import { generateActionInProgressStateFlagTests } from './utils';
 
 import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
-	const expectedState = {
-		data: {
-			email: dummyData.email,
-			emailValidated: dummyData.email_validated,
-			phone: dummyData.phone,
-			phoneValidated: dummyData.phone_validated,
-		},
-		isFetching: false,
-		isUpdatingPhone: false,
-		isDeletingPhone: false,
-		isUpdatingEmail: false,
-		isDeletingEmail: false,
+	const expectedData = {
+		email: dummyData.email,
+		emailValidated: dummyData.email_validated,
+		phone: dummyData.phone,
+		phoneValidated: dummyData.phone_validated,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {
@@ -47,11 +37,11 @@ describe( '#account-recovery reducer fetch:', () => {
 			...dummyData,
 		} );
 
-		assert.deepEqual( initState, expectedState );
+		assert.deepEqual( initState.data, expectedData );
 	} );
 } );
 
-describe( '#account-recovery reducer update / delete:', () => {
+describe( '#account-recovery/settings reducer:', () => {
 	let initState;
 
 	beforeEach( () => {
@@ -101,48 +91,60 @@ describe( '#account-recovery reducer update / delete:', () => {
 
 		assert.equal( state.data.email, '' );
 	} );
-} );
 
-describe( '#account-recovery reducer action status flags: ', () => {
-	const targetPhone = { target: 'phone' };
-	const targetEmail = { target: 'email' };
+	const arbitraryTargetName = 'whatever';
 
-	generateActionInProgressStateFlagTests(
-		'isFetching',
-		reducer,
-		[ ACCOUNT_RECOVERY_SETTINGS_FETCH ],
-		[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ],
-	);
+	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE action should set the isUpdating sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
+			target: arbitraryTargetName,
+		} );
 
-	generateActionInProgressStateFlagTests(
-		'isUpdatingPhone',
-		reducer,
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
-		targetPhone
-	);
+		assert.isTrue( state.isUpdating[ arbitraryTargetName ] );
+	} );
 
-	generateActionInProgressStateFlagTests(
-		'isDeletingPhone',
-		reducer,
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
-		targetPhone
-	);
+	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should unset the isUpdating sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+			target: arbitraryTargetName,
+		} );
 
-	generateActionInProgressStateFlagTests(
-		'isUpdatingEmail',
-		reducer,
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ],
-		targetEmail
-	);
+		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
+	} );
 
-	generateActionInProgressStateFlagTests(
-		'isDeletingEmail',
-		reducer,
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE ],
-		[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS, ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ],
-		targetEmail
-	);
+	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should unset the isUpdating sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINS_DELETE action should set the isDeleting sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_DELETE,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isTrue( state.isDeleting[ arbitraryTargetName ] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS action should unset the isDeleting sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED action should unset the isDeleting sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
+	} );
 } );
