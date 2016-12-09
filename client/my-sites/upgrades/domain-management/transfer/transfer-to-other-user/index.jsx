@@ -4,11 +4,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, head, omit, find } from 'lodash';
+import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Header from 'my-sites/upgrades/domain-management/components/header';
@@ -24,7 +25,6 @@ import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/component
 import SectionHeader from 'components/section-header';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import page from 'page';
 import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
 
 const wpcom = wp.undocumented();
@@ -130,7 +130,7 @@ class TransferOtherUser extends React.Component {
 			<Main className="transfer-to-other-user">
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ paths.domainManagementEdit( slug, selectedDomainName ) }>
+					backHref={ paths.domainManagementTransfer( slug, selectedDomainName ) }>
 					{ this.props.translate( 'Transfer Domain To Another User' ) }
 				</Header>
 				{ this.renderSection() }
@@ -167,10 +167,10 @@ class TransferOtherUser extends React.Component {
 	}
 
 	renderSection() {
-		const { selectedDomainName: domainName, translate, users } = this.props,
+		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
 			{ currentUserCanManage } = getSelectedDomain( this.props ),
-			saveButtonLabel = this.props.translate( 'Transfer Domain' );
+			saveButtonLabel = translate( 'Transfer Domain' );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
@@ -182,23 +182,37 @@ class TransferOtherUser extends React.Component {
 				<Card className="transfer-card">
 					<p>
 						{ translate( 'Transferring a domain to another user will give all the rights of the domain to that user. ' +
-							'Please choose a user to the transfer {{strong}}%(domainName)s{{/strong}}.',
+							'Please choose an administrator to transfer {{strong}}%(domainName)s{{/strong}} to.',
 							{ args: { domainName }, components: { strong: <strong /> } } ) }
+					</p>
+					<p>
+						{ translate( 'You can transfer this domain to any administrator on this site. If the user you want to ' +
+							'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
+							{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
+						) }
 					</p>
 					<FormFieldset>
 						<FormSelect
+							disabled={ availableUsers.length === 0 }
 							className="transfer-to-other-user__select"
 							onChange={ this.handleUserChange }
 							value={ this.state.selectedUserId }>
-							{ availableUsers.map( ( user ) => (
-								<option key={ user.ID } value={ user.ID }>
-									{ this.getUserDisplayName( user ) }
-								</option>
-							) ) }
+							{ availableUsers.length
+								? availableUsers.map( ( user ) => (
+									<option key={ user.ID } value={ user.ID }>
+										{ this.getUserDisplayName( user ) }
+									</option>
+								) )
+								: ( <option value="">{ translate( '-- Site has no administrators --' ) }</option> )
+							}
 						</FormSelect>
 					</FormFieldset>
 					<DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } />
-					<FormButton onClick={ this.handleTransferDomain }>{ saveButtonLabel }</FormButton>
+					<FormButton
+						disabled={ ! this.state.selectedUserId }
+						onClick={ this.handleTransferDomain }>
+							{ saveButtonLabel }
+					</FormButton>
 				</Card>
 				{ this.renderDialog() }
 			</div>
