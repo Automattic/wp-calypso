@@ -208,25 +208,22 @@ const SearchStream = React.createClass( {
 
 	handleStreamMounted( c ) {
 		this.streamRef = c;
-		if ( this.searchBoxRef && this.streamRef ) {
-			this.searchBoxRef.width = this.streamRef.width;
-		}
 	},
 
 	handleSearchBoxMounted( c ) {
 		this.searchBoxRef = c;
+	},
+
+	resizeSearchBox() {
 		if ( this.searchBoxRef && this.streamRef ) {
-			this.searchBoxRef.width = this.streamRef.width;
+			const width = this.streamRef.getClientRects()[ 0 ].width;
+			this.searchBoxRef.style.width = `${ width }px`;
 		}
 	},
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', () => {
-			if ( this.searchBoxRef && this.streamRef ) {
-				const width = this.streamRef.getClientRects()[ 0 ].width;
-				this.searchBoxRef.style.width = `${ width }px`;
-			}
-		} );
+		this.resizeListener = window.addEventListener( 'resize', this.resizeSearchBox );
+		this.resizeSearchBox();
 	},
 
 	componentWillUnmount() {
