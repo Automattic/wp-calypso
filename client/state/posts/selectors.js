@@ -19,6 +19,7 @@ import {
 } from './utils';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * Returns a post object by its global ID.
@@ -452,4 +453,13 @@ export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 		return post.terms && post.terms[ taxonomy ] &&
 			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
 	} );
+}
+
+export function getPostMetadata( state, siteId, postId, key ) {
+	const post = getSitePost( state, siteId, postId );
+	if ( ! post || ! post.metadata ) {
+		return null;
+	}
+
+	return get( find( post.metadata, { key } ), 'value', null );
 }
