@@ -105,9 +105,9 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', settings )
-					.query( {
-						path: '/module/' + moduleSlug
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/module/' + moduleSlug,
+						body: settings
 					} )
 					.reply( 200, {
 						code: 'success'
@@ -143,9 +143,9 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', settings )
-					.query( {
-						path: '/module/' + moduleSlug
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/module/' + moduleSlug,
+						body: settings
 					} )
 					.reply( 400, {
 						message: 'Invalid option: setting_1'
