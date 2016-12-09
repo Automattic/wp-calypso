@@ -189,7 +189,7 @@
 
 	@include breakpoint( ">480px" ) {
 		margin: 0 -6px 0 8px;
-		text-align: right;
+		text-align: center;
 		width: auto;
 
 		.is-dismissible & {
@@ -198,6 +198,7 @@
 
 		.banner__prices {
 			justify-content: flex-end;
+			text-align: right;
 		}
 	}
 }
