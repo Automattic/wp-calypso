@@ -6,9 +6,17 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_STATUS_SET } from 'state/action-types';
+import {
+	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	AUTOMATED_TRANSFER_STATUS_SET,
+} from 'state/action-types';
 import { automatedTransferStatusSchema } from './schema';
 import { createReducer } from 'state/utils';
+
+export const eligibility = ( state = {}, action ) =>
+	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE === action.type
+		? { ...state, [ action.domain ]: action.data }
+		: state;
 
 // Stores the status of automated transfers per site
 export const status = createReducer( {}, {
@@ -19,5 +27,6 @@ export const status = createReducer( {}, {
 }, automatedTransferStatusSchema );
 
 export default combineReducers( {
+	eligibility,
 	status,
 } );

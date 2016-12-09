@@ -3,6 +3,7 @@
  */
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
+	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET,
 } from 'state/action-types';
 
@@ -28,5 +29,12 @@ export const setAutomatedTransferStatus = ( siteId, automatedTransferStatus ) =>
 export const requestEligibility = siteId => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	siteId,
+} );
+
+export const updateEligibility = ( domain, data ) => ( {
+	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	domain,
+	siteId,
+	data,
 } );
 
