@@ -23,7 +23,7 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_TRANSFER_STATUS_SUCCESS,
+	THEME_TRANSFER_STATUS_RECEIVE,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
@@ -510,7 +510,7 @@ describe( 'actions', () => {
 		it( 'should dispatch success on status complete', () => {
 			pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_STATUS_SUCCESS,
+					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId,
 					transferId: 1,
 					status: 'complete',
@@ -538,7 +538,7 @@ describe( 'actions', () => {
 				// Two 'progress' then a 'complete'
 				expect( spy ).to.have.been.calledThrice;
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_STATUS_SUCCESS,
+					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
 					transferId: 3,
 					status: 'progress',
@@ -546,7 +546,7 @@ describe( 'actions', () => {
 					themeId: undefined,
 				} );
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_STATUS_SUCCESS,
+					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
 					transferId: 3,
 					status: 'complete',

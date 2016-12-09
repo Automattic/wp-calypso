@@ -40,7 +40,7 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_TRANSFER_STATUS_SUCCESS,
+	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -515,7 +515,7 @@ export function initiateThemeTransfer( siteId, file ) {
 // receive a transfer status
 function transferStatus( siteId, transferId, status, message, themeId ) {
 	return {
-		type: THEME_TRANSFER_STATUS_SUCCESS,
+		type: THEME_TRANSFER_STATUS_RECEIVE,
 		siteId,
 		transferId,
 		status,
