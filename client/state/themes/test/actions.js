@@ -571,18 +571,15 @@ describe( 'actions', () => {
 	describe( '#initiateThemeTransfer', () => {
 		const siteId = '2211667';
 
-		let nockScope;
 		useNock( ( nock ) => {
-			nockScope = nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
-				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
 				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } );
 		} );
 
 		it( 'should dispatch success', () => {
 			initiateThemeTransfer( siteId, {} )( spy ).then( () => {
-				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).to.have.been.calledThrice;
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -595,7 +592,7 @@ describe( 'actions', () => {
 					transferId: 1,
 				} );
 
-				expect( nockScope.isDone() ).to.be.true;
+				expect( spy ).to.have.been.calledWith( sinon.match.func );
 			} );
 		} );
 	} );
@@ -625,18 +622,15 @@ describe( 'actions', () => {
 	describe( '#initiateThemeTransfer', () => {
 		const siteId = '2211667';
 
-		let nockScope;
 		useNock( ( nock ) => {
-			nockScope = nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
-				.reply( 200, 'something up' )
+			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
 				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } );
 		} );
 
 		it( 'should do something on status failure', () => {
 			initiateThemeTransfer( siteId, {} )( spy ).then( () => {
-				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).to.have.been.calledThrice;
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -649,7 +643,7 @@ describe( 'actions', () => {
 					transferId: 1,
 				} );
 
-				expect( nockScope.isDone() ).to.be.true;
+				expect( spy ).to.have.been.calledWith( sinon.match.func );
 			} );
 		} );
 	} );

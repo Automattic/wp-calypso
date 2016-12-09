@@ -492,7 +492,7 @@ export function initiateThemeTransfer( siteId, file ) {
 					siteId,
 					transferId: transfer_id,
 				} );
-				pollThemeTransferStatus( siteId, transfer_id )( dispatch );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
 				dispatch( {
