@@ -149,7 +149,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-bottom: 16px;
 
 		.follow-button {
-			margin-top: -7px;
+			margin-top: -9px;
 
 			@include breakpoint( "<480px" ) {
 				margin-right: 0;
