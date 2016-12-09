@@ -348,13 +348,13 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://api.wordpress.org' )
 					.persist()
+					.defaultReplyHeaders( {
+						'Content-Type': 'application/json'
+					} )
 					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyseventeen' )
 					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
 					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyumpteen' )
-					.reply( 404, {
-						error: 'not_found',
-						message: 'Not found'
-					} );
+					.reply( 200, false );
 			} );
 
 			it( 'should dispatch request action when thunk triggered', () => {
@@ -395,7 +395,7 @@ describe( 'actions', () => {
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wporg',
 						themeId: 'twentyumpteen',
-						error: sinon.match( { message: 'Not Found' } )
+						error: sinon.match( 'not found' )
 					} );
 				} );
 			} );
