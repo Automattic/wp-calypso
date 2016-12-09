@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { initial, flatMap, trim, sampleSize } from 'lodash';
+import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
@@ -206,23 +206,25 @@ const SearchStream = React.createClass( {
 		return SearchCardAdapter( isRecommendations );
 	},
 
-	handleStreamMounted( c ) {
-		this.streamRef = c;
+	handleStreamMounted( ref ) {
+		this.streamRef = ref;
 	},
 
-	handleSearchBoxMounted( c ) {
-		this.searchBoxRef = c;
+	handleSearchBoxMounted( ref ) {
+		this.searchBoxRef = ref;
 	},
 
 	resizeSearchBox() {
 		if ( this.searchBoxRef && this.streamRef ) {
 			const width = this.streamRef.getClientRects()[ 0 ].width;
-			this.searchBoxRef.style.width = `${ width }px`;
+			if ( width > 0 ) {
+				this.searchBoxRef.style.width = `${ width }px`;
+			}
 		}
 	},
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', this.resizeSearchBox );
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
 		this.resizeSearchBox();
 	},
 
