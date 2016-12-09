@@ -75,7 +75,7 @@ describe( 'theme-filters', () => {
 	describe( 'stripFilters', () => {
 		it( 'should strip filters from a mixed input string', () => {
 			const remaining = stripFilters( 'blah color:blue yah' );
-			assert.equal( remaining, 'blah  yah' );
+			assert.equal( remaining, 'blah yah' );
 		} );
 
 		it( 'should still strip invalid filters', () => {

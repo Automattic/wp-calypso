@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var protectForm = require( 'lib/mixins/protect-form' ),
-	assign = require( 'lodash/assign' ),
+var assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' ),
 	MenuName = require( './menu-name' ),
 	MenuItemList = require( './menu-item-list' ),
@@ -21,8 +20,6 @@ var protectForm = require( 'lib/mixins/protect-form' ),
  * Renders one menu
  */
 var Menu = React.createClass( {
-
-	mixins: [ protectForm.mixin ],
 
 	MOUSE_DRAG_STEP_PIXELS: 16,
 

@@ -7,7 +7,7 @@
 }
 
 .domain-search-page-wrapper h2 {
-	@extend %heading;
+	@include heading;
 	margin: 0 0 10px 0;
 }
 

@@ -1,0 +1,70 @@
+.phone-input__flag-icon {
+	pointer-events: none;
+	width: 24px;
+	align-self: center;
+	box-shadow: 0 0 1px lighten( $gray, 20% );
+}
+
+.phone-input__flag-selector-icon {
+	color: lighten( $gray, 10% );
+	margin-left: 3px;
+	align-self: center;
+}
+
+.phone-input__flag-container {
+	pointer-events: none;
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	padding: 0 5px;
+}
+
+.phone-input__select-container {
+	position: absolute;
+	top: 0;
+	width: 60px;
+	cursor: pointer;
+
+	&:hover .phone-input__flag-selector-icon {
+		color: $gray;
+	}
+}
+
+.phone-input__select-inner-container {
+	margin-top: 4px;
+	border-right: 1px solid lighten( $gray, 20% );
+	height: 32px;
+	display: flex;
+}
+
+select.phone-input__country-select {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 58px;
+	height: 38px;
+	border: 0;
+	background-image: none;
+	opacity: 0;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.phone-input__flag-spinner {
+	z-index: 0;
+	position: absolute;
+	align-self: center;
+	left: 10px;
+	pointer-events: none;
+	width: 24px;
+}
+
+.phone-input {
+	position: relative;
+	width: 100%;
+	input {
+		padding-left: 70px;
+	}
+}

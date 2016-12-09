@@ -9,16 +9,17 @@ import React from 'react';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import Card from 'components/card';
 
-export default React.createClass( {
+const ReaderAuthorLinkExample = () => {
 
-	displayName: 'ReaderAuthorLink',
+	const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
 
-	render() {
-		const author = { URL: 'http://wpcalypso.wordpress.com' };
-		return (
-			<Card>
-				<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
-			</Card>
-		);
-	}
-} );
+	return (
+		<Card>
+			<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
+		</Card>
+	);
+};
+
+ReaderAuthorLinkExample.displayName = 'ReaderAuthorLink';
+
+export default ReaderAuthorLinkExample;

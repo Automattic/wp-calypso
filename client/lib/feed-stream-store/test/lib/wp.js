@@ -16,5 +16,7 @@ module.exports = {
 			add: returnSelf,
 			run: returnSelf
 		};
-	}
+	},
+	me: returnSelf,
+	dismissSite: returnSelf
 };

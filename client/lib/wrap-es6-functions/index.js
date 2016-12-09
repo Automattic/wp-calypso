@@ -1,3 +1,8 @@
+/* eslint-disable no-console */
+
+/**
+ * External dependencies
+ */
 import partial from 'lodash/partial';
 import isFunction from 'lodash/isFunction';
 

@@ -11,7 +11,7 @@
 }
 
 .is-group-editor .layout__content {
-	padding: 0;
+	padding: 47px 0 0;
 }
 
 .post-editor__inner {
@@ -233,6 +233,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-right: 5px;
+	vertical-align: bottom;
 }
 
 .post-editor__confirmation-dialog-reasoning {

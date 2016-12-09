@@ -5,6 +5,8 @@ import React from 'react';
 import page from 'page';
 import debugFactory from 'debug';
 import { find } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,14 +20,13 @@ import SummaryChart from '../stats-summary-chart';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:stats:site' );
 const StatsStrings = statsStringsFactory();
 
-module.exports = React.createClass( {
-	displayName: 'StatsSummary',
-
-	mixins: [ observe( 'sites', 'summaryList' ) ],
+const StatsSummary = React.createClass( {
+	mixins: [ observe( 'summaryList' ) ],
 
 	getActiveFilter: function() {
 		return find( this.props.filters(), ( filter ) => {
@@ -63,7 +64,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const site = this.props.sites.getSelectedSite();
+		const { site, translate } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -75,7 +76,7 @@ module.exports = React.createClass( {
 		switch ( this.props.context.params.module ) {
 
 			case 'referrers':
-				title = this.translate( 'Referrers' );
+				title = translate( 'Referrers' );
 				summaryView = <StatsModule
 					key="referrers-summary"
 					path={ 'referrers' }
@@ -87,7 +88,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'clicks':
-				title = this.translate( 'Clicks' );
+				title = translate( 'Clicks' );
 				summaryView = <StatsModule
 					key="clicks-summary"
 					path={ 'clicks' }
@@ -99,7 +100,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'countryviews':
-				title = this.translate( 'Countries' );
+				title = translate( 'Countries' );
 				summaryView = <Countries
 					key="countries-summary"
 					path="countries-summary"
@@ -110,7 +111,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'posts':
-				title = this.translate( 'Posts & Pages' );
+				title = translate( 'Posts & Pages' );
 				summaryView = <StatsModule
 					key="posts-summary"
 					path={ 'posts' }
@@ -122,7 +123,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'authors':
-				title = this.translate( 'Authors' );
+				title = translate( 'Authors' );
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = <StatsModule
@@ -139,7 +140,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'videoplays':
-				title = this.translate( 'Videos' );
+				title = translate( 'Videos' );
 				summaryView = <StatsModule
 					key="videoplays-summary"
 					path={ 'videoplays' }
@@ -152,7 +153,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'podcastdownloads':
-				title = this.translate( 'Podcasts' );
+				title = translate( 'Podcasts' );
 				summaryView = <StatsModule
 					key="podcastdownloads-summary"
 					path={ 'podcastdownloads' }
@@ -165,7 +166,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'videodetails':
-				title = this.translate( 'Video' );
+				title = translate( 'Video' );
 
 				if ( this.props.summaryList.response.post ) {
 					title = this.props.summaryList.response.post.post_title;
@@ -175,7 +176,7 @@ module.exports = React.createClass( {
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				chartTitle = (
 					<h3 key="summary-title" className="stats-section-title">
-						{ this.translate( 'Video Details' ) }
+						{ translate( 'Video Details' ) }
 					</h3>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -190,7 +191,7 @@ module.exports = React.createClass( {
 					dataKey="value"
 					labelKey="period"
 					labelClass="video"
-					tabLabel={ this.translate( 'Plays' ) } />;
+					tabLabel={ translate( 'Plays' ) } />;
 
 				summaryViews.push( barChart );
 
@@ -200,7 +201,7 @@ module.exports = React.createClass( {
 				break;
 
 			case 'searchterms':
-				title = this.translate( 'Search Terms' );
+				title = translate( 'Search Terms' );
 				summaryView = <StatsModule
 					key="search-terms-summary"
 					path={ 'searchterms' }
@@ -227,3 +228,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		site: getSelectedSite( state )
+	};
+} )( localize( StatsSummary ) );

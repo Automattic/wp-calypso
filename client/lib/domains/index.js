@@ -23,7 +23,7 @@ function ValidationError( code ) {
 inherits( ValidationError, Error );
 
 function canAddGoogleApps( domainName ) {
-	var tld = domainName.split( '.' )[ 1 ],
+	const tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
 			return includes( domainName, phrase );
 		} );
@@ -38,17 +38,28 @@ function canRegister( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, data ) {
-		var errorCode;
 		if ( serverError ) {
-			errorCode = serverError.error;
-		} else if ( ! data.is_available && data.is_mappable ) {
+			onComplete( new ValidationError( serverError.error ) );
+			return;
+		}
+
+		const {
+			is_available: isAvailable,
+			is_mappable: isMappable,
+			is_registrable: isRegistrable,
+			unmappability_reason: unmappabilityReason
+		} = data;
+
+		let errorCode;
+		if ( ! isMappable ) {
+			errorCode = 'not_mappable';
+			if ( unmappabilityReason ) {
+				errorCode += `_${ unmappabilityReason }`;
+			}
+		} else if ( ! isAvailable && isMappable ) {
 			errorCode = 'not_available_but_mappable';
-		} else if ( ! data.is_mappable && data.unmappability_reason ) {
-			errorCode = `mappable_but_${data.unmappability_reason}`;
-		} else if ( ! data.is_registrable ) {
-			errorCode = 'not_registrable';
-		} else if ( ! data.is_available ) {
-			errorCode = 'not_available';
+		} else if ( isAvailable && ! isRegistrable ) {
+			errorCode = 'available_but_not_registrable';
 		}
 
 		if ( errorCode ) {
@@ -66,7 +77,7 @@ function canMap( domainName, onComplete ) {
 	}
 
 	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
-		var errorCode;
+		let errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
 		} else if ( ! data.is_mappable ) {
@@ -120,7 +131,7 @@ function isSubdomain( domainName ) {
 }
 
 function isInitialized( state, siteId ) {
-	var siteState = state[ siteId ];
+	const siteState = state[ siteId ];
 	return siteState && ( siteState.hasLoadedFromServer || siteState.isFetching );
 }
 

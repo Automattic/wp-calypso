@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import StoreConnection from 'components/data/store-connection';
-import observe from 'lib/mixins/data-observe';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 function getStateFromStores( props ) {
 	return {
@@ -19,26 +20,26 @@ function getStateFromStores( props ) {
 	};
 }
 
-const EmailForwardingData = React.createClass( {
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
+export class EmailForwardingData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object,
+	};
 
-	mixins: [ observe( 'sites' ) ],
+	constructor( props ) {
+		super( props );
 
-	componentWillMount() {
 		this.loadEmailForwarding();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadEmailForwarding();
-	},
+	}
 
-	loadEmailForwarding() {
+	loadEmailForwarding = () => {
 		upgradesActions.fetchEmailForwarding( this.props.selectedDomainName );
-	},
+	};
 
 	render() {
 		return (
@@ -47,9 +48,14 @@ const EmailForwardingData = React.createClass( {
 				stores={ [ EmailForwardingStore ] }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
+}
+
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
 } );
 
-export default EmailForwardingData;
+export default connect( mapStateToProps )( EmailForwardingData );

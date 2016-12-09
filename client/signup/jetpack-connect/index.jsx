@@ -14,7 +14,12 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import {
+	getGlobalSelectedPlan,
+	getConnectingSite,
+	getJetpackSiteByUrl
+} from 'state/jetpack-connect/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -24,11 +29,13 @@ import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
 import StepHeader from '../step-header';
 import HelpButton from './help-button';
+import untrailingslashit from 'lib/route/untrailingslashit';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
 	goToRemoteAuth,
 	goToPluginInstall,
+	goToPlans,
 	goToPluginActivation,
 	checkUrl
 } from 'state/jetpack-connect/actions';
@@ -50,6 +57,9 @@ const JetpackConnectMain = React.createClass( {
 			from = 'ad';
 		}
 		if ( this.props.type === 'premium' ) {
+			from = 'ad';
+		}
+		if ( this.props.type === 'personal' ) {
 			from = 'ad';
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
@@ -85,7 +95,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
-		return url;
+		return untrailingslashit( url );
 	},
 
 	onURLChange() {
@@ -97,11 +107,15 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
-		this.props.checkUrl(
-			this.state.currentUrl,
-			!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
-			this.props.type
-		);
+		if ( this.props.isRequestingSites ) {
+			this.waitingForSites = true;
+		} else {
+			this.props.checkUrl(
+				this.state.currentUrl,
+				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
+				this.props.type
+			);
+		}
 	},
 
 	installJetpack() {
@@ -136,6 +150,20 @@ const JetpackConnectMain = React.createClass( {
 		) {
 			return this.props.goToRemoteAuth( this.state.currentUrl );
 		}
+		if ( this.getStatus() === 'alreadyOwned' &&
+			! this.props.jetpackConnectSite.isRedirecting
+		) {
+			return this.props.goToPlans( this.state.currentUrl );
+		}
+
+		if ( this.waitingForSites && ! this.props.isRequestingSites ) {
+			this.waitingForSites = false;
+			this.props.checkUrl(
+				this.state.currentUrl,
+				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
+				this.props.type
+			);
+		}
 	},
 
 	isRedirecting() {
@@ -147,6 +175,10 @@ const JetpackConnectMain = React.createClass( {
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
 			return false;
+		}
+
+		if ( this.checkProperty( 'userOwnsSite' ) ) {
+			return 'alreadyOwned';
 		}
 
 		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
@@ -183,9 +215,6 @@ const JetpackConnectMain = React.createClass( {
 		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'notConnectedJetpack';
 		}
-		if ( this.checkProperty( 'userOwnsSite' ) ) {
-			return 'alreadyOwned';
-		}
 		if ( this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'alreadyConnected';
 		}
@@ -202,25 +231,35 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getTexts() {
-		if ( this.props.type === 'install' ) {
-			return {
-				headerTitle: this.translate( 'Install Jetpack' ),
-				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
-					'to your self-hosted WordPress site.' ),
-			};
-		}
-		if ( this.props.type === 'pro' ) {
+		const { type, selectedPlan } = this.props;
+
+		if ( type === 'pro' || selectedPlan === 'jetpack_business' || selectedPlan === 'jetpack_business_monthly' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Professional' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
-		if ( this.props.type === 'premium' ) {
+		if ( type === 'premium' || selectedPlan === 'jetpack_premium' || selectedPlan === 'jetpack_premium_monthly' ) {
 			return {
 				headerTitle: this.translate( 'Get Jetpack Premium' ),
 				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
+			};
+		}
+		if ( type === 'personal' || selectedPlan === 'jetpack_personal' || selectedPlan === 'jetpack_personal_monthly' ) {
+			return {
+				headerTitle: this.translate( 'Get Jetpack Personal' ),
+				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+					'then purchase and activate your plan.' ),
+			};
+		}
+
+		if ( type === 'install' ) {
+			return {
+				headerTitle: this.translate( 'Install Jetpack' ),
+				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+					'to your self-hosted WordPress site.' ),
 			};
 		}
 		return {
@@ -231,7 +270,10 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	isInstall() {
-		return this.props.type === 'install' || this.props.type === 'pro' || this.props.type === 'premium';
+		return this.props.type === 'install' ||
+			this.props.type === 'pro' ||
+			this.props.type === 'premium' ||
+			this.props.type === 'personal';
 	},
 
 	getInstructionsData( status ) {
@@ -281,7 +323,7 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.waitingForSites }
 					isInstall={ this.isInstall() } />
 			</Card>
 		);
@@ -397,7 +439,9 @@ export default connect(
 
 		return {
 			jetpackConnectSite: getConnectingSite( state ),
-			getJetpackSiteByUrl: getJetpackSite
+			getJetpackSiteByUrl: getJetpackSite,
+			isRequestingSites: isRequestingSites( state ),
+			selectedPlan: getGlobalSelectedPlan( state )
 		};
 	},
 	dispatch => bindActionCreators( {
@@ -406,6 +450,7 @@ export default connect(
 		checkUrl,
 		dismissUrl,
 		goToRemoteAuth,
+		goToPlans,
 		goToPluginInstall,
 		goToPluginActivation
 	}, dispatch )

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import observe from 'lib/mixins/data-observe';
 import * as upgradesActions from 'lib/upgrades/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [
 	DomainsStore,
@@ -34,33 +35,33 @@ function getStateFromStores( props ) {
 
 const DomainManagementData = React.createClass( {
 	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired,
-		sitePlans: React.PropTypes.object.isRequired
+		context: PropTypes.object.isRequired,
+		productsList: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string,
+		selectedSite: PropTypes.object,
+		sitePlans: PropTypes.object.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
 
 	componentWillMount: function() {
-		if ( this.props.sites.getSelectedSite() ) {
-			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
-		}
+		const { selectedSite } = this.props;
 
-		this.prevSelectedSite = this.props.sites.getSelectedSite();
+		if ( selectedSite ) {
+			upgradesActions.fetchDomains( selectedSite.ID );
+		}
 	},
 
-	componentWillUpdate: function() {
-		if ( this.prevSelectedSite !== this.props.sites.getSelectedSite() ) {
-			upgradesActions.fetchDomains( this.props.sites.getSelectedSite().ID );
-		}
+	componentWillUpdate: function( nextProps ) {
+		const { selectedSite: prevSite } = this.props;
+		const { selectedSite: nextSite } = nextProps;
 
-		this.prevSelectedSite = this.props.sites.getSelectedSite();
+		if ( nextSite !== prevSite ) {
+			upgradesActions.fetchDomains( nextSite.ID );
+		}
 	},
 
 	render: function() {
-		const selectedSite = this.props.sites.getSelectedSite();
 		return (
 			<div>
 				<StoreConnection
@@ -69,22 +70,25 @@ const DomainManagementData = React.createClass( {
 					getStateFromStores={ getStateFromStores }
 					products={ this.props.productsList.get() }
 					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.sites.getSelectedSite() }
+					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
-					context={ this.props.context } />
-				{
-					selectedSite &&
-					<QuerySitePlans siteId={ selectedSite.ID } />
+					context={ this.props.context }
+				/>
+				{ this.props.selectedSite &&
+					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
 				}
 			</div>
 		);
 	}
 } );
 
-export default connect(
-	function( state, props ) {
-		return {
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() )
-		};
-	}
-)( DomainManagementData );
+const mapStateToProps = state => {
+	const selectedSite = getSelectedSite( state );
+
+	return {
+		sitePlans: getPlansBySite( state, selectedSite ),
+		selectedSite,
+	};
+};
+
+export default connect( mapStateToProps )( DomainManagementData );

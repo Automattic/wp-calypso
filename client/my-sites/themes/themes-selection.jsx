@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import page from 'page';
+import { connect } from 'react-redux';
 import compact from 'lodash/compact';
 
 /**
@@ -11,19 +11,12 @@ import compact from 'lodash/compact';
 import { trackClick } from './helpers';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
-import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
-import buildUrl from 'lib/mixins/url-search/build-url';
-import {
-	getFilter,
-	getSortedFilterTerms,
-	stripFilters,
-} from './theme-filters.js';
-import config from 'config';
-
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
-	? require( './themes-magic-search-card' )
-	: require( './themes-search-card' );
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import { isThemeActive } from 'state/themes/selectors';
+import { isThemePurchased } from 'state/themes/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -31,34 +24,23 @@ const ThemesSelection = React.createClass( {
 			PropTypes.object,
 			PropTypes.bool
 		] ).isRequired,
-		siteId: PropTypes.string,
+		siteId: PropTypes.number,
 		search: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		getOptions: React.PropTypes.func,
-		queryParams: PropTypes.object.isRequired,
-		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
 		filter: React.PropTypes.string,
 		vertical: React.PropTypes.string,
+		// connected props
+		queryParams: PropTypes.object.isRequired,
+		themesList: PropTypes.array.isRequired,
+		isThemeActive: React.PropTypes.func,
+		isThemePurchased: React.PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return { search: '' };
-	},
-
-	doSearch( searchBoxContent ) {
-		const filter = getSortedFilterTerms( searchBoxContent );
-		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier || 'all', filter, searchString );
-	},
-
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {
@@ -86,26 +68,9 @@ const ThemesSelection = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_last_page_scroll' );
 	},
 
-	onTierSelect( { value: tier } ) {
-		trackClick( 'search bar filter', tier );
-		this.updateUrl( tier, this.props.filter );
-	},
-
-	updateUrl( tier, filter, searchString = this.props.search ) {
-		const { siteId, vertical } = this.props;
-
-		const siteIdSection = siteId ? `/${ siteId }` : '';
-		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier === 'all' ? '' : `/${ tier }`;
-		const filterSection = filter ? `/filter/${ filter }` : '';
-
-		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
-		page( buildUrl( url, searchString ) );
-	},
-
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! theme.active ) {
+		if ( ! this.props.isThemeActive( theme.id ) ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
@@ -117,31 +82,25 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const site = this.props.selectedSite;
+		const { selectedSite: site } = this.props;
 
 		return (
 			<div className="themes__selection">
-				<StickyPanel>
-					<ThemesSearchCard
-							site={ site }
-							onSearch={ this.doSearch }
-							search={ this.prependFilterKeys() + this.props.search }
-							tier={ this.props.tier }
-							select={ this.onTierSelect } />
-				</StickyPanel>
 				<ThemesData
-						site={ site }
-						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
-						search={ this.props.search }
-						tier={ this.props.tier }
-						filter={ this.addVerticalToFilters() }
-						onRealScroll={ this.trackScrollPage }
-						onLastPage={ this.trackLastPage } >
+					site={ site }
+					isMultisite={ ! this.props.siteId } // Not the same as `! site` !
+					search={ this.props.search }
+					tier={ this.props.tier }
+					filter={ this.addVerticalToFilters() }
+					onRealScroll={ this.trackScrollPage }
+					onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }
 						onMoreButtonClick={ this.onMoreButtonClick }
 						onScreenshotClick={ this.onScreenshotClick }
 						getScreenshotUrl={ this.props.getScreenshotUrl }
-						getActionLabel={ this.props.getActionLabel } />
+						getActionLabel={ this.props.getActionLabel }
+						isActive={ this.props.isThemeActive }
+						isPurchased={ this.props.isThemePurchased } />
 				</ThemesData>
 			</div>
 		);
@@ -149,4 +108,20 @@ const ThemesSelection = React.createClass( {
 
 } );
 
-export default ThemesSelection;
+export default connect(
+	( state, { siteId } ) => ( {
+		isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
+		isThemePurchased: themeId => (
+			// Note: This component assumes that purchase and data is already present in the state tree
+			// (used by the isThemePurchased selector). At the time of implementation there's no caching
+			// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
+			// redundant AJAX requests, we're not rendering the query component locally.
+			isThemePurchased( state, themeId, siteId ) ||
+			// The same is true for the `hasFeature` selector, which relies on the presence of
+			// a `<QuerySitePlans />` component in a parent component.
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		),
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state ),
+	} )
+)( ThemesSelection );

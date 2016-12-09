@@ -8,6 +8,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import AddCardDetails from './payment/add-card-details';
+import AddCreditCard from './add-credit-card';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -81,6 +82,18 @@ export default {
 			context,
 			<AddCardDetails
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		);
+	},
+
+	addCreditCard( context ) {
+		recordPurchasesPageView(
+			paths.addCreditCard(),
+			'Add Credit Card'
+		);
+
+		renderPage(
+			context,
+			<AddCreditCard />
 		);
 	},
 
@@ -172,7 +185,7 @@ export default {
 		setTitle( context );
 
 		recordPurchasesPageView(
-			paths.list()
+			paths.purchasesRoot()
 		);
 
 		renderPage(

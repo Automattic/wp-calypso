@@ -1,30 +1,20 @@
-/** @ssr-ready **/
+/**
+ * DEPRECATED. Use client/state/themes/selectors instead.
+ */
 
 /**
  * External dependencies
  */
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import startsWith from 'lodash/startsWith';
 import mapValues from 'lodash/mapValues';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
-
-const oldShowcaseUrl = '//wordpress.com/themes/';
-
-export function getSignupUrl( theme ) {
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
-
-	if ( isPremium( theme ) ) {
-		url += '&premium=true';
-	}
-
-	return url;
-}
+import { sectionify } from 'lib/route/path';
+import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
 export function getPreviewUrl( theme, site ) {
 	if ( site && site.jetpack ) {
@@ -105,22 +95,6 @@ export function getExternalThemesUrl( site ) {
 	return oldShowcaseUrl + site.slug;
 }
 
-export function isPremium( theme ) {
-	if ( ! theme ) {
-		return false;
-	}
-
-	if ( theme.stylesheet && startsWith( theme.stylesheet, 'premium/' ) ) {
-		return true;
-	}
-	// The /v1.1/sites/:site_id/themes/mine endpoint (which is used by the
-	// current-theme reducer, selector, and component) does not return a
-	// `stylesheet` attribute. However, it does return a `cost` field (which
-	// contains the correct price even if the user has already purchased that
-	// theme, or if they have an upgrade that includes all premium themes).
-	return !! ( theme.cost && theme.cost.number );
-}
-
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
@@ -142,7 +116,7 @@ function appendActionTracking( option, name ) {
 }
 
 export function getAnalyticsData( path, tier, site_id ) {
-	let basePath = route.sectionify( path );
+	let basePath = sectionify( path );
 	let analyticsPageTitle = 'Themes';
 
 	if ( tier ) {

@@ -77,7 +77,6 @@ describe( 'utils', () => {
 					name: 'Badman '
 				},
 				canonical_image: {
-					type: 'image',
 					uri: 'https://example.com/logo.png'
 				}
 			} );

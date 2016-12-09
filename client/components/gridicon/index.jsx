@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /* !!!
 IF YOU ARE EDITING gridicon/index.jsx
 THEN YOU ARE EDITING A FILE THAT GETS OUTPUT FROM THE GRIDICONS REPO!

@@ -4,8 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import noop from 'lodash/noop';
-import partial from 'lodash/partial';
+import { noop, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,10 +12,12 @@ import { localize } from 'i18n-calypso';
  */
 import { getPost } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -28,23 +29,25 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post, site } ) {
+function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
-	const authorAndSiteAreDifferent = site.title.toLowerCase() !== post.author.name.toLowerCase();
+	const siteName = ( site && site.title ) || post.site_name;
+	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
+
 	return (
 		<div className="reader-related-card-v2__meta">
-			<a href={ siteUrl }>
+			<a href={ siteUrl } onClick={ onSiteClick }>
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card-v2__byline">
-				<span className="reader-related-card-v2__byline-author">
-					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.author.name }</a>
-				</span>
 				{ authorAndSiteAreDifferent &&
-				<span className="reader-related-card-v2__byline-site">
-					<a href={ siteUrl } className="reader-related-card-v2__link">{ site.title }</a>
+				<span className="reader-related-card-v2__byline-author">
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ post.author.name }</a>
 				</span>
 				}
+				<span className="reader-related-card-v2__byline-site">
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ siteName }</a>
+				</span>
 			</div>
 			<FollowButton siteUrl={ post.site_URL } />
 		</div>
@@ -82,10 +85,7 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-/* eslint-disable no-unused-vars */
-export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
-// onSiteClick is not being used
-/* eslint-enable no-unused-vars */
+export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -93,20 +93,24 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 	const featuredImage = post.canonical_image;
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card-v2', {
-		'has-thumbnail': !! featuredImage
+		'has-thumbnail': !! featuredImage,
+		'has-excerpt': post.excerpt && post.excerpt.length > 1
 	} );
+	const postClickTracker = partial( onPostClick, post );
+	const siteClickTracker = partial( onSiteClick, post );
 
 	return (
 		<Card className={ classes }>
-			<AuthorAndSiteFollow post={ post } site={ site } />
+			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
-				onClick={ partial( onPostClick, post ) } >
+				onClick={ postClickTracker } >
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
-						onClick={ partial( onPostClick, post ) } /> }
+						onClick={ postClickTracker } /> }
 					<div className="reader-related-card-v2__site-info">
 						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
 						<div className="reader-related-card-v2__excerpt post-excerpt">
-							{ featuredImage ? post.short_excerpt : post.excerpt }
+							{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
 						</div>
 					</div>
 			</a>
@@ -120,10 +124,12 @@ export default connect(
 	( state, ownProps ) => {
 		const { post } = ownProps;
 		const actualPost = getPost( state, post );
-		const site = actualPost && getSite( state, actualPost.site_ID );
+		const siteId = post && post.site_ID;
+		const site = siteId && getSite( state, siteId );
 		return {
 			post: actualPost,
-			site
+			site,
+			siteId
 		};
 	}
 )( LocalizedRelatedPostCard );

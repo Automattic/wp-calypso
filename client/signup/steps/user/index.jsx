@@ -11,8 +11,6 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
-import { abtest } from 'lib/abtest';
-import config from 'config';
 
 export default React.createClass( {
 
@@ -58,21 +56,6 @@ export default React.createClass( {
 
 		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
 			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
-		}
-
-		if ( config.isEnabled( 'reader/start' ) ) {
-			// User is participating in Reader Cold Start
-			const coldStartVariant = abtest( 'coldStartReader' );
-
-			if ( coldStartVariant === 'noEmailColdStart' || coldStartVariant === 'noEmailColdStartWithAutofollows' ) {
-				userData.subscription_delivery_email_default = 'never';
-				userData.is_new_reader = true;
-			}
-
-			// Autofollows are on by default
-			if ( coldStartVariant === 'noEmailColdStart' ) {
-				userData.follow_default_blogs = false;
-			}
 		}
 
 		const formWithoutPassword = Object.assign( {}, form, {

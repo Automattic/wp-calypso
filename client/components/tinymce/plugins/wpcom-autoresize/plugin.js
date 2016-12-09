@@ -65,7 +65,13 @@ function wcpomAutoResize( editor ) {
 		// Make sure we have a valid height
 		if ( isNaN( myHeight ) || myHeight <= 0 ) {
 			// Get height differently depending on the browser used
-			myHeight = tinymce.Env.ie ? body.scrollHeight : ( tinymce.Env.webkit && body.clientHeight === 0 ? 0 : body.offsetHeight );
+			if ( tinymce.Env.ie ) {
+				myHeight = body.scrollHeight;
+			} else if ( tinymce.Env.webkit && body.clientHeight === 0 ) {
+				myHeight = 0;
+			} else {
+				myHeight = body.offsetHeight;
+			}
 		}
 
 		// Don't make it smaller than the minimum height

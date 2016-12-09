@@ -1,0 +1,137 @@
+.tag-stream__header {
+	display: flex;
+	flex-direction: column;
+
+	&.has-back-button {
+		margin-top: -27px;
+	}
+}
+
+.tag-stream__header .follow-button {
+	padding: 0;
+	position: relative;
+		top: 2px;
+
+	@include breakpoint( "<660px" ) {
+		margin: 12px 10px 0 0;
+	}
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+}
+
+.tag-stream__header .follow-button__label {
+
+	@include breakpoint( "<660px" ) {
+		display: inline;
+	}
+}
+
+.tag-stream__header-image {
+	background: lighten( $gray, 30% );
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: right center;
+	box-sizing: content-box;
+	display: flex;
+	flex-direction: column;
+	min-height: 120px;
+	margin-top: 15px;
+	padding: 10px;
+	position: relative;
+	z-index: 0;
+
+	&::before {
+		content: '';
+		background: rgba( 0, 0, 0, .3 );
+		height: 100%;
+		position: absolute;
+			bottom: 0;
+			left: 0;
+		width: 100%;
+		z-index: 1;
+	}
+}
+
+.tag-stream__header-image .gridicon.gridicons-tag {
+	fill: $white;
+	position: relative;
+		right: 6px;
+		top: 3px;
+	z-index: 2;
+}
+
+.tag-stream__header-image-title {
+	color: $white;
+	font-size: 28px;
+	line-height: 1.3;
+	margin-top: 42px;
+	text-align: center;
+	text-shadow: 0 1px rgba( 0, 0, 0, .3 );
+	z-index: 2;
+}
+
+.tag-stream__header-image-byline {
+	color: $white;
+	font-size: 12px;
+	font-weight: 500;
+	padding-top: 24px;
+	text-align: right;
+	text-shadow: 0 1px rgba(0, 0, 0, .3);
+	z-index: 2;
+	-webkit-font-smoothing: antialiased;
+}
+
+.tag-stream__header-image-byline-label {
+	opacity: .7;
+}
+
+.tag-stream__header-image-byline-link,
+.tag-stream__header-image-byline-link:visited {
+	color: $white;
+	opacity: .9;
+}
+
+.tag-stream__header-image-byline-link:hover {
+	color: $white;
+}
+
+// Back button in Tag streams
+
+.is-reader-page .card.header-cake {
+	background: none;
+	box-shadow: none;
+	padding: 0;
+	position: relative;
+		left: -3px;
+		top: 8px;
+
+	@include breakpoint( "<660px" ) {
+		left: 13px;
+		top: 20px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		top: 14px;
+	}
+
+	.button.header-cake__back {
+		padding: 0;
+	}
+}

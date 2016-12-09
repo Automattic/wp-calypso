@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	photon = require( 'photon' );
+import React from 'react';
+import classNames from 'classnames';
+import photon from 'photon';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	SocialLogo = require( 'components/social-logo' );
+import analytics from 'lib/analytics';
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButton',

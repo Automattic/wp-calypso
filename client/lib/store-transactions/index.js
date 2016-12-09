@@ -4,7 +4,8 @@
 var debug = require( 'debug' )( 'calypso:store-transactions' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+	inherits = require( 'inherits' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -154,7 +155,7 @@ TransactionFlow.prototype._createPaygateToken = function( callback ) {
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	var onComplete = this.push.bind( this, null ), // End the stream when the transaction has finished
 		transaction = {
-			cart: this._initialData.cart,
+			cart: omit( this._initialData.cart, [ 'messages'] ), // messages contain reference to DOMNode
 			domain_details: this._initialData.domainDetails,
 			payment: payment
 		};
@@ -224,10 +225,10 @@ function getPaygateParameters( cardDetails ) {
 		name: cardDetails.name,
 		number: cardDetails.number,
 		cvc: cardDetails.cvv,
-		zip: cardDetails['postal-code'],
+		zip: cardDetails[ 'postal-code' ],
 		country: cardDetails.country,
-		exp_month: cardDetails['expiration-date'].substring( 0, 2 ),
-		exp_year: '20' + cardDetails['expiration-date'].substring( 3, 5 )
+		exp_month: cardDetails[ 'expiration-date' ].substring( 0, 2 ),
+		exp_year: '20' + cardDetails[ 'expiration-date' ].substring( 3, 5 )
 	};
 }
 
@@ -253,11 +254,11 @@ function fullCreditsPayment() {
 	return { paymentMethod: 'WPCOM_Billing_WPCOM' };
 }
 
-module.exports = {
-	hasDomainDetails: hasDomainDetails,
-	submit: submit,
-	newCardPayment: newCardPayment,
-	storedCardPayment: storedCardPayment,
-	fullCreditsPayment: fullCreditsPayment,
-	createPaygateToken: createPaygateToken
+export default {
+	createPaygateToken,
+	fullCreditsPayment,
+	hasDomainDetails,
+	newCardPayment,
+	storedCardPayment,
+	submit
 };

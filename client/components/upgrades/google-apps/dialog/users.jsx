@@ -28,7 +28,8 @@ const GoogleAppsUsers = React.createClass( {
 		return {
 			email: { value: '', error: null },
 			firstName: { value: '', error: null },
-			lastName: { value: '', error: null }
+			lastName: { value: '', error: null },
+			domain: { value: this.props.domain, error: null }
 		};
 	},
 
@@ -66,7 +67,7 @@ const GoogleAppsUsers = React.createClass( {
 						name="email"
 						value={ user.email.value }
 						suffix={ '@' + this.props.domain }
-						isError={ user.email.error }
+						isError={ !! user.email.error }
 						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'Email' ) } />
@@ -79,7 +80,7 @@ const GoogleAppsUsers = React.createClass( {
 						name="firstName"
 						value={ user.firstName.value }
 						maxLength={ 60 }
-						isError={ user.firstName.error }
+						isError={ !! user.firstName.error }
 						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'First Name' ) } />
@@ -92,7 +93,7 @@ const GoogleAppsUsers = React.createClass( {
 						name="lastName"
 						value={ user.lastName.value }
 						maxLength={ 60 }
-						isError={ user.lastName.error }
+						isError={ !! user.lastName.error }
 						onChange={ this.updateField.bind( this, index ) }
 						onBlur={ this.props.onBlur }
 						onClick={ this.recordInputFocus.bind( this, index, 'Last Name' ) } />
@@ -121,8 +122,8 @@ const GoogleAppsUsers = React.createClass( {
 	updateField( index, event ) {
 		event.preventDefault();
 
-		const newValue = event.target.value,
-			fieldName = event.target.name,
+		const fieldName = event.target.name,
+			newValue = fieldName === 'email' ? event.target.value.trim() : event.target.value,
 			updatedFields = clone( this.props.fields );
 		updatedFields[ index ] = clone( updatedFields[ index ] );
 		updatedFields[ index ][ fieldName ] = clone( updatedFields[ index ][ fieldName ] );

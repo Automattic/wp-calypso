@@ -47,12 +47,12 @@ export default class TermQueryManager extends PaginatedQueryManager {
 		let order;
 
 		switch ( query.order_by ) {
-			case 'name':
-				order = termA.name.localeCompare( termB.name );
-				break;
-
 			case 'count':
 				order = termA.post_count - termB.post_count;
+				break;
+			case 'name':
+			default:
+				order = termA.name.localeCompare( termB.name );
 				break;
 		}
 

@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import includes from 'lodash/includes';
+import SocialLogo from 'social-logos';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import includes from 'lodash/includes';
 import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import SocialLogo from 'components/social-logo';
 import flowRight from 'lodash/flowRight';
 import { connectDispatcher } from './dispatcher-converter';
 

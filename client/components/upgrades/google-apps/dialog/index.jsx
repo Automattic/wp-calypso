@@ -207,8 +207,7 @@ const GoogleAppsDialog = React.createClass( {
 	validateForm() {
 		const validation = validateGappsUsers( {
 			users: this.state.users,
-			fields: this.getFields(),
-			domainSuffix: this.props.domain
+			fields: this.getFields()
 		} );
 
 		if ( validation.errors.length > 0 ) {
@@ -227,7 +226,7 @@ const GoogleAppsDialog = React.createClass( {
 
 		users = users.map( ( user ) => {
 			return {
-				email: `${ user.email.value }@${ this.props.domain }`,
+				email: `${ user.email.value }@${ this.props.domain }`.toLowerCase(),
 				firstname: user.firstName.value.trim(),
 				lastname: user.lastName.value.trim()
 			};

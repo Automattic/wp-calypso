@@ -101,6 +101,9 @@ normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
 import createBetterExcerpt from './rule-create-better-excerpt';
 normalizePost.createBetterExcerpt = wrapSync( createBetterExcerpt );
 
+import createBetterExcerptRefresh from './rule-create-better-excerpt-refresh';
+normalizePost.createBetterExcerptRefresh = wrapSync( createBetterExcerptRefresh );
+
 import withContentDOM from './rule-with-content-dom';
 normalizePost.withContentDOM = function( transforms ) {
 	return function( post, callback ) {
@@ -110,19 +113,19 @@ normalizePost.withContentDOM = function( transforms ) {
 };
 
 import removeStyles from './rule-content-remove-styles';
-import safeContentImages from './rule-content-safe-images';
-import makeEmbedsSecure from './rule-content-make-embeds-secure';
-import wordCountAndReadingTime from './rule-content-word-count';
-import detectEmbeds from './rule-content-detect-embeds';
+import removeElementsBySelector from './rule-content-remove-elements-by-selector';
+import makeImagesSafe from './rule-content-make-images-safe';
+import makeEmbedsSafe from './rule-content-make-embeds-safe';
+import detectMedia from './rule-content-detect-media';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
 import detectPolls from './rule-content-detect-polls';
 
 normalizePost.content = {
 	removeStyles,
-	safeContentImages,
-	makeEmbedsSecure,
-	wordCountAndReadingTime,
-	detectEmbeds,
+	removeElementsBySelector,
+	makeImagesSafe,
+	makeEmbedsSafe,
+	detectMedia,
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
 	detectPolls

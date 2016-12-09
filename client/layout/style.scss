@@ -10,8 +10,8 @@
 .layout__content {
 	@include clear-fix;
 	position: relative;
-	margin: 47px 0 0 0;
-	padding: 32px 32px 32px ( $sidebar-width-max + 32px );
+	margin: 0;
+	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
 	transition: opacity 0.3s;
@@ -24,13 +24,16 @@
 		padding: 0;
 		margin: 0;
 	}
+
+	@media print {
+		padding: 0;
+	}
 }
 
 // Tablets
 @include breakpoint( "<960px" ) {
 	.layout__content {
-		padding: 24px;
-		padding-left: ( $sidebar-width-min + 24px );
+		padding: 71px 24px 24px ( $sidebar-width-min + 24px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;
@@ -48,10 +51,15 @@
 	.layout__content {
 		margin-left: 0;
 		padding: 0;
+		padding-top: 47px;
 
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
+	}
+
+	.layout:not( .focus-content ) .layout__content {
+		z-index: z-index( 'root', '.layout__content' );
 	}
 }
 
@@ -70,6 +78,15 @@
 	.sidebar__menu {
 		transform: translateX( 0 );
 		transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
+	}
+}
+
+.layout {
+	.sidebar,
+	.masterbar {
+		@media print {
+			display: none;
+		}
 	}
 }
 

@@ -14,7 +14,8 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL
+	IMAGE_EDITOR_STATE_RESET_ALL,
+	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 
 import {
@@ -25,7 +26,8 @@ import {
 	setImageEditorAspectRatio,
 	setImageEditorFileInfo,
 	setImageEditorCropBounds,
-	imageEditorCrop
+	imageEditorCrop,
+	setImageEditorImageHasLoaded
 } from '../actions';
 import { AspectRatios } from '../constants';
 
@@ -35,7 +37,19 @@ describe( 'actions', () => {
 			const action = resetImageEditorState();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_STATE_RESET
+				type: IMAGE_EDITOR_STATE_RESET,
+				additionalData: {}
+			} );
+		} );
+
+		it( 'should return an action object with additional data if specified', () => {
+			const action = resetImageEditorState( { aspectRatio: AspectRatios.FREE } );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_STATE_RESET,
+				additionalData: {
+					aspectRatio: AspectRatios.FREE
+				}
 			} );
 		} );
 	} );
@@ -45,7 +59,19 @@ describe( 'actions', () => {
 			const action = resetAllImageEditorState();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_STATE_RESET_ALL
+				type: IMAGE_EDITOR_STATE_RESET_ALL,
+				additionalData: {}
+			} );
+		} );
+
+		it( 'should return an action object with additional data if specified', () => {
+			const action = resetAllImageEditorState( { aspectRatio: AspectRatios.FREE } );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_STATE_RESET_ALL,
+				additionalData: {
+					aspectRatio: AspectRatios.FREE
+				}
 			} );
 		} );
 	} );
@@ -119,6 +145,16 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
 				ratio: AspectRatios.ORIGINAL
+			} );
+		} );
+	} );
+
+	describe( '#setImageEditorImageHasLoaded()', () => {
+		it( 'should return an action object', () => {
+			const action = setImageEditorImageHasLoaded();
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_IMAGE_HAS_LOADED
 			} );
 		} );
 	} );

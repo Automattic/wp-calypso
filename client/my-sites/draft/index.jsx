@@ -11,7 +11,6 @@ var React = require( 'react' ),
  */
 var CompactCard = require( 'components/card/compact' ),
 	Gridicon = require( 'components/gridicon' ),
-	Notice = require( 'components/notice' ),
 	NoticeAction = require( 'components/notice/notice-action' ),
 	SiteIcon = require( 'components/site-icon' ),
 	PostRelativeTimeStatus = require( 'my-sites/post-relative-time-status' ),
@@ -24,6 +23,7 @@ var CompactCard = require( 'components/card/compact' ),
 
 import Gravatar from 'components/gravatar';
 import photon from 'photon';
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

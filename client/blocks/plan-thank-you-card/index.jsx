@@ -14,7 +14,7 @@ import { getRawSite } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { plansList } from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
 import formatCurrency from 'lib/format-currency';
 
 class PlanThankYouCard extends Component {
@@ -45,7 +45,7 @@ class PlanThankYouCard extends Component {
 						: <div>
 								<div className="plan-thank-you-card__plan-name">
 								{ translate( '%(planName)s Plan', {
-									args: { planName: plansList[ plan.productSlug ].getTitle() }
+									args: { planName: getPlan( plan.productSlug ).getTitle() }
 								} ) }
 								</div>
 								<div className="plan-thank-you-card__plan-price">

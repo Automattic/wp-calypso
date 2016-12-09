@@ -9,7 +9,6 @@ var page = require( 'page' ),
  * Internal Dependencies
  */
 var sites = require( 'lib/sites-list' )(),
-	user = require( 'lib/user' )(),
 	utils = require( 'lib/site/utils' ),
 	notices = require( 'notices' ),
 	route = require( 'lib/route' ),
@@ -65,9 +64,7 @@ module.exports = {
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
 
 			context.contentComponent = React.createElement( SharingConnections, {
-				user: user,
 				connections: connectionsList,
-				sites: sites
 			} );
 		}
 

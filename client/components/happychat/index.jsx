@@ -20,7 +20,12 @@ import {
 import {
 	openChat,
 	closeChat,
+	minimizeChat,
+	minimizedChat
 } from 'state/ui/happychat/actions';
+import {
+	isHappychatMinimizing
+} from 'state/ui/happychat/selectors';
 import {
 	isConnected,
 	isConnecting,
@@ -42,7 +47,7 @@ const connectingTitle = ( { onCloseChat } ) => {
 		<div className="happychat__active-toolbar">
 		<span>{ translate( 'Starting chat' ) }</span>
 			<div onClick={ onCloseChat }>
-				<GridIcon icon="cross" />
+				<GridIcon icon="chevron-down" />
 			</div>
 		</div>
 	);
@@ -59,13 +64,13 @@ const connectedTitle = ( { onCloseChat } ) => (
 	<div className="happychat__active-toolbar">
 	<h4>{ translate( 'WP.com' ) }</h4>
 		<div onClick={ onCloseChat }>
-			<GridIcon icon="cross" />
+			<GridIcon icon="chevron-down" />
 		</div>
 	</div>
 );
 
 /**
- * Funciton for rendering correct titlebar based on happychat client state
+ * Function for rendering correct titlebar based on happychat client state
  */
 const title = first(
 	when( isConnected, connectedTitle ),
@@ -88,6 +93,7 @@ const Happychat = React.createClass( {
 	render() {
 		const {
 			connectionStatus,
+			isMinimizing,
 			user,
 			onCloseChat,
 			onOpenChat
@@ -96,17 +102,21 @@ const Happychat = React.createClass( {
 		return (
 			<div className="happychat">
 				<div
-					className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) } ) }>
+					className={ classnames( 'happychat__container', {
+						'is-open': isChatOpen( { connectionStatus } ),
+						'is-minimizing': isMinimizing
+					} ) } >
 					<div className="happychat__title">
 						{ title( {
 							connectionStatus,
+							isMinimizing,
 							user,
 							onCloseChat,
 							onOpenChat
 						} ) }
 					</div>
-					{ timeline( { connectionStatus } ) }
-					{ composer( { connectionStatus } ) }
+					{ timeline( { connectionStatus, isMinimizing } ) }
+					{ composer( { connectionStatus, isMinimizing } ) }
 				</div>
 			</div>
 		);
@@ -115,7 +125,8 @@ const Happychat = React.createClass( {
 
 const mapState = state => {
 	return {
-		connectionStatus: getHappychatConnectionStatus( state )
+		connectionStatus: getHappychatConnectionStatus( state ),
+		isMinimizing: isHappychatMinimizing( state )
 	};
 };
 
@@ -125,7 +136,11 @@ const mapDispatch = ( dispatch ) => {
 			dispatch( openChat() );
 		},
 		onCloseChat() {
-			dispatch( closeChat() );
+			dispatch( minimizeChat() );
+			setTimeout( function() {
+				dispatch( minimizedChat() );
+				dispatch( closeChat() );
+			}, 500 );
 		},
 		connectChat() {
 			dispatch( connectChat() );

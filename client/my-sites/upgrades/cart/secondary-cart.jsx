@@ -1,24 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var CartBody = require( 'my-sites/upgrades/cart/cart-body' ),
-	CartMessagesMixin = require( './cart-messages-mixin' ),
-	CartSummaryBar = require( 'my-sites/upgrades/cart/cart-summary-bar' ),
-	CartPlanAd = require( './cart-plan-ad' ),
-	CartPlanDiscountAd = require( './cart-plan-discount-ad' ),
-	Sidebar = require( 'layout/sidebar' ),
-	observe = require( 'lib/mixins/data-observe' );
+import CartBody from 'my-sites/upgrades/cart/cart-body';
+import CartMessagesMixin from './cart-messages-mixin';
+import CartSummaryBar from 'my-sites/upgrades/cart/cart-summary-bar';
+import CartPlanAd from './cart-plan-ad';
+import CartPlanDiscountAd from './cart-plan-discount-ad';
+import Sidebar from 'layout/sidebar';
+import observe from 'lib/mixins/data-observe';
 import CartBodyLoadingPlaceholder from 'my-sites/upgrades/cart/cart-body/loading-placeholder';
 
-var SecondaryCart = React.createClass( {
+const SecondaryCart = React.createClass( {
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
-	render: function() {
+	render() {
 		const { cart, selectedSite } = this.props;
 
 		if ( ! cart.hasLoadedFromServer ) {
@@ -48,4 +49,4 @@ var SecondaryCart = React.createClass( {
 	}
 } );
 
-module.exports = SecondaryCart;
+export default localize( SecondaryCart );

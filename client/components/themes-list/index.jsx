@@ -3,9 +3,8 @@
  */
 import React from 'react';
 import times from 'lodash/times';
-import isEqual from 'lodash/isEqual';
 import { localize } from 'i18n-calypso';
-import identity from 'lodash/identity';
+import { identity, isEqual, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -36,6 +35,8 @@ export const ThemesList = React.createClass( {
 		onScreenshotClick: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
 		getActionLabel: React.PropTypes.func,
+		isActive: React.PropTypes.func,
+		isPurchased: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
@@ -54,19 +55,21 @@ export const ThemesList = React.createClass( {
 			showThemeUpload: false,
 			themeUploadClickRecorder: identity,
 			onThemeUpload: identity,
-			fetchNextPage() {},
-			optionsGenerator() {
-				return [];
-			},
-			getActionLabel() {
-				return '';
-			}
+			fetchNextPage: noop,
+			optionsGenerator: () => [],
+			getActionLabel: () => '',
+			isActive: () => false,
+			isPurchased: () => false
 		};
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		return this.props.loading !== nextProps.loading ||
-			! isEqual( this.props.themes, nextProps.themes );
+		return nextProps.loading !== this.props.loading ||
+			! isEqual( nextProps.themes, this.props.themes ) ||
+			( nextProps.getButtonOptions !== this.props.getButtonOptions ) ||
+			( nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ) ||
+			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
+			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
 	renderTheme( theme, index ) {
@@ -78,7 +81,9 @@ export const ThemesList = React.createClass( {
 			onMoreButtonClick={ this.props.onMoreButtonClick }
 			actionLabel={ this.props.getActionLabel( theme ) }
 			index={ index }
-			theme={ theme } />;
+			theme={ theme }
+			active={ this.props.isActive( theme.id ) }
+			purchased={ this.props.isPurchased( theme.id ) } />;
 	},
 
 	renderLoadingPlaceholders() {

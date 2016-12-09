@@ -15,6 +15,11 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
 	let sandbox, TestUtils, PostEditor, SitesList, PostEditStore;
+	const defaultProps = {
+		translate: string => string,
+		markSaved: () => {},
+		markChanged: () => {}
+	};
 
 	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
@@ -69,8 +74,7 @@ describe( 'PostEditor', function() {
 
 		SitesList = require( 'lib/sites-list/list' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
-		PostEditor = require( '../post-editor' );
-		PostEditor.prototype.translate = ( string ) => string;
+		PostEditor = require( '../post-editor' ).PostEditor;
 	} );
 
 	afterEach( function() {
@@ -83,6 +87,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
@@ -99,6 +104,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
@@ -115,6 +121,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
@@ -130,6 +137,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 
@@ -149,6 +157,7 @@ describe( 'PostEditor', function() {
 				<PostEditor
 					preferences={ {} }
 					sites={ new SitesList() }
+					{ ...defaultProps }
 				/>
 			);
 

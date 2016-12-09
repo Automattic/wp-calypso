@@ -102,7 +102,6 @@ SwitcherShell = React.createClass( {
 						<InfiniteList
 							items={ users }
 							key={ infiniteListKey }
-							namespace={ infiniteListKey }
 							className="author-selector__infinite-list"
 							ref={ this._setListContext }
 							context={ this.state.listContext }
@@ -177,7 +176,6 @@ SwitcherShell = React.createClass( {
 				onClick={ this._selectAuthor.bind( this, author ) }
 				focusOnHover={ false }
 				key={ authorGUID }
-				ref={ authorGUID }
 				tabIndex="-1">
 				<UserItem user={ author }/>
 			</PopoverMenuItem>

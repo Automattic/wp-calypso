@@ -1,7 +1,18 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import {
+	flowRight as compose,
+	identity,
+} from 'lodash';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import PurchaseButton from './purchase-button';
@@ -9,47 +20,40 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 import Plugin from './plugin';
 
-export const PremiumPluginsPanel = React.createClass( {
-	render() {
-		const {
-			isActive = false,
-			onClick,
-			purchaseLink,
-			plugins = []
-		} = this.props;
+export const PremiumPluginsPanel = ( {
+	isActive = false,
+	onClick,
+	purchaseLink,
+	plugins = [],
+	translate = identity,
+} ) => (
+	<div>
+		<SectionHeader label={ translate( 'Premium Plan Upgrades' ) }>
+			<PurchaseButton { ...{ isActive, href: purchaseLink } } />
+		</SectionHeader>
 
-		const cardClasses = classNames( 'wpcom-plugins__premium-panel', {
-			'is-disabled': ! isActive
-		} );
-
-		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Premium Plan Upgrades' ) }>
-					<PurchaseButton { ...{ isActive, href: purchaseLink } } />
-				</SectionHeader>
-
-				<Card className={ cardClasses }>
-					<div className="wpcom-plugins__list">
-						{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
-							<Plugin
-								onClick={ () => onClick( name ) }
-								{ ...{
-									name,
-									key: name,
-									descriptionLink,
-									icon,
-									isActive,
-									category,
-									description
-								} }
-							/>
-						) }
-					</div>
-				</Card>
+		<Card className={ classNames( 'wpcom-plugins__premium-panel', {
+			'is-disabled': ! isActive,
+		} ) }>
+			<div className="wpcom-plugins__list">
+				{ plugins.map( ( { name, descriptionLink, icon, category, description } ) =>
+					<Plugin
+						{ ...{
+							category,
+							description,
+							descriptionLink,
+							icon,
+							isActive,
+							key: name,
+							name,
+							onClick,
+						} }
+					/>
+				) }
 			</div>
-		);
-	}
-} );
+		</Card>
+	</div>
+);
 
 PremiumPluginsPanel.propTypes = {
 	isActive: PropTypes.bool,
@@ -57,16 +61,14 @@ PremiumPluginsPanel.propTypes = {
 	plugins: PropTypes.array
 };
 
-const trackClick = name => recordTracksEvent(
-	'calypso_plugin_wpcom_click',
-	{
+const trackClick = name =>
+	recordTracksEvent( 'calypso_plugin_wpcom_click', {
 		plugin_name: name,
-		plugin_plan: 'premium'
-	}
-);
+		plugin_plan: 'premium',
+	} );
 
 const mapDispatchToProps = dispatch => ( {
-	onClick: name => dispatch( trackClick( name ) )
+	onClick: compose( dispatch, trackClick ),
 } );
 
-export default connect( null, mapDispatchToProps )( PremiumPluginsPanel );
+export default connect( null, mapDispatchToProps )( localize( PremiumPluginsPanel ) );

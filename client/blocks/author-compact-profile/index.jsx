@@ -2,6 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { numberFormat, localize } from 'i18n-calypso';
+import { has } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -10,11 +13,8 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
 import { getStreamUrl } from 'reader/route';
-import { numberFormat } from 'i18n-calypso';
-import { has, includes } from 'lodash';
+import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -38,13 +38,12 @@ const AuthorCompactProfile = React.createClass( {
 		}
 
 		const hasAuthorName = has( author, 'name' );
-		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === author.name.toLowerCase();
+		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
 		const classes = classnames( 'author-compact-profile', {
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
 			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
-		const authorNameBlacklist = [ 'admin' ];
 
 		// If we have a feed URL, use that for the follow button in preference to the site URL
 		const followUrl = feedUrl || siteUrl;
@@ -54,10 +53,10 @@ const AuthorCompactProfile = React.createClass( {
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && ! includes( authorNameBlacklist, author.name.toLowerCase() ) &&
+				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&
-					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post } >
+					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post }>
 						{ siteName }
 					</ReaderSiteStreamLink> }
 

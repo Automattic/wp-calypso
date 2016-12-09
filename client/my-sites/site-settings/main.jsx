@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import Main from 'components/main';
 import notices from 'notices';
+import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -90,7 +91,7 @@ export class SiteSettingsComponent extends Component {
 			case 'import':
 				return <ImportSettings site={ site } />;
 			case 'export':
-				return <ExportSettings site={ site }/>;
+				return <ExportSettings site={ site } />;
 			case 'guidedTransfer':
 				return <GuidedTransfer hostSlug={ hostSlug } />;
 		}
@@ -104,6 +105,7 @@ export class SiteSettingsComponent extends Component {
 			<Main className="site-settings">
 					<SidebarNavigation />
 					<SiteSettingsNavigation site={ site } section={ section } />
+					<QueryProductsList />
 					{ site && <QuerySitePurchases siteId={ site.ID } /> }
 					{ site && this.getSection() }
 			</Main>

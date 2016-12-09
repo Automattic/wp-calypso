@@ -24,25 +24,28 @@ These rules encourage liberal spacing for improved developer readability. The mi
 
 Don't forget to [remove trailing whitespace](trailing-whitespace.md).
 
+We specify an [EditorConfig](http://editorconfig.org/) configuration and encourage you to install a plugin for your editor to simplify following many of our spacing guidelines.
+
 ## Objects
 
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
 
 ```js
-// Preferred
-var map = {
-    ready: 9,
-    when: 4,
-    'you are': 15
-};
-
-// Acceptable for small objects
-var map = { ready: 9, when: 4, 'you are': 15 };
-
 // Bad
-var map = { ready: 9,
-    when: 4, 'you are': 15 };
-
+const labels = { facebook: 'Facebook',
+	twitter: 'Twitter', 'google-plus': 'Google Plus' };
+```
+```js
+// Acceptable for small objects
+const labels = { 'google-plus': 'Google Plus' };
+```
+```js
+// Good
+const labels = {
+	facebook: 'Facebook',
+	twitter: 'Twitter',
+	'google-plus': 'Google Plus'
+};
 ```
 
 ## Arrays and Function Calls
@@ -50,7 +53,7 @@ var map = { ready: 9,
 Always include extra spaces around elements and arguments:
 
 ```js
-array = [ a, b ];
+const array = [ a, b ];
 
 foo( arg );
 
@@ -67,57 +70,43 @@ foo( {
 	b: 'beta'
 } );
 
-foo( data, function() {
-    // Do stuff
+foo( data, () => {
+	// Do stuff
 } );
-
-foo( function() {
-    // Do stuff
-}.bind( this ) );
-
-foo( function() {
-    // Do stuff
-}, options );
-
 ```
 
 ## Examples of Good Spacing
 
 ```js
-var i;
-
 if ( condition ) {
-    doSomething( 'with a string' );
+	doSomething( 'with a string' );
 } else if ( otherCondition ) {
-    otherThing( {
-        key: value,
-        otherKey: otherValue
-    } );
+	otherThing( {
+		key: value,
+		otherKey: otherValue
+	} );
 } else {
-    somethingElse( true );
+	somethingElse( true );
 }
 
-// Unlike jQuery, WordPress prefers a space after the ! negation operator.
-// This is also done to conform to our PHP standards.
 while ( ! condition ) {
-    iterating++;
+	iterating++;
 }
 
-for ( i = 0; i < 100; i++ ) {
-    object[ array[ i ] ] = someFn( i );
-    $( '.container' ).val( array[ i ] );
+for ( let i = 0; i < 100; i++ ) {
+	object[ array[ i ] ] = someFn( i );
 }
 
 try {
-    // Expressions
+	// Expressions
 } catch ( e ) {
-    // Expressions
+	// Expressions
 }
 ```
 
 ## Semicolons
 
-Use them. Never rely on Automatic Semicolon Insertion (ASI).
+Use them. Never rely on [Automatic Semicolon Insertion (ASI)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion).
 
 ## Indentation and Line Breaks
 
@@ -125,19 +114,69 @@ Indentation and line breaks add readability to complex statements.
 
 Tabs should be used for indentation.
 
-## Blocks and Curly Braces
-
-if, else, for, while, and try blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
+Try to return early from a function to avoid functions with deep indentation akin to ["Callback Hell"](http://callbackhell.com/).
 
 ```js
-var a, b, c;
+// Bad
+function isFreshData( data ) {
+	let isFresh;
+	if ( data ) {
+		if ( data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+			isFresh = true;
+		} else {
+			isFresh = false;
+		}
+	} else {
+		isFresh = false;
+	}
 
-if ( myFunction() ) {
-    // Expressions
-} else if ( ( a && b ) || c ) {
-    // Expressions
+	return isFresh;
+}
+```
+```js
+// Good
+function isFreshData( data ) {
+	if ( data && data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+		return true;
+	}
+
+	return false;
+}
+```
+
+## Blocks and Curly Braces
+
+`if`, `else`, `for`, `while`, and `try` blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
+
+```js
+if ( isLarge() ) {
+	// Expressions
+} else if ( isMedium() ) {
+	// Expressions
 } else {
-    // Expressions
+	// Expressions
+}
+```
+
+When all paths of a set of `if` or `else if` statements `return` a value, do not include an `else` block.
+
+```js
+// Bad
+function getStatusLabel() {
+	if ( isValid() ) {
+		return 'OK';
+	} else {
+		return 'Not OK';
+	}
+}
+
+// Good
+function getStatusLabel() {
+	if ( isValid() ) {
+		return 'OK';
+	}
+
+	return 'Not OK';
 }
 ```
 
@@ -147,32 +186,21 @@ When a statement is too long to fit on one line, line breaks must occur after an
 
 ```js
 // Bad
-var html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c
-    + ' is ' + ( a + b + c );
-
-// Good
-var html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
-    ' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
+	+ ' is ' + ( a + b + c );
 ```
-
-Lines should be broken into logical groups if it improves readability, such as splitting each expression of a ternary operator onto its own line, even if both will fit on a single line.
-
 ```js
-// Acceptable
-var baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
-
-// Better
-var baz = firstCondition( foo ) && secondCondition( bar )
-    ? qux( foo, bar )
-    : foo;
+// Good
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
+	' is ' + ( a + b + c );
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
 if ( firstCondition() && secondCondition() &&
-        thirdCondition() ) {
-    doStuff();
+		thirdCondition() ) {
+	doStuff();
 }
 ```
 
@@ -201,19 +229,25 @@ counter++;
 Globals should almost never be used. If they are used or you need to reference a pre-existing global do so via `window`.
 
 ```js
-var userId = window.currentUser.ID;
+let userId;
+if ( typeof window !== 'undefined' ) {
+	userId = window.currentUser.ID;
+}
 ```
+
+Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/master/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
 
 ## Naming Conventions
 
 Variable and function names should be full words, using camel case with a lowercase first letter. This also applies to abbreviations and acronyms.
 
 ```js
-// Good
-var userIdToDelete, siteUrl;
-
 // Bad
-var userIDToDelete, siteURL;
+let userIDToDelete, siteURL;
+```
+```js
+// Good
+let userIdToDelete, siteUrl;
 ```
 
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
@@ -241,7 +275,7 @@ Single line comments:
 someStatement();
 
 // Explanation of something complex on the next line
-$( 'p' ).doSomething();
+Array.prototype.forEach.call( document.querySelectorAll( 'p' ), doSomething );
 ```
 
 When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
@@ -262,17 +296,8 @@ function Book(title, author) {
 Multi-line comments that are not a jsdoc comment should use `//`:
 
 ```js
-//
 // This is a comment that is long enough to warrant being stretched
 // over the span of multiple lines.
-```
-
-Inline comments are allowed as an exception when used to annotate special arguments in formal parameter lists:
-
-```js
-function foo( types, selector, data, fn, /* INTERNAL */ one ) {
-    // Do stuff
-}
 ```
 
 ## Equality
@@ -282,7 +307,7 @@ Strict equality checks (===) must be used in favor of abstract equality checks (
 ```js
 // Check for both undefined and null values, for some important reason.
 if ( undefOrNull == null ) {
-    // Expressions
+	// Expressions
 }
 ```
 
@@ -300,11 +325,15 @@ These are the preferred ways of checking the type of an object:
 However, you don't generally have to know the type of an object. Prefer testing
 the object's existence and shape over its type.
 
+`typeof object === 'object'` can be misleading, as non-plain-object types test
+as true for this check (e.g. Arrays). If you need to test whether a variable is
+a plain object, consider using [Lodash's `_.isPlainObject`](https://lodash.com/docs/#isPlainObject)
+
 ## Existence and Shape Checks
 
-Prefer using the [power](http://www.ecma-international.org/ecma-262/5.1/#sec-9.2)
-of "truthy" in JavaScript boolean expressions to validate the existence and shape
-of an object to using `typeof`.
+Prefer using the [power of "truthy"](http://www.ecma-international.org/ecma-262/6.0/#sec-toboolean)
+in JavaScript boolean expressions to validate the existence and shape of an 
+object to using `typeof`.
 
 The following are all false in boolean expressions:
 
@@ -342,12 +371,25 @@ if ( object && 'desired' in object ) { ... }
 if ( object && object.desired ) { ... }
 ```
 
+Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios:
+
+```js
+'valueOf' in {}; // true
+```
+
+If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) instead.
+
+```js
+const key = 'valueOf';
+{}.hasOwnProperty( key ); // false
+```
+
 ## Strings
 
 Use single-quotes for string literals:
 
 ```js
-var myStr = 'strings should be contained in single quotes';
+const myStr = 'strings should be contained in single quotes';
 ```
 
 When a string contains single quotes, they need to be escaped with a backslash (\\):
@@ -355,9 +397,21 @@ When a string contains single quotes, they need to be escaped with a backslash (
 Double quotes can be used in cases where there is a single quote in the string or in JSX attributes.
 
 ```js
-var myStr = "You're amazing just the way you are.";
+const myStr = "You're amazing just the way you are.";
 
-var component = <div className="post"></div>;
+const component = <div className="post"></div>;
+```
+
+[ES2015 template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) are available as an alternative to string concatenation when including variables in a string.
+
+```js
+// Before
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
+	' is ' + ( a + b + c );
+```
+```js
+// After
+const sumLabel = `The sum of ${ a } and ${ b } plus ${ c } is ${ a + b + c }`;
 ```
 
 ## Switch Statements
@@ -372,16 +426,16 @@ When using switch statements:
 ```js
 switch ( event.keyCode ) {
 
-    // ENTER and SPACE both trigger x()
-    case constants.keyCode.ENTER:
-    case constants.keyCode.SPACE:
-        x();
-        break;
-    case constants.keyCode.ESCAPE:
-        y();
-        break;
-    default:
-        z();
+	// ENTER and SPACE both trigger x()
+	case constants.keyCode.ENTER:
+	case constants.keyCode.SPACE:
+		x();
+		break;
+	case constants.keyCode.ESCAPE:
+		y();
+		break;
+	default:
+		z();
 }
 ```
 
@@ -394,10 +448,11 @@ The first word of a variable name should be a noun or adjective (not a verb) to 
 You can prefix a variable with verb only for boolean values when it makes code easier to read.
 
 ```js
-// bad
+// Bad
 const play = false;
-
-// good
+```
+```js
+// Good
 const name = 'John';
 const blueCar = new Car( 'blue' );
 const shouldFlop = true;
@@ -408,19 +463,23 @@ const shouldFlop = true;
 The first word of a function name should be a verb (not a noun) to avoid confusion with variables.
 
 ```js
-// bad
+// Bad
 function name() {
-    return 'John';
+	return 'John';
 }
-
-// good
+```
+```js
+// Good
 function getName() {
-    return 'John';
+	return 'John';
 }
+```
 
-// good
+You may prefix a function by `is` or `has` to indicate a Boolean return value.
+
+```js
 function isValid() {
-    return true;
+	return true;
 }
 ```
 
@@ -429,13 +488,13 @@ function isValid() {
 Creating arrays in JavaScript should be done using the shorthand `[]` constructor rather than the `new Array()` notation.
 
 ```js
-var myArray = [];
+const myArray = [];
 ```
 
 You can initialize an array during construction:
 
 ```js
-var myArray = [ 1, 'WordPress', 2, 'Blog' ];
+const myArray = [ 1, 'WordPress', 2, 'Blog' ];
 ```
 
 In JavaScript, associative arrays are defined as objects.
@@ -445,13 +504,13 @@ In JavaScript, associative arrays are defined as objects.
 There are many ways to create objects in JavaScript. Object literal notation, `{}`, is both the most performant, and also the easiest to read.
 
 ```js
-var myObj = {};
+const myObj = {};
 ```
 
 Object literal notation should be used unless the object requires a specific prototype, in which case the object should be created by calling a constructor function with new.
 
 ```js
-var myObj = new ConstructorMethod();
+const myObj = new ConstructorMethod();
 ```
 
 Object properties should be accessed via dot notation, unless the key is a variable, a reserved word, or a string that would not be a valid identifier:
@@ -459,560 +518,117 @@ Object properties should be accessed via dot notation, unless the key is a varia
 ```js
 prop = object.propertyName;
 prop = object[ variableKey ];
-prop = object['default'];
-prop = object['key-with-hyphens'];
+prop = object[ 'default' ];
+prop = object[ 'key-with-hyphens' ];
 ```
 
 ## “Yoda” Conditions #
 
-Since we require strict equality checks, we are not going to enforce "Yoda" conditionals. You're welcome to use them, but the most important consideration should be readability of the conditional.
+Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
 
 ## Iteration
 
-The functional programming inspired methods that were added in ECMA5 improve readability. Use them throughout.
+Starting in [ECMAScript 5](https://en.wikipedia.org/wiki/ECMAScript#5th_Edition), JavaScript includes many methods and patterns inspired by functional programming.
+
+We encourage you to make use of these methods in favor of traditional `for` and `while` loops:
+
+- [`Array#map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
+- [`Array#filter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)
+- [`Array#reduce`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
+- [`Array#some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
+- [`Array#every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
+
+While ES2015 and beyond include many more Array prototype methods, these cannot be used due to complications with polyfills. Instead, you are encouraged to use their [Lodash](https://lodash.com/) equivalents, among many other Lodash methods:
+
+- [`_.find`](https://lodash.com/docs/#find) ([`Array#find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find))
+- [`_.findIndex`](https://lodash.com/docs/#findIndex) ([`Array#findIndex`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex))
+- [`_.includes`](https://lodash.com/docs/#includes) ([`Array#includes`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes))
+
+Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
+
+__Examples:__
+
+Creating an array of React elements from an array of post objects:
 
 ```js
-var posts = postList.map( function( post ) {
-	return <Post post={ post } key={ post.global_ID } />;
-} );
+posts.map( ( post ) => (
+	<Post post={ post } key={ post.global_ID } />
+) );
 ```
 
-When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
+Check whether every post in an array of post objects is published:
 
 ```js
-// Good & Efficient
-var i, max;
+posts.every( ( post ) => post.status === 'publish' );
+```
 
-// getItemCount() gets called once
-for ( i = 0, max = getItemCount(); i < max; i++ ) {
-    // Do stuff
+Group an array of post objects by status:
+
+```js
+posts.reduce( ( memo, post ) => {
+	memo[ post.status ] = ( memo[ post.status ] || [] ).concat( post );
+	return memo;
+}, {} );
+```
+
+### React components
+
+- Use [stateless function components or the `React.Component` class](https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components) instead of `React.createClass`
+  - Unlike `React.createClass`, methods of components extending `React.Component` are not automatically bound to the instance. Instead, you will need to bind the functions in your component's constructor or use [class instance property initializers](https://github.com/tc39/proposal-class-public-fields)
+- Use [PropTypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) to validate prop types and help set usage expectations for other developers
+- Use [JSX](https://facebook.github.io/jsx/) for creating React elements, like those returned from a component's `render` function
+- Methods that are bound to event handlers should have descriptive names. 
+  - Avoid naming methods after event handlers like `onClick`, `onSubmit`, etc.
+  - You can use fat arrow functions if it makes handling the event cleaner.
+- Avoid prefixing method names with `_`.
+- If you find that your render logic becomes complex, it might be a sign that you should split the component into separate individual components.
+
+```jsx
+import React, { Component, PropTypes } from 'react';
+
+export default class Link extends Component {
+	static propTypes = {
+		href: PropTypes.string,
+		onNavigate: PropTypes.func,
+		children: PropTypes.node
+	};
+
+	navigate = ( event ) => {
+		event.preventDefault();
+		this.props.onNavigate();
+	}
+
+	render() {
+		const { href, children } = this.props;
+
+		return (
+			<a href={ href } onClick={ this.navigate }>
+				{ children }
+			</a>
+		);
+	}
 }
-
-// Bad & Potentially Inefficient:
-// getItemCount() gets called every time
-for ( i = 0; i < getItemCount(); i++ ) {
-    // Do stuff
-}
 ```
-
-### React method names
-
-* Methods that return JSX partial code should start with `render`.
-* Methods that navigate to a different page should start with `go`.
-* Methods that are bound to event handlers should have descriptive names. Don't name methods after event handlers like `onClick`, `onSubmit`, etc. You can use fat arrow functions if it makes handling the event cleaner.
-* Avoid prefixing method names with `_`.
-
-```js
-// good
-const CartComponent = React.createClass( {
-    ...
-
-    renderActionButton() {
-        if ( this.isLoading() ) {
-            return null;
-        }
-
-        if ( this.canGoToCheckout() ) {
-            return <Button onClick={ this.goToCheckout }>{ this.translate( 'Go to checkout' ) }</Button>;
-        } else {
-            return <Button onClick={ this.confirmCart }>{ this.translate( 'Confirm cart' ) }</Button>;
-        }
-    },
-
-    confirmCart() {
-        actions.confirmCart( () => {
-             this.enableCheckoutStep();
-        } );
-    },
-
-    goToCheckout() {
-        page( this.getCheckoutPath() );
-    }
-} );
-```
-
-JSX is pretty easy to read as standard HTML. That's why separate meta `renderSomething` methods should only be used if there is meaningful functionality happening within the code, not just to break up content.
-If you find that you have many separate rendering functions, or rendering functions that include more than a basic amount of logic, it might be a sign that there’s room for splitting off separate new components.
 
 ## ES6
 
-We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/learn-es2015/#subclassable-built-ins).
-
-### Let and Const
-
-You can use `const` for all of your references.
-
-> Why? This ensures that you can't reassign your references (mutation), which can lead to bugs and difficult to comprehend code.
-
-```javascript
-// good
-var a = 1,
-    b = 2;
-
-// better
-const a = 1,
-    b = 2;
-```
-
-If you must mutate references, you can use `let`. Otherwise `const` is preferred.
-
-> Why? `let` is block-scoped rather than function-scoped like `var`.
-
-```javascript
-// good
-var count = 1;
-if ( true ) {
-    count += 1;
-}
-
-// better
-let count = 1;
-if ( true ) {
-    count += 1;
-}
-```
-
-Note that both `let` and `const` are block-scoped.
-
-```javascript
-// const and let only exist in the blocks they are defined in.
-{
-    let a = 1;
-    const b = 1;
-}
-console.log( a ); // ReferenceError
-console.log( b ); // ReferenceError
-```
-
-More about:
-
-- [Let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let) at MDN
-- [Const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) at MDN
-
-### Arrow Functions
-
-When you must use function expressions (as when passing an anonymous function), you can use arrow function notation.
-
-> Why? It creates a version of the function that executes in the context of `this`, which is usually what you want, and is a more concise syntax.
-
-> Why not? If you have a fairly complicated function, you might move that logic out into its own function declaration.
-
-```javascript
-// good
-function Person() {
-    this.age = 0;
-
-    setInterval( function() {
-        this.age++;
-    }.bind( this ), 1000 );
-}
-let p = new Person();
-
-// better
-function Person() {
-    this.age = 0;
-
-    setInterval( () => {
-        this.age++;
-    }, 1000 );
-}
-let p = new Person();
-```
-
-If the function body fits on one line and there is only a single argument, feel free to omit the braces and parentheses, and use the implicit return. Otherwise, add the parentheses, braces, and use a `return` statement.
-
-> Why? Syntactic sugar. It reads well when multiple functions are chained together.
-
-> Why not? If you plan on returning an object.
-
-```javascript
-// bad
-// it's too magic, it works only with parentheses, otherwise it returns collection of undefine values
-[ 1, 2, 3 ].map( x => ( { value: x * x } ) );
-
-// good
-[ 1, 2, 3 ].map( x => x * x );
-
-// good
-[ 1, 2, 3 ].reduce( ( total, n ) => {
-    return total + n;
-}, 0 );
-
-```
-
-More about:
-
-- [Arrow Functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) at MDN
-
-### Object Property Shorthand
-
-You can use property value shorthand.
-
-> Why? It is shorter to write and descriptive.
-
-```javascript
-const lukeSkywalker = 'Luke Skywalker';
-
-// good
-const obj = {
-    lukeSkywalker: lukeSkywalker,
-};
-
-// better
-const obj = {
-    lukeSkywalker,
-};
-```
-
-Group your shorthand properties at the beginning of your object declaration.
-
-> Why? It's easier to tell which properties are using the shorthand.
-
-```javascript
-const anakinSkywalker = 'Anakin Skywalker',
-    lukeSkywalker = 'Luke Skywalker';
-
-// bad
-const obj = {
-    episodeOne: 1,
-    twoJediWalkIntoACantina: 2,
-    lukeSkywalker,
-    episodeThree: 3,
-    mayTheFourth: 4,
-    anakinSkywalker,
-};
-
-// good
-const obj = {
-    lukeSkywalker,
-    anakinSkywalker,
-    episodeOne: 1,
-    twoJediWalkIntoACantina: 2,
-    episodeThree: 3,
-    mayTheFourth: 4,
-};
-```
-
-More about:
-
-- [Object Property Shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Property_definitions) at MDN
-
-### Object Method Shorthand
-
-You can use object method shorthand.
-
-```javascript
-// good
-const atom = {
-    value: 1,
-
-    addValue: function ( value ) {
-        return atom.value + value;
-    },
-};
-
-// better
-const atom = {
-    value: 1,
-
-    addValue( value ) {
-        return atom.value + value;
-    },
-};
-```
-
-More about:
-
-- [Object Method Shorthand](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Method_definitions) at MDN
-
-### Object Computed Properties
-
-You can use computed property names when creating objects with dynamic property names.
-
-> Why? They allow you to define all the properties of an object in one place.
-
-```javascript
-
-function getKey( k ) {
-    return `a key named ${k}`;
-}
-
-// good
-const obj = {
-    id: 5,
-    name: 'San Francisco',
-};
-obj[ getKey( 'enabled' ) ] = true;
-
-// better
-const obj = {
-    id: 5,
-    name: 'San Francisco',
-    [ getKey( 'enabled' ) ]: true,
-};
-```
-
-More about:
-
-- [Object Computed Properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Computed_property_names) at MDN
-
-### Template Strings
-
-When programmatically building up strings, you can use template strings instead of concatenation.
-
-> Why? Template strings give you a readable, concise syntax with proper newlines and string interpolation features.
-
-```javascript
-// good
-function sayHi( name ) {
-    return 'How are you, ' + name + '?';
-}
-
-// better
-function sayHi( name ) {
-    return `How are you, ${ name }?`;
-}
-```
-
-More about:
-
-- [Template Strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings) at MDN
-
-### Destructuring
-
-You can use object destructuring when accessing and using multiple properties of an object.
-
-> Why? Destructuring saves you from creating temporary references for those properties.
-
-```javascript
-// good
-function getFullName( user ) {
-    const firstName = user.firstName,
-        lastName = user.lastName;
-
-    return `${ firstName } ${ lastName }`;
-}
-
-// better
-function getFullName( user ) {
-    const { firstName, lastName } = user;
-
-    return `${ firstName } ${ lastName }`;
-}
-
-// best
-function getFullName( { firstName, lastName } ) {
-    return `${ firstName } ${ lastName }`;
-}
-```
-
-You can use array destructuring.
-
-```javascript
-const arr = [ 1, 2, 3, 4 ];
-
-// good
-const first = arr[0],
-    second = arr[1];
-
-// better
-const [ first, second ] = arr;
-```
-
-Use object destructuring for multiple return values, not array destructuring.
-
-> Why? You can add new properties over time or change the order of things without breaking call sites.
-
-```javascript
-// bad
-// the caller needs to think about the order of return data
-function processInput( input ) {
-    let left, right, top, bottom;
-    // some assignment happens
-    return [ left, right, top, bottom ];
-}
-const [ left, , top ] = processInput( input );
-
-// good
-// the caller selects only the data they need
-function processInput( input ) {
-    let left, right, top, bottom;
-    // some assignment happens
-    return { left, right, top, bottom };
-}
-const { left, top } = processInput( input );
-```
-
-More about:
-
-- [Destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) at MDN
-
-### Default Parameters
-
-You can use default parameter syntax rather than mutating function arguments.
-
-```javascript
-// really bad
-function handleThings( opts ) {
-    // No! We shouldn't mutate function arguments.
-    // Double bad: if opts is falsy it'll be set to an object which may
-    // be what you want but it can introduce subtle bugs.
-    opts = opts || {};
-    // ...
-}
-
-// good
-function handleThings( opts ) {
-    if ( opts === void 0 ) {
-        opts = {};
-    }
-    // ...
-}
-
-// better
-function handleThings( opts = {} ) {
-    // ...
-}
-```
-
-More about:
-
-- [Default Parameters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters) at MDN
-
-### Rest
-
-Never use `arguments`, opt to use rest syntax `...` instead.
-
-> Why? `...` is explicit about which arguments you want pulled. Plus rest arguments are a real Array and not Array-like like `arguments`.
-
-```javascript
-// bad
-function concatenateAll() {
-    const args = Array.prototype.slice.call( arguments );
-
-    return args.join( '' );
-}
-
-// good
-function concatenateAll( ...args ) {
-    return args.join( '' );
-}
-```
-
-More about:
-
-- [Rest](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters) at MDN
-
-### Array Spreads
-
-You can use array spreads `...` to copy arrays.
-
-```javascript
-// good
-const itemsCopy = items.slice();
-
-// better
-const itemsCopy = [ ...items ];
-```
-
-More about:
-
-- [Array Spreads](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator) at MDN
-
-### Promises
-
-It's ok to use callbacks to manage your asynchronous flows, but if you need to handle more than one async call, you can use promises to avoid nested callbacks and to have a single exception management point to deal with.
-
-```javascript
-// bad
-function doSomething( callback ) {
-    // do stuff
-    callback( error, result );
-}
-doSomething( function( error, result ) {
-    if ( ! error ) {
-        doSomethingElse( function( error2, result2 ) {
-            if ( ! error2 ) {
-                // ad infinitum
-            }
-        } );
-    }
-} );
-
-// good
-function doSomething() {
-    return new Promise( function( resolve, reject ) {
-        // do stuff
-        if ( stuff ) {
-            return resolve( stuff );
-        }
-        reject( error );
-    }
-}
-doSomething()
-    .then( doSomethingElse )
-    .then( doSomethingElseMore )
-    .catch( function( error ) {
-        // manage error
-    } );
-```
-
-Keep in mind that each function called from a `.then` should return a promise, or else the next `then/catch` in the chain would be always called immediately after it.
-
-More about:
-
-- [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) at MDN
-
-
-### Resources
-
-1. [ECMAScript® 2015 Language Specification](http://www.ecma-international.org/ecma-262/6.0/).
-2. [Babel](https://babeljs.io/).
-3. [Overview of ECMAScript 6 features](https://github.com/lukehoban/es6features).
-4. [ECMAScript 6 new features overview & comparison](http://es6-features.org/).
-5. [ECMAScript 6 compatibility table](https://kangax.github.io/compat-table/es6/).
-6. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb.
+We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill.
+
+Resources:
+
+1. [ECMAScript® 2015 Language Specification](http://www.ecma-international.org/ecma-262/6.0/)
+2. [Babel](https://babeljs.io/)
+3. [Overview of ECMAScript 6 features](https://github.com/lukehoban/es6features)
+4. [ECMAScript 6 new features overview & comparison](http://es6-features.org/)
+6. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb
 
 ## ESLint
 
-To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/yannickcr/eslint-plugin-wpcalypso), which we use in our configuration.
+To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration file [`.eslintrc.js`](../../.eslintrc.js) that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
-In cases where ESLint is not happy with awesome code, you can tell ESLint to ignore a set of lines:
-
-```js
-/* eslint-disable */
-// Code here will be ignored when linted by ESLint.
-/* eslint-enable */
-```
-
-You can also selectively disable and re-enable warnings of specific rules:
-
-```js
-/* eslint-disable no-console, no-alert */
-
-console.log( 'word' );
-alert( 'press' );
-
-/* eslint-enable no-console */
-```
-
-You can also ignore a single line:
-
-```js
-if ( a != b ) { // eslint-disable-line
-	// do stuff
-}
-```
-
-Or a specific rule on a single line:
-
-```js
-if ( a != b ) { // eslint-disable-line eqeqeq
-	// do stuff
-}
-```
+In cases where ESLint incorrectly identifies code as not following our standards, you can [disable rules using inline comments](http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments). Before disabling a rule, be certain and vocal that you understand the reason for it needing to be disabled. Our ESLint configuration is very well-tuned, and disabling a rule is not appropriate as an escape valve for poorly written code. If you don't understand or disagree with the existence of a rule, open an issue to start a discussion.
 
 ### [Automatically Run ESLint Against Your Changesets](#setting-up-githooks)
 

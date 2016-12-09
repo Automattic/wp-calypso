@@ -85,21 +85,12 @@ var DomainSearch = React.createClass( {
 
 	addDomain( suggestion ) {
 		this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
-		let items = [];
+		const items = [
+			cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } )
+		];
 
-		const shouldBundleDomainWithPlan = cartItems.shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.sites.getSelectedSite(), this.props.cart, suggestion );
-		if ( shouldBundleDomainWithPlan ) {
-			const domain = cartItems.domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug
-			} );
-			items = items.concat( cartItems.bundleItemWithPlan( domain ) );
-		} else {
-			items.push( cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } ) );
-		}
-
-		if ( cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan ) {
-			upgradesActions.addItem( cartItems.domainPrivacyProtection( {
+		if ( cartItems.isNextDomainFree( this.props.cart ) ) {
+			items.push( cartItems.domainPrivacyProtection( {
 				domain: suggestion.domain_name
 			} ) );
 		}
@@ -132,10 +123,7 @@ var DomainSearch = React.createClass( {
 		} else {
 			content = (
 				<span>
-					<FreeTrialNotice
-						cart={ this.props.cart }
-						sitePlans={ this.props.sitePlans }
-						selectedSite={ selectedSite } />
+					<FreeTrialNotice cart={ this.props.cart } />
 
 					<div className="domain-search__content">
 						<UpgradesNavigation

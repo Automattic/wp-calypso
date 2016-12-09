@@ -17,11 +17,12 @@ const Card = require( 'components/card' ),
 	StatusLabel = require( 'post-editor/editor-status-label' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
-	PostSchedule = require( 'components/post-schedule' ),
 	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
+
+import AsyncLoad from 'components/async-load';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -228,7 +229,7 @@ export default React.createClass( {
 
 	closeSchedulePopover: function( wasCanceled ) {
 		if ( wasCanceled ) {
-			let date = this.props.savedPost && this.props.savedPost.date
+			const date = this.props.savedPost && this.props.savedPost.date
 				? this.moment( this.props.savedPost.date )
 				: null;
 
@@ -239,25 +240,26 @@ export default React.createClass( {
 	},
 
 	renderPostScheduler: function() {
-		var tz = siteUtils.timezone( this.props.site ),
+		const tz = siteUtils.timezone( this.props.site ),
 			gmtOffset = siteUtils.gmtOffset( this.props.site ),
 			postDate = this.props.post && this.props.post.date
 				? this.props.post.date
 				: null;
 
 		return (
-			<PostSchedule
+			<AsyncLoad
+				require="components/post-schedule"
 				selectedDay={ postDate }
 				timezone={ tz }
 				gmtOffset={ gmtOffset }
 				onDateChange={ this.setPostDate }
-				onMonthChange={ this.setCurrentMonth }>
-			</PostSchedule>
+				onMonthChange={ this.setCurrentMonth }
+			/>
 		);
 	},
 
 	schedulePostPopover: function() {
-		var postScheduler = this.renderPostScheduler();
+		const postScheduler = this.renderPostScheduler();
 
 		return (
 			<Popover
@@ -286,7 +288,7 @@ export default React.createClass( {
 	},
 
 	getFirstDayOfTheMonth: function( date ) {
-		var tz = siteUtils.timezone( this.props.site );
+		const tz = siteUtils.timezone( this.props.site );
 		date = date || this.moment();
 
 		return postUtils.getOffsetDate( date, tz ).set( {
@@ -421,7 +423,6 @@ export default React.createClass( {
 				{
 					this.state.showAdvanceStatus &&
 						<EditPostStatus
-							post={ this.props.post }
 							savedPost={ this.props.savedPost }
 							type={ this.props.type }
 							onSave={ this.props.onSave }
@@ -473,7 +474,9 @@ export default React.createClass( {
 				</div>
 				{
 					this.state.needsVerification &&
-					<div className="editor-ground-control__email-verification-notice" tabIndex={ 7 } onClick={ this.props.onMoreInfoAboutEmailVerify }>
+					<div className="editor-ground-control__email-verification-notice"
+						tabIndex={ 7 }
+						onClick={ this.props.onMoreInfoAboutEmailVerify }>
 						<Gridicon
 							icon="info"
 							className="editor-ground-control__email-verification-notice-icon" />

@@ -19,14 +19,11 @@ Stats Parser
 Functions within `stats-parser.js` are utilized to transform the data into standard arrays that are then consumed by .jsx views.
 
 
-External Dependencies
-=====================
-* `emitter-component` to send `change` events which are subscribed to via the `mixins\data-observe` within your jsx component.
-
 Internal Dependencies
 =====================
 * `wpcom-undocumented` to fetch data from the `/sites/{ site.ID }/stats/{ statType }` endpoint
 * `local-list` to persist api responses to localStorage by siteID and options:w
+* `emitter` mixin to send `change` events which are subscribed to within your jsx component.
 
 Methods
 =======

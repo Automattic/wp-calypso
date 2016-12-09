@@ -61,7 +61,7 @@ const CancelPrivateRegistration = React.createClass( {
 
 	redirectIfDataIsInvalid( props = this.props ) {
 		if ( ! this.isDataValid( props ) ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 		}
 	},
 

@@ -16,7 +16,7 @@ import LanguageSelector from 'components/forms/language-selector';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
 import config from 'config';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'lib/protect-form';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
@@ -38,7 +38,7 @@ import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite( site ) {
 		site = site || this.props.site;
@@ -129,32 +129,36 @@ const FormGeneral = React.createClass( {
 
 	siteOptions() {
 		return (
-			<div>
-				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
-					<FormInput
-						name="blogname"
-						id="blogname"
-						type="text"
-						valueLink={ this.linkState( 'blogname' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
-						onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
-					<FormInput
-						name="blogdescription"
-						type="text"
-						id="blogdescription"
-						valueLink={ this.linkState( 'blogdescription' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
-						onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
-					<FormSettingExplanation>
-						{ this.translate( 'In a few words, explain what this site is about.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+			<div className="site-settings__site-options">
+				<div className="site-settings__site-title-tagline">
+					<FormFieldset>
+						<FormLabel htmlFor="blogname">{ this.translate( 'Site Title' ) }</FormLabel>
+						<FormInput
+							name="blogname"
+							id="blogname"
+							type="text"
+							valueLink={ this.linkState( 'blogname' ) }
+							disabled={ this.state.fetchingSettings }
+							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
+							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) }
+							data-tip-target="site-title-input" />
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
+						<FormInput
+							name="blogdescription"
+							type="text"
+							id="blogdescription"
+							valueLink={ this.linkState( 'blogdescription' ) }
+							disabled={ this.state.fetchingSettings }
+							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
+							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) }
+							data-tip-target="site-tagline-input" />
+						<FormSettingExplanation>
+							{ this.translate( 'In a few words, explain what this site is about.' ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+				</div>
 				<SiteIconSetting />
 			</div>
 		);
@@ -449,7 +453,7 @@ const FormGeneral = React.createClass( {
 
 		return (
 			<CompactCard>
-				<form onChange={ this.markChanged }>
+				<form onChange={ this.props.markChanged }>
 					<ul id="settings-jetpack">
 						<li>
 							<FormLabel>
@@ -571,7 +575,7 @@ const FormGeneral = React.createClass( {
 						compact={ true }
 						onClick={ this.handleSubmitForm }
 						primary={ true }
-
+						data-tip-target="settings-site-profile-save"
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm
@@ -581,7 +585,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.siteOptions() }
 						{ this.blogAddress() }
 						{ this.languageOptions() }
@@ -605,7 +609,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
@@ -649,7 +653,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
@@ -707,4 +711,4 @@ const FormGeneral = React.createClass( {
 	}
 } );
 
-export default FormGeneral;
+export default protectForm( FormGeneral );

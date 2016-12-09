@@ -19,6 +19,7 @@ export default React.createClass( {
 					<UpgradeNudge
 						feature="custom-domain"
 						href="#"
+						shouldDisplay={ () => true }
 					/>
 				</div>
 				<div>
@@ -26,6 +27,7 @@ export default React.createClass( {
 						title="This is a title"
 						message="This is a custom message"
 						icon="customize"
+						shouldDisplay={ () => true }
 						compact
 					/>
 				</div>

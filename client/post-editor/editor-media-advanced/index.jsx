@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +15,7 @@ import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import { getSelectedSite } from 'state/ui/selectors';
 
 class EditorMediaAdvanced extends Component {
 	constructor() {
@@ -24,7 +26,7 @@ class EditorMediaAdvanced extends Component {
 
 	save() {
 		const { media, appearance } = this.props.item;
-		const markup = MediaMarkup.get( Object.assign( {}, media, {
+		const markup = MediaMarkup.get( this.props.selectedSite, Object.assign( {}, media, {
 			alt: ReactDom.findDOMNode( this.refs.alt ).value
 		} ), appearance );
 
@@ -70,4 +72,10 @@ EditorMediaAdvanced.defaultProps = {
 	insertMedia: () => {}
 };
 
-export default localize( EditorMediaAdvanced );
+export default connect(
+	state => {
+		return {
+			selectedSite: getSelectedSite( state )
+		};
+	}
+)( localize( EditorMediaAdvanced ) );

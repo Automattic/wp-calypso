@@ -6,11 +6,14 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import {
 	debounce,
+	defer,
 	find,
+	isEmpty,
 	mapValues,
 	omit,
 	property,
 } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,65 +21,61 @@ import {
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import Gridicon from 'components/gridicon';
+import pathToSection from 'lib/path-to-section';
+import { ROUTE_SET } from 'state/action-types';
 import { tourBranching } from './config-parsing';
 import {
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
 	query,
-	targetForSlug
+	targetForSlug,
 } from './positioning';
 
+const debug = debugFactory( 'calypso:guided-tours' );
 const contextTypes = Object.freeze( {
 	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
+	start: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
+	isLastStep: PropTypes.bool.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
+	sectionName: PropTypes.string.isRequired,
+	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
+	lastAction: PropTypes.object,
 } );
+
+const anyFrom = ( obj ) => {
+	const key = Object.keys( obj )[ 0 ];
+	return key && obj[ key ];
+};
 
 export class Tour extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		version: PropTypes.string,
-		path: PropTypes.string,
+		path: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.arrayOf( PropTypes.string )
+		] ),
 		when: PropTypes.func,
 	};
 
-	static childContextTypes = contextTypes;
-
-	getChildContext() {
-		const { branching, next, quit, isValid, tour, tourVersion, step } = this.tourMeta;
-		return { branching, next, quit, isValid, tour, tourVersion, step };
-	}
-
-	constructor( props, context ) {
-		super( props, context );
-		this.setTourMeta( props );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setTourMeta( nextProps );
-	}
-
-	setTourMeta( props ) {
-		const { branching, next, quit, isValid, name, version, stepName } = props;
-		this.tourMeta = { branching, next, quit, isValid, tour: name, tourVersion: version, step: stepName };
-	}
+	static contextTypes = contextTypes;
 
 	render() {
-		const { children, stepName } = this.props;
-		const nextStep = find( children, stepComponent =>
-			stepComponent.props.name === stepName );
-		const isLastStep = nextStep === children[ children.length - 1 ];
+		const { children } = this.props;
+		const { step } = this.context;
+		const nextStep = Array.isArray( children )
+			? find( children, stepComponent =>
+				stepComponent.props.name === step )
+			: children;
 
-		if ( ! nextStep ) {
-			return null;
-		}
-
-		return React.cloneElement( nextStep, { isLastStep } );
+		return nextStep || null;
 	}
 }
 
@@ -97,15 +96,15 @@ export class Step extends Component {
 		] ),
 		when: PropTypes.func,
 		scrollContainer: PropTypes.string,
+		style: PropTypes.object,
 	};
 
 	static contextTypes = contextTypes;
 
-	constructor( props, context ) {
-		super( props, context );
-	}
-
 	componentWillMount() {
+		this.start();
+		this.setStepSection( this.context, { init: true } );
+		debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 		this.skipIfInvalidContext( this.props, this.context );
 		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
 		this.setStepPosition( this.props );
@@ -116,6 +115,8 @@ export class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		this.setStepSection( nextContext );
+		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.skipIfInvalidContext( nextProps, nextContext );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
@@ -129,11 +130,120 @@ export class Step extends Component {
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 	}
 
-	skipIfInvalidContext( props, context ) {
-		const { when, next } = props;
-		if ( when && ! context.isValid( when ) ) {
-			this.context.next( this.tour, next ); //TODO(ehg): use future branching code get next step
+	/*
+	 * Needed for analytics, since GT is selector-driven
+	 */
+	start() {
+		const { start, step, tour, tourVersion } = this.context;
+		start( { step, tour, tourVersion } );
+	}
+
+	/*
+	 * A step belongs to a specific section. This datum is used by the "blank
+	 * exit" feature (cf. Step.quitIfInvalidRoute).
+	 *
+	 * `setStepSection` has specific logic to deal with the fact that `step` and
+	 * `section` transitions are not synchronized. Notably, navigating to a
+	 * different section may trigger a route change (ROUTE_SET) before a step
+	 * change (GUIDED_TOUR_UPDATE). This is further obfuscated by code
+	 * splitting, because `section` doesn't transition immediately.
+	 *
+	 * Below, `shouldPause` tells us that we're waiting for the section to
+	 * change.
+	 */
+	setStepSection( nextContext, { init = false } = {} ) {
+		if ( init ) {
+			// hard reset on Step instantiation
+			this.stepSection = nextContext.sectionName;
+			return;
 		}
+
+		debug( 'Step#componentWillReceiveProps: stepSection:',
+				this.stepSection,
+				nextContext.sectionName );
+
+		if ( this.context.step !== nextContext.step ) {
+			// invalidate if waiting for section
+			this.stepSection = nextContext.shouldPause
+				? null
+				: nextContext.sectionName;
+		} else if ( this.context.shouldPause &&
+				! nextContext.shouldPause &&
+				! this.stepSection ) {
+			// only write if previously invalidated
+			this.stepSection = nextContext.sectionName;
+		}
+	}
+
+	quitIfInvalidRoute( nextProps, nextContext ) {
+		if ( nextContext.step !== this.context.step ||
+				nextContext.sectionName === this.context.sectionName ||
+				! nextContext.sectionName ) {
+			return;
+		}
+
+		const { step, branching, lastAction } = nextContext;
+		const hasContinue = !! branching[ step ].continue;
+		const hasJustNavigated = lastAction.type === ROUTE_SET;
+
+		debug( 'Step.quitIfInvalidRoute',
+			'step', step,
+			'previousStep', this.context.step,
+			'hasContinue', hasContinue,
+			'hasJustNavigated', hasJustNavigated,
+			'lastAction', lastAction,
+			'path', lastAction.path,
+			'isDifferentSection', this.isDifferentSection( lastAction.path ) );
+
+		if ( ! hasContinue && hasJustNavigated &&
+				this.isDifferentSection( lastAction.path ) ) {
+			defer( () => {
+				debug( 'Step.quitIfInvalidRoute: quitting (different section)' );
+				this.context.quit( this.context );
+			} );
+		}
+
+		// quit if we have a target but cant find it
+		defer( () => {
+			const { quit } = this.context;
+			const target = targetForSlug( this.props.target );
+			if ( this.props.target && ! target ) {
+				debug( 'Step.quitIfInvalidRoute: quitting (cannot find target)' );
+				quit( this.context );
+			} else {
+				debug( 'Step.quitIfInvalidRoute: not quitting' );
+			}
+		} );
+	}
+
+	isDifferentSection( path ) {
+		return this.stepSection && path &&
+			this.stepSection !== pathToSection( path );
+	}
+
+	skipIfInvalidContext( props, context ) {
+		const { when } = props;
+		const { branching, isValid, next, step, tour, tourVersion } = context;
+
+		this.setAnalyticsTimestamp( context );
+
+		if ( when && ! isValid( when ) ) {
+			const nextStepName = anyFrom( branching[ step ] );
+			const skipping = this.shouldSkipAnalytics();
+			next( { tour, tourVersion, step, nextStepName, skipping } );
+		}
+	}
+
+	setAnalyticsTimestamp( { step, shouldPause } ) {
+		if ( this.context.step !== step ||
+				( this.context.shouldPause && ! shouldPause ) ) {
+			this.lastTransitionTimestamp = Date.now();
+		}
+	}
+
+	shouldSkipAnalytics() {
+		return this.lastTransitionTimestamp &&
+			Date.now() - this.lastTransitionTimestamp < 500;
 	}
 
 	onScrollOrResize = debounce( () => {
@@ -142,13 +252,20 @@ export class Step extends Component {
 
 	setStepPosition( props, shouldScrollTo ) {
 		const { placement, target } = props;
-		const stepPos = getStepPosition( { placement, targetSlug: target, shouldScrollTo } );
+		const stepPos = getStepPosition( { placement, targetSlug: target, shouldScrollTo, scrollContainer: this.scrollContainer } );
 		const stepCoords = posToCss( stepPos );
 		this.setState( { stepPos, stepCoords } );
 	}
 
 	render() {
 		const { when, children } = this.props;
+		const { isLastStep } = this.context;
+
+		debug( 'Step#render' );
+		if ( this.context.shouldPause ) {
+			debug( 'Step: shouldPause' );
+			return null;
+		}
 
 		if ( when && ! this.context.isValid( when ) ) {
 			return null;
@@ -161,6 +278,8 @@ export class Step extends Component {
 			this.props.className,
 			'guided-tours__step',
 			'guided-tours__step-glow',
+			this.context.step === 'init' && 'guided-tours__step-first',
+			isLastStep && 'guided-tours__step-finish',
 			targetSlug && 'guided-tours__step-pointing',
 			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,
@@ -169,8 +288,10 @@ export class Step extends Component {
 			} ),
 		].filter( Boolean );
 
+		const style = { ...this.props.style, ...stepCoords };
+
 		return (
-			<Card className={ classNames( ...classes ) } style={ stepCoords } >
+			<Card className={ classNames( ...classes ) } style={ style } >
 				{ children }
 			</Card>
 		);
@@ -190,7 +311,9 @@ export class Next extends Component {
 	}
 
 	onClick = () => {
-		this.context.next( this.context.tour, this.props.step );
+		const { next, tour, tourVersion, step } = this.context;
+		const { step: nextStepName } = this.props;
+		next( { tour, tourVersion, step, nextStepName } );
 	}
 
 	render() {
@@ -217,7 +340,8 @@ export class Quit extends Component {
 
 	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
-		this.context.quit();
+		const { quit, tour, tourVersion, step, isLastStep } = this.context;
+		quit( { tour, tourVersion, step, isLastStep } );
 	}
 
 	render() {
@@ -248,11 +372,11 @@ export class Continue extends Component {
 	}
 
 	componentDidMount() {
-		! this.props.hidden && this.addTargetListener();
+		this.addTargetListener();
 	}
 
 	componentWillUnmount() {
-		! this.props.hidden && this.removeTargetListener();
+		this.removeTargetListener();
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
@@ -268,7 +392,9 @@ export class Continue extends Component {
 	}
 
 	onContinue = () => {
-		this.context.next( this.context.tour, this.props.step );
+		const { next, tour, tourVersion, step } = this.context;
+		const { step: nextStepName } = this.props;
+		next( { tour, tourVersion, step, nextStepName } );
 	}
 
 	addTargetListener() {
@@ -277,6 +403,7 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.addEventListener ) {
 			targetNode.addEventListener( 'click', this.onContinue );
+			targetNode.addEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
@@ -286,7 +413,16 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
 			targetNode.removeEventListener( 'click', this.onContinue );
+			targetNode.removeEventListener( 'touchstart', this.onContinue );
 		}
+	}
+
+	defaultMessage() {
+		return this.props.icon
+			? translate( 'Click the {{icon/}} to continue.', {
+				components: { icon: <Gridicon icon={ this.props.icon } size={ 24 } /> }
+			} )
+			: translate( 'Click to continue.' );
 	}
 
 	render() {
@@ -294,9 +430,21 @@ export class Continue extends Component {
 			return null;
 		}
 
-		return <i>{ this.props.children || translate( 'Click to continue.' ) }</i>;
+		return (
+			<p className="guided-tours__actionstep-instructions">
+				<em>{ this.props.children || this.defaultMessage() }</em>
+			</p>
+		);
 	}
 }
+
+export const ButtonRow = ( { children } ) => {
+	const className = React.Children.count( children ) === 1
+		? 'guided-tours__single-button-row'
+		: 'guided-tours__choice-button-row';
+
+	return <div className={ className }>{ children }</div>;
+};
 
 export class Link extends Component {
 	constructor( props ) {
@@ -314,31 +462,78 @@ export class Link extends Component {
 	}
 }
 
-//FIXME: where do these functions belong?
 export const makeTour = tree => {
-	const tour = ( { stepName, isValid, next, quit } ) =>
-		React.cloneElement( tree, {
-			stepName, isValid, next, quit,
-			branching: tourBranching( tree ),
-		} );
+	return class extends Component {
+		static propTypes = {
+			isValid: PropTypes.func.isRequired,
+			lastAction: PropTypes.object,
+			next: PropTypes.func.isRequired,
+			quit: PropTypes.func.isRequired,
+			shouldPause: PropTypes.bool.isRequired,
+			stepName: PropTypes.string.isRequired,
+		};
 
-	tour.propTypes = {
-		stepName: PropTypes.string.isRequired,
-		isValid: PropTypes.func.isRequired,
-		next: PropTypes.func.isRequired,
-		quit: PropTypes.func.isRequired,
-		branching: PropTypes.object.isRequired,
+		static childContextTypes = contextTypes;
+
+		static meta = omit( tree.props, 'children' );
+
+		getChildContext() {
+			return this.tourMeta;
+		}
+
+		constructor( props, context ) {
+			super( props, context );
+			this.setTourMeta( props );
+			debug( 'Anonymous#constructor', props, context );
+		}
+
+		componentWillReceiveProps( nextProps ) {
+			debug( 'Anonymous#componentWillReceiveProps' );
+			this.setTourMeta( nextProps );
+		}
+
+		setTourMeta( props ) {
+			const {
+				isValid,
+				lastAction,
+				next,
+				quit,
+				start,
+				sectionName,
+				shouldPause,
+				stepName,
+			} = props;
+			const step = stepName;
+			const branching = tourBranching( tree );
+			this.tourMeta = {
+				next, quit, start, isValid, lastAction, sectionName, shouldPause,
+				step,
+				branching,
+				isLastStep: this.isLastStep( { step, branching } ),
+				tour: tree.props.name,
+				tourVersion: tree.props.version,
+			};
+		}
+
+		isLastStep( { step, branching } ) {
+			return isEmpty( branching[ step ] );
+		}
+
+		render() {
+			return tree;
+		}
 	};
-	tour.meta = omit( tree.props, 'children' );
-	return tour;
 };
 
-export const combineTours = tours => {
-	const combined = ( props ) => {
-		const tour = tours[ props.tourName ];
-		return tour ? tour( props ) : null;
-	};
-	combined.meta = mapValues( tours, property( 'meta' ) );
-
-	return combined;
-};
+export const combineTours = tours => (
+	class AllTours extends Component {
+		static meta = mapValues( tours, property( 'meta' ) );
+		render() {
+			debug( 'AllTours#render' );
+			const MyTour = tours[ this.props.tourName ];
+			return MyTour
+				? <MyTour { ...omit( this.props, 'tourName' ) } />
+				: null;
+		}
+	}
+);

@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:me:sidebar' );
  * Internal dependencies
  */
 const Sidebar = require( 'layout/sidebar' ),
+	SidebarFooter = require( 'layout/sidebar/footer' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
@@ -20,8 +21,10 @@ const Sidebar = require( 'layout/sidebar' ),
 	userUtilities = require( 'lib/user/utils' );
 
 import Button from 'components/button';
+import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isHappychatAvailable } from 'state/happychat/selectors';
 
 const MeSidebar = React.createClass( {
 
@@ -50,7 +53,7 @@ const MeSidebar = React.createClass( {
 	},
 
 	render: function() {
-		const context = this.props.context;
+		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
 			'/me/security/two-step': 'security',
@@ -60,8 +63,9 @@ const MeSidebar = React.createClass( {
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
-			'/purchases': 'billing',
-			'/me/billing': 'billing',
+			[ purchasesPaths.purchasesRoot() ]: 'purchases',
+			[ purchasesPaths.billingHistory() ]: 'purchases',
+			[ purchasesPaths.addCreditCard() ]: 'purchases',
 			'/me/chat': 'happychat'
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
@@ -113,8 +117,8 @@ const MeSidebar = React.createClass( {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'billing' }
-							link="/purchases"
+							selected={ selected === 'purchases' }
+							link={ purchasesPaths.purchasesRoot() }
 							label={ this.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }
@@ -152,24 +156,9 @@ const MeSidebar = React.createClass( {
 							onNavigate={ this.onNavigate }
 						/>
 						{ this.renderNextStepsItem( selected ) }
-						<SidebarItem
-							selected={ selected === 'help' }
-							link={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
-							label={ this.translate( 'Help' ) }
-							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
-							icon="help-outline"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="help"
-						/>
-						{ config.isEnabled( 'happychat' ) && <SidebarItem
-								selected= { selected === 'happychat' }
-								link="/me/chat"
-								icon="comment"
-								label= { this.translate( 'Support Chat' ) }
-								preloadSectionName="happychat"
-								onNavigate={ this.onNavigate } /> }
 					</ul>
 				</SidebarMenu>
+				<SidebarFooter />
 			</Sidebar>
 		);
 	},
@@ -193,6 +182,7 @@ const MeSidebar = React.createClass( {
 function mapStateToProps( state ) {
 	return {
 		currentUser: getCurrentUser( state ),
+		isHappychatAvailable: isHappychatAvailable( state )
 	};
 }
 

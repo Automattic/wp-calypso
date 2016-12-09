@@ -1,48 +1,51 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import * as stats from 'reader/stats';
+import * as DiscoverHelper from 'reader/discover/helper';
 
-var SiteEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
-		return false;
-	},
-
-	recordAction: function() {
+const SiteEmptyContent = ( { translate } ) => {
+	const recordAction = () => {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
 		stats.recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
-	},
+	};
 
-	recordSecondaryAction: function() {
+	const recordSecondaryAction = () => {
 		stats.recordAction( 'clicked_recommendations_on_empty' );
 		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
 		stats.recordTrack( 'calypso_reader_recommendations_on_empty_site_stream_clicked' );
-	},
+	};
 
-	render: function() {
-		var action = discoverHelper.isDiscoverEnabled()
-		? (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null,
-			secondaryAction = (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
+	let action;
 
-		return ( <EmptyContent
-			title={ this.translate( 'No Posts' ) }
-			line={ this.translate( 'This site has not posted anything yet. Try back later.' ) }
+	if ( DiscoverHelper.isDiscoverEnabled() ) {
+		action = (
+			<a className="empty-content__action button is-primary"
+				onClick={ recordAction }
+				href="/discover">{ translate( 'Explore Discover' ) }</a> );
+	}
+
+	const secondaryAction = (
+		<a className="empty-content__action button"
+			onClick={ recordSecondaryAction }
+			href="/recommendations">{ translate( 'Get recommendations on who to follow' ) }</a> );
+
+	return ( <EmptyContent
+			title={ translate( 'No Posts' ) }
+			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
 			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
 			illustrationWidth={ 500 }
 			/> );
-	}
-} );
+};
 
-module.exports = SiteEmptyContent;
+export default localize( SiteEmptyContent );

@@ -24,6 +24,11 @@ import {
 	getHappychatConnectionStatus,
 	getHappychatTimeline
 } from 'state/happychat/selectors';
+import {
+	isExternal,
+	addSchemeIfMissing,
+	setUrlScheme,
+} from 'lib/url';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
@@ -37,10 +42,26 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		let href = url;
+		let rel = null;
+		let target = null;
+
+		if ( isExternal( url ) ) {
+			href = addSchemeIfMissing( href, 'http' );
+			rel = 'noopener noreferrer';
+			target = '_blank';
+		} else if ( typeof window !== 'undefined' ) {
+			// Force internal URLs to the current scheme to avoid a page reload
+			const scheme = window.location.protocol.replace( /:+$/, '' );
+			href = setUrlScheme( href, scheme );
+		}
+
 		if ( last < startIndex ) {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a key={ parts.length } href={ url } rel="noopener noreferrer" target="_blank">{ url }</a> );
+
+		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ href }</a> );
+
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
@@ -107,9 +128,11 @@ const groupMessages = messages => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-const welcomeMessage = () => (
+const welcomeMessage = ( { currentUserEmail } ) => (
 	<div className="happychat__welcome">
-		{ translate( 'Welcome to WordPress.com support chat!' ) }
+		<p>{ translate( 'Welcome to WordPress.com support chat! We\'ll send a transcript to %s at the end of the chat.', {
+			args: currentUserEmail
+		} ) }</p>
 	</div>
 );
 
@@ -153,7 +176,8 @@ const mapProps = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
-		isCurrentUser: ( { user_id } ) => user_id === current_user.ID
+		isCurrentUser: ( { user_id } ) => user_id === current_user.ID,
+		currentUserEmail: current_user.email
 	};
 };
 

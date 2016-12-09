@@ -9,7 +9,7 @@ import { each, pick, map } from 'lodash';
  * Internal dependencies
  */
 import formBase from './form-base';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'lib/protect-form';
 import config from 'config';
 import PressThisLink from './press-this-link';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
@@ -21,7 +21,8 @@ import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import QueryTerms from 'components/data/query-terms';
-import TaxonomyManager from 'blocks/taxonomy-manager';
+import QueryTaxonomies from 'components/data/query-taxonomies';
+import TaxonomyCard from './taxonomies/taxonomy-card';
 import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
@@ -29,7 +30,7 @@ import { isRequestingTermsForQuery, getTerms } from 'state/terms/selectors';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
 const SiteSettingsFormWriting = React.createClass( {
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		let writingAttributes = [
@@ -87,7 +88,7 @@ const SiteSettingsFormWriting = React.createClass( {
 			this.linkState( key ).requestChange( value );
 		} );
 
-		this.markChanged();
+		this.props.markChanged();
 	},
 
 	submitFormAndActivateCustomContentModule( event ) {
@@ -120,7 +121,14 @@ const SiteSettingsFormWriting = React.createClass( {
 	render: function() {
 		const markdownSupported = this.state.markdown_supported;
 		return (
-			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.props.markChanged }>
+				{ config.isEnabled( 'manage/site-settings/categories' ) &&
+					<div className="site-settings__taxonomies">
+						<QueryTaxonomies siteId={ this.props.siteId } postType="post" />
+						<TaxonomyCard taxonomy="category" postType="post" />
+						<TaxonomyCard taxonomy="post_tag" postType="post" />
+					</div>
+				}
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
 					<Button
 						compact
@@ -216,7 +224,6 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormFieldset>
 					}
 				</Card>
-				{ config.isEnabled( 'manage/site-settings/categories' ) && <TaxonomyManager taxonomy="category" /> }
 			</form>
 		);
 	}
@@ -239,4 +246,4 @@ export default connect(
 	{ requestPostTypes },
 	null,
 	{ pure: false }
-)( SiteSettingsFormWriting );
+)( protectForm( SiteSettingsFormWriting ) );

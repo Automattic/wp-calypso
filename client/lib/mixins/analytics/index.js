@@ -3,7 +3,7 @@
  */
 import analytics from 'lib/analytics';
 import { type as domainTypes } from 'lib/domains/constants';
-import snakeCase from 'lodash/snakeCase';
+import { snakeCase, endsWith } from 'lodash';
 
 const getDomainTypeText = function( domain ) {
 	switch ( domain.type ) {
@@ -19,6 +19,16 @@ const getDomainTypeText = function( domain ) {
 		case domainTypes.WPCOM:
 			return 'Wpcom Domain';
 	}
+};
+
+const getDomainTypeTextFromSearch = function( suggestion ) {
+	if ( suggestion.is_free ) {
+		if ( endsWith( suggestion.domain_name, '.blog' ) ) {
+			return 'dotblog_subdomain';
+		}
+		return 'wpcom_subdomain';
+	}
+	return 'domain_reg';
 };
 
 const EVENTS = {
@@ -135,6 +145,22 @@ const EVENTS = {
 					section
 				}
 			);
+		},
+
+		submitDomainStepSelection( suggestion, section ) {
+			const domainType = getDomainTypeTextFromSearch( suggestion );
+			analytics.ga.recordEvent(
+				'Domain Search',
+				`Submitted Domain Selection for a ${ domainType } on a Domain Registration`,
+				'Domain Name',
+				suggestion.domain_name
+			);
+
+			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', {
+				domain_name: suggestion.domain_name,
+				section,
+				type: domainType
+			} );
 		}
 	},
 

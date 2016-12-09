@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	SIGNUP_DEPENDENCY_STORE_RESET,
+	SIGNUP_COMPLETE_RESET,
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 } from 'state/action-types';
 
@@ -14,7 +14,7 @@ export default createReducer( {},
 		[ SIGNUP_DEPENDENCY_STORE_UPDATE ]: ( state = {}, action ) => {
 			return Object.assign( {}, state, action.data );
 		},
-		[ SIGNUP_DEPENDENCY_STORE_RESET ]: () => {
+		[ SIGNUP_COMPLETE_RESET ]: () => {
 			return {};
 		},
 	},

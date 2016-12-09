@@ -9,20 +9,25 @@ import {
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL
+	IMAGE_EDITOR_STATE_RESET_ALL,
+	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 
 // Doesn't reset image file info (src, fileName, etc).
-export function resetImageEditorState() {
+// additionalData can contain arbitrarily needed data.
+export function resetImageEditorState( additionalData = {} ) {
 	return {
-		type: IMAGE_EDITOR_STATE_RESET
+		type: IMAGE_EDITOR_STATE_RESET,
+		additionalData
 	};
 }
 
 // Resets image file info as well (src, fileName, etc).
-export function resetAllImageEditorState() {
+// additionalData can contain arbitrarily needed data.
+export function resetAllImageEditorState( additionalData = {} ) {
 	return {
-		type: IMAGE_EDITOR_STATE_RESET_ALL
+		type: IMAGE_EDITOR_STATE_RESET_ALL,
+		additionalData
 	};
 }
 
@@ -72,5 +77,11 @@ export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) 
 		leftRatio,
 		widthRatio,
 		heightRatio
+	};
+}
+
+export function setImageEditorImageHasLoaded() {
+	return {
+		type: IMAGE_EDITOR_IMAGE_HAS_LOADED
 	};
 }

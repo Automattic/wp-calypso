@@ -4,18 +4,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
-import { getDetailsUrl, getCustomizeUrl, getForumUrl, trackClick } from './helpers';
+import { getForumUrl, trackClick } from './helpers';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
-	isActivating,
-	hasActivated,
-	getCurrentTheme
-} from 'state/themes/current-theme/selectors';
+	getActiveTheme,
+	getTheme,
+	getThemeDetailsUrl,
+	getThemeCustomizeUrl,
+	isActivatingTheme,
+	hasActivatedTheme
+} from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 
 const ThanksModal = React.createClass( {
@@ -35,7 +40,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	onCloseModal() {
-		this.props.clearActivated();
+		this.props.clearActivated( this.props.site.ID );
 		this.setState( { show: false } );
 	},
 
@@ -57,16 +62,16 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderWpcomInfo() {
-		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
-				a: <a href={ getDetailsUrl( this.props.currentTheme, this.props.site ) }
-					onClick={ this.onLinkClick( 'features' ) }/>
+				a: <a href={ this.props.detailsUrl }
+					onClick={ this.onLinkClick( 'features' ) } />
 			}
 		} );
-		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
+		const customize = translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
-				a: <a href={ getCustomizeUrl( this.props.currentTheme, this.props.site ) }
-					onClick={ this.onLinkClick( 'customize' ) }/>
+				a: <a href={ this.props.customizeUrl }
+					onClick={ this.onLinkClick( 'customize' ) } />
 			}
 		} );
 		return (
@@ -75,10 +80,10 @@ const ThanksModal = React.createClass( {
 					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
-				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
+				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
 						a: <a href={ getForumUrl( this.props.currentTheme ) }
-							onClick={ this.onLinkClick( 'support' ) }/>
+							onClick={ this.onLinkClick( 'support' ) } />
 					}
 				} ) }
 			</li>
@@ -90,10 +95,10 @@ const ThanksModal = React.createClass( {
 		if ( themeUri ) {
 			return (
 				<li>
-					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
+					{ translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
 							a: <a href={ themeUri }
-								onClick={ this.onLinkClick( 'org theme' ) }/>
+								onClick={ this.onLinkClick( 'org theme' ) } />
 						}
 					} ) }
 				</li>
@@ -105,10 +110,10 @@ const ThanksModal = React.createClass( {
 		if ( authorUri ) {
 			return (
 				<li>
-					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
+					{ translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
 							a: <a href={ authorUri }
-								onClick={ this.onLinkClick( 'org author' ) }/>
+								onClick={ this.onLinkClick( 'org author' ) } />
 						}
 					} ) }
 				</li>
@@ -119,10 +124,10 @@ const ThanksModal = React.createClass( {
 	renderWporgForumInfo() {
 		return (
 			<li>
-				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
+				{ translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							onClick={ this.onLinkClick( 'org forum' ) }/>
+							onClick={ this.onLinkClick( 'org forum' ) } />
 					}
 				} ) }
 			</li>
@@ -153,7 +158,7 @@ const ThanksModal = React.createClass( {
 		return (
 			<div>
 				<h1>
-					{ this.translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
+					{ translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
 						args: { themeName, themeAuthor },
 						components: {
 							br: <br />
@@ -176,24 +181,37 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
+		const { currentTheme, hasActivated, isActivating } = this.props;
+		const visitSiteText = hasActivated ? translate( 'Visit site' ) : translate( 'Activating theme…' );
 		const buttons = [
-			{ action: 'back', label: this.translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, onClick: this.visitSite },
+			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
+			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! hasActivated, onClick: this.visitSite },
 		];
 
 		return (
-			<Dialog className="themes-thanks-modal" isVisible={ this.props.isActivating || this.props.hasActivated } buttons={ buttons } onClose={ this.onCloseModal } >
-				{ this.props.hasActivated ? this.renderContent() : this.renderLoading() }
+			<Dialog className="themes-thanks-modal"
+				isVisible={ isActivating || hasActivated }
+				buttons={ buttons }
+				onClose={ this.onCloseModal } >
+				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
 	},
 } );
 
 export default connect(
-	( state, props ) => ( {
-		isActivating: isActivating( state ),
-		hasActivated: hasActivated( state ),
-		currentTheme: getCurrentTheme( state, props.site ? props.site.ID : null )
-	} ),
+	( state, { site } ) => {
+		const siteIdOrWpcom = ( site && isJetpackSite( state, site.ID ) ) ? site.ID : 'wpcom';
+		const currentThemeId = site && getActiveTheme( state, site.ID );
+		const currentTheme = currentThemeId && getTheme( state, siteIdOrWpcom, currentThemeId );
+
+		return {
+			currentTheme,
+			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
+			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
+			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
+			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) )
+		};
+	},
 	{ clearActivated }
 )( ThanksModal );

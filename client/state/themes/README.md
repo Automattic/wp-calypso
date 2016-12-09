@@ -3,17 +3,9 @@ Theme Data
 
 Contains reducers, selectors, and action creators for themes, and the theme showcase.
 
-### current-theme/
-
-Manages data concerning each site's currently selected theme.
-
 ### theme-details/
 
 Provides details for a theme given its ID.
-
-### themes-last-query/
-
-Tracks the last themes query.
 
 ### themes-list/
 

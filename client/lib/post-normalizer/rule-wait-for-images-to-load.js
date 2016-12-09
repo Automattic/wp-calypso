@@ -7,7 +7,6 @@ import {
 	flow,
 	forEach,
 	map,
-	pick,
 	pull,
 	uniq
 } from 'lodash';
@@ -21,7 +20,12 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
 
 function convertImageToObject( image ) {
-	return pick( image, [ 'src', 'naturalWidth', 'naturalHeight' ] );
+	return {
+		src: image.src,
+		// use natural height and width
+		width: image.naturalWidth,
+		height: image.naturalHeight
+	};
 }
 
 function imageForURL( imageUrl ) {
@@ -57,6 +61,15 @@ export default function waitForImagesToLoad( post ) {
 			post.content_images = filter( map( post.content_images, function( image ) {
 				return find( post.images, { src: image.src } );
 			} ), Boolean );
+
+			// this adds adds height/width to images
+			post.content_media = map( post.content_media, ( media ) => {
+				if ( media.mediaType === 'image' ) {
+					const img = find( post.images, { src: media.src } );
+					return { ...media, ...img };
+				}
+				return media;
+			} );
 
 			resolve( post );
 		}

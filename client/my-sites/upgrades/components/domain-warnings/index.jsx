@@ -67,7 +67,7 @@ export default React.createClass( {
 		),
 			compactMessage = this.translate( 'Renew', { context: 'Call to action link for renewing an expiring/expired domain' } );
 		return (
-			<NoticeAction href={ purchasesPaths.list() }>
+			<NoticeAction href={ purchasesPaths.purchasesRoot() }>
 				{ this.props.isCompact ? compactMessage : fullMessage }
 			</NoticeAction>
 		);
@@ -97,10 +97,6 @@ export default React.createClass( {
 
 	wrongNSMappedDomains() {
 		debug( 'Rendering wrongNSMappedDomains' );
-
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
-			return null;
-		}
 
 		const wrongMappedDomains = this.getDomains().filter( domain =>
 			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom );

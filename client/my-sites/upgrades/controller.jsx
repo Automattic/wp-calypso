@@ -1,24 +1,34 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
-	qs = require( 'qs' ),
-	i18n = require( 'i18n-calypso' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' );
+import page from 'page';
+import qs from 'qs';
+import i18n from 'i18n-calypso';
+import ReactDom from 'react-dom';
+import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	Main = require( 'components/main' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
-	setSection = require( 'state/ui/actions' ).setSection,
-	productsList = require( 'lib/products-list' )(),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
+import analytics from 'lib/analytics';
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import Main from 'components/main';
+import upgradesActions from 'lib/upgrades/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { setSection } from 'state/ui/actions';
+import productsFactory from 'lib/products-list';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { canCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+
+/**
+ * Module variables
+ */
+const sites = sitesFactory();
+const productsList = productsFactory();
 
 module.exports = {
 
@@ -232,12 +242,16 @@ module.exports = {
 
 	redirectIfNoSite: function( redirectTo ) {
 		return function( context, next ) {
-			var selectedSite = sites.getSelectedSite();
-
-			if ( ! selectedSite || ! selectedSite.isUpgradeable() ) {
-				return page.redirect( redirectTo );
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+			const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+			if ( ! userCanManageOptions ) {
+				const user = getCurrentUser( state );
+				const visibleSiteCount = get( user, 'visible_site_count', 0 );
+				//if only one site navigate to stats to avoid redirect loop
+				const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
+				return page.redirect( redirect );
 			}
-
 			next();
 		};
 	},

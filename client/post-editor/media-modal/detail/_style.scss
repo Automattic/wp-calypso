@@ -54,12 +54,22 @@
 	max-height: 100%;
 	max-width: 100%;
 	transform: translate( -50%, -50% );
+
+	.spinner__border {
+		fill: transparent;
+	}
 }
 
 .editor-media-modal-detail__preview {
 	&.is-image {
 		width: auto;
 		height: auto;
+		transition: opacity 200ms ease-in-out;
+	}
+
+	&.is-uploading,
+	&.is-loading {
+		opacity: 0.5;
 	}
 }
 
@@ -100,26 +110,43 @@
 	}
 }
 
-.editor-media-modal-detail__edit {
-	font-weight: bold;
+.editor-media-modal-detail__edition-bar {
 	display: none;
+
 	&.is-desktop {
 		@include breakpoint( ">480px" ) {
 			display: block;
 			position: absolute;
-			top: 8px;
-			right: 8px;
+			    top: 8px;
+			    right: 8px;
+
+		    button {
+		    	margin-left: 8px;
+		    }
 		}
 	}
 
 	&.is-mobile {
 		@include breakpoint( "<480px" ) {
 			display: block;
-			width: 100%;
- 			margin-bottom: 16px;
+			button {
+				width: 48%;
+	 			margin-bottom: 8px;
+
+	 			&:first-child {
+	 				margin-right: 2%;
+	 			}
+
+	 			&:last-child {
+	 				margin-left: 2%;
+	 			}
+	 		}
 		}
 	}
 
+	button {
+		font-weight: bold;
+	}
 }
 
 .editor-media-modal-detail__sidebar {
@@ -152,6 +179,7 @@
 .editor-media-modal-detail__file-info tr {
 	display: block;
 	flex-basis: 50%;
+	width: 100%;
 }
 
 .editor-media-modal-detail__file-info th,
@@ -176,6 +204,10 @@
 
 	&::after {
 		@include long-content-fade( $color: $white );
+	}
+
+	span {
+		display: block;
 	}
 }
 

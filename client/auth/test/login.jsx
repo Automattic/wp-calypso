@@ -12,7 +12,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'LoginTest', function() {
-	let Login, loginStub, page, React, ReactDom, ReactInjection, TestUtils;
+	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
 
 	useFakeDom.withContainer();
 	useMockery( ( mockery ) => {
@@ -26,9 +26,9 @@ describe( 'LoginTest', function() {
 	before( () => {
 		React = require( 'react' );
 		ReactDom = require( 'react-dom' );
-		ReactInjection = require( 'react/lib/ReactInjection' );
+		ReactClass = require( 'react/lib/ReactClass' );
 		TestUtils = require( 'react-addons-test-utils' );
-		ReactInjection.Class.injectMixin( { translate: identity } );
+		ReactClass.injection.injectMixin( { translate: identity } );
 		Login = require( '../login.jsx' );
 		page = ReactDom.render( <Login />, useFakeDom.getContainer() );
 	} );

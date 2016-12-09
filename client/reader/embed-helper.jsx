@@ -24,7 +24,8 @@ var embedsConfig = {
 			}
 			return {
 				width: `${ width | 0 }px`,
-				height: `${ height | 0 }px`
+				height: `${ height | 0 }px`,
+				paddingRight: '1px', // this exists to solve a bug in safari that we found here: https://github.com/Automattic/wp-calypso/issues/8987
 			};
 		}
 	},

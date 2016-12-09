@@ -208,8 +208,7 @@ const Post = React.createClass( {
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader__post-title-link', true, rootNode ) ) {
-				stats.recordPermalinkClick( 'card_title_with_modifier' );
-				stats.recordGaEvent( 'Clicked Post Permalink with Modifier' );
+				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
@@ -226,7 +225,7 @@ const Post = React.createClass( {
 		}
 
 		// ignore clicks on anchors inside inline content
-		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader__full-post-content', true, rootNode ) ) {
+		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-full-post__story-content', true, rootNode ) ) {
 			return;
 		}
 
@@ -364,7 +363,7 @@ const Post = React.createClass( {
 				{ shouldUseFullExcerpt
 					? <EmbedContainer>
 							<div key="full-post-inline"
-								className="reader__full-post-content"
+								className="reader-full-post__story-content"
 								dangerouslySetInnerHTML={ // eslint-disable-line react/no-danger
 									{ __html: post.content }
 								} />

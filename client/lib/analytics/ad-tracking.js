@@ -37,6 +37,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
 	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
+	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -44,7 +45,9 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563',
 		criteo: '31321',
-		quantcast: 'p-3Ma3jHaQMB_bS'
+		quantcast: 'p-3Ma3jHaQMB_bS',
+		yahooProjectId: '10000',
+		yahooPixelId: '10014088'
 	},
 
 	// For converting other currencies into USD for tracking purposes
@@ -54,7 +57,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		JPY: 125,
 		AUD: 1.35,
 		CAD: 1.35,
-		GBP: 0.75
+		GBP: 0.75,
+		BRL: 2.55
 	};
 
 /**
@@ -118,6 +122,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -252,14 +259,20 @@ function recordOrder( cart, orderId ) {
 
 	// Purchase tracking happens in one of three ways:
 
-	// 1. Fire a tracking event for each product purchased
+	// 1. Fire one tracking event that includes details about the entire order
+	recordOrderInAtlas( cart, orderId );
+	recordOrderInCriteo( cart, orderId );
+
+	// This has to come before we add the items to the Google Analytics cart
+	recordOrderInGoogleAnalytics( cart, orderId );
+
+	// 2. Fire a tracking event for each product purchased
 	cart.products.forEach( product => {
 		recordProduct( product, orderId );
 	} );
 
-	// 2. Fire one tracking event that includes details about each product purchased
-	recordOrderInAtlas( cart, orderId );
-	recordOrderInCriteo( cart, orderId );
+	// Ensure we submit the cart to Google Analytics
+	window.ga( 'ecommerce:send' );
 
 	// 3. Fire a single tracking event without any details about what was purchased
 	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
@@ -310,13 +323,18 @@ function recordProduct( product, orderId ) {
 
 		// Bing
 		if ( isSupportedCurrency( product.currency ) ) {
-			window.uetq.push( {
+			const bingParams = {
 				ec: 'purchase',
 				gv: costUSD
-			} );
+			};
+			if ( isJetpackPlan ) {
+				// `el` must be included only for jetpack plans
+				bingParams.el = 'jetpack';
+			}
+			window.uetq.push( bingParams );
 		}
 
-		// Google
+		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
 				google_conversion_id: GOOGLE_CONVERSION_ID,
@@ -334,9 +352,17 @@ function recordProduct( product, orderId ) {
 			} );
 		}
 
-		// Quantcast
-		// Note that all properties have to be strings or they won't get tracked
+		// Google Analytics
+		window.ga( 'ecommerce:addItem', {
+			id: orderId,
+			name: product.product_slug,
+			price: product.cost,
+			currency: product.currency
+		} );
+
 		if ( isSupportedCurrency( product.currency ) ) {
+			// Quantcast
+			// Note that all properties have to be strings or they won't get tracked
 			window._qevents.push( {
 				qacct: TRACKING_IDS.quantcast,
 				labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
@@ -344,6 +370,25 @@ function recordProduct( product, orderId ) {
 				revenue: costUSD.toString(),
 				event: 'refresh'
 			} );
+
+			// Yahoo
+			// Like the Quantcast tracking above, the price has to be passed as a string
+			// See: https://developer.yahoo.com/gemini/guide/dottags/installing-tags/
+
+			/*global YAHOO*/
+			YAHOO.ywa.I13N.fireBeacon( [ {
+				projectId: TRACKING_IDS.yahooProjectId,
+				properties: {
+					pixelId: TRACKING_IDS.yahooPixelId,
+					qstrings: {
+						et: 'custom',
+						ec: 'wordpress.com',
+						ea: 'purchase',
+						el: product.product_slug,
+						gv: costUSD.toString()
+					}
+				}
+			} ] );
 		}
 	} catch ( err ) {
 		debug( 'Unable to save purchase tracking data', err );
@@ -504,6 +549,28 @@ function criteoSiteType() {
 	}
 
 	return 'd';
+}
+
+/**
+ * Records an order in Google Analytics
+ *
+ * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInGoogleAnalytics( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	window.ga( 'ecommerce:addTransaction', {
+		id: orderId,
+		affiliation: 'WordPress.com',
+		revenue: cart.total_cost,
+		currency: cart.currency
+	} );
 }
 
 /**

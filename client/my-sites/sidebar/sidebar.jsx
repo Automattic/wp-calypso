@@ -1,65 +1,72 @@
 /**
  * External dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:my-sites:sidebar' ),
-	has = require( 'lodash/has' ),
-	includes = require( 'lodash/includes' ),
-	React = require( 'react' );
-
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	CurrentSite = require( 'my-sites/current-site' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
-	Gridicon = require( 'components/gridicon' ),
-	productsValues = require( 'lib/products-values' ),
-	PublishMenu = require( './publish-menu' ),
-	Sidebar = require( 'layout/sidebar' ),
-	SidebarHeading = require( 'layout/sidebar/heading' ),
-	SidebarItem = require( 'layout/sidebar/item' ),
-	SidebarMenu = require( 'layout/sidebar/menu' ),
-	SidebarRegion = require( 'layout/sidebar/region' ),
-	SiteStatsStickyLink = require( 'components/site-stats-sticky-link' );
-
+import analytics from 'lib/analytics';
 import Button from 'components/button';
+import config from 'config';
+import CurrentSite from 'my-sites/current-site';
+import Gridicon from 'components/gridicon';
+import productsValues from 'lib/products-values';
+import PublishMenu from './publish-menu';
+import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
+import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
+import SidebarRegion from 'layout/sidebar/region';
+import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { userCan } from 'lib/site/utils';
+import { isJetpackSite } from 'state/sites/selectors';
 
-export const MySitesSidebar = React.createClass( {
-	propTypes: {
-		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		setLayoutFocus: React.PropTypes.func.isRequired,
-		path: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		currentUser: React.PropTypes.object,
-	},
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:my-sites:sidebar' );
 
-	componentDidMount: function() {
+export class MySitesSidebar extends Component {
+
+	static propTypes = {
+		setNextLayoutFocus: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		path: PropTypes.string,
+		sites: PropTypes.object,
+		currentUser: PropTypes.object,
+		isJetpack: PropTypes.bool,
+	};
+
+	componentDidMount() {
 		debug( 'The sidebar React component is mounted.' );
-	},
+	}
 
-	onNavigate: function() {
+	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
-	},
+	};
 
-	onPreviewSite( event ) {
+	onPreviewSite = ( event ) => {
 		const site = this.getSelectedSite();
 		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
 			event.preventDefault();
 			this.props.setLayoutFocus( 'preview' );
 		}
-	},
+	};
 
-	itemLinkClass: function( paths, existingClasses ) {
+	itemLinkClass = ( paths, existingClasses ) => {
 		var classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
@@ -75,9 +82,9 @@ export const MySitesSidebar = React.createClass( {
 		classSet.selected = this.isItemLinkSelected( paths );
 
 		return classNames( classSet );
-	},
+	};
 
-	isItemLinkSelected: function( paths ) {
+	isItemLinkSelected( paths ) {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
 		}
@@ -85,39 +92,39 @@ export const MySitesSidebar = React.createClass( {
 		return paths.some( function( path ) {
 			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
-	},
+	}
 
-	isSingle: function() {
+	isSingle() {
 		return !! ( this.props.sites.getSelectedSite() || this.props.sites.get().length === 1 );
-	},
+	}
 
-	getSingleSiteDomain: function() {
+	getSingleSiteDomain() {
 		if ( this.props.sites.selected ) {
 			return this.getSelectedSite().slug;
 		}
 
 		return this.props.sites.getPrimary().slug;
-	},
+	}
 
-	getSelectedSite: function() {
+	getSelectedSite() {
 		if ( this.props.sites.get().length === 1 ) {
 			return this.props.sites.getPrimary();
 		}
 
 		return this.props.sites.getSelectedSite();
-	},
+	}
 
-	hasJetpackSites: function() {
+	hasJetpackSites() {
 		return this.props.sites.get().some( function( site ) {
 			return site.jetpack;
 		} );
-	},
+	}
 
-	siteSuffix: function() {
+	siteSuffix() {
 		return this.isSingle() ? '/' + this.getSingleSiteDomain() : '';
-	},
+	}
 
-	publish: function() {
+	publish() {
 		return (
 			<PublishMenu site={ this.getSelectedSite() }
 				sites={ this.props.sites }
@@ -126,9 +133,9 @@ export const MySitesSidebar = React.createClass( {
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
-	},
+	}
 
-	stats: function() {
+	stats() {
 		var site = this.getSelectedSite();
 
 		if ( site && ! site.capabilities ) {
@@ -143,31 +150,29 @@ export const MySitesSidebar = React.createClass( {
 			<li className={ this.itemLinkClass( '/stats', 'stats' ) }>
 				<SiteStatsStickyLink onClick={ this.onNavigate }>
 					<Gridicon icon="stats-alt" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Stats' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Stats' ) }</span>
 				</SiteStatsStickyLink>
 			</li>
 		);
-	},
+	}
 
-	ads: function() {
-		var site = this.getSelectedSite(),
-			adsLink = '/ads/earnings' + this.siteSuffix();
-
-		if ( ! site || ! site.options.wordads ) {
-			return null;
-		}
+	ads() {
+		const site = this.getSelectedSite();
+		const adsLink = '/ads/earnings' + this.siteSuffix();
+		const canManageAds = site && site.options.wordads && userCan( 'manage_options', site );
 
 		return (
+			canManageAds &&
 			<SidebarItem
-				label={ site.jetpack ? 'AdControl' : 'WordAds' }
+				label={ site.jetpack ? 'Ads' : 'WordAds' }
 				className={ this.itemLinkClass( '/ads', 'rads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
 				icon="speaker" />
 		);
-	},
+	}
 
-	themes: function() {
+	themes() {
 		var site = this.getSelectedSite(),
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			themesLink;
@@ -190,7 +195,7 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'Themes' ) }
+				label={ this.props.translate( 'Themes' ) }
 				tipTarget="themes"
 				className={ this.itemLinkClass( '/design', 'themes' ) }
 				link={ themesLink }
@@ -198,14 +203,14 @@ export const MySitesSidebar = React.createClass( {
 				icon="themes"
 				preloadSectionName="themes"
 			>
-				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
-					{ this.translate( 'Customize' ) }
+				<SidebarButton href={ this.props.customizeUrl } preloadSectionName="customize">
+					{ this.props.translate( 'Customize' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
-	},
+	}
 
-	menus: function() {
+	menus() {
 		var site = this.getSelectedSite(),
 			menusLink = '/menus' + this.siteSuffix(),
 			showClassicLink = ! config.isEnabled( 'manage/menus' );
@@ -233,19 +238,23 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ this.translate( 'Menus' ) }
+				label={ this.props.translate( 'Menus' ) }
 				className={ this.itemLinkClass( '/menus', 'menus' ) }
 				link={ menusLink }
 				onNavigate={ this.onNavigate }
 				icon="menus"
 				preloadSectionName="menus" />
 		);
-	},
+	}
 
-	plugins: function() {
+	plugins() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
 			addPluginsLink;
+
+		if ( config.isEnabled( 'automated-transfer' ) ) {
+			addPluginsLink = '/plugins/browse' + this.siteSuffix();
+		}
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
 			if ( ! this.isSingle() ) {
@@ -267,7 +276,7 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'Plugins' ) }
+				label={ this.props.translate( 'Plugins' ) }
 				className={ this.itemLinkClass( '/plugins', 'plugins' ) }
 				link={ pluginsLink }
 				onNavigate={ this.onNavigate }
@@ -275,13 +284,13 @@ export const MySitesSidebar = React.createClass( {
 				preloadSectionName="plugins"
 			>
 				<SidebarButton href={ addPluginsLink }>
-					{ this.translate( 'Add' ) }
+					{ this.props.translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
-	},
+	}
 
-	upgrades: function() {
+	upgrades() {
 		var site = this.getSelectedSite(),
 			domainsLink = '/domains/manage' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix();
@@ -308,7 +317,7 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'Domains' ) }
+				label={ this.props.translate( 'Domains' ) }
 				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
 				link={ domainsLink }
 				onNavigate={ this.onNavigate }
@@ -316,13 +325,13 @@ export const MySitesSidebar = React.createClass( {
 				preloadSectionName="upgrades"
 			>
 				<SidebarButton href={ addDomainLink }>
-					{ this.translate( 'Add' ) }
+					{ this.props.translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
-	},
+	}
 
-	plan: function() {
+	plan() {
 		if ( ! config.isEnabled( 'manage/plans' ) ) {
 			return null;
 		}
@@ -360,7 +369,7 @@ export const MySitesSidebar = React.createClass( {
 		let planName = site.plan.product_name_short;
 
 		if ( productsValues.isFreeTrial( site.plan ) ) {
-			planName = this.translate( 'Trial', {
+			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.'
 			} );
 		}
@@ -369,21 +378,21 @@ export const MySitesSidebar = React.createClass( {
 			<li className={ this.itemLinkClass( [ '/plans' ], linkClass ) }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
 					<Gridicon icon="clipboard" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'Plan', { context: 'noun' } ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Plan', { context: 'noun' } ) }</span>
 				</a>
 				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick }>{ planName }</a>
 			</li>
 		);
-	},
+	}
 
-	trackUpgradeClick: function() {
+	trackUpgradeClick = () => {
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default'
 		} );
 		this.onNavigate();
-	},
+	};
 
-	sharing: function() {
+	sharing() {
 		var site = this.getSelectedSite(),
 			sharingLink = '/sharing' + this.siteSuffix();
 
@@ -413,16 +422,16 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'Sharing' ) }
+				label={ this.props.translate( 'Sharing' ) }
 				className={ this.itemLinkClass( '/sharing', 'sharing' ) }
 				link={ sharingLink }
 				onNavigate={ this.onNavigate }
 				icon="share"
 				preloadSectionName="sharing" />
 		);
-	},
+	}
 
-	users: function() {
+	users() {
 		var site = this.getSelectedSite(),
 			usersLink = '/people/team' + this.siteSuffix(),
 			addPeopleLink = '/people/new' + this.siteSuffix();
@@ -451,7 +460,7 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'People' ) }
+				label={ this.props.translate( 'People' ) }
 				className={ this.itemLinkClass( '/people', 'users' ) }
 				link={ usersLink }
 				onNavigate={ this.onNavigate }
@@ -459,13 +468,13 @@ export const MySitesSidebar = React.createClass( {
 				preloadSectionName="people"
 			>
 				<SidebarButton href={ addPeopleLink }>
-					{ this.translate( 'Add' ) }
+					{ this.props.translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
-	},
+	}
 
-	siteSettings: function() {
+	siteSettings() {
 		var site = this.getSelectedSite(),
 			siteSettingsLink = '/settings/general' + this.siteSuffix();
 
@@ -483,51 +492,68 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<SidebarItem
-				label={ this.translate( 'Settings' ) }
+				label={ this.props.translate( 'Settings' ) }
 				className={ this.itemLinkClass( '/settings', 'settings' ) }
 				link={ siteSettingsLink }
 				onNavigate={ this.onNavigate }
 				icon="cog"
-				preloadSectionName="settings" />
+				preloadSectionName="settings"
+				tipTarget="settings" />
 		);
-	},
+	}
 
-	wpAdmin: function() {
-		var site = this.getSelectedSite(),
-			currentUser = this.props.currentUser;
+	wpAdmin() {
+		var site = this.getSelectedSite();
 
 		if ( ! site.options ) {
 			return null;
 		}
 
-		// only skip wpadmin for non-vip
-		if ( ! site.is_vip ) {
-			// safety check for nested attribute
-			if ( ! has( currentUser, 'meta.data.flags.active_flags' ) ) {
-				return null;
-			}
+		// Ignore Jetpack sites as they've opted into this interface.
+		if ( this.props.isJetpack ) {
+			return null;
+		}
 
-			if ( ! includes( currentUser.meta.data.flags.active_flags, 'wpcom-use-wpadmin-flows' ) ) {
-				return null;
-			}
+		if ( ! this.useWPAdminFlows() ) {
+			return null;
 		}
 
 		return (
 			<li className="wp-admin">
 				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank" rel="noopener noreferrer">
 					<Gridicon icon="my-sites" size={ 24 } />
-					<span className="menu-link-text">{ this.translate( 'WP Admin' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
 					<span className="noticon noticon-external" />
 				</a>
 			</li>
 		);
-	},
+	}
 
-	trackWpadminClick: function() {
+	// Check for cases where WP Admin links should appear, where we need support for legacy reasons (VIP, older users, testing).
+	useWPAdminFlows() {
+		const site = this.getSelectedSite();
+		const currentUser = this.props.currentUser;
+		const userRegisteredDate = new Date( currentUser.date );
+		const cutOffDate = new Date( '2015-09-07' );
+
+		// VIP sites should always show a WP Admin link regardless of the current user.
+		if ( site.is_vip ) {
+			return true;
+		}
+
+		// User registered before the cut-off date of September 7, 2015 and we want to support them as legacy users.
+		if ( userRegisteredDate < cutOffDate ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	trackWpadminClick = () => {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked WP Admin' );
-	},
+	};
 
-	vip: function() {
+	vip() {
 		var site, viplink;
 
 		if ( ! config.isEnabled( 'vip' ) ) {
@@ -544,13 +570,13 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/updates', 'sidebar__vip' ) } >
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Updates' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Updates' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	vipDeploys: function() {
+	vipDeploys() {
 		var site, viplink;
 
 		if ( ! config.isEnabled( 'vip/deploys' ) ) {
@@ -567,13 +593,13 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/deploys', 'sidebar__vip-deploys' ) } >
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Deploys' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Deploys' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	vipBilling: function() {
+	vipBilling() {
 		var site, viplink;
 
 		if ( ! config.isEnabled( 'vip/billing' ) ) {
@@ -590,13 +616,13 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/billing', 'sidebar__vip-billing' ) }>
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Billing' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Billing' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	vipSupport: function() {
+	vipSupport() {
 		var viplink;
 
 		if ( ! config.isEnabled( 'vip/support' ) ) {
@@ -608,13 +634,13 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/support', 'sidebar__vip-support' ) }>
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Support' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Support' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	vipBackups: function() {
+	vipBackups() {
 		var site, viplink;
 
 		if ( ! config.isEnabled( 'vip/backups' ) ) {
@@ -631,13 +657,13 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/backups', 'sidebar__vip-backups' ) }>
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Backups' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Backups' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	vipLogs: function() {
+	vipLogs() {
 		var site, viplink;
 
 		if ( ! config.isEnabled( 'vip/logs' ) ) {
@@ -654,33 +680,33 @@ export const MySitesSidebar = React.createClass( {
 		return (
 			<li className={ this.itemLinkClass( '/vip/logs', 'sidebar__vip-logs' ) }>
 				<a href={ viplink } >
-					<span className="menu-link-text">{ this.translate( 'Logs' ) }</span>
+					<span className="menu-link-text">{ this.props.translate( 'Logs' ) }</span>
 				</a>
 			</li>
 		);
-	},
+	}
 
-	focusContent: function() {
+	focusContent = () => {
 		this.props.setLayoutFocus( 'content' );
-	},
+	};
 
-	addNewSite: function() {
+	addNewSite() {
 		if ( this.props.currentUser.visible_site_count > 1 ) {
 			return null;
 		}
 
 		return (
-			<Button compact borderless
+			<Button borderless
 				className="my-sites-sidebar__add-new-site"
 				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
 				onClick={ this.focusContent }
 			>
-				<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
+				<Gridicon icon="add-outline" /> { this.props.translate( 'Add New Site' ) }
 			</Button>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		var publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
@@ -718,7 +744,7 @@ export const MySitesSidebar = React.createClass( {
 
 				{ publish
 					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Publish' ) }</SidebarHeading>
+						<SidebarHeading>{ this.props.translate( 'Publish' ) }</SidebarHeading>
 						{ this.publish() }
 					</SidebarMenu>
 					: null
@@ -726,7 +752,7 @@ export const MySitesSidebar = React.createClass( {
 
 				{ appearance
 					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Personalize' ) }</SidebarHeading>
+						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>
 							{ this.themes() }
 							{ this.menus() }
@@ -737,7 +763,7 @@ export const MySitesSidebar = React.createClass( {
 
 				{ configuration
 					? <SidebarMenu>
-						<SidebarHeading>{ this.translate( 'Configure' ) }</SidebarHeading>
+						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
 							{ this.ads() }
 							{ this.sharing() }
@@ -757,13 +783,16 @@ export const MySitesSidebar = React.createClass( {
 			</Sidebar>
 		);
 	}
-} );
+}
 
 function mapStateToProps( state ) {
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		currentUser: getCurrentUser( state ),
+		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
+		isJetpack: isJetpackSite( state, selectedSiteId )
 	};
 }
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( MySitesSidebar );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( localize( MySitesSidebar ) );

@@ -24,6 +24,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-weight: 600;
 	margin-bottom: 20px;
 	display: -webkit-box;
+	letter-spacing: 0.01em;
 	max-height: 22px;
 	overflow: hidden;
 	position: relative;
@@ -134,6 +135,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card-v2__meta {
 		display: flex;
 		margin-bottom: 13px;
+		z-index: 1;
 	}
 
 	.reader-related-card-v2__post {
@@ -200,6 +202,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__excerpt {
 			font-size: 14px;
+		}
+	}
+
+	&.has-excerpt {
+
+		.reader-related-card-v2__title {
+			margin-bottom: 10px;
 		}
 	}
 }
@@ -336,6 +345,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__byline-author {
 	margin-top: -5px;
+	word-break: break-word;
 }
 
 .reader-related-card-v2__byline-site {
@@ -365,6 +375,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-bottom: 12px;
 	margin-top: -4px;
 	padding: 0;
+	z-index: 1;
 
 	.gridicon__follow {
 		fill: $blue-medium;
@@ -390,13 +401,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			color: $alert-green;
 		}
 	}
-
-	@media ( max-width: 535px ) {
-		margin-right: 10px;
-	}
 }
 
 .reader-related-card-v2__featured-image {
+	border: 1px solid lighten( $gray, 20% );
 	display: block;
 	height: 80px;
 
@@ -423,7 +431,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-size: 16px;
 	font-weight: 700;
 	line-height: 1.4;
-	margin-bottom: 10px;
 }
 
 .reader-related-card-v2__excerpt {
@@ -441,7 +448,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		overflow : hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
-		-webkit-line-clamp: 10;
 		-webkit-box-orient: vertical;
 		max-height: none;
 	}
@@ -458,6 +464,10 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		&::after {
 			content: none;
 		}
+	}
+
+	.reader-related-card-v2__featured-image {
+		border: 0;
 	}
 
 	.reader-related-card-v2__site-info {
@@ -493,4 +503,15 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card-v2__byline-site {
 		margin-top: 4px;
 	}
+}
+
+// Targets RP cards on Devdocs
+.is-section-devdocs .reader-related-card-v2__blocks.is-same-site {
+	border: 0;
+	padding-top: 0;
+}
+
+.is-section-devdocs .reader-related-card-v2__blocks.is-other-site {
+	margin-top: 20px;
+	padding-top: 20px;
 }

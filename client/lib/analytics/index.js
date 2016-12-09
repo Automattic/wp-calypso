@@ -29,7 +29,7 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?54' ); // W_JS_VER
+loadScript( '//stats.wp.com/w.js?55' ); // W_JS_VER
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {
@@ -250,6 +250,10 @@ var analytics = {
 					};
 				}
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
+
+				// Load the Ecommerce Plugin
+				window.ga( 'require', 'ecommerce' );
+
 				analytics.ga.initialized = true;
 			}
 		},

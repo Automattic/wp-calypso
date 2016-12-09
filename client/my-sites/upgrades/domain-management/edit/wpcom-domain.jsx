@@ -20,6 +20,26 @@ const WpcomDomain = React.createClass( {
 		this.recordEvent( 'navigationClick', 'Edit Site Address', this.props.domain );
 	},
 
+	getEditSiteAddressBlock() {
+		/**
+		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
+		 */
+		if ( this.props.domain.name.match( /\.\w+\.blog$/ ) ) {
+			return null;
+		}
+
+		return (
+			<VerticalNav>
+				<VerticalNavItem
+					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
+					external={ true }
+					onClick={ this.handleEditSiteAddressClick }>
+					{ this.translate( 'Edit Site Address' ) }
+				</VerticalNavItem>
+			</VerticalNav>
+		);
+	},
+
 	render() {
 		return (
 			<div>
@@ -36,15 +56,7 @@ const WpcomDomain = React.createClass( {
 						</Property>
 					</Card>
 				</div>
-
-				<VerticalNav>
-					<VerticalNavItem
-						path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ this.props.selectedSite.ID }` }
-						external={ true }
-						onClick={ this.handleEditSiteAddressClick }>
-						{ this.translate( 'Edit Site Address' ) }
-					</VerticalNavItem>
-				</VerticalNav>
+				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
 	}

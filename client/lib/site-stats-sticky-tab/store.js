@@ -54,6 +54,10 @@ function saveMyPlace( tab, slug ) {
 			newPlace.tab = 'day';
 		}
 
+		if ( newPlace.slug === '' && _cachedPlace.tab === 'insights' && ! newPlace.tab ) {
+			newPlace.tab = 'day';
+		}
+
 		// Something changed, update the in-memory copy
 		_cachedPlace = merge( _cachedPlace, newPlace );
 

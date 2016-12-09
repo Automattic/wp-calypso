@@ -16,13 +16,16 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
-	GoogleApps = require( 'components/upgrades/google-apps' ),
-	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
+	{ getSurveyVertical } = require( 'state/signup/steps/survey/selectors.js' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' ),
 	getUsernameSuggestion = require( 'lib/signup/step-actions' ).getUsernameSuggestion;
+
+import { abtest, getABTestVariation } from 'lib/abtest';
+
+import Notice from 'components/notice';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
@@ -30,10 +33,6 @@ const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 const DomainsStep = React.createClass( {
 	contextTypes: {
 		store: React.PropTypes.object
-	},
-
-	showGoogleApps: function() {
-		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
 
 	showDomainSearch: function() {
@@ -68,23 +67,10 @@ const DomainsStep = React.createClass( {
 
 		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
 
-		if ( this.props.step.suggestion &&
-			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
-			// overwrite the Google Apps data if the user goes back and selects a different domain
-			stepData.googleAppsForm = undefined;
-		}
-
 		SignupActions.saveSignupStep( stepData );
 
-		const isPurchasingItem = Boolean( suggestion.product_slug );
-
 		defer( () => {
-			// we must defer here because `submitWithDomain` also dispatches an action
-			if ( isPurchasingItem ) {
-				this.showGoogleApps();
-			} else {
-				this.submitWithDomain();
-			}
+			this.submitWithDomain();
 		} );
 	},
 
@@ -126,6 +112,8 @@ const DomainsStep = React.createClass( {
 					productSlug: suggestion.product_slug
 				} )
 				: undefined;
+
+		registerDomainAnalytics.recordEvent( 'submitDomainStepSelection', suggestion, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
@@ -170,24 +158,14 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
-	googleAppsForm: function() {
-		return (
-			<div className="domains-step__section-wrapper">
-				<GoogleApps
-					productsList={ productsList }
-					domain={ this.props.step.suggestion.domain_name }
-					onGoBack={ this.showDomainSearch }
-					onClickSkip={ this.submitWithDomain }
-					onAddGoogleApps={ this.submitWithDomain }
-					onSave={ this.handleSave.bind( this, 'googleAppsForm' ) }
-					initialState={ this.props.step.googleAppsForm }
-					analyticsSection="signup" />
-			</div>
-		);
-	},
-
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+
+		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' ) ||
+			(
+				getABTestVariation( 'noSurveyStep' ) === 'showSurveyStep' &&
+				abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain'
+			);
 
 		return (
 			<RegisterDomainStep
@@ -203,8 +181,10 @@ const DomainsStep = React.createClass( {
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
+				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
+				surveyVertical={ this.props.surveyVertical }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
@@ -237,10 +217,6 @@ const DomainsStep = React.createClass( {
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
-		}
-
-		if ( 'google' === this.props.stepSectionName ) {
-			content = this.googleAppsForm();
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -276,6 +252,7 @@ const DomainsStep = React.createClass( {
 module.exports = connect( ( state ) => {
 	return {
 		// no user = DOMAINS_WITH_PLANS_ONLY
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
+		surveyVertical: getSurveyVertical( state ),
 	};
 } ) ( DomainsStep );

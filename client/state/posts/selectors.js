@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, get, includes, isEqual, omit, some } from 'lodash';
+import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import moment from 'moment-timezone';
 
@@ -445,4 +445,11 @@ export function getPostPreviewUrl( state, siteId, postId ) {
 	}
 
 	return previewUrl;
+}
+
+export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
+	return filter( getSitePosts( state, siteId ), post => {
+		return post.terms && post.terms[ taxonomy ] &&
+			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
+	} );
 }

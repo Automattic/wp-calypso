@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	DOMAIN_PURCHASE,
+	DOMAIN_PURCHASE_PENDING_TRANSFER,
 	DOMAIN_PURCHASE_EXPIRED,
 	DOMAIN_PURCHASE_INCLUDED_IN_PLAN,
 	DOMAIN_MAPPING_PURCHASE,
@@ -59,6 +60,10 @@ describe( 'index', () => {
 
 		it( 'should be cancelable when the purchase can have auto-renew disabled', () => {
 			expect( isCancelable( PLAN_PURCHASE ) ).to.be.true;
+		} );
+
+		it( 'should not be cancelable if domain is pending transfer', () => {
+			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).to.be.false;
 		} );
 	} );
 } );

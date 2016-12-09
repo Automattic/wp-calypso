@@ -5,13 +5,13 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	qs = require( 'qs' ),
 	page = require( 'page' );
+import SocialLogo from 'social-logos';
 
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	Gridicon = require( 'components/gridicon' ),
 	sitesList = require( 'lib/sites-list' )(),
 	stats = require( 'reader/stats' ),
-	SocialLogo = require( 'components/social-logo' ),
 	SitesPopover = require( 'components/sites-popover' ),
 	sections = require( 'sections-preload' );
 
@@ -72,6 +72,10 @@ function buildQuerystringForPost( post ) {
 
 const ReaderShare = React.createClass( {
 
+	propTypes: {
+		iconSize: React.PropTypes.number
+	},
+
 	getInitialState() {
 		return { showingMenu: false };
 	},
@@ -79,7 +83,8 @@ const ReaderShare = React.createClass( {
 	getDefaultProps() {
 		return {
 			position: 'top',
-			tagName: 'li'
+			tagName: 'li',
+			iconSize: 24
 		};
 	},
 
@@ -169,7 +174,7 @@ const ReaderShare = React.createClass( {
 			ref: 'shareButton' },
 			[
 				( <span key="button" ref="shareButton" className={ buttonClasses }>
-					<Gridicon icon="share" size={ 24 } />
+					<Gridicon icon="share" size={ this.props.iconSize } />
 					<span className="reader-share__button-label">{ this.translate( 'Share', { comment: 'Share the post' } ) }</span>
 				</span> ),
 				( this.state.showingMenu &&

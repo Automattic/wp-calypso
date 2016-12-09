@@ -53,7 +53,7 @@ export default React.createClass( {
 	},
 
 	focus() {
-		var node = ReactDom.findDOMNode( this.refs.input );
+		const node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		scrollIntoViewport( node );
 	},

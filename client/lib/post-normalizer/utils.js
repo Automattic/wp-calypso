@@ -58,6 +58,12 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		parsedURL.query.strip = 'info'; // strip all exif data, leave ICC intact
 	}
 
+	// make a new query object with keys in a known order
+	parsedURL.query = Object.keys( parsedURL.query ).sort().reduce( ( memo, key ) => {
+		memo[ key ] = parsedURL.query[ key ];
+		return memo;
+	}, {} );
+
 	return url.format( parsedURL );
 }
 
@@ -86,13 +92,22 @@ export function domForHtml( html ) {
 	return dom;
 }
 
+/** Determine if url is likely pointed to an image
+ * @param {string} uri - a url
+ * @returns {boolean} - true or false depending on if it is probably an image (has the right extension)
+ */
+export function isUrlLikelyAnImage( uri ) {
+	const withoutQuery = url.parse( uri ).pathname;
+	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ext => endsWith( withoutQuery, ext ) );
+}
+
 /**
  * Determine if a post thumbnail is likely an image
  * @param  {object} thumb the thumbnail object from a post
  * @return {boolean}       whether or not we think this is an image
  */
 export function thumbIsLikelyImage( thumb ) {
-	if ( ! thumb ) {
+	if ( ! thumb || ! thumb.URL ) {
 		return false;
 	}
 	// this doesn't work because jetpack 4.2 lies
@@ -100,9 +115,47 @@ export function thumbIsLikelyImage( thumb ) {
 	//if ( startsWith( thumb.mime_type, 'image/' ) ) {
 	//	return true;
 	// }
+	return isUrlLikelyAnImage( thumb.URL );
+}
 
-	const { pathname } = url.parse( thumb.URL, true, true );
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], function( ext ) {
-		return endsWith( pathname, ext );
+/**
+ * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
+ * them a free-er sandbox
+ */
+export function iframeIsWhitelisted( iframe ) {
+	const iframeWhitelist = [
+		'youtube.com',
+		'youtube-nocookie.com',
+		'videopress.com',
+		'vimeo.com',
+		'cloudup.com',
+		'soundcloud.com',
+		'8tracks.com',
+		'spotify.com',
+		'me.sh',
+		'bandcamp.com',
+		'kickstarter.com',
+		'facebook.com',
+		'embed.itunes.apple.com'
+	];
+
+	const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+	return some( iframeWhitelist, function( whitelistedSuffix ) {
+		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );
+}
+
+export function isCandidateForCanonicalImage( image ) {
+	if ( ! image ) {
+		return false;
+	}
+
+	if ( image.width < 350 ) {
+		return false;
+	}
+
+	if ( ( image.width * image.height ) < 30000 ) {
+		return false;
+	}
+	return true;
 }

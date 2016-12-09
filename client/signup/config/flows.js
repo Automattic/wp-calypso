@@ -27,7 +27,18 @@ function getSiteDestination( dependencies ) {
 		return getCheckoutUrl( dependencies );
 	}
 
-	return 'https://' + dependencies.siteSlug;
+	let protocol = 'https';
+
+	/**
+	 * It is possible that non-wordpress.com sites are not HTTPS ready.
+	 *
+	 * Redirect them
+	 */
+	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+		protocol = 'http';
+	}
+
+	return protocol + '://' + dependencies.siteSlug;
 }
 
 function getPostsDestination( dependencies ) {
@@ -47,7 +58,7 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -59,7 +70,7 @@ const flows = {
 	},
 
 	premium: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -71,7 +82,7 @@ const flows = {
 	},
 
 	free: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
 		lastModified: '2016-06-02'
@@ -84,29 +95,36 @@ const flows = {
 		lastModified: '2016-01-27'
 	},
 
+	subdomain: {
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'Provide a vertical for subdomains',
+		lastModified: '2016-10-31'
+	},
+
 	main: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
 	},
 
 	sitetitle: {
-		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
 	},
 
 	website: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
 		lastModified: '2016-05-23'
 	},
 
 	blog: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
 		lastModified: '2016-05-23'
@@ -136,21 +154,21 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go through this flow receive a blogging-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go through this flow receive a website-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	desktop: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2016-05-30'
@@ -164,7 +182,7 @@ const flows = {
 	},
 
 	pressable: {
-		steps: [ 'survey', 'design-type-with-store', 'themes', 'domains', 'plans', 'survey-user' ],
+		steps: [ 'survey', 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for testing the pressable-store step',
 		lastModified: '2016-06-27'
@@ -176,11 +194,19 @@ const flows = {
 	},
 
 	'get-dot-blog': {
-		steps: [ 'get-dot-blog-survey', 'get-dot-blog-themes', 'get-dot-blog-plans' ],
+		steps: [ 'get-dot-blog-themes', 'get-dot-blog-plans' ],
 		destination: getSiteDestination,
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
-		lastModified: '2016-10-03'
-	}
+		lastModified: '2016-11-14'
+	},
+
+	userfirst: {
+		steps: [ 'user' ],
+		destination: '/start',
+		description: 'User-first signup flow',
+		lastModified: '2016-11-29',
+		autoContinue: true,
+	},
 };
 
 if ( config( 'env' ) === 'development' ) {
@@ -249,6 +275,11 @@ const Flows = {
 	getFlow( flowName, currentStepName = '' ) {
 		let flow = Flows.getFlows()[ flowName ];
 
+		// if the flow couldn't be found, return early
+		if ( ! flow ) {
+			return flow;
+		}
+
 		if ( user.get() ) {
 			flow = removeUserStepFromFlow( flow );
 		}
@@ -289,6 +320,15 @@ const Flows = {
 			return;
 		}
 
+		/**
+		 * This is called on Signup start (page initialization),
+		 * before the steps are rendered. Used if there is a need
+		 * to filter the first step in the flow.
+		 */
+		if ( '' === stepName ) {
+			abtest( 'noSurveyStep' );
+		}
+
 		if ( 'main' === flowName ) {
 			if ( 'survey' === stepName ) {
 				abtest( 'siteTitleStep' );
@@ -314,6 +354,11 @@ const Flows = {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
 				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
 			}
+		}
+
+		// no matter the flow
+		if ( getABTestVariation( 'noSurveyStep' ) === 'hideSurveyStep' ) {
+			return Flows.removeStepFromFlow( 'survey', flow );
 		}
 
 		return flow;
@@ -350,6 +395,15 @@ const Flows = {
 		}
 
 		return flow;
+	},
+
+	removeStepFromFlow( stepName, flow ) {
+		return {
+			...flow,
+			steps: flow.steps.filter( ( step ) => {
+				return step !== stepName;
+			} )
+		};
 	}
 };
 

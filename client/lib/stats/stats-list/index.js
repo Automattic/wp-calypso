@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var Emitter = require( 'lib/mixins/emitter'),
-	debug = require( 'debug' )( 'calypso:stats-list' );
+var debug = require( 'debug' )( 'calypso:stats-list' );
 
 /**
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
+	Emitter = require( 'lib/mixins/emitter'),
 	statsParser = require( './stats-parser' )(),
 	analytics = require( 'lib/analytics' );
 

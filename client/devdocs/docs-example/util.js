@@ -1,3 +1,14 @@
+/* eslint-disable no-console */
+
+/**
+ * External dependencies
+ */
+import debug from 'debug';
+
+/**
+ * Module variables
+ */
+const log = debug( 'calypso:docs-example:util' );
 
 const getComponentName = docsExample => {
 	if ( ! docsExample ) {
@@ -17,7 +28,7 @@ const getComponentName = docsExample => {
 
 const slugToCamelCase = name => {
 	if ( ! name ) {
-		console.warn( 'name is not defined' );
+		log( 'name is not defined' );
 		return console.trace();
 	}
 
@@ -28,7 +39,7 @@ const slugToCamelCase = name => {
 
 const camelCaseToSlug = name => {
 	if ( ! name ) {
-		console.warn( 'name is not defined' );
+		log( 'name is not defined' );
 		return console.trace();
 	}
 

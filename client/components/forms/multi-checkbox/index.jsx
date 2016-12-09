@@ -1,40 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	debug = require( 'debug' )( 'calypso:forms:multi-checkbox' );
+import React, { Component, PropTypes } from 'react';
+import { includes, omit } from 'lodash';
 
-var MultiCheckbox = module.exports = React.createClass({
-	displayName: 'MultiCheckbox',
+export default class MultiCheckbox extends Component {
+	static propTypes = {
+		checked: PropTypes.array,
+		defaultChecked: PropTypes.array,
+		disabled: PropTypes.bool,
+		onChange: PropTypes.func,
+		options: PropTypes.array.isRequired,
+		name: PropTypes.string,
+	};
 
-	propTypes: {
-		defaultChecked: React.PropTypes.array,
-		onChange: React.PropTypes.func,
-		disabled: React.PropTypes.bool
-	},
+	static defaultProps = {
+		defaultChecked: Object.freeze( [] ),
+		disabled: false,
+		onChange: () => {},
+		name: 'multiCheckbox'
+	};
 
-	getInitialState: function() {
-		return { initialChecked: this.props.defaultChecked };
-	},
+	state = {
+		initialChecked: this.props.defaultChecked
+	};
 
-	getDefaultProps: function() {
-		return {
-			defaultChecked: Object.freeze( [] ),
-			onChange: function() {},
-			disabled: false
-		};
-	},
-
-	componentWillMount: function() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	},
-
-	handleChange: function( event ) {
-		var target = event.target,
-			checked = this.props.checked || this.state.initialChecked;
-
-		checked = checked.concat( [ target.value ] ).filter( function( currentValue ) {
+	handleChange = ( event ) => {
+		const target = event.target;
+		let checked = this.props.checked || this.state.initialChecked;
+		checked = checked.concat( [ target.value ] ).filter( ( currentValue ) => {
 			return currentValue !== target.value || target.checked;
 		} );
 
@@ -43,24 +37,27 @@ var MultiCheckbox = module.exports = React.createClass({
 		} );
 
 		event.stopPropagation();
-	},
+	};
 
-	getCheckboxElements: function() {
-		var checked = this.props.checked || this.state.initialChecked;
-
-		return this.props.options.map( function( option ) {
-			var isChecked = checked.indexOf( option.value ) !== -1;
-
-			return (
-				<label key={ option.value }>
-					<input name={ this.props.name + '[]' } type="checkbox" value={ option.value } checked={ isChecked } onChange={ this.handleChange } disabled={ this.props.disabled } />
-					<span>{ option.label }</span>
-				</label>
-			);
-		}, this );
-	},
-
-	render: function() {
-		return <div className="form-checkbox-group" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>{ this.getCheckboxElements() }</div>;
+	render() {
+		const { disabled, name, options } = this.props;
+		const checked = this.props.checked || this.state.initialChecked;
+		return (
+			<div className="multi-checkbox" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>
+				{ options.map( ( option ) => (
+					<label key={ option.value }>
+						<input
+							name={ name + '[]' }
+							type="checkbox"
+							value={ option.value }
+							checked={ includes( checked, option.value ) }
+							onChange={ this.handleChange }
+							disabled={ disabled }
+						/>
+						<span>{ option.label }</span>
+					</label>
+				) ) }
+			</div>
+		);
 	}
-} );
+}

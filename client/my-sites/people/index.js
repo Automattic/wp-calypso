@@ -34,7 +34,7 @@ module.exports = function() {
 		}
 
 		page(
-			'/people/edit/:user_login/:site_id',
+			'/people/edit/:site_id/:user_login',
 			peopleController.enforceSiteEnding,
 			controller.siteSelection,
 			controller.navigation,

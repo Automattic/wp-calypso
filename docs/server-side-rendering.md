@@ -3,7 +3,7 @@ Server-side Rendering
 
 Server-side rendering is great for SEO, as well as progressive enhancement. When rendering on the server, we have a special set of constraints that we need to follow when building components and libraries.
 
-tl;dr: Don't depend on the DOM/BOM; make sure your initial render is synchronous; don't mutate class variables; add the `/** @ssr-ready **/` pragma.
+tl;dr: Don't depend on the DOM/BOM; make sure your initial render is synchronous; don't mutate class variables; add a test to `renderToString` your server-side rendered page.
 
 #### React Components
 
@@ -20,6 +20,10 @@ React components used on the server will be rendered to HTML by being passed to 
 * Libraries that are used on the server should be mindful of the DOM not being available on the server, and should either: be modified to work without the DOM; have non-DOM specific fallbacks; or fail in an obvious manner.
 * Singletons should be avoided, as once instantiated they will persist for the entire duration of the `node` process.
 
+### Tests
+
+In order to ensure that no module down the dependency chain breaks server-side rendering of your Calypso section or page, you should add a test to `renderToString` it. This way, when another developer modifies a dependency of your section in a way that would break server-side rendering, they'll be notified by a failed test.
+
 ### Run different code on the client
 
 Occasionally, it may be necessary to conditionally do something client-specific inside an individual source file. This is quite useful for libraries that are heavily DOM dependent, and require a different implementation on the server. Don't do this for React components, as it will likely cause reconciliation errors — factor out your dependencies instead.
@@ -32,13 +36,9 @@ Here's how your module's `package.json` should look, if you really want to do th
 }
 ```
 
-You may also need to add the module to the SSR pragma `IGNORED_MODULES` [list](https://github.com/Automattic/wp-calypso/blob/master/server/pragma-checker/index.js), since the client-specific parts cannot be marked `/** @ssr-ready **/`.
+### Stubbing a module on the server side
 
-### Marking your code as compatible with server-side rendering
-
-When you're satisfied that your component or library will render on the server, mark it and its dependencies as SSR-ready by inserting `/** @ssr-ready **/` at the top of the file. This will signal to the `PragmaChecker` webpack plugin that your file's dependencies should be checked. It also communicates to other developers that your code is going to be rendered on the server, so should be modified with care.
-
-If you know that your code will never be called on the server, instead of adding `/** @ssr-ready **/`, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
+If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
 
 ### I want to server-side render my components!
 

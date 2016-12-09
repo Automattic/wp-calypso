@@ -22,13 +22,13 @@ var PostImage = React.createClass( {
 			} ),
 			content_images: React.PropTypes.arrayOf( React.PropTypes.shape( {
 				src: React.PropTypes.string.isRequired,
-				naturalWidth: React.PropTypes.number,
-				naturalHeight: React.PropTypes.number
+				width: React.PropTypes.number,
+				height: React.PropTypes.number
 			} ) ),
 			images: React.PropTypes.arrayOf( React.PropTypes.shape( {
 				src: React.PropTypes.string.isRequired,
-				naturalWidth: React.PropTypes.number,
-				naturalHeight: React.PropTypes.number
+				width: React.PropTypes.number,
+				height: React.PropTypes.number
 			} ) )
 		} )
 	},

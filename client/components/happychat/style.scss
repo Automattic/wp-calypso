@@ -52,6 +52,10 @@
 	right: 12px;
 	font-size: 14px;
 	display: none;		/* disabled */
+	box-sizing: border-box;
+
+	transform: translateZ(0);
+	backface-visibility: hidden;
 
 	.happychat__title {
 		height: auto;
@@ -96,6 +100,11 @@
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
+
+	.spinner {
+		margin: 16px 0;
+	}
+
 }
 
 .happychat__welcome {
@@ -132,6 +141,83 @@
 
 	}
 
+}
+
+
+/**
+ * Minimize animation
+ */
+
+.layout .happychat .happychat__container.is-open.is-minimizing {
+	box-shadow: none;
+	border-top: 1px solid lighten( $gray, 20% );
+	border-left: 1px solid lighten( $gray, 20% );
+	border-right: 1px solid lighten( $gray, 20% );
+	background: lighten( $gray, 30% );
+	animation: happychat-minimize .5s 1 forwards;
+
+	> .happychat__loading,
+	> .happychat__composer,
+	> .happychat__welcome,
+	> .happychat__conversation,
+	> .happychat__title .happychat__active-toolbar * {
+		visibility: hidden;
+	}
+
+	> .happychat__title {
+		transform: translateZ(0);
+		position: relative;
+		animation: happychat-disappear .1s 1 forwards;
+	}
+
+}
+
+@keyframes happychat-disappear {
+	0% {
+		top: 0px;
+	}
+	50% {
+		top: 4px;
+	}
+	100% {
+		top: -47px;
+	}
+}
+
+@keyframes happychat-minimize {
+	0% {
+		max-height: 220px;
+		bottom: 0px;
+	}
+	99%, 100% {
+		right: calc( 100% - 229px ); // small sidebar
+		width: 34px;
+		max-height: 34px;
+		bottom: 0px;
+	}
+	100% {
+		max-height: 0;
+		bottom: -34px;
+	}
+}
+
+@include breakpoint( ">960px" ) {
+	@keyframes happychat-minimize {
+		0% {
+			max-height: 100%;
+			bottom: 0px;
+		}
+		99%, 100% {
+			right: calc( 100% - 273px ); // large sidebar
+			width: 34px;
+			max-height: 34px;
+			bottom: 0px;
+		}
+		100% {
+			max-height: 0;
+			bottom: -34px;
+		}
+	}
 }
 
 
@@ -365,7 +451,7 @@
 
 	// add space in the main column for the docked sidebar
 	.has-chat .layout__content {
-		padding: 32px 304px;
+		padding: 79px 304px 32px;
 	}
 
 	// adjust when scoll arrows show up in stats insights when panel is open
@@ -376,7 +462,7 @@
 
 	// adjust themes page to accomodate docked sidebar
 	.has-chat.is-section-theme .layout__content {
-		padding: 32px 0;
+		padding: 79px 0 32px;
 	}
 
 	.has-chat.is-section-theme .theme__sheet {
@@ -389,7 +475,7 @@
 
 	// add space in the editor for the docked sidebar
 	.has-chat.is-group-editor .layout__content {
-		padding: 0 272px 0 0;
+		padding: 47px 272px 0 0;
 	}
 
 	.has-chat.is-group-editor .editor__header,
@@ -413,6 +499,12 @@
 	.has-chat.is-group-editor .editor__switch-mode {
 	    right: 32px;
 	}
+
+	// make space in customizer
+	.has-chat .main.customize.is-iframe {
+		right: 272px;
+	}
+
 }
 
 @include breakpoint( ">1280px" ) {
@@ -431,7 +523,7 @@
 
 @include breakpoint( "480px-1040px" ) {
 
-	.layout:not( .is-section-chat ) {
+	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
 			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
 			width: 280px;
@@ -469,7 +561,7 @@
 }
 
 @include breakpoint( "<480px" ) {
-	.layout:not( .is-section-chat ) {
+	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
 			right: 0;
 		}

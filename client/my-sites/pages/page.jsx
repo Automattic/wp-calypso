@@ -25,8 +25,15 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
-import { isFrontPage } from 'state/pages/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { hasStaticFrontPage } from 'state/sites/selectors';
+import {
+	isFrontPage,
+	isPostsPage,
+} from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
+import { userCan } from 'lib/site/utils';
+import { updateSitesList } from './helpers';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -103,13 +110,19 @@ const Page = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, updateSitesList );
 	},
 
 	getSetAsHomepageItem: function() {
+		if ( ! this.props.selectedSiteId ) {
+			return null;
+		}
+
 		const isPublished = this.props.page.status === 'publish';
 
-		if ( ! isPublished || this.props.isFrontPage ) {
+		if ( ! isPublished || this.props.isFrontPage ||
+			! config.isEnabled( 'manage/pages/set-homepage' ) ||
+			! userCan( 'edit_theme_options', this.props.site ) ) {
 			return null;
 		}
 
@@ -127,6 +140,10 @@ const Page = React.createClass( {
 
 	getViewItem: function() {
 		if ( this.props.page.status === 'trash' ) {
+			return null;
+		}
+
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
 		}
 
@@ -206,6 +223,10 @@ const Page = React.createClass( {
 	},
 
 	getEditItem: function() {
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
@@ -219,6 +240,10 @@ const Page = React.createClass( {
 	},
 
 	getSendToTrashItem: function() {
+		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
@@ -297,6 +322,45 @@ const Page = React.createClass( {
 		}
 
 		const setAsHomepageItem = this.getSetAsHomepageItem();
+		const viewItem = this.getViewItem();
+		const publishItem = this.getPublishItem();
+		const editItem = this.getEditItem();
+		const restoreItem = this.getRestoreItem();
+		const sendToTrashItem = this.getSendToTrashItem();
+		const moreInfoItem = this.popoverMoreInfo();
+		const hasSeparatedItems = (
+			viewItem || publishItem || editItem ||
+			restoreItem || sendToTrashItem || moreInfoItem
+		);
+		const hasPopoverItems = setAsHomepageItem || hasSeparatedItems;
+		const setHomepageMenuSeparator = ( setAsHomepageItem && hasSeparatedItems ) ? <MenuSeparator /> : null;
+		const popoverMenu = hasPopoverItems ? (
+			<PopoverMenu
+				isVisible={ this.state.showPageActions }
+				onClose={ this.togglePageActions }
+				position={ 'bottom left' }
+				context={ this.refs && this.refs.popoverMenuButton }
+			>
+				{ setAsHomepageItem }
+				{ setHomepageMenuSeparator }
+				{ viewItem }
+				{ publishItem }
+				{ editItem }
+				{ restoreItem }
+				{ sendToTrashItem }
+				{ moreInfoItem }
+			</PopoverMenu>
+		) : null;
+		const ellipsisGridicon = hasPopoverItems ? (
+			<Gridicon
+			icon="ellipsis"
+			className={ classNames( {
+				'page__actions-toggle': true,
+				'is-active': this.state.showPageActions
+			} ) }
+			onClick={ this.togglePageActions }
+			ref="popoverMenuButton" />
+		) : null;
 
 		return (
 			<CompactCard className="page">
@@ -312,30 +376,10 @@ const Page = React.createClass( {
 					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
+				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
-				<Gridicon
-					icon="ellipsis"
-					className={ classNames( {
-						'page__actions-toggle': true,
-						'is-active': this.state.showPageActions
-					} ) }
-					onClick={ this.togglePageActions }
-					ref="popoverMenuButton" />
-				<PopoverMenu
-					isVisible={ this.state.showPageActions }
-					onClose={ this.togglePageActions }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					{ setAsHomepageItem }
-					{ setAsHomepageItem ? <MenuSeparator /> : null }
-					{ this.getViewItem() }
-					{ this.getPublishItem() }
-					{ this.getEditItem() }
-					{ this.getRestoreItem() }
-					{ this.getSendToTrashItem() }
-					{ this.popoverMoreInfo() }
-				</PopoverMenu>
+				{ ellipsisGridicon }
+				{ popoverMenu }
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
@@ -375,7 +419,10 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID )
+			selectedSiteId: getSelectedSiteId( state ),
+			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
+			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
+			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {

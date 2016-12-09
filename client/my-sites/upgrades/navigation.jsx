@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Dispatcher from 'dispatcher';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +24,7 @@ const PlansNavigation = React.createClass( {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired,
-		sitePlans: React.PropTypes.object.isRequired
+		] ).isRequired
 	},
 
 	getInitialState() {
@@ -54,6 +54,7 @@ const PlansNavigation = React.createClass( {
 		const path = sectionify( this.props.path );
 		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
 		const sectionTitle = path.split( '?' )[ 0 ].replace( /\//g, ' ' );
+		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 
 		return (
 			<SectionNav
@@ -69,13 +70,13 @@ const PlansNavigation = React.createClass( {
 					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' || path === '/plans/monthly' }>
 						{ this.translate( 'Plans' ) }
 					</NavItem>
-					{ ! isJetpack &&
+					{ ! isJetpack && userCanManageOptions &&
 						<NavItem path={ `/domains/manage/${ site.slug }` } key="domains"
 							selected={ path === '/domains/manage' || path === '/domains/add' }>
 							{ this.translate( 'Domains' ) }
 						</NavItem>
 					}
-					{ ! isJetpack &&
+					{ ! isJetpack && userCanManageOptions &&
 						<NavItem path={ `/domains/manage/email/${ site.slug }` } key="googleApps"
 							selected={ path === '/domains/manage/email' }>
 							{ this.translate( 'G Suite' ) }
@@ -110,7 +111,6 @@ const PlansNavigation = React.createClass( {
 
 		return (
 			<PopoverCart
-				sitePlans={ this.props.sitePlans }
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.toggleCartVisibility }

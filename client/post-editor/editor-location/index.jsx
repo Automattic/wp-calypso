@@ -9,9 +9,10 @@ const React = require( 'react' ),
  */
 const PostActions = require( 'lib/posts/actions' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	Notice = require( 'components/notice' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
+
+import Notice from 'components/notice';
 
 /**
  * Module variables

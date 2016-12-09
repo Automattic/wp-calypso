@@ -45,6 +45,7 @@
 
 	.all-sites-icon {
 		display: inline-block;
+		margin: 0;
 	}
 
 	.plugin-install-button__install {
@@ -84,15 +85,19 @@
 .plugin-site-network__network_disabled {
 	width: 100%;
 	height: 32px;
-	margin-top: -16px;
-	display: inline-block;
+	display: flex;
 	position: relative;
+		top: 16px;
+		right: 8px;
 
 	.plugin-site-disabled-manage {
-		width: calc( 100% - 24px );
 		right: 8px;
 		display: flex;
 		justify-content: space-between;
+	}
+
+	.plugin-site-disabled-manage__label {
+		line-height: 1.6;
 	}
 }
 
@@ -105,10 +110,7 @@
 }
 
 .foldable-card__action .plugin-site-network__network_disabled .plugin-site-disabled-manage {
-	position: absolute;
-		top: 8px;
-		right: 16px;
-	width: 215px;
+	position: relative;
 	line-height: 32px;
 }
 

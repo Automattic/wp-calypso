@@ -1,44 +1,8 @@
-%clear-text {
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
 %noticon {
-	@extend %clear-text;
+	@include clear-text;
 	display: inline-block;
 	font: normal 16px/1 Noticons;
 	vertical-align: middle;
-}
-
-%container {
-	position: relative;
-	margin-bottom: 6%;
-	padding: 0 20px 12px;
-	background: $white;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.075);
-
-	@include clear-fix;
-
-	ul,
-	ol {
-		font-size: 14px;
-		margin-bottom: 4px;
-	}
-
-	@include breakpoint( "<480px" ) {
-		margin-left: .25em;
-		margin-right: .25em;
-	}
-}
-
-%container-header {
-	background: $gray-light;
-	padding: 13px 20px 10px;
-	margin: 0 -20px;
-	min-height: 37px;
-	font-size: 14px;
-	line-height: 135%;
-	border-bottom: 1px solid #EBF0F2;
 }
 
 %placeholder {
@@ -65,28 +29,6 @@
 		right: 0;
 		z-index: z-index( 'root', '.stats-module.is-loading .module-header-title::after' );
 	}
-}
-
-%placeholder-icon {
-
-	.stats-module.is-loading & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.stats-module.is-loading &:hover::before,
-	.stats-module.is-loading &::before,
-	.stats-module.is-loading &:hover,
-	.stats-module.is-loading & {
-		color: $gray-light;
-		fill: $gray-light;
-	}
-}
-
-%heading {
-	color: darken( $gray, 20% );
-	font-size: 2rem;
-	font-weight: 300;
-	margin: 1em 0;
 }
 
 %mobile-link-element {

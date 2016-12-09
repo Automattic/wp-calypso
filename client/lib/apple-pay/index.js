@@ -7,7 +7,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const MERCHANT_IDENTIFIER = 'merchant.com.wordpress';
 
 const recordApplePayStatusEvent = canMakePaymentsWithActiveCard => recordTracksEvent( 'calypso_apple_pay_status', {
-	canMakePaymentsWithActiveCard
+	can_make_payments_with_active_card: canMakePaymentsWithActiveCard
 } );
 
 export const recordApplePayStatus = () => dispatch => {

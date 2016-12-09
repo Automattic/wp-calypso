@@ -80,11 +80,6 @@ describe( 'utils', () => {
 
 				const isListsEqual = actualDatesList.equals( sortedDatesList );
 
-				if ( ! isListsEqual ) {
-					// hint what are the nodes involved
-					console.error( 'Bad child nodes', childNodesList );
-				}
-
 				expect( isListsEqual ).to.be.true;
 
 				if ( isListsEqual ) {

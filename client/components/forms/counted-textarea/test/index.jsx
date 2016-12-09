@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
+	ReactClass = require( 'react/lib/ReactClass' ),
 	TestUtils = require( 'react-addons-test-utils' ),
 	expect = require( 'chai' ).expect,
 	i18n = require( 'i18n-calypso' );
@@ -11,7 +11,7 @@ describe( 'index', function() {
 	var CountedTextarea, renderer;
 
 	before( function() {
-		ReactInjection.Class.injectMixin( i18n.mixin );
+		ReactClass.injection.injectMixin( i18n.mixin );
 		CountedTextarea = require( '../' );
 	} );
 

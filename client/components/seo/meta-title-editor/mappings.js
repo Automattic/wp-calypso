@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 // Maps between different title format formats
 //
 // raw from API is

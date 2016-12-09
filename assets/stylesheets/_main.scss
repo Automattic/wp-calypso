@@ -256,7 +256,7 @@ html.iframed {
 
 .noticon:before,
 .noticon:after {
-	@extend %clear-text;
+	@include clear-text;
 
 	font-family: Noticons;
 	line-height: 1;

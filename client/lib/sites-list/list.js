@@ -33,7 +33,6 @@ function SitesList() {
 	this.fetched = false; // false until data comes from api
 	this.fetching = false;
 	this.selected = null;
-	this.lastSelected = null;
 	this.propagateChange = this.propagateChange.bind( this );
 }
 
@@ -328,30 +327,6 @@ SitesList.prototype.getSelectedOrAll = function() {
  */
 SitesList.prototype.getSelectedSite = function() {
 	return this.getSite( this.selected );
-};
-
-/**
- * Return the last selected site or false
- *
- * @api public
- */
-SitesList.prototype.getLastSelectedSite = function() {
-	return this.getSite( this.lastSelected );
-};
-
-/**
- * Resets the selected site
- *
- * @api public
- */
-SitesList.prototype.resetSelectedSite = function() {
-	if ( ! this.selected ) {
-		return;
-	}
-
-	this.lastSelected = this.selected;
-	this.selected = null;
-	this.emit( 'change' );
 };
 
 /**

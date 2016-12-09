@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
 * Functions for working with theme search filters. The filter syntax is
 * {taxonomy}:{term}
@@ -181,6 +179,13 @@ const taxonomies = {
 };
 /* eslint-enable */
 
+/**
+ * @return {Object} [taxonomies][terms]
+ */
+export function getTaxonomies( ) {
+	return taxonomies;
+}
+
 let termTable;
 let ambiguousTerms;
 
@@ -319,7 +324,8 @@ export function getSortedFilterTerms( input ) {
  * @return {string} input string minus any filters
  */
 export function stripFilters( input ) {
-	return input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+	const withoutFilters = input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+	return withoutFilters.replace( /\s+/g, ' ' );
 }
 
 export function getSubjects() {

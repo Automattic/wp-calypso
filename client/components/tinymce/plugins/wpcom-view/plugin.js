@@ -432,10 +432,8 @@ function wpview( editor ) {
 				// Returning false stops the ugly bars from appearing in IE11 and stops the view being selected as a range in FF.
 				// Unfortunately, it also inhibits the dragging of views to a new location.
 				return false;
-			} else {
-				if ( event.type === 'touchend' || event.type === 'mousedown' ) {
-					deselect();
-				}
+			} else if ( event.type === 'touchend' || event.type === 'mousedown' ) {
+				deselect();
 			}
 
 			if ( event.type === 'touchend' && scrolled ) {
@@ -637,13 +635,11 @@ function wpview( editor ) {
 				if ( view.previousSibling ) {
 					if ( getView( view.previousSibling ) ) {
 						setViewCursor( false, view.previousSibling );
+					} else if ( dom.isEmpty( view.previousSibling ) && key === VK.BACKSPACE ) {
+						dom.remove( view.previousSibling );
 					} else {
-						if ( dom.isEmpty( view.previousSibling ) && key === VK.BACKSPACE ) {
-							dom.remove( view.previousSibling );
-						} else {
-							selection.select( view.previousSibling, true );
-							selection.collapse();
-						}
+						selection.select( view.previousSibling, true );
+						selection.collapse();
 					}
 				} else {
 					setViewCursor( true, view );

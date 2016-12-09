@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
@@ -10,47 +10,54 @@ import { omit } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 
-const handlerMouseOver = ( event ) => {
-	event.target.focus();
-};
+export default class PopoverMenuItem extends Component {
+	static propTypes = {
+		href: PropTypes.string,
+		className: PropTypes.string,
+		isSelected: PropTypes.bool,
+		icon: PropTypes.string,
+		focusOnHover: PropTypes.bool,
+		children: PropTypes.node
+	};
 
-const PopoverItem = ( props ) => {
-	const {
-		focusOnHover,
-		className,
-		href,
-		icon,
-		children
-	} = props;
+	static defaultProps = {
+		isSelected: false,
+		focusOnHover: true
+	};
 
-	const Component = href ? 'a' : 'button';
+	focus( event ) {
+		event.target.focus();
+	}
 
-	return (
-		<Component
-			role="menuitem"
-			onMouseOver={ focusOnHover ? handlerMouseOver : null }
-			tabIndex="-1"
-			{ ...omit( props, 'icon', 'focusOnHover' ) }
-			className={ classnames( 'popover__menu-item', className ) }
-		>
-			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-			{ children }
-		</Component>
-	);
-};
+	render() {
+		const {
+			children,
+			className,
+			focusOnHover,
+			href,
+			icon,
+			isSelected,
+		} = this.props;
+		const classes = classnames( 'popover__menu-item', className, {
+			'is-selected': isSelected
+		} );
+		const ItemComponent = href ? 'a' : 'button';
 
-PopoverItem.displayName = 'PopoverMenuItem';
+		let hoverHandler;
+		if ( focusOnHover ) {
+			hoverHandler = this.focus;
+		}
 
-PopoverItem.propTypes = {
-	href: PropTypes.string,
-	className: PropTypes.string,
-	icon: PropTypes.string,
-	focusOnHover: PropTypes.bool,
-	children: PropTypes.node
-};
-
-PopoverItem.defaultProps = {
-	focusOnHover: true
-};
-
-export default PopoverItem;
+		return (
+			<ItemComponent
+				role="menuitem"
+				onMouseOver={ hoverHandler }
+				tabIndex="-1"
+				{ ...omit( this.props, 'icon', 'focusOnHover', 'isSelected' ) }
+				className={ classes }>
+				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+				{ children }
+			</ItemComponent>
+		);
+	}
+}

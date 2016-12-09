@@ -47,20 +47,22 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * Returns a parsed object of statsStreak data for a given query, or default "empty" object
  * if no statsStreak data has been received for that site.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {Object}  query    Stats query object
- * @return {Object}           Parsed Data for the query
+ * @param  {Object}  state    			Global state tree
+ * @param  {Number}  siteId   			Site ID
+ * @param  {Object}  query    			Stats query object
+ * @param  {?Number} query.gmtOffset    GMT offset of the queried site
+ * @return {Object}           			Parsed Data for the query
  */
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
+		const { gmtOffset = 0 } = query;
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
-
 		if ( streakData && streakData.data ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
-				const datestamp = postDay.format( 'YYYY-MM-DD' );
+				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
+
 				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 					response[ datestamp ] = 0;
 				}

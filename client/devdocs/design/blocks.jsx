@@ -52,6 +52,7 @@ import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
+import DailyPostButton from 'blocks/daily-post-button/docs/example';
 
 export default React.createClass( {
 
@@ -124,6 +125,7 @@ export default React.createClass( {
 					<DismissibleCard />
 					<ReaderAvatar />
 					<ReaderPostOptionsMenu />
+					<DailyPostButton />
 				</Collection>
 			</Main>
 		);

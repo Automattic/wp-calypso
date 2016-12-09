@@ -11,8 +11,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
-	THEMES_RECEIVE
+	LEGACY_THEMES_RECEIVE
 } from 'state/action-types';
 
 export const initialState = fromJS( {
@@ -26,23 +25,20 @@ function add( newThemes, themes ) {
 	}, {} ) );
 }
 
-export function setActiveTheme( themeId, themes ) {
-	return themes
-		.map( theme => theme.delete( 'active' ) )
-		.setIn( [ themeId, 'active' ], true );
-}
-
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case THEMES_RECEIVE:
-			const isNewSite = action.isJetpack && ( action.siteId !== state.get( 'currentSiteId' ) );
-			return state
-				.update( 'themes', themes => isNewSite ? new Map() : themes )
-				.set( 'currentSiteId', action.siteId )
-				.update( 'themes', add.bind( null, action.themes ) );
+		case LEGACY_THEMES_RECEIVE: {
+			const isCurrentSite = action.siteId === state.get( 'currentSiteId' );
+			const isNewSite = action.isJetpack && ! isCurrentSite;
+			const currentThemes = isNewSite ? new Map() : state.get( 'themes' );
+			const mergedThemes = add( action.themes, currentThemes );
 
-		case THEME_ACTIVATED:
-			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
+			return state.withMutations( ( temporaryState ) => {
+				temporaryState
+					.set( 'themes', mergedThemes )
+					.set( 'currentSiteId', action.siteId );
+			} );
+		}
 		case DESERIALIZE:
 			return initialState;
 		case SERVER_DESERIALIZE:

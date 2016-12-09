@@ -53,22 +53,27 @@ function handleRequestFailure( state, action ) {
 	}, state );
 }
 
-function handleRequestSuccess( state, action ) {
-	const feed = assign( {}, action.payload );
+function adaptFeed( feed ) {
 	if ( feed.name ) {
 		feed.name = decodeEntities( feed.name );
 	}
+	feed.feed_ID = + feed.feed_ID;
+	feed.blog_ID = + feed.blog_ID;
+	return feed;
+}
+
+function handleRequestSuccess( state, action ) {
+	const feed = assign( {}, action.payload );
+	adaptFeed( feed );
 	return assign( {}, state, {
-		[ action.payload.feed_ID ]: feed
+		[ feed.feed_ID ]: feed
 	} );
 }
 
 function handleFeedUpdate( state, action ) {
 	const feeds = map( action.payload, feed => {
 		feed = assign( {}, feed );
-		if ( feed.name ) {
-			feed.name = decodeEntities( feed.name );
-		}
+		adaptFeed( feed );
 		return feed;
 	} );
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );

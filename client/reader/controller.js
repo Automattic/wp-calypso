@@ -6,12 +6,11 @@ import React from 'react';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
-import config from 'config';
-import defer from 'lodash/defer';
 
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
@@ -23,10 +22,6 @@ import {
 	getPrettySiteUrl
 } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { requestGraduate } from 'state/reader/start/actions';
-import { isRequestingGraduation } from 'state/reader/start/selectors';
-import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ReaderSidebarComponent from 'reader/sidebar';
@@ -51,13 +46,13 @@ function renderFeedError( context ) {
 }
 
 module.exports = {
-	initAbTests: function( context, next ) {
+	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
 		activeAbTests.forEach( test => abtest( test ) );
 		next();
 	},
 
-	prettyRedirects: function( context, next ) {
+	prettyRedirects( context, next ) {
 		// Do we have a 'pretty' site or feed URL?
 		let redirect;
 		if ( context.params.blog_id ) {
@@ -73,7 +68,7 @@ module.exports = {
 		next();
 	},
 
-	legacyRedirects: function( context, next ) {
+	legacyRedirects( context, next ) {
 		const legacyPathRegexes = {
 			feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
 			feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
@@ -82,13 +77,13 @@ module.exports = {
 		};
 
 		if ( context.path.match( legacyPathRegexes.feedStream ) ) {
-			page.redirect( `/read/feeds/${context.params.feed_id}` );
+			page.redirect( `/read/feeds/${ context.params.feed_id }` );
 		} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
-			page.redirect( `/read/feeds/${context.params.feed_id}/posts/${context.params.post_id}` );
+			page.redirect( `/read/feeds/${ context.params.feed_id }/posts/${ context.params.post_id }` );
 		} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
-			page.redirect( `/read/blogs/${context.params.blog_id}` );
+			page.redirect( `/read/blogs/${ context.params.blog_id }` );
 		} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
-			page.redirect( `/read/blogs/${context.params.blog_id}/posts/${context.params.post_id}` );
+			page.redirect( `/read/blogs/${ context.params.blog_id }/posts/${ context.params.post_id }` );
 		}
 
 		next();
@@ -102,13 +97,13 @@ module.exports = {
 		next();
 	},
 
-	incompleteUrlRedirects: function( context, next ) {
+	incompleteUrlRedirects( context, next ) {
 		let redirect;
 		// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
 		if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/feeds/${context.params.feed_id}`;
+			redirect = `/read/feeds/${ context.params.feed_id }`;
 		} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
-			redirect = `/read/blogs/${context.params.blog_id}`;
+			redirect = `/read/blogs/${ context.params.blog_id }`;
 		}
 
 		if ( redirect ) {
@@ -118,12 +113,12 @@ module.exports = {
 		next();
 	},
 
-	preloadReaderBundle: function( context, next ) {
+	preloadReaderBundle( context, next ) {
 		preload( 'reader' );
 		next();
 	},
 
-	loadSubscriptions: function( context, next ) {
+	loadSubscriptions( context, next ) {
 		// these three are included to ensure that the stores required have been loaded and can accept actions
 		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ), // eslint-disable-line no-unused-vars
 			PostEmailSubscriptionStore = require( 'lib/reader-post-email-subscriptions' ), // eslint-disable-line no-unused-vars
@@ -132,51 +127,7 @@ module.exports = {
 		next();
 	},
 
-	checkForColdStart: function( context, next ) {
-		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
-		const user = getCurrentUser( context.store.getState() );
-		const numberofTries = 3;
-		let graduationThreshold;
-
-		if ( abtest( 'coldStartReader' ) === 'noEmailColdStartWithAutofollows' ) {
-			graduationThreshold = config( 'reader_cold_start_graduation_threshold_with_autofollows' );
-		} else {
-			graduationThreshold = config( 'reader_cold_start_graduation_threshold' );
-		}
-
-		if ( ! user ) {
-			next();
-			return;
-		}
-
-		if ( ! user.is_new_reader ) {
-			next();
-			return;
-		}
-
-		function checkSubCount( tries ) {
-			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
-				// we have total subs now, make the decision
-				if ( FeedSubscriptionStore.getTotalSubscriptions() < graduationThreshold ) {
-					defer( page.redirect.bind( page, '/recommendations/start' ) );
-				} else {
-					if ( ! isRequestingGraduation( context.store.getState() ) ) {
-						context.store.dispatch( requestGraduate() );
-					}
-					defer( next );
-				}
-			} else if ( tries > -1 ) {
-				FeedSubscriptionStore.once( 'change', checkSubCount.bind( null, --tries ) );
-			} else {
-				defer( next );
-			}
-		}
-
-		checkSubCount( numberofTries );
-	},
-
-	sidebar: function( context, next ) {
-
+	sidebar( context, next ) {
 		renderWithReduxStore(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( ReaderSidebarComponent, { path: context.path } )
@@ -188,17 +139,24 @@ module.exports = {
 		next();
 	},
 
-	unmountSidebar: function( context, next ) {
+	unmountSidebar( context, next ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		next();
 	},
 
-	following: function( context ) {
-		var StreamComponent = require( 'reader/following/main' ),
+	following( context ) {
+		const StreamComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
 			mcKey = 'following';
+
+		let recommendationsStore = null;
+		if ( config.isEnabled( 'reader/refresh/stream' ) ) {
+			// custom_recs_posts_with_images instead of recommendations_posts because we only want those with images for now
+			recommendationsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
+			recommendationsStore.perPage = 4;
+		}
 
 		ensureStoreLoading( followingStore, context );
 
@@ -213,6 +171,8 @@ module.exports = {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
 					store: followingStore,
+					recommendationsStore,
+					showPrimaryFollowButtonOnCards: false,
 					trackScrollPage: trackScrollPage.bind(
 						null,
 						basePath,
@@ -227,13 +187,13 @@ module.exports = {
 		);
 	},
 
-	feedDiscovery: function( context, next ) {
-		var feedLookup = require( 'lib/feed-lookup' );
+	feedDiscovery( context, next ) {
+		const feedLookup = require( 'lib/feed-lookup' );
 
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			feedLookup( context.params.feed_id )
 				.then( function( feedId ) {
-					page.redirect( `/read/feeds/${feedId}` );
+					page.redirect( `/read/feeds/${ feedId }` );
 				} )
 				.catch( function() {
 					renderFeedError( context );
@@ -243,8 +203,8 @@ module.exports = {
 		}
 	},
 
-	feedListing: function( context ) {
-		var FeedStream = require( 'reader/feed-stream' ),
+	feedListing( context ) {
+		const FeedStream = require( 'reader/feed-stream' ),
 			basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
@@ -261,7 +221,7 @@ module.exports = {
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
-				feedId: context.params.feed_id,
+				feedId: +context.params.feed_id,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -270,6 +230,7 @@ module.exports = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				showPrimaryFollowButtonOnCards: false,
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
@@ -278,8 +239,8 @@ module.exports = {
 		);
 	},
 
-	blogListing: function( context ) {
-		var SiteStream = require( 'reader/site-stream' ),
+	blogListing( context ) {
+		const SiteStream = require( 'reader/site-stream' ),
 			basePath = '/read/blogs/:blog_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
@@ -296,7 +257,7 @@ module.exports = {
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
-				siteId: context.params.blog_id,
+				siteId: +context.params.blog_id,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -305,6 +266,7 @@ module.exports = {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+				showPrimaryFollowButtonOnCards: false,
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
@@ -313,13 +275,8 @@ module.exports = {
 		);
 	},
 
-	removePost: function( context, next ) {
-		context.store.dispatch( hideReaderFullPost() );
-		next();
-	},
-
-	readA8C: function( context ) {
-		var StreamComponent = require( 'reader/stream' ),
+	readA8C( context ) {
+		const StreamComponent = require( 'reader/stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
@@ -345,6 +302,7 @@ module.exports = {
 						analyticsPageTitle,
 						mcKey
 					),
+					showPrimaryFollowButtonOnCards: false,
 					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 				} ),
 			),

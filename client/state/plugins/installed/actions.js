@@ -145,7 +145,9 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
-			updatePlugin( siteId, plugin )( dispatch );
+			if ( data.update ) {
+				updatePlugin( siteId, data )( dispatch );
+			}
 		};
 
 		const errorCallback = ( error ) => {
@@ -300,17 +302,23 @@ export function removePlugin( siteId, plugin ) {
 	};
 }
 
-export function fetchPlugins( sites ) {
+export function fetchPlugins( siteIds ) {
 	return ( dispatch ) => {
-		return sites.map( ( site ) => {
+		return siteIds.map( ( siteId ) => {
 			const defaultAction = {
-				siteId: site.ID,
+				siteId
 			};
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
 			const receivePluginsDispatchSuccess = ( data ) => {
 				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } );
+
+				data.plugins.map( plugin => {
+					if ( plugin.update && plugin.autoupdate ) {
+						updatePlugin( siteId, plugin )( dispatch );
+					}
+				} );
 			};
 
 			const receivePluginsDispatchFail = ( error ) => {
@@ -318,7 +326,7 @@ export function fetchPlugins( sites ) {
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 			};
 
-			return wpcom.site( site.ID ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
+			return wpcom.site( siteId ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
 		} );
 	};
 }

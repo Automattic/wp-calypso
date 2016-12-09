@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
 import {
@@ -200,16 +201,18 @@ class PostCommentForm extends React.Component {
 					<label>
 						<div className={ expandingAreaClasses }>
 							<pre><span>{ this.state.commentText }</span><br /></pre>
-							<textarea
-								value={ this.state.commentText }
-								placeholder={ translate( 'Enter your comment here…' ) }
-								ref={ this.handleTextAreaNode }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-							/>
+							<AutoDirection>
+								<textarea
+									value={ this.state.commentText }
+									placeholder={ translate( 'Enter your comment here…' ) }
+									ref={ this.handleTextAreaNode }
+									onKeyUp={ this.handleKeyUp }
+									onKeyDown={ this.handleKeyDown }
+									onFocus={ this.handleFocus }
+									onBlur={ this.handleBlur }
+									onChange={ this.handleTextChange }
+								/>
+							</AutoDirection>
 						</div>
 						<button
 							ref="commentButton"

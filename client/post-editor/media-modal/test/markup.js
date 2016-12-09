@@ -13,7 +13,7 @@ import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'markup', function() {
-	let sandbox, markup, sites;
+	let sandbox, markup, site;
 
 	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
@@ -27,7 +27,7 @@ describe( 'markup', function() {
 
 	before( () => {
 		markup = require( '../markup' );
-		sites = require( 'lib/sites-list' )();
+		site = {};
 	} );
 
 	beforeEach( () => {
@@ -36,21 +36,21 @@ describe( 'markup', function() {
 
 	describe( '#get()', function() {
 		it( 'should return an empty string if not passed any arguments', function() {
-			var value = markup.get();
+			var value = markup.get( site );
 
 			expect( value ).to.equal( '' );
 		} );
 
 		it( 'should defer to a specific mime type handler if one exists', function() {
 			sandbox.stub( markup.mimeTypes, 'image' );
-			markup.get( { mime_type: 'image/png' } );
+			markup.get( site, { mime_type: 'image/png' } );
 
 			expect( markup.mimeTypes.image ).to.have.been.called;
 		} );
 
 		it( 'should return a link for a mime type prefix without a specific handler', function() {
 			sandbox.stub( markup, 'link' );
-			markup.get( { mime_type: 'application/pdf' } );
+			markup.get( site, { mime_type: 'application/pdf' } );
 
 			expect( markup.link ).to.have.been.called;
 		} );
@@ -69,7 +69,7 @@ describe( 'markup', function() {
 
 	describe( '#caption()', function() {
 		it( 'should accept a media object, returning a caption element', function() {
-			var value = markup.caption( {
+			var value = markup.caption( site, {
 				ID: 1,
 				URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 				alt: 'Automattic',
@@ -83,7 +83,7 @@ describe( 'markup', function() {
 		} );
 
 		it( 'should accept a non-captioned image, returning null', function() {
-			var value = markup.caption( {
+			var value = markup.caption( site, {
 				ID: 1,
 				URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 				alt: 'Automattic',
@@ -95,7 +95,7 @@ describe( 'markup', function() {
 		} );
 
 		it( 'should accept a captioned string, returning a React element', function() {
-			var value = markup.caption( '[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]' );
+			var value = markup.caption( site, '[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]' );
 
 			expect( value.type ).to.equal( 'dl' );
 			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal( '<dl class="wp-caption aligncenter" style="width:660px;"><dt class="wp-caption-dt"><img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /></dt><dd class="wp-caption-dd">Ceramic</dd></dl>' );
@@ -104,14 +104,8 @@ describe( 'markup', function() {
 
 	describe( '.mimeTypes', function() {
 		describe( '#image()', function() {
-			beforeEach( function() {
-				sandbox.stub( sites, 'getSelectedSite', function() {
-					return {};
-				} );
-			} );
-
 			it( 'should not set width auto if media width cannot be determined', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 'media-4',
 					URL: 'blob:http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71',
 					thumbnails: {}
@@ -121,7 +115,7 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should return an img element for an image', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 					alt: 'Automattic',
@@ -133,17 +127,14 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should respect the max width for a site size', function() {
-				sites.getSelectedSite.restore();
-				sandbox.stub( sites, 'getSelectedSite', function() {
-					return {
-						options: {
-							image_large_width: 1024,
-							image_large_height: 1024
-						}
-					};
-				} );
+				const siteWithLargeSize = {
+					options: {
+						image_large_width: 1024,
+						image_large_height: 1024
+					}
+				};
 
-				const value = markup.mimeTypes.image( {
+				const value = markup.mimeTypes.image( siteWithLargeSize, {
 					ID: 1,
 					URL: 'http://example.com/image.png',
 					thumbnails: {},
@@ -151,23 +142,18 @@ describe( 'markup', function() {
 					height: 2000
 				}, { size: 'large' } );
 
-				sites.getSelectedSite.restore();
-
 				expect( value ).to.equal( '<img src="http://example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should respect the max height for a site size', function() {
-				sites.getSelectedSite.restore();
-				sandbox.stub( sites, 'getSelectedSite', function() {
-					return {
-						options: {
-							image_large_width: 1024,
-							image_large_height: 1024
-						}
-					};
-				} );
+				const siteWithLargeSize = {
+					options: {
+						image_large_width: 1024,
+						image_large_height: 1024
+					}
+				};
 
-				const value = markup.mimeTypes.image( {
+				const value = markup.mimeTypes.image( siteWithLargeSize, {
 					ID: 1,
 					URL: 'http://example.com/image.png',
 					thumbnails: {},
@@ -175,13 +161,11 @@ describe( 'markup', function() {
 					height: 5000
 				}, { size: 'large' } );
 
-				sites.getSelectedSite.restore();
-
 				expect( value ).to.equal( '<img src="http://example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should include a resize parameter if forceResize option passed', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 					alt: 'Automattic',
@@ -193,7 +177,7 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should avoid XSS because React', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: '""><SCRIPT>alert("XSS")</SCRIPT>"',
 					thumbnails: {},
@@ -205,17 +189,13 @@ describe( 'markup', function() {
 
 			it( 'should attempt to find the site\'s thumbnail width if a size is specified', function() {
 				var value;
+				const siteWithWidth = {
+					options: {
+						image_large_width: 200
+					}
+				};
 
-				sites.getSelectedSite.restore();
-				sandbox.stub( sites, 'getSelectedSite', function() {
-					return {
-						options: {
-							image_large_width: 200
-						}
-					};
-				} );
-
-				value = markup.mimeTypes.image( {
+				value = markup.mimeTypes.image( siteWithWidth, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 					alt: 'Automattic',
@@ -223,20 +203,14 @@ describe( 'markup', function() {
 					width: 276
 				}, { size: 'large' } );
 
-				sites.getSelectedSite.restore();
-
 				expect( value ).to.equal( '<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=200" alt="Automattic" width="200" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should attempt to find the media\'s own thumbnail width if a size is specified', function() {
 				var value;
+				const jetpackSite = { jetpack: true };
 
-				sites.getSelectedSite.restore();
-				sandbox.stub( sites, 'getSelectedSite', function() {
-					return { jetpack: true };
-				} );
-
-				value = markup.mimeTypes.image( {
+				value = markup.mimeTypes.image( jetpackSite, {
 					ID: 1,
 					URL: 'http://example.com/wp-content/uploads/2015/05/logo11w.png',
 					alt: 'WordPress',
@@ -246,13 +220,11 @@ describe( 'markup', function() {
 					width: 5380
 				}, { size: 'large' } );
 
-				sites.getSelectedSite.restore();
-
 				expect( value ).to.equal( '<img src="http://example.com/wp-content/uploads/2015/05/logo11w-1024x1024.png" alt="WordPress" width="1024" class="alignnone size-large wp-image-1"/>' );
 			} );
 
 			it( 'should wrap a captioned image in a caption shortcode', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 					alt: 'Automattic',
@@ -265,7 +237,7 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should calculate the height when specifying a size', function() {
-				var value = markup.mimeTypes.image( {
+				var value = markup.mimeTypes.image( site, {
 					ID: 1,
 					URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 					alt: 'Automattic',
@@ -280,7 +252,7 @@ describe( 'markup', function() {
 
 		describe( '#audio()', function() {
 			it( 'should return an `audio` shortcode for an audio item', function() {
-				var value = markup.mimeTypes.audio( {
+				var value = markup.mimeTypes.audio( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp3'
 				} );
 
@@ -290,7 +262,7 @@ describe( 'markup', function() {
 
 		describe( '#video()', function() {
 			it( 'should return a `wpvideo` shortcode for a VideoPress video', function() {
-				var value = markup.mimeTypes.video( {
+				var value = markup.mimeTypes.video( site, {
 					videopress_guid: '11acMj3O'
 				} );
 
@@ -298,7 +270,7 @@ describe( 'markup', function() {
 			} );
 
 			it( 'should return a `video` shortcode for a video', function() {
-				var value = markup.mimeTypes.video( {
+				var value = markup.mimeTypes.video( site, {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp4',
 					height: 454,
 					width: 1436

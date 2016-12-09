@@ -47,7 +47,8 @@ export default {
 					mcKey
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: !! context.lastRoute
+				showBack: !! context.lastRoute,
+				showPrimaryFollowButtonOnCards: true
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

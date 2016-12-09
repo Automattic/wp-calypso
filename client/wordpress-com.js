@@ -54,15 +54,8 @@ sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/purchases' ],
+		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'me/purchases',
-		group: 'me',
-		secondary: true
-	},
-	{
-		name: 'billing',
-		paths: [ '/me/billing' ],
-		module: 'me/billing-history',
 		group: 'me',
 		secondary: true
 	},
@@ -200,6 +193,16 @@ sections.push( {
 	secondary: true
 } );
 
+if ( config.isEnabled( 'account-recovery' ) ) {
+	sections.push( {
+		name: 'account-recovery',
+		paths: [ '/account-recovery' ],
+		module: 'account-recovery',
+		secondary: false,
+		enableLoggedOut: true,
+	} );
+}
+
 if ( config.isEnabled( 'manage/ads' ) ) {
 	sections.push( {
 		name: 'ads',
@@ -217,16 +220,6 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 		module: 'my-sites/drafts',
 		secondary: true,
 		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'manage/payment-methods' ) ) {
-	sections.push( {
-		name: 'payment-methods',
-		paths: [ '/payment-methods/add-credit-card' ],
-		module: 'me/payment-methods',
-		group: 'me',
-		secondary: true
 	} );
 }
 

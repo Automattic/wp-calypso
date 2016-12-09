@@ -4,32 +4,32 @@
 	justify-content: space-between;
 	margin-left: -15px;
 
-	.credit-card-form-fields__field,
-	.credit-card-form-fields__label {
+	.credit-card-form-fields__field {
+		flex-basis: calc( 100% - 15px );
+		flex-grow: 1;
+		flex-shrink: 0;
 		margin-left: 15px;
 	}
 
-	.cvv,
-	.expiration-date {
-		flex-basis: 6em;
-		flex-grow: 1;
-		flex-shrink: 0;
-	}
-
 	.country {
-		flex-basis: auto;
-		flex-grow: 3;
-		flex-shrink: 0;
-
 		label {
 			display: none;
 		}
 	}
 
-	.postal-code {
-		flex-basis: 8em;
-		flex-grow: 2;
-		flex-shrink: 0;
+	@include breakpoint( ">480px" ) {
+		.cvv,
+		.expiration-date {
+			flex-basis: calc( 50% - 15px );
+		}
+
+		.country {
+			flex-basis: auto;
+		}
+
+		.postal-code {
+			flex-basis: 8em;
+		}
 	}
 }
 

@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import moment from 'moment';
-import debugFactory from 'debug';
 import {
 	find,
 	get,
@@ -15,28 +13,24 @@ import {
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { addItem } from 'lib/upgrades/actions';
-import { cartItems } from 'lib/cart-values';
 import {
 	isFreeJetpackPlan,
 	isJetpackPlan,
 	isMonthly
 } from 'lib/products-values';
 import {
-	featuresList,
-	plansList,
+	FEATURES_LIST,
+	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE, 
+	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
-import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
 
 /**
  * Module vars
  */
 const sitesList = SitesList();
-const debug = debugFactory( 'calypso:plans' );
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function isFreePlan( plan ) {
@@ -44,23 +38,23 @@ export function isFreePlan( plan ) {
 }
 
 export function getPlan( plan ) {
-	return plansList[ plan ];
+	return PLANS_LIST[ plan ];
 }
 
 export function getValidFeatureKeys() {
-	return Object.keys( featuresList );
+	return Object.keys( FEATURES_LIST );
 }
 
 export function isValidFeatureKey( feature ) {
-	return !! featuresList[ feature ];
+	return !! FEATURES_LIST[ feature ];
 }
 
 export function getFeatureByKey( feature ) {
-	return featuresList[ feature ];
+	return FEATURES_LIST[ feature ];
 }
 
 export function getFeatureTitle( feature ) {
-	return invoke( featuresList, [ feature, 'getTitle' ] );
+	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
 export function getSitePlanSlug( siteID ) {
@@ -75,48 +69,27 @@ export function getSitePlanSlug( siteID ) {
 
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
 	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
-	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
+	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
 export function getUpgradePlanSlugFromPath( path, siteID ) {
 	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
-	return find( Object.keys( plansList ), planKey => (
+	return find( Object.keys( PLANS_LIST ), planKey => (
 		( planKey === path || getPlanPath( planKey ) === path ) &&
 		canUpgradeToPlan( planKey, site )
 	) );
 }
 
 export function getPlanPath( plan ) {
-	return get( plansList, [ plan, 'getPathSlug' ], () => undefined )();
+	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
+	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
 }
 
 export function hasFeature( feature, siteID ) {
 	return planHasFeature( getSitePlanSlug( siteID ), feature );
-}
-
-export function addCurrentPlanToCartAndRedirect( sitePlans, selectedSite ) {
-	addItem( cartItems.planItem( getCurrentPlan( sitePlans.data ).productSlug ) );
-
-	page( `/checkout/${ selectedSite.slug }` );
-}
-
-export function getCurrentPlan( plans ) {
-	const currentPlan = find( plans, { currentPlan: true } );
-
-	if ( currentPlan ) {
-		debug( 'current plan: %o', currentPlan );
-		return currentPlan;
-	}
-
-	// get Site plan from the `site` data
-	const site = sitesList.getSelectedSite();
-	const plan = createSitePlanObject( site.plan );
-	debug( 'current plan: %o', plan );
-	return plan;
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
@@ -191,13 +164,12 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
-
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
 	}
 
-	if ( site ) {
+	if ( site && site.slug ) {
 		url += '/' + site.slug;
 	}
 
@@ -205,8 +177,8 @@ export function plansLink( url, site, intervalType ) {
 }
 
 export function applyTestFiltersToPlansList( planName ) {
-	const filteredPlanConstantObj = { ...plansList[ planName ] };
-	const filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
+	const filteredPlanConstantObj = { ...getPlan( planName ) };
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getFeatures();
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests

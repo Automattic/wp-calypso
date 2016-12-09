@@ -12,21 +12,22 @@ var observe = require( 'lib/mixins/data-observe' ),
 	ButtonsAppearance = require( './appearance' ),
 	ButtonsOptions = require( './options' ),
 	notices = require( 'notices' ),
-	analytics = require( 'lib/analytics' ),
-	protectForm = require( 'lib/mixins/protect-form' ).mixin;
+	analytics = require( 'lib/analytics' );
+import { protectForm } from 'lib/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 	displayName: 'SharingButtons',
 
 	mixins: [
-		observe( 'site', 'buttons', 'postTypes' ),
-		protectForm
+		observe( 'site', 'buttons', 'postTypes' )
 	],
 
 	propTypes: {
 		site: React.PropTypes.object.isRequired,
 		buttons: React.PropTypes.object.isRequired,
-		postTypes: React.PropTypes.object.isRequired
+		postTypes: React.PropTypes.object.isRequired,
+		markSaved: React.PropTypes.func.isRequired,
+		markChanged: React.PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {
@@ -66,7 +67,7 @@ module.exports = React.createClass( {
 			notices.success( this.translate( 'Settings saved successfully!' ) );
 		}
 
-		this.markSaved();
+		this.props.markSaved();
 		this.setState( {
 			values: {},
 			isSaving: false,
@@ -84,14 +85,14 @@ module.exports = React.createClass( {
 			pairs[ option ] = value;
 		}
 
-		this.markChanged();
+		this.props.markChanged();
 		this.setState( {
 			values: assign( {}, this.state.values, pairs )
 		} );
 	},
 
 	handleButtonsChange: function( buttons ) {
-		this.markChanged();
+		this.props.markChanged();
 		this.setState( { buttonsPendingSave: buttons } );
 	},
 
@@ -133,4 +134,4 @@ module.exports = React.createClass( {
 			</form>
 		);
 	}
-} );
+} ) );

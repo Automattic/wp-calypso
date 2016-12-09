@@ -1,61 +1,59 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:feed-store:post-list-store' ),
-	filter = require( 'lodash/filter' ),
-	forEach = require( 'lodash/forEach' ),
-	map = require( 'lodash/map' );
+import { assign, filter, findIndex, forEach, last, map } from 'lodash';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
 /**
  * Internal Dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	FeedPostStore = require( 'lib/feed-post-store' ),
-	ActionTypes = require( './constants' ).action;
+import Dispatcher from 'dispatcher';
+import Emitter from 'lib/mixins/emitter';
+import FeedPostStore from 'lib/feed-post-store';
+import { action as ActionTypes } from './constants';
 
-var PagedStream = function( spec ) {
-	if ( ! spec ) {
-		throw new Error( 'must supply a paged stream spec' );
+export default class PagedStream {
+	constructor( spec ) {
+		if ( ! spec ) {
+			throw new Error( 'must supply a paged stream spec' );
+		}
+
+		if ( ! spec.id ) {
+			throw new Error( 'missing id' );
+		}
+
+		if ( ! spec.fetcher ) {
+			throw new Error( 'missing fetcher' );
+		}
+
+		if ( ! spec.keyMaker ) {
+			throw new Error( 'must supply keyMaker' );
+		}
+
+		this.id = spec.id;
+
+		assign( this, {
+			id: spec.id,
+			postKeys: [], // an array of keys, as determined by the key maker,
+			pendingPostKeys: [],
+			postById: new Set(),
+			errors: [],
+			fetcher: spec.fetcher,
+			page: 1,
+			perPage: spec.perPage || 10,
+			query: spec.query,
+			selectedIndex: -1,
+			orderBy: 'date',
+			_isLastPage: false,
+			_isFetchingNextPage: false,
+			keyMaker: spec.keyMaker
+		} );
 	}
 
-	if ( ! spec.id ) {
-		throw new Error( 'missing id' );
-	}
-
-	if ( ! spec.fetcher ) {
-		throw new Error( 'missing fetcher' );
-	}
-
-	if ( ! spec.keyMaker ) {
-		throw new Error( 'must supply keyMaker' );
-	}
-
-	this.id = spec.id;
-
-	assign( this, {
-		id: spec.id,
-		postKeys: [], // an array of keys, as determined by the key maker,
-		pendingPostKeys: [],
-		postById: {},
-		errors: [],
-		fetcher: spec.fetcher,
-		page: 1,
-		perPage: spec.perPage || 10,
-		query: spec.query,
-		selectedIndex: -1,
-		orderBy: 'date',
-		_isLastPage: false,
-		_isFetchingNextPage: false,
-		keyMaker: spec.keyMaker
-	} );
-};
-
-assign( PagedStream.prototype, {
-
-	handlePayload: function( payload ) {
-		var action = payload && payload.action;
+	handlePayload( payload ) {
+		const action = payload && payload.action;
 
 		if ( ! action ) {
 			return;
@@ -84,133 +82,131 @@ assign( PagedStream.prototype, {
 			case ActionTypes.SELECT_PREV_ITEM:
 				this.selectPrevItem( action.selectedIndex );
 				break;
-			case ActionTypes.CHANGE_QUERY:
-				this.resetQuery( action.query );
+			case ActionTypes.DISMISS_FEED_STREAM_POST:
+				this.dismissPost( action.postKey );
 				break;
 		}
-	},
+	}
 
-	get: function() {
+	get() {
 		return this.postKeys;
-	},
+	}
 
-	getID: function() {
+	getID() {
 		return this.id;
-	},
+	}
 
-	getAll: function() {
+	getAll() {
 		return map( this.postKeys, function( key ) {
 			return FeedPostStore.get( key );
 		} );
-	},
+	}
 
-	getPage: function() {
+	getPage() {
 		return this.page;
-	},
+	}
 
-	getPerPage: function() {
+	getPerPage() {
 		return this.perPage;
-	},
+	}
 
-	getUpdateCount: function() {
+	getUpdateCount() {
 		return 0;
-	},
+	}
 
-	getSelectedPost: function() {
+	getSelectedPost() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}
 		return null;
-	},
+	}
 
-	getSelectedIndex: function() {
+	getSelectedIndex() {
 		return this.selectedIndex;
-	},
+	}
 
-	isLastPage: function() {
+	isLastPage() {
 		return this._isLastPage;
-	},
+	}
 
-	isFetchingNextPage: function() {
+	isFetchingNextPage() {
 		return this._isFetchingNextPage;
-	},
+	}
 
-	_isValidPostOrGap: function( postKey ) {
-		var post = FeedPostStore.get( postKey );
+	isValidPostOrGap( postKey ) {
+		const post = FeedPostStore.get( postKey );
 		return post && post._state !== 'error' && post._state !== 'pending' &&
 			post._state !== 'minimal';
-	},
+	}
 
-	selectNextItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex + 1;
+	selectNextItem( selectedIndex ) {
+		const nextIndex = selectedIndex + 1;
 		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
+			if ( this.isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
 				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
+				this.emitChange();
 			} else {
 				this.selectNextItem( nextIndex );
 			}
 		}
-	},
+	}
 
-	selectPrevItem: function( selectedIndex ) {
-		var nextIndex = selectedIndex - 1;
+	selectPrevItem( selectedIndex ) {
+		const nextIndex = selectedIndex - 1;
 		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this._isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
+			if ( this.isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
 				this.selectedIndex = nextIndex;
-				this.emit( 'change' );
+				this.emitChange();
 			} else {
 				this.selectPrevItem( nextIndex );
 			}
 		}
-	},
+	}
 
-	selectItem: function( selectedIndex ) {
+	selectItem( selectedIndex ) {
 		this.selectNextItem( selectedIndex - 1 );
-	},
+	}
 
-	onNextPageFetch: function( params ) {
+	onNextPageFetch( params ) {
 		params.offset = ( this.page - 1 ) * this.perPage;
 		params.before = this.startDate || undefined;
 		params.after = undefined;
 		params.number = this.perPage;
-	},
+	}
 
-	getLastItemWithDate: function() {
+	getLastItemWithDate() {
 		return null;
-	},
+	}
 
-	getFirstItemWithDate: function() {
+	getFirstItemWithDate() {
 		return null;
-	},
+	}
 
-	hasRecentError: function( errorType ) {
-		var aMinuteAgo = Date.now() - ( 60 * 1000 );
+	hasRecentError( errorType ) {
+		const aMinuteAgo = Date.now() - ( 60 * 1000 );
 		return this.errors.some( function( error ) {
 			return ( error.timestamp && error.timestamp > aMinuteAgo ) && ( ! errorType || errorType === error.error );
 		} );
-	},
+	}
 
-	setIsFetchingNextPage: function( val ) {
+	setIsFetchingNextPage( val ) {
 		this._isFetchingNextPage = val;
-		this.emit( 'change' );
-	},
+		this.emitChange();
+	}
 
-	filterNewPosts: function( posts ) {
+	filterNewPosts( posts ) {
 		const postById = this.postById;
 		posts = filter( posts, function( post ) {
-			return ! ( post.ID in postById );
+			return ! ( postById.has( post.ID ) );
 		} );
 		return map( posts, this.keyMaker );
-	},
+	}
 
-	getSitesCrossPostedTo: function() {
+	getSitesCrossPostedTo() {
 		return null;
-	},
+	}
 
-	receivePage: function( id, error, data ) {
-		var posts, postKeys;
-
+	receivePage( id, error, data ) {
 		if ( id !== this.id ) {
 			return;
 		}
@@ -223,11 +219,11 @@ assign( PagedStream.prototype, {
 			debug( 'Error fetching posts from API:', error );
 			error.timestamp = Date.now();
 			this.errors.push( error );
-			this.emit( 'change' );
+			this.emitChange();
 			return;
 		}
 
-		posts = data && data.posts;
+		const posts = data && data.posts;
 
 		if ( ! posts ) {
 			return;
@@ -235,24 +231,38 @@ assign( PagedStream.prototype, {
 
 		if ( ! posts.length ) {
 			this._isLastPage = true;
-			this.emit( 'change' );
+			this.emitChange();
 			return;
 		}
 
-		postKeys = this.filterNewPosts( posts );
+		const postKeys = this.filterNewPosts( posts );
 
 		if ( postKeys.length ) {
 			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				postById[ postKey.postId ] = true;
+				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 			this.page++;
-			this.emit( 'change' );
+			this.emitChange();
 		}
 	}
-} );
+
+	// pop the last item off the end and insert in the place of the dismissed post
+	dismissPost( postKey ) {
+		const indexToRemove = findIndex( this.postKeys, postKey );
+		if ( indexToRemove === -1 ) {
+			return;
+		}
+		const newPostKeys = [ ...this.postKeys ];
+		const lastItem = last( newPostKeys );
+		const removedItem = newPostKeys[ indexToRemove ];
+		newPostKeys[ indexToRemove ] = lastItem;
+		newPostKeys.pop();
+		this.postById.delete( removedItem.postId );
+		this.postKeys = newPostKeys;
+		this.emitChange();
+	}
+}
 
 Emitter( PagedStream.prototype );
-
-module.exports = PagedStream;

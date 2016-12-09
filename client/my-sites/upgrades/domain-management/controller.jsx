@@ -16,7 +16,6 @@ import EmailData from 'components/data/domain-management/email' ;
 import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
 import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/upgrades/paths';
-import PrimaryDomainData from 'components/data/domain-management/primary-domain';
 import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
@@ -49,7 +48,7 @@ module.exports = {
 				component={ DomainManagement.List.default }
 				context={ pageContext }
 				productsList={ productsList }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -74,7 +73,7 @@ module.exports = {
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -92,11 +91,9 @@ module.exports = {
 		);
 
 		renderWithReduxStore(
-			<PrimaryDomainData
-				component={ DomainManagement.PrimaryDomain }
-				context={ pageContext }
+			<DomainManagement.PrimaryDomain
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -165,7 +162,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -186,7 +183,7 @@ module.exports = {
 			<EmailForwardingData
 				component={ DomainManagement.EmailForwarding }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -207,7 +204,7 @@ module.exports = {
 			<DnsData
 				component={ DomainManagement.Dns }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -227,7 +224,7 @@ module.exports = {
 			<NameserversData
 				component={ DomainManagement.NameServers }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -273,7 +270,7 @@ module.exports = {
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);

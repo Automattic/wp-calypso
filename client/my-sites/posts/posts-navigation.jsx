@@ -141,12 +141,10 @@ export default React.createClass( {
 
 	_getStatusTabs( author, siteFilter ) {
 		var statusItems = [],
-			isJetpackSite = this.props.sites.getSelectedSite().jetpack,
 			status, selectedText, selectedCount;
 
 		for ( status in this.filterStatuses ) {
-			if ( 'undefined' === typeof this.state.counts[ status ] &&
-				( ! isJetpackSite ) && 'publish' !== status ) {
+			if ( 'undefined' === typeof this.state.counts[ status ] && 'publish' !== status ) {
 				continue;
 			}
 
@@ -156,16 +154,14 @@ export default React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = ( ! isJetpackSite ) && false !== this.state.counts[ status ]
+			let count = false !== this.state.counts[ status ]
 				? this.state.counts[ status ]
 				: false;
 
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
 
-				if ( ! isJetpackSite ) {
-					selectedCount = count;
-				}
+				selectedCount = count;
 			}
 
 			if ( 'publish' === status && ! count ) {
@@ -177,10 +173,7 @@ export default React.createClass( {
 					className={ 'is-' + status }
 					key={ 'statusTabs' + path }
 					path={ path }
-					count={ null === this.props.sites.selected || isJetpackSite ?
-						null :
-						count
-					}
+					count={ null === this.props.sites.selected || count }
 					value={ textItem }
 					selected={ path === this.props.context.pathname }>
 					{ textItem }

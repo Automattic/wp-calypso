@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	Main = require( 'components/main' ),
-	CompactCard = require( 'components/card/compact' ),
-	SecuritySectionNav = require( 'me/security-section-nav' ),
-	ReauthRequired = require( 'me/reauth-required' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	RecoveryEmail = require( './recovery-email' ),
-	RecoveryPhone = require( './recovery-phone' );
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'components/main';
+import CompactCard from 'components/card/compact';
+import SecuritySectionNav from 'me/security-section-nav';
+import ReauthRequired from 'me/reauth-required';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import observe from 'lib/mixins/data-observe';
+import RecoveryEmail from './recovery-email';
+import RecoveryPhone from './recovery-phone';
 
-module.exports = React.createClass( {
+const SecurityCheckup = React.createClass( {
 	displayName: 'SecurityCheckup',
 
 	mixins: [ observe( 'userSettings' ) ],
@@ -36,7 +37,9 @@ module.exports = React.createClass( {
 
 				<CompactCard className="security-checkup-intro">
 					<p className="security-checkup-intro__text">
-						{ this.translate( 'Keep your account safe by adding a backup email address and phone number. If you ever have problems accessing your account, WordPress.com will use what you enter here to verify your identity.' ) }
+						{ this.props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
+								'If you ever have problems accessing your account, WordPress.com will use what ' +
+								'you enter here to verify your identity.' ) }
 					</p>
 				</CompactCard>
 
@@ -50,5 +53,7 @@ module.exports = React.createClass( {
 
 			</Main>
 		);
-	}
+	},
 } );
+
+export default localize( SecurityCheckup );

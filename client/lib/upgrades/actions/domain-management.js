@@ -187,22 +187,27 @@ function fetchWhois( domainName ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_FETCH_COMPLETED,
 				domainName,
-				data: whoisAssembler.createDomainObject( data )
+				data: whoisAssembler.createDomainWhois( data )
 			} );
 		}
 	} );
 }
 
-function updateWhois( domainName, contactInformation, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, ( error, data ) => {
+function updateWhois( domainName, contactInformation, transferLock, onComplete ) {
+	wpcom.updateWhois( domainName, contactInformation, transferLock, ( error, data ) => {
 		if ( ! error ) {
-			// update may take a few minutes, we try after 1 minute to see if it is already done
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+				domainName
+			} );
+
+			// For WWD the update may take longer
+			// After 1 minute, we mark the WHOIS as needing updating
 			setTimeout( () => {
 				Dispatcher.handleServerAction( {
 					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
 					domainName
 				} );
-				fetchWhois( domainName );
 			}, 60000 );
 		}
 
@@ -281,6 +286,19 @@ function deleteDns( domainName, record, onComplete ) {
 			record,
 		} );
 
+		onComplete( error );
+	} );
+}
+
+function addDnsOffice( domainName, token, onComplete ) {
+	wpcom.addDnsOffice( domainName, token, ( error, data ) => {
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DNS_ADD_OFFICE_COMPLETED,
+				records: data && data.records,
+				domainName
+			} );
+		}
 		onComplete( error );
 	} );
 }
@@ -546,6 +564,7 @@ function declineTransfer( domainName, onComplete ) {
 export {
 	acceptTransfer,
 	addDns,
+	addDnsOffice,
 	addEmailForwarding,
 	closeSiteRedirectNotice,
 	declineTransfer,

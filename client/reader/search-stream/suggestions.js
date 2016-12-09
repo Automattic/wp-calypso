@@ -1,13 +1,11 @@
-export const staffSuggestions = {
+export const suggestions = {
 	en: [
-		'2016 Election',
 		'Astrology',
 		'Batman',
 		'Beach',
 		'Beautiful',
 		'Bloom',
 		'Chickens',
-		'Clinton',
 		'Cocktails',
 		'Colorado',
 		'Craft Beer',
@@ -32,9 +30,7 @@ export const staffSuggestions = {
 		'Michigan',
 		'Monkeys',
 		'Mountain Biking',
-		'Obama',
 		'Overwatch',
-		'Pokemon GO',
 		'Pride',
 		'Recipe',
 		'Red Sox',
@@ -47,15 +43,9 @@ export const staffSuggestions = {
 		'Toddlers',
 		'Travel Backpacks',
 		'Travel',
-		'Trump',
 		'Woodworking',
 		'WordPress',
-		'Zombies'
-	]
-};
-
-export const popularSuggestions = {
-	en: [
+		'Zombies',
 		'Food',
 		'Writing',
 		'Life',
@@ -65,7 +55,6 @@ export const popularSuggestions = {
 		'Love',
 		'Health',
 		'Funny',
-		'Trump',
 		'Fashion',
 		'Fitness',
 		'Anime',

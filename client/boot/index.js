@@ -10,7 +10,7 @@ if ( process.env.NODE_ENV === 'development' ) {
 var React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
+	ReactClass = require( 'react/lib/ReactClass' ),
 	some = require( 'lodash/some' ),
 	startsWith = require( 'lodash/startsWith' ),
 	debug = require( 'debug' )( 'calypso' ),
@@ -70,7 +70,7 @@ function init() {
 		i18n.setLocale( i18nLocaleStringsObject );
 	}
 
-	ReactInjection.Class.injectMixin( i18n.mixin );
+	ReactClass.injection.injectMixin( i18n.mixin );
 
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
@@ -130,7 +130,7 @@ function loadDevModulesAndBoot() {
 		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,
 		// we have to wait for it to load before proceeding with the application's startup.
 		require.ensure( [], function() {
-			ReactInjection.Class.injectMixin( require( 'lib/mixins/render-visualizer' ) );
+			ReactClass.injection.injectMixin( require( 'lib/mixins/render-visualizer' ) );
 			boot();
 		}, 'devmodules' );
 
@@ -270,7 +270,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	// warn against navigating from changed, unsaved forms
-	page.exit( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
+	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
 
 	page( '*', function( context, next ) {
 		var path = context.pathname;
@@ -362,17 +362,6 @@ function reduxStoreReady( reduxStore ) {
 		} );
 	}
 
-	page( '*', function( context, next ) {
-		// Reset the selected site before each route is executed. This needs to
-		// occur after the sections routes execute to avoid a brief flash where
-		// sites are reset but the next section is waiting to be loaded.
-		if ( ! route.getSiteFragment( context.path ) && sites.getSelectedSite() ) {
-			sites.resetSelectedSite();
-		}
-
-		next();
-	} );
-
 	require( 'my-sites' )();
 
 	// clear notices
@@ -388,7 +377,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' );
+		require( 'lib/olark' ).initialize( reduxStore.dispatch );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {

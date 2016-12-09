@@ -88,7 +88,7 @@ const FeedSubscriptionStore = {
 		const errorInfo = get( action, 'data.info' );
 
 		errors.push( {
-			URL: action.url,
+			URL: siteUrl,
 			errorType: ErrorTypes.UNABLE_TO_FOLLOW,
 			info: errorInfo,
 			timestamp: Date.now()
@@ -132,6 +132,7 @@ const FeedSubscriptionStore = {
 		// All subscriptions we receive this way will be 'subscribed', so set the state accordingly
 		const subscriptionsWithState = map( data.subscriptions, function( sub ) {
 			sub.URL = FeedSubscriptionHelper.prepareSiteUrl( sub.URL );
+			sub.comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( sub.URL );
 			return subscriptionTemplate.merge( sub );
 		} );
 
@@ -181,9 +182,9 @@ const FeedSubscriptionStore = {
 	},
 
 	getSubscription: function( siteUrl ) {
-		const preparedSiteUrl = FeedSubscriptionHelper.prepareSiteUrl( siteUrl );
+		const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( siteUrl );
 		return subscriptions.list.find( function( subscription ) {
-			return ( subscription.get( 'URL' ) === preparedSiteUrl && subscription.get( 'state' ) === States.SUBSCRIBED );
+			return ( subscription.get( 'comparableUrl' ) === comparableUrl && subscription.get( 'state' ) === States.SUBSCRIBED );
 		} );
 	},
 
@@ -253,7 +254,7 @@ const FeedSubscriptionStore = {
 
 function _acceptSubscription( subscription, addToTop = true ) {
 	let subs = subscriptions.list;
-	const existingIndex = subs.findIndex( value => value.get( 'URL' ) === subscription.get( 'URL' ) );
+	const existingIndex = subs.findIndex( value => value.get( 'comparableUrl' ) === subscription.get( 'comparableUrl' ) );
 	if ( existingIndex !== -1 ) {
 		// update the existing subscription by merging together
 		subs = subs.mergeIn( [ existingIndex ], subscription );
@@ -276,8 +277,9 @@ function addSubscription( subscription, addToTop = true ) {
 
 	// Is this URL already in the subscription list (in any state, not just SUBSCRIBED)?
 	const preparedSiteUrl = FeedSubscriptionHelper.prepareSiteUrl( subscription.URL );
+	const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( subscription.URL );
 	const existingSubscription = subscriptions.list.find( function( sub ) {
-		return sub.get( 'URL' ) === preparedSiteUrl;
+		return sub.get( 'comparableUrl' ) === comparableUrl;
 	} );
 
 	if ( existingSubscription ) {
@@ -286,6 +288,7 @@ function addSubscription( subscription, addToTop = true ) {
 
 	// Otherwise, create a new subscription
 	subscription.URL = preparedSiteUrl;
+	subscription.comparableUrl = comparableUrl;
 	const newSubscription = subscriptionTemplate.merge( subscription );
 	_acceptSubscription( newSubscription, addToTop );
 	subscriptions.count++;
@@ -300,9 +303,9 @@ function updateSubscription( url, newSubscriptionInfo ) {
 		return;
 	}
 
-	const preparedSiteUrl = FeedSubscriptionHelper.prepareSiteUrl( url );
+	const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( url );
 	const subscriptionIndex = subscriptions.list.findIndex( function( item ) {
-		return item.get( 'URL' ) === preparedSiteUrl;
+		return item.get( 'comparableUrl' ) === comparableUrl;
 	} );
 
 	if ( subscriptionIndex === -1 ) {
@@ -323,7 +326,9 @@ function updateSubscription( url, newSubscriptionInfo ) {
 	const newSubscriptionInfoUrl = newSubscriptionInfo.get( 'URL' );
 	if ( newSubscriptionInfoUrl ) {
 		debug( 'New subscription URL is ' + newSubscriptionInfoUrl );
-		newSubscriptionInfo = newSubscriptionInfo.set( 'URL', FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfoUrl ) );
+		newSubscriptionInfo = newSubscriptionInfo
+			.set( 'URL', FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfoUrl ) )
+			.set( 'comparableUrl', FeedSubscriptionHelper.prepareComparableUrl( newSubscriptionInfoUrl ) );
 	}
 
 	const updatedSubscription = existingSubscription.merge( newSubscriptionInfo );

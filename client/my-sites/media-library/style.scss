@@ -50,7 +50,7 @@
 }
 
 .media-library__heading {
-	@extend %heading;
+	@include heading;
 	display: inline-block;
 	margin: 0;
 	line-height: 40px;

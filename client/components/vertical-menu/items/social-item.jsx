@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -10,11 +8,7 @@ import {
 	get,
 	identity
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'social-logos';
 
 const services = translate => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook feed' ) },

@@ -6,6 +6,7 @@ import {
 	SITE_FRONT_PAGE_SET,
 	SITE_FRONT_PAGE_SET_FAILURE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_ICON_SET,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -15,6 +16,10 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE
 } from 'state/action-types';
+import {
+	bumpStat,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 import { omit } from 'lodash';
 
 /**
@@ -98,7 +103,7 @@ export function requestSite( siteId ) {
 	};
 }
 
-export function setFrontPage( siteId, pageId ) {
+export function setFrontPage( siteId, pageId, successCallback ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_FRONT_PAGE_SET,
@@ -111,13 +116,37 @@ export function setFrontPage( siteId, pageId ) {
 			page_on_front_id: pageId,
 		};
 
-		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
+		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
+			const updatedOptions = {
+				page_on_front: parseInt( response.page_on_front_id, 10 ),
+				show_on_front: response.is_page_on_front ? 'page' : 'posts',
+			};
+
+			if ( 0 === response.page_for_posts_id || response.page_for_posts_id ) {
+				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
+			}
+
+			// This gives us a means to fix the `SitesList` cache outside of actions
+			// @todo Remove this when `SitesList` is Reduxified
+			if ( 'function' === typeof( successCallback ) ) {
+				successCallback( {
+					siteId,
+					updatedOptions,
+				} );
+			}
+
+			dispatch( recordTracksEvent( 'calypso_front_page_set', {
+				siteId,
+				pageId,
+			} ) );
+			dispatch( bumpStat( 'calypso_front_page_set', 'success' ) );
 			dispatch( {
 				type: SITE_FRONT_PAGE_SET_SUCCESS,
 				siteId,
-				pageId
+				updatedOptions,
 			} );
 		} ).catch( ( error ) => {
+			dispatch( bumpStat( 'calypso_front_page_set', 'failure' ) );
 			dispatch( {
 				type: SITE_FRONT_PAGE_SET_FAILURE,
 				siteId,
@@ -125,5 +154,21 @@ export function setFrontPage( siteId, pageId ) {
 				error
 			} );
 		} );
+	};
+}
+
+/**
+ * Returns an action object used in signalling that the icon for the site
+ * should be assigned to the specified image URL.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {String} iconUrl Icon URL
+ * @return {Object}         Action object
+ */
+export function setSiteIcon( siteId, iconUrl ) {
+	return {
+		type: SITE_ICON_SET,
+		siteId,
+		iconUrl
 	};
 }

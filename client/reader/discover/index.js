@@ -15,7 +15,6 @@ export default function() {
 		readerController.updateLastRoute,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
-		readerController.removePost,
 		readerController.sidebar,
 		controller.discover
 	);

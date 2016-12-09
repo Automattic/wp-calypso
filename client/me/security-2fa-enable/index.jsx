@@ -14,12 +14,13 @@ var FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
-	Notice = require( 'components/notice' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	analytics = require( 'lib/analytics' ),
 	constants = require( 'me/constants' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

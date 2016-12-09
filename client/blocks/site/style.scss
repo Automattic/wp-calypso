@@ -42,7 +42,7 @@
 	display: flex;
 	justify-content: space-between;
 	overflow: hidden;
-	padding: 16px 4px 16px 16px;
+	padding: 16px;
 	position: relative;
 	width: 100%;
 
@@ -127,90 +127,6 @@
 
 .site__content:hover .site__home {
 	opacity: 1;
-}
-
-.site__toggle-more-options {
-	color: $gray;
-	cursor: pointer;
-	padding-right: 16px;
-	line-height: 0;
-	.gridicon {
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
-	&:hover {
-		.gridicon {
-			color: darken( $gray, 20% );
-		}
-	}
-}
-
-.site.is-toggled {
-	.site__toggle-more-options .gridicon {
-		transform: rotate( 90deg );
-	}
-	.site-indicator {
-		display: none;
-	}
-}
-
-.site.is-toggled.has-edit-capabilities {
-	.site-icon {
-		border: 1px dashed $gray-dark;
-		opacity: 0.8;
-	}
-}
-
-.site__actions {
-	align-items: center;
-	display: flex;
-	flex: 1 0 0;
-	justify-content: flex-end;
-	animation: appear .3s ease-in-out;
-}
-
-.site__edit-icon-text {
-	animation: appear .3s ease-in-out;
-	font-size: 10px;
-	max-width: 60px;
-}
-
-.site__edit-icon,
-.site__edit-icon:visited {
-	color: darken( $gray, 10% );
-	font-weight: 600;
-	font-size: 11px;
-	text-transform: uppercase;
-	display: flex;
-	align-items: center;
-	&:hover {
-		color: $blue-medium;
-	}
-	.gridicons-external {
-		top: -1px;
-	}
-}
-
-.site__star {
-	color: $gray;
-	cursor: pointer;
-	line-height: 0;
-
-	&:hover .gridicons-star-outline {
-		color: $alert-yellow;
-	}
-
-	.gridicons-star {
-		color: $alert-yellow;
-	}
-}
-
-a.site__cog {
-	color: $gray;
-	line-height: 0;
-
-	&:hover {
-		color: darken( $gray, 20% );
-	}
 }
 
 .site__badge {

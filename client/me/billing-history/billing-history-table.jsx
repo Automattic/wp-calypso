@@ -15,6 +15,7 @@ var TransactionsTable = require( './transactions-table' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	successNotice = require( 'state/notices/actions' ).successNotice,
 	errorNotice = require( 'state/notices/actions' ).errorNotice;
+import purchasesPaths from 'me/purchases/paths';
 
 const BillingHistoryTable = React.createClass( {
 	displayName: 'BillingHistoryTable',
@@ -80,7 +81,7 @@ const BillingHistoryTable = React.createClass( {
 	renderTransaction: function( transaction ) {
 		return (
 			<div className="billing-history__transaction-links">
-				<a className="billing-history__view-receipt" href={ '/me/billing/' + transaction.id } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
+				<a className="billing-history__view-receipt" href={ purchasesPaths.billingHistoryReceipt( transaction.id ) } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
 					{ this.translate( 'View Receipt' ) }
 				</a>
 				{ this.renderEmailAction( transaction.id ) }

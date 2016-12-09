@@ -14,7 +14,6 @@ export default function() {
 	readerController.preloadReaderBundle,
 	readerController.loadSubscriptions,
 	readerController.updateLastRoute,
-	readerController.removePost,
 	readerController.sidebar,
 	start );
 }

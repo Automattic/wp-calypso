@@ -20,6 +20,12 @@ import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
+import {
+	olarkReady,
+	operatorsAway,
+	operatorsAvailable,
+	setChatAvailability,
+} from 'state/ui/olark/actions';
 
 /**
  * Module variables
@@ -51,11 +57,11 @@ const olark = {
 
 	userType: 'Unknown',
 
-	initialize() {
+	initialize( dispatch ) {
 		debug( 'Initializing Olark Live Chat' );
 
 		this.getOlarkConfiguration()
-			.then( ( configuration ) => this.configureOlark( configuration ) )
+			.then( ( configuration ) => this.configureOlark( configuration, dispatch ) )
 			.catch( ( error ) => this.handleError( error ) );
 	},
 
@@ -85,7 +91,7 @@ const olark = {
 		} );
 	},
 
-	configureOlark: function( wpcomOlarkConfig = {} ) {
+	configureOlark: function( wpcomOlarkConfig = {}, dispatch ) {
 		var userData = user.get(),
 			siteUrl = this.getSiteUrl(),
 			updateDetailsEvents = [
@@ -116,8 +122,11 @@ const olark = {
 		olarkEvents.initialize();
 
 		olarkEvents.once( 'api.chat.onReady', olarkActions.setReady );
+		olarkEvents.once( 'api.chat.onReady', () => dispatch( olarkReady() ) );
 		olarkEvents.on( 'api.chat.onOperatorsAway', olarkActions.setOperatorsAway );
+		olarkEvents.on( 'api.chat.onOperatorsAway', () => dispatch( operatorsAway() ) );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', olarkActions.setOperatorsAvailable );
+		olarkEvents.on( 'api.chat.onOperatorsAvailable', () => dispatch( operatorsAvailable() ) );
 
 		olarkExpandedEvents.forEach( this.hookExpansionEventToStoreSync.bind( this ) );
 
@@ -149,6 +158,8 @@ const olark = {
 		} else {
 			this.showChatBox();
 		}
+
+		dispatch( setChatAvailability( wpcomOlarkConfig.availability ) );
 	},
 
 	updateOlarkGroupAndEligibility() {
@@ -423,5 +434,5 @@ const olark = {
 };
 
 emitter( olark );
-olark.initialize();
+
 module.exports = olark;

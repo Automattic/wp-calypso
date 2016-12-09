@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import JetpackConnect from './index';
-import jetpackConnectAuthorizeForm from './authorize-form';
+import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import {
@@ -25,10 +25,9 @@ import i18nUtils from 'lib/i18n-utils';
 import analytics from 'lib/analytics';
 import config from 'config';
 import route from 'lib/route';
-import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
-const sites = sitesFactory();
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -57,6 +56,33 @@ const jetpackConnectFirstStep = ( context, type ) => {
 			userModule: userModule,
 			locale: context.params.locale
 		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
+const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
+	const PlansLanding = require( './plans-landing' ),
+		analyticsPageTitle = 'Plans',
+		basePath = route.sectionify( context.path ),
+		analyticsBasePath = basePath + '/:site';
+
+	removeSidebar( context );
+
+	context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+
+	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+	renderWithReduxStore(
+		<PlansLanding
+			context={ context }
+			destinationType={ context.params.destinationType }
+			intervalType={ context.params.intervalType }
+			isLanding={ true }
+			landingType={ landingType }
+			basePlansPath={ path }
+			hideFreePlan={ hideFreePlan } />,
 		document.getElementById( 'primary' ),
 		context.store
 	);
@@ -93,6 +119,15 @@ export default {
 		}
 
 		next();
+	},
+
+	personal( context ) {
+		const analyticsBasePath = '/jetpack/connect/personal',
+			analyticsPageTitle = 'Jetpack Connect Personal';
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		jetpackConnectFirstStep( context, 'personal' );
 	},
 
 	premium( context ) {
@@ -139,14 +174,23 @@ export default {
 
 		userModule.fetch();
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		let intervalType = context.params.intervalType;
+		let locale = context.params.locale;
+		if ( context.params.localeOrInterval ) {
+			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+				intervalType = context.params.localeOrInterval;
+			} else {
+				locale = context.params.localeOrInterval;
+			}
+		}
 
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 		renderWithReduxStore(
-			React.createElement( jetpackConnectAuthorizeForm, {
-				path: context.path,
-				locale: context.params.locale,
-				userModule: userModule
-			} ),
+			<JetpackConnectAuthorizeForm
+				path={ context.path }
+				intervalType={ intervalType }
+				locale={ locale }
+				userModule={ userModule } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -175,15 +219,29 @@ export default {
 		);
 	},
 
+	vaultpressLanding( context ) {
+		getPlansLandingPage( context, true, '/jetpack/connect/vaultpress', 'vaultpress' );
+	},
+
+	akismetLanding( context ) {
+		getPlansLandingPage( context, true, '/jetpack/connect/akismet', 'akismet' );
+	},
+
 	plansLanding( context ) {
+		getPlansLandingPage( context, false, '/jetpack/connect/store', 'jetpack' );
+	},
+
+	plansSelection( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
-			site = sites.getSelectedSite(),
+			state = context.store.getState(),
+			siteId = getSelectedSiteId( state ),
+			isJetpack = isJetpackSite( state, siteId ),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
 
-		if ( ! site || ! site.jetpack || ! config.isEnabled( 'jetpack/connect' ) ) {
+		if ( ! config.isEnabled( 'jetpack/connect' ) || ! isJetpack ) {
 			return;
 		}
 
@@ -198,11 +256,30 @@ export default {
 		renderWithReduxStore(
 			<CheckoutData>
 				<Plans
-					sites={ sites }
 					context={ context }
 					destinationType={ context.params.destinationType }
+					basePlansPath={ '/jetpack/connect/plans' }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	plansPreSelection( context ) {
+		const Plans = require( './plans' ),
+			analyticsPageTitle = 'Plans',
+			basePath = route.sectionify( context.path ),
+			analyticsBasePath = basePath + '/:site';
+
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		renderWithReduxStore(
+			<Plans
+				context={ context }
+				showFirst={ true }
+				destinationType={ context.params.destinationType } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);

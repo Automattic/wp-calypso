@@ -1,26 +1,33 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import map from 'lodash/map';
+import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import ReaderSidebarTagsListItem from './list-item';
 
-const ReaderSidebarTagsList = React.createClass( {
+export class ReaderSidebarTagsList extends Component {
 
-	propTypes: {
+	static propTypes = {
 		tags: React.PropTypes.array,
 		onUnfollow: React.PropTypes.func.isRequired,
 		path: React.PropTypes.string.isRequired,
-		currentTag: React.PropTypes.string
-	},
+		currentTag: React.PropTypes.string,
+		translate: React.PropTypes.func,
+	}
 
-	renderItems() {
-		const { path, onUnfollow, currentTag } = this.props;
-		return map( this.props.tags, function( tag ) {
+	static defaultProps = {
+		translate: identity,
+	}
+
+	renderItems = () => {
+		const { path, onUnfollow, currentTag, tags } = this.props;
+		return map( tags, function( tag ) {
 			return (
 				<ReaderSidebarTagsListItem
 					key={ tag.ID }
@@ -30,12 +37,13 @@ const ReaderSidebarTagsList = React.createClass( {
 					currentTag={ currentTag } />
 			);
 		} );
-	},
+	}
 
 	render() {
-		if ( ! this.props.tags || this.props.tags.length === 0 ) {
+		const { tags, translate } = this.props;
+		if ( ! tags || tags.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ this.translate( 'Find relevant posts by adding a\xa0tag.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">{ translate( 'Find relevant posts by adding a\xa0tag.' ) }</li>
 			);
 		}
 
@@ -43,6 +51,6 @@ const ReaderSidebarTagsList = React.createClass( {
 			<div>{ this.renderItems() }</div>
 		);
 	}
-} );
+}
 
-export default ReaderSidebarTagsList;
+export default localize( ReaderSidebarTagsList );

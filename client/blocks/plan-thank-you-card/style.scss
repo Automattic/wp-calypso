@@ -5,26 +5,26 @@
 	background-color: darken( $alert-green, 10 );
 	border-radius: 8px 8px 6px 6px;
 	overflow: hidden;
-	margin: 0 auto 24px;
+	margin: 12px auto 24px;
 	color: $white;
 	font-family: $sans;
 	text-align: center;
 
 	@include breakpoint( ">480px" ) {
-		margin-top: 56px;
+		margin-top: 28px;
 	}
 }
 
 .plan-thank-you-card__header {
 	background-color: $alert-green;
-	padding: 24px 0;
+	padding: 12px 0;
 	position: relative;
 	line-height: 1.2;
 	border-radius: 6px 6px 0 0;
 	overflow: hidden;
 
 	@include breakpoint( ">480px" ) {
-		padding: 75px 0 30px;
+		padding: 32px 0 15px;
 	}
 }
 
@@ -68,8 +68,9 @@
 	font-size: 14px;
 	height: 40px;
 	line-height: 40px;
+	max-width: 280px;
 	padding: 0;
-	width: 280px;
+	width: 100%;
 	margin: 0 auto;
 	border-style: solid;
 	border-color: darken( $alert-green, 20 );
@@ -222,11 +223,11 @@
 }
 
 .plan-thank-you-card__main-icon {
-	width: 100px;
-	height: 100px;
+	width: 72px;
+	height: 72px;
 
 	@include breakpoint( ">480px" ) {
-		width: 140px;
-		height: 140px;
+		width: 96px;
+		height: 96px;
 	}
 }

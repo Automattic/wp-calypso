@@ -47,7 +47,7 @@ class ThemeMoreButton extends React.Component {
 	render() {
 		const classes = classNames(
 			'theme__more-button',
-			{ 'is-active': this.props.theme.active },
+			{ 'is-active': this.props.active },
 			{ 'is-open': this.state.showPopover }
 		);
 

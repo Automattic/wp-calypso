@@ -21,7 +21,6 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	paths = require( 'my-sites/upgrades/paths' ),
-	Notice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ hasGoogleApps, getGoogleAppsSupportedDomains } = require( 'lib/domains' ),
@@ -29,6 +28,8 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	validateUsers = googleAppsLibrary.validate,
 	filterUsers = googleAppsLibrary.filter,
 	DomainsSelect = require( './domains-select' );
+
+import Notice from 'components/notice';
 
 const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
@@ -169,7 +170,7 @@ const AddEmailAddressesCard = React.createClass( {
 		let command = { fieldsets: {} };
 
 		command.fieldsets[ index ] = {};
-		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue } };
+		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
 
 		if ( fieldName === 'domain' ) {
 			this.recordEvent( 'domainChange', newValue, index );
@@ -285,7 +286,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	groups = mapValues( groups, function( group ) {
 		return map( group, function( fieldset ) {
 			return {
-				email: fieldset.username.value + '@' + fieldset.domain.value
+				email: `${ fieldset.username.value }@${ fieldset.domain.value }`.toLowerCase()
 			};
 		} );
 	} );

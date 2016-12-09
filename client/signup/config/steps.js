@@ -47,14 +47,6 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
-	'survey-user': {
-		stepName: 'survey-user',
-		apiRequestFunction: stepActions.createAccount,
-		providesToken: true,
-		dependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		providesDependencies: [ 'bearer_token', 'username' ]
-	},
-
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
@@ -67,15 +59,15 @@ module.exports = {
 	plans: {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'cartItem' ]
+		dependencies: [ 'siteSlug', 'domainItem' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme', 'surveyQuestion' ],
+		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -109,7 +101,7 @@ module.exports = {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
 		dependencies: [ 'cartItem' ],
-		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]
+		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem', 'privacyItem' ]
 	},
 
 	'get-dot-blog-themes': {
@@ -119,13 +111,5 @@ module.exports = {
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
-	},
-
-	'get-dot-blog-survey': {
-		stepName: 'get-dot-blog-survey',
-		props: {
-			surveySiteType: 'blog'
-		},
-		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
 };

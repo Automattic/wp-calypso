@@ -109,8 +109,12 @@
 
 // The actual list of sites
 .site-selector__sites {
-	max-height: calc( 100% - 89px );
+	max-height: calc( 100% - 93px );
 	overflow-y: auto;
+
+	@include breakpoint( "<660px" ) {
+		max-height: calc( 100% - 109px );
+	}
 }
 
 .site-selector__no-results {
@@ -120,9 +124,43 @@
 }
 
 .site-selector__add-new-site {
-	padding: 8px 9px;
-	display: block;
-	border-top: 1px solid lighten( $gray, 20% );
+	padding: 0;
+	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	margin: auto 0 0;
+	display: flex;
+	flex-direction: row;
+	padding-left: 10px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 16px;
+	}
+}
+
+.site-selector__add-new-site .button {
+	box-sizing: border-box;
+	display: inline-block;
+	text-transform: uppercase;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 8px;
+	color: darken( $gray, 10% );
+	line-height: 2.1;
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 16px;
+	}
+
+	.gridicon {
+		display: block;
+		float: left;
+		margin-right: 6px;
+		top: auto;
+		margin-top: auto;
+	}
 }
 
 // Containers in the list of sites are larger

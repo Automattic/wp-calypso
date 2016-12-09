@@ -3,7 +3,7 @@
  */
 import { fromJS } from 'immutable';
 import map from 'lodash/map';
-import uniq from 'lodash/uniq'
+import uniq from 'lodash/uniq';
 /**
  * Internal dependencies
  */
@@ -12,10 +12,10 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEMES_INCREMENT_PAGE,
 	THEMES_QUERY,
-	THEMES_RECEIVE,
+	LEGACY_THEMES_RECEIVE,
 	THEMES_RECEIVE_SERVER_ERROR,
 } from 'state/action-types';
 
@@ -34,8 +34,7 @@ export const initialState = query( fromJS( {
 	list: [],
 	nextId: 0,
 	query: {},
-	queryState: {},
-	active: 0
+	queryState: {}
 } ) );
 
 /**
@@ -68,7 +67,7 @@ export default ( state = initialState, action ) => {
 		case THEMES_QUERY:
 			return query( state, action.params );
 
-		case THEMES_RECEIVE:
+		case LEGACY_THEMES_RECEIVE:
 			if (
 				( action.queryParams.id === state.getIn( [ 'query', 'id' ] ) ) ||
 				action.wasJetpack
@@ -89,17 +88,12 @@ export default ( state = initialState, action ) => {
 				.updateIn( [ 'query', 'page' ], page => page + 1 );
 
 		case THEMES_RECEIVE_SERVER_ERROR:
+		case THEME_ACTIVATE_REQUEST_FAILURE:
 			return state
 				.setIn( [ 'queryState', 'isFetchingNextPage' ], false )
 				.setIn( [ 'queryState', 'isLastPage' ], true )
 				.setIn( [ 'queryState', 'error' ], true );
 
-		case THEME_ACTIVATED:
-			// The `active` attribute isn't ever really read, but since
-			// `createReducerStore()` only emits a `change` event when the new
-			// state is different from the old one, we need something to change
-			// here.
-			return state.set( 'active', action.theme.id );
 		case DESERIALIZE:
 			return initialState;
 		case SERVER_DESERIALIZE:

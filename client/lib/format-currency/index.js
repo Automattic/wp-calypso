@@ -39,6 +39,12 @@ const CURRENCIES = {
 		grouping: ',',
 		decimal: '.',
 		precision: 0
+	},
+	BRL: {
+		symbol: 'R$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2
 	}
 };
 

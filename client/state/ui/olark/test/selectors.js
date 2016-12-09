@@ -8,15 +8,77 @@ import { expect } from 'chai';
  */
 import {
 	isOlarkReady,
+	isOperatorsAvailable,
 	isOlarkTimedOut,
+	isChatAvailable,
 	isRequestingOlark
 } from '../selectors';
 import {
 	STATUS_READY,
-	STATUS_TIMEOUT
+	STATUS_TIMEOUT,
+	OPERATOR_STATUS_AVAILABLE,
+	OPERATOR_STATUS_AWAY
 } from '../constants';
 
 describe( 'selectors', () => {
+	describe( '#isChatAvailable()', () => {
+		it( 'should return true if chat is available', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {
+							testArea: true,
+						}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( true );
+		} );
+		it( 'should return false if chat is not available', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {
+							testArea: false,
+						}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( false );
+		} );
+		it( 'should return false if area does not exist', () => {
+			const isAvailable = isChatAvailable( {
+				ui: {
+					olark: {
+						availability: {}
+					}
+				}
+			}, 'testArea' );
+			expect( isAvailable ).to.equal( false );
+		} );
+	} );
+	describe( '#isOperatorsAvailable()', () => {
+		it( 'should return true if operators are available', () => {
+			const isAvailable = isOperatorsAvailable( {
+				ui: {
+					olark: {
+						operatorStatus: OPERATOR_STATUS_AVAILABLE
+					}
+				}
+			} );
+			expect( isAvailable ).to.equal( true );
+		} );
+		it( 'should return false if operators are away', () => {
+			const isAvailable = isOperatorsAvailable( {
+				ui: {
+					olark: {
+						operatorStatus: OPERATOR_STATUS_AWAY
+					}
+				}
+			} );
+			expect( isAvailable ).to.equal( false );
+		} );
+	} );
 	describe( '#isOlarkReady()', () => {
 		it( 'should return false if olark has unknown status', () => {
 			const isReady = isOlarkReady( {

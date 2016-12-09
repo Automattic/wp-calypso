@@ -18,7 +18,7 @@ import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selector
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import DraftsButton from 'post-editor/drafts-button';
+import AsyncLoad from 'components/async-load';
 
 function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
 	const className = classnames( 'editor-sidebar__header', {
@@ -53,7 +53,7 @@ function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPo
 				</Button>
 			) }
 			{ type === 'post' && (
-				<DraftsButton onClick={ toggleDrafts } />
+				<AsyncLoad require="post-editor/drafts-button" onClick={ toggleDrafts } />
 			) }
 			<Button
 				onClick={ toggleSidebar }

@@ -103,10 +103,13 @@ export const ReaderSidebar = React.createClass( {
 	},
 
 	highlightNewTag( tag ) {
-		defer( function() {
-			page( '/tag/' + tag.slug );
-			window.scrollTo( 0, 0 );
-		} );
+		const tagUrl = `/tag/${ tag.slug }`;
+		if ( tagUrl !== page.current ) {
+			defer( function() {
+				page( tagUrl );
+				window.scrollTo( 0, 0 );
+			} );
+		}
 	},
 
 	openExpandableMenuForCurrentTagOrList() {
@@ -154,32 +157,6 @@ export const ReaderSidebar = React.createClass( {
 						<ReaderSidebarTeams teams={ this.state.teams } path={ this.props.path } />
 
 						{
-							// Post Recommendations - Used by the Data team to test recommendation algorithms
-							config.isEnabled( 'reader/recommendations/posts' ) &&
-							(
-								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/posts', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
-									<a href="/recommendations/posts">
-										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.props.translate( 'Recommended Posts (Alpha)' ) }</span>
-									</a>
-								</li>
-							)
-						}
-
-						{
-							// Post Recommendations Cold Start - Used by the Data team to test cold start algorithms
-							config.isEnabled( 'reader/recommendations/posts' ) &&
-							(
-								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
-									<a href="/recommendations/cold">
-										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.props.translate( 'Coldstart (Alpha)' ) }</span>
-									</a>
-								</li>
-							)
-						}
-
-						{
 							isDiscoverEnabled()
 							? (
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
@@ -202,12 +179,14 @@ export const ReaderSidebar = React.createClass( {
 							)
 						}
 
+						{ ! config.isEnabled( 'reader/refresh/stream' ) && (
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations', this.props.path, { 'sidebar-streams__recommendations': true } ) }>
 							<a href="/recommendations">
 								<Gridicon icon="thumbs-up" size={ 24 } />
 								<span className="menu-link-text">{ this.props.translate( 'Recommendations' ) }</span>
 							</a>
-						</li>
+						</li> )
+						}
 
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', this.props.path, { 'sidebar-activity__likes': true } ) }>
 							<a href="/activities/likes">
@@ -219,14 +198,17 @@ export const ReaderSidebar = React.createClass( {
 				</SidebarMenu>
 
 				<QueryReaderLists />
-				<ReaderSidebarLists
-					lists={ this.props.subscribedLists }
-					path={ this.props.path }
-					isOpen={ this.props.isListsOpen }
-					onClick={ this.props.toggleListsVisibility }
-					currentListOwner={ this.state.currentListOwner }
-					currentListSlug={ this.state.currentListSlug } />
-
+				{ this.props.subscribedLists && this.props.subscribedLists.length
+				? <ReaderSidebarLists
+						lists={ this.props.subscribedLists }
+						path={ this.props.path }
+						isOpen={ this.props.isListsOpen }
+						onClick={ this.props.toggleListsVisibility }
+						currentListOwner={ this.state.currentListOwner }
+						currentListSlug={ this.state.currentListSlug }
+					/>
+				: null
+				}
 				<ReaderSidebarTags
 					tags={ this.state.tags }
 					path={ this.props.path }
@@ -234,7 +216,6 @@ export const ReaderSidebar = React.createClass( {
 					onClick={ this.props.toggleTagsVisibility }
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
-
 			</SidebarRegion>
 
 			{ this.props.shouldRenderAppPromo &&

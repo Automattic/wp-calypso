@@ -107,15 +107,11 @@ function Pageable( prototype ) {
 		if ( options.page > 1 && ! objects.length ) {
 			// we requested a new page of objects and nothing came back
 			this.page--;
+		} else if ( objects.length ) {
+			this.data = this.data.concat( objects );
 		} else {
-			// If it's a paginated request append it to the
-			// original data we already have
-			if ( objects.length ) {
-				this.data = this.data.concat( objects );
-			} else {
-				// no new objects, move our page marker back a page
-				this.page--;
-			}
+			// no new objects, move our page marker back a page
+			this.page--;
 		}
 
 		if ( this.isLastPage( objects ) ) {

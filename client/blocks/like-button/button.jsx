@@ -22,7 +22,7 @@ const LikeButton = React.createClass( {
 		tagName: React.PropTypes.string,
 		onLikeToggle: React.PropTypes.func,
 		likedLabel: React.PropTypes.string,
-		isMini: React.PropTypes.bool,
+		iconSize: React.PropTypes.number,
 		animateLike: React.PropTypes.bool
 	},
 
@@ -32,7 +32,7 @@ const LikeButton = React.createClass( {
 			showZeroCount: false,
 			likeCount: 0,
 			showLabel: true,
-			isMini: false,
+			iconSize: 24,
 			animateLike: true
 		};
 	},
@@ -59,7 +59,6 @@ const LikeButton = React.createClass( {
 			'has-label': this.props.showLabel
 		};
 		let likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } );
-		let iconSize = 24;
 
 		if ( this.props.liked ) {
 			containerClasses[ 'is-liked' ] = true;
@@ -79,10 +78,6 @@ const LikeButton = React.createClass( {
 			} );
 		}
 
-		if ( this.props.isMini ) {
-			iconSize = 18;
-		}
-
 		const labelElement = ( <span className="like-button__label">
 			<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
 			{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
@@ -95,7 +90,7 @@ const LikeButton = React.createClass( {
 					className: classNames( containerClasses ),
 					onTouchTap: this.toggleLiked
 				},
-				<LikeIcons size={ iconSize } />, labelElement
+				<LikeIcons size={ this.props.iconSize } />, labelElement
 			)
 		);
 	}

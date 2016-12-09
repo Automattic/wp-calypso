@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 6.7.0
+    version: 6.9.1
 test:
   pre:
     - NODE_ENV=test make client/config/index.js:
@@ -24,4 +24,18 @@ test:
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true
-    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.pot $CIRCLE_ARTIFACTS/translate/calypso-strings.pot; fi;
+    - ? |
+          if [[ $CIRCLE_NODE_INDEX == 0 ]]; then
+            make translate;
+            mkdir -p $CIRCLE_ARTIFACTS/translate;
+            cp calypso-strings.pot $CIRCLE_ARTIFACTS/translate/calypso-strings.pot;
+            if [[ $CIRCLE_BRANCH != "master" ]]; then
+              node bin/get-circle-string-artifact-url | xargs curl > $CIRCLE_ARTIFACTS/translate/calypso-strings-master.pot;
+              msgcat -u $CIRCLE_ARTIFACTS/translate/calypso-strings.pot $CIRCLE_ARTIFACTS/translate/calypso-strings-master.pot > $CIRCLE_ARTIFACTS/translate/new-calypso-strings.pot;
+            fi;
+          fi;
+      :
+        parallel: true
+notify:
+  webhooks:
+    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh

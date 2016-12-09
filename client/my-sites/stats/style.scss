@@ -18,6 +18,14 @@
 	margin-left: 4px;
 }
 
+.is-section-stats .followers-count .button {
+	margin-right: 16px;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}
+
 // Welcome Stats message
 // -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
 

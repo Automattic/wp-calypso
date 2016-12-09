@@ -1,87 +1,101 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' );
+import page from 'page';
+import React, { Component } from 'react';
+import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	Dialog = require( 'components/dialog' ),
-	analytics = require( 'lib/analytics' ),
-	SitesListActions = require( 'lib/sites-list/actions' );
+import Dialog from 'components/dialog';
+import SitesListActions from 'lib/sites-list/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+class DisconnectJetpackDialog extends Component {
+	constructor( props ) {
+		super( props );
 
-	displayName: 'DisconnectJetpackDialog',
+		this.state = {
+			showJetpackDisconnectDialog: false
+		};
 
-	getInitialState: function() {
-		return { showJetpackDisconnectDialog: false };
-	},
+		this.open = this.open.bind( this );
+		this.close = this.close.bind( this );
+		this.disconnectJetpack = this.disconnectJetpack.bind( this );
+	}
 
-	open: function() {
-		this.setState( { showJetpackDisconnectDialog: true } );
-	},
+	open() {
+		this.setState( {
+			showJetpackDisconnectDialog: true
+		} );
+	}
 
-	close: function( action ) {
-		this.setState( { showJetpackDisconnectDialog: false } );
+	close( action ) {
+		this.setState( {
+			showJetpackDisconnectDialog: false
+		} );
+
 		if ( action === 'continue' ) {
 			this.disconnectJetpack();
-			analytics.ga.recordEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+			this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 		} else {
-			analytics.ga.recordEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+			this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 		}
-	},
+	}
 
-	disconnectJetpack: function() {
-		var selectedSite = sites.getSelectedSite();
+	disconnectJetpack() {
+		const { site, selectedSite } = this.props;
 
 		// remove any error and completed notices
 		SitesListActions.removeSitesNotices( [ { status: 'error' }, { status: 'completed' } ] );
 
-		if ( this.props.site ) {
-			SitesListActions.disconnect( this.props.site );
-			if ( selectedSite === this.props.site && this.props.redirect ) {
+		if ( site ) {
+			SitesListActions.disconnect( site );
+			if ( selectedSite === site && this.props.redirect ) {
 				page.redirect( this.props.redirect );
 				return;
 			}
 		} else if ( this.props.sites ) {
-			this.props.sites.getSelectedOrAllWithPlugins().forEach( function( site ) {
-				SitesListActions.disconnect( site );
-			} );
+			this.props.sites.getSelectedOrAllWithPlugins().forEach( siteItem => SitesListActions.disconnect( siteItem ) );
 		}
-		if ( selectedSite === this.props.site ) {
+
+		if ( selectedSite === site ) {
 			page.redirect( '/sites' );
 		}
-	},
+	}
 
-	render: function() {
-		var moreInfo,
-			deactivationButtons = [
-				{
-					action: 'cancel',
-					label: this.translate( 'Cancel' )
-				},
-				{
-					action: 'continue',
-					label: this.translate( 'Disconnect' ),
-					isPrimary: true
-				}
-			];
+	renderInfo() {
+		const { site } = this.props;
 
-		if ( this.props.site && this.props.site.name || this.props.site && this.props.site.title ) {
-			moreInfo = this.translate(
-				'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.', {
-					args: { siteName: this.props.site.name || this.props.site.title },
-					context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.'
-				} );
-		} else {
-			moreInfo = this.translate(
-				'Disconnecting Jetpack will remove access to WordPress.com features.', {
-					context: 'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.'
-				} );
+		if ( ! site ) {
+			return translate( 'Disconnecting Jetpack will remove access to WordPress.com features.', {
+				context: 'Jetpack: Warning message displayed prior to disconnecting multiple Jetpack Sites.'
+			} );
 		}
+
+		return translate( 'Disconnecting Jetpack will remove access to WordPress.com features for %(siteName)s.', {
+			args: {
+				siteName: site.name || site.title
+			},
+			context: 'Jetpack: Warning message displayed prior to disconnecting a Jetpack Site.'
+		} );
+	}
+
+	render() {
+		const deactivationButtons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' )
+			},
+			{
+				action: 'continue',
+				label: translate( 'Disconnect' ),
+				isPrimary: true
+			}
+		];
 
 		return (
 			<Dialog
@@ -89,9 +103,22 @@ module.exports = React.createClass( {
 				buttons={ deactivationButtons }
 				onClose={ this.close }
 				transitionLeave={ false }>
-				<h1>{ this.translate( 'Disconnect Jetpack' ) }</h1>
-				<p>{ moreInfo }</p>
+				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
+				<p>{ this.renderInfo() }</p>
 			</Dialog>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		selectedSite: getSelectedSite( state )
+	} ),
+	{
+		recordGoogleEvent
+	},
+	null,
+	{
+		withRef: true
+	}
+)( DisconnectJetpackDialog );

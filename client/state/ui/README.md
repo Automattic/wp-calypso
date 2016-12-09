@@ -38,3 +38,13 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 const selectedSite = getSelectedSite( store.getState() );
 ```
+
+### `getSelectedSiteSlug( state: Object )`
+
+Returns the currently selected site slug.
+
+```js
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+
+const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
+```

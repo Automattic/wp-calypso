@@ -12,7 +12,8 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var webpackConfig = require( process.cwd() + '/webpack.config' ),
-	utils = require( '../utils' );
+	utils = require( '../utils' ),
+	config = require( '../../config' );
 
 /**
  * Variables
@@ -20,6 +21,7 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
 var _children = [],
 	start = new Date().getTime(),
 	CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
+	bundleEnv = config( 'env' ),
 	outputOptions;
 
 outputOptions = {
@@ -84,6 +86,7 @@ webpack( webpackConfig, function( error, stats ) {
 	files = assets.map( function( chunk ) {
 		return path.join( process.cwd(), 'public', chunk.file );
 	} );
+	files.push( path.join( process.cwd(), 'public', 'vendor.' + bundleEnv + '.js' ) );
 
 	minify( files );
 });

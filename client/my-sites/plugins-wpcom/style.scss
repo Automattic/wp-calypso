@@ -50,11 +50,11 @@
 // Special styles for displaying only two plugins
 .wpcom-plugins__business-panel .wpcom-plugins__plugin-item {
 	width: 100%;
-	
+
 	&:last-child {
 		border-right: none;
 	}
-	
+
 	@include breakpoint( ">960px" ) {
 		width: 50%;
 		border-right: 1px solid lighten( $gray, 20% );
@@ -114,10 +114,12 @@
 	margin-bottom: 0;
 }
 
-.wpcom-plugin-panel button.is-active-plugin {
+.plugins-wpcom__panel button.is-active-plugin {
 	color: $alert-green;
+	cursor: default;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		color: $alert-green;
 	}
 }
@@ -146,7 +148,7 @@
 	}
 }
 
-.wpcom-plugin-panel .notice {
+.plugins-wpcom__panel .notice {
 	margin: 0;
 }
 
@@ -195,5 +197,149 @@
 
 	@include breakpoint( ">960px" ) {
 		margin: 0 auto;
+	}
+}
+
+.plugins-wpcom__empty-results {
+	padding: 11px 16px;
+}
+
+.plugins-wpcom__jetpack-plugin-item.card {
+	display: flex;
+	flex-direction: row;
+	padding: 0;
+
+	.plugins-wpcom__plugin-link {
+		display: block;
+		flex-grow: 1;
+		font-size: 14px;
+		padding: 16px 0 16px 16px;
+		overflow: hidden;
+	}
+
+	.plugins-wpcom__plugin-name {
+		color: $gray-dark;
+		display: block;
+		line-height: 21px;
+		overflow: hidden;
+		text-align: left;
+		text-overflow: ellipsis;
+		white-space: pre;
+	}
+
+	.plugins-wpcom__plugin-description {
+		color: $gray;
+		font-size: 12px;
+		padding: 2px 0;
+
+		@include breakpoint( '>480px' ) {
+			font-size: 14px;
+		}
+	}
+
+	.plugins-wpcom__plugin-actions {
+		align-self: center;
+		flex-grow: 1;
+		flex-shrink: 0;
+		padding: 16px;
+		text-align: right;
+
+		@include breakpoint( '>480px' ) {
+			flex-grow: 0;
+		}
+
+		@include breakpoint( '>660px' ) {
+			padding-right: 24px;
+			padding-left: 24px;
+		}
+	}
+
+	.plugins-wpcom__is-premium-plugin,
+	.plugins-wpcom__is-business-plugin {
+		display: block;
+		@include breakpoint( '>480px' ) {
+			display: inline-block;
+			margin-left: 10px;
+		}
+	}
+	.plugins-wpcom__is-premium-plugin {
+		color: $alert-green;
+	}
+	.plugins-wpcom__is-business-plugin {
+		color: $alert-purple;
+	}
+}
+
+.plugins-wpcom__jetpack-main-plugin.card {
+	.plugins-wpcom__plugin-link {
+		display: flex;
+		padding: 16px 0 16px 16px;
+		@include breakpoint( '>660px' ) {
+			padding: 24px 0 24px 24px;
+		}
+
+		.plugin-icon {
+			float: none;
+			flex-shrink: 0;
+		}
+		.plugins-wpcom__plugin-content {
+			flex-grow: 1;
+			overflow: hidden;
+		}
+	}
+
+	.plugins-wpcom__plugin-name {
+		@include breakpoint( '>480px' ) {
+			font-size: 24px;
+			font-weight: 700;
+			font-family: $serif;
+			line-height: 32px;
+		}
+	}
+}
+
+.plugins-wpcom__jetpack-plugins-list.card {
+	padding: 0;
+
+	.plugins-wpcom__jetpack-plugin-item.card {
+		&:hover {
+			//box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			//	0 1px 2px darken( $gray, 30% );
+			box-shadow: 0 0 0 1px $gray;
+		}
+	}
+
+	.plugins-wpcom__plugin-name {
+		@include breakpoint( '>480px' ) {
+			font-size: 18px;
+		}
+	}
+}
+
+.plugins-wpcom__jetpack-category-header.card {
+	color: $gray;
+	font-size: 14px;
+	line-height: 15px;
+	padding-bottom: 11px;
+	padding-left: 50px;
+	padding-top: 11px;
+	position: relative;
+
+	@include breakpoint( '>480px' ) {
+		line-height: 25px;
+		padding-left: 60px;
+	}
+
+	.gridicon {
+		height: 24px;
+		left: 16px;
+		position: absolute;
+		top: 6px;
+		width: 24px;
+
+		@include breakpoint( '>480px' ) {
+			left: 24px;
+			top: 11px;
+		}
 	}
 }

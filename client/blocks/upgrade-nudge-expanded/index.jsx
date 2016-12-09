@@ -18,9 +18,9 @@ import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
-import { getFeatureTitle } from 'lib/plans';
+import { getFeatureTitle, getPlan } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL, plansList } from 'lib/plans/constants';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -137,7 +137,7 @@ UpgradeNudgeExpanded.propTypes = {
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
 	currentPlan: getSitePlan( state, getSelectedSiteId( state ) ),
-	planConstants: plansList[ plan ],
+	planConstants: getPlan( plan ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 

@@ -23,7 +23,7 @@ function filter( { users, fields } ) {
 	} );
 }
 
-function validate( { users, fields, domainSuffix } ) {
+function validate( { users, fields } ) {
 	var errors;
 
 	users = filter( { users, fields } );
@@ -37,10 +37,10 @@ function validate( { users, fields, domainSuffix } ) {
 				if ( field.value.length > 60 ) {
 					error = i18n.translate( 'This field can\'t be longer than 60 characters.' );
 				}
-			} else if ( 'email' === key ) {
-				if ( /[^[0-9a-z_'.-]/i.test( field.value ) ) {
+			} else if ( includes( [ 'email', 'username' ], key ) ) {
+				if ( ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( field.value ) ) {
 					error = i18n.translate( 'Only number, letters, dashes, underscores, apostrophes and periods are allowed.' );
-				} else if ( ! emailValidator.validate( `${ field.value }@${ domainSuffix }` ) ) {
+				} else if ( ! emailValidator.validate( `${ field.value }@${ user.domain.value }` ) ) {
 					error = i18n.translate( 'Please provide a valid email address.' );
 				}
 			}

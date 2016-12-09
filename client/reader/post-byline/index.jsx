@@ -20,12 +20,6 @@ import {
 
 class PostByline extends React.Component {
 
-	constructor( ) {
-		super( );
-		this.recordTagClick = this.recordTagClick.bind( this );
-		this.recordAuthorClick = this.recordAuthorClick.bind( this );
-	}
-
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
@@ -38,7 +32,7 @@ class PostByline extends React.Component {
 		isDiscoverPost: false
 	}
 
-	recordTagClick() {
+	recordTagClick = () => {
 		recordAction( 'click_tag' );
 		recordGaEvent( 'Clicked Tag Link' );
 		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
@@ -46,12 +40,11 @@ class PostByline extends React.Component {
 		} );
 	}
 
-	recordDateClick() {
-		recordPermalinkClick( 'timestamp' );
-		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	recordDateClick = () => {
+		recordPermalinkClick( 'timestamp', this.props.post );
 	}
 
-	recordAuthorClick() {
+	recordAuthorClick = () => {
 		recordAction( 'click_author' );
 		recordGaEvent( 'Clicked Author Link' );
 		recordTrackForPost( 'calypso_reader_author_link_clicked', this.props.post );

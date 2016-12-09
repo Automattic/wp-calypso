@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Returns the site object for the currently selected site.
@@ -36,13 +34,39 @@ export function getSelectedSiteId( state ) {
 }
 
 /**
+ * Returns the slug of the currently selected site,
+ * or null if no site is selected.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}       Selected site slug
+ */
+export function getSelectedSiteSlug( state ) {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		return null;
+	}
+
+	return getSiteSlug( state, siteId );
+}
+
+/**
+ * Returns the current section.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Object}        Current section
+ */
+export function getSection( state ) {
+	return state.ui.section || false;
+}
+
+/**
  * Returns the current section name.
  *
  * @param  {Object}  state Global state tree
  * @return {?String}       Current section name
  */
 export function getSectionName( state ) {
-	return get( state.ui.section, 'name', null );
+	return get( getSection( state ), 'name', null );
 }
 
 /**
@@ -52,7 +76,7 @@ export function getSectionName( state ) {
  * @return {?String}       Current section group name
  */
 export function getSectionGroup( state ) {
-	return get( state.ui.section, 'group', null );
+	return get( getSection( state ), 'group', null );
 }
 
 /**
@@ -84,7 +108,7 @@ export function isSectionLoading( state ) {
  * @see client/sections
  */
 export function isSectionIsomorphic( state ) {
-	return get( state.ui.section, 'isomorphic', false );
+	return get( getSection( state ), 'isomorphic', false );
 }
 
 /**
@@ -113,5 +137,5 @@ export function hasSidebar( state ) {
 	if ( val === false ) {
 		return false;
 	}
-	return get( state.ui.section, 'secondary', true );
+	return get( getSection( state ), 'secondary', true );
 }

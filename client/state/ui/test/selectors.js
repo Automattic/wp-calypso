@@ -9,6 +9,8 @@ import { expect } from 'chai';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
+	getSelectedSiteSlug,
+	getSection,
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
@@ -76,6 +78,66 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.eql( 2916284 );
+		} );
+	} );
+
+	describe( '#getSelectedSiteSlug()', () => {
+		it( 'should return null if no site is selected', () => {
+			const slug = getSelectedSiteSlug( {
+				ui: {
+					selectedSiteSlug: null
+				}
+			} );
+
+			expect( slug ).to.be.null;
+		} );
+
+		it( 'should return slug for the selected site', () => {
+			const slug = getSelectedSiteSlug( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com'
+						}
+					}
+				},
+				ui: {
+					selectedSiteId: 2916284
+				}
+			} );
+
+			expect( slug ).to.eql( 'example.com' );
+		} );
+	} );
+
+	describe( '#getSection()', () => {
+		it( 'should return false if no section is assigned', () => {
+			const section = getSection( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( section ).to.eql( false );
+		} );
+
+		it( 'should return the current section if there is one assigned', () => {
+			const sectionObj = {
+				name: 'post-editor',
+				paths: [ '/post', '/page' ],
+				module: 'post-editor',
+				group: 'editor',
+				secondary: true
+			};
+			const section = getSection( {
+				ui: {
+					section: sectionObj
+				}
+			} );
+
+			expect( section ).to.equal( sectionObj );
 		} );
 	} );
 

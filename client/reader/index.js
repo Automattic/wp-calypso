@@ -19,10 +19,8 @@ module.exports = function() {
 		page( '/',
 			controller.preloadReaderBundle,
 			controller.loadSubscriptions,
-			controller.checkForColdStart,
 			controller.initAbTests,
 			controller.updateLastRoute,
-			controller.removePost,
 			controller.sidebar,
 			controller.following );
 
@@ -42,7 +40,6 @@ module.exports = function() {
 		page( '/read/feeds/:feed_id',
 			controller.updateLastRoute,
 			controller.prettyRedirects,
-			controller.removePost,
 			controller.sidebar,
 			controller.feedDiscovery,
 			controller.feedListing );
@@ -53,11 +50,10 @@ module.exports = function() {
 		page( '/read/blogs/:blog_id',
 			controller.updateLastRoute,
 			controller.prettyRedirects,
-			controller.removePost,
 			controller.sidebar,
 			controller.blogListing );
 	}
 
 	// Automattic Employee Posts
-	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
+	page( '/read/a8c', controller.updateLastRoute, controller.sidebar, forceTeamA8C, controller.readA8C );
 };

@@ -26,7 +26,7 @@ function goToCancelPurchase( props ) {
 }
 
 function goToList() {
-	page( paths.list() );
+	page( paths.purchasesRoot() );
 }
 
 function goToManagePurchase( props ) {

@@ -1,0 +1,110 @@
+.taxonomy-manager {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+}
+
+.taxonomy-manager__header {
+	display: flex;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+	background: $white;
+}
+
+.taxonomy-manager__header .search-card {
+	margin-bottom: 1px;
+	display: flex;
+	flex-grow: 1;
+	box-shadow: none;
+}
+
+.taxonomy-manager__header .search-card .search {
+	height: 58px;
+}
+
+.taxonomy-manager__actions {
+	flex-grow: 0;
+	padding: 16px 24px;
+}
+
+.taxonomy-manager__nested-list {
+	margin-left: 2em;
+}
+
+.taxonomy-manager__list-item {
+	background-color: $gray-light;
+}
+
+.taxonomy-manager__list-item-card {
+	cursor: pointer;
+}
+
+.taxonomy-manager__list-item-card.card.is-compact {
+	padding: 0;
+}
+
+.taxonomy-manager__item {
+	display: flex;
+	flex-direction: row;
+
+	.taxonomy-manager__icon {
+		padding: 15px;
+		color: $gray;
+		.gridicon {
+			display: block;
+		}
+	}
+	&.is-default .taxonomy-manager__icon {
+		color: $blue-medium;
+	}
+
+	.taxonomy-manager__label {
+		line-height: 54px;
+		white-space: nowrap;
+		overflow: hidden;
+		flex-grow: 1;
+		position: relative;
+
+		&::after {
+			@include long-content-fade();
+		}
+
+		.taxonomy-manager__list-item.is-placeholder & {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.taxonomy-manager__default-label {
+			text-transform: uppercase;
+			color: $blue-medium;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+	}
+
+	.count {
+		margin: 18px 2px;
+	}
+
+	.ellipsis-menu {
+		.ellipsis-menu__toggle.button.is-borderless {
+			cursor: pointer;
+			font-size: 24px;
+			color: $gray;
+			padding: 15px 24px;
+			min-width: 24px;
+			.gridicon {
+				top: 2px;
+			}
+		}
+
+		&.is-menu-visible .ellipsis-menu__toggle.button.is-borderless {
+			color: $blue-medium;
+		}
+	}
+}
+
+.taxonomy-manager .virtual-list__list-row.is-empty {
+	padding: 16px 24px;
+	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+}

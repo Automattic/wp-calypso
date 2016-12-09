@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
 
 /**
@@ -10,13 +13,6 @@ export const defaultStandardPlugins = [
 		icon: 'stats-alt',
 		category: 'Traffic Growth',
 		description: i18n.translate( 'View your site\'s visits, referrers, and more.' )
-	},
-	{
-		name: i18n.translate( 'Essential SEO' ),
-		descriptionLink: 'http://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/',
-		icon: 'search',
-		category: 'Traffic Growth',
-		description: i18n.translate( 'Search engine optimization and sitemaps.' )
 	},
 	{
 		name: i18n.translate( 'Security Scanning' ),
@@ -185,8 +181,8 @@ export const defaultPremiumPlugins = [
  */
 export const defaultBusinessPlugins = [
 	{
-		name: i18n.translate( 'Advanced SEO' ),
-		descriptionLink: 'https://support.wordpress.com/advanced-seo/',
+		name: i18n.translate( 'SEO Tools' ),
+		descriptionLink: 'https://support.wordpress.com/seo-tools/',
 		icon: 'search',
 		category: 'Traffic Growth',
 		description: i18n.translate( 'Custom meta descriptions, social media previews, and more.' )

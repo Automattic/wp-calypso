@@ -7,8 +7,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSiteByUrl } from 'state/sites/selectors';
-
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // an hour
+import { isStale } from './utils';
+import { urlToSlug } from 'lib/url';
+import { AUTH_ATTEMPS_TTL } from './constants';
 
 const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
@@ -23,13 +24,17 @@ const getAuthorizationRemoteQueryData = ( state ) => {
 };
 
 const getAuthorizationRemoteSite = ( state ) => {
-	const remoteUrl = get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+};
+
+const isRemoteSiteOnSitesList = ( state ) => {
+	const remoteUrl = getAuthorizationRemoteSite( state );
 
 	if ( ! remoteUrl ) {
-		return null;
+		return false;
 	}
 
-	return getSiteByUrl( state, remoteUrl );
+	return !! getSiteByUrl( state, remoteUrl );
 };
 
 const getSessions = ( state ) => {
@@ -48,19 +53,25 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const site = siteSlug.replace( /.*?:\/\//g, '' );
+	const site = urlToSlug( siteSlug );
 	const sessions = getSessions( state );
 
-	if ( sessions[ site ] ) {
-		const currentTime = ( new Date() ).getTime();
-		return ( currentTime - sessions[ site ].timestamp < JETPACK_CONNECT_TTL );
+	if ( sessions[ site ] && sessions[ site ].timestamp ) {
+		return ! isStale( sessions[ site ].timestamp );
 	}
 
 	return false;
 };
 
+const isRedirectingToWpAdmin = function( state ) {
+	const authorizationData = getAuthorizationData( state );
+	return !! authorizationData.isRedirectingToWpAdmin;
+};
+
 const getFlowType = function( state, siteSlug ) {
 	const sessions = getSessions( state );
+	siteSlug = urlToSlug( siteSlug );
+
 	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].flowType;
 	}
@@ -73,6 +84,14 @@ const getJetpackSiteByUrl = ( state, url ) => {
 		return null;
 	}
 	return site;
+};
+
+const getAuthAttempts = ( state, slug ) => {
+	const attemptsData = get( state, [ 'jetpackConnect', 'jetpackAuthAttempts', slug ] );
+	if ( attemptsData && isStale( attemptsData.timestamp, AUTH_ATTEMPS_TTL ) ) {
+		return 0;
+	}
+	return attemptsData ? attemptsData.attempt || 0 : 0;
 };
 
 /**
@@ -94,6 +113,27 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
+const getJetpackPlanSelected = function( state ) {
+	const selectedPlans = state.jetpackConnect.jetpackConnectSelectedPlans;
+	const siteUrl = getAuthorizationRemoteQueryData( state ).site;
+
+	if ( siteUrl ) {
+		const siteSlug = urlToSlug( siteUrl );
+		if ( selectedPlans && selectedPlans[ siteSlug ] ) {
+			return selectedPlans[ siteSlug ];
+		}
+	}
+	return false;
+};
+
+const getSiteSelectedPlan = function( state, siteSlug ) {
+	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ siteSlug ];
+};
+
+const getGlobalSelectedPlan = function( state ) {
+	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ];
+};
+
 export default {
 	getConnectingSite,
 	getAuthorizationData,
@@ -103,7 +143,13 @@ export default {
 	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
+	isRedirectingToWpAdmin,
+	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
-	hasXmlrpcError
+	hasXmlrpcError,
+	getJetpackPlanSelected,
+	getSiteSelectedPlan,
+	getGlobalSelectedPlan,
+	getAuthAttempts
 };

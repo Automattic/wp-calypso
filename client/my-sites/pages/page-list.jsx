@@ -231,7 +231,7 @@ var Pages = React.createClass( {
 				rows.push(
 					<BlogPostsPage
 						key="blog-posts-page"
-						siteId={ site.ID }
+						site={ site }
 					/>
 				);
 			}

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,6 +13,13 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	analytics = require( 'lib/analytics' ),
 	cartValues = require( 'lib/cart-values' );
+
+import { abtest } from 'lib/abtest';
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
+import PaymentChatButton from './payment-chat-button';
+import config from 'config';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { some } from 'lodash';
 
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
@@ -29,6 +37,16 @@ var CreditCardPaymentBox = React.createClass( {
 	content: function() {
 		var cart = this.props.cart;
 
+		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
+		const showPaymentChatButton =
+			config.isEnabled( 'upgrades/presale-chat' ) &&
+			hasBusinessPlanInCart &&
+			abtest( 'presaleChatButton' ) === 'showChatButton';
+
+		const paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
+			'credit-card-payment-box__switch-link-left': showPaymentChatButton
+		} );
+
 		return (
 			<form autoComplete="off" onSubmit={ this.props.onSubmit }>
 				<CreditCardSelector
@@ -40,14 +58,24 @@ var CreditCardPaymentBox = React.createClass( {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
 
+				<CartCoupon cart={ cart } />
+
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 
 					{ cartValues.isPayPalExpressEnabled( cart )
-						? <a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
+						? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
 						: null
+					}
+
+					{
+						showPaymentChatButton &&
+						<PaymentChatButton
+							paymentType="credits"
+							cart={ this.props.cart }
+							transactionStep={ this.props.transactionStep } />
 					}
 				</div>
 			</form>

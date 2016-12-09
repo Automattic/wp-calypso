@@ -1,6 +1,9 @@
+/* eslint-disable no-console */
+
 /**
- *  This file is served as-is as /service-worker.js
- **/
+ * WARNING: DO NOT USE ES2015+ OR COMMONJS. This file is served as-is and isn't
+ * transpiled by Babel or bundled by Webpack.
+ */
 
 /* eslint-disable */
 'use strict';

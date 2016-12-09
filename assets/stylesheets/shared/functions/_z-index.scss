@@ -44,7 +44,11 @@ $z-layers: (
 		'.reader__featured-post-title': 1,
 		'.search-stream__input-card': 0,
 		'.reader-search-card': 0,
+		'.reader-post-card__featured-image': 0,
+		'.reader-post-card__title': 0,
 		'.reader-list-gap__button': 1,
+		'.reader-feed-header': 0,
+		'.reader-feed-header__back-and-follow': 0,
 		'.post-trends__title': 1,
 		'.plugin-item__label': 1,
 		'.wp-editor-tools': 1,
@@ -102,12 +106,10 @@ $z-layers: (
 		'.global-notices': 179,
 		'.notices-list.is-pinned': 180,
 		'.notices-list.is-pinned .notice': 180,
-		'.masterbar': 180,
 		'.detail-page__backdrop': 190,
 		'.layout__loader': 200,
 		'.offline-status': 200,
 		'.reader-post-images__full-list': 200,
-		'.happychat__container.is-open': 999,
 		'.environment-badge': 999,
 		'.customizer-loading-panel__placeholder-change-theme': 999,
 		'.module-overlay': 1000,
@@ -116,9 +118,12 @@ $z-layers: (
 		'.sharing-buttons-preview-buttons__more': 1000,
 		'.sortable-list__item.is-draggable.is-active': 1000,
 		'.chart__tooltip': 1000,
+		'.layout__content': 1001,
+		'.masterbar': 1001,
 		'.drop-zone__content': 1010,
 		'.dropdown-menu': 9999,
 		'.main.customize.is-iframe': 9999,
+		'.happychat__container.is-open': 9999,
 		'.fullscreen-overlay': 100005,
 		'#wp_editbtns': 100020,
 		'#wp-fullscreen-body': 100010,
@@ -150,7 +155,8 @@ $z-layers: (
 	'.masterbar': (
 		'.masterbar__notifications-bubble': 99999,
 		'.reader-back': 99999,
-		'.reader-profile': 100000
+		'.reader-profile': 100000,
+		'.reader-visit-site': 99999
 	),
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
@@ -182,16 +188,23 @@ $z-layers: (
 		'.editor-media-modal .section-nav': 10,
 		'.editor-media-modal .notice': 10,
 		'.editor-media-modal-gallery__preview-toggle': 100,
-		'.image-editor__canvas': 100,
-		'.image-editor__crop-background': 200,
-		'.image-editor__crop': 300,
-		'.image-editor__crop-handle': 400,
 		'.editor-contact-form-modal .section-nav': 10
 	),
 	'.following-edit': ( //aka 'main'
 		'.following-edit__subscribe-form .gridicons-add-outline': 23,
 		'.following-edit__subscribe-form .card.is-search-result': 35,
 		'.following-edit__subscribe-form .search': 36
+	),
+	'.site-settings__taxonomies': (
+		'.card__link-indicator': 1
+	),
+	'.reader-feed-header': (
+		'.reader-feed-header__follow': 1,
+		'.reader-feed-header__site': 0
+	),
+	'.reader-feed-header__back-and-follow': (
+		'.card.header-cake': 1,
+		'.reader-feed-header__follow': 1
 	),
 
 	// The following may be inserted into different areas.

@@ -50,20 +50,6 @@ function onlyOneSite() {
 }
 
 class DailyPostButton extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			showingMenu: false
-		};
-
-		this._closeTimerId = null;
-		this._isMounted = false;
-
-		[ 'openEditorWithSite', 'toggle', 'closeMenu', 'renderSitesPopover' ].forEach(
-			( method ) => this[ method ] = this[ method ].bind( this )
-		);
-	}
-
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		position: React.PropTypes.string,
@@ -74,6 +60,13 @@ class DailyPostButton extends React.Component {
 		position: 'top',
 		tagName: 'li'
 	}
+
+	state = {
+		showingMenu: false
+	};
+
+	_closeTimerId = null;
+	_isMounted = false;
 
 	componentDidMount() {
 		this._isMounted = true;
@@ -97,7 +90,7 @@ class DailyPostButton extends React.Component {
 		} );
 	}
 
-	openEditorWithSite( siteSlug ) {
+	openEditorWithSite = ( siteSlug ) => {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -110,7 +103,7 @@ class DailyPostButton extends React.Component {
 		return true;
 	}
 
-	toggle( event ) {
+	toggle = ( event ) => {
 		preventDefault( event );
 		if ( ! this.state.showingMenu ) {
 			recordAction( 'open_daily_post_challenge' );
@@ -125,7 +118,7 @@ class DailyPostButton extends React.Component {
 		this._deferMenuChange( ! this.state.showingMenu );
 	}
 
-	closeMenu() {
+	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
@@ -134,7 +127,7 @@ class DailyPostButton extends React.Component {
 		}
 	}
 
-	renderSitesPopover() {
+	renderSitesPopover = () => {
 		return (
 			<SitesPopover
 				key="menu"

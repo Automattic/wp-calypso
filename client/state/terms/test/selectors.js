@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import TermQueryManager from 'lib/query-manager/term';
 import {
+	countFoundTermsForQuery,
 	getTerm,
 	getTerms,
 	getTermsForQuery,
@@ -537,6 +538,49 @@ describe( 'selectors', () => {
 			}, 2916284, 'jetpack-portfolio', 100 );
 
 			expect( term ).to.be.null;
+		} );
+	} );
+
+	describe( 'countFoundTermsForQuery()', () => {
+		it( 'should return null if no matching query results exist', () => {
+			const count = countFoundTermsForQuery( {
+				terms: {
+					queries: {}
+				}
+			}, 2916284, 'category', {} );
+
+			expect( count ).to.be.null;
+		} );
+
+		it( 'should return the found value of the query', () => {
+			const count = countFoundTermsForQuery( {
+				terms: {
+					queries: {
+						2916284: {
+							category: new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs'
+									}
+								},
+								queries: {
+									'[["search","ribs"]]': {
+										itemKeys: [ 111 ],
+										found: 4
+									}
+								}
+							} )
+						}
+					}
+				}
+			}, 2916284, 'category', { search: 'ribs' } );
+
+			expect( count ).to.eql( 4 );
 		} );
 	} );
 } );

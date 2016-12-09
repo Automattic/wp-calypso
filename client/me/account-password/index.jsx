@@ -14,8 +14,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var protectForm = require( 'lib/mixins/protect-form' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
+import { protectForm } from 'lib/protect-form';
+var FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormPasswordInput = require( 'components/forms/form-password-input' ),
 	FormButton = require( 'components/forms/form-button' ),
@@ -30,7 +30,7 @@ const AccountPassword = React.createClass( {
 
 	displayName: 'AccountPassword',
 
-	mixins: [ LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, observe( 'accountPasswordData' ), eventRecorder ],
 
 	componentDidMount: function() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
@@ -53,7 +53,7 @@ const AccountPassword = React.createClass( {
 			pendingValidation: true
 		} );
 		this.debouncedPasswordValidate();
-		this.markChanged();
+		this.props.markChanged();
 	},
 
 	validatePassword: function() {
@@ -69,9 +69,9 @@ const AccountPassword = React.createClass( {
 		this.setState( { password: newPassword, pendingValidation: true } );
 
 		if ( '' === newPassword ) {
-			this.markSaved();
+			this.props.markSaved();
 		} else {
-			this.markChanged();
+			this.props.markChanged();
 		}
 	},
 
@@ -86,7 +86,7 @@ const AccountPassword = React.createClass( {
 		this.props.userSettings.saveSettings(
 			function( error, response ) {
 				this.setState( { savingPassword: false } );
-				this.markSaved();
+				this.props.markSaved();
 
 				if ( error ) {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
@@ -177,4 +177,4 @@ const AccountPassword = React.createClass( {
 export default connect(
 	null,
 	dispatch => bindActionCreators( { errorNotice }, dispatch )
-)( AccountPassword );
+)( protectForm( AccountPassword ) );

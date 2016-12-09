@@ -3,6 +3,8 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,9 +19,11 @@ var StatsList = require( '../stats-list' ),
 	Card = require( 'components/card' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
+import observe from 'lib/mixins/data-observe';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'StatModuleFollowersPage',
+const StatModuleFollowersPage = React.createClass( {
+	mixins: [ observe( 'followersList' ) ],
 
 	data: function( nextProps ) {
 		var props = nextProps || this.props;
@@ -40,15 +44,16 @@ module.exports = React.createClass( {
 	},
 
 	filterSelect: function() {
+		const { translate } = this.props;
 		var selectFilter,
 			options = [
 				{
 					value: 'wpcom',
-					label: this.translate( 'WordPress.com Followers' )
+					label: translate( 'WordPress.com Followers' )
 				},
 				{
 					value: 'email',
-					label: this.translate( 'Email Followers' )
+					label: translate( 'Email Followers' )
 				}
 			];
 
@@ -64,6 +69,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const { translate } = this.props;
 		var data = this.data(),
 			hasError = this.props.followersList.isError(),
 			noData = this.props.followersList.isEmpty( 'subscribers' ),
@@ -92,15 +98,15 @@ module.exports = React.createClass( {
 
 		switch ( this.props.followType ) {
 			case 'comment':
-				itemType = this.translate( 'Comments' );
+				itemType = translate( 'Comments' );
 				break;
 
 			case 'email':
-				itemType = this.translate( 'Email' );
+				itemType = translate( 'Email' );
 				break;
 
 			case 'wpcom':
-				itemType = this.translate( 'WordPress.com' );
+				itemType = translate( 'WordPress.com' );
 				break;
 		}
 
@@ -112,7 +118,7 @@ module.exports = React.createClass( {
 				endIndex = data.total;
 			}
 
-			paginationSummary = this.translate( 'Showing %(startIndex)s - %(endIndex)s of %(total)s %(itemType)s followers', {
+			paginationSummary = translate( 'Showing %(startIndex)s - %(endIndex)s of %(total)s %(itemType)s followers', {
 				context: 'pagination',
 				comment: '"Showing [start index] - [end index] of [total] [item]" Example: Showing 21 - 40 of 300 WordPress.com followers',
 				args: {
@@ -134,32 +140,32 @@ module.exports = React.createClass( {
 
 		if ( data && data.posts ) {
 			followers = <StatsList data={ data.posts } moduleName="Followers" />;
-			labelLegend = this.translate( 'Post', {
+			labelLegend = translate( 'Post', {
 				context: 'noun'
 			} );
-			valueLegend = this.translate( 'Followers' );
+			valueLegend = translate( 'Followers' );
 		} else if ( data && data.subscribers ) {
 			followers = <StatsList data={ data.subscribers } followList={ this.props.followList } moduleName="Followers" />;
-			labelLegend = this.translate( 'Follower' );
-			valueLegend = this.translate( 'Since' );
+			labelLegend = translate( 'Follower' );
+			valueLegend = translate( 'Since' );
 		}
 
 		if ( 'email' === this.props.followType ) {
-			emailExportUrl = 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' + this.props.site.ID + '&blog_subscribers=csv&type=email';
+			emailExportUrl = 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' + this.props.siteId + '&blog_subscribers=csv&type=email';
 		}
 
 		return (
 			<div className="followers">
-				<SectionHeader label={ this.translate( 'Followers' ) }>
+				<SectionHeader label={ translate( 'Followers' ) }>
 					{ emailExportUrl
-						? ( <Button compact href={ emailExportUrl }>{ this.translate( 'Download Data as CSV' ) }</Button> )
+						? ( <Button compact href={ emailExportUrl }>{ translate( 'Download Data as CSV' ) }</Button> )
 						: null }
 				</SectionHeader>
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
 						{ this.filterSelect() }
 
-						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ this.translate( 'No followers' ) } /> : null }
+						{ ( noData && ! hasError ) ? <ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } /> : null }
 
 						{ paginationSummary }
 
@@ -180,3 +186,11 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteId
+	};
+} )( localize( StatModuleFollowersPage ) );

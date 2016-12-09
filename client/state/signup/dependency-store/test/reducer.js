@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
-	SIGNUP_DEPENDENCY_STORE_RESET,
+	SIGNUP_COMPLETE_RESET,
 } from 'state/action-types';
 
 import signupDependencyStore from '../reducer';
@@ -23,7 +23,7 @@ describe( 'reducer', () => {
 
 	it( 'should reset the signup store', () => {
 		expect( signupDependencyStore( { test: 123 }, {
-			type: SIGNUP_DEPENDENCY_STORE_RESET,
+			type: SIGNUP_COMPLETE_RESET,
 		} ) ).to.be.eql( {} );
 	} );
 } );

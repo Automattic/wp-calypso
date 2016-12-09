@@ -131,6 +131,13 @@ function reducer( state, payload ) {
 				isBeingAdded: false
 			} );
 			break;
+		case ActionTypes.DNS_ADD_OFFICE_COMPLETED:
+			state = updateDomainState( state, action.domainName, {
+				records: action.records,
+				isFetching: false,
+				hasLoadedFromServer: true
+			} );
+			break;
 		case ActionTypes.DNS_ADD_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isSubmittingForm: false

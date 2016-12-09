@@ -1,38 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	keyMirror = require( 'key-mirror' ),
-	assign = require( 'lodash/assign' );
+import React, { Component } from 'react';
+import keyMirror from 'key-mirror';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	Notice = require( 'components/notice' ),
-	analytics = require( 'lib/analytics' );
+import FormButton from 'components/forms/form-button';
+import Notice from 'components/notice';
+import analytics from 'lib/analytics';
 
-var views = keyMirror( {
+const views = keyMirror( {
 	VIEWING: null,
 	EDITING: null
 } );
 
-module.exports = React.createClass( {
-	displayName: 'SecurityCheckupRecoveryContact',
+class ManageContact extends Component {
+	constructor( props ) {
+		super( props );
 
-	propTypes: {
-		type: React.PropTypes.string,
-		disabled: React.PropTypes.bool
-	},
-
-	getInitialState: function() {
-		return assign( {
+		this.state = {
 			currentView: views.VIEWING
-		} );
-	},
+		};
+	}
 
-	renderHeader: function() {
-		var isEditing = views.EDITING === this.state.currentView;
+	renderHeader() {
+		const isEditing = views.EDITING === this.state.currentView;
+		const { translate } = this.props;
 
 		return (
 			<div className="security-checkup-contact__header">
@@ -54,17 +50,17 @@ module.exports = React.createClass( {
 								disabled={ this.props.disabled }
 								isPrimary={ false }
 								onClick={ this.onEdit }>
-								{ this.props.hasValue ? this.translate( 'Edit' ) : this.translate( 'Add' ) }
+								{ this.props.hasValue ? translate( 'Edit' ) : translate( 'Add' ) }
 							</FormButton>
 						</div>
 					)
 				}
 			</div>
 		);
-	},
+	}
 
-	renderEdit: function() {
-		var view = null;
+	renderEdit() {
+		let view = null;
 
 		if ( views.EDITING === this.state.currentView ) {
 			view = (
@@ -81,21 +77,17 @@ module.exports = React.createClass( {
 		}
 
 		return view;
-	},
+	}
 
-	renderNotice: function() {
-		var notice = null,
-			lastNotice = this.props.lastNotice,
-			showDismiss,
-			onClick,
-			isError;
+	renderNotice() {
+		const { lastNotice } = this.props;
 
 		if ( lastNotice && lastNotice.message ) {
-			isError = lastNotice.type === 'error';
-			showDismiss = lastNotice.showDismiss !== false;
-			onClick = showDismiss ? this.dismissNotice : null;
+			const isError = lastNotice.type === 'error';
+			const showDismiss = lastNotice.showDismiss !== false;
+			const onClick = showDismiss ? this.dismissNotice : null;
 
-			notice = (
+			return (
 				<Notice
 					status={ isError ? 'is-error' : 'is-success' }
 					onDismissClick={ onClick }
@@ -105,19 +97,20 @@ module.exports = React.createClass( {
 				</Notice>
 			);
 		}
-		return notice;
-	},
 
-	renderLoading: function() {
+		return null;
+	}
+
+	renderLoading() {
 		return (
 			<div>
 				<p className="security-checkup-contact__placeholder-heading"> &nbsp; </p>
 				<p className="security-checkup-contact__placeholder-text"> &nbsp; </p>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		if ( this.props.isLoading ) {
 			return this.renderLoading();
 		}
@@ -129,44 +122,51 @@ module.exports = React.createClass( {
 				{ this.renderNotice() }
 			</div>
 		);
-	},
+	}
 
-	onEdit: function() {
+	onEdit = () => {
 		this.dismissNotice();
 		this.setState( { currentView: views.EDITING }, function() {
 			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
 		} );
-	},
+	}
 
-	onCancel: function() {
+	onCancel = () => {
 		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.recordEvent( 'cancel' );
 		} );
-	},
+	}
 
-	onSave: function( data ) {
+	onSave = ( data ) => {
 		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );
 		} );
-	},
+	}
 
-	onDelete: function() {
+	onDelete = () => {
 		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onDelete();
 			this.recordEvent( 'delete' );
 		} );
-	},
+	}
 
-	dismissNotice: function() {
+	dismissNotice = () => {
 		this.props.onDismissNotice();
-	},
+	}
 
-	recordEvent: function( action ) {
-		let event = `calypso_security_checkup_${ this.props.type }_${ action }_click`;
+	recordEvent( action ) {
+		const event = `calypso_security_checkup_${ this.props.type }_${ action }_click`;
 		analytics.tracks.recordEvent( event );
 	}
-} );
+}
+
+ManageContact.propTypes = {
+	type: React.PropTypes.string,
+	disabled: React.PropTypes.bool
+};
+
+export default localize( ManageContact );

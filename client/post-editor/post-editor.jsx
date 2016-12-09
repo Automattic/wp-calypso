@@ -3,12 +3,11 @@
  */
 const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:post-editor' ),
-	page = require( 'page' ),
-	debounce = require( 'lodash/debounce' ),
-	throttle = require( 'lodash/throttle' );
+	page = require( 'page' );
+import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,14 +21,12 @@ const actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
@@ -38,6 +35,7 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
+import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -54,8 +52,9 @@ import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { protectForm } from 'lib/protect-form';
 
-const PostEditor = React.createClass( {
+export const PostEditor = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
@@ -65,13 +64,15 @@ const PostEditor = React.createClass( {
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
-		editPath: React.PropTypes.string
+		editPath: React.PropTypes.string,
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	_previewWindow: null,
 
 	mixins: [
-		protectForm.mixin,
 		observe( 'sites' )
 	],
 
@@ -123,14 +124,13 @@ const PostEditor = React.createClass( {
 		}
 
 		if ( nextState.isDirty || nextProps.dirty ) {
-			this.markChanged();
+			this.props.markChanged();
 		} else {
-			this.markSaved();
+			this.props.markSaved();
 		}
 	},
 
 	componentDidMount: function() {
-		debug( 'PostEditor react component mounted.' );
 		// if content is passed in, e.g., through url param
 		if ( this.state.post && this.state.post.content ) {
 			this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
@@ -185,7 +185,7 @@ const PostEditor = React.createClass( {
 		if ( this.state.post ) {
 			isPage = utils.isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
-			hasAutosave = ( this.state.post.meta && this.state.post.meta.data && this.state.post.meta.data.autosave );
+			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
 		return (
 			<div className="post-editor">
@@ -230,13 +230,13 @@ const PostEditor = React.createClass( {
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
 										onClick={ this.switchEditorVisualMode }
-										title={ this.translate( 'Edit with a visual editor' ) }>
-										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										title={ this.props.translate( 'Edit with a visual editor' ) }>
+										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
 									<SegmentedControlItem
 										selected={ mode === 'html' }
 										onClick={ this.switchEditorHtmlMode }
-										title={ this.translate( 'Edit the raw HTML code' ) }>
+										title={ this.props.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
 								</SegmentedControl>
@@ -271,7 +271,9 @@ const PostEditor = React.createClass( {
 							allPostsUrl={ this.getAllPostsUrl() }
 							toggleSidebar={ this.toggleSidebar } />
 						{ this.props.showDrafts
-							? <DraftList { ...this.props }
+							? <AsyncLoad
+								require="my-sites/drafts/draft-list"
+								{ ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }
@@ -409,7 +411,6 @@ const PostEditor = React.createClass( {
 	},
 
 	onEditorContentChange: function() {
-		debug( 'editor content changed' );
 		this.debouncedSaveRawContent();
 		this.debouncedAutosave();
 	},
@@ -508,7 +509,7 @@ const PostEditor = React.createClass( {
 		} else {
 			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
 			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
-			this.markSaved();
+			this.props.markSaved();
 			this.onClose();
 		}
 	},
@@ -799,4 +800,4 @@ export default connect(
 	},
 	null,
 	{ pure: false }
-)( PostEditor );
+)( protectForm( localize( PostEditor ) ) );

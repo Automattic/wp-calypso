@@ -35,6 +35,11 @@ $accordion-background-expanded: $white;
 		transform: translateY( -50% );
 		color: lighten( $gray, 10% );
 	}
+
+	.accordion.has-subtitle & {
+		padding-top: ( $accordion-padding - $accordion-subtitle-height / 2 );
+		padding-bottom: ( $accordion-padding - $accordion-subtitle-height / 2 );
+	}
 }
 
 .accordion.is-expanded {
@@ -54,11 +59,6 @@ $accordion-background-expanded: $white;
 	}
 }
 
-.accordion__header.has-subtitle .accordion__toggle {
-	padding-top: ( $accordion-padding - $accordion-subtitle-height / 2 );
-	padding-bottom: ( $accordion-padding - $accordion-subtitle-height / 2 );
-}
-
 .accordion__icon {
 	position: absolute;
 		left: $accordion-padding;
@@ -75,11 +75,10 @@ $accordion-background-expanded: $white;
 .accordion__title,
 .accordion__subtitle {
 	display: block;
-}
 
-.accordion__header.has-icon .accordion__title,
-.accordion__header.has-icon .accordion__subtitle {
-	padding-left: 28px;
+	.accordion.has-icon & {
+		padding-left: 28px;
+	}
 }
 
 .accordion__subtitle {

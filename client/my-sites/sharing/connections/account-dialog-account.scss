@@ -28,12 +28,9 @@
 	cursor: pointer;
 }
 
-.account-dialog-account.is-conflict::before {
-	@include noticon( '\f414', 16px );
+.account-dialog-account.is-conflict .gridicons-notice {
 	position: absolute;
-		left: 4px;
-		top: 50%;
-	margin-top: -6px;
+		left: -5px;
 	color: $alert-yellow;
 }
 
@@ -41,13 +38,13 @@
 .account-dialog .account-dialog-account__picture {
 	position: absolute;
 		left: 8px;
-		top: 3px;
+		top: 0;
 	width: 34px;
 	height: 34px;
 }
 
 .account-dialog-account:not( .is-connected ) .account-dialog-account__picture {
-	left: 22px;
+	left: 26px;
 }
 
 .account-dialog-account__name {

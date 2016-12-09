@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -37,7 +35,6 @@ function getPurchasesBySite( purchases, sites ) {
 			const siteObject = find( sites, { ID: currentValue.siteId } );
 
 			result = result.concat( {
-				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
 				/* if the purchase is attached to a deleted site,
@@ -45,7 +42,8 @@ function getPurchasesBySite( purchases, sites ) {
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
 				title: currentValue.siteName || currentValue.domain || '',
-				purchases: [ currentValue ]
+				purchases: [ currentValue ],
+				domain: siteObject ? siteObject.domain : currentValue.domain
 			} );
 		}
 
@@ -91,6 +89,10 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
+	if ( isPendingTransfer( purchase ) ) {
+		return false;
+	}
+
 	if ( isExpired( purchase ) ) {
 		return false;
 	}
@@ -125,6 +127,10 @@ function isOneTimePurchase( purchase ) {
 
 function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
+}
+
+function isPendingTransfer( purchase ) {
+	return purchase.pendingTransfer;
 }
 
 function isRedeemable( purchase ) {
@@ -261,4 +267,4 @@ export {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-}
+};

@@ -4,8 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,15 +29,15 @@ const Theme = React.createClass( {
 			screenshot: React.PropTypes.string,
 			// Theme price (pre-formatted string) -- empty string indicates free theme
 			price: React.PropTypes.string,
-			// If true, the user has 'purchased' the theme
-			purchased: React.PropTypes.bool,
-			// If true, highlight this theme as active
-			active: React.PropTypes.bool,
 			author: React.PropTypes.string,
 			author_uri: React.PropTypes.string,
 			demo_uri: React.PropTypes.string,
 			stylesheet: React.PropTypes.string
 		} ),
+		// If true, highlight this theme as active
+		active: React.PropTypes.bool,
+		// If true, the user has 'purchased' the theme
+		purchased: React.PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
 		// URL the screenshot link points to
@@ -63,7 +62,13 @@ const Theme = React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps ) {
-		return ! isEqual( nextProps.theme, this.props.theme );
+		return nextProps.theme.id !== this.props.theme.id ||
+			( nextProps.active !== this.props.active ) ||
+			( nextProps.purchased !== this.props.purchased ) ||
+			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
+			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
+			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
+			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
 	getDefaultProps() {
@@ -71,7 +76,8 @@ const Theme = React.createClass( {
 			isPlaceholder: false,
 			buttonContents: {},
 			onMoreButtonClick: noop,
-			actionLabel: ''
+			actionLabel: '',
+			active: false
 		} );
 	},
 
@@ -104,11 +110,13 @@ const Theme = React.createClass( {
 	render() {
 		const {
 			name,
-			active,
 			price,
-			purchased,
 			screenshot
 		} = this.props.theme;
+		const {
+			active,
+			purchased
+		} = this.props;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick )
@@ -121,7 +129,7 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = window && window.devicePixelRatio > 1 ? 680 : 340;
+		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
@@ -131,7 +139,7 @@ const Theme = React.createClass( {
 							? <img className="theme__img"
 								src={ screenshot + '?w=' + screenshotWidth }
 								onClick={ this.onScreenshotClick }
-								id={ screenshotID }/>
+								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
 								<Gridicon icon="themes" size={ 48 } />
 							</div>
@@ -152,6 +160,7 @@ const Theme = React.createClass( {
 								<ThemeMoreButton
 									index={ this.props.index }
 									theme={ this.props.theme }
+									active={ this.props.active }
 									onClick={ this.props.onMoreButtonClick }
 									options={ this.props.buttonContents } />
 							</TrackInteractions> : null }

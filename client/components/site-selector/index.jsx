@@ -17,13 +17,10 @@ import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import observe from 'lib/mixins/data-observe';
 import AllSites from 'my-sites/all-sites';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
-import config from 'config';
+import SiteSelectorAddSite from './add-site';
 
 const noop = () => {};
 const ALL_SITES = 'ALL_SITES';
@@ -236,20 +233,6 @@ const SiteSelector = React.createClass( {
 		}
 	},
 
-	recordAddNewSite() {
-		analytics.tracks.recordEvent( 'calypso_add_new_wordpress_click' );
-	},
-
-	renderNewSiteButton() {
-		return (
-			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
-					<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
-				</Button>
-			</span>
-		);
-	},
-
 	getSiteBasePath( site ) {
 		let siteBasePath = this.props.siteBasePath;
 		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
@@ -443,7 +426,7 @@ const SiteSelector = React.createClass( {
 						</span>
 					}
 				</div>
-				{ this.props.showAddNewSite && this.renderNewSiteButton() }
+				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
 		);
 	}

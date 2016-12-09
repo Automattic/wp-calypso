@@ -55,6 +55,7 @@ import support from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import * as upgradesActions from 'lib/upgrades/actions';
+import { isMonthly } from 'lib/plans/constants';
 
 const user = userFactory();
 
@@ -98,7 +99,7 @@ const ManagePurchase = React.createClass( {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 			return;
 		}
 
@@ -107,7 +108,7 @@ const ManagePurchase = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 			return;
 		}
 
@@ -274,7 +275,8 @@ const ManagePurchase = React.createClass( {
 
 	renderPrice() {
 		const purchase = getPurchase( this.props ),
-			{ amount, currencyCode, currencySymbol } = purchase;
+			{ amount, currencyCode, currencySymbol, productSlug } = purchase,
+			period = productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) ) {
 			return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}(one-time){{/period}}', {
@@ -289,8 +291,13 @@ const ManagePurchase = React.createClass( {
 			return this.translate( 'Free with Plan' );
 		}
 
-		return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}/ year{{/period}}', {
-			args: { amount, currencyCode, currencySymbol },
+		return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+			args: {
+				amount,
+				currencyCode,
+				currencySymbol,
+				period
+			},
 			components: {
 				period: <span className="manage-purchase__time-period" />
 			}
@@ -490,7 +497,7 @@ const ManagePurchase = React.createClass( {
 
 			const text = isRenewing( purchase )
 				? this.translate( 'Edit Payment Method' )
-				: this.translate( 'Add Payment Method' );
+				: this.translate( 'Add Credit Card' );
 
 			return (
 				<CompactCard href={ path }>{ text }</CompactCard>

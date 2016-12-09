@@ -17,7 +17,6 @@ export default function() {
 	);
 	page( '/tag/:tag',
 		readerController.updateLastRoute,
-		readerController.removePost,
 		readerController.sidebar,
 		controller.tagListing
 	);
@@ -26,7 +25,6 @@ export default function() {
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
-		readerController.removePost,
 		readerController.sidebar,
 		controller.recommendedTags
 	);

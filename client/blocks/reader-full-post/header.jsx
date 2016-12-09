@@ -8,20 +8,20 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import AutoDirection from 'components/auto-direction';
 import ExternalLink from 'components/external-link';
-import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
+import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
 import ReaderFullPostHeaderTags from './header-tags';
 import Gridicon from 'components/gridicon';
 
 const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = ( { } ) => {
-		recordPermalinkClick( 'full_post_title' );
+		recordPermalinkClick( 'full_post_title', post );
 	};
 
-	const recordDateClick = ( { } ) => {
-		recordPermalinkClick( 'timestamp' );
-		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	const recordDateClick = () => {
+		recordPermalinkClick( 'timestamp_full_post', post );
 	};
 
 	const classes = { 'reader-full-post__header': true };
@@ -33,11 +33,13 @@ const ReaderFullPostHeader = ( { post } ) => {
 	return (
 		<div className={ classNames( classes ) }>
 			{ post.title
-				? <h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
-					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
-						{ post.title }
-					</ExternalLink>
-				</h1>
+				? <AutoDirection>
+					<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+						<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
+							{ post.title }
+						</ExternalLink>
+					</h1>
+				</AutoDirection>
 				: null }
 			<div className="reader-full-post__header-meta">
 				{ post.date

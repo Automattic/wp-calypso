@@ -1,28 +1,31 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import React from 'react';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	getNewMessages = require( 'lib/cart-values' ).getNewMessages,
-	CartStore = require( 'lib/cart/store' );
+import notices from 'notices';
+import { getNewMessages } from 'lib/cart-values';
 
 module.exports = {
-	componentDidMount: function() {
-		CartStore.on( 'change', this.displayCartMessages );
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.cart.hasLoadedFromServer ) {
+			return;
+		}
+
+		if ( this.props.cart.messages !== nextProps.cart.messages ) {
+			this.displayCartMessages( nextProps.cart );
+		}
 	},
 
-	componentWillUnmount: function() {
-		CartStore.off( 'change', this.displayCartMessages );
-	},
-
-	getChargebackErrorMessage: function() {
-		return this.translate(
-			"{{strong}}Warning:{{/strong}} One or more transactions linked to this site were refunded due to a contested charge. This may have happened because of a chargeback by the credit card holder or a PayPal investigation. Each contested charge carries a fine. To resolve the issue and re-enable posting, please {{a}}pay for the chargeback fine{{/a}}.",
+	getChargebackErrorMessage() {
+		return this.props.translate(
+			'{{strong}}Warning:{{/strong}} One or more transactions linked to this site were refunded due to a contested charge. ' +
+				'This may have happened because of a chargeback by the credit card holder or a PayPal investigation. Each contested ' +
+				'charge carries a fine. To resolve the issue and re-enable posting, please {{a}}pay for the chargeback fine{{/a}}.',
 			{
 				components: {
 					strong: <strong />,
@@ -32,36 +35,41 @@ module.exports = {
 		);
 	},
 
-	getBlockedPurchaseErrorMessage: function() {
-		return this.translate(
-			"Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.",
+	getBlockedPurchaseErrorMessage() {
+		return this.props.translate(
+			'Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.',
 			{
 				components: {
-					a: <a href={ 'https://wordpress.com/error-report/?url=payment@' + this.props.selectedSite.slug } target="_blank" rel="noopener noreferrer" />
+					a: <a
+						href={ 'https://wordpress.com/error-report/?url=payment@' + this.props.selectedSite.slug }
+						target="_blank"
+						rel="noopener noreferrer" />
 				}
 			}
 		);
 	},
 
-	getPrettyErrorMessages: function( messages ) {
+	getPrettyErrorMessages( messages ) {
 		if ( ! messages ) {
 			return [];
 		}
 
-		return messages.map( function( error ) {
-			if ( error.code === 'chargeback' ) {
-				return Object.assign( error, { message: this.getChargebackErrorMessage() } );
-			} else if ( error.code === 'blocked' ) {
-				return Object.assign( error, { message: this.getBlockedPurchaseErrorMessage() } );
-			} else {
-				return error;
+		return messages.map( ( error ) => {
+			switch ( error.code ) {
+				case 'chargeback':
+					return Object.assign( error, { message: this.getChargebackErrorMessage() } );
+
+				case 'blocked':
+					return Object.assign( error, { message: this.getBlockedPurchaseErrorMessage() } );
+
+				default:
+					return error;
 			}
-		}, this );
+		} );
 	},
 
-	displayCartMessages: function() {
-		var newCart = this.props.cart,
-			previousCart = ( this.state ) ? this.state.previousCart : null,
+	displayCartMessages( newCart ) {
+		const previousCart = ( this.state ) ? this.state.previousCart : null,
 			messages = getNewMessages( previousCart, newCart );
 
 		messages.errors = this.getPrettyErrorMessages( messages.errors );
@@ -69,13 +77,14 @@ module.exports = {
 		this.setState( { previousCart: newCart } );
 
 		if ( ! isEmpty( messages.errors ) ) {
-			notices.error( messages.errors.map( function( error ) {
-				return ( <p key={ error.code }>{ error.message }</p> );
-			}, this ) );
+			notices.error(
+				messages.errors.map( ( error, index ) => ( <p key={ `${ error.code }-${ index }` }>{ error.message }</p> ) ),
+				{ persistent: true }
+			);
 		} else if ( ! isEmpty( messages.success ) ) {
-			notices.success( messages.success.map( function( success ) {
-				return ( <p key={ success.code }>{ success.message }</p> );
-			}, this ) );
+			notices.success(
+				messages.success.map( ( success, index ) => ( <p key={ `${ success.code }-${ index }` }>{ success.message }</p> ) )
+			);
 		}
 	}
 };

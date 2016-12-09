@@ -26,6 +26,11 @@ const guidedTransferHosts = {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
 		label: i18n.translate( 'SiteGround' ),
 		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669'
+	},
+	pressable: {
+		logo: '/calypso/images/guided-transfer/pressable-logo.png',
+		label: i18n.translate( 'Pressable' ),
+		url: 'https://pressable.com'
 	}
 };
 

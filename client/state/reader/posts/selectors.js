@@ -36,11 +36,11 @@ export function getPostBySiteAndId( state, siteId, postId ) {
 			internalPosts = filter( items, post => post && post.site_ID && post.ID && ! post.is_external );
 
 		postMapBySiteAndPost = keyBy( internalPosts, post => {
-			return `${post.site_ID}-${post.ID}`;
+			return `${ post.site_ID }-${ post.ID }`;
 		} );
 
 		previousItems = items;
 	}
 
-	return postMapBySiteAndPost[ `${siteId}-${postId}` ];
+	return postMapBySiteAndPost[ `${ siteId }-${ postId }` ];
 }

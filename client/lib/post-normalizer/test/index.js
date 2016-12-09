@@ -2,7 +2,8 @@
  * External dependencies
  */
 const assert = require( 'chai' ).assert,
-	Spy = require( 'sinon' ).spy;
+	Spy = require( 'sinon' ).spy,
+	trim = require( 'lodash/trim' );
 
 /**
  * Internal dependencies
@@ -42,10 +43,10 @@ describe( 'index', function() {
 			normalizer.withContentDOM(),
 			normalizer.withContentDOM( [
 				normalizer.content.removeStyles,
-				normalizer.content.safeContentImages( 300 ),
-				normalizer.content.makeEmbedsSecure,
-				normalizer.content.detectEmbeds,
-				normalizer.content.wordCountAndReadingTime
+				normalizer.content.sanitizeContent,
+				normalizer.content.makeImagesSafe( 300 ),
+				normalizer.content.makeEmbedsSafe,
+				normalizer.content.detectMedia,
 			] ),
 			normalizer.createBetterExcerpt,
 			normalizer.waitForImagesToLoad,
@@ -235,11 +236,11 @@ describe( 'index', function() {
 				}
 			};
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
-				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
-				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200' );
+				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?quality=80&strip=info&w=200' );
 				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
 				done( err );
 			} );
@@ -387,13 +388,13 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.safeContentImages', function() {
+	describe( 'content.makeImagesSafe', function() {
 		it( 'can route all images through wp-safe-image if no size specified', function( done ) {
 			normalizer(
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -406,7 +407,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/?post=123',
 					content: '<img src="/example.jpg"><img src="example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -419,7 +420,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/2015/01/my-post/',
 					content: '<img src="../../../example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -431,8 +432,8 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages( 400 ) ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?w=400&amp;quality=80&amp;strip=info"><img src="http://example.com/example2.jpg-SAFE?w=400&amp;quality=80&amp;strip=info">' );
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400"><img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' );
 					done( err );
 				}
 			);
@@ -444,7 +445,7 @@ describe( 'index', function() {
 				{
 					content: '<img width="700" height="700" src="http://example.com/example.jpg?nope">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages( 400 ) ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '' );
 					done( err );
 				}
@@ -457,20 +458,20 @@ describe( 'index', function() {
 				{
 					content: '<img onload="hi" onerror="there" src="http://example.com/example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
 		} );
 
-		it( 'fixes up srcsets', function( done ) {
+		it( 'removes srcsets', function( done ) {
 			normalizer(
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE" srcset="http://example.com/example-100.jpg-SAFE 100w, http://example.com/example-600.jpg-SAFE 600w">' );
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
@@ -481,63 +482,11 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
-		} );
-	} );
-
-	describe( 'content.wordCountAndReadingTime', function() {
-		function assertCountAndTime( content, count, time, done ) {
-			normalizer(
-				{
-					content: content
-				},
-				[ normalizer.withContentDOM( [ normalizer.content.wordCountAndReadingTime ] ) ], function( err, normalized ) {
-					assert.strictEqual( normalized.word_count, count );
-					assert.strictEqual( normalized.reading_time, time );
-					done( err );
-				}
-			);
-		}
-
-		function assertTimeForCount( count, time, done ) {
-			assertCountAndTime( ( new Array( count + 1 ) ).join( ' word ' ), count, time, done );
-		}
-
-		it( 'is undefined for empty content', function( done ) {
-			assertCountAndTime( '', undefined, undefined, done );
-		} );
-
-		it( 'has zero words, no time, with only punctuation', function( done ) {
-			assertCountAndTime( ';:,.?¿\-!¡', 0, undefined, done );
-		} );
-
-		it( 'can deal with html in the content', function( done ) {
-			assertCountAndTime( '<p>This is a sentence , made ,. up of words!</p>', 8, 2, done );
-		} );
-
-		it( 'can deal with urls', function( done ) {
-			assertCountAndTime( 'welcome to http://example.com?foo=bar, another college website', 6, 2, done );
-		} );
-
-		it( 'reading time matches the expected breakpoints', function( done ) {
-			function doneIfError( err ) {
-				if ( err ) {
-					done( err );
-				}
-			}
-			assertTimeForCount( 1, 1, doneIfError );
-			assertTimeForCount( 4, 1, doneIfError );
-			assertTimeForCount( 5, 2, doneIfError );
-			assertTimeForCount( 8, 2, doneIfError );
-			assertTimeForCount( 9, 3, doneIfError );
-			assertTimeForCount( 12, 3, doneIfError );
-			assertTimeForCount( 13, 4, doneIfError );
-
-			done();
 		} );
 	} );
 
@@ -613,25 +562,25 @@ describe( 'index', function() {
 				images: [
 					null, // null reference
 					{
-						naturalHeight: 1,
-						naturalWidth: 1
+						height: 1,
+						width: 1
 					}, // too small
 					{
-						naturalHeight: 351,
-						naturalWidth: 5
+						height: 351,
+						width: 5
 					}, // too narrow
 					{
-						naturalHeight: 5,
-						naturalWidth: 351
+						height: 5,
+						width: 351
 					}, // too short
 					{
-						naturalHeight: 351,
-						naturalWidth: 351,
+						height: 351,
+						width: 351,
 						src: 'http://example.com/image.jpg'
 					}, // YES
 					{
-						naturalHeight: 3500,
-						naturalWidth: 3500
+						height: 3500,
+						width: 3500
 					} // prefer first that passes
 				]
 			};
@@ -684,8 +633,8 @@ describe( 'index', function() {
 		it( 'should filter post.images based on size', function() {
 			function fakeImage( width, height ) {
 				return {
-					naturalWidth: width,
-					naturalHeight: height
+					width: width,
+					height: height
 				};
 			}
 			let post = {
@@ -712,14 +661,38 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.makeEmbedsSecure', function() {
+	describe( 'content.makeEmbedsSafe', function() {
 		it( 'makes iframes safe, rewriting to ssl and sandboxing', function( done ) {
 			normalizer(
 				{
 					content: '<iframe src="http://example.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '<iframe src="https://example.com/" sandbox=""></iframe>' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'allows trusted sources to be unsandboxed', function( done ) {
+			normalizer(
+				{
+					content: '<iframe src="http://spotify.com"></iframe>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
+					assert.strictEqual( normalized.content, '<iframe src="https://spotify.com/"></iframe>' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'applies the right level of sandboxing to whitelisted sources', function( done ) {
+			normalizer(
+				{
+					content: '<iframe src="http://youtube.com"></iframe>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
+					assert.strictEqual( normalized.content, '<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
 					done( err );
 				}
 			);
@@ -730,7 +703,7 @@ describe( 'index', function() {
 				{
 					content: '<iframe src=""></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}
@@ -743,7 +716,7 @@ describe( 'index', function() {
 					is_external: true,
 					content: '<object data="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></object>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}
@@ -756,7 +729,7 @@ describe( 'index', function() {
 					is_external: true,
 					content: '<embed src="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}
@@ -764,18 +737,18 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.contentEmbeds', function() {
-		it( 'detects whitelisted iframes and alters the sandbox', function( done ) {
+	describe( 'content.detectMedia', function() {
+		it( 'detects whitelisted iframes', function( done ) {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
+					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com"></iframe>' );
 					assert.strictEqual( embed.height, 50 );
 					assert.strictEqual( embed.width, 100 );
 					assert.isNull( embed.type );
@@ -785,12 +758,12 @@ describe( 'index', function() {
 				}
 			);
 		} );
-		it( 'detects trusted iframes and removes the sandbox', function( done ) {
+		it( 'detects trusted iframes', function( done ) {
 			normalizer(
 				{
 					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
@@ -808,7 +781,7 @@ describe( 'index', function() {
 					'</span></p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'youtube' );
 					done( err );
@@ -823,88 +796,35 @@ describe( 'index', function() {
 					'</div>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'vimeo' );
 					done( err );
 				}
 			);
 		} );
-		it( 'detects special instagram embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="instagram-media"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-instagram' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special twitter embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="twitter-video"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-twitter' );
-					done( err );
-				}
-			);
-		} );
-		// skipping for now because jsdom doesn't like namespaced elements
-		it.skip( 'detects special facebook post embed', function( done ) {
-			normalizer(
-				{
-					content: '<fb:post data-href="http://facebook.com"></fb:post>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special facebook embed', function( done ) {
-			normalizer(
-				{
-					content: '<div class="fb-video"><div></div></div>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'empty content does not set the array', function( done ) {
+		it( 'empty content yields undefined', function( done ) {
 			normalizer(
 				{
 					content: '',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.isUndefined( normalized.content_embeds );
 					done( err );
 				}
 			);
 		} );
-		it( 'content with no embeds does not set the array', function( done ) {
+		it( 'content with no embeds yields an empty array', function( done ) {
 			normalizer(
 				{
 					content: '<p>foo</p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds );
+					assert.deepEqual( normalized.content_embeds, [] );
 					done( err );
 				}
 			);
@@ -924,9 +844,9 @@ describe( 'index', function() {
 					content: badContent,
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds, 'No content_embeds should have been found' );
+					assert.deepEqual( normalized.content_embeds, [], 'No content_embeds should have been found' );
 					done( err );
 				}
 			);
@@ -948,7 +868,36 @@ describe( 'index', function() {
 				}
 			);
 		} );
+
+		it( 'removes elements by selector', function( done ) {
+			normalizer(
+				{
+					content: `
+					<div class="sharedaddy">sharedaddy</div>
+					<script>/*hi*/</script>
+					<div class="jp-relatedposts">jetpack</div>
+					<div class="jp-relatedposts-headline">jetpack</div>
+					<div class="mc4wp-form">a form</div>
+					<div class="wpcnt">wordads</div>
+					<div class="OUTBRAIN">outbrain content ads</div>
+					<div class="adsbygoogle">google ads</div>
+					<form><input type="text"></form>
+					<input type="password">
+					<select><option>nope</option></select>
+					<button>hi</button>
+					<textarea>noooope</textarea>
+					`,
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.removeElementsBySelector ] )
+				], function( err, normalized ) {
+					assert.equal( trim( normalized.content ), '' );
+					done( err );
+				}
+			);
+		} );
 	} );
+
 	describe( 'The fancy excerpt creator', function() {
 		function assertExcerptBecomes( source, expected, done ) {
 			normalizer( { content: source }, [ normalizer.createBetterExcerpt ], function( err, normalized ) {
@@ -971,7 +920,11 @@ describe( 'index', function() {
 		} );
 
 		it( 'limits the excerpt to 3 elements after trimming', function( done ) {
-			assertExcerptBecomes( '<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>', '<p>one</p><p>two</p><br>', done );
+			assertExcerptBecomes(
+				'<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>',
+				'<p>one</p><p>two</p><br>',
+				done
+			);
 		} );
 
 		it( 'only trims top-level breaks', function( done ) {
@@ -984,6 +937,31 @@ describe( 'index', function() {
 				'<p>hi there</p>',
 				done
 			);
+		} );
+	} );
+
+	describe( 'The refreshed fancy excerpt creator', () => {
+		function assertExcerptBecomes( source, expected, done ) {
+			normalizer( { content: source }, [ normalizer.createBetterExcerptRefresh ], function( err, normalized ) {
+				assert.strictEqual( normalized.better_excerpt, expected );
+				done( err );
+			} );
+		}
+
+		it( 'removes tags but inserts spaces between p tags', function( done ) {
+			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four', done );
+		} );
+
+		it( 'turns br tags into spaces', function( done ) {
+			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three', done );
+		} );
+
+		it( 'trims whitespace from the excerpt', function( done ) {
+			assertExcerptBecomes( '<p> </p><p>one</p><p>two</p><p>three</p><p>four</p><p> </p>', 'one two three four', done );
+		} );
+
+		it( 'removes tables from the content', function( done ) {
+			assertExcerptBecomes( '<p>test</p><table><tr><td>in a table</td></tr></table><p>more</p>', 'test more', done );
 		} );
 	} );
 } );

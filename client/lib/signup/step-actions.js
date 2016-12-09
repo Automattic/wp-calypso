@@ -18,12 +18,14 @@ import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
+import analytics from 'lib/analytics';
 
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
 } from 'state/action-types';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
@@ -36,13 +38,14 @@ function createSiteWithCart( callback, dependencies, {
 	themeItem
 } ) {
 	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
+	const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
-			vertical: dependencies.surveyQuestion || undefined
+			vertical: surveyVertical || undefined
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -226,7 +229,7 @@ module.exports = {
 		}, dependencies, data );
 	},
 
-	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
+	addPlanToCart( callback, { siteSlug }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
 			defer( callback );
@@ -234,22 +237,33 @@ module.exports = {
 			return;
 		}
 
-		SignupCart.addToCart( siteSlug, cartItem, callback );
+		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+
+		SignupCart.addToCart( siteSlug, newCartItems, callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
+		const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
+		const surveySiteType = getSurveySiteType( this._reduxStore.getState() ).trim();
+
 		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
 				ab_test_variations: getSavedVariations(),
 				validate: false,
 				signup_flow_name: flowName,
-				nux_q_site_type: dependencies.surveySiteType,
-				nux_q_question_primary: dependencies.surveyQuestion,
+				nux_q_site_type: surveySiteType,
+				nux_q_question_primary: surveyVertical,
 				jetpack_redirect: queryArgs.jetpackRedirect
 			}
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+
+			if ( ! errors ) {
+				// Fire after a new user registers.
+				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+			}
 
 			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
 		} );

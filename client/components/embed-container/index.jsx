@@ -19,7 +19,7 @@ const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {
 	'blockquote[class^="instagram-"]': embedInstagram,
-	'blockquote[class^="twitter-"]': embedTwitter,
+	'blockquote[class^="twitter-"], a[class^="twitter-"]': embedTwitter,
 	'fb\\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow

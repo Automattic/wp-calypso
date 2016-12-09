@@ -18,7 +18,7 @@ var notices = require( 'notices' ),
 	EmptyContent = require( 'components/empty-content' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Actions = require( 'my-sites/customize/actions' ),
-	themeActivated = require( 'state/themes/actions' ).activated;
+	themeActivated = require( 'state/themes/actions' ).themeActivated;
 
 var loadingTimer;
 
@@ -233,8 +233,7 @@ var Customize = React.createClass( {
 					this.setState( { iframeLoaded: true } );
 					break;
 				case 'activated':
-					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					Actions.activated( themeSlug, site, this.props.themeActivated );
+					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
 				case 'purchased':
 					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
@@ -299,7 +298,7 @@ var Customize = React.createClass( {
 
 		if ( iframeUrl ) {
 			debug( 'loading iframe URL', iframeUrl );
-			let iframeClassName = this.state.iframeLoaded ? 'is-iframe-loaded' : '';
+			const iframeClassName = this.state.iframeLoaded ? 'is-iframe-loaded' : '';
 			// The loading message here displays while the iframe is loading. When the
 			// loading completes, the customizer will send a postMessage back to this
 			// component. If the loading takes longer than 25 seconds (see

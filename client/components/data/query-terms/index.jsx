@@ -44,7 +44,7 @@ class QueryTerms extends Component {
 }
 
 QueryTerms.propTypes = {
-	siteId: PropTypes.number.isRequired,
+	siteId: PropTypes.number,
 	taxonomy: PropTypes.string.isRequired,
 	query: PropTypes.object,
 	requesting: PropTypes.bool.isRequired,

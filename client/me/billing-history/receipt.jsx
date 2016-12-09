@@ -13,6 +13,7 @@ var tableRows = require( './table-rows' ),
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import purchasesPaths from 'me/purchases/paths';
 
 module.exports = React.createClass( {
 	displayName: 'BillingReceipt',
@@ -26,7 +27,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Main>
-				<HeaderCake backHref="/me/billing">
+				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ this.translate( 'Billing History' ) }
 				</HeaderCake>
 				<Card compact className="billing-history__receipt-card">
@@ -103,7 +104,9 @@ module.exports = React.createClass( {
 		var transaction = this.props.transaction,
 			text;
 
-		if ( 'NOT STORED' === transaction.cc_type.toUpperCase() ) {
+		if ( transaction.pay_part === 'paypal_express' ) {
+			text = this.translate( 'PayPal' );
+		} else if ( 'NOT STORED' === transaction.cc_type.toUpperCase() ) {
 			text = this.translate( 'Credit Card' );
 		} else {
 			text = transaction.cc_type.toUpperCase() + this.translate( ' ending in ' ) + transaction.cc_num;

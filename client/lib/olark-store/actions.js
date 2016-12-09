@@ -86,6 +86,15 @@ const olarkActions = {
 
 	hideBox() {
 		olarkApi( 'api.box.hide' );
+	},
+
+	focusBox() {
+		if ( ! document ) {
+			return;
+		}
+
+		const chatInput = document.querySelector( '#habla_wcsend_input' );
+		chatInput && chatInput.focus();
 	}
 };
 

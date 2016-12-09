@@ -14,9 +14,11 @@ import {
 	PLAN_BUSINESS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
 import AdvertisingRemoved from './advertising-removed';
@@ -34,12 +36,23 @@ import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { isPressableSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
-			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
+			.oneOf( [ PLAN_FREE,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_BUSINESS,
+				PLAN_JETPACK_BUSINESS_MONTHLY,
+				PLAN_JETPACK_PREMIUM,
+				PLAN_JETPACK_PREMIUM_MONTHLY,
+				PLAN_JETPACK_PERSONAL,
+				PLAN_JETPACK_PERSONAL_MONTHLY,
+				] )
 			.isRequired,
 		isPlaceholder: PropTypes.bool
 	};
@@ -51,13 +64,15 @@ class ProductPurchaseFeaturesList extends Component {
 	getBusinessFeatures() {
 		const {
 			selectedSite,
-			planHasDomainCredit
+			planHasDomainCredit,
+			isPressableSite
 		} = this.props;
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
+				isPressableSite={ isPressableSite }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -188,6 +203,28 @@ class ProductPurchaseFeaturesList extends Component {
 		];
 	}
 
+	getJetpackPersonalFeatures() {
+		const {	selectedSite } = this.props;
+
+		return [
+			<JetpackBackupSecurity
+				key="jetpackBackupSecurity"
+			/>,
+			<JetpackAntiSpam
+				key="jetpackAntiSpam"
+			/>,
+			<JetpackWordPressCom
+				selectedSite={ selectedSite }
+				key="jetpackWordPressCom"
+			/>,
+			<JetpackReturnToDashboard
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>
+		];
+	}
+
+
 	getJetpackBusinessFeatures() {
 		const {	selectedSite } = this.props;
 
@@ -231,6 +268,9 @@ class ProductPurchaseFeaturesList extends Component {
 			case PLAN_JETPACK_PREMIUM:
 			case PLAN_JETPACK_PREMIUM_MONTHLY:
 				return this.getJetpackPremiumFeatures();
+			case PLAN_JETPACK_PERSONAL:
+			case PLAN_JETPACK_PERSONAL_MONTHLY:
+				return this.getJetpackPersonalFeatures();
 			case PLAN_JETPACK_BUSINESS:
 			case PLAN_JETPACK_BUSINESS_MONTHLY:
 				return this.getJetpackBusinessFeatures();
@@ -255,6 +295,7 @@ export default connect(
 
 		return {
 			selectedSite,
+			isPressableSite: !! isPressableSite( state, selectedSiteId ),
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId )
 		};
 	}

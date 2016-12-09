@@ -2,21 +2,20 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' ),
 	useMockery = require( 'test/helpers/use-mockery' );
 
 describe( 'Count', function() {
-	var React, ReactInjection, TestUtils, Count, renderer;
+	var React, ReactClass, TestUtils, Count, renderer;
 
 	// really only using Mockery for the clean module cache
 	useMockery();
 
 	before( function() {
 		React = require( 'react' );
-		ReactInjection = require( 'react/lib/ReactInjection' );
+		ReactClass = require( 'react/lib/ReactClass' );
 		TestUtils = require( 'react-addons-test-utils' );
 
-		ReactInjection.Class.injectMixin( require( 'i18n-calypso' ).mixin );
+		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
 		Count = require( '../' );
 	} );
 
@@ -78,10 +77,4 @@ describe( 'Count', function() {
 
 		expect( result.props.children ).to.equal( '3' );
 	} );
-
-	it( 'should warn when passing something that is not a number', sinon.test( function() {
-		this.stub( console, 'error' );
-		renderer.render( <Count count={ "17" } /> );
-		expect( console.error ).to.have.been.called;
-	} ) );
 } );

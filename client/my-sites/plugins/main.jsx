@@ -2,14 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import debugModule from 'debug';
 import classNames from 'classnames';
-import getOr from 'lodash/get';
-import some from 'lodash/some';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
+import { find, isEmpty, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,31 +13,25 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import PluginItem from './plugin-item/plugin-item';
+import DocumentHead from 'components/data/document-head';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
-
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:my-sites:plugins' );
+import PluginsBrowser from './plugins-browser';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
 
 const PluginsMain = React.createClass( {
-
-	displayName: 'PluginsMain',
-
 	mixins: [ URLSearch ],
 
 	getInitialState() {
@@ -50,7 +39,6 @@ const PluginsMain = React.createClass( {
 	},
 
 	componentDidMount() {
-		debug( 'Plugins React component mounted.' );
 		this.props.sites.on( 'change', this.refreshPlugins );
 		PluginsStore.on( 'change', this.refreshPlugins );
 	},
@@ -67,7 +55,7 @@ const PluginsMain = React.createClass( {
 	getPluginsFromStore( nextProps, sites ) {
 		const props = nextProps || this.props;
 		let	plugins = null;
-		if ( ! props.sites.selected ) {
+		if ( ! props.selectedSiteSlug ) {
 			plugins = PluginsStore.getPlugins( sites.filter( site => site.visible ), props.filter );
 		} else {
 			plugins = PluginsStore.getPlugins( sites, props.filter );
@@ -118,7 +106,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getFilters() {
-		const siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '';
+		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
 
 		return [
 			{
@@ -174,8 +162,8 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentUpdateData() {
-		let emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
-			selectedSite = this.props.sites.getSelectedSite();
+		const emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
+			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
 			emptyContentData.title = this.translate( 'All plugins on %(siteName)s are {{span}}up to date.{{/span}}', {
@@ -196,7 +184,7 @@ const PluginsMain = React.createClass( {
 
 		if ( selectedSite ) {
 			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
-			if ( selectedSite.jetpack ) {
+			if ( this.props.selectedSiteIsJetpack ) {
 				emptyContentData.illustration = '/calypso/images/drake/drake-jetpack.svg';
 				emptyContentData.title = this.translate( 'Plugins can\'t be updated on %(siteName)s.', {
 					textOnly: true,
@@ -238,13 +226,16 @@ const PluginsMain = React.createClass( {
 	},
 
 	getUpdatesTabVisibility() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			return selectedSite.jetpack && selectedSite.canUpdateFiles;
+			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
 		}
 
-		return some( this.props.sites.getSelectedOrAllWithPlugins(), site => site && site.jetpack && site.canUpdateFiles );
+		return some(
+			this.props.sites.getSelectedOrAllWithPlugins(),
+			site => site && this.props.isJetpackSite( site.ID ) && this.props.canJetpackSiteUpdateFiles( site.ID )
+		);
 	},
 
 	shouldShowPluginListPlaceholders() {
@@ -253,15 +244,32 @@ const PluginsMain = React.createClass( {
 		return isEmpty( plugins ) && this.isFetchingPlugins();
 	},
 
+	renderDocumentHead() {
+		return <DocumentHead title={ this.translate( 'Plugins', { textOnly: true } ) } />;
+	},
+
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
+		const { selectedSite } = this.props;
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
-				return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
 					textOnly: true,
-					components: { searchTerm: <em>{ this.props.search }</em> }
-				} ) } />
+					args: {
+						searchQuery: this.props.search
+					}
+				} );
+
+				return <PluginsBrowser
+						hideSearchForm
+						site={ selectedSite ? selectedSite.slug : null }
+						path={ this.context.path }
+						sites={ this.props.sites }
+						search={ this.props.search }
+						store={ this.context.store }
+						searchTitle={ searchTitle }
+					/>;
 			}
 
 			const emptyContentData = this.getEmptyContentData();
@@ -270,7 +278,7 @@ const PluginsMain = React.createClass( {
 					title={ emptyContentData.title }
 					illustration={ emptyContentData.illustration }
 					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />
+					action={ emptyContentData.action } />;
 			}
 		}
 		return (
@@ -279,7 +287,6 @@ const PluginsMain = React.createClass( {
 					header={ this.translate( 'Plugins' ) }
 					plugins={ plugins }
 					sites={ this.props.sites }
-					selectedSite={ this.props.sites.getSelectedSite() }
 					pluginUpdateCount={ this.state.pluginUpdateCount }
 					isPlaceholder= { this.shouldShowPluginListPlaceholders() } />
 			</div>
@@ -316,18 +323,26 @@ const PluginsMain = React.createClass( {
 				sites={ [] }
 				selectedSite={ selectedSite }
 				progress={ [] }
-				isMock={ true } />
+				isMock={ true } />;
 		} );
 	},
 
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const {
+			category,
+			search,
+			selectedSite,
+		} = this.props;
 
-		if ( ! getOr( selectedSite, 'jetpack', true ) ) {
+		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<WpcomPluginPanel />
+					<WpcomPluginPanel { ...{
+						category,
+						search,
+					} } />
 				</Main>
 			);
 		}
@@ -335,16 +350,21 @@ const PluginsMain = React.createClass( {
 		if ( this.state.accessError ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+					{ this.state.accessError.featureExample
+						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
+						: null
+					}
 				</Main>
 			);
 		}
 
-		if ( selectedSite && selectedSite.jetpack && ! selectedSite.canManage() ) {
+		if ( this.props.selectedSiteIsJetpack && ! this.props.canSelectedJetpackSiteManage ) {
 			return (
 				<Main>
+					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -364,6 +384,7 @@ const PluginsMain = React.createClass( {
 
 		return (
 			<Main className={ containerClass }>
+				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
@@ -372,7 +393,7 @@ const PluginsMain = React.createClass( {
 								return null;
 							}
 
-							let attr = {
+							const attr = {
 								key: filterItem.id,
 								path: filterItem.path,
 								selected: filterItem.id === this.props.filter,
@@ -406,9 +427,18 @@ const PluginsMain = React.createClass( {
 
 export default connect(
 	state => {
+		const selectedSite = getSelectedSite( state );
+
 		return {
-			wporgPlugins: state.plugins.wporg.items
+			selectedSite,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
+			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
+			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
+			isJetpackSite: siteId => isJetpackSite( state, siteId ),
+			wporgPlugins: state.plugins.wporg.items,
 		};
 	},
-	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
+	{ wporgFetchPluginData }
 )( PluginsMain );

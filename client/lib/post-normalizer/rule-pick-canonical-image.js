@@ -2,31 +2,13 @@
  * External Dependencies
  */
 import { find } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
-import { thumbIsLikelyImage } from './utils';
+import { thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 
-const debug = debugFactory( 'calypso:post-normalizer:pick-canonical-image' );
 
-function candidateForCanonicalImage( image ) {
-	if ( ! image ) {
-		return false;
-	}
-
-	if ( image.naturalWidth < 350 ) {
-		debug( ( image && image.src ), ': not wide enough' );
-		return false;
-	}
-
-	if ( ( image.naturalWidth * image.naturalHeight ) < 30000 ) {
-		debug( ( image && image.src ), ': not enough area' );
-		return false;
-	}
-	return true;
-}
 
 export default function pickCanonicalImage( post ) {
 	let canonicalImage;
@@ -34,12 +16,12 @@ export default function pickCanonicalImage( post ) {
 		post.canonical_image = null;
 	}
 	if ( post.images ) {
-		canonicalImage = find( post.images, candidateForCanonicalImage );
+		canonicalImage = find( post.images, isCandidateForCanonicalImage );
 		if ( canonicalImage ) {
 			canonicalImage = {
 				uri: canonicalImage.src,
-				width: canonicalImage.naturalWidth,
-				height: canonicalImage.naturalHeight
+				width: canonicalImage.width,
+				height: canonicalImage.height
 			};
 		}
 	} else if ( thumbIsLikelyImage( post.post_thumbnail ) ) {

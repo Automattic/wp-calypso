@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -13,11 +14,15 @@ import {
 	getPlanRawDiscount,
 	getPlansBySite,
 	getPlansBySiteId,
+	getCurrentPlan,
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
-	isSitePlanDiscounted
+	isSitePlanDiscounted,
+	getSitePlanSlug,
+	hasFeature
 } from '../selectors';
+import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {
@@ -54,6 +59,73 @@ describe( 'selectors', () => {
 			expect( plans ).to.eql( plans1 );
 		} );
 	} );
+	describe( '#getCurrentPlan()', () => {
+		context( 'when no plan data is found for the given siteId', () => {
+			const siteId = 77203074;
+			const state = deepFreeze( {
+				sites: {
+					plans: {
+						[ siteId ]: {}
+					}
+				}
+			} );
+
+			it( 'returns null', () => {
+				const plan = getCurrentPlan( state, siteId );
+				expect( plan ).to.eql( null );
+			} );
+		} );
+
+		context( 'when plans are found for the given siteId', () => {
+			context( 'when those plans include a \'currentPlan\'', () => {
+				const siteId = 77203074;
+				const plan1 = { currentPlan: true };
+				const state = deepFreeze( {
+					sites: {
+						plans: {
+							[ siteId ]: {
+								data: [ plan1 ]
+							}
+						},
+						items: {
+							[ siteId ]: {
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				} );
+
+				it( 'returns the currentPlan', () => {
+					const plan = getCurrentPlan( state, siteId );
+					expect( plan ).to.eql( plan1 );
+				} );
+			} );
+
+			context( 'when those plans do not include a \'currentPlan\'', () => {
+				const siteId = 77203074;
+				const plan1 = { currentPlan: false };
+				const state = deepFreeze( {
+					sites: {
+						plans: {
+							[ siteId ]: {
+								data: [ plan1 ]
+							}
+						},
+						items: {
+							[ siteId ]: {
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				} );
+
+				it( 'returns a new sitePlanObject', () => {
+					const plan = getCurrentPlan( state, siteId );
+					expect( plan ).to.eql( {} );
+				} );
+			} );
+		} );
+	} );
 	describe( '#getSitePlan()', () => {
 		it( 'should return plans by site and plan slug', () => {
 			const plans1 = {
@@ -65,6 +137,7 @@ describe( 'selectors', () => {
 					productSlug: 'silver'
 				}, { currentPlan: true, productSlug: 'bronze' } ]
 			};
+
 			const plans2 = {
 				data: [ {
 					currentPlan: true,
@@ -582,6 +655,130 @@ describe( 'selectors', () => {
 
 		it( 'should return true if user is a plan owner', () => {
 			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSitePlanSlug()', () => {
+		it( 'should return null if no plan data is found for the given siteId', () => {
+			expect( getSitePlanSlug(
+				{
+					sites: {
+						plans: {
+							2916284: {}
+						}
+					}
+				},
+				2916284
+			) ).to.be.null;
+		} );
+
+		it( 'should return the given site\'s current plan\'s product slug', () => {
+			expect( getSitePlanSlug(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_PREMIUM
+								} ]
+							}
+						}
+					}
+				},
+				2916284
+			) ).to.equal( PLAN_PREMIUM );
+		} );
+	} );
+
+	describe( '#hasFeature()', () => {
+		it( 'should return false if no siteId is given', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				null,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if no feature is given', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				2916284
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if no plan data is found for the given siteId', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return false if the site\'s current plan doesn\'t include the specified feature', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_PREMIUM
+								} ]
+							}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.false;
+		} );
+
+		it( 'should return true if the site\'s current plan includes the specified feature', () => {
+			expect( hasFeature(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					}
+				},
+				2916284,
+				FEATURE_UNLIMITED_PREMIUM_THEMES
+			) ).to.be.true;
 		} );
 	} );
 } );

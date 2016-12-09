@@ -12,12 +12,8 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
+import AsyncLoad from 'components/async-load';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
-import Location from 'post-editor/editor-location';
-import Discussion from 'post-editor/editor-discussion';
-import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
@@ -32,7 +28,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
-import EditorDrawerFeaturedImage from './featured-image';
+
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
@@ -134,7 +130,8 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<PostFormatsAccordion
+			<AsyncLoad
+				require="post-editor/editor-post-formats/accordion"
 				post={ this.props.post }
 				className="editor-drawer__accordion"
 			/>
@@ -143,7 +140,8 @@ const EditorDrawer = React.createClass( {
 
 	renderSharing: function() {
 		return (
-			<EditorSharingAccordion
+			<AsyncLoad
+				require="post-editor/editor-sharing/accordion"
 				site={ this.props.site }
 				post={ this.props.post } />
 		);
@@ -155,9 +153,11 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorDrawerFeaturedImage
+			<AsyncLoad
+				require="./featured-image"
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
 	},
 
@@ -205,7 +205,10 @@ const EditorDrawer = React.createClass( {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
-				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
+				<AsyncLoad
+					require="post-editor/editor-location"
+					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
+				/>
 			</AccordionSection>
 		);
 	},
@@ -217,7 +220,8 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<Discussion
+				<AsyncLoad
+					require="post-editor/editor-discussion"
 					site={ this.props.site }
 					post={ this.props.post }
 					isNew={ this.props.isNew }
@@ -227,8 +231,22 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderSeo: function() {
-		if ( ! config.isEnabled( 'manage/advanced-seo' ) || ! this.props.site ) {
+		const { jetpackVersionSupportsSeo } = this.props;
+
+		if ( ! this.props.site ) {
 			return;
+		}
+
+		if ( ! this.props.site.jetpack && ! config.isEnabled( 'manage/advanced-seo' ) ) {
+			return;
+		}
+
+		if ( this.props.site.jetpack ) {
+			if ( ! config.isEnabled( 'jetpack/seo-tools' ) ||
+				! this.props.site.isModuleActive( 'seo-tools' ) ||
+				! jetpackVersionSupportsSeo ) {
+				return;
+			}
 		}
 
 		const { plan } = this.props.site;
@@ -238,7 +256,10 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
+			<AsyncLoad
+				require="post-editor/editor-seo-accordion"
+				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
+			/>
 		);
 	},
 
@@ -301,6 +322,7 @@ export default connect(
 
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
+			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type )
 		};
 	},

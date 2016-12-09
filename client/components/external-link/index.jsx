@@ -23,12 +23,14 @@ export default React.createClass( {
 		onClick: React.PropTypes.func,
 		icon: React.PropTypes.bool,
 		iconSize: React.PropTypes.number,
-		target: React.PropTypes.string
+		target: React.PropTypes.string,
+		showIconFirst: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
-			iconSize: 18
+			iconSize: 18,
+			showIconFirst: false
 		};
 	},
 
@@ -37,7 +39,7 @@ export default React.createClass( {
 			'has-icon': !! this.props.icon,
 		} );
 
-		const props = assign( {}, omit( this.props, 'icon', 'iconSize' ), {
+		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst' ), {
 			className: classes,
 			rel: 'external'
 		} );
@@ -46,10 +48,13 @@ export default React.createClass( {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
 
+		const iconComponent = <Gridicon icon="external" size={ this.props.iconSize } />;
+
 		return (
 			<a { ...props }>
+				{ this.props.icon && this.props.showIconFirst && iconComponent }
 				{ this.props.children }
-				{ this.props.icon ? <Gridicon icon="external" size={ this.props.iconSize } /> : null }
+				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
 			</a>
 		);
 	}

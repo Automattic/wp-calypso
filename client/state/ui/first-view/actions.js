@@ -35,8 +35,8 @@ export function hideView( { enabled } ) {
 
 		const tracksEvent = recordTracksEvent( `calypso_first_view_dismissed`, {
 			view: config.name,
-			showAgain: enabled,
-			timeSpent: timeBucket,
+			show_again: enabled,
+			time_spent: timeBucket,
 		} );
 
 

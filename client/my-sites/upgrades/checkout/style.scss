@@ -244,6 +244,22 @@
 		}
 	}
 
+	.cart-coupon {
+		display: none;
+		margin: 16px 0;
+
+		// On larger screens, users can use the coupon functionality present on the sidebar
+		@include breakpoint( "<660px" ) {
+			display: block;
+			text-align: center;
+		}
+
+		input {
+			margin-right: 15px;
+			width: 50%;
+		}
+	}
+
 	.payment-box-actions {
 		@include breakpoint( ">660px" ) {
 			margin: 20px -30px 0px -30px;
@@ -708,8 +724,8 @@
 				display: block;
 				height: 25px;
 				position: absolute;
-					left: -8px;
-					top: -8px;
+				left: -8px;
+				top: -8px;
 				width: 25px;
 			}
 
@@ -750,7 +766,7 @@
 				background: $gray-light;
 				font-size: 12px;
 				margin: 20px -20px;
-				min-height: 126px;
+				min-height: 144px;
 				padding: 20px;
 
 				span {
@@ -799,6 +815,35 @@
 	@include breakpoint( ">960px" ) {
 		float: right;
 		clear: none;
+	}
+}
+
+.credit-card-payment-box__switch-link-left {
+	@include breakpoint( ">960px" ) {
+		float: left;
+		padding-left: 20px
+	}
+}
+
+.checkout__payment-chat-button-icon {
+	color: $blue-wordpress;
+	margin-right: 5px;
+}
+
+.checkout__payment-chat-button {
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+		text-align: center;
+	}
+
+	@include breakpoint( ">960px" ) {
+		float: right;
+	}
+}
+
+.credits-payment-box .checkout__payment-chat-button {
+	@include breakpoint( ">660px" ) {
+		float: right;
 	}
 }
 

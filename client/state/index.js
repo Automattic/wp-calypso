@@ -9,8 +9,11 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
+import accountRecovery from './account-recovery/reducer';
+import automatedTransfer from './automated-transfer/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
@@ -19,7 +22,9 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
+import jetpackSettings from './jetpack-settings/reducer';
 import jetpackSync from './jetpack-sync/reducer';
+import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import notices from './notices/reducer';
 import pageTemplates from './page-templates/reducer';
@@ -36,8 +41,10 @@ import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
+import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import sites from './sites/reducer';
+import siteRoles from './site-roles/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
@@ -53,6 +60,8 @@ import wordads from './wordads/reducer';
  */
 export const reducer = combineReducers( {
 	application,
+	accountRecovery,
+	automatedTransfer,
 	comments,
 	componentsUsageStats,
 	countryStates,
@@ -61,9 +70,11 @@ export const reducer = combineReducers( {
 	domains,
 	geo,
 	googleAppsUsers,
+	happinessEngineers,
 	happychat,
 	help,
 	jetpackConnect,
+	jetpackSettings,
 	jetpackSync,
 	notices,
 	pageTemplates,
@@ -80,8 +91,10 @@ export const reducer = combineReducers( {
 	reader,
 	receipts,
 	sharing,
+	shortcodes,
 	signup,
 	sites,
+	siteRoles,
 	siteSettings,
 	stats,
 	storedCards,
@@ -90,7 +103,7 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	wordads
+	wordads,
 } );
 
 const middleware = [ thunkMiddleware, noticesMiddleware ];
@@ -111,7 +124,11 @@ export function createReduxStore( initialState = {} ) {
 		window.app.isDebug &&
 		window.devToolsExtension
 	) {
-		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
+		createStoreWithMiddleware = compose(
+			createStoreWithMiddleware,
+			consoleDispatcher,
+			window.devToolsExtension(),
+		);
 	}
 	return createStoreWithMiddleware( createStore )( reducer, initialState );
 }

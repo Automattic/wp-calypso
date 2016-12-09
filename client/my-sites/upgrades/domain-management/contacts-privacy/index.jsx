@@ -15,6 +15,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
+import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
 const ContactsPrivacy = React.createClass( {
 	propTypes: {
@@ -33,7 +34,10 @@ const ContactsPrivacy = React.createClass( {
 		}
 
 		const domain = getSelectedDomain( this.props ),
-			{ hasPrivacyProtection, privateDomain, currentUserCanManage } = domain;
+			{ hasPrivacyProtection, privateDomain, currentUserCanManage } = domain,
+			contactInformation = privateDomain
+				? findPrivacyServiceWhois( this.props.whois.data )
+				: findRegistrantWhois( this.props.whois.data );
 
 		return (
 			<Main className="domain-management-contacts-privacy">
@@ -45,7 +49,7 @@ const ContactsPrivacy = React.createClass( {
 
 				<VerticalNav>
 					<ContactsPrivacyCard
-						contactInformation= { this.props.whois.data }
+						contactInformation= { contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
 						hasPrivacyProtection={ hasPrivacyProtection }

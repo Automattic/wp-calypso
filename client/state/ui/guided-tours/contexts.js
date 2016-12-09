@@ -1,8 +1,17 @@
-/** @ssr-ready **/
-
+/**
+ * Internal dependencies
+ */
 import config from 'config';
-import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { abtest } from 'lib/abtest';
+import {
+	getSectionName,
+	getSelectedSite,
+	getSelectedSiteId,
+	isPreviewShowing as isPreviewShowingSelector,
+} from 'state/ui/selectors';
+import { getLastAction } from 'state/ui/action-log/selectors';
+import { getCurrentUser, canCurrentUser } from 'state/current-user/selectors';
+import { hasDefaultSiteTitle } from 'state/sites/selectors';
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
@@ -10,25 +19,47 @@ export const inSection = sectionName => state =>
 export const isEnabled = feature => () =>
 	config.isEnabled( feature );
 
-export const previewIsNotShowing = state =>
-	! isPreviewShowing( state );
+export const isPreviewNotShowing = state =>
+	! isPreviewShowingSelector( state );
 
-export const previewIsShowing = state =>
-	isPreviewShowing( state );
+export const isPreviewShowing = state =>
+	isPreviewShowingSelector( state );
+
+const timeSinceUserRegistration = state => {
+	const user = getCurrentUser( state );
+	const registrationDate = user && Date.parse( user.date );
+	return registrationDate ? ( Date.now() - registrationDate ) : false;
+};
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 export const isNewUser = state => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return false;
-	}
-
-	const creation = Date.parse( user.date );
-	return ( Date.now() - creation ) <= WEEK_IN_MILLISECONDS;
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
 };
 
-export const selectedSiteIsPreviewable = state =>
+export const isUserOlderThan = age => state => {
+	const userAge = timeSinceUserRegistration( state );
+	return userAge !== false ? userAge >= age : false;
+};
+
+export const hasUserInteractedWithComponent = componentName => state =>
+	getLastAction( state ).component === componentName;
+
+export const isSelectedSitePreviewable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
 
-export const selectedSiteIsCustomizable = state =>
+export const isSelectedSiteCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+
+export const isAbTestInVariant = ( testName, variant ) => () =>
+	abtest( testName ) === variant;
+
+export const hasSelectedSiteDefaultSiteTitle = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+};
+
+export const canUserEditSettingsOfSelectedSite = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
+};

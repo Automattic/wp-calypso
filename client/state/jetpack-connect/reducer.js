@@ -1,8 +1,7 @@
 /**
  * External dependencis
  */
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
+import { isEmpty, omit, pickBy } from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -13,6 +12,7 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
@@ -26,6 +26,8 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_RETRY_AUTH,
+	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -38,30 +40,38 @@ import {
 
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
+import { isStale } from './utils';
+import { JETPACK_CONNECT_AUTHORIZE_TTL, AUTH_ATTEMPS_TTL } from './constants';
+import { urlToSlug } from 'lib/url';
 
-const defaultAuthorizeState = {
-	queryObject: {},
-	isAuthorizing: false,
-	authorizeSuccess: false,
-	authorizeError: false
-};
+function buildDefaultAuthorizeState() {
+	return {
+		queryObject: {},
+		isAuthorizing: false,
+		authorizeSuccess: false,
+		authorizeError: false,
+		timestamp: Date.now()
+	};
+}
 
-function buildNoProtocolUrlObj( url, flowType ) {
-	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
+function buildUrlSessionObj( url, flowType ) {
+	const slug = urlToSlug( url );
 	const sessionValue = {
 		timestamp: Date.now(),
 		flowType: flowType || ''
 	};
-	return { [ noProtocolUrl ]: sessionValue };
+	return { [ slug ]: sessionValue };
 }
 
 export function jetpackConnectSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_CHECK_URL:
-			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.flowType ) );
+			return Object.assign( {}, state, buildUrlSessionObj( action.url, action.flowType ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
-				return state;
+				return pickBy( state, ( session ) => {
+					return ! isStale( session.timestamp );
+				} );
 			}
 			return {};
 		case SERIALIZE:
@@ -110,6 +120,8 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case JETPACK_CONNECT_CONFIRM_JETPACK_STATUS:
 			return Object.assign( {}, state, { installConfirmedByUser: action.status } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
@@ -192,7 +204,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign(
 				{},
-				defaultAuthorizeState,
+				buildDefaultAuthorizeState(),
 				{ queryObject: queryObject }
 			);
 		case JETPACK_CONNECT_QUERY_UPDATE:
@@ -243,10 +255,35 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
 		case DESERIALIZE:
-			return state;
+			return ! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ? state : {};
 		case SERIALIZE:
 			return state;
+	}
+	return state;
+}
+
+export function jetpackAuthAttempts( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_RETRY_AUTH:
+			const slug = action.slug;
+			let currentTimestamp = state[ slug ] ? state[ slug ].timestamp || Date.now() : Date.now();
+			let attemptNumber = action.attemptNumber;
+			if ( attemptNumber > 0 ) {
+				const now = Date.now();
+				if ( isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
+					currentTimestamp = now;
+					attemptNumber = 0;
+				}
+			}
+			return Object.assign( {}, state, { [ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp } } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
+		case DESERIALIZE:
+		case SERIALIZE:
+			state;
 	}
 	return state;
 }
@@ -281,7 +318,24 @@ export function jetpackSSO( state = {}, action ) {
 export function jetpackSSOSessions( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			return Object.assign( {}, state, buildNoProtocolUrlObj( action.siteUrl ) );
+			return Object.assign( {}, state, buildUrlSessionObj( action.siteUrl ) );
+		case SERIALIZE:
+			return state;
+		case DESERIALIZE:
+			return ! isStale( state.timestamp ) ? state : {};
+	}
+	return state;
+}
+
+export function jetpackConnectSelectedPlans( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE:
+			const siteSlug = urlToSlug( action.site );
+			return Object.assign( {}, state, { [ siteSlug ]: action.plan } );
+		case JETPACK_CONNECT_CHECK_URL:
+			return { '*': state[ '*' ] };
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
 		case SERIALIZE:
 		case DESERIALIZE:
 			return state;
@@ -295,4 +349,6 @@ export default combineReducers( {
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
+	jetpackConnectSelectedPlans,
+	jetpackAuthAttempts,
 } );

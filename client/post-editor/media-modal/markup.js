@@ -11,8 +11,7 @@ var ReactDomServer = require( 'react-dom/server' ),
  */
 var Shortcode = require( 'lib/shortcode' ),
 	MediaUtils = require( 'lib/media/utils' ),
-	MediaSerialization = require( 'lib/media-serialization' ),
-	sites = require( 'lib/sites-list' )();
+	MediaSerialization = require( 'lib/media-serialization' );
 
 /**
  * Module variables
@@ -21,14 +20,15 @@ var Markup;
 
 Markup = {
 	/**
-	 * Given a media object, returns a markup string representing that object
+	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
 	 *
+	 * @param  {Object} site    A site object
 	 * @param  {Object} media   A media object
 	 * @param  {Object} options Appearance options
 	 * @return {string}         A markup string
 	 */
-	get: function( media, options ) {
+	get: function( site, media, options ) {
 		var mimePrefix;
 
 		if ( ! media ) {
@@ -40,7 +40,7 @@ Markup = {
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
 		if ( mimePrefix && 'function' === typeof Markup.mimeTypes[ mimePrefix ] ) {
-			return Markup.mimeTypes[ mimePrefix ]( media, options );
+			return Markup.mimeTypes[ mimePrefix ]( site, media, options );
 		}
 
 		return Markup.link( media );
@@ -63,7 +63,7 @@ Markup = {
 	},
 
 	/**
-	 * Given a media object or markup string, returns a caption React element.
+	 * Given a media object or markup string and a site, returns a caption React element.
 	 *
 	 * Adapted from WordPress.
 	 *
@@ -71,15 +71,16 @@ Markup = {
 	 * @license See CREDITS.md.
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
 	 *
+	 * @param  {Object} site           A site object
 	 * @param  {(Object|String)} media A media object or markup string
 	 * @return {String}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( media ) {
+	caption: function( site, media ) {
 		var parsed, match, img, caption, width;
 
 		if ( 'string' !== typeof media ) {
-			media = Markup.get( media );
+			media = Markup.get( site, media );
 		}
 
 		parsed = Shortcode.parse( media );
@@ -110,16 +111,15 @@ Markup = {
 
 	mimeTypes: {
 		/**
-		 * Given an image media object, returns a markup string representing that
+		 * Given an image media object and a site, returns a markup string representing that
 		 * image object as HTML.
 		 *
+		 * @param  {Object} site    A site object
 		 * @param  {Object} media   An image media object
 	 	 * @param  {Object} options Appearance options
 		 * @return {string}         An image markup string
 		 */
-		image: function( media, options ) {
-			const site = sites.getSelectedSite();
-
+		image: function( site, media, options ) {
 			options = assign( {
 				size: 'full',
 				align: 'none',
@@ -175,10 +175,11 @@ Markup = {
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {Object} media An audio media object
 		 * @return {string}       An audio markup string
 		 */
-		audio: function( media ) {
+		audio: function( site, media ) {
 			return Shortcode.stringify( {
 				tag: 'audio',
 				attrs: {
@@ -191,10 +192,11 @@ Markup = {
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {string} media A video media object
 		 * @return {string}       A video markup string
 		 */
-		video: function( media ) {
+		video: function( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
 				return Shortcode.stringify( {
 					tag: 'wpvideo',

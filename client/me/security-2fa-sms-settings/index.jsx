@@ -14,12 +14,13 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	formBase = require( 'me/form-base' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	Notice = require( 'components/notice' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
+import { protectForm } from 'lib/protect-form';
+import Notice from 'components/notice';
+
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'Security2faSMSSettings',
 
@@ -32,12 +33,14 @@ module.exports = React.createClass( {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
-	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ) ],
+	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ) ],
 
 	propTypes: {
 		onCancel: React.PropTypes.func.isRequired,
 		onVerifyByApp: React.PropTypes.func.isRequired,
-		onVerifyBySMS: React.PropTypes.func.isRequired
+		onVerifyBySMS: React.PropTypes.func.isRequired,
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired
 	},
 
 	verifyByApp: null,
@@ -236,4 +239,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );

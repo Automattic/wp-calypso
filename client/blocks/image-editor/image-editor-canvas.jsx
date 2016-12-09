@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { noop, throttle } from 'lodash';
+import { noop, throttle, startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -15,9 +15,13 @@ import MediaUtils from 'lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
-	getImageEditorCrop
+	getImageEditorCrop,
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
-import { setImageEditorCropBounds } from 'state/ui/editor/image-editor/actions';
+import {
+	setImageEditorCropBounds,
+	setImageEditorImageHasLoaded
+} from 'state/ui/editor/image-editor/actions';
 
 class ImageEditorCanvas extends Component {
 	static propTypes = {
@@ -35,7 +39,9 @@ class ImageEditorCanvas extends Component {
 			heightRatio: PropTypes.number
 		} ),
 		setImageEditorCropBounds: PropTypes.func,
-		onLoadError: PropTypes.func
+		setImageEditorImageHasLoaded: PropTypes.func,
+		onLoadError: PropTypes.func,
+		isImageLoaded: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -51,19 +57,24 @@ class ImageEditorCanvas extends Component {
 			cropHeightRatio: 1
 		},
 		setImageEditorCropBounds: noop,
-		onLoadError: noop
+		setImageEditorImageHasLoaded: noop,
+		onLoadError: noop,
+		isImageLoaded: false
 	};
 
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			imageLoaded: false
-		};
-
 		this.onWindowResize = null;
 
 		this.onLoadComplete = this.onLoadComplete.bind( this );
+		this.updateCanvasPosition = this.updateCanvasPosition.bind( this );
+
+		this.isVisible = false;
+	}
+
+	componentDidMount() {
+		this.isVisible = true;
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -72,13 +83,27 @@ class ImageEditorCanvas extends Component {
 		}
 	}
 
-	getImage( url ) {
+	isBlobSrc( src ) {
+		return startsWith( src, 'blob' );
+	}
+
+	getImage( src ) {
 		const { onLoadError, mimeType } = this.props;
 
 		const req = new XMLHttpRequest();
-		req.open( 'GET', url + '?', true ); // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
+
+		if ( ! this.isBlobSrc( src ) ) {
+			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
+		}
+
+		req.open( 'GET', src, true );
 		req.responseType = 'arraybuffer';
+
 		req.onload = () => {
+			if ( ! this.isVisible ) {
+				return;
+			}
+
 			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: mimeType } ) );
 			this.initImage( objectURL );
 		};
@@ -95,7 +120,7 @@ class ImageEditorCanvas extends Component {
 	}
 
 	onLoadComplete( event ) {
-		if ( event.type !== 'load' ) {
+		if ( event.type !== 'load' || ! this.isVisible ) {
 			return;
 		}
 
@@ -106,9 +131,7 @@ class ImageEditorCanvas extends Component {
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
-		this.setState( {
-			imageLoaded: true
-		} );
+		this.props.setImageEditorImageHasLoaded();
 	}
 
 	componentWillUnmount() {
@@ -116,6 +139,8 @@ class ImageEditorCanvas extends Component {
 			window.removeEventListener( 'resize', this.onWindowResize );
 			this.onWindowResize = null;
 		}
+
+		this.isVisible = false;
 	}
 
 	componentDidUpdate() {
@@ -239,20 +264,21 @@ class ImageEditorCanvas extends Component {
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
 
-		const { imageLoaded } = this.state;
+		const { isImageLoaded } = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
-			'is-placeholder': ! imageLoaded
+			'is-placeholder': ! isImageLoaded
 		} );
 
 		return (
 			<div className="image-editor__canvas-container">
-				{ imageLoaded && <ImageEditorCrop /> }
 				<canvas
 					ref="canvas"
 					style={ canvasStyle }
 					onMouseDown={ this.preventDrag }
-					className={ canvasClasses } />
+					className={ canvasClasses }
+				/>
+				{ isImageLoaded && <ImageEditorCrop /> }
 			</div>
 		);
 	}
@@ -263,16 +289,19 @@ export default connect(
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
+		const isImageLoaded = isImageEditorImageLoaded( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
-			crop
+			crop,
+			isImageLoaded
 		};
 	},
 	{
-		setImageEditorCropBounds
+		setImageEditorCropBounds,
+		setImageEditorImageHasLoaded
 	},
 	null,
 	{ withRef: true }

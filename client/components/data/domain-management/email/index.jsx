@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
 import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
+import QueryProducts from 'components/data/query-products-list';
+import QuerySites from 'components/data/query-sites';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
 import {
@@ -25,10 +26,11 @@ import {
 import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const user = userFactory();
 
-var stores = [
+const stores = [
 	DomainsStore,
 	CartStore
 ];
@@ -56,76 +58,82 @@ const EmailData = React.createClass( {
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
+		selectedSite: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
-		sites: React.PropTypes.object.isRequired,
 		googleAppsUsers: React.PropTypes.array.isRequired,
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
-	mixins: [ observe( 'productsList' ) ],
-
 	componentWillMount() {
-		this.loadDomainsAndSitePlans();
-		this.props.fetchGoogleAppsUsers();
+		const { selectedSite } = this.props;
+
+		this.loadDomainsAndSitePlans( selectedSite );
+		this.props.fetchGoogleAppsUsers( selectedSite.ID );
 	},
 
-	componentWillUpdate() {
-		this.loadDomainsAndSitePlans();
-	},
+	componentWillUpdate( nextProps ) {
+		const { selectedSite: nextSite } = nextProps;
+		const { selectedSite: prevSite } = this.props;
 
-	loadDomainsAndSitePlans() {
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( this.prevSelectedSite !== selectedSite ) {
-			fetchDomains( selectedSite.ID );
-			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
-
-			this.prevSelectedSite = selectedSite;
+		if ( nextSite !== prevSite ) {
+			this.loadDomainsAndSitePlans( nextSite );
 		}
+	},
+
+	loadDomainsAndSitePlans( site ) {
+		fetchDomains( site.ID );
+		this.props.fetchSitePlans( this.props.sitePlans, site );
 	},
 
 	render() {
 		return (
-			<StoreConnection
-				domains={ this.props.domains }
-				googleAppsUsers={ this.props.googleAppsUsers }
-				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
-				sitePlans={ this.props.sitePlans }
-				context={ this.props.context } />
+			<div>
+				<QueryProducts />
+				<QuerySites />
+				<StoreConnection
+					domains={ this.props.domains }
+					googleAppsUsers={ this.props.googleAppsUsers }
+					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					products={ this.props.products }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans }
+					context={ this.props.context } />
+			</div>
 		);
 	}
 } );
 
 export default connect(
-	( state, { selectedDomainName, sites } ) => {
+	( state, { selectedDomainName } ) => {
+		const selectedSite = getSelectedSite( state );
 		const googleAppsUsers = selectedDomainName
 			? getByDomain( state, selectedDomainName )
-			: getBySite( state, sites.getSelectedSite().ID );
+			: getBySite( state, selectedSite.ID );
 
 		return {
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
-			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
-		}
+			products: state.productsList.items,
+			sitePlans: getPlansBySite( state, selectedSite ),
+			selectedSite,
+		};
 	},
-	( dispatch, { selectedDomainName, sites } ) => {
+	( dispatch, { selectedDomainName } ) => {
 		const googleAppsUsersFetcher = selectedDomainName
 			? () => fetchByDomain( selectedDomainName )
-			: () => fetchBySiteId( sites.getSelectedSite().ID );
+			: siteId => fetchBySiteId( siteId );
 
 		return {
-			fetchGoogleAppsUsers: () => dispatch( googleAppsUsersFetcher() ),
+			fetchGoogleAppsUsers: siteId => dispatch( googleAppsUsersFetcher( siteId ) ),
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
 				}
 			}
-		}
+		};
 	}
 )( EmailData );

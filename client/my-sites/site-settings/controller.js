@@ -11,12 +11,14 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
+import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
+import Taxonomies from './taxonomies';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
@@ -170,6 +172,13 @@ module.exports = {
 		);
 	},
 
+	taxonomies( context ) {
+		renderPage(
+			context,
+			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
+		);
+	},
+
 	legacyRedirects( context, next ) {
 		const section = context.params.section,
 			redirectMap = {
@@ -179,8 +188,8 @@ module.exports = {
 				notifications: '/me/notifications',
 				disbursements: '/me/public-profile',
 				earnings: '/me/public-profile',
-				'billing-history': '/me/billing',
-				'billing-history-v2': '/me/billing',
+				'billing-history': purchasesPaths.billingHistory(),
+				'billing-history-v2': purchasesPaths.billingHistory(),
 				'connected-apps': '/me/security/connected-applications'
 			};
 		if ( ! context ) {

@@ -39,7 +39,7 @@ const CurrentSite = React.createClass( {
 	componentWillMount() {
 		const selectedSite = this.getSelectedSite();
 
-		if ( selectedSite ) {
+		if ( selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
 		}
 		this.prevSelectedSite = selectedSite;
@@ -60,7 +60,7 @@ const CurrentSite = React.createClass( {
 	componentWillUpdate() {
 		const selectedSite = this.getSelectedSite();
 
-		if ( selectedSite && this.prevSelectedSite !== selectedSite ) {
+		if ( selectedSite && this.prevSelectedSite !== selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
 		}
 		this.prevSelectedSite = selectedSite;
@@ -74,9 +74,6 @@ const CurrentSite = React.createClass( {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
-		if ( this.refs.site ) {
-			this.refs.site.closeActions();
-		}
 
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},
@@ -107,14 +104,6 @@ const CurrentSite = React.createClass( {
 					'expiringDomainsCannotManage',
 					'wrongNSMappedDomains'
 				] } />
-		);
-	},
-
-	getSiteNotices: function() {
-		return (
-			<div>
-				{ this.getDomainWarnings() }
-			</div>
 		);
 	},
 
@@ -164,15 +153,13 @@ const CurrentSite = React.createClass( {
 					? <Site
 						site={ site }
 						homeLink={ true }
-						enableActions={ true }
 						externalLink={ true }
 						onClick={ this.previewSite }
 						onSelect={ this.previewSite }
-						tipTarget="site-card-preview"
-						ref="site" />
+						tipTarget="site-card-preview" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
-				{ this.getSiteNotices( site ) }
+				{ ! site.jetpack && this.getDomainWarnings() }
 				<SiteNotice site={ site } />
 			</Card>
 		);

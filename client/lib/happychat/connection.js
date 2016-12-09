@@ -1,4 +1,4 @@
-/*
+/**
  * External dependencies
  */
 import IO from 'socket.io-client';
@@ -7,7 +7,7 @@ import config from 'config';
 import { v4 as uuid } from 'uuid';
 
 /*
- * Happychat client connectionf or Socket.IO
+ * Happychat client connection for Socket.IO
  */
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
@@ -21,9 +21,15 @@ class Connection extends EventEmitter {
 				socket
 					.once( 'connect', () => resolve( socket ) )
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
-					.on( 'identify', () => socket.emit( 'token', token ) )
-					.on( 'token', handler => handler( { signer_user_id: user_id, jwt: token } ) )
-					.on( 'message', message => this.emit( 'message', message ) );
+					.on( 'token', handler => {
+						handler( { signer_user_id: user_id, jwt: token } );
+					} )
+					// Received a chat message
+					.on( 'message', message => this.emit( 'message', message ) )
+					// Received chat status new/assigning/assigned/missed/pending/abandoned
+					.on( 'status', status => this.emit( 'status', status ) )
+					// If happychat is currently accepting chats
+					.on( 'accept', accept => this.emit( 'accept', accept ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );

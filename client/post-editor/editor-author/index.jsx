@@ -1,18 +1,24 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const Gravatar = require( 'components/gravatar' ),
-	user = require( 'lib/user' )(),
-	AuthorSelector = require( 'blocks/author-selector' ),
-	PostActions = require( 'lib/posts/actions' ),
-	touchDetect = require( 'lib/touch-detect' ),
-	sites = require( 'lib/sites-list' )(),
-	stats = require( 'lib/posts/stats' );
+import Gravatar from 'components/gravatar';
+import userFactory from 'lib/user';
+import AuthorSelector from 'blocks/author-selector';
+import PostActions from 'lib/posts/actions';
+import touchDetect from 'lib/touch-detect';
+import sitesFactory from 'lib/sites-list';
+import * as stats from 'lib/posts/stats';
+
+/**
+ * Module dependencies
+ */
+const user = userFactory();
+const sites = sitesFactory();
 
 export default React.createClass( {
 	displayName: 'EditorAuthor',

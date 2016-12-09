@@ -15,7 +15,7 @@ const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => (
 		isVisible={ isVisible }
 		buttons={ [
 			{ action: 'dismiss', label: i18n.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ purchasesPaths.list() }>{
+			<a className="button is-primary" href={ purchasesPaths.purchasesRoot() }>{
 				i18n.translate( 'Manage Purchases', { context: 'button label' } )
 			}</a>
 		] }

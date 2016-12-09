@@ -1,51 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	isEmpty = require( 'lodash/isEmpty' );
+
+import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var AccountRecoveryStore = require( 'lib/security-checkup/account-recovery-store' ),
-	SecurityCheckupActions = require( 'lib/security-checkup/actions' ),
-	ManageContact = require( './manage-contact' ),
-	EditPhone = require( './edit-phone' ),
-	accept = require( 'lib/accept' );
+import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
+import SecurityCheckupActions from 'lib/security-checkup/actions';
+import ManageContact from './manage-contact';
+import EditPhone from './edit-phone';
+import accept from 'lib/accept';
 
-module.exports = React.createClass( {
-	displayName: 'SecurityCheckupRecoveryPhone',
+class RecoveryPhone extends Component {
+	constructor( props ) {
+		super( props );
 
-	componentDidMount: function() {
+		this.state = this.getDataFromStores();
+	}
+
+	componentDidMount() {
 		AccountRecoveryStore.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		AccountRecoveryStore.off( 'change', this.refreshData );
-	},
+	}
 
-	getInitialState: function() {
-		return assign( {}, this.getDataFromStores() );
-	},
-
-	refreshData: function() {
+	refreshData = () => {
 		this.setState( this.getDataFromStores() );
-	},
+	}
 
-	getDataFromStores: function() {
+	getDataFromStores() {
 		return AccountRecoveryStore.getPhone();
-	},
+	}
 
-	render: function() {
-		var phone = ! isEmpty( this.state.data ) ? this.state.data : false,
-			twoStepEnabled = this.props.userSettings.isTwoStepEnabled(),
-			twoStepNotice = null;
-
+	getTwoStepNotice( twoStepEnabled ) {
 		if ( twoStepEnabled ) {
-			twoStepNotice = {
+			return {
 				type: 'error',
-				message: this.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
+				message: this.props.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
 					components: {
 						a: <a href="/me/security/two-step" />
 					}
@@ -54,14 +51,23 @@ module.exports = React.createClass( {
 			};
 		}
 
+		return null;
+	}
+
+	render() {
+		const phone = ! isEmpty( this.state.data ) ? this.state.data : false;
+		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
+		const twoStepNotice = this.getTwoStepNotice( twoStepEnabled );
+		const { translate } = this.props;
+
 		return (
 			<ManageContact
 				type="sms"
 				isLoading={ this.state.loading }
-				title={ this.translate( 'Recovery SMS Number', {
+				title={ translate( 'Recovery SMS Number', {
 					comment: 'Account security'
 				} ) }
-				subtitle={ phone ? phone.numberFull : this.translate( 'Not set' ) }
+				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }
 				hasValue={ !! phone }
 				lastNotice={ twoStepNotice || this.state.lastNotice }
 				disabled={ twoStepEnabled }
@@ -75,21 +81,23 @@ module.exports = React.createClass( {
 						/>
 				</ManageContact>
 		);
-	},
+	}
 
-	onSave: function( phone ) {
+	onSave = ( phone ) => {
 		SecurityCheckupActions.updatePhone( phone, this.state.data );
-	},
+	}
 
-	onDelete: function() {
-		accept( this.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
+	onDelete = () => {
+		accept( this.props.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deletePhone();
 			}
 		} );
-	},
+	}
 
-	onDismissNotice: function() {
+	onDismissNotice = () => {
 		SecurityCheckupActions.dismissPhoneNotice();
 	}
-} );
+}
+
+export default localize( RecoveryPhone );

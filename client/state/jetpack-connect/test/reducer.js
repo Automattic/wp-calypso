@@ -33,6 +33,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_RETRY_AUTH,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -42,7 +43,8 @@ import reducer, {
 	jetpackSSO,
 	jetpackSSOSessions,
 	jetpackConnectSessions,
-	jetpackConnectSite
+	jetpackConnectSite,
+	jetpackAuthAttempts
 } from '../reducer';
 
 const successfulSSOValidation = {
@@ -85,7 +87,9 @@ describe( 'reducer', () => {
 			'jetpackConnectAuthorize',
 			'jetpackConnectSessions',
 			'jetpackSSO',
-			'jetpackSSOSessions'
+			'jetpackSSOSessions',
+			'jetpackConnectSelectedPlans',
+			'jetpackAuthAttempts'
 		] );
 	} );
 
@@ -104,8 +108,17 @@ describe( 'reducer', () => {
 			expect( state ).to.have.property( 'example.wordpress.com' ).to.be.a( 'object' );
 		} );
 
+		it( 'should convert forward slashes to double colon when checking a new url', () => {
+			const state = jetpackConnectSessions( undefined, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://example.wordpress.com/example123'
+			} );
+
+			expect( state ).to.have.property( 'example.wordpress.com::example123' ).to.be.a( 'object' );
+		} );
+
 		it( 'should store a timestamp when checking a new url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -116,7 +129,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update the timestamp when checking an existent url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -142,8 +155,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.eql( {} );
 		} );
 
+		it( 'should not restore a state with a property with a stale timestamp', () => {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
 		it( 'should not restore a state with a session stored with extra properties', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1, foo: 'bar' } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp, foo: 'bar' } }, {
 				type: DESERIALIZE
 			} );
 
@@ -151,19 +173,33 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should restore a valid state', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp } } );
 		} );
 
 		it( 'should restore a valid state including dashes, slashes and semicolons', () => {
-			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp } } );
+		} );
+
+		it( 'should restore only sites with non-stale timestamps', () => {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( {
+				'example.wordpress.com': { timestamp: 1 },
+				'automattic.wordpress.com': { timestamp },
+			}, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( { 'automattic.wordpress.com': { timestamp } } );
 		} );
 	} );
 
@@ -313,7 +349,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store an integer timestamp when creating new session', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
@@ -324,6 +360,17 @@ describe( 'reducer', () => {
 				.to.be.a( 'object' );
 			expect( state[ 'example.wordpress.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
+		} );
+
+		it( 'should convert forward slashes to double colon when creating a new session', () => {
+			const state = jetpackSSOSessions( undefined, {
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				ssoUrl: 'https://example.wordpress.com/example123?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com/example123'
+			} );
+
+			expect( state ).to.have.property( 'example.wordpress.com::example123' )
+				.to.be.a( 'object' );
 		} );
 
 		it( 'should persist state', () => {
@@ -341,13 +388,27 @@ describe( 'reducer', () => {
 		it( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( {
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://example.wordpress.com'
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: Date.now()
 			} );
 			const state = jetpackSSOSessions( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: 1
+			} );
+			const state = jetpackSSOSessions( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
@@ -651,7 +712,8 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: SERIALIZE
@@ -665,13 +727,29 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				queryObject: {
+					client_id: 'example.com',
+					redirect_uri: 'https://example.com/',
+				},
+				timestamp: 1
+			} );
+			const state = jetpackConnectAuthorize( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
@@ -807,6 +885,44 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.eql( {} );
+		} );
+	} );
+
+	describe( '#jetpackAuthAttempts()', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackAuthAttempts( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should update the timestamp when adding an existent slug with stale timestamp', () => {
+			const nowTime = Date.now();
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: 1, attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+			expect( state[ 'example.com' ] ).to.have.property( 'timestamp' )
+				.to.be.at.least( nowTime );
+		} );
+
+		it( 'should reset the attempt number to 0 when adding an existent slug with stale timestamp', () => {
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: 1, attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+
+			expect( state[ 'example.com' ] ).to.have.property( 'attempt' ).to.equals( 0 );
+		} );
+
+		it( 'should store the attempt number when adding an existent slug with non-stale timestamp', () => {
+			const state = jetpackAuthAttempts( { 'example.com': { timestamp: Date.now(), attempt: 1 } }, {
+				type: JETPACK_CONNECT_RETRY_AUTH,
+				slug: 'example.com',
+				attemptNumber: 2
+			} );
+
+			expect( state[ 'example.com' ] ).to.have.property( 'attempt' ).to.equals( 2 );
 		} );
 	} );
 } );

@@ -12,7 +12,8 @@ import {
 	imageEditorHasChanges,
 	getImageEditorCropBounds,
 	getImageEditorCrop,
-	getImageEditorAspectRatio
+	getImageEditorAspectRatio,
+	isImageEditorImageLoaded
 } from '../selectors';
 import { AspectRatios } from '../constants';
 
@@ -144,6 +145,24 @@ describe( 'selectors', () => {
 			} );
 
 			expect( hasChanges ).to.eql( AspectRatios.FREE );
+		} );
+	} );
+
+	describe( '#isImageEditorImageLoaded()', () => {
+		it( 'should return whether the image is loaded or not', () => {
+			const imageIsLoading = true;
+
+			const isImageLoaded = isImageEditorImageLoaded( {
+				ui: {
+					editor: {
+						imageEditor: {
+							imageIsLoading: imageIsLoading
+						}
+					}
+				}
+			} );
+
+			expect( isImageLoaded ).to.eql( ! imageIsLoading );
 		} );
 	} );
 } );

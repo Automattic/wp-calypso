@@ -24,7 +24,7 @@ $polldaddy-red:  #D45458;
 }
 
 .jetpack-plugins-setup__header {
-	@extend %heading;
+	@include heading;
 	margin-bottom: .75em;
 	text-align: center;
 	color: $gray-dark;

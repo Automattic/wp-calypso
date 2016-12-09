@@ -17,7 +17,7 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
 	discover( context ) {
-		var blogId = config( 'discover_blog_id' ),
+		const blogId = config( 'discover_blog_id' ),
 			SiteStream = require( 'reader/site-stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId,
@@ -33,7 +33,7 @@ export default {
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
 				store: feedStore,
-				siteId: blogId,
+				siteId: +blogId,
 				title: 'Discover',
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -44,7 +44,9 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
-				showBack: false
+				showPrimaryFollowButtonOnCards: true,
+				showBack: false,
+				className: 'is-discover-stream is-site-stream',
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

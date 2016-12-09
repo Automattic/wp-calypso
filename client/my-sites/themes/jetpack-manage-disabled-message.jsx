@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import noop from 'lodash/noop';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import ThemesList from 'components/themes-list';
 
-export default React.createClass( {
+const JetpackManageDisabledMessage = React.createClass( {
 	displayName: 'JetpackManageDisabledMessage',
 
 	propTypes: {
@@ -60,10 +61,10 @@ export default React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="optInManage"
-					title={ this.translate( 'Looking to manage this site\'s themes?' ) }
+					title={ this.props.translate( 'Looking to manage this site\'s themes?' ) }
 					site={ this.props.site }
 					section="themes"
-					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
+					secondaryAction={ this.props.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
 					secondaryActionTarget="_blank"
 					actionCallback={ this.clickOnActivate }
@@ -72,3 +73,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( JetpackManageDisabledMessage );

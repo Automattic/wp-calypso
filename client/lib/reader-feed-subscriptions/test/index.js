@@ -31,6 +31,7 @@ describe( 'store', function() {
 		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS(
 			{
 				URL: siteUrl,
+				comparableUrl: 'trailnose.com',
 				state: 'SUBSCRIBED'
 			}
 		) );
@@ -82,6 +83,7 @@ describe( 'store', function() {
 
 		expect( FeedSubscriptionStore.getSubscription( siteUrl ) ).to.immutablyEqual( immutable.fromJS( {
 			URL: siteUrl,
+			comparableUrl: 'trailnose.com',
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
 		} ) );
@@ -156,6 +158,7 @@ describe( 'store', function() {
 		expect( FeedSubscriptionStore.getSubscription( 'http://www.banana.com' ) ).to.immutablyEqual( immutable.fromJS( {
 			ID: 1,
 			URL: 'http://www.banana.com',
+			comparableUrl: 'www.banana.com',
 			feed_ID: 123,
 			state: 'SUBSCRIBED'
 		} ) );
@@ -173,6 +176,7 @@ describe( 'store', function() {
 		expect( FeedSubscriptionStore.getSubscription( 'http://www.dragonfruit.com' ) ).to.immutablyEqual( immutable.fromJS( {
 			ID: 3,
 			URL: 'http://www.dragonfruit.com',
+			comparableUrl: 'www.dragonfruit.com',
 			feed_ID: 456,
 			state: 'SUBSCRIBED'
 		} ) );

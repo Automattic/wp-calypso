@@ -15,7 +15,6 @@ export default function() {
 		page( '/read/search',
 			readerController.preloadReaderBundle,
 			readerController.updateLastRoute,
-			readerController.removePost,
 			readerController.sidebar,
 			controller.search );
 	} else {

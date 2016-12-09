@@ -73,7 +73,7 @@ const CancelPurchase = React.createClass( {
 	redirect( props ) {
 		const purchase = getPurchase( props ),
 			selectedSite = getSelectedSite( props );
-		let redirectPath = paths.list();
+		let redirectPath = paths.purchasesRoot();
 
 		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
 			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );

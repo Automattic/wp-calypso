@@ -6,13 +6,13 @@ import includes from 'lodash/includes';
 /**
  * Internal Dependencies
  */
-var trailingslashit = require( './trailingslashit' ),
-	untrailingslashit = require( './untrailingslashit' );
+import trailingslashit from './trailingslashit';
+import untrailingslashit from './untrailingslashit';
 
 /**
  * Module variables
  */
-var statsLocationsByTab = {
+const statsLocationsByTab = {
 	day: '/stats/day/',
 	week: '/stats/week/',
 	month: '/stats/month/',
@@ -21,7 +21,7 @@ var statsLocationsByTab = {
 };
 
 function getSiteFragment( path ) {
-	const basePath = path.split( '?' )[0];
+	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
 	// There are 2 URL positions where we should look for the site fragment:
@@ -64,8 +64,8 @@ function addSiteFragment( path, site ) {
 }
 
 function sectionify( path ) {
-	var basePath = path.split( '?' )[0],
-		site = getSiteFragment( basePath );
+	let basePath = path.split( '?' )[ 0 ];
+	const site = getSiteFragment( basePath );
 
 	if ( site ) {
 		basePath = trailingslashit( basePath ).replace( '/' + site + '/', '/' );
@@ -74,7 +74,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	var path = '/stats/insights/';
+	const path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;
@@ -84,8 +84,6 @@ function getStatsDefaultSitePage( slug ) {
 }
 
 function getStatsPathForTab( tab, siteIdOrSlug ) {
-	var path;
-
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -95,7 +93,7 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
 		return getStatsDefaultSitePage();
 	}
 
-	path = statsLocationsByTab[ tab ];
+	const path = statsLocationsByTab[ tab ];
 
 	if ( ! path ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );

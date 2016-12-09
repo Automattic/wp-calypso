@@ -18,9 +18,9 @@ const Card = require( 'components/card' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	AuthorSelector = require( 'blocks/author-selector' ),
 	UsersActions = require( 'lib/users/actions' ),
-	Gravatar = require( 'components/gravatar' ),
 	accept = require( 'lib/accept' ),
 	analytics = require( 'lib/analytics' );
+import Gravatar from 'components/gravatar';
 
 module.exports = React.createClass( {
 	displayName: 'DeleteUser',

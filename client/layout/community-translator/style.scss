@@ -136,7 +136,7 @@ body {
 }
 
 .community-translator__translator-invitation__title {
-	@extend %heading;
+	@include heading;
 	color: $gray-dark;
 	font-family: $serif;
 	font-weight: 600;

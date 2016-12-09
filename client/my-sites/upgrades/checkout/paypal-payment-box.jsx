@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { some } from 'lodash';
+import classnames from 'classnames';
 var assign = require( 'lodash/assign' ),
 	React = require( 'react' );
 
@@ -16,6 +18,12 @@ var analytics = require( 'lib/analytics' ),
 	SubscriptionText = require( './subscription-text' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
+
+import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
+import PaymentChatButton from './payment-chat-button';
+import config from 'config';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',
@@ -122,6 +130,14 @@ module.exports = React.createClass( {
 	},
 
 	content: function() {
+		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
+		const showPaymentChatButton =
+			config.isEnabled( 'upgrades/presale-chat' ) &&
+			hasBusinessPlanInCart &&
+			abtest( 'presaleChatButton' ) === 'showChatButton';
+		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
+			'credit-card-payment-box__switch-link-left': showPaymentChatButton
+		} );
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
 				<div className="payment-box-section">
@@ -146,6 +162,8 @@ module.exports = React.createClass( {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
+				<CartCoupon cart={ this.props.cart } />
+
 				<div className="payment-box-actions">
 					<div className="pay-button">
 						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
@@ -155,12 +173,19 @@ module.exports = React.createClass( {
 					</div>
 
 					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
-						<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>
+						<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
 							{ this.translate( 'or use a credit card', {
 								context: 'Upgrades: PayPal checkout screen',
 								comment: 'Checkout with PayPal -- or use a credit card'
 							} ) }
 						</a> }
+
+					{
+						showPaymentChatButton &&
+						<PaymentChatButton
+							paymentType="paypal"
+							cart={ this.props.cart } />
+					}
 				</div>
 			</form>
 		);

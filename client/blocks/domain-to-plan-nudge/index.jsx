@@ -14,7 +14,8 @@ import DismissibleCard from 'blocks/dismissible-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
-import { plansList, PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
+import { PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
@@ -29,14 +30,9 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
 import { canCurrentUser } from 'state/current-user/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { abtest } from 'lib/abtest';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 class DomainToPlanNudge extends Component {
-
-	constructor() {
-		super( ...arguments );
-		this.personalCheckout = this.personalCheckout.bind( this );
-	}
 
 	static propTypes = {
 		discountedRawPrice: PropTypes.number,
@@ -50,7 +46,8 @@ class DomainToPlanNudge extends Component {
 		siteId: PropTypes.number,
 		sitePlans: PropTypes.object,
 		translate: PropTypes.func,
-		userCurrency: PropTypes.string
+		userCurrency: PropTypes.string,
+		size: PropTypes.string
 	};
 
 	isSiteEligible() {
@@ -67,11 +64,10 @@ class DomainToPlanNudge extends Component {
 			rawPrice &&       //plans info has loaded
 			site &&           //site exists
 			site.wpcom_url && //has a mapped domain
-			hasFreePlan &&    //has a free wpcom plan
-			abtest( 'domainToPersonalPlanNudge' ) === 'nudge';
+			hasFreePlan;      //has a free wpcom plan
 	}
 
-	personalCheckout() {
+	personalCheckout = () => {
 		const { siteId } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
@@ -81,9 +77,22 @@ class DomainToPlanNudge extends Component {
 		} );
 
 		page( `/checkout/${ siteId }/personal` );
+	};
+
+	renderRegular() {
+		const { siteId, translate } = this.props;
+		return (
+			<UpgradeNudge
+				title={ translate( 'Upgrade to a Personal Plan and save!' ) }
+				message={ translate( 'Buy our Personal Plan and remove WordPress.com Ads from your site.' ) }
+				feature={ 'no-adverts' }
+				event="domain_to_personal_nudge" //actually cta_name
+				href={ `/checkout/${ siteId }/personal` }
+			/>
+		);
 	}
 
-	renderCard() {
+	renderBanner() {
 		const {
 			discountedRawPrice,
 			productSlug,
@@ -193,13 +202,20 @@ class DomainToPlanNudge extends Component {
 		);
 	}
 
+	renderDomainToPlanNudge() {
+		const { size } = this.props;
+		if ( size === 'banner' ) {
+			this.renderBanner();
+		}
+		return this.renderRegular();
+	}
+
 	render() {
 		const { siteId } = this.props;
-
 		return (
 			<div className="domain-to-plan-nudge">
 				<QuerySitePlans siteId={ siteId } />
-				{ this.isSiteEligible() && this.renderCard() }
+				{ this.isSiteEligible() && this.renderDomainToPlanNudge() }
 			</div>
 		);
 	}
@@ -209,7 +225,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = props.siteId || getSelectedSiteId( state ),
 			productSlug = PLAN_PERSONAL,
-			productId = plansList[ PLAN_PERSONAL ].getProductId();
+			productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 		return {
 			canManage: canCurrentUser( state, siteId, 'manage_options' ),
@@ -217,7 +233,7 @@ export default connect(
 			hasFreePlan: isCurrentSitePlan(
 				state,
 				siteId,
-				plansList[ PLAN_FREE ].getProductId()
+				getPlan( PLAN_FREE ).getProductId()
 			),
 			productId,
 			productSlug,

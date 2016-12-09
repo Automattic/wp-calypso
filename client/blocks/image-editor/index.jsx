@@ -3,7 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { bindActionCreators } from 'redux';
+import {
+	noop,
+	isEqual,
+	partial
+} from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -15,20 +20,26 @@ import Notice from 'components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
-	setImageEditorFileInfo
+	setImageEditorFileInfo,
+	setImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/actions';
 import {
-	getImageEditorFileInfo
+	getImageEditorFileInfo,
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
+import {
+	AspectRatios,
+	AspectRatiosValues
+} from 'state/ui/editor/image-editor/constants';
+import { getDefaultAspectRatio } from './utils';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -37,22 +48,30 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageEditorSave: PropTypes.func,
-		onImageEditorCancel: PropTypes.func,
+		onDone: PropTypes.func,
+		onCancel: PropTypes.func,
+		onReset: PropTypes.func,
 		className: PropTypes.string,
+		defaultAspectRatio: PropTypes.oneOf( AspectRatiosValues ),
+		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( AspectRatiosValues ) ),
 
 		// Redux props
 		site: PropTypes.object,
 		fileName: PropTypes.string,
 		setImageEditorFileInfo: PropTypes.func,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isImageLoaded: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageEditorSave: noop,
-			onImageEditorCancel: noop
+			onDone: noop,
+			onCancel: null,
+			onReset: noop,
+			isImageLoaded: false,
+			defaultAspectRatio: AspectRatios.FREE,
+			allowedAspectRatios: AspectRatiosValues
 		};
 	},
 
@@ -62,11 +81,39 @@ const ImageEditor = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	componentWillReceiveProps( newProps ) {
 		const {
-			media,
-			site
+			media: currentMedia
 		} = this.props;
+
+		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+			this.props.resetAllImageEditorState();
+
+			this.updateFileInfo( newProps.media );
+
+			this.setDefaultAspectRatio();
+		}
+	},
+
+	componentDidMount() {
+		this.updateFileInfo( this.props.media );
+
+		this.setDefaultAspectRatio();
+	},
+
+	setDefaultAspectRatio() {
+		const {
+			defaultAspectRatio,
+			allowedAspectRatios
+		} = this.props;
+
+		this.props.setImageEditorAspectRatio(
+			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
+		);
+	},
+
+	updateFileInfo( media ) {
+		const {	site } = this.props;
 
 		let src,
 			fileName = 'default',
@@ -74,12 +121,15 @@ const ImageEditor = React.createClass( {
 			title = 'default';
 
 		if ( media ) {
-			src = MediaUtils.url( media, {
+			src = media.src || MediaUtils.url( media, {
 				photon: site && ! site.is_private
 			} );
+
 			fileName = media.file || path.basename( src );
-			mimeType = MediaUtils.getMimeType( media );
-			title = media.title;
+
+			mimeType = MediaUtils.getMimeType( media ) || mimeType;
+
+			title = media.title || title;
 		}
 
 		this.props.resetImageEditorState();
@@ -87,85 +137,63 @@ const ImageEditor = React.createClass( {
 	},
 
 	onDone() {
+		const { isImageLoaded, onDone } = this.props;
+
+		if ( ! isImageLoaded ) {
+			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
+
+			return;
+		}
+
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
-		canvasComponent.toBlob( this.onImageExtracted );
 
-		if ( this.props.onImageEditorSave ) {
-			this.props.onImageEditorSave();
-		}
-	},
-
-	onCancel() {
-		this.props.resetAllImageEditorState();
-
-		if ( this.props.onImageEditorCancel ) {
-			this.props.onImageEditorCancel();
-		}
-	},
-
-	onImageExtracted( blob ) {
-		const {
-			fileName,
-			site,
-			translate
-		} = this.props;
-
-		const mimeType = MediaUtils.getMimeType( fileName );
-
-		// check if a title is already post-fixed with '(edited copy)'
-		const editedCopyText = translate(
-			'%(title)s (edited copy)', {
-				args: {
-					title: ''
-				}
-			} );
-
-		let { title } = this.props;
-
-		if ( title.indexOf( editedCopyText ) === -1 ) {
-			title = translate(
-				'%(title)s (edited copy)', {
-					args: {
-						title: title
-					}
-				} );
-		}
-
-		this.props.resetAllImageEditorState();
-
-		MediaActions.add( site.ID, {
-			fileName: fileName,
-			fileContents: blob,
-			title: title,
-			mimeType: mimeType
+		canvasComponent.toBlob( ( blob ) => {
+			onDone( null, blob, this.getImageEditorProps() );
 		} );
 	},
 
-	isValidTransfer: function( transfer ) {
-		if ( ! transfer ) {
-			return false;
+	onCancel() {
+		this.props.onCancel( this.getImageEditorProps() );
+	},
+
+	onReset() {
+		this.props.resetImageEditorState();
+
+		this.props.onReset( this.getImageEditorProps() );
+	},
+
+	getImageEditorProps() {
+		const {
+			src,
+			fileName,
+			media,
+			mimeType,
+			title,
+			site
+		} = this.props;
+
+		const imageProperties = {
+			src,
+			fileName,
+			mimeType,
+			title,
+			site,
+			resetAllImageEditorState: this.props.resetAllImageEditorState
+		};
+
+		if ( media && media.ID ) {
+			imageProperties.ID = media.ID;
 		}
 
-		// Firefox will claim that images dragged from within the same page are
-		// files, but will also identify them with a `mozSourceNode` attribute.
-		// This value will be `null` for files dragged from outside the page.
-		//
-		// See: https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/mozSourceNode
-		if ( transfer.mozSourceNode ) {
-			return false;
-		}
-
-		// `types` is a DOMStringList, which is treated as an array in Chrome,
-		// but as an array-like object in Firefox. Therefore, we call `indexOf`
-		// using the Array prototype. Safari may pass types as `null` which
-		// makes detection impossible, so we err on allowing the transfer.
-		//
-		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
-		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
+		return imageProperties;
 	},
 
 	onLoadCanvasError() {
-		this.setState( { canvasError: this.translate( 'We are unable to edit this image.' ) } );
+		const { translate } = this.props;
+
+		this.setState( {
+			canvasError: translate( 'We are unable to edit this image.' )
+		} );
 	},
 
 	renderError() {
@@ -182,7 +210,8 @@ const ImageEditor = React.createClass( {
 	render() {
 		const {
 			className,
-			siteId
+			siteId,
+			allowedAspectRatios
 		} = this.props;
 
 		const classes = classNames(
@@ -202,10 +231,13 @@ const ImageEditor = React.createClass( {
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
 						/>
-						<ImageEditorToolbar />
+						<ImageEditorToolbar
+							allowedAspectRatios={ allowedAspectRatios }
+						/>
 						<ImageEditorButtons
-							onCancel={ this.onCancel }
+							onCancel={ this.props.onCancel && this.onCancel }
 							onDone={ this.onDone }
+							onReset={ this.onReset }
 						/>
 					</div>
 				</figure>
@@ -224,12 +256,26 @@ export default connect(
 
 		return {
 			...getImageEditorFileInfo( state ),
-			site: getSite( state, siteId )
+			site: getSite( state, siteId ),
+			isImageLoaded: isImageEditorImageLoaded( state )
 		};
 	},
-	{
-		resetImageEditorState,
-		resetAllImageEditorState,
-		setImageEditorFileInfo
+	( dispatch, ownProp ) => {
+		const defaultAspectRatio = getDefaultAspectRatio(
+			ownProp.defaultAspectRatio,
+			ownProp.allowedAspectRatios
+		);
+
+		const resetActionsAdditionalData = {
+			aspectRatio: defaultAspectRatio
+		};
+
+		return bindActionCreators( {
+			setImageEditorFileInfo,
+			setImageEditorAspectRatio,
+			resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
+			resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData )
+
+		}, dispatch );
 	}
 )( localize( ImageEditor ) );

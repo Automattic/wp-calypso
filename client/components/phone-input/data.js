@@ -12,11 +12,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{3})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[346-9]"
 				},
 				{
 					match: "(180[02])(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "1"
 				}
 			]
 		},
@@ -28,22 +30,26 @@ module.exports = {
 				{
 					match: "([2-4679])(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-4679][2-8]"
 				},
 				{
 					match: "(5\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5"
 				},
 				{
 					match: "([479]00)(\\d)(\\d{5})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[479]0"
 				},
 				{
 					match: "([68]00)(\\d{2,9})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "60|8"
 				}
 			]
 		},
@@ -55,7 +61,8 @@ module.exports = {
 				{
 					match: "([2-7]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-7]"
 				}
 			]
 		},
@@ -77,22 +84,26 @@ module.exports = {
 				{
 					match: "(4)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4[0-6]"
 				},
 				{
 					match: "(6[6-9])(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2358][2-5]|4[7-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[235][16-9]|8[016-9]|[79]"
 				}
 			]
 		},
@@ -104,22 +115,26 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "1|47"
 				},
 				{
 					match: "(\\d{2})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4[139]|[5-7]|9[1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[23]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0 $1"
+					nationalFormat: "0 $1",
+					leadingDigitPattern: "8|90"
 				}
 			]
 		},
@@ -141,91 +156,109 @@ module.exports = {
 				{
 					match: "([68]\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[68]"
 				},
 				{
 					match: "(\\d{2})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[2-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[2-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[2-9]"
 				},
 				{
 					match: "(9)(11)(\\d{4})(\\d{4})",
 					replace: "$2 15-$3-$4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "911"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$2 15-$3-$4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9(?:2(?:2(?:0[013-9]|[13])|3(?:0[013-9]|[67])|49|6(?:[0136]|4[0-59])|8|9(?:[19]|44|7[013-9]|8[14]))|3(?:36|4(?:[12]|3(?:4|5[014]|6[1239])|[58]4)|5(?:1|3[0-24-689]|8[46])|6|7[069]|8(?:[01]|34|[578][45])))"
 				},
 				{
 					match: "(9)(\\d{4})(\\d{2})(\\d{4})",
 					replace: "$2 15-$3-$4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9[23]"
 				},
 				{
 					match: "(11)(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:2(?:0[013-9]|[13])|3(?:0[013-9]|[67])|49|6(?:[0136]|4[0-59])|8|9(?:[19]|44|7[013-9]|8[14]))|3(?:36|4(?:[12]|3(?:4|5[014]|6[1239])|[58]4)|5(?:1|3[0-24-689]|8[46])|6|7[069]|8(?:[01]|34|[578][45]))"
 				},
 				{
 					match: "(\\d{4})(\\d{2})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]"
 				},
 				{
 					match: "(\\d{3})",
 					replace: "$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1[012]|911"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "([68]\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[68]"
 				},
 				{
 					match: "(9)(11)(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3-$4"
+					replace: "$1 $2 $3-$4",
+					leadingDigitPattern: "911"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3-$4"
+					replace: "$1 $2 $3-$4",
+					leadingDigitPattern: "9(?:2(?:2(?:0[013-9]|[13])|3(?:0[013-9]|[67])|49|6(?:[0136]|4[0-59])|8|9(?:[19]|44|7[013-9]|8[14]))|3(?:36|4(?:[12]|3(?:4|5[014]|6[1239])|[58]4)|5(?:1|3[0-24-689]|8[46])|6|7[069]|8(?:[01]|34|[578][45])))"
 				},
 				{
 					match: "(9)(\\d{4})(\\d{2})(\\d{4})",
-					replace: "$1 $2 $3-$4"
+					replace: "$1 $2 $3-$4",
+					leadingDigitPattern: "9[23]"
 				},
 				{
 					match: "(11)(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:2(?:0[013-9]|[13])|3(?:0[013-9]|[67])|49|6(?:[0136]|4[0-59])|8|9(?:[19]|44|7[013-9]|8[14]))|3(?:36|4(?:[12]|3(?:4|5[014]|6[1239])|[58]4)|5(?:1|3[0-24-689]|8[46])|6|7[069]|8(?:[01]|34|[578][45]))"
 				},
 				{
 					match: "(\\d{4})(\\d{2})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]"
 				}
 			]
 		},
@@ -242,37 +275,44 @@ module.exports = {
 				{
 					match: "(116\\d{3})",
 					replace: "$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "116"
 				},
 				{
 					match: "(1)(\\d{3,12})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(5\\d)(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5[079]"
 				},
 				{
 					match: "(5\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5[079]"
 				},
 				{
 					match: "(5\\d)(\\d{4})(\\d{4,7})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5[079]"
 				},
 				{
 					match: "(\\d{3})(\\d{3,10})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "316|46|51|732|6(?:5[0-3579]|[6-9])|7(?:[28]0)|[89]"
 				},
 				{
 					match: "(\\d{4})(\\d{3,9})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2|3(?:1[1-578]|[3-8])|4[2378]|5[2-6]|6(?:[12]|4[1-9]|5[468])|7(?:2[1-8]|35|4[1-8]|[5-79])"
 				}
 			]
 		},
@@ -284,42 +324,50 @@ module.exports = {
 				{
 					match: "([2378])(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[2378]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[45]|14"
 				},
 				{
 					match: "(16)(\\d{3})(\\d{2,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "16"
 				},
 				{
 					match: "(1[389]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:[38]00|90)"
 				},
 				{
 					match: "(180)(2\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1802"
 				},
 				{
 					match: "(19\\d)(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "19[13]"
 				},
 				{
 					match: "(19\\d{2})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "19[679]"
 				},
 				{
 					match: "(13)(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "13[1-9]"
 				}
 			],
 			priority: 10
@@ -349,17 +397,20 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:1[28]|2(?:[45]2|[0-36])|365)"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[4-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -371,17 +422,20 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-5]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[1-356]|[7-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[047]"
 				}
 			]
 		},
@@ -398,22 +452,26 @@ module.exports = {
 				{
 					match: "(2)(\\d{7,8})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(\\d{2})(\\d{4,6})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-79]1"
 				},
 				{
 					match: "(\\d{4})(\\d{3,6})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1|3(?:0|[2-58]2)|4(?:0|[25]2|3[23]|[4689][25])|5(?:[02-578]2|6[25])|6(?:[0347-9]2|[26][25])|7[02-9]2|8(?:[023][23]|[4-7]2)|9(?:[02][23]|[458]2|6[016])"
 				},
 				{
 					match: "(\\d{3})(\\d{3,7})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-79][2-9]|8"
 				}
 			]
 		},
@@ -425,22 +483,26 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4[6-9]"
 				},
 				{
 					match: "(\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]|4[23]|9[2-4]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[156]|7[018]|8(?:0[1-9]|[1-79])"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:80|9)0"
 				}
 			]
 		},
@@ -462,42 +524,50 @@ module.exports = {
 				{
 					match: "(2)(\\d)(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(2)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "43[124-7]|70[1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{2})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "43[124-7]|70[1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[78]00"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "999"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[356]|4[124-7]|7[1-9]|8[1-6]|9[1-7]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "48|8[7-9]|9[08]"
 				}
 			]
 		},
@@ -560,11 +630,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([234])(\\d{7})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[234]"
 				},
 				{
 					match: "([67]\\d{7})",
-					replace: "$1"
+					replace: "$1",
+					leadingDigitPattern: "[67]"
 				}
 			]
 		},
@@ -582,57 +654,68 @@ module.exports = {
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[2-9](?:[1-9]|0[1-9])"
 				},
 				{
 					match: "(\\d{5})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "9(?:[1-9]|0[1-9])"
 				},
 				{
 					match: "(\\d{3,5})",
 					replace: "$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1[125689]"
 				},
 				{
 					match: "(\\d{2})(\\d{5})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "[1-9][1-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "(?:300|40(?:0|20))"
 				},
 				{
 					match: "([3589]00)(\\d{2,3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3589]00"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d{2})(\\d{5})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "[1-9][1-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "(?:300|40(?:0|20))"
 				},
 				{
 					match: "([3589]00)(\\d{2,3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3589]00"
 				}
 			]
 		},
@@ -647,11 +730,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1|77"
 				},
 				{
 					match: "([2-8])(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[2-68]|7[246]"
 				}
 			]
 		},
@@ -661,15 +746,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-6]"
 				},
 				{
 					match: "(7\\d)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(90)(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -681,37 +769,44 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "8 0$1"
+					nationalFormat: "8 0$1",
+					leadingDigitPattern: "17(?:[02358]|1[0-2]|9[0189])|2[4-9]|[34]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "8 0$1"
+					nationalFormat: "8 0$1",
+					leadingDigitPattern: "1(?:5[24]|6(?:2|3[04-9]|5[0346-9])|7(?:[46]|7[37-9]))|2(?:1[246]|2[25]|3[26])"
 				},
 				{
 					match: "(\\d{4})(\\d{2})(\\d{3})",
 					replace: "$1 $2-$3",
-					nationalFormat: "8 0$1"
+					nationalFormat: "8 0$1",
+					leadingDigitPattern: "1(?:5[169]|6(?:3[1-3]|4|5[125])|7(?:1[3-9]|7[0-24-6]|9[2-7]))|2(?:1[35]|2[34]|3[3-5])"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "8[01]|9"
 				},
 				{
 					match: "(82\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "82"
 				},
 				{
 					match: "(800)(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(800)(\\d{2})(\\d{2,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "800"
 				}
 			]
 		},
@@ -721,11 +816,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "[2-8]"
 				},
 				{
 					match: "(0)(800)(\\d{4})(\\d{3})",
-					replace: "$1-$2-$3-$4"
+					replace: "$1-$2-$3-$4",
+					leadingDigitPattern: "0"
 				}
 			]
 		},
@@ -794,22 +891,26 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "12"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[0-2459]|9"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "88"
 				},
 				{
 					match: "(\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-6]"
 				}
 			]
 		},
@@ -829,11 +930,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[02]"
 				},
 				{
 					match: "(\\d)(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -845,17 +948,20 @@ module.exports = {
 				{
 					match: "([2-9]\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-7]|[89]1"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[047]|90"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4 $5",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "860"
 				}
 			]
 		},
@@ -887,89 +993,106 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "2[23]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "[357]|4[1-35]|6[13-57]"
 				},
 				{
 					match: "(9)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(44)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "44"
 				},
 				{
 					match: "([68]00)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "60|8"
 				},
 				{
 					match: "(600)(\\d{3})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "60"
 				},
 				{
 					match: "(1230)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{5})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "219"
 				},
 				{
 					match: "(\\d{4,5})",
 					replace: "$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[1-9]"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "2[23]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "[357]|4[1-35]|6[13-57]"
 				},
 				{
 					match: "(9)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(44)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "44"
 				},
 				{
 					match: "([68]00)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "60|8"
 				},
 				{
 					match: "(600)(\\d{3})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "60"
 				},
 				{
 					match: "(1230)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{5})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "219"
 				}
 			]
 		},
@@ -979,15 +1102,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "([26])(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4 $5"
+					replace: "$1 $2 $3 $4 $5",
+					leadingDigitPattern: "[26]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[23]|88"
 				},
 				{
 					match: "(800)(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "80"
 				}
 			]
 		},
@@ -999,124 +1125,150 @@ module.exports = {
 				{
 					match: "(80\\d{2})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80[2678]"
 				},
 				{
 					match: "([48]00)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[48]00"
 				},
 				{
 					match: "(\\d{5,6})",
-					replace: "$1"
+					replace: "$1",
+					leadingDigitPattern: "100|95"
 				},
 				{
 					match: "(\\d{2})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:10|2\\d)(?:100|9[56])"
 				},
 				{
 					match: "(\\d{3})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-9]\\d{2}(?:10|9[56])"
 				},
 				{
 					match: "(\\d{3,4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-9]"
 				},
 				{
 					match: "(21)(\\d{4})(\\d{4,6})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21"
 				},
 				{
 					match: "([12]\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "10(?:[1-79]|8(?:[1-9]|0[1-9]))|2[02-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:1[02-9]|35|49|5|7[02-68]|9[1-68])|4(?:1[02-9]|2[179]|[35][2-9]|6[4789]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[04-9]|4[3-6]|6[2368])|8(?:1[236-8]|2[5-7]|3|5[1-9]|7[02-9]|8[3678]|9[1-7])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:11|7[179])|4(?:[15]1|3[1-35])|5(?:1|2[37]|3[12]|51|7[13-79]|9[15])|7(?:31|5[457]|6[09]|91)|8(?:[57]1|98)"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8078"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[3-578]"
 				},
 				{
 					match: "(10800)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "10800"
 				},
 				{
 					match: "(\\d{3})(\\d{7,8})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "950"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(80\\d{2})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80[2678]"
 				},
 				{
 					match: "([48]00)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[48]00"
 				},
 				{
 					match: "(\\d{2})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:10|2\\d)(?:100|9[56])"
 				},
 				{
 					match: "(\\d{3})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-9]\\d{2}(?:10|9[56])"
 				},
 				{
 					match: "(21)(\\d{4})(\\d{4,6})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21"
 				},
 				{
 					match: "([12]\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "10(?:[1-79]|8(?:[1-9]|0[1-9]))|2[02-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:1[02-9]|35|49|5|7[02-68]|9[1-68])|4(?:1[02-9]|2[179]|[35][2-9]|6[4789]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[04-9]|4[3-6]|6[2368])|8(?:1[236-8]|2[5-7]|3|5[1-9]|7[02-9]|8[3678]|9[1-7])|9(?:0[1-3689]|1[1-79]|[379]|4[13]|5[1-5])"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:11|7[179])|4(?:[15]1|3[1-35])|5(?:1|2[37]|3[12]|51|7[13-79]|9[15])|7(?:31|5[457]|6[09]|91)|8(?:[57]1|98)"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8078"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[3-578]"
 				},
 				{
 					match: "(10800)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "10800"
 				},
 				{
 					match: "(\\d{3})(\\d{7,8})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "950"
 				}
 			]
 		},
@@ -1128,31 +1280,37 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "1(?:8[2-9]|9(?:09|[1-3])|[2-7])|[24-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{7})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "(1)(\\d{3})(\\d{7})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:800|9(?:0[01]|4[78]))"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "1(?:8[2-9]|9(?:09|[1-3])|[2-7])|[24-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{7})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "(1)(\\d{3})(\\d{7})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1(?:800|9(?:0[01]|4[78]))"
 				}
 			]
 		},
@@ -1162,11 +1320,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[24-7]|8[3-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1-$2-$3"
+					replace: "$1-$2-$3",
+					leadingDigitPattern: "[89]0"
 				}
 			]
 		},
@@ -1178,17 +1338,20 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{6,7})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(\\d{2})(\\d{4,6})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[2-4]"
 				},
 				{
 					match: "(\\d)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5"
 				}
 			]
 		},
@@ -1208,11 +1371,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[13-7]"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "9"
 				}
 			],
 			priority: 10
@@ -1240,15 +1405,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "([2-9]\\d{2})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[2-8]|9[015-7]"
 				},
 				{
 					match: "(96\\d)(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "96"
 				},
 				{
 					match: "(9\\d)(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "9[36]"
 				}
 			]
 		},
@@ -1260,92 +1428,110 @@ module.exports = {
 				{
 					match: "(1\\d{2})(\\d{7,8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[67]"
 				},
 				{
 					match: "(15\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "15[0568]"
 				},
 				{
 					match: "(1\\d{3})(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "15"
 				},
 				{
 					match: "(\\d{2})(\\d{3,11})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3[02]|40|[68]9"
 				},
 				{
 					match: "(\\d{3})(\\d{3,11})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:\\d1|0[2389]|1[24]|28|34)|3(?:[3-9][15]|40)|[4-8][1-9]1|9(?:06|[1-9]1)"
 				},
 				{
 					match: "(\\d{4})(\\d{2,11})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[24-6]|[7-9](?:\\d[1-9]|[1-9]\\d)|3(?:3(?:0[1-467]|2[127-9]|3[124578]|[46][1246]|7[1257-9]|8[1256]|9[145])|4(?:2[135]|3[1357]|4[13578]|6[1246]|7[1356]|9[1346])|5(?:0[14]|2[1-3589]|3[1357]|4[1246]|6[1-4]|7[1346]|8[13568]|9[1246])|6(?:0[356]|2[1-489]|3[124-6]|4[1347]|6[13]|7[12579]|8[1-356]|9[135])|7(?:2[1-7]|3[1357]|4[145]|6[1-5]|7[1-4])|8(?:21|3[1468]|4[1347]|6[0135-9]|7[1467]|8[136])|9(?:0[12479]|2[1358]|3[1357]|4[134679]|6[1-9]|7[136]|8[147]|9[1468]))"
 				},
 				{
 					match: "(3\\d{4})(\\d{1,10})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "(800)(\\d{7,12})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(\\d{3})(\\d)(\\d{4,10})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:37|80)|900[1359]"
 				},
 				{
 					match: "(1\\d{2})(\\d{5,11})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "181"
 				},
 				{
 					match: "(18\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "18500"
 				},
 				{
 					match: "(18\\d{2})(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "18[68]"
 				},
 				{
 					match: "(18\\d)(\\d{8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "18[2-579]"
 				},
 				{
 					match: "(700)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "700"
 				},
 				{
 					match: "(138)(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "138"
 				},
 				{
 					match: "(15[013-68])(\\d{2})(\\d{8})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "15[013-68]"
 				},
 				{
 					match: "(15[279]\\d)(\\d{2})(\\d{7})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "15[279]"
 				},
 				{
 					match: "(1[67]\\d)(\\d{2})(\\d{7,8})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:6[023]|7)"
 				}
 			]
 		},
@@ -1394,17 +1580,20 @@ module.exports = {
 				{
 					match: "([1-4]\\d)(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-4]"
 				},
 				{
 					match: "([5-8]\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[5-8]"
 				},
 				{
 					match: "(9\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -1416,33 +1605,39 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2-$3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[247]|[356][2-8]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(1800)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d)(\\d{3})(\\d{4})",
-					replace: "$1-$2-$3"
+					replace: "$1-$2-$3",
+					leadingDigitPattern: "[247]|[356][2-8]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(1800)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1"
 				}
 			]
 		},
@@ -1452,19 +1647,23 @@ module.exports = {
 			patterns: [
 				{
 					match: "([3-79]\\d{2})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[369]|4[3-8]|5(?:[02]|1(?:[0-8]|95)|5[0-478]|6(?:4[0-4]|5[1-589]))|7[1-9]"
 				},
 				{
 					match: "(70)(\\d{2})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "70"
 				},
 				{
 					match: "(8000)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "8000"
 				},
 				{
 					match: "([458]\\d{3})(\\d{3,4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "40|5|8(?:00[1-9]|[1-5])"
 				}
 			]
 		},
@@ -1476,17 +1675,20 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{7,8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[012]|[89]00"
 				},
 				{
 					match: "(\\d{2})(\\d{6,7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[35]|[4-6]|[89][2-9]"
 				}
 			]
 		},
@@ -1513,11 +1715,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([89]00)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[89]00"
 				},
 				{
 					match: "([5-9]\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[568]|[79][0-8]"
 				}
 			]
 		},
@@ -1541,22 +1745,26 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3,7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:[1-3]00|[6-8]0)"
 				},
 				{
 					match: "(116\\d{3})",
 					replace: "$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "116"
 				},
 				{
 					match: "(\\d{2})(\\d{4,10})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[14]|2[09]|50|7[135]"
 				},
 				{
 					match: "(\\d)(\\d{4,11})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[25689][1-8]|3"
 				}
 			],
 			priority: 10
@@ -1567,11 +1775,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[36-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "0"
 				}
 			]
 		},
@@ -1607,29 +1817,34 @@ module.exports = {
 				{
 					match: "([1-79])(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4 $5",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-79]"
 				},
 				{
 					match: "(1\\d{2})(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "11"
 				},
 				{
 					match: "(8\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0 $1"
+					nationalFormat: "0 $1",
+					leadingDigitPattern: "8"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "([1-79])(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4 $5",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-79]"
 				},
 				{
 					match: "(8\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0 $1"
+					nationalFormat: "0 $1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -1640,11 +1855,13 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-7]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "0"
 				}
 			]
 		},
@@ -1656,52 +1873,62 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2|5[56]|7(?:0|6(?:[013-9]|2[0-35-9]))"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:1|\\d1)|3|9[018]"
 				},
 				{
 					match: "(\\d{5})(\\d{4,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:3873|5(?:242|39[456])|697[347]|768[347]|9467)"
 				},
 				{
 					match: "(1\\d{3})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(7\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7(?:[1-5789]|624)"
 				},
 				{
 					match: "(800)(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8001111"
 				},
 				{
 					match: "(845)(46)(4\\d)",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "845464"
 				},
 				{
 					match: "(8\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8(?:4[2-5]|7[0-3])"
 				},
 				{
 					match: "(80\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80"
 				},
 				{
 					match: "([58]00)(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[58]00"
 				}
 			],
 			priority: 10
@@ -1719,17 +1946,20 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[348]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "5"
 				}
 			]
 		},
@@ -1760,12 +1990,14 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[235]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -1775,7 +2007,8 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "2"
 				}
 			]
 		},
@@ -1805,11 +2038,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[67]"
 				}
 			]
 		},
@@ -1832,11 +2067,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[235]"
 				},
 				{
 					match: "(\\d{3})(\\d{6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -1846,15 +2083,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "([27]\\d)(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "21|7"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "2[2-9]1|[689]"
 				},
 				{
 					match: "(2\\d{3})(\\d{6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "2[2-9][02-9]"
 				}
 			]
 		},
@@ -1864,11 +2104,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-7]"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1"
 				}
 			]
 		},
@@ -1883,11 +2125,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "44|9[567]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "40"
 				}
 			]
 		},
@@ -1907,19 +2151,23 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[235-7]|[89](?:0[1-9]|[1-9])"
 				},
 				{
 					match: "(800)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(900)(\\d{2})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "900"
 				},
 				{
 					match: "(900)(\\d{2,5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "900"
 				}
 			]
 		},
@@ -1941,57 +2189,68 @@ module.exports = {
 				{
 					match: "(1)(\\d{4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(6[09])(\\d{4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[09]"
 				},
 				{
 					match: "([67]2)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[67]2"
 				},
 				{
 					match: "([2-5]\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-5]"
 				},
 				{
 					match: "(9\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(9\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(9\\d)(\\d{3,4})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[0145]|7"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[0145]|7"
 				},
 				{
 					match: "(80[01])(\\d{2})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				},
 				{
 					match: "(80[01])(\\d{3,4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -2013,12 +2272,14 @@ module.exports = {
 				{
 					match: "(1)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "($1)"
+					nationalFormat: "($1)",
+					leadingDigitPattern: "[2-9]"
 				}
 			]
 		},
@@ -2030,42 +2291,50 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{5,8})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "2[124]|[36]1"
 				},
 				{
 					match: "(\\d{3})(\\d{5,8})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[4579]|2[035-9]|[36][02-9]"
 				},
 				{
 					match: "(8\\d{2})(\\d{3,4})(\\d{3,5})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[1-35-9]"
 				},
 				{
 					match: "(1)(500)(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "15"
 				},
 				{
 					match: "(177)(\\d{6,8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "17"
 				},
 				{
 					match: "(800)(\\d{5,7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(804)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "804"
 				},
 				{
 					match: "(80\\d)(\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80[79]"
 				}
 			]
 		},
@@ -2077,47 +2346,56 @@ module.exports = {
 				{
 					match: "(1)(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "2[24-9]|47|58|6[237-9]|9[35-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "40[24]|50[45]"
 				},
 				{
 					match: "(48)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "48"
 				},
 				{
 					match: "(818)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "81"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[24-69]|7[14]"
 				},
 				{
 					match: "([78]\\d)(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "76|8[35-9]"
 				},
 				{
 					match: "(700)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "70"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:8[059]0|5)"
 				}
 			]
 		},
@@ -2129,42 +2407,50 @@ module.exports = {
 				{
 					match: "([2-489])(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-489]"
 				},
 				{
 					match: "([57]\\d)(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[57]"
 				},
 				{
 					match: "(1)([7-9]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1-$2-$3-$4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1[7-9]"
 				},
 				{
 					match: "(1255)(\\d{3})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "125"
 				},
 				{
 					match: "(1200)(\\d{3})(\\d{3})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "120"
 				},
 				{
 					match: "(1212)(\\d{2})(\\d{2})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "121"
 				},
 				{
 					match: "(1599)(\\d{6})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "15"
 				},
 				{
 					match: "(\\d{4})",
 					replace: "*$1",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[2-689]"
 				}
 			]
 		},
@@ -2183,62 +2469,74 @@ module.exports = {
 				{
 					match: "(\\d{5})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7(?:0|2(?:[0235679]|[14][017-9]|8(?:[0-569]|78)|9[389])|3(?:[05-8]|1(?:[089]|7[5-9])|2(?:[5-8]|[01][089])|3[017-9]|4(?:[07-9]|11)|9(?:[01689]|59|70))|4(?:0[1-9]|1(?:[015-9]|2[089]|4[08])|2(?:09|[1-7][089]|[89])|3(?:[0-8][089]|9)|4(?:[089]|11|7[02-8])|5(?:0[089]|[59]9)|7(?:0[3-9]|11|7[02-8]|[89])|8(?:[0-24-7][089]|[389])|9(?:[0-6][089]|7[08]|[89]))|5(?:[034678]|2[03-9]|5[017-9]|9[7-9])|6(?:0[0-47]|1[0-257-9]|2[0-4]|3[19]|5[4589]|[6-9])|7(?:0[2-9]|[1-79]|8[1-9])|8(?:[0-79]|88[01])|99[4-9])|8(?:0(?:[01589]|6[67])|1(?:[02-57-9]|1[0135-9])|2(?:[236-9]|5[1-9])|3(?:[0357-9]|4[1-9])|[45]|6[02457-9]|7(?:07|[1-69])|8(?:[0-26-9]|44|5[2-9])|9(?:[035-9]|2[2-9]|4[0-8]))|9"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "11|2[02]|33|4[04]|79|80[2-46]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:2[0-249]|3[0-25]|4[145]|[569][14]|7[1257]|8[1346]|[68][1-9])|2(?:1[257]|3[013]|4[01]|5[0137]|6[0158]|78|8[1568]|9[14])|3(?:26|4[1-3]|5[34]|6[01489]|7[02-46]|8[159])|4(?:1[36]|2[1-47]|3[15]|5[12]|6[0-26-9]|7[0-24-9]|8[013-57]|9[014-7])|5(?:1[025]|[36][25]|22|4[28]|5[12]|[78]1|9[15])|6(?:12|[2345]1|57|6[13]|7[14]|80)"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7(?:12|2[14]|3[134]|4[47]|5(?:1|5[2-6])|[67]1|88)"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8(?:16|2[014]|3[126]|6[136]|7[078]|8[34]|91)"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:[23579]|[468][1-9])|[2-8]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "008"
 				},
 				{
 					match: "(1600)(\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1600"
 				},
 				{
 					match: "(1800)(\\d{4,5})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1800"
 				},
 				{
 					match: "(18[06]0)(\\d{2,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "18[06]0"
 				},
 				{
 					match: "(140)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "140"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "18(?:0[03]|6[12])"
 				}
 			]
 		},
@@ -2260,17 +2558,20 @@ module.exports = {
 				{
 					match: "(1)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "([2-6]\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-6]"
 				},
 				{
 					match: "(7\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				}
 			]
 		},
@@ -2282,27 +2583,32 @@ module.exports = {
 				{
 					match: "(21)(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(\\d{3})(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -2312,11 +2618,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[4-9]"
 				},
 				{
 					match: "(3\\d{2})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "3"
 				}
 			]
 		},
@@ -2326,43 +2634,53 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3,4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "0[26]|55"
 				},
 				{
 					match: "(0[26])(\\d{4})(\\d{5})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "0[26]"
 				},
 				{
 					match: "(0[26])(\\d{4,6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "0[26]"
 				},
 				{
 					match: "(0\\d{2})(\\d{3,4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "0[13-57-9][0159]"
 				},
 				{
 					match: "(\\d{3})(\\d{3,6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "0[13-57-9][0159]|8(?:03|4[17]|9(?:2|[45][0-4]))"
 				},
 				{
 					match: "(0\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "0[13-57-9][2-46-8]"
 				},
 				{
 					match: "(0\\d{3})(\\d{2,6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "0[13-57-9][2-46-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[13]|8(?:00|4[08]|9(?:5[5-9]|9))"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "894[5-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "3"
 				}
 			],
 			priority: 10
@@ -2387,17 +2705,20 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[2356]|87"
 				},
 				{
 					match: "(7)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7[457-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "70|8[0158]|9"
 				}
 			]
 		},
@@ -2409,129 +2730,154 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:12|57|99)0"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "0077"
 				},
 				{
 					match: "(\\d{4})(\\d{2})(\\d{3,4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "0077"
 				},
 				{
 					match: "(\\d{4})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "0088"
 				},
 				{
 					match: "(\\d{4})(\\d{3})(\\d{3,4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00(?:37|66)"
 				},
 				{
 					match: "(\\d{4})(\\d{4})(\\d{4,5})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00(?:37|66)"
 				},
 				{
 					match: "(\\d{4})(\\d{5})(\\d{5,6})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00(?:37|66)"
 				},
 				{
 					match: "(\\d{4})(\\d{6})(\\d{6,7})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00(?:37|66)"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2579]0|80[1-9]"
 				},
 				{
 					match: "(\\d{4})(\\d)(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:267|3(?:7[247]|9[278])|4(?:5[67]|66)|5(?:47|58|64|8[67])|6(?:3[245]|48|5[4-68]))|5(?:769|979[2-69])|499[2468]|7468|8(?:3(?:8[78]|96[2457-9])|636[2-57-9]|477|51[24])|9(?:496|802|9(?:1[23]|69))"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:2[3-6]|3[3-9]|4[2-6]|5(?:[236-8]|[45][2-69])|[68][2-7]|7[2-689]|9[1-578])|2(?:2(?:[04-689]|3[23])|3[3-58]|4[0-468]|5(?:5[78]|7[2-4]|[0468][2-9])|6(?:[0135-8]|4[2-5])|7(?:[0679]|8[2-7])|8(?:[024578]|3[25-9]|9[6-9])|9(?:11|3[2-4]))|4(?:2(?:2[2-9]|8[237-9])|3[689]|6[035-7]|7(?:[059][2-8]|[68])|80|9[3-5])|5(?:3[1-36-9]|4[4578]|5[013-8]|6[1-9]|7[2-8]|8[14-7]|9(?:[89][2-8]|[4-7]))|7(?:2[15]|3[5-9]|4[02-9]|6[135-8]|7[0-4689]|9(?:[017-9]|4[6-8]|5[2-478]|6[2-589]))|8(?:2(?:4[4-8]|9(?:[3578]|20|4[04-9]|6(?:5[25]|60)))|3(?:7(?:[2-5]|6[0-59])|[3-6][2-9]|8[2-5])|4[5-8]|5[2-9]|6(?:[37]|5(?:[467]|5[014-9])|6(?:[2-8]|9[02-69])|8[2-8]|9(?:[236-8]|9[23]))|7[579]|8[03-579]|9[2-8])|9(?:[23]0|4[02-46-9]|5[024-79]|6[4-9]|7[2-47-9]|8[02-7]|9(?:3(?:3[02-9]|4[0-24689])|4[2-69]|[5-7]))"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1|2(?:2[37]|5(?:[57]|[68]0|9(?:17|99))|64|78|8[39]|917)|4(?:2(?:[68]|20|9[178])|64|7[347])|5(?:[2-589]|39[67])|60|8(?:[46-9]|3[279]|2[124589])|9(?:[235-8]|93(?:31|4))"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:9[14-79]|74|[34]7|[56]9)|82|993"
 				},
 				{
 					match: "(\\d)(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3|4(?:2[09]|7[01])|6[1-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2479][1-9]"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:12|57|99)0"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "800"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2579]0|80[1-9]"
 				},
 				{
 					match: "(\\d{4})(\\d)(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:267|3(?:7[247]|9[278])|4(?:5[67]|66)|5(?:47|58|64|8[67])|6(?:3[245]|48|5[4-68]))|5(?:769|979[2-69])|499[2468]|7468|8(?:3(?:8[78]|96[2457-9])|636[2-57-9]|477|51[24])|9(?:496|802|9(?:1[23]|69))"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:2[3-6]|3[3-9]|4[2-6]|5(?:[236-8]|[45][2-69])|[68][2-7]|7[2-689]|9[1-578])|2(?:2(?:[04-689]|3[23])|3[3-58]|4[0-468]|5(?:5[78]|7[2-4]|[0468][2-9])|6(?:[0135-8]|4[2-5])|7(?:[0679]|8[2-7])|8(?:[024578]|3[25-9]|9[6-9])|9(?:11|3[2-4]))|4(?:2(?:2[2-9]|8[237-9])|3[689]|6[035-7]|7(?:[059][2-8]|[68])|80|9[3-5])|5(?:3[1-36-9]|4[4578]|5[013-8]|6[1-9]|7[2-8]|8[14-7]|9(?:[89][2-8]|[4-7]))|7(?:2[15]|3[5-9]|4[02-9]|6[135-8]|7[0-4689]|9(?:[017-9]|4[6-8]|5[2-478]|6[2-589]))|8(?:2(?:4[4-8]|9(?:[3578]|20|4[04-9]|6(?:5[25]|60)))|3(?:7(?:[2-5]|6[0-59])|[3-6][2-9]|8[2-5])|4[5-8]|5[2-9]|6(?:[37]|5(?:[467]|5[014-9])|6(?:[2-8]|9[02-69])|8[2-8]|9(?:[236-8]|9[23]))|7[579]|8[03-579]|9[2-8])|9(?:[23]0|4[02-46-9]|5[024-79]|6[4-9]|7[2-47-9]|8[02-7]|9(?:3(?:3[02-9]|4[0-24689])|4[2-69]|[5-7]))"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1|2(?:2[37]|5(?:[57]|[68]0|9(?:17|99))|64|78|8[39]|917)|4(?:2(?:[68]|20|9[178])|64|7[347])|5(?:[2-589]|39[67])|60|8(?:[46-9]|3[279]|2[124589])|9(?:[235-8]|93(?:31|4))"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:9[14-79]|74|[34]7|[56]9)|82|993"
 				},
 				{
 					match: "(\\d)(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3|4(?:2[09]|7[01])|6[1-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2479][1-9]"
 				}
 			]
 		},
@@ -2543,17 +2889,20 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{5,7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[24-6]"
 				},
 				{
 					match: "(\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -2565,17 +2914,20 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[25-7]|31[25]"
 				},
 				{
 					match: "(\\d{4})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:1[36]|[2-9])"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d)(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -2587,11 +2939,13 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1\\d[1-9]|[2-9]"
 				},
 				{
 					match: "(1[89]00)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[89]0"
 				}
 			]
 		},
@@ -2622,17 +2976,20 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -2644,114 +3001,136 @@ module.exports = {
 				{
 					match: "(\\d{5})(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00798"
 				},
 				{
 					match: "(\\d{5})(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "00798"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:0|1[19]|[69]9|5(?:44|59|8))|[57]0"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:[01]|5(?:[1-3]|4[56])|6[2-8]|[7-9])|[68]0|[3-6][1-9][1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d)(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1312"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "131[13-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "13[2-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3-$4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "30"
 				},
 				{
 					match: "(\\d)(\\d{3,4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[1-9]"
 				},
 				{
 					match: "(\\d)(\\d{3,4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21[0-46-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-6][1-9]1(?:[0-46-9])"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:5(?:44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:0|1[19]|[69]9|5(?:44|59|8))|[57]0"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:[01]|5(?:[1-3]|4[56])|6[2-8]|[7-9])|[68]0|[3-6][1-9][1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d)(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1312"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "131[13-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "13[2-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1-$2-$3-$4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "30"
 				},
 				{
 					match: "(\\d)(\\d{3,4})(\\d{4})",
 					replace: "$1-$2-$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[1-9]"
 				},
 				{
 					match: "(\\d)(\\d{3,4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21[0-46-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-6][1-9]1(?:[0-46-9])"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:5(?:44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
 				}
 			]
 		},
@@ -2761,11 +3140,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{3,4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[16]|2(?:[0-35-9]|4[0-35-9])|9[024-9]|52[25]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "244|5(?:[015]|66)"
 				}
 			]
 		},
@@ -2789,17 +3170,20 @@ module.exports = {
 				{
 					match: "(20)(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "20"
 				},
 				{
 					match: "([2-8]\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[13]|3[14]|[4-8]"
 				},
 				{
 					match: "(30)(\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "30"
 				}
 			]
 		},
@@ -2811,11 +3195,13 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[13-6]|7(?:[2-57]|62|8[0-7]|9[04-9])|8[02-9]|9"
 				},
 				{
 					match: "([7-9]\\d)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[89][01]|7(?:[01]|6[013-9]|8[89]|9[1-3])"
 				}
 			]
 		},
@@ -2831,15 +3217,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[23789]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "6[56]"
 				},
 				{
 					match: "(69)(7\\d{2})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "697"
 				}
 			]
 		},
@@ -2851,12 +3240,14 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{1})(\\d{6})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-689]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				}
 			]
 		},
@@ -2868,22 +3259,20 @@ module.exports = {
 				{
 					match: "(2\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
-					match: "(\\d{3})(\\d{3})(\\d{3})",
+					match: "([4-5])(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
-				},
-				{
-					match: "([4-6])(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[45]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23578]"
 				}
 			]
 		},
@@ -2905,22 +3294,26 @@ module.exports = {
 				{
 					match: "([34]\\d)(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "(8-$1)"
+					nationalFormat: "(8-$1)",
+					leadingDigitPattern: "37|4(?:1|5[45]|6[2-4])"
 				},
 				{
 					match: "([3-6]\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(8-$1)"
+					nationalFormat: "(8-$1)",
+					leadingDigitPattern: "3[148]|4(?:[24]|6[09])|528|6"
 				},
 				{
 					match: "([7-9]\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "[7-9]"
 				},
 				{
 					match: "(5)(2\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(8-$1)"
+					nationalFormat: "(8-$1)",
+					leadingDigitPattern: "52[0-79]"
 				}
 			]
 		},
@@ -2930,39 +3323,48 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-5]|7[1-9]|[89](?:[1-9]|0[2-9])"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[2-5]|7[1-9]|[89](?:[1-9]|0[2-9])"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "20"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "2(?:[0367]|4[3-8])"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "20"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{1,2})",
-					replace: "$1 $2 $3 $4 $5"
+					replace: "$1 $2 $3 $4 $5",
+					leadingDigitPattern: "2(?:[0367]|4[3-8])"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{1,4})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "2(?:[12589]|4[12])|[3-5]|7[1-9]|8(?:[1-9]|0[2-9])|9(?:[1-9]|0[2-46-9])"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "70|80[01]|90[015]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "6"
 				}
 			]
 		},
@@ -2994,24 +3396,34 @@ module.exports = {
 			nationalPrefix: "0",
 			patterns: [
 				{
-					match: "([56]\\d{2})(\\d{6})",
+					match: "([5-7]\\d{2})(\\d{6})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5(?:2[015-7]|3[0-4])|[67]"
 				},
 				{
 					match: "([58]\\d{3})(\\d{5})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5(?:2(?:[2-48]|90)|3(?:[5-79]|80)|924)|892"
 				},
 				{
 					match: "(5\\d{4})(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5(?:29|38)[89]"
+				},
+				{
+					match: "([5]\\d{2})(\\d{2})(\\d{2})(\\d{2})",
+					replace: "$1 $2 $3 $4",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5(?:4[067]|5[03])"
 				},
 				{
 					match: "(8[09])(\\d{7})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8(?:0|9[013-9])"
 				}
 			]
 		},
@@ -3023,22 +3435,26 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "9"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4"
 				},
 				{
 					match: "(6)(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4 $5",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{2})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -3050,17 +3466,20 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "22|3"
 				},
 				{
 					match: "([25-7]\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[13-9]|[5-7]"
 				},
 				{
 					match: "([89]\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -3072,12 +3491,14 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-57-9]|6(?:[03689]|7(?:[0-8]|9[3-9]))"
 				},
 				{
 					match: "(67)(9)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "679[0-2]"
 				}
 			]
 		},
@@ -3119,17 +3540,20 @@ module.exports = {
 				{
 					match: "(2)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "([347]\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[347]"
 				},
 				{
 					match: "([58]\\d{2})(\\d)(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[58]"
 				}
 			]
 		},
@@ -3139,17 +3563,20 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[246-9]"
 				},
 				{
 					match: "(\\d{4})",
-					replace: "$1"
+					replace: "$1",
+					leadingDigitPattern: "67|74"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[246-9]"
 				}
 			]
 		},
@@ -3161,47 +3588,56 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1|2[245]"
 				},
 				{
 					match: "(2)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "251"
 				},
 				{
 					match: "(\\d)(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "16|2"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "67|81"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[4-8]"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{4,6})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9(?:2[0-4]|[35-9]|4[137-9])"
 				},
 				{
 					match: "(9)([34]\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9(?:3[0-36]|4[0-57-9])"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "92[56]"
 				},
 				{
 					match: "(9)(\\d{3})(\\d{3})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "93"
 				}
 			]
 		},
@@ -3213,27 +3649,32 @@ module.exports = {
 				{
 					match: "([12]\\d)(\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[12]1"
 				},
 				{
 					match: "([12]2\\d)(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[12]2[1-3]"
 				},
 				{
 					match: "([12]\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[12](?:27|[3-5]\\d)2"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[57-9]"
 				},
 				{
 					match: "([12]\\d{4})(\\d{4,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[12](?:27|[3-5]\\d)[4-9]"
 				}
 			]
 		},
@@ -3295,11 +3736,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([2-46-9]\\d{2})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-46-9]"
 				},
 				{
 					match: "(5\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "5"
 				}
 			]
 		},
@@ -3309,11 +3752,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "[3467]|9(?:[1-9]|0[1-9])"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "900"
 				}
 			]
 		},
@@ -3325,17 +3770,20 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(2\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1789]"
 				}
 			]
 		},
@@ -3347,42 +3795,50 @@ module.exports = {
 				{
 					match: "([358]\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "01 $1"
+					nationalFormat: "01 $1",
+					leadingDigitPattern: "33|55|81"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "01 $1"
+					nationalFormat: "01 $1",
+					leadingDigitPattern: "[2467]|3[0-2457-9]|5[089]|8[02-9]|9[0-35-9]"
 				},
 				{
 					match: "(1)([358]\\d)(\\d{4})(\\d{4})",
 					replace: "044 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:33|55|81)"
 				},
 				{
 					match: "(1)(\\d{3})(\\d{3})(\\d{4})",
 					replace: "044 $2 $3 $4",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1(?:[2467]|3[0-2457-9]|5[089]|8[2-9]|9[1-35-9])"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "([358]\\d)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "01 $1"
+					nationalFormat: "01 $1",
+					leadingDigitPattern: "33|55|81"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "01 $1"
+					nationalFormat: "01 $1",
+					leadingDigitPattern: "[2467]|3[0-2457-9]|5[089]|8[02-9]|9[0-35-9]"
 				},
 				{
 					match: "(1)([358]\\d)(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1(?:33|55|81)"
 				},
 				{
 					match: "(1)(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1(?:[2467]|3[0-2457-9]|5[089]|8[2-9]|9[1-35-9])"
 				}
 			]
 		},
@@ -3394,31 +3850,37 @@ module.exports = {
 				{
 					match: "([4-79])(\\d{3})(\\d{4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[4-79]"
 				},
 				{
 					match: "(3)(\\d{4})(\\d{4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "([18]\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[02-46-9][1-9]|8"
 				},
 				{
 					match: "(1)([36-8]00)(\\d{2})(\\d{4})",
-					replace: "$1-$2-$3-$4"
+					replace: "$1-$2-$3-$4",
+					leadingDigitPattern: "1[36-8]0"
 				},
 				{
 					match: "(11)(\\d{4})(\\d{4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "11"
 				},
 				{
 					match: "(15[49])(\\d{3})(\\d{4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "15"
 				}
 			]
 		},
@@ -3428,11 +3890,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([28]\\d)(\\d{3})(\\d{3,4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "2|8[2-7]"
 				},
 				{
 					match: "(80\\d)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "80"
 				}
 			]
 		},
@@ -3444,22 +3908,26 @@ module.exports = {
 				{
 					match: "(8\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[1235]"
 				},
 				{
 					match: "(6\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6"
 				},
 				{
 					match: "(88)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "88"
 				},
 				{
 					match: "(870)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "870"
 				}
 			]
 		},
@@ -3469,7 +3937,8 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1.$2.$3"
+					replace: "$1.$2.$3",
+					leadingDigitPattern: "[2-46-9]|5[0-4]"
 				}
 			]
 		},
@@ -3479,11 +3948,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[289]|09"
 				},
 				{
 					match: "(08)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "08"
 				}
 			]
 		},
@@ -3493,11 +3964,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(\\d)(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "3"
 				}
 			]
 		},
@@ -3507,34 +3980,40 @@ module.exports = {
 			nationalPrefix: "0",
 			patterns: [
 				{
-					match: "(\\d{3})(\\d{3})(\\d{3,4})",
-					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
-				},
-				{
 					match: "(\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[12]|9(?:0[3-9]|[1-9])"
+				},
+				{
+					match: "(\\d{3})(\\d{3})(\\d{3,4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "70|8[01]|90[2357-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-6]|7(?:[1-79]|0[1-9])|8[2-9]"
 				},
 				{
 					match: "([78]00)(\\d{4})(\\d{4,5})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[78]00"
 				},
 				{
 					match: "([78]00)(\\d{5})(\\d{5,6})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[78]00"
 				},
 				{
 					match: "(78)(\\d{2})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "78"
 				}
 			]
 		},
@@ -3556,32 +4035,38 @@ module.exports = {
 				{
 					match: "([1-578]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[035]|2[0346]|3[03568]|4[0356]|5[0358]|7|8[4578]"
 				},
 				{
 					match: "([1-5]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[16-8]|2[259]|3[124]|4[17-9]|5[124679]"
 				},
 				{
 					match: "(6)(\\d{8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6[0-57-9]"
 				},
 				{
 					match: "(66)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "66"
 				},
 				{
 					match: "(14)(\\d{3,4})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "14"
 				},
 				{
 					match: "([89]0\\d)(\\d{4,7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80|9"
 				}
 			]
 		},
@@ -3591,11 +4076,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([489]\\d{2})(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[489]"
 				},
 				{
 					match: "([235-7]\\d)(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[235-7]"
 				}
 			],
 			priority: 10
@@ -3608,17 +4095,20 @@ module.exports = {
 				{
 					match: "(1)(\\d{7})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[2-6]"
 				},
 				{
 					match: "(\\d{2})(\\d{6})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[01]|[2-8]|9(?:[1-69]|7[15-9])"
 				},
 				{
 					match: "(9\\d{2})(\\d{7})",
 					replace: "$1-$2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "9(?:6[013]|7[245]|8)"
 				}
 			]
 		},
@@ -3644,32 +4134,38 @@ module.exports = {
 				{
 					match: "([34679])(\\d{3})(\\d{4})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[346]|7[2-57-9]|9[1-9]"
 				},
 				{
 					match: "(24099)(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "24099"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,5})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:1[1-9]|[69]|7[0-35-9])|70|86"
 				},
 				{
 					match: "(2\\d)(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[028]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:10|74)|5|[89]0"
 				}
 			]
 		},
@@ -3679,15 +4175,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(2\\d)(\\d{6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "([79]\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[79]"
 				},
 				{
 					match: "([58]00)(\\d{4,6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[58]"
 				}
 			]
 		},
@@ -3697,11 +4196,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "[1-57-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "6"
 				}
 			]
 		},
@@ -3713,22 +4214,26 @@ module.exports = {
 				{
 					match: "(1)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "([4-8]\\d)(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[4-7]|8[2-4]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "80"
 				},
 				{
 					match: "(9\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -3738,11 +4243,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "4[09]|8[79]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "44"
 				}
 			]
 		},
@@ -3752,11 +4259,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[13-689]|27"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "20|7"
 				}
 			]
 		},
@@ -3768,40 +4277,48 @@ module.exports = {
 				{
 					match: "(2)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(2)(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "(\\d{4})(\\d{4,6})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "3(?:230|397|461)|4(?:2(?:35|[46]4|51)|396|4(?:22|63)|59[347]|76[15])|5(?:221|446)|642[23]|8(?:622|8(?:[24]2|5[13]))"
 				},
 				{
 					match: "(\\d{5})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "3469|4(?:279|9(?:30|56))|8834"
 				},
 				{
 					match: "([3-8]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[3-8]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "81|9"
 				},
 				{
 					match: "(1800)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1"
 				},
 				{
 					match: "(1800)(\\d{1,2})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1"
 				}
 			]
 		},
@@ -3813,42 +4330,50 @@ module.exports = {
 				{
 					match: "(\\d{2})(111)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)111"
 				},
 				{
 					match: "(\\d{3})(111)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:2[349]|45|54|60|72|8[2-5]|9[2-9])\\d111"
 				},
 				{
 					match: "(\\d{2})(\\d{7,8})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:2[125]|4[0-246-9]|5[1-35-7]|6[1-8]|7[14]|8[16]|91)[2-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{6,7})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:2[349]|45|54|60|72|8[2-5]|9[2-9])\\d[2-9]"
 				},
 				{
 					match: "(3\\d{2})(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3"
 				},
 				{
 					match: "([15]\\d{3})(\\d{5,6})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "58[12]|1"
 				},
 				{
 					match: "(586\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "586"
 				},
 				{
 					match: "([89]00)(\\d{3})(\\d{2})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]00"
 				}
 			]
 		},
@@ -3858,23 +4383,28 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[14]|2[0-57-9]|3[2-4]|5[24-689]|6[1-3578]|7[14-7]|8[1-79]|9[145]"
 				},
 				{
 					match: "(\\d{2})(\\d{1})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[12]2"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "26|39|5[0137]|6[0469]|7[02389]|8[08]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2,3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "64"
 				},
 				{
 					match: "(\\d{3})(\\d{3})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "64"
 				}
 			]
 		},
@@ -3909,17 +4439,20 @@ module.exports = {
 				{
 					match: "([2489])(2\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2489]"
 				},
 				{
 					match: "(5[69]\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5"
 				},
 				{
 					match: "(1[78]00)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1[78]"
 				}
 			]
 		},
@@ -3929,11 +4462,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(2\\d)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "2[12]"
 				},
 				{
 					match: "([2-46-9]\\d{2})(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "2[3-9]|[346-9]"
 				}
 			]
 		},
@@ -3955,36 +4490,43 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:[26]1|3[289]|4[124678]|7[123]|8[1236])"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "(?:[26]1|3[289]|4[124678]|7[123]|8[1236])"
 				},
 				{
 					match: "(\\d{3})(\\d{3,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-9]0"
 				},
 				{
 					match: "(\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9[1-9]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "8700"
 				},
 				{
 					match: "(\\d{3})(\\d{4,5})",
 					replace: "$1 $2",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[2-8][1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-8][1-9]"
 				}
 			]
 		},
@@ -3994,11 +4536,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "([28]\\d{2})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[28]"
 				},
 				{
 					match: "([3-7]\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[3-7]"
 				}
 			]
 		},
@@ -4022,22 +4566,26 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]1"
 				},
 				{
 					match: "(21)(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "21"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23][3-7]|[7-9]"
 				},
 				{
 					match: "(2\\d{2})(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[3-6]"
 				}
 			]
 		},
@@ -4049,32 +4597,38 @@ module.exports = {
 				{
 					match: "([23]\\d{2})(\\d{4,9})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "(?:2[389]|39)0"
 				},
 				{
 					match: "([1-3]\\d)(\\d{5,10})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1|2(?:[0-24-7]|[389][1-9])|3(?:[0-8]|9[1-9])"
 				},
 				{
 					match: "(6\\d)(\\d{6,8})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "6"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3,9})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]"
 				},
 				{
 					match: "(7[26])(\\d{4,9})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7[26]"
 				},
 				{
 					match: "(7[08]\\d)(\\d{4,9})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7[08]"
 				}
 			]
 		},
@@ -4086,29 +4640,34 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1-$2-$3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "[1-79]"
 				},
 				{
 					match: "([3489]\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "8 ($1)"
+					nationalFormat: "8 ($1)",
+					leadingDigitPattern: "[34689]"
 				},
 				{
 					match: "(7\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 ($1)"
+					nationalFormat: "8 ($1)",
+					leadingDigitPattern: "7"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "([3489]\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "8 ($1)"
+					nationalFormat: "8 ($1)",
+					leadingDigitPattern: "[34689]"
 				},
 				{
 					match: "(7\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "8 ($1)"
+					nationalFormat: "8 ($1)",
+					leadingDigitPattern: "7"
 				}
 			],
 			priority: 10
@@ -4121,16 +4680,19 @@ module.exports = {
 				{
 					match: "(2\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "([7-9]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[7-9]"
 				},
 				{
 					match: "(0\\d)(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "0"
 				}
 			]
 		},
@@ -4142,32 +4704,38 @@ module.exports = {
 				{
 					match: "([1-467])(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-467]"
 				},
 				{
 					match: "(1\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[1-467]"
 				},
 				{
 					match: "(5\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5"
 				},
 				{
 					match: "(92\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "92"
 				},
 				{
 					match: "(800)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "80"
 				},
 				{
 					match: "(811)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "81"
 				}
 			]
 		},
@@ -4177,7 +4745,8 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[7-9]"
 				}
 			]
 		},
@@ -4187,11 +4756,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{3})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "8"
 				},
 				{
 					match: "(\\d)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[246]"
 				}
 			]
 		},
@@ -4215,103 +4786,125 @@ module.exports = {
 				{
 					match: "(8)(\\d{2,3})(\\d{2,3})(\\d{2})",
 					replace: "$1-$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				},
 				{
 					match: "([1-69]\\d)(\\d{2,3})(\\d{2})(\\d{2})",
 					replace: "$1-$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[013689]|2[0136]|3[1356]|4[0246]|54|6[03]|90"
 				},
 				{
 					match: "([1-469]\\d)(\\d{3})(\\d{2})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[136]|2[136]|3[356]|4[0246]|6[03]|90"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1-$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[0-5]|4[0-3])"
 				},
 				{
 					match: "(\\d{3})(\\d{2,3})(\\d{2})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[0-5]|4[0-3])"
 				},
 				{
 					match: "(7\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1-$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(77)(\\d{2})(\\d{2})",
 					replace: "$1-$2$3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(20)(\\d{2,3})(\\d{2})",
 					replace: "$1-$2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "20"
 				},
 				{
 					match: "(9[034]\\d)(\\d{2})(\\d{2})(\\d{3})",
 					replace: "$1-$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9[034]"
 				},
 				{
 					match: "(9[034]\\d)(\\d{4})",
 					replace: "$1-$2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9[034]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1-$2 $3 $4 $5",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "25[245]|67[3-6]"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(8)(\\d{2,3})(\\d{2,3})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "8"
 				},
 				{
 					match: "([1-69]\\d)(\\d{2,3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1[013689]|2[0136]|3[1356]|4[0246]|54|6[03]|90"
 				},
 				{
 					match: "([1-469]\\d)(\\d{3})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[136]|2[136]|3[356]|4[0246]|6[03]|90"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[0-5]|4[0-3])"
 				},
 				{
 					match: "(\\d{3})(\\d{2,3})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[2457]|2(?:[247-9]|5[0138])|3[0247-9]|4[1357-9]|5[0-35-9]|6(?:[124-689]|7[0-2])|9(?:[125-8]|3[0-5]|4[0-3])"
 				},
 				{
 					match: "(7\\d)(\\d{3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(77)(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(20)(\\d{2,3})(\\d{2})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "20"
 				},
 				{
 					match: "(9[034]\\d)(\\d{2})(\\d{2})(\\d{3})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "9[034]"
 				},
 				{
 					match: "(9[034]\\d)(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "9[034]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4 $5"
+					replace: "$1 $2 $3 $4 $5",
+					leadingDigitPattern: "25[245]|67[3-6]"
 				}
 			]
 		},
@@ -4321,19 +4914,23 @@ module.exports = {
 			patterns: [
 				{
 					match: "([3689]\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[369]|8[1-9]"
 				},
 				{
 					match: "(1[89]00)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "1[89]"
 				},
 				{
 					match: "(7000)(\\d{4})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "70"
 				},
 				{
 					match: "(800)(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "80"
 				}
 			]
 		},
@@ -4351,22 +4948,26 @@ module.exports = {
 				{
 					match: "(\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "(0$1)"
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[12]|3[24-8]|4[24-8]|5[2-8]|7[3-8]"
 				},
 				{
 					match: "([3-7]\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[37][01]|4[0139]|51|6"
 				},
 				{
 					match: "([89][09])(\\d{3,6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89][09]"
 				},
 				{
 					match: "([58]\\d{2})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "59|8[1-3]"
 				}
 			]
 		},
@@ -4384,32 +4985,38 @@ module.exports = {
 				{
 					match: "(2)(16)(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "216"
 				},
 				{
 					match: "([3-5]\\d)(16)(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-5]"
 				},
 				{
 					match: "(2)(\\d{3})(\\d{3})(\\d{2})",
 					replace: "$1/$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "([3-5]\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1/$2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[3-5]"
 				},
 				{
 					match: "([689]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[689]"
 				},
 				{
 					match: "(9090)(\\d{3})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9090"
 				}
 			]
 		},
@@ -4431,29 +5038,35 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[5-7]"
 				},
 				{
 					match: "(0549)(\\d{6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "0"
 				},
 				{
 					match: "(\\d{6})",
-					replace: "0549 $1"
+					replace: "0549 $1",
+					leadingDigitPattern: "[89]"
 				}
 			],
 			internationalPatterns: [
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[5-7]"
 				},
 				{
 					match: "(0549)(\\d{6})",
-					replace: "($1) $2"
+					replace: "($1) $2",
+					leadingDigitPattern: "0"
 				},
 				{
 					match: "(\\d{6})",
-					replace: "(0549) $1"
+					replace: "(0549) $1",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -4463,11 +5076,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "[379]"
 				},
 				{
 					match: "(\\d{3})(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1 $2 $3 $4"
+					replace: "$1 $2 $3 $4",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -4478,19 +5093,23 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d)(\\d{6})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "2[0-79]|[13-5]"
 				},
 				{
 					match: "(\\d)(\\d{7})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "24|[67]"
 				},
 				{
 					match: "(\\d{2})(\\d{5,7})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "15|28|6[1-35-9]|799|9[2-9]"
 				},
 				{
 					match: "(90\\d)(\\d{3})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "90"
 				}
 			]
 		},
@@ -4500,15 +5119,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{3})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "[2-4]|5[2-58]"
 				},
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})",
-					replace: "$1-$2-$3"
+					replace: "$1-$2-$3",
+					leadingDigitPattern: "56"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "59|[6-8]"
 				}
 			]
 		},
@@ -4540,15 +5162,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[267]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[89]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})(\\d{4})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -4565,12 +5190,14 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-5]"
 				},
 				{
 					match: "(9\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9"
 				}
 			]
 		},
@@ -4580,7 +5207,8 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[027]"
 				}
 			]
 		},
@@ -4623,17 +5251,20 @@ module.exports = {
 				{
 					match: "(2)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2"
 				},
 				{
 					match: "([13-9]\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "14|[3-9]"
 				},
 				{
 					match: "(1[89]00)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1"
 				}
 			]
 		},
@@ -4645,22 +5276,26 @@ module.exports = {
 				{
 					match: "([349]\\d{2})(\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(8) $1"
+					nationalFormat: "(8) $1",
+					leadingDigitPattern: "[34]7|91[78]"
 				},
 				{
 					match: "([4589]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(8) $1"
+					nationalFormat: "(8) $1",
+					leadingDigitPattern: "4[148]|[58]|9(?:1[59]|[0235-9])"
 				},
 				{
 					match: "(331700)(\\d)(\\d{2})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(8) $1"
+					nationalFormat: "(8) $1",
+					leadingDigitPattern: "331700"
 				},
 				{
 					match: "(\\d{4})(\\d)(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "(8) $1"
+					nationalFormat: "(8) $1",
+					leadingDigitPattern: "3(?:[1245]|3(?:[02-9]|1[0-589]))"
 				}
 			]
 		},
@@ -4674,11 +5309,13 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[2-489]"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "7"
 				}
 			]
 		},
@@ -4690,17 +5327,20 @@ module.exports = {
 				{
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "(8 $1)"
+					nationalFormat: "(8 $1)",
+					leadingDigitPattern: "12"
 				},
 				{
 					match: "(\\d{2})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "8 $1"
+					nationalFormat: "8 $1",
+					leadingDigitPattern: "6"
 				},
 				{
 					match: "(\\d{3})(\\d)(\\d{2})(\\d{2})",
 					replace: "$1 $2-$3-$4",
-					nationalFormat: "(8 $1)"
+					nationalFormat: "(8 $1)",
+					leadingDigitPattern: "13|[2-5]"
 				}
 			]
 		},
@@ -4720,15 +5360,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{2})(\\d{3})",
-					replace: "$1-$2"
+					replace: "$1-$2",
+					leadingDigitPattern: "[1-6]|7[0-4]|8[05]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "7[5-9]|8[47-9]"
 				},
 				{
 					match: "(\\d{4})(\\d{3})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "0"
 				}
 			]
 		},
@@ -4738,18 +5381,27 @@ module.exports = {
 			nationalPrefix: "0",
 			patterns: [
 				{
-					match: "(\\d{3})(\\d{3})(\\d{4})",
-					replace: "$1 $2 $3",
-					nationalFormat: "(0$1)"
+					match: "(\\d{3})(\\d{3})(\\d{2})(\\d{2})",
+					replace: "$1 $2 $3 $4",
+					nationalFormat: "(0$1)",
+					leadingDigitPattern: "[23]|4(?:[0-35-9]|4[0-35-9])"
+				},
+				{
+					match: "(\\d{3})(\\d{3})(\\d{2})(\\d{2})",
+					replace: "$1 $2 $3 $4",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "5[02-69]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "51|[89]"
 				},
 				{
 					match: "(444)(\\d{1})(\\d{3})",
-					replace: "$1 $2 $3"
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "444"
 				}
 			]
 		},
@@ -4770,17 +5422,20 @@ module.exports = {
 				{
 					match: "([2-8])(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[2-6]|[78][1-9]"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80|9"
 				},
 				{
 					match: "(70)(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "70"
 				}
 			]
 		},
@@ -4792,17 +5447,20 @@ module.exports = {
 				{
 					match: "([24]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[24]"
 				},
 				{
 					match: "([67]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[67]"
 				},
 				{
 					match: "([89]\\d{2})(\\d{2})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]"
 				}
 			]
 		},
@@ -4814,17 +5472,20 @@ module.exports = {
 				{
 					match: "([3-9]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[38]9|4(?:[45][0-5]|87)|5(?:0|6(?:3[14-7]|7)|7[37])|6[36-8]|73|9[1-9]"
 				},
 				{
 					match: "([3-689]\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:[1-46-8]2[013-9]|52)|4(?:[1378]2|62[013-9])|5(?:[12457]2|6[24])|6(?:[49]2|[12][29]|5[24])|8[0-8]|90"
 				},
 				{
 					match: "([3-6]\\d{3})(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3(?:5[013-9]|[1-46-8](?:22|[013-9]))|4(?:[137][013-9]|6(?:[013-9]|22)|[45][6-9]|8[4-6])|5(?:[1245][013-9]|6(?:3[02389]|[015689])|3|7[4-6])|6(?:[49][013-9]|5[0135-9]|[12][13-8])"
 				}
 			]
 		},
@@ -4836,17 +5497,20 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[7-9]|20(?:[013-8]|2[5-9])|4(?:6[45]|[7-9])"
 				},
 				{
 					match: "(\\d{2})(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "3|4(?:[1-5]|6[0-36-9])"
 				},
 				{
 					match: "(2024)(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2024"
 				}
 			]
 		},
@@ -4879,17 +5543,20 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{4})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[24]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "9[1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[89]0"
 				}
 			]
 		},
@@ -4946,47 +5613,56 @@ module.exports = {
 				{
 					match: "([17]99)(\\d{4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[17]99"
 				},
 				{
 					match: "([48])(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4|8(?:[1-57]|[689][0-79])"
 				},
 				{
 					match: "([235-7]\\d)(\\d{4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[025-79]|3[0136-9]|5[2-9]|6[0-46-8]|7[02-79]"
 				},
 				{
 					match: "(80)(\\d{5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80"
 				},
 				{
 					match: "(69\\d)(\\d{4,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "69"
 				},
 				{
 					match: "([235-7]\\d{2})(\\d{4})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2[1348]|3[25]|5[01]|65|7[18]"
 				},
 				{
 					match: "([89]\\d)(\\d{3})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[689]8|9"
 				},
 				{
 					match: "(1[2689]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:[26]|8[68]|99)"
 				},
 				{
 					match: "(1[89]00)(\\d{4,6})",
 					replace: "$1 $2",
-					nationalFormat: "$1"
+					nationalFormat: "$1",
+					leadingDigitPattern: "1[89]0"
 				}
 			]
 		},
@@ -4996,7 +5672,8 @@ module.exports = {
 			patterns: [
 				{
 					match: "(\\d{3})(\\d{4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "[579]"
 				}
 			]
 		},
@@ -5016,15 +5693,18 @@ module.exports = {
 			patterns: [
 				{
 					match: "(8\\d{2})(\\d{3,4})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "8"
 				},
 				{
 					match: "(7\\d)(\\d{5})",
-					replace: "$1 $2"
+					replace: "$1 $2",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(\\d{5})",
-					replace: "$1"
+					replace: "$1",
+					leadingDigitPattern: "[2-6]"
 				}
 			]
 		},
@@ -5036,12 +5716,14 @@ module.exports = {
 				{
 					match: "([1-7])(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-6]|7[24-68]"
 				},
 				{
 					match: "(7\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7[0137]"
 				}
 			]
 		},
@@ -5058,22 +5740,26 @@ module.exports = {
 				{
 					match: "(860)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "860"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[1-79]|8(?:[0-47]|6[1-9])"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[1-4]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{2,3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8[1-4]"
 				}
 			]
 		},
@@ -5085,12 +5771,14 @@ module.exports = {
 				{
 					match: "([29]\\d)(\\d{7})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[29]"
 				},
 				{
 					match: "(800)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8"
 				}
 			]
 		},
@@ -5102,52 +5790,62 @@ module.exports = {
 				{
 					match: "([49])(\\d{3})(\\d{2,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "4|9[2-9]"
 				},
 				{
 					match: "(7\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7"
 				},
 				{
 					match: "(86\\d{2})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "86[24]"
 				},
 				{
 					match: "([2356]\\d{2})(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:0[45]|2[278]|[49]8|[78])|3(?:08|17|3[78]|7[1569]|8[37]|98)|5[15][78]|6(?:[29]8|[38]7|6[78]|75|[89]8)"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2(?:1[39]|2[0157]|6[14]|7[35]|84)|329"
 				},
 				{
 					match: "([1-356]\\d)(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1[3-9]|2[0569]|3[0-69]|5[05689]|6[0-46-9]"
 				},
 				{
 					match: "([235]\\d)(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[23]9|54"
 				},
 				{
 					match: "([25]\\d{3})(\\d{3,5})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "258[23]|5483"
 				},
 				{
 					match: "(8\\d{3})(\\d{6})",
 					replace: "$1 $2",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "86"
 				},
 				{
 					match: "(80\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					nationalFormat: "0$1"
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80"
 				}
 			]
 		}

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { assert } from 'chai';
+import { assert, expect } from 'chai';
 import { spy } from 'sinon';
 import { each, omit } from 'lodash';
 
@@ -74,10 +74,6 @@ describe( 'PostByline', () => {
 			it( 'records permalink clicks', () => {
 				assert.isTrue( statsSpies.recordPermalinkClick.calledWith( 'timestamp' ) );
 			} );
-
-			it( 'records GA event', () => {
-				assert.isTrue( statsSpies.recordGaEvent.calledWith( 'Clicked Post Permalink', 'timestamp' ) );
-			} );
 		} );
 
 		context( 'author click', () => {
@@ -90,7 +86,7 @@ describe( 'PostByline', () => {
 			} );
 
 			it( 'records GA event', () =>{
-				assert.isTrue( statsSpies.recordGaEvent.calledWith( 'Clicked Author Link' ) );
+				expect( statsSpies.recordGaEvent ).to.have.been.calledWith( 'Clicked Author Link' );
 			} );
 
 			it( 'records track for post', () => {

@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -56,6 +54,7 @@ const Search = React.createClass( {
 		autoFocus: PropTypes.bool,
 		disabled: PropTypes.bool,
 		onKeyDown: PropTypes.func,
+		onClick: PropTypes.func,
 		disableAutocorrect: PropTypes.bool,
 		onBlur: PropTypes.func,
 		searching: PropTypes.bool,
@@ -85,6 +84,10 @@ const Search = React.createClass( {
 			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
+			onClick: noop,
+			//undefined value for overlayStyling is an optimization that will
+			//disable overlay scrolling calculation when no overlay is provided.
+			overlayStyling: undefined,
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
@@ -190,9 +193,9 @@ const Search = React.createClass( {
 		this.setState( { keyword: '' } );
 	},
 
-	onBlur: function() {
+	onBlur: function( event ) {
 		if ( this.props.onBlur ) {
-			this.props.onBlur();
+			this.props.onBlur( event );
 		}
 
 		this.setState( { hasFocus: false } );
@@ -335,6 +338,7 @@ const Search = React.createClass( {
 						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
+						onMouseUp={ this.props.onClick }
 						onFocus={ this.onFocus }
 						onBlur={ this.onBlur }
 						disabled={ this.props.disabled }

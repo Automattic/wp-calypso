@@ -141,7 +141,7 @@ module.exports = React.createClass( {
 				return (
 					<div className={ classNames( { 'plugin-install-button__install': true, embed: this.props.isEmbed } ) }>
 						<span className="plugin-install-button__warning">{ this.translate( 'Jetpack 3.7 is required' ) }</span>
-						<Button compact={ true } onclick={ this.updateJetpackAction } href={ this.props.selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' } >{ this.translate( 'update', { context: 'verb, update plugin button label' } ) }</Button>
+						<Button compact={ true } onClick={ this.updateJetpackAction } href={ this.props.selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' } >{ this.translate( 'update', { context: 'verb, update plugin button label' } ) }</Button>
 					</div>
 				);
 			}

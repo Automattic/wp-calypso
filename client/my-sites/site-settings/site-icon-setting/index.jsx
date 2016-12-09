@@ -1,47 +1,211 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { uniqueId, head, partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'components/site-icon';
 import Button from 'components/button';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import AsyncLoad from 'components/async-load';
+import Dialog from 'components/dialog';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
+import { setSiteIcon } from 'state/sites/actions';
+import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import InfoPopover from 'components/info-popover';
+import MediaActions from 'lib/media/actions';
+import MediaStore from 'lib/media/store';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import { isItemBeingUploaded, url as getMediaUrl } from 'lib/media/utils';
+import { addQueryArgs } from 'lib/url';
 
-function SiteIconSetting( { translate, siteId } ) {
-	if ( ! isEnabled( 'manage/site-settings/site-icon' ) ) {
-		return null;
+class SiteIconSetting extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+		siteId: PropTypes.number,
+		isJetpack: PropTypes.bool,
+		customizerUrl: PropTypes.string,
+		generalOptionsUrl: PropTypes.string,
+		onEditSelectedMedia: PropTypes.func,
+		resetAllImageEditorState: PropTypes.func
+	};
+
+	state = {
+		isModalVisible: false,
+		hasToggledModal: false
+	};
+
+	toggleModal = ( isModalVisible ) => {
+		this.setState( {
+			isModalVisible,
+			hasToggledModal: true
+		} );
+	};
+
+	hideModal = () => this.toggleModal( false );
+
+	showModal = () => this.toggleModal( true );
+
+	editSelectedMedia = ( media ) => {
+		if ( media ) {
+			this.props.onEditSelectedMedia();
+		} else {
+			this.hideModal();
+		}
+	};
+
+	setSiteIcon = ( error, blob ) => {
+		if ( error || ! blob ) {
+			return;
+		}
+
+		const { siteId } = this.props;
+		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
+		if ( ! selectedItem ) {
+			return;
+		}
+
+		// Upload media using a manually generated ID so that we can continue
+		// to reference it within this function
+		const transientMediaId = uniqueId( 'site-icon' );
+		MediaActions.add( siteId, {
+			ID: transientMediaId,
+			fileName: `cropped-${ selectedItem.file }`,
+			fileContents: blob
+		} );
+
+		// Avoid calling to component instance within progress check closure
+		// below since component may have been unmounted in time since upload
+		const {
+			saveSiteSettings: dispatchSaveSiteSettings,
+			setSiteIcon: dispatchSetSiteIcon
+		} = this.props;
+
+		dispatchSetSiteIcon( siteId, getMediaUrl( MediaStore.get( siteId, transientMediaId ) ) );
+
+		const checkUploadComplete = () => {
+			// MediaStore tracks pointers from transient media to the persisted
+			// copy, so if our request is for a media which is not transient,
+			// we can assume the upload has finished.
+			const media = MediaStore.get( siteId, transientMediaId );
+			if ( isItemBeingUploaded( media ) ) {
+				return;
+			}
+
+			MediaStore.off( 'change', checkUploadComplete );
+			dispatchSetSiteIcon( siteId, getMediaUrl( media ) );
+			dispatchSaveSiteSettings( siteId, { site_icon: media.ID } );
+		};
+
+		MediaStore.on( 'change', checkUploadComplete );
+
+		this.hideModal();
+		this.props.resetAllImageEditorState();
+	};
+
+	preloadModal() {
+		asyncRequire( 'post-editor/media-modal' );
 	}
 
-	return (
-		<FormFieldset className="site-icon-setting">
-			<FormLabel>{ translate( 'Site Icon' ) }</FormLabel>
-			<div className="site-icon-setting__controls">
-				<SiteIcon size={ 64 } siteId={ siteId } />
-				<Button className="site-icon-setting__change-button">
-					{ translate( 'Change site icon' ) }
+	render() {
+		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } = this.props;
+		const { isModalVisible, hasToggledModal } = this.state;
+		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
+
+		let buttonProps;
+		if ( isIconManagementEnabled ) {
+			buttonProps = {
+				type: 'button',
+				onClick: this.showModal,
+				onMouseEnter: this.preloadModal
+			};
+		} else {
+			buttonProps = { rel: 'external' };
+
+			if ( isJetpack ) {
+				buttonProps.href = addQueryArgs( {
+					'autofocus[section]': 'title_tagline'
+				}, customizerUrl );
+			} else {
+				buttonProps.href = generalOptionsUrl;
+				buttonProps.target = '_blank';
+			}
+		}
+
+		return (
+			<FormFieldset className="site-icon-setting">
+				<FormLabel className="site-icon-setting__heading">
+					{ translate( 'Site Icon' ) }
+					<InfoPopover position="bottom right">
+						{ translate( 'A browser and app icon for your site.' ) }
+					</InfoPopover>
+				</FormLabel>
+				{ React.createElement( buttonProps.href ? 'a' : 'button', {
+					...buttonProps,
+					className: 'site-icon-setting__icon'
+				}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
+				<Button
+					{ ...buttonProps }
+					className="site-icon-setting__change-button"
+					compact>
+					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
-			</div>
-			<FormSettingExplanation>
-				{ translate( 'The Site Icon is used as a browser and app icon for your site.' ) }
-			</FormSettingExplanation>
-		</FormFieldset>
-	);
+				{ isIconManagementEnabled && hasToggledModal && (
+					<MediaLibrarySelectedData siteId={ siteId }>
+						<AsyncLoad
+							require="post-editor/media-modal"
+							placeholder={ (
+								<Dialog
+									additionalClassNames="editor-media-modal"
+									isVisible={ isModalVisible } />
+							) }
+							siteId={ siteId }
+							onClose={ this.editSelectedMedia }
+							enabledFilters={ [ 'images' ] }
+							imageEditorProps={ {
+								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+								onDone: this.setSiteIcon
+							} }
+							visible={ isModalVisible }
+							labels={ {
+								confirm: translate( 'Continue' )
+							} }
+							single />
+					</MediaLibrarySelectedData>
+				) }
+			</FormFieldset>
+		);
+	}
 }
 
-SiteIconSetting.propTypes = {
-	translate: PropTypes.func,
-	siteId: PropTypes.number
-};
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state )
-} ) )( localize( SiteIconSetting ) );
+		return {
+			siteId,
+			isJetpack: isJetpackSite( state, siteId ),
+			customizerUrl: getCustomizerUrl( state, siteId ),
+			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' )
+		};
+	},
+	{
+		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+		resetAllImageEditorState,
+		saveSiteSettings,
+		setSiteIcon
+	}
+)( localize( SiteIconSetting ) );

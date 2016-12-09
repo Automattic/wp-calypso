@@ -55,15 +55,16 @@ import {
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.reset();
+	let spy;
+	useSandbox( ( sandbox ) => {
+		spy = sandbox.spy();
+		sandbox.stub( console, 'error' );
 	} );
 
-	describe( '#fetch()', () => {
+	describe( '#fetchPlugins()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -75,11 +76,13 @@ describe( 'actions', () => {
 				.reply( 403, {
 					error: 'unauthorized',
 					message: 'This endpoint is only available for Jetpack powered Sites'
-				} );
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
+				.reply( 200, jetpackUpdated );
 		} );
 
 		it( 'should dispatch fetch action when triggered', () => {
-			fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			fetchPlugins( [ 2916284 ] )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGINS_REQUEST,
@@ -88,7 +91,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugins receive action when request completes', () => {
-			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_RECEIVE,
@@ -98,7 +101,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugin request success action when request completes', () => {
-			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_SUCCESS,
@@ -109,7 +112,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			const responses = fetchPlugins( [ { ID: 77203074, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 77203074 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_FAILURE,
@@ -118,9 +121,21 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
+
+		it( 'should dispatch plugin update request if any site plugins need updating', () => {
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
+			return Promise.all( responses ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PLUGIN_UPDATE_REQUEST,
+					action: UPDATE_PLUGIN,
+					siteId: 2916284,
+					pluginId: 'jetpack/jetpack'
+				} );
+			} );
+		} );
 	} );
 
-	describe( '#activate()', () => {
+	describe( '#activatePlugin()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -171,7 +186,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#deactivate()', () => {
+	describe( '#deactivatePlugin()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -222,7 +237,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#update()', () => {
+	describe( '#updatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -289,7 +304,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#enableAutoupdate()', () => {
+	describe( '#enableAutoupdatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -366,7 +381,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#disableAutoupdate()', () => {
+	describe( '#disableAutoupdatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -427,7 +442,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#install()', () => {
+	describe( '#installPlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -496,7 +511,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#remove()', () => {
+	describe( '#removePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,

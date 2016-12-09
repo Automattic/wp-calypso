@@ -10,8 +10,9 @@ var i18n = require( 'i18n-calypso'),
  */
 var i18nUtils = require( 'lib/i18n-utils' ),
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
-	LocaleSuggestionStore = require( 'lib/locale-suggestions' ),
-	Notice = require( 'components/notice' );
+	LocaleSuggestionStore = require( 'lib/locale-suggestions' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 	displayName: 'LocaleSuggestions',

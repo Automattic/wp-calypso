@@ -69,7 +69,7 @@ export default React.createClass( {
 						ref="input"
 						onChange={ this.props.onChange }
 						onClick={ this.recordCountrySelectClick }
-						isError={ this.props.isError } >
+						isError={ this.props.isError }>
 						{ options.map( option => (
 							<option
 								key={ option.key }

@@ -69,6 +69,7 @@ describe( 'MediaActions', function() {
 						return {
 							get: mediaGet.bind( [ siteId, mediaId ].join() ),
 							update: mediaUpdate.bind( [ siteId, mediaId ].join() ),
+							edit: mediaUpdate.bind( [ siteId, mediaId ].join() ),
 							'delete': mediaDelete.bind( [ siteId, mediaId ].join() )
 						};
 					}

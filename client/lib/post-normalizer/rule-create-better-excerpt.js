@@ -9,6 +9,7 @@ import trim from 'lodash/trim';
  * Internal Dependencies
  */
 import { domForHtml } from './utils';
+import { stripHTML } from 'lib/formatting';
 
 export function formatExcerpt( content ) {
 	if ( ! content ) {
@@ -67,11 +68,12 @@ export default function createBetterExcerpt( post ) {
 	}
 
 	post.better_excerpt = formatExcerpt( post.content );
+	post.better_excerpt_no_html = stripHTML( post.better_excerpt );
 
 	// also make a shorter excerpt...
-	if ( post.excerpt ) {
+	if ( post.better_excerpt_no_html ) {
 		// replace any trailing [...] with an actual ellipsis
-		let shorterExcerpt = post.excerpt.replace( /\[...\]\w*$/, '…' );
+		let shorterExcerpt = post.better_excerpt_no_html.replace( /\[...\]\w*$/, '…' );
 		// limit to 160 characters
 		if ( shorterExcerpt.length > 160 ) {
 			const lastSpace = shorterExcerpt.lastIndexOf( ' ', 160 );

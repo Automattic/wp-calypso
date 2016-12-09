@@ -36,7 +36,7 @@ export default {
 	transaction( context ) {
 		const Receipt = require( './receipt' );
 		const billingData = require( 'lib/billing-history-data' );
-		const transactionId = context.params.transaction_id;
+		const receiptId = context.params.receiptId;
 		const basePath = route.sectionify( context.path );
 
 		// Initialize billing data
@@ -44,11 +44,11 @@ export default {
 
 		context.store.dispatch( setTitle( i18n.translate( 'Billing History', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		if ( transactionId ) {
+		if ( receiptId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
 			renderWithReduxStore(
-				React.createElement( Receipt, { transaction: billingData.getTransaction( transactionId ) } ),
+				React.createElement( Receipt, { transaction: billingData.getTransaction( receiptId ) } ),
 				document.getElementById( 'primary' ),
 				context.store
 			);

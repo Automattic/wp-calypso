@@ -1,28 +1,38 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
 import moment from 'moment';
-import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
+import { memoize, some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
+import { isSectionLoading, getInitialQueryArguments, getSection } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
+import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
 
-export function getConfigForCurrentView( state ) {
-	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
-	const path = currentRoute.path ? currentRoute.path : '';
-	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
+const getConfigForPath = memoize( path =>
+	find( FIRST_VIEW_CONFIG, entry =>
+		some( entry.paths, entryPath =>
+			startsWith( path, entryPath ) ) ) || false );
 
-	return config || false;
-}
+export const getConfigForCurrentView = createSelector(
+	state => {
+		const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+		if ( ! currentRoute ) {
+			return false;
+		}
+
+		const path = currentRoute.path ? currentRoute.path : '';
+		return getConfigForPath( path );
+	},
+	getActionLog
+);
 
 export function isUserEligible( state, config ) {
 	const userStartDate = getCurrentUserDate( state );
@@ -74,18 +84,16 @@ export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
 }
 
 function routeSetIsInCurrentSection( state, routeSet ) {
-	const section = state.ui.section;
+	const section = getSection( state );
 	return some( section.paths, path => startsWith( routeSet.path, path ) );
 }
 
 export function shouldViewBeVisible( state ) {
 	const firstViewConfig = getConfigForCurrentView( state );
 
-	if ( ! firstViewConfig ) {
-		return false;
-	}
-
-	return isViewEnabled( state, firstViewConfig ) &&
+	return ! findOngoingTour( state ) &&
+		firstViewConfig &&
+		isViewEnabled( state, firstViewConfig ) &&
 		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
 }

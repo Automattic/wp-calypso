@@ -162,7 +162,7 @@ module.exports = {
 				this.setState( { submittingForm: false } );
 			} else {
 				notices.success( this.translate( 'Settings saved!' ) );
-				this.markSaved();
+				this.props.markSaved && this.props.markSaved();
 				//for dirtyFields, see lib/mixins/dirty-linked-state
 				this.setState( { submittingForm: false, dirtyFields: [] } );
 

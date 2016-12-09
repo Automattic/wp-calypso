@@ -8,8 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import {
-	recordPermalinkClick,
-	recordGaEvent
+	recordPermalinkClick
 } from 'reader/stats';
 
 const PostExcerptLink = React.createClass( {
@@ -34,7 +33,6 @@ const PostExcerptLink = React.createClass( {
 
 	recordClick() {
 		recordPermalinkClick( 'summary_card_site_name' );
-		recordGaEvent( 'Clicked Excerpt Notice Permalink' );
 	},
 
 	render() {

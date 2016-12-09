@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -17,12 +16,13 @@ var config = require( 'config' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
+import { protectForm } from 'lib/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackMonitor',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};
@@ -36,7 +36,8 @@ module.exports = React.createClass( {
 	resetState: function() {
 		this.replaceState( {
 			togglingModule: false,
-			emailNotifications: false
+			emailNotifications: false,
+			wpNoteNotifications: false
 		} );
 	},
 
@@ -46,7 +47,8 @@ module.exports = React.createClass( {
 		site.fetchMonitorSettings( ( function( error, data ) {
 			if ( ! error ) {
 				this.setState( {
-					emailNotifications: data.settings.email_notifications
+					emailNotifications: data.settings.email_notifications,
+					wpNoteNotifications: data.settings.wp_note_notifications
 				} );
 			} else {
 				debug( 'error getting Monitor settings', error );
@@ -83,14 +85,14 @@ module.exports = React.createClass( {
 	saveSettings: function() {
 		this.setState( { submitingForm: true } );
 		notices.clearNotices( 'notices' );
-		this.props.site.updateMonitorSettings( this.state.emailNotifications, ( function( error ) {
+		this.props.site.updateMonitorSettings( this.state.emailNotifications, this.state.wpNoteNotifications, ( function( error ) {
 			if ( error ) {
 				this.handleError();
 				notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 				return;
 			}
 			notices.success( this.translate( 'Settings saved successfully!' ) );
-			this.markSaved();
+			this.props.markSaved();
 			this.setState( { submittingForm: false } );
 		} ).bind( this ) );
 	},
@@ -99,29 +101,52 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<p>{ this.translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
+				{ this.settingsMonitorEmailCheckbox() }
+				{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
+			</div>
+		);
+	},
+
+	settingsMonitorEmailCheckbox: function() {
+		return (
+			<FormLabel>
+				<FormCheckbox
+					disabled={ this.disableForm() }
+					onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
+					id="jetpack_monitor_email"
+					checkedLink={ this.linkState( 'emailNotifications' ) }
+					name="jetpack_monitor_email" />
+				<span>
+					{ this.translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
+						components: {
+							a: <a href="/me/account" onClick={ this.recordEvent.bind( this, 'Clicked on Monitor Link to WordPress.com Email Address' ) } />
+						}
+					} ) }
+				</span>
+			</FormLabel>
+		);
+	},
+
+	settingsMonitorWpNoteCheckbox: function() {
+		return (
 				<FormLabel>
 					<FormCheckbox
 						disabled={ this.disableForm() }
-						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
-						id="jetpack_monitor_email"
-						checkedLink={ this.linkState( 'emailNotifications' ) }
-						name="jetpack_monitor_email" />
+						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor wp-note checkbox' ) }
+						id="jetpack_monitor_wp_note"
+						checkedLink={ this.linkState( 'wpNoteNotifications' ) }
+						name="jetpack_monitor_wp_note" />
 					<span>
-						{ this.translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
-							components: {
-								a: <a href="/me/account" onClick={ this.recordEvent.bind( this, 'Clicked on Monitor Link to WordPress.com Email Address' ) } />
-							}
-						} ) }
+						{ this.translate( 'Send notifications via WordPress.com notification.' ) }
 					</span>
 				</FormLabel>
-			</div>
 		);
 	},
 
 	// updates the state when an error occurs
 	handleError: function() {
 		this.setState( { submittingForm: false, togglingModule: false } );
-		this.markSaved();
+		this.props.markSaved();
 	},
 
 	disableForm: function() {
@@ -154,7 +179,7 @@ module.exports = React.createClass( {
 				<Button
 					compact
 					primary
-					onClick={ this.handleSubmitForm }
+					onClick={ this.saveSettings }
 					>
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 				</Button>
@@ -188,4 +213,4 @@ module.exports = React.createClass( {
 		);
 	}
 
-} );
+} ) );

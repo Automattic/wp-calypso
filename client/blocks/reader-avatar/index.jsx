@@ -12,61 +12,66 @@ import SiteIcon from 'components/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-const ReaderAvatar = React.createClass( {
-	propTypes: {
-		author: React.PropTypes.object.isRequired,
-		siteIcon: React.PropTypes.string,
-		feedIcon: React.PropTypes.string
-	},
-
-	render() {
-		const { author, siteIcon, feedIcon } = this.props;
-
-		let fakeSite;
-		if ( siteIcon ) {
-			fakeSite = {
-				icon: {
-					img: siteIcon
-				}
-			};
-		} else if ( feedIcon ) {
-			fakeSite = {
-				icon: {
-					img: feedIcon
-				}
-			};
-		}
-
-		const hasSiteIcon = !! siteIcon;
-		let hasAvatar = !! ( author && author.has_avatar );
-
-		if ( hasSiteIcon && hasAvatar ) {
-			// do these both reference the same image? disregard querystring params.
-			const [ withoutQuery, ] = siteIcon.split( '?' );
-			if ( startsWith( author.avatar_URL, withoutQuery ) ) {
-				hasAvatar = false;
+const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = false } ) => {
+	let fakeSite;
+	if ( siteIcon ) {
+		fakeSite = {
+			icon: {
+				img: siteIcon
 			}
-		}
-
-		const hasBothIcons = hasSiteIcon && hasAvatar;
-
-		const classes = classnames(
-			'reader-avatar',
-			{
-				'has-site-and-author-icon': hasBothIcons,
-				'has-site-icon': hasSiteIcon,
-				'has-gravatar': hasAvatar
+		};
+	} else if ( feedIcon ) {
+		fakeSite = {
+			icon: {
+				img: feedIcon
 			}
-		);
-
-		return (
-			<div className={ classes }>
-				{ hasSiteIcon && <SiteIcon size={ 96 } site={ fakeSite } /> }
-				{ hasAvatar && <Gravatar user={ author } size={ hasBothIcons ? 32 : 96 } /> }
-			</div>
-		);
+		};
 	}
 
-} );
+	let hasSiteIcon = !! siteIcon;
+	let hasAvatar = !! ( author && author.has_avatar );
+
+	if ( hasSiteIcon && hasAvatar ) {
+		// Do these both reference the same image? Disregard query string params.
+		const [ withoutQuery, ] = siteIcon.split( '?' );
+		if ( startsWith( author.avatar_URL, withoutQuery ) ) {
+			hasAvatar = false;
+		}
+	}
+
+	// If we have an avatar and we prefer it, don't even consider the site icon
+	if ( hasAvatar && preferGravatar ) {
+		hasSiteIcon = false;
+	}
+
+	const hasBothIcons = hasSiteIcon && hasAvatar;
+
+	const classes = classnames(
+		'reader-avatar',
+		{
+			'has-site-and-author-icon': hasBothIcons,
+			'has-site-icon': hasSiteIcon,
+			'has-gravatar': hasAvatar
+		}
+	);
+
+	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ 96 } site={ fakeSite } />;
+	const feedIconElement = hasAvatar && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const iconElements = [ siteIconElement, feedIconElement ];
+
+	return (
+		<div className={ classes }>
+			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
+		</div>
+	);
+};
+
+ReaderAvatar.propTypes = {
+	author: React.PropTypes.object,
+	siteIcon: React.PropTypes.string,
+	feedIcon: React.PropTypes.string,
+	siteUrl: React.PropTypes.string,
+	preferGravatar: React.PropTypes.bool
+};
 
 export default localize( ReaderAvatar );

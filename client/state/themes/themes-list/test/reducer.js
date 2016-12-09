@@ -15,7 +15,7 @@ import {
 } from 'state/action-types';
 import reducer, { initialState, query } from '../reducer';
 
-describe( 'themes-last-query reducer', () => {
+describe( 'themes-list reducer', () => {
 	describe( 'persistence', () => {
 		it( 'does not persist state because this is not implemented yet', () => {
 			const jsObject = deepFreeze( {
@@ -31,8 +31,7 @@ describe( 'themes-last-query reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = fromJS( jsObject );
 			const persistedState = reducer( state, { type: SERIALIZE } );
@@ -52,8 +51,7 @@ describe( 'themes-last-query reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = reducer( jsObject, { type: DESERIALIZE } );
 			expect( state ).to.eql( initialState );
@@ -73,8 +71,7 @@ describe( 'themes-last-query reducer', () => {
 				queryState: {
 					isLastPage: true,
 					isFetchingNextPage: false
-				},
-				active: 0
+				}
 			} );
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( query( fromJS( jsObject ) ) );

@@ -3,21 +3,27 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import postActions from 'lib/posts/actions';
 import Tooltip from 'components/tooltip';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import { recordStat, recordEvent } from 'lib/posts/stats';
+import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 
-export default React.createClass( {
+const EditorSticky = React.createClass( {
 	displayName: 'EditorSticky',
 
 	propTypes: {
-		post: React.PropTypes.object
+		postId: React.PropTypes.number,
+		siteId: React.PropTypes.number,
+		sticky: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -30,7 +36,7 @@ export default React.createClass( {
 		let stickyStat;
 		let stickyEventLabel;
 
-		if ( ! this.props.post.sticky ) {
+		if ( ! this.props.sticky ) {
 			stickyStat = 'advanced_sticky_enabled_toolbar';
 			stickyEventLabel = 'On';
 		} else {
@@ -41,15 +47,16 @@ export default React.createClass( {
 		recordStat( stickyStat );
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( { sticky: ! this.props.post.sticky } );
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			sticky: ! this.props.sticky
+		} );
 		this.setState( { tooltip: false } );
 	},
 
 	render: function() {
 		const classes = classnames(
 			'editor-sticky',
-			{ 'is-sticky': this.props.post && this.props.post.sticky }
+			{ 'is-sticky': this.props.sticky }
 		);
 
 		return (
@@ -69,7 +76,7 @@ export default React.createClass( {
 					isVisible={ this.state.tooltip }
 					position="bottom left"
 				>
-					{ this.props.post && this.props.post.sticky
+					{ this.props.sticky
 						? <span>{ this.translate( 'Marked as sticky' ) }</span>
 						: <div>
 							{ this.translate( 'Mark as sticky' ) }
@@ -83,3 +90,18 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const postId = getEditorPostId( state );
+		const siteId = getSelectedSiteId( state );
+		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
+
+		return {
+			postId,
+			siteId,
+			sticky
+		};
+	},
+	{ editPost }
+)( EditorSticky );

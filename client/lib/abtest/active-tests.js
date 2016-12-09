@@ -15,24 +15,6 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
-	coldStartReader: {
-		datestamp: '20160901',
-		variations: {
-			noEmailColdStart: 33,
-			noEmailColdStartWithAutofollows: 33,
-			noChanges: 34
-		},
-		defaultVariation: 'noChanges',
-		allowExistingUsers: false,
-	},
-	domainSuggestionClickableRow: {
-		datestamp: '20160802',
-		variations: {
-			clickableRow: 20,
-			clickableButton: 80
-		},
-		defaultVariation: 'clickableButton'
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
@@ -71,23 +53,6 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	signupSurveyStep: {
-		datestamp: '20161010',
-		variations: {
-			surveyStepV1: 50,
-			surveyStepV2: 50,
-		},
-		defaultVariation: 'surveyStepV1'
-	},
-	readerSearchSuggestions: {
-		datestamp: '20160804',
-		variations: {
-			staffSuggestions: 50,
-			popularSuggestions: 50
-		},
-		defaultVariation: 'staffSuggestions',
-		allowExistingUsers: true
-	},
 	domainSuggestionPopover: {
 		datestamp: '20160809',
 		variations: {
@@ -97,22 +62,32 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
-	paidNuxStreamlined: {
-		datestamp: '20160912',
+	domainDotBlogSubdomain: {
+		datestamp: '20161208',
 		variations: {
-			original: 50,
-			streamlined: 50,
+			excludeDotBlogSubdomain: 50,
+			includeDotBlogSubdomain: 50,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'excludeDotBlogSubdomain',
+		allowAnyLocale: true,
 	},
-	readerFullPost: {
-		datestamp: '20160929',
+	designShowcaseWelcomeTour: {
+		datestamp: '20161206',
 		variations: {
-			current: 50,
-			refreshed: 50
+			enabled: 0,
+			disabled: 100,
 		},
-		defaultVariation: 'current',
-		allowExistingUsers: true
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
+	themeSheetWelcomeTour: {
+		datestamp: '20161206',
+		variations: {
+			enabled: 0,
+			disabled: 100,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
 	},
 	siteTitleStep: {
 		datestamp: '20160928',
@@ -123,13 +98,45 @@ module.exports = {
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
 	},
-	domainToPersonalPlanNudge: {
-		datestamp: '20161011',
+
+	jetpackConnectPlansFirst: {
+		datestamp: '20161024',
 		variations: {
-			original: 50,
-			nudge: 50
+			showPlansBeforeAuth: 50,
+			showPlansAfterAuth: 50
+		},
+		defaultVariation: 'showPlansAfterAuth',
+		allowExistingUsers: true
+	},
+
+	presaleChatButton: {
+		datestamp: '20161129',
+		variations: {
+			showChatButton: 50,
+			original: 50
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: false
-	}
+		allowAnyLocale: true,
+		allowExistingUsers: true,
+	},
+
+	noSurveyStep: {
+		datestamp: '20161202',
+		variations: {
+			showSurveyStep: 50,
+			hideSurveyStep: 50,
+		},
+		defaultVariation: 'showSurveyStep',
+		allowAnyLocale: true,
+	},
+
+	siteTitleTour: {
+		datestamp: '20161207',
+		variations: {
+			disabled: 100,
+			enabled: 0,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 };

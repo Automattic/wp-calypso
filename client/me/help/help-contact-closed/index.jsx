@@ -7,6 +7,7 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import purchasesPaths from 'me/purchases/paths';
 import supportUrls from 'lib/url/support';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import HelpContactClosedDetail from './detail';
@@ -53,7 +54,7 @@ export default localize( ( props ) => {
 					'If you require a refund, you can still request one directly from your {{link}}Purchases{{/link}} ' +
 					'screen.', {
 						components: {
-							link: <a href="/purchases" />
+							link: <a href={ purchasesPaths.purchasesRoot() } />
 						}
 					}
 				) }
