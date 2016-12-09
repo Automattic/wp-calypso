@@ -372,7 +372,7 @@
 		.foldable-card__content {
 			padding: 0;
 		}
- 	}
+	}
 
 	.foldable-card__expand .gridicon {
 		transform: rotate( -90deg );
@@ -395,8 +395,8 @@
 		border-bottom: none;
 	}
 
-  	&:after {
-    	background-color: inherit;
-    	margin-top: 20px;
+	&:after {
+		background-color: inherit;
+		margin-top: 20px;
 	}
 }
