@@ -574,7 +574,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
-				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } );
+				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } )
+				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
+				.reply( 400, 'some problem' );
 		} );
 
 		it( 'should dispatch success', () => {
@@ -595,16 +597,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( sinon.match.func );
 			} );
 		} );
-	} );
-
-	describe( '#initiateThemeTransfer', () => {
-		const siteId = '2211667';
-
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
-				.reply( 400, 'some problem' );
-		} );
 
 		it( 'should dispatch failure on error', () => {
 			initiateThemeTransfer( siteId, {} )( spy ).catch( () => {
@@ -615,35 +607,6 @@ describe( 'actions', () => {
 					siteId,
 				} );
 				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
-			} );
-		} );
-	} );
-
-	describe( '#initiateThemeTransfer', () => {
-		const siteId = '2211667';
-
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( `/rest/v1.1/sites/${ siteId }/automated-transfers/initiate` )
-				.reply( 200, { success: true, status: 'progress', transfer_id: 1, } );
-		} );
-
-		it( 'should do something on status failure', () => {
-			initiateThemeTransfer( siteId, {} )( spy ).then( () => {
-				expect( spy ).to.have.been.calledThrice;
-
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_INITIATE_REQUEST,
-					siteId,
-				} );
-
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_INITIATE_SUCCESS,
-					siteId,
-					transferId: 1,
-				} );
-
-				expect( spy ).to.have.been.calledWith( sinon.match.func );
 			} );
 		} );
 	} );
