@@ -12,7 +12,7 @@ import handlers from './wpcom';
  */
 export const middleware = store => next => action =>
 	// we won't use has( handlers, action.type )
-	// here becuase of performance implications
+	// here because of performance implications
 	// this function is run on every dispatch
 	!! handlers[ action.type ]
 		? handlers[ action.type ].forEach( handler => handler( store, action ) )
