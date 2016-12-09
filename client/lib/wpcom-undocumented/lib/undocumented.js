@@ -1494,6 +1494,25 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 	}, fn );
 };
 
+/**
+ * Install WordPress.com theme on Jetpack site
+ *
+ * @param {String}    siteId   The site ID
+ * @param {Object}    themeId  WordPress.com theme with -wpcom suffix
+ * @param {Function}  fn       The callback function
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.installWpcomThemeOnJetpack = function( siteId, themeId, fn ) {
+	const sitePath = `/sites/${ siteId }`;
+	const themePath = `/themes/${ themeId }`;
+	const path = sitePath + themePath + '/install';
+	debug( path );
+
+	return this.wpcom.req.post( {
+		path,
+	}, fn );
+};
+
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
