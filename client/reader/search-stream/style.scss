@@ -34,6 +34,18 @@
 	width: 830px;
 }
 
+/* clamp to 3 lines for search-rec excerpts except for those without images */
+ .is-reader-page .search-stream .reader-related-card-v2__excerpt.post-excerpt {
+	max-height: 15px * 1.6 * 3;
+}
+
+/* for recs without images give them some more height so more text shows */
+.is-reader-page .search-stream .reader-related-card-v2:not(has-thumbnail)
+		.reader-related-card-v2__excerpt.post-excerpt {
+
+	height: 130px; // the height of 3 lines of excerpt + the missing image
+}
+
 // Custom breakpoints needed to match Related Posts
 $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
