@@ -1498,14 +1498,12 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
  * Install .org or .com theme on Jetpack site
  *
  * @param {String}    siteId   The site ID
- * @param {Object}    themeId  WordPress.com theme needs -wpcom suffix
+ * @param {String}    themeId  WordPress.com theme needs -wpcom suffix
  * @param {Function}  fn       The callback function
  * @returns {Promise} promise
  */
 Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
-	const sitePath = `/sites/${ siteId }`;
-	const themePath = `/themes/${ themeId }`;
-	const path = sitePath + themePath + '/install';
+	const path = `/sites/${ siteId }/themes/${ themeId }/install`;
 	debug( path );
 
 	return this.wpcom.req.post( {
