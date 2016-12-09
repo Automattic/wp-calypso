@@ -45,12 +45,10 @@ const TransferData = React.createClass( {
 
 	componentWillMount() {
 		this.loadData();
-		this.loadWapiDomainInfo();
 	},
 
 	componentWillUpdate() {
 		this.loadData();
-		this.loadWapiDomainInfo();
 	},
 
 	loadData() {
@@ -62,9 +60,6 @@ const TransferData = React.createClass( {
 
 			this.prevSelectedSite = selectedSite;
 		}
-	},
-
-	loadWapiDomainInfo() {
 		fetchWapiDomainInfo( this.props.selectedDomainName );
 	},
 
