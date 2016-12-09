@@ -6,7 +6,7 @@
 	color: $gray;
 }
 
-.delete-user .author-selector__author-toggle .gravatar {
+.delete-user__single-site .author-selector__author-toggle .gravatar {
 	margin-left: 6px;
 	vertical-align: middle;
 }
@@ -15,7 +15,11 @@
 	margin: 0 3px 0 8px
 }
 
-.edit-team-member-form__remove-user .gridicon {
+.delete-user__remove-user .gridicon {
 	margin: -2px 4px 0 0;
 	vertical-align: middle;
+}
+
+.delete-user__remove-user {
+	cursor: pointer;
 }
