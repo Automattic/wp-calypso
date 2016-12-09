@@ -463,3 +463,17 @@ export function getPostMetadata( state, siteId, postId, key ) {
 
 	return get( find( post.metadata, { key } ), 'value', null );
 }
+
+export function isPostEditLocked( state, siteId, postId ) {
+	const lock = getPostMetadata( state, siteId, postId, '_edit_lock' );
+	if ( ! lock ) {
+		return false;
+	}
+
+	const [ timestamp, userId ] = lock.split( ':' );
+	if ( timestamp < ( Date.now() / 1000 ) - 150 ) {
+		return false;
+	}
+
+	return getCurrentUserId( state ) !== userId;
+}
