@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { map, partial, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -99,7 +99,8 @@ export class RecommendedPosts extends React.PureComponent {
 									<RelatedPostCard
 										post={ post }
 										onPostClick={ partial( handlePostClick, uiIndex ) }
-										onSiteClick={ partial( handleSiteClick, uiIndex ) } />
+										onSiteClick={ partial( handleSiteClick, uiIndex ) }
+										followSource={ this.props.followSource } />
 								</li> );
 							}
 						)
@@ -109,5 +110,11 @@ export class RecommendedPosts extends React.PureComponent {
 		);
 	}
 }
+
+RecommendedPosts.propTypes = {
+	index: PropTypes.number,
+	translate: PropTypes.function,
+	recommendations: PropTypes.object,
+};
 
 export default localize( RecommendedPosts );

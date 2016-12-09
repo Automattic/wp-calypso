@@ -46,7 +46,7 @@ function RecommendedPosts( { post, site } ) {
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
 			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } />
+				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource="empty-search-rec" />
 		</div>
 	);
 }
@@ -88,6 +88,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 			site={ this.props.site }
 			feed={ this.props.feed }
 			onClick={ this.onCardClick }
+			followSource="search-results"
 			onCommentClick={ this.onCommentClick }
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 		/>;

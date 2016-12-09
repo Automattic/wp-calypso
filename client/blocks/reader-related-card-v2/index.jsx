@@ -29,7 +29,7 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
+function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
 	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
@@ -49,7 +49,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick } ) {
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ siteName }</a>
 				</span>
 			</div>
-			<FollowButton siteUrl={ post.site_URL } />
+			<FollowButton siteUrl={ post.site_URL } followSource={ followSource } />
 		</div>
 	);
 }
@@ -85,7 +85,8 @@ function RelatedPostCardPlaceholder() {
 	);
 }
 
-export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSiteClick = noop,
+		followSource } ) {
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
 	}
@@ -102,7 +103,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 	return (
 		<Card className={ classes }>
 			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
-			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } />
+			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } followSource={ followSource } />
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ postClickTracker } >
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
