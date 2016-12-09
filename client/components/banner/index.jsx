@@ -36,7 +36,7 @@ class Banner extends Component {
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
-		feature: PropTypes.oneOf( [ ...getValidFeatureKeys() ] ),
+		feature: PropTypes.oneOf( getValidFeatureKeys() ),
 		href: PropTypes.string,
 		icon: PropTypes.string,
 		list: PropTypes.arrayOf( PropTypes.string ),
@@ -45,12 +45,12 @@ class Banner extends Component {
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		siteSlug: PropTypes.string,
 		title: PropTypes.string.isRequired,
-	}
+	};
 
 	static defaultProps = {
 		dismissTemporary: false,
 		onClick: noop,
-	}
+	};
 
 	getHref() {
 		const {
