@@ -9,7 +9,8 @@ var React = require( 'react' );
 var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	Main = require( 'components/main' ),
 	Button = require( 'components/button' ),
-	Card = require( 'components/card' );
+	Card = require( 'components/card' ),
+	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
 
@@ -19,11 +20,7 @@ module.exports = React.createClass( {
 		return (
 			<Main className="get-apps">
 				<MeSidebarNavigation />
-
-				<h1 className="get-apps__title">{ this.translate( 'Get Apps' ) }</h1>
-				<p className="get-apps__subheading">{ this.translate( 'Manage all your WordPress.com and Jetpack-enabled sites in one place. On your desktop, or on the go.' ) }</p>
-
-				<h2 className="form-section-heading">{ this.translate( 'Desktop apps' ) }</h2>
+				<SectionHeader label={ this.translate( 'Desktop apps' ) } />
 				<Card className="get-apps__desktop">
 
 					<section className="get-apps__app">
@@ -55,7 +52,7 @@ module.exports = React.createClass( {
 
 				</Card>
 
-				<h2 className="form-section-heading">{ this.translate( 'Mobile apps' ) }</h2>
+				<SectionHeader label={ this.translate( 'Mobile apps' ) } />
 				<Card className="get-apps__mobile">
 
 					<section className="get-apps__app">
