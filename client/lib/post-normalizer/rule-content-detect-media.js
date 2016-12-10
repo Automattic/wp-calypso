@@ -3,6 +3,7 @@
  */
 import { map, compact, includes, some, filter } from 'lodash';
 import getVideoId from 'get-video-id';
+import request from 'superagent';
 
 /**
  * Internal Dependencies
@@ -66,9 +67,9 @@ const detectImage = ( image ) => {
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
 const getAutoplayIframe = ( iframe ) => {
-	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
+	if ( includes( iframe.src, 'youtube' ) || includes( iframe.src, 'vimeo' ) ) {
 		const autoplayIframe = iframe.cloneNode();
-		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
+		if ( ! includes( autoplayIframe.src, '?' ) ) {
 			autoplayIframe.src += '?autoplay=1';
 		} else {
 			autoplayIframe.src += '&autoplay=1';
@@ -82,13 +83,21 @@ const getAutoplayIframe = ( iframe ) => {
  * @param {Node} iframe - the DOM node for the iframe
  * @returns {string} thumbnailUrl - the url for a thumbnail of the video, null if we cannot determine it
  */
-const getThumbnailUrl = ( iframe ) => {
-	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
+const getThumbnailUrlPromise = ( iframe ) => {
+	if ( includes( iframe.src, 'youtube' ) ) {
 		const videoId = getVideoId( iframe.src );
+		const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
 
-		return videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
+		return Promise.resolve( thumbnailUrl );
+	} else if ( includes( iframe.src, 'vimeo' ) ) {
+		const videoId = getVideoId( iframe.src );
+		const fetchUrl = `https://vimeo.com/api/v2/video/${ videoId }.json`;
+
+		return request.get( fetchUrl )
+			.then( resp => Promise.resolve( resp.body[ 0 ].thumbnail_large ) )
+			.catch( err => Promise.reject( err ) );
 	}
-	return null;
+	return Promise.reject();
 };
 
 const getEmbedType = ( iframe ) => {
@@ -133,7 +142,7 @@ const detectEmbed = ( iframe ) => {
 		height: height,
 		mediaType: 'video',
 		autoplayIframe: getAutoplayIframe( iframe ),
-		thumbnailUrl: getThumbnailUrl( iframe ),
+		thumbnailUrlPromise: getThumbnailUrlPromise( iframe ),
 	};
 };
 

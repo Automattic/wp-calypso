@@ -31,7 +31,7 @@ function isCandidateForFeature( media ) {
 		return isImageLargeEnoughForFeature( media );
 	} else if ( media.mediaType === 'video' ) {
 		// we need to have a thumbnail and know how to autoplay it
-		return media.thumbnailUrl && media.autoplayIframe;
+		return media.thumbnailUrlPromise && media.autoplayIframe;
 	}
 
 	return false;
