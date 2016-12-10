@@ -206,13 +206,19 @@ class TermFormDialog extends Component {
 	}
 
 	renderParentSelector() {
-		const { labels, siteId, taxonomy, translate } = this.props;
+		const { labels, siteId, taxonomy, translate, terms } = this.props;
 		const { searchTerm, selectedParent } = this.state;
 		const query = {};
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
 		const hideTermAndChildren = get( this.props.term, 'ID' );
+
+		// if there is only one term for the site, and we are editing that term
+		// do not show the parent selector
+		if ( hideTermAndChildren && terms && terms.length === 1 ) {
+			return null;
+		}
 
 		return (
 			<FormFieldset>
