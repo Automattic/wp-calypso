@@ -24,6 +24,11 @@ module.exports = {
 		providesDependencies: [ 'theme' ]
 	},
 
+	'design-store': {
+		stepName: 'design-store',
+		providesDependencies: [ 'designType' ]
+	},
+
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'designType' ]

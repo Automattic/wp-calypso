@@ -14,6 +14,7 @@ var config = require( 'config' ),
 	UserSignupComponent = require( 'signup/steps/user' );
 
 module.exports = {
+	'design-store': DesignTypeComponent,
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	domains: DomainsStepComponent,
