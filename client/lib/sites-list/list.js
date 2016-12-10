@@ -20,7 +20,6 @@ import { isPlan } from 'lib/products-values';
 import userUtils from 'lib/user/utils';
 import { withoutHttp } from 'lib/url';
 
-
 const debug = debugModule( 'calypso:sites-list' );
 
 /**
