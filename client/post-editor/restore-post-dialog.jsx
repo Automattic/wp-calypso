@@ -40,24 +40,6 @@ class EditorRestorePostDialog extends Component {
 		}
 	}
 
-	getDialogButtons = () => {
-		const { translate, onClose } = this.props;
-		return [
-			<FormButton
-				key="restore"
-				isPrimary={ true }
-				onClick={ this.restorePost }>
-					{ translate( 'Restore' ) }
-			</FormButton>,
-			<FormButton
-				key="back"
-				isPrimary={ false }
-				onClick={ onClose }>
-					{ translate( 'Don\'t restore' ) }
-			</FormButton>
-		];
-	}
-
 	getStrings = () => {
 		const { isAutosave, postType, translate } = this.props;
 		const isPage = postType === 'page';
@@ -86,11 +68,28 @@ class EditorRestorePostDialog extends Component {
 	}
 
 	render() {
+		const { onClose, translate } = this.props;
 		const strings = this.getStrings();
+
+		const dialogButtons = [
+			<FormButton
+				key="restore"
+				isPrimary={ true }
+				onClick={ this.restorePost }>
+					{ translate( 'Restore' ) }
+			</FormButton>,
+			<FormButton
+				key="back"
+				isPrimary={ false }
+				onClick={ onClose }>
+					{ translate( 'Don\'t restore' ) }
+			</FormButton>
+		];
+
 		return (
 			<Dialog
 				isVisible={ true }
-				buttons={ this.getDialogButtons() }
+				buttons={ dialogButtons }
 			>
 				<h1>{ strings.dialogTitle }</h1>
 				<p>{ strings.dialogContent }</p>
