@@ -23,6 +23,84 @@ export function isValidStateWithSchema( state, schema ) {
 }
 
 /**
+ * Creates a super-reducer as a map of reducers over keyed objects
+ *
+ * Use this when wanting to write reducers that operate
+ * on a single object as if it lived in isolation when
+ * really it lives in a map of similar objects referenced
+ * by some predesignated key or id. This could be used
+ * for example when reducing properties on a site object
+ * wherein we have many sites keyed by site id.
+ *
+ * Note! This will only apply the supplied reducer to
+ * the item referenced by the supplied key in the action.
+ *
+ * If no key exists whose name matches the given keyName
+ * then this super-reducer will abort and return the
+ * previous state.
+ *
+ * If some action should apply to every single item
+ * in the map of keyed objects, this utility cannot be
+ * used as it will only reduce the referenced item.
+ *
+ * @example
+ * const age = ( state = 0, action ) =>
+ *     GROW === action.type
+ *         ? state + 1
+ *         : state
+ *
+ * const title = ( state = 'grunt', action ) =>
+ *     PROMOTION === action.type
+ *         ? action.title
+ *         : state
+ *
+ * const userReducer = combineReducers( {
+ *     age,
+ *     title,
+ * } )
+ *
+ * export default keyedReducer( 'username', userReducer )
+ *
+ * dispatch( { type: GROW, username: 'hunter02' } )
+ *
+ * state.users === {
+ *     hunter02: {
+ *         age: 1,
+ *         title: 'grunt',
+ *     }
+ * }
+ *
+ * @param {string} keyName name of key in action referencing item in state map
+ * @param {function} reducer applied to referenced item in state map
+ * @return {function} super-reducer applying reducer over map of keyed items
+ */
+export const keyedReducer = ( keyName, reducer ) => ( state = {}, action ) => {
+	// the action must refer to some item in the map
+	const itemKey = action[ keyName ];
+
+	// if no reference exists abort
+	// and return unchanged state
+	if ( ! itemKey ) {
+		return state;
+	}
+
+	// pass the old sub-state from that item into the reducer
+	const oldState = state[ itemKey ];
+	const newState = reducer( oldState, action );
+
+	// and do nothing if the new sub-state matches the old sub-state
+	if ( newState === oldState ) {
+		return state;
+	}
+
+	// otherwise immutably update the super-state
+	return {
+		...state,
+		[ itemKey ]: newState,
+	};
+};
+
+/**
  * Given an action object or thunk, returns an updated object or thunk which
  * will include additional data in the action (as provided) when dispatched.
  *
@@ -116,3 +194,45 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		return state;
 	};
 }
+
+/**
+ * Creates schema-validating reducer
+ *
+ * Use this to wrap simple reducers with a schema-based
+ * validation check when loading the initial state from
+ * persistent storage.
+ *
+ * When this wraps a reducer with a known JSON schema,
+ * it will intercept the DESERIALIZE action (on app boot)
+ * and check if the persisted state is still valid state.
+ * If so it will return the persisted state, otherwise
+ * it will return the initial state computed from
+ * passing the null action.
+ *
+ * @example
+ * const ageReducer = ( state = 0, action ) =>
+ *     GROW === action.type
+ *         ? state + 1
+ *         : state
+ *
+ * const schema = { type: 'number', minimum: 0 }
+ *
+ * export const age = withSchemaValidation( schema, age )
+ *
+ * // ageReducer( -5, { type: DESERIALIZE } ) === -5
+ * // age( -5, { type: DESERIALIZE } ) === 0
+ * // age( 23, { type: DESERIALIZE } ) === 23
+ *
+ * @param {object} schema JSON-schema description of state
+ * @param {function} reducer normal reducer from ( state, action ) to new state
+ * @returns {function} wrapped reducer handling validation on DESERIALIZE
+ */
+export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
+	if ( DESERIALIZE === action.type ) {
+		return state && isValidStateWithSchema( state, schema )
+			? state
+			: reducer( undefined, { type: '@@dummy/INIT' } );
+	}
+
+	return reducer( state, action );
+};
