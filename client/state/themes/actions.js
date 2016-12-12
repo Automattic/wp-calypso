@@ -41,6 +41,9 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -414,6 +417,50 @@ export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId
+	};
+}
+
+/**
+ * Triggers a network request to activate a specific wpcom theme on a given Jetpack site.
+ * First step of the process is the installation of the theme on Jetpack site.
+ * Second step is the actuall activation.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
+export function activateWpcomThemeOnJetpack( siteId, themeId, source = 'unknown', purchased = false ) {
+	//Add -wpcom suffix. This suffix tells the endpoint that we want to
+	//install WordPress.com theme. Without the suffix endpoint would look
+	//for theme in .org
+	const wpcomThemeId = themeId + '-wpcom';
+	return dispatch => {
+		dispatch( {
+			type: THEME_ACTIVATE_ON_JETPACK_REQUEST,
+			wpcomThemeId,
+			siteId,
+		} );
+		dispatch( installWpcomThemeOnJetpack( siteId, wpcomThemeId ) )
+			.then( () => {
+				return dispatch( activateTheme( wpcomThemeId, siteId, source, purchased ) );
+			} )
+			.then( () => {
+				dispatch( {
+					type: THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
+					wpcomThemeId,
+					siteId,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
+					wpcomThemeId,
+					siteId,
+					error
+				} );
+			} );
 	};
 }
 
