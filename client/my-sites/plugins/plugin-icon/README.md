@@ -6,9 +6,9 @@ This component is used to display the icon for a plugin. It takes a plugin image
 #### How to use:
 
 ```js
-var PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' );
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
-render: function() {
+render() {
     return (
         <div className="your-stuff">
               <PluginIcon image={ plugin.icon } />
@@ -19,4 +19,6 @@ render: function() {
 
 #### Props
 
-* `image`: an image source.
+* `image` (`string`) - an image source.
+* `isPlaceholder` (`bool`) - `true` to display as a placeholder.
+* `className` (`string`) - A string that adds additional class names to this component.
