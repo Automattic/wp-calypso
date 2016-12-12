@@ -19,6 +19,7 @@ export default function() {
 			( context ) => page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) ) );
 		page( '/devdocs/app-components', '/devdocs/blocks' );
 		page( '/devdocs/blocks/:component?', controller.sidebar, controller.blocks );
+		page( '/devdocs/graph', controller.sidebar, controller.graph );
 		page( '/devdocs/start', controller.pleaseLogIn );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome );
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc );

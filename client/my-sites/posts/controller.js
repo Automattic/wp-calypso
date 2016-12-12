@@ -8,6 +8,8 @@ var page = require( 'page' ),
 	i18n = require( 'i18n-calypso' );
 
 import { Provider } from 'react-redux';
+import GraphProvider from 'lib/graph/GraphProvider';
+import createGraph from 'lib/graph';
 
 /**
  * Internal Dependencies
@@ -77,22 +79,25 @@ module.exports = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
+		const graph = createGraph( context.store );
 		ReactDom.render(
-			React.createElement( Provider, { store: context.store },
-				React.createElement( Posts, {
-					context: context,
-					siteID: siteID,
-					author: author,
-					statusSlug: statusSlug,
-					sites: sites,
-					search: search,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						baseAnalyticsPath,
-						analyticsPageTitle,
-						'Posts'
-					)
-				} )
+			React.createElement( GraphProvider, { graph },
+				React.createElement( Provider, { store: context.store },
+					React.createElement( Posts, {
+						context: context,
+						siteID: siteID,
+						author: author,
+						statusSlug: statusSlug,
+						sites: sites,
+						search: search,
+						trackScrollPage: trackScrollPage.bind(
+							null,
+							baseAnalyticsPath,
+							analyticsPageTitle,
+							'Posts'
+						)
+					} )
+				)
 			),
 			document.getElementById( 'primary' )
 		);

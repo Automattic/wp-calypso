@@ -75,6 +75,13 @@ export default React.createClass( {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="grid"
+							label="GraphiQL"
+							link="/devdocs/graph"
+							selected={ '/devdocs/graph' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="types"
 							label="Icons"
 							link="/devdocs/docs/icons.md"

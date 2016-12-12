@@ -20,6 +20,8 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import GraphProvider from 'lib/graph/GraphProvider';
+import createGraph from 'lib/graph';
 
 const user = userFactory();
 const sites = sitesFactory();
@@ -152,17 +154,20 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
+		const graph = createGraph( context.store );
 		renderWithReduxStore(
-			React.createElement( StatsComponent, {
-				site: site,
-				followList: followList,
-				commentsList: commentsList,
-				tagsList: tagsList,
-				wpcomFollowersList: wpcomFollowersList,
-				emailFollowersList: emailFollowersList,
-				commentFollowersList: commentFollowersList,
-				summaryDate: summaryDate
-			} ),
+			React.createElement( GraphProvider, { graph },
+				React.createElement( StatsComponent, {
+					site: site,
+					followList: followList,
+					commentsList: commentsList,
+					tagsList: tagsList,
+					wpcomFollowersList: wpcomFollowersList,
+					emailFollowersList: emailFollowersList,
+					commentFollowersList: commentFollowersList,
+					summaryDate: summaryDate
+				} )
+			),
 			document.getElementById( 'primary' ),
 			context.store
 		);

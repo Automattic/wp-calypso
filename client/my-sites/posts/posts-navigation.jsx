@@ -2,7 +2,9 @@
  * External Dependencies
  */
 import React from 'react';
-import Debug from 'debug';
+import { get } from 'lodash';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,11 +15,11 @@ import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
-import PostCountsStore from 'lib/posts/post-counts-store';
 import Gravatar from 'components/gravatar';
 import userLib from 'lib/user';
+import queryGraph from 'lib/graph/query';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const debug = new Debug( 'calypso:posts-navigation' );
 const user = userLib();
 
 // Path converter
@@ -28,9 +30,7 @@ const statusToDescription = {
 	trash: 'trashed'
 };
 
-export default React.createClass( {
-	displayName: 'PostsNavigation',
-
+const PostsNavigation = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
 		sites: React.PropTypes.object.isRequired,
@@ -41,45 +41,9 @@ export default React.createClass( {
 
 	mixins: [ URLSearch ],
 
-	getInitialState() {
-		var counts = this._getCounts(),
-			state = {
-				show: true,
-				loading: true,
-				counts: null === this.props.sites.selected ?
-					this._defaultCounts() :
-					this._getCounts()
-			};
-
-		if ( ! this.props.sites.selected || Object.keys( counts ).length ) {
-			state.loading = false;
-		}
-
-		return state;
-	},
-
-	componentWillMount() {
-		PostCountsStore.on( 'change', this._updatePostCounts );
-	},
-
-	componentWillUnmount() {
-		PostCountsStore.off( 'change', this._updatePostCounts );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteID !== nextProps.siteID ||
-			this.props.author !== nextProps.author ||
-			this.props.statusSlug !== nextProps.statusSlug ) {
-			this._setPostCounts( nextProps.siteID, nextProps.author ? 'mine' : 'all' );
-		}
-	},
-
 	render() {
-		if ( ! this.state.show ) {
-			return null;
-		}
-
-		if ( this.state.loading ) {
+		const loading = get( this.props.results, [ 'postsCount', 'requesting' ], true );
+		if ( loading ) {
 			return ( <SectionNav /> );
 		}
 
@@ -140,11 +104,13 @@ export default React.createClass( {
 	},
 
 	_getStatusTabs( author, siteFilter ) {
-		var statusItems = [],
-			status, selectedText, selectedCount;
+		const statusItems = [];
+		let status, selectedText, selectedCount;
+		const authorKey = author === '/my' ? 'mine' : 'all';
+		const counts = get( this.props.results, [ 'postsCount', authorKey ], {} );
 
 		for ( status in this.filterStatuses ) {
-			if ( 'undefined' === typeof this.state.counts[ status ] && 'publish' !== status ) {
+			if ( counts && ! counts[ status ] && 'publish' !== status ) {
 				continue;
 			}
 
@@ -154,8 +120,8 @@ export default React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = false !== this.state.counts[ status ]
-				? this.state.counts[ status ]
+			let count = counts && false !== counts[ status ]
+				? counts[ status ]
 				: false;
 
 			if ( path === this.props.context.pathname ) {
@@ -183,7 +149,7 @@ export default React.createClass( {
 
 		// set selectedText as `published` as default
 		selectedText = selectedText || 'published';
-		selectedCount = selectedCount || this.getCountByStatus( 'publish' );
+		selectedCount = selectedCount || ( counts && counts.publish );
 
 		let tabs = (
 			<NavTabs
@@ -248,126 +214,40 @@ export default React.createClass( {
 			</span>
 		);
 	},
-
-	_defaultCounts() {
-		var default_options = {},
-			status;
-
-		for ( status in statusToDescription ) {
-			default_options[ status ] = false;
-		}
-
-		return default_options;
-	},
-
-	_defaultStateOptions() {
-		this.setState( {
-			show: true,
-			loading: false,
-			counts: this._defaultCounts()
-		} );
-	},
-
-	/**
-	 * Set immediately post filters state
-	 *
-	 * @param {String} siteID - site ID
-	 * @param {String} scope - scope `all` or `mine`
-	 * @return {void}
-	 */
-	_setPostCounts( siteID, scope ) {
-		// print default filters for `All my Sites`
-		if ( ! siteID || null === this.props.sites.selected ) {
-			return this._defaultStateOptions();
-		}
-
-		if ( ! PostCountsStore.getTotalCount( siteID, 'all' ) ) {
-			return this.setState( {
-				show: true,
-				loading: true
-			} );
-		}
-
-		this.setState( {
-			show: true,
-			loading: false,
-			counts: this._getCounts( siteID, scope )
-		} );
-	},
-
-	_updatePostCounts( siteID = this.props.sites.selected, scope ) {
-		scope = scope || ( this.props.author ? 'mine' : 'all' );
-
-		// is `All my sites` selected`
-		if ( null === this.props.sites.selected ) {
-			return this._defaultStateOptions();
-		}
-
-		let state = {
-			show: true,
-			loading: false,
-			counts: {}
-		};
-
-		if ( PostCountsStore.getTotalCount( siteID, 'all' ) ) {
-			state.counts = this._getCounts( siteID, scope );
-		} else {
-			debug( '[%s] clean counts', siteID || 'All my sites' );
-			state.show = false;
-			state.counts = {};
-		}
-
-		this.setState( state );
-	},
-
-	/**
-	 * Return a counts object depending on current
-	 * counts for `all` scope, filling with zeros for
-	 * `me` scope.
-	 * Also calc and remove unallowed statuses.
-	 *
-	 * @param {String} siteID - Site identifier
-	 * @param {String} [scope] - Optional scope (mine or all)
-	 * @return {Object} counts
-	 */
-	_getCounts( siteID = this.props.sites.selected, scope ) {
-		var counts = {},
-			status;
-
-		scope = scope || ( this.props.author ? 'mine' : 'all' );
-		let all = PostCountsStore.get( siteID, 'all' );
-		let mine = PostCountsStore.get( siteID, 'mine' );
-
-		// make a copy of counts object
-		for ( status in all ) {
-			counts[ status ] = 'all' === scope ?
-				all[ status ] :
-				( mine[ status ] || 0 );
-		}
-
-		// join 'draft' and 'pending' statuses in 'draft'
-		if ( counts.draft || counts.pending ) {
-			counts.draft = ( counts.draft || 0 ) + ( counts.pending || 0 );
-			delete counts.pending;
-		}
-
-		// join 'public' and 'private' statuses in 'publish'
-		if ( counts.publish || counts.private ) {
-			counts.publish = ( counts.publish || 0 ) + ( counts.private || 0 );
-			delete counts.private;
-		}
-
-		return counts;
-	},
-
-	/**
-	 * Return count of the given status
-	 *
-	 * @param {String} status - status type
-	 * @return {Number|Null} return count of the given status
-	 */
-	getCountByStatus( status ) {
-		let count = this.state.counts[ status ];
-		return ( count !== false ) ? count : null;
-	}
 } );
+
+export default compose(
+	connect(
+		state => ( {
+			siteId: getSelectedSiteId( state )
+		} )
+	),
+	queryGraph(
+		`
+			query PostsCountNavigation( $siteId: Int, $postType: String )
+			{
+				postsCount( siteId: $siteId, postType: $postType ) {
+					mine {
+						publish
+						draft
+						trash
+						future
+					}
+					all {
+						publish
+						draft
+						trash
+						future
+					}
+					requesting
+				}
+			}
+		`,
+		( { siteId } ) => {
+			return {
+				siteId,
+				postType: 'post',
+			};
+		}
+	)
+)( PostsNavigation );

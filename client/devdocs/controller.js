@@ -8,6 +8,9 @@ import debounce from 'lodash/debounce';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
+import GraphProvider from 'lib/graph/GraphProvider';
+import createGraph from 'lib/graph';
+import GraphiQL from 'lib/graph/GraphiQL';
 
 /**
  * Internal dependencies
@@ -128,6 +131,16 @@ const devdocs = {
 			React.createElement( FormStateExamplesComponent, {
 				component: context.params.component
 			} ),
+			document.getElementById( 'primary' )
+		);
+	},
+
+	graph: function( context ) {
+		const graph = createGraph( context.store );
+		ReactDom.render(
+			React.createElement( GraphProvider, { graph },
+				React.createElement( GraphiQL )
+			),
 			document.getElementById( 'primary' )
 		);
 	},
