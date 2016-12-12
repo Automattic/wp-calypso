@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { initial, flatMap, trim, sampleSize } from 'lodash';
+import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
@@ -206,6 +206,32 @@ const SearchStream = React.createClass( {
 		return SearchCardAdapter( isRecommendations );
 	},
 
+	handleStreamMounted( ref ) {
+		this.streamRef = ref;
+	},
+
+	handleSearchBoxMounted( ref ) {
+		this.searchBoxRef = ref;
+	},
+
+	resizeSearchBox() {
+		if ( this.searchBoxRef && this.streamRef ) {
+			const width = this.streamRef.getClientRects()[ 0 ].width;
+			if ( width > 0 ) {
+				this.searchBoxRef.style.width = `${ width }px`;
+			}
+		}
+	},
+
+	componentDidMount() {
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
+		this.resizeSearchBox();
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.resizeListener );
+	},
+
 	placeholderFactory( { key, ...rest } ) {
 		if ( isRefreshedStream && ! this.props.query ) {
 			return (
@@ -244,7 +270,8 @@ const SearchStream = React.createClass( {
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<div className="search-stream__fixed-area">
+				<div ref={ this.handleStreamMounted } />
+				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							initialValue={ this.props.query }
