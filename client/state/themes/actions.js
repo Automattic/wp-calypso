@@ -425,11 +425,11 @@ export function clearActivated( siteId ) {
  * First step of the process is the installation of the theme on Jetpack site.
  * Second step is the actuall activation.
  *
- * @param  {String}   themeId   Theme ID
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {Number|String} siteId    Site ID
+ * @param  {String}        themeId   Theme ID, this should be standard id without -wpcom suffix.
+ * @param  {String}        source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}       purchased Whether the theme has been purchased prior to activation
+ * @return {Function}                Action thunk
  */
 export function activateWpcomThemeOnJetpack( siteId, themeId, source = 'unknown', purchased = false ) {
 	//Add -wpcom suffix. This suffix tells the endpoint that we want to
