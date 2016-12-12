@@ -27,7 +27,10 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-	SERVER_DESERIALIZE
+	SERVER_DESERIALIZE,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -77,6 +80,34 @@ export function activationRequests( state = {}, action ) {
 				...state,
 				[ action.siteId ]: THEME_ACTIVATE_REQUEST === action.type
 			};
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated Jetpack site wpcom theme activation requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
+ * boolean reflecting whether a request for the theme activation is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function activationRequestWpcomThemeOnJetpack( state = {}, action ) {
+	switch ( action.type ) {
+		case THEME_ACTIVATE_ON_JETPACK_REQUEST:
+		case THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS:
+		case THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ action.wpcomThemeId ]: THEME_ACTIVATE_ON_JETPACK_REQUEST === action.type
+				} )
+			} );
 
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -324,6 +355,7 @@ export default combineReducers( {
 	activeThemes,
 	activeThemeRequests,
 	activationRequests,
+	activationRequestWpcomThemeOnJetpack,
 	completedActivationRequests,
 	themesUI,
 	uploadTheme
