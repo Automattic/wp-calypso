@@ -1,3 +1,4 @@
+
 /**
  * External dependencies.
  */
@@ -2153,6 +2154,20 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
 	} );
+};
+
+/**
+ * Call endpoint that determines whether a site is eligible
+ * for automated transfer.
+ *
+ * @param {int} siteId -- the ID of the site
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.transferEligibility = function( siteId ) {
+	const path = `/sites/${ siteId }/automated-transfers/eligibility`;
+	debug( path );
+	return this.wpcom.req.get( { path } );
 };
 
 /**
