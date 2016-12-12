@@ -99,17 +99,33 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 	}
 
+	.reader-related-card-v2__post {
+		max-height: 205px;
+
+		@media #{$reader-related-card-v2-breakpoint-small} {
+			max-height: 100px;
+		}
+
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			max-height: 100px;
+		}
+
+		.reader-related-card-v2__excerpt {
+			-webkit-line-clamp: initial;
+		}
+	}
+
 	 .has-thumbnail {
 
 		.reader-related-card-v2__post {
-			max-height: 220px;
+			max-height: 200px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				max-height: 160px;
+				max-height: 145px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 160px;
+				max-height: 145px;
 			}
 		}
 
