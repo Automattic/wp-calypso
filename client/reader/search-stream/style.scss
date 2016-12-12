@@ -119,7 +119,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	 .has-thumbnail {
 
 		.reader-related-card-v2__post {
-			max-height: 199px;
+			max-height: 200px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
 				max-height: 145px;
