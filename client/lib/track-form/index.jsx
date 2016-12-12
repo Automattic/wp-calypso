@@ -11,11 +11,9 @@ export const trackForm = WrappedComponent => {
 			fields: {}
 		};
 
-		updateFields = ( fields, updateDirtyFields = true, callback ) => {
+		updateFields = ( fields, callback ) => {
 			const newState = {
-				dirtyFields: updateDirtyFields
-					? union( this.state.dirtyFields, Object.keys( fields ) )
-					: this.state.dirtyFields,
+				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
 				fields: {
 					...this.state.fields,
 					...fields
@@ -23,6 +21,15 @@ export const trackForm = WrappedComponent => {
 			};
 
 			this.setState( newState, callback );
+		};
+
+		replaceFields = ( fields, callback ) => {
+			const newFields = {
+				...this.state.fields,
+				...fields
+			};
+
+			this.setState( { fields: newFields }, callback );
 		};
 
 		clearDirtyFields = () => {
@@ -39,6 +46,7 @@ export const trackForm = WrappedComponent => {
 					fields={ fields }
 					dirtyFields={ dirtyFields }
 					updateFields={ this.updateFields }
+					replaceFields={ this.replaceFields }
 					clearDirtyFields={ this.clearDirtyFields }
 					{ ...this.props }
 				/>

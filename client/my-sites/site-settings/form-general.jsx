@@ -100,7 +100,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	componentWillMount() {
 		this._showWarning( this.props.site );
-		this.props.updateFields( {
+		this.props.replaceFields( {
 			fetchingSettings: true,
 			blogname: '',
 			blogdescription: '',
@@ -116,8 +116,8 @@ class SiteSettingsFormGeneral extends Component {
 			holidaysnow: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
-		}, false );
-		this.props.updateFields( this.getFormSettings( this.props.settings ), false );
+		} );
+		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -132,7 +132,7 @@ class SiteSettingsFormGeneral extends Component {
 			//If we have any fields that the user has updated,
 			//do not wipe out those fields from the poll update.
 			newState = omit( newState, nextProps.dirtyFields );
-			nextProps.updateFields( newState, false );
+			nextProps.replaceFields( newState );
 		}
 
 		if (
@@ -398,7 +398,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	handleAmpToggle = () => {
 		const { fields, updateFields } = this.props;
-		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, true, () => {
+		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
 			this.submitForm();
 			this.onRecordEvent( 'Clicked AMP Toggle' );
 		} );
