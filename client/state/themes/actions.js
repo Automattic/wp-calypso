@@ -432,22 +432,22 @@ export function activateWpcomThemeOnJetpack( siteId, themeId, source = 'unknown'
 	//Add -wpcom suffix. This suffix tells the endpoint that we want to
 	//install WordPress.com theme. Without the suffix endpoint would look
 	//for theme in .org
-	const wpcomThemeId = themeId + '-wpcom';
+	const suffixedThemeId = themeId + '-wpcom';
 	return dispatch => {
 		dispatch( {
 			type: THEME_ACTIVATE_REQUEST,
-			themeId: wpcomThemeId,
+			themeId: suffixedThemeId,
 			siteId,
 		} );
 
-		return wpcom.undocumented().installThemeOnJetpack( siteId, wpcomThemeId )
+		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
 			.then( () => {
-				return activateTheme( wpcomThemeId, siteId, source, purchased )( dispatch );
+				return activateTheme( suffixedThemeId, siteId, source, purchased )( dispatch );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					themeId: wpcomThemeId,
+					themeId: suffixedThemeId,
 					siteId,
 					error
 				} );
