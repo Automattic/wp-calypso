@@ -110,11 +110,11 @@ const Email = React.createClass( {
 			};
 		} else {
 			emptyContentProps = {
-				title: this.translate( "You don't have any domains yet." ),
+				title: this.translate( "Enable powerful email features." ),
 				line: this.translate(
-					'Add a domain to your site to make it easier ' +
-					'to remember and easier to share, and get access to email ' +
-					'forwarding, G Suite, and other email services.'
+					'To set up email forwarding, G Suite, and other email ' +
+					'services for your site, upgrade your site’s web address ' +
+					'to a professional custom domain.'
 				)
 			};
 		}
