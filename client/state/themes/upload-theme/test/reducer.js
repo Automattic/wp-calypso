@@ -12,6 +12,11 @@ import {
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
+	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_INITIATE_PROGRESS,
+	THEME_TRANSFER_INITIATE_REQUEST,
 } from 'state/action-types';
 import {
 	uploadedThemeId,
@@ -21,7 +26,7 @@ import {
 	inProgress,
 } from '../reducer';
 
-const themeId ='twentysixteen';
+const themeId = 'twentysixteen';
 
 const error = {
 	type: 'error',
@@ -63,6 +68,18 @@ describe( 'uploadedThemeId', () => {
 		} );
 		expect( state[ siteId ] ).to.be.undefined;
 	} );
+
+	it( 'should contain theme id after successful transfer with theme', () => {
+		const state = uploadedThemeId( {}, {
+			type: THEME_TRANSFER_STATUS_RECEIVE,
+			siteId,
+			transferId: 89,
+			status: 'complete',
+			message: 'transfer complete',
+			themeId,
+		} );
+		expect( state[ siteId ] ).to.deep.equal( themeId );
+	} );
 } );
 
 describe( 'uploadError', () => {
@@ -98,6 +115,25 @@ describe( 'uploadError', () => {
 		} );
 		expect( state[ siteId ] ).to.be.undefined;
 	} );
+
+	it( 'should contain error after failed transfer request', () => {
+		const state = uploadError( {}, {
+			type: THEME_TRANSFER_INITIATE_FAILURE,
+			siteId,
+			error,
+		} );
+		expect( state[ siteId ] ).to.deep.equal( error );
+	} );
+
+	it( 'should contain error after failed transfer status request', () => {
+		const state = uploadError( {}, {
+			type: THEME_TRANSFER_STATUS_FAILURE,
+			siteId,
+			transferId: 98,
+			error,
+		} );
+		expect( state[ siteId ] ).to.deep.equal( error );
+	} );
 } );
 
 describe( 'progressLoaded', () => {
@@ -125,6 +161,16 @@ describe( 'progressLoaded', () => {
 		} );
 		expect( state[ siteId ] ).to.be.undefined;
 	} );
+
+	it( 'should contain loaded amount after transfer progress action', () => {
+		const state = progressLoaded( {}, {
+			type: THEME_TRANSFER_INITIATE_PROGRESS,
+			siteId,
+			total: 100,
+			loaded: 50,
+		} );
+		expect( state[ siteId ] ).to.equal( 50 );
+	} );
 } );
 
 describe( 'progressTotal', () => {
@@ -151,6 +197,16 @@ describe( 'progressTotal', () => {
 			siteId,
 		} );
 		expect( state[ siteId ] ).to.be.undefined;
+	} );
+
+	it( 'should contain total amount after transfer progress action', () => {
+		const state = progressTotal( {}, {
+			type: THEME_TRANSFER_INITIATE_PROGRESS,
+			siteId,
+			total: 100,
+			loaded: 50,
+		} );
+		expect( state[ siteId ] ).to.equal( 100 );
 	} );
 } );
 
@@ -190,6 +246,33 @@ describe( 'inProgress', () => {
 		const state = inProgress( {}, {
 			type: THEME_UPLOAD_CLEAR,
 			siteId,
+		} );
+		expect( state[ siteId ] ).to.not.be.true;
+	} );
+
+	it( 'should be true on transfer initiate', () => {
+		const state = inProgress( {}, {
+			type: THEME_TRANSFER_INITIATE_REQUEST,
+			siteId,
+		} );
+		expect( state[ siteId ] ).to.be.true;
+	} );
+
+	it( 'should not be true on transfer status complete', () => {
+		const state = inProgress( {}, {
+			type: THEME_TRANSFER_STATUS_RECEIVE,
+			siteId,
+			themeId,
+			status: 'complete'
+		} );
+		expect( state[ siteId ] ).to.not.be.true;
+	} );
+
+	it( 'should not be true on transfer status failure', () => {
+		const state = inProgress( {}, {
+			type: THEME_TRANSFER_STATUS_FAILURE,
+			siteId,
+			error,
 		} );
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
