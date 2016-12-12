@@ -18,7 +18,8 @@ var Site = require( './site' ),
 	Me = require( './me' ),
 	MailingList = require( './mailing-list' ),
 	config = require( 'config' ),
-	i18n = require( 'lib/i18n-utils' );
+	i18n = require( 'lib/i18n-utils' ),
+	readerContentWidth = require( 'reader/lib/content-width' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -986,9 +987,20 @@ Undocumented.prototype.fetchPreviewMarkup = function( siteId, path, postData ) {
 	} );
 };
 
+function addReaderContentWidth( params ) {
+	if ( params.content_width ) {
+		return;
+	}
+	const contentWidth = readerContentWidth();
+	if ( contentWidth ) {
+		params.content_width = contentWidth;
+	}
+}
+
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
 	query.apiVersion = '1.3';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
@@ -1001,6 +1013,7 @@ Undocumented.prototype.readFollowingMine = function( query, fn ) {
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
 	query.apiVersion = '1.3';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
 
@@ -1019,6 +1032,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
 	params.apiVersion = '1.3';
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ) + '/posts', params, fn );
 };
@@ -1027,6 +1041,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.3';
+	addReaderContentWidth( query );
 
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.feedId ) + '/posts/' + encodeURIComponent( query.postId ), params, fn );
 };
@@ -1034,6 +1049,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 Undocumented.prototype.readSearch = function( query, fn ) {
 	debug( '/read/search', query );
 	const params = Object.assign( { apiVersion: '1.2' }, query );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
@@ -1056,6 +1072,7 @@ Undocumented.prototype.readTagPosts = function( query, fn ) {
 	} else {
 		params.apiVersion = '1.2';
 	}
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/tags/' + encodeURIComponent( query.tag ) + '/posts', params, fn );
 };
@@ -1070,6 +1087,7 @@ Undocumented.prototype.readTagImages = function( query, fn ) {
 Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 	debug( '/recommendations/posts' );
 	query.apiVersion = '1.2';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
@@ -1087,6 +1105,7 @@ Undocumented.prototype.readLiked = function( query, fn ) {
 	var params = clone( query );
 	debug( '/read/liked' );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/liked', params, fn );
 };
 
@@ -1101,6 +1120,7 @@ Undocumented.prototype.readListPosts = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list/:list/posts' );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/list/' + query.owner + '/' + query.slug + '/posts', params, fn );
 };
 
@@ -1189,12 +1209,14 @@ Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
 Undocumented.prototype.readSitePosts = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site/posts' );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
 };
 
 Undocumented.prototype.readSitePost = function( query, fn ) {
 	var params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
@@ -1202,6 +1224,7 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 	debug( '/read/site/:site/post/:post/related' );
 	const params = omit( query, [ 'site_id', 'post_id' ] );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/site/' + query.site_id + '/post/' + query.post_id + '/related', params, fn );
 };
 
