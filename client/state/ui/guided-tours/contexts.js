@@ -42,6 +42,13 @@ export const isUserOlderThan = age => state => {
 	return userAge !== false ? userAge >= age : false;
 };
 
+export const hasUserRegisteredBefore = date => state => {
+	const compareDate = date && Date.parse( date );
+	const user = getCurrentUser( state );
+	const registrationDate = user && Date.parse( user.date );
+	return ( registrationDate < compareDate );
+};
+
 export const hasUserInteractedWithComponent = componentName => state =>
 	getLastAction( state ).component === componentName;
 
