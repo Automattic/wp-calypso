@@ -79,7 +79,7 @@ const PlansNavigation = React.createClass( {
 					{ ! isJetpack && userCanManageOptions &&
 						<NavItem path={ `/domains/manage/email/${ site.slug }` } key="googleApps"
 							selected={ path === '/domains/manage/email' }>
-							{ this.translate( 'G Suite' ) }
+							{ this.translate( 'Email' ) }
 						</NavItem>
 					}
 				</NavTabs>
