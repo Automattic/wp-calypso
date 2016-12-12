@@ -14,7 +14,6 @@ import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { addSiteFragment } from 'lib/route';
 import QueryPostTypes from 'components/data/query-post-types';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SectionHeader from 'components/section-header';
@@ -110,7 +109,6 @@ class CustomPostTypesFieldset extends Component {
 				{ siteId && (
 					<QueryPostTypes siteId={ siteId } />
 				) }
-				<FormLabel>{ translate( 'Custom Content Types' ) }</FormLabel>
 				<p>
 					{ translate( 'Display different types of content on your site with {{link}}custom content types{{/link}}.', {
 						components: {
