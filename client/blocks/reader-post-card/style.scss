@@ -123,6 +123,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			}
 
 			.reader-post-card__post-details {
+				flex: 0 auto;
 				margin-top: -10px;
 			}
 
