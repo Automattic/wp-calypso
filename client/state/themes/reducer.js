@@ -103,11 +103,10 @@ export function activationRequestWpcomThemeOnJetpack( state = {}, action ) {
 		case THEME_ACTIVATE_ON_JETPACK_REQUEST:
 		case THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS:
 		case THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.wpcomThemeId ]: THEME_ACTIVATE_ON_JETPACK_REQUEST === action.type
-				} )
-			} );
+			return {
+				...state,
+				[ action.siteId ]: THEME_ACTIVATE_ON_JETPACK_REQUEST === action.type
+			};
 
 		case SERIALIZE:
 		case DESERIALIZE:

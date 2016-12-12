@@ -840,17 +840,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': true
-				}
+				'sitewithjetpack.com': true
 			} );
 		} );
 
 		it( 'should accumulate mappings', () => {
 			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': true
-				}
+				'sitewithjetpack.com': true
 			} ), {
 				type: THEME_ACTIVATE_ON_JETPACK_REQUEST,
 				siteId: 'anothersitewithjetpack.com',
@@ -858,20 +854,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': true
-				},
-				'anothersitewithjetpack.com': {
-					'pinboard-wpcom': true
-				}
+				'sitewithjetpack.com': true,
+				'anothersitewithjetpack.com': true
 			} );
 		} );
 
 		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
 			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': true
-				}
+				'sitewithjetpack.com': true
 			} ), {
 				type: THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
 				siteId: 'sitewithjetpack.com',
@@ -879,17 +869,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': false
-				}
+				'sitewithjetpack.com': false
 			} );
 		} );
 
 		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
 			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': true
-				}
+				'sitewithjetpack.com': true
 			} ), {
 				type: THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
 				siteId: 'sitewithjetpack.com',
@@ -898,17 +884,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': {
-					'karuna-wpcom': false
-				}
+				'sitewithjetpack.com': false
 			} );
 		} );
 
 		it( 'never persists state', () => {
 			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': {
-					karuna: true
-				}
+				'sitewithjetpack.com': true
 			} ), {
 				type: SERIALIZE
 			} );
@@ -918,9 +900,7 @@ describe( 'reducer', () => {
 
 		it( 'never loads persisted state', () => {
 			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': {
-					karuna: false
-				}
+				'sitewithjetpack.com': false
 			} ), {
 				type: DESERIALIZE
 			} );
