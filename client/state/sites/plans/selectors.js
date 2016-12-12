@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { find, get, includes } from 'lodash';
+
+import { find, get } from 'lodash';
 import debugFactory from 'debug';
 import moment from 'moment';
 
@@ -12,7 +13,8 @@ import { initialSiteState } from './reducer';
 import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
 import createSelector from 'lib/create-selector';
-import { PLANS_LIST } from 'lib/plans/constants';
+import { getPlan, getPlanPath, planHasFeature } from 'lib/plans';
+import { PLAN_FREE, PLANS_LIST } from 'lib/plans/constants';
 
 /**
  * Module dependencies
@@ -213,11 +215,6 @@ export function getSitePlanSlug( state, siteId ) {
 	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
 }
 
-// Duplicated from lib/plans. Proper solution in https://github.com/Automattic/wp-calypso/pull/9635
-function planHasFeature( plan, feature ) {
-	return includes( get( PLANS_LIST[ plan ], 'getFeatures', () => [] )(), feature );
-}
-
 /**
  * Whether a site's current plan includes a given feature
  *
@@ -228,4 +225,17 @@ function planHasFeature( plan, feature ) {
  */
 export function hasFeature( state, siteId, feature ) {
 	return planHasFeature( getSitePlanSlug( state, siteId ), feature );
+}
+
+export function canUpgradeToPlan( state, siteId, planKey ) {
+	const plan = getCurrentPlan( state, siteId );
+	const planSlug = get( plan, 'expired', false ) ? PLAN_FREE : get( plan, 'productSlug', PLAN_FREE );
+	return get( getPlan( planKey ), 'availableFor', () => false )( planSlug );
+}
+
+export function getUpgradePlanSlugFromPath( state, siteId, path ) {
+	return find( Object.keys( PLANS_LIST ), planKey => (
+		( planKey === path || getPlanPath( planKey ) === path ) &&
+		canUpgradeToPlan( state, siteId, planKey )
+	) );
 }

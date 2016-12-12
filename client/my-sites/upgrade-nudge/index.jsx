@@ -13,11 +13,13 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
-import { getValidFeatureKeys, hasFeature } from 'lib/plans';
+import { getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteOption, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const UpgradeNudge = React.createClass( {
 
@@ -65,42 +67,52 @@ const UpgradeNudge = React.createClass( {
 	},
 
 	shouldDisplay() {
-		const { feature, jetpack, shouldDisplay, site } = this.props;
+		const {
+			currentPlan,
+			feature,
+			hasWordads,
+			isJetpackSite: isJetpack,
+			jetpack,
+			siteId,
+			shouldDisplay
+		} = this.props;
+
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
-		if ( ! site ) {
+		if ( ! siteId ) {
 			return false;
 		}
-		if ( feature && hasFeature( feature, site.ID ) ) {
+		if ( feature && this.props.hasFeature( feature ) ) {
 			return false;
 		}
-		if ( ! feature && ! isFreePlan( site.plan ) ) {
+		if ( ! feature && ! isFreePlan( currentPlan ) ) {
 			return false;
 		}
-		if ( feature === 'no-adverts' && site.options.wordads ) {
+		if ( feature === 'no-adverts' && hasWordads ) {
 			return false;
 		}
-		if ( ! jetpack && site.jetpack || jetpack && ! site.jetpack ) {
+		if ( ! jetpack && isJetpack || jetpack && ! isJetpack ) {
 			return false;
 		}
 		return true;
 	},
 
 	render() {
-		const { site, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		const classes = classNames( this.props.className, 'upgrade-nudge' );
+
 		let href = this.props.href;
 
 		if ( ! this.shouldDisplay() ) {
 			return null;
 		}
 
-		if ( ! this.props.href && site ) {
+		if ( ! this.props.href && siteSlug ) {
 			if ( this.props.feature ) {
-				href = `/plans/${ site.slug }?feature=${ this.props.feature }`;
+				href = `/plans/${ siteSlug }?feature=${ this.props.feature }`;
 			} else {
-				href = `/plans/${ site.slug }`;
+				href = `/plans/${ siteSlug }`;
 			}
 		}
 
@@ -144,8 +156,16 @@ const UpgradeNudge = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-	} ),
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			hasWordads: getSiteOption( state, siteId, 'wordads' ),
+			isJetpackSite: isJetpackSite( state, siteId ),
+			siteId,
+			currentPlan: getCurrentPlan( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			hasFeature: ( feature ) => hasFeature( state, siteId, feature ),
+		};
+	},
 	{ recordTracksEvent }
 )( localize( UpgradeNudge ) );

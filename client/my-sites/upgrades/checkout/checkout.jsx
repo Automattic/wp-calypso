@@ -36,13 +36,11 @@ const analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
-import {
-	isValidFeatureKey,
-	getUpgradePlanSlugFromPath
-} from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import { getUpgradePlanSlugFromPath } from 'state/sites/plans/selectors';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -112,7 +110,7 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product );
+		const planSlug = this.props.getUpgradePlanSlugFromPath( this.props.sites.getSelectedSite().ID, this.props.product );
 
 		let cartItem,
 			cartMeta;
@@ -309,7 +307,8 @@ const Checkout = React.createClass( {
 module.exports = connect(
 	function( state ) {
 		return {
-			cards: getStoredCards( state )
+			cards: getStoredCards( state ),
+			getUpgradePlanSlugFromPath: ( siteId, path ) => getUpgradePlanSlugFromPath( state, siteId, path )
 		};
 	},
 	{
