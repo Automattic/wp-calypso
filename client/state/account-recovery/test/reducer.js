@@ -26,6 +26,12 @@ describe( '#account-recovery/isFetchingSettings reducer :', () => {
 	it( 'should unset isFetchingSettings flag on success.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
+			settings: {
+				email: '',
+				email_validated: true,
+				phone: {},
+				phone_validated: true,
+			},
 		} );
 
 		assert.isFalse( state.isFetchingSettings );
