@@ -29,7 +29,7 @@ const ThanksModal = React.createClass( {
 
 	propTypes: {
 		// Where is the modal being used?
-		source: React.PropTypes.oneOf( [ 'details', 'list' ] ).isRequired,
+		source: React.PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
 		isActivating: React.PropTypes.bool.isRequired,
 		hasActivated: React.PropTypes.bool.isRequired,
