@@ -42,6 +42,7 @@ class Tooltip extends Component {
 		const classes = classnames(
 			'popover',
 			'tooltip',
+			`is-${ this.props.status }`,
 			`is-${ this.props.position }`,
 			this.props.className
 		);
