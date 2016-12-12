@@ -13,11 +13,12 @@ import ThemeShowcase from './theme-showcase';
 
 const MultiSiteThemeShowcase = connectOptions(
 	( props ) => (
-		<ThemesSiteSelectorModal { ...props } sourcePath="/design">
-			<ThemeShowcase source="showcase">
-				<SidebarNavigation />
-			</ThemeShowcase>
-		</ThemesSiteSelectorModal>
+		<div>
+			<SidebarNavigation />
+			<ThemesSiteSelectorModal { ...props } sourcePath="/design">
+				<ThemeShowcase source="showcase" />
+			</ThemesSiteSelectorModal>
+		</div>
 	)
 );
 

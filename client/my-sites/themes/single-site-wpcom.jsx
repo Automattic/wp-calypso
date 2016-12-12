@@ -22,6 +22,7 @@ export default connectOptions(
 
 		return (
 			<div>
+				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
 				<UpgradeNudge
 					title={ translate( 'Get Custom Design with Premium' ) }
@@ -32,7 +33,6 @@ export default connectOptions(
 				<ThemeShowcase { ...props } siteId={ siteId }>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<SidebarNavigation />
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />

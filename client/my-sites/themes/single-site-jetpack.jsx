@@ -46,11 +46,11 @@ export default connectOptions(
 
 		return (
 			<div>
+				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
 				<ThemeShowcase { ...props } siteId={ siteId }>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<SidebarNavigation />
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
