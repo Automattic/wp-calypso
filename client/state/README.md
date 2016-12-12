@@ -93,6 +93,36 @@ They automatically benefit from the way `combineReducers` will immutably update 
 We are left with simple update expressions that are decoupled from the rest of the items in the collection.
 We are provided the opportunity to make straightforward tests without complicated mocks.
 
+#### Example
+
+```js
+const age = ( state = 0, action ) =>
+    GROW === action.type
+        ? state + 1
+        : state
+
+const title = ( state = 'grunt', action ) =>
+    PROMOTION === action.type
+        ? action.title
+        : state
+
+const userReducer = combineReducers( {
+    age,
+    title,
+} )
+
+export default keyedReducer( 'username', userReducer )
+
+dispatch( { type: GROW, username: 'hunter02' } )
+
+state.users === {
+    hunter02: {
+        age: 1,
+        title: 'grunt',
+    }
+}
+```
+
 ### withSchemaValidation( schema, reducer )
 
 When Calypso boots up it loads the last-known state out of persistent storage in the browser.
