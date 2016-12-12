@@ -166,7 +166,6 @@ const ThemeShowcase = React.createClass( {
 			<Main className="themes">
 				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
-				{ this.props.children }
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }
 						theme={ this.state.previewingTheme }
@@ -215,6 +214,7 @@ const ThemeShowcase = React.createClass( {
 					tier={ this.props.tier }
 					filter={ this.props.filter }
 					vertical={ this.props.vertical } />
+					{ this.props.children }
 			</Main>
 		);
 	}
