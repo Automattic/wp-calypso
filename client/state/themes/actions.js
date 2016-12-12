@@ -368,27 +368,23 @@ export function installWpcomThemeOnJetpack( siteId, wpcomThemeId ) {
 			wpcomThemeId
 		} );
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().installThemeOnJetpack( siteId, wpcomThemeId )
-				.then( ( theme ) => {
-					dispatch( receiveTheme( theme ) );
-					dispatch( {
-						type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
-						siteId,
-						wpcomThemeId
-					} );
-					resolve();
-				} )
-				.catch( ( error ) => {
-					dispatch( {
-						type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
-						siteId,
-						wpcomThemeId,
-						error
-					} );
-					reject( error );
+		return wpcom.undocumented().installThemeOnJetpack( siteId, wpcomThemeId )
+			.then( ( theme ) => {
+				dispatch( receiveTheme( theme ) );
+				dispatch( {
+					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+					siteId,
+					wpcomThemeId
 				} );
-		} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+					siteId,
+					wpcomThemeId,
+					error
+				} );
+			} );
 	};
 }
 

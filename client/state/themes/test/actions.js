@@ -880,7 +880,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
+			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
@@ -891,11 +891,11 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
+			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
-					themeId: 'pinboard',
+					wpcomThemeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
 			} );
