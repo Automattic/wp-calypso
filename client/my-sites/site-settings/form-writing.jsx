@@ -223,7 +223,7 @@ const SiteSettingsFormWriting = React.createClass( {
 				) }
 
 				{ config.isEnabled( 'press-this' ) && (
-					<div>
+					<div className="press-this">
 						{
 							this.renderSectionHeader( this.translate( 'Press This', {
 								context: 'name of browser bookmarklet tool'
@@ -231,7 +231,7 @@ const SiteSettingsFormWriting = React.createClass( {
 						}
 						<Card className="site-settings">
 							<FormFieldset>
-								<div className="press-this">
+								<div>
 									<p>{ this.translate( 'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.' ) }</p>
 									<p>{ this.translate( 'Use Press This to clip text, images and videos from any web page. Then edit and add more straight from Press This before you save or publish it in a post on your site.' ) }</p>
 									<p>{ this.translate( 'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites for a posting shortcut.' ) }</p>
