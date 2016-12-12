@@ -422,6 +422,10 @@ export function clearActivated( siteId ) {
  * First step of the process is the installation of the theme on Jetpack site.
  * Second step is the actuall activation.
  *
+ * Warning: this is working but not final version. It has a built in hack in form of
+ * dispatching THEME_ACTIVATE_REQUEST twice to mark process start and has no handlin
+ * of information about installation process except in failure scenario.
+ *
  * @param  {Number}   siteId    Site ID
  * @param  {String}   themeId   Theme ID, this should be standard id without -wpcom suffix.
  * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
