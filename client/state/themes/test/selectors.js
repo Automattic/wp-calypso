@@ -29,6 +29,7 @@ import {
 	getThemeForumUrl,
 	getActiveTheme,
 	isRequestingActiveTheme,
+	isWporgTheme,
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -129,6 +130,62 @@ describe( 'themes selectors', () => {
 			}, 2916284, 'twentysixteen' );
 
 			expect( theme ).to.equal( twentysixteen );
+		} );
+
+		context( 'on a Jetpack site', () => {
+			it( 'with a theme not found on WP.org, should return the theme object', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+
+				const theme = getTheme( {
+					themes: {
+						queries: {
+							2916284: new ThemeQueryManager( {
+								items: { twentyseventeen: jetpackTheme }
+							} )
+						}
+					}
+				}, 2916284, 'twentyseventeen' );
+
+				expect( theme ).to.deep.equal( jetpackTheme );
+			} );
+
+			it( 'with a theme found on WP.org, should return an object with some attrs merged from WP.org', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+				const wporgTheme = {
+					demo_uri: 'https://wp-themes.com/twentyseventeen',
+					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+					taxonomies: {
+						theme_feature: {
+							'custom-header': 'Custom Header'
+						}
+					}
+				};
+				const theme = getTheme( {
+					themes: {
+						queries: {
+							2916284: new ThemeQueryManager( {
+								items: { twentyseventeen: jetpackTheme }
+							} ),
+							wporg: new ThemeQueryManager( {
+								items: { twentyseventeen: wporgTheme }
+							} ),
+						}
+					}
+				}, 2916284, 'twentyseventeen' );
+
+				expect( theme ).to.deep.equal( {
+					...jetpackTheme,
+					...wporgTheme
+				} );
+			} );
 		} );
 	} );
 
@@ -1103,38 +1160,120 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeForumUrl', () => {
-		it( 'given a free theme, should return the general themes forum URL', () => {
-			const forumUrl = getThemeForumUrl(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentysixteen }
-							} )
+		context( 'on a WP.com site', () => {
+			it( 'given a free theme, should return the general themes forum URL', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
-					}
-				},
-				'twentysixteen'
-			);
+					},
+					'twentysixteen'
+				);
 
-			expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
+			} );
+
+			it( 'given a premium theme, should return the specific theme forum URL', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
+						}
+					},
+					'mood'
+				);
+
+				expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+			} );
 		} );
 
-		it( 'given a premium theme, should return the specific theme forum URL', () => {
-			const forumUrl = getThemeForumUrl(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood }
-							} )
+		context( 'on a Jetpack site', () => {
+			it( 'given a theme that\'s not found on WP.org, should return null', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
+						}
+					},
+					'twentysixteen',
+					77203074
+				);
+
+				expect( forumUrl ).to.be.null;
+			} );
+
+			it( 'given a theme that\'s found on WP.org, should return the correspoding WP.org theme forum URL', () => {
+				const jetpackTheme = {
+					id: 'twentyseventeen',
+					name: 'Twenty Seventeen',
+					author: 'the WordPress team',
+				};
+				const wporgTheme = {
+					demo_uri: 'https://wp-themes.com/twentyseventeen',
+					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+					taxonomies: {
+						theme_feature: {
+							'custom-header': 'Custom Header'
 						}
 					}
-				},
-				'mood'
-			);
+				};
 
-			expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {
+								77203074: new ThemeQueryManager( {
+									items: { twentyseventeen: jetpackTheme }
+								} ),
+								wporg: new ThemeQueryManager( {
+									items: { twentyseventeen: wporgTheme }
+								} )
+							}
+						}
+					},
+					'twentyseventeen',
+					77203074
+				);
+
+				expect( forumUrl ).to.equal( '//wordpress.org/support/theme/twentyseventeen' );
+			} );
 		} );
 	} );
 
@@ -1316,6 +1455,45 @@ describe( 'themes selectors', () => {
 		);
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isWporgTheme()', () => {
+		it( 'should return false if theme is not found on WP.org', () => {
+			const isWporg = isWporgTheme( {
+				themes: {
+					queries: {
+					}
+				}
+			}, 'twentyseventeen' );
+
+			expect( isWporg ).to.be.false;
+		} );
+
+		it( 'should return true if theme is found on WP.org', () => {
+			const wporgTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'wordpressdotorg',
+				demo_uri: 'https://wp-themes.com/twentyseventeen',
+				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+				taxonomies: {
+					theme_feature: {
+						'custom-header': 'Custom Header'
+					}
+				}
+			};
+			const isWporg = isWporgTheme( {
+				themes: {
+					queries: {
+						wporg: new ThemeQueryManager( {
+							items: { twentyseventeen: wporgTheme }
+						} ),
+					}
+				}
+			}, 'twentyseventeen' );
+
+			expect( isWporg ).to.be.true;
 		} );
 	} );
 

@@ -32,7 +32,6 @@ describe( 'main', function() {
 			mockery.registerMock( 'lib/analytics', {} );
 			mockery.registerMock( 'my-sites/themes/helpers', {
 				isPremium: noop,
-				getForumUrl: noop,
 				getDetailsUrl: noop,
 			} );
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );

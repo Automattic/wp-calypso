@@ -8,6 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import wporg from 'lib/wporg';
 import {
 	// Old action names
 	THEME_BACK_PATH_SET,
@@ -49,7 +50,12 @@ import {
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeIdFromStylesheet, filterThemesForJetpack, normalizeWpcomTheme } from './utils';
+import {
+	getThemeIdFromStylesheet,
+	filterThemesForJetpack,
+	normalizeWpcomTheme,
+	normalizeWporgTheme
+} from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -262,6 +268,29 @@ export function requestTheme( themeId, siteId ) {
 			siteId,
 			themeId
 		} );
+
+		if ( siteId === 'wporg' ) {
+			return wporg.fetchThemeInformation( themeId ).then( ( theme ) => {
+				// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
+				// if a theme can't be found.
+				if ( ! theme ) {
+					throw ( 'Theme not found' ); // Will be caught by .catch() below
+				}
+				dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: THEME_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+		}
 
 		if ( siteId === 'wpcom' ) {
 			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
