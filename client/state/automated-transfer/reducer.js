@@ -11,13 +11,12 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 } from 'state/utils';
-import { AUTOMATED_TRANSFER_STATUS as transferStatus } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 } from 'state/action-types';
 
-export const status = ( state = transferStatus.ALOOF, action ) =>
+export const status = ( state = null, action ) =>
 	SET_STATUS === action.type
 		? action.automatedTransferStatus
 		: state;

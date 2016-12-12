@@ -1,5 +1,4 @@
-export const AUTOMATED_TRANSFER_STATUS = {
-	ALOOF: 'aloof',
+export const transferStates = {
 	INQUIRING: 'inquiring',
 	START: 'start',
 	SETUP: 'setup',

@@ -1,8 +1,7 @@
 import { eligibility } from './eligibility/schema';
 
 export const status = {
-	type: 'number',
-	minimum: 1,
+	type: 'string',
 };
 
 export const automatedTransferSite = {
