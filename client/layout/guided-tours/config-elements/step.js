@@ -3,15 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
 import {
 	debounce,
 	defer,
-	find,
-	isEmpty,
-	mapValues,
-	omit,
-	property,
 } from 'lodash';
 import debugFactory from 'debug';
 
@@ -19,67 +13,25 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
-import ExternalLink from 'components/external-link';
-import Gridicon from 'components/gridicon';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
-import { tourBranching } from './config-parsing';
 import {
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
 	query,
 	targetForSlug,
-} from './positioning';
+} from '../positioning';
+import contextTypes from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
-const contextTypes = Object.freeze( {
-	branching: PropTypes.object.isRequired,
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-	start: PropTypes.func.isRequired,
-	isValid: PropTypes.func.isRequired,
-	isLastStep: PropTypes.bool.isRequired,
-	tour: PropTypes.string.isRequired,
-	tourVersion: PropTypes.string.isRequired,
-	sectionName: PropTypes.string.isRequired,
-	shouldPause: PropTypes.bool.isRequired,
-	step: PropTypes.string.isRequired,
-	lastAction: PropTypes.object,
-} );
 
 const anyFrom = ( obj ) => {
 	const key = Object.keys( obj )[ 0 ];
 	return key && obj[ key ];
 };
 
-export class Tour extends Component {
-	static propTypes = {
-		name: PropTypes.string.isRequired,
-		version: PropTypes.string,
-		path: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.arrayOf( PropTypes.string )
-		] ),
-		when: PropTypes.func,
-	};
-
-	static contextTypes = contextTypes;
-
-	render() {
-		const { children } = this.props;
-		const { step } = this.context;
-		const nextStep = Array.isArray( children )
-			? find( children, stepComponent =>
-				stepComponent.props.name === step )
-			: children;
-
-		return nextStep || null;
-	}
-}
-
-export class Step extends Component {
+export default class Step extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		placement: PropTypes.oneOf( [
@@ -297,243 +249,3 @@ export class Step extends Component {
 		);
 	}
 }
-
-export class Next extends Component {
-	static propTypes = {
-		step: PropTypes.string.isRequired,
-		children: PropTypes.node,
-	};
-
-	static contextTypes = contextTypes;
-
-	constructor( props, context ) {
-		super( props, context );
-	}
-
-	onClick = () => {
-		const { next, tour, tourVersion, step } = this.context;
-		const { step: nextStepName } = this.props;
-		next( { tour, tourVersion, step, nextStepName } );
-	}
-
-	render() {
-		const { children } = this.props;
-		return (
-			<Button primary onClick={ this.onClick }>
-				{ children || translate( 'Next' ) }
-			</Button>
-		);
-	}
-}
-
-export class Quit extends Component {
-	static propTypes = {
-		children: PropTypes.node,
-		primary: PropTypes.bool,
-	};
-
-	static contextTypes = contextTypes;
-
-	constructor( props, context ) {
-		super( props, context );
-	}
-
-	onClick = ( event ) => {
-		this.props.onClick && this.props.onClick( event );
-		const { quit, tour, tourVersion, step, isLastStep } = this.context;
-		quit( { tour, tourVersion, step, isLastStep } );
-	}
-
-	render() {
-		const { children, primary } = this.props;
-		return (
-			<Button onClick={ this.onClick } primary={ primary }>
-				{ children || translate( 'Quit' ) }
-			</Button>
-		);
-	}
-}
-
-export class Continue extends Component {
-	static contextTypes = contextTypes;
-
-	static propTypes = {
-		children: PropTypes.node,
-		click: PropTypes.bool,
-		hidden: PropTypes.bool,
-		icon: PropTypes.string,
-		step: PropTypes.string.isRequired,
-		target: PropTypes.string,
-		when: PropTypes.func,
-	};
-
-	constructor( props, context ) {
-		super( props, context );
-	}
-
-	componentDidMount() {
-		this.addTargetListener();
-	}
-
-	componentWillUnmount() {
-		this.removeTargetListener();
-	}
-
-	componentWillReceiveProps( nextProps, nextContext ) {
-		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
-	}
-
-	componentWillUpdate() {
-		this.removeTargetListener();
-	}
-
-	componentDidUpdate() {
-		this.addTargetListener();
-	}
-
-	onContinue = () => {
-		const { next, tour, tourVersion, step } = this.context;
-		const { step: nextStepName } = this.props;
-		next( { tour, tourVersion, step, nextStepName } );
-	}
-
-	addTargetListener() {
-		const { target = false, click, when } = this.props;
-		const targetNode = targetForSlug( target );
-
-		if ( click && ! when && targetNode && targetNode.addEventListener ) {
-			targetNode.addEventListener( 'click', this.onContinue );
-			targetNode.addEventListener( 'touchstart', this.onContinue );
-		}
-	}
-
-	removeTargetListener() {
-		const { target = false, click, when } = this.props;
-		const targetNode = targetForSlug( target );
-
-		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
-			targetNode.removeEventListener( 'click', this.onContinue );
-			targetNode.removeEventListener( 'touchstart', this.onContinue );
-		}
-	}
-
-	defaultMessage() {
-		return this.props.icon
-			? translate( 'Click the {{icon/}} to continue.', {
-				components: { icon: <Gridicon icon={ this.props.icon } size={ 24 } /> }
-			} )
-			: translate( 'Click to continue.' );
-	}
-
-	render() {
-		if ( this.props.hidden ) {
-			return null;
-		}
-
-		return (
-			<p className="guided-tours__actionstep-instructions">
-				<em>{ this.props.children || this.defaultMessage() }</em>
-			</p>
-		);
-	}
-}
-
-export const ButtonRow = ( { children } ) => {
-	const className = React.Children.count( children ) === 1
-		? 'guided-tours__single-button-row'
-		: 'guided-tours__choice-button-row';
-
-	return <div className={ className }>{ children }</div>;
-};
-
-export class Link extends Component {
-	constructor( props ) {
-		super( props );
-	}
-
-	render() {
-		/* eslint-disable react/jsx-no-target-blank */
-		return (
-			<div className="guided-tours__external-link">
-				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
-			</div>
-		);
-		/* eslint-enable react/jsx-no-target-blank */
-	}
-}
-
-export const makeTour = tree => {
-	return class extends Component {
-		static propTypes = {
-			isValid: PropTypes.func.isRequired,
-			lastAction: PropTypes.object,
-			next: PropTypes.func.isRequired,
-			quit: PropTypes.func.isRequired,
-			shouldPause: PropTypes.bool.isRequired,
-			stepName: PropTypes.string.isRequired,
-		};
-
-		static childContextTypes = contextTypes;
-
-		static meta = omit( tree.props, 'children' );
-
-		getChildContext() {
-			return this.tourMeta;
-		}
-
-		constructor( props, context ) {
-			super( props, context );
-			this.setTourMeta( props );
-			debug( 'Anonymous#constructor', props, context );
-		}
-
-		componentWillReceiveProps( nextProps ) {
-			debug( 'Anonymous#componentWillReceiveProps' );
-			this.setTourMeta( nextProps );
-		}
-
-		setTourMeta( props ) {
-			const {
-				isValid,
-				lastAction,
-				next,
-				quit,
-				start,
-				sectionName,
-				shouldPause,
-				stepName,
-			} = props;
-			const step = stepName;
-			const branching = tourBranching( tree );
-			this.tourMeta = {
-				next, quit, start, isValid, lastAction, sectionName, shouldPause,
-				step,
-				branching,
-				isLastStep: this.isLastStep( { step, branching } ),
-				tour: tree.props.name,
-				tourVersion: tree.props.version,
-			};
-		}
-
-		isLastStep( { step, branching } ) {
-			return isEmpty( branching[ step ] );
-		}
-
-		render() {
-			return tree;
-		}
-	};
-};
-
-export const combineTours = tours => (
-	class AllTours extends Component {
-		static meta = mapValues( tours, property( 'meta' ) );
-		render() {
-			debug( 'AllTours#render' );
-			const MyTour = tours[ this.props.tourName ];
-			return MyTour
-				? <MyTour { ...omit( this.props, 'tourName' ) } />
-				: null;
-		}
-	}
-);
