@@ -93,6 +93,7 @@ export default connectOptions(
 						filter={ props.filter }
 						vertical={ props.vertical } />
 				</ThemeShowcase>
-			</div>		);
+			</div>
+		);
 	}
 );
