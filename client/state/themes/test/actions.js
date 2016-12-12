@@ -860,38 +860,38 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch install theme request action when triggered', () => {
-			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy );
+			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL_ON_JETPACK_REQUEST,
 				siteId: 'jetpackenabledsite.com',
-				themeId: 'karuna'
+				wpcomThemeId: 'karuna-wpcom'
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy ).then( () => {
+			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
 					siteId: 'jetpackenabledsite.com',
-					themeId: 'karuna',
+					wpcomThemeId: 'karuna-wpcom',
 				} );
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist' )( spy ).then( () => {
+			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
-					themeId: 'typist',
+					wpcomThemeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
 				} );
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard' )( spy ).then( () => {
+			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
