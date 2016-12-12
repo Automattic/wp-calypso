@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
+import sinon, { match } from 'sinon';
 import { expect } from 'chai';
 
 /**
@@ -81,9 +81,13 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail when the request fails', () => {
-			fetchByDomain( '' )( spy ).then( () => {
+			fetchByDomain( noUpgradeDomain )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: GOOGLE_APPS_USERS_FETCH_FAILED
+					type: GOOGLE_APPS_USERS_FETCH_FAILED,
+					error: match( {
+						statusCode: 400,
+						error: 'upgrade_required',
+					} )
 				} );
 			} );
 		} );
@@ -137,9 +141,13 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail when the request fails', () => {
-			fetchBySiteId( '' )( spy ).then( () => {
+			fetchBySiteId( noUpgradeSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: GOOGLE_APPS_USERS_FETCH_FAILED
+					type: GOOGLE_APPS_USERS_FETCH_FAILED,
+					error: match( {
+						statusCode: 400,
+						error: 'upgrade_required',
+					} )
 				} );
 			} );
 		} );
