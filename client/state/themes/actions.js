@@ -442,9 +442,10 @@ export function activateWpcomThemeOnJetpack( siteId, themeId, source = 'unknown'
 			wpcomThemeId,
 			siteId,
 		} );
-		dispatch( installWpcomThemeOnJetpack( siteId, wpcomThemeId ) )
+
+		return wpcom.undocumented().installThemeOnJetpack( siteId, wpcomThemeId )
 			.then( () => {
-				return dispatch( activateTheme( wpcomThemeId, siteId, source, purchased ) );
+				dispatch( activateTheme( wpcomThemeId, siteId, source, purchased ) );
 			} )
 			.then( () => {
 				dispatch( {
