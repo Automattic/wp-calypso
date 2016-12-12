@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
+import suggestions from './suggestions/reducer';
 import {
 	USER_RECEIVE,
 	DESERIALIZE,
@@ -35,5 +36,6 @@ export function items( state = {}, action ) {
 }
 
 export default combineReducers( {
-	items
+	items,
+	suggestions
 } );
