@@ -27,7 +27,7 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-	SERVER_DESERIALIZE
+	SERVER_DESERIALIZE,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
