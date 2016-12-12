@@ -76,25 +76,11 @@ describe( 'middleware', () => {
 	} );
 
 	describe( 'recordEventOnce', () => {
-		it( 'should not dispatch anything when event already recorded', () => {
-			const getState = () => ( {
-				analytics: {
-					chicken: true
-				}
-			} );
+		it( 'should dispatch the record event action only once', () => {
+			recordEventOnce( 'ribs', 'ga', { label: 'label' } )( spy );
+			recordEventOnce( 'ribs', 'ga', { label: 'label' } )( spy );
 
-			recordEventOnce( 'chicken', 'ga', { label: 'label' } )( spy, getState );
-			expect( spy ).to.not.have.been.called;
-		} );
-
-		it( 'should not dispatch anything when event already recorded', () => {
-			const getState = () => ( {
-				analytics: {
-					chicken: true
-				}
-			} );
-
-			recordEventOnce( 'ribs', 'ga', { label: 'label' } )( spy, getState );
+			expect( spy ).to.have.been.calledOnce;
 			expect( spy ).to.have.been.calledWith( {
 				type: ANALYTICS_EVENT_RECORD,
 				meta: {
@@ -102,7 +88,6 @@ describe( 'middleware', () => {
 						type: ANALYTICS_EVENT_RECORD,
 						payload: {
 							service: 'ga',
-							eventId: 'ribs',
 							label: 'label'
 						}
 					} ]
