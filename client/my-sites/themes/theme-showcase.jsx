@@ -214,9 +214,7 @@ const ThemeShowcase = React.createClass( {
 					search={ search }
 					tier={ this.props.tier }
 					filter={ this.props.filter }
-					vertical={ this.props.vertical }
-					queryParams={ this.props.queryParams }
-					themesList={ this.props.themesList } />
+					vertical={ this.props.vertical } />
 			</Main>
 		);
 	}
