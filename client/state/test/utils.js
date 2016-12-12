@@ -22,12 +22,21 @@ describe( 'utils', () => {
 		} ),
 		actionSerialize = { type: SERIALIZE },
 		actionDeserialize = { type: DESERIALIZE };
-	let extendAction, createReducer, reducer;
+	let createReducer;
+	let extendAction;
+	let keyedReducer;
+	let reducer;
+	let withSchemaValidation;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
 
-		( { extendAction, createReducer } = require( 'state/utils' ) );
+		( {
+			createReducer,
+			extendAction,
+			keyedReducer,
+			withSchemaValidation,
+		} = require( 'state/utils' ) );
 	} );
 
 	describe( 'extendAction()', () => {
@@ -233,6 +242,76 @@ describe( 'utils', () => {
 
 			expect( monitor ).to.have.been.calledThrice;
 			expect( state ).to.eql( [ 0, 1 ] );
+		} );
+	} );
+
+	describe( '#keyedReducer', () => {
+		const grow = name => ( { type: 'GROW', name } );
+
+		const age = ( state = 0, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+
+		const prevState = {
+			Bonobo: 13,
+		};
+
+		it( 'should create keyed state given simple reducers', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( undefined, grow( 'Calypso' ) ) ).to.eql( {
+				Calypso: 1
+			} );
+		} );
+
+		it( 'should only affect the keyed item in a collection', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( prevState, grow( 'Calypso' ) ) ).to.eql( {
+				Bonobo: 13,
+				Calypso: 1,
+			} );
+		} );
+
+		it( 'should skip if no key is provided in the action', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( prevState, { type: 'GROW' } ) ).to.equal( prevState );
+		} );
+
+		it( 'should return without changes if no actual changes occur', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( prevState, { type: 'STAY', name: 'Bonobo' } ) ).to.equal( prevState );
+		} );
+	} );
+
+	describe( '#withSchemaValidation', () => {
+		const load = { type: DESERIALIZE };
+		const normal = { type: 'NORMAL' };
+		const schema = {
+			type: 'number',
+			minimum: 0,
+		};
+
+		const age = ( state = 0, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+
+		it( 'should invalidate DESERIALIZED state', () => {
+			const validated = withSchemaValidation( schema, age );
+
+			expect( validated( -5, load ) ).to.equal( 0 );
+		} );
+
+		it( 'should not invalidate normal state', () => {
+			const validated = withSchemaValidation( schema, age );
+
+			expect( validated( -5, normal ) ).to.equal( -5 );
+		} );
+
+		it( 'should validate initial state', () => {
+			const validated = withSchemaValidation( schema, age );
+
+			expect( validated( 5, load ) ).to.equal( 5 );
 		} );
 	} );
 } );

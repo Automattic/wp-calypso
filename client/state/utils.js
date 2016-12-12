@@ -85,18 +85,18 @@ export const keyedReducer = ( keyName, reducer ) => ( state = {}, action ) => {
 	}
 
 	// pass the old sub-state from that item into the reducer
-	const oldState = state[ itemKey ];
-	const newState = reducer( oldState, action );
+	const oldItemState = state[ itemKey ];
+	const newItemState = reducer( oldItemState, action );
 
 	// and do nothing if the new sub-state matches the old sub-state
-	if ( newState === oldState ) {
+	if ( newItemState === oldItemState ) {
 		return state;
 	}
 
 	// otherwise immutably update the super-state
 	return {
 		...state,
-		[ itemKey ]: newState,
+		[ itemKey ]: newItemState,
 	};
 };
 
@@ -231,7 +231,7 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
 	if ( DESERIALIZE === action.type ) {
 		return state && isValidStateWithSchema( state, schema )
 			? state
-			: reducer( undefined, { type: '@@dummy/INIT' } );
+			: reducer( undefined, { type: '@@calypso/INIT' } );
 	}
 
 	return reducer( state, action );
