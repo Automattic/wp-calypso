@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { map, compact, includes, some, filter } from 'lodash';
-import getVideoId from 'get-video-id';
+import getEmbedMetadata from 'get-video-id';
 
 /**
  * Internal Dependencies
@@ -66,7 +66,8 @@ const detectImage = ( image ) => {
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
 const getAutoplayIframe = ( iframe ) => {
-	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
+	const metadata = getEmbedMetadata( iframe.src );
+	if ( metadata && metadata.service === 'youtube' ) {
 		const autoplayIframe = iframe.cloneNode();
 		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
 			autoplayIframe.src += '?autoplay=1';
@@ -83,11 +84,15 @@ const getAutoplayIframe = ( iframe ) => {
  * @returns {string} thumbnailUrl - the url for a thumbnail of the video, null if we cannot determine it
  */
 const getThumbnailUrl = ( iframe ) => {
-	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
-		const videoId = getVideoId( iframe.src );
-
-		return videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
+	const metadata = getEmbedMetadata( iframe.src );
+	if ( ! metadata ) {
+		return null;
 	}
+
+	if ( metadata.service === 'youtube' ) {
+		return `https://img.youtube.com/vi/${ metadata.id }/mqdefault.jpg`;
+	}
+
 	return null;
 };
 
