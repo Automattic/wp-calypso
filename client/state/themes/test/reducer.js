@@ -21,9 +21,6 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	SERIALIZE,
 	DESERIALIZE
@@ -37,7 +34,6 @@ import reducer, {
 	themeRequestErrors,
 	activeThemes,
 	activationRequests,
-	activationRequestWpcomThemeOnJetpack,
 	activeThemeRequests,
 	completedActivationRequests,
 } from '../reducer';
@@ -82,7 +78,6 @@ describe( 'reducer', () => {
 			'activeThemes',
 			'activeThemeRequests',
 			'activationRequests',
-			'activationRequestWpcomThemeOnJetpack',
 			'completedActivationRequests',
 			'themesUI',
 			'uploadTheme'
@@ -817,90 +812,6 @@ describe( 'reducer', () => {
 		it( 'never loads persisted state', () => {
 			const state = activationRequests( deepFreeze( {
 				2916284: true
-			} ), {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-	} );
-
-	describe( '#activationRequestWpcomThemeOnJetpack()', () => {
-		it( 'should default to an empty object', () => {
-			const state = activationRequestWpcomThemeOnJetpack( undefined, {} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'should map site ID, theme ID to true value if request in progress', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_ON_JETPACK_REQUEST,
-				siteId: 'sitewithjetpack.com',
-				wpcomThemeId: 'karuna-wpcom'
-			} );
-
-			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': true
-			} );
-		} );
-
-		it( 'should accumulate mappings', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': true
-			} ), {
-				type: THEME_ACTIVATE_ON_JETPACK_REQUEST,
-				siteId: 'anothersitewithjetpack.com',
-				wpcomThemeId: 'pinboard-wpcom'
-			} );
-
-			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': true,
-				'anothersitewithjetpack.com': true
-			} );
-		} );
-
-		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': true
-			} ), {
-				type: THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
-				siteId: 'sitewithjetpack.com',
-				wpcomThemeId: 'karuna-wpcom'
-			} );
-
-			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': false
-			} );
-		} );
-
-		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': true
-			} ), {
-				type: THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
-				siteId: 'sitewithjetpack.com',
-				wpcomThemeId: 'karuna-wpcom',
-				error: { message: 'The theme is already installed' }
-			} );
-
-			expect( state ).to.deep.equal( {
-				'sitewithjetpack.com': false
-			} );
-		} );
-
-		it( 'never persists state', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': true
-			} ), {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		it( 'never loads persisted state', () => {
-			const state = activationRequestWpcomThemeOnJetpack( deepFreeze( {
-				'sitewithjetpack.com': false
 			} ), {
 				type: DESERIALIZE
 			} );

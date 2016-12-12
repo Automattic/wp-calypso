@@ -28,9 +28,6 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -456,18 +453,18 @@ describe( 'actions', () => {
 			activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEME_ACTIVATE_ON_JETPACK_REQUEST,
+				type: THEME_ACTIVATE_REQUEST,
 				siteId: 'jetpackenabledsite.com',
-				wpcomThemeId: 'karuna-wpcom'
+				themeId: 'karuna-wpcom'
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme activate request success action when request completes', () => {
 			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_ACTIVATE_ON_JETPACK_REQUEST_SUCCESS,
+					type: THEME_ACTIVATE_REQUEST,
 					siteId: 'jetpackenabledsite.com',
-					wpcomThemeId: 'karuna-wpcom',
+					themeId: 'karuna-wpcom',
 				} );
 			} );
 		} );
@@ -475,9 +472,9 @@ describe( 'actions', () => {
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
 			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
-					wpcomThemeId: 'typist-wpcom',
+					themeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
 				} );
 			} );
@@ -486,9 +483,9 @@ describe( 'actions', () => {
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
 			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_ACTIVATE_ON_JETPACK_REQUEST_FAILURE,
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 'jetpackenabledsite.com',
-					wpcomThemeId: 'pinboard-wpcom',
+					themeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
 			} );
