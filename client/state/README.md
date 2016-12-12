@@ -133,3 +133,20 @@ This can be done by passing a schema into a call to `createReducer()`, but somet
 This helper produces a new reducer given an original reducer and schema.
 The new reducer will automatically validate the persisted state when Calypso loads and reinitialize if it isn't valid.
 It is in most regards a lightweight version of `createReducer()`.
+
+#### Example
+
+```js
+const ageReducer = ( state = 0, action ) =>
+	GROW === action.type
+		? state + 1
+		: state
+
+const schema = { type: 'number', minimum: 0 }
+
+export const age = withSchemaValidation( schema, age )
+
+ageReducer( -5, { type: DESERIALIZE } ) === -5
+age( -5, { type: DESERIALIZE } ) === 0
+age( 23, { type: DESERIALIZE } ) === 23
+```

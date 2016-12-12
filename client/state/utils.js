@@ -219,9 +219,9 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  *
  * export const age = withSchemaValidation( schema, age )
  *
- * // ageReducer( -5, { type: DESERIALIZE } ) === -5
- * // age( -5, { type: DESERIALIZE } ) === 0
- * // age( 23, { type: DESERIALIZE } ) === 23
+ * ageReducer( -5, { type: DESERIALIZE } ) === -5
+ * age( -5, { type: DESERIALIZE } ) === 0
+ * age( 23, { type: DESERIALIZE } ) === 23
  *
  * @param {object} schema JSON-schema description of state
  * @param {function} reducer normal reducer from ( state, action ) to new state
