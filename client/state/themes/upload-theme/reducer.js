@@ -17,7 +17,6 @@ import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
-	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/action-types';
@@ -103,11 +102,15 @@ export const inProgress = createReducer( {}, {
 		...state,
 		[ siteId ]: false,
 	} ),
-	[ THEME_TRANSFER_INITIATE_SUCCESS ]: ( state, { siteId } ) => ( {
+	[ THEME_TRANSFER_STATUS_RECEIVE ]: ( state, { siteId, status } ) => ( {
+		...state,
+		[ siteId ]: ! status === 'complete',
+	} ),
+	[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: false,
 	} ),
-	[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId } ) => ( {
+	[ THEME_TRANSFER_STATUS_FAILURE ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: false,
 	} ),
