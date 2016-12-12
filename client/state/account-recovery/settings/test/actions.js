@@ -66,7 +66,7 @@ describe( 'account-recovery actions', () => {
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-				...dummyData,
+				settings: dummyData,
 			} ) );
 		},
 		postConditionFailed: () => {
@@ -82,7 +82,7 @@ describe( 'account-recovery actions', () => {
 			const action = accountRecoveryFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-				...dummyData,
+				settings: dummyData,
 			} );
 		} );
 	} );

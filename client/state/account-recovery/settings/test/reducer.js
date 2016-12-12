@@ -24,20 +24,24 @@ import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import reducer from '../reducer';
 
 describe( '#account-recovery reducer fetch:', () => {
-	const expectedData = {
+	const expectedState = {
 		email: dummyData.email,
 		emailValidated: dummyData.email_validated,
-		phone: dummyData.phone,
+
+		phoneCountryCode: dummyData.phone.country_code,
+		phoneCountryNumericCode: dummyData.phone.country_numeric_code,
+		phoneNumber: dummyData.phone.number,
+		phoneNumberFull: dummyData.phone.number_full,
 		phoneValidated: dummyData.phone_validated,
 	};
 
 	it( 'should return an initial object with the settings data.', () => {
 		const initState = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-			...dummyData,
+			settings: dummyData,
 		} );
 
-		assert.deepEqual( initState.data, expectedData );
+		assert.deepEqual( initState.data, expectedState );
 	} );
 } );
 
@@ -47,7 +51,7 @@ describe( '#account-recovery/settings reducer:', () => {
 	beforeEach( () => {
 		initState = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-			...dummyData,
+			settings: dummyData,
 		} );
 	} );
 
@@ -60,7 +64,10 @@ describe( '#account-recovery/settings reducer:', () => {
 
 		assert.deepEqual( state.data, {
 			...initState.data,
-			phone: dummyNewPhone,
+			phoneCountryCode: dummyNewPhone.country_code,
+			phoneCountryNumericCode: dummyNewPhone.country_numeric_code,
+			phoneNumber: dummyNewPhone.number,
+			phoneNumberFull: dummyNewPhone.number_full,
 		} );
 	} );
 
@@ -70,7 +77,10 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: 'phone',
 		} );
 
-		assert.deepEqual( state.data.phone, {} );
+		assert.equal( state.data.phoneCountryCode, '' );
+		assert.equal( state.data.phoneCountryNumericCode, '' );
+		assert.equal( state.data.phoneNumber, '' );
+		assert.equal( state.data.phoneNumberFull, '' );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {

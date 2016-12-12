@@ -50,21 +50,52 @@ const isDeleting = createReducer( {}, {
 	} ),
 } );
 
+const convertPhoneProperties = ( rawPhone ) => {
+	const {
+		country_code,
+		country_numeric_code,
+		number,
+		number_full,
+	} = rawPhone;
+
+	return {
+		phoneCountryCode: country_code,
+		phoneCountryNumericCode: country_numeric_code,
+		phoneNumber: number,
+		phoneNumberFull: number_full,
+	};
+};
+
 const data = createReducer( null, {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
-		...state,
-		email,
-		emailValidated: email_validated,
-		phone,
-		phoneValidated: phone_validated
-	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) => {
+		const {
+			email,
+			email_validated,
+			phone,
+			phone_validated,
+		} = settings;
+
+		return {
+			...state,
+			email,
+			emailValidated: email_validated,
+			...convertPhoneProperties( phone ),
+			phoneValidated: phone_validated
+		};
+	},
 
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) => {
 		switch ( target ) {
 			case 'phone':
-				return { ...state, phone: value };
+				return {
+					...state,
+					...convertPhoneProperties( value ),
+				};
 			case 'email':
-				return { ...state, email: value };
+				return {
+					...state,
+					email: value,
+				};
 			default: // do nothing to unknown targets
 				return { ...state };
 		}
@@ -73,9 +104,18 @@ const data = createReducer( null, {
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) => {
 		switch ( target ) {
 			case 'phone':
-				return { ...state, phone: {} };
+				return {
+					...state,
+					phoneCountryCode: '',
+					phoneCountryNumericCode: '',
+					phoneNumber: '',
+					phoneNumberFull: '',
+				};
 			case 'email':
-				return { ...state, email: '' };
+				return {
+					...state,
+					email: '',
+				};
 			default: // do nothing to unknown targets
 				return { ...state };
 		}

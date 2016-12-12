@@ -20,10 +20,10 @@ import {
 const TARGET_PHONE = 'phone';
 const TARGET_EMAIL = 'email';
 
-export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
+export const accountRecoveryFetchSuccess = ( settings ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-		...accountRecoverySettings,
+		settings,
 	};
 };
 
