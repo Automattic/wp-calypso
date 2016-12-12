@@ -33,6 +33,7 @@ import {
 	themeActivated,
 	clearActivated,
 	activateTheme,
+	activateWpcomThemeOnJetpack,
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
@@ -510,6 +511,94 @@ describe( 'actions', () => {
 
 			return activateTheme( 'badTheme', 2211667, trackingData )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( themeActivationFailure );
+			} );
+		} );
+	} );
+
+	describe( '#activateWpcomThemeOnJetpack', () => {
+		const successResponse = {
+			id: 'karuna-wpcom',
+			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
+			active: false,
+			name: 'Karuna',
+			theme_uri: 'https://wordpress.com/themes/karuna/',
+			description: 'Karuna is a clean business theme designed with health and wellness-focused sites in mind.' +
+				' With bright, bold colors, prominent featured images, and support for customer testimonials',
+			author: 'Automattic',
+			author_uri: 'http://wordpress.com/themes/',
+			version: '1.1.0',
+			autoupdate: false,
+			log: [
+				[
+					'Unpacking the package&#8230;',
+					'Installing the theme&#8230;',
+					'Theme installed successfully.'
+				]
+			]
+		};
+
+		const downloadFailureResponse = {
+			status: 400,
+			code: 'problem_fetching_theme',
+			message: 'Problem downloading theme'
+		};
+
+		const alreadyInstalledFailureResponse = {
+			status: 400,
+			code: 'theme_already_installed',
+			message: 'The theme is already installed'
+		};
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/karuna-wpcom/install' )
+				.reply( 200, successResponse )
+				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/typist-wpcom/install' )
+				.reply( 400, downloadFailureResponse )
+				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/pinboard-wpcom/install' )
+				.reply( 400, alreadyInstalledFailureResponse );
+		} );
+
+		it( 'should dispatch activate theme request action when triggered', () => {
+			activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: THEME_ACTIVATE_REQUEST,
+				siteId: 'jetpackenabledsite.com',
+				themeId: 'karuna-wpcom'
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme activate request success action when request completes', () => {
+			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_ACTIVATE_REQUEST,
+					siteId: 'jetpackenabledsite.com',
+					themeId: 'karuna-wpcom',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
+			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist' )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					siteId: 'jetpackenabledsite.com',
+					themeId: 'typist-wpcom',
+					error: sinon.match( { message: 'Problem downloading theme' } ),
+				} );
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
+			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard' )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					siteId: 'jetpackenabledsite.com',
+					themeId: 'pinboard-wpcom',
+					error: sinon.match( { message: 'The theme is already installed' } ),
+				} );
 			} );
 		} );
 	} );
