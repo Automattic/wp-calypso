@@ -17,10 +17,7 @@ const themeSchema = {
 		'id',
 		'name',
 		'author',
-		'screenshot',
-		'stylesheet',
-		'demo_uri',
-		'author_uri'
+		'screenshot'
 	]
 };
 
@@ -28,7 +25,7 @@ export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
 		// Site ID
-		'^(wpcom|\\d+)$': {
+		'^(wpcom|wporg|\\d+)$': {
 			type: 'object',
 			properties: {
 				data: {
@@ -80,7 +77,7 @@ export const queriesSchema = {
 export const activeThemesSchema = {
 	type: 'object',
 	patternProperties: {
-		'^(wpcom|\\d+)$': {
+		'^\\d+$': {
 			description: 'Theme ID',
 			type: 'string'
 		}

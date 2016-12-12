@@ -11,13 +11,14 @@ import { translate } from 'i18n-calypso';
  */
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
-import { getForumUrl, trackClick } from './helpers';
+import { trackClick } from './helpers';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
 	getActiveTheme,
 	getTheme,
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
+	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme
 } from 'state/themes/selectors';
@@ -82,7 +83,7 @@ const ThanksModal = React.createClass( {
 			<li>
 				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
-						a: <a href={ getForumUrl( this.props.currentTheme ) }
+						a: <a href={ this.props.forumUrl }
 							onClick={ this.onLinkClick( 'support' ) } />
 					}
 				} ) }
@@ -209,6 +210,7 @@ export default connect(
 			currentTheme,
 			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
 			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
+			forumUrl: getThemeForumUrl( state, currentThemeId ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
 			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) )
 		};

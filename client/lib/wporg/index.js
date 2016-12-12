@@ -95,5 +95,39 @@ module.exports = {
 			.end( function( err, data ) {
 				callback( err, data.body );
 			} );
-	}
+	},
+	/**
+	 * Get information about a given theme from the WordPress.org API.
+	 * If provided with a callback, will call that on succes with an object with theme details.
+	 * Otherwise, will return a promise.
+	 *
+	 * @param {string}     themeId  The theme identifier.
+	 * @param {function}   callback Callback that gets executed after the XHR returns the results.
+	 * @returns {?Promise} Promise  that is returned if no callback parameter is passed
+	 */
+	fetchThemeInformation: function( themeId, callback ) {
+		const url = 'https://api.wordpress.org/themes/info/1.1/';
+		const query = { action: 'theme_information', 'request[slug]': themeId };
+		// if callback is provided, behave traditionally
+		if ( 'function' === typeof callback ) {
+			return superagent
+				.get( url )
+				.set( 'Accept', 'application/json' )
+				.query( query )
+				.end( ( err, { body } ) => {
+					callback( err, body );
+				} );
+		}
+
+		// otherwise, return a Promise
+		return new Promise( ( resolve, reject ) => {
+			return superagent
+				.get( url )
+				.set( 'Accept', 'application/json' )
+				.query( query )
+				.end( ( err, { body } ) => {
+					err ? reject( err ) : resolve( body );
+				} );
+		} );
+	},
 };
