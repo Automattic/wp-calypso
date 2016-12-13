@@ -23,9 +23,13 @@ import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 
 import {
+	updateAccountRecoveryEmail,
+	deleteAccountRecoveryEmail,
+} from 'state/account-recovery/settings/actions';
+
+import {
 	getAccountRecoveryEmail,
 } from 'state/account-recovery/settings/selectors';
-
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUser } from 'state/users/selectors';
 
@@ -60,9 +64,10 @@ const SecurityCheckup = React.createClass( {
 				<CompactCard>
 					<RecoveryEmail
 						primaryEmail={ this.props.primaryEmail }
-						recoveryEmail={ this.props.accountRecoveryEmail }
+						accountRecoveryEmail={ this.props.accountRecoveryEmail }
+						updateAccountRecoveryEmail={ this.props.updateAccountRecoveryEmail }
+						deleteAccountRecoveryEmail={ this.props.deleteAccountRecoveryEmail }
 					/>
-					<RecoveryEmail userSettings={ this.props.userSettings } />
 				</CompactCard>
 
 				<CompactCard>
@@ -78,5 +83,9 @@ export default connect(
 	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
-	} )
+	} ),
+	{
+		updateAccountRecoveryEmail,
+		deleteAccountRecoveryEmail,
+	}
 )( localize( SecurityCheckup ) );

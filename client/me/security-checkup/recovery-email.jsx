@@ -41,7 +41,7 @@ class RecoveryEmail extends Component {
 		// const primaryEmail = this.props.userSettings.getSetting( 'user_email' );
 		const {
 			primaryEmail,
-			recoveryEmail,
+			accountRecoveryEmail,
 			translate,
 		} = this.props;
 
@@ -50,8 +50,8 @@ class RecoveryEmail extends Component {
 				type="email"
 				isLoading={ this.state.loading }
 				title={ translate( 'Recovery Email Address' ) }
-				subtitle={ recoveryEmail ? recoveryEmail : translate( 'Not set' ) }
-				hasValue={ !! recoveryEmail }
+				subtitle={ accountRecoveryEmail ? accountRecoveryEmail : translate( 'Not set' ) }
+				hasValue={ !! accountRecoveryEmail }
 				lastNotice={ this.state.lastNotice }
 
 				onSave={ this.onSave }
@@ -60,20 +60,23 @@ class RecoveryEmail extends Component {
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }
-						storedEmail={ recoveryEmail }
+						storedEmail={ accountRecoveryEmail }
 						/>
 				</ManageContact>
 		);
 	}
 
-	onSave = ( email ) => {
-		SecurityCheckupActions.updateEmail( email, this.state.data.email );
+	onSave = ( newEmail ) => {
+		// TODO:
+		// check if email !== primaryEmail
+		this.props.updateAccountRecoveryEmail( newEmail );
+		// SecurityCheckupActions.updateEmail( email, this.state.data.email );
 	}
 
 	onDelete = () => {
 		accept( this.props.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
 			if ( accepted ) {
-				SecurityCheckupActions.deleteEmail();
+				this.props.deleteAccountRecoveryEmail();
 			}
 		} );
 	}
