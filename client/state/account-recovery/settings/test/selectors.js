@@ -78,7 +78,6 @@ describe( '#account-recovery/settings/selectors', () => {
 		} );
 	} );
 
-
 	describe( '#getAccountRecoveryPhoneCountryCode', () => {
 		it( 'should return a default value on absence', () => {
 			assert.equal( getAccountRecoveryPhoneCountryCode( stateBeforeFetching ), '' );
