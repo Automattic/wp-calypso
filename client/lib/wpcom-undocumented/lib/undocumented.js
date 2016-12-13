@@ -1041,7 +1041,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.3';
-	addReaderContentWidth( query );
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.feedId ) + '/posts/' + encodeURIComponent( query.postId ), params, fn );
 };
