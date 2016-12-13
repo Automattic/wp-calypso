@@ -11,7 +11,7 @@ export const items = {
 	},
 	87654321: {
 		isActive: true,
-		isStaging: false,
+		isStaging: true,
 		devMode: {
 			isActive: true,
 			constant: false,

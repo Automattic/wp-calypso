@@ -38,3 +38,15 @@ export function getJetpackConnectionStatus( state, siteId ) {
 export function isJetpackSiteInDevelopmentMode( state, siteId ) {
 	return get( getJetpackConnectionStatus( state, siteId ), [ 'devMode', 'isActive' ], null );
 }
+
+/**
+ * Returns true if we the Jetpack site is in staging mode. False otherwise.
+ * Returns null if the site is unknown, or there is no information yet.
+ *
+ * @param  {Object}   state    Global state tree
+ * @param  {String}   siteId   The ID of the site we're querying
+ * @return {?Boolean}          Whether the site is in staging mode.
+ */
+export function isJetpackSiteInStagingMode( state, siteId ) {
+	return get( getJetpackConnectionStatus( state, siteId ), [ 'isStaging' ], null );
+}
