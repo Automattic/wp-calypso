@@ -123,7 +123,8 @@ const ThemesSelection = React.createClass( {
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
-					isPurchased={ this.props.isThemePurchased } />
+					isPurchased={ this.props.isThemePurchased }
+					loading={ this.props.isRequesting } />
 			</div>
 		);
 	},
