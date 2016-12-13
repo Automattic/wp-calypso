@@ -116,7 +116,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2.card.is-compact {
 	box-shadow: none;
-	flex: 1;
+	flex: 1 1 auto;
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
