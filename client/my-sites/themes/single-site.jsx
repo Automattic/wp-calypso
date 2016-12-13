@@ -64,6 +64,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				'purchase',
 				'activate',
 				'tryandcustomize',
+				'upload',
 				'separator',
 				'info',
 				'support',
@@ -71,7 +72,9 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			] }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
-			source="showcase" />
+			source="showcase"
+			showUploadButton={ true }
+		/>
 	);
 };
 

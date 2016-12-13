@@ -80,11 +80,8 @@ const tryandcustomize = {
 
 const upload = {
 	label: i18n.translate( 'Upload Theme' ),
-	getUrl: getUploadUrl,
-
-	// TODO make this in a proper way after we will be able to support more elaborate scenarios
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId )
-}
+	getUrl: getUploadUrl
+};
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.

@@ -425,11 +425,7 @@ export function getUploadUrl( state, theme, siteId ) {
 		return null;
 	}
 
-	if ( isJetpackSite( state, siteId ) ) {
-		return `/design/upload/${ getSiteSlug( state, siteId ) }`;
-	}
-
-	return null;
+	return `/design/upload/${ getSiteSlug( state, siteId ) }`;
 }
 
 /**
