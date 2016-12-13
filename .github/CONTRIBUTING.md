@@ -3,6 +3,7 @@
 Hi! Thank you for your interest in contributing to Calypso, we really appreciate it.
 
 There are many ways to contribute – reporting bugs, feature suggestions, fixing bugs, submitting pull requests for enhancements.
+With over 10,000 PRs we have merged all sorts of different contributions from within Automattic and from the community, all working together to make Calypso a better experience for everyone.
 
 ## Reporting Bugs, Asking Questions, Sending Suggestions
 
@@ -35,7 +36,7 @@ Running `make run` will build all the code and continuously watch the front-end 
 
 ### Tests
 
-The [test/README.md](../test/README.md) file documents how to create new tests, and how to run all or just some tests from the test suite. 
+The [test/README.md](../test/README.md) file documents how to create new tests, and how to run all or just some tests from the test suite.
 
 ### Errors and Warnings
 
