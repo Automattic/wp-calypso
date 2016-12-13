@@ -82,6 +82,18 @@ export default React.createClass( {
 			noticeValues.icon = 'status';
 			return noticeValues;
 		}
+		if ( this.props.noticeType === 'retryingAuth' ) {
+			noticeValues.text = this.translate( 'Error authorizing. Page is refreshing for an other attempt.' );
+			noticeValues.status = 'is-warning';
+			noticeValues.icon = 'notice';
+			return noticeValues;
+		}
+		if ( this.props.noticeType === 'retryAuth' ) {
+			noticeValues.text = this.translate( 'In some cases, authorization can take a few attempts. Please try again.' );
+			noticeValues.status = 'is-warning';
+			noticeValues.icon = 'notice';
+			return noticeValues;
+		}
 		if ( this.props.noticeType === 'secretExpired' ) {
 			noticeValues.text = this.translate( 'Oops, that took a while. You\'ll have to try again.' );
 			noticeValues.status = 'is-error';

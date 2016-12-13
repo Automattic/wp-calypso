@@ -246,8 +246,9 @@ const LoggedInForm = React.createClass( {
 			this.activateManageAndRedirect();
 		}
 		if ( authorizeError && this.props.authAttempts < MAX_AUTH_ATTEMPTS && ! this.retryingAuth ) {
+			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			this.props.retryAuth( queryObject.site, this.props.authAttempts + 1 );
+			this.props.retryAuth( queryObject.site, attempts + 1 );
 		}
 	},
 
@@ -369,12 +370,20 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderNotices() {
-		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
+		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
 			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
 		}
 
-		if ( this.retryingAuth || ! authorizeError || this.props.authAttempts < MAX_AUTH_ATTEMPTS ) {
+		if ( this.retryingAuth ) {
+			return <JetpackConnectNotices noticeType="retryingAuth" />;
+		}
+
+		if ( this.props.authAttempts < MAX_AUTH_ATTEMPTS && this.props.authAttempts > 0 && ! isAuthorizing && ! authorizeSuccess ) {
+			return <JetpackConnectNotices noticeType="retryAuth" />;
+		}
+
+		if ( ! authorizeError ) {
 			return null;
 		}
 
