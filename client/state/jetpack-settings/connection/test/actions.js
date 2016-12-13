@@ -33,7 +33,7 @@ describe( 'actions', () => {
 					.query( {
 						path: '/connection/'
 					} )
-					.reply( 200, status, {
+					.reply( 200, { data: status }, {
 						'Content-Type': 'application/json'
 					} );
 			} );
