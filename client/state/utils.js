@@ -92,7 +92,7 @@ export const keyedReducer = ( keyName, reducer ) => {
 
 	return ( state = {}, action ) => {
 		// don't allow coercion of key name: null => 0
-		if ( ! action.hasOwnProperty( keyName )  ) {
+		if ( ! action.hasOwnProperty( keyName ) ) {
 			return state;
 		}
 
