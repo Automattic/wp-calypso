@@ -515,3 +515,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: 20px;
 	padding-top: 20px;
 }
+// IE11 fix for in-stream recs
+.is-reader-page .reader-stream__recommended-posts-list-item .reader-related-card-v2 {
+	flex: none;
+}
