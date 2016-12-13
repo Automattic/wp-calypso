@@ -24,7 +24,11 @@ import {
 describe( '#account-recovery/settings/selectors', () => {
 	const stateBeforeFetching = {
 		accountRecovery: {
-			settings: null,
+			settings: {
+				data: null,
+				isUpdating: false,
+				isDeleting: false,
+			},
 		},
 	};
 
