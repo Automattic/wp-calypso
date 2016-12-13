@@ -6,7 +6,7 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -28,15 +28,20 @@ class ThemeUploadCard extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Card className="themes-upload-card">
-				<Button compact icon
-					onClick={ this.trackClick }
-					href={ this.props.href }
+			<div className="themes-upload-card">
+				<SectionHeader
+					label={ translate( 'Custom Themes' ) }
+					count={ 10 }
 				>
-					<Gridicon icon="cloud-upload" />
-					{ translate( 'Upload Theme' ) }
-				</Button>
-			</Card>
+					<Button compact icon
+						onClick={ this.trackClick }
+						href={ this.props.href }
+					>
+						<Gridicon icon="cloud-upload" />
+						{ translate( 'Upload Theme' ) }
+					</Button>
+				</SectionHeader>
+			</div>
 		);
 	}
 }

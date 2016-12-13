@@ -1,9 +1,9 @@
 CurrentTheme
 ============
 
-Card showing the current active theme for a site with related actions.
+Card showing the upload theme button.
 
 ## Usage
 
-Wrap this component in a `data/current-theme` component to connect it to the
-current theme state, and pass the current site object as `site` prop.
+It needs href linking to the uplaod page.
+It should only be used in scenarios when upload makes sense.
