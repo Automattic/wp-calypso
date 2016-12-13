@@ -75,15 +75,24 @@ export function isValidStateWithSchema( state, schema ) {
  * @return {function} super-reducer applying reducer over map of keyed items
  */
 export const keyedReducer = ( keyName, reducer ) => {
+	// some keys are invalid
+	if ( 'string' !== typeof keyName ) {
+		throw new TypeError( `Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }` );
+	}
+
+	if ( ! keyName.length ) {
+		throw new TypeError( 'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string' );
+	}
+
+	if ( 'function' !== typeof reducer ) {
+		throw new TypeError( `Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }` );
+	}
+
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
 	return ( state = {}, action ) => {
-		// some keys are invalid
-		if (
-			null === keyName ||
-			undefined === keyName ||
-			! action.hasOwnProperty( keyName ) // don't allow coercion of key name: null => 0
-		) {
+		// don't allow coercion of key name: null => 0
+		if ( ! action.hasOwnProperty( keyName )  ) {
 			return state;
 		}
 

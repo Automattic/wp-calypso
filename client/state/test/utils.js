@@ -257,6 +257,31 @@ describe( 'utils', () => {
 			Bonobo: 13,
 		} );
 
+		it( 'should only accept string-type key names', () => {
+			expect( () => keyedReducer( null, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( undefined, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( [], age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( {}, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( true, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 10, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 15.4, age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( '', age ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', age ) ).to.not.throw( TypeError );
+		} );
+
+		it( 'should only accept a function as the reducer argument', () => {
+			expect( () => keyedReducer( 'key', null ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', undefined ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', [] ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', {} ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', true ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', 10 ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', 15.4 ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', '' ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key' ) ).to.throw( TypeError );
+			expect( () => keyedReducer( 'key', () => {} ).to.not.throw( TypeError ) );
+		} );
+
 		it( 'should create keyed state given simple reducers', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( undefined, grow( 'Calypso' ) ) ).to.eql( {
