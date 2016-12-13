@@ -16,6 +16,7 @@ class ThemeUploadCard extends React.Component {
 
 	static propTypes = {
 		href: PropTypes.string.isRequired,
+		count: PropTypes.number,
 	};
 
 	constructor( props ) {
@@ -31,7 +32,7 @@ class ThemeUploadCard extends React.Component {
 			<div className="themes-upload-card">
 				<SectionHeader
 					label={ translate( 'Custom Themes' ) }
-					count={ 10 }
+					count={ this.props.count }
 				>
 					<Button compact icon
 						onClick={ this.trackClick }
