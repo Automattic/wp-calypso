@@ -15,6 +15,7 @@ import { trackClick } from '../helpers';
 class ThemeUploadCard extends React.Component {
 
 	static propTypes = {
+		label: PropTypes.string,
 		href: PropTypes.string.isRequired,
 		count: PropTypes.number,
 	};
@@ -31,7 +32,7 @@ class ThemeUploadCard extends React.Component {
 		return (
 			<div className="themes-upload-card">
 				<SectionHeader
-					label={ translate( 'Custom Themes' ) }
+					label={ this.props.label }
 					count={ this.props.count }
 				>
 					<Button compact icon

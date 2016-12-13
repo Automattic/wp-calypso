@@ -150,7 +150,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, secondaryOption, tier, search } = this.props;
+		const { site, options, getScreenshotOption, secondaryOption, tier, search, translate } = this.props;
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -192,6 +192,7 @@ const ThemeShowcase = React.createClass( {
 				{ this.props.showUploadButton && config.isEnabled( 'manage/themes/upload' ) &&
 					<ThemeUploadCard
 						href={ options.upload.getUrl() }
+						label={ translate( 'WordPress.com themes' ) }
 					/>
 				}
 				<ThemesSelection
