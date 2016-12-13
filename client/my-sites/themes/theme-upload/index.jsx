@@ -83,6 +83,7 @@ class Upload extends React.Component {
 		const { translate, uploadedTheme, themeId } = this.props;
 		notices.success( translate( 'Successfully uploaded theme %(name)s', {
 			args: {
+				// using themeId lets us show a message before theme data arrives
 				name: uploadedTheme ? uploadedTheme.name : themeId
 			}
 		} ) );
