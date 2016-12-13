@@ -25,5 +25,5 @@ const concatHandlers = ( left, right ) =>
 
 export const mergeHandlers = ( ...handlers ) =>
 	handlers.length > 1
-		? mergeWith( {}, ...handlers, concatHandlers )
+		? mergeWith( Object.create( null ), ...handlers, concatHandlers )
 		: handlers[ 0 ];
