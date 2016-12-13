@@ -218,6 +218,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	width: 100%;
 }
 
+/* Fix for IE11 unable to handle nested flexbox min-height.
+ * See issue: https://github.com/Automattic/wp-calypso/issues/9412 
+ */
+.is-reader-page .reader-post-card__gallery .reader-post-card__post-details {
+	flex: inherit;
+}
+
 .reader-post-card__byline-author-site {
 	overflow: hidden;
 	position: relative;
