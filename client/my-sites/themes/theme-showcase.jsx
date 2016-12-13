@@ -20,6 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
+import ThemeUploadCard from './themes-upload-card';
 import config from 'config';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
@@ -62,6 +63,7 @@ const ThemeShowcase = React.createClass( {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
+		showUploadButton: PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -69,6 +71,7 @@ const ThemeShowcase = React.createClass( {
 			selectedSite: false,
 			tier: '',
 			search: '',
+			showUploadButton: false
 		};
 	},
 
@@ -186,6 +189,11 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
+				{ this.props.showUploadButton && config.isEnabled( 'manage/themes/upload' ) &&
+					<ThemeUploadCard
+						href={ options.upload.getUrl() }
+					/>
+				}
 				<ThemesSelection
 					siteId={ this.props.siteId }
 					selectedSite={ this.props.selectedSite }

@@ -22,7 +22,8 @@ import {
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
-	isThemePurchased as isPurchased
+	isThemePurchased as isPurchased,
+	getUploadUrl
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -77,6 +78,14 @@ const tryandcustomize = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
+const upload = {
+	label: i18n.translate( 'Upload Theme' ),
+	getUrl: getUploadUrl,
+
+	// TODO make this in a proper way after we will be able to support more elaborate scenarios
+	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId )
+}
+
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
@@ -128,6 +137,7 @@ const ALL_THEME_OPTIONS = {
 	purchase,
 	activate,
 	tryandcustomize,
+	upload,
 	signup,
 	separator,
 	info,

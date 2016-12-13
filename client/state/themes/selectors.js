@@ -420,6 +420,18 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 	return customizeUrl;
 }
 
+export function getUploadUrl( state, theme, siteId ) {
+	if ( ! siteId ) {
+		return null;
+	}
+
+	if ( isJetpackSite( state, siteId ) ) {
+		return `/design/upload/${ getSiteSlug( state, siteId ) }`;
+	}
+
+	return null;
+}
+
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *
