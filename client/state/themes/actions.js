@@ -629,8 +629,8 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				return resolve();
 			}
 			return wpcom.undocumented().transferStatus( siteId, transferId )
-				.then( ( { status, message, themeId } ) => {
-					dispatch( transferStatus( siteId, transferId, status, message, themeId ) );
+				.then( ( { status, message, uploaded_theme_slug } ) => {
+					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
 						return resolve();
