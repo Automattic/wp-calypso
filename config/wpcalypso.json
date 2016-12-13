@@ -15,6 +15,7 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
+		"automated-transfer": true,
 		"apple-pay": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
