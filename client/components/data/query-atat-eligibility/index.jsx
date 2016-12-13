@@ -3,7 +3,6 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +11,7 @@ import { requestEligibility } from 'state/automated-transfer/actions';
 
 export class QueryAutomatedTransferEligibility extends Component {
 	static propTypes = {
-		request: PropTypes.func.isRequired,
+		requestEligibility: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 	};
 
@@ -26,8 +25,8 @@ export class QueryAutomatedTransferEligibility extends Component {
 		}
 	}
 
-	request( { request, siteId } ) {
-		siteId && request( siteId );
+	request( { requestEligibility, siteId } ) {
+		siteId && requestEligibility( siteId );
 	}
 
 	render() {
@@ -35,8 +34,8 @@ export class QueryAutomatedTransferEligibility extends Component {
 	}
 }
 
-export const mapDispatchToProps = dispatch => ( {
-	request: compose( dispatch, requestEligibility ),
+export const mapDispatchToProps = ( {
+	requestEligibility,
 } );
 
 export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );
