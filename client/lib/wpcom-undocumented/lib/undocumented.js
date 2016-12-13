@@ -210,6 +210,23 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
 };
 
+/*
+ * Retrieve current connection status of a Jetpack site.
+ *
+ * @param {int}      [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( {
+		path: '/jetpack-blogs/' + siteId + '/rest-api/',
+		body: {
+			path: '/connection/'
+		}
+	}, fn );
+};
+
 Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri, scope, state ) {
 	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
 	const endpointUrl = '/jetpack-blogs/' + siteId + '/jetpack-login';
