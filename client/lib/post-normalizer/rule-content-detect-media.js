@@ -67,7 +67,7 @@ const detectImage = ( image ) => {
  */
 const getAutoplayIframe = ( iframe ) => {
 	const metadata = getEmbedMetadata( iframe.src );
-	if ( metadata && metadata.service === 'youtube' ) {
+	if ( metadata && ( metadata.service === 'youtube' || metadata.service === 'vimeo' ) ) {
 		const autoplayIframe = iframe.cloneNode();
 		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
 			autoplayIframe.src += '?autoplay=1';
@@ -76,23 +76,6 @@ const getAutoplayIframe = ( iframe ) => {
 		}
 		return autoplayIframe.outerHTML;
 	}
-	return null;
-};
-
-/** For an iframe we know how to process, return the url of a thumbnail
- * @param {Node} iframe - the DOM node for the iframe
- * @returns {string} thumbnailUrl - the url for a thumbnail of the video, null if we cannot determine it
- */
-const getThumbnailUrl = ( iframe ) => {
-	const metadata = getEmbedMetadata( iframe.src );
-	if ( ! metadata ) {
-		return null;
-	}
-
-	if ( metadata.service === 'youtube' ) {
-		return `https://img.youtube.com/vi/${ metadata.id }/mqdefault.jpg`;
-	}
-
 	return null;
 };
 
@@ -138,7 +121,6 @@ const detectEmbed = ( iframe ) => {
 		height: height,
 		mediaType: 'video',
 		autoplayIframe: getAutoplayIframe( iframe ),
-		thumbnailUrl: getThumbnailUrl( iframe ),
 	};
 };
 
