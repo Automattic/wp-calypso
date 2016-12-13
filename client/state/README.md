@@ -144,7 +144,7 @@ const ageReducer = ( state = 0, action ) =>
 
 const schema = { type: 'number', minimum: 0 }
 
-export const age = withSchemaValidation( schema, age )
+export const age = withSchemaValidation( schema, ageReducer )
 
 ageReducer( -5, { type: DESERIALIZE } ) === -5
 age( -5, { type: DESERIALIZE } ) === 0

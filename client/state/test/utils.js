@@ -253,9 +253,9 @@ describe( 'utils', () => {
 				? state + 1
 				: state;
 
-		const prevState = {
+		const prevState = deepFreeze( {
 			Bonobo: 13,
-		};
+		} );
 
 		it( 'should create keyed state given simple reducers', () => {
 			const keyed = keyedReducer( 'name', age );
@@ -275,6 +275,19 @@ describe( 'utils', () => {
 		it( 'should skip if no key is provided in the action', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'GROW' } ) ).to.equal( prevState );
+		} );
+
+		it( 'should handle falsey keys', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( { [ 0 ]: 10 }, grow( 0 ) ) ).to.eql( { '0': 11 } );
+		} );
+
+		it( 'should handle coerced-to-string keys', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( { '10': 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( '10' ) ) ).to.eql( { '10': 11 } );
+			expect( keyed( { [ 10 ]: 10 }, grow( 10 ) ) ).to.eql( { '10': 11 } );
+			expect( keyed( { '10': 10 }, grow( 10 ) ) ).to.eql( { '10': 11 } );
 		} );
 
 		it( 'should return without changes if no actual changes occur', () => {

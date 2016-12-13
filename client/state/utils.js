@@ -78,12 +78,21 @@ export const keyedReducer = ( keyName, reducer ) => {
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
 	return ( state = {}, action ) => {
+		// some keys are invalid
+		if (
+			null === keyName ||
+			undefined === keyName ||
+			! action.hasOwnProperty( keyName ) // don't allow coercion of key name: null => 0
+		) {
+			return state;
+		}
+
 		// the action must refer to some item in the map
 		const itemKey = action[ keyName ];
 
-		// if no reference exists abort
-		// and return unchanged state
-		if ( ! itemKey ) {
+		// if the action doesn't contain a valid reference
+		// then return without any updates
+		if ( null === itemKey || undefined === itemKey ) {
 			return state;
 		}
 
