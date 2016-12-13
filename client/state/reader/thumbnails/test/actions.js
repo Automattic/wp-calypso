@@ -81,11 +81,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'youtube: should return action with thumbnail instantly', () => {
+		it( 'youtube: should dispatch action with thumbnail instantly', () => {
 			const dispatchSpy = sinon.spy();
-			const action = requestThumbnail( youtubeEmbedUrl )( dispatchSpy );
+			requestThumbnail( youtubeEmbedUrl )( dispatchSpy );
 
-			expect( action ).to.eql( {
+			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_THUMBNAIL_RECEIVE,
 				embedUrl: youtubeEmbedUrl,
 				thumbnailUrl: youtubeThumbnailUrl,
@@ -114,11 +114,11 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should return a failure action instantly if unsupported', () => {
+		it( 'should dispatch a failure action instantly if unsupported', () => {
 			const dispatchSpy = sinon.spy();
-			const action = requestThumbnail( unsupportedEmbedUrl )( dispatchSpy );
+			requestThumbnail( unsupportedEmbedUrl )( dispatchSpy );
 
-			expect( action ).to.eql( {
+			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_THUMBNAIL_REQUEST_FAILURE,
 				embedUrl: unsupportedEmbedUrl,
 				error: { type: 'UNSUPPORTED_EMBED' },

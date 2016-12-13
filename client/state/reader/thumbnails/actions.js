@@ -62,7 +62,8 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 	switch ( service ) {
 		case 'youtube': {
 			const thumbnailUrl = `https://img.youtube.com/vi/${ id }/mqdefault.jpg`;
-			return receiveThumbnail( embedUrl, thumbnailUrl );
+			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+			return Promise.resolve();
 		}
 		case 'vimeo': {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
@@ -83,6 +84,7 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 				} );
 		}
 		default:
-			return requestFailure( embedUrl, { type: 'UNSUPPORTED_EMBED' } );
+			dispatch( requestFailure( embedUrl, { type: 'UNSUPPORTED_EMBED' } ) );
+			return Promise.resolve();
 	}
 };
