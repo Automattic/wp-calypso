@@ -8,15 +8,12 @@ import { cloneDeep, get, isEqual, keyBy, range } from 'lodash';
  */
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
-import { isThemeMatchingQuery } from './util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
-	matches = isThemeMatchingQuery;
-
 	/**
 	 * Signal that an item(s) has been received for tracking. Optionally
 	 * specify that items received are intended for patch application, or that
