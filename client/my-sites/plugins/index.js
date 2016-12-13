@@ -76,6 +76,13 @@ module.exports = function() {
 			pluginsController.plugin
 		);
 
+		page( '/plugins/:plugin/:site_id/eligibility',
+			controller.siteSelection,
+			controller.navigation,
+			pluginsController.eligibility
+
+		);
+
 		page.exit( '/plugins*',
 			pluginsController.resetHistory
 		);

@@ -9,12 +9,17 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
-export const WpcomPluginInstallButton = ( { translate, disabled } ) => {
+function getPluginLink( pluginSlug, siteSlug ) {
+	return `/plugins/${ pluginSlug }/${ siteSlug }/eligibility`;
+}
+
+export const WpcomPluginInstallButton = ( { translate, disabled, plugin, site } ) => {
 	return <Button
 		onClick={ undefined }
 		primary={ true }
 		type="submit"
 		disabled={ disabled }
+		href={ getPluginLink( plugin, site ) }
 	>
 		{ translate( 'Install' ) }
 	</Button>;
