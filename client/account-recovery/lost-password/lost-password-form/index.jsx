@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import Card from 'components/card';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
+import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
+import { getResetOptions } from 'state/account-recovery/reset/selectors';
 
 export class LostPasswordFormComponent extends Component {
 	constructor() {
@@ -27,12 +30,19 @@ export class LostPasswordFormComponent extends Component {
 	submitForm = () => {
 		this.setState( { isSubmitting: true } );
 
-		//TODO: dispatch an event with userLogin and wait to here back
+		//This is only here to test the redux action and will be replaced in a future PR
+		this.props.fetchResetOptionsByLogin( this.state.userLogin );
 	};
 
 	onUserLoginChanged = ( event ) => {
 		this.setState( { userLogin: event.target.value } );
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.resetOptions ) {
+			this.setState( { isSubmitting: false } );
+		}
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -97,6 +107,12 @@ export class LostPasswordFormComponent extends Component {
 
 LostPasswordFormComponent.defaultProps = {
 	translate: identity,
+	fetchResetOptionsByLogin: noop,
 };
 
-export default localize( LostPasswordFormComponent );
+export default connect(
+	( state ) => ( {
+		resetOptions: getResetOptions( state ),
+	} ),
+	{ fetchResetOptionsByLogin }
+)( localize( LostPasswordFormComponent ) );
