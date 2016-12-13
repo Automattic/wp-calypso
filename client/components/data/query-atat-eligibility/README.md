@@ -15,7 +15,7 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 export function MyTransferView( { eligibility, siteId } ) {
     return (
         <div>
-            <QueryElibility siteId={ siteId } />
+            <QueryEligibility siteId={ siteId } />
             <div>{ JSON.stringify( eligibility ) }</div>
         </div>
     );
