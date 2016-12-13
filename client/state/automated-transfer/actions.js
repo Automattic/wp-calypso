@@ -1,7 +1,10 @@
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_STATUS_SET } from 'state/action-types';
+import {
+	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
+	AUTOMATED_TRANSFER_STATUS_SET,
+} from 'state/action-types';
 
 /**
  * Sets the status of an automated transfer for a particular site
@@ -15,3 +18,15 @@ export const setAutomatedTransferStatus = ( siteId, automatedTransferStatus ) =>
 	siteId,
 	automatedTransferStatus,
 } );
+
+/**
+ * Indicates that we need the eligibility information for a given site
+ *
+ * @param {number} siteId site for requested information
+ * @returns {Object} Redux action
+ */
+export const requestEligibility = siteId => ( {
+	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
+	siteId,
+} );
+
