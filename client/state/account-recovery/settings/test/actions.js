@@ -9,9 +9,9 @@ import { assert } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
-	accountRecoveryFetch,
-	accountRecoveryFetchSuccess,
-	accountRecoveryFetchFailed,
+	accountRecoverySettingsFetch,
+	accountRecoverySettingsFetchSuccess,
+	accountRecoverySettingsFetchFailed,
 
 	updateAccountRecoveryPhone,
 	updateAccountRecoveryPhoneSuccess,
@@ -54,14 +54,14 @@ describe( 'account-recovery actions', () => {
 	const errorResponse = { status: 400, message: 'Something wrong!' };
 
 	generateSuccessAndFailedTestsForThunk( {
-		testBaseName: '#accountRecoveryFetch',
+		testBaseName: '#accountRecoverySettingsFetch',
 		nockSettings: {
 			method: 'get',
 			endpoint: '/rest/v1.1/me/account-recovery',
 			successResponse: dummyData,
 			errorResponse: errorResponse,
 		},
-		thunk: () => accountRecoveryFetch()( spy ),
+		thunk: () => accountRecoverySettingsFetch()( spy ),
 		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } ) ),
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
@@ -77,9 +77,9 @@ describe( 'account-recovery actions', () => {
 		},
 	} );
 
-	describe( '#accountRecoveryFetchSuccess()', () => {
+	describe( '#accountRecoverySettingsFetchSuccess()', () => {
 		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
-			const action = accountRecoveryFetchSuccess( dummyData );
+			const action = accountRecoverySettingsFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 				settings: dummyData,
@@ -87,9 +87,9 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#accountRecoveryFetchFailed()', () => {
+	describe( '#accountRecoverySettingsFetchFailed()', () => {
 		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
-			const action = accountRecoveryFetchFailed( errorResponse );
+			const action = accountRecoverySettingsFetchFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,

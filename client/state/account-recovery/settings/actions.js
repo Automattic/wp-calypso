@@ -20,28 +20,28 @@ import {
 const TARGET_PHONE = 'phone';
 const TARGET_EMAIL = 'email';
 
-export const accountRecoveryFetchSuccess = ( settings ) => {
+export const accountRecoverySettingsFetchSuccess = ( settings ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 		settings,
 	};
 };
 
-export const accountRecoveryFetchFailed = ( error ) => {
+export const accountRecoverySettingsFetchFailed = ( error ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 		error,
 	};
 };
 
-export const accountRecoveryFetch = () => ( dispatch ) => {
+export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
 
 	return wpcom.undocumented().me().getAccountRecovery()
 		.then( ( accountRecoverySettings ) =>
-			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) )
+			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
 		).catch( ( { status, message } ) =>
-			dispatch( accountRecoveryFetchFailed( { status, message } ) )
+			dispatch( accountRecoverySettingsFetchFailed( { status, message } ) )
 		);
 };
 
