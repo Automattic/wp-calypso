@@ -37,17 +37,21 @@ class RecoveryEmail extends Component {
 	}
 
 	render() {
-		const email = this.state.data ? this.state.data.email : false;
-		const primaryEmail = this.props.userSettings.getSetting( 'user_email' );
-		const { translate } = this.props;
+		// const email = this.state.data ? this.state.data.email : false;
+		// const primaryEmail = this.props.userSettings.getSetting( 'user_email' );
+		const {
+			primaryEmail,
+			recoveryEmail,
+			translate,
+		} = this.props;
 
 		return (
 			<ManageContact
 				type="email"
 				isLoading={ this.state.loading }
 				title={ translate( 'Recovery Email Address' ) }
-				subtitle={ email ? email : translate( 'Not set' ) }
-				hasValue={ !! email }
+				subtitle={ recoveryEmail ? recoveryEmail : translate( 'Not set' ) }
+				hasValue={ !! recoveryEmail }
 				lastNotice={ this.state.lastNotice }
 
 				onSave={ this.onSave }
@@ -56,7 +60,7 @@ class RecoveryEmail extends Component {
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }
-						storedEmail={ this.state.data.email }
+						storedEmail={ recoveryEmail }
 						/>
 				</ManageContact>
 		);

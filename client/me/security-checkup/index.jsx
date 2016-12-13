@@ -2,20 +2,32 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
+import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
+
+import MeSidebarNavigation from 'me/sidebar-navigation';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
+
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
+
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
+
+import {
+	getAccountRecoveryEmail,
+} from 'state/account-recovery/settings/selectors';
+
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getUser } from 'state/users/selectors';
 
 const SecurityCheckup = React.createClass( {
 	displayName: 'SecurityCheckup',
@@ -29,6 +41,8 @@ const SecurityCheckup = React.createClass( {
 	render: function() {
 		return (
 			<Main className="security-checkup">
+				<QueryAccountRecoverySettings />
+
 				<MeSidebarNavigation />
 
 				<SecuritySectionNav path={ this.props.path } />
@@ -44,6 +58,10 @@ const SecurityCheckup = React.createClass( {
 				</CompactCard>
 
 				<CompactCard>
+					<RecoveryEmail
+						primaryEmail={ this.props.primaryEmail }
+						recoveryEmail={ this.props.accountRecoveryEmail }
+					/>
 					<RecoveryEmail userSettings={ this.props.userSettings } />
 				</CompactCard>
 
@@ -56,4 +74,9 @@ const SecurityCheckup = React.createClass( {
 	},
 } );
 
-export default localize( SecurityCheckup );
+export default connect(
+	( state ) => ( {
+		accountRecoveryEmail: getAccountRecoveryEmail( state ),
+		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
+	} )
+)( localize( SecurityCheckup ) );

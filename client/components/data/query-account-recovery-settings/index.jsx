@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { accountRecoverySettingsFetch } from 'state/account-recovery/actions';
+import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
 import { isFetchingAccountRecoverySettings } from 'state/account-recovery/selectors';
 
 class QueryAccountRecoverySettings extends Component {
