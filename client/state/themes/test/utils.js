@@ -225,21 +225,14 @@ describe( 'utils', () => {
 			screenshots: [ 'https://i0.wp.com/theme.files.wordpress.com/2015/12/twentysomething-featured-image.jpg?ssl=1' ],
 			stylesheet: 'pub/twentysomething',
 			taxonomies: {
-				theme_subject: [
+				theme_feature: [
 					{
-						name: 'Blog',
-						slug: 'blog',
-						term_id: '273'
+						name: 'Custom Header',
+						slug: 'custom-header'
 					},
 					{
-						name: 'Lifestream',
-						slug: 'lifestream',
-						term_id: '652270'
-					},
-					{
-						name: 'Journal',
-						slug: 'journal',
-						term_id: '96'
+						name: 'Infinite Scroll',
+						slug: 'infinite-scroll'
 					}
 				],
 				theme_color: [
@@ -310,7 +303,7 @@ describe( 'utils', () => {
 
 			it( 'should return true for a matching filter search', () => {
 				const isMatch = isThemeMatchingQuery( {
-					search: 'journal'
+					search: 'infinite'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
@@ -352,7 +345,7 @@ describe( 'utils', () => {
 
 			it( 'should return true if theme includes filter', () => {
 				const isMatch = isThemeMatchingQuery( {
-					filters: 'journal'
+					filters: 'infinite-scroll'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
@@ -361,14 +354,14 @@ describe( 'utils', () => {
 			context( 'with multiple filters from a single taxonomy', () => {
 				it( 'should return false if theme doesn\'t match all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'journal,business'
+						filters: 'infinite-scroll,business'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'journal,blog'
+						filters: 'infinite-scroll,custom-header'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.true;
@@ -378,14 +371,14 @@ describe( 'utils', () => {
 			context( 'with multiple filters from different taxonomies', () => {
 				it( 'should return false if theme doesn\'t match all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'journal,green'
+						filters: 'infinite-scroll,green'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'journal,black'
+						filters: 'infinite-scroll,black'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.true;
