@@ -40,8 +40,8 @@ export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 	return wpcom.undocumented().me().getAccountRecovery()
 		.then( ( accountRecoverySettings ) =>
 			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
-		).catch( ( { status, message } ) =>
-			dispatch( accountRecoverySettingsFetchFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( accountRecoverySettingsFetchFailed( error ) )
 		);
 };
 
@@ -81,8 +81,8 @@ export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch 
 	return wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number )
 		.then( ( phone ) =>
 			dispatch( updateAccountRecoveryPhoneSuccess( phone ) )
-		).catch( ( { status, message } ) =>
-			dispatch( updateAccountRecoveryPhoneFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( updateAccountRecoveryPhoneFailed( error ) )
 		);
 };
 
@@ -99,8 +99,8 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 	return wpcom.undocumented().me().deleteAccountRecoveryPhone()
 		.then( () =>
 			dispatch( deleteAccountRecoveryPhoneSuccess() )
-		).catch( ( { status, message } ) =>
-			dispatch( deleteAccountRecoveryPhoneFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( deleteAccountRecoveryPhoneFailed( error ) )
 		);
 };
 
@@ -117,8 +117,8 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 	return wpcom.undocumented().me().updateAccountRecoveryEmail( newEmail )
 		.then( ( { email } ) =>
 			dispatch( updateAccountRecoveryEmailSuccess( email ) )
-		).catch( ( { status, message } ) =>
-			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( updateAccountRecoveryEmailFailed( error ) )
 		);
 };
 
@@ -135,7 +135,7 @@ export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 	return wpcom.undocumented().me().deleteAccountRecoveryEmail()
 		.then( () =>
 			dispatch( deleteAccountRecoveryEmailSuccess() )
-		).catch( ( { status, message } ) =>
-			dispatch( deleteAccountRecoveryEmailFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( deleteAccountRecoveryEmailFailed( error ) )
 		);
 };

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -70,10 +71,10 @@ describe( 'account-recovery actions', () => {
 			} ) );
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 				error: errorResponse,
-			} ) );
+			} ) ) );
 		},
 	} );
 
@@ -119,11 +120,11 @@ describe( 'account-recovery actions', () => {
 				value: dummyNewPhone,
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 				target: 'phone',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
@@ -171,11 +172,11 @@ describe( 'account-recovery actions', () => {
 				target: 'phone',
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 				target: 'phone',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
@@ -223,11 +224,11 @@ describe( 'account-recovery actions', () => {
 			} ) );
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 				target: 'email',
 				error: errorResponse,
-			} ) );
+			} ) ) );
 		},
 	} );
 
@@ -275,11 +276,11 @@ describe( 'account-recovery actions', () => {
 				target: 'email',
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 				target: 'email',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryEmailSuccess', () => {
