@@ -1899,7 +1899,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
 	}, fn );
 };
 
-/*
+/**
  * Start an export
  *
  * @param {int}       siteId            The site ID
@@ -1911,6 +1911,21 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
 	return this.wpcom.withLocale().req.post( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/start`
+	}, advancedSettings, fn );
+};
+
+/**
+ * Start an export from a Jetpack site
+ *
+ * @param {int}       siteId            The site ID
+ * @param {Object}    advancedSettings  Advanced export configuration
+ * @param {Function}  fn                The callback function
+ * @returns {Promise}                   A promise that resolves when the export started
+ */
+Undocumented.prototype.startJetpackExport = function( siteId, advancedSettings, fn ) {
+	return this.wpcom.withLocale().req.post( {
+		apiVersion: '1.1',
+		path: `/sites/${ siteId }/export`
 	}, advancedSettings, fn );
 };
 

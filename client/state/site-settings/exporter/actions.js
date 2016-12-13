@@ -96,7 +96,7 @@ export function advancedSettingsFail( siteId, error ) {
  * @param  {Number}   siteId  The ID of the site to export
  * @return {Function}         Action thunk
  */
-export function startExport( siteId, { exportAll = true } = {} ) {
+export function startExport( siteId, { exportAll = true } = {}, siteType = 'wpcom' ) {
 	return ( dispatch, getState ) => {
 		if ( ! siteId ) {
 			return;
@@ -116,10 +116,19 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 		const failure =
 			error => dispatch( exportFailed( siteId, error ) );
 
-		return wpcom.undocumented()
-			.startExport( siteId, advancedSettings )
-			.then( success )
-			.catch( failure );
+		let result;
+		if ( siteType === 'jetpack' ) {
+			result = wpcom.undocumented()
+				.startJetpackExport( siteId, advancedSettings )
+				.then( success )
+				.catch( failure );
+		} else {
+			result = wpcom.undocumented()
+				.startExport( siteId, advancedSettings )
+				.then( success )
+				.catch( failure );
+		}
+		return result;
 	};
 }
 
