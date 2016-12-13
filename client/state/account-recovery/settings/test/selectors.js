@@ -14,6 +14,10 @@ import {
 	getAccountRecoveryPhoneCountryNumericCode,
 	getAccountRecoveryPhoneNumber,
 	getAccountRecoveryPhoneNumberFull,
+	isUpdatingAccountRecoveryPhone,
+	isUpdatingAccountRecoveryEmail,
+	isDeletingAccountRecoveryPhone,
+	isDeletingAccountRecoveryEmail,
 } from '../selectors';
 
 import {
@@ -26,8 +30,6 @@ describe( '#account-recovery/settings/selectors', () => {
 		accountRecovery: {
 			settings: {
 				data: null,
-				isUpdating: false,
-				isDeleting: false,
 			},
 		},
 	};
@@ -115,6 +117,84 @@ describe( '#account-recovery/settings/selectors', () => {
 
 		it( 'should return the phoneNumberFull field', () => {
 			assert.equal( getAccountRecoveryPhoneNumberFull( stateAfterFetching ), dummyNewPhone.number_full );
+		} );
+	} );
+
+	const stateBeforeUpdating = {
+		accountRecovery: {
+			settings: {
+				isUpdating: {},
+			},
+		},
+	};
+
+	const stateDuringUpdating = {
+		accountRecovery: {
+			settings: {
+				isUpdating: {
+					phone: true,
+					email: true,
+				},
+			},
+		},
+	};
+
+	describe( '#isUpdatingAccountRecoveryPhone', () => {
+		it( 'should return false on absence', () => {
+			assert.isFalse( isUpdatingAccountRecoveryPhone( stateBeforeUpdating ) );
+		} );
+
+		it( 'should return isUpdating.phone', () => {
+			assert.isTrue( isUpdatingAccountRecoveryPhone( stateDuringUpdating ) );
+		} );
+	} );
+
+	describe( '#isUpdatingAccountRecoveryEmail', () => {
+		it( 'should return false on absence', () => {
+			assert.isFalse( isUpdatingAccountRecoveryEmail( stateBeforeUpdating ) );
+		} );
+
+		it( 'should return isUpdating.email', () => {
+			assert.isTrue( isUpdatingAccountRecoveryEmail( stateDuringUpdating ) );
+		} );
+	} );
+
+	const stateBeforeDeleting = {
+		accountRecovery: {
+			settings: {
+				isDeleting: {},
+			},
+		},
+	};
+
+	const stateDuringDeleting = {
+		accountRecovery: {
+			settings: {
+				isDeleting: {
+					phone: true,
+					email: true,
+				},
+			},
+		},
+	};
+
+	describe( '#isDeletingAccountRecoveryPhone', () => {
+		it( 'should return false on absence', () => {
+			assert.isFalse( isDeletingAccountRecoveryPhone( stateBeforeDeleting ) );
+		} );
+
+		it( 'should return isDeleting.phone', () => {
+			assert.isTrue( isDeletingAccountRecoveryPhone( stateDuringDeleting ) );
+		} );
+	} );
+
+	describe( '#isDeletingAccountRecoveryEmail', () => {
+		it( 'should return false on absence', () => {
+			assert.isFalse( isDeletingAccountRecoveryEmail( stateBeforeDeleting ) );
+		} );
+
+		it( 'should return isDeleting.email', () => {
+			assert.isTrue( isDeletingAccountRecoveryEmail( stateDuringDeleting ) );
 		} );
 	} );
 } );

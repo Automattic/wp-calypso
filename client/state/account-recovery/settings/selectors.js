@@ -33,3 +33,19 @@ export const getAccountRecoveryPhoneNumber = ( state ) => {
 export const getAccountRecoveryPhoneNumberFull = ( state ) => {
 	return isSettingsDataExist( state ) ? '' : getSettingsData( state ).phoneNumberFull;
 };
+
+export const isUpdatingAccountRecoveryPhone = ( state ) => {
+	return !! state.accountRecovery.settings.isUpdating.phone;
+};
+
+export const isUpdatingAccountRecoveryEmail = ( state ) => {
+	return !! state.accountRecovery.settings.isUpdating.email;
+};
+
+export const isDeletingAccountRecoveryPhone = ( state ) => {
+	return !! state.accountRecovery.settings.isDeleting.phone;
+};
+
+export const isDeletingAccountRecoveryEmail = ( state ) => {
+	return !! state.accountRecovery.settings.isDeleting.email;
+};
