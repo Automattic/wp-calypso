@@ -45,15 +45,17 @@ export default connectOptions(
 		}
 
 		return (
-			<ThemeShowcase { ...props } siteId={ siteId }>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			<div>
 				<SidebarNavigation />
-				<ThanksModal
-					site={ site }
-					source={ 'list' } />
 				<CurrentTheme siteId={ siteId } />
-			</ThemeShowcase>
+				<ThemeShowcase { ...props } siteId={ siteId }>
+					{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+					<ThanksModal
+						site={ site }
+						source={ 'list' } />
+				</ThemeShowcase>
+			</div>
 		);
 	}
 );

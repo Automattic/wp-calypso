@@ -203,6 +203,10 @@ assign( SignupFlowController.prototype, {
 		return this._flow.destination;
 	},
 
+	shouldAutoContinue: function() {
+		return !! this._flow.autoContinue;
+	},
+
 	reset: function() {
 		SignupProgressStore.off( 'change', this._boundProcess );
 

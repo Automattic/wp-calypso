@@ -8,6 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
-import { getForumUrl } from 'my-sites/themes/helpers';
 import { isPremiumTheme as isPremium } from 'state/themes/utils';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryActiveTheme from 'components/data/query-active-theme';
@@ -37,7 +37,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import { isThemeActive, isThemePurchased, getThemeRequestErrors } from 'state/themes/selectors';
+import { isThemeActive, isThemePurchased, getThemeRequestErrors, getThemeForumUrl } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -153,20 +153,32 @@ const ThemeSheet = React.createClass( {
 		if ( this.isLoaded() ) {
 			return this.props.screenshots[ 0 ];
 		}
-		return '';
+		return null;
+	},
+
+	renderPreviewButton() {
+		return (
+			<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
+				<Gridicon icon="themes" size={ 18 } />
+				<span className="theme__sheet-preview-link-text">
+					{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
+				</span>
+			</a>
+		);
 	},
 
 	renderScreenshot() {
-		const img = <img className="theme__sheet-img" src={ this.getFullLengthScreenshot() + '?=w680' } />;
+		let screenshot;
+		if ( this.props.isJetpack ) {
+			screenshot = this.props.screenshot;
+		} else {
+			screenshot = this.getFullLengthScreenshot();
+		}
+		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
 		return (
 			<div className="theme__sheet-screenshot">
-				<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
-					<Gridicon icon="themes" size={ 18 } />
-					<span className="theme__sheet-preview-link-text">
-						{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
-					</span>
-				</a>
-				{ this.getFullLengthScreenshot() && img }
+				{ this.props.demo_uri && this.renderPreviewButton() }
+				{ img }
 			</div>
 		);
 	},
@@ -208,15 +220,25 @@ const ThemeSheet = React.createClass( {
 		}[ section ];
 	},
 
+	renderDescription() {
+		if ( this.props.descriptionLong ) {
+			return (
+				<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
+			);
+		}
+		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
+		return <div>{ this.props.description }</div>;
+	},
+
 	renderOverviewTab() {
 		return (
 			<div>
 				<Card className="theme__sheet-content">
-					<div dangerouslySetInnerHTML={ { __html: this.props.descriptionLong } } />
+					{ this.renderDescription() }
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
-				{ this.renderRelatedThemes() }
+				{ ! this.props.isJetpack && this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -245,6 +267,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderThemeForumCard( isPrimary = false ) {
+		if ( ! this.props.forumUrl ) {
+			return null;
+		}
+
 		const description = isPremium( this.props )
 			? i18n.translate( 'Get in touch with the theme author' )
 			: i18n.translate( 'Get help from volunteers and staff' );
@@ -256,7 +282,7 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Have a question about this theme?' ) }
 					<small>{ description }</small>
 				</div>
-				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
+				<Button primary={ isPrimary } href={ this.props.forumUrl }>Visit forum</Button>
 			</Card>
 		);
 	},
@@ -294,16 +320,22 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderFeaturesCard() {
-		const { siteSlug, taxonomies } = this.props;
-		const themeFeatures = taxonomies && taxonomies.theme_feature instanceof Array
-		? taxonomies.theme_feature.map( function( item ) {
+		const { isJetpack, siteSlug, taxonomies } = this.props;
+		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
+			return null;
+		}
+
+		const themeFeatures = taxonomies.theme_feature.map( function( item ) {
 			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
 			return (
 				<li key={ 'theme-features-item-' + item.slug }>
-					<a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+					{ isJetpack
+						? <a>{ item.name }</a>
+						: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+					}
 				</li>
 			);
-		} ) : [];
+		} );
 
 		return (
 			<div>
@@ -318,7 +350,13 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderDownload() {
-		if ( isPremium( this.props ) ) {
+		// Don't render download button:
+		// * If it's a premium theme
+		// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
+		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
+		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
+		//   The <ThemeDownloadCard /> component can handle that case.
+		if ( isPremium( this.props ) || ( this.props.isJetpack && ! this.props.download ) ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
@@ -410,7 +448,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId, siteIdOrWpcom } = this.props;
+		const { name: themeName, description, currentUserId, isJetpack, siteIdOrWpcom } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
@@ -435,6 +473,7 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="theme__sheet">
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
+				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
@@ -526,23 +565,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	);
 };
 
-const getThemeDetailsFromTheme = ( theme ) => {
-	return {
-		name: theme.name,
-		author: theme.author,
-		price: theme.price,
-		screenshot: theme.screenshot,
-		screenshots: theme.screenshots,
-		description: theme.description,
-		descriptionLong: theme.description_long,
-		supportDocumentation: theme.support_documentation || undefined,
-		download: theme.download_uri || undefined,
-		taxonomies: theme.taxonomies,
-		stylesheet: theme.stylesheet,
-		demo_uri: theme.demo_uri,
-	};
-};
-
 export default connect(
 	/*
 	 * A number of the props that this mapStateToProps function computes are used
@@ -570,19 +592,21 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const siteIdOrWpcom = ( selectedSite && isJetpackSite( state, selectedSite.ID ) ) ? selectedSite.ID : 'wpcom';
+		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
+		const siteIdOrWpcom = isJetpack ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const themeDetails = theme ? getThemeDetailsFromTheme( theme ) : {};
+
 		return {
-			...themeDetails,
+			...theme,
 			id,
 			error,
 			selectedSite,
 			siteSlug,
+			isJetpack,
 			siteIdOrWpcom,
 			backPath,
 			currentUserId,
@@ -593,6 +617,7 @@ export default connect(
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
+			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID )
 		};
 	}
 )( ThemeSheetWithOptions );

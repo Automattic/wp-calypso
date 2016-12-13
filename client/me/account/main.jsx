@@ -379,13 +379,13 @@ const Account = React.createClass( {
 			);
 		}
 
-		let primarySiteId = this.props.userSettings.getSetting( 'primary_site_ID' );
+		const primarySiteId = this.props.userSettings.getSetting( 'primary_site_ID' );
 
 		return (
 			<SitesDropdown
 				key={ primarySiteId }
 				isPlaceholder={ ! primarySiteId }
-				selected={ this.props.userSettings.getSetting( 'primary_site_ID' ) }
+				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
 			/>
 		);

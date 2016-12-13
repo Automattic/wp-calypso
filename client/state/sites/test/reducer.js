@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_ICON_SET,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -272,6 +273,66 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( original );
+		} );
+
+		it( 'should return same state on setting icon of non-tracked site', () => {
+			const original = deepFreeze( {} );
+			const state = items( original, {
+				type: SITE_ICON_SET,
+				siteId: 2916284,
+				iconUrl: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6'
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should return same state on setting icon of same URL', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					icon: {
+						img: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6',
+						ico: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6'
+					}
+				}
+			} );
+			const state = items( original, {
+				type: SITE_ICON_SET,
+				siteId: 2916284,
+				iconUrl: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6'
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should return updated state on setting new icon URL', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					icon: {
+						img: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6',
+						ico: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6'
+					}
+				}
+			} );
+			const state = items( original, {
+				type: SITE_ICON_SET,
+				siteId: 2916284,
+				iconUrl: 'https://secure.gravatar.com/blavatar/dca162c4950d38afefdc4f785bc8a3f1'
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					icon: {
+						img: 'https://secure.gravatar.com/blavatar/dca162c4950d38afefdc4f785bc8a3f1',
+						ico: 'https://secure.gravatar.com/blavatar/dca162c4950d38afefdc4f785bc8a3f1'
+					}
+				}
+			} );
 		} );
 
 		it( 'should persist state', () => {

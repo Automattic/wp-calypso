@@ -8,6 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import AutoDirection from 'components/auto-direction';
 import ExternalLink from 'components/external-link';
 import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
@@ -32,11 +33,13 @@ const ReaderFullPostHeader = ( { post } ) => {
 	return (
 		<div className={ classNames( classes ) }>
 			{ post.title
-				? <h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
-					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
-						{ post.title }
-					</ExternalLink>
-				</h1>
+				? <AutoDirection>
+					<h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+						<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
+							{ post.title }
+						</ExternalLink>
+					</h1>
+				</AutoDirection>
 				: null }
 			<div className="reader-full-post__header-meta">
 				{ post.date

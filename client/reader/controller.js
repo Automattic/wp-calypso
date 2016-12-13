@@ -153,7 +153,8 @@ module.exports = {
 
 		let recommendationsStore = null;
 		if ( config.isEnabled( 'reader/refresh/stream' ) ) {
-			recommendationsStore = feedStreamFactory( 'recommendations_posts' );
+			// custom_recs_posts_with_images instead of recommendations_posts because we only want those with images for now
+			recommendationsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
 			recommendationsStore.perPage = 4;
 		}
 

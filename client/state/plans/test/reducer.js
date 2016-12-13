@@ -21,9 +21,9 @@ import plansReducer, {
  */
 import {
 	plansReceiveAction,
-	plansRequestAction,
 	plansRequestSuccessAction,
-	plansRequestFailureAction
+	plansRequestFailureAction,
+	requestPlans,
 } from '../actions';
 
 /**
@@ -128,7 +128,7 @@ describe( 'reducer', () => {
 
 		it( 'should return TRUE when initial state is undefined and action is REQUEST', () => {
 			const initialState = undefined;
-			const action = plansRequestAction();
+			const action = requestPlans();
 			const expectedState = true;
 			deepFreeze( expectedState );
 
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 
 		it( 'should set `error` state to FALSE on REQUEST', () => {
 			const initialState = true;
-			const action = plansRequestAction();
+			const action = requestPlans();
 			const expectedState = false;
 
 			deepFreeze( initialState );

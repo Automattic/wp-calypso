@@ -63,7 +63,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	domainDotBlogSubdomain: {
-		datestamp: '20161125',
+		datestamp: '20161208',
 		variations: {
 			excludeDotBlogSubdomain: 50,
 			includeDotBlogSubdomain: 50,
@@ -72,6 +72,15 @@ module.exports = {
 		allowAnyLocale: true,
 	},
 	designShowcaseWelcomeTour: {
+		datestamp: '20161206',
+		variations: {
+			enabled: 0,
+			disabled: 100,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
+	themeSheetWelcomeTour: {
 		datestamp: '20161206',
 		variations: {
 			enabled: 0,
@@ -103,11 +112,12 @@ module.exports = {
 	presaleChatButton: {
 		datestamp: '20161129',
 		variations: {
-			showChatButton: 20,
-			original: 80
+			showChatButton: 80,
+			original: 20
 		},
 		defaultVariation: 'original',
 		allowAnyLocale: true,
+		allowExistingUsers: true,
 	},
 
 	noSurveyStep: {
@@ -118,5 +128,15 @@ module.exports = {
 		},
 		defaultVariation: 'showSurveyStep',
 		allowAnyLocale: true,
-	}
+	},
+
+	siteTitleTour: {
+		datestamp: '20161207',
+		variations: {
+			disabled: 100,
+			enabled: 0,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 };

@@ -1,0 +1,204 @@
+@mixin banner-color( $color ) {
+	border-left-color: $color;
+	.banner__icon {
+		color: $color;
+	}
+	.banner__icon-circle {
+		background-color: $color;
+	}
+}
+
+.banner.card {
+	border-left: 3px solid;
+	display: flex;
+	padding: 12px 6px 12px 12px;
+
+	&.is-dismissible {
+		padding-right: 48px;
+	}
+
+	@include banner-color( $blue-wordpress );
+
+	&.is-upgrade-personal {
+		@include banner-color( $alert-yellow );
+	}
+	&.is-upgrade-premium {
+		@include banner-color( $alert-green );
+	}
+	&.is-upgrade-business {
+		@include banner-color( $alert-purple );
+	}
+
+	.card__link-indicator {
+		align-items: center;
+		color: $blue-wordpress;
+		display: flex;
+	}
+
+	&:hover {
+		transition: all 100ms ease-in-out;
+		&.is-card-link {
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+		}
+		.card__link-indicator {
+			color: $blue-dark;
+		}
+	}
+
+	@include breakpoint( ">480px" ) {
+		padding: 12px 16px;
+		&.is-dismissible {
+			padding-right: 16px;
+		}
+	}
+}
+
+.banner__icons {
+	display: flex;
+
+	.banner__icon,
+	.banner__icon-circle {
+		border-radius: 50%;
+		flex-shrink: 0;
+		height: 24px;
+		margin-right: 16px;
+		margin-top: -2px;
+		text-align: center;
+		top: 4px;
+		width: 24px;
+	}
+
+	.banner__icon {
+		align-self: center;
+		color: $white;
+		display: block;
+	}
+
+	.banner__icon-circle {
+		color: white;
+		display: none;
+		padding: 3px 4px 4px 3px;
+	}
+
+	@include breakpoint( ">480px" ) {
+		align-items: center;
+
+		.banner__icon {
+			display: none;
+		}
+		.banner__icon-circle {
+			display: block;
+		}
+	}
+}
+
+.banner__icon-plan {
+	display: flex;
+	margin-right: 16px;
+
+	.plan-icon {
+		height: 32px;
+		width: 32px;
+	}
+
+	@include breakpoint( ">480px" ) {
+		align-items: center;
+	}
+}
+
+.banner__content {
+	align-items: center;
+	display: flex;
+	flex-grow: 1;
+	flex-wrap: wrap;
+
+	@include breakpoint( ">480px" ) {
+		flex-wrap: nowrap;
+	}
+}
+
+.banner__info {
+	flex-grow: 1;
+	line-height: 1.4;
+	width: 100%;
+
+	.banner__title,
+	.banner__description,
+	.banner__list {
+		color: $gray-dark;
+	}
+
+	.banner__title {
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.banner__description {
+		font-size: 12px;
+		margin-top: 3px;
+	}
+
+	.banner__list {
+		font-size: 12px;
+		list-style: none;
+		margin: 0;
+		li {
+			margin: 6px 0;
+			.gridicon {
+				color: $gray;
+				display: none;
+			}
+		}
+	}
+
+	@include breakpoint( ">480px" ) {
+		width: auto;
+
+		.banner__list li .gridicon {
+			display: inline;
+			margin-right: 12px;
+			vertical-align: bottom;
+		}
+	}
+}
+
+.banner__action {
+	align-self: center;
+	font-size: 12px;
+	margin: 8px 0 0 0;
+	text-align: left;
+	width: 100%;
+
+	.banner__prices {
+		display: flex;
+		justify-content: flex-start;
+
+		.plan-price {
+			margin-bottom: 0;
+		}
+
+		.plan-price.is-discounted,
+		.plan-price.is-discounted .plan-price__currency-symbol {
+			color: $gray-dark;
+		}
+
+		.has-call-to-action & .plan-price {
+			margin-bottom: 8px;
+		}
+	}
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 -6px 0 8px;
+		text-align: center;
+		width: auto;
+
+		.is-dismissible & {
+			margin-top: 40px;
+		}
+
+		.banner__prices {
+			justify-content: flex-end;
+			text-align: right;
+		}
+	}
+}

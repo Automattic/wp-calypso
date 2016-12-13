@@ -311,6 +311,39 @@ module.exports = {
 			<TransferData
 				component={ DomainManagement.Transfer }
 				selectedDomainName={ pageContext.params.domain }
+				sites={ sites }
+			/>,
+			document.getElementById( 'primary' ),
+			pageContext.store
+		);
+	},
+
+	domainManagementTransferToOtherUser( pageContext ) {
+		setTitle(
+			i18n.translate( 'Transfer Domain' ),
+			pageContext
+		);
+
+		renderWithReduxStore(
+			<TransferData
+				component={ DomainManagement.TransferToOtherUser }
+				selectedDomainName={ pageContext.params.domain }
+				sites={ sites } />,
+			document.getElementById( 'primary' ),
+			pageContext.store
+		);
+	},
+
+	domainManagementTransferOut( pageContext ) {
+		setTitle(
+			i18n.translate( 'Transfer Domain' ),
+			pageContext
+		);
+
+		renderWithReduxStore(
+			<TransferData
+				component={ DomainManagement.TransferOut }
+				selectedDomainName={ pageContext.params.domain }
 				sites={ sites } />,
 			document.getElementById( 'primary' ),
 			pageContext.store

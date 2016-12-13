@@ -30,7 +30,7 @@ class TagStreamHeader extends React.Component {
 		following: React.PropTypes.bool,
 		onFollowToggle: React.PropTypes.func,
 		tagImages: React.PropTypes.array,
-		hasBackButton: React.PropTypes.bool
+		showBack: React.PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -54,11 +54,11 @@ class TagStreamHeader extends React.Component {
 	}
 
 	render() {
-		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, hasBackButton, imageSearchString } = this.props;
+		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, showBack, imageSearchString } = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
-			'has-back-button': hasBackButton
+			'has-back-button': showBack
 		} );
 		const imageStyle = {};
 		const tagImage = this.state.chosenTagImage;

@@ -6,14 +6,6 @@ $reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040p
 $reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
 $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
-// Overrides 30px top margin, moves first card closer to top of stream
-.is-reader-page .following.main .card.reader-post-card:nth-child(2) {
-
-	@include breakpoint( ">480px" ) {
-		margin-top: -18px;
-	}
-}
-
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card {
 
@@ -350,6 +342,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	cursor: pointer;
 	font-size: 18px;
 	font-weight: 700;
+	display: block;
 
 	&:hover {
 		color: $gray-dark;
@@ -369,17 +362,49 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 }
 
-// If we're not showing the entire excerpt, clamp to 3 lines
+// If we're not showing the entire excerpt, clamp lines
 .reader-post-card.card:not(.is-showing-entire-excerpt) {
+
 	.reader-post-card__excerpt {
 		overflow: hidden;
 		max-height: 15px * 1.6 * 3;
+
+
+		// Clamp to 2 lines on wider viewports
+		@include breakpoint( ">960px" ) {
+			max-height: 15px * 1.6 * 2;
+		}
 
 		&::before {
 			@include long-content-fade( $size: 15px * 1.6 * 5 );
 			top: inherit;
 			height: 15px * 1.6;
 		}
+	}
+
+	.reader-post-card__excerpt[direction=rtl] {
+		&::before {
+			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+
+	.reader-post-card__excerpt[direction=ltr] {
+		&::before {
+			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+}
+
+// 3 line excerpt for thumbnail cards
+.reader-post-card.card.has-thumbnail:not(.is-gallery) {
+
+	.reader-post-card__excerpt {
+		max-height: 15px * 1.6 * 3;
+		overflow: hidden;
 	}
 }
 

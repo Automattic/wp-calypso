@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import { startsWith } from 'lodash';
+import { forEach, startsWith, random } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Dispatcher = require( 'dispatcher' ),
-	FeedStream = require( './feed-stream' ),
-	PagedStream = require( './paged-stream' ),
-	FeedStreamCache = require( './feed-stream-cache' ),
-	analytics = require( 'lib/analytics' ),
-	forEach = require( 'lodash/forEach' ),
-	wpcomUndoc = require( 'lib/wp' ).undocumented();
+import config from 'config';
+import Dispatcher from 'dispatcher';
+import FeedStream from './feed-stream';
+import PagedStream from './paged-stream';
+import FeedStreamCache from './feed-stream-cache';
+import analytics from 'lib/analytics';
+import wpcom from 'lib/wp';
+
+const wpcomUndoc = wpcom.undocumented();
 
 function feedKeyMaker( post ) {
 	return {
@@ -69,7 +70,7 @@ function trainTracksProxyForStream( stream, callback ) {
 }
 
 function getStoreForFeed( storeId ) {
-	var feedId = storeId.split( ':' )[ 1 ],
+	const feedId = storeId.split( ':' )[ 1 ],
 		fetcher = function fetchFeedById( query, callback ) {
 			query.ID = feedId;
 			wpcomUndoc.readFeedPosts( query, callback );
@@ -96,16 +97,15 @@ function getStoreForTag( storeId ) {
 			keyMaker: siteKeyMaker,
 			perPage: 5
 		} );
-	} else {
-		return new FeedStream( {
-			id: storeId,
-			fetcher: fetcher,
-			keyMaker: mixedKeyMaker,
-			onGapFetch: limitSiteParams,
-			onUpdateFetch: limitSiteParams,
-			dateProperty: 'tagged_on'
-		} );
 	}
+	return new FeedStream( {
+		id: storeId,
+		fetcher: fetcher,
+		keyMaker: mixedKeyMaker,
+		onGapFetch: limitSiteParams,
+		onUpdateFetch: limitSiteParams,
+		dateProperty: 'tagged_on'
+	} );
 }
 
 function getStoreForSearch( storeId ) {
@@ -127,7 +127,7 @@ function getStoreForSearch( storeId ) {
 }
 
 function getStoreForList( storeId ) {
-	var listKey = storeId.split( ':' )[ 1 ],
+	const listKey = storeId.split( ':' )[ 1 ],
 		[ listOwner, ...listSlug ] = listKey.split( '-' ),
 		fetcher = function( query, callback ) {
 			query.owner = listOwner;
@@ -145,7 +145,7 @@ function getStoreForList( storeId ) {
 }
 
 function getStoreForSite( storeId ) {
-	var siteId = storeId.split( ':' )[ 1 ],
+	const siteId = storeId.split( ':' )[ 1 ],
 		fetcher = function( query, callback ) {
 			query.site = siteId;
 			wpcomUndoc.readSitePosts( query, callback );
@@ -161,7 +161,7 @@ function getStoreForSite( storeId ) {
 }
 
 function getStoreForFeatured( storeId ) {
-	var siteId = storeId.split( ':' )[ 1 ],
+	const siteId = storeId.split( ':' )[ 1 ],
 		fetcher = function( query, callback ) {
 			wpcomUndoc.readSiteFeatured( siteId, query, callback );
 		};
@@ -184,7 +184,7 @@ function getStoreForRecommendedPosts( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		switch( storeId ) {
+		switch ( storeId ) {
 			case 'cold_posts':
 				query.algorithm = 'read:recommendations:posts/es/2';
 				break;
@@ -202,6 +202,22 @@ function getStoreForRecommendedPosts( storeId ) {
 				break;
 			case 'custom_recs_posts_with_images':
 				query.algorithm = 'read:recommendations:posts/es/7';
+
+				/* Seed FAQ:
+				 * Q: What does it do?
+				 * A: It throws a little randomness into the Elasticsearch query so that users
+				 * don't see the same recommendations every time:
+				 * https://www.elastic.co/guide/en/elasticsearch/guide/current/random-scoring.html
+				 *
+				 * Q: How did we pick this range?
+				 * A: It's big enough that the same user probably won't get repeats too frequently
+				 * and small enough that we aren't going cause overflows anywhere.
+				 *
+				 * Q: How often do we change the seed?
+				 * A: We change the seed each time the store is generated. Practically speaking
+				 * that means each time the page is refreshed.
+				 */
+				query.seed = random( 0, 10000 );
 				break;
 			default:
 				query.algorithm = 'read:recommendations:posts/es/1';
@@ -218,8 +234,8 @@ function getStoreForRecommendedPosts( storeId ) {
 	return stream;
 }
 
-function feedStoreFactory( storeId ) {
-	var store = FeedStreamCache.get( storeId );
+export default function feedStoreFactory( storeId ) {
+	let store = FeedStreamCache.get( storeId );
 
 	if ( store ) {
 		return store;
@@ -275,5 +291,3 @@ function feedStoreFactory( storeId ) {
 	FeedStreamCache.set( storeId, store );
 	return store;
 }
-
-module.exports = feedStoreFactory;

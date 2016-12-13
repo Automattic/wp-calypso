@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import AutoDirection from 'components/auto-direction';
 
 export default class PostCommentContent extends React.Component {
 	render() {
@@ -12,8 +13,10 @@ export default class PostCommentContent extends React.Component {
 
 		/*eslint-disable react/no-danger*/
 		return (
-			<div className="comments__comment-content" dangerouslySetInnerHTML={ { __html: this.props.content } }>
-			</div>
+			<AutoDirection>
+				<div className="comments__comment-content" dangerouslySetInnerHTML={ { __html: this.props.content } }>
+				</div>
+			</AutoDirection>
 		);
 		/*eslint-enable react/no-danger*/
 	}

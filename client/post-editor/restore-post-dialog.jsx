@@ -1,95 +1,112 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import noop from 'lodash/noop';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { noop, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import utils from 'lib/posts/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 
-export default React.createClass( {
+class EditorRestorePostDialog extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+		onClose: PropTypes.func,
+		onRestore: PropTypes.func,
+		isAutosave: PropTypes.bool,
+		postType: PropTypes.string,
+		userCanDeletePost: PropTypes.bool,
+	}
 
-	displayName: 'EditorRestorePostDialog',
+	static defaultProps = {
+		onClose: noop,
+		onRestore: noop,
+		isAutosave: false,
+	}
 
-	getDefaultProps() {
-		return {
-			onClose: noop,
-			onRestore: noop,
-			isAutosave: false
-		};
-	},
-
-	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		onClose: React.PropTypes.func,
-		onRestore: React.PropTypes.func,
-		isAutosave: React.PropTypes.bool
-	},
-
-	restorePost() {
-		if ( this.props.isAutosave ) {
-			this.props.onRestore();
-		} else if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			this.props.onRestore( 'draft' );
+	restorePost = () => {
+		const { isAutosave, userCanDeletePost, onRestore } = this.props;
+		if ( isAutosave ) {
+			onRestore();
+		} else if ( userCanDeletePost ) {
+			onRestore( 'draft' );
 		}
-	},
+	}
 
-	getDialogButtons() {
-		return [
+	getStrings = () => {
+		const { isAutosave, postType, translate } = this.props;
+		const isPage = postType === 'page';
+		if ( isAutosave ) {
+			if ( isPage ) {
+				return {
+					dialogTitle: translate( 'Saved Draft' ),
+					dialogContent: translate( 'A more recent revision of this page exists. Restore?' ),
+				};
+			}
+			return {
+				dialogTitle: translate( 'Saved Draft' ),
+				dialogContent: translate( 'A more recent revision of this post exists. Restore?' ),
+			};
+		}
+		if ( isPage ) {
+			return {
+				dialogTitle: translate( 'Deleted Page' ),
+				dialogContent: translate( 'This page has been sent to the trash. Restore it to continue writing.' ),
+			};
+		}
+		return {
+			dialogTitle: translate( 'Deleted Post' ),
+			dialogContent: translate( 'This post has been sent to the trash. Restore it to continue writing.' ),
+		};
+	}
+
+	render() {
+		const { onClose, translate } = this.props;
+		const strings = this.getStrings();
+
+		const dialogButtons = [
 			<FormButton
 				key="restore"
 				isPrimary={ true }
 				onClick={ this.restorePost }>
-					{ this.translate( 'Restore' ) }
+					{ translate( 'Restore' ) }
 			</FormButton>,
 			<FormButton
 				key="back"
 				isPrimary={ false }
-				onClick={ this.props.onClose }>
-					{ this.translate( "Don't restore" ) }
+				onClick={ onClose }>
+					{ translate( 'Don\'t restore' ) }
 			</FormButton>
 		];
-	},
 
-	getStrings() {
-		if ( this.props.isAutosave ) {
-			if ( utils.isPage( this.props.post ) ) {
-				return {
-					dialogTitle: this.translate( 'Saved Draft' ),
-					dialogContent: this.translate( 'A more recent revision of this page exists. Restore?' ),
-				};
-			}
-			return {
-				dialogTitle: this.translate( 'Saved Draft' ),
-				dialogContent: this.translate( 'A more recent revision of this post exists. Restore?' ),
-			};
-		}
-		if ( utils.isPage( this.props.post ) ) {
-			return {
-				dialogTitle: this.translate( 'Deleted Page' ),
-				dialogContent: this.translate( 'This page has been sent to the trash. Restore it to continue writing.' ),
-			};
-		}
-		return {
-			dialogTitle: this.translate( 'Deleted Post' ),
-			dialogContent: this.translate( 'This post has been sent to the trash. Restore it to continue writing.' ),
-		};
-	},
-
-	render() {
-		const strings = this.getStrings();
 		return (
 			<Dialog
 				isVisible={ true }
-				buttons={ this.getDialogButtons() }
+				buttons={ dialogButtons }
 			>
 				<h1>{ strings.dialogTitle }</h1>
 				<p>{ strings.dialogContent }</p>
 			</Dialog>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const capabilities = getEditedPostValue( state, siteId, postId, 'capabilities' );
+
+		return {
+			postType: getEditedPostValue( state, siteId, postId, 'type' ),
+			userCanDeletePost: get( capabilities, 'delete_post' ),
+		};
+	}
+)( localize( EditorRestorePostDialog ) );

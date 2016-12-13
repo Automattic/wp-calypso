@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 
@@ -17,60 +16,60 @@ import Gridicon from 'components/gridicon';
 
 const sites = sitesList();
 
-export default React.createClass( {
+export default class SitesDropdown extends PureComponent {
 
-	displayName: 'SitesDropdown',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		selected: React.PropTypes.oneOfType( [
-			React.PropTypes.number,
-			React.PropTypes.string
-		] ),
+	static propTypes = {
+		selectedSiteId: React.PropTypes.number,
 		showAllSites: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		onSiteSelect: React.PropTypes.func,
 		filter: React.PropTypes.func,
 		isPlaceholder: React.PropTypes.bool
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			showAllSites: false,
-			onClose: noop,
-			onSiteSelect: noop,
-			isPlaceholder: false
-		};
-	},
+	static defaultProps = {
+		showAllSites: false,
+		onClose: noop,
+		onSiteSelect: noop,
+		isPlaceholder: false
+	}
 
-	getInitialState() {
-		const primary = sites.getPrimary();
-		return {
-			selected: this.props.selected || primary && primary.slug
+	constructor( props ) {
+		super( props );
+
+		this.selectSite = this.selectSite.bind( this );
+		this.toggleOpen = this.toggleOpen.bind( this );
+		this.onClose = this.onClose.bind( this );
+
+		const selectedSite = props.selectedSiteId
+			? sites.getSite( props.selectedSiteId )
+			: sites.getPrimary();
+
+		this.state = {
+			selectedSiteSlug: selectedSite && selectedSite.slug
 		};
-	},
+	}
 
 	getSelectedSite() {
-		return sites.getSite( this.state.selected );
-	},
+		return sites.getSite( this.state.selectedSiteSlug );
+	}
 
 	selectSite( siteSlug ) {
 		this.props.onSiteSelect( siteSlug );
 		this.setState( {
-			selected: siteSlug,
+			selectedSiteSlug: siteSlug,
 			open: false
 		} );
-	},
+	}
 
 	toggleOpen() {
 		this.setState( { open: ! this.state.open } );
-	},
+	}
 
 	onClose( e ) {
 		this.setState( { open: false } );
 		this.props.onClose && this.props.onClose( e );
-	},
+	}
 
 	render() {
 		return (
@@ -92,7 +91,7 @@ export default React.createClass( {
 							autoFocus={ true }
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
-							selected={ this.state.selected }
+							selected={ this.state.selectedSiteSlug }
 							hideSelected={ true }
 							filter={ this.props.filter }
 						/>
@@ -101,4 +100,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, get } from 'lodash';
+import { includes, isEqual, omit, some, get, pick } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteOption,
+	isJetpackSite,
+	canJetpackSiteManage,
+	hasJetpackSiteJetpackThemesExtendedFeatures
+} from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { isPremiumTheme, oldShowcaseUrl } from './utils';
 import {
@@ -54,7 +60,20 @@ export const getTheme = createSelector(
 			return null;
 		}
 
-		return manager.getItem( themeId );
+		const theme = manager.getItem( themeId );
+		if ( siteId === 'wpcom' || siteId === 'wporg' ) {
+			return theme;
+		}
+		// We're dealing with a Jetpack site. If we have theme info obtained from the
+		// WordPress.org API, merge it.
+		const wporgTheme = getTheme( state, 'wporg', themeId );
+		if ( ! wporgTheme ) {
+			return theme;
+		}
+		return {
+			...theme,
+			...pick( wporgTheme, [ 'demo_uri', 'download', 'taxonomies' ] )
+		};
 	},
 	( state ) => state.themes.queries
 );
@@ -273,6 +292,17 @@ export function isRequestingActiveTheme( state, siteId ) {
 }
 
 /**
+ * Whether a theme is present in the WordPress.org Theme Directory
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  themeId Theme ID
+ * @return {Boolean}         Whether theme is in WP.org theme directory
+ */
+export function isWporgTheme( state, themeId ) {
+	return !! getTheme( state, 'wporg', themeId );
+}
+
+/**
  * Returns the URL for a given theme's details sheet.
  *
  * @param  {Object}  state  Global state tree
@@ -285,7 +315,12 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
 		return null;
 	}
 
-	if ( isJetpackSite( state, siteId ) ) {
+	if ( isJetpackSite( state, siteId ) &&
+		! (
+			config.isEnabled( 'manage/themes/details/jetpack' ) &&
+			canJetpackSiteManage( state, siteId ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+		) ) {
 		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + theme.id;
 	}
 
@@ -412,9 +447,17 @@ export function getThemeSignupUrl( state, theme ) {
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID
+ * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId ) {
+export function getThemeForumUrl( state, themeId, siteId ) {
+	if ( isJetpackSite( state, siteId ) ) {
+		if ( isWporgTheme( state, themeId ) ) {
+			return '//wordpress.org/support/theme/' + themeId;
+		}
+		return null;
+	}
+
 	if ( isThemePremium( state, themeId ) ) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}

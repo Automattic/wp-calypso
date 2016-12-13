@@ -3,6 +3,7 @@
  */
 const wpcom = require( 'lib/wp' );
 import keys from 'lodash/keys';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -209,27 +210,59 @@ function configure( site, plugin, dispatch ) {
 			action: 'register',
 		} );
 	}
-	site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
-		if ( ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
-			const response = JSON.parse( data.option_value );
-			if ( 'response' === response.action && 'broken' === response.status ) {
-				error = new Error( response.error );
-				error.name = 'RegisterError';
+
+	const saveOption = () => {
+		return site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
+			if ( ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
+				const response = JSON.parse( data.option_value );
+				if ( 'response' === response.action && 'broken' === response.status ) {
+					error = new Error( response.error );
+					error.name = 'RegisterError';
+				}
 			}
-		}
-		if ( error ) {
+			if ( error ) {
+				dispatch( {
+					type: PLUGIN_SETUP_ERROR,
+					siteId: site.ID,
+					slug: plugin.slug,
+					error,
+				} );
+			}
+			dispatch( {
+				type: PLUGIN_SETUP_FINISH,
+				siteId: site.ID,
+				slug: plugin.slug,
+			} );
+		} );
+	};
+
+	// We don't need to check for VaultPress
+	if ( 'vaultpress' === plugin.slug ) {
+		return saveOption();
+	}
+
+	return site.getOption( { option_name: option }, ( getError, getData ) => {
+		if ( get( getData, 'option_value' ) === optionValue ) {
+			// Already registered with this key
+			dispatch( {
+				type: PLUGIN_SETUP_FINISH,
+				siteId: site.ID,
+				slug: plugin.slug,
+			} );
+			return;
+		} else if ( getData.option_value ) {
+			// Already registered with another key
+			const alreadyRegistered = new Error();
+			alreadyRegistered.code = 'already_registered';
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
 				slug: plugin.slug,
-				error,
+				error: alreadyRegistered,
 			} );
+			return;
 		}
-		dispatch( {
-			type: PLUGIN_SETUP_FINISH,
-			siteId: site.ID,
-			slug: plugin.slug,
-		} );
+		return saveOption();
 	} );
 }
 

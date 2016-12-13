@@ -17,6 +17,7 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
 var Site = require( './site' ),
 	Me = require( './me' ),
 	MailingList = require( './mailing-list' ),
+	AccountRecoveryReset = require( './account-recovery-reset' ),
 	config = require( 'config' ),
 	i18n = require( 'lib/i18n-utils' );
 
@@ -56,6 +57,10 @@ Undocumented.prototype.me = function() {
 
 Undocumented.prototype.mailingList = function( category ) {
 	return new MailingList( category, this.wpcom );
+};
+
+Undocumented.prototype.accountRecoveryReset = function( userData ) {
+	return new AccountRecoveryReset( userData, this.wpcom );
 };
 
 /*
@@ -1494,6 +1499,25 @@ Undocumented.prototype.jetpackThemeDetails = function( themeId, siteId, fn ) {
 	}, fn );
 };
 
+/**
+ * Install a theme from WordPress.org or WordPress.com on the given Jetpack site.
+ * Whether the theme is installed from .com or .org is controlled by the themeId string
+ * if it has a -wpcom suffix, .com is used.
+ *
+ * @param {String}    siteId   The site ID
+ * @param {String}    themeId  WordPress.com theme with -wpcom suffix, WordPress.org otherwise
+ * @param {Function}  fn       The callback function
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
+	const path = `/sites/${ siteId }/themes/${ themeId }/install`;
+	debug( path );
+
+	return this.wpcom.req.post( {
+		path,
+	}, fn );
+};
+
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
@@ -1668,6 +1692,10 @@ Undocumented.prototype.declineTransfer = function( domainName, fn ) {
 	};
 
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
+};
+
+Undocumented.prototype.transferToUser = function( siteId, domainName, targetUserId, fn ) {
+	return this.wpcom.req.post( '/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId, fn );
 };
 
 /*
@@ -2096,6 +2124,55 @@ Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
 			path: '/sites/' + siteId + '/homepage',
 			body: data
 		}, fn );
+};
+
+/**
+ * Initiate the Automated Transfer process, uploading a theme and/or selecting
+ * a community plugin.
+ *
+ * @param {int} siteId -- the ID of the site
+ * @param {string} [plugin] -- .org plugin slug
+ * @param {File} [theme] -- theme zip to upload
+ * @param {Function} [onProgress] -- called with upload progress status
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onProgress ) {
+	debug( '/sites/:site_id/automated-transfers/initiate' );
+	return new Promise( ( resolve, rejectPromise ) => {
+		const resolver = ( error, data ) => {
+			error ? rejectPromise( error ) : resolve( data );
+		};
+
+		const post = {
+			path: `/sites/${ siteId }/automated-transfers/initiate`
+		};
+
+		if ( plugin ) {
+			post.body = { plugin };
+		}
+		if ( theme ) {
+			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		const req = this.wpcom.req.post( post, resolver );
+		req && ( req.upload.onprogress = onProgress );
+	} );
+};
+
+/**
+ * Fetch the status of an Automated Transfer.
+ *
+ * @param {int} siteId -- the ID of the site being transferred
+ * @param {int} transferId -- ID of the specific transfer
+ *
+ * @returns {Promise} promise for handling result
+ */
+Undocumented.prototype.transferStatus = function( siteId, transferId ) {
+	debug( '/sites/:site_id/automated-transfers/status/:transfer_id' );
+	return this.wpcom.req.get( {
+		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
+	} );
 };
 
 /**

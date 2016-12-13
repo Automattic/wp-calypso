@@ -10,6 +10,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
+import automatedTransfer from './automated-transfer/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
@@ -60,6 +61,7 @@ import wordads from './wordads/reducer';
 export const reducer = combineReducers( {
 	application,
 	accountRecovery,
+	automatedTransfer,
 	comments,
 	componentsUsageStats,
 	countryStates,
@@ -109,7 +111,8 @@ const middleware = [ thunkMiddleware, noticesMiddleware ];
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
 	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware
+		require( './analytics/middleware.js' ).analyticsMiddleware,
+		require( './data-layer/wpcom-api-middleware.js' ).middleware,
 	);
 }
 

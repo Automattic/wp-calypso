@@ -13,6 +13,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
+import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
@@ -316,10 +317,12 @@ export class FullPostView extends React.Component {
 						{ post.use_excerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
+								<AutoDirection>
 									<div
 										className="reader-full-post__story-content"
 										dangerouslySetInnerHTML={ { __html: post.content } } />
-								</EmbedContainer>
+								</AutoDirection>
+							</EmbedContainer>
 						}
 
 						{ post.use_excerpt && ! isDiscoverPost( post )

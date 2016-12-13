@@ -164,7 +164,7 @@ export class MySitesSidebar extends Component {
 		return (
 			canManageAds &&
 			<SidebarItem
-				label={ site.jetpack ? 'AdControl' : 'WordAds' }
+				label={ site.jetpack ? 'Ads' : 'WordAds' }
 				className={ this.itemLinkClass( '/ads', 'rads' ) }
 				link={ adsLink }
 				onNavigate={ this.onNavigate }
@@ -497,7 +497,8 @@ export class MySitesSidebar extends Component {
 				link={ siteSettingsLink }
 				onNavigate={ this.onNavigate }
 				icon="cog"
-				preloadSectionName="settings" />
+				preloadSectionName="settings"
+				tipTarget="settings" />
 		);
 	}
 

@@ -1,23 +1,26 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:sites-list' ),
-	store = require( 'store' ),
-	assign = require( 'lodash/assign' ),
-	find = require( 'lodash/find' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	some = require( 'lodash/some' );
+import debugModule from 'debug';
+import store from 'store';
+import assign from 'lodash/assign';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import some from 'lodash/some';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Site = require( 'lib/site' ),
-	JetpackSite = require( 'lib/site/jetpack' ),
-	Searchable = require( 'lib/mixins/searchable' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	isPlan = require( 'lib/products-values' ).isPlan,
-	userUtils = require( 'lib/user/utils' );
+import wpcom from 'lib/wp';
+import Site from 'lib/site';
+import JetpackSite from 'lib/site/jetpack';
+import Searchable from 'lib/mixins/searchable';
+import Emitter from 'lib/mixins/emitter';
+import { isPlan } from 'lib/products-values';
+import userUtils from 'lib/user/utils';
+import { withoutHttp } from 'lib/url';
+
+const debug = debugModule( 'calypso:sites-list' );
 
 /**
  * SitesList component
@@ -153,7 +156,7 @@ SitesList.prototype.markCollisions = function( sites ) {
 
 		if ( ! site.jetpack ) {
 			hasCollision = some( collisions, function( someSite ) {
-				return ( someSite.jetpack && site.ID !== someSite.ID && site.URL === someSite.URL );
+				return ( someSite.jetpack && site.ID !== someSite.ID && withoutHttp( site.URL ) === withoutHttp( someSite.URL ) );
 			} );
 			if ( hasCollision ) {
 				site.hasConflict = true;

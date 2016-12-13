@@ -21,13 +21,8 @@ export default connectOptions(
 		const { site, siteId, translate } = props;
 
 		return (
-			<ThemeShowcase { ...props } siteId={ siteId }>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			<div>
 				<SidebarNavigation />
-				<ThanksModal
-					site={ site }
-					source={ 'list' } />
 				<CurrentTheme siteId={ siteId } />
 				<UpgradeNudge
 					title={ translate( 'Get Custom Design with Premium' ) }
@@ -35,7 +30,14 @@ export default connectOptions(
 					feature={ FEATURE_ADVANCED_DESIGN }
 					event="themes_custom_design"
 					/>
-			</ThemeShowcase>
+				<ThemeShowcase { ...props } siteId={ siteId }>
+					{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+					<ThanksModal
+						site={ site }
+						source={ 'list' } />
+				</ThemeShowcase>
+			</div>
 		);
 	}
  );

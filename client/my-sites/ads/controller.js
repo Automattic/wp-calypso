@@ -27,7 +27,7 @@ function _recordPageView( context, analyticsPageTitle ) {
 }
 
 function _getLayoutTitle( context ) {
-	var title = sites.getSelectedSite().jetpack ? 'AdControl' : 'WordAds';
+	var title = sites.getSelectedSite().jetpack ? 'Ads' : 'WordAds';
 	switch ( context.params.section ) {
 		case 'earnings':
 			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: title } } );

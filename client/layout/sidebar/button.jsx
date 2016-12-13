@@ -41,6 +41,7 @@ export default React.createClass( {
 				target={ isExternal( this.props.href ) ? '_blank' : null }
 				className="sidebar__button"
 				onMouseEnter={ this.preload }
+				data-tip-target={ this.props.tipTarget }
 			>
 				{ this.props.children || this.translate( 'Add' ) }
 			</a>

@@ -2,11 +2,12 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { omit, omitBy, split } from 'lodash';
+import { filter, get, map, mapKeys, omit, omitBy, split } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { isThemeMatchingQuery } from 'lib/query-manager/theme/util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -19,6 +20,54 @@ export const oldShowcaseUrl = '//wordpress.com/themes/';
 /**
  * Utility
  */
+
+ /**
+  * Normalizes a theme obtained from the WordPress.com REST API
+  *
+  * @param  {Object} theme  Themes object
+  * @return {Object}        Normalized theme object
+  */
+export function normalizeWpcomTheme( theme ) {
+	const attributesMap = {
+		description_long: 'descriptionLong',
+		support_documentation: 'supportDocumentation',
+		download_uri: 'download'
+	};
+
+	return mapKeys( theme, ( value, key ) => (
+		get( attributesMap, key, key )
+	) );
+}
+
+/**
+ * Normalizes a theme obtained from the WordPress.org REST API
+ *
+ * @param  {Object} theme  Themes object
+ * @return {Object}        Normalized theme object
+ */
+export function normalizeWporgTheme( theme ) {
+	const attributesMap = {
+		slug: 'id',
+		preview_url: 'demo_uri',
+		screenshot_url: 'screenshot',
+		download_link: 'download'
+	};
+
+	const normalizedTheme = mapKeys( theme, ( value, key ) => (
+		get( attributesMap, key, key )
+	) );
+
+	if ( ! normalizedTheme.tags ) {
+		return normalizedTheme;
+	}
+
+	return {
+		...omit( normalizedTheme, 'tags' ),
+		taxonomies: { theme_feature: map( normalizedTheme.tags,
+			( name, slug ) => ( { name, slug } )
+		) }
+	};
+}
 
 /**
  * Given a theme stylesheet string (like 'pub/twentysixteen'), returns the corresponding theme ID ('twentysixteen').
@@ -109,4 +158,16 @@ export function isPremiumTheme( theme ) {
 	// contains the correct price even if the user has already purchased that
 	// theme, or if they have an upgrade that includes all premium themes).
 	return !! ( theme.cost && theme.cost.number );
+}
+
+/**
+ * Returns a filtered themes array. Filtering is done based on particular themes
+ * matching provided query
+ *
+ * @param  {Array}  themes Array of themes objects
+ * @param  {Object} query  Themes query
+ * @return {Array}         Filtered themes
+ */
+export function filterThemesForJetpack( themes, query ) {
+	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
 }

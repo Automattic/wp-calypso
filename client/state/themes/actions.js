@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { conforms, omit, property } from 'lodash';
+import { conforms, map, omit, property, delay } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import wporg from 'lib/wporg';
 import {
 	// Old action names
 	THEME_BACK_PATH_SET,
@@ -35,6 +36,12 @@ import {
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_INITIATE_PROGRESS,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -43,7 +50,12 @@ import {
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme } from './selectors';
 import { getQueryParams } from './themes-list/selectors';
-import { getThemeIdFromStylesheet } from './utils';
+import {
+	getThemeIdFromStylesheet,
+	filterThemesForJetpack,
+	normalizeWpcomTheme,
+	normalizeWporgTheme
+} from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -203,14 +215,24 @@ export function requestThemes( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
+		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes: rawThemes } ) => {
+			const themes = map( rawThemes, normalizeWpcomTheme );
+
 			dispatch( receiveThemes( themes, siteId ) );
+
+			let filteredThemes = themes;
+			if ( siteId !== 'wpcom' ) {
+				// A Jetpack site's themes endpoint ignores the query, returning an unfiltered list of all installed themes instead,
+				// So we have to filter on the client side instead.
+				filteredThemes = filterThemesForJetpack( themes, query );
+			}
+
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
+				themes: filteredThemes,
 				siteId,
 				query,
 				found,
-				themes
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
@@ -247,9 +269,32 @@ export function requestTheme( themeId, siteId ) {
 			themeId
 		} );
 
+		if ( siteId === 'wporg' ) {
+			return wporg.fetchThemeInformation( themeId ).then( ( theme ) => {
+				// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
+				// if a theme can't be found.
+				if ( ! theme ) {
+					throw ( 'Theme not found' ); // Will be caught by .catch() below
+				}
+				dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
+				dispatch( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: THEME_REQUEST_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+		}
+
 		if ( siteId === 'wpcom' ) {
 			return wpcom.undocumented().themeDetails( themeId ).then( ( theme ) => {
-				dispatch( receiveTheme( theme, siteId ) );
+				dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 				dispatch( {
 					type: THEME_REQUEST_SUCCESS,
 					siteId,
@@ -267,8 +312,8 @@ export function requestTheme( themeId, siteId ) {
 
 		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
 		// the regular themeDetails() method for Jetpack sites yet.
-		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( theme ) => {
-			dispatch( receiveThemes( theme.themes, siteId ) );
+		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( { themes } ) => {
+			dispatch( receiveThemes( map( themes, normalizeWpcomTheme ), siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
@@ -336,7 +381,8 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom.undocumented().activateTheme( themeId, siteId )
 			.then( ( theme ) => {
-				const themeStylesheet = theme.stylesheet || themeId; // Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
+				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
 			} )
 			.catch( error => {
@@ -401,6 +447,48 @@ export function clearActivated( siteId ) {
 }
 
 /**
+ * Triggers a network request to activate a specific wpcom theme on a given Jetpack site.
+ * First step of the process is the installation of the theme on Jetpack site.
+ * Second step is the actuall activation.
+ *
+ * Warning: this is working but not final version. It has a built in hack in form of
+ * dispatching THEME_ACTIVATE_REQUEST twice to mark process start and has no handlin
+ * of information about installation process except in failure scenario.
+ *
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   themeId   Theme ID, this should be standard id without -wpcom suffix.
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
+export function activateWpcomThemeOnJetpack( siteId, themeId, source = 'unknown', purchased = false ) {
+	//Add -wpcom suffix. This suffix tells the endpoint that we want to
+	//install WordPress.com theme. Without the suffix endpoint would look
+	//for theme in .org
+	const suffixedThemeId = themeId + '-wpcom';
+	return dispatch => {
+		dispatch( {
+			type: THEME_ACTIVATE_REQUEST,
+			themeId: suffixedThemeId,
+			siteId,
+		} );
+
+		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
+			.then( () => {
+				return activateTheme( suffixedThemeId, siteId, source, purchased )( dispatch );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					themeId: suffixedThemeId,
+					siteId,
+					error
+				} );
+			} );
+	};
+}
+
+/**
  * Triggers a theme upload to the given site.
  *
  * @param {Number} siteId -- Site to upload to
@@ -452,5 +540,110 @@ export function clearThemeUpload( siteId ) {
 	return {
 		type: THEME_UPLOAD_CLEAR,
 		siteId,
+	};
+}
+
+/**
+ * Start an Automated Transfer with an uploaded theme.
+ *
+ * @param {Number} siteId -- the site to transfer
+ * @param {File} file -- theme zip to upload
+ *
+ * @returns {Promise} for testing purposes only
+ */
+export function initiateThemeTransfer( siteId, file ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_TRANSFER_INITIATE_REQUEST,
+			siteId,
+		} );
+		return wpcom.undocumented().initiateTransfer( siteId, null, file, ( event ) => {
+			dispatch( {
+				type: THEME_TRANSFER_INITIATE_PROGRESS,
+				siteId,
+				loaded: event.loaded,
+				total: event.total,
+			} );
+		} )
+			.then( ( { transfer_id } ) => {
+				dispatch( {
+					type: THEME_TRANSFER_INITIATE_SUCCESS,
+					siteId,
+					transferId: transfer_id,
+				} );
+				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_TRANSFER_INITIATE_FAILURE,
+					siteId,
+					error,
+				} );
+			} );
+	};
+}
+
+// receive a transfer status
+function transferStatus( siteId, transferId, status, message, themeId ) {
+	return {
+		type: THEME_TRANSFER_STATUS_RECEIVE,
+		siteId,
+		transferId,
+		status,
+		message,
+		themeId,
+	};
+}
+
+// receive a transfer status error
+function transferStatusFailure( siteId, transferId, error ) {
+	return {
+		type: THEME_TRANSFER_STATUS_FAILURE,
+		siteId,
+		transferId,
+		error,
+	};
+}
+
+/**
+ * Make API calls to the transfer status endpoint until a status complete is received,
+ * or an error is received, or the timeout is reached.
+ *
+ * The returned promise is only for testing purposes, and therefore is never rejected,
+ * to avoid unhandled rejections in production.
+ *
+ * @param {Number} siteId -- the site being transferred
+ * @param {Number} transferId -- the specific transfer
+ * @param {Number} [interval] -- time between poll attemps
+ * @param {Number} [timeout] -- time to wait for 'complete' status before bailing
+ *
+ * @return {Promise} for testing purposes only
+ */
+export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
+	const endTime = Date.now() + timeout;
+	return dispatch => {
+		const pollStatus = ( resolve, reject ) => {
+			if ( Date.now() > endTime ) {
+				// timed-out, stop polling
+				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
+				return resolve();
+			}
+			return wpcom.undocumented().transferStatus( siteId, transferId )
+				.then( ( { status, message, themeId } ) => {
+					dispatch( transferStatus( siteId, transferId, status, message, themeId ) );
+					if ( status === 'complete' ) {
+						// finished, stop polling
+						return resolve();
+					}
+					// poll again
+					return delay( pollStatus, interval, resolve, reject );
+				} )
+				.catch( ( error ) => {
+					dispatch( transferStatusFailure( siteId, transferId, error ) );
+					// error, stop polling
+					return resolve();
+				} );
+		};
+		return new Promise( pollStatus );
 	};
 }

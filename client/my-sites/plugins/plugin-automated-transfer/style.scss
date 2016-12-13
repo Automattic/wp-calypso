@@ -1,0 +1,15 @@
+.plugin-automated-transfer {
+	.gridicons-sync g {
+		animation: spinning-sync-icon linear 2s infinite;
+		transform-origin: center;
+	}
+	.gridicons-checkmark g,
+	.gridicons-notice g {
+		transform: rotate( 0deg );
+	}
+}
+
+@keyframes spinning-sync-icon {
+	from { transform: rotate( 0deg ); }
+	to { transform: rotate( 360deg ); }
+}

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { initial, flatMap, trim, sampleSize } from 'lodash';
+import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
@@ -19,7 +19,7 @@ import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
-import { recordTrackForPost } from 'reader/stats';
+import { recordTrackForPost, recordAction } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
 import SearchCard from 'blocks/reader-search-card';
@@ -31,13 +31,28 @@ import config from 'config';
 const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
 
 function RecommendedPosts( { post, site } ) {
+	function handlePostClick() {
+		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
+			recommendation_source: 'empty-search',
+		} );
+		recordAction( 'search_page_rec_post_click' );
+	}
+
+	function handleSiteClick() {
+		recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
+			recommendation_source: 'empty-search',
+		} );
+		recordAction( 'search_page_rec_site_click' );
+	}
+
 	if ( ! site ) {
 		site = { title: post.site_name, };
 	}
 
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site } />
+			<RelatedPostCard post={ post } site={ site }
+				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } />
 		</div>
 	);
 }
@@ -191,6 +206,32 @@ const SearchStream = React.createClass( {
 		return SearchCardAdapter( isRecommendations );
 	},
 
+	handleStreamMounted( ref ) {
+		this.streamRef = ref;
+	},
+
+	handleSearchBoxMounted( ref ) {
+		this.searchBoxRef = ref;
+	},
+
+	resizeSearchBox() {
+		if ( this.searchBoxRef && this.streamRef ) {
+			const width = this.streamRef.getClientRects()[ 0 ].width;
+			if ( width > 0 ) {
+				this.searchBoxRef.style.width = `${ width }px`;
+			}
+		}
+	},
+
+	componentDidMount() {
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
+		this.resizeSearchBox();
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.resizeListener );
+	},
+
 	placeholderFactory( { key, ...rest } ) {
 		if ( isRefreshedStream && ! this.props.query ) {
 			return (
@@ -229,7 +270,8 @@ const SearchStream = React.createClass( {
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
-				<div className="search-stream__fixed-area">
+				<div ref={ this.handleStreamMounted } />
+				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							initialValue={ this.props.query }
