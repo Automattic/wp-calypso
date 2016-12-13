@@ -134,11 +134,11 @@ var utils = {
 				postNormalizer.decodeEntities,
 				postNormalizer.stripHTML,
 				postNormalizer.safeImageProperties( imageWidth ),
-				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
 					postNormalizer.content.makeImagesSafe( imageWidth )
-				] )
+				] ),
+				postNormalizer.pickCanonicalImage,
 			],
 			callback
 		);

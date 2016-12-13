@@ -559,7 +559,7 @@ describe( 'index', function() {
 	describe( 'canonical image picker', function() {
 		it( 'can pick the canonical image from images', function( done ) {
 			const postRunThroughWaitForImagesToLoad = {
-				images: [
+				content_images: [
 					null, // null reference
 					{
 						height: 1,
@@ -598,10 +598,10 @@ describe( 'index', function() {
 		it( 'will pick featured_image if present and images missing', function( done ) {
 			normalizer(
 				{
-					featured_image: 'http://example.com/featured.jpg',
-					featured_media: {
-						type: 'image',
-						uri: 'http://example.com/media.jpg'
+					post_thumbnail: {
+						URL: 'http://example.com/featured.jpg',
+						width: 700,
+						height: 200,
 					}
 				},
 				[ normalizer.pickCanonicalImage ], function( err, normalized ) {
