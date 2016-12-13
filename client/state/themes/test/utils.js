@@ -392,31 +392,5 @@ describe( 'utils', () => {
 				} );
 			} );
 		} );
-
-		context( 'query.tier', () => {
-			it( 'should return true for a free theme when querying for all themes', () => {
-				const isMatch = isThemeMatchingQuery( {
-					tier: ''
-				}, DEFAULT_THEME );
-
-				expect( isMatch ).to.be.true;
-			} );
-
-			it( 'should return true for a free theme when querying for free themes', () => {
-				const isMatch = isThemeMatchingQuery( {
-					tier: 'free'
-				}, DEFAULT_THEME );
-
-				expect( isMatch ).to.be.true;
-			} );
-
-			it( 'should return false for a free theme when querying for premium themes', () => {
-				const isMatch = isThemeMatchingQuery( {
-					tier: 'premium'
-				}, DEFAULT_THEME );
-
-				expect( isMatch ).to.be.false;
-			} );
-		} );
 	} );
 } );

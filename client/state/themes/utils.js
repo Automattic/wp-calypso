@@ -233,13 +233,6 @@ export function isThemeMatchingQuery( query, theme ) {
 						some( terms, { slug: f } )
 					) )
 				) );
-
-			case 'tier':
-				if ( ! value ) {
-					return true;
-				}
-				const queryingForPremium = value === 'premium';
-				return queryingForPremium === isPremium( theme );
 		}
 
 		return true;
