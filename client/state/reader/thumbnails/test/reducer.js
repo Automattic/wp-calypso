@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index requesting state by tag', () => {
+		it( 'should index requesting state by embedUrl', () => {
 			const state = requesting( {}, {
 				type: READER_THUMBNAIL_REQUEST,
 				embedUrl,

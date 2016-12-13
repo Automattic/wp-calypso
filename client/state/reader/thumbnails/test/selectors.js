@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 	const thumbnailUrl = 'thumbnailUrl';
 
 	describe( '#getThumbnailForIframe()', () => {
-		it( 'should return undefined if there is no image available', () => {
+		it( 'should return undefined if there is no thumbnail available', () => {
 			const state = {
 				reader: {
 					thumbnails: {
@@ -41,8 +41,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isRequestingTagImages()', () => {
-		it( 'should return true if requesting images for the specified tag', () => {
+	describe( '#isRequestingThumbnailUrl()', () => {
+		it( 'should return true if requesting thumbnail for the embed', () => {
 			const state = {
 				reader: {
 					thumbnails: {
