@@ -16,13 +16,13 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { isPremiumTheme, oldShowcaseUrl } from './utils';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getSerializedThemesQueryWithoutPage,
-	isPremium
+	isPremium,
+	oldShowcaseUrl
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 
@@ -357,7 +357,7 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
  * @return {?String}        Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, theme, siteId ) {
-	if ( ! theme || ! isPremiumTheme( theme ) ) {
+	if ( isJetpackSite( state, siteId ) || ! theme || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -400,7 +400,7 @@ export function getThemeHelpUrl( state, theme, siteId ) {
  * @return {?String}        Theme purchase URL
  */
 export function getThemePurchaseUrl( state, theme, siteId ) {
-	if ( ! isPremiumTheme( theme ) ) {
+	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -450,7 +450,7 @@ export function getThemeSignupUrl( state, theme ) {
 
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
-	if ( isPremiumTheme( theme ) ) {
+	if ( isThemePremium( state, theme.id ) ) {
 		url += '&premium=true';
 	}
 
@@ -535,9 +535,6 @@ export function hasActivatedTheme( state, siteId ) {
 
 /**
  * Whether a WPCOM theme given by its ID is premium.
- *
- * Note that we aren't using this selector yet since the necessary reducer (queries)
- * isn't wired yet!
  *
  * @param  {Object} state   Global state tree
  * @param  {Object} themeId Theme ID

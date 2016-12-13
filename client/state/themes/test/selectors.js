@@ -947,11 +947,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
 						}
 					},
 					{
-						id: 'mood',
-						stylesheet: 'premium/mood'
+						id: 'mood'
 					}
 				);
 				expect( supportUrl ).to.equal( '/theme/mood/setup' );
@@ -967,11 +973,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
 						}
 					},
 					{
-						id: 'mood',
-						stylesheet: 'premium/mood'
+						id: 'mood'
 					},
 					2916284
 				);
@@ -990,11 +1002,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					}
 				);
 				expect( supportUrl ).to.be.null;
@@ -1010,11 +1028,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					},
 					2916284
 				);
@@ -1035,11 +1059,17 @@ describe( 'themes selectors', () => {
 									}
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					},
 					77203074
 				);
@@ -1079,11 +1109,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
 					}
 				},
 				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
+					id: 'mood'
 				},
 				2916284
 			);
@@ -1127,11 +1163,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
 					}
 				},
 				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
+					id: 'twentysixteen'
 				},
 				2916284
 			);
@@ -1148,11 +1190,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
 					}
 				},
 				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
+					id: 'mood'
 				},
 				2916284
 			);
@@ -1224,19 +1272,39 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeSignupUrl', () => {
 		it( 'given a free theme, should return the correct signup URL', () => {
-			const signupUrl = getThemeSignupUrl( {}, {
-				id: 'twentysixteen',
-				stylesheet: 'pub/twentysixteen'
-			} );
+			const signupUrl = getThemeSignupUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				{
+					id: 'twentysixteen'
+				}
+			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
 		} );
 
 		it( 'given a premium theme, should return the correct signup URL', () => {
-			const signupUrl = getThemeSignupUrl( {}, {
-				id: 'mood',
-				stylesheet: 'premium/mood'
-			} );
+			const signupUrl = getThemeSignupUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				},
+				{
+					id: 'mood'
+				}
+			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
 		} );
