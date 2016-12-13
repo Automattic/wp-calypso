@@ -80,7 +80,8 @@ const tryandcustomize = {
 
 const upload = {
 	label: i18n.translate( 'Upload Theme' ),
-	getUrl: getUploadUrl
+	getUrl: getUploadUrl,
+	hideForTheme: () => true
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
