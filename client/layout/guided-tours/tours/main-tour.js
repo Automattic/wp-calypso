@@ -3,7 +3,10 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+import {
+	negate as not,
+	overEvery as and,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,9 +26,8 @@ import {
 	isEnabled,
 	isSelectedSitePreviewable,
 	isSelectedSiteCustomizable,
-	isPreviewNotShowing,
-	isPreviewShowing,
 } from 'state/ui/guided-tours/contexts';
+import { isPreviewShowing } from 'state/ui/selectors';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
 
@@ -128,7 +130,7 @@ export const MainTour = makeTour(
 			<ButtonRow>
 				<Next step="close-preview" />
 				<Quit />
-				<Continue hidden step="close-preview" when={ isPreviewNotShowing } />
+				<Continue hidden step="close-preview" when={ not( isPreviewShowing ) } />
 			</ButtonRow>
 		</Step>
 
@@ -141,7 +143,7 @@ export const MainTour = makeTour(
 			<p>
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
-			<Continue icon="cross-small" step="themes" target="web-preview__close" when={ isPreviewNotShowing } />
+			<Continue icon="cross-small" step="themes" target="web-preview__close" when={ not( isPreviewShowing ) } />
 		</Step>
 
 		<Step name="themes"
