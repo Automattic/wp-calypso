@@ -71,10 +71,10 @@ export class FullPostView extends React.Component {
 		this.hasScrolledToCommentAnchor = false;
 	}
 
-	static PropTypes = {
+	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		onClose: React.PropTypes.func.isRequired,
-		referralPost: React.PropTypes.object
+		referralPost: React.PropTypes.object,
 	}
 
 	componentDidMount() {
