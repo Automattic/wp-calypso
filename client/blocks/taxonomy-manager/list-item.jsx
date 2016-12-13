@@ -18,7 +18,7 @@ import Count from 'components/count';
 import Dialog from 'components/dialog';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { decodeEntities } from 'lib/formatting';
@@ -36,6 +36,7 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -111,7 +112,7 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, translate } = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -156,9 +157,11 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Delete' ) }
 						</PopoverMenuItem>
 					}
-					<PopoverMenuItem href={ this.getTaxonomyLink() } icon="external">
-						{ translate( 'View Posts' ) }
-					</PopoverMenuItem>
+					{ ! isJetpack &&
+						<PopoverMenuItem href={ this.getTaxonomyLink() } icon="external">
+							{ translate( 'View Posts' ) }
+						</PopoverMenuItem>
+					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
 						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
@@ -187,6 +190,7 @@ export default connect(
 		const siteUrl = get( getSite( state, siteId ), 'URL' );
 
 		return {
+			isJetpack: isJetpackSite( state, siteId ),
 			isDefault,
 			canSetAsDefault,
 			siteId,
