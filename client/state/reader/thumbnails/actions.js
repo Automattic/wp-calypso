@@ -21,7 +21,7 @@ import {
 const debug = debugModule( 'calypso:redux:reader-service-thumbnails' );
 
 /**
- * Returns an action object to signal that image objects have been received.
+ * Returns an action object to signal that a thumbnailUrl has been received.
  *
  * @param {String} embedUrl the url of the embed for which the thumbnail was grabbed
  * @param {String} thumbnailUrl the url at which to find the thumbnail for the embed
@@ -51,10 +51,11 @@ function requestFailure( embedUrl, error ) {
 }
 
 /**
- * Triggers a network request to fetch a thumbnail
+ * Either instantly returns an action for the thumbnail info or
+ * triggers a network request to fetch a thumbnailUrl if necessary
  *
  * @param  {String} embedUrl -  the url of the embed for which to get the thumbnail
- * @return {Function} Action thunk
+ * @return {Function|Object} Action thunk | Action object
  */
 export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};
