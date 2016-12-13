@@ -22,7 +22,7 @@ import {
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
-	isThemePurchased as isPurchased
+	isThemePurchased as isPurchased,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
