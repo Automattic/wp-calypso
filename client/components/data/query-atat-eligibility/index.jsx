@@ -13,7 +13,7 @@ import { requestEligibility } from 'state/automated-transfer/actions';
 export class QueryAutomatedTransferEligibility extends Component {
 	static propTypes = {
 		request: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 	};
 
 	componentWillMount() {
@@ -27,7 +27,7 @@ export class QueryAutomatedTransferEligibility extends Component {
 	}
 
 	request( { request, siteId } ) {
-		request( siteId );
+		siteId && request( siteId );
 	}
 
 	render() {
