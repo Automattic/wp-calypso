@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import {
 	isThemePurchased
 } from 'state/themes/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -35,6 +37,8 @@ const ThemesSelection = React.createClass( {
 		getOptions: PropTypes.func,
 		query: PropTypes.object.isRequired,
 		getActionLabel: PropTypes.func,
+		incrementPage: PropTypes.func,
+		resetPage: PropTypes.func,
 		// connected props
 		siteIdOrWpcom: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -50,6 +54,12 @@ const ThemesSelection = React.createClass( {
 
 	getDefaultProps() {
 		return { search: '' };
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
+			this.props.resetPage();
+		}
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {

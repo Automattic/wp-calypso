@@ -160,6 +160,10 @@ const ThemeShowcase = React.createClass( {
 		this.setState( { page: this.state.page + 1 } );
 	},
 
+	resetPage() {
+		this.setState( { page: 1 } );
+	},
+
 	render() {
 		const { site, options, getScreenshotOption, secondaryOption, search } = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
@@ -243,7 +247,8 @@ const ThemeShowcase = React.createClass( {
 					tier={ this.props.tier }
 					filter={ this.props.filter }
 					vertical={ this.props.vertical }
-					incrementPage={ this.incrementPage } />
+					incrementPage={ this.incrementPage }
+					resetPage={ this.resetPage } />
 					{ this.props.children }
 			</Main>
 		);
