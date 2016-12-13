@@ -30,12 +30,12 @@ import {
 	}
 
 /**
- * Tracks all known image objects, indexed by iframe.src name.
+ * Tracks all known thumbnail urls, indexed by iframe.src.
  *
  * @param  {Array} state  Current state
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
- {}*/
+ */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_THUMBNAIL_RECEIVE:
@@ -54,13 +54,13 @@ export function items( state = {}, action ) {
 }
 
 /**
-* Returns the updated requesting state after an action has been dispatched.
-* Requesting state tracks whether a request is in progress.
-*
-* @param  {Object} state  Current state
-* @param  {Object} action Action object
-* @return {Object}        Updated state
-*/
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a request is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_THUMBNAIL_REQUEST:
