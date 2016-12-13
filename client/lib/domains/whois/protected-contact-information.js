@@ -7,7 +7,7 @@ function getOpenHrsProtectedContactInformation( domain ) {
 	return {
 		firstName: 'Private',
 		lastName: 'Whois',
-		organization: 'Knock Knock Whois Not There, LLC',
+		organization: 'Knock Knock WHOIS Not There, LLC',
 		email: `${ domain }@privatewho.is`,
 		phone: '+1.8772738550',
 		address1: '9450 SW Gemini Dr #63259',
