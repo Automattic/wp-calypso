@@ -109,7 +109,14 @@ const ThemeSheet = React.createClass( {
 	},
 
 	isLoaded() {
-		return !! this.props.name;
+		// We need to make sure the theme object has been loaded including full details
+		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
+		// component used by the theme showcase's list view). However, these extra details
+		// aren't present for a Jetpack site.
+		if ( this.props.isJetpack ) {
+			return !! this.props.name;
+		}
+		return !! this.props.screenshots;
 	},
 
 	onButtonClick() {
