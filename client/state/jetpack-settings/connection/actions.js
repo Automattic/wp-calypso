@@ -17,11 +17,11 @@ export const requestJetpackConnectionStatus = ( siteId ) => {
 		} );
 
 		return wp.undocumented().getJetpackConnectionStatus( siteId )
-			.then( ( status ) => {
+			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
 					siteId,
-					status
+					status: response.data
 				} );
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
