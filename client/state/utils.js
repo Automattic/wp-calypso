@@ -74,29 +74,43 @@ export function isValidStateWithSchema( state, schema ) {
  * @param {function} reducer applied to referenced item in state map
  * @return {function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer ) => ( state = {}, action ) => {
-	// the action must refer to some item in the map
-	const itemKey = action[ keyName ];
+export const keyedReducer = ( keyName, reducer ) => {
+	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
-	// if no reference exists abort
-	// and return unchanged state
-	if ( ! itemKey ) {
-		return state;
-	}
+	return ( state = {}, action ) => {
+		// the action must refer to some item in the map
+		const itemKey = action[ keyName ];
 
-	// pass the old sub-state from that item into the reducer
-	const oldItemState = state[ itemKey ];
-	const newItemState = reducer( oldItemState, action );
+		// if no reference exists abort
+		// and return unchanged state
+		if ( ! itemKey ) {
+			return state;
+		}
 
-	// and do nothing if the new sub-state matches the old sub-state
-	if ( newItemState === oldItemState ) {
-		return state;
-	}
+		// pass the old sub-state from that item into the reducer
+		// we need this to update state and also to compare if
+		// we had any changes, thus the initialState
+		const oldItemState = state.hasOwnProperty( itemKey )
+			? state[ itemKey ]
+			: initialState;
 
-	// otherwise immutably update the super-state
-	return {
-		...state,
-		[ itemKey ]: newItemState,
+		const newItemState = reducer( oldItemState, action );
+
+		// and do nothing if the new sub-state matches the old sub-state
+		// or if it matches the default state for the reducer, in which
+		// case nothing happened and we don't need to store it
+		if (
+			newItemState === oldItemState ||
+			newItemState === initialState
+		) {
+			return state;
+		}
+
+		// otherwise immutably update the super-state
+		return {
+			...state,
+			[ itemKey ]: newItemState,
+		};
 	};
 };
 

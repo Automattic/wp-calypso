@@ -281,6 +281,11 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'name', age );
 			expect( keyed( prevState, { type: 'STAY', name: 'Bonobo' } ) ).to.equal( prevState );
 		} );
+
+		it( 'should not initialize a state if no changes and not keyed (simple state)', () => {
+			const keyed = keyedReducer( 'name', age );
+			expect( keyed( prevState, { type: 'STAY', name: 'Calypso' } ) ).to.equal( prevState );
+		} );
 	} );
 
 	describe( '#withSchemaValidation', () => {
