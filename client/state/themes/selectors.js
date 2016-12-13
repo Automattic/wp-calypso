@@ -420,14 +420,6 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 	return customizeUrl;
 }
 
-export function getUploadUrl( state, theme, siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-
-	return `/design/upload/${ getSiteSlug( state, siteId ) }`;
-}
-
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *

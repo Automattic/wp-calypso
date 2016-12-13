@@ -191,7 +191,7 @@ const ThemeShowcase = React.createClass( {
 				</StickyPanel>
 				{ this.props.showUploadButton && config.isEnabled( 'manage/themes/upload' ) &&
 					<ThemeUploadCard
-						href={ options.upload.getUrl() }
+						href={ `/design/upload/${ this.props.siteSlug }` }
 						label={ translate( 'WordPress.com themes' ) }
 					/>
 				}
