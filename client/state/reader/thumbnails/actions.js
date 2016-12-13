@@ -61,7 +61,7 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};
 	switch ( service ) {
 		case 'youtube': {
-			const thumbnailUrl = id ? `https://img.youtube.com/vi/${ id }/mqdefault.jpg` : null;
+			const thumbnailUrl = `https://img.youtube.com/vi/${ id }/mqdefault.jpg`;
 			return receiveThumbnail( embedUrl, thumbnailUrl );
 		}
 		case 'vimeo': {
