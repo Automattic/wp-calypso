@@ -452,7 +452,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-stream__recommended-posts-list-item {
 	display: flex;
-	flex: 1 1 auto;
+	flex: 1 1 0%;
 	flex-direction: column;
 	list-style-type: none;
 	position: relative;
