@@ -71,6 +71,12 @@ export class FullPostView extends React.Component {
 		this.hasScrolledToCommentAnchor = false;
 	}
 
+	static PropTypes = {
+		post: React.PropTypes.object.isRequired,
+		onClose: React.PropTypes.func.isRequired,
+		referralPost: React.PropTypes.object
+	}
+
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.on( 'like-selection', this.handleLike );
@@ -412,6 +418,15 @@ export default class FullPostFluxContainer extends React.Component {
 		super( props );
 		this.state = this.getStateFromStores( props );
 		this.smartSetState = smartSetState;
+	}
+
+	static propTypes = {
+		blogId: React.PropTypes.string.isRequired,
+		postId: React.PropTypes.string.isRequired,
+		onClose: React.PropTypes.func.isRequired,
+		onPostNotFound: React.PropTypes.func.isRequired,
+		context: React.PropTypes.object,
+		referral: React.PropTypes.object
 	}
 
 	getStateFromStores( props = this.props ) {
