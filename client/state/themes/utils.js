@@ -2,24 +2,49 @@
  * External dependencies
  */
 import startsWith from 'lodash/startsWith';
-import { filter, get, map, mapKeys, omit, omitBy, split } from 'lodash';
+import {
+	every,
+	filter,
+	get,
+	includes,
+	map,
+	mapKeys,
+	omit,
+	omitBy,
+	some,
+	split
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isThemeMatchingQuery } from 'lib/query-manager/theme/util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
  * Constants
  */
 const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
+// Used for client-side filtering of results from Jetpack sites. Note that Jetpack sites
+// only return the 'feature' taxonomy (in the guise of an array called `tags` which
+// we normalize to taxonomies.theme_feature to be consistent with results from WPCOM.)
+const SEARCH_TAXONOMIES = [ 'feature' ];
 
 export const oldShowcaseUrl = '//wordpress.com/themes/';
 
 /**
  * Utility
  */
+
+/**
+ * Whether a given theme object is premium.
+ *
+ * @param  {Object} theme Theme object
+ * @return {Boolean}      True if the theme is premium
+ */
+export function isPremium( theme ) {
+	const themeStylesheet = get( theme, 'stylesheet', false );
+	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
+}
 
  /**
   * Normalizes a theme obtained from the WordPress.com REST API
@@ -170,4 +195,49 @@ export function isPremiumTheme( theme ) {
  */
 export function filterThemesForJetpack( themes, query ) {
 	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
+}
+
+/**
+ * Returns true if the theme matches the given query, or false otherwise.
+ *
+ * @param  {Object}  query Query object
+ * @param  {Object}  theme Item to consider
+ * @return {Boolean}       Whether theme matches query
+ */
+export function isThemeMatchingQuery( query, theme ) {
+	const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
+	return every( queryWithDefaults, ( value, key ) => {
+		switch ( key ) {
+			case 'search':
+				if ( ! value ) {
+					return true;
+				}
+
+				const search = value.toLowerCase();
+
+				const foundInTaxonomies = some( SEARCH_TAXONOMIES, ( taxonomy ) => (
+					theme.taxonomies && some( theme.taxonomies[ 'theme_' + taxonomy ], ( { name } ) => (
+						includes( name.toLowerCase(), search )
+					) )
+				) );
+
+				return foundInTaxonomies || (
+					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
+					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
+					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
+				);
+
+			case 'filters':
+				// TODO: Change filters object shape to be more like post's terms, i.e.
+				// { color: 'blue,red', feature: 'post-slider' }
+				const filters = value.split( ',' );
+				return every( filters, ( f ) => (
+					some( theme.taxonomies, ( terms ) => (
+						some( terms, { slug: f } )
+					) )
+				) );
+		}
+
+		return true;
+	} );
 }
