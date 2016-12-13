@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { property, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,12 +13,12 @@ import {
 
 export const eligibilityHolds = ( state = [], action ) =>
 	UPDATE === action.type
-		? action.eligibilityHolds
+		? sortBy( action.eligibilityHolds )
 		: state;
 
 export const eligibilityWarnings = ( state = [], action ) =>
 	UPDATE === action.type
-		? action.eligibilityWarnings
+		? sortBy( action.eligibilityWarnings, property( 'name' ) )
 		: state;
 
 export const lastUpdate = ( state = 0, action ) =>

@@ -42,9 +42,11 @@ export const requestEligibility = siteId => ( {
  * @param {Object} data eligibility information to be merged into existing state
  * @returns {Object} Redux action
  */
-export const updateEligibility = ( siteId, data ) => ( {
+export const updateEligibility = ( siteId, { eligibilityHolds, eligibilityWarnings, lastUpdate, status } ) => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	eligibilityHolds,
+	eligibilityWarnings,
+	lastUpdate,
 	siteId,
-	data,
+	status,
 } );
-
