@@ -48,7 +48,7 @@ const ThemesSelection = React.createClass( {
 		isRequesting: PropTypes.bool,
 		isRequestingIgnoringQuery: PropTypes.bool,
 		isLastPage: PropTypes.bool,
-		isActiveTheme: PropTypes.func,
+		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
 	},
 
@@ -122,7 +122,7 @@ const ThemesSelection = React.createClass( {
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
-					isActive={ this.props.isActiveTheme }
+					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased } />
 			</div>
 		);
@@ -140,7 +140,7 @@ export default connect(
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isRequestingIgnoringQuery: isRequestingThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
-			isActiveTheme: themeId => isThemeActive( state, themeId, siteId ),
+			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isThemePurchased: themeId => (
 				// Note: This component assumes that purchase and data is already present in the state tree
 				// (used by the isThemePurchased selector). At the time of implementation there's no caching
