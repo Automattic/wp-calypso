@@ -205,6 +205,11 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
 		return lastPage;
 	}
 
+	// No pagination on Jetpack sites so if we have a page that means we have all
+	if ( isJetpackSite( state, siteId ) ) {
+		return true;
+	}
+
 	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
 }
 
