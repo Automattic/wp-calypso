@@ -20,15 +20,14 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 ### Props
 
-* `name`: (string) Unique identifier of step.
+* `name`: (string) Unique identifier of the step.
 * `target`: (string, optional) Target which this step belongs to and will be used for positioning. This prop is value is used to look up according `[data-tip-target]` in DOM. If omitted, `<body>` will be used as target. TODO: mention querySelector hack?, is body really default target?
 * `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
 * `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'
 * `style`: (object, optional) Will be used as step's inline style.
-* `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of step it should skip to. If you omit this prop, step will be rendered as expected.
-* `next`: (string, optional) Define this to tell Guided Tours name of step it should skip to when `when` evaluates to false.
-
+* `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of the step it should skip to. If you omit this prop, step will be rendered as expected.
+* `next`: (string, optional) Define this to tell Guided Tours name of the step it should skip to when `when` evaluates to false.
 
 ## ButtonRow
 
@@ -41,14 +40,47 @@ Continue is a React component that you can use in Step to programmatically conti
 - binding an `onClick` listener to any DOM element in Calypso
 - redux selector function that evaluates to true in order to advance the tour
 
+### Props
+
+* `step`: (string) Name of the step the tour will advance to.
+* `target`: (string, optional) Name of `[data-tip-target]` that would be watched.
+* `click`: (bool, optional) If true, `onClick` will be listened on `target` DOM node.
+* `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
+* `icon`: (string, optional) Name of Gridicon to show in custom message.
+* `when`: (function, optional) Redux selector. Once it evaluates to true, tour will advance to `step`.
+
+### Content
+
+- text
+- text + props.icon
+- custom content
+
 ## Next
 
 Link is a React component that shows a button that allows users to advance tour to another step. To be used inside of `<ButtonRow>`.
+
+### Props
+
+* `step`: (string) Name of the step the tour will advance to.
+
+### Label
+
+Default label is "Next". To override, place your label as children like this: `<Next name="next-step">Custom Label</Next>`.
+
+By default, this renders as a primary button with label "Next". If you want to override this label, place your content as children like this: `<Next step="name">Custom Label</Next>`.
 
 ## Quit
 
 Quit is a React component that shows a button that allows users to quit current tour. To be used inside of `<ButtonRow>`.
 
+### Props
+
+* `primary` (bool, optional) If true, button will be rendered as primary.
+
+### Label
+
+Default label is "Quit". To override, place your label as children like this: `<Quit>Custom Label</Quit>`.
+
 ## Link
 
-Link is a React component that shows a Link to external page in Step. It takes care of styling and makes sure the link always opens in a new browser tab. We usually use it in the last step of tour where we nudge user to explore the docs to learn more about the area we just covered with a tour.
+Link is a React component that shows a Link to external page in Step. It takes care of the styling and makes sure the link always opens in a new browser tab. We usually use it in the last step of tour where we nudge user to explore the docs to learn more about the area we just covered with a tour.
