@@ -122,7 +122,7 @@ class PostEditorSlug extends Component {
 					<TrackInputChanges onNewValue={ this.recordChangeStats }>
 						<FormTextInput
 							ref="slugField"
-							value={ decodeURI( slug ) }
+							value={ slug }
 							onChange={ this.onSlugChange }
 							onKeyDown={ this.onSlugKeyDown }
 							onBlur={ this.onBlur }

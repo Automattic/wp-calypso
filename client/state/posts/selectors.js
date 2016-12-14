@@ -401,7 +401,7 @@ export function getEditedPostSlug( state, siteId, postId ) {
 
 	// when post is published, return the slug
 	if ( isPostPublished( state, siteId, postId ) ) {
-		return postSlug;
+		return decodeURI( postSlug );
 	}
 
 	// only return suggested_slug if slug has not been edited
