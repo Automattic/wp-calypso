@@ -29,15 +29,15 @@ QueryReaderThumbnails.propTypes = {
 	requestThumbnail: PropTypes.func
 };
 
+const mapStateToProps = ( state, ownProps ) => ( {
+	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
+} );
+
+const mapDispatchToProps = ( dispatch ) => (
+	bindActionCreators( { requestThumbnail }, dispatch )
+);
+
 export default connect(
-	( state, ownProps ) => {
-		return {
-			shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl )
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestThumbnail
-		}, dispatch );
-	}
+	mapStateToProps,
+	mapDispatchToProps,
 )( QueryReaderThumbnails );

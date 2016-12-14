@@ -93,7 +93,8 @@ class FeaturedVideo extends React.Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
-	} ) )( localize( FeaturedVideo ) );
+const mapStateToProps = ( state, ownProps ) => ( {
+	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
+} );
+
+export default connect( mapStateToProps )( localize( FeaturedVideo ) );
