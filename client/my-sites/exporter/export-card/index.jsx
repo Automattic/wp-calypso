@@ -41,6 +41,7 @@ class ExportCard extends Component {
 		const {
 			translate,
 			fetchStatus,
+			siteType,
 		} = this.props;
 
 		const exportButton = (
@@ -77,7 +78,9 @@ class ExportCard extends Component {
 						onClickExport={ this.props.exportSelectedItems }
 					/>
 				</FoldableCard>
-				{ this.props.isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
+				{/* Don't fetch status for Jetpack exports, they are not async. */}
+				{ this.props.isExporting && siteType === 'wpcom' &&
+				<Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
 	}

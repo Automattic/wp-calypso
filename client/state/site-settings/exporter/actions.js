@@ -113,6 +113,9 @@ export function startExport( siteId, { exportAll = true } = {}, siteType = 'wpco
 		const success =
 			() => dispatch( exportStarted( siteId ) );
 
+		const jetpackSuccess =
+			( response = {} ) => dispatch( jetpackExportComplete( siteId, response.download_url ) );
+
 		const failure =
 			error => dispatch( exportFailed( siteId, error ) );
 
@@ -120,7 +123,7 @@ export function startExport( siteId, { exportAll = true } = {}, siteType = 'wpco
 		if ( siteType === 'jetpack' ) {
 			result = wpcom.undocumented()
 				.startJetpackExport( siteId, advancedSettings )
-				.then( success )
+				.then( jetpackSuccess )
 				.catch( failure );
 		} else {
 			result = wpcom.undocumented()
@@ -177,6 +180,14 @@ export function exportFailed( siteId, error ) {
 }
 
 export function exportComplete( siteId, downloadURL ) {
+	return {
+		type: EXPORT_COMPLETE,
+		siteId,
+		downloadURL
+	};
+}
+
+export function jetpackExportComplete( siteId, downloadURL ) {
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,
