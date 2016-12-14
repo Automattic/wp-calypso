@@ -12,9 +12,6 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
 import config from 'config';
 import { activateTheme } from 'state/themes/actions';
 import {
-	isPremiumTheme as isPremium
-} from 'state/themes/utils';
-import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
 	getThemeCustomizeUrl as	getCustomizeUrl,
@@ -23,6 +20,7 @@ import {
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
 	isThemePurchased as isPurchased,
+	isThemePremium as isPremium
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -41,7 +39,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		getUrl: getPurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		hideForTheme: ( state, theme, siteId ) =>
-			! theme.price || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
+			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
 	}
 	: {};
 
@@ -51,7 +49,7 @@ const activate = {
 	action: activateTheme,
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
-			theme.price &&
+			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
 		)
@@ -112,7 +110,7 @@ const support = {
 	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme ) => ! isPremium( theme )
+	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id )
 };
 
 const help = {

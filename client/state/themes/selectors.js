@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, get, pick } from 'lodash';
+import { includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -40,7 +40,9 @@ export const getThemes = createSelector(
 			return [];
 		}
 
-		return manager.getItems();
+		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+		// over different pages) which we need to remove manually here for now.
+		return uniq( manager.getItems() );
 	},
 	( state ) => state.themes.queries
 );
@@ -120,7 +122,9 @@ export const getThemesForQuery = createSelector(
 			return null;
 		}
 
-		return themes;
+		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+		// over different pages) which we need to remove manually here for now.
+		return uniq( themes );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
@@ -187,6 +191,11 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 		return null;
 	}
 
+	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
+	if ( isJetpackSite( state, siteId ) ) {
+		return 1;
+	}
+
 	return Math.max( pages, 1 );
 }
 
@@ -224,7 +233,14 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		return themes.getItemsIgnoringPage( query );
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		if ( ! themesForQueryIgnoringPage ) {
+			return null;
+		}
+
+		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+		// over different pages) which we need to remove manually here for now.
+		return uniq( themesForQueryIgnoringPage );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
