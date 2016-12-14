@@ -247,7 +247,11 @@ export function isThemeMatchingQuery( query, theme ) {
 					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
 				);
 
-			case 'filters':
+			case 'filter':
+				if ( ! value ) {
+					return true;
+				}
+
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
