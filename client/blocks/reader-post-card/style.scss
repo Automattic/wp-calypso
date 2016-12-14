@@ -253,10 +253,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__timestamp {
 	display: inline-table;
-	margin-right: 10px;
 }
 
 .reader-post-card__tag {
+	margin-left: 10px;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
