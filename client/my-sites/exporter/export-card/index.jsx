@@ -91,15 +91,16 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 
 const trackExportClick = ( scope = 'all' ) => recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
 	setPostType: flowRight( dispatch, setPostType ),
-	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
-
-	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
+	fetchStatus: () => dispatch( exportStatusFetch( ownProps.siteId ) ),
+	exportAll: () => dispatch( withAnalytics(
+		trackExportClick(), startExport( ownProps.siteId, { exportAll: true }, ownProps.siteType )
+	) ),
 	exportSelectedItems: () => dispatch( withAnalytics(
 		trackExportClick( 'selected' ),
-		startExport( siteId, { exportAll: false } )
+		startExport( ownProps.siteId, { exportAll: false }, ownProps.siteType )
 	) ),
 } );
 

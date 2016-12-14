@@ -22,6 +22,7 @@ class Exporter extends Component {
 		const {
 			siteId,
 			isTransferInProgress,
+			siteType,
 		} = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
 
@@ -32,7 +33,7 @@ class Exporter extends Component {
 				<Notices />
 				{ showGuidedTransferOptions && isTransferInProgress &&
 					<InProgressCard /> }
-				<ExportCard siteId={ siteId } />
+				<ExportCard siteId={ siteId } siteType={ siteType }/>
 				{ showGuidedTransferOptions && ! isTransferInProgress &&
 					<GuidedTransferCard /> }
 			</div>
@@ -43,6 +44,7 @@ class Exporter extends Component {
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
 	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
+	siteType: state.jetpack ? 'jetpack' : 'wpcom'
 } );
 
 export default connect( mapStateToProps )( Exporter );
