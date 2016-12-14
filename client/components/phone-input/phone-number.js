@@ -197,7 +197,11 @@ function processNumber( inputNumber, numberRegion ) {
 export function formatNumber( inputNumber, country ) {
 	const digitCount = stripNonDigits( inputNumber ).length;
 	if ( digitCount < MIN_LENGTH_TO_FORMAT || digitCount < ( country.dialCode || '' ).length ) {
-		return inputNumber;
+		if ( inputNumber[ 0 ] === '+' ) {
+			return '+' + stripNonDigits( inputNumber.substr( 1 ) );
+		} else {
+			return stripNonDigits( inputNumber );
+		}
 	}
 
 	// Some countries don't have their own patterns, but share / follow another country's patterns. Here we switch the
