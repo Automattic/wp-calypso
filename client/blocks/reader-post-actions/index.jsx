@@ -20,7 +20,20 @@ import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ExternalLink from 'components/external-link';
 
-const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, showMenu, showMenuFollow, iconSize, className } ) => {
+const ReaderPostActions = ( props ) => {
+	const {
+		translate,
+		post,
+		site,
+		onCommentClick,
+		showEdit,
+		showVisit,
+		showMenu,
+		showMenuFollow,
+		iconSize,
+		className
+	} = props;
+
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
