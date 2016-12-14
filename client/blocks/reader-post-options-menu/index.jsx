@@ -29,13 +29,15 @@ const ReaderPostOptionsMenu = React.createClass( {
 	propTypes: {
 		post: React.PropTypes.object.isRequired,
 		feed: React.PropTypes.object,
-		onBlock: React.PropTypes.func
+		onBlock: React.PropTypes.func,
+		showFollow: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			onBlock: noop,
-			position: 'top left'
+			position: 'top left',
+			showFollow: true
 		};
 	},
 
@@ -142,7 +144,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					onToggle={ this.onMenuToggle }>
-					<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
+					{ this.props.showFollow && <FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
 						{ this.translate( 'Edit Post' ) }

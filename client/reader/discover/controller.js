@@ -44,7 +44,7 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
-				showPrimaryFollowButtonOnCards: true,
+				showPrimaryFollowButtonOnCards: false,
 				showBack: false,
 				className: 'is-discover-stream is-site-stream',
 			} ),

@@ -122,6 +122,7 @@ export default class RefreshPostCard extends React.Component {
 			length: 140,
 			separator: /,? +/
 		} );
+		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		if ( ! title && isPhotoOnly ) {
 			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
@@ -129,7 +130,7 @@ export default class RefreshPostCard extends React.Component {
 
 		let followUrl;
 		if ( showPrimaryFollowButton ) {
-			if ( DiscoverHelper.isDiscoverPost( post ) ) {
+			if ( isDiscoverPost ) {
 				followUrl = DiscoverHelper.getSourceFollowUrl( post );
 			} else {
 				followUrl = feed ? feed.feed_URL : post.site_URL;
@@ -165,6 +166,7 @@ export default class RefreshPostCard extends React.Component {
 								post={ originalPost ? originalPost : post }
 								showVisit={ true }
 								showMenu={ true }
+								showMenuFollow={ ! isDiscoverPost }
 								onCommentClick={ onCommentClick }
 								showEdit={ false }
 								className="ignore-click"
