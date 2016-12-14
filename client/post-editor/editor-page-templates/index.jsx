@@ -18,6 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { editPost } from 'state/posts/actions';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 
@@ -28,7 +29,8 @@ class EditorPageTemplates extends Component {
 		postType: PropTypes.string,
 		template: PropTypes.string,
 		templates: PropTypes.array,
-		editPost: PropTypes.func
+		editPost: PropTypes.func,
+		pageForPostsId: PropTypes.number,
 	};
 
 	constructor() {
@@ -66,8 +68,8 @@ class EditorPageTemplates extends Component {
 	}
 
 	render() {
-		const { postType, template, siteId, translate } = this.props;
-		if ( 'page' !== postType ) {
+		const { postType, template, siteId, translate, postId, pageForPostsId } = this.props;
+		if ( 'page' !== postType || postId === pageForPostsId ) {
 			return null;
 		}
 
@@ -109,8 +111,9 @@ export default connect(
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const template = getEditedPostValue( state, siteId, postId, 'page_template' );
 		const templates = getPageTemplates( state, siteId );
+		const pageForPostsId = getSiteOption( state, siteId, 'page_for_posts' );
 
-		return { siteId, postId, postType, template, templates };
+		return { siteId, postId, postType, template, templates, pageForPostsId };
 	},
 	{ editPost }
 )( localize( EditorPageTemplates ) );
