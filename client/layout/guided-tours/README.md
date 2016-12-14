@@ -30,9 +30,11 @@ These are the **core use cases** we currently see for Guided Tours:
 
 Guided Tours sits on top of Calypso, and conceptually isn't part of the UI — one could think of it as a "meta UI". The design of the steps is different from the default Calypso design for this reason: we want Guided Tours to be obviously *not* part of normal Calypso. 
 
-## Getting Started: Building a Simple Tour
+## Getting Started
 
-_(TODO: add a simple tour and instructions on how to build it)_
+To help you get started with creating your own tours, we have one tutorial available. 
+
+Tutorial: [Building a Simple Tour](docs/TUTORIAL.md)
 
 ## API Overview
 
