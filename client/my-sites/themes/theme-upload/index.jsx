@@ -18,7 +18,8 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-// Necessary for ThanksModal (QueryTheme not needed, since we've stored upload details)
+import QueryTheme from 'components/data/query-theme';
+// Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
@@ -79,10 +80,11 @@ class Upload extends React.Component {
 	}
 
 	successMessage() {
-		const { translate, uploadedTheme } = this.props;
+		const { translate, uploadedTheme, themeId } = this.props;
 		notices.success( translate( 'Successfully uploaded theme %(name)s', {
 			args: {
-				name: uploadedTheme.name
+				// using themeId lets us show a message before theme data arrives
+				name: uploadedTheme ? uploadedTheme.name : themeId
 			}
 		} ) );
 	}
@@ -210,10 +212,21 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const { translate, inProgress, complete, failed, siteId, selectedSite } = this.props;
+		const {
+			translate,
+			inProgress,
+			complete,
+			failed,
+			siteId,
+			selectedSite,
+			themeId,
+			uploadedTheme,
+		} = this.props;
+
 		return (
 			<Main>
 				<QueryActiveTheme siteId={ siteId } />
+				{ themeId && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
@@ -221,7 +234,7 @@ class Upload extends React.Component {
 				<Card>
 					{ ! inProgress && ! complete && this.renderDropZone() }
 					{ inProgress && this.renderProgressBar() }
-					{ complete && ! failed && this.renderTheme() }
+					{ complete && ! failed && uploadedTheme && this.renderTheme() }
 				</Card>
 			</Main>
 		);
@@ -250,6 +263,7 @@ export default connect(
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
+			themeId,
 			uploadedTheme: getTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
