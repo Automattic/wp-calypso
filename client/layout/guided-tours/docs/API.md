@@ -65,9 +65,7 @@ Link is a React component that shows a button that allows users to advance tour 
 
 ### Label
 
-Default label is "Next". To override, place your label as children like this: `<Next name="next-step">Custom Label</Next>`.
-
-By default, this renders as a primary button with label "Next". If you want to override this label, place your content as children like this: `<Next step="name">Custom Label</Next>`.
+Default label is "Next". To override, place your label as children like this: `<Next step="next-step">Custom Label</Next>`.
 
 ## Quit
 
