@@ -65,7 +65,7 @@ export default connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					<ThemesSelection
+					<ThemesSelection query={ /* TBD */ }
 						selectedSite={ false }
 						getScreenshotUrl={ function( theme ) {
 							if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -87,11 +87,7 @@ export default connectOptions(
 								addTracking( options ),
 								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 							); } }
-						trackScrollPage={ props.trackScrollPage }
-						search={ search }
-						tier={ props.tier }
-						filter={ props.filter }
-						vertical={ props.vertical } />
+						trackScrollPage={ props.trackScrollPage } />
 				</ThemeShowcase>
 			</div>
 		);
