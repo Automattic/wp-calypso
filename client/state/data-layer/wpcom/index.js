@@ -1,11 +1,13 @@
 /**
  * Internal dependencies
  */
-import requestPlans from './plans';
 import { mergeHandlers } from 'state/data-layer/utils';
+import plans from './plans';
+import sites from './sites';
 
 export const handlers = mergeHandlers(
-	requestPlans,
+	plans,
+	sites,
 );
 
 export default handlers;
