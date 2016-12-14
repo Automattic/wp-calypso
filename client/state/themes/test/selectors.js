@@ -540,6 +540,37 @@ describe( 'themes selectors', () => {
 
 			expect( lastPage ).to.equal( 1 );
 		} );
+
+		it( 'should return 1 for a Jetpack site', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
 	} );
 
 	describe( '#isThemesLastPageForQuery()', () => {
@@ -624,6 +655,37 @@ describe( 'themes selectors', () => {
 					}
 				}
 			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
+
+		it( 'should return true for a Jetpack site', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
 
 			expect( isLastPage ).to.be.true;
 		} );
