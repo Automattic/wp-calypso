@@ -1,0 +1,54 @@
+# Guided Tours API
+
+Guided Tours are declared as a tree of JSX components.
+
+
+## Tour
+
+Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` components as children.
+
+### Props
+
+* `name`: (string) Unique name of tour in camelCase.
+* `version` (string): Version identifier. We use date string like "20161224".
+* `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `[ '/stats', '/settings' ]`
+* `when` (function, optional): This is a redux selector function. Use this to define conditions for the tour to start.
+
+## Step
+
+Step is a React component that defines a single Step of a tour. It is represented as dark box on top of Calypso UI. Step can be positioned in many ways in relation to any DOM node in Calypso that is marked with `[data-tip-target]` attribute.
+
+### Props
+
+* `name`: (string) Unique identifier of step.
+* `target`: (string, optional) Target which this step belongs to and will be used for positioning. This prop is value is used to look up according `[data-tip-target]` in DOM. If omitted, `<body>` will be used as target. TODO: mention querySelector hack?, is body really default target?
+* `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
+* `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
+'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'
+* `style`: (object, optional) Will be used as step's inline style.
+* `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of step it should skip to. If you omit this prop, step will be rendered as expected.
+* `next`: (string, optional) Define this to tell Guided Tours name of step it should skip to when `when` evaluates to false.
+
+
+## ButtonRow
+
+ButtonRow is a React component to display button controls in Step and takes care of their proper styling. No props, just put your controls as children.
+
+## Continue
+
+Continue is a React component that you can use in Step to programmatically continue the tour to other step based on user interaction with Calypso. There are currently two ways to declare the condition to continue the tour.
+
+- binding an `onClick` listener to any DOM element in Calypso
+- redux selector function that evaluates to true in order to advance the tour
+
+## Next
+
+Link is a React component that shows a button that allows users to advance tour to another step. To be used inside of `<ButtonRow>`.
+
+## Quit
+
+Quit is a React component that shows a button that allows users to quit current tour. To be used inside of `<ButtonRow>`.
+
+## Link
+
+Link is a React component that shows a Link to external page in Step. It takes care of styling and makes sure the link always opens in a new browser tab. We usually use it in the last step of tour where we nudge user to explore the docs to learn more about the area we just covered with a tour.
