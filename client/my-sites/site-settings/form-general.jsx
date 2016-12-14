@@ -415,8 +415,8 @@ class SiteSettingsFormGeneral extends Component {
 
 		const {
 			fields: {
-				amp_is_supported,
-				amp_is_enabled
+				amp_is_supported: ampIsSupported,
+				amp_is_enabled: ampIsEnabled
 			},
 			isRequestingSettings,
 			isSavingSettings,
@@ -424,9 +424,9 @@ class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		const isDisabled = isRequestingSettings || isSavingSettings;
-		const isCustomizeDisabled = isDisabled || ! amp_is_enabled;
+		const isCustomizeDisabled = isDisabled || ! ampIsEnabled;
 
-		if ( ! amp_is_supported ) {
+		if ( ! ampIsSupported ) {
 			return null;
 		}
 
@@ -440,7 +440,7 @@ class SiteSettingsFormGeneral extends Component {
 						{ translate( 'Edit Design' ) }
 					</Button>
 					<FormToggle
-						checked={ amp_is_enabled }
+						checked={ ampIsEnabled }
 						onChange={ this.handleAmpToggle }
 						disabled={ isDisabled } />
 				</SectionHeader>
