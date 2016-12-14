@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { throttle, constant } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal Dependencies
  */
