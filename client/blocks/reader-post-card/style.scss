@@ -411,7 +411,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-showing-entire-excerpt) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery) {
 
 	.reader-post-card__excerpt {
 		max-height: 15px * 1.6 * 3;
