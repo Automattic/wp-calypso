@@ -1,38 +1,35 @@
-var React = require( 'react' );
+const React = require( 'react' );
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+const EmptyContent = require( 'components/empty-content' ),
+	stats = require( 'reader/stats' );
 
-var FeedEmptyContent = React.createClass( {
+const FeedEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
 		return false;
 	},
 
 	recordAction: function() {
+		stats.recordAction( 'clicked_search_on_empty' );
+		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
+	},
+
+	recordSecondaryAction: function() {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
 		stats.recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
 	},
 
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_recommendations_on_empty' );
-		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_recommendations_on_empty_feed_clicked' );
-	},
-
 	render: function() {
-		var action = discoverHelper.isDiscoverEnabled()
-		? (
-			<a
+		const action = <a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null,
+				href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a>,
 			secondaryAction = (
 				<a
 					className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
+					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
 
 		return ( <EmptyContent
 			title={ this.translate( 'No recent posts' ) }
