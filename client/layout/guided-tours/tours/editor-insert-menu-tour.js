@@ -17,10 +17,9 @@ import {
 } from 'layout/guided-tours/config-elements';
 import {
 	isEnabled,
-	isUserOlderThan,
+	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
-
-const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
+import { isDesktop } from 'lib/viewport';
 
 class RepositioningStep extends Step {
 
@@ -42,10 +41,11 @@ export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
-		version="20161209"
+		version="20161214"
 		when={ and(
 			isEnabled( 'post-editor/insert-menu' ),
-			isUserOlderThan( TWO_DAYS_IN_MILLISECONDS ),
+			hasUserRegisteredBefore( new Date( '2016-12-14' ) ),
+			isDesktop,
 		) }
 	>
 		<RepositioningStep
