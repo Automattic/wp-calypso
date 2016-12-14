@@ -109,17 +109,6 @@ module.exports = {
 		allowExistingUsers: true
 	},
 
-	presaleChatButton: {
-		datestamp: '20161129',
-		variations: {
-			showChatButton: 80,
-			original: 20
-		},
-		defaultVariation: 'original',
-		allowAnyLocale: true,
-		allowExistingUsers: true,
-	},
-
 	noSurveyStep: {
 		datestamp: '20161202',
 		variations: {
