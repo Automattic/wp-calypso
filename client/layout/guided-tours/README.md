@@ -36,7 +36,36 @@ _(TODO: add a simple tour and instructions on how to build it)_
 
 ## API Overview
 
-_(TODO: document all the elements in `config-elements.js`)_
+### Tour
+
+Tour is a top-level declaration of a tour. It defines conditions for starting a tour and contains `<Step>` components as children.
+
+### Step
+
+Step is a React component that defines a single Step of a tour. Step can be positioned in many ways in relation to any DOM node in Calypso that is marked with `[data-tip-target]` attribute.
+
+### ButtonRow
+
+ButtonRow is a React component to display button controls in Step and takes care of their proper styling. No props, just put your controls as children.
+
+### Continue
+
+Continue is a React component that you can use in Step to programmatically continue the tour to other step based on user interaction with Calypso. There are currently two ways to declare the condition to continue the tour.
+
+- binding an `onClick` listener to any DOM element in Calypso
+- redux selector function that evaluates to true in order to advance the tour
+
+### Next
+
+Link is a React component that shows a button that allows users to advance tour to another step. To be used inside of `<ButtonRow>`.
+
+### Quit
+
+Quit is a React component that shows a button that allows users to quit current tour. To be used inside of `<ButtonRow>`.
+
+### Link
+
+Link is a React component that shows a Link to external page in Step. It takes care of styling and makes sure the link always opens in a new browser tab. We usually use it in the last step of tour where we nudge user to explore the docs to learn more about the area we just covered with a tour.
 
 ## List of Tours
 
