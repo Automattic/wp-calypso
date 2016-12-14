@@ -117,6 +117,7 @@ export function deleteTerm( siteId, taxonomy, termId, termSlug ) {
 			() => {
 				const state = getState();
 				const deletedTerm = getTerm( state, siteId, taxonomy, termId );
+				const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
 
 				// Update the parentId of its children
 				const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), term => {
@@ -138,6 +139,21 @@ export function deleteTerm( siteId, taxonomy, termId, termSlug ) {
 						}
 					} ) );
 				} );
+
+				// update default category post count if applicable
+				if ( taxonomy === 'category' && deletedTermPostCount > 0 ) {
+					const siteSettings = getSiteSettings( state, siteId );
+					const defaultCategory = getTerm( state, siteId, taxonomy, get( siteSettings, [ 'default_category' ] ) );
+					if ( defaultCategory ) {
+						dispatch(
+							receiveTerm(
+								siteId,
+								taxonomy,
+								{ ...defaultCategory, post_count: defaultCategory.post_count + deletedTermPostCount }
+							)
+						);
+					}
+				}
 
 				// remove the term from the store
 				dispatch( removeTerm( siteId, taxonomy, termId ) );
