@@ -30,10 +30,6 @@ describe( 'main', function() {
 			mockery.registerMock( 'components/data/query-user-purchases', EmptyComponent );
 			mockery.registerMock( 'components/data/query-site-purchases', EmptyComponent );
 			mockery.registerMock( 'lib/analytics', {} );
-			mockery.registerMock( 'my-sites/themes/helpers', {
-				isPremium: noop,
-				getDetailsUrl: noop,
-			} );
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {

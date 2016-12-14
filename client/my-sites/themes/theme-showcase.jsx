@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import pickBy from 'lodash/pickBy';
+import { compact, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,6 +78,7 @@ const ThemeShowcase = React.createClass( {
 
 	getInitialState() {
 		return {
+			page: 1,
 			showPreview: false,
 			previewingTheme: null,
 		};
@@ -150,8 +151,22 @@ const ThemeShowcase = React.createClass( {
 		return primaryOption;
 	},
 
+	addVerticalToFilters() {
+		const { vertical, filter } = this.props;
+		return compact( [ filter, vertical ] ).join( ',' );
+	},
+
+	incrementPage() {
+		this.setState( { page: this.state.page + 1 } );
+	},
+
+	resetPage() {
+		this.setState( { page: 1 } );
+	},
+
 	render() {
-		const { site, options, getScreenshotOption, secondaryOption, tier, search } = this.props;
+		const { site, options, getScreenshotOption, secondaryOption, search } = this.props;
+		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -164,6 +179,14 @@ const ThemeShowcase = React.createClass( {
 			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },
 			{ property: 'og:type', content: 'website' }
 		];
+
+		const query = {
+			search,
+			tier,
+			filter: this.addVerticalToFilters(),
+			page: this.state.page,
+			number: 20
+		};
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -196,7 +219,7 @@ const ThemeShowcase = React.createClass( {
 						label={ this.props.uploadLabel }
 					/>
 				}
-				<ThemesSelection
+				<ThemesSelection query={ query }
 					siteId={ this.props.siteId }
 					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
@@ -223,7 +246,9 @@ const ThemeShowcase = React.createClass( {
 					search={ search }
 					tier={ this.props.tier }
 					filter={ this.props.filter }
-					vertical={ this.props.vertical } />
+					vertical={ this.props.vertical }
+					incrementPage={ this.incrementPage }
+					resetPage={ this.resetPage } />
 					{ this.props.children }
 			</Main>
 		);

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { conforms, map, omit, property, delay } from 'lodash';
+import { map, property, delay } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -10,13 +10,6 @@ import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
 import {
-	// Old action names
-	THEME_BACK_PATH_SET,
-	THEME_CLEAR_ACTIVATED,
-	THEMES_INCREMENT_PAGE,
-	THEMES_QUERY,
-	LEGACY_THEMES_RECEIVE,
-	// New action names
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
@@ -30,7 +23,8 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEMES_RECEIVE_SERVER_ERROR,
+	THEME_BACK_PATH_SET,
+	THEME_CLEAR_ACTIVATED,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
@@ -47,110 +41,16 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getActiveTheme } from './selectors';
-import { getQueryParams } from './themes-list/selectors';
+import { getActiveTheme, getLastThemeQuery } from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	filterThemesForJetpack,
+	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme
 } from './utils';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
-
-// Old actions
-
-export function fetchThemes( site ) {
-	return ( dispatch, getState ) => {
-		const queryParams = getQueryParams( getState() );
-		const startTime = new Date().getTime();
-
-		debug( 'Query params', queryParams );
-
-		const extendedQueryParams = omit(
-			{
-				...queryParams,
-				number: queryParams.perPage,
-				apiVersion: site.jetpack ? '1' : '1.2'
-			},
-			'perPage'
-		);
-
-		return wpcom.undocumented().themes( site ? site.ID : null, extendedQueryParams )
-			.then( themes => {
-				const responseTime = ( new Date().getTime() ) - startTime;
-				return dispatch( legacyReceiveThemes( themes, site, queryParams, responseTime ) );
-			} )
-			.catch( error => receiveServerError( error ) );
-	};
-}
-
-export function fetchNextPage( site ) {
-	return dispatch => {
-		dispatch( incrementThemesPage( site ) );
-		return dispatch( fetchThemes( site ) );
-	};
-}
-
-export function query( params ) {
-	return {
-		type: THEMES_QUERY,
-		params: params
-	};
-}
-
-export function incrementThemesPage( site ) {
-	return {
-		type: THEMES_INCREMENT_PAGE,
-		site: site
-	};
-}
-
-export function receiveServerError( error ) {
-	return {
-		type: THEMES_RECEIVE_SERVER_ERROR,
-		error: error
-	};
-}
-
-const isFirstPageOfSearch = conforms( {
-	search: a => undefined !== a,
-	page: a => a === 1
-} );
-
-export function legacyReceiveThemes( data, site, queryParams, responseTime ) {
-	return ( dispatch, getState ) => {
-		const themeAction = {
-			type: LEGACY_THEMES_RECEIVE,
-			siteId: site.ID,
-			isJetpack: !! site.jetpack,
-			wasJetpack: isJetpackSite( getState(), site.ID ),
-			themes: data.themes,
-			found: data.found,
-			queryParams: queryParams
-		};
-
-		const trackShowcaseSearch = recordTracksEvent(
-			'calypso_themeshowcase_search',
-			{
-				search_term: queryParams.search || null,
-				tier: queryParams.tier,
-				response_time_in_ms: responseTime,
-				result_count: data.found,
-				results_first_page: data.themes.map( property( 'id' ) )
-			}
-		);
-
-		const action = isFirstPageOfSearch( queryParams )
-			? withAnalytics( trackShowcaseSearch, themeAction )
-			: themeAction;
-
-		dispatch( action );
-
-		return action;
-	};
-}
 
 // Set destination for 'back' button on theme sheet
 export function setBackPath( path ) {
@@ -159,8 +59,6 @@ export function setBackPath( path ) {
 		path,
 	};
 }
-
-// New actions
 
 /**
  * Returns an action object to be used in signalling that a theme object has
@@ -199,6 +97,7 @@ export function receiveThemes( themes, siteId ) {
  */
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch ) => {
+		const startTime = new Date().getTime();
 		let siteIdToQuery, queryWithApiVersion;
 
 		if ( siteId === 'wpcom' ) {
@@ -216,17 +115,35 @@ export function requestThemes( siteId, query = {} ) {
 		} );
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes: rawThemes } ) => {
-			const themes = map( rawThemes, normalizeWpcomTheme );
-
-			dispatch( receiveThemes( themes, siteId ) );
-
-			let filteredThemes = themes;
+			let themes;
+			let filteredThemes;
 			if ( siteId !== 'wpcom' ) {
+				themes = map( rawThemes, normalizeJetpackTheme );
 				// A Jetpack site's themes endpoint ignores the query, returning an unfiltered list of all installed themes instead,
 				// So we have to filter on the client side instead.
 				filteredThemes = filterThemesForJetpack( themes, query );
+			} else {
+				themes = map( rawThemes, normalizeWpcomTheme );
+				filteredThemes = themes;
 			}
 
+			if ( query.search && query.page === 1 ) {
+				const responseTime = ( new Date().getTime() ) - startTime;
+				const trackShowcaseSearch = recordTracksEvent(
+					'calypso_themeshowcase_search',
+					{
+						search_term: query.search || null,
+						tier: query.tier,
+						response_time_in_ms: responseTime,
+						result_count: found,
+						results_first_page: filteredThemes.map( property( 'id' ) )
+					}
+				);
+				dispatch( trackShowcaseSearch );
+			}
+
+			// receiveThemes is query-agnostic, so it gets its themes unfiltered
+			dispatch( receiveThemes( themes, siteId ) );
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
 				themes: filteredThemes,
@@ -313,7 +230,7 @@ export function requestTheme( themeId, siteId ) {
 		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
 		// the regular themeDetails() method for Jetpack sites yet.
 		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( { themes } ) => {
-			dispatch( receiveThemes( map( themes, normalizeWpcomTheme ), siteId ) );
+			dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
@@ -415,7 +332,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			siteId,
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
-		const queryParams = getState().themes.themesList.get( 'query' );
+		const query = getLastThemeQuery( getState(), siteId );
 
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
@@ -424,7 +341,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
-				search_term: queryParams.get( 'search' ) || null
+				search_term: query.search || null
 			}
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );

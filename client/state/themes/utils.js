@@ -237,7 +237,7 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const foundInTaxonomies = some( SEARCH_TAXONOMIES, ( taxonomy ) => (
 					theme.taxonomies && some( theme.taxonomies[ 'theme_' + taxonomy ], ( { name } ) => (
-						includes( name.toLowerCase(), search )
+						name && includes( name.toLowerCase(), search )
 					) )
 				) );
 

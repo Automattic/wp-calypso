@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
-import { PER_PAGE } from 'state/themes/themes-list/constants';
+import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import Card from 'components/card';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
@@ -87,7 +87,7 @@ export const ThemesList = React.createClass( {
 	},
 
 	renderLoadingPlaceholders() {
-		return times( PER_PAGE, function( i ) {
+		return times( DEFAULT_THEME_QUERY.number, function( i ) {
 			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
 		} );
 	},

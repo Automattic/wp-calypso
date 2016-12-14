@@ -457,6 +457,9 @@ describe( 'themes selectors', () => {
 	describe( '#getThemesLastPageForQuery()', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {}
 				}
@@ -467,6 +470,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -489,6 +495,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -511,6 +520,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return 1 if there are no found themes', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -525,6 +537,37 @@ describe( 'themes selectors', () => {
 					}
 				}
 			}, 2916284, { search: 'Umpteen' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
+
+		it( 'should return 1 for a Jetpack site', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
 
 			expect( lastPage ).to.equal( 1 );
 		} );
@@ -543,6 +586,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -565,6 +611,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -587,6 +636,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -603,6 +655,37 @@ describe( 'themes selectors', () => {
 					}
 				}
 			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
+
+		it( 'should return true for a Jetpack site', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
 
 			expect( isLastPage ).to.be.true;
 		} );

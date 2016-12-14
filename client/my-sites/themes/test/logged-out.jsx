@@ -17,12 +17,9 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'state';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
-import {
-	incrementThemesPage,
-	query,
-	legacyReceiveThemes,
-	receiveServerError
-} from 'state/themes/actions';
+import { THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE } from 'state/action-types';
+import { receiveThemes } from 'state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
 describe( 'logged-out', () => {
 	context( 'when calling renderToString()', function() {
@@ -85,8 +82,6 @@ describe( 'logged-out', () => {
 					screenshot: 'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/karuna/screenshot.png'
 				}
 			];
-
-			this.queryParams = { perPage: 5, page: 1, filter: '', id: 1 };
 		} );
 
 		beforeEach( () => {
@@ -109,9 +104,14 @@ describe( 'logged-out', () => {
 		} );
 
 		it( 'renders without error when themes are present', () => {
-			this.store.dispatch( query( this.queryParams ) );
-			this.store.dispatch( incrementThemesPage( false ) );
-			this.store.dispatch( legacyReceiveThemes( { themes: this.themes }, false, this.queryParams ) );
+			this.store.dispatch( receiveThemes( this.themes, 'wpcom' ) );
+			this.store.dispatch( {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 'wpcom',
+				query: DEFAULT_THEME_QUERY,
+				found: this.themes.length,
+				themes: this.themes
+			} );
 
 			let markup;
 			assert.doesNotThrow( () => {
@@ -124,9 +124,12 @@ describe( 'logged-out', () => {
 		} );
 
 		it( 'renders without error when theme fetch fails', () => {
-			this.store.dispatch( query( this.queryParams ) );
-			this.store.dispatch( incrementThemesPage( false ) );
-			this.store.dispatch( receiveServerError( 'Error' ) );
+			this.store.dispatch( {
+				type: THEMES_REQUEST_FAILURE,
+				siteId: 'wpcom',
+				query: {},
+				error: 'Error'
+			} );
 
 			let markup;
 			assert.doesNotThrow( () => {
