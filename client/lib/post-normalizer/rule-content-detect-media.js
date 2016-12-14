@@ -109,12 +109,9 @@ const detectEmbed = ( iframe ) => {
 	const height = Number( iframe.height );
 	const aspectRatio = width / height;
 
-	const embedUrl = iframe.getAttribute( 'data-wpcom-embed-url' );
-
 	return {
 		type: getEmbedType( iframe ),
 		src: iframe.src,
-		embedUrl,
 		iframe: iframe.outerHTML,
 		aspectRatio: aspectRatio,
 		width: width,
