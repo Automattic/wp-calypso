@@ -21,7 +21,7 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
 import {
-	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
+	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
@@ -173,7 +173,7 @@ function getUsernameSuggestion( username, reduxState ) {
 
 	// Clear out the local storage variable before sending the call.
 	reduxState.dispatch( {
-		type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
+		type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 		data: ''
 	} );
 
@@ -186,7 +186,7 @@ function getUsernameSuggestion( username, reduxState ) {
 		 * Default the suggested username to `username` because if the validation succeeds would mean
 		 * that the username is free
 		 */
-		let resulting_username = username;
+		let resultingUsername = username;
 
 		/**
 		 * Only start checking for suggested username if the API returns an error for the validation.
@@ -204,14 +204,14 @@ function getUsernameSuggestion( username, reduxState ) {
 			 *    - a valid suggested username
 			 */
 			if ( messages.username && messages.username.taken && messages.suggested_username ) {
-				resulting_username = messages.suggested_username.suggested_username;
+				resultingUsername = messages.suggested_username.data;
 			}
 		}
 
 		// Save the suggested username for later use
 		reduxState.dispatch( {
-			type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
-			data: resulting_username
+			type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
+			data: resultingUsername
 		} );
 	} );
 }
