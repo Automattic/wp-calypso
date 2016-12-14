@@ -58,8 +58,7 @@ class Upload extends React.Component {
 		installing: React.PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
+	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
 	}
