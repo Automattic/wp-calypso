@@ -34,8 +34,10 @@ class PluginAutomatedTransfer extends Component {
 		clickOutside: false,
 	}
 
-	componentWillReceiveProps() {
-		this.setState( { clickOutside: false } );
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.status !== nextProps.status ) {
+			this.setState( { clickOutside: false } );
+		}
 	}
 
 	getNoticeText = ( pluginName = '' ) => {
@@ -84,6 +86,7 @@ class PluginAutomatedTransfer extends Component {
 		const { CONFLICTS, COMPLETE } = transferStates;
 		if ( CONFLICTS !== status && COMPLETE !== status ) {
 			event.preventDefault();
+			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
 		}
 	}
