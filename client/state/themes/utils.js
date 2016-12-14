@@ -194,7 +194,7 @@ export function isPremiumTheme( theme ) {
  * @return {Array}         Filtered themes
  */
 export function filterThemesForJetpack( themes, query ) {
-	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
+	return filter( themes, theme => isThemeMatchingQuery( query, theme ) );
 }
 
 /**
