@@ -233,9 +233,14 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		if ( ! themesForQueryIgnoringPage ) {
+			return null;
+		}
+
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themes.getItemsIgnoringPage( query ) );
+		return uniq( themesForQueryIgnoringPage );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
