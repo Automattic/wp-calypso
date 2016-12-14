@@ -26,15 +26,10 @@ import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ).isRequired,
+		query: PropTypes.object.isRequired,
 		siteId: PropTypes.number,
-		search: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		getOptions: PropTypes.func,
-		query: PropTypes.object.isRequired,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
 		resetPage: PropTypes.func,
@@ -48,10 +43,6 @@ const ThemesSelection = React.createClass( {
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
-	},
-
-	getDefaultProps() {
-		return { search: '' };
 	},
 
 	componentWillReceiveProps( nextProps ) {
