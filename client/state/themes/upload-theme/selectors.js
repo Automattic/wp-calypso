@@ -22,7 +22,10 @@ export function isUploadInProgress( state, siteId ) {
  * @return {Boolean} -- True if upload has completed
  */
 export function isUploadComplete( state, siteId ) {
-	return !! get( state.themes.uploadTheme.uploadedThemeId, siteId, false );
+	return !! (
+		( ! isUploadInProgress( state, siteId ) ) &&
+		getUploadedThemeId( state, siteId )
+	);
 }
 
 /**
