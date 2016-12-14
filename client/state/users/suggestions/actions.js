@@ -39,7 +39,7 @@ export function requestUserSuggestions( siteId ) {
 			siteId,
 		} );
 
-		return wpcom.undocumented().getUserSuggestions( siteId )
+		return wpcom.users().suggest( { site_id: siteId } )
 			.then( ( data ) => {
 				dispatch( receiveUserSuggestions( siteId, data ) );
 				dispatch( {

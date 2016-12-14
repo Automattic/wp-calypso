@@ -2326,20 +2326,6 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
- * Get user suggestions for a site.
- *
- * @param {int}       siteId            The site ID
- * @returns {Promise}
- */
-Undocumented.prototype.getUserSuggestions = function( siteId ) {
-	debug( '/users/suggest/ query' );
-
-	return this.wpcom.users().suggest( {
-		site_id: siteId,
-	} );
-};
-
-/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
