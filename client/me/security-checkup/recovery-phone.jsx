@@ -3,40 +3,39 @@
  */
 
 import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
-import SecurityCheckupActions from 'lib/security-checkup/actions';
+// import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
+// import SecurityCheckupActions from 'lib/security-checkup/actions';
 import ManageContact from './manage-contact';
 import EditPhone from './edit-phone';
 import accept from 'lib/accept';
 
 class RecoveryPhone extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = this.getDataFromStores();
-	}
-
-	componentDidMount() {
-		AccountRecoveryStore.on( 'change', this.refreshData );
-	}
-
-	componentWillUnmount() {
-		AccountRecoveryStore.off( 'change', this.refreshData );
-	}
-
-	refreshData = () => {
-		this.setState( this.getDataFromStores() );
-	}
-
-	getDataFromStores() {
-		return AccountRecoveryStore.getPhone();
-	}
+	// constructor( props ) {
+	// 	super( props );
+    //
+	// 	this.state = this.getDataFromStores();
+	// }
+    //
+	// componentDidMount() {
+	// 	AccountRecoveryStore.on( 'change', this.refreshData );
+	// }
+    //
+	// componentWillUnmount() {
+	// 	AccountRecoveryStore.off( 'change', this.refreshData );
+	// }
+    //
+	// refreshData = () => {
+	// 	this.setState( this.getDataFromStores() );
+	// }
+    //
+	// getDataFromStores() {
+	// 	return AccountRecoveryStore.getPhone();
+	// }
 
 	getTwoStepNotice( twoStepEnabled ) {
 		if ( twoStepEnabled ) {
@@ -55,15 +54,20 @@ class RecoveryPhone extends Component {
 	}
 
 	render() {
-		const phone = ! isEmpty( this.state.data ) ? this.state.data : false;
+		// const phone = ! isEmpty( this.state.data ) ? this.state.data : false;
 		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
 		const twoStepNotice = this.getTwoStepNotice( twoStepEnabled );
-		const { translate } = this.props;
+
+		const {
+			phone,
+			isLoading,
+			translate,
+		} = this.props;
 
 		return (
 			<ManageContact
 				type="sms"
-				isLoading={ this.state.loading }
+				isLoading={ isLoading }
 				title={ translate( 'Recovery SMS Number', {
 					comment: 'Account security'
 				} ) }
@@ -77,26 +81,32 @@ class RecoveryPhone extends Component {
 				onDismissNotice={ this.onDismissNotice }
 				>
 					<EditPhone
-						storedPhone={ this.state.data }
+						storedPhone={ phone }
 						/>
 				</ManageContact>
 		);
 	}
 
 	onSave = ( phone ) => {
-		SecurityCheckupActions.updatePhone( phone, this.state.data );
+		this.props.updatePhone( phone );
+		// SecurityCheckupActions.updatePhone( phone, this.state.data );
 	}
 
 	onDelete = () => {
-		accept( this.props.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
+		const {
+			translate,
+			deletePhone,
+		} = this.props;
+
+		accept( translate( 'Are you sure you want to remove the SMS number?' ), ( accepted ) => {
 			if ( accepted ) {
-				SecurityCheckupActions.deletePhone();
+				deletePhone();
 			}
 		} );
 	}
 
 	onDismissNotice = () => {
-		SecurityCheckupActions.dismissPhoneNotice();
+		// SecurityCheckupActions.dismissPhoneNotice();
 	}
 }
 

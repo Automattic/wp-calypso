@@ -24,14 +24,19 @@ import RecoveryPhone from './recovery-phone';
 
 import {
 	updateAccountRecoveryEmail,
+	updateAccountRecoveryPhone,
+	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryEmail,
 } from 'state/account-recovery/settings/actions';
 
 import {
-	isAccountRecoverySettingsReady,
 	getAccountRecoveryEmail,
+	getAccountRecoveryPhone,
+	isAccountRecoverySettingsReady,
 	isUpdatingAccountRecoveryEmail,
+	isUpdatingAccountRecoveryPhone,
 	isDeletingAccountRecoveryEmail,
+	isDeletingAccountRecoveryPhone,
 } from 'state/account-recovery/settings/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUser } from 'state/users/selectors';
@@ -75,7 +80,13 @@ const SecurityCheckup = React.createClass( {
 				</CompactCard>
 
 				<CompactCard>
-					<RecoveryPhone userSettings={ this.props.userSettings } />
+					<RecoveryPhone
+						userSettings={ this.props.userSettings }
+						phone={ this.props.accountRecoveryPhone }
+						updatePhone={ this.props.updatePhone }
+						deletePhone={ this.props.deletePhone }
+						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryPhoneActionInProgress }
+					/>
 				</CompactCard>
 
 			</Main>
@@ -88,10 +99,14 @@ export default connect(
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isUpdatingAccountRecoveryEmail( state ) || isDeletingAccountRecoveryEmail( state ),
 		accountRecoverySettingsReady: isAccountRecoverySettingsReady( state ),
+		accountRecoveryPhone: getAccountRecoveryPhone( state ),
+		accountRecoveryPhoneActionInProgress: isUpdatingAccountRecoveryPhone( state ) || isDeletingAccountRecoveryPhone( state ),
 		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
 	} ),
 	{
 		updateAccountRecoveryEmail,
 		deleteAccountRecoveryEmail,
+		updateAccountRecoveryPhone,
+		deleteAccountRecoveryPhone,
 	}
 )( localize( SecurityCheckup ) );
