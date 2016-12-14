@@ -10,15 +10,13 @@ import {
 	isAccountRecoverySettingsReady,
 	isAccountRecoveryEmailValidated,
 	isAccountRecoveryPhoneValidated,
-	getAccountRecoveryEmail,
-	getAccountRecoveryPhoneCountryCode,
-	getAccountRecoveryPhoneCountryNumericCode,
-	getAccountRecoveryPhoneNumber,
-	getAccountRecoveryPhoneNumberFull,
 	isUpdatingAccountRecoveryPhone,
 	isUpdatingAccountRecoveryEmail,
 	isDeletingAccountRecoveryPhone,
 	isDeletingAccountRecoveryEmail,
+
+	getAccountRecoveryEmail,
+	getAccountRecoveryPhone,
 } from '../selectors';
 
 import {
@@ -41,10 +39,12 @@ describe( '#account-recovery/settings/selectors', () => {
 				data: {
 					email: dummyNewEmail,
 					emailValidated: true,
-					phoneCountryCode: dummyNewPhone.country_code,
-					phoneCountryNumericCode: dummyNewPhone.country_numeric_code,
-					phoneNumber: dummyNewPhone.number,
-					phoneNumberFull: dummyNewPhone.number_full,
+					phone: {
+						countryCode: dummyNewPhone.country_code,
+						countryNumericCode: dummyNewPhone.country_numeric_code,
+						number: dummyNewPhone.number,
+						numberFull: dummyNewPhone.number_full,
+					},
 					phoneValidated: true,
 				},
 			},
@@ -91,43 +91,18 @@ describe( '#account-recovery/settings/selectors', () => {
 		} );
 	} );
 
-	describe( '#getAccountRecoveryPhoneCountryCode', () => {
+	describe( '#getAccountRecoveryPhone', () => {
 		it( 'should return a default value on absence', () => {
-			assert.equal( getAccountRecoveryPhoneCountryCode( stateBeforeFetching ), '' );
+			assert.isNull( getAccountRecoveryPhone( stateBeforeFetching ) );
 		} );
 
-		it( 'should return the phoneCountryCode field', () => {
-			assert.equal( getAccountRecoveryPhoneCountryCode( stateAfterFetching ), dummyNewPhone.country_code );
-		} );
-	} );
-
-	describe( '#getAccountRecoveryPhoneCountryNumericCode', () => {
-		it( 'should return a default value on absence', () => {
-			assert.equal( getAccountRecoveryPhoneCountryNumericCode( stateBeforeFetching ), '' );
-		} );
-
-		it( 'should return the phoneCountryNumericCode field', () => {
-			assert.equal( getAccountRecoveryPhoneCountryNumericCode( stateAfterFetching ), dummyNewPhone.country_numeric_code );
-		} );
-	} );
-
-	describe( '#getAccountRecoveryPhoneNumber', () => {
-		it( 'should return a default value on absence', () => {
-			assert.equal( getAccountRecoveryPhoneNumber( stateBeforeFetching ), '' );
-		} );
-
-		it( 'should return the phoneNumber field', () => {
-			assert.equal( getAccountRecoveryPhoneNumber( stateAfterFetching ), dummyNewPhone.number );
-		} );
-	} );
-
-	describe( '#getAccountRecoveryPhoneNumberFull', () => {
-		it( 'should return a default value on absence', () => {
-			assert.equal( getAccountRecoveryPhoneNumberFull( stateBeforeFetching ), '' );
-		} );
-
-		it( 'should return the phoneNumberFull field', () => {
-			assert.equal( getAccountRecoveryPhoneNumberFull( stateAfterFetching ), dummyNewPhone.number_full );
+		it( 'should return the phone field', () => {
+			assert.deepEqual( getAccountRecoveryPhone( stateAfterFetching ), {
+				countryCode: dummyNewPhone.country_code,
+				countryNumericCode: dummyNewPhone.country_numeric_code,
+				number: dummyNewPhone.number,
+				numberFull: dummyNewPhone.number_full,
+			} );
 		} );
 	} );
 

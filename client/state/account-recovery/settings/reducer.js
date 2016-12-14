@@ -50,20 +50,28 @@ const isDeleting = createReducer( {}, {
 	} ),
 } );
 
-const convertPhoneProperties = ( rawPhone ) => {
+const convertPhoneResponse = ( phoneResponse ) => {
+	if ( ! phoneResponse ) {
+		return null;
+	}
+
 	const {
 		country_code,
 		country_numeric_code,
 		number,
 		number_full,
-	} = rawPhone;
+	} = phoneResponse;
 
 	return {
-		phoneCountryCode: country_code,
-		phoneCountryNumericCode: country_numeric_code,
-		phoneNumber: number,
-		phoneNumberFull: number_full,
+		countryCode: country_code,
+		countryNumericCode: country_numeric_code,
+		number: number,
+		numberFull: number_full,
 	};
+};
+
+const convertEmailResponse = ( emailResponse ) => {
+	return emailResponse ? emailResponse : '';
 };
 
 const data = createReducer( null, {
@@ -75,12 +83,15 @@ const data = createReducer( null, {
 			phone_validated,
 		} = settings;
 
+		// At the moment, the response from /me/account-recovery could have an object or false for the phone field,
+		// and an string or false for the email field. I personally don't like the mixed value so did the conversion
+		// in the following.
 		return {
 			...state,
-			email,
+			email: convertEmailResponse( email ),
 			emailValidated: email_validated,
-			...convertPhoneProperties( phone ),
-			phoneValidated: phone_validated
+			phone: convertPhoneResponse( phone ),
+			phoneValidated: phone_validated,
 		};
 	},
 
@@ -89,12 +100,12 @@ const data = createReducer( null, {
 			case 'phone':
 				return {
 					...state,
-					...convertPhoneProperties( value ),
+					phone: convertPhoneResponse( value ),
 				};
 			case 'email':
 				return {
 					...state,
-					email: value,
+					email: convertEmailResponse( value ),
 				};
 			default: // do nothing to unknown targets
 				return { ...state };
@@ -106,10 +117,7 @@ const data = createReducer( null, {
 			case 'phone':
 				return {
 					...state,
-					phoneCountryCode: '',
-					phoneCountryNumericCode: '',
-					phoneNumber: '',
-					phoneNumberFull: '',
+					phone: null,
 				};
 			case 'email':
 				return {

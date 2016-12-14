@@ -27,11 +27,13 @@ describe( '#account-recovery reducer fetch:', () => {
 	const expectedState = {
 		email: dummyData.email,
 		emailValidated: dummyData.email_validated,
+		phone: {
+			countryCode: dummyData.phone.country_code,
+			countryNumericCode: dummyData.phone.country_numeric_code,
+			number: dummyData.phone.number,
+			numberFull: dummyData.phone.number_full,
+		},
 
-		phoneCountryCode: dummyData.phone.country_code,
-		phoneCountryNumericCode: dummyData.phone.country_numeric_code,
-		phoneNumber: dummyData.phone.number,
-		phoneNumberFull: dummyData.phone.number_full,
 		phoneValidated: dummyData.phone_validated,
 	};
 
@@ -64,10 +66,12 @@ describe( '#account-recovery/settings reducer:', () => {
 
 		assert.deepEqual( state.data, {
 			...initState.data,
-			phoneCountryCode: dummyNewPhone.country_code,
-			phoneCountryNumericCode: dummyNewPhone.country_numeric_code,
-			phoneNumber: dummyNewPhone.number,
-			phoneNumberFull: dummyNewPhone.number_full,
+			phone: {
+				countryCode: dummyNewPhone.country_code,
+				countryNumericCode: dummyNewPhone.country_numeric_code,
+				number: dummyNewPhone.number,
+				numberFull: dummyNewPhone.number_full,
+			},
 		} );
 	} );
 
@@ -77,10 +81,7 @@ describe( '#account-recovery/settings reducer:', () => {
 			target: 'phone',
 		} );
 
-		assert.equal( state.data.phoneCountryCode, '' );
-		assert.equal( state.data.phoneCountryNumericCode, '' );
-		assert.equal( state.data.phoneNumber, '' );
-		assert.equal( state.data.phoneNumberFull, '' );
+		assert.isNull( state.data.phone );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with email target should update the email field', () => {

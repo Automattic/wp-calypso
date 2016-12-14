@@ -18,20 +18,8 @@ export const getAccountRecoveryEmail = ( state ) => {
 	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).email : '';
 };
 
-export const getAccountRecoveryPhoneCountryCode = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phoneCountryCode : '';
-};
-
-export const getAccountRecoveryPhoneCountryNumericCode = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phoneCountryNumericCode : '';
-};
-
-export const getAccountRecoveryPhoneNumber = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phoneNumber : '';
-};
-
-export const getAccountRecoveryPhoneNumberFull = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phoneNumberFull : '';
+export const getAccountRecoveryPhone = ( state ) => {
+	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phone : null;
 };
 
 export const isUpdatingAccountRecoveryPhone = ( state ) => {
