@@ -104,7 +104,7 @@ export const inProgress = createReducer( {}, {
 	} ),
 	[ THEME_TRANSFER_STATUS_RECEIVE ]: ( state, { siteId, status } ) => ( {
 		...state,
-		[ siteId ]: ! status === 'complete',
+		[ siteId ]: ( status !== 'complete' ),
 	} ),
 	[ THEME_TRANSFER_INITIATE_FAILURE ]: ( state, { siteId } ) => ( {
 		...state,
