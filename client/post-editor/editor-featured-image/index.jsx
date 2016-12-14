@@ -8,7 +8,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import EditorMediaModal from 'post-editor/media-modal';
+import MediaModal from 'post-editor/media-modal';
 import PostActions from 'lib/posts/actions';
 import PostUtils from 'lib/posts/utils';
 import * as stats from 'lib/posts/stats';
@@ -52,16 +52,16 @@ export default React.createClass( {
 		} );
 	},
 
-	setImage( items ) {
+	setImage( value ) {
 		this.hideMediaModal();
 		this.props.onImageSelected();
 
-		if ( ! items || ! items.length ) {
+		if ( ! value ) {
 			return;
 		}
 
 		PostActions.edit( {
-			featured_image: items[0].ID
+			featured_image: value.items[ 0 ].ID
 		} );
 
 		stats.recordStat( 'featured_image_set' );
@@ -75,7 +75,7 @@ export default React.createClass( {
 
 		return (
 			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-				<EditorMediaModal
+				<MediaModal
 					visible={ this.props.selecting || this.state.isSelecting }
 					onClose={ this.setImage }
 					site={ this.props.site }
