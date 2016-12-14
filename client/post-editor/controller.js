@@ -127,15 +127,15 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'metadata',
 			'post_thumbnail',
 			'terms',
-			'title',
 			'type'
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );
 		postAttributes.title = decodeEntities( postAttributes.title );
 
 		actions.startEditingNew( siteId, {
-			type: 'post',
 			content: postToCopy.content,
+			title: postToCopy.title,
+			type: 'post',
 		} );
 		context.store.dispatch( editPost( siteId, null, postAttributes ) );
 		actions.edit( postAttributes );
