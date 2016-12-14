@@ -1,15 +1,12 @@
 .eligibility-warnings {
     margin-top: 32px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 .eligibility-warnings .card {
     margin: 0;
-}
-
-.eligibility-warnings__buttons {
-    display: flex;
-    justify-content: flex-end;
-    flex: 1 1;
 }
 
 .eligibility-warnings__message {
@@ -22,6 +19,10 @@
 .eligibility-warnings__message-content {
     flex-grow: 1;
     margin: 0 16px;
+}
+
+.eligibility-warnings__message-description {
+    color: $gray;
 }
 
 .eligibility-warnings__warning-action {
@@ -58,4 +59,10 @@
     @include breakpoint( '<480px' ) {
         flex: 1 1;
     }
+}
+
+.eligibility-warnings__buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 1;
 }
