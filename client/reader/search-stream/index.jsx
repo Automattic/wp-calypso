@@ -23,6 +23,16 @@ import { suggestions } from './suggestions';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
+<<<<<<< 055392bc672dc66dc0a08a2d323450d8064fdc70
+=======
+import config from 'config';
+import {
+	EMPTY_SEARCH_RECOMMENDATIONS,
+	SEARCH_RESULTS,
+ } from 'reader/follow-button/constants';
+
+const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
+>>>>>>> following sagely wisdom of @bluefuton
 
 function RecommendedPosts( { post, site } ) {
 	function handlePostClick() {
@@ -46,7 +56,7 @@ function RecommendedPosts( { post, site } ) {
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
 			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource="empty-search-rec" />
+				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
 		</div>
 	);
 }
@@ -88,7 +98,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 			site={ this.props.site }
 			feed={ this.props.feed }
 			onClick={ this.onCardClick }
-			followSource="search-results"
+			followSource={ SEARCH_RESULTS }
 			onCommentClick={ this.onCommentClick }
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 		/>;
