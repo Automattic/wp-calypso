@@ -45,6 +45,7 @@ import { getActiveTheme, getLastThemeQuery } from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	filterThemesForJetpack,
+	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme
 } from './utils';
@@ -114,13 +115,16 @@ export function requestThemes( siteId, query = {} ) {
 		} );
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes: rawThemes } ) => {
-			const themes = map( rawThemes, normalizeWpcomTheme );
-
-			let filteredThemes = themes;
+			let themes;
+			let filteredThemes;
 			if ( siteId !== 'wpcom' ) {
+				themes = map( rawThemes, normalizeJetpackTheme );
 				// A Jetpack site's themes endpoint ignores the query, returning an unfiltered list of all installed themes instead,
 				// So we have to filter on the client side instead.
 				filteredThemes = filterThemesForJetpack( themes, query );
+			} else {
+				themes = map( rawThemes, normalizeWpcomTheme );
+				filteredThemes = themes;
 			}
 
 			if ( query.search && query.page === 1 ) {
@@ -226,7 +230,7 @@ export function requestTheme( themeId, siteId ) {
 		// See comment next to lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails() why we can't
 		// the regular themeDetails() method for Jetpack sites yet.
 		return wpcom.undocumented().jetpackThemeDetails( themeId, siteId ).then( ( { themes } ) => {
-			dispatch( receiveThemes( map( themes, normalizeWpcomTheme ), siteId ) );
+			dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
 			dispatch( {
 				type: THEME_REQUEST_SUCCESS,
 				siteId,
