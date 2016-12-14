@@ -246,7 +246,7 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
-						<PhoneInput selectedCountryCode="us" countriesList={ countriesList } />
+						<PhoneInput initialCountryCode="us" countriesList={ countriesList } />
 					</FormFieldset>
 
 					<FormFieldset>
