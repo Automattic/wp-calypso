@@ -10,6 +10,7 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import {
 	POST_EDIT,
+	SITE_SETTINGS_UPDATE,
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
@@ -37,6 +38,7 @@ const testTerms = [
 ];
 const siteId = 2916284;
 const taxonomyName = 'jetpack-testimonials';
+const categoryTaxonomyName = 'category';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -250,6 +252,12 @@ describe( 'actions', () => {
 					name: 'ribs',
 					description: ''
 				} )
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ categoryTaxonomyName }/terms/slug:rib` )
+				.reply( 200, {
+					ID: 123,
+					name: 'ribs',
+					description: ''
+				} )
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:toto` )
 				.reply( 400, {
 					message: 'The taxonomy does not exist',
@@ -257,7 +265,7 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
+		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE POST_EDIT and SITE_SETTINGS_UPDATE on Success', () => {
 			const postObjects = {
 				[ siteId ]: {
 					'0fcb4eb16f493c19b627438fdc18d57c': {
@@ -266,7 +274,7 @@ describe( 'actions', () => {
 						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
 						title: 'Steak &amp; Eggs',
 						terms: {
-							[ taxonomyName ]: [
+							[ categoryTaxonomyName ]: [
 								{ ID: 10, name: 'old category name', slug: 'old' }
 							]
 						}
@@ -280,6 +288,76 @@ describe( 'actions', () => {
 							items: postObjects[ siteId ]
 						} )
 					},
+				},
+				siteSettings: {
+					items: {
+						[ siteId ]: {
+							default_category: 10
+						}
+					}
+				},
+				terms: {
+					queries: {
+						[ siteId ]: {
+							[ categoryTaxonomyName ]: new TermQueryManager( {
+								items: {
+									11: { ID: 11, name: 'chicken', slug: 'chicken', parent: 10 }
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			};
+			const getState = () => state;
+
+			return updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
+					termId: 10
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: categoryTaxonomyName,
+					terms: [
+						{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
+						{ ID: 123, name: 'ribs', description: '' }
+					],
+					query: undefined,
+					found: undefined
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_EDIT,
+					siteId: siteId,
+					postId: 120,
+					post: {
+						terms: {
+							[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ]
+						}
+					}
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_SETTINGS_UPDATE,
+					siteId: siteId,
+					settings: {
+						default_category: 123
+					}
+				} );
+			} );
+		} );
+
+		it( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', () => {
+			const state = {
+				posts: { queries: {} },
+				siteSettings: {
+					items: {
+						[ siteId ]: {
+							default_category: 10
+						}
+					}
 				},
 				terms: {
 					queries: {
@@ -297,31 +375,11 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: TERM_REMOVE,
+				expect( spy ).to.not.have.been.calledWith( {
+					type: SITE_SETTINGS_UPDATE,
 					siteId: siteId,
-					taxonomy: taxonomyName,
-					termId: 10
-				} );
-				expect( spy ).to.have.been.calledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					terms: [
-						{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
-						{ ID: 123, name: 'ribs', description: '' }
-					],
-					query: undefined,
-					found: undefined
-				} );
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_EDIT,
-					siteId: siteId,
-					postId: 120,
-					post: {
-						terms: {
-							[ taxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ]
-						}
+					settings: {
+						default_category: 123
 					}
 				} );
 			} );
