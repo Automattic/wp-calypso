@@ -1,0 +1,17 @@
+.themes-upload-card {
+	.section-header {
+		background-color: transparent;
+		border-color: transparent;
+		box-shadow: none;
+		padding: 24px 0px 0px;
+		margin-bottom: 4px;
+	}
+
+	.section-header__label::before {
+		background-image: none;
+	}
+
+	.button {
+		float: right;
+	}
+}

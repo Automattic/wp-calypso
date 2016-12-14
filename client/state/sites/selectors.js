@@ -1004,7 +1004,7 @@ export function getCustomizerUrl( state, siteId ) {
 	}, adminUrl );
 }
 
-/*
+/**
  * Returns true if the site has unchanged site title
  *
  * @param {Object} state Global state tree

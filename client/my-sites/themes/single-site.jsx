@@ -18,7 +18,7 @@ import { isThemeActive } from 'state/themes/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { isJetpack } = props;
+	const { isJetpack, translate } = props;
 	const sites = sitesFactory();
 	const site = sites.getSelectedSite();
 
@@ -48,6 +48,8 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
+				showUploadButton={ true }
+				uploadLabel={ translate( 'Custom themes' ) }
 			/>
 		);
 	}
@@ -69,7 +71,10 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			] }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
-			source="showcase" />
+			source="showcase"
+			showUploadButton={ true }
+			uploadLabel={ translate( 'WordPress.com themes' ) }
+		/>
 	);
 };
 

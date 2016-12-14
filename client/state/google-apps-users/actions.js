@@ -54,10 +54,10 @@ export function fetchBySiteId( siteId ) {
 				items: data.accounts
 			} );
 		}, ( error ) => {
-			return {
+			dispatch( {
 				type: GOOGLE_APPS_USERS_FETCH_FAILED,
 				error
-			}
+			} );
 		} );
 	};
 }

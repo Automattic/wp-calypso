@@ -21,9 +21,9 @@ import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
-	getSerializedThemesQueryWithoutPage
+	getSerializedThemesQueryWithoutPage,
+	isPremium
 } from './utils';
-import { isPremium } from 'lib/query-manager/theme/util';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**

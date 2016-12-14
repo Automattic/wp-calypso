@@ -36,7 +36,7 @@
 		font-weight: 700;
 	}
 
-	p, div {
+	p, > div {
 		margin: 0 0 24px;
 
 		&:last-child {
@@ -160,7 +160,8 @@
 	}
 
 	.wp-caption-text,
-	figure figcaption {
+	figure figcaption,
+	figure .caption {
 		padding: 12px;
 		margin: 0;
 		font-size: 13px;

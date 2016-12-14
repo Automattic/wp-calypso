@@ -19,7 +19,8 @@ var Site = require( './site' ),
 	MailingList = require( './mailing-list' ),
 	AccountRecoveryReset = require( './account-recovery-reset' ),
 	config = require( 'config' ),
-	i18n = require( 'lib/i18n-utils' );
+	i18n = require( 'lib/i18n-utils' ),
+	readerContentWidth = require( 'reader/lib/content-width' );
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -64,6 +65,35 @@ Undocumented.prototype.accountRecoveryReset = function( userData ) {
 };
 
 /*
+ * Retrieve Jetpack Jumpstart status for a site with id siteid.
+ *
+ * @param {int}      [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jumpstart/' }, fn );
+};
+
+/*
+ * Activate or deactivate Jetpack Jumpstart for a site with id siteid.
+ *
+ * @param {int}      [siteId]
+ * @param {Boolean}  [active]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jumpstart/', body: JSON.stringify( { active } ) },
+		fn
+	);
+};
+
+/*
  * Jetpack modules data from the site with id siteId
  *
  * @param {int} [siteId]
@@ -99,6 +129,37 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn
 Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, fn ) {
 	debug( '/sites/:site_id:/jetpack/modules/:module_slug query' );
 	return this.wpcom.req.post( { path: '/sites/' + siteId + '/jetpack/modules/' + moduleSlug }, {}, { active: false }, fn );
+};
+
+/*
+ * Retrieve the settings of a Jetpack module with moduleSlug on the site with id siteId
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/module/' + moduleSlug }, fn );
+};
+
+/*
+ * Update the settings of a Jetpack module with moduleSlug on the site with id siteId to the specified settings
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {object} [settings]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlug, settings, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/module/' + moduleSlug, body: JSON.stringify( settings ) },
+		fn
+	);
 };
 
 /**
@@ -176,6 +237,23 @@ Undocumented.prototype.fetchJetpackKeys = function( siteId, fn ) {
 Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
+};
+
+/*
+ * Retrieve current connection status of a Jetpack site.
+ *
+ * @param {int}      [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( {
+		path: '/jetpack-blogs/' + siteId + '/rest-api/',
+		body: {
+			path: '/connection/'
+		}
+	}, fn );
 };
 
 Undocumented.prototype.jetpackLogin = function( siteId, _wp_nonce, redirect_uri, scope, state ) {
@@ -991,9 +1069,20 @@ Undocumented.prototype.fetchPreviewMarkup = function( siteId, path, postData ) {
 	} );
 };
 
+function addReaderContentWidth( params ) {
+	if ( params.content_width ) {
+		return;
+	}
+	const contentWidth = readerContentWidth();
+	if ( contentWidth ) {
+		params.content_width = contentWidth;
+	}
+}
+
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
 	query.apiVersion = '1.3';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
@@ -1006,6 +1095,7 @@ Undocumented.prototype.readFollowingMine = function( query, fn ) {
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
 	query.apiVersion = '1.3';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
 
@@ -1024,6 +1114,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
 	params.apiVersion = '1.3';
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ) + '/posts', params, fn );
 };
@@ -1032,6 +1123,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.3';
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.feedId ) + '/posts/' + encodeURIComponent( query.postId ), params, fn );
 };
@@ -1039,6 +1131,7 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 Undocumented.prototype.readSearch = function( query, fn ) {
 	debug( '/read/search', query );
 	const params = Object.assign( { apiVersion: '1.2' }, query );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
@@ -1061,6 +1154,7 @@ Undocumented.prototype.readTagPosts = function( query, fn ) {
 	} else {
 		params.apiVersion = '1.2';
 	}
+	addReaderContentWidth( params );
 
 	return this.wpcom.req.get( '/read/tags/' + encodeURIComponent( query.tag ) + '/posts', params, fn );
 };
@@ -1075,6 +1169,7 @@ Undocumented.prototype.readTagImages = function( query, fn ) {
 Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 	debug( '/recommendations/posts' );
 	query.apiVersion = '1.2';
+	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
@@ -1092,6 +1187,7 @@ Undocumented.prototype.readLiked = function( query, fn ) {
 	var params = clone( query );
 	debug( '/read/liked' );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/liked', params, fn );
 };
 
@@ -1106,6 +1202,7 @@ Undocumented.prototype.readListPosts = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list/:list/posts' );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/list/' + query.owner + '/' + query.slug + '/posts', params, fn );
 };
 
@@ -1194,12 +1291,14 @@ Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
 Undocumented.prototype.readSitePosts = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site/posts' );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
 };
 
 Undocumented.prototype.readSitePost = function( query, fn ) {
 	var params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts/' + query.postId, params, fn );
 };
 
@@ -1207,6 +1306,7 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 	debug( '/read/site/:site/post/:post/related' );
 	const params = omit( query, [ 'site_id', 'post_id' ] );
 	params.apiVersion = '1.2';
+	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/site/' + query.site_id + '/post/' + query.post_id + '/related', params, fn );
 };
 

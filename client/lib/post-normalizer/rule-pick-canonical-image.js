@@ -8,38 +8,23 @@ import { find } from 'lodash';
  */
 import { thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 
-
-
 export default function pickCanonicalImage( post ) {
-	let canonicalImage;
-	if ( post.canonical_image ) {
-		post.canonical_image = null;
-	}
-	if ( post.images ) {
-		canonicalImage = find( post.images, isCandidateForCanonicalImage );
+	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
+		const { URL: url, width, height } = post.post_thumbnail;
+		post.canonical_image = {
+			uri: url,
+			width,
+			height
+		};
+	} else if ( post.content_images && post.content_images.length ) {
+		const canonicalImage = find( post.content_images, isCandidateForCanonicalImage );
 		if ( canonicalImage ) {
-			canonicalImage = {
+			post.canonical_image = {
 				uri: canonicalImage.src,
 				width: canonicalImage.width,
 				height: canonicalImage.height
 			};
 		}
-	} else if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
-		canonicalImage = {
-			uri: post.post_thumbnail.URL,
-			width: post.post_thumbnail.width,
-			height: post.post_thumbnail.height
-		};
-	} else if ( post.featured_image ) {
-		canonicalImage = {
-			uri: post.featured_image,
-			width: 0,
-			height: 0
-		};
-	}
-
-	if ( canonicalImage ) {
-		post.canonical_image = canonicalImage;
 	}
 	return post;
 }

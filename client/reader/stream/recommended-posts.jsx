@@ -89,12 +89,13 @@ export class RecommendedPosts extends React.PureComponent {
 							( post, index ) => {
 								const uiIndex = this.props.index + index;
 								return ( <li className="reader-stream__recommended-posts-list-item" key={ post.global_ID }>
-									<Button borderless
+									<div className="reader-stream__recommended-post-dismiss">
+										<Button borderless
 										title={ this.props.translate( 'Dismiss this recommendation' ) }
-										className="reader-stream__recommended-post-dismiss"
 										onClick={ partial( dismissRecommendation, uiIndex, this.props.storeId, post ) }>
 										<Gridicon icon="cross" size={ 14 } />
-									</Button>
+										</Button>
+									</div>
 									<RelatedPostCard
 										post={ post }
 										onPostClick={ partial( handlePostClick, uiIndex ) }

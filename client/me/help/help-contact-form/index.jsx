@@ -77,7 +77,7 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteSlug: this.getSiteId()
+			siteId: this.getSiteId()
 		};
 	},
 
