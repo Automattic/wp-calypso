@@ -17,7 +17,6 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	isRequestingThemesForQuery,
-	isRequestingThemesForQueryIgnoringPage,
 	isThemesLastPageForQuery,
 	isThemeActive,
 	isThemePurchased
@@ -46,7 +45,6 @@ const ThemesSelection = React.createClass( {
 		] ),
 		themes: PropTypes.array,
 		isRequesting: PropTypes.bool,
-		isRequestingIgnoringQuery: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
@@ -96,7 +94,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	fetchNextPage( options ) {
-		if ( this.props.isRequesting || /* this.props.isRequestingIgnoringQuery || */ this.props.isLastPage ) {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
 		}
 
@@ -139,7 +137,6 @@ export default connect(
 			siteIdOrWpcom,
 			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
-			isRequestingIgnoringQuery: isRequestingThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isThemePurchased: themeId => (
