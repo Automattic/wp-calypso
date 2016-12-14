@@ -12,31 +12,27 @@ import EditEmail from './edit-email';
 import accept from 'lib/accept';
 
 class RecoveryEmail extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = this.getDataFromStores();
-	}
-
 	render() {
 		const {
 			primaryEmail,
 			accountRecoveryEmail,
 			translate,
+			isLoading,
 		} = this.props;
 
+		// TODO: lastNotice? onDismissNotice?
 		return (
 			<ManageContact
 				type="email"
-				isLoading={ this.state.loading }
+				isLoading={ isLoading }
 				title={ translate( 'Recovery Email Address' ) }
 				subtitle={ accountRecoveryEmail ? accountRecoveryEmail : translate( 'Not set' ) }
 				hasValue={ !! accountRecoveryEmail }
-				lastNotice={ this.state.lastNotice }
+				lastNotice={ null }
 
 				onSave={ this.onSave }
 				onDelete={ this.onDelete }
-				onDismissNotice={ this.onDismissNotice }
+				onDismissNotice={ () => {} }
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }
@@ -51,9 +47,14 @@ class RecoveryEmail extends Component {
 	}
 
 	onDelete = () => {
-		accept( this.props.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
+		const {
+			translate,
+			deleteAccountRecoveryEmail,
+		} = this.props;
+
+		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
 			if ( accepted ) {
-				this.props.deleteAccountRecoveryEmail();
+				deleteAccountRecoveryEmail();
 			}
 		} );
 	}
