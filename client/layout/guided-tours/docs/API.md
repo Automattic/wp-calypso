@@ -31,14 +31,23 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 ## ButtonRow
 
-ButtonRow is a React component to display button controls in Step and takes care of their proper styling. No props, just put your controls as children.
+ButtonRow is a React component to display button controls in Step and takes care of their proper styling. To be used as the last child of Step to contain all available controls.
+
+### Example
+
+```jsx
+<ButtonRow>
+  <Next step="next-step" />
+  <Quit />
+</ButtonRow>
+```
 
 ## Continue
 
 Continue is a React component that you can use in Step to programmatically continue the tour to other step based on user interaction with Calypso. There are currently two ways to declare the condition to continue the tour.
 
-- binding an `onClick` listener to any DOM element in Calypso
-- redux selector function that evaluates to true in order to advance the tour
+- Binding an `onClick` listener to a DOM node marked as `[data-tip-target]`
+- Redux selector function that evaluates to true in order to advance the tour
 
 ### Props
 
@@ -65,7 +74,16 @@ Link is a React component that shows a button that allows users to advance tour 
 
 ### Label
 
-Default label is "Next". To override, place your label as children like this: `<Next step="next-step">Custom Label</Next>`.
+Default label is "Next". To override, place your label as a child.
+
+### Example
+
+```jsx
+// with default label
+<Next step="next-step" />
+// or with a custom one
+<Next step="next-step">Custom Label</Next>`
+```
 
 ## Quit
 
@@ -73,11 +91,24 @@ Quit is a React component that shows a button that allows users to quit current 
 
 ### Props
 
-* `primary` (bool, optional) If true, button will be rendered as primary.
+* `primary` (bool, optional) If true, button will be rendered as primary. Use only if Quit is the only available action.
 
 ### Label
 
-Default label is "Quit". To override, place your label as children like this: `<Quit>Custom Label</Quit>`.
+Default label is "Quit". To override, place your label a child.
+
+### Example
+
+```jsx
+// with default label
+<Quit />
+
+// with a custom label
+<Quit>Custom Label</Next>`
+
+// custom label + primary styling
+<Quit primary>Custom Label</Next>`
+```
 
 ## Link
 
