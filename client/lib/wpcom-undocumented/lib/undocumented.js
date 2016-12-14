@@ -1618,6 +1618,23 @@ Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
 	}, fn );
 };
 
+/**
+ * Delete a theme from Jetpack site.
+ *
+ * @param {Number}    siteId   The site ID
+ * @param {String}    themeId  The theme ID
+ * @param {Function}  fn       The callback function
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.deleteThemeFromJetpack = function( siteId, themeId, fn ) {
+	const path = `/sites/${ siteId }/themes/${ themeId }/delete`;
+	debug( path );
+
+	return this.wpcom.req.post( {
+		path,
+	}, fn );
+};
+
 Undocumented.prototype.activeTheme = function( siteId, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
