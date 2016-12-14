@@ -312,16 +312,20 @@
 
 .tiled-gallery-caption { /* Captions */
 	box-sizing: border-box; /* to make width: 100% work */
-	background: #eee;
-	background: rgba( 255,255,255,0.8 );
-	color: #333;
-	font-size: 13px;
+	background: #222;
+	background: rgba( 0,0,0,0.3 );
+	background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2) 73%, rgba( 0,0,0,.5) 100%);
+	color: $white;
+	font-family: $sans;
+	font-size: 14px;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 	font-weight: 400;
 	overflow: hidden;
 	padding: 10px 20px;
 	position: absolute;
-		bottom: 0;
-	width: 100%;
+		bottom: 2px;
+		left: 2px;
+		right: 2px;
 }
 
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
