@@ -543,6 +543,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -565,6 +568,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -587,6 +593,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
