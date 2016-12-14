@@ -3,6 +3,7 @@
  */
 import noop from 'lodash/noop';
 import find from 'lodash/find';
+import includes from 'lodash/includes';
 import React from 'react';
 import classnames from 'classnames';
 
@@ -18,7 +19,7 @@ const PhoneInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
 		value: React.PropTypes.string,
-		selectedCountryCode: React.PropTypes.string.isRequired,
+		initialCountryCode: React.PropTypes.string,
 		countriesList: React.PropTypes.object.isRequired
 	},
 
@@ -26,11 +27,12 @@ const PhoneInput = React.createClass( {
 		return {
 			value: '',
 			onChange: noop,
+			initialCountryCode: 'us'
 		};
 	},
 
 	getInitialState() {
-		const selectedCountry = countries[ this.props.selectedCountryCode ];
+		const selectedCountry = countries[ this.props.initialCountryCode ];
 		const formattedNumber = formatNumber( this.props.value, selectedCountry );
 		return {
 			selectedCountry,
@@ -54,21 +56,22 @@ const PhoneInput = React.createClass( {
 		}
 	},
 
-	getFormattedNumberAndCountry: function( value ) {
+	getFormattedNumberAndCountry( value ) {
 		let formattedNumber = value,
 			selectedCountry = this.state.selectedCountry;
 
 		if ( value ) {
-			if ( ( value[ 0 ] === '+' || value[ 0 ] === '1' ) && ! this.state.freezeSelection ) {
+			if ( includes( [ '+', '1' ], value[ 0 ] ) && ! this.state.freezeSelection ) {
 				selectedCountry = findCountryFromNumber( value ) || this.state.selectedCountry;
 			}
 
 			formattedNumber = formatNumber( value, selectedCountry );
 		}
+
 		return {
 			selectedCountry,
 			formattedNumber
-		}
+		};
 	},
 
 	handleInput( event ) {
@@ -79,7 +82,7 @@ const PhoneInput = React.createClass( {
 		}
 
 		event.preventDefault();
-		let { formattedNumber, selectedCountry } = this.getFormattedNumberAndCountry( value );
+		const { formattedNumber, selectedCountry } = this.getFormattedNumberAndCountry( value );
 
 		let caretPosition = event.target.selectionStart;
 		const oldFormattedText = this.state.formattedNumber;
@@ -97,7 +100,6 @@ const PhoneInput = React.createClass( {
 			if ( caretPosition > 0 && oldFormattedText.length >= formattedNumber.length ) {
 				this.numberInput.setSelectionRange( caretPosition, caretPosition );
 			}
-
 		} );
 		this.props.onChange( event );
 	},
@@ -107,8 +109,8 @@ const PhoneInput = React.createClass( {
 		this.numberInput.setSelectionRange( pos, pos );
 	},
 
-	handleCountrySelection( event ) {
-		const countryCode = event.target.value.toLowerCase();
+	setCountry( countryCode ) {
+		countryCode = countryCode.toLowerCase();
 		let selectedCountry = countries[ countryCode ];
 		// Special cases where the country is in a disputed region and not globally recognized.
 		// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
@@ -118,9 +120,9 @@ const PhoneInput = React.createClass( {
 			if ( data ) {
 				selectedCountry = {
 					isoCode: countryCode,
-					dialCode: data.numeric_code.replace('+', ''),
+					dialCode: data.numeric_code.replace( '+', '' ),
 					nationalPrefix: ''
-				}
+				};
 			}
 		}
 
@@ -130,8 +132,12 @@ const PhoneInput = React.createClass( {
 		} );
 	},
 
+	handleCountrySelection( event ) {
+		this.setCountry( event.target.value );
+	},
+
 	getCountry() {
-		return this.state.selectedCountry
+		return this.state.selectedCountry;
 	},
 
 	render() {
