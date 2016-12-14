@@ -320,7 +320,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin-top: 14px;
 
 	.reader-post-card__post-details {
-		flex: 0 auto;
+		flex: 1 auto;
 	}
 
 	@media #{$reader-post-card-breakpoint-large} {
