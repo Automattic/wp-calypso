@@ -10,6 +10,7 @@ var forIn = require( 'lodash/forIn' );
 var mapValues = require( 'lodash/mapValues' );
 var orderBy = require( 'lodash/orderBy' );
 var last = require( 'lodash/last' );
+var includes = require( 'lodash/includes' );
 
 var areaCodes = {
 	CA: [ "204", "236", "249", "250", "289", "306", "343", "365", "387", "403", "416", "418", "431", "437", "438", "450", "506", "514", "519", "548", "579", "581", "587", "604", "613", "639", "647", "672", "705", "709", "742", "778", "780", "782", "807", "819", "825", "867", "873", "902", "905" ],
@@ -80,6 +81,10 @@ var numberFormatIndexes = {
 	FORMAT: 2,
 	LEADING_DIGIT_PATTERN: 3,
 	NATIONAL_CALLING_FORMAT: 4
+};
+
+var aliases = {
+	uk: 'gb'
 };
 
 function tabs( depth ) {
@@ -241,6 +246,17 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 }
 
 /**
+ * Creates aliases. E.g. allows `uk` to be found by both `gb` and `uk`.
+ * @param data
+ */
+function insertCountryAliases( data ) {
+	Object.keys( aliases ).forEach( source => {
+		data[ source ] = data[ aliases[ source ] ];
+	} );
+	return data;
+}
+
+/**
  * Converts a given object to a JS string, then compiles and executes the given string and compares the two with deep
  * equality. If they are deeply equal, returns the JS string.
  * @param {{}} data
@@ -271,7 +287,9 @@ function generateDialCodeMap( metadata ) {
 			return;
 		}
 		res[ key ] = res[ key ] || [];
-		res[ key ].push( value );
+		if ( ! includes( res[ key ], value ) ) {
+			res[ key ].push( value );
+		}
 	}
 	forIn( metadata, function( country ) {
 		addValue( country.dialCode, country.isoCode );
@@ -293,6 +311,7 @@ function generateFullDataset( metadata ) {
 getLibPhoneNumberData()
 	.then( processLibPhoneNumberMetadata )
 	.then( generateDeepRemoveEmptyArraysFromObject( [ 'patterns', 'internationalPatterns' ] ) )
+	.then( insertCountryAliases )
 	.then( removeAllNumberKeys )
 	.then( generateFullDataset )
 	.then( deepRemoveUndefinedKeysFromObject )
