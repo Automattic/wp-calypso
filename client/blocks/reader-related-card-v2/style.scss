@@ -136,11 +136,12 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2.card {
+	z-index: z-index( 'root', '.reader-related-card-v2.card' );
 
 	.reader-related-card-v2__meta {
 		display: flex;
 		margin-bottom: 13px;
-		z-index: 1;
+		z-index: z-index( '.reader-related-card-v2.card', '.reader-related-card-v2__meta' );
 	}
 
 	.reader-related-card-v2__post {
@@ -380,7 +381,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-bottom: 12px;
 	margin-top: -4px;
 	padding: 0;
-	z-index: 1;
+	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
 
 	.gridicon__follow {
 		fill: $blue-medium;
