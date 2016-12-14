@@ -36,7 +36,7 @@
 		font-weight: 700;
 	}
 
-	p, div {
+	p, > div {
 		margin: 0 0 24px;
 
 		&:last-child {
