@@ -46,6 +46,26 @@ export function isPremium( theme ) {
 	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
 }
 
+/**
+ * Normalizes a theme obtained via the WordPress.com REST API from a Jetpack site
+ *
+ * @param  {Object} theme  Themes object
+ * @return {Object}        Normalized theme object
+ */
+export function normalizeJetpackTheme( theme = {} ) {
+	if ( ! theme.tags ) {
+		return theme;
+	}
+
+	return {
+		...omit( theme, 'tags' ),
+		taxonomies: {
+			// Map slugs only since JP sites give us no names
+			theme_feature: map( theme.tags, slug => ( { slug } ) )
+		}
+	};
+}
+
  /**
   * Normalizes a theme obtained from the WordPress.com REST API
   *
