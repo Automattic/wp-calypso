@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	isPremium,
+	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
 	getThemeIdFromStylesheet,
@@ -46,6 +47,39 @@ describe( 'utils', () => {
 				stylesheet: 'premium/mood'
 			} );
 			expect( premium ).to.be.true;
+		} );
+	} );
+
+	describe( '#normalizeJetpackTheme()', () => {
+		it( 'should return an empty object when given no argument', () => {
+			const normalizedTheme = normalizeJetpackTheme();
+			expect( normalizedTheme ).to.deep.equal( {} );
+		} );
+		it( 'should rename some keys', () => {
+			const normalizedTheme = normalizeJetpackTheme( {
+				id: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'the WordPress team',
+				screenshot: 'twentyfifteen.png',
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				tags: [
+					'custom-header',
+					'two-columns'
+				]
+			} );
+			expect( normalizedTheme ).to.deep.equal( {
+				id: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'the WordPress team',
+				screenshot: 'twentyfifteen.png',
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				taxonomies: {
+					theme_feature: [
+						{ slug: 'custom-header' },
+						{ slug: 'two-columns' }
+					]
+				}
+			} );
 		} );
 	} );
 
