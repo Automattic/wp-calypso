@@ -46,10 +46,30 @@ export function isPremium( theme ) {
 	return themeStylesheet && startsWith( themeStylesheet, 'premium/' );
 }
 
+/**
+ * Normalizes a theme obtained via the WordPress.com REST API from a Jetpack site
+ *
+ * @param  {Object} theme  Theme object
+ * @return {Object}        Normalized theme object
+ */
+export function normalizeJetpackTheme( theme = {} ) {
+	if ( ! theme.tags ) {
+		return theme;
+	}
+
+	return {
+		...omit( theme, 'tags' ),
+		taxonomies: {
+			// Map slugs only since JP sites give us no names
+			theme_feature: map( theme.tags, slug => ( { slug } ) )
+		}
+	};
+}
+
  /**
   * Normalizes a theme obtained from the WordPress.com REST API
   *
-  * @param  {Object} theme  Themes object
+  * @param  {Object} theme  Theme object
   * @return {Object}        Normalized theme object
   */
 export function normalizeWpcomTheme( theme ) {
@@ -67,7 +87,7 @@ export function normalizeWpcomTheme( theme ) {
 /**
  * Normalizes a theme obtained from the WordPress.org REST API
  *
- * @param  {Object} theme  Themes object
+ * @param  {Object} theme  Theme object
  * @return {Object}        Normalized theme object
  */
 export function normalizeWporgTheme( theme ) {
@@ -189,12 +209,12 @@ export function isPremiumTheme( theme ) {
  * Returns a filtered themes array. Filtering is done based on particular themes
  * matching provided query
  *
- * @param  {Array}  themes Array of themes objects
+ * @param  {Array}  themes Array of theme objects
  * @param  {Object} query  Themes query
  * @return {Array}         Filtered themes
  */
 export function filterThemesForJetpack( themes, query ) {
-	return filter( themes, theme => isThemeMatchingQuery( theme, query ) );
+	return filter( themes, theme => isThemeMatchingQuery( query, theme ) );
 }
 
 /**
@@ -227,7 +247,11 @@ export function isThemeMatchingQuery( query, theme ) {
 					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )
 				);
 
-			case 'filters':
+			case 'filter':
+				if ( ! value ) {
+					return true;
+				}
+
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
