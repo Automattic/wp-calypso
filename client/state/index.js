@@ -126,8 +126,8 @@ export function createReduxStore( initialState = {} ) {
 		window.devToolsExtension
 	) {
 		createStoreWithMiddleware = compose(
-			createStoreWithMiddleware,
 			consoleDispatcher,
+			createStoreWithMiddleware,
 			window.devToolsExtension(),
 		);
 	}
