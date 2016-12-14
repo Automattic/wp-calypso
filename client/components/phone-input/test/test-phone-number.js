@@ -208,6 +208,13 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '14256559999', countries.us ), '1 425-655-9999' );
 			} );
 		} );
+
+		describe( 'sanitization', () => {
+			it( 'should strip non-digits on <3 length strings', () => {
+				equal( formatNumber( '1aaaa', countries.us ), '1' );
+				equal( formatNumber( '1a', countries.us ), '1' );
+			} );
+		} );
 	} );
 
 	describe( 'toE164', () => {
