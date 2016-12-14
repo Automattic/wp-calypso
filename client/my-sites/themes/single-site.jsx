@@ -12,7 +12,7 @@ import Main from 'components/main';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import sitesFactory from 'lib/sites-list';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
@@ -80,12 +80,11 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 
 export default connect(
 	( state ) => {
-		const selectedSite = getSelectedSite( state );
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
-			selectedSite,
-			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
-			getScreenshotOption: ( theme ) => ( selectedSite && isThemeActive( state, theme.id, selectedSite.ID ) ) ? 'customize' : 'info'
+			isJetpack: isJetpackSite( state, selectedSiteId ),
+			isCustomizable: canCurrentUser( state, selectedSiteId, 'edit_theme_options' ),
+			getScreenshotOption: ( theme ) => isThemeActive( state, theme.id, selectedSiteId ) ? 'customize' : 'info'
 		};
 	}
 )( localize( SingleSiteThemeShowcaseWithOptions ) );
