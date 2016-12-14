@@ -2,6 +2,8 @@
  * External dependencies
  */
 import map from 'lodash/map';
+import head from 'lodash/head';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -17,6 +19,10 @@ export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
+);
+
+export const getHappychatTranscriptTimestamp = state => (
+	state.happychat.transcript_timestamp || get( head( state.happychat.timeline ), 'timestamp' )
 );
 
 /**
