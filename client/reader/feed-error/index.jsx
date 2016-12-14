@@ -17,30 +17,30 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 const FeedError = React.createClass( {
 	getDefaultProps() {
 		return {
-			message: i18n.translate( 'Sorry, we can\'t find that stream.' )
+			message: i18n.translate( 'Sorry, we can\'t find that site.' )
 		};
 	},
 
 	recordAction() {
-		recordAction( 'clicked_discover_on_404' );
-		recordGaEvent( 'Clicked Discover on 404' );
-		recordTrack( 'calypso_reader_discover_on_feed_error_clicked' );
-	},
-
-	recordSecondaryAction() {
 		recordAction( 'clicked_search_on_404' );
 		recordGaEvent( 'Clicked Search on 404' );
 		recordTrack( 'calypso_reader_search_on_feed_error_clicked' );
 	},
 
+	recordSecondaryAction() {
+		recordAction( 'clicked_discover_on_404' );
+		recordGaEvent( 'Clicked Discover on 404' );
+		recordTrack( 'calypso_reader_discover_on_feed_error_clicked' );
+	},
+
 	render() {
 		const action = ( <a className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
+				href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a>),
 			secondaryAction = (
 				<a className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a> );
+					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
 
 		const CurrentMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
 
