@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import config from 'config';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteType } from 'state/ui/selectors';
 import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
 
 import Notices from './notices';
@@ -44,7 +45,7 @@ class Exporter extends Component {
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
 	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
-	siteType: state.jetpack ? 'jetpack' : 'wpcom'
+	siteType: getSelectedSiteType( state )
 } );
 
 export default connect( mapStateToProps )( Exporter );
