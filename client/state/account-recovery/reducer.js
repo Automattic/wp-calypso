@@ -11,8 +11,6 @@ import settings from './settings/reducer';
 
 import { createReducer } from 'state/utils';
 
-import settings from './settings/reducer';
-
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,

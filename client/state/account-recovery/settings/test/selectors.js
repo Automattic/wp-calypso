@@ -7,6 +7,7 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import {
+	isAccountRecoverySettingsReady,
 	isAccountRecoveryEmailValidated,
 	isAccountRecoveryPhoneValidated,
 	getAccountRecoveryEmail,
@@ -49,6 +50,16 @@ describe( '#account-recovery/settings/selectors', () => {
 			},
 		},
 	};
+
+	describe( '#isAccountRecoverySettingsReady', () => {
+		it( 'should return false on absence', () => {
+			assert.isFalse( isAccountRecoverySettingsReady( stateBeforeFetching ) );
+		} );
+
+		it( 'should return true if exists', () => {
+			assert.isTrue( isAccountRecoverySettingsReady( stateAfterFetching ) );
+		} );
+	} );
 
 	describe( '#isAccountRecoveryEmailValidated:', () => {
 		it( 'should return false on absence', () => {
