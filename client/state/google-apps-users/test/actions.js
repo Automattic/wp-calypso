@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
+import sinon, { match } from 'sinon';
 import { expect } from 'chai';
 
 /**
@@ -54,12 +54,12 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( `/rest/v1.1/domains/${noUpgradeDomain}/google-apps` )
+				.get( `/rest/v1.1/domains/${ noUpgradeDomain }/google-apps` )
 				.reply( 400, {
 					error: 'upgrade_required'
 				} )
-				.get( `/rest/v1.1/domains/${upgradedDomain}/google-apps` )
-				.reply( 200, upgradeResponse )
+				.get( `/rest/v1.1/domains/${ upgradedDomain }/google-apps` )
+				.reply( 200, upgradeResponse );
 		} );
 
 		it( 'should dispatch fetch action with domain data for a domain', () => {
@@ -81,21 +81,74 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail when the request fails', () => {
-			fetchByDomain( '' )( spy ).then( () => {
+			fetchByDomain( noUpgradeDomain )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: GOOGLE_APPS_USERS_FETCH_FAILED
+					type: GOOGLE_APPS_USERS_FETCH_FAILED,
+					error: match( {
+						statusCode: 400,
+						error: 'upgrade_required',
+					} )
 				} );
 			} );
 		} );
 	} );
 
-	describe( '#fetchBySite', () => {
-		it( 'should dispatch fetch action with site id for site', () => {
-			fetchBySiteId( 123 )( spy );
+	describe( '#fetchBySiteId', () => {
+		const noUpgradeSiteId = 12345678,
+			upgradedSiteId = 87654321,
+			upgradeResponse = {
+				accounts: [
+					{
+						domain: 'yesupgrade.com',
+						email: 'test@yesupgrade.com',
+						firstname: 'Test',
+						fullname: 'Test User',
+						lastname: 'Test',
+						mailbox: 'test',
+						site_id: 12345678,
+						suspended: false
+					}
+				]
+			};
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( `/rest/v1.1/sites/${ noUpgradeSiteId }/google-apps` )
+				.reply( 400, {
+					error: 'upgrade_required'
+				} )
+				.get( `/rest/v1.1/sites/${ upgradedSiteId }/google-apps` )
+				.reply( 200, upgradeResponse );
+		} );
+
+		it( 'should dispatch fetch action with site data for a site', () => {
+			fetchBySiteId( noUpgradeSiteId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: GOOGLE_APPS_USERS_FETCH,
-				siteId: 123
+				siteId: noUpgradeSiteId
+			} );
+		} );
+
+		it( 'should dispatch complete when request completes', () => {
+			fetchBySiteId( upgradedSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GOOGLE_APPS_USERS_FETCH_COMPLETED,
+					items: upgradeResponse.accounts
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail when the request fails', () => {
+			fetchBySiteId( noUpgradeSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GOOGLE_APPS_USERS_FETCH_FAILED,
+					error: match( {
+						statusCode: 400,
+						error: 'upgrade_required',
+					} )
+				} );
 			} );
 		} );
 	} );
