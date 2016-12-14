@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	isPremium,
+	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
 	getThemeIdFromStylesheet,
@@ -46,6 +47,39 @@ describe( 'utils', () => {
 				stylesheet: 'premium/mood'
 			} );
 			expect( premium ).to.be.true;
+		} );
+	} );
+
+	describe( '#normalizeJetpackTheme()', () => {
+		it( 'should return an empty object when given no argument', () => {
+			const normalizedTheme = normalizeJetpackTheme();
+			expect( normalizedTheme ).to.deep.equal( {} );
+		} );
+		it( 'should rename some keys', () => {
+			const normalizedTheme = normalizeJetpackTheme( {
+				id: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'the WordPress team',
+				screenshot: 'twentyfifteen.png',
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				tags: [
+					'custom-header',
+					'two-columns'
+				]
+			} );
+			expect( normalizedTheme ).to.deep.equal( {
+				id: 'twentyfifteen',
+				name: 'Twenty Fifteen',
+				author: 'the WordPress team',
+				screenshot: 'twentyfifteen.png',
+				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				taxonomies: {
+					theme_feature: [
+						{ slug: 'custom-header' },
+						{ slug: 'two-columns' }
+					]
+				}
+			} );
 		} );
 	} );
 
@@ -326,10 +360,10 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		context( 'query.filters', () => {
+		context( 'query.filter', () => {
 			it( 'should return false if theme does not include filter', () => {
 				const isMatch = isThemeMatchingQuery( {
-					filters: 'nosuchfilter'
+					filter: 'nosuchfilter'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.false;
@@ -337,7 +371,7 @@ describe( 'utils', () => {
 
 			it( 'should return false on a partial match', () => {
 				const isMatch = isThemeMatchingQuery( {
-					filters: 'ourna'
+					filter: 'ourna'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.false;
@@ -345,7 +379,7 @@ describe( 'utils', () => {
 
 			it( 'should return true if theme includes filter', () => {
 				const isMatch = isThemeMatchingQuery( {
-					filters: 'infinite-scroll'
+					filter: 'infinite-scroll'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
@@ -354,14 +388,14 @@ describe( 'utils', () => {
 			context( 'with multiple filters from a single taxonomy', () => {
 				it( 'should return false if theme doesn\'t match all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'infinite-scroll,business'
+						filter: 'infinite-scroll,business'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'infinite-scroll,custom-header'
+						filter: 'infinite-scroll,custom-header'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.true;
@@ -371,14 +405,14 @@ describe( 'utils', () => {
 			context( 'with multiple filters from different taxonomies', () => {
 				it( 'should return false if theme doesn\'t match all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'infinite-scroll,green'
+						filter: 'infinite-scroll,green'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.false;
 				} );
 				it( 'should return true if theme matches all filters', () => {
 					const isMatch = isThemeMatchingQuery( {
-						filters: 'infinite-scroll,black'
+						filter: 'infinite-scroll,black'
 					}, DEFAULT_THEME );
 
 					expect( isMatch ).to.be.true;
