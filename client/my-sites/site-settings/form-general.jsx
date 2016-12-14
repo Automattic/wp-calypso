@@ -101,7 +101,6 @@ class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
 		this.props.replaceFields( {
-			fetchingSettings: true,
 			blogname: '',
 			blogdescription: '',
 			lang_id: '',
@@ -824,7 +823,7 @@ const connectComponent = connect(
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
 		return {
-			isRequestingSettings,
+			isRequestingSettings: isRequestingSettings && ! settings,
 			isSavingSettings,
 			isSaveRequestSuccessful,
 			settings,
