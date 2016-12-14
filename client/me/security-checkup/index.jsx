@@ -28,6 +28,7 @@ import {
 } from 'state/account-recovery/settings/actions';
 
 import {
+	isAccountRecoverySettingsReady,
 	getAccountRecoveryEmail,
 	isUpdatingAccountRecoveryEmail,
 	isDeletingAccountRecoveryEmail,
@@ -69,7 +70,7 @@ const SecurityCheckup = React.createClass( {
 						accountRecoveryEmail={ this.props.accountRecoveryEmail }
 						updateAccountRecoveryEmail={ this.props.updateAccountRecoveryEmail }
 						deleteAccountRecoveryEmail={ this.props.deleteAccountRecoveryEmail }
-						isLoading={ this.props.accountRecoveryEmailActionInProgress }
+						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryEmailActionInProgress }
 					/>
 				</CompactCard>
 
@@ -86,6 +87,7 @@ export default connect(
 	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isUpdatingAccountRecoveryEmail( state ) || isDeletingAccountRecoveryEmail( state ),
+		accountRecoverySettingsReady: isAccountRecoverySettingsReady( state ),
 		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
 	} ),
 	{
