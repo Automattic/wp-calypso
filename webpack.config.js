@@ -38,6 +38,9 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	module: {
+		// avoids this warning:
+		// https://github.com/localForage/localForage/issues/577
+		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		loaders: [
 			{
 				test: /sections.js$/,
