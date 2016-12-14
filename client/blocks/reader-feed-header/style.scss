@@ -75,6 +75,7 @@
 
 		.reader-feed-header__follow {
 			display: flex;
+			flex: 1 0 auto;
 			flex-direction: row;
 			justify-content: flex-end;
 			z-index: z-index( '.reader-feed-header__back-and-follow', '.reader-feed-header__follow' );
