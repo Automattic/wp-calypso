@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find } from 'lodash';
@@ -129,6 +128,10 @@ class Upload extends React.Component {
 		this.props.uploadTheme( this.props.siteId, file );
 	}
 
+	onBackClick = () => {
+		window.history.back();
+	};
+
 	renderDropZone() {
 		const { translate } = this.props;
 		const uploadPromptText = translate(
@@ -232,7 +235,7 @@ class Upload extends React.Component {
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
-				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
+				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
 					{ ! inProgress && ! complete && this.renderDropZone() }
 					{ inProgress && this.renderProgressBar() }
