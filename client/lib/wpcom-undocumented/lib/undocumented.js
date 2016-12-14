@@ -1621,7 +1621,7 @@ Undocumented.prototype.installThemeOnJetpack = function( siteId, themeId, fn ) {
 /**
  * Delete a theme from Jetpack site.
  *
- * @param {String}    siteId   The site ID
+ * @param {Number}    siteId   The site ID
  * @param {String}    themeId  The theme ID
  * @param {Function}  fn       The callback function
  * @returns {Promise} promise
