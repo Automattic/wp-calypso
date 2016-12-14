@@ -27,27 +27,6 @@ import {
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
- * Returns an array of theme objects by site ID.
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @return {Array}         Site themes
- */
-export const getThemes = createSelector(
-	( state, siteId ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
-			return [];
-		}
-
-		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
-		// over different pages) which we need to remove manually here for now.
-		return uniq( manager.getItems() );
-	},
-	( state ) => state.themes.queries
-);
-
-/**
  * Returns a theme object by site ID, theme ID pair.
  *
  * @param  {Object}  state   Global state tree
