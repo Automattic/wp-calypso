@@ -26,9 +26,9 @@ const FeedError = React.createClass( {
 	},
 
 	recordSecondaryAction() {
-		recordAction( 'clicked_recommendations_on_404' );
-		recordGaEvent( 'Clicked Recommendations on 404' );
-		recordTrack( 'calypso_reader_recommendations_on_feed_error_clicked' );
+		recordAction( 'clicked_search_on_404' );
+		recordGaEvent( 'Clicked Search on 404' );
+		recordTrack( 'calypso_reader_search_on_feed_error_clicked' );
 	},
 
 	render() {
@@ -38,7 +38,7 @@ const FeedError = React.createClass( {
 			secondaryAction = (
 				<a className="empty-content__action button"
 					onClick={ this.recordSecondaryAction }
-					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
+					href="/read/search">{ this.translate( 'Find Sites to Follow' ) }</a> );
 
 		return (
 			<Main>

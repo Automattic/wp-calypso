@@ -19,9 +19,9 @@ const SiteEmptyContent = ( { translate } ) => {
 	};
 
 	const recordSecondaryAction = () => {
-		stats.recordAction( 'clicked_recommendations_on_empty' );
-		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_recommendations_on_empty_site_stream_clicked' );
+		stats.recordAction( 'clicked_search_on_empty' );
+		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_search_on_empty_site_stream_clicked' );
 	};
 
 	let action;
@@ -36,7 +36,7 @@ const SiteEmptyContent = ( { translate } ) => {
 	const secondaryAction = (
 		<a className="empty-content__action button"
 			onClick={ recordSecondaryAction }
-			href="/recommendations">{ translate( 'Get recommendations on who to follow' ) }</a> );
+			href="/read/search">{ translate( 'Find Sites to Follow' ) }</a> );
 
 	return ( <EmptyContent
 			title={ translate( 'No Posts' ) }
