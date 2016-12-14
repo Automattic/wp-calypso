@@ -1,0 +1,61 @@
+.eligibility-warnings {
+    margin-top: 32px;
+}
+
+.eligibility-warnings .card {
+    margin: 0;
+}
+
+.eligibility-warnings__buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 1;
+}
+
+.eligibility-warnings__message {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 80px;
+}
+
+.eligibility-warnings__message-content {
+    flex-grow: 1;
+    margin: 0 16px;
+}
+
+.eligibility-warnings__warning-action {
+    color: $gray;
+}
+
+.eligibility-warnings__error-icon {
+    color: $alert-red;
+}
+
+.eligibility-warnings__warning-icon {
+    color: $alert-yellow;
+}
+
+.eligibility-warnings__confirm-icon {
+    color: $gray;
+}
+.eligibility-warnings__confirm-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.eligibility-warnings__confirm-box .button {
+    margin-left: 16px;
+}
+
+.eligibility-warnings__confirm-text {
+    flex: 2 1;
+    margin-left: 16px;
+    color: $gray;
+    font-style: italic;
+
+    @include breakpoint( '<480px' ) {
+        flex: 1 1;
+    }
+}

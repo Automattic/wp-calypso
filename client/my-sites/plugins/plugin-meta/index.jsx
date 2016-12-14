@@ -167,8 +167,8 @@ export default React.createClass( {
 		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
 			return <WpcomPluginInstallButton
 						disabled={ ! this.hasBusinessPlan() }
-						plugin={ this.props.plugin.slug }
-						site={ this.props.selectedSite.slug }
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
 			/>;
 		}
 	},

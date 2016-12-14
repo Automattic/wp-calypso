@@ -19,7 +19,7 @@ export const WpcomPluginInstallButton = ( { translate, disabled, plugin, site } 
 		primary={ true }
 		type="submit"
 		disabled={ disabled }
-		href={ getPluginLink( plugin, site ) }
+		href={ getPluginLink( plugin.slug, site.slug ) }
 	>
 		{ translate( 'Install' ) }
 	</Button>;

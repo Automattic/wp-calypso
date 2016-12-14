@@ -160,9 +160,14 @@ function renderPluginsBrowser( context ) {
 }
 
 function renderPluginWarnings( context ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
 	renderWithReduxStore(
 		React.createElement( PluginEligibility, {
-			whitelist: context.query.only || false
+			siteSlug: site.slug,
+			pluginSlug
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
