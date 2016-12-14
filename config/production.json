@@ -84,6 +84,7 @@
 		"reader/full-errors": false,
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": false,
+		"reader/refresh/stream": true,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,
