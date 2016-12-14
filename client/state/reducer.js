@@ -1,19 +1,16 @@
 /**
  * External dependencies
  */
-import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
  */
-import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
-import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
@@ -58,7 +55,7 @@ import wordads from './wordads/reducer';
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
+export default combineReducers( {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -105,31 +102,3 @@ export const reducer = combineReducers( {
 	users,
 	wordads,
 } );
-
-const middleware = [ thunkMiddleware, noticesMiddleware ];
-
-if ( typeof window === 'object' ) {
-	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware,
-		require( './data-layer/wpcom-api-middleware.js' ).middleware,
-	);
-}
-
-let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
-
-export function createReduxStore( initialState = {} ) {
-	if (
-		typeof window === 'object' &&
-		window.app &&
-		window.app.isDebug &&
-		window.devToolsExtension
-	) {
-		createStoreWithMiddleware = compose(
-			createStoreWithMiddleware,
-			consoleDispatcher,
-			window.devToolsExtension(),
-		);
-	}
-	return createStoreWithMiddleware( createStore )( reducer, initialState );
-}
