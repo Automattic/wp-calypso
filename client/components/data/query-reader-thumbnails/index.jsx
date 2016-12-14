@@ -13,10 +13,20 @@ import { requestThumbnail } from 'state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
 	componentWillMount() {
-		if ( ! this.props.shouldRequestThumbnail || ! this.props.embedUrl ) {
+		this.request( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.embedUrl !== this.props.embedUrl ) {
+			this.request( nextProps );
+		}
+	}
+
+	request( props ) {
+		if ( ! props.shouldRequestThumbnail || ! props.embedUrl ) {
 			return;
 		}
-		this.props.requestThumbnail( this.props.embedUrl );
+		props.requestThumbnail( props.embedUrl );
 	}
 
 	render() {

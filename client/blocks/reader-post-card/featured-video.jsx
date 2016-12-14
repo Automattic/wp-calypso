@@ -84,9 +84,14 @@ class FeaturedVideo extends React.Component {
 		return (
 			<div>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-				<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
-					dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
-				/>
+
+				// if we couldn't retrieve a thumbnail that usually means there was an issue
+				// with the video and we shouldn't display it
+				{ this.props.thumbnailUrl &&
+					<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
+						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
+					/>
+				}
 			</div>
 		);
 		/* eslint-enable-line react/no-danger */
