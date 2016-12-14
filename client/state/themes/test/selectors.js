@@ -457,6 +457,9 @@ describe( 'themes selectors', () => {
 	describe( '#getThemesLastPageForQuery()', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {}
 				}
@@ -467,6 +470,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -489,6 +495,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -511,6 +520,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return 1 if there are no found themes', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {

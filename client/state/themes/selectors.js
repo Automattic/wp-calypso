@@ -191,6 +191,11 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 		return null;
 	}
 
+	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
+	if ( isJetpackSite( state, siteId ) ) {
+		return 1;
+	}
+
 	return Math.max( pages, 1 );
 }
 
@@ -207,11 +212,6 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
 	const lastPage = getThemesLastPageForQuery( state, siteId, query );
 	if ( null === lastPage ) {
 		return lastPage;
-	}
-
-	// No pagination on Jetpack sites so if we have a page that means we have all
-	if ( isJetpackSite( state, siteId ) ) {
-		return true;
 	}
 
 	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
