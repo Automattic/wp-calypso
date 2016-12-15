@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { includes, omit } from 'lodash';
 import wrapWithClickOutside from 'react-click-outside';
 
 /**
@@ -95,7 +95,7 @@ class PluginAutomatedTransfer extends Component {
 		const { plugin, status, translate } = this.props;
 		const { CONFLICTS } = transferStates;
 
-		if ( ! status || ! includes( transferStates, status ) ) {
+		if ( ! status || ! includes( omit( transferStates, 'INQUIRING' ), status ) ) {
 			return null;
 		}
 
