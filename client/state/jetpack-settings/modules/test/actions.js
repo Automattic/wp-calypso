@@ -55,8 +55,16 @@ describe( 'actions', () => {
 		describe( '#success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/sites/123456/jetpack/modules/module-a' )
-				.reply( 200, MODULE_DATA_FIXTURE[ 'module-a' ] );
+					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
+						path: '/module/module-a/active/',
+						body: JSON.stringify( { active: true } )
+					} )
+					.reply( 200, {
+						data: {
+							code: 'success',
+							message: 'The requested Jetpack module was activated.'
+						}
+					} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_ACTIVATE_SUCCESS when API activates a module', () => {
@@ -74,11 +82,14 @@ describe( 'actions', () => {
 		describe( '#failure', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/sites/123456/jetpack/modules/module-a' )
-				.reply( 400, {
-					error: 'activation_error',
-					message: 'The Jetpack Module is already activated.'
-				} );
+					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
+						path: '/module/module-a/active/',
+						body: JSON.stringify( { active: true } )
+					} )
+					.reply( 400, {
+						error: 'activation_error',
+						message: 'The Jetpack Module is already activated.'
+					} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
