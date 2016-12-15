@@ -155,8 +155,12 @@ const ConnectedThemesSelection = connect(
 	}
 )( ThemesSelection );
 
+/**
+ * Provide page state management needed for `ThemesSelection`. We cannot store the
+ * current state inside `ThemesSelection` since it is also needed in its `connect`
+ * call for selectors that require the entire query object, including the page.
+ */
 class ThemesSelectionWithPage extends React.Component {
-
 	state = {
 		page: 1,
 	};
@@ -178,7 +182,6 @@ class ThemesSelectionWithPage extends React.Component {
 			/>
 		);
 	}
-
 }
 
 export default ThemesSelectionWithPage;
