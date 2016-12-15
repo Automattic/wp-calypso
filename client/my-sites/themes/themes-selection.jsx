@@ -28,7 +28,10 @@ import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 const ThemesSelection = React.createClass( {
 	propTypes: {
 		query: PropTypes.object.isRequired,
-		siteId: PropTypes.number,
+		siteId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.oneOf( [ false ] )
+		] ),
 		onScreenshotClick: PropTypes.func,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,

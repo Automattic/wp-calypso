@@ -78,7 +78,7 @@ export default connectOptions(
 						search={ search }
 						tier={ tier }
 						vertical={ vertical }
-						siteId = { siteId }
+						siteId = { false }
 						selectedSite={ false }
 						getScreenshotUrl={ function( theme ) {
 							if ( ! getScreenshotOption( theme ).getUrl ) {
