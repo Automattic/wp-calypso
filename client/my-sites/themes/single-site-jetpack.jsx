@@ -104,8 +104,8 @@ export default connectOptions(
 							/>
 						</div>
 					}
-						</ThemeShowcase>
-						</div>
-						);
-					}
-					);
+				</ThemeShowcase>
+			</div>
+		);
+	}
+);
