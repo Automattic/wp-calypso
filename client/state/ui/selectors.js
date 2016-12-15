@@ -24,22 +24,6 @@ export function getSelectedSite( state ) {
 }
 
 /**
- * Returns the site type for the currently selected site.
- *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Selected site type
- */
-export function getSelectedSiteType( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
-		return null;
-	}
-
-	const site = getSite( state, siteId );
-	return site.jetpack ? 'jetpack' : 'wpcom';
-}
-
-/**
  * Returns the currently selected site ID.
  *
  * @param  {Object}  state Global state tree

@@ -41,7 +41,7 @@ class ExportCard extends Component {
 		const {
 			translate,
 			fetchStatus,
-			siteType,
+			isJetpackSite,
 		} = this.props;
 
 		const exportButton = (
@@ -54,6 +54,8 @@ class ExportCard extends Component {
 				loadingText={ translate( 'Exporting…' ) } />
 		);
 
+		// Last element is an Interval for checking export status.
+		// Don't fetch status for Jetpack exports, they are not async.
 		return (
 			<div className="export-card">
 				<FoldableCard
@@ -78,8 +80,7 @@ class ExportCard extends Component {
 						onClickExport={ this.props.exportSelectedItems }
 					/>
 				</FoldableCard>
-				{/* Don't fetch status for Jetpack exports, they are not async. */}
-				{ this.props.isExporting && siteType === 'wpcom' &&
+				{ this.props.isExporting && ! isJetpackSite &&
 				<Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
@@ -99,11 +100,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( ownProps.siteId ) ),
 	exportAll: () => dispatch( withAnalytics(
-		trackExportClick(), startExport( ownProps.siteId, { exportAll: true }, ownProps.siteType )
+		trackExportClick(),
+		startExport( ownProps.siteId, { exportAll: true, isJetpackSite: ownProps.isJetpackSite } )
 	) ),
 	exportSelectedItems: () => dispatch( withAnalytics(
 		trackExportClick( 'selected' ),
-		startExport( ownProps.siteId, { exportAll: false }, ownProps.siteType )
+		startExport( ownProps.siteId, { exportAll: false, isJetpackSite: ownProps.isJetpackSite } )
 	) ),
 } );
 
