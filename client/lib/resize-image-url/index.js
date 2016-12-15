@@ -1,48 +1,68 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/assign' ),
-	omit = require( 'lodash/omit' ),
-	url = require( 'url' );
-
-const IMAGE_SCALE_FACTOR = ( typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ) ? 2 : 1;
+import { get, assign, omit, includes, mapValues } from 'lodash';
+import { parse, format } from 'url';
 
 /**
- * Changes the sizing parameters on a URL. Works for wpcom and photon.
- * @param {string} imageUrl The URL to add sizing params to
- * @param {object} params The parameters to add
- * @returns {string} The resized URL
+ * Pattern matching valid http(s) URLs
+ *
+ * @type {RegExp}
  */
-function resizeImageUrl( imageUrl, params ) {
-	var parsedUrl = url.parse( imageUrl, true, true );
+const REGEXP_VALID_PROTOCOL = /^https?:$/;
 
-	if ( ! /^https?:$/.test( parsedUrl.protocol ) ) {
+/**
+ * Factor by which dimensions should be multiplied, specifically accounting for
+ * high pixel-density displays (e.g. retina). This multiplier currently maxes
+ * at 2x image size, though could foreseeably be the exact display ratio.
+ *
+ * @type {Number}
+ */
+const IMAGE_SCALE_FACTOR = get( global.window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+
+/**
+ * Query parameters to be treated as image dimensions
+ *
+ * @type {String[]}
+ */
+const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
+
+/**
+ * Given a numberic value, returns the value multiplied by image scale factor
+ *
+ * @param  {Number} value Original value
+ * @return {Number}       Updated value
+ */
+const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
+
+/**
+ * Changes the sizing parameters on a URL. Works for WordPress.com, Photon, and
+ * Gravatar images
+ *
+ * @param   {String} imageUrl Original image url
+ * @param   {Object} params   Resize parameters to add
+ * @returns {String}          Resize image URL
+ */
+export default function resizeImageUrl( imageUrl, params ) {
+	const parsedUrl = parse( imageUrl, true, true );
+	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
 		return imageUrl;
 	}
 
-	parsedUrl.query = omit( parsedUrl.query, [ 'w', 'h', 'resize', 'fit' ] );
+	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
-	const localParams = assign( {}, params );
-	if ( localParams.w ) {
-		localParams.w *= IMAGE_SCALE_FACTOR;
-	}
+	// Map sizing parameters, multiplying their values by the scale factor
+	assign( parsedUrl.query, mapValues( params, ( value, key ) => {
+		if ( 'resize' === key || 'fit' === key ) {
+			return value.split( ',' ).map( scaleByFactor ).join( ',' );
+		} else if ( includes( SIZE_PARAMS, key ) ) {
+			return scaleByFactor( value );
+		}
 
-	if ( localParams.h ) {
-		localParams.h *= IMAGE_SCALE_FACTOR;
-	}
-
-	if ( localParams.resize ) {
-		let [ width, height ] = localParams.resize.split( ',' );
-		width *= IMAGE_SCALE_FACTOR;
-		height *= IMAGE_SCALE_FACTOR;
-		localParams.resize = `${width},${height}`;
-	}
-
-	parsedUrl.query = assign( parsedUrl.query, localParams );
+		return value;
+	} ) );
 
 	delete parsedUrl.search;
 
-	return url.format( parsedUrl );
+	return format( parsedUrl );
 }
-
-module.exports = resizeImageUrl;
