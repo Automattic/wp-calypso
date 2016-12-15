@@ -122,8 +122,16 @@ describe( 'actions', () => {
 		describe( '#success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/sites/123456/jetpack/modules/module-b' )
-				.reply( 200, MODULE_DATA_FIXTURE[ 'module-b' ] );
+					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
+						path: '/module/module-b/active/',
+						body: JSON.stringify( { active: false } )
+					} )
+					.reply( 200, {
+						data: {
+							code: 'success',
+							message: 'The requested Jetpack module was deactivated.'
+						}
+					} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_SUCCESS when API deactivates a module', () => {
@@ -141,11 +149,14 @@ describe( 'actions', () => {
 		describe( '#failure', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/sites/123456/jetpack/modules/module-b' )
-				.reply( 400, {
-					error: 'deactivation_error',
-					message: 'The Jetpack Module is already deactivated.'
-				} );
+					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
+						path: '/module/module-b/active/',
+						body: JSON.stringify( { active: false } )
+					} )
+					.reply( 400, {
+						error: 'deactivation_error',
+						message: 'The Jetpack Module is already deactivated.'
+					} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_FAILURE when deactivating a module fails', () => {
