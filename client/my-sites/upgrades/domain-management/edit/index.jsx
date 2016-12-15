@@ -10,6 +10,7 @@ import page from 'page';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
+import MaintenanceCard from 'my-sites/upgrades/domain-management/components/domain/maintenance-card';
 import MappedDomain from './mapped-domain';
 import RegisteredDomain from './registered-domain';
 import SiteRedirect from './site-redirect';
@@ -27,16 +28,22 @@ const Edit = React.createClass( {
 			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
 		}
 
+		let content = <Details
+			domain={ domain }
+			selectedSite={ this.props.selectedSite }
+			settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
+		/>;
+
+		if ( domain.type === domainTypes.REGISTERED && domain.registrar === 'Registrar TLD Maintenance' ) {
+			content = <MaintenanceCard { ...this.props } />;
+		}
+
 		return (
 			<Main className="domain-management-edit">
 				<Header onClick={ this.goToDomainManagement } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.translate( 'Domain Settings' ) }
 				</Header>
-
-				<Details
-					domain={ domain }
-					selectedSite={ this.props.selectedSite }
-					settingPrimaryDomain={ this.props.domains.settingPrimaryDomain } />
+				{ content }
 			</Main>
 		);
 	},
