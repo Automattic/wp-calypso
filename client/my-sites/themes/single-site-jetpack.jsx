@@ -80,8 +80,7 @@ export default connectOptions(
 								tier={ tier }
 								filter={ filter }
 								vertical={ vertical }
-								siteId = { false }
-								selectedSite={ false }
+								siteId = { null }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
