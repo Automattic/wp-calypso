@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 
 /**
@@ -11,10 +12,9 @@ import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
+import { enqueueFileUploads } from 'state/media/actions';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryDropZone',
-
+const MediaLibraryDropZone = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		fullScreen: React.PropTypes.bool,
@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files );
+		this.props.enqueueFileUploads( this.props.site.ID, files );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -80,3 +80,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, { enqueueFileUploads } )( MediaLibraryDropZone );
