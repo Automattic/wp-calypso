@@ -207,6 +207,7 @@ export default {
 	},
 	retryAuth( url, attemptNumber ) {
 		return ( dispatch ) => {
+			debug( 'retrying auth', url, attemptNumber );
 			dispatch( {
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				attemptNumber: attemptNumber,
