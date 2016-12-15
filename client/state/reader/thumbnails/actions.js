@@ -4,7 +4,6 @@
 import debugModule from 'debug';
 import getEmbedMetadata from 'get-video-id';
 import request from 'superagent';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +19,6 @@ import {
  * Module variables
  */
 const debug = debugModule( 'calypso:redux:reader-service-thumbnails' );
-export const UNSUPPORTED_EMBED = 'UNSUPPORTED_EMBED';
-export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
 
 /**
  * Returns an action object to signal that a thumbnailUrl has been received.
@@ -78,19 +75,16 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
 			return request.get( fetchUrl )
 				.then( response => {
-					const thumbnailUrl = get( response, [ 'body', 0, 'thumbnail_large' ] );
-					if ( thumbnailUrl ) {
-						dispatch( requestSuccessful( embedUrl ) );
-						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-					} else {
-						dispatch( requestFailure( embedUrl, { type: BAD_API_RESPONSE, response } ) );
-					}
+					const thumbnailUrl = response.body[ 0 ].thumbnail_large;
+
+					dispatch( requestSuccessful( embedUrl ) );
+					dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 				}, error => {
 					dispatch( requestFailure( embedUrl, error ) );
 				} );
 		}
 		default:
-			dispatch( requestFailure( embedUrl, { type: UNSUPPORTED_EMBED } ) );
+			dispatch( requestFailure( embedUrl, { type: 'UNSUPPORTED_EMBED' } ) );
 			return Promise.resolve();
 	}
 };
