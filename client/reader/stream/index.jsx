@@ -32,7 +32,7 @@ import XPostHelper from 'reader/xpost-helper';
 import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/constants';
+import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
