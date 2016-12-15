@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, find, flow, forEach, matches } from 'lodash';
+import { filter, find, flow, forEach } from 'lodash';
 import url from 'url';
 
 /**
@@ -121,15 +121,10 @@ function classifyPost( post ) {
 		}
 
 		const canonicalImageUrl = url.parse( canonicalImage.uri, true, true ),
-			canonicalImageUrlImportantParts = {
-				hostname: canonicalImageUrl.hostname,
-				pathname: canonicalImageUrl.pathname,
-				query: canonicalImageUrl.query
-			},
-			matcher = matches( canonicalImageUrlImportantParts );
+			canonicalImagePath = canonicalImageUrl.pathname;
 		if ( find( post.content_images, ( img ) => {
 			const imgUrl = url.parse( img.src, true, true );
-			return matcher( imgUrl );
+			return imgUrl.pathname === canonicalImagePath;
 		} ) ) {
 			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
 		}
