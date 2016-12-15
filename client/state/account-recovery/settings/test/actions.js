@@ -104,7 +104,7 @@ describe( 'account-recovery actions', () => {
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/phone',
-			successResponse: dummyNewPhone,
+			successResponse: { phone: dummyNewPhone },
 			errorResponse: errorResponse,
 		},
 		thunk: () => updateAccountRecoveryPhone( dummyNewPhone.country_code, dummyNewPhone.number )( spy ),
