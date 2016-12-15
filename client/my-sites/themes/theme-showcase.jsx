@@ -69,7 +69,6 @@ const ThemeShowcase = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			selectedSite: false,
 			tier: '',
 			search: '',
 			showUploadButton: false
@@ -221,7 +220,6 @@ const ThemeShowcase = React.createClass( {
 				}
 				<ThemesSelection query={ query }
 					siteId={ this.props.siteId }
-					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;
@@ -243,10 +241,6 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
-					search={ search }
-					tier={ this.props.tier }
-					filter={ this.props.filter }
-					vertical={ this.props.vertical }
 					incrementPage={ this.incrementPage }
 					resetPage={ this.resetPage } />
 					{ this.props.children }
