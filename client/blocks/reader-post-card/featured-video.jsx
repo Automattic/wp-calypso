@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { throttle, constant } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
@@ -12,8 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import EmbedHelper from 'reader/embed-helper';
 import FeaturedImage from './featured-image';
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
 class FeaturedVideo extends React.Component {
 
@@ -80,27 +77,14 @@ class FeaturedVideo extends React.Component {
 			);
 		}
 
-		// if we can't retrieve a thumbnail that means there was an issue
-		// with the embed and we shouldn't display it
-		const showEmbed = !! this.props.thumbnailUrl;
-
 		/* eslint-disable react/no-danger */
 		return (
-			<div>
-				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-				{ showEmbed &&
-					<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
-						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
-					/>
-				}
-			</div>
+			<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
+				dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
+			/>
 		);
 		/* eslint-enable-line react/no-danger */
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
-} );
-
-export default connect( mapStateToProps )( localize( FeaturedVideo ) );
+export default localize( FeaturedVideo );
