@@ -230,7 +230,7 @@ class Upload extends React.Component {
 		return (
 			<Main>
 				<QueryActiveTheme siteId={ siteId } />
-				{ themeId && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
+				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
