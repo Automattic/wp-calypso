@@ -2,13 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	getThemes,
 	getTheme,
 	getThemeRequestErrors,
 	isRequestingTheme,
@@ -71,40 +69,10 @@ const mood = {
 
 describe( 'themes selectors', () => {
 	beforeEach( () => {
-		getThemes.memoizedSelector.cache.clear();
 		getTheme.memoizedSelector.cache.clear();
 		getThemesForQuery.memoizedSelector.cache.clear();
 		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
-	} );
-
-	describe( '#getThemes()', () => {
-		it( 'should return an array of theme objects for the site', () => {
-			const themeObjects = {
-				wpcom: {
-					mood
-				},
-				77203074: {
-					twentyfifteen,
-					twentysixteen
-				}
-			};
-			const state = {
-				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: themeObjects.wpcom
-						} ),
-						77203074: new ThemeQueryManager( {
-							items: themeObjects[ 77203074 ]
-						} )
-					},
-
-				}
-			};
-
-			expect( getThemes( state, 77203074 ) ).to.have.members( values( themeObjects[ 77203074 ] ) );
-		} );
 	} );
 
 	describe( '#getTheme()', () => {
