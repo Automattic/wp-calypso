@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, omit } from 'lodash';
+import { compact, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import {
 	isThemeActive,
 	isThemePurchased
 } from 'state/themes/selectors';
+import config from 'config';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -120,11 +121,21 @@ const ThemesSelection = React.createClass( {
 
 } );
 
-export default connect(
-	( state, { query, siteId } ) => {
+const ConnectedThemesSelection = connect(
+	( state, { search, tier, siteId, page, vertical, filter } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const siteIdOrWpcom = ( siteId && isJetpack ) ? siteId : 'wpcom';
+
+		const query = {
+			search,
+			page,
+			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
+			filter: compact( [ filter, vertical ] ).join( ',' ),
+			number: 20
+		};
+
 		return {
+			query,
 			siteIdOrWpcom,
 			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
@@ -143,3 +154,34 @@ export default connect(
 		};
 	}
 )( ThemesSelection );
+
+class ThemesSelectonWithPage extends React.Component {
+
+	constructor() {
+		super();
+		this.state = {
+			page: 1,
+		};
+	}
+
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	}
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
+	}
+
+	render() {
+		return (
+			<ConnectedThemesSelection { ...this.props }
+				page={ this.state.page }
+				incrementPage={ this.incrementPage }
+				resetPage={ this.resetPage }
+			/>
+		);
+	}
+
+}
+
+export default ThemesSelectonWithPage;

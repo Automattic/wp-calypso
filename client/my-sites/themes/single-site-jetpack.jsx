@@ -30,7 +30,9 @@ export default connectOptions(
 			options,
 			search,
 			site,
-			siteId
+			siteId,
+			tier,
+			vertical
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -65,7 +67,11 @@ export default connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					<ThemesSelection query={ /* TBD */ }
+					<ThemesSelection
+						search={ search }
+						tier={ tier }
+						vertical={ vertical }
+						siteId = { siteId }
 						selectedSite={ false }
 						getScreenshotUrl={ function( theme ) {
 							if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -87,7 +93,8 @@ export default connectOptions(
 								addTracking( options ),
 								option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 							); } }
-						trackScrollPage={ props.trackScrollPage } />
+						trackScrollPage={ props.trackScrollPage }
+					/>
 				</ThemeShowcase>
 			</div>
 		);

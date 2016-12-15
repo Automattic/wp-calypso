@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -150,19 +150,6 @@ const ThemeShowcase = React.createClass( {
 		return primaryOption;
 	},
 
-	addVerticalToFilters() {
-		const { vertical, filter } = this.props;
-		return compact( [ filter, vertical ] ).join( ',' );
-	},
-
-	incrementPage() {
-		this.setState( { page: this.state.page + 1 } );
-	},
-
-	resetPage() {
-		this.setState( { page: 1 } );
-	},
-
 	render() {
 		const { site, options, getScreenshotOption, secondaryOption, search } = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
@@ -178,14 +165,6 @@ const ThemeShowcase = React.createClass( {
 			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },
 			{ property: 'og:type', content: 'website' }
 		];
-
-		const query = {
-			search,
-			tier,
-			filter: this.addVerticalToFilters(),
-			page: this.state.page,
-			number: 20
-		};
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -218,7 +197,10 @@ const ThemeShowcase = React.createClass( {
 						label={ this.props.uploadLabel }
 					/>
 				}
-				<ThemesSelection query={ query }
+				<ThemesSelection
+					search={ search }
+					tier={ this.props.tier }
+					vertical={ this.props.vertical }
 					siteId={ this.props.siteId }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -241,9 +223,8 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
-					incrementPage={ this.incrementPage }
-					resetPage={ this.resetPage } />
-					{ this.props.children }
+				/>
+				{ this.props.children }
 			</Main>
 		);
 	}
