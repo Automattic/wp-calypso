@@ -41,10 +41,10 @@ export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
-		version="20161214"
+		version="20161215"
 		when={ and(
 			isEnabled( 'post-editor/insert-menu' ),
-			hasUserRegisteredBefore( new Date( '2016-12-14' ) ),
+			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
 			isDesktop,
 		) }
 	>
