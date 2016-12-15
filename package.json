@@ -75,6 +75,7 @@
     "keymaster": "1.6.2",
     "localforage": "1.4.3",
     "lodash": "4.15.0",
+    "lru-cache": "4.0.1",
     "lunr": "0.5.7",
     "marked": "0.3.5",
     "moment": "2.10.6",
