@@ -9,14 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import RefreshFeedHeader from 'blocks/reader-feed-header';
-import OldFeedHeader from 'reader/feed-header';
 import FeedFeatured from './featured';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
-import HeaderBack from 'reader/header-back';
 import SiteStore from 'lib/reader-site-store';
 import SiteStoreActions from 'lib/reader-site-store/actions';
 import { state as SiteState } from 'lib/reader-site-store/constants';
@@ -155,8 +152,6 @@ class SiteStream extends React.Component {
 			featuredContent = ( <FeedFeatured store={ featuredStore } /> );
 		}
 
-		const FeedHeader = config.isEnabled( 'reader/refresh/stream' ) ? RefreshFeedHeader : OldFeedHeader;
-
 		return (
 			<Stream
 				{ ...this.props }
@@ -165,8 +160,7 @@ class SiteStream extends React.Component {
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
-				{ ! config.isEnabled( 'reader/refresh/stream' ) && this.props.showBack && <HeaderBack /> }
-				<FeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
+				<RefreshFeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
 				{ featuredContent }
 			</Stream>
 
