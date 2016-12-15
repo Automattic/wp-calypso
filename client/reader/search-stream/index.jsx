@@ -29,7 +29,7 @@ import config from 'config';
 import {
 	EMPTY_SEARCH_RECOMMENDATIONS,
 	SEARCH_RESULTS,
- } from 'reader/follow-button/constants';
+} from 'reader/follow-button/follow-sources';
 
 const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
 >>>>>>> following sagely wisdom of @bluefuton
