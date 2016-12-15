@@ -10,7 +10,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { activateTheme } from 'state/themes/actions';
+import { activateTheme, activateWpcomThemeOnJetpack } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
@@ -52,6 +52,20 @@ const activate = {
 			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		)
+	)
+};
+
+const activateOnJetpack = {
+	label: i18n.translate( 'Activate' ),
+	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
+	action: activateWpcomThemeOnJetpack,
+	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
+	hideForTheme: ( state, theme, siteId ) => (
+		isActive( state, theme.id, siteId ) || (
+			isPremium( state, theme.id ) &&
+			! isPurchased( state, theme.id, siteId ) && // Probably not relevant (yet) on Jetpack sites
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
 };
@@ -125,6 +139,7 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
+	activateOnJetpack,
 	tryandcustomize,
 	signup,
 	separator,
