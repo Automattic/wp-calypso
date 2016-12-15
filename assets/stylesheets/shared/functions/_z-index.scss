@@ -50,6 +50,7 @@ $z-layers: (
 		'.reader-feed-header': 0,
 		'.reader-feed-header__back-and-follow': 0,
 		'.reader-related-card-v2.card': 0,
+		'.list-stream__header-follow': 0,
 		'.post-trends__title': 1,
 		'.plugin-item__label': 1,
 		'.wp-editor-tools': 1,
@@ -210,6 +211,9 @@ $z-layers: (
 		'.reader-related-card-v2__meta': 1
 	),
 	'.reader-related-card-v2__meta': (
+		'.follow-button': 1
+	),
+	'.list-stream__header-follow': (
 		'.follow-button': 1
 	),
 

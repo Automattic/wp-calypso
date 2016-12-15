@@ -74,10 +74,30 @@
 	align-items: stretch;
 	display: flex;
 	margin-left: auto;
-	z-index: 1;
+	z-index: z-index( 'root', '.list-stream__header-follow' );
 
 	.follow-button {
 		padding: 0;
+		z-index: z-index( '.list-stream__header-follow', '.follow-button' );
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+		}
+
+		&.is-following {
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
 	}
 }
 
