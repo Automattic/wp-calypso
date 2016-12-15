@@ -23,10 +23,10 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
-import { uploadTheme, clearThemeUpload } from 'state/themes/actions';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -110,7 +110,7 @@ class Upload extends React.Component {
 	}
 
 	onFileSelect = ( files ) => {
-		const { translate } = this.props;
+		const { translate, siteId } = this.props;
 		const errorMessage = translate( 'Please drop a single zip file' );
 
 		if ( files.length !== 1 ) {
@@ -125,7 +125,10 @@ class Upload extends React.Component {
 			return;
 		}
 		debug( 'zip file:', file );
-		this.props.uploadTheme( this.props.siteId, file );
+
+		const action = this.props.isJetpackSite
+			? this.props.uploadTheme : this.props.initiateThemeTransfer;
+		action( siteId, file );
 	}
 
 	onBackClick = () => {
@@ -171,7 +174,8 @@ class Upload extends React.Component {
 		} = this.props;
 
 		const uploadingMessage = translate( 'Uploading your theme…' );
-		const installingMessage = translate( 'Installing your theme on site…' );
+		const installingMessage = this.props.isJetpackSite
+			? translate( 'Installing your theme…' ) : translate( 'Configuring your site…' );
 
 		return (
 			<div>
@@ -231,7 +235,7 @@ class Upload extends React.Component {
 		return (
 			<Main>
 				<QueryActiveTheme siteId={ siteId } />
-				{ themeId && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
+				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
@@ -265,6 +269,7 @@ export default connect(
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
@@ -276,5 +281,5 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 		};
 	},
-	{ uploadTheme, clearThemeUpload },
+	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
 )( localize( UploadWithOptions ) );

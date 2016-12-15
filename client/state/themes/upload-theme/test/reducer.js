@@ -268,6 +268,16 @@ describe( 'inProgress', () => {
 		expect( state[ siteId ] ).to.not.be.true;
 	} );
 
+	it( 'should be true on transfer status not-complete', () => {
+		const state = inProgress( {}, {
+			type: THEME_TRANSFER_STATUS_RECEIVE,
+			siteId,
+			themeId,
+			status: 'uploading'
+		} );
+		expect( state[ siteId ] ).to.be.true;
+	} );
+
 	it( 'should not be true on transfer status failure', () => {
 		const state = inProgress( {}, {
 			type: THEME_TRANSFER_STATUS_FAILURE,
