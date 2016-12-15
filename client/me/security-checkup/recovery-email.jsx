@@ -15,7 +15,7 @@ class RecoveryEmail extends Component {
 	render() {
 		const {
 			primaryEmail,
-			accountRecoveryEmail,
+			email,
 			translate,
 			isLoading,
 		} = this.props;
@@ -26,8 +26,8 @@ class RecoveryEmail extends Component {
 				type="email"
 				isLoading={ isLoading }
 				title={ translate( 'Recovery Email Address' ) }
-				subtitle={ accountRecoveryEmail ? accountRecoveryEmail : translate( 'Not set' ) }
-				hasValue={ !! accountRecoveryEmail }
+				subtitle={ email ? email : translate( 'Not set' ) }
+				hasValue={ !! email }
 				lastNotice={ null }
 
 				onSave={ this.onSave }
@@ -36,25 +36,25 @@ class RecoveryEmail extends Component {
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }
-						storedEmail={ accountRecoveryEmail ? accountRecoveryEmail : '' }
+						storedEmail={ email ? email : '' }
 						/>
 				</ManageContact>
 		);
 	}
 
 	onSave = ( newEmail ) => {
-		this.props.updateAccountRecoveryEmail( newEmail );
+		this.props.updateEmail( newEmail );
 	}
 
 	onDelete = () => {
 		const {
 			translate,
-			deleteAccountRecoveryEmail,
+			deleteEmail,
 		} = this.props;
 
 		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
 			if ( accepted ) {
-				deleteAccountRecoveryEmail();
+				deleteEmail();
 			}
 		} );
 	}

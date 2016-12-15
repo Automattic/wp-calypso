@@ -72,9 +72,9 @@ const SecurityCheckup = React.createClass( {
 				<CompactCard>
 					<RecoveryEmail
 						primaryEmail={ this.props.primaryEmail }
-						accountRecoveryEmail={ this.props.accountRecoveryEmail }
-						updateAccountRecoveryEmail={ this.props.updateAccountRecoveryEmail }
-						deleteAccountRecoveryEmail={ this.props.deleteAccountRecoveryEmail }
+						email={ this.props.accountRecoveryEmail }
+						updateEmail={ this.props.updateAccountRecoveryEmail }
+						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryEmailActionInProgress }
 					/>
 				</CompactCard>
