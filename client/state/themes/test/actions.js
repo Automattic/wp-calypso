@@ -560,7 +560,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch activate theme request action when triggered', () => {
-			activateWpcomThemeOnJetpack( 2211667, 'karuna' )( spy );
+			activateWpcomThemeOnJetpack( 'karuna', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
@@ -570,7 +570,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme activate request success action when request completes', () => {
-			return activateWpcomThemeOnJetpack( 2211667, 'karuna' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'karuna', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST,
 					siteId: 2211667,
@@ -580,7 +580,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return activateWpcomThemeOnJetpack( 2211667, 'typist' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'typist', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 2211667,
@@ -591,7 +591,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return activateWpcomThemeOnJetpack( 2211667, 'pinboard' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'pinboard', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 2211667,
