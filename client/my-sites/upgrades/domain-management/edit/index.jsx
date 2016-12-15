@@ -18,11 +18,13 @@ import WpcomDomain from './wpcom-domain';
 import { type as domainTypes } from 'lib/domains/constants';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
+import { registrar as registrarNames } from 'lib/domains/constants';
 
 const Edit = React.createClass( {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props ),
-			Details = this.getDetailsForType( domain && domain.type );
+			Details = this.getDetailsForType( domain && domain.type ),
+			{ MAINTENANCE } = registrarNames;
 
 		if ( ! domain || ! Details ) {
 			return <DomainMainPlaceholder goBack={ this.goToDomainManagement } />;
@@ -34,7 +36,7 @@ const Edit = React.createClass( {
 			settingPrimaryDomain={ this.props.domains.settingPrimaryDomain }
 		/>;
 
-		if ( domain.type === domainTypes.REGISTERED && domain.registrar === 'Registrar TLD Maintenance' ) {
+		if ( domain.type === domainTypes.REGISTERED && domain.registrar === MAINTENANCE ) {
 			content = <MaintenanceCard { ...this.props } />;
 		}
 
