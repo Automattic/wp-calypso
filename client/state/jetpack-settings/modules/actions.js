@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { omit, map } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -92,7 +97,15 @@ export const fetchModuleList = ( siteId ) => {
 
 		return wp.undocumented().getJetpackModules( siteId )
 			.then( ( { data } ) => {
-				dispatch( receiveJetpackModules( siteId, data ) );
+				const modules = map(
+					data,
+					( module ) => ( {
+						active: module.activated,
+						...omit( module, 'activated' )
+					} )
+				);
+
+				dispatch( receiveJetpackModules( siteId, modules ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_SUCCESS,
 					siteId
