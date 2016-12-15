@@ -3,13 +3,15 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import url from 'url';
+import { includes } from 'lodash';
+import { parse as parseUrl } from 'url';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { getSite } from 'state/sites/selectors';
+import resizeImageUrl from 'lib/resize-image-url';
 import Gridicon from 'components/gridicon';
 
 const SiteIcon = React.createClass( {
@@ -29,27 +31,20 @@ const SiteIcon = React.createClass( {
 		size: React.PropTypes.number
 	},
 
-	imgSizeParam( host ) {
-		return host && host.indexOf( 'gravatar.com' ) === -1 ? 'w' : 's';
-	},
+	getIconSrcUrl( imageUrl ) {
+		const { host } = parseUrl( imageUrl, true, true );
+		const sizeParam = includes( host, 'gravatar.com' ) ? 's' : 'w';
 
-	getIconSrcURL( imgURL ) {
-		var parsed = url.parse( imgURL, true, true ),
-			sizeParam = this.imgSizeParam( parsed.host );
-
-		parsed.query[sizeParam] = this.props.imgSize;
-
-		// Use query param to set retina size: we use the same
-		// size everyhere, even if the intended display size is
-		// a bit smaller, to keep just one cached image per site.
-		return url.format( parsed );
+		return resizeImageUrl( imageUrl, {
+			[ sizeParam ]: this.props.imgSize
+		} );
 	},
 
 	render() {
 		var iconSrc, iconClasses, style;
 
 		// Set the site icon path if it's available
-		iconSrc = ( this.props.site && this.props.site.icon ) ? this.getIconSrcURL( this.props.site.icon.img ) : null;
+		iconSrc = ( this.props.site && this.props.site.icon ) ? this.getIconSrcUrl( this.props.site.icon.img ) : null;
 
 		iconClasses = classNames( {
 			'site-icon': true,
