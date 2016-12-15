@@ -83,8 +83,8 @@ const SecurityCheckup = React.createClass( {
 					<RecoveryPhone
 						userSettings={ this.props.userSettings }
 						phone={ this.props.accountRecoveryPhone }
-						updatePhone={ this.props.updatePhone }
-						deletePhone={ this.props.deletePhone }
+						updatePhone={ this.props.updateAccountRecoveryPhone }
+						deletePhone={ this.props.deleteAccountRecoveryPhone }
 						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryPhoneActionInProgress }
 					/>
 				</CompactCard>
