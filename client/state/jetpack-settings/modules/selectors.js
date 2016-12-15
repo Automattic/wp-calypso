@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether the module is active
  */
 export function isModuleActive( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'active' ], null );
+	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'activated' ], null );
 }
 
 /**
