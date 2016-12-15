@@ -19,7 +19,9 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
+import ThemeUploadCard from './themes-upload-card';
 import { addTracking } from './helpers';
+import { translate } from 'i18n-calypso';
 
 export default connectOptions(
 	( props ) => {
@@ -67,6 +69,11 @@ export default connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
+					{ config.isEnabled( 'manage/themes/upload' ) &&
+						<ThemeUploadCard
+							label={ translate( 'WordPress.com themes' ) }
+						/>
+					}
 					<ThemesSelection
 						search={ search }
 						tier={ tier }
