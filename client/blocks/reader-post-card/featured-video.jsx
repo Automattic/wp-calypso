@@ -76,19 +76,19 @@ class FeaturedVideo extends React.Component {
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
 					/>
-				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
 				</FeaturedImage>
 			);
 		}
+
+		// if we can't retrieve a thumbnail that means there was an issue
+		// with the embed and we shouldn't display it
+		const showEmbed = !! this.props.thumbnailUrl;
 
 		/* eslint-disable react/no-danger */
 		return (
 			<div>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
-
-				// if we couldn't retrieve a thumbnail that usually means there was an issue
-				// with the video and we shouldn't display it
-				{ this.props.thumbnailUrl &&
+				{ showEmbed &&
 					<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
 						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
 					/>
