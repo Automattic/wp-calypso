@@ -69,7 +69,7 @@ export const EditorInsertMenuTour = makeTour(
 				} ) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( 'Close' ) }</Quit>
+				<Quit primary>{ translate( 'Got it' ) }</Quit>
 			</ButtonRow>
 		</RepositioningStep>
 	</Tour>
