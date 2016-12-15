@@ -16,7 +16,7 @@ class ThemeUploadCard extends React.Component {
 
 	static propTypes = {
 		label: PropTypes.string,
-		href: PropTypes.string.isRequired,
+		href: PropTypes.string,
 		count: PropTypes.number,
 	};
 
@@ -35,13 +35,15 @@ class ThemeUploadCard extends React.Component {
 					label={ this.props.label }
 					count={ this.props.count }
 				>
-					<Button compact icon
-						onClick={ this.trackClick }
-						href={ this.props.href }
-					>
-						<Gridicon icon="cloud-upload" />
-						{ translate( 'Upload Theme' ) }
-					</Button>
+					{ this.props.href &&
+						<Button compact icon
+							onClick={ this.trackClick }
+							href={ this.props.href }
+						>
+							<Gridicon icon="cloud-upload" />
+							{ translate( 'Upload Theme' ) }
+						</Button>
+					}
 				</SectionHeader>
 			</div>
 		);

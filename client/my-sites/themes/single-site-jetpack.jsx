@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +18,25 @@ import { connectOptions } from './theme-options';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
+import ThemesSelection from './themes-selection';
+import ThemeUploadCard from './themes-upload-card';
+import { addTracking } from './helpers';
+import { translate } from 'i18n-calypso';
 
 export default connectOptions(
 	( props ) => {
-		const { site, siteId, analyticsPath, analyticsPageTitle } = props;
+		const {
+			analyticsPath,
+			analyticsPageTitle,
+			getScreenshotOption,
+			options,
+			search,
+			site,
+			siteId,
+			tier,
+			filter,
+			vertical
+		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 		if ( ! jetpackEnabled ) {
@@ -54,6 +70,41 @@ export default connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
+					{ config.isEnabled( 'manage/themes/upload' ) &&
+						<div>
+							<ThemeUploadCard
+								label={ translate( 'WordPress.com themes' ) }
+							/>
+							<ThemesSelection
+								search={ search }
+								tier={ tier }
+								filter={ filter }
+								vertical={ vertical }
+								siteId = { null }
+								getScreenshotUrl={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
+									return getScreenshotOption( theme ).getUrl( theme );
+								} }
+								onScreenshotClick={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).action ) {
+										return;
+									}
+									getScreenshotOption( theme ).action( theme );
+								} }
+								getActionLabel={ function( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								getOptions={ function( theme ) {
+									return pickBy(
+										addTracking( options ),
+										option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+									); } }
+								trackScrollPage={ props.trackScrollPage }
+							/>
+						</div>
+					}
 				</ThemeShowcase>
 			</div>
 		);
