@@ -28,12 +28,11 @@ class PostByline extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
 		feed: React.PropTypes.object,
-		isDiscoverPost: React.PropTypes.bool,
-		showSiteName: React.PropTypes.bool
+		showSiteName: React.PropTypes.bool,
+		originalPost: React.PropTypes.object,
 	}
 
 	static defaultProps = {
-		isDiscoverPost: false,
 		showSiteName: true
 	}
 
@@ -49,15 +48,20 @@ class PostByline extends React.Component {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
 	}
 
+	getPostAuthor = () => {
+		return get( this.props, 'post.author' );
+	}
+
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
+		const { post, site, feed, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
 		const siteName = siteNameFromSiteAndPost( site, post );
-		const hasAuthorName = has( post, 'author.name' );
+		const postAuthor = this.getPostAuthor();
+		const hasAuthorName = has( postAuthor, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
-		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
+		const shouldDisplayAuthor = hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -76,10 +80,10 @@ class PostByline extends React.Component {
 						{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
 							className="reader-post-card__link"
-							author={ post.author }
+							author={ postAuthor }
 							siteUrl={ streamUrl }
 							post={ post }>
-							{ post.author.name }
+							{ postAuthor.name }
 						</ReaderAuthorLink>
 						}
 						{ shouldDisplayAuthor && showSiteName && ', ' }

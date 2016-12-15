@@ -16,6 +16,7 @@ import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
 import PostByline from './byline';
+import DiscoverPostByline from './discover-byline';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import FollowButton from 'reader/follow-button';
@@ -148,7 +149,10 @@ export default class RefreshPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				<PostByline post={ originalPost ? originalPost : post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				{ isDiscoverPost
+					? <DiscoverPostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+					: <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				}
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }
