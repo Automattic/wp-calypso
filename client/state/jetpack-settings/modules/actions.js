@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { keyBy } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -95,10 +90,9 @@ export const fetchModuleList = ( siteId ) => {
 			siteId
 		} );
 
-		return wp.undocumented().jetpackModules( siteId )
-			.then( ( data ) => {
-				const modules = keyBy( data.modules, 'id' );
-				dispatch( receiveJetpackModules( siteId, modules ) );
+		return wp.undocumented().getJetpackModules( siteId )
+			.then( ( { data } ) => {
+				dispatch( receiveJetpackModules( siteId, data ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_SUCCESS,
 					siteId
