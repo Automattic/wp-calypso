@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -179,7 +180,13 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
-						modules: API_MODULE_LIST_RESPONSE_FIXTURE.data
+						modules: map(
+							API_MODULE_LIST_RESPONSE_FIXTURE.data,
+							( module ) => ( {
+								active: module.activated,
+								...omit( module, 'activated' )
+							} )
+						)
 					} );
 				} );
 			} );

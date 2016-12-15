@@ -2,11 +2,11 @@ export const modules = {
 	123456: {
 		'module-a': {
 			module: 'module-a',
-			activated: false
+			active: false
 		},
 		'module-b': {
 			module: 'module-b',
-			activated: true,
+			active: true,
 			options: {
 				c: {
 					currentValue: 2
@@ -51,7 +51,7 @@ export const api_module_list_response = {
 export const moduleData = {
 	'module-a': {
 		module: 'module-a',
-		activated: false,
+		active: false,
 		name: 'Module A',
 		description: 'Just another awesome module',
 		sort: 1,
@@ -62,7 +62,7 @@ export const moduleData = {
 	},
 	'module-b': {
 		module: 'module-b',
-		activated: true,
+		active: true,
 		name: 'Module A',
 		description: 'Just another awesome module',
 		sort: 1,
