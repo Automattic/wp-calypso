@@ -30,8 +30,8 @@ function isCandidateForFeature( media ) {
 	if ( media.mediaType === 'image' ) {
 		return isImageLargeEnoughForFeature( media );
 	} else if ( media.mediaType === 'video' ) {
-		// we need to have a thumbnail and know how to autoplay it
-		return media.thumbnailUrl && media.autoplayIframe;
+		// we need to know how to autoplay it which probably means we know how to get a thumbnail
+		return media.autoplayIframe;
 	}
 
 	return false;
