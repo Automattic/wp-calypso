@@ -3,7 +3,7 @@
  */
 import compact from 'lodash/compact';
 import debugFactory from 'debug';
-import Lru from 'lru-cache';
+import Lru from 'lru';
 import React from 'react';
 
 /**
