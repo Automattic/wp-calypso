@@ -162,7 +162,7 @@ const fastPostNormalizationRules = flow( [
 	withContentDom( [
 		removeStyles,
 		removeElementsBySelector,
-		makeImagesSafe( READER_CONTENT_WIDTH ),
+		makeImagesSafe(),
 		discoverFullBleedImages,
 		makeEmbedsSafe,
 		disableAutoPlayOnEmbeds,

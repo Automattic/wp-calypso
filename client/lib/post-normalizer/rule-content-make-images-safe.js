@@ -60,7 +60,7 @@ function isCandidateForContentImage( imageUrl ) {
 	} );
 }
 
-export default function( maxWidth ) {
+export default function( maxWidth = false ) {
 	return function makeImagesSafe( post, dom ) {
 		let content_images = [],
 			images;
