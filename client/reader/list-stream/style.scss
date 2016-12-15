@@ -70,7 +70,7 @@
 	}
 }
 
-.list-stream__header-follow {
+.list-stream__header-follow .follow-button {
 	align-items: stretch;
 	display: flex;
 	margin-left: auto;
@@ -78,6 +78,25 @@
 
 	.follow-button {
 		padding: 0;
+	}
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
 	}
 }
 
