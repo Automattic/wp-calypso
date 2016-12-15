@@ -1,6 +1,13 @@
-import lruCache from 'lru-cache';
+/**
+ * External Dependencies
+ */
+import LRU from 'lru';
 
-const cache = lruCache( 10 );
+/**
+ * Internal Dependencies
+ */
+
+const cache = new LRU( 10 );
 const specialCache = {};
 
 function isSpecialStream( id ) {

@@ -1836,13 +1836,19 @@
       "version": "1.2.0"
     },
     "i18n-calypso": {
-      "version": "1.6.2",
+      "version": "1.7.0",
       "dependencies": {
         "async": {
           "version": "1.5.2"
         },
         "commander": {
           "version": "2.9.0"
+        },
+        "glob": {
+          "version": "7.1.1"
+        },
+        "minimatch": {
+          "version": "3.0.3"
         }
       }
     },
@@ -2368,6 +2374,9 @@
     "lodash.debounce": {
       "version": "4.0.8"
     },
+    "lodash.flatten": {
+      "version": "4.4.0"
+    },
     "lodash.isarguments": {
       "version": "3.1.0",
       "dev": true
@@ -2423,8 +2432,11 @@
       "version": "1.0.0",
       "dev": true
     },
+    "lru": {
+      "version": "3.1.0"
+    },
     "lru-cache": {
-      "version": "4.0.1"
+      "version": "4.0.2"
     },
     "lunr": {
       "version": "0.5.7"

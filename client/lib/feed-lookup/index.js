@@ -1,13 +1,13 @@
 // External Dependencies
 var isEmpty = require( 'lodash/isEmpty' ),
 	head = require( 'lodash/head' ),
-	lruCache = require( 'lru-cache' );
+	LruCache = require( 'lru' );
 
 // Internal Dependencies
 var inflight = require( 'lib/inflight' ),
 	wpcom = require( 'lib/wp' );
 
-const cache = lruCache( 10 );
+const cache = new LruCache( 10 );
 
 function requestKey( feedId ) {
 	return `feed-lookup-${feedId}`;
