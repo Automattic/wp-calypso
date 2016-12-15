@@ -117,7 +117,7 @@ export default class RefreshPostCard extends React.Component {
 			'is-showing-entire-excerpt': showEntireExcerpt
 		} );
 		const showExcerpt = ! isPhotoOnly;
-		const excerptAttribute = useBetterExcerpt && trim( post.better_excerpt_no_html ) ? 'better_excerpt_no_html' : 'excerpt_no_html';
+		const excerptAttribute = useBetterExcerpt && trim( post.better_excerpt ) ? 'better_excerpt' : 'excerpt';
 		let title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/
@@ -159,7 +159,13 @@ export default class RefreshPostCard extends React.Component {
 								<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 							</h1>
 						</AutoDirection>
-						{ showExcerpt && <AutoDirection><div className="reader-post-card__excerpt">{ post[ excerptAttribute ] }</div></AutoDirection> }
+						{ showExcerpt && (
+								<AutoDirection>
+									<div className="reader-post-card__excerpt"
+										dangerouslySetInnerHTML={ { __html: post[ excerptAttribute ] } } // eslint-disable-line react/no-danger
+									></div>
+								</AutoDirection> )
+						}
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ post &&
 							<ReaderPostActions

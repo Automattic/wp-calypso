@@ -371,6 +371,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin-top: 9px;
 	word-break: break-word;
 	position: relative;
+	p {
+		margin: 0;
+	}
 }
 
 // If we're not showing the entire excerpt, clamp lines
