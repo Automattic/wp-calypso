@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import page from 'page';
-import { flowRight, omit } from 'lodash';
+import { flowRight, omit, once } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -21,7 +21,6 @@ import SectionHeader from 'components/section-header';
 import config from 'config';
 import { protectForm } from 'lib/protect-form';
 import notices from 'notices';
-import analytics from 'lib/analytics';
 import trackForm from 'lib/track-form';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
@@ -43,16 +42,13 @@ import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettings
 } from 'state/site-settings/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 
-const debug = debugFactory( 'calypso:my-sites:site-settings' );
-
 class SiteSettingsFormGeneral extends Component {
-	state = {};
-
 	getFormSettings( settings ) {
 		if ( ! settings ) {
 			return {};
@@ -144,31 +140,12 @@ class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
-	onRecordEvent( eventAction ) {
-		return this.recordEvent.bind( this, eventAction );
-	}
-
 	onRecordEventOnce( key, eventAction ) {
-		return this.recordEventOnce.bind( this, key, eventAction );
+		return () => this.props.recordGoogleEventOnce( 'Site Settings', eventAction );
 	}
 
-	recordEvent( eventAction ) {
-		debug( 'record event: %o', eventAction );
-		analytics.ga.recordEvent( 'Site Settings', eventAction );
-	}
-
-	/**
-	 * Record an analytics event only once per mounted component instance
-	 * @param  {string} key         - unique key to namespace the event
-	 * @param  {string} eventAction - the description of the action to appear in analytics
-	 */
-	recordEventOnce( key, eventAction ) {
-		debug( 'record event once: %o - %o', key, eventAction );
-		if ( this.state[ 'recordEventOnce-' + key ] ) {
-			return;
-		}
-		this.recordEvent( eventAction );
-		this.setState( { [ 'recordEventOnce-' + key ]: true } );
+	onRecordEvent( eventAction ) {
+		return () => this.props.recordGoogleEvent( 'Site Settings', eventAction );
 	}
 
 	handleRadio = event => {
@@ -191,7 +168,7 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		this.submitForm();
-		this.recordEvent( 'Clicked Save Settings Button' );
+		this.onRecordEvent( 'Clicked Save Settings Button' )();
 	};
 
 	submitForm() {
@@ -313,7 +290,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	trackUpgradeClick() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'settings_site_address' } );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'settings_site_address' } );
 	}
 
 	languageOptions() {
@@ -399,12 +376,12 @@ class SiteSettingsFormGeneral extends Component {
 		const { fields, updateFields } = this.props;
 		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
 			this.submitForm();
-			this.onRecordEvent( 'Clicked AMP Toggle' );
+			this.onRecordEvent( 'Clicked AMP Toggle' )();
 		} );
 	};
 
 	handleAmpCustomize = () => {
-		this.onRecordEvent( 'Clicked AMP Customize button' );
+		this.onRecordEvent( 'Clicked AMP Customize button' )();
 		page( '/customize/amp/' + this.props.site.slug );
 	};
 
@@ -830,7 +807,16 @@ const connectComponent = connect(
 			siteId
 		};
 	},
-	{ removeNotice, saveSiteSettings }
+	dispatch => {
+		const boundActionCreators = bindActionCreators(
+			{ recordGoogleEvent, recordTracksEvent, removeNotice, saveSiteSettings },
+			dispatch
+		);
+		return {
+			...boundActionCreators,
+			recordGoogleEventOnce: once( boundActionCreators.recordGoogleEvent )
+		};
+	}
 );
 
 export default flowRight(
