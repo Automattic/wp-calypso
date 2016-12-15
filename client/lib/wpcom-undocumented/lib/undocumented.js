@@ -106,6 +106,19 @@ Undocumented.prototype.jetpackModules = function( siteId, fn ) {
 };
 
 /*
+ * Retrieve Jetpack modules data for a site with id siteid.
+ * Similar to jetpackModules(), but uses the REST API of the Jetpack site.
+ *
+ * @param {int}      [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/module/all/' }, fn );
+};
+
+/*
  * Activate the Jetpack module with moduleSlug on the site with id siteId
  *
  * @param {int} [siteId]
