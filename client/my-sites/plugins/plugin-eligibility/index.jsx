@@ -10,7 +10,7 @@ import page from 'page';
  */
 import MainComponent from 'components/main';
 import HeaderCake from 'components/header-cake';
-import EligibilityWarnings from 'components/eligibility-warnings';
+import EligibilityWarnings from 'blocks/eligibility-warnings';
 
 class PluginEligibility extends Component {
 	static propTypes = {
