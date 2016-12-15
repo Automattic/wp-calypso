@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    height: 80px;
+    min-height: 80px;
 }
 
 .eligibility-warnings__message-content {
@@ -21,11 +21,9 @@
     margin: 0 16px;
 }
 
-.eligibility-warnings__message-description {
-    color: $gray;
-}
-
-.eligibility-warnings__warning-action {
+.eligibility-warnings__message-description,
+.eligibility-warnings__warning-action,
+.eligibility-warnings__confirm-icon {
     color: $gray;
 }
 
@@ -37,32 +35,22 @@
     color: $alert-yellow;
 }
 
-.eligibility-warnings__confirm-icon {
-    color: $gray;
-}
 .eligibility-warnings__confirm-box {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
+}
+
+.eligibility-warnings__confirm-text {
+    flex-grow: 1;
+    color: $gray;
+    font-style: italic;
+    flex-basis: 60%;
+    margin: 8px 16px;
 }
 
 .eligibility-warnings__confirm-box .button {
     margin-left: 16px;
-}
-
-.eligibility-warnings__confirm-text {
-    flex: 2 1;
-    margin-left: 16px;
-    color: $gray;
-    font-style: italic;
-
-    @include breakpoint( '<480px' ) {
-        flex: 1 1;
-    }
-}
-
-.eligibility-warnings__buttons {
-    display: flex;
-    justify-content: flex-end;
-    flex: 1 1;
 }
