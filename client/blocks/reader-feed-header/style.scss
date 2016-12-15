@@ -129,11 +129,11 @@
 		padding: 0;
 
 		.gridicon {
-			fill: $blue-wordpress;
+			fill: $blue-medium;
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: $blue-medium;
 
 			@include breakpoint( "<660px" ) {
 				display: inline-block;
