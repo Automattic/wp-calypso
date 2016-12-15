@@ -155,14 +155,11 @@ const ConnectedThemesSelection = connect(
 	}
 )( ThemesSelection );
 
-class ThemesSelectonWithPage extends React.Component {
+class ThemesSelectionWithPage extends React.Component {
 
-	constructor() {
-		super();
-		this.state = {
-			page: 1,
-		};
-	}
+	state = {
+		page: 1,
+	};
 
 	incrementPage = () => {
 		this.setState( { page: this.state.page + 1 } );
@@ -184,4 +181,4 @@ class ThemesSelectonWithPage extends React.Component {
 
 }
 
-export default ThemesSelectonWithPage;
+export default ThemesSelectionWithPage;
