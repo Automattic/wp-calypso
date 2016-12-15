@@ -34,6 +34,7 @@ export default connectOptions(
 			site,
 			siteId,
 			tier,
+			filter,
 			vertical
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
@@ -77,6 +78,7 @@ export default connectOptions(
 							<ThemesSelection
 								search={ search }
 								tier={ tier }
+								filter={ filter }
 								vertical={ vertical }
 								siteId = { false }
 								selectedSite={ false }

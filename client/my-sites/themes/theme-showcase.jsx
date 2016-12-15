@@ -151,7 +151,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, secondaryOption, search } = this.props;
+		const { site, options, getScreenshotOption, secondaryOption, search, filter } = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 		const primaryOption = this.getPrimaryOption();
 
@@ -200,6 +200,7 @@ const ThemeShowcase = React.createClass( {
 				<ThemesSelection
 					search={ search }
 					tier={ this.props.tier }
+					filter={ filter }
 					vertical={ this.props.vertical }
 					siteId={ this.props.siteId }
 					getScreenshotUrl={ function( theme ) {
