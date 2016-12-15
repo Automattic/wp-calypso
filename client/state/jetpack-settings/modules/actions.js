@@ -28,7 +28,7 @@ export const activateModule = ( siteId, moduleSlug ) => {
 			moduleSlug
 		} );
 
-		return wp.undocumented().jetpackModulesActivate( siteId, moduleSlug )
+		return wp.undocumented().jetpackModuleActivate( siteId, moduleSlug )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
