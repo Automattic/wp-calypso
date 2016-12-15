@@ -39,8 +39,6 @@ class RecoveryPhone extends Component {
 			translate,
 		} = this.props;
 
-		// TODO:
-		// lastNotice?
 		return (
 			<ManageContact
 				type="sms"
@@ -54,8 +52,6 @@ class RecoveryPhone extends Component {
 				disabled={ twoStepEnabled }
 
 				onSave={ this.onSave }
-				onDelete={ this.onDelete }
-				onDismissNotice={ this.onDismissNotice }
 				>
 					<EditPhone
 						storedPhone={ phone }
@@ -79,10 +75,6 @@ class RecoveryPhone extends Component {
 				deletePhone();
 			}
 		} );
-	}
-
-	onDismissNotice = () => {
-		//TODO
 	}
 }
 

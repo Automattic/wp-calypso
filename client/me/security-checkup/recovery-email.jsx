@@ -20,7 +20,6 @@ class RecoveryEmail extends Component {
 			isLoading,
 		} = this.props;
 
-		// TODO: lastNotice? onDismissNotice?
 		return (
 			<ManageContact
 				type="email"
@@ -28,11 +27,9 @@ class RecoveryEmail extends Component {
 				title={ translate( 'Recovery Email Address' ) }
 				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
-				lastNotice={ null }
 
 				onSave={ this.onSave }
 				onDelete={ this.onDelete }
-				onDismissNotice={ () => {} }
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }

@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 
 const views = keyMirror( {
@@ -79,28 +78,6 @@ class ManageContact extends Component {
 		return view;
 	}
 
-	renderNotice() {
-		const { lastNotice } = this.props;
-
-		if ( lastNotice && lastNotice.message ) {
-			const isError = lastNotice.type === 'error';
-			const showDismiss = lastNotice.showDismiss !== false;
-			const onClick = showDismiss ? this.dismissNotice : null;
-
-			return (
-				<Notice
-					status={ isError ? 'is-error' : 'is-success' }
-					onDismissClick={ onClick }
-					showDismiss={ showDismiss }
-					>
-					{ lastNotice.message }
-				</Notice>
-			);
-		}
-
-		return null;
-	}
-
 	renderLoading() {
 		return (
 			<div>
@@ -119,27 +96,23 @@ class ManageContact extends Component {
 			<div className="security-checkup-contact">
 				{ this.renderHeader() }
 				{ this.renderEdit() }
-				{ this.renderNotice() }
 			</div>
 		);
 	}
 
 	onEdit = () => {
-		this.dismissNotice();
 		this.setState( { currentView: views.EDITING }, function() {
 			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
 		} );
 	}
 
 	onCancel = () => {
-		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.recordEvent( 'cancel' );
 		} );
 	}
 
 	onSave = ( data ) => {
-		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );
@@ -147,15 +120,10 @@ class ManageContact extends Component {
 	}
 
 	onDelete = () => {
-		this.dismissNotice();
 		this.setState( { currentView: views.VIEWING }, function() {
 			this.props.onDelete();
 			this.recordEvent( 'delete' );
 		} );
-	}
-
-	dismissNotice = () => {
-		this.props.onDismissNotice();
 	}
 
 	recordEvent( action ) {
