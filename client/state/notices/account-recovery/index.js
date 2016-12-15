@@ -6,15 +6,38 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import {
+	successNotice,
+	errorNotice,
+} from 'state/notices/actions';
+
+import {
+	getAccountRecoveryPhone,
+	getAccountRecoveryEmail,
+} from 'state/account-recovery/settings/selectors';
+
 import { dispatchError } from '../utils';
 
-const getUpdateSuccessMessage = ( target ) => {
+const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {
 		case 'phone':
+			const oldPhone = getAccountRecoveryPhone( getState() );
+
+			if ( null == oldPhone ) {
+				return translate( 'Successfully added new recovery SMS number.' );
+			}
+
 			return translate( 'Successfully updated recovery SMS number.' );
+
 		case 'email':
+			const oldEmail = getAccountRecoveryEmail( getState() );
+
+			if ( '' === oldEmail ) {
+				return translate( 'Successfully added new recovery email address.' );
+			}
+
 			return translate( 'Successfully updated recovery email address.' );
+
 		default:
 			return translate( 'Successfully updated the recovery option.' );
 	}
@@ -57,8 +80,8 @@ export const onAccountRecoverySettingsFetchFailed = dispatchError(
 	translate( 'An error occurred while fetching your account recovery settings.' )
 );
 
-export const onAccountRecoverySettingsUpdateSuccess = ( dispatch, { target } ) =>
-	dispatch( successNotice( getUpdateSuccessMessage( target ) ) );
+export const onAccountRecoverySettingsUpdateSuccess = ( dispatch, { target }, getState ) =>
+	dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
 
 export const onAccountRecoverySettingsUpdateFailed = ( dispatch, { target } ) =>
 	dispatch( errorNotice( getUpdateErrorMessage( target ) ) );
