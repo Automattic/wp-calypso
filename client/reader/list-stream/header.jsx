@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { isExternal } from 'lib/url';
-import FollowButton from 'components/follow-button/button';
+import FollowButton from 'blocks/follow-button/button';
 
 const ListStreamHeader = (
 	{ isPlaceholder, title, description, showEdit, editUrl, showFollow, following, onFollowToggle, translate }
