@@ -20,10 +20,11 @@ import Card from 'components/card';
 import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
+import ThemeEnhancements from './theme-enhancements';
 
 class SiteSettingsFormWriting extends Component {
 
@@ -190,6 +191,16 @@ class SiteSettingsFormWriting extends Component {
 					</div>
 				) }
 
+				{
+					this.props.isJetpackSite && (
+						<ThemeEnhancements
+							submittingForm={ this.state.submittingForm }
+							onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+							fetchingSettings={ this.state.fetchingSettings }
+							/>
+					)
+				}
+
 				{ config.isEnabled( 'press-this' ) && (
 					<div>
 						{
@@ -212,6 +223,7 @@ const connectComponent = connect(
 		return {
 			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 			siteId
 		};
 	},
