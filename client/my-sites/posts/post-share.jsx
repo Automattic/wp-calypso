@@ -4,8 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import includes from 'lodash/includes';
-import map from 'lodash/map';
+import { includes, map, without } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -110,6 +109,18 @@ const PostSharing = React.createClass( {
 	sharePost: function() {
 		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
 	},
+	isButtonDisabled() {
+		if ( this.props.requesting ) {
+			return true;
+		}
+
+		const activeConnectionIds = without(
+			map( this.props.connections, connection => connection.keyring_connection_ID ),
+			...this.state.skipped
+		);
+
+		return activeConnectionIds.length < 1;
+	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -153,7 +164,7 @@ const PostSharing = React.createClass( {
 								<Button
 									primary={ true }
 									onClick={ this.sharePost }
-									disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
+									disabled={ this.isButtonDisabled() }
 								>
 									{ this.translate( 'Share post' ) }
 								</Button>
