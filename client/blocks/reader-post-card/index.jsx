@@ -163,7 +163,7 @@ export default class RefreshPostCard extends React.Component {
 								<AutoDirection>
 									<div className="reader-post-card__excerpt"
 										dangerouslySetInnerHTML={ { __html: post[ excerptAttribute ] } } // eslint-disable-line react/no-danger
-									></div>
+									/>
 								</AutoDirection> )
 						}
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
