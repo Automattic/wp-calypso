@@ -24,7 +24,7 @@ class QueryUsersSuggestions extends Component {
 	}
 
 	request( props ) {
-		if ( props.isRequesting ) {
+		if ( props.isRequesting || ! props.siteId ) {
 			return;
 		}
 
