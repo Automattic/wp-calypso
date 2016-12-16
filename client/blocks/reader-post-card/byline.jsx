@@ -29,7 +29,6 @@ class PostByline extends React.Component {
 		site: React.PropTypes.object,
 		feed: React.PropTypes.object,
 		showSiteName: React.PropTypes.bool,
-		originalPost: React.PropTypes.object,
 	}
 
 	static defaultProps = {
