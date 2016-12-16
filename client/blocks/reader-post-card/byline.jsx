@@ -70,12 +70,16 @@ class PostByline extends React.Component {
 		return get( this.props.feed, 'image' );
 	}
 
+	getSiteName = () => {
+		return siteNameFromSiteAndPost( this.props.site, this.props.post );
+	}
+
 	render() {
 		const { post, site, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
-		const siteName = siteNameFromSiteAndPost( site, post );
+		const siteName = this.getSiteName();
 		const postAuthor = this.getPostAuthor();
 		const hasAuthorName = has( postAuthor, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
@@ -110,6 +114,7 @@ class PostByline extends React.Component {
 							className="reader-post-card__site reader-post-card__link"
 							feedId={ feedId }
 							siteId={ siteId }
+							siteUrl={ streamUrl }
 							post={ post }>
 							{ siteName }
 						</ReaderSiteStreamLink> }

@@ -14,6 +14,7 @@ const ReaderSiteStreamLink = React.createClass( {
 	propTypes: {
 		feedId: React.PropTypes.number,
 		siteId: React.PropTypes.number,
+		siteUrl: React.PropTypes.string,
 		post: React.PropTypes.object // for stats only
 	},
 
@@ -26,8 +27,13 @@ const ReaderSiteStreamLink = React.createClass( {
 	},
 
 	render() {
-		const link = getStreamUrl( this.props.feedId, this.props.siteId );
-		const omitProps = [ 'feedId', 'siteId', 'post' ];
+		let link = this.props.siteUrl;
+
+		if ( ! link ) {
+			link = getStreamUrl( this.props.feedId, this.props.siteId );
+		}
+
+		const omitProps = [ 'feedId', 'siteId', 'post', 'siteUrl' ];
 
 		return (
 			<a { ...omit( this.props, omitProps ) } href={ link } onClick={ this.recordClick }>{ this.props.children }</a>

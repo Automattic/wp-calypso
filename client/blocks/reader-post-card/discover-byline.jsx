@@ -39,14 +39,17 @@ class DiscoverPostByline extends PostByline {
 		return getStreamUrl( null, blogId );
 	}
 
-	// @todo
 	getSiteIcon = () => {
+		return null;
+		//return get( this.props.post, 'discover_metadata.attribution.avatar_url' );
+	}
+
+	getFeedIcon = () => {
 		return null;
 	}
 
-	// @todo
-	getFeedIcon = () => {
-		return null;
+	getSiteName = () => {
+		return get( this.props.post, 'discover_metadata.attribution.blog_name' );
 	}
 }
 
