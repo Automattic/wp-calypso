@@ -408,10 +408,6 @@ export function clearActivated( siteId ) {
  * First step of the process is the installation of the theme on Jetpack site.
  * Second step is the actuall activation.
  *
- * Warning: this is working but not final version. It has a built in hack in form of
- * dispatching THEME_ACTIVATE_REQUEST twice to mark process start and has no handlin
- * of information about installation process except in failure scenario.
- *
  * @param  {String}   themeId   Theme ID, this should be standard id without -wpcom suffix.
  * @param  {Number}   siteId    Site ID
  * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
@@ -423,23 +419,23 @@ export function activateWpcomThemeOnJetpack( themeId, siteId, source = 'unknown'
 	//install WordPress.com theme. Without the suffix endpoint would look
 	//for theme in .org
 	const suffixedThemeId = themeId + '-wpcom';
-	return dispatch => {
+	return ( dispatch ) => {
+		// To the user, this is presented as just activation -- the install part is hidden.
+		// Thus, we want to trigger any UI changes that apply to activation here, too.
 		dispatch( {
 			type: THEME_ACTIVATE_REQUEST,
 			themeId: suffixedThemeId,
 			siteId,
 		} );
-
-		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
+		dispatch( installTheme( suffixedThemeId, siteId ) )
 			.then( () => {
-				return activateTheme( suffixedThemeId, siteId, source, purchased )( dispatch );
-			} )
-			.catch( ( error ) => {
+				dispatch( activateTheme( suffixedThemeId, siteId, source, purchased )
+			); } )
+			.catch( () => {
 				dispatch( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					themeId: suffixedThemeId,
 					siteId,
-					error
 				} );
 			} );
 	};
