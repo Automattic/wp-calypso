@@ -160,6 +160,30 @@
 	}
 }
 
+.site-settings__discussion-settings {
+	label:first-of-type {
+		font-weight: normal;
+	}
+
+	.form-toggle__label {
+		display: flex;
+		align-items: center;
+	}
+
+	.form-toggle__switch {
+		flex: 1 0 auto;
+	}
+
+	.form-toggle__switch + span {
+		flex: 0 1 100%;
+		margin-left: 12px;
+	}
+
+	hr {
+		margin: 0 -24px 1.5em;
+	}
+}
+
 .site-settings__site-options {
 	padding-bottom: 24px;
 
