@@ -16,6 +16,7 @@ import notices from 'notices';
 import sitesFactory from 'lib/sites-list';
 import analytics from 'lib/analytics';
 import PlanSetup from './jetpack-plugins-setup';
+import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
@@ -158,6 +159,21 @@ function renderPluginsBrowser( context ) {
 	);
 }
 
+function renderPluginWarnings( context ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
+	renderWithReduxStore(
+		React.createElement( PluginEligibility, {
+			siteSlug: site.slug,
+			pluginSlug
+		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}
+
 function renderProvisionPlugins( context ) {
 	const state = context.store.getState();
 	const section = getSection( state );
@@ -238,6 +254,10 @@ const controller = {
 
 	setupPlugins( context ) {
 		renderProvisionPlugins( context );
+	},
+
+	eligibility( context ) {
+		renderPluginWarnings( context );
 	},
 
 	resetHistory( context, next ) {
