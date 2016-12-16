@@ -20,9 +20,9 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
-	THEME_INSTALL_ON_JETPACK_REQUEST,
-	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
@@ -173,12 +173,12 @@ export function themeRequests( state = {}, action ) {
  */
 export function installThemeOnJetpackRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case THEME_INSTALL_ON_JETPACK_REQUEST:
-		case THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS:
-		case THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE:
+		case THEME_INSTALL:
+		case THEME_INSTALL_SUCCESS:
+		case THEME_INSTALL_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
-					[ action.themeId ]: THEME_INSTALL_ON_JETPACK_REQUEST === action.type
+					[ action.themeId ]: THEME_INSTALL === action.type
 				} )
 			} );
 

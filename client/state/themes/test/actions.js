@@ -27,9 +27,9 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_INSTALL_ON_JETPACK_REQUEST,
-	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -863,7 +863,7 @@ describe( 'actions', () => {
 			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEME_INSTALL_ON_JETPACK_REQUEST,
+				type: THEME_INSTALL,
 				siteId: 'jetpackenabledsite.com',
 				wpcomThemeId: 'karuna-wpcom'
 			} );
@@ -872,7 +872,7 @@ describe( 'actions', () => {
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
 			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+					type: THEME_INSTALL_SUCCESS,
 					siteId: 'jetpackenabledsite.com',
 					wpcomThemeId: 'karuna-wpcom',
 				} );
@@ -882,7 +882,7 @@ describe( 'actions', () => {
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
 			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+					type: THEME_INSTALL_FAILURE,
 					siteId: 'jetpackenabledsite.com',
 					wpcomThemeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
@@ -893,7 +893,7 @@ describe( 'actions', () => {
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
 			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+					type: THEME_INSTALL_FAILURE,
 					siteId: 'jetpackenabledsite.com',
 					wpcomThemeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),

@@ -22,9 +22,9 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
-	THEME_INSTALL_ON_JETPACK_REQUEST,
-	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -831,7 +831,7 @@ describe( 'reducer', () => {
 
 		it( 'should map site ID, theme ID to true value if request in progress', () => {
 			const state = installThemeOnJetpackRequests( deepFreeze( {} ), {
-				type: THEME_INSTALL_ON_JETPACK_REQUEST,
+				type: THEME_INSTALL,
 				siteId: 'sitewithjetpack.com',
 				themeId: 'karuna'
 			} );
@@ -849,7 +849,7 @@ describe( 'reducer', () => {
 					karuna: true
 				}
 			} ), {
-				type: THEME_INSTALL_ON_JETPACK_REQUEST,
+				type: THEME_INSTALL,
 				siteId: 'anothersitewithjetpack.com',
 				themeId: 'pinboard'
 			} );
@@ -870,7 +870,7 @@ describe( 'reducer', () => {
 					karuna: true
 				}
 			} ), {
-				type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+				type: THEME_INSTALL_SUCCESS,
 				siteId: 'sitewithjetpack.com',
 				themeId: 'karuna'
 			} );
@@ -888,7 +888,7 @@ describe( 'reducer', () => {
 					karuna: true
 				}
 			} ), {
-				type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+				type: THEME_INSTALL_FAILURE,
 				siteId: 'sitewithjetpack.com',
 				themeId: 'karuna',
 				error: { message: 'The theme is already installed' }

@@ -36,9 +36,9 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_INSTALL_ON_JETPACK_REQUEST,
-	THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -363,7 +363,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 export function installWpcomThemeOnJetpack( siteId, wpcomThemeId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: THEME_INSTALL_ON_JETPACK_REQUEST,
+			type: THEME_INSTALL,
 			siteId,
 			wpcomThemeId
 		} );
@@ -372,14 +372,14 @@ export function installWpcomThemeOnJetpack( siteId, wpcomThemeId ) {
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme ) );
 				dispatch( {
-					type: THEME_INSTALL_ON_JETPACK_REQUEST_SUCCESS,
+					type: THEME_INSTALL_SUCCESS,
 					siteId,
 					wpcomThemeId
 				} );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
-					type: THEME_INSTALL_ON_JETPACK_REQUEST_FAILURE,
+					type: THEME_INSTALL_FAILURE,
 					siteId,
 					wpcomThemeId,
 					error
