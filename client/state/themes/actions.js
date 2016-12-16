@@ -3,6 +3,7 @@
  */
 import { map, property, delay } from 'lodash';
 import debugFactory from 'debug';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +17,9 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
+	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_SUCCESS,
+	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_REQUEST,
@@ -47,7 +51,7 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getActiveTheme, getLastThemeQuery } from './selectors';
+import { getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	filterThemesForJetpack,
@@ -403,6 +407,49 @@ export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId
+	};
+}
+
+/**
+ * Triggers a network request to install WordPress.com theme on Jetpack site.
+ * After installataion it switches page to the customizer
+ * Requires Jetpack 4.4
+ *
+ * @param  {String}   siteId       Jetpack Site ID
+ * @param  {String}   wpcomThemeId WP.com Theme ID
+ * @return {Function}              Action thunk
+ */
+export function tryAndCustomizeWpcomThemeOnJetpack( themeId, siteId ) {
+	//Add -wpcom suffix. This suffix tells the endpoint that we want to
+	//install WordPress.com theme. Without the suffix endpoint would look
+	//for theme in .org
+	const suffixedThemeId = themeId + '-wpcom';
+
+	return ( dispatch, getState ) => {
+		dispatch( {
+			type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
+			siteId,
+			suffixedThemeId
+		} );
+
+		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
+			.then( ( theme ) => {
+				dispatch( {
+					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_SUCCESS,
+					siteId,
+					suffixedThemeId
+				} );
+				const url = getThemeCustomizeUrl( getState(), theme, siteId );
+				page( url );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_FAILURE,
+					themeId: suffixedThemeId,
+					siteId,
+					error
+				} );
+			} );
 	};
 }
 
