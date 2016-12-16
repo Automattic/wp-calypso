@@ -23,13 +23,27 @@ import ThemeUploadCard from './themes-upload-card';
 import { addTracking } from './helpers';
 import { translate } from 'i18n-calypso';
 
+const ConnectedThemesSelection = connectOptions(
+	( props ) => {
+		return (
+			<ThemesSelection { ...props }
+				siteId={ null /* Override props.siteId to get themes from WPCOM here */ }
+				getOptions={ function( theme ) {
+					return pickBy(
+						addTracking( props.options ),
+						option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+					); } }
+			/>
+		);
+	}
+);
+
 export default connectOptions(
 	( props ) => {
 		const {
 			analyticsPath,
 			analyticsPageTitle,
 			getScreenshotOption,
-			options,
 			search,
 			site,
 			siteId,
@@ -75,12 +89,15 @@ export default connectOptions(
 							<ThemeUploadCard
 								label={ translate( 'WordPress.com themes' ) }
 							/>
-							<ThemesSelection
+							<ConnectedThemesSelection
+								options={ [
+									'activateOnJetpack'
+								] }
 								search={ search }
 								tier={ tier }
 								filter={ filter }
 								vertical={ vertical }
-								siteId = { null }
+								siteId = { siteId /* This is for the options in the '...' menu only */ }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
@@ -96,11 +113,6 @@ export default connectOptions(
 								getActionLabel={ function( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								getOptions={ function( theme ) {
-									return pickBy(
-										addTracking( options ),
-										option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
-									); } }
 								trackScrollPage={ props.trackScrollPage }
 							/>
 						</div>
