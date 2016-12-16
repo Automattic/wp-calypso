@@ -851,39 +851,39 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/karuna-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
 				.reply( 200, successResponse )
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/typist-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
 				.reply( 400, downloadFailureResponse )
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/pinboard-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/pinboard-wpcom/install' )
 				.reply( 400, alreadyInstalledFailureResponse );
 		} );
 
 		it( 'should dispatch install theme request action when triggered', () => {
-			installTheme( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy );
+			installTheme( 'karuna-wpcom', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL,
-				siteId: 'jetpackenabledsite.com',
+				siteId: 2211667,
 				wpcomThemeId: 'karuna-wpcom'
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installTheme( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy ).then( () => {
+			return installTheme( 2211667, 'karuna-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					wpcomThemeId: 'karuna-wpcom',
 				} );
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installTheme( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
+			return installTheme( 2211667, 'typist-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					wpcomThemeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
 				} );
@@ -891,10 +891,10 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installTheme( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
+			return installTheme( 2211667, 'pinboard-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					wpcomThemeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
