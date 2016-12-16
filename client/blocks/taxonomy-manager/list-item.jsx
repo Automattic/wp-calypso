@@ -113,7 +113,7 @@ class TaxonomyManagerListItem extends Component {
 		return decodeEntities( term.name ) || translate( 'Untitled' );
 	};
 
-	viewPosts = () => () => {
+	viewPosts = () => {
 		this.props.setPreviewUrl( this.getTaxonomyLink() );
 		this.props.setPreviewType( 'site-preview' );
 		this.props.setLayoutFocus( 'preview' );
@@ -166,7 +166,7 @@ class TaxonomyManagerListItem extends Component {
 						</PopoverMenuItem>
 					}
 					{ ! isJetpack &&
-						<PopoverMenuItem onClick={ this.viewPosts() } icon="external">
+						<PopoverMenuItem onClick={ this.viewPosts } icon="external">
 							{ translate( 'View Posts' ) }
 						</PopoverMenuItem>
 					}
