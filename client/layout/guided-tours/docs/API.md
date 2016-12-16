@@ -29,17 +29,38 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of the step it should skip to. If you omit this prop, step will be rendered as expected.
 * `next`: (string, optional) Define this to tell Guided Tours name of the step it should skip to when `when` evaluates to false.
 
+### Example
+
+```jsx
+// single step tour
+<Tour path="/me" name="uselessTour">
+  <Step>
+    <p>This is a page about you.</p>
+    <ButtonRow>
+      <Quit />
+    </ButtonRow>
+  </Step>
+</Tour>
+```
+
+Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
+
+This is just a quick and not very useful tour. You can see more examples in [TUTORIAL.md](TUTORIAL.md) or by exploring existing tours in client/layout/guided-tours/tours.
+
 ## ButtonRow
 
-ButtonRow is a React component to display button controls in Step and takes care of their proper styling. To be used as the last child of Step to contain all available controls.
+ButtonRow is a React component to display button controls in Step and takes care of their proper styling. Usually used as the last child of Step to contain all available controls.
 
 ### Example
 
 ```jsx
-<ButtonRow>
-  <Next step="next-step" />
-  <Quit />
-</ButtonRow>
+<Step>
+  <p>ButtonRow Example</p>
+  <ButtonRow>
+    <Next step="next-step" />
+    <Quit />
+  </ButtonRow>
+</Step>
 ```
 
 ## Continue
@@ -63,6 +84,15 @@ Continue is a React component that you can use in Step to programmatically conti
 - text
 - text + props.icon
 - custom content
+
+### Examples
+
+```jsx
+// continue when user clicks DOM element with html attribute `data-tip-target="my-sites"`
+<Continue step="next-step" click target="my-sites" />
+// continue when Redux selector evaluates to true (in this case after user opens preview)
+<Continue step="next-step" when={ isPreviewShowing } />
+```
 
 ## Next
 
@@ -91,7 +121,7 @@ Quit is a React component that shows a button that allows users to quit current 
 
 ### Props
 
-* `primary` (bool, optional) If true, button will be rendered as primary. Use only if Quit is the only available action.
+* `primary` (bool, optional) If true, button will be rendered as primary. Use only if Quit is the only available action in that step.
 
 ### Label
 
@@ -104,12 +134,29 @@ Default label is "Quit". To override, place your label a child.
 <Quit />
 
 // with a custom label
-<Quit>Custom Label</Next>`
+<Quit>Custom Label</Quit>`
 
 // custom label + primary styling
-<Quit primary>Custom Label</Next>`
+<Quit primary>Custom Label</Quit>`
 ```
 
 ## Link
 
 Link is a React component that shows a Link to external page in Step. It takes care of the styling and makes sure the link always opens in a new browser tab. We usually use it in the last step of tour where we nudge user to explore the docs to learn more about the area we just covered with a tour.
+
+Place Link after ButtonRow (if present) for correct styling.
+
+### Example
+
+```
+// last step of tour with option to quit or visit learn.wordpress.com
+<Step>
+  <p>This is the last step!</p>
+  <ButtonRow>
+    <Quit />
+  </ButtonRow>
+  <Link href="https://learn.wordpress.com">
+    { translate( 'Learn more about WordPress.com' ) }
+  </Link>
+</Step>
+```
