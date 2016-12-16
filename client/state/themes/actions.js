@@ -356,32 +356,32 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * Triggers a network request to install WordPress.com theme on Jetpack site.
  * Requires Jetpack 4.4
  *
- * @param  {String}   wpcomThemeId WP.com Theme ID with -wpcom suffix
- * @param  {String}   siteId       Jetpack Site ID
- * @return {Function}              Action thunk
+ * @param  {String}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
+ * @param  {String}   siteId  Jetpack Site ID
+ * @return {Function}         Action thunk
  */
-export function installTheme( wpcomThemeId, siteId ) {
+export function installTheme( themeId, siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_INSTALL,
 			siteId,
-			wpcomThemeId
+			themeId
 		} );
 
-		return wpcom.undocumented().installThemeOnJetpack( siteId, wpcomThemeId )
+		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
-					wpcomThemeId
+					themeId
 				} );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
 					siteId,
-					wpcomThemeId,
+					themeId,
 					error
 				} );
 			} );
