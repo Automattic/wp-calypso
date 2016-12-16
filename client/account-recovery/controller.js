@@ -8,10 +8,16 @@ import page from 'page';
  * Internal dependencies
  */
 import LostPasswordPage from 'account-recovery/lost-password';
+import ForgotUsernamePage from 'account-recovery/forgot-username';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 export function lostPassword( context, next ) {
 	context.primary = <LostPasswordPage basePath={ context.path } />;
+	next();
+}
+
+export function forgotUsername( context, next ) {
+	context.primary = <ForgotUsernamePage basePath={ context.path } />;
 	next();
 }
 
