@@ -15,7 +15,6 @@ import DISPLAY_TYPES from './display-types';
  * Rules
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
-import createBetterExcerptRefresh from 'lib/post-normalizer/rule-create-better-excerpt-refresh';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
@@ -165,7 +164,7 @@ const fastPostNormalizationRules = flow( [
 		detectMedia,
 		detectPolls,
 	] ),
-	config.isEnabled( 'reader/refresh/stream' ) ? createBetterExcerptRefresh : createBetterExcerpt,
+	createBetterExcerpt,
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
