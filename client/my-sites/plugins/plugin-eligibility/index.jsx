@@ -49,6 +49,7 @@ class PluginEligibility extends Component {
 	}
 }
 
+// It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
 
 export default withNavigation( localize( PluginEligibility ) );
