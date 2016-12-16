@@ -10,9 +10,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
-const JetpackConnectExampleActivate = ( { isInstall, url, translate } ) => {
+const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } ) => {
 	return (
-		<div className="example-components__main">
+		<div className="example-components__main" onClick={ onClick }>
 			<div className="example-components__browser-chrome example-components__site-url-input-container">
 				<div className="example-components__browser-chrome-dots">
 					<div className="example-components__browser-chrome-dot"></div>
@@ -68,6 +68,14 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate } ) => {
 			</div>
 		</div>
 	);
+};
+
+JetpackConnectExampleActivate.propTypes = {
+	onClick: React.PropTypes.func
+};
+
+JetpackConnectExampleActivate.defaultProps = {
+	onClick: () => {}
 };
 
 export default localize( JetpackConnectExampleActivate );
