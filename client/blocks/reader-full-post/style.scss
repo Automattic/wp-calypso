@@ -186,10 +186,6 @@
 		}
 	}
 
-	.reader-author-link {
-		margin-top: 0;
-	}
-
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
 		margin-top: 20px;
@@ -257,6 +253,7 @@
 		}
 
 		.author-compact-profile__site-link {
+			flex: 1;
 			display: inline;
 
 			@include breakpoint( "<660px" ) {
