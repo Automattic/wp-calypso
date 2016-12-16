@@ -28,6 +28,20 @@
 	}
 }
 
+.jetpack-connect__main-error {
+	.logged-out-form__links {
+		margin-top: 15px;
+		text-align: center;
+
+		.logged-out-form__link-item {
+			.gridicon {
+				position: relative;
+				top: 4px;
+			}
+		}
+	}
+}
+
 .jetpack-connect__site-url-entry-container {
 	max-width: 400px;
 }

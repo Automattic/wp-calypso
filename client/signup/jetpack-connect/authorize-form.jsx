@@ -617,7 +617,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	renderNoQueryArgsError() {
 		return (
-			<Main>
+			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-whoops.svg"
 					title={ this.translate(
