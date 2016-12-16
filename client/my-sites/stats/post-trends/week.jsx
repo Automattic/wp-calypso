@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -18,6 +18,8 @@ class PostTrendsWeek extends Component {
 		month: PropTypes.object.isRequired,
 		max: PropTypes.number,
 		streakData: PropTypes.object,
+		moment: PropTypes.func,
+		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -27,7 +29,7 @@ class PostTrendsWeek extends Component {
 
 	getDayComponents() {
 		const days = [];
-		const { month, startDate, streakData, max } = this.props;
+		const { month, startDate, streakData, max, moment, userLocale } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
 			const dayDate = moment( startDate ).locale( 'en' ).add( i, 'day' );
@@ -53,7 +55,7 @@ class PostTrendsWeek extends Component {
 			days.push(
 				<Day key={ dayDate.format( 'MMDD' ) }
 					className={ classNames.join( ' ' ) }
-					label={ dayDate.locale( this.props.userLocale ).format( 'L' ) }
+					label={ dayDate.locale( userLocale ).format( 'L' ) }
 					postCount={ postCount }
 				/>
 			);
@@ -71,8 +73,5 @@ class PostTrendsWeek extends Component {
 }
 
 export default connect(
-	( state ) => ( { userLocale: getCurrentUserLocale( state ) } ),
-	{},
-	null,
-	{ pure: false }
-)( PostTrendsWeek );
+	( state ) => ( { userLocale: getCurrentUserLocale( state ) } )
+)( localize( PostTrendsWeek ) );

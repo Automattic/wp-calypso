@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React, { PropTypes, Component } from 'react';
 
 /**
@@ -9,15 +9,16 @@ import React, { PropTypes, Component } from 'react';
  */
 import Week from './week';
 
-export default class PostTrendsMonth extends Component {
+class PostTrendsMonth extends Component {
 	static propTypes = {
 		startDate: PropTypes.object.isRequired,
 		streakData: PropTypes.object,
 		max: PropTypes.number,
-		userLocale: PropTypes.string,
+		moment: PropTypes.func,
 	};
 
 	getWeekComponents() {
+		const { moment } = this.props;
 		const monthStart = moment( this.props.startDate ).locale( 'en' );
 		const monthEnd = moment( monthStart ).endOf( 'month' );
 		const weekStart = moment( monthStart ).startOf( 'week' );
@@ -55,3 +56,5 @@ export default class PostTrendsMonth extends Component {
 		);
 	}
 }
+
+export default localize( PostTrendsMonth );
