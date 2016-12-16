@@ -20,7 +20,8 @@ import {
 	getFlowType,
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
-	getAuthAttempts
+	getAuthAttempts,
+	hasExpiredSecretError
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -544,6 +545,76 @@ describe( 'selectors', () => {
 
 		it( 'should be true if all the conditions are met', () => {
 			const hasError = hasXmlrpcError( stateHasXmlrpcError );
+			expect( hasError ).to.be.true;
+		} );
+	} );
+
+	describe( '#hasExpiredSecretError', () => {
+		const stateHasExpiredSecretError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'verify_secrets_expired'
+					},
+					authorizationCode: 'xxxx'
+				}
+			}
+		};
+
+		const stateHasNoError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: false
+				}
+			}
+		};
+
+		const stateHasNoAuthorizationCode = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'Could not verify your request.'
+					}
+				}
+			}
+		};
+
+		const stateHasOtherError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'Jetpack: [already_connected] User already connected.'
+					},
+					authorizationCode: 'xxxx'
+				}
+			}
+		};
+
+		it( 'should be undefined when there is an empty state', () => {
+			const hasError = hasExpiredSecretError( { jetpackConnect: {} } );
+			expect( hasError ).to.be.undefined;
+		} );
+
+		it( 'should be false when there is no error', () => {
+			const hasError = hasExpiredSecretError( stateHasNoError );
+			expect( hasError ).to.be.false;
+		} );
+
+		it( 'should be undefined when there is no authorization code', () => {
+			// An authorization code is received during the jetpack.login portion of the connection
+			// Expired secret errors happen only during jetpack.authorize which only happens after jetpack.login is succesful
+			const hasError = hasExpiredSecretError( stateHasNoAuthorizationCode );
+			expect( hasError ).to.be.undefined;
+		} );
+
+		it( 'should be false if no expired secret error is found', () => {
+			// eg a user is already connected, or they've taken too long and their secret expired
+			const hasError = hasExpiredSecretError( stateHasOtherError );
+			expect( hasError ).to.be.false;
+		} );
+
+		it( 'should be true if all the conditions are met', () => {
+			const hasError = hasExpiredSecretError( stateHasExpiredSecretError );
 			expect( hasError ).to.be.true;
 		} );
 	} );
