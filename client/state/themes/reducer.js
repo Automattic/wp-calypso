@@ -345,7 +345,7 @@ export default combineReducers( {
 	queryRequests,
 	queryRequestErrors,
 	lastQuery,
-	wpcomThemeOnJetpackInstallRequests,
+	installThemeOnJetpackRequests,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,
