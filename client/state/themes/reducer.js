@@ -171,7 +171,7 @@ export function themeRequests( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function installThemeOnJetpackRequests( state = {}, action ) {
+export function themeInstalls( state = {}, action ) {
 	switch ( action.type ) {
 		case THEME_INSTALL:
 		case THEME_INSTALL_SUCCESS:
@@ -345,7 +345,7 @@ export default combineReducers( {
 	queryRequests,
 	queryRequestErrors,
 	lastQuery,
-	installThemeOnJetpackRequests,
+	themeInstalls,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,
