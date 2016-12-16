@@ -245,7 +245,13 @@ const LoggedInForm = React.createClass( {
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManageAndRedirect();
 		}
-		if ( authorizeError && this.props.authAttempts < MAX_AUTH_ATTEMPTS && ! this.retryingAuth ) {
+		if (
+			authorizeError &&
+			this.props.authAttempts < MAX_AUTH_ATTEMPTS &&
+			! this.retryingAuth &&
+			! props.requestHasXmlrpcError() &&
+			authorizeError.message.indexOf( 'verify_secrets_expired' ) === -1
+		) {
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
 			this.props.retryAuth( queryObject.site, attempts + 1 );
