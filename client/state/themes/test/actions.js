@@ -865,7 +865,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL,
 				siteId: 2211667,
-				wpcomThemeId: 'karuna-wpcom'
+				themeId: 'karuna-wpcom'
 			} );
 		} );
 
@@ -874,7 +874,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
-					wpcomThemeId: 'karuna-wpcom',
+					themeId: 'karuna-wpcom',
 				} );
 			} );
 		} );
@@ -884,7 +884,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
-					wpcomThemeId: 'typist-wpcom',
+					themeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
 				} );
 			} );
@@ -895,7 +895,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
-					wpcomThemeId: 'pinboard-wpcom',
+					themeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
 			} );
