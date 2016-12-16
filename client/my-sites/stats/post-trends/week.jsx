@@ -1,48 +1,48 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
-import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Day from './day';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
-export default React.createClass( {
+class PostTrendsWeek extends Component {
 
-	displayName: 'PostTrendsWeek',
-
-	propTypes: {
+	static propTypes = {
 		startDate: PropTypes.object.isRequired,
 		month: PropTypes.object.isRequired,
 		max: PropTypes.number,
-		streakData: PropTypes.object
-	},
+		streakData: PropTypes.object,
+		moment: PropTypes.func,
+		userLocale: PropTypes.string,
+	};
 
-	getDefaultProps() {
-		return {
-			streakData: {},
-			max: 0
-		};
-	},
+	static defaultProps = {
+		streakData: {},
+		max: 0,
+	};
 
 	getDayComponents() {
 		const days = [];
-		const { month, startDate, streakData, max } = this.props;
+		const { month, startDate, streakData, max, moment, userLocale } = this.props;
 
 		for ( let i = 0; i < 7; i++ ) {
-			const dayDate = i18n.moment( startDate ).locale( 'en' ).add( i, 'day' );
+			const dayDate = moment( startDate ).locale( 'en' ).add( i, 'day' );
 			const postCount = streakData[ dayDate.format( 'YYYY-MM-DD' ) ] || 0;
-			let classNames = [];
+			const classNames = [];
 			let level = Math.ceil( ( postCount / max ) * 4 );
 
 			if (
-				dayDate.isBefore( i18n.moment( month ).startOf( 'month' ) ) ||
-				dayDate.isAfter( i18n.moment( month ).endOf( 'month' ) )
+				dayDate.isBefore( moment( month ).startOf( 'month' ) ) ||
+				dayDate.isAfter( moment( month ).endOf( 'month' ) )
 			) {
 				classNames.push( 'is-outside-month' );
-			} else if ( dayDate.isAfter( i18n.moment().endOf( 'day' ) ) ) {
+			} else if ( dayDate.isAfter( moment().endOf( 'day' ) ) ) {
 				classNames.push( 'is-after-today' );
 			} else if ( level ) {
 				if ( level > 4 ) {
@@ -55,14 +55,14 @@ export default React.createClass( {
 			days.push(
 				<Day key={ dayDate.format( 'MMDD' ) }
 					className={ classNames.join( ' ' ) }
-					label={ dayDate.format( 'L' ) }
+					label={ dayDate.locale( userLocale ).format( 'L' ) }
 					postCount={ postCount }
 				/>
 			);
 		}
 
 		return days;
-	},
+	}
 
 	render() {
 		return (
@@ -70,4 +70,8 @@ export default React.createClass( {
 		);
 	}
 
-} );
+}
+
+export default connect(
+	( state ) => ( { userLocale: getCurrentUserLocale( state ) } )
+)( localize( PostTrendsWeek ) );
