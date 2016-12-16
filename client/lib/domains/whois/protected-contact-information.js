@@ -7,14 +7,14 @@ function getOpenHrsProtectedContactInformation( domain ) {
 	return {
 		firstName: 'Private',
 		lastName: 'Whois',
-		organization: 'Knock Knock Whois Not There LLC',
+		organization: 'Knock Knock WHOIS Not There, LLC',
 		email: `${ domain }@privatewho.is`,
 		phone: '+1.8772738550',
-		address1: '60, 29th Street, #343',
+		address1: '9450 SW Gemini Dr #63259',
 		address2: '',
-		city: 'San Francisco',
-		state: 'CA',
-		postalCode: '94110-4929',
+		city: 'Beaverton',
+		state: 'OR',
+		postalCode: '97008-7105',
 		countryCode: 'US'
 	};
 }
