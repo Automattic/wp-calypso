@@ -50,7 +50,6 @@ export function blogPost( context ) {
 			React.createElement( ReaderFullPost, {
 				blogId: blogId,
 				postId: postId,
-				context: context,
 				referral: referral,
 				onClose: function() {
 					page.back( context.lastRoute || '/' );

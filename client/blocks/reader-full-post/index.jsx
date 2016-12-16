@@ -425,7 +425,6 @@ export default class FullPostFluxContainer extends React.Component {
 		postId: React.PropTypes.string.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		onPostNotFound: React.PropTypes.func.isRequired,
-		context: React.PropTypes.object,
 		referral: React.PropTypes.object
 	}
 

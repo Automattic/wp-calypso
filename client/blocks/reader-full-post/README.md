@@ -11,7 +11,6 @@ The "new" reader full post component
 - `onPostNotFound` : A Post not found handler function
 
 *optional*
-- `context`: The `page` controller context
 - `referral`: An object containing a `blogId` and `postId`
 
 ### Referral
