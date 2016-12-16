@@ -137,7 +137,7 @@ const MeSidebar = React.createClass( {
 						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-							label={ this.translate( 'Notifications' ) }
+							label={ this.translate( 'Notification Settings' ) }
 							icon="bell"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="notification-settings"

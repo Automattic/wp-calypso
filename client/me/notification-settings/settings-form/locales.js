@@ -6,14 +6,14 @@ export const streamLabels = {
 };
 
 export const settingLabels = {
-	comment_like: () => i18n.translate( 'Likes on your comments' ),
-	comment_reply: () => i18n.translate( 'Replies to your comments' ),
+	comment_like: () => i18n.translate( 'Likes on my comments' ),
+	comment_reply: () => i18n.translate( 'Replies to my comments' ),
 
-	new_comment: () => i18n.translate( 'New Comment' ),
-	post_like: () => i18n.translate( 'Post Likes' ),
-	follow: () => i18n.translate( 'Follows' ),
-	achievement: () => i18n.translate( 'Achievements' ),
-	mentions: () => i18n.translate( 'Mentions' )
+	new_comment: () => i18n.translate( 'Comments on my site' ),
+	post_like: () => i18n.translate( 'Likes on my posts' ),
+	follow: () => i18n.translate( 'Site follows' ),
+	achievement: () => i18n.translate( 'Site achievements' ),
+	mentions: () => i18n.translate( 'Username mentions' )
 };
 
 export const getLabelForStream = stream => stream in streamLabels
