@@ -48,7 +48,7 @@ export default class Step extends Component {
 		] ),
 		when: PropTypes.func,
 		scrollContainer: PropTypes.string,
-		shouldScrollTo: PropTypes.boolean,
+		shouldScrollTo: PropTypes.bool,
 		style: PropTypes.object,
 	};
 
