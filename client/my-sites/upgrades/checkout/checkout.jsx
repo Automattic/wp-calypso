@@ -262,9 +262,18 @@ const Checkout = React.createClass( {
 					cart={ this.props.cart }
 					productsList={ this.props.productsList } />
 			);
+		} else if ( this.props.cart.hasLoadedFromServer === null && this.props.cart.hasPendingServerUpdates === null ) {
+			return (
+				<SecurePaymentForm
+					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					cards={ this.props.cards }
+					products={ this.props.productsList.get() }
+					selectedSite={ selectedSite }
+					redirectTo={ this.getCheckoutCompleteRedirectPath } />
+			);
 		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
 			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
-
 			return (
 				<SecurePaymentFormPlaceholder />
 			);

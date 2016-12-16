@@ -53,6 +53,10 @@ const SecurePaymentForm = React.createClass( {
 	},
 
 	getVisiblePaymentBox( cart ) {
+		if ( true ) {
+			return 'credit-card';
+		}
+
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
 		} else if ( isFree( cart ) ) {

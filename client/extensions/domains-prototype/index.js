@@ -11,12 +11,13 @@ import React from 'react';
 import Button from 'components/button';
 import ButtonGroup from 'components/button';
 import Card from 'components/card';
+import Checkout from 'my-sites/upgrades/checkout';
+import CheckoutData from 'components/data/checkout';
 import Main from 'components/main';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import route from 'lib/route';
-import SearchCard from 'components/search-card';
 import SectionHeader from 'components/section-header';
 import { setSection } from 'state/ui/actions';
 
@@ -24,20 +25,6 @@ import { setSection } from 'state/ui/actions';
  * Module variables
  */
 const productsList = productsFactory();
-
-const render = ( context ) => {
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-	renderWithReduxStore( (
-		<Main className="">
-			<SectionHeader label="Domain Name Search">🐬</SectionHeader>
-			<SearchCard
-				onSearch={ noop }
-				placeholder="Enter a domain or keyword"
-			/>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
 
 const onAddDomain = ( suggestion ) => {
 	page( '/domains-prototype/select/' + suggestion.domain_name );
@@ -48,16 +35,19 @@ const search = ( context ) => {
 
 	renderWithReduxStore(
 		(
-			<RegisterDomainStep
-				path={ context.path }
-				suggestion={ context.params.suggestion }
-				domainsWithPlansOnly={ false }
-				onDomainsAvailabilityChange={ noop }
-				onAddDomain={ onAddDomain }
-				selectedSite={ null }
-				offerMappingOption
-				basePath={ route.sectionify( context.path ) }
-				products={ productsList.get() } />
+			<Main className="">
+				<SectionHeader label="Look for a web address">🐬</SectionHeader>
+				<RegisterDomainStep
+					path={ context.path }
+					suggestion={ context.params.suggestion }
+					domainsWithPlansOnly={ false }
+					onDomainsAvailabilityChange={ noop }
+					onAddDomain={ onAddDomain }
+					selectedSite={ null }
+					offerMappingOption
+					basePath={ route.sectionify( context.path ) }
+					products={ productsList.get() } />
+			</Main>
 		),
 		document.getElementById( 'primary' ),
 		context.store
@@ -70,7 +60,11 @@ const select = ( context ) => {
 	renderWithReduxStore( (
 		<Main className="">
 			<SectionHeader label="Domain Name Select">🐬</SectionHeader>
-			<Card>You selected { context.params.domainName }</Card>
+			<Card>
+				You selected { context.params.domainName }.
+				This screen is redundant
+				<Button href={ '/domains-prototype/checkout/' + context.params.domainName }>Buy now</Button>
+			</Card>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
@@ -114,10 +108,29 @@ const manageDomain = ( context ) => {
 	), document.getElementById( 'primary' ), context.store );
 };
 
+const checkout = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	renderWithReduxStore(
+		(
+			<CheckoutData>
+				<Checkout
+					product={ context.params.product }
+					productsList={ productsList }
+					selectedFeature={ context.params.feature }
+				/>
+			</CheckoutData>
+		),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
+
 export default function() {
-	page( '/domains-prototype/search', search );
 	page( '/domains-prototype/select/:domainName', select );
 	page( '/domains-prototype/manage', manage );
 	page( '/domains-prototype/manage/:domainName', manageDomain );
-	page( '/domains-prototype/', render );
+	page( '/domains-prototype/checkout/:domainName', checkout );
+	page( '/domains-prototype/', search );
 }
