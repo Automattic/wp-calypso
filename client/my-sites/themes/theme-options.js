@@ -64,7 +64,6 @@ const activateOnJetpack = {
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
-			! isPurchased( state, theme.id, siteId ) && // Probably not relevant (yet) on Jetpack sites
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
