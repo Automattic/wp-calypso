@@ -4,6 +4,7 @@
 import startsWith from 'lodash/startsWith';
 import {
 	every,
+	endsWith,
 	filter,
 	get,
 	includes,
@@ -190,6 +191,22 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
+ * Filter wpcom themes from Jetpack theme list
+ * Themes on Jetpack installed from WordPress.com have -wpcom suffix
+ * We filter out all those themes because they will also be visible on
+ * second list specific to WordPress.com This may be to simple aproach
+ * so it may need more elaborate aproach
+ *
+ * TODO Veriy that this aproach is sufficien.
+ *
+ * @param  {Array}  themes Array of theme objects
+ * @return {Array}         Filtered themes
+ */
+export function filterWpcomThemesFromJetpack( themes ) {
+	return filter( themes, theme => ! endsWith( theme.id, '-wpcom' ) );
+}
+
+/**
  * Returns a filtered themes array. Filtering is done based on particular themes
  * matching provided query
  *
@@ -198,7 +215,10 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * @return {Array}         Filtered themes
  */
 export function filterThemesForJetpack( themes, query ) {
-	return filter( themes, theme => isThemeMatchingQuery( query, theme ) );
+	return filter(
+		filterWpcomThemesFromJetpack( themes ),
+		theme => isThemeMatchingQuery( query, theme )
+	);
 }
 
 /**
