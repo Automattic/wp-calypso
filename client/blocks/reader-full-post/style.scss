@@ -186,6 +186,10 @@
 		}
 	}
 
+	.reader-author-link {
+		margin-top: 0;
+	}
+
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
 		margin-top: 20px;
