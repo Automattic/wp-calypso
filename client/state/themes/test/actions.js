@@ -551,39 +551,39 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/karuna-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
 				.reply( 200, successResponse )
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/typist-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
 				.reply( 400, downloadFailureResponse )
-				.post( '/rest/v1.1/sites/jetpackenabledsite.com/themes/pinboard-wpcom/install' )
+				.post( '/rest/v1.1/sites/2211667/themes/pinboard-wpcom/install' )
 				.reply( 400, alreadyInstalledFailureResponse );
 		} );
 
 		it( 'should dispatch activate theme request action when triggered', () => {
-			activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy );
+			activateWpcomThemeOnJetpack( 'karuna', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
-				siteId: 'jetpackenabledsite.com',
+				siteId: 2211667,
 				themeId: 'karuna-wpcom'
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme activate request success action when request completes', () => {
-			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'karuna', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					themeId: 'karuna-wpcom',
 				} );
 			} );
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'typist', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					themeId: 'typist-wpcom',
 					error: sinon.match( { message: 'Problem downloading theme' } ),
 				} );
@@ -591,10 +591,10 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return activateWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard' )( spy ).then( () => {
+			return activateWpcomThemeOnJetpack( 'pinboard', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					siteId: 'jetpackenabledsite.com',
+					siteId: 2211667,
 					themeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
