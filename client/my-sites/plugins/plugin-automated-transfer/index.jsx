@@ -84,7 +84,7 @@ class PluginAutomatedTransfer extends Component {
 	handleClickOutside( event ) {
 		const { status } = this.props;
 		const { CONFLICTS, COMPLETE } = transferStates;
-		if ( CONFLICTS !== status && COMPLETE !== status ) {
+		if ( status && CONFLICTS !== status && COMPLETE !== status ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
