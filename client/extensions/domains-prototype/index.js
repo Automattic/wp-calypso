@@ -30,13 +30,17 @@ const onAddDomain = ( suggestion ) => {
 	page( '/domains-prototype/select/' + suggestion.domain_name );
 };
 
+const header = ( text ) => {
+	return ( <SectionHeader label={ text }>🐬</SectionHeader> );
+};
+
 const search = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	renderWithReduxStore(
 		(
 			<Main className="">
-				<SectionHeader label="Look for a web address">🐬</SectionHeader>
+				{ header( 'Look for a web address' ) }
 				<RegisterDomainStep
 					path={ context.path }
 					suggestion={ context.params.suggestion }
@@ -47,6 +51,7 @@ const search = ( context ) => {
 					offerMappingOption
 					basePath={ route.sectionify( context.path ) }
 					products={ productsList.get() } />
+				}
 			</Main>
 		),
 		document.getElementById( 'primary' ),
@@ -59,12 +64,12 @@ const select = ( context ) => {
 
 	renderWithReduxStore( (
 		<Main className="">
-			<SectionHeader label="Domain Name Select">🐬</SectionHeader>
+			{ header( 'You have selected ' + context.params.domainName ) }
 			<Card>
 				You selected { context.params.domainName }.
 				This screen is redundant
-				<Button href={ '/domains-prototype/checkout/' + context.params.domainName }>Buy now</Button>
 			</Card>
+			<Button primary href={ '/domains-prototype/checkout/' + context.params.domainName }>Buy now</Button>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
@@ -74,7 +79,7 @@ const manage = ( context ) => {
 
 	renderWithReduxStore( (
 		<Main className="">
-			<SectionHeader label="Manage your domains">🐬</SectionHeader>
+			{ header( 'Manage your addresses' ) }
 			<Card>
 				domain1.blog
 				<Button href="/domains-prototype/manage/domain1.blog" primary>Set up</Button>
@@ -96,12 +101,29 @@ const manageDomain = ( context ) => {
 
 	renderWithReduxStore( (
 		<Main className="">
-			<SectionHeader label={ 'Manage ' + context.params.domainName }>🐬</SectionHeader>
+			{ header( 'Manage ' + context.params.domainName ) }
 			<Card>
 				<ButtonGroup>
 					<Button compact href="">Change name servers</Button>
 					<Button compact href="">Edit DNS</Button>
 					<Button compact href="" primary>Connect to WordPress.com</Button>
+				</ButtonGroup>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const success = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	renderWithReduxStore( (
+		<Main className="">
+			{ header( 'You now own ' + context.params.domainName ) }
+			<Card>
+				<ButtonGroup>
+					<Button compact href="/domains-prototype">Search again</Button>
+					<Button compact href="/domains-prototype/manage">Manage all domains</Button>
+					<Button compact href={ '/domains-prototype/manage/' + context.params.domainName }>Manage { context.params.domainName }</Button>
 				</ButtonGroup>
 			</Card>
 		</Main>
@@ -126,11 +148,11 @@ const checkout = ( context ) => {
 	);
 };
 
-
 export default function() {
-	page( '/domains-prototype/select/:domainName', select );
+	page( '/domains-prototype/select/:domainName?', select );
 	page( '/domains-prototype/manage', manage );
-	page( '/domains-prototype/manage/:domainName', manageDomain );
-	page( '/domains-prototype/checkout/:domainName', checkout );
+	page( '/domains-prototype/manage/:domainName?', manageDomain );
+	page( '/domains-prototype/checkout/:domainName?', checkout );
+	page( '/domains-prototype/success/:domainName?', success );
 	page( '/domains-prototype/', search );
 }

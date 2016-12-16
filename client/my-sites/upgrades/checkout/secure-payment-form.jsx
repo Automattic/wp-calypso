@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { find, defer } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -88,7 +89,11 @@ const SecurePaymentForm = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
-		this.submitTransaction( event );
+		event.preventDefault();
+		page( '/domains-prototype/success/testdomain.blog' );
+		if ( false ) {
+			this.submitTransaction( event );
+		}
 	},
 
 	getInitialCard() {
