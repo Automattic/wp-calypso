@@ -356,11 +356,11 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * Triggers a network request to install WordPress.com theme on Jetpack site.
  * Requires Jetpack 4.4
  *
- * @param  {String}   siteId       Jetpack Site ID
  * @param  {String}   wpcomThemeId WP.com Theme ID with -wpcom suffix
+ * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function installTheme( siteId, wpcomThemeId ) {
+export function installTheme( wpcomThemeId, siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_INSTALL,

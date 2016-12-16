@@ -870,7 +870,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installTheme( 2211667, 'karuna-wpcom' )( spy ).then( () => {
+			return installTheme( 'karuna-wpcom', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
@@ -880,7 +880,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installTheme( 2211667, 'typist-wpcom' )( spy ).then( () => {
+			return installTheme( 'typist-wpcom', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
@@ -891,7 +891,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installTheme( 2211667, 'pinboard-wpcom' )( spy ).then( () => {
+			return installTheme( 'pinboard-wpcom', 2211667 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
