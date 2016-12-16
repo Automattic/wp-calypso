@@ -11,6 +11,17 @@ import { isRequestingUserSuggestions as isRequesting } from 'state/users/suggest
 import { requestUserSuggestions } from 'state/users/suggestions/actions';
 
 class QueryUsersSuggestions extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+		isRequesting: PropTypes.bool,
+		requestUserSuggestions: PropTypes.func,
+	};
+
+	static defaultProps = {
+		requestUserSuggestions: () => {},
+		isRequesting: false,
+	};
+
 	componentWillMount() {
 		this.request( this.props );
 	}
@@ -35,17 +46,6 @@ class QueryUsersSuggestions extends Component {
 		return null;
 	}
 }
-
-QueryUsersSuggestions.propTypes = {
-	siteId: PropTypes.number,
-	isRequesting: PropTypes.bool,
-	requestUserSuggestions: PropTypes.func
-};
-
-QueryUsersSuggestions.defaultProps = {
-	requestUserSuggestions: () => {},
-	isRequesting: false
-};
 
 export default connect(
 	( state, ownProps ) => {
