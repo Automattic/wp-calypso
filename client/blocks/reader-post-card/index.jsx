@@ -124,6 +124,7 @@ export default class RefreshPostCard extends React.Component {
 			separator: /,? +/
 		} );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+		const isDiscoverPick = DiscoverHelper.isDiscoverPick( post );
 
 		if ( ! title && isPhotoOnly ) {
 			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
@@ -149,8 +150,8 @@ export default class RefreshPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				{ isDiscoverPost
-					? <DiscoverPostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				{ isDiscoverPick
+					? <DiscoverPostByline post={ post } site={ site } feed={ feed } originalPost={ originalPost } />
 					: <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				}
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }

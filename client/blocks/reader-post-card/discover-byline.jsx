@@ -2,11 +2,13 @@
  * External Dependencies
  */
 import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import PostByline from './byline';
+//import * as DiscoverHelper from 'reader/discover/helper';
 
 class DiscoverPostByline extends PostByline {
 
@@ -19,12 +21,16 @@ class DiscoverPostByline extends PostByline {
 		originalPost: React.PropTypes.object,
 	}
 
-	constructor( props ) {
-		super( props );
-	}
-
 	getPostAuthor = () => {
 		return { name: 'Banana' };
+	}
+
+	getPostTimeLinkUrl = () => {
+		if ( this.props.originalPost ) {
+			return get( this.props.originalPost, 'URL' );
+		}
+
+		return get( this.props.post, 'discover_metadata.permalink' );
 	}
 }
 

@@ -52,6 +52,10 @@ class PostByline extends React.Component {
 		return get( this.props, 'post.author' );
 	}
 
+	getPostTimeLinkUrl = () => {
+		return get( this.props, 'post.URL' );
+	}
+
 	render() {
 		const { post, site, feed, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
@@ -65,6 +69,7 @@ class PostByline extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
+		const postTimeLinkUrl = this.getPostTimeLinkUrl();
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -100,7 +105,7 @@ class PostByline extends React.Component {
 							<span className="reader-post-card__timestamp">
 								<a className="reader-post-card__timestamp-link"
 									onClick={ this.recordDateClick }
-									href={ post.URL }
+									href={ postTimeLinkUrl }
 									target="_blank"
 									rel="noopener noreferrer">
 									<PostTime date={ post.date } />
