@@ -353,8 +353,9 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 }
 
 /**
- * Triggers a network request to install WordPress.com theme on Jetpack site.
- * Requires Jetpack 4.4
+ * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
+ * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
+ * requires Jetpack 4.4
  *
  * @param  {String}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
  * @param  {String}   siteId  Jetpack Site ID
