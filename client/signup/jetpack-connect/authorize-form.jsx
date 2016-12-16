@@ -33,6 +33,7 @@ import {
 	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError,
+	hasExpiredSecretError,
 	getSiteSelectedPlan,
 	isRemoteSiteOnSitesList,
 	getGlobalSelectedPlan,
@@ -250,7 +251,7 @@ const LoggedInForm = React.createClass( {
 			this.props.authAttempts < MAX_AUTH_ATTEMPTS &&
 			! this.retryingAuth &&
 			! props.requestHasXmlrpcError() &&
-			authorizeError.message.indexOf( 'verify_secrets_expired' ) === -1
+			! props.requestHasExpiredSecretError()
 		) {
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
@@ -396,7 +397,7 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
-		if ( authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
+		if ( this.props.requestHasExpiredSecretError() ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
 		if ( this.props.requestHasXmlrpcError() ) {
@@ -694,6 +695,9 @@ export default connect(
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
 		};
+		const requestHasExpiredSecretError = () => {
+			return hasExpiredSecretError( state );
+		};
 		const selectedPlan = getSiteSelectedPlan( state, siteSlug ) || getGlobalSelectedPlan( state );
 
 		const isFetchingSites = () => {
@@ -708,6 +712,7 @@ export default connect(
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites,
 			requestHasXmlrpcError,
+			requestHasExpiredSecretError,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
 			authAttempts: getAuthAttempts( state, siteSlug )
 		};
