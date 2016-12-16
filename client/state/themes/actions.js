@@ -360,7 +360,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * @param  {String}   wpcomThemeId WP.com Theme ID with -wpcom suffix
  * @return {Function}              Action thunk
  */
-export function installWpcomThemeOnJetpack( siteId, wpcomThemeId ) {
+export function installTheme( siteId, wpcomThemeId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_INSTALL,

@@ -43,7 +43,7 @@ import {
 	requestTheme,
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
-	installWpcomThemeOnJetpack
+	installTheme
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -814,7 +814,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#installWpcomThemeOnJetpack', () => {
+	describe( '#installTheme', () => {
 		const successResponse = {
 			id: 'karuna-wpcom',
 			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
@@ -860,7 +860,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch install theme request action when triggered', () => {
-			installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy );
+			installTheme( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL,
@@ -870,7 +870,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy ).then( () => {
+			return installTheme( 'jetpackenabledsite.com', 'karuna-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 'jetpackenabledsite.com',
@@ -880,7 +880,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
+			return installTheme( 'jetpackenabledsite.com', 'typist-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 'jetpackenabledsite.com',
@@ -891,7 +891,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installWpcomThemeOnJetpack( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
+			return installTheme( 'jetpackenabledsite.com', 'pinboard-wpcom' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 'jetpackenabledsite.com',
