@@ -104,6 +104,10 @@
 			color: $alert-red;
 		}
 	}
+
+	.button.is-compact {
+		white-space: pre;
+	}
 }
 
 .current-plan__header-expires-in {
