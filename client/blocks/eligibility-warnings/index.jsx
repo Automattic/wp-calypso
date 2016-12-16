@@ -15,17 +15,10 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
 
-const EligibilityWarnings = props => {
-	const {
-		translate,
-		backUrl,
-		isEligible,
-		eligibilityData
-	} = props;
-
-	// Mapping eligibility hold constant to messages that will be shown to the user
-	// TODO: update supportUrls and maybe create similar mapping for warnings
-	const holdsMessage = {
+// Mapping eligibility hold constant to messages that will be shown to the user
+// TODO: update supportUrls and maybe create similar mapping for warnings
+function getHoldsMessages( translate ) {
+	return {
 		MULTIPLE_USERS: {
 			title: translate( 'Multiple users' ),
 			description: translate( 'This feature is not supported on sites with multiple users.' ),
@@ -67,6 +60,17 @@ const EligibilityWarnings = props => {
 			supportUrl: 'https://support.wordpress.com/'
 		}
 	};
+}
+
+const EligibilityWarnings = props => {
+	const {
+		translate,
+		backUrl,
+		isEligible,
+		eligibilityData
+	} = props;
+
+	const holdsMessage = getHoldsMessages( translate );
 
 	return (
 		<div className="eligibility-warnings">
