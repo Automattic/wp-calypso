@@ -33,10 +33,10 @@ function ReaderFollowButton( props ) {
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
 			dispatchRecordFollow( siteUrl );
-			recordFollowTracks( siteUrl, railcar, { followSource } );
+			recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
 		} else {
 			dispatchRecordUnfollow( siteUrl );
-			recordUnfollowTracks( siteUrl, railcar, { followSource } );
+			recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
 		}
 
 		if ( onFollowToggle ) {
