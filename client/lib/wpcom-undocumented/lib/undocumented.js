@@ -235,7 +235,7 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/settings', body: JSON.stringify( settings ) },
+		{ path: '/settings/', body: JSON.stringify( settings ) },
 		fn
 	);
 };
