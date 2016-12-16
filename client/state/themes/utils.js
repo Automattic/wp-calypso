@@ -192,10 +192,10 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 
 /**
  * Filter wpcom themes from Jetpack theme list
- * Themes on Jetpack installed from WordPress.com have -wpcom suffix
+ * Themes on Jetpack installed from WordPress.com have -wpcom suffix.
  * We filter out all those themes because they will also be visible on
- * second list specific to WordPress.com This may be to simple aproach
- * so it may need more elaborate aproach
+ * second list specific to WordPress.com. This may be too simple aproach
+ * so it may revisit it again later.
  *
  * TODO Veriy that this aproach is sufficien.
  *
