@@ -39,6 +39,9 @@ import {
 } from 'state/themes/upload-theme/selectors';
 import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
+import QueryEligibility from 'components/data/query-atat-eligibility';
+import { getEligibility } from 'state/automated-transfer/selectors';
+import EligibilityWarnings from 'blocks/eligibility-warnings';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -220,31 +223,43 @@ class Upload extends React.Component {
 		);
 	}
 
+	renderUploadCard() {
+		const { inProgress, failed, uploadedTheme, complete } = this.props;
+		return (
+			<Card>
+				{ ! inProgress && ! complete && this.renderDropZone() }
+				{ inProgress && this.renderProgressBar() }
+				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+			</Card>
+		);
+	}
+
+	isEligible() {
+		const { eligibilityHolds } = this.props.eligibilityData;
+		return this.props.isJetpackSite || ( eligibilityHolds && ! eligibilityHolds.length );
+	}
+
 	render() {
 		const {
 			translate,
-			inProgress,
 			complete,
-			failed,
 			siteId,
 			selectedSite,
 			themeId,
-			uploadedTheme,
+			eligibilityData,
 		} = this.props;
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
-				<Card>
-					{ ! inProgress && ! complete && this.renderDropZone() }
-					{ inProgress && this.renderProgressBar() }
-					{ complete && ! failed && uploadedTheme && this.renderTheme() }
-				</Card>
+				{ ! this.isEligible() && <EligibilityWarnings isEligible={ this.isEligible() } eligibilityData={ eligibilityData } /> }
+				{ this.isEligible() && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -279,6 +294,7 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
+			eligibilityData: getEligibility( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
