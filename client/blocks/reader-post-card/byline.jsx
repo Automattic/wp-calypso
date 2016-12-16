@@ -56,8 +56,22 @@ class PostByline extends React.Component {
 		return get( this.props, 'post.URL' );
 	}
 
+	getStreamUrl = () => {
+		const feedId = get( this.props.post, 'feed_ID' );
+		const siteId = get( this.props.site, 'ID' );
+		return getStreamUrl( feedId, siteId );
+	}
+
+	getSiteIcon = () => {
+		return get( this.props.site, 'icon.img' );
+	}
+
+	getFeedIcon = () => {
+		return get( this.props.feed, 'image' );
+	}
+
 	render() {
-		const { post, site, feed, showSiteName } = this.props;
+		const { post, site, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
@@ -66,9 +80,9 @@ class PostByline extends React.Component {
 		const hasAuthorName = has( postAuthor, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor = hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
-		const streamUrl = getStreamUrl( feedId, siteId );
-		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
+		const streamUrl = this.getStreamUrl();
+		const siteIcon = this.getSiteIcon();
+		const feedIcon = this.getFeedIcon();
 		const postTimeLinkUrl = this.getPostTimeLinkUrl();
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -77,7 +91,7 @@ class PostByline extends React.Component {
 				<ReaderAvatar
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
-					author={ post.author }
+					author={ postAuthor }
 					preferGravatar={ true }
 					siteUrl={ streamUrl } />
 				<div className="reader-post-card__byline-details">

@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import PostByline from './byline';
-//import * as DiscoverHelper from 'reader/discover/helper';
+import { getStreamUrl } from 'reader/route';
 
 class DiscoverPostByline extends PostByline {
 
@@ -22,7 +22,8 @@ class DiscoverPostByline extends PostByline {
 	}
 
 	getPostAuthor = () => {
-		return { name: 'Banana' };
+		// Will be null for site picks
+		return get( this.props.originalPost, 'author' );
 	}
 
 	getPostTimeLinkUrl = () => {
@@ -31,6 +32,21 @@ class DiscoverPostByline extends PostByline {
 		}
 
 		return get( this.props.post, 'discover_metadata.permalink' );
+	}
+
+	getStreamUrl = () => {
+		const blogId = get( this.props.post, 'discover_metadata.featured_post_wpcom_data.blog_id' );
+		return getStreamUrl( null, blogId );
+	}
+
+	// @todo
+	getSiteIcon = () => {
+		return null;
+	}
+
+	// @todo
+	getFeedIcon = () => {
+		return null;
 	}
 }
 
