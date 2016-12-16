@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import { getEligibility } from 'state/automated-transfer/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
 
@@ -153,10 +153,10 @@ EligibilityWarnings.propTypes = {
 };
 
 const mapStateToProps = state => {
-	const siteSlug = getSelectedSiteSlug( state );
+	const siteId = getSelectedSiteId( state );
 
 	return {
-		eligibilityData: getEligibility( state, siteSlug )
+		eligibilityData: getEligibility( state, siteId )
 	};
 };
 
