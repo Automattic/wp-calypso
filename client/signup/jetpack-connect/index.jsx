@@ -402,6 +402,7 @@ const JetpackConnectMain = React.createClass( {
 										isInstall={ isInstall }
 										currentUrl={ currentUrl }
 										confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
+										onClick={ instructionsData.buttonOnClick }
 									/>
 								);
 							} )

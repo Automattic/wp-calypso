@@ -156,7 +156,13 @@
 }
 
 .example-components__main {
+	cursor: pointer;
 	width: 100%;
+
+	&:hover > div {
+		box-shadow: 0 0 0 1px $gray,
+					0 2px 4px lighten( $gray, 20% );
+	}
 }
 
 .example-components__browser-chrome {
@@ -181,7 +187,7 @@
 
 .example-components__content {
 	position: relative;
-	margin: 0 1px;
+	margin: 0;
 	line-height: 0;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		0 1px 2px lighten( $gray, 30% );
