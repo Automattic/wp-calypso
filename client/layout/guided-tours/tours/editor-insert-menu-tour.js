@@ -20,6 +20,7 @@ import {
 	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import Gridicon from 'components/gridicon';
 
 class RepositioningStep extends Step {
 
@@ -64,8 +65,9 @@ export const EditorInsertMenuTour = makeTour(
 				) }
 			</p>
 			<p>
-				{ translate( 'Click here to see everything you can add.', {
-					comment: 'Description of the Guided Tour for the Editor Insert Menu button.'
+				{ translate( 'Click {{icon/}} to add media and other kinds of content.', {
+					components: { icon: <Gridicon icon="chevron-down" /> },
+					comment: 'Refers to the Insert Content button and dropdown in the post editor.'
 				} ) }
 			</p>
 			<ButtonRow>
