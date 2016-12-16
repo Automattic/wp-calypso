@@ -43,6 +43,7 @@ class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
 			.oneOf( [ PLAN_FREE,
+				PLAN_PERSONAL,
 				PLAN_PREMIUM,
 				PLAN_BUSINESS,
 				PLAN_JETPACK_FREE,
@@ -223,7 +224,6 @@ class ProductPurchaseFeaturesList extends Component {
 			/>
 		];
 	}
-
 
 	getJetpackBusinessFeatures() {
 		const {	selectedSite } = this.props;
