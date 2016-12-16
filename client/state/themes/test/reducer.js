@@ -38,7 +38,7 @@ import reducer, {
 	activeThemes,
 	activationRequests,
 	activeThemeRequests,
-	installThemeOnJetpackRequests,
+	themeInstalls,
 	completedActivationRequests,
 } from '../reducer';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -823,15 +823,15 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#installThemeOnJetpackRequests()', () => {
+	describe( '#themeInstalls()', () => {
 		it( 'should default to an empty object', () => {
-			const state = installThemeOnJetpackRequests( undefined, {} );
+			const state = themeInstalls( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
 		it( 'should map site ID, theme ID to true value if request in progress', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {} ), {
+			const state = themeInstalls( deepFreeze( {} ), {
 				type: THEME_INSTALL,
 				siteId: 'sitewithjetpack.com',
 				themeId: 'karuna'
@@ -845,7 +845,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should accumulate mappings', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {
+			const state = themeInstalls( deepFreeze( {
 				'sitewithjetpack.com': {
 					karuna: true
 				}
@@ -866,7 +866,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should map site ID, theme ID to false value if request finishes successfully', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {
+			const state = themeInstalls( deepFreeze( {
 				'sitewithjetpack.com': {
 					karuna: true
 				}
@@ -884,7 +884,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should map site ID, theme ID to false value if request finishes with failure', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {
+			const state = themeInstalls( deepFreeze( {
 				'sitewithjetpack.com': {
 					karuna: true
 				}
@@ -903,7 +903,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never persists state', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {
+			const state = themeInstalls( deepFreeze( {
 				'sitewithjetpack.com': {
 					karuna: true
 				}
@@ -915,7 +915,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'never loads persisted state', () => {
-			const state = installThemeOnJetpackRequests( deepFreeze( {
+			const state = themeInstalls( deepFreeze( {
 				'sitewithjetpack.com': {
 					karuna: false
 				}
