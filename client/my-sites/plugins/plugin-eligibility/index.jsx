@@ -17,6 +17,7 @@ class PluginEligibility extends Component {
 		pluginSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
+		navigateTo: PropTypes.func
 	};
 
 	getBackUrl = () => {
@@ -25,7 +26,7 @@ class PluginEligibility extends Component {
 		return `/plugins/${ pluginSlug }/${ siteSlug }`;
 	};
 
-	goBack = () => page( this.getBackUrl() );
+	goBack = () => this.props.navigateTo( this.getBackUrl() );
 
 	render() {
 		const { translate } = this.props;
@@ -82,4 +83,6 @@ class PluginEligibility extends Component {
 	}
 }
 
-export default localize( PluginEligibility );
+const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
+
+export default withNavigation( localize( PluginEligibility ) );
