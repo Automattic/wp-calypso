@@ -46,7 +46,8 @@ import {
 	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
-	getCustomizerUrl
+	getCustomizerUrl,
+	getTaxonomyPostsUrl,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -2270,6 +2271,68 @@ describe( 'selectors', () => {
 
 				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
+		} );
+	} );
+
+	describe( 'getTaxonomyPostsUrl()', () => {
+		it( 'it should null if the site is not tracked', () => {
+			const state = createStateWithItems( {} );
+			const url = getTaxonomyPostsUrl( state, siteId, 'post_tag', 'chicken' );
+			expect( url ).to.be.null;
+		} );
+
+		it( 'it should return an url with tag instead of post_tag for dotcom websites', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://example.com',
+					jetpack: false
+				}
+			} );
+			const url = getTaxonomyPostsUrl( state, siteId, 'post_tag', 'chicken' );
+			expect( url ).to.equal( 'https://example.com/tag/chicken/' );
+		} );
+
+		it( 'it should return a category front page url for dotcom websites', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://example.com',
+					jetpack: false
+				}
+			} );
+			const url = getTaxonomyPostsUrl( state, siteId, 'category', 'chicken' );
+			expect( url ).to.equal( 'https://example.com/category/chicken/' );
+		} );
+
+		it( 'it should use the tag_base option for JetPack websites', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://example.com',
+					jetpack: true,
+					options: {
+						tag_base: 'awesome_tag_slug'
+					}
+				}
+			} );
+			const url = getTaxonomyPostsUrl( state, siteId, 'post_tag', 'chicken' );
+			expect( url ).to.equal( 'https://example.com/awesome_tag_slug/chicken/' );
+		} );
+
+		it( 'it should use the category_base option for JetPack websites', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://example.com',
+					jetpack: true,
+					options: {
+						category_base: 'awesome_category_slug'
+					}
+				}
+			} );
+			const url = getTaxonomyPostsUrl( state, siteId, 'category', 'chicken' );
+			expect( url ).to.equal( 'https://example.com/awesome_category_slug/chicken/' );
 		} );
 	} );
 } );

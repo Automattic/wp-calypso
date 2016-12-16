@@ -18,7 +18,7 @@ import Count from 'components/count';
 import Dialog from 'components/dialog';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getTaxonomyPostsUrl } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -36,9 +36,8 @@ class TaxonomyManagerListItem extends Component {
 		siteId: PropTypes.number,
 		term: PropTypes.object,
 		translate: PropTypes.func,
-		siteUrl: PropTypes.string,
+		postsLink: PropTypes.string,
 		slug: PropTypes.string,
-		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,16 +72,6 @@ class TaxonomyManagerListItem extends Component {
 		}
 	};
 
-	getTaxonomyLink() {
-		const { taxonomy, siteUrl, term } = this.props;
-		let taxonomyBase = taxonomy;
-
-		if ( taxonomy === 'post_tag' ) {
-			taxonomyBase = 'tag';
-		}
-		return `${ siteUrl }/${ taxonomyBase }/${ term.slug }/`;
-	}
-
 	tooltipText = () => {
 		const { term, translate } = this.props;
 		const name = this.getName();
@@ -114,13 +103,13 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	viewPosts = () => {
-		this.props.setPreviewUrl( this.getTaxonomyLink() );
+		this.props.setPreviewUrl( this.props.postsLink );
 		this.props.setPreviewType( 'site-preview' );
 		this.props.setLayoutFocus( 'preview' );
 	};
 
 	render() {
-		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
+		const { canSetAsDefault, isDefault, onClick, postsLink, term, translate } = this.props;
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -165,7 +154,7 @@ class TaxonomyManagerListItem extends Component {
 							{ translate( 'Delete' ) }
 						</PopoverMenuItem>
 					}
-					{ ! isJetpack &&
+					{ postsLink &&
 						<PopoverMenuItem onClick={ this.viewPosts } icon="external">
 							{ translate( 'View Posts' ) }
 						</PopoverMenuItem>
@@ -195,14 +184,13 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const siteUrl = get( getSite( state, siteId ), 'URL' );
+		const postsLink = getTaxonomyPostsUrl( state, siteId, taxonomy, term.slug );
 
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
 			isDefault,
 			canSetAsDefault,
 			siteId,
-			siteUrl,
+			postsLink,
 		};
 	},
 	{

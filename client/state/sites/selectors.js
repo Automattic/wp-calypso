@@ -1020,3 +1020,29 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
 	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
 };
+
+/**
+ * Returns the taxonomy posts URL for a site, taxonomy and a slug
+ *
+ * @param  {Object} state    Global state tree
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy
+ * @param  {String} slug     Term Slug
+ * @return {String}          Taxonomy posts URL
+ */
+export function getTaxonomyPostsUrl( state, siteId, taxonomy, slug ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+	let taxonomyBase = taxonomy;
+	if ( taxonomy === 'post_tag' ) {
+		taxonomyBase = 'tag';
+	}
+	if ( isJetpackSite( state, siteId ) ) {
+		const jetpackBase = getSiteOption( state, siteId, `${ taxonomyBase }_base` );
+		taxonomyBase = jetpackBase || taxonomyBase;
+	}
+
+	return `${ site.URL }/${ taxonomyBase }/${ slug }/`;
+}
