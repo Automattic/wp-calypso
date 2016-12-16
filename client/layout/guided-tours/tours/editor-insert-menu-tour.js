@@ -53,7 +53,11 @@ export const EditorInsertMenuTour = makeTour(
 			name="init"
 			placement="beside"
 			target=".mce-wpcom-insert-menu"
-			style={ { animationDelay: '10s' } }
+			style={ {
+				animationDelay: '10s',
+				marginTop: '-8px',
+				zIndex: '100000',
+			} }
 		>
 			<p>
 				{ translate(
