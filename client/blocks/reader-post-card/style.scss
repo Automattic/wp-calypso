@@ -459,6 +459,26 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-right: 2px;
 	}
 
+	.reader-share_button .gridicon {
+		position: relative;
+
+		@include breakpoint( ">960px" ) {
+			top: 1px;
+		}
+
+		@media #{$reader-post-card-breakpoint-xxlarge} {
+			top: 0;
+		}
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			top: 1px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			top: 1px;
+		}
+	}
+
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
