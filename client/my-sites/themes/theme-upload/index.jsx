@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find } from 'lodash';
+import { includes, find, isEqual, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,6 +60,13 @@ class Upload extends React.Component {
 		installing: React.PropTypes.bool,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showEligibility: true,
+		};
+	}
+
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
@@ -70,7 +77,31 @@ class Upload extends React.Component {
 			const { siteId, inProgress } = this.props;
 			! inProgress && this.props.clearThemeUpload( siteId );
 		}
+
+		if ( ! isEqual( this.props.eligibilityData, nextProps.eligibilityData ) ||
+			( nextProps.siteId !== this.props.siteId ) ) {
+			this.setState( {
+				showEligibility: this.showEligibility( nextProps.eligibilityData ),
+			} );
+		}
 	}
+
+	showEligibility( eligibilityData ) {
+		if ( this.props.isJetpackSite || ! eligibilityData ) {
+			return false;
+		}
+
+		return ! isEmpty( eligibilityData.eligibilityHolds ) ||
+			! isEmpty( eligibilityData.eligibilityWarnings );
+	}
+
+	isEligible( eligibilityData ) {
+		return eligibilityData && isEmpty( eligibilityData.eligibilityHolds );
+	}
+
+	onProceedClick = () => {
+		this.setState( { showEligibility: false } );
+	};
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.complete && ! prevProps.complete ) {
@@ -234,11 +265,6 @@ class Upload extends React.Component {
 		);
 	}
 
-	isEligible() {
-		const { eligibilityHolds } = this.props.eligibilityData;
-		return this.props.isJetpackSite || ( eligibilityHolds && ! eligibilityHolds.length );
-	}
-
 	render() {
 		const {
 			translate,
@@ -258,8 +284,12 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
-				{ ! this.isEligible() && <EligibilityWarnings isEligible={ this.isEligible() } eligibilityData={ eligibilityData } /> }
-				{ this.isEligible() && this.renderUploadCard() }
+				{ this.state.showEligibility && <EligibilityWarnings
+					isEligible={ this.isEligible( eligibilityData ) }
+					eligibilityData={ eligibilityData }
+					backUrl="/design"
+					onProceed={ this.onProceedClick } /> }
+				{ ! this.state.showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
