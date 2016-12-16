@@ -26,6 +26,8 @@ import {
  */
 const statusMapping = {
 	multiple_users: eligibilityHolds.MULTIPLE_USERS,
+	no_vip_sites: eligibilityHolds.NO_VIP_SITES,
+	no_business_plan: eligibilityHolds.NO_BUSINESS_PLAN,
 	no_wpcom_nameservers: eligibilityHolds.NO_WPCOM_NAMESERVERS,
 	not_using_custom_domain: eligibilityHolds.NOT_USING_CUSTOM_DOMAIN,
 	non_admin_user: eligibilityHolds.NON_ADMIN_USER,
