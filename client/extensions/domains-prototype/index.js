@@ -8,6 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import ButtonGroup from 'components/button';
 import Card from 'components/card';
 import Main from 'components/main';
 import productsFactory from 'lib/products-list';
@@ -73,8 +75,49 @@ const select = ( context ) => {
 	), document.getElementById( 'primary' ), context.store );
 };
 
+const manage = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	renderWithReduxStore( (
+		<Main className="">
+			<SectionHeader label="Manage your domains">🐬</SectionHeader>
+			<Card>
+				domain1.blog
+				<Button href="/domains-prototype/manage/domain1.blog" primary>Set up</Button>
+			</Card>
+			<Card>
+				domain2.blog
+				<Button href="/domains-prototype/manage/domain2.blog" primary>Set up</Button>
+			</Card>
+			<Card>
+				domain3.blog
+				<Button href="/domains-prototype/manage/domain3.blog" primary>Set up</Button>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const manageDomain = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	renderWithReduxStore( (
+		<Main className="">
+			<SectionHeader label={ 'Manage ' + context.params.domainName }>🐬</SectionHeader>
+			<Card>
+				<ButtonGroup>
+					<Button compact href="">Change name servers</Button>
+					<Button compact href="">Edit DNS</Button>
+					<Button compact href="" primary>Connect to WordPress.com</Button>
+				</ButtonGroup>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
 export default function() {
 	page( '/domains-prototype/search', search );
 	page( '/domains-prototype/select/:domainName', select );
+	page( '/domains-prototype/manage', manage );
+	page( '/domains-prototype/manage/:domainName', manageDomain );
 	page( '/domains-prototype/', render );
 }
