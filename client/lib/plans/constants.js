@@ -54,6 +54,8 @@ export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
+export const FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM = 'video-upload-jetpack-premium';
+export const FEATURE_VIDEO_UPLOADS_JETPACK_PRO = 'video-upload-jetpack-pro';
 export const FEATURE_AUDIO_UPLOADS = 'audio-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
@@ -235,7 +237,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_PREMIUM_SUPPORT
 		],
@@ -279,8 +281,9 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			FEATURE_MALWARE_SCANNING_DAILY
+			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+			FEATURE_MALWARE_SCANNING_DAILY,
+			FEATURE_PREMIUM_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -322,7 +325,7 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_POLLS_PRO,
@@ -348,7 +351,8 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
@@ -446,6 +450,28 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'The easiest way to upload videos to your website and display them ' +
 			'using a fast, unbranded, customizable player with rich stats.'
+		),
+		getStoreSlug: () => 'videopress'
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats ' +
+			'(13GB storage space).'
+		),
+		getStoreSlug: () => 'videopress'
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats ' +
+			'(unlimited storage space).'
 		),
 		getStoreSlug: () => 'videopress'
 	},
