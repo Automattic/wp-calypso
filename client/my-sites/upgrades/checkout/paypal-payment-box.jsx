@@ -23,7 +23,6 @@ import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',
@@ -133,8 +132,7 @@ module.exports = React.createClass( {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
-			hasBusinessPlanInCart &&
-			abtest( 'presaleChatButton' ) === 'showChatButton';
+			hasBusinessPlanInCart;
 		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 			'credit-card-payment-box__switch-link-left': showPaymentChatButton
 		} );
