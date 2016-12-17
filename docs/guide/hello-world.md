@@ -151,16 +151,16 @@ export default React.createClass( {
 } );
 ```
 
-Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Inside the `React.createClass` object, after "displayName", write:
+Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Inside the `React.createClass` object, after "displayName: 'HelloWorld',", insert before the closing "} );":
 
 ```javascript
-render() {
-	return (
-		<Main>
-			<h1>Hello, World!</h1>
-		</Main>
-	);
-}
+	render() {
+		return (
+			<Main>
+				<h1>Hello, World!</h1>
+			</Main>
+		);
+	}
 ```
 
 If you want to learn more about our approach to writing React components, check out the [Components](../components.md) page.
