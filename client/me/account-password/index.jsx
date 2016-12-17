@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { bindActionCreators, compose } from 'redux';
 import { localize } from 'i18n-calypso';
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
@@ -9,7 +10,6 @@ var React = require( 'react' ),
 	head = require( 'lodash/head' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	classNames = require( 'classnames' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
 /**
@@ -180,7 +180,11 @@ const AccountPassword = React.createClass( {
 	}
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { errorNotice }, dispatch )
-)( protectForm( localize( AccountPassword ) ) );
+export default compose(
+	connect(
+		null,
+		dispatch => bindActionCreators( { errorNotice }, dispatch ),
+	),
+	localize,
+	protectForm,
+)( AccountPassword );
