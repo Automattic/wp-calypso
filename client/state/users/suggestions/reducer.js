@@ -9,51 +9,46 @@ import { combineReducers } from 'redux';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
+	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
+import { itemsSchema } from './schema';
 
 /**
- * Returns the updated requests state after an action has been dispatched. The
- * state maps site ID keys to whether a request for user suggestions is in progress.
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a user suggestions request is in progress for a site.
  *
- * @param  {Object} state   Current state
- * @param  {Object} action  Action payload
- * @return {Object}         Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case USER_SUGGESTIONS_REQUEST:
-		case USER_SUGGESTIONS_REQUEST_SUCCESS:
-		case USER_SUGGESTIONS_REQUEST_FAILURE:
-			return {
-				...state,
-				[ action.siteId ]: USER_SUGGESTIONS_REQUEST === action.type,
-			};
-	}
-
-	return state;
-}
+export const requesting = createReducer( {}, {
+	[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: true };
+	},
+	[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
+	},
+	[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
+	},
+} );
 
 /**
- * Returns the updated items state after an action has been dispatched. The
- * state maps site ID keys to an array of user suggestions.
+ * Returns the updated items state after an action has been dispatched. Items
+ * state tracks an array of user suggestions available for a site. Receiving
+ * user suggestions for a site will replace the existing set.
  *
- * @param  {Object} state   Current state
- * @param  {Object} action  Action payload
- * @return {Object}         Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case USER_SUGGESTIONS_RECEIVE:
-			return {
-				...state,
-				[ action.siteId ]: action.suggestions,
-			};
-	}
-
-	return state;
-}
+export const items = createReducer( {}, {
+	[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
+		return { ...state, [ siteId ]: suggestions };
+	},
+}, itemsSchema );
 
 export default combineReducers( {
 	requesting,
