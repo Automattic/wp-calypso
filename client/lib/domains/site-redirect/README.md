@@ -1,7 +1,7 @@
 SiteRedirectStore
 -----------------
 
-`SiteRedirectStore` is a module that manages **site redirect settings** for a specific site. More specifically, it allows to retrieve and update the location of a Site Redirect upgrade. It is modelled as a [Flux](https://facebook.github.io/flux/docs/overview.html) store, and follows the reducer pattern promoted by [Redux](http://rackt.org/redux/docs/basics/Reducers.html). Changes on the store can be monitored by binding to the `change` event. Finally actions are made available to interact with this store.
+`SiteRedirectStore` is a module that manages **site redirect settings** for a specific site. More specifically, it allows to retrieve and update the location of a Site Redirect upgrade. It is modelled as a [Flux](https://facebook.github.io/flux/docs/overview.html) store, and follows the reducer pattern promoted by [Redux](http://redux.js.org/docs/basics/Reducers.html). Changes on the store can be monitored by binding to the `change` event. Finally actions are made available to interact with this store.
 
 ## Usage
 
