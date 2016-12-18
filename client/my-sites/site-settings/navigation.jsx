@@ -116,7 +116,7 @@ export default React.createClass( {
 					{
 						config.isEnabled( 'manage/export' ) &&
 							<NavItem
-								path={ `/settings/export/${ this.props.slug }` }
+								path={ `/settings/export/${ site.slug }` }
 								selected={ section === 'export' } >
 									{ strings.export }
 							</NavItem>
