@@ -126,7 +126,7 @@ export function startExport( siteId, { exportAll = true, isJetpackSite = false }
 		let result;
 		if ( isJetpackSite ) {
 			result = wpcom.undocumented()
-				.startJetpackExport( siteId, advancedSettings )
+				.startExport( siteId, advancedSettings )
 				.then( jetpackSuccess )
 				.catch( failure );
 		} else {
