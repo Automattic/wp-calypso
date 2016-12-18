@@ -160,7 +160,7 @@
 		&.is-valid {
 
 			.gridicon {
-				fill: $gray-dark;
+				fill: $blue-medium;
 
 				&:hover,
 				&:active {
@@ -177,7 +177,7 @@
 			}
 
 			.follow-button__label {
-				color: $gray-dark;
+				color: $blue-medium;
 			}
 
 			.following-edit__list-title {
@@ -371,4 +371,30 @@
 
 .is-section-reader .main.following-edit .empty-content {
 	margin-top: -40px;
+}
+
+.following-edit .reader-list-item__actions {
+	top: 21px;
+}
+
+.following-edit .reader-list-item__actions .follow-button {
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
 }

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { each, pick, map } from 'lodash';
+import { each, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,13 +20,11 @@ import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
-import QueryTerms from 'components/data/query-terms';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
 import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
-import { isRequestingTermsForQuery, getTerms } from 'state/terms/selectors';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
 const SiteSettingsFormWriting = React.createClass( {
@@ -34,7 +32,6 @@ const SiteSettingsFormWriting = React.createClass( {
 
 	getSettingsFromSite: function( site ) {
 		let writingAttributes = [
-			'default_category',
 			'default_post_format',
 			'wpcom_publish_posts_with_markdown',
 			'markdown_supported',
@@ -70,7 +67,6 @@ const SiteSettingsFormWriting = React.createClass( {
 	resetState: function() {
 		this.replaceState( {
 			fetchingSettings: true,
-			default_category: '',
 			default_post_format: '',
 		} );
 	},
@@ -149,20 +145,6 @@ const SiteSettingsFormWriting = React.createClass( {
 				{ this.renderSectionHeader( this.translate( 'Composing' ) ) }
 				<Card className="site-settings">
 					<FormFieldset>
-						<QueryTerms siteId={ this.props.siteId } taxonomy="category" />
-						<FormLabel htmlFor="default_category">
-							{ this.translate( 'Default Post Category' ) }
-						</FormLabel>
-						<FormSelect
-							name="default_category"
-							id="default_category"
-							valueLink={ this.linkState( 'default_category' ) }
-							disabled={ this.props.isRequestingCategories }
-							onClick={ this.recordEvent.bind( this, 'Selected Default Post Category' ) }>
-							{ map( this.props.categories, category => {
-								return <option value={ category.ID } key={ 'post-category-' + category.ID }>{ category.name }</option>;
-							} ) }
-						</FormSelect>
 						<FormLabel htmlFor="default_post_format">
 							{ this.translate( 'Default Post Format' ) }
 						</FormLabel>
@@ -257,14 +239,10 @@ const SiteSettingsFormWriting = React.createClass( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isRequestingCategories = isRequestingTermsForQuery( state, siteId, 'category', {} );
-		const categories = getTerms( state, siteId, 'category' );
 
 		return {
 			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
-			categories,
-			isRequestingCategories,
 			siteId
 		};
 	},

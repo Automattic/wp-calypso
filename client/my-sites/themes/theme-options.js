@@ -4,16 +4,13 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, identity, mapValues, pick, pickBy } from 'lodash';
+import { has, identity, mapValues, pick, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { activateTheme } from 'state/themes/actions';
-import {
-	isPremiumTheme as isPremium
-} from 'state/themes/utils';
+import { activateTheme, activateWpcomThemeOnJetpack } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
@@ -23,6 +20,7 @@ import {
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
 	isThemePurchased as isPurchased,
+	isThemePremium as isPremium
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -41,7 +39,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		getUrl: getPurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		hideForTheme: ( state, theme, siteId ) =>
-			! theme.price || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
+			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
 	}
 	: {};
 
@@ -51,9 +49,22 @@ const activate = {
 	action: activateTheme,
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
-			theme.price &&
+			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+		)
+	)
+};
+
+const activateOnJetpack = {
+	label: i18n.translate( 'Activate' ),
+	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
+	action: activateWpcomThemeOnJetpack,
+	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
+	hideForTheme: ( state, theme, siteId ) => (
+		isActive( state, theme.id, siteId ) || (
+			isPremium( state, theme.id ) &&
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
 };
@@ -112,7 +123,7 @@ const support = {
 	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme ) => ! isPremium( theme )
+	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id )
 };
 
 const help = {
@@ -127,6 +138,7 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
+	activateOnJetpack,
 	tryandcustomize,
 	signup,
 	separator,
@@ -135,7 +147,6 @@ const ALL_THEME_OPTIONS = {
 	help
 };
 
-const ALL_THEME_ACTIONS = { activate: activateTheme }; // All theme related actions available.
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
@@ -170,7 +181,11 @@ export const connectOptions = connect(
 				: {}
 		) );
 	},
-	( dispatch, { siteId, source = 'unknown' } ) => {
+	( dispatch, { options: optionNames, siteId, source = 'unknown' } ) => {
+		const options = pickBy(
+			pick( ALL_THEME_OPTIONS, optionNames ),
+			'action'
+		);
 		let mapAction;
 
 		if ( siteId ) {
@@ -180,14 +195,14 @@ export const connectOptions = connect(
 		}
 
 		return bindActionCreators(
-			mapValues( ALL_THEME_ACTIONS, action => mapAction( action ) ),
+			mapValues( options, ( { action } ) => mapAction( action ) ),
 			dispatch
 		);
 	},
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( actions, name ) ) {
+			if ( has( option, 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;

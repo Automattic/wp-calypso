@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import pickBy from 'lodash/pickBy';
+import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,7 +69,6 @@ const ThemeShowcase = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			selectedSite: false,
 			tier: '',
 			search: '',
 			showUploadButton: false
@@ -78,6 +77,7 @@ const ThemeShowcase = React.createClass( {
 
 	getInitialState() {
 		return {
+			page: 1,
 			showPreview: false,
 			previewingTheme: null,
 		};
@@ -151,7 +151,8 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, secondaryOption, tier, search } = this.props;
+		const { site, options, getScreenshotOption, secondaryOption, search, filter } = this.props;
+		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -197,8 +198,11 @@ const ThemeShowcase = React.createClass( {
 					/>
 				}
 				<ThemesSelection
+					search={ search }
+					tier={ this.props.tier }
+					filter={ filter }
+					vertical={ this.props.vertical }
 					siteId={ this.props.siteId }
-					selectedSite={ this.props.selectedSite }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;
@@ -220,11 +224,8 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
-					search={ search }
-					tier={ this.props.tier }
-					filter={ this.props.filter }
-					vertical={ this.props.vertical } />
-					{ this.props.children }
+				/>
+				{ this.props.children }
 			</Main>
 		);
 	}

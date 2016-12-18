@@ -1,0 +1,59 @@
+.eligibility-warnings {
+    margin-top: 32px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.eligibility-warnings .card {
+    margin: 0;
+    display: flex;
+}
+
+.eligibility-warnings__message {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    min-height: 80px;
+}
+
+.eligibility-warnings__message-content {
+    flex-grow: 1;
+    margin: 0 16px;
+}
+
+.eligibility-warnings__message-description,
+.eligibility-warnings__warning-action,
+.eligibility-warnings__confirm-icon {
+    color: $gray;
+}
+
+.eligibility-warnings__error-icon {
+    color: $alert-red;
+    flex-shrink: 0;
+}
+
+.eligibility-warnings__warning-icon {
+    color: $alert-yellow;
+    flex-shrink: 0;
+}
+
+.eligibility-warnings__confirm-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.eligibility-warnings__confirm-text {
+    flex-grow: 1;
+    color: $gray;
+    font-style: italic;
+    flex-basis: 60%;
+    margin: 8px 16px;
+}
+
+.eligibility-warnings__confirm-box .button {
+    margin-left: 16px;
+}

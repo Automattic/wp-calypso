@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-import Lru from 'lru-cache';
+import Lru from 'lru';
 import startsWith from 'lodash/startsWith';
 
 /**

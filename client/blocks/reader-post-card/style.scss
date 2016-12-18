@@ -253,10 +253,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__timestamp {
 	display: inline-table;
-	margin-right: 10px;
 }
 
 .reader-post-card__tag {
+	margin-left: 10px;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -320,7 +320,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin-top: 14px;
 
 	.reader-post-card__post-details {
-		flex: 0 auto;
+		flex: 1 auto;
 	}
 
 	@media #{$reader-post-card-breakpoint-large} {
@@ -371,6 +371,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin-top: 9px;
 	word-break: break-word;
 	position: relative;
+	p {
+		margin: 0;
+	}
 }
 
 // If we're not showing the entire excerpt, clamp lines
@@ -411,7 +414,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-showing-entire-excerpt) {
 
 	.reader-post-card__excerpt {
 		max-height: 15px * 1.6 * 3;
@@ -454,6 +457,26 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	.comment-button .gridicon {
 		top: 2px;
 		margin-right: 2px;
+	}
+
+	.reader-share_button .gridicon {
+		position: relative;
+
+		@include breakpoint( ">960px" ) {
+			top: 1px;
+		}
+
+		@media #{$reader-post-card-breakpoint-xxlarge} {
+			top: 0;
+		}
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			top: 1px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			top: 1px;
+		}
 	}
 
 	.reader-share__button-label,

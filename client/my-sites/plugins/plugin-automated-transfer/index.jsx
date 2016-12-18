@@ -5,11 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import wrapWithClickOutside from 'react-click-outside';
 
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_STATUS } from 'state/automated-transfer/constants';
+import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import Notice from 'components/notice';
@@ -29,9 +30,23 @@ class PluginAutomatedTransfer extends Component {
 		},
 	}
 
+	state = {
+		clickOutside: false,
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.status !== nextProps.status ) {
+			this.setState( { clickOutside: false } );
+		}
+	}
+
 	getNoticeText = ( pluginName = '' ) => {
 		const { status, translate } = this.props;
-		const { START, SETUP, LEAVING, CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
+		const { START, SETUP, LEAVING, CONFLICTS, COMPLETE } = transferStates;
+
+		if ( this.state.clickOutside ) {
+			return translate( "Don't leave quite yet! Just a bit longer." );
+		}
 
 		switch ( status ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: pluginName } } );
@@ -43,7 +58,10 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	getStatus = status => {
-		const { CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
+		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( this.state.clickOutside ) {
+			return 'is-info';
+		}
 		switch ( status ) {
 			case CONFLICTS: return 'is-error';
 			case COMPLETE: return 'is-success';
@@ -52,7 +70,10 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	getIcon = status => {
-		const { CONFLICTS, COMPLETE } = AUTOMATED_TRANSFER_STATUS;
+		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( this.state.clickOutside ) {
+			return 'sync';
+		}
 		switch ( status ) {
 			case CONFLICTS: return 'notice';
 			case COMPLETE: return 'checkmark';
@@ -60,11 +81,21 @@ class PluginAutomatedTransfer extends Component {
 		}
 	}
 
+	handleClickOutside( event ) {
+		const { status } = this.props;
+		const { CONFLICTS, COMPLETE } = transferStates;
+		if ( status && CONFLICTS !== status && COMPLETE !== status ) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.setState( { clickOutside: true } );
+		}
+	}
+
 	render() {
 		const { plugin, status, translate } = this.props;
-		const { CONFLICTS } = AUTOMATED_TRANSFER_STATUS;
+		const { CONFLICTS } = transferStates;
 
-		if ( ! status || ! includes( AUTOMATED_TRANSFER_STATUS, status ) ) {
+		if ( ! status || ! includes( transferStates, status ) ) {
 			return null;
 		}
 
@@ -95,4 +126,4 @@ const mapStateToProps = state => {
 	return { status };
 };
 
-export default connect( mapStateToProps )( localize( PluginAutomatedTransfer ) );
+export default connect( mapStateToProps )( localize( wrapWithClickOutside( PluginAutomatedTransfer ) ) );

@@ -59,8 +59,8 @@ class SiteIconSetting extends Component {
 
 	showModal = () => this.toggleModal( true );
 
-	editSelectedMedia = ( media ) => {
-		if ( media ) {
+	editSelectedMedia = ( value ) => {
+		if ( value ) {
 			this.props.onEditSelectedMedia();
 		} else {
 			this.hideModal();

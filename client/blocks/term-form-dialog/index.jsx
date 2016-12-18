@@ -65,7 +65,6 @@ class TermFormDialog extends Component {
 		if ( this.state.saving ) {
 			return;
 		}
-		this.setState( this.constructor.initialState );
 		this.props.onClose();
 	};
 
@@ -147,7 +146,7 @@ class TermFormDialog extends Component {
 	componentWillReceiveProps( newProps ) {
 		if (
 			this.props.term !== newProps.term ||
-			this.props.showDialog !== newProps.showDialog
+			this.props.showDialog !== newProps.showDialog && newProps.showDialog
 		) {
 			this.init( newProps );
 		}

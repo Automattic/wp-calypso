@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find } from 'lodash';
@@ -18,15 +17,16 @@ import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-// Necessary for ThanksModal (QueryTheme not needed, since we've stored upload details)
+import QueryTheme from 'components/data/query-theme';
+// Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
-import { uploadTheme, clearThemeUpload } from 'state/themes/actions';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -57,8 +57,7 @@ class Upload extends React.Component {
 		installing: React.PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
+	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
 	}
@@ -79,12 +78,16 @@ class Upload extends React.Component {
 	}
 
 	successMessage() {
-		const { translate, uploadedTheme } = this.props;
-		notices.success( translate( 'Successfully uploaded theme %(name)s', {
-			args: {
-				name: uploadedTheme.name
-			}
-		} ) );
+		const { translate, uploadedTheme, themeId } = this.props;
+		notices.success(
+			translate( 'Successfully uploaded theme %(name)s', {
+				args: {
+					// using themeId lets us show a message before theme data arrives
+					name: uploadedTheme ? uploadedTheme.name : themeId
+				}
+			} ),
+			{ duration: 5000 }
+		);
 	}
 
 	failureMessage() {
@@ -107,7 +110,7 @@ class Upload extends React.Component {
 	}
 
 	onFileSelect = ( files ) => {
-		const { translate } = this.props;
+		const { translate, siteId } = this.props;
 		const errorMessage = translate( 'Please drop a single zip file' );
 
 		if ( files.length !== 1 ) {
@@ -122,8 +125,15 @@ class Upload extends React.Component {
 			return;
 		}
 		debug( 'zip file:', file );
-		this.props.uploadTheme( this.props.siteId, file );
+
+		const action = this.props.isJetpackSite
+			? this.props.uploadTheme : this.props.initiateThemeTransfer;
+		action( siteId, file );
 	}
+
+	onBackClick = () => {
+		window.history.back();
+	};
 
 	renderDropZone() {
 		const { translate } = this.props;
@@ -164,7 +174,8 @@ class Upload extends React.Component {
 		} = this.props;
 
 		const uploadingMessage = translate( 'Uploading your theme…' );
-		const installingMessage = translate( 'Installing your theme on site…' );
+		const installingMessage = this.props.isJetpackSite
+			? translate( 'Installing your theme…' ) : translate( 'Configuring your site…' );
 
 		return (
 			<div>
@@ -210,18 +221,29 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const { translate, inProgress, complete, failed, siteId, selectedSite } = this.props;
+		const {
+			translate,
+			inProgress,
+			complete,
+			failed,
+			siteId,
+			selectedSite,
+			themeId,
+			uploadedTheme,
+		} = this.props;
+
 		return (
 			<Main>
 				<QueryActiveTheme siteId={ siteId } />
+				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
-				<HeaderCake onClick={ page.back }>{ translate( 'Upload theme' ) }</HeaderCake>
+				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
 				<Card>
 					{ ! inProgress && ! complete && this.renderDropZone() }
 					{ inProgress && this.renderProgressBar() }
-					{ complete && ! failed && this.renderTheme() }
+					{ complete && ! failed && uploadedTheme && this.renderTheme() }
 				</Card>
 			</Main>
 		);
@@ -247,9 +269,11 @@ export default connect(
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
+			themeId,
 			uploadedTheme: getTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
@@ -257,5 +281,5 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 		};
 	},
-	{ uploadTheme, clearThemeUpload },
+	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
 )( localize( UploadWithOptions ) );

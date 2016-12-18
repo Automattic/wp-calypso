@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, find, flow, forEach, matches } from 'lodash';
+import { filter, find, flow, forEach } from 'lodash';
 import url from 'url';
 
 /**
@@ -15,7 +15,6 @@ import DISPLAY_TYPES from './display-types';
  * Rules
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
-import createBetterExcerptRefresh from 'lib/post-normalizer/rule-create-better-excerpt-refresh';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
@@ -121,15 +120,10 @@ function classifyPost( post ) {
 		}
 
 		const canonicalImageUrl = url.parse( canonicalImage.uri, true, true ),
-			canonicalImageUrlImportantParts = {
-				hostname: canonicalImageUrl.hostname,
-				pathname: canonicalImageUrl.pathname,
-				query: canonicalImageUrl.query
-			},
-			matcher = matches( canonicalImageUrlImportantParts );
+			canonicalImagePath = canonicalImageUrl.pathname;
 		if ( find( post.content_images, ( img ) => {
 			const imgUrl = url.parse( img.src, true, true );
-			return matcher( imgUrl );
+			return imgUrl.pathname === canonicalImagePath;
 		} ) ) {
 			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
 		}
@@ -170,7 +164,7 @@ const fastPostNormalizationRules = flow( [
 		detectMedia,
 		detectPolls,
 	] ),
-	config.isEnabled( 'reader/refresh/stream' ) ? createBetterExcerptRefresh : createBetterExcerpt,
+	createBetterExcerpt,
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,

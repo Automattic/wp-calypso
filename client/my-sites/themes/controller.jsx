@@ -3,7 +3,7 @@
  */
 import compact from 'lodash/compact';
 import debugFactory from 'debug';
-import Lru from 'lru-cache';
+import Lru from 'lru';
 import React from 'react';
 
 /**
@@ -14,12 +14,9 @@ import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
-import { PER_PAGE } from 'state/themes/themes-list/constants';
-import {
-	fetchThemes,
-	incrementThemesPage,
-	query
-} from 'state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { requestThemes, receiveThemes } from 'state/themes/actions';
+import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -96,33 +93,32 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		return next();
 	}
 
-	const queryParams = {
+	const siteId = 'wpcom';
+	const query = {
 		search: context.query.s,
 		tier: context.params.tier,
 		filter: compact( [ context.params.filter, context.params.vertical ] ).join( ',' ),
-		page: 0,
-		perPage: PER_PAGE,
+		page: 1,
+		number: DEFAULT_THEME_QUERY.number,
 	};
 	const cacheKey = context.path;
-
-	context.store.dispatch( query( queryParams ) );
-	context.store.dispatch( incrementThemesPage( false ) );
 
 	if ( shouldUseCache ) {
 		const cachedData = themesQueryCache.get( cacheKey );
 		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( cachedData.action );
+			context.store.dispatch( receiveThemes( cachedData.themes ), siteId );
 			context.renderCacheKey = context.path + cachedData.timestamp;
 			return next();
 		}
 	}
 
-	context.store.dispatch( fetchThemes( false ) )
-		.then( action => {
+	context.store.dispatch( requestThemes( siteId, query ) )
+		.then( () => {
 			if ( shouldUseCache ) {
+				const themes = getThemesForQuery( context.store.getState(), siteId, query );
 				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, { action, timestamp } );
+				themesQueryCache.set( cacheKey, { themes, timestamp } );
 				context.renderCacheKey = context.path + timestamp;
 				debug( `caching theme data key=${ cacheKey }` );
 			}

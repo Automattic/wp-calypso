@@ -13,7 +13,7 @@ import Icon from 'reader/list-item/icon';
 import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
-import FollowButton from 'components/follow-button/button';
+import FollowButton from 'blocks/follow-button/button';
 import SiteIcon from 'components/site-icon';
 
 const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, translate } ) => {

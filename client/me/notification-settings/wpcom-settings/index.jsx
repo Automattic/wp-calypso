@@ -79,7 +79,7 @@ const WPCOMNotifications = React.createClass( {
 				<p>
 					{ this.translate(
 						'We\'ll always send important emails regarding your account, security, ' +
-						'privacy, and purchase transactions, but you can get some fun extras, too!'
+						'privacy, and purchase transactions, but you can get some helpful extras, too.'
 					) }
 				</p>
 

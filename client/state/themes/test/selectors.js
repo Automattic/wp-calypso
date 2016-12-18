@@ -2,13 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	getThemes,
 	getTheme,
 	getThemeRequestErrors,
 	isRequestingTheme,
@@ -71,40 +69,10 @@ const mood = {
 
 describe( 'themes selectors', () => {
 	beforeEach( () => {
-		getThemes.memoizedSelector.cache.clear();
 		getTheme.memoizedSelector.cache.clear();
 		getThemesForQuery.memoizedSelector.cache.clear();
 		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
 		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
-	} );
-
-	describe( '#getThemes()', () => {
-		it( 'should return an array of theme objects for the site', () => {
-			const themeObjects = {
-				wpcom: {
-					mood
-				},
-				77203074: {
-					twentyfifteen,
-					twentysixteen
-				}
-			};
-			const state = {
-				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: themeObjects.wpcom
-						} ),
-						77203074: new ThemeQueryManager( {
-							items: themeObjects[ 77203074 ]
-						} )
-					},
-
-				}
-			};
-
-			expect( getThemes( state, 77203074 ) ).to.have.members( values( themeObjects[ 77203074 ] ) );
-		} );
 	} );
 
 	describe( '#getTheme()', () => {
@@ -457,6 +425,9 @@ describe( 'themes selectors', () => {
 	describe( '#getThemesLastPageForQuery()', () => {
 		it( 'should return null if the site query is not tracked', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {}
 				}
@@ -467,6 +438,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -489,6 +463,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return the last page value for a site query, even if including page param', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -511,6 +488,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return 1 if there are no found themes', () => {
 			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -525,6 +505,37 @@ describe( 'themes selectors', () => {
 					}
 				}
 			}, 2916284, { search: 'Umpteen' } );
+
+			expect( lastPage ).to.equal( 1 );
+		} );
+
+		it( 'should return 1 for a Jetpack site', () => {
+			const lastPage = getThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
 
 			expect( lastPage ).to.equal( 1 );
 		} );
@@ -543,6 +554,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return false if the query explicit value is not the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -565,6 +579,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query explicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -587,6 +604,9 @@ describe( 'themes selectors', () => {
 
 		it( 'should return true if the query implicit value is the last page', () => {
 			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {}
+				},
 				themes: {
 					queries: {
 						2916284: new ThemeQueryManager( {
@@ -603,6 +623,37 @@ describe( 'themes selectors', () => {
 					}
 				}
 			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( isLastPage ).to.be.true;
+		} );
+
+		it( 'should return true for a Jetpack site', () => {
+			const isLastPage = isThemesLastPageForQuery( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true
+						}
+					}
+				},
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Twenty"]]': {
+									itemKeys: [ 'twentysixteen' ],
+									found: 7
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Twenty' } );
 
 			expect( isLastPage ).to.be.true;
 		} );
@@ -864,11 +915,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
 						}
 					},
 					{
-						id: 'mood',
-						stylesheet: 'premium/mood'
+						id: 'mood'
 					}
 				);
 				expect( supportUrl ).to.equal( '/theme/mood/setup' );
@@ -884,11 +941,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { mood }
+								} )
+							}
 						}
 					},
 					{
-						id: 'mood',
-						stylesheet: 'premium/mood'
+						id: 'mood'
 					},
 					2916284
 				);
@@ -907,11 +970,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					}
 				);
 				expect( supportUrl ).to.be.null;
@@ -927,11 +996,17 @@ describe( 'themes selectors', () => {
 									URL: 'https://example.wordpress.com'
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					},
 					2916284
 				);
@@ -952,11 +1027,17 @@ describe( 'themes selectors', () => {
 									}
 								}
 							}
+						},
+						themes: {
+							queries: {
+								wpcom: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
-						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
+						id: 'twentysixteen'
 					},
 					77203074
 				);
@@ -996,11 +1077,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
 					}
 				},
 				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
+					id: 'mood'
 				},
 				2916284
 			);
@@ -1044,11 +1131,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
 					}
 				},
 				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
+					id: 'twentysixteen'
 				},
 				2916284
 			);
@@ -1065,11 +1158,17 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
 					}
 				},
 				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
+					id: 'mood'
 				},
 				2916284
 			);
@@ -1141,19 +1240,39 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeSignupUrl', () => {
 		it( 'given a free theme, should return the correct signup URL', () => {
-			const signupUrl = getThemeSignupUrl( {}, {
-				id: 'twentysixteen',
-				stylesheet: 'pub/twentysixteen'
-			} );
+			const signupUrl = getThemeSignupUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				{
+					id: 'twentysixteen'
+				}
+			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
 		} );
 
 		it( 'given a premium theme, should return the correct signup URL', () => {
-			const signupUrl = getThemeSignupUrl( {}, {
-				id: 'mood',
-				stylesheet: 'premium/mood'
-			} );
+			const signupUrl = getThemeSignupUrl(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				},
+				{
+					id: 'mood'
+				}
+			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
 		} );

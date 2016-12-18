@@ -9,8 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import FollowButtonContainer from 'components/follow-button';
-import FollowButton from 'components/follow-button/button';
+import FollowButtonContainer from 'blocks/follow-button';
+import FollowButton from 'blocks/follow-button/button';
 import * as stats from 'reader/stats';
 import {
 	recordFollow,

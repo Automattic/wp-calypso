@@ -49,7 +49,10 @@ export default React.createClass( {
 			this.props.jetpackVersion &&
 			versionCompare( this.props.jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<' )
 		);
-		const jetpackConnectExample = <JetpackExampleConnect url={ this.props.currentUrl } isLegacy={ isLegacyVersion } />;
+		const jetpackConnectExample = <JetpackExampleConnect
+			url={ this.props.currentUrl }
+			isLegacy={ isLegacyVersion }
+			onClick={ this.props.onClick } />;
 		const steps = {
 			installJetpack: {
 				title: this.translate( '1. Install Jetpack' ),
@@ -59,13 +62,13 @@ export default React.createClass( {
 					: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
 					'dashboard to install Jetpack. Click the blue install button.' ),
 				action: this.renderAlreadyHaveJetpackButton(),
-				example: <JetpackExampleInstall url={ this.props.currentUrl } />
+				example: <JetpackExampleInstall url={ this.props.currentUrl } onClick={ this.props.onClick } />
 			},
 			activateJetpackAfterInstall: {
 				title: this.translate( '2. Activate Jetpack' ),
 				text: this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ),
 				action: null,
-				example: <JetpackExampleActivate url={ this.props.currentUrl } isInstall={ true } />
+				example: <JetpackExampleActivate url={ this.props.currentUrl } isInstall={ true } onClick={ this.props.onClick } />
 			},
 			connectJetpackAfterInstall: {
 				title: this.translate( '3. Connect Jetpack' ),
@@ -78,7 +81,7 @@ export default React.createClass( {
 				text: this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. ' +
 					'Click the blue "Activate" link. ' ),
 				action: this.renderNotJetpackButton(),
-				example: <JetpackExampleActivate url={ this.props.currentUrl } isInstall={ false } />
+				example: <JetpackExampleActivate url={ this.props.currentUrl } isInstall={ false } onClick={ this.props.onClick } />
 			},
 			connectJetpack: {
 				title: this.translate( '2. Connect Jetpack' ),

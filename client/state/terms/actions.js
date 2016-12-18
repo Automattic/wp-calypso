@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, uniqueId } from 'lodash';
+import { filter, get, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,9 @@ import {
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
 import { editPost } from 'state/posts/actions';
+import { updateSiteSettings } from 'state/site-settings/actions';
 import { getSitePostsByTerm } from 'state/posts/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
 
 /**
@@ -83,6 +85,16 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 						}
 					} ) );
 				} );
+
+				// Update the default category if needed
+				const siteSettings = getSiteSettings( state, siteId );
+				if (
+					taxonomy === 'category' &&
+					get( siteSettings, [ 'default_category' ] ) === termId &&
+					updatedTerm.ID !== termId
+				) {
+					dispatch( updateSiteSettings( siteId, { default_category: updatedTerm.ID } ) );
+				}
 
 				return updatedTerm;
 			}

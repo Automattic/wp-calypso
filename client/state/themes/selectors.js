@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, get, pick } from 'lodash';
+import { includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -16,34 +16,15 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { isPremiumTheme, oldShowcaseUrl } from './utils';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
 	getSerializedThemesQueryWithoutPage,
-	isPremium
+	isPremium,
+	oldShowcaseUrl
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
-
-/**
- * Returns an array of theme objects by site ID.
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @return {Array}         Site themes
- */
-export const getThemes = createSelector(
-	( state, siteId ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
-			return [];
-		}
-
-		return manager.getItems();
-	},
-	( state ) => state.themes.queries
-);
 
 /**
  * Returns a theme object by site ID, theme ID pair.
@@ -120,7 +101,9 @@ export const getThemesForQuery = createSelector(
 			return null;
 		}
 
-		return themes;
+		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+		// over different pages) which we need to remove manually here for now.
+		return uniq( themes );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
@@ -187,6 +170,11 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 		return null;
 	}
 
+	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
+	if ( isJetpackSite( state, siteId ) ) {
+		return 1;
+	}
+
 	return Math.max( pages, 1 );
 }
 
@@ -224,7 +212,14 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		return themes.getItemsIgnoringPage( query );
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		if ( ! themesForQueryIgnoringPage ) {
+			return null;
+		}
+
+		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+		// over different pages) which we need to remove manually here for now.
+		return uniq( themesForQueryIgnoringPage );
 	},
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
@@ -341,7 +336,7 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
  * @return {?String}        Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, theme, siteId ) {
-	if ( ! theme || ! isPremiumTheme( theme ) ) {
+	if ( isJetpackSite( state, siteId ) || ! theme || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -384,7 +379,7 @@ export function getThemeHelpUrl( state, theme, siteId ) {
  * @return {?String}        Theme purchase URL
  */
 export function getThemePurchaseUrl( state, theme, siteId ) {
-	if ( ! isPremiumTheme( theme ) ) {
+	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -434,7 +429,7 @@ export function getThemeSignupUrl( state, theme ) {
 
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
-	if ( isPremiumTheme( theme ) ) {
+	if ( isThemePremium( state, theme.id ) ) {
 		url += '&premium=true';
 	}
 
@@ -519,9 +514,6 @@ export function hasActivatedTheme( state, siteId ) {
 
 /**
  * Whether a WPCOM theme given by its ID is premium.
- *
- * Note that we aren't using this selector yet since the necessary reducer (queries)
- * isn't wired yet!
  *
  * @param  {Object} state   Global state tree
  * @param  {Object} themeId Theme ID
