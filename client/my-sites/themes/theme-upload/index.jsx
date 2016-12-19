@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find } from 'lodash';
+import { includes, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,6 +39,9 @@ import {
 } from 'state/themes/upload-theme/selectors';
 import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
+import QueryEligibility from 'components/data/query-atat-eligibility';
+import { getEligibility } from 'state/automated-transfer/selectors';
+import EligibilityWarnings from 'blocks/eligibility-warnings';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -55,7 +58,13 @@ class Upload extends React.Component {
 		progressTotal: React.PropTypes.number,
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
+		isJetpackSite: React.PropTypes.bool,
+		isEligible: React.PropTypes.bool,
 	};
+
+	state = {
+		showEligibility: ! this.props.isJetpackSite,
+	}
 
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
@@ -64,10 +73,16 @@ class Upload extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
-			const { siteId, inProgress } = this.props;
+			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
+
+			this.setState( { showEligibility: ! nextProps.isJetpackSite } );
 		}
 	}
+
+	onProceedClick = () => {
+		this.setState( { showEligibility: false } );
+	};
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.complete && ! prevProps.complete ) {
@@ -220,31 +235,43 @@ class Upload extends React.Component {
 		);
 	}
 
+	renderUploadCard() {
+		const { inProgress, failed, uploadedTheme, complete } = this.props;
+		return (
+			<Card>
+				{ ! inProgress && ! complete && this.renderDropZone() }
+				{ inProgress && this.renderProgressBar() }
+				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+			</Card>
+		);
+	}
+
 	render() {
 		const {
 			translate,
-			inProgress,
 			complete,
-			failed,
 			siteId,
 			selectedSite,
 			themeId,
-			uploadedTheme,
+			isEligible,
 		} = this.props;
+
+		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
-				<Card>
-					{ ! inProgress && ! complete && this.renderDropZone() }
-					{ inProgress && this.renderProgressBar() }
-					{ complete && ! failed && uploadedTheme && this.renderTheme() }
-				</Card>
+				{ showEligibility && <EligibilityWarnings
+					isEligible={ isEligible }
+					backUrl="/design"
+					onProceed={ this.onProceedClick } /> }
+				{ ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -261,6 +288,10 @@ const UploadWithOptions = ( props ) => {
 			options={ [ 'tryandcustomize', 'activate' ] } />
 	);
 };
+
+const isEligible = ( ( eligibilityData ) => {
+	return isEmpty( eligibilityData.eligibilityHolds );
+} );
 
 export default connect(
 	( state ) => {
@@ -279,6 +310,7 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
+			isEligible: isEligible( getEligibility( state, siteId ) ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
