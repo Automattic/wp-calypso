@@ -53,11 +53,9 @@ class PluginAutomatedTransfer extends Component {
 		if ( COMPLETE === transferState ) {
 			this.setState( { transferComplete: true } );
 		}
-
 		if ( this.props.transferState !== transferState ) {
 			this.setState( { clickOutside: false } );
 		}
-
 		if (
 			this.state.shouldDisplay &&
 			! isTransferring &&
@@ -78,7 +76,6 @@ class PluginAutomatedTransfer extends Component {
 		if ( transferComplete ) {
 			return translate( 'Successfully installed %(plugin)s!', { args: { plugin: pluginName } } );
 		}
-
 		switch ( transferState ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: pluginName } } );
 			case SETUP : return translate( 'Now configuring your site. This may take a few minutes.' );
@@ -96,11 +93,10 @@ class PluginAutomatedTransfer extends Component {
 		if ( transferComplete ) {
 			return 'is-success';
 		}
-
-		switch ( transferState ) {
-			case CONFLICTS: return 'is-error';
-			default: return 'is-info';
+		if ( CONFLICTS === transferState ) {
+			return 'is-error';
 		}
+		return 'is-info';
 	}
 
 	getIcon = transferState => {
@@ -113,16 +109,14 @@ class PluginAutomatedTransfer extends Component {
 		if ( transferComplete ) {
 			return 'checkmark';
 		}
-
-		switch ( transferState ) {
-			case CONFLICTS: return 'notice';
-			default: return 'sync';
+		if ( CONFLICTS === transferState ) {
+			return 'notice';
 		}
+		return 'sync';
 	}
 
 	handleClickOutside( event ) {
-		const { isTransferring } = this.props;
-		if ( isTransferring ) {
+		if ( this.props.isTransferring ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
