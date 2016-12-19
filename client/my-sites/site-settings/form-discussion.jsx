@@ -255,7 +255,7 @@ module.exports = protectForm( React.createClass( {
 				step="1"
 				id="close_comments_days_old"
 				className="small-text"
-				value={ this.state.close_comments_days_old }
+				value={ 'undefined' === typeof this.state.close_comments_days_old ? 14 : this.state.close_comments_days_old }
 				onChange={ this.handleText }
 				disabled={ this.state.fetchingSettings }
 				onClick={ this.recordEvent.bind( this, 'Clicked Automatically Close Days Field' ) }
@@ -291,7 +291,7 @@ module.exports = protectForm( React.createClass( {
 				step="1"
 				min="0"
 				id="comments_per_page"
-				value={ this.state.comments_per_page }
+				value={ 'undefined' === typeof this.state.comments_per_page ? 50 : this.state.comments_per_page }
 				onChange={ this.handleText }
 				className="small-text"
 				disabled={ this.state.fetchingSettings }
@@ -491,7 +491,7 @@ module.exports = protectForm( React.createClass( {
 				step="1"
 				min="0"
 				className="small-text"
-				value={ this.state.comment_max_links }
+				value={ 'undefined' === typeof this.state.comment_max_links ? 2 : this.state.comment_max_links }
 				onChange={ this.handleText }
 				disabled={ this.state.fetchingSettings }
 				onClick={ this.recordEvent.bind( this, 'Clicked Comment Queue Link Count Field' ) }
