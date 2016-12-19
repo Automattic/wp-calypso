@@ -40,8 +40,8 @@ class DiscoverPostByline extends PostByline {
 	}
 
 	getSiteIcon = () => {
-		return null;
-		//return get( this.props.post, 'discover_metadata.attribution.avatar_url' );
+		//return null;
+		return get( this.props.post, 'discover_metadata.attribution.avatar_url' );
 	}
 
 	getFeedIcon = () => {
