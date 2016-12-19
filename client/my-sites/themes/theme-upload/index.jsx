@@ -308,10 +308,11 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpackSite: isJetpackSite( state, siteId ),
+			isJetpackSite: isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
@@ -321,7 +322,7 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
-			eligibilityData: getEligibility( state, siteId ),
+			eligibilityData: ( ! isJetpack ) && getEligibility( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
