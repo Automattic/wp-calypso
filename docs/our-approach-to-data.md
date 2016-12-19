@@ -44,21 +44,21 @@ __Advantages:__
 [Redux](http://redux.js.org/), described as a "predictable state container", is an evolution of the principles advocated in Flux. It is not a far departure from Flux, but is distinct in many ways:
 
 - There is typically a single store instance which maintains all state for the entire application
-- Action creators do not call to the global dispatcher directly, but rather return simple action objects which can be passed to the [store `dispatch` method](http://rackt.org/redux/docs/api/Store.html#dispatch)
+- Action creators do not call to the global dispatcher directly, but rather return simple action objects which can be passed to the [store `dispatch` method](http://redux.js.org/docs/api/Store.html#dispatch)
 - While Flux Stores are responsible for maintaining own state, Redux reducers are composable functions that manipulate specific parts of the global state "tree"
-- Since state is the [single source of truth](http://rackt.org/redux/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application, reducers tend to be much simpler and more transparent than Flux stores
+- Since state is the [single source of truth](http://redux.js.org/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application, reducers tend to be much simpler and more transparent than Flux stores
 
 __Identifying characteristics:__
 
 - Files exist within the `state` directory, mirroring the structure of the global tree
-- React bindings use [`react-redux`](https://github.com/rackt/react-redux) `connect`
+- React bindings use [`react-redux`](https://github.com/reactjs/react-redux) `connect`
 
 __Advantages:__
 
 - An arguably simpler abstraction to the same problems addressed by Facebook’s Flux implementation
 - Better suited for server-side rendering, as the singleton nature of Flux stores exposes the risk of leaking session data between requests
 - Encourages and often forces a developer toward writing functional, testable code
-- Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/rackt/react-redux)
+- Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/reactjs/react-redux)
 
 ## Current Recommendations
 
@@ -107,7 +107,7 @@ As mentioned above, new actions should be added to `action-types.js`. Action typ
 
 ### Data Normalization
 
-Because a Redux store is the [single source of truth](http://rackt.org/redux/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application state, it is important that all known data be tracked within the state tree and that it be well-structured. In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
+Because a Redux store is the [single source of truth](http://redux.js.org/docs/introduction/ThreePrinciples.html#single-source-of-truth) for the entire application state, it is important that all known data be tracked within the state tree and that it be well-structured. In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
 
 As an example, consider that there are many variations of a "user" in the application. A user may be the current user, a subscriber to a site, or someone who has left a comment on a story in your Reader feed. Each of these display user data in different ways, and in some cases retrieve the data from different sources. However, they can all be classified as a user, and relations between the user and a display context can be established through references.
 
@@ -171,7 +171,7 @@ Framed this way, we can consider two types of data components: app components an
 
 #### App components
 
-An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/rackt/react-redux) to assist in creating bindings between React components and the Redux store instance.
+An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/reactjs/react-redux) to assist in creating bindings between React components and the Redux store instance.
 
 Below is an example of an app component. It retrieves an array of posts for a given site and passes the posts to the component for rendering. If you're unfamiliar with the stateless function syntax for declaring components, refer to the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) for more information.
 
@@ -262,7 +262,7 @@ What are a few common use-cases for selectors?
 - Resolving references: A [normalized state tree](#data-normalization) is ideal from the standpoint of minimizing redundancy and synchronization concerns, but is not as developer-friendly to use. Selectors can be helpful in restoring convenient access to useful objects.
 - Derived data: A normalized state tree avoids storing duplicated data. However, it can be useful to request a value which is calculated based on state data. For example, it might be valuable to retrieve the hostname for a site, which can be calculated based on its URL property.
 - Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled. 
- - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with a library like [`reselect`](https://github.com/rackt/reselect)).
+ - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with a library like [`reselect`](https://github.com/reactjs/reselect)).
 
 ### UI State
 
