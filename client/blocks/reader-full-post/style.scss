@@ -257,6 +257,7 @@
 		}
 
 		.author-compact-profile__site-link {
+			flex: 1 0 0;
 			display: inline;
 
 			@include breakpoint( "<660px" ) {
