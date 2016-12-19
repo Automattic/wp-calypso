@@ -332,8 +332,15 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleResolve() {
-		this.retryingAuth = false;
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
+		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
+		this.retryingAuth = false;
+		if ( this.props.requestHasExpiredSecretError() ) {
+			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
+			window.location.href = queryObject.site + authUrl;
+			return;
+		}
+		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
 		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 	},
 
