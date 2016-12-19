@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -67,7 +68,8 @@ const EligibilityWarnings = props => {
 		translate,
 		backUrl,
 		isEligible,
-		eligibilityData
+		eligibilityData,
+		onProceed,
 	} = props;
 
 	const holdsMessage = getHoldsMessages( translate );
@@ -137,7 +139,7 @@ const EligibilityWarnings = props => {
 						{ translate( 'Cancel' ) }
 					</Button>
 
-					<Button primary={ true } disabled={ ! isEligible }>
+					<Button primary={ true } disabled={ ! isEligible } onClick={ onProceed }>
 						{ translate( 'Proceed' ) }
 					</Button>
 				</div>
@@ -149,7 +151,12 @@ const EligibilityWarnings = props => {
 EligibilityWarnings.propTypes = {
 	isEligible: PropTypes.bool.isRequired,
 	backUrl: PropTypes.string,
-	translate: PropTypes.func
+	translate: PropTypes.func,
+	onProceed: PropTypes.func,
+};
+
+EligibilityWarnings.defaultProps = {
+	onProceed: noop,
 };
 
 const mapStateToProps = state => {
