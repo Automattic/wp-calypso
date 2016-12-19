@@ -2,9 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import ReactDom from 'react-dom';
 import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
-import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,13 +20,9 @@ import FeedStore from 'lib/feed-store';
 import { recordTrackForPost, recordAction } from 'reader/stats';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from './suggestions';
-import SearchCard from 'blocks/reader-search-card';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import config from 'config';
-
-const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
 
 function RecommendedPosts( { post, site } ) {
 	function handlePostClick() {
@@ -71,29 +65,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 		this.setState( this.getStateFromStores( nextProps ) );
 	}
 
-	onCardClick = ( props, event ) => {
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
-			return;
-		}
-		const rootNode = ReactDom.findDOMNode( this );
-		const anchor = closest( event.target, 'a', true, rootNode );
-
-		if ( anchor && anchor.href.search( /\/read\/blogs\/|\/read\/feeds\// ) !== -1 ) {
-			return;
-		}
-
-		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
-			return;
-		}
-
-		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
-
-		event.preventDefault();
-		this.props.handleClick( this.props.post, {} );
-	}
-
-	onRefreshCardClick = ( post ) => {
+	onCardClick = ( post ) => {
 		recordTrackForPost( 'calypso_reader_searchcard_clicked', post );
 		this.props.handleClick( post, {} );
 	}
@@ -105,9 +77,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 	render() {
 		let CardComponent;
 
-		if ( ! isRefreshedStream ) {
-			CardComponent = SearchCard;
-		} else if ( isRecommendations ) {
+		if ( isRecommendations ) {
 			CardComponent = RecommendedPosts;
 		} else {
 			CardComponent = ReaderPostCard;
@@ -117,7 +87,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 			post={ this.props.post }
 			site={ this.props.site }
 			feed={ this.props.feed }
-			onClick={ isRefreshedStream ? this.onRefreshCardClick : this.onCardClick }
+			onClick={ this.onCardClick }
 			onCommentClick={ this.onCommentClick }
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 		/>;
@@ -233,7 +203,7 @@ const SearchStream = React.createClass( {
 	},
 
 	placeholderFactory( { key, ...rest } ) {
-		if ( isRefreshedStream && ! this.props.query ) {
+		if ( ! this.props.query ) {
 			return (
 				<div className="search-stream__recommendation-list-item" key={ key }>
 					<RelatedPostCard { ...rest } />
