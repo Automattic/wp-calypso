@@ -162,6 +162,7 @@ const PostSharing = React.createClass( {
 							<div className="posts__post-share-form">
 								{ this.renderMessage() }
 								<Button
+									className="posts__post-share-button"
 									primary={ true }
 									onClick={ this.sharePost }
 									disabled={ this.isButtonDisabled() }
