@@ -271,7 +271,7 @@ class Upload extends React.Component {
 					isEligible={ isEligible }
 					backUrl="/design"
 					onProceed={ this.onProceedClick } /> }
-				{ ( ! showEligibility ) && this.renderUploadCard() }
+				{ ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
