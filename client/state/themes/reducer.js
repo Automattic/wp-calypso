@@ -9,6 +9,19 @@ import { mapValues, omit } from 'lodash';
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
 import {
+	ACTIVE_THEME_REQUEST,
+	ACTIVE_THEME_REQUEST_SUCCESS,
+	ACTIVE_THEME_REQUEST_FAILURE,
+	DESERIALIZE,
+	SERIALIZE,
+	SERVER_DESERIALIZE,
+	THEME_ACTIVATE_REQUEST,
+	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_CLEAR_ACTIVATED,
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
@@ -16,16 +29,6 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_CLEAR_ACTIVATED,
-	ACTIVE_THEME_REQUEST,
-	ACTIVE_THEME_REQUEST_SUCCESS,
-	ACTIVE_THEME_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
-	SERVER_DESERIALIZE,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -148,6 +151,34 @@ export function themeRequests( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
 					[ action.themeId ]: THEME_REQUEST === action.type
+				} )
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
+ * Returns the updated Jetpack site wpcom theme install requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, theme ID pairing to a
+ * boolean reflecting whether a request for the theme install is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function themeInstalls( state = {}, action ) {
+	switch ( action.type ) {
+		case THEME_INSTALL:
+		case THEME_INSTALL_SUCCESS:
+		case THEME_INSTALL_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ action.themeId ]: THEME_INSTALL === action.type
 				} )
 			} );
 
@@ -314,6 +345,7 @@ export default combineReducers( {
 	queryRequests,
 	queryRequestErrors,
 	lastQuery,
+	themeInstalls,
 	themeRequests,
 	themeRequestErrors,
 	activeThemes,

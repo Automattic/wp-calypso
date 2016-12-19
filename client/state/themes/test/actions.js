@@ -15,18 +15,21 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
+	THEME_TRANSFER_STATUS_FAILURE,
+	THEME_TRANSFER_STATUS_RECEIVE,
 	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_TRANSFER_INITIATE_REQUEST,
-	THEME_TRANSFER_INITIATE_SUCCESS,
-	THEME_TRANSFER_INITIATE_FAILURE,
 } from 'state/action-types';
 import {
 	themeActivated,
@@ -40,6 +43,7 @@ import {
 	requestTheme,
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
+	installTheme
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -806,6 +810,94 @@ describe( 'actions', () => {
 					siteId,
 				} );
 				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
+			} );
+		} );
+	} );
+
+	describe( '#installTheme', () => {
+		const successResponse = {
+			id: 'karuna-wpcom',
+			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
+			active: false,
+			name: 'Karuna',
+			theme_uri: 'https://wordpress.com/themes/karuna/',
+			description: 'Karuna is a clean business theme designed with health and wellness-focused sites in mind.' +
+				' With bright, bold colors, prominent featured images, and support for customer testimonials',
+			author: 'Automattic',
+			author_uri: 'http://wordpress.com/themes/',
+			version: '1.1.0',
+			autoupdate: false,
+			log: [
+				[
+					'Unpacking the package&#8230;',
+					'Installing the theme&#8230;',
+					'Theme installed successfully.'
+				]
+			]
+		};
+
+		const downloadFailureResponse = {
+			status: 400,
+			code: 'problem_fetching_theme',
+			message: 'Problem downloading theme'
+		};
+
+		const alreadyInstalledFailureResponse = {
+			status: 400,
+			code: 'theme_already_installed',
+			message: 'The theme is already installed'
+		};
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
+				.reply( 200, successResponse )
+				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
+				.reply( 400, downloadFailureResponse )
+				.post( '/rest/v1.1/sites/2211667/themes/pinboard-wpcom/install' )
+				.reply( 400, alreadyInstalledFailureResponse );
+		} );
+
+		it( 'should dispatch install theme request action when triggered', () => {
+			installTheme( 'karuna-wpcom', 2211667 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: THEME_INSTALL,
+				siteId: 2211667,
+				themeId: 'karuna-wpcom'
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme install request success action when request completes', () => {
+			return installTheme( 'karuna-wpcom', 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_INSTALL_SUCCESS,
+					siteId: 2211667,
+					themeId: 'karuna-wpcom',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
+			return installTheme( 'typist-wpcom', 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_INSTALL_FAILURE,
+					siteId: 2211667,
+					themeId: 'typist-wpcom',
+					error: sinon.match( { message: 'Problem downloading theme' } ),
+				} );
+			} );
+		} );
+
+		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
+			return installTheme( 'pinboard-wpcom', 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_INSTALL_FAILURE,
+					siteId: 2211667,
+					themeId: 'pinboard-wpcom',
+					error: sinon.match( { message: 'The theme is already installed' } ),
+				} );
 			} );
 		} );
 	} );
