@@ -146,11 +146,11 @@ export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dis
 	} ) )
 );
 
-export const onThemeUploadSuccess = ( dispatch, { themeId } ) => {
+export const onThemeUploadSuccess = ( dispatch, { theme } ) => {
 	return dispatch( successNotice(
 		translate( 'Successfully uploaded theme %(name)s', {
 			args: {
-				name: themeId
+				name: theme.name
 			}
 		} ),
 		{ duration: 5000 }
