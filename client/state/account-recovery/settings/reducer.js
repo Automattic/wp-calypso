@@ -18,36 +18,33 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 } from 'state/action-types';
 
+const setTargetState = ( value ) => ( state, { target } ) => ( {
+	...state,
+	[ target ]: value,
+} );
+
 const isUpdating = createReducer( {}, {
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: true,
-	} ),
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: false,
-	} ),
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: false,
-	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE ]: setTargetState( true ),
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: setTargetState( false ),
+	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: setTargetState( false ),
 } );
 
 const isDeleting = createReducer( {}, {
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: true,
-	} ),
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: false,
-	} ),
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: ( state, { target } ) => ( {
-		...state,
-		[ target ]: false,
-	} ),
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE ]: setTargetState( true ),
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: setTargetState( false ),
+	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: setTargetState( false ),
+} );
+
+const isResending = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION ]: setTargetState( true ),
+	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS ]: setTargetState( false ),
+	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: setTargetState( false ),
 } );
 
 const convertPhoneResponse = ( phoneResponse ) => {
@@ -132,4 +129,5 @@ export default combineReducers( {
 	isUpdating,
 	isDeleting,
 	isReady,
+	isResending,
 } );
