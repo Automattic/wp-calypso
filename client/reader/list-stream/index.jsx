@@ -13,7 +13,6 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 import ListMissing from './missing';
-import OldStreamHeader from 'reader/stream-header';
 import ListStreamHeader from './header';
 import { followList, unfollowList } from 'state/reader/lists/actions';
 import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
@@ -62,13 +61,11 @@ const ListStream = React.createClass( {
 			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
-		const StreamHeader = config.isEnabled( 'reader/refresh/stream' ) ? ListStreamHeader : OldStreamHeader;
-
 		return (
 			<Stream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
-				<StreamHeader
+				<ListStreamHeader
 					isPlaceholder={ ! list }
 					icon={ <svg className="gridicon gridicon__list" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M9 19h10v-2H9v2zm0-6h10v-2H9v2zm0-8v2h10V5H9zm-3-.5c-.828 0-1.5.672-1.5 1.5S5.172 7.5 6 7.5 7.5 6.828 7.5 6 6.828 4.5 6 4.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5z"/></g></svg> }
 					title={ title }
