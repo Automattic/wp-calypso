@@ -415,29 +415,24 @@ export function clearActivated( siteId ) {
  * After installataion it switches page to the customizer
  * Requires Jetpack 4.4
  *
+* @param  {String}   themeId      WP.com Theme ID
  * @param  {String}   siteId       Jetpack Site ID
- * @param  {String}   wpcomThemeId WP.com Theme ID
  * @return {Function}              Action thunk
  */
 export function tryAndCustomizeWpcomThemeOnJetpack( themeId, siteId ) {
-	//Add -wpcom suffix. This suffix tells the endpoint that we want to
-	//install WordPress.com theme. Without the suffix endpoint would look
-	//for theme in .org
-	const suffixedThemeId = themeId + '-wpcom';
-
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
 			siteId,
-			suffixedThemeId
+			themeId
 		} );
 
-		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
+		return installTheme( themeId, siteId )
 			.then( ( theme ) => {
 				dispatch( {
 					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_SUCCESS,
 					siteId,
-					suffixedThemeId
+					themeId
 				} );
 				const url = getThemeCustomizeUrl( getState(), theme, siteId );
 				page( url );
@@ -445,7 +440,7 @@ export function tryAndCustomizeWpcomThemeOnJetpack( themeId, siteId ) {
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_FAILURE,
-					themeId: suffixedThemeId,
+					themeId: themeId,
 					siteId,
 					error
 				} );
