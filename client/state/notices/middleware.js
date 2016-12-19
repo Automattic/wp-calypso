@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { find, includes, truncate } from 'lodash';
+import { truncate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,11 +31,6 @@ import {
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE,
-	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_TRANSFER_INITIATE_FAILURE,
-	THEME_TRANSFER_STATUS_FAILURE,
-	THEME_UPLOAD_FAILURE,
-	THEME_UPLOAD_SUCCESS
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -146,36 +141,6 @@ export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dis
 	} ) )
 );
 
-export const onThemeUploadSuccess = ( dispatch, { theme } ) => {
-	return dispatch( successNotice(
-		translate( 'Successfully uploaded theme %(name)s', {
-			args: {
-				name: theme.name
-			}
-		} ),
-		{ duration: 5000 }
-	) );
-};
-
-export const onThemeUploadFailure = ( dispatch, { error } ) => {
-	const errorCauses = {
-		exists: translate( 'Upload problem: Theme already installed on site.' ), // folder_exists
-		'already installed': translate( 'Upload problem: Theme already installed on site.' ), // theme_already_installed
-		'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
-		incompatible: translate( 'Upload problem: Incompatible theme.' ),
-	};
-
-	const errorString = JSON.stringify( error );
-
-	const cause = find( errorCauses, ( value, key ) => {
-		return includes( errorString, key );
-	} );
-
-	return dispatch(
-		errorNotice( cause || translate( 'Problem uploading theme' ) )
-	);
-};
-
 /**
  * Handler action type mapping
  */
@@ -204,11 +169,6 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
-	[ THEME_ACTIVATE_REQUEST_FAILURE ]: onThemeUploadFailure,
-	[ THEME_TRANSFER_INITIATE_FAILURE ]: onThemeUploadFailure,
-	[ THEME_TRANSFER_STATUS_FAILURE ]: onThemeUploadFailure,
-	[ THEME_UPLOAD_FAILURE ]: onThemeUploadFailure,
-	[ THEME_UPLOAD_SUCCESS ]: onThemeUploadSuccess
 };
 
 /**
