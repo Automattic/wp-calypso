@@ -60,11 +60,8 @@ class Upload extends React.Component {
 		installing: React.PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showEligibility: true,
-		};
+	state = {
+		showEligibility: true,
 	}
 
 	componentDidMount() {
