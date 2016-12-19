@@ -4,11 +4,8 @@
 import {
 	MEDIA_ITEMS_RECEIVE,
 	MEDIA_FILE_UPLOAD,
-	MEDIA_FILE_UPLOAD_FAILURE,
-	MEDIA_FILE_UPLOAD_SUCCESS,
 	MEDIA_FILE_UPLOADS_ENQUEUE
 } from 'state/action-types';
-import wpcom from 'lib/wp';
 
 /**
  * Returns an action object to be used in signalling that a media item has been
@@ -47,32 +44,10 @@ export function receiveMediaItems( siteId, items ) {
  * @return {Function}             Action thunk
  */
 export function uploadFile( siteId, file ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: MEDIA_FILE_UPLOAD,
-			siteId,
-			file
-		} );
-
-		// Determine upload mechanism by object type
-		const isUrl = 'string' === typeof file;
-		const addHandler = isUrl ? 'addMediaUrls' : 'addMediaFiles';
-
-		return wpcom.site( siteId )[ addHandler ]( file ).then( ( { media } ) => {
-			// Success response always returns media array, even single upload
-			dispatch( receiveMediaItems( siteId, media ) );
-			dispatch( {
-				type: MEDIA_FILE_UPLOAD_SUCCESS,
-				siteId,
-				file
-			} );
-		} ).catch( () => {
-			dispatch( {
-				type: MEDIA_FILE_UPLOAD_FAILURE,
-				siteId,
-				file
-			} );
-		} );
+	return {
+		type: MEDIA_FILE_UPLOAD,
+		siteId,
+		file
 	};
 }
 
