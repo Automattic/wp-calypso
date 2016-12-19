@@ -144,9 +144,7 @@
 }
 
 .purchase-detail__button {
-	&[href] {
-		text-align: center;
-	}
+	text-align: center;
 
 	&:not(.clipboard-button) {
 		width: 80%;
