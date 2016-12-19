@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import wrapWithClickOutside from 'react-click-outside';
 
 /**
@@ -41,34 +40,36 @@ class PluginAutomatedTransfer extends Component {
 	};
 
 	componentWillMount() {
-		if ( transferStates.COMPLETE === this.props.transferState ) {
+		const { COMPLETE } = transferStates;
+		const { transferState } = this.props;
+		if ( ! transferState || COMPLETE === transferState ) {
 			this.setState( { shouldDisplay: false } );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { COMPLETE, CONFLICTS } = transferStates;
-		const { isTransferring, transferState } = nextProps;
+		const { COMPLETE } = transferStates;
+		const newState = {};
 
-		if ( COMPLETE === transferState ) {
-			this.setState( { transferComplete: true } );
+		if ( COMPLETE === nextProps.transferState ) {
+			newState.transferComplete = true;
+		} else {
+			if ( this.props.transferState !== nextProps.transferState ) {
+				newState.clickOutside = false;
+			}
+
+			if ( ! this.state.transferComplete ) {
+				newState.shouldDisplay = nextProps.transferState;
+			}
 		}
-		if ( this.props.transferState !== transferState ) {
-			this.setState( { clickOutside: false } );
-		}
-		if (
-			this.state.shouldDisplay &&
-			! isTransferring &&
-			! includes( [ COMPLETE, CONFLICTS ], transferState )
-		) {
-			this.setState( { shouldDisplay: false } );
-		}
+
+		this.setState( newState );
 	}
 
 	getNoticeText = ( pluginName = '' ) => {
+		const { START, SETUP, CONFLICTS } = transferStates;
 		const { transferState, translate } = this.props;
 		const { clickOutside, transferComplete } = this.state;
-		const { START, SETUP, CONFLICTS } = transferStates;
 
 		if ( clickOutside ) {
 			return translate( "Don't leave quite yet! Just a bit longer." );
@@ -116,7 +117,7 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	handleClickOutside( event ) {
-		if ( this.props.isTransferring ) {
+		if ( this.props.isTransferring && ! this.state.transferComplete ) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
@@ -124,9 +125,9 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	render() {
+		const { CONFLICTS } = transferStates;
 		const { plugin, transferState, translate } = this.props;
 		const { shouldDisplay } = this.state;
-		const { CONFLICTS } = transferStates;
 
 		if ( ! shouldDisplay ) {
 			return null;
