@@ -711,7 +711,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch success on status complete', () => {
-			pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
+			return pollThemeTransferStatus( siteId, 1 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId,
@@ -723,9 +723,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should time-out if status never complete', ( done ) => {
-			pollThemeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
-				done();
+		it( 'should time-out if status never complete', () => {
+			return pollThemeTransferStatus( siteId, 2, 10, 25 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
@@ -735,9 +734,8 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch status update', ( done ) => {
-			pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
-				done();
+		it( 'should dispatch status update', () => {
+			return pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				// Two 'progress' then a 'complete'
 				expect( spy ).to.have.been.calledThrice;
 				expect( spy ).to.have.been.calledWith( {
@@ -760,7 +758,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure on receipt of error', () => {
-			pollThemeTransferStatus( siteId, 4 )( spy ).then( () => {
+			return pollThemeTransferStatus( siteId, 4 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
@@ -783,7 +781,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch success', () => {
-			initiateThemeTransfer( siteId )( spy ).then( () => {
+			return initiateThemeTransfer( siteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				expect( spy ).to.have.been.calledWith( {
@@ -802,7 +800,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure on error', () => {
-			initiateThemeTransfer( siteId )( spy ).catch( () => {
+			return initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledOnce;
 
 				expect( spy ).to.have.been.calledWithMatch( {
