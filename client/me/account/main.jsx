@@ -143,8 +143,8 @@ const Account = React.createClass( {
 	},
 
 	thankTranslationContributors() {
-		const { translate } = this.props;
-		const locale = this.props.userSettings.getSetting( 'language' );
+		const { translate, userSettings } = this.props;
+		const locale = userSettings.getSetting( 'language' );
 		if ( ! locale || locale === 'en' ) {
 			return;
 		}
@@ -457,7 +457,7 @@ const Account = React.createClass( {
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
 	renderAccountFields() {
-		const { translate } = this.props;
+		const { translate, userSettings } = this.props;
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
@@ -518,7 +518,7 @@ const Account = React.createClass( {
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
-					disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() || this.hasEmailValidationError() }
+					disabled={ ! userSettings.hasUnsavedSettings() || this.getDisabledState() || this.hasEmailValidationError() }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
 					{ this.state.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
