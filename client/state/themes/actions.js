@@ -419,7 +419,7 @@ export function clearActivated( siteId ) {
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function tryAndCustomizeWpcomThemeOnJetpack( themeId, siteId ) {
+function installAndTryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
@@ -446,6 +446,21 @@ export function tryAndCustomizeWpcomThemeOnJetpack( themeId, siteId ) {
 				} );
 			} );
 	};
+}
+
+/**
+ * thin wrapper arround installAndTryAndCustomize so it can be used int theme action
+ *
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
+ */
+export function installWpcomThemeAndTryAndCustomize( themeId, siteId ) {
+	//Add -wpcom suffix. This suffix tells the endpoint that we want to
+	//install WordPress.com theme. Without the suffix endpoint would look
+	//for theme in .org
+	const suffixedThemeId = themeId + '-wpcom';
+	return installAndTryAndCustomize( suffixedThemeId, siteId );
 }
 
 /**
