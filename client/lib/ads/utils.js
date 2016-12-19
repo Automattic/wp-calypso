@@ -16,8 +16,9 @@ export function canAccessWordads( site ) {
 			return true;
 		}
 
+		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
 		return site.options &&
-			site.options.wordads &&
+			( site.options.wordads || jetpackPremium ) &&
 			userCan( 'manage_options', site ) &&
 			( ! site.jetpack || config.isEnabled( 'manage/ads/jetpack' ) );
 	}
