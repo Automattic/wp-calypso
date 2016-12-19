@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +31,6 @@ import {
 	isUploadComplete,
 	hasUploadFailed,
 	getUploadedThemeId,
-	getUploadError,
 	getUploadProgressTotal,
 	getUploadProgressLoaded,
 	isInstallInProgress,
@@ -51,7 +49,6 @@ class Upload extends React.Component {
 		complete: React.PropTypes.bool,
 		failed: React.PropTypes.bool,
 		uploadedTheme: React.PropTypes.object,
-		error: React.PropTypes.object,
 		progressTotal: React.PropTypes.number,
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
@@ -67,46 +64,6 @@ class Upload extends React.Component {
 			const { siteId, inProgress } = this.props;
 			! inProgress && this.props.clearThemeUpload( siteId );
 		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.complete && ! prevProps.complete ) {
-			this.successMessage();
-		} else if ( this.props.failed && ! prevProps.failed ) {
-			this.failureMessage();
-		}
-	}
-
-	successMessage() {
-		const { translate, uploadedTheme, themeId } = this.props;
-		notices.success(
-			translate( 'Successfully uploaded theme %(name)s', {
-				args: {
-					// using themeId lets us show a message before theme data arrives
-					name: uploadedTheme ? uploadedTheme.name : themeId
-				}
-			} ),
-			{ duration: 5000 }
-		);
-	}
-
-	failureMessage() {
-		const { translate, error } = this.props;
-
-		debug( 'Error', error );
-
-		const errorCauses = {
-			exists: translate( 'Upload problem: Theme already installed on site.' ),
-			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
-			incompatible: translate( 'Upload problem: Incompatible theme.' ),
-		};
-
-		const errorString = JSON.stringify( error );
-		const cause = find( errorCauses, ( v, key ) => {
-			return includes( errorString, key );
-		} );
-
-		notices.error( cause || translate( 'Problem uploading theme' ) );
 	}
 
 	onFileSelect = ( files ) => {
@@ -275,7 +232,6 @@ export default connect(
 			failed: hasUploadFailed( state, siteId ),
 			themeId,
 			uploadedTheme: getTheme( state, siteId, themeId ),
-			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
