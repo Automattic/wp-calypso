@@ -115,7 +115,10 @@ const PostSharing = React.createClass( {
 		}
 
 		const activeConnectionIds = without(
-			map( this.props.connections, connection => connection.keyring_connection_ID ),
+			map(
+				this.props.connections.filter( connection => connection.status !== 'broken' ),
+				connection => connection.keyring_connection_ID
+			),
 			...this.state.skipped
 		);
 
