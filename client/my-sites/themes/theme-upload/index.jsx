@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEqual, isEmpty } from 'lodash';
+import { includes, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,10 +58,12 @@ class Upload extends React.Component {
 		progressTotal: React.PropTypes.number,
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
+		isJetpackSite: React.PropTypes.bool,
+		isEligible: React.PropTypes.bool,
 	};
 
 	state = {
-		showEligibility: true,
+		showEligibility: ! this.props.isJetpackSite,
 	}
 
 	componentDidMount() {
@@ -71,29 +73,11 @@ class Upload extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
-			const { siteId, inProgress } = this.props;
+			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
+
+			this.setState( { showEligibility: ! nextProps.isJetpackSite } );
 		}
-
-		if ( ! isEqual( this.props.eligibilityData, nextProps.eligibilityData ) ||
-			( nextProps.siteId !== this.props.siteId ) ) {
-			this.setState( {
-				showEligibility: this.showEligibility( nextProps.eligibilityData ),
-			} );
-		}
-	}
-
-	showEligibility( eligibilityData ) {
-		if ( this.props.isJetpackSite || ! eligibilityData ) {
-			return false;
-		}
-
-		return ! isEmpty( eligibilityData.eligibilityHolds ) ||
-			! isEmpty( eligibilityData.eligibilityWarnings );
-	}
-
-	isEligible( eligibilityData ) {
-		return eligibilityData && isEmpty( eligibilityData.eligibilityHolds );
 	}
 
 	onProceedClick = () => {
@@ -269,8 +253,10 @@ class Upload extends React.Component {
 			siteId,
 			selectedSite,
 			themeId,
-			eligibilityData,
+			isEligible,
 		} = this.props;
+
+		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
 
 		return (
 			<Main>
@@ -281,12 +267,11 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
-				{ this.state.showEligibility && <EligibilityWarnings
-					isEligible={ this.isEligible( eligibilityData ) }
-					eligibilityData={ eligibilityData }
+				{ showEligibility && <EligibilityWarnings
+					isEligible={ isEligible }
 					backUrl="/design"
 					onProceed={ this.onProceedClick } /> }
-				{ ! this.state.showEligibility && this.renderUploadCard() }
+				{ ( ! showEligibility ) && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -304,15 +289,18 @@ const UploadWithOptions = ( props ) => {
 	);
 };
 
+const isEligible = ( ( eligibilityData ) => {
+	return isEmpty( eligibilityData.eligibilityHolds );
+} );
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpackSite: isJetpack,
+			isJetpackSite: isJetpackSite( state, siteId ),
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
@@ -322,7 +310,7 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
-			eligibilityData: ( ! isJetpack ) && getEligibility( state, siteId ),
+			isEligible: isEligible( getEligibility( state, siteId ) ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
