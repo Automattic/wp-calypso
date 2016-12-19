@@ -26,6 +26,7 @@ import {
 	updateAccountRecoveryPhone,
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryEmail,
+	resendAccountRecoveryEmailValidation,
 } from 'state/account-recovery/settings/actions';
 
 import {
@@ -85,7 +86,9 @@ const SecurityCheckup = React.createClass( {
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
-					<RecoveryEmailValidationNotice />
+					<RecoveryEmailValidationNotice
+						onResend={ this.props.resendAccountRecoveryEmailValidation }
+					/>
 				</CompactCard>
 
 				<CompactCard>
@@ -123,5 +126,6 @@ export default connect(
 		deleteAccountRecoveryEmail,
 		updateAccountRecoveryPhone,
 		deleteAccountRecoveryPhone,
+		resendAccountRecoveryEmailValidation,
 	}
 )( localize( SecurityCheckup ) );

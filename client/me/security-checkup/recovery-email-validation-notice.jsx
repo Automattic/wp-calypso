@@ -14,6 +14,7 @@ class RecoveryEmailValidationNotice extends Component {
 	render() {
 		const {
 			translate,
+			onResend,
 		} = this.props;
 
 		return (
@@ -23,7 +24,7 @@ class RecoveryEmailValidationNotice extends Component {
 						'Check your inbox for a confirmation link.' ) }
 				showDismiss={ false }
 			>
-				<NoticeAction href="#">
+				<NoticeAction href="#" onClick={ onResend }>
 					{ translate( 'Resend' ) }
 				</NoticeAction>
 			</Notice>
