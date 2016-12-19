@@ -1,6 +1,6 @@
 $follow-button-gray-disabled: lighten( $gray, 20% );
 
-.follow-button {
+.follow-button, button.follow-button {
 
 	.gridicon__follow {
 		opacity: 1;
@@ -101,7 +101,6 @@ $follow-button-gray-disabled: lighten( $gray, 20% );
 }
 
 .follow-button__label {
-
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
