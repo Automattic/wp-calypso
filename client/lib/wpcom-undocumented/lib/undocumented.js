@@ -645,11 +645,12 @@ Undocumented.prototype.getStoredCards = function( fn ) {
  * @param {int|string} [siteId] The site ID
  * @param {Function} [callback] The callback function called with arguments error, data
  * @api public
+ * @return {Promise} A Promise to resolve when complete
  */
 Undocumented.prototype.menus = function( siteId, callback ) {
 	debug( '/sites/:site_id/menus query' );
 
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/menus' }, callback );
+	return this.wpcom.withLocale().req.get( { path: '/sites/' + siteId + '/menus' }, callback );
 };
 
 /**
