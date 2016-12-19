@@ -699,13 +699,13 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/1` )
-				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.reply( 200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' } )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/2` ).thrice()
 				.reply( 200, { status: 'stuck', message: 'jammed' } )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` ).twice()
 				.reply( 200, { status: 'progress', message: 'in progress' } )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/3` )
-				.reply( 200, { status: 'complete', message: 'all done', themeId: 'mood' } )
+				.reply( 200, { status: 'complete', message: 'all done', uploaded_theme_slug: 'mood' } )
 				.get( `/rest/v1.1/sites/${ siteId }/automated-transfers/status/4` )
 				.reply( 400, 'something wrong' );
 		} );
