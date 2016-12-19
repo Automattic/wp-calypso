@@ -18,6 +18,8 @@ function hasDiscoverSlug( post, searchSlug ) {
 	return !! ( metaData && find( metaData, { slug: searchSlug } ) );
 }
 
+export const discoverBlogId = config( 'discover_blog_id' );
+
 export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }
@@ -41,13 +43,13 @@ export function getSiteUrl( post ) {
 }
 
 export function hasSource( post ) {
-	return this.isDiscoverPost( post ) && ! this.isDiscoverSitePick( post );
+	return isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 }
 
 export function getSourceData( post ) {
 	const sourceData = get( post, 'discover_metadata.featured_post_wpcom_data' );
 
-	if ( sourceData && ! this.isDiscoverSitePick( post ) ) {
+	if ( sourceData && ! isDiscoverSitePick( post ) ) {
 		return {
 			blogId: get( sourceData, 'blog_id' ),
 			postId: get( sourceData, 'post_id' )
