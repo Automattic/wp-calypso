@@ -473,6 +473,7 @@ export function uploadTheme( siteId, file ) {
 					type: THEME_UPLOAD_SUCCESS,
 					siteId,
 					themeId: theme.id,
+					theme
 				} );
 			} )
 			.catch( error => {
