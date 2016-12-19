@@ -279,7 +279,6 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 				url
 			} );
-			tracksEvent( dispatch, 'calyspo_jpc_xmlrpc_error', { error: queryObject.authorizeError } );
 			externalRedirect( url );
 		};
 	},
