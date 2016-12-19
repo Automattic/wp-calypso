@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
@@ -151,12 +150,8 @@ module.exports = {
 			followingStore = feedStreamFactory( 'following' ),
 			mcKey = 'following';
 
-		let recommendationsStore = null;
-		if ( config.isEnabled( 'reader/refresh/stream' ) ) {
-			// custom_recs_posts_with_images instead of recommendations_posts because we only want those with images for now
-			recommendationsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
-			recommendationsStore.perPage = 4;
-		}
+		const recommendationsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
+		recommendationsStore.perPage = 4;
 
 		ensureStoreLoading( followingStore, context );
 
