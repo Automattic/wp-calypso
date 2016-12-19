@@ -253,6 +253,9 @@ const LoggedInForm = React.createClass( {
 			! props.requestHasXmlrpcError() &&
 			! props.requestHasExpiredSecretError()
 		) {
+			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
+			// Any other type of error, we will immediately and automatically retry the request as many times
+			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
 			this.props.retryAuth( queryObject.site, attempts + 1 );
@@ -336,10 +339,15 @@ const LoggedInForm = React.createClass( {
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
 		if ( this.props.requestHasExpiredSecretError() ) {
+			// In this case, we need to re-issue the secret.
+			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
 			window.location.href = queryObject.site + authUrl;
 			return;
 		}
+		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
+		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
+		// legacy functions on the client.
 		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
 		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 	},
