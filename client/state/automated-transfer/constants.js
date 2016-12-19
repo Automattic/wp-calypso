@@ -2,7 +2,6 @@ export const transferStates = {
 	INQUIRING: 'inquiring',
 	START: 'start',
 	SETUP: 'setup',
-	LEAVING: 'leaving',
 	CONFLICTS: 'conflicts',
 	COMPLETE: 'complete',
 };
