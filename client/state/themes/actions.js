@@ -427,10 +427,10 @@ export function activateWpcomThemeOnJetpack( themeId, siteId, source = 'unknown'
 			themeId: suffixedThemeId,
 			siteId,
 		} );
-		dispatch( installTheme( suffixedThemeId, siteId ) )
+		return dispatch( installTheme( suffixedThemeId, siteId ) )
 			.then( () => {
-				dispatch( activateTheme( suffixedThemeId, siteId, source, purchased )
-			); } )
+				dispatch( activateTheme( suffixedThemeId, siteId, source, purchased ) );
+			} )
 			.catch( () => {
 				dispatch( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
