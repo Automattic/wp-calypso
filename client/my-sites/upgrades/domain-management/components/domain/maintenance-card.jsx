@@ -12,7 +12,7 @@ import EmptyContent from 'components/empty-content';
 
 const MaintenanceCard = ( { domains, selectedDomainName, translate } ) => {
 	const domain = getSelectedDomain( { domains, selectedDomainName } ),
-		tld = getTld( domain );
+		tld = getTld( domain.name );
 
 	return (
 		<EmptyContent

@@ -179,10 +179,10 @@ function hasMappedDomain( domains ) {
 	return getMappedDomains( domains ).length > 0;
 }
 
-function getTld( domain ) {
-	const lastIndexOfDot = domain.name.lastIndexOf( '.' );
+function getTld( domainName ) {
+	const lastIndexOfDot = domainName.lastIndexOf( '.' );
 
-	return lastIndexOfDot !== -1 && domain.name.substring( lastIndexOfDot + 1 );
+	return lastIndexOfDot !== -1 && domainName.substring( lastIndexOfDot + 1 );
 }
 
 export {
