@@ -17,9 +17,6 @@ import {
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
-	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
-	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_SUCCESS,
-	THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_REQUEST,
@@ -384,6 +381,7 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
+				return theme;
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -392,6 +390,7 @@ export function installTheme( themeId, siteId ) {
 					themeId,
 					error
 				} );
+				return error;
 			} );
 	};
 }
@@ -415,35 +414,16 @@ export function clearActivated( siteId ) {
  * After installataion it switches page to the customizer
  * Requires Jetpack 4.4
  *
-* @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   themeId      WP.com Theme ID
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-function installAndTryAndCustomize( themeId, siteId ) {
+export function installAndTryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		dispatch( {
-			type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST,
-			siteId,
-			themeId
-		} );
-
-		return installTheme( themeId, siteId )
+		return dispatch( installTheme( themeId, siteId ) )
 			.then( ( theme ) => {
-				dispatch( {
-					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_SUCCESS,
-					siteId,
-					themeId
-				} );
 				const url = getThemeCustomizeUrl( getState(), theme, siteId );
 				page( url );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: THEME_TRY_AND_CUSTOMIZE_ON_JETPACK_REQUEST_FAILURE,
-					themeId: themeId,
-					siteId,
-					error
-				} );
 			} );
 	};
 }
