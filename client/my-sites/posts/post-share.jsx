@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, map, without } from 'lodash';
+import { includes, map } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -59,6 +59,13 @@ const PostSharing = React.createClass( {
 		this.setState( { skipped } );
 	},
 
+	isConnectionActive: function( connection ) {
+		return (
+			connection.status !== 'broken' &&
+			this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
+		);
+	},
+
 	renderServices: function() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
 			return;
@@ -70,10 +77,10 @@ const PostSharing = React.createClass( {
 				className={ classNames( {
 					'posts__post-share-service': true,
 					[ connection.service ]: true,
-					'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+					'is-active': this.isConnectionActive( connection )
 				} ) }
 			>
-				<FormToggle checked={ ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 ) }/>
+				<FormToggle checked={ this.isConnectionActive( connection ) }/>
 				<SocialLogo icon={ connection.service === 'google_plus' ? 'google-plus' : connection.service }/>
 				<div className="posts__post-share-service-account-name">
 					<span>{ connection && connection.external_display }</span>
@@ -83,10 +90,7 @@ const PostSharing = React.createClass( {
 		);
 	},
 	renderMessage: function() {
-		const skipped = this.state.skipped;
-		const targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
-				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
-			} ) : [];
+		const targeted = this.hasConnections() ? this.props.connections.filter( this.isConnectionActive.bind( this ) ) : [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
 		const acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
 
@@ -114,15 +118,7 @@ const PostSharing = React.createClass( {
 			return true;
 		}
 
-		const activeConnectionIds = without(
-			map(
-				this.props.connections.filter( connection => connection.status !== 'broken' ),
-				connection => connection.keyring_connection_ID
-			),
-			...this.state.skipped
-		);
-
-		return activeConnectionIds.length < 1;
+		return this.props.connections.filter( this.isConnectionActive.bind( this ) ).length < 1;
 	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
