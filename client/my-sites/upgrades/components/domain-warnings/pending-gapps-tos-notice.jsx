@@ -11,7 +11,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
-import paths from 'my-sites/upgrades/paths';
+import { domainManagementEmail } from 'my-sites/upgrades/paths';
 
 const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />,
 	strong = <strong />;
@@ -44,9 +44,9 @@ const PendingGappsTosNotice = React.createClass( {
 	},
 
 	getGappsLoginUrl( email, domain ) {
-		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel' +
-			'&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }' +
-			'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1`;
+		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel` +
+			`&continue=https%3A%2F%2Fadmin.google.com%2F${ domain }` +
+			'%2FAcceptTermsOfService%3Fcontinue%3Dhttps%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F1';
 	},
 
 	getNoticeSeverity() {
@@ -103,8 +103,8 @@ const PendingGappsTosNotice = React.createClass( {
 	compactNotice() {
 		const severity = this.getNoticeSeverity(),
 			href = this.props.domains.length === 1
-				? paths.domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
-				: paths.domainManagementEmail( this.props.siteSlug );
+				? domainManagementEmail( this.props.siteSlug, this.props.domains[ 0 ].name )
+				: domainManagementEmail( this.props.siteSlug );
 
 		return (
 			<Notice
