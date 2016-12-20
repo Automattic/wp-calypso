@@ -102,7 +102,8 @@ const CurrentSite = React.createClass( {
 					'expiringDomainsCanManage',
 					'expiredDomainsCannotManage',
 					'expiringDomainsCannotManage',
-					'wrongNSMappedDomains'
+					'wrongNSMappedDomains',
+					'pendingGappsTosAcceptanceDomains'
 				] } />
 		);
 	},
