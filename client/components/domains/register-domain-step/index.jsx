@@ -21,7 +21,7 @@ import { localize } from 'i18n-calypso';
  */
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { getFixedDomainSearch, canRegister } from 'lib/domains';
+import { getFixedDomainSearch, canRegister, getTld } from 'lib/domains';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
@@ -549,15 +549,14 @@ const RegisterDomainStep = React.createClass( {
 	showValidationErrorMessage: function( domain, error ) {
 		let message,
 			severity = 'error';
-		const lastIndexOfDot = domain.lastIndexOf( '.' ),
-			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot ),
+		const tld = getTld( domain ),
 			translate = this.props.translate;
 
 		switch ( error.code ) {
 			case 'available_but_not_registrable':
 				if ( tld ) {
 					message = translate(
-						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
+						'To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, ' +
 						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 						{
 							args: { tld },
@@ -573,7 +572,7 @@ const RegisterDomainStep = React.createClass( {
 			case 'tld_in_maintenance':
 				if ( tld ) {
 					message = translate(
-						'Domains ending with {{strong}}%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
+						'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
 						{
 							args: { tld },
 							components: {

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, canMap, canRegister } from 'lib/domains';
+import { getFixedDomainSearch, canMap, canRegister, getTld } from 'lib/domains';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import analyticsMixin from 'lib/mixins/analytics';
@@ -186,14 +186,13 @@ const MapDomainStep = React.createClass( {
 	handleValidationErrorMessage: function( domain, error ) {
 		let message;
 		const severity = 'error',
-			lastIndexOfDot = domain.lastIndexOf( '.' ),
-			tld = lastIndexOfDot !== -1 && domain.substring( lastIndexOfDot ),
+			tld = getTld( domain ),
 			translate = this.props.translate;
 
 		switch ( error.code ) {
 			case 'tld_in_maintenance':
 				if ( tld ) {
-					message = translate( 'Sorry, %(tld)s TLD is in maintenance, and we cannot check availability for it.', {
+					message = translate( 'Sorry, .%(tld)s TLD is in maintenance, and we cannot check availability for it.', {
 						args: { tld }
 					} );
 				}

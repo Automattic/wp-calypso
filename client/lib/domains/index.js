@@ -179,6 +179,12 @@ function hasMappedDomain( domains ) {
 	return getMappedDomains( domains ).length > 0;
 }
 
+function getTld( domain ) {
+	const lastIndexOfDot = domain.name.lastIndexOf( '.' );
+
+	return lastIndexOfDot !== -1 && domain.name.substring( lastIndexOfDot + 1 );
+}
+
 export {
 	canAddGoogleApps,
 	canMap,
@@ -190,6 +196,7 @@ export {
 	getSelectedDomain,
 	getRegisteredDomains,
 	getMappedDomains,
+	getTld,
 	hasGoogleApps,
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
