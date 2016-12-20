@@ -154,6 +154,12 @@ export const PostEditor = React.createClass( {
 
 	componentWillReceiveProps: function( nextProps ) {
 		const { siteId, postId } = this.props;
+
+		// When switching posts, reset post edits for the post we're leaving
+		if ( nextProps.postId !== postId ) {
+			this.props.resetPostEdits( siteId, postId );
+		}
+
 		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
 			// make sure the history entry has the post ID in it, but don't dispatch
 			page.replace( nextProps.editPath, null, false, false );
