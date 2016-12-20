@@ -3,6 +3,9 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Internal dependencies
@@ -869,6 +872,126 @@ describe( 'actions', () => {
 					error: sinon.match.truthy,
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#installAndTryAndCustomize', () => {
+		let installAndTryAndCustomize;
+		const pageSpy = sinon.spy();
+		useMockery( ( mockery ) => {
+			mockery.registerMock( 'page', pageSpy );
+			mockery.registerMock( './selectors', { getThemeCustomizeUrl: () => 'customizer/url' } );
+			installAndTryAndCustomize =
+				require( '../actions' ).installAndTryAndCustomize;
+		} );
+
+		const middlewares = [ thunk ];
+		const mockStore = configureMockStore( middlewares );
+		const storeDefault = {
+			sites: {
+				items: {
+					2211667: {
+						ID: 2211667,
+						URL: 'https://example.com',
+						jetpack: true
+					}
+				}
+			}
+		};
+
+		const successResponse = {
+			id: 'karuna-wpcom',
+			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
+			active: false,
+			name: 'Karuna',
+			theme_uri: 'https://wordpress.com/themes/karuna/',
+			description: 'Karuna is a clean business theme designed with health and wellness-focused sites in mind.' +
+				' With bright, bold colors, prominent featured images, and support for customer testimonials',
+			author: 'Automattic',
+			author_uri: 'http://wordpress.com/themes/',
+			version: '1.1.0',
+			autoupdate: false,
+			log: [
+				[
+					'Unpacking the package&#8230;',
+					'Installing the theme&#8230;',
+					'Theme installed successfully.'
+				]
+			]
+		};
+
+		const alreadyInstalledFailureResponse = {
+			status: 400,
+			code: 'theme_already_installed',
+			message: 'The theme is already installed'
+		};
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
+				.reply( 200, successResponse )
+				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
+				.reply( 400, alreadyInstalledFailureResponse );
+		} );
+
+		it( 'should dispatch install request/success and themes receive action when triggered, page should be called', () => {
+			const store = mockStore( storeDefault );
+			const expectedActions = [
+				{
+					type: 'THEME_INSTALL',
+					siteId: 2211667,
+					themeId: 'karuna-wpcom'
+				},
+				{
+					type: 'THEMES_RECEIVE',
+					themes: [ successResponse ],
+					siteId: undefined
+				},
+				{
+					type: 'THEME_INSTALL_SUCCESS',
+					siteId: 2211667,
+					themeId: 'karuna-wpcom'
+				}
+			];
+
+			return store.dispatch( installAndTryAndCustomize( 'karuna-wpcom', 2211667 ) )
+				.then( () => {
+					expect( store.getActions() ).to.deep.equal( expectedActions );
+					expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
+				}
+			);
+		} );
+
+		it( 'should dispatch install request and failure action when triggered, page should not be called', () => {
+			const store = mockStore( storeDefault );
+			const expectedActions = [
+				{
+					type: 'THEME_INSTALL',
+					siteId: 2211667,
+					themeId: 'typist-wpcom'
+				},
+				{
+					type: 'THEME_INSTALL_FAILURE',
+					siteId: 2211667,
+					themeId: 'typist-wpcom',
+					error: sinon.match( { message: 'The theme is already installed' } )
+				}
+			];
+
+			return store.dispatch( installAndTryAndCustomize( 'typist-wpcom', 2211667 ) )
+				.then( () => {
+					// using spy here is just a trick to be able to use sinon.match that needs
+					// to be used inside calledWith - this is important for failure scenarios
+					// that can have env dependant strings
+					const storeCallSpy = sinon.spy();
+					storeCallSpy( store.getActions()[ 0 ] );
+					storeCallSpy( store.getActions()[ 1 ] );
+					expect( storeCallSpy ).to.have.been.calledWith( expectedActions[ 0 ] );
+					expect( storeCallSpy ).to.have.been.calledWith( expectedActions[ 1 ] );
+					expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
+				}
+			);
 		} );
 	} );
 } );
