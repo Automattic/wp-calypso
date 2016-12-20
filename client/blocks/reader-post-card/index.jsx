@@ -24,7 +24,7 @@ import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import * as DiscoverHelper from 'reader/discover/helper';
 
-export default class RefreshPostCard extends React.Component {
+export default class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,

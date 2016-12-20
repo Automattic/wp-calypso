@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import RefreshPostCard from 'blocks/reader-post-card';
+import ReaderPostCardBlock from 'blocks/reader-post-card';
 import DisplayTypes from 'state/reader/posts/display-types';
 
 const searchItems = [
@@ -132,11 +132,11 @@ const searchItems = [
 	},
 ];
 
-const RefreshCards = () => (
+const ReaderPostCard = () => (
 	<div className="design-assets__group">
 		<div>
 			{ searchItems.map( item => (
-				<RefreshPostCard
+				<ReaderPostCardBlock
 					key={ item.post.global_ID }
 					post={ item.post }
 					site={ item.site }
@@ -146,4 +146,4 @@ const RefreshCards = () => (
 	</div>
 );
 
-export default RefreshCards;
+export default ReaderPostCard;
