@@ -88,6 +88,7 @@ export default function( id ) {
 		isFetchingUpdated: false,
 	};
 
+
 	function queryPosts( options ) {
 		let query = assign( {}, _defaultQuery, options );
 
@@ -223,7 +224,7 @@ export default function( id ) {
 			_activeList.page++;
 		}
 		_activeList.postIds = priorList;
-		sort();
+		// sort();
 	}
 
 	// Merge updated posts
@@ -257,7 +258,7 @@ export default function( id ) {
 
 		if ( newPostIds.length ) {
 			_activeList.postIds = _activeList.postIds.concat( newPostIds );
-			sort();
+			// sort();
 		}
 	}
 
@@ -337,6 +338,7 @@ export default function( id ) {
 			const query = _activeList.query;
 
 			params.status = query.status;
+			params.hierarchical = query.hierarchical;
 			params.order_by = query.orderBy;
 			params.order = query.order;
 			params.author = query.author;
@@ -369,6 +371,7 @@ export default function( id ) {
 			const query = _activeList.query;
 
 			params.status = query.status;
+			params.hierarchical = query.hierarchical;
 			params.author = query.author;
 			params.type = query.type;
 

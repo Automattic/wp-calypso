@@ -35,6 +35,7 @@ var PageList = React.createClass( {
 		return (
 			<PostListFetcher
 				type="page"
+				hierarchical={true}
 				siteID={ this.props.siteID }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
@@ -203,10 +204,10 @@ var Pages = React.createClass( {
 
 		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
 		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
-				// we're listing in reverse chrono. use the markers.
-				pages = this._insertTimeMarkers( pages );
-			}
+			// if ( ! this.props.search ) {
+			// 	// we're listing in reverse chrono. use the markers.
+			// 	pages = this._insertTimeMarkers( pages );
+			// }
 			rows = pages.map( function( page ) {
 				if ( ! ( 'site_ID' in page ) ) {
 					return page;
@@ -228,7 +229,7 @@ var Pages = React.createClass( {
 			const status = this.props.status || 'published';
 
 			if ( site && status === 'published' ) {
-				rows.push(
+				rows.unshift(
 					<BlogPostsPage
 						key="blog-posts-page"
 						site={ site }
