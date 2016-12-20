@@ -24,7 +24,8 @@ function convertImageToObject( image ) {
 		src: image.src,
 		// use natural height and width
 		width: image.naturalWidth,
-		height: image.naturalHeight
+		height: image.naturalHeight,
+		htmlImageElement: image,
 	};
 }
 

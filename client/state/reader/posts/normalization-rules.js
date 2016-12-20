@@ -3,6 +3,7 @@
  */
 import { filter, find, flow, forEach } from 'lodash';
 import url from 'url';
+import smartcrop from 'smartcrop';
 
 /**
  * Internal Dependencies
@@ -179,11 +180,22 @@ export function runFastRules( post ) {
 	return post;
 }
 
+function findSmartCrop( post ) {
+	if ( post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {
+		const { htmlImageElement } = find( post.images, image => image.src === post.canonical_media.src );
+		console.error( htmlImageElement, post.images[0].src, post.canonical_media.src, post.images[0].src === post.canonical_media.src )
+		post.canonical_media.crop = smartcrop.crop( htmlImageElement, { width: 720, height: 240 } );
+	}
+
+	return post;
+}
+
 const slowSyncRules = flow( [
 	keepValidImages( 144, 72 ),
 	pickCanonicalImage,
 	pickCanonicalMedia,
-	classifyPost
+	classifyPost,
+	findSmartCrop,
 ] );
 
 export function runSlowRules( post ) {
