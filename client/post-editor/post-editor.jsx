@@ -156,7 +156,7 @@ export const PostEditor = React.createClass( {
 		const { siteId, postId } = this.props;
 
 		// When switching posts, reset post edits for the post we're leaving
-		if ( nextProps.postId !== postId ) {
+		if ( nextProps.siteId !== siteId || nextProps.postId !== postId ) {
 			this.props.resetPostEdits( siteId, postId );
 		}
 
