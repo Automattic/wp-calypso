@@ -20,7 +20,8 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			external: false
+			external: false,
+			download: false,
 		};
 	},
 
