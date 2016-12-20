@@ -173,7 +173,7 @@
       "dev": true
     },
     "babel-generator": {
-      "version": "6.20.0",
+      "version": "6.21.0",
       "dependencies": {
         "source-map": {
           "version": "0.5.6"
@@ -184,7 +184,7 @@
       "version": "6.18.0"
     },
     "babel-helper-builder-react-jsx": {
-      "version": "6.18.0"
+      "version": "6.21.1"
     },
     "babel-helper-call-delegate": {
       "version": "6.18.0"
@@ -274,7 +274,7 @@
       "version": "6.8.0"
     },
     "babel-plugin-transform-es2015-block-scoping": {
-      "version": "6.20.0"
+      "version": "6.21.0"
     },
     "babel-plugin-transform-es2015-classes": {
       "version": "6.18.0"
@@ -304,7 +304,7 @@
       "version": "6.8.0"
     },
     "babel-plugin-transform-es2015-parameters": {
-      "version": "6.18.0"
+      "version": "6.21.0"
     },
     "babel-plugin-transform-es2015-shorthand-properties": {
       "version": "6.18.0"
@@ -340,7 +340,7 @@
       "version": "6.8.0"
     },
     "babel-plugin-transform-regenerator": {
-      "version": "6.20.0"
+      "version": "6.21.0"
     },
     "babel-plugin-transform-runtime": {
       "version": "6.9.0"
@@ -375,10 +375,10 @@
       "version": "6.16.0"
     },
     "babel-traverse": {
-      "version": "6.20.0"
+      "version": "6.21.0"
     },
     "babel-types": {
-      "version": "6.20.0"
+      "version": "6.21.0"
     },
     "babylon": {
       "version": "6.14.1"
@@ -534,7 +534,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000597"
+      "version": "1.0.30000600"
     },
     "caseless": {
       "version": "0.11.0"
@@ -601,7 +601,7 @@
       "version": "1.1.1"
     },
     "clean-css": {
-      "version": "3.4.22",
+      "version": "3.4.23",
       "dependencies": {
         "commander": {
           "version": "2.8.1"
@@ -1448,7 +1448,7 @@
       }
     },
     "fast-future": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "fast-levenshtein": {
       "version": "2.0.5",
@@ -2870,9 +2870,6 @@
       "version": "1.0.2",
       "dev": true
     },
-    "path-parser": {
-      "version": "1.0.2"
-    },
     "path-to-regexp": {
       "version": "0.1.7"
     },
@@ -3773,7 +3770,7 @@
       "version": "1.1.2"
     },
     "symbol-tree": {
-      "version": "3.2.0",
+      "version": "3.2.1",
       "dev": true
     },
     "sync-exec": {
@@ -3813,7 +3810,7 @@
       "version": "2.2.1"
     },
     "tar-fs": {
-      "version": "1.14.0"
+      "version": "1.15.0"
     },
     "tar-stream": {
       "version": "1.5.2",
