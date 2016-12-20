@@ -4,7 +4,6 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -51,10 +50,6 @@ const ListStream = React.createClass( {
 			title = list.title;
 
 			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
-
-			if ( config.isEnabled( 'reader/list-management' ) ) {
-				editUrl = `/read/list/${ list.owner }/${ list.slug }/edit`;
-			}
 		}
 
 		if ( this.props.isMissing ) {
