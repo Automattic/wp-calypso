@@ -7,6 +7,8 @@ export const title = ( { translate, reason } ) => {
 	switch ( reason ) {
 		case 'thanksgiving':
 			return translate( 'Limited Support For Thanksgiving' );
+		case 'eoy-holidays':
+			return translate( 'Limited support over the holidays' );
 	}
 
 	return null;
@@ -29,12 +31,30 @@ export const upcoming = ( { translate, reason, closedFrom, closedTo } ) => {
 					}
 				}
 			);
+		case 'eoy-holidays':
+			return translate(
+				'{{p}}Live chat will be closed on the following dates for the holidays:{{/p}} ' +
+				'{{dates/}}' +
+				'{{p}}If you need to get in touch with us on those days, you’ll be able to ' +
+				'submit a support request from this page and we will get to it as fast as we can. ' +
+				'Thank you!{{/p}}', {
+					components: {
+						p: <p />,
+						dates:
+						<ul>
+							<li>{ translate( 'December 24-26' ) }</li>
+							<li>{ translate( 'December 31' ) }</li>
+							<li>{ translate( 'January 1' ) }</li>
+						</ul>
+					}
+				}
+			);
 	}
 
 	return null;
 };
 
-export const closed = ( { translate, reason, closedTo } ) => {
+export const closed = ( { translate, reason, closedFrom, closedTo } ) => {
 	switch ( reason ) {
 		case 'thanksgiving':
 			return translate(
@@ -49,6 +69,9 @@ export const closed = ( { translate, reason, closedTo } ) => {
 					}
 				}
 			);
+		case 'eoy-holidays':
+			// Use the same message during closure
+			return upcoming( { translate, reason, closedFrom, closedTo } );
 	}
 
 	return null;
