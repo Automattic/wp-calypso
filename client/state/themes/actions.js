@@ -428,9 +428,7 @@ export function installAndTryAndCustomize( themeId, siteId ) {
 				}
 				const url = getThemeCustomizeUrl( getState(), status.theme, siteId );
 				page( url );
-			} )
-			// getThemeCustomizeUrl failures
-			.catch( ( ) => {} );
+			} );
 	};
 }
 
