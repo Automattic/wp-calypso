@@ -9,12 +9,12 @@ import { get, has } from 'lodash';
  */
 import uploadData from '../upload-data/reducer';
 import {
-	AUTOMATED_TRANSFER_UPLOAD as UPLOAD,
+	AUTOMATED_TRANSFER_INITIATE as INITIATE,
 	AUTOMATED_TRANSFER_UPLOAD_UPDATE as UPDATE,
 } from 'state/action-types';
 
 export const slug = ( state = '', action ) => get( {
-	[ UPLOAD ]: action.pluginSlug || state,
+	[ INITIATE ]: action.pluginSlug || state,
 	[ UPDATE ]: action.pluginSlug || state,
 }, action.type, state );
 

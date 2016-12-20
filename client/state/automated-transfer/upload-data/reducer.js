@@ -7,7 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	AUTOMATED_TRANSFER_UPLOAD as UPLOAD,
+	AUTOMATED_TRANSFER_INITIATE as INITIATE,
 	AUTOMATED_TRANSFER_UPLOAD_UPDATE as UPDATE,
 } from 'state/action-types';
 
@@ -31,7 +31,7 @@ export const bytesLoaded = ( state = 0, action ) =>
  * @returns {number} new byte count
  */
 export const bytesTotal = ( state = 0, action ) =>
-	UPLOAD === action.type
+	INITIATE === action.type
 		? action.bytesTotal
 		: state;
 

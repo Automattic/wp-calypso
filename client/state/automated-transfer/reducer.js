@@ -17,18 +17,26 @@ import {
 import { automatedTransfer as schema } from './schema';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
+	AUTOMATED_TRANSFER_INITIATE as INITIATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_UPDATE as STATUS_UPDATE,
 } from 'state/action-types';
 
+export const id = ( state = null, action ) =>
+	INITIATE === action.type
+		? ( action.id && action.id || state )
+		: state;
+
 export const status = ( state = null, action ) => get( {
 	[ SET_STATUS ]: action.status,
 	[ ELIGIBILITY_UPDATE ]: action.status,
+	[ INITIATE ]: action.status || state,
 	[ STATUS_UPDATE ]: action.status,
 }, action.type, state );
 
 export const siteReducer = combineReducers( {
 	eligibility,
+	id,
 	plugin,
 	status,
 	theme,

@@ -4,6 +4,7 @@
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	AUTOMATED_TRANSFER_INITIATE,
 	AUTOMATED_TRANSFER_STATUS_SET,
 } from 'state/action-types';
 
@@ -20,6 +21,13 @@ export const setAutomatedTransferStatus = ( siteId, status ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_SET,
 	siteId,
 	status,
+} );
+
+export const initiateTransfer = ( siteId, { status, theme } ) => ( {
+	type: AUTOMATED_TRANSFER_INITIATE,
+	siteId,
+	status,
+	theme,
 } );
 
 /**
