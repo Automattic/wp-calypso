@@ -1,9 +1,14 @@
-// External dependencies
+/**
+ * External dependencies
+ */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, compose } from 'redux';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -59,20 +64,21 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.list ) {
+		const { list, translate } = this.props;
+		if ( ! list ) {
 			return null;
 		}
 
 		let notice = null;
 		if ( this.props.isUpdatedList ) {
-			notice = <Notice status="is-success" text={ this.translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
+			notice = <Notice status="is-success" text={ translate( 'List details saved successfully.' ) } onDismissClick={ this.handleDismissNotice } />;
 		}
 
 		if ( this.props.hasError ) {
-			notice = <Notice status="is-error" text={ this.translate( 'Sorry, there was a problem saving your list details.' ) } onDismissClick={ this.handleDismissNotice } />;
+			notice = <Notice status="is-error" text={ translate( 'Sorry, there was a problem saving your list details.' ) } onDismissClick={ this.handleDismissNotice } />;
 		}
 
-		const isTitleMissing = ! this.props.list.title || this.props.list.title.length < 1;
+		const isTitleMissing = ! list.title || list.title.length < 1;
 
 		return (
 			<div className="list-management-description-edit">
@@ -92,8 +98,8 @@ const ListManagementDescriptionEdit = React.createClass( {
 								className={ isTitleMissing ? 'is-error' : '' }
 								placeholder=""
 								onChange={ this.onTitleChange }
-								value={ this.props.list ? this.props.list.title : '' } />
-							{ isTitleMissing ? <FormInputValidation isError text={ this.translate( 'Title is a required field.' ) } /> : '' }
+								value={ list ? list.title : '' } />
+							{ isTitleMissing ? <FormInputValidation isError text={ translate( 'Title is a required field.' ) } /> : '' }
 						</FormFieldset>
 						<FormFieldset>
 							<FormLabel htmlFor="list-description">Description</FormLabel>
@@ -103,11 +109,11 @@ const ListManagementDescriptionEdit = React.createClass( {
 								id="list-description"
 								placeholder=""
 								onChange={ this.onDescriptionChange }
-								value={ this.props.list ? this.props.list.description : '' }></FormTextarea>
+								value={ list ? list.description : '' }></FormTextarea>
 						</FormFieldset>
 
 						<FormButtonsBar>
-							<FormButton disabled={ isTitleMissing }>{ this.translate( 'Save Changes' ) }</FormButton>
+							<FormButton disabled={ isTitleMissing }>{ translate( 'Save Changes' ) }</FormButton>
 						</FormButtonsBar>
 					</form>
 				</Card>
@@ -116,19 +122,23 @@ const ListManagementDescriptionEdit = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			isUpdatedList: isUpdatedList( state, ownProps.list.ID ),
-			hasError: hasError( state, ownProps.list.ID )
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			updateListDetails,
-			dismissListNotice,
-			updateTitle,
-			updateDescription
-		}, dispatch );
-	}
-)( protectForm( ListManagementDescriptionEdit ) );
+export default compose(
+	connect(
+		( state, ownProps ) => {
+			return {
+				isUpdatedList: isUpdatedList( state, ownProps.list.ID ),
+				hasError: hasError( state, ownProps.list.ID )
+			};
+		},
+		( dispatch ) => {
+			return bindActionCreators( {
+				updateListDetails,
+				dismissListNotice,
+				updateTitle,
+				updateDescription
+			}, dispatch );
+		}
+	),
+	localize,
+	protectForm,
+)( ListManagementDescriptionEdit );
