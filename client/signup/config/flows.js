@@ -207,6 +207,13 @@ const flows = {
 		lastModified: '2016-11-29',
 		autoContinue: true,
 	},
+
+	'domain-first': {
+		steps: [ 'domains', 'survey', 'design-type', 'themes', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'An experimental approach for WordPress.com/domains',
+		lastModified: '2016-12-20'
+	},
 };
 
 if ( config( 'env' ) === 'development' ) {
