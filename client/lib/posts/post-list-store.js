@@ -142,26 +142,26 @@ export default function( id ) {
 	/**
 	 * Sort the active list
 	 */
-	function sort() {
-		const key = _activeList.query.orderBy;
-
-		_activeList.postIds.sort( function( a, b ) {
-			var postA = PostsStore.get( a ),
-				postB = PostsStore.get( b ),
-				timeA = postA[ key ],
-				timeB = postB[ key ];
-
-			if ( timeA === timeB ) {
-				if ( postA.title === postB.title ) {
-					return 0;
-				}
-
-				return postA.title > postB.title ? 1 : -1;
-			}
-			// reverse-chronological
-			return timeA > timeB ? -1 : 1;
-		} );
-	}
+	// function sort() {
+	// 	const key = _activeList.query.orderBy;
+    //
+	// 	_activeList.postIds.sort( function( a, b ) {
+	// 		var postA = PostsStore.get( a ),
+	// 			postB = PostsStore.get( b ),
+	// 			timeA = postA[ key ],
+	// 			timeB = postB[ key ];
+    //
+	// 		if ( timeA === timeB ) {
+	// 			if ( postA.title === postB.title ) {
+	// 				return 0;
+	// 			}
+    //
+	// 			return postA.title > postB.title ? 1 : -1;
+	// 		}
+	// 		// reverse-chronological
+	// 		return timeA > timeB ? -1 : 1;
+	// 	} );
+	// }
 
 	// Process a new page of data and concatenate to the end of the list
 	function receivePage( listId, error, data ) {
