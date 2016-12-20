@@ -16,12 +16,12 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
-	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	{ getSurveyVertical } = require( 'state/signup/steps/survey/selectors.js' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
 
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),

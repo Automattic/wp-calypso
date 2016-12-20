@@ -11,14 +11,13 @@ var page = require( 'page' ),
  */
 var HeaderCake = require( 'components/header-cake' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
-	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	paths = require( 'my-sites/upgrades/paths' );
-
+import { currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 
 var MapDomain = React.createClass( {
