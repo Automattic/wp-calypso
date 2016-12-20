@@ -505,7 +505,9 @@ SitesList.prototype.hasSiteWithPlugins = function() {
 
 SitesList.prototype.fetchAvailableUpdates = function() {
 	this.getJetpack().forEach( function( site ) {
-		site.fetchAvailableUpdates();
+		if ( site.versionCompare( '4.2', '<' ) ) {
+			site.fetchAvailableUpdates();
+		}
 	}, this );
 };
 
