@@ -13,7 +13,7 @@ import config from 'config';
 import {
 	activateTheme,
 	activateWpcomThemeOnJetpack,
-	tryAndCustomizeWpcomThemeOnJetpack
+	installWpcomThemeAndTryAndCustomize
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
@@ -98,7 +98,7 @@ const tryAndCustomizeOnJetpack = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	action: tryAndCustomizeWpcomThemeOnJetpack,
+	action: installWpcomThemeAndTryAndCustomize,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
