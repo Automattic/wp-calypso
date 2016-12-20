@@ -35,6 +35,10 @@ export default React.createClass( {
 			attributes.target = '_blank';
 		}
 
+		if ( this.props.download ) {
+			attributes.download = '';
+		}
+
 		return (
 			<a {...attributes} >
 				<span>{ this.props.children }</span>
