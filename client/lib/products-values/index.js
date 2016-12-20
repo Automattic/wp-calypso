@@ -178,6 +178,13 @@ function isPlan( product ) {
 	);
 }
 
+function isDotComPlan( product ) {
+	return (
+		isPlan( product ) &&
+		! isJetpackPlan( product )
+	);
+}
+
 function isPrivateRegistration( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -352,6 +359,7 @@ module.exports = {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,
 	isFreePlan,
