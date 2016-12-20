@@ -10,13 +10,15 @@ import { forEach } from 'lodash';
 import {
 	ANALYTICS_STAT_BUMP,
 	EDITOR_POST_ID_SET,
-	EDITOR_SHOW_DRAFTS_TOGGLE
+	EDITOR_SHOW_DRAFTS_TOGGLE,
+	EDITOR_START
 } from 'state/action-types';
 import {
 	MODAL_VIEW_STAT_MAPPING,
 	setEditorPostId,
 	toggleEditorDraftsVisible,
-	setEditorMediaModalView
+	setEditorMediaModalView,
+	startPostEditor
 } from '../actions';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 
@@ -27,6 +29,18 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: EDITOR_POST_ID_SET,
+				postId: 183
+			} );
+		} );
+	} );
+
+	describe( 'startPostEditor()', () => {
+		it( 'should return an action object', () => {
+			const action = startPostEditor( 10, 183 );
+
+			expect( action ).to.eql( {
+				type: EDITOR_START,
+				siteId: 10,
 				postId: 183
 			} );
 		} );

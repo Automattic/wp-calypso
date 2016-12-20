@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	EDITOR_START,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
@@ -912,6 +913,42 @@ describe( 'reducer', () => {
 				}
 			} ), {
 				type: POST_EDITS_RESET,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} );
+		} );
+
+		it( 'should ignore start editor action when site doesn\'t exist', () => {
+			const original = deepFreeze( {} );
+			const state = edits( original, {
+				type: EDITOR_START,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should discard edits when start editor action is dispatched', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: EDITOR_START,
 				siteId: 2916284,
 				postId: 841
 			} );

@@ -9,6 +9,7 @@ import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } fr
  */
 import PostQueryManager from 'lib/query-manager/post';
 import {
+	EDITOR_START,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
@@ -262,6 +263,7 @@ export function edits( state = {}, action ) {
 			} );
 
 		case POST_EDITS_RESET:
+		case EDITOR_START:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
 				break;
 			}

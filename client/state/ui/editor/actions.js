@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-types';
+import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE, EDITOR_START } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
@@ -17,8 +17,8 @@ export const MODAL_VIEW_STATS = {
 };
 
 /**
- * Returns an action object to be used in signalling that the editor should
- * begin to edit the post with the specified post ID, or `null` as a new post.
+ * Returns an action object to be used in signalling that the edited post ID has changed
+ * but we're still editing the same post
  *
  * @param  {?Number} postId Post ID
  * @return {Object}         Action object
@@ -26,6 +26,22 @@ export const MODAL_VIEW_STATS = {
 export function setEditorPostId( postId ) {
 	return {
 		type: EDITOR_POST_ID_SET,
+		postId
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that the editor should
+ * begin to edit the post with the specified post ID, or `null` as a new post.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {?Number} postId Post ID
+ * @return {Object}         Action object
+ */
+export function startPostEditor( siteId, postId ) {
+	return {
+		type: EDITOR_START,
+		siteId,
 		postId
 	};
 }

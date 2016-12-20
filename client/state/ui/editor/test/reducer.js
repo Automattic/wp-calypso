@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-types';
+import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE, EDITOR_START } from 'state/action-types';
 import reducer, { postId, showDrafts } from '../reducer';
 
 describe( 'reducer', () => {
@@ -35,6 +35,16 @@ describe( 'reducer', () => {
 
 			expect( state ).to.equal( 184 );
 		} );
+
+		it( 'should update the tracked id when starting the editor', () => {
+			const state = postId( undefined, {
+				type: EDITOR_START,
+				siteId: 1,
+				postId: 184
+			} );
+
+			expect( state ).to.equal( 184 );
+		} )
 	} );
 
 	describe( '#showDrafts()', () => {

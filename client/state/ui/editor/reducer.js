@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE } from 'state/action-types';
+import { EDITOR_POST_ID_SET, EDITOR_SHOW_DRAFTS_TOGGLE, EDITOR_START } from 'state/action-types';
 import imageEditor from './image-editor/reducer';
 import lastDraft from './last-draft/reducer';
 import contactForm from './contact-form/reducer';
@@ -22,6 +22,7 @@ import contactForm from './contact-form/reducer';
 export function postId( state = null, action ) {
 	switch ( action.type ) {
 		case EDITOR_POST_ID_SET:
+		case EDITOR_START:
 			return action.postId;
 	}
 
