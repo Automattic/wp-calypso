@@ -50,4 +50,6 @@ export const closed = ( { translate, reason, closedTo } ) => {
 				}
 			);
 	}
+
+	return null;
 };
