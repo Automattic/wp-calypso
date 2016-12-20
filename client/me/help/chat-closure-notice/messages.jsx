@@ -42,9 +42,18 @@ export const upcoming = ( { translate, reason, closedFrom, closedTo } ) => {
 						p: <p />,
 						dates:
 						<ul>
-							<li>{ translate( 'December 24-26' ) }</li>
-							<li>{ translate( 'December 31' ) }</li>
-							<li>{ translate( 'January 1' ) }</li>
+							<li>{ translate( '%(closed_start_date)s to %(closed_end_date)s', {
+								args: {
+									closed_start_date: closedFrom.format( 'llll' ),
+									closed_end_date: closedFrom.clone().add( 72, 'hours' ).format( 'llll' ),
+								}
+							} ) }</li>
+							<li>{ translate( '%(closed_start_date)s to %(closed_end_date)s', {
+								args: {
+									closed_start_date: closedTo.clone().subtract( 48, 'hours' ).format( 'llll' ),
+									closed_end_date: closedTo.format( 'llll' ),
+								}
+							} ) }</li>
 						</ul>
 					}
 				}

@@ -224,7 +224,7 @@ export const HelpContactForm = React.createClass( {
 			<div className="help-contact-form">
 				<ChatClosureNotice
 					reason="eoy-holidays"
-					from="2016-12-24T08:00:00Z"
+					from="2016-12-24T00:00:00Z"
 					to="2017-01-02T00:00:00Z"
 				/>
 				{ formDescription && ( <p>{ formDescription }</p> ) }
