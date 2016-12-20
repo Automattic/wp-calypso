@@ -183,8 +183,13 @@ export function runFastRules( post ) {
 function findSmartCrop( post ) {
 	if ( post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {
 		const { htmlImageElement } = find( post.images, image => image.src === post.canonical_media.src );
-		console.error( htmlImageElement, post.images[0].src, post.canonical_media.src, post.images[0].src === post.canonical_media.src )
-		post.canonical_media.crop = smartcrop.crop( htmlImageElement, { width: 720, height: 240 } );
+		smartcrop.crop( htmlImageElement, { width: 720, height: 240 } ).then( crop => {
+			post.canonical_media.cropOffset = {
+				x: 720 * ( crop.topCrop.x / crop.topCrop.width ),
+				y: -240 * ( crop.topCrop.y / crop.topCrop.height ),
+			};
+			console.error( post.canonical_media );
+		} );
 	}
 
 	return post;

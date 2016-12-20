@@ -23,8 +23,11 @@ import PostGallery from './gallery';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import * as DiscoverHelper from 'reader/discover/helper';
+import DISPLAY_TYPES from 'state/reader/posts/display-types';
 
 export default class RefreshPostCard extends React.Component {
+	state = {};
+
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
@@ -52,6 +55,25 @@ export default class RefreshPostCard extends React.Component {
 		// to the full post view
 		const postToOpen = this.props.originalPost ? this.props.originalPost : this.props.post;
 		this.props.onClick( postToOpen );
+	}
+
+	findSmartCrop = () => {
+		const { post } = this.props;
+
+		if ( post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {
+			console.error( 'tried', post.canonical_media );
+			if ( post.canonical_media.cropOffset ) {
+				clearInterval( this.findCropInterval );
+				this.setState( { offset: post.canonical_media.cropOffset } );
+				console.error( 'weeeee' );
+			}
+		}
+	}
+
+	componentDidMount() {
+		if ( this.props.post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {
+			this.findCropInterval = setInterval( this.findSmartCrop, 1000 );
+		}
 	}
 
 	handleCardClick = ( event ) => {
@@ -143,7 +165,8 @@ export default class RefreshPostCard extends React.Component {
 		} else if ( post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <FeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } />;
 		} else {
-			featuredAsset = <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
+			featuredAsset = <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL }
+				offset={ this.state.offset } />;
 		}
 
 		return (

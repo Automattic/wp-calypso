@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  */
 import cssSafeUrl from 'lib/css-safe-url';
 
-const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
+const FeaturedImage = ( { imageUri, href, children, onClick, offset } ) => {
 	if ( imageUri === undefined ) {
 		return null;
 	}
@@ -20,6 +20,10 @@ const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'right center'
 	};
+
+	if ( offset ) {
+		featuredImageStyle.backgroundPosition = `${ offset.x }px ${ offset.y }px`;
+	}
 
 	return (
 		<a className="reader-post-card__featured-image" href={ href } style={ featuredImageStyle } onClick={ onClick } >
