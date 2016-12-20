@@ -885,6 +885,10 @@ describe( 'actions', () => {
 				require( '../actions' ).installAndTryAndCustomize;
 		} );
 
+		afterEach( () => {
+			pageSpy.reset();
+		} );
+
 		const middlewares = [ thunk ];
 		const mockStore = configureMockStore( middlewares );
 		const storeDefault = {
