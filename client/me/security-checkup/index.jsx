@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
+import Notice from 'components/notice';
 import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
 
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -51,6 +52,23 @@ const SecurityCheckup = React.createClass( {
 	},
 
 	render: function() {
+		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
+
+		const {
+			translate,
+			accountRecoverySettingsReady
+		} = this.props;
+
+		const isRecoveryEmailLoading = ! accountRecoverySettingsReady || this.props.accountRecoveryEmailActionInProgress;
+		const isRecoveryPhoneLoading = ! accountRecoverySettingsReady || this.props.accountRecoveryPhoneActionInProgress;
+
+		const twoStepNoticeMessage = translate(
+			'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
+				components: {
+					a: <a href="/me/security/two-step" />
+				},
+			} );
+
 		return (
 			<Main className="security-checkup">
 				<QueryAccountRecoverySettings />
@@ -75,18 +93,25 @@ const SecurityCheckup = React.createClass( {
 						email={ this.props.accountRecoveryEmail }
 						updateEmail={ this.props.updateAccountRecoveryEmail }
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
-						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryEmailActionInProgress }
+						isLoading={ isRecoveryEmailLoading }
 					/>
 				</CompactCard>
 
 				<CompactCard>
 					<RecoveryPhone
-						userSettings={ this.props.userSettings }
 						phone={ this.props.accountRecoveryPhone }
 						updatePhone={ this.props.updateAccountRecoveryPhone }
 						deletePhone={ this.props.deleteAccountRecoveryPhone }
-						isLoading={ ! this.props.accountRecoverySettingsReady || this.props.accountRecoveryPhoneActionInProgress }
+						isLoading={ isRecoveryPhoneLoading }
+						disabled={ twoStepEnabled }
 					/>
+					{ twoStepEnabled &&
+						<Notice
+							status="is-error"
+							text={ twoStepNoticeMessage }
+							showDismiss={ false }
+						/>
+					}
 				</CompactCard>
 
 			</Main>

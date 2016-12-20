@@ -13,30 +13,12 @@ import EditPhone from './edit-phone';
 import accept from 'lib/accept';
 
 class RecoveryPhone extends Component {
-	getTwoStepNotice( twoStepEnabled ) {
-		if ( twoStepEnabled ) {
-			return {
-				type: 'error',
-				message: this.props.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
-					components: {
-						a: <a href="/me/security/two-step" />
-					}
-				} ),
-				showDismiss: false
-			};
-		}
-
-		return null;
-	}
-
 	render() {
-		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
-		const twoStepNotice = this.getTwoStepNotice( twoStepEnabled );
-
 		const {
 			phone,
 			isLoading,
 			translate,
+			disabled,
 		} = this.props;
 
 		return (
@@ -48,15 +30,13 @@ class RecoveryPhone extends Component {
 				} ) }
 				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }
 				hasValue={ !! phone }
-				lastNotice={ twoStepNotice || null }
-				disabled={ twoStepEnabled }
-
+				disabled={ disabled }
 				onSave={ this.onSave }
-				>
-					<EditPhone
-						storedPhone={ phone }
-						/>
-				</ManageContact>
+			>
+				<EditPhone
+					storedPhone={ phone }
+				/>
+			</ManageContact>
 		);
 	}
 
