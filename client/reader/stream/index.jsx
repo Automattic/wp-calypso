@@ -9,9 +9,7 @@ import { defer, flatMap, lastIndexOf, noop, times, clamp } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import ReaderMain from 'components/reader-main';
-import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
@@ -21,9 +19,8 @@ import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import Post from './post';
 import CrossPost from './x-post';
-import RefreshPost from './refresh-post';
+import Post from './post';
 import page from 'page';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
@@ -39,7 +36,7 @@ import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 
-function oldCardFactory( post ) {
+function cardFactory( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
 		return CrossPost;
 	}
@@ -50,16 +47,6 @@ function oldCardFactory( post ) {
 
 	return Post;
 }
-
-function refreshCardFactory( post ) {
-	let postClass = oldCardFactory( post );
-	if ( postClass === Post ) {
-		postClass = RefreshPost;
-	}
-	return postClass;
-}
-
-const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
 const MAX_DISTANCE_BETWEEN_RECS = 30;
@@ -200,7 +187,7 @@ export default class ReaderStream extends React.Component {
 				return externalPostClass;
 			}
 		}
-		return defaultCardFactory( post );
+		return cardFactory( post );
 	}
 
 	scrollToSelectedPost( animate ) {
@@ -448,17 +435,18 @@ export default class ReaderStream extends React.Component {
 		}
 	}
 
-	showFullPost( post, options ) {
-		options = options || {};
-		let hashtag = '';
-		if ( options.comments ) {
-			hashtag += '#comments';
+	showFullPost( post, options = {} ) {
+		const hashtag = options.comments ? '#comments' : '';
+		let query = '';
+		if ( post.referral ) {
+			const { blogId, postId } = post.referral;
+			query = `?ref_blog=${ blogId }&ref_post=${ postId }`;
 		}
 		const method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag );
+			page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
 		} else {
-			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag );
+			page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 		}
 	}
 
@@ -540,10 +528,8 @@ export default class ReaderStream extends React.Component {
 			showingStream = true;
 		}
 
-		const CurrentMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
-
 		return (
-			<CurrentMain className={ classnames( 'following', this.props.className ) }>
+			<ReaderMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar> }
@@ -555,7 +541,7 @@ export default class ReaderStream extends React.Component {
 					? <div className="infinite-scroll-end" />
 					: null
 				}
-			</CurrentMain>
+			</ReaderMain>
 		);
 	}
 }

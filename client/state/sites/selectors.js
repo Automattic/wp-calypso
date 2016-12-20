@@ -22,7 +22,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { isHttps, withoutHttp, addQueryArgs } from 'lib/url';
+import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 
 /**
  * Internal dependencies
@@ -233,7 +233,7 @@ export function getSiteSlug( state, siteId ) {
 		return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
 	}
 
-	return withoutHttp( site.URL ).replace( /\//g, '::' );
+	return urlToSlug( site.URL );
 }
 
 /**

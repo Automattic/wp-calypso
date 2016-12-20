@@ -71,6 +71,12 @@ export class FullPostView extends React.Component {
 		this.hasScrolledToCommentAnchor = false;
 	}
 
+	static propTypes = {
+		post: React.PropTypes.object.isRequired,
+		onClose: React.PropTypes.func.isRequired,
+		referralPost: React.PropTypes.object,
+	}
+
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.on( 'like-selection', this.handleLike );
@@ -238,7 +244,7 @@ export class FullPostView extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed } = this.props;
+		const { post, site, feed, referralPost } = this.props;
 
 		if ( post._state === 'error' ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -263,6 +269,8 @@ export class FullPostView extends React.Component {
 			classes[ 'feed-' + post.feed_ID ] = true;
 		}
 
+		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
+
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
@@ -275,7 +283,7 @@ export class FullPostView extends React.Component {
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<ReaderFullPostBack onBackClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
-					<ExternalLink icon={ true } href={ post.URL } onClick={ this.handleVisitSiteClick } target="_blank">
+					<ExternalLink icon={ true } href={ externalHref } onClick={ this.handleVisitSiteClick } target="_blank">
 						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
 					</ExternalLink>
 				</div>
@@ -309,7 +317,7 @@ export class FullPostView extends React.Component {
 
 					</div>
 					<article className="reader-full-post__story" ref="article">
-						<ReaderFullPostHeader post={ post } />
+						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
 							<FeaturedImage src={ post.featured_image } />
@@ -396,6 +404,7 @@ const ConnectedFullPostView = connect(
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
 		}
+
 		return props;
 	},
 	{ setSection }
@@ -411,6 +420,14 @@ export default class FullPostFluxContainer extends React.Component {
 		this.smartSetState = smartSetState;
 	}
 
+	static propTypes = {
+		blogId: React.PropTypes.string.isRequired,
+		postId: React.PropTypes.string.isRequired,
+		onClose: React.PropTypes.func.isRequired,
+		onPostNotFound: React.PropTypes.func.isRequired,
+		referral: React.PropTypes.object
+	}
+
 	getStateFromStores( props = this.props ) {
 		const postKey = {
 			blogId: props.blogId,
@@ -418,14 +435,22 @@ export default class FullPostFluxContainer extends React.Component {
 			postId: props.postId
 		};
 
+		let referralPost;
+		if ( props.referral ) {
+			referralPost = PostStore.get( props.referral );
+			if ( ! referralPost ) {
+				fetchPost( props.referral );
+			}
+		}
+
 		const post = PostStore.get( postKey );
 
 		if ( ! post ) {
 			fetchPost( postKey );
 		}
-
 		return {
-			post
+			post,
+			referralPost
 		};
 	}
 
@@ -449,7 +474,8 @@ export default class FullPostFluxContainer extends React.Component {
 		return this.state.post
 			? <ConnectedFullPostView
 					onClose={ this.props.onClose }
-					post={ this.state.post } />
+					post={ this.state.post }
+					referralPost={ this.state.referralPost } />
 			: null;
 	}
 }

@@ -43,7 +43,6 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
-import SearchPostCard from 'blocks/reader-search-card/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
@@ -111,7 +110,6 @@ export default React.createClass( {
 					<DomainTip />
 					<RelatedPostCard />
 					<RelatedPostCardv2 />
-					<SearchPostCard />
 					<PostItem />
 					<PostRelativeTime />
 					<PostStatus />

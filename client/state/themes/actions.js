@@ -13,29 +13,32 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_REQUEST,
-	THEME_REQUEST_SUCCESS,
-	THEME_REQUEST_FAILURE,
-	THEMES_RECEIVE,
-	THEMES_REQUEST,
-	THEMES_REQUEST_SUCCESS,
-	THEMES_REQUEST_FAILURE,
 	THEME_ACTIVATE_REQUEST,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
-	THEME_UPLOAD_START,
-	THEME_UPLOAD_SUCCESS,
-	THEME_UPLOAD_FAILURE,
-	THEME_UPLOAD_CLEAR,
-	THEME_UPLOAD_PROGRESS,
+	THEME_INSTALL,
+	THEME_INSTALL_SUCCESS,
+	THEME_INSTALL_FAILURE,
+	THEME_REQUEST,
+	THEME_REQUEST_SUCCESS,
+	THEME_REQUEST_FAILURE,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_UPLOAD_START,
+	THEME_UPLOAD_SUCCESS,
+	THEME_UPLOAD_FAILURE,
+	THEME_UPLOAD_CLEAR,
+	THEME_UPLOAD_PROGRESS,
+	THEMES_RECEIVE,
+	THEMES_REQUEST,
+	THEMES_REQUEST_SUCCESS,
+	THEMES_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -347,6 +350,43 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 	};
 	return themeActivatedThunk; // it is named function just for testing purposes
+}
+
+/**
+ * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
+ * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
+ * requires Jetpack 4.4
+ *
+ * @param  {String}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
+ * @param  {String}   siteId  Jetpack Site ID
+ * @return {Function}         Action thunk
+ */
+export function installTheme( themeId, siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: THEME_INSTALL,
+			siteId,
+			themeId
+		} );
+
+		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
+			.then( ( theme ) => {
+				dispatch( receiveTheme( theme ) );
+				dispatch( {
+					type: THEME_INSTALL_SUCCESS,
+					siteId,
+					themeId
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: THEME_INSTALL_FAILURE,
+					siteId,
+					themeId,
+					error
+				} );
+			} );
+	};
 }
 
 /**

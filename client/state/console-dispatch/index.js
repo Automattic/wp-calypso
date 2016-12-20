@@ -81,7 +81,7 @@ export const consoleDispatcher = next => ( reducer, initialState ) => {
 			recordAction( action );
 		}
 
-		store.dispatch( action );
+		return store.dispatch( action );
 	};
 
 	Object.assign( window, store, {

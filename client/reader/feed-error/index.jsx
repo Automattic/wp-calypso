@@ -7,8 +7,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Main from 'components/main';
 import ReaderMain from 'components/reader-main';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
@@ -42,10 +40,8 @@ const FeedError = React.createClass( {
 					onClick={ this.recordSecondaryAction }
 					href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
 
-		const CurrentMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
-
 		return (
-			<CurrentMain>
+			<ReaderMain>
 				<MobileBackToSidebar>
 					<h1>{ this.props.sidebarTitle }</h1>
 				</MobileBackToSidebar>
@@ -57,7 +53,7 @@ const FeedError = React.createClass( {
 					illustration={ '/calypso/images/drake/drake-404.svg' }
 					illustrationWidth={ 500 }
 				/>
-			</CurrentMain>
+			</ReaderMain>
 		);
 	}
 } );

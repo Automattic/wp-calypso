@@ -26,6 +26,11 @@
 		}
 	}
 
+	.gridicon {
+		vertical-align: middle;
+		margin-top: -4px;
+	}
+
 	.gridicon[height="16"] {
 		position: relative;
 		top: 2px;
@@ -106,11 +111,6 @@
 	font-style: italic;
 	line-height: 24px;
 	min-height: 24px;
-
-	.gridicon {
-		vertical-align: middle;
-		margin-top: -4px;
-	}
 
 	.external-link {
 		font-style: normal;

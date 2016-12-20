@@ -22,7 +22,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
-import HelpContactClosureNotice from '../help-contact-closure-notice';
+import ChatClosureNotice from '../chat-closure-notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -222,7 +222,11 @@ export const HelpContactForm = React.createClass( {
 
 		return (
 			<div className="help-contact-form">
-				<HelpContactClosureNotice />
+				<ChatClosureNotice
+					reason="thanksgiving"
+					from="2016-11-24T08:00:00Z"
+					to="2016-11-25T08:00:00Z"
+				/>
 				{ formDescription && ( <p>{ formDescription }</p> ) }
 
 				{ showHowCanWeHelpField && (

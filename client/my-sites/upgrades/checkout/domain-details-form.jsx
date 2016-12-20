@@ -209,7 +209,7 @@ export default React.createClass( {
 				<Input
 					label={ this.translate( 'Phone', { textOnly } ) }
 					placeholder={ this.translate(
-						'e.g. +1.555.867.5309',
+						'e.g. +1.5558675309',
 						{
 							context: 'Domain contact info phone placeholder',
 							comment: 'Please use the phone number format most common for your language, but it must begin with just the country code in the format \'+1\' - no parenthesis, leading zeros, etc.'
