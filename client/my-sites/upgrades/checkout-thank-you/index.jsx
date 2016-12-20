@@ -34,6 +34,7 @@ import {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDotComPlan,
 	isGoogleApps,
 	isGuidedTransfer,
 	isJetpackPlan,
@@ -180,7 +181,7 @@ const CheckoutThankYou = React.createClass( {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
-			wasOnlyDotcomPlanPurchased = purchases.every( isPlan );
+			wasOnlyDotcomPlanPurchased = purchases.every( isDotComPlan );
 		}
 
 		const userCreatedMoment = moment( this.props.userDate );
