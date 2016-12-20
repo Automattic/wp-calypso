@@ -170,6 +170,7 @@ export default class RefreshPostCard extends React.Component {
 						{ post &&
 							<ReaderPostActions
 								post={ originalPost ? originalPost : post }
+								visitUrl = { post.URL }
 								showVisit={ true }
 								showMenu={ true }
 								showMenuFollow={ ! isDiscoverPost }

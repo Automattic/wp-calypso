@@ -31,7 +31,8 @@ const ReaderPostActions = ( props ) => {
 		showMenu,
 		showMenuFollow,
 		iconSize,
-		className
+		className,
+		visitUrl
 	} = props;
 
 	const onEditClick = () => {
@@ -51,7 +52,7 @@ const ReaderPostActions = ( props ) => {
 		<ul className={ listClassnames }>
 			{ showVisit &&
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ExternalLink href={ post.URL }
+					<ExternalLink href={ visitUrl || post.URL }
 						target="_blank"
 						icon={ true }
 						showIconFirst={ true }
@@ -111,7 +112,8 @@ ReaderPostActions.propTypes = {
 	showEdit: React.PropTypes.bool,
 	iconSize: React.PropTypes.number,
 	showMenu: React.PropTypes.bool,
-	showMenuFollow: React.PropTypes.bool
+	showMenuFollow: React.PropTypes.bool,
+	visitUrl: React.PropTypes.string
 };
 
 ReaderPostActions.defaultProps = {
