@@ -88,7 +88,7 @@ const SecurityCheckup = React.createClass( {
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
-					{ this.props.shouldShowEmailValidationNotice &&
+					{ this.props.shouldShowEmailValidationNotice && ! isRecoveryEmailLoading &&
 						<RecoveryEmailValidationNotice
 							onResend={ this.props.resendAccountRecoveryEmailValidation }
 						/>
