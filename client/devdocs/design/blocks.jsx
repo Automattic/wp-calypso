@@ -49,7 +49,7 @@ import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
-import RefreshPostCard from 'blocks/reader-post-card/docs/example';
+import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
 
@@ -117,7 +117,7 @@ export default React.createClass( {
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
-					<RefreshPostCard />
+					<ReaderPostCard />
 					<PlanPrice />
 					<PlanThankYouCard />
 					<DismissibleCard />
