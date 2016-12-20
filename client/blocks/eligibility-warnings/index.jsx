@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +16,17 @@ import { getEligibility } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 
 // Mapping eligibility hold constant to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
 function getHoldsMessages( translate ) {
 	return {
+		PLACEHOLDER: {
+			title: '',
+			description: '',
+			supportUrl: '',
+		},
 		MULTIPLE_USERS: {
 			title: translate( 'Multiple users' ),
 			description: translate( 'This feature is not supported on sites with multiple users.' ),
@@ -63,23 +70,41 @@ function getHoldsMessages( translate ) {
 	};
 }
 
+const checkEligibility = eligibilityData => isEmpty( eligibilityData.eligibilityHolds );
+
 const EligibilityWarnings = props => {
 	const {
 		translate,
 		backUrl,
+		onProceed,
+		siteId,
 		isEligible,
 		eligibilityData,
-		onProceed,
+		isPlaceholder,
 	} = props;
 
 	const holdsMessage = getHoldsMessages( translate );
 
+	const holds = ( eligibilityData && eligibilityData.eligibilityHolds )
+		? eligibilityData.eligibilityHolds
+		: [ 'PLACEHOLDER' ];
+
+	const warnings = ( eligibilityData && eligibilityData.eligibilityWarnings )
+		? eligibilityData.eligibilityWarnings
+		: [];
+
+	const classes = classNames( {
+		'eligibility-warnings__message': true,
+		'is-placeholder': isPlaceholder,
+	} );
+
 	return (
 		<div className="eligibility-warnings">
+			<QueryEligibility siteId={ siteId } />
 			<SectionHeader label={ translate( 'Conflicts' ) } />
 
-			{ eligibilityData.eligibilityHolds.map( ( error ) =>
-				<Card key={ holdsMessage[ error ].title } className="eligibility-warnings__message">
+			{ holds.map( ( error ) =>
+				<Card key={ holdsMessage[ error ].title } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__error-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
@@ -97,8 +122,8 @@ const EligibilityWarnings = props => {
 				</Card>
 			) }
 
-			{ eligibilityData.eligibilityWarnings.map( ( { name, description, supportUrl } ) =>
-				<Card key={ name } className="eligibility-warnings__message">
+			{ warnings.map( ( { name, description, supportUrl } ) =>
+				<Card key={ name } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__warning-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
@@ -149,10 +174,9 @@ const EligibilityWarnings = props => {
 };
 
 EligibilityWarnings.propTypes = {
-	isEligible: PropTypes.bool.isRequired,
+	onProceed: PropTypes.func,
 	backUrl: PropTypes.string,
 	translate: PropTypes.func,
-	onProceed: PropTypes.func,
 };
 
 EligibilityWarnings.defaultProps = {
@@ -161,9 +185,14 @@ EligibilityWarnings.defaultProps = {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
+	const eligibilityData = getEligibility( state, siteId );
+	const dataLoaded = !! eligibilityData.lastUpdate;
 
 	return {
-		eligibilityData: getEligibility( state, siteId )
+		siteId,
+		eligibilityData,
+		isEligible: dataLoaded && checkEligibility( eligibilityData ),
+		isPlaceholder: ! dataLoaded,
 	};
 };
 

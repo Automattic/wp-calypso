@@ -37,6 +37,7 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -328,6 +329,9 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta">
+				{ config.isEnabled( 'automated-transfer' ) && this.props.selectedSite.ID &&
+					<QueryEligibility siteId={ this.props.selectedSite.ID } />
+				}
 				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
