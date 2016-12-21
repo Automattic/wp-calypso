@@ -12,7 +12,6 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
-import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
@@ -105,10 +104,6 @@ class SearchStream extends Component {
 		query: React.PropTypes.string,
 	};
 
-	static defaultProps = {
-		showBlankContent: true,
-	};
-
 	constructor( props ) {
 		super( props );
 
@@ -131,7 +126,7 @@ class SearchStream extends Component {
 		}
 	}
 
-	updateState( props = this.props ) {
+	updateState = ( props = this.props ) => {
 		const newState = {
 			title: this.getTitle( props )
 		};
@@ -140,11 +135,11 @@ class SearchStream extends Component {
 		}
 	}
 
-	getTitle( props = this.props ) {
+	getTitle = ( props = this.props ) => {
 		return props.query;
 	}
 
-	updateQuery( newValue ) {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
@@ -152,24 +147,24 @@ class SearchStream extends Component {
 		}
 	}
 
-	scrollToTop() {
+	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
 	}
 
-	cardFactory() {
+	cardFactory = () => {
 		const isRecommendations = ! this.props.query;
 		return SearchCardAdapter( isRecommendations );
 	}
 
-	handleStreamMounted( ref ) {
+	handleStreamMounted = ( ref ) => {
 		this.streamRef = ref;
 	}
 
-	handleSearchBoxMounted( ref ) {
+	handleSearchBoxMounted = ( ref ) => {
 		this.searchBoxRef = ref;
 	}
 
-	resizeSearchBox() {
+	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
 			const width = this.streamRef.getClientRects()[ 0 ].width;
 			if ( width > 0 ) {
@@ -187,7 +182,7 @@ class SearchStream extends Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
-	placeholderFactory( { key, ...rest } ) {
+	placeholderFactory = ( { key, ...rest } ) => {
 		if ( ! this.props.query ) {
 			return (
 				<div className="search-stream__recommendation-list-item" key={ key }>
@@ -199,11 +194,8 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store } = this.props.store;
-		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions } /> : null;
-		const emptyContent = this.props.query
-			? <EmptyContent query={ this.props.query } />
-			: blankContent;
+		const { store } = this.props;
+		const emptyContent = <EmptyContent query={ this.props.query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -216,12 +208,10 @@ class SearchStream extends Component {
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
-
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				placeholderFactory={ this.placeholderFactory }
