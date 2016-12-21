@@ -16,9 +16,7 @@ const actions = require( 'lib/posts/actions' ),
 	route = require( 'lib/route' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
-	EditorDrawer = require( 'post-editor/editor-drawer' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	TinyMCE = require( 'components/tinymce' ),
@@ -35,14 +33,12 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
-import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
 import { receivePost, resetPostEdits } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
-import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -50,9 +46,11 @@ import EditorNotice from 'post-editor/editor-notice';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
-import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { protectForm } from 'lib/protect-form';
+import EditorSidebar from 'post-editor/editor-sidebar';
+import Site from 'blocks/site';
+import StatusLabel from 'post-editor/editor-status-label';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -162,6 +160,10 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	hideNotice: function() {
+		this.setState( { notice: null } );
+	},
+
 	toggleSidebar: function() {
 		this.hideDrafts();
 		this.props.setLayoutFocus( 'content' );
@@ -194,8 +196,18 @@ export const PostEditor = React.createClass( {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<div className="post-editor__inner">
+					<EditorMobileNavigation
+						site={ site }
+						post={ this.state.post }
+						savedPost={ this.state.savedPost }
+						onSave={ this.onSave }
+						onPublish={ this.onPublish }
+						isPublishing={ this.state.isPublishing }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
+						onClose={ this.onClose }
+						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
-						<EditorMobileNavigation site={ site } onClose={ this.onClose } />
 						<div className="editor">
 							<EditorActionBar
 								isNew={ this.state.isNew }
@@ -206,9 +218,21 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
+							<div className="post-editor__site">
+								<Site
+									site={ site }
+									indicator={ false }
+									homeLink={ true }
+									externalLink={ true }
+								/>
+								<StatusLabel
+									post={ this.state.savedPost }
+									type={ this.props.type }
+								/>
+							</div>
 							<EditorNotice
 								{ ...this.state.notice }
-								onDismissClick={ this.onNoticeClick } />
+								onDismissClick={ this.hideNotice } />
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
@@ -255,60 +279,40 @@ export const PostEditor = React.createClass( {
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
 						<EditorWordCount />
-						{ this.iframePreviewEnabled()
-							? <EditorPreview
-								showPreview={ this.state.showPreview }
-								onClose={ this.onPreviewClose }
-								isSaving={ this.state.isSaving || this.state.isAutosaving }
-								isLoading={ this.state.isLoading }
-								previewUrl={ this.state.previewUrl }
-								externalUrl={ this.state.previewUrl }
-							/>
-							: null }
 					</div>
-					<div className="post-editor__sidebar">
-						<EditorSidebarHeader
-							allPostsUrl={ this.getAllPostsUrl() }
-							toggleSidebar={ this.toggleSidebar } />
-						{ this.props.showDrafts
-							? <AsyncLoad
-								require="my-sites/drafts/draft-list"
-								{ ...this.props }
-								onTitleClick={ this.toggleSidebar }
-								showAllActionsMenu={ false }
-								siteID={ site ? site.ID : null }
-								selectedId={ this.state.post && this.state.post.ID || null }
-							/>
-						: <div>
-							<EditorGroundControl
-								savedPost={ this.state.savedPost }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-								isDirty={ this.state.isDirty || this.props.dirty }
-								isSaveBlocked={ this.isSaveBlocked() }
-								hasContent={ this.state.hasContent }
-								isSaving={ this.state.isSaving }
-								isPublishing={ this.state.isPublishing }
-								onSave={ this.onSave }
-								onPreview={ this.onPreview }
-								onPublish={ this.onPublish }
-								onTrashingPost={ this.onTrashingPost }
-								onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
-								site={ site }
-								user={ this.props.user }
-								userUtils={ this.props.userUtils }
-								type={ this.props.type }
-							/>
-							<EditorDrawer
-								type={ this.props.type }
-								site={ site }
-								post={ this.state.post }
-								isNew={ this.state.isNew }
-							/>
-
-						</div> }
-						<SidebarFooter />
-					</div>
+					<EditorSidebar
+						allPostsUrl={ this.getAllPostsUrl() }
+						sites={ this.props.sites }
+						onTitleClick={ this.toggleSidebar }
+						savedPost={ this.state.savedPost }
+						post={ this.state.post }
+						isNew={ this.state.isNew }
+						isDirty={ this.state.isDirty || this.props.dirty }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						hasContent={ this.state.hasContent }
+						isSaving={ this.state.isSaving }
+						isPublishing={ this.state.isPublishing }
+						onSave={ this.onSave }
+						onPreview={ this.onPreview }
+						onPublish={ this.onPublish }
+						onTrashingPost={ this.onTrashingPost }
+						site={ site }
+						user={ this.props.user }
+						userUtils={ this.props.userUtils }
+						type={ this.props.type }
+						showDrafts={ this.props.showDrafts }
+						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+						/>
+					{ this.iframePreviewEnabled() ?
+						<EditorPreview
+							showPreview={ this.state.showPreview }
+							onClose={ this.onPreviewClose }
+							isSaving={ this.state.isSaving || this.state.isAutosaving }
+							isLoading={ this.state.isLoading }
+							previewUrl={ this.state.previewUrl }
+							externalUrl={ this.state.previewUrl }
+						/>
+						: null }
 				</div>
 				{ isTrashed
 					? <RestorePostDialog
@@ -361,11 +365,6 @@ export const PostEditor = React.createClass( {
 
 	closeVerifyEmailDialog: function() {
 		this.setState( { showVerifyEmailDialog: false } );
-	},
-
-	onNoticeClick: function( event ) {
-		event.preventDefault();
-		this.setState( { notice: null } );
 	},
 
 	onEditedPostChange: function() {
@@ -591,14 +590,10 @@ export const PostEditor = React.createClass( {
 			// to avoid a weird UX we clear the iframe when (auto)saving
 			// so we need to delay opening it a bit to avoid flickering
 			setTimeout( function() {
-				this.setState( { showPreview: true }, function() {
-					this.props.setLayoutFocus( 'content' );
-				} );
+				this.setState( { showPreview: true } );
 			}.bind( this ), 150 );
 		} else {
-			this.setState( { showPreview: true }, function() {
-				this.props.setLayoutFocus( 'content' );
-			} );
+			this.setState( { showPreview: true } );
 		}
 	},
 

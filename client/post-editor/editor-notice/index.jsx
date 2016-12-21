@@ -15,6 +15,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -29,6 +30,14 @@ export class EditorNotice extends Component {
 		link: PropTypes.string,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ( ! this.props.message && nextProps.message ) ||
+			( ! this.props.error && nextProps.error ) ) {
+			// If we are showing a notice that didn't exist before, switch to the main editor view to show it
+			this.props.setLayoutFocus( 'content' );
+		}
 	}
 
 	getErrorMessage() {
@@ -216,4 +225,4 @@ export default connect( ( state ) => {
 		type: post.type,
 		typeObject: getPostType( state, siteId, post.type )
 	};
-} )( localize( EditorNotice ) );
+}, { setLayoutFocus } )( localize( EditorNotice ) );

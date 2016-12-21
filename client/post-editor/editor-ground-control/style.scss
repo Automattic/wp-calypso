@@ -2,12 +2,21 @@
 	padding: 16px;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
+
+	@include breakpoint( "<660px" ) {
+		padding-top: 0;
+	}
 }
 
 .editor-ground-control .site {
 	margin: -16px;
 	margin-bottom: 0;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
+
 .editor-ground-control__separator {
 	margin: 0 -16px;
 	background: lighten( $gray, 30 );
@@ -38,15 +47,36 @@
 	margin: 0 4px 8px;
 }
 
-.editor-ground-control__publish-button {
+.editor-ground-control .editor-publish-button {
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
+
 .editor-ground-control__time-button {
-	border-radius: 0 4px 4px 0;
+	@include breakpoint( ">660px" ) {
+		@include button-is-primary;
+
+		border-radius: 0 4px 4px 0;
+		padding-left: 8px;
+		padding-right: 8px;
+		margin-left: -1px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
+}
+
+.editor-ground-control__time-button-label {
 	padding-left: 8px;
-	padding-right: 8px;
-	margin-left: -1px;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .editor-ground-control__save.button.is-link,
@@ -88,6 +118,10 @@
 }
 
 .editor-ground-control__email-verification-notice {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+
 	font-size: 12px;
 	padding: 16px 16px 16px 48px;
 	background: white;

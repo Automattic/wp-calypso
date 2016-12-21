@@ -23,6 +23,7 @@ const Card = require( 'components/card' ),
 	stats = require( 'lib/posts/stats' );
 
 import AsyncLoad from 'components/async-load';
+import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -33,9 +34,9 @@ export default React.createClass( {
 		isSaveBlocked: React.PropTypes.bool,
 		isPublishing: React.PropTypes.bool,
 		isSaving: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
 		onPreview: React.PropTypes.func,
 		onPublish: React.PropTypes.func,
+		onSave: React.PropTypes.func,
 		onSaveDraft: React.PropTypes.func,
 		onMoreInfoAboutEmailVerify: React.PropTypes.func,
 		post: React.PropTypes.object,
@@ -55,7 +56,6 @@ export default React.createClass( {
 			isSaveBlocked: false,
 			isPublishing: false,
 			isSaving: false,
-			onClose: noop,
 			onPublish: noop,
 			onSaveDraft: noop,
 			post: null,
@@ -63,6 +63,7 @@ export default React.createClass( {
 			site: {},
 			user: null,
 			userUtils: null,
+			setDate: noop
 		};
 	},
 
@@ -141,67 +142,8 @@ export default React.createClass( {
 		return this.translate( 'Preview' );
 	},
 
-	trackPrimaryButton: function() {
-		const postEvents = {
-			update: 'Clicked Update Post Button',
-			schedule: 'Clicked Schedule Post Button',
-			requestReview: 'Clicked Request-Review Post Button',
-			publish: 'Clicked Publish Post Button',
-		};
-		const pageEvents = {
-			update: 'Clicked Update Page Button',
-			schedule: 'Clicked Schedule Page Button',
-			requestReview: 'Clicked Request-Review Page Button',
-			publish: 'Clicked Publish Page Button',
-		};
-		const buttonState = this.getPrimaryButtonState();
-		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
-		stats.recordEvent( eventString );
-		stats.recordEvent( 'Clicked Primary Button' );
-	},
-
-	getPrimaryButtonState: function() {
-		if (
-			postUtils.isPublished( this.props.savedPost ) &&
-			! postUtils.isBackDatedPublished( this.props.savedPost ) &&
-			! postUtils.isFutureDated( this.props.post ) ||
-			(
-				this.props.savedPost &&
-				this.props.savedPost.status === 'future' &&
-				postUtils.isFutureDated( this.props.post )
-			)
-		) {
-			return 'update';
-		}
-
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return 'schedule';
-		}
-
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
-			return 'publish';
-		}
-
-		if ( this.props.savedPost && this.props.savedPost.status === 'pending' ) {
-			return 'update';
-		}
-
-		return 'requestReview';
-	},
-
-	getPrimaryButtonLabel: function() {
-		const primaryButtonState = this.getPrimaryButtonState();
-		const buttonLabels = {
-			update: this.translate( 'Update' ),
-			schedule: this.translate( 'Schedule' ),
-			publish: this.translate( 'Publish' ),
-			requestReview: this.translate( 'Submit for Review' ),
-		};
-		return buttonLabels[ primaryButtonState ];
-	},
-
 	getVerificationNoticeLabel: function() {
-		const primaryButtonState = this.getPrimaryButtonState();
+		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
 		let buttonLabels;
 
 		// TODO: switch entirely to new wording once translations catch up
@@ -323,31 +265,12 @@ export default React.createClass( {
 			! this.props.isSaveBlocked;
 	},
 
-	isPrimaryButtonEnabled: function() {
-		return ! this.props.isPublishing &&
-			! this.props.isSaveBlocked &&
-			this.props.hasContent &&
-			! this.state.needsVerification;
+	canPublishPost: function() {
+		return siteUtils.userCan( 'publish_posts', this.props.site );
 	},
 
 	toggleAdvancedStatus: function() {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
-	},
-
-	onPrimaryButtonClick: function() {
-		this.trackPrimaryButton();
-
-		if ( postUtils.isPublished( this.props.savedPost ) &&
-			! postUtils.isBackDatedPublished( this.props.savedPost )
-		) {
-			return this.props.onSave();
-		}
-
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
-			return this.props.onPublish();
-		}
-
-		return this.props.onSave( 'pending' );
 	},
 
 	onSaveButtonClick: function() {
@@ -441,18 +364,22 @@ export default React.createClass( {
 						{ this.getPreviewLabel() }
 					</button>
 					<div className="editor-ground-control__publish-combo">
-						<button
-							className="editor-ground-control__publish-button button is-primary"
-							onClick={ this.onPrimaryButtonClick }
-							disabled={ ! this.isPrimaryButtonEnabled() }
+						<EditorPublishButton
+							site={ this.props.site }
+							post={ this.props.post }
+							savedPost={ this.props.savedPost }
+							onSave={ this.props.onSave }
+							onPublish={ this.props.onPublish }
 							tabIndex={ 5 }
-						>
-							{ this.getPrimaryButtonLabel() }
-						</button>
-						{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
+							isPublishing={ this.props.isPublishing }
+							isSaveBlocked={ this.props.isSaveBlocked }
+							hasContent={ this.props.hasContent }
+							needsVerification={ this.state.needsVerification }
+						/>
+						{ this.canPublishPost() &&
 							<button
 								ref="schedulePost"
-								className="editor-ground-control__time-button button is-primary"
+								className="editor-ground-control__time-button button"
 								onClick={ this.toggleSchedulePopover }
 								onMouseEnter={ this.showDateTooltip }
 								onMouseLeave={ this.hideDateTooltip }
@@ -464,11 +391,17 @@ export default React.createClass( {
 									? <Gridicon icon="scheduled" size={ 18 } />
 									: <Gridicon icon="calendar" size={ 18 } />
 								}
+								<span className="editor-ground-control__time-button-label">
+									{ postUtils.isFutureDated( this.props.post )
+										? this.moment( this.props.post.date ).calendar()
+										: this.translate( 'Choose Date' )
+									}
+								</span>
 							</button>
 						}
 						{ this.renderDateTooltip() }
 					</div>
-					{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
+					{ this.canPublishPost() &&
 						this.schedulePostPopover()
 					}
 				</div>
