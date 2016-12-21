@@ -21,8 +21,6 @@ import { getSiteSettings } from 'state/site-settings/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
 import { decodeEntities } from 'lib/formatting';
 import Tooltip from 'components/tooltip';
 
@@ -113,12 +111,6 @@ class TaxonomyManagerListItem extends Component {
 		return decodeEntities( term.name ) || translate( 'Untitled' );
 	};
 
-	viewPosts = () => {
-		this.props.setPreviewUrl( this.getTaxonomyLink() );
-		this.props.setPreviewType( 'site-preview' );
-		this.props.setLayoutFocus( 'preview' );
-	};
-
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
 		const name = this.getName();
@@ -167,7 +159,7 @@ class TaxonomyManagerListItem extends Component {
 						</PopoverMenuItem>
 					}
 					{ ! isJetpack &&
-						<PopoverMenuItem onClick={ this.viewPosts } icon="external">
+						<PopoverMenuItem href={ this.getTaxonomyLink() } target="_blank" rel="noopener noreferrer" icon="external">
 							{ translate( 'View Posts' ) }
 						</PopoverMenuItem>
 					}
@@ -209,8 +201,5 @@ export default connect(
 	{
 		deleteTerm,
 		saveSiteSettings,
-		setLayoutFocus,
-		setPreviewType,
-		setPreviewUrl,
 	}
 )( localize( TaxonomyManagerListItem ) );
