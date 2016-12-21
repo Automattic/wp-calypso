@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import { flowRight, omit, once } from 'lodash';
+import { flowRight, omit, memoize } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -140,14 +140,6 @@ class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
-	onRecordEventOnce( key, eventAction ) {
-		return () => this.props.recordGoogleEventOnce( 'Site Settings', eventAction );
-	}
-
-	onRecordEvent( eventAction ) {
-		return () => this.props.recordGoogleEvent( 'Site Settings', eventAction );
-	}
-
 	handleRadio = event => {
 		const currentTargetName = event.currentTarget.name,
 			currentTargetValue = event.currentTarget.value;
@@ -168,7 +160,7 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		this.submitForm();
-		this.onRecordEvent( 'Clicked Save Settings Button' )();
+		this.props.trackClick( 'Save Settings Button' );
 	};
 
 	submitForm() {
@@ -193,7 +185,7 @@ class SiteSettingsFormGeneral extends Component {
 	};
 
 	siteOptions() {
-		const { translate, isRequestingSettings, fields } = this.props;
+		const { translate, isRequestingSettings, fields, clickTracker, typeTracker } = this.props;
 
 		return (
 			<div className="site-settings__site-options">
@@ -207,8 +199,8 @@ class SiteSettingsFormGeneral extends Component {
 							value={ fields.blogname || '' }
 							onChange={ this.onChangeField( 'blogname' ) }
 							disabled={ isRequestingSettings }
-							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
+							onClick={ clickTracker( 'Site Title Field' ) }
+							onKeyPress={ typeTracker( 'Site Title Field' ) } />
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="blogdescription">{ translate( 'Site Tagline' ) }</FormLabel>
@@ -219,8 +211,8 @@ class SiteSettingsFormGeneral extends Component {
 							value={ fields.blogdescription || '' }
 							onChange={ this.onChangeField( 'blogdescription' ) }
 							disabled={ isRequestingSettings }
-							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) } />
+							onClick={ clickTracker( 'Site Tagline Field' ) }
+							onKeyPress={ typeTracker( 'Site Tagline Field' ) } />
 						<FormSettingExplanation>
 							{ translate( 'In a few words, explain what this site is about.' ) }
 						</FormSettingExplanation>
@@ -294,7 +286,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	languageOptions() {
-		const { fields, isRequestingSettings, site, translate } = this.props;
+		const { fields, isRequestingSettings, clickTracker, site, translate } = this.props;
 		if ( site.jetpack ) {
 			return null;
 		}
@@ -308,7 +300,7 @@ class SiteSettingsFormGeneral extends Component {
 					value={ fields.lang_id }
 					onChange={ this.onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings }
-					onClick={ this.onRecordEvent( 'Clicked Language Field' ) } />
+					onClick={ clickTracker( 'Language Field' ) } />
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
@@ -320,7 +312,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	visibilityOptions() {
-		const { fields, isRequestingSettings, site, translate } = this.props;
+		const { fields, isRequestingSettings, clickTracker, site, translate } = this.props;
 
 		return (
 			<FormFieldset>
@@ -331,7 +323,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ 1 === parseInt( fields.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ isRequestingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Public' ) }</span>
 					<FormSettingExplanation isIndented>
 						{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
@@ -345,7 +337,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ 0 === parseInt( fields.blog_public, 10 ) }
 						onChange={ this.handleRadio }
 						disabled={ isRequestingSettings }
-						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
+						onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Hidden' ) }</span>
 					<FormSettingExplanation isIndented>
 						{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
@@ -360,7 +352,7 @@ class SiteSettingsFormGeneral extends Component {
 							checked={ -1 === parseInt( fields.blog_public, 10 ) }
 							onChange={ this.handleRadio }
 							disabled={ isRequestingSettings }
-							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
+							onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
 						<span>{ translate( 'Private' ) }</span>
 						<FormSettingExplanation isIndented>
 							{ translate( 'Your site is only visible to you and users you approve.' ) }
@@ -373,15 +365,15 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	handleAmpToggle = () => {
-		const { fields, updateFields } = this.props;
+		const { fields, trackClick, updateFields } = this.props;
 		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
 			this.submitForm();
-			this.onRecordEvent( 'Clicked AMP Toggle' )();
+			trackClick( 'AMP Toggle' );
 		} );
 	};
 
 	handleAmpCustomize = () => {
-		this.onRecordEvent( 'Clicked AMP Customize button' )();
+		this.props.trackClick( 'AMP Customize button' );
 		page( '/customize/amp/' + this.props.site.slug );
 	};
 
@@ -442,7 +434,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	relatedPostsOptions() {
-		const { fields, translate } = this.props;
+		const { fields, clickTracker, translate } = this.props;
 		if ( ! fields.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -457,7 +449,7 @@ class SiteSettingsFormGeneral extends Component {
 								value="0"
 								checked={ 0 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
+								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
 							<span>{ translate( 'Hide related content after posts' ) }</span>
 						</FormLabel>
 					</li>
@@ -468,7 +460,7 @@ class SiteSettingsFormGeneral extends Component {
 								value="1"
 								checked={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
 								onChange={ this.handleRadio }
-								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
+								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
 							<span>{ translate( 'Show related content after posts' ) }</span>
 						</FormLabel>
 						<ul
@@ -808,13 +800,18 @@ const connectComponent = connect(
 		};
 	},
 	dispatch => {
-		const boundActionCreators = bindActionCreators(
-			{ recordGoogleEvent, recordTracksEvent, removeNotice, saveSiteSettings },
-			dispatch
-		);
+		const boundActionCreators = bindActionCreators( {
+			recordTracksEvent,
+			removeNotice,
+			saveSiteSettings
+		}, dispatch );
+		const trackClick = name => dispatch( recordGoogleEvent( 'Site Settings', `Clicked ${ name }` ) );
+		const trackType = memoize( name => dispatch( recordGoogleEvent( 'Site Settings', `Typed in ${ name }` ) ) );
 		return {
 			...boundActionCreators,
-			recordGoogleEventOnce: once( boundActionCreators.recordGoogleEvent )
+			clickTracker: message => () => trackClick( message ),
+			typeTracker: message => () => trackType( message ),
+			trackClick,
 		};
 	}
 );
