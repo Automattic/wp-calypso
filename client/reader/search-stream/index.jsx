@@ -99,13 +99,19 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 	}
 };
 
-const SearchStream = React.createClass( {
+class SearchStream extends Component {
 
-	propTypes: {
-		query: React.PropTypes.string
-	},
+	static propTypes = {
+		query: React.PropTypes.string,
+	};
 
-	getInitialState() {
+	static defaultProps = {
+		showBlankContent: true,
+	};
+
+	constructor( props ) {
+		super( props );
+
 		const lang = i18nUtils.getLocaleSlug();
 		let pickedSuggestions = null;
 
@@ -113,23 +119,17 @@ const SearchStream = React.createClass( {
 			pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
 		}
 
-		return {
+		this.state = {
 			suggestions: pickedSuggestions,
 			title: this.getTitle()
 		};
-	},
-
-	getDefaultProps() {
-		return {
-			showBlankContent: true
-		};
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
 		}
-	},
+	}
 
 	updateState( props = this.props ) {
 		const newState = {
@@ -138,11 +138,11 @@ const SearchStream = React.createClass( {
 		if ( newState.title !== this.state.title ) {
 			this.setState( newState );
 		}
-	},
+	}
 
 	getTitle( props = this.props ) {
 		return props.query;
-	},
+	}
 
 	updateQuery( newValue ) {
 		this.scrollToTop();
@@ -150,24 +150,24 @@ const SearchStream = React.createClass( {
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
-	},
+	}
 
 	scrollToTop() {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
 	cardFactory() {
 		const isRecommendations = ! this.props.query;
 		return SearchCardAdapter( isRecommendations );
-	},
+	}
 
 	handleStreamMounted( ref ) {
 		this.streamRef = ref;
-	},
+	}
 
 	handleSearchBoxMounted( ref ) {
 		this.searchBoxRef = ref;
-	},
+	}
 
 	resizeSearchBox() {
 		if ( this.searchBoxRef && this.streamRef ) {
@@ -176,16 +176,16 @@ const SearchStream = React.createClass( {
 				this.searchBoxRef.style.width = `${ width }px`;
 			}
 		}
-	},
+	}
 
 	componentDidMount() {
 		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
 		this.resizeSearchBox();
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeListener );
-	},
+	}
 
 	placeholderFactory( { key, ...rest } ) {
 		if ( ! this.props.query ) {
@@ -196,7 +196,7 @@ const SearchStream = React.createClass( {
 			);
 		}
 		return null;
-	},
+	}
 
 	render() {
 		const { store } = this.props.store;
@@ -248,6 +248,6 @@ const SearchStream = React.createClass( {
 			</Stream>
 		);
 	}
-} );
+}
 
 export default localize( SearchStream );
