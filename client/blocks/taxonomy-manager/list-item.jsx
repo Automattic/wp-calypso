@@ -19,10 +19,27 @@ import Dialog from 'components/dialog';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { decodeEntities } from 'lib/formatting';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
+import { setUrlScheme } from 'lib/url';
 import Tooltip from 'components/tooltip';
+
+const ViewTaxonomyMenuItem = ( { href, onClick, isPreviewable, children } ) => {
+	const props = {
+		href: isPreviewable ? undefined : href,
+		target: isPreviewable ? undefined : '_blank',
+		icon: isPreviewable ? 'visible' : 'external',
+		onClick: isPreviewable ? onClick : undefined,
+	};
+	return (
+		<PopoverMenuItem { ...props } rel="noopener noreferrer">
+			{ children }
+		</PopoverMenuItem>
+	);
+};
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -37,6 +54,7 @@ class TaxonomyManagerListItem extends Component {
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
 		isJetpack: PropTypes.bool,
+		isPreviewable: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -111,6 +129,16 @@ class TaxonomyManagerListItem extends Component {
 		return decodeEntities( term.name ) || translate( 'Untitled' );
 	};
 
+	viewTaxonomyPosts = () => {
+		// Avoid Mixed Content errors by forcing HTTPS, which is a requirement
+		// of previewable sites anyway. 10198-gh-wp-calypso
+		const url = setUrlScheme( this.getTaxonomyLink(), 'https' );
+
+		this.props.setPreviewUrl( url );
+		this.props.setPreviewType( 'site-preview' );
+		this.props.setLayoutFocus( 'preview' );
+	};
+
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
 		const name = this.getName();
@@ -159,9 +187,12 @@ class TaxonomyManagerListItem extends Component {
 						</PopoverMenuItem>
 					}
 					{ ! isJetpack &&
-						<PopoverMenuItem href={ this.getTaxonomyLink() } target="_blank" rel="noopener noreferrer" icon="external">
+						<ViewTaxonomyMenuItem
+								href={ this.getTaxonomyLink() }
+								onClick={ this.viewTaxonomyPosts }
+								isPreviewable={ this.props.isPreviewable }>
 							{ translate( 'View Posts' ) }
-						</PopoverMenuItem>
+						</ViewTaxonomyMenuItem>
 					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
@@ -185,15 +216,18 @@ class TaxonomyManagerListItem extends Component {
 export default connect(
 	( state, { taxonomy, term } ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSite( state, siteId );
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const siteUrl = get( getSite( state, siteId ), 'URL' );
+		const isPreviewable = get( site, 'is_previewable' );
+		const siteUrl = get( site, 'URL' );
 
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
-			isDefault,
 			canSetAsDefault,
+			isDefault,
+			isJetpack: isJetpackSite( state, siteId ),
+			isPreviewable,
 			siteId,
 			siteUrl,
 		};
@@ -201,5 +235,8 @@ export default connect(
 	{
 		deleteTerm,
 		saveSiteSettings,
+		setLayoutFocus,
+		setPreviewType,
+		setPreviewUrl,
 	}
 )( localize( TaxonomyManagerListItem ) );
