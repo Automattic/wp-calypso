@@ -22,6 +22,7 @@ var controller = {
 		var Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			status = context.params.status,
+			hierarchical = true,
 			search = context.query.s,
 			basePath = route.sectionify( context.path ),
 			analyticsPageTitle = 'Pages',
@@ -49,6 +50,7 @@ var controller = {
 				context: context,
 				siteID: siteID,
 				status: status,
+				hierarchical: hierarchical,
 				sites: sites,
 				search: search,
 				trackScrollPage: trackScrollPage.bind(

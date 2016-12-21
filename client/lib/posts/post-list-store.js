@@ -36,6 +36,7 @@ const _defaultQuery = {
 	order: 'DESC',
 	author: false,
 	search: false,
+	hierarchical: false,
 	perPage: 20
 };
 
@@ -87,7 +88,6 @@ export default function( id ) {
 		isFetchingNextPage: false,
 		isFetchingUpdated: false,
 	};
-
 
 	function queryPosts( options ) {
 		let query = assign( {}, _defaultQuery, options );
@@ -142,26 +142,26 @@ export default function( id ) {
 	/**
 	 * Sort the active list
 	 */
-	// function sort() {
-	// 	const key = _activeList.query.orderBy;
-    //
-	// 	_activeList.postIds.sort( function( a, b ) {
-	// 		var postA = PostsStore.get( a ),
-	// 			postB = PostsStore.get( b ),
-	// 			timeA = postA[ key ],
-	// 			timeB = postB[ key ];
-    //
-	// 		if ( timeA === timeB ) {
-	// 			if ( postA.title === postB.title ) {
-	// 				return 0;
-	// 			}
-    //
-	// 			return postA.title > postB.title ? 1 : -1;
-	// 		}
-	// 		// reverse-chronological
-	// 		return timeA > timeB ? -1 : 1;
-	// 	} );
-	// }
+	function sort() {
+		const key = _activeList.query.orderBy;
+
+		_activeList.postIds.sort( function( a, b ) {
+			var postA = PostsStore.get( a ),
+				postB = PostsStore.get( b ),
+				timeA = postA[ key ],
+				timeB = postB[ key ];
+
+			if ( timeA === timeB ) {
+				if ( postA.title === postB.title ) {
+					return 0;
+				}
+
+				return postA.title > postB.title ? 1 : -1;
+			}
+			// reverse-chronological
+			return timeA > timeB ? -1 : 1;
+		} );
+	}
 
 	// Process a new page of data and concatenate to the end of the list
 	function receivePage( listId, error, data ) {
@@ -224,7 +224,11 @@ export default function( id ) {
 			_activeList.page++;
 		}
 		_activeList.postIds = priorList;
-		// sort();
+
+		// do not sort pages
+		if( ! ( _activeList.query.type === 'page' && _activeList.query.hierarchical ) ) {
+			sort();
+		}
 	}
 
 	// Merge updated posts
@@ -258,7 +262,11 @@ export default function( id ) {
 
 		if ( newPostIds.length ) {
 			_activeList.postIds = _activeList.postIds.concat( newPostIds );
-			// sort();
+
+			// do not sort pages
+			if( ! ( _activeList.query.type === 'page' && _activeList.query.hierarchical ) ) {
+				sort();
+			}
 		}
 	}
 
