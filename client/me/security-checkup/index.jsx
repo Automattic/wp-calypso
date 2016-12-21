@@ -20,6 +20,7 @@ import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
+import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
 
 import {
 	updateAccountRecoveryEmail,
@@ -112,6 +113,7 @@ const SecurityCheckup = React.createClass( {
 							showDismiss={ false }
 						/>
 					}
+					<RecoveryPhoneValidationNotice />
 				</CompactCard>
 
 			</Main>
