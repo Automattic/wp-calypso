@@ -1,0 +1,48 @@
+table.props-editor__table{
+  > tbody tr:last-child > td {
+	border-bottom: solid 1px #eee;
+  }
+
+  tr:hover {
+  	background-color: rgba(0, 113, 96, 0.05);
+  }
+
+  th {
+	border-bottom: 1px solid $gray-dark;
+  }
+
+  td {
+	vertical-align: top;
+  }
+
+  td.props-editor__table-row-name {
+	color: rgb(17, 147, 154);
+  }
+
+  td.props-editor__table-row-optional {
+	color: #c6c6c6;
+  }
+
+  td.props-editor__table-row-required {
+	color: rgb(255, 76, 34);
+  }
+
+  td.props-editor__table-row-default {
+	color: rgb(236, 171, 32);
+  }
+
+  td.props-editor__table-row-current {
+	color: rgb(32, 171, 236);
+	display: inline-flex;
+	width: 100%
+  }
+
+  tr.props-editor__unknown-type {
+	background-color: rgba(255, 131, 131, 0.46);
+  }
+
+  th, td {
+	text-align: left;
+	padding: 10px 10px;
+  }
+}

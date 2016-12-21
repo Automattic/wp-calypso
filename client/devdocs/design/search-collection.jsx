@@ -11,6 +11,7 @@ import {
 	camelCaseToSlug,
 	getComponentName,
 } from 'devdocs/docs-example/util';
+import PropsEditor from 'blocks/props-editor';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -64,7 +65,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 				unique={ !! component }
 				url={ exampleLink }
 			>
-				{ example }
+				{ component ? <PropsEditor component={ component } example={ example } /> : example }
 			</DocsExampleWrapper>
 		);
 	} );

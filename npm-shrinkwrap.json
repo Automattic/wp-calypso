@@ -959,11 +959,9 @@
     },
     "doctrine": {
       "version": "1.5.0",
-      "dev": true,
       "dependencies": {
         "isarray": {
-          "version": "1.0.0",
-          "dev": true
+          "version": "1.0.0"
         }
       }
     },
@@ -1746,6 +1744,9 @@
       "version": "2.0.0"
     },
     "has-binary": {
+      "version": "0.1.7"
+    },
+    "has-color": {
       "version": "0.1.7"
     },
     "has-cors": {
@@ -2683,6 +2684,20 @@
         }
       }
     },
+    "nomnom": {
+      "version": "1.8.1",
+      "dependencies": {
+        "ansi-styles": {
+          "version": "1.0.0"
+        },
+        "chalk": {
+          "version": "0.4.0"
+        },
+        "strip-ansi": {
+          "version": "0.1.1"
+        }
+      }
+    },
     "noop-logger": {
       "version": "0.1.1"
     },
@@ -3095,6 +3110,17 @@
     },
     "react-day-picker": {
       "version": "2.4.1"
+    },
+    "react-docgen": {
+      "version": "2.12.1",
+      "dependencies": {
+        "async": {
+          "version": "1.5.2"
+        },
+        "babylon": {
+          "version": "5.8.38"
+        }
+      }
     },
     "react-dom": {
       "version": "15.4.0"
@@ -3974,6 +4000,9 @@
     },
     "ultron": {
       "version": "1.0.2"
+    },
+    "underscore": {
+      "version": "1.6.0"
     },
     "uniq": {
       "version": "1.0.1",
