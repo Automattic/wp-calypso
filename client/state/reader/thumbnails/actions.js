@@ -68,6 +68,11 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 			return Promise.resolve();
 		}
+		case 'videopress': {
+			const thumbnailUrl = `https://thumbs.videopress.com/${ id }?c=1`;
+			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+			return Promise.resolve();
+		}
 		case 'vimeo': {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
 			dispatch( {
@@ -90,12 +95,6 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 				} );
 		}
 		default:
-			if ( embedUrl.indexOf( 'videopress.com' ) >= 0 ) {
-				const regex = /embed\/(\w{8})/;
-				const videoId = embedUrl.match( regex )[ 1 ];
-				const thumbnailUrl = `https://thumbs.videopress.com/${ videoId }?c=1`;
-				dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-			}
 			dispatch( requestFailure( embedUrl, { type: UNSUPPORTED_EMBED } ) );
 			return Promise.resolve();
 	}
