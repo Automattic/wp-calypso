@@ -121,6 +121,7 @@ class TaxonomyManagerListItem extends Component {
 
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
+		const name = this.getName();
 		const className = classNames( 'taxonomy-manager__item', {
 			'is-default': isDefault
 		} );
@@ -135,7 +136,7 @@ class TaxonomyManagerListItem extends Component {
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				<span className="taxonomy-manager__label" onClick={ onClick }>
-					<span>{ this.getName() }</span>
+					<span>{ name }</span>
 					{ isDefault &&
 					<span className="taxonomy-manager__default-label">
 							{ translate( 'default', { context: 'label for terms marked as default' } ) }
@@ -182,7 +183,7 @@ class TaxonomyManagerListItem extends Component {
 					buttons={ deleteDialogButtons }
 					onClose={ this.closeDeleteDialog }
 				>
-					<p>{ translate( 'Are you sure you want to permanently delete this item?' ) }</p>
+					<p>{ translate( 'Are you sure you want to permanently delete \'%(name)s\'?', { args: { name } } ) }</p>
 				</Dialog>
 			</div>
 		);
