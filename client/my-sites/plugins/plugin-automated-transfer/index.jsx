@@ -41,51 +41,57 @@ class PluginAutomatedTransfer extends Component {
 
 	componentWillMount() {
 		const { COMPLETE } = transferStates;
-		const { transferState } = this.props;
-		if ( ! transferState || COMPLETE === transferState ) {
+		const { isTransferring, transferState } = this.props;
+		if ( ! isTransferring || ! transferState || COMPLETE === transferState ) {
 			this.setState( { shouldDisplay: false } );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { COMPLETE } = transferStates;
+		const { COMPLETE, CONFLICTS } = transferStates;
+		const { transferComplete } = this.state;
 		const newState = {};
 
 		if ( COMPLETE === nextProps.transferState ) {
 			newState.transferComplete = true;
+		} else if ( transferComplete ) {
+			newState.shouldDisplay = true;
 		} else {
 			if ( this.props.transferState !== nextProps.transferState ) {
 				newState.clickOutside = false;
 			}
 
-			if ( ! this.state.transferComplete ) {
-				newState.shouldDisplay = nextProps.transferState;
+			if ( ! nextProps.isTransferring && CONFLICTS !== nextProps.transferState ) {
+				newState.shouldDisplay = false;
+			} else {
+				newState.shouldDisplay = true;
 			}
 		}
 
 		this.setState( newState );
 	}
 
-	getNoticeText = ( pluginName = '' ) => {
+	getNoticeText = () => {
 		const { START, SETUP, CONFLICTS } = transferStates;
-		const { transferState, translate } = this.props;
+		const { plugin, transferState, translate } = this.props;
 		const { clickOutside, transferComplete } = this.state;
 
 		if ( clickOutside ) {
 			return translate( "Don't leave quite yet! Just a bit longer." );
 		}
 		if ( transferComplete ) {
-			return translate( 'Successfully installed %(plugin)s!', { args: { plugin: pluginName } } );
+			return translate( 'Successfully installed %(plugin)s!', { args: { plugin: plugin.name } } );
 		}
 		switch ( transferState ) {
-			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: pluginName } } );
+			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: plugin.name } } );
 			case SETUP : return translate( 'Now configuring your site. This may take a few minutes.' );
-			case CONFLICTS: return translate( 'Sorry, we found some conflicts to fix before proceding.' );
+			case CONFLICTS: return translate( 'Sorry, we found some conflicts to fix before proceeding.' );
 		}
 	}
 
-	getStatus = transferState => {
+	getStatus = () => {
 		const { CONFLICTS } = transferStates;
+		const { transferState } = this.props;
 		const { clickOutside, transferComplete } = this.state;
 
 		if ( clickOutside ) {
@@ -100,8 +106,9 @@ class PluginAutomatedTransfer extends Component {
 		return 'is-info';
 	}
 
-	getIcon = transferState => {
+	getIcon = () => {
 		const { CONFLICTS } = transferStates;
+		const { transferState } = this.props;
 		const { clickOutside, transferComplete } = this.state;
 
 		if ( clickOutside ) {
@@ -126,8 +133,8 @@ class PluginAutomatedTransfer extends Component {
 
 	render() {
 		const { CONFLICTS } = transferStates;
-		const { plugin, transferState, translate } = this.props;
-		const { shouldDisplay } = this.state;
+		const { transferState, translate } = this.props;
+		const { shouldDisplay, transferComplete } = this.state;
 
 		if ( ! shouldDisplay ) {
 			return null;
@@ -135,13 +142,13 @@ class PluginAutomatedTransfer extends Component {
 
 		return (
 			<Notice
-				icon={ this.getIcon( transferState ) }
+				icon={ this.getIcon() }
 				className="plugin-automated-transfer"
 				showDismiss={ false }
-				status={ this.getStatus( transferState ) }
-				text={ this.getNoticeText( plugin.name ) }
+				status={ this.getStatus() }
+				text={ this.getNoticeText() }
 			>
-				{ CONFLICTS === transferState &&
+				{ ! transferComplete && CONFLICTS === transferState &&
 					<NoticeAction href="#">
 						{ translate( 'View Conflicts', {
 							comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
