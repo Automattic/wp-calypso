@@ -64,7 +64,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		if ( isDomainMapping( this.props.primaryPurchase ) ) {
 			return this.translate(
 				'Your domain {{strong}}%(domainName)s{{/strong}} was added to your site. ' +
-				"But it isn't working yet – follow the instructions below to complete the set up.", {
+				'It may take a little while to start working – see below for more information.', {
 					args: { domainName: this.props.primaryPurchase.meta },
 					components: { strong: <strong /> }
 				}
