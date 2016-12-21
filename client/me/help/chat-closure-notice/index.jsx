@@ -18,13 +18,13 @@ import { title, upcoming, closed } from './messages';
 const Notice = localize( ( { translate, closedFrom, closedTo, reason } ) =>
 	<div className="chat-closure-notice">
 		<FormSectionHeading>{ title( { translate, closedFrom, closedTo, reason } ) }</FormSectionHeading>
-		<p>
+		<div>
 			{
 				i18n.moment().isBefore( closedFrom )
 					? upcoming( { translate, closedFrom, closedTo, reason } )
 					: closed( { translate, closedFrom, closedTo, reason } )
 			}
-		</p>
+		</div>
 	</div>
 );
 
