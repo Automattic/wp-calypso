@@ -220,7 +220,7 @@ Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlu
  */
 Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/settings/' }, fn );
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/settings/' }, fn );
 };
 
 /*
@@ -235,7 +235,7 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/settings/', body: JSON.stringify( settings ) },
+		{ path: '/jetpack/v4/settings/', body: JSON.stringify( settings ) },
 		fn
 	);
 };
