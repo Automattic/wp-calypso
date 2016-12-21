@@ -93,12 +93,16 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		&.is-photo {
 
 			.reader-post-card__featured-image {
-				position: relative;
-					top: 0;
+				background-attachment: fixed;
+				background-position: center top !important;
+				background-repeat: no-repeat;
+				background-size: 56% !important;
 				height: 225px;
 				margin-right: 0;
 				margin-bottom: 0;
 				max-width: 100%;
+				position: relative;
+					top: 0;
 
 				&::before {
 					content: '';
