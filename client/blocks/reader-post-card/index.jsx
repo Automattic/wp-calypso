@@ -16,6 +16,7 @@ import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
 import PostByline from './byline';
+import DiscoverPostByline from './discover-byline';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import FollowButton from 'reader/follow-button';
@@ -123,6 +124,7 @@ export default class ReaderPostCard extends React.Component {
 			separator: /,? +/
 		} );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+		const isDiscoverPick = DiscoverHelper.isDiscoverPick( post );
 
 		if ( ! title && isPhotoOnly ) {
 			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
@@ -148,7 +150,10 @@ export default class ReaderPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
-				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				{ isDiscoverPick
+					? <DiscoverPostByline post={ post } site={ site } feed={ feed } originalPost={ originalPost } />
+					: <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				}
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }

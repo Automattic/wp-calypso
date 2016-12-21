@@ -28,12 +28,10 @@ class PostByline extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
 		feed: React.PropTypes.object,
-		isDiscoverPost: React.PropTypes.bool,
-		showSiteName: React.PropTypes.bool
+		showSiteName: React.PropTypes.bool,
 	}
 
 	static defaultProps = {
-		isDiscoverPost: false,
 		showSiteName: true
 	}
 
@@ -49,18 +47,46 @@ class PostByline extends React.Component {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
 	}
 
+	getPostAuthor = () => {
+		return get( this.props, 'post.author' );
+	}
+
+	getPostTimeLinkUrl = () => {
+		return get( this.props, 'post.URL' );
+	}
+
+	getStreamUrl = () => {
+		const feedId = get( this.props.post, 'feed_ID' );
+		const siteId = get( this.props.site, 'ID' );
+		return getStreamUrl( feedId, siteId );
+	}
+
+	getSiteIcon = () => {
+		return get( this.props.site, 'icon.img' );
+	}
+
+	getFeedIcon = () => {
+		return get( this.props.feed, 'image' );
+	}
+
+	getSiteName = () => {
+		return siteNameFromSiteAndPost( this.props.site, this.props.post );
+	}
+
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
+		const { post, site, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
-		const siteName = siteNameFromSiteAndPost( site, post );
-		const hasAuthorName = has( post, 'author.name' );
+		const siteName = this.getSiteName();
+		const postAuthor = this.getPostAuthor();
+		const hasAuthorName = has( postAuthor, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
-		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
-		const streamUrl = getStreamUrl( feedId, siteId );
-		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
+		const shouldDisplayAuthor = hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
+		const streamUrl = this.getStreamUrl();
+		const siteIcon = this.getSiteIcon();
+		const feedIcon = this.getFeedIcon();
+		const postTimeLinkUrl = this.getPostTimeLinkUrl();
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -68,7 +94,7 @@ class PostByline extends React.Component {
 				<ReaderAvatar
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
-					author={ post.author }
+					author={ postAuthor }
 					preferGravatar={ true }
 					siteUrl={ streamUrl } />
 				<div className="reader-post-card__byline-details">
@@ -76,10 +102,10 @@ class PostByline extends React.Component {
 						{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
 							className="reader-post-card__link"
-							author={ post.author }
+							author={ postAuthor }
 							siteUrl={ streamUrl }
 							post={ post }>
-							{ post.author.name }
+							{ postAuthor.name }
 						</ReaderAuthorLink>
 						}
 						{ shouldDisplayAuthor && showSiteName && ', ' }
@@ -87,6 +113,7 @@ class PostByline extends React.Component {
 							className="reader-post-card__site reader-post-card__link"
 							feedId={ feedId }
 							siteId={ siteId }
+							siteUrl={ streamUrl }
 							post={ post }>
 							{ siteName }
 						</ReaderSiteStreamLink> }
@@ -96,7 +123,7 @@ class PostByline extends React.Component {
 							<span className="reader-post-card__timestamp">
 								<a className="reader-post-card__timestamp-link"
 									onClick={ this.recordDateClick }
-									href={ post.URL }
+									href={ postTimeLinkUrl }
 									target="_blank"
 									rel="noopener noreferrer">
 									<PostTime date={ post.date } />

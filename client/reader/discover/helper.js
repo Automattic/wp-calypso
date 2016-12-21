@@ -28,6 +28,10 @@ export function isDiscoverPost( post ) {
 	return !! ( get( post, 'discover_metadata' ) || get( post, 'site_ID' ) === config( 'discover_blog_id' ) );
 }
 
+export function isDiscoverPick( post ) {
+	return hasDiscoverSlug( post, 'pick' );
+}
+
 export function isDiscoverSitePick( post ) {
 	return hasDiscoverSlug( post, 'site-pick' );
 }
@@ -38,7 +42,7 @@ export function isInternalDiscoverPost( post ) {
 
 export function getSiteUrl( post ) {
 	const blogId = get( post, 'discover_metadata.featured_post_wpcom_data.blog_id' );
-	// If we have a blog ID, we want to send them to the site detail page
+	// If we have a blog ID, we want to send them to the site stream page
 	return blogId ? readerRouteGetSiteUrl( blogId ) : get( post, 'discover_metadata.permalink' );
 }
 
