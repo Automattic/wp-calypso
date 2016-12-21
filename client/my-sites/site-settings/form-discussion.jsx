@@ -144,7 +144,7 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 	otherCommentSettings() {
 		const markdownSupported = this.state.markdown_supported;
 		return (
-			<FormFieldset>
+			<FormFieldset className="site-settings__other-comment-settings">
 				<FormToggle
 					className="is-compact"
 					checked={ !! this.state.require_name_email }
@@ -307,6 +307,7 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 			<FormSelect
 				className="is-compact"
 				name="default_comments_page"
+				style={ { marginTop: '4px' } }
 				value={ this.state.default_comments_page }
 				onChange={ this.handleText }
 				disabled={ this.state.fetchingSettings }
