@@ -545,12 +545,12 @@ describe( 'actions', () => {
 			expect( stub ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
 				siteId: 2211667,
-				themeId: 'karuna-wpcom'
+				themeId: 'karuna'
 			} );
 		} );
 
 		it( 'should dispatch THEME_ACTIVATE_REQUEST, installTheme(), and activateTheme()', ( done ) => {
-			installAndActivate( 'karuna', 2211667 )( stub ).then( () => {
+			installAndActivate( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST,
 					themeId: 'karuna-wpcom',
@@ -564,7 +564,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch wpcom theme install request failure action when theme install fails', () => {
 			// Fail on attempted install
-			stub.withArgs( matchFunction( installTheme( 'pinboard-wpcom', 2211667 ) ) )
+			stub.withArgs( matchFunction( installTheme( 'pinboard', 2211667 ) ) )
 				.returns( new Promise( ( res, rej ) => {
 					rej();
 				} ) );
@@ -573,7 +573,7 @@ describe( 'actions', () => {
 				expect( stub ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 2211667,
-					themeId: 'pinboard-wpcom'
+					themeId: 'pinboard'
 				} );
 			} );
 		} );
