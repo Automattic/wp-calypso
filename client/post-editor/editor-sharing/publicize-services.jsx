@@ -20,10 +20,6 @@ class EditorSharingPublicizeServices extends Component {
 		newConnectionPopup: PropTypes.func.isRequired
 	};
 
-	static defaultProps = {
-		post: Object.freeze( {} ),
-	};
-
 	render() {
 		const services = reduce( this.props.connections, ( memo, connection ) => {
 			if ( connection.label in memo ) {
