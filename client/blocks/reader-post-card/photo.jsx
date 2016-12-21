@@ -12,12 +12,9 @@ import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isExpanded: false
-		};
-	}
+	state = {
+		isExpanded: false
+	};
 
 	handleClick = ( event ) => {
 		if ( this.state.isExpanded ) {
