@@ -175,7 +175,7 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: false } ) },
+		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: false } ) },
 		fn
 	);
 };
