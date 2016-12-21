@@ -12,14 +12,11 @@ import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import config from 'config';
 
 const analyticsPageTitle = 'Reader';
 
 export default {
 	search: function( context ) {
-		const isRefresh = config.isEnabled( 'reader/refresh/stream' );
-
 		var SearchStream = require( 'reader/search-stream' ),
 			basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
@@ -30,7 +27,7 @@ export default {
 		if ( searchSlug ) {
 			store = feedStreamFactory( 'search:' + searchSlug );
 			ensureStoreLoading( store, context );
-		} else if ( isRefresh ) {
+		} else {
 			store = feedStreamFactory( 'custom_recs_posts_with_images' );
 			ensureStoreLoading( store, context );
 		}
