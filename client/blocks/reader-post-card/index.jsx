@@ -171,7 +171,7 @@ export default class ReaderPostCard extends React.Component {
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 						{ discoverBlogName &&
 							<DiscoverFollowButton
-									siteName={ get( post, 'discover_metadata.attribution.blog_name' ) }
+									siteName={ discoverBlogName }
 									followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } />
 						}
 
