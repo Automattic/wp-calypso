@@ -84,10 +84,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			&:hover .reader-post-card__play-icon {
 				opacity: 1;
 			}
-
-			&.is-expanded {
-				border: 1px solid red;
-			}
 		}
 
 		.reader-post-card__play-icon {
