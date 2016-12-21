@@ -56,7 +56,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
-						path: '/module/module-a/active/',
+						path: '/jetpack/v4/module/module-a/active/',
 						body: JSON.stringify( { active: true } )
 					} )
 					.reply( 200, {
@@ -83,7 +83,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
-						path: '/module/module-a/active/',
+						path: '/jetpack/v4/module/module-a/active/',
 						body: JSON.stringify( { active: true } )
 					} )
 					.reply( 400, {
