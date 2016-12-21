@@ -1,0 +1,82 @@
+.is-reader-page .discover-attribution {
+	font-size: 13px;
+	font-family: $sans;
+	text-transform: lowercase;
+	color: $gray;
+	position: relative;
+	margin-top: 13px;
+	margin-bottom: 8px;
+
+	&.is-site {
+		margin-top: 15px;
+	}
+
+	.gridicons-arrow-right {
+		height: 12px;
+		width: 12px;
+		fill: $white;
+		background: $gray;
+		padding: 4px;
+		border-radius: 100%;
+		position: relative;
+			top: 6px;
+		margin-right: 6px;
+
+	}
+
+	.gravatar {
+		background: $gray-light;
+		position: relative;
+			top: 6px;
+		margin: 1px 6px 1px 0;
+	}
+
+	.discover-attribution__author,
+	.discover-attribution__blog {
+		color: $blue-medium;
+		text-decoration: none;
+		text-transform: none;
+
+		&:hover {
+			color: $blue-light;
+		}
+	}
+
+	.discover-attribution__blog {
+		margin-right: 6px;
+	}
+
+	.noticon {
+		font-size: 20px;
+		height: 20px;
+		background-color: lighten( $gray, 20% );
+		color: $white;
+		margin-right: 6px;
+	}
+
+	.follow-button {
+		position: static;
+		border: none;
+		padding: 0;
+		vertical-align: text-bottom;
+		color: lighten( $gray, 10% );
+		font-size: 13px;
+		line-height: 16px;
+		background: transparent;
+		float: none;
+
+		&.is-following {
+			color: $alert-green;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		.follow-button__label {
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
+	}
+}
