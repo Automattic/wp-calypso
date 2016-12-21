@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
 /**
  * Internal dependencies
@@ -22,10 +21,9 @@ import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import { protectForm } from 'lib/protect-form';
 
-module.exports = protectForm( React.createClass( {
+const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-	displayName: 'SiteSettingsFormDiscussion',
-
+const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 	mixins: [ formBase ],
 
 	discussionAttributes: [
@@ -57,14 +55,14 @@ module.exports = protectForm( React.createClass( {
 		'markdown_supported',
 	],
 
-	getSettingsFromSite: function( siteInstance ) {
+	getSettingsFromSite( siteInstance ) {
 		const site = siteInstance || this.props.site,
 			settings = {};
 
 		if ( site.settings ) {
-			this.discussionAttributes.map( function( attribute ) {
+			this.discussionAttributes.map( attribute => {
 				settings[ attribute ] = site.settings[ attribute ];
-			}, this );
+			} );
 		}
 
 		settings.fetchingSettings = site.fetchingSettings;
@@ -72,9 +70,9 @@ module.exports = protectForm( React.createClass( {
 		return settings;
 	},
 
-	resetState: function() {
+	resetState() {
 		const clearSettings = { fetchingSettings: true };
-		this.discussionAttributes.forEach( function( attribute ) {
+		this.discussionAttributes.forEach( attribute => {
 			clearSettings[ attribute ] = '';
 		} );
 		this.replaceState( clearSettings );
@@ -539,3 +537,5 @@ module.exports = protectForm( React.createClass( {
 		);
 	}
 } ) );
+
+export default SiteSettingsFormDiscussion;
