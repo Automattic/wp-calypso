@@ -36,7 +36,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/settings/'
+						path: '/jetpack/v4/settings/'
 					} )
 					.reply( 200, { data: settings[ siteId ] }, {
 						'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/settings/'
+						path: '/jetpack/v4/settings/'
 					} )
 					.reply( 400, {
 						message: 'Invalid request.'
@@ -101,7 +101,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/settings/',
+						path: '/jetpack/v4/settings/',
 						body: JSON.stringify( settings[ siteId ] )
 					} )
 					.reply( 200, {
@@ -137,7 +137,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/settings/',
+						path: '/jetpack/v4/settings/',
 						body: JSON.stringify( settings[ siteId ] )
 					} )
 					.reply( 400, {
