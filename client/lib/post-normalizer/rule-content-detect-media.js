@@ -67,7 +67,8 @@ const detectImage = ( image ) => {
  */
 const getAutoplayIframe = ( iframe ) => {
 	const metadata = getEmbedMetadata( iframe.src );
-	if ( metadata && ( metadata.service === 'youtube' || metadata.service === 'vimeo' ) ) {
+	if ( ( metadata && ( metadata.service === 'youtube' || metadata.service === 'vimeo' ) ||
+			iframe.src.indexOf( 'videopress.com' ) >= 0 ) ) {
 		const autoplayIframe = iframe.cloneNode();
 		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
 			autoplayIframe.src += '?autoplay=1';
