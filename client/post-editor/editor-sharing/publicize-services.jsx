@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { groupBy, map } from 'lodash';
 
@@ -13,32 +13,28 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 
-class EditorSharingPublicizeServices extends Component {
-	static propTypes = {
-		post: PropTypes.object,
-		connections: PropTypes.array.isRequired,
-		newConnectionPopup: PropTypes.func.isRequired
-	};
-
-	render() {
-		return (
-			<ul className="editor-sharing__publicize-services">
-				{ map( groupBy( this.props.connections, 'label' ), ( connections, label ) =>
-					<li key={ label } className="editor-sharing__publicize-service">
-						<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
-						{ connections.map( ( connection ) =>
-							<EditorSharingPublicizeConnection
-								key={ connection.ID }
-								post={ this.props.post }
-								connection={ connection }
-								onRefresh={ this.props.newConnectionPopup } />
-						) }
-					</li>
+export const EditorSharingPublicizeServices = ( { connections, post, newConnectionPopup } ) => (
+	<ul className="editor-sharing__publicize-services">
+		{ map( groupBy( connections, 'label' ), ( groupedConnections, label ) =>
+			<li key={ label } className="editor-sharing__publicize-service">
+				<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
+				{ groupedConnections.map( ( connection ) =>
+					<EditorSharingPublicizeConnection
+						key={ connection.ID }
+						post={ post }
+						connection={ connection }
+						onRefresh={ newConnectionPopup } />
 				) }
-			</ul>
-		);
-	}
-}
+			</li>
+		) }
+	</ul>
+);
+
+EditorSharingPublicizeServices.propTypes = {
+	connections: PropTypes.array.isRequired,
+	post: PropTypes.object,
+	newConnectionPopup: PropTypes.func.isRequired
+};
 
 export default connect(
 	( state ) => {
