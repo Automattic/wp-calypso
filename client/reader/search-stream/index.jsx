@@ -23,16 +23,10 @@ import { suggestions } from './suggestions';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-<<<<<<< 055392bc672dc66dc0a08a2d323450d8064fdc70
-=======
-import config from 'config';
 import {
 	EMPTY_SEARCH_RECOMMENDATIONS,
 	SEARCH_RESULTS,
 } from 'reader/follow-button/follow-sources';
-
-const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
->>>>>>> following sagely wisdom of @bluefuton
 
 function RecommendedPosts( { post, site } ) {
 	function handlePostClick() {
@@ -240,6 +234,10 @@ const SearchStream = React.createClass( {
 		const sugList = initial( flatMap( this.state.suggestions, query =>
 			[ <Suggestion suggestion={ query } />, ', ' ] ) );
 
+		const documentTitle = this.props.translate(
+			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
+		);
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
@@ -250,7 +248,7 @@ const SearchStream = React.createClass( {
 				placeholderFactory={ this.placeholderFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
+				<DocumentHead title={ documentTitle } />
 				<div ref={ this.handleStreamMounted } />
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
