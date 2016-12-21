@@ -160,6 +160,26 @@
 	}
 }
 
+.site-settings__general-settings {
+	.form-toggle__label {
+		display: flex;
+		align-items: center;
+	}
+
+	.form-toggle__switch {
+		flex: 1 0 auto;
+	}
+
+	.form-toggle__switch + span {
+		flex: 0 1 100%;
+		margin-left: 12px;
+	}
+
+	p.form-setting-explanation.is-indented {
+		margin-left: 0;
+	}
+}
+
 .site-settings__site-options {
 	padding-bottom: 24px;
 

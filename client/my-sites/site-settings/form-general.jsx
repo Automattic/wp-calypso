@@ -19,13 +19,11 @@ import config from 'config';
 import { protectForm } from 'lib/protect-form';
 import notices from 'notices';
 import analytics from 'lib/analytics';
-import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
@@ -35,10 +33,8 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 
-const FormGeneral = React.createClass( {
-	displayName: 'SiteSettingsFormGeneral',
-
-	mixins: [ dirtyLinkedState, formBase ],
+const SiteSettingsFormGeneral = React.createClass( {
+	mixins: [ formBase ],
 
 	getSettingsFromSite( site ) {
 		site = site || this.props.site;
@@ -115,16 +111,42 @@ const FormGeneral = React.createClass( {
 		} );
 	},
 
-	onTimezoneSelect( timezone ) {
-		this.setState( { timezone_string: timezone } );
-	},
-
 	onRecordEvent( eventAction ) {
 		return this.recordEvent.bind( this, eventAction );
 	},
 
 	onRecordEventOnce( key, eventAction ) {
 		return this.recordEventOnce.bind( this, key, eventAction );
+	},
+
+	setDirtyField( key ) {
+		const newState = {};
+		const dirtyFields = this.state.dirtyFields || [];
+		if ( dirtyFields.indexOf( key ) === -1 ) {
+			newState.dirtyFields = [ ...dirtyFields, key ];
+		}
+		this.setState( newState );
+	},
+
+	handleChange( event ) {
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = event.currentTarget.value;
+
+		this.setDirtyField( currentTargetName );
+		this.setState( { [ currentTargetName ]: currentTargetValue } );
+	},
+
+	handleToggle( name ) {
+		return () => {
+			this.recordEvent.bind( this, `Toggled ${ name }` );
+			this.setDirtyField( name );
+			this.setState( { [ name ]: ! this.state[ name ] } );
+		};
+	},
+
+	handleTimezoneSelect( timezone ) {
+		this.setDirtyField( 'timezone_string' );
+		this.setState( { timezone_string: timezone } );
 	},
 
 	siteOptions() {
@@ -137,8 +159,9 @@ const FormGeneral = React.createClass( {
 							name="blogname"
 							id="blogname"
 							type="text"
-							valueLink={ this.linkState( 'blogname' ) }
+							value={ this.state.blogname }
 							disabled={ this.state.fetchingSettings }
+							onChange={ this.handleChange }
 							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
 							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) }
 							data-tip-target="site-title-input" />
@@ -149,8 +172,9 @@ const FormGeneral = React.createClass( {
 							name="blogdescription"
 							type="text"
 							id="blogdescription"
-							valueLink={ this.linkState( 'blogdescription' ) }
+							value={ this.state.blogdescription }
 							disabled={ this.state.fetchingSettings }
+							onChange={ this.handleChange }
 							onClick={ this.onRecordEvent( 'Clicked Site Site Tagline Field' ) }
 							onKeyPress={ this.onRecordEventOnce( 'typedTagline', 'Typed in Site Site Tagline Field' ) }
 							data-tip-target="site-tagline-input" />
@@ -237,7 +261,8 @@ const FormGeneral = React.createClass( {
 					name="lang_id"
 					id="lang_id"
 					languages={ config( 'languages' ) }
-					valueLink={ this.linkState( 'lang_id' ) }
+					value={ this.state.lang_id }
+					onChange={ this.handleChange }
 					disabled={ this.state.fetchingSettings }
 					onClick={ this.onRecordEvent( 'Clicked Language Field' ) } />
 				<FormSettingExplanation>
@@ -260,7 +285,7 @@ const FormGeneral = React.createClass( {
 						name="blog_public"
 						value="1"
 						checked={ 1 === parseInt( this.state.blog_public, 10 ) }
-						onChange={ this.handleRadio }
+						onChange={ this.handleChange }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Public' ) }</span>
@@ -274,7 +299,7 @@ const FormGeneral = React.createClass( {
 						name="blog_public"
 						value="0"
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
-						onChange={ this.handleRadio }
+						onChange={ this.handleChange }
 						disabled={ this.state.fetchingSettings }
 						onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ this.translate( 'Hidden' ) }</span>
@@ -289,7 +314,7 @@ const FormGeneral = React.createClass( {
 							name="blog_public"
 							value="-1"
 							checked={ -1 === parseInt( this.state.blog_public, 10 ) }
-							onChange={ this.handleRadio }
+							onChange={ this.handleChange }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Visibility Radio Button' ) } />
 						<span>{ this.translate( 'Private' ) }</span>
@@ -384,7 +409,7 @@ const FormGeneral = React.createClass( {
 								name="jetpack_relatedposts_enabled"
 								value="0"
 								checked={ 0 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
+								onChange={ this.handleChange }
 								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Hide related content after posts' ) }</span>
 						</FormLabel>
@@ -395,7 +420,7 @@ const FormGeneral = React.createClass( {
 								name="jetpack_relatedposts_enabled"
 								value="1"
 								checked={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
+								onChange={ this.handleChange }
 								onClick={ this.onRecordEvent( 'Clicked Related Posts Radio Button' ) } />
 							<span>{ this.translate( 'Show related content after posts' ) }</span>
 						</FormLabel>
@@ -403,24 +428,26 @@ const FormGeneral = React.createClass( {
 							id="settings-reading-relatedposts-customize"
 							className={ 1 === parseInt( this.state.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
 							<li>
-								<FormLabel>
-									<FormCheckbox
-										name="jetpack_relatedposts_show_headline"
-										checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
+								<FormToggle
+									className="is-compact"
+									checked={ !! this.state.jetpack_relatedposts_show_headline }
+									disabled={ this.state.fetchingSettings }
+									onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
 									<span>
 										{ this.translate(
 											'Show a "Related" header to more clearly separate the related section from posts'
 										) }
 									</span>
-								</FormLabel>
+								</FormToggle>
 							</li>
 							<li>
-								<FormLabel>
-									<FormCheckbox
-										name="jetpack_relatedposts_show_thumbnails"
-										checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
+								<FormToggle
+									className="is-compact"
+									checked={ !! this.state.jetpack_relatedposts_show_thumbnails }
+									disabled={ this.state.fetchingSettings }
+									onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
 									<span>{ this.translate( 'Use a large and visually striking layout' ) }</span>
-								</FormLabel>
+								</FormToggle>
 							</li>
 						</ul>
 						<RelatedContentPreview
@@ -452,16 +479,22 @@ const FormGeneral = React.createClass( {
 		}
 
 		return (
-			<CompactCard>
+			<CompactCard className="site-settings__general-settings">
 				<form onChange={ this.props.markChanged }>
 					<ul id="settings-jetpack">
 						<li>
 							<FormLabel>
-								<FormCheckbox
-									name="jetpack_sync_non_public_post_stati"
-									checkedLink={ this.linkState( 'jetpack_sync_non_public_post_stati' ) }
-								/>
-								<span>{ this.translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
+								<FormToggle
+									className="is-compact"
+									checked={ !! this.state.jetpack_sync_non_public_post_stati }
+									disabled={ this.state.fetchingSettings }
+									onChange={ this.handleToggle( 'jetpack_sync_non_public_post_stati' ) }>
+									<span>{
+										this.translate(
+											'Allow synchronization of Posts and Pages with non-public post statuses'
+										)
+									}</span>
+								</FormToggle>
 								<FormSettingExplanation isIndented>
 									{ this.translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
 								</FormSettingExplanation>
@@ -475,13 +508,11 @@ const FormGeneral = React.createClass( {
 
 	jetpackDisconnectOption() {
 		const { site } = this.props;
-		let disconnectText;
-
 		if ( ! site.jetpack ) {
 			return null;
 		}
 
-		disconnectText = this.translate( 'Disconnect Site', {
+		const disconnectText = this.translate( 'Disconnect Site', {
 			context: 'Jetpack: Action user takes to disconnect Jetpack site from .com link in general site settings'
 		} );
 
@@ -510,14 +541,13 @@ const FormGeneral = React.createClass( {
 		return (
 			<FormFieldset>
 				<legend>{ this.translate( 'Holiday Snow' ) }</legend>
-				<ul>
-					<li>
-						<FormLabel>
-							<FormCheckbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) }/>
-							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
-						</FormLabel>
-					</li>
-				</ul>
+				<FormToggle
+					className="is-compact"
+					checked={ !! this.state.holidaysnow }
+					disabled={ this.state.fetchingSettings }
+					onChange={ this.handleToggle( 'holidaysnow' ) }>
+					<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
+				</FormToggle>
 			</FormFieldset>
 		);
 	},
@@ -534,10 +564,10 @@ const FormGeneral = React.createClass( {
 				</FormLabel>
 
 				<Timezone
-					valueLink={ this.linkState( 'timezone_string' ) }
-					selectedZone={ this.linkState( 'timezone_string' ).value }
+					value={ this.state.timezone_string }
+					selectedZone={ this.state.timezone_string }
 					disabled={ this.state.fetchingSettings }
-					onSelect={ this.onTimezoneSelect }
+					onSelect={ this.handleTimezoneSelect }
 				/>
 
 				<FormSettingExplanation>
@@ -584,7 +614,7 @@ const FormGeneral = React.createClass( {
 							}
 					</Button>
 				</SectionHeader>
-				<Card>
+				<Card className="site-settings__general-settings">
 					<form onChange={ this.props.markChanged }>
 						{ this.siteOptions() }
 						{ this.blogAddress() }
@@ -608,7 +638,7 @@ const FormGeneral = React.createClass( {
 							}
 					</Button>
 				</SectionHeader>
-				<Card>
+				<Card className="site-settings__general-settings">
 					<form onChange={ this.props.markChanged }>
 						{ this.visibilityOptions() }
 					</form>
@@ -652,7 +682,7 @@ const FormGeneral = React.createClass( {
 							}
 					</Button>
 				</SectionHeader>
-				<Card>
+				<Card className="site-settings__general-settings">
 					<form onChange={ this.props.markChanged }>
 						{ this.relatedPostsOptions() }
 					</form>
@@ -711,4 +741,4 @@ const FormGeneral = React.createClass( {
 	}
 } );
 
-export default protectForm( FormGeneral );
+export default protectForm( SiteSettingsFormGeneral );
