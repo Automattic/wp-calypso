@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map, filter, uniqBy } from 'lodash';
+import { includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,9 +43,15 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		const skipped = PostMetadata.publicizeSkipped( post );
-		const targeted = filter( connections, ( { keyring_connection_ID: ID } ) => ! ( ID in skipped ) );
 
-		return map( uniqBy( targeted, 'service' ), 'label' ).join( ', ' );
+		return reduce( connections, ( memo, connection ) => {
+			const { keyring_connection_ID: id, label } = connection;
+			if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
+				memo.push( label );
+			}
+
+			return memo;
+		}, [] ).join( ', ' );
 	},
 
 	renderShortUrl: function() {
