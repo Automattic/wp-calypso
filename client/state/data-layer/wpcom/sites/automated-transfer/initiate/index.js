@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { initiateTransfer } from 'state/automated-transfer/actions';
+import { initiateTransfer, requestEligibility } from 'state/automated-transfer/actions';
 import { transferStates } from 'state/automated-transfer/constants';
 import {
 	AUTOMATED_TRANSFER_INITIATE_REQUEST,
@@ -37,9 +37,7 @@ const apiResponse = ( dispatch, siteId ) => data => dispatch( initiateTransfer( 
  *
  * @param {Object} error error from API fetch
  */
-const apiFailure = error => {
-	throw new Error( error );
-};
+const apiFailure = ( dispatch, siteId ) => () => dispatch( requestEligibility( siteId ) );
 
 /**
  * Issues an API request to initiate an automatic transfer
@@ -60,7 +58,7 @@ export const requestTransfer = ( { dispatch }, { siteId, pluginSlug, themeFile }
 		),
 	)
 		.then( apiResponse( dispatch, siteId ) )
-		.catch( apiFailure );
+		.catch( apiFailure( dispatch, siteId ) );
 
 export default {
 	[ AUTOMATED_TRANSFER_INITIATE_REQUEST ]: [ requestTransfer ],
