@@ -1,59 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { groupBy, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var serviceConnections = require( 'my-sites/sharing/connections/service-connections' ),
-	EditorSharingPublicizeConnection = require( './publicize-connection' );
+import EditorSharingPublicizeConnection from './publicize-connection';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'EditorSharingPublicizeServices',
+export const EditorSharingPublicizeServices = ( { connections, post, newConnectionPopup } ) => (
+	<ul className="editor-sharing__publicize-services">
+		{ map( groupBy( connections, 'label' ), ( groupedConnections, label ) =>
+			<li key={ label } className="editor-sharing__publicize-service">
+				<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
+				{ groupedConnections.map( ( connection ) =>
+					<EditorSharingPublicizeConnection
+						key={ connection.ID }
+						post={ post }
+						connection={ connection }
+						onRefresh={ newConnectionPopup } />
+				) }
+			</li>
+		) }
+	</ul>
+);
 
-	propTypes: {
-		post: React.PropTypes.object,
-		siteId: React.PropTypes.number.isRequired,
-		connections: React.PropTypes.array.isRequired,
-		newConnectionPopup: React.PropTypes.func.isRequired
+EditorSharingPublicizeServices.propTypes = {
+	connections: PropTypes.array.isRequired,
+	post: PropTypes.object,
+	newConnectionPopup: PropTypes.func.isRequired
+};
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+
+		return {
+			connections: getSiteUserConnections( state, siteId, userId ),
+		};
 	},
-
-	renderServices: function() {
-		var services = serviceConnections.getServicesFromConnections( this.props.connections );
-
-		return services.map( function( service ) {
-			return (
-				<li key={ service.ID } className="editor-sharing__publicize-service">
-					<h5 className="editor-sharing__publicize-service-heading">{ service.label }</h5>
-					{ this.renderConnections( service.ID ) }
-				</li>
-			);
-		}, this );
-	},
-
-	renderConnections: function( serviceName ) {
-		const connections = serviceConnections.getConnectionsAvailableToCurrentUser(
-			serviceName,
-			this.props.connections
-		);
-
-		return connections.map( function( connection ) {
-			return (
-				<EditorSharingPublicizeConnection
-					key={ connection.ID }
-					post={ this.props.post }
-					connection={ connection }
-					onRefresh={ this.props.newConnectionPopup } />
-			);
-		}, this );
-	},
-
-	render: function() {
-		return (
-			<ul className="editor-sharing__publicize-services">
-				{ this.renderServices() }
-			</ul>
-		);
-	}
-} );
+)( EditorSharingPublicizeServices );

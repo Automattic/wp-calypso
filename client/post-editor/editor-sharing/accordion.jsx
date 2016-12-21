@@ -4,8 +4,7 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { map, includes } from 'lodash';
+import { includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +12,6 @@ import { map, includes } from 'lodash';
 import Accordion from 'components/accordion';
 import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
-import serviceConnections from 'my-sites/sharing/connections/service-connections';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';
@@ -26,7 +24,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
-import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
 const EditorSharingAccordion = React.createClass( {
 	propTypes: {
@@ -46,12 +43,15 @@ const EditorSharingAccordion = React.createClass( {
 		}
 
 		const skipped = PostMetadata.publicizeSkipped( post );
-		const targeted = connections.filter( ( connection ) => {
-			return ! includes( skipped, connection.keyring_connection_ID );
-		} );
-		const targetedServices = serviceConnections.getServicesFromConnections( targeted );
 
-		return map( targetedServices, 'label' ).join( ', ' );
+		return reduce( connections, ( memo, connection ) => {
+			const { keyring_connection_ID: id, label } = connection;
+			if ( ! includes( skipped, id ) && ! includes( memo, label ) ) {
+				memo.push( label );
+			}
+
+			return memo;
+		}, [] ).join( ', ' );
 	},
 
 	renderShortUrl: function() {
@@ -141,9 +141,4 @@ export default connect(
 			isPublicizeEnabled
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestConnections
-		}, dispatch );
-	}
 )( EditorSharingAccordion );

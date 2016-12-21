@@ -122,8 +122,6 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		return (
 			<PublicizeServices
 				post={ this.props.post }
-				siteId={ this.props.site.ID }
-				connections={ this.props.connections }
 				newConnectionPopup={ this.newConnectionPopup } />
 		);
 	},
