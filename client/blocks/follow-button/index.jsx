@@ -15,7 +15,9 @@ const FollowButtonContainer = React.createClass( {
 	propTypes: {
 		siteUrl: React.PropTypes.string.isRequired,
 		iconSize: React.PropTypes.number,
-		onFollowToggle: React.PropTypes.func
+		onFollowToggle: React.PropTypes.func,
+		followLabel: React.PropTypes.string,
+		followingLabel: React.PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -67,7 +69,10 @@ const FollowButtonContainer = React.createClass( {
 				onFollowToggle={ this.handleFollowToggle }
 				iconSize={ this.props.iconSize }
 				tagName={ this.props.tagName }
-				disabled={ this.props.disabled } />
+				disabled={ this.props.disabled }
+				followLabel={ this.props.followLabel }
+				followingLabel={ this.props.followingLabel }
+				className={ this.props.className } />
 		);
 	}
 } );

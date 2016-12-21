@@ -12,7 +12,6 @@ import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import * as discoverStats from './stats';
 
-// var DiscoverSiteAttribution = React.createClass( {
 class DiscoverSiteAttribution extends React.Component {
 
 	constructor( props ) {
@@ -33,7 +32,7 @@ class DiscoverSiteAttribution extends React.Component {
 		followUrl: React.PropTypes.string.isRequired
 	}
 
-	recordSiteClick( ) {
+	recordSiteClick() {
 		discoverStats.recordSiteClick( this.props.siteUrl );
 	}
 
@@ -57,7 +56,7 @@ class DiscoverSiteAttribution extends React.Component {
 						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
 				</span>
-				{ !! this.props.followUrl ? <FollowButton siteUrl={ this.props.followUrl } iconSize={ 20 } onFollowToggle={ this.recordFollowToggle }/> : null }
+				{ !! this.props.followUrl ? <FollowButton siteUrl={ this.props.followUrl } iconSize={ 20 } onFollowToggle={ this.recordFollowToggle } /> : null }
 			</div>
 		);
 	}

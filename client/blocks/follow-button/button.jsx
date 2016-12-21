@@ -50,7 +50,7 @@ const FollowButton = React.createClass( {
 
 	render() {
 		let label = this.props.followLabel ? this.props.followLabel : this.strings.FOLLOW;
-		const menuClasses = [ 'button', 'follow-button', 'has-icon' ];
+		const menuClasses = [ 'button', 'follow-button', 'has-icon', this.props.className ];
 		const iconSize = this.props.iconSize;
 
 		if ( this.props.following ) {

@@ -530,6 +530,20 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			color: $alert-green;
 		}
 	}
+
+	&.is-discover {
+		position: relative;
+		top: 0;
+		float: none;
+		margin-top: 10px;
+		margin-bottom: 3px;
+
+		.follow-button__label {
+			@include breakpoint( "<660px" ) {
+				display: inline;
+			}
+		}
+	}
 }
 
 // If chat window is open
