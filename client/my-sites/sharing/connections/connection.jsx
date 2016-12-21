@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import site from 'lib/site';

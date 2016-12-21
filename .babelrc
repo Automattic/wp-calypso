@@ -11,6 +11,15 @@
 		"syntax-jsx",
 		"transform-react-jsx",
 		"transform-react-display-name",
-		"lodash"
+		"lodash",
+		[
+			"transform-imports",
+			{
+				"state/selectors": {
+					"transform": "state/selectors/${member}",
+					"kebabCase": true
+				}
+			}
+		]
 	]
 }

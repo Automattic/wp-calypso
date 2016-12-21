@@ -13,7 +13,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {

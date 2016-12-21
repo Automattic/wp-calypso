@@ -9,7 +9,8 @@ import {
 	getSelectedSiteId,
 } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
-import { getCurrentUser, canCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { hasDefaultSiteTitle } from 'state/sites/selectors';
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;

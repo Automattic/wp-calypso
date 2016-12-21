@@ -20,7 +20,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 

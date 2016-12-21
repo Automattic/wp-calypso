@@ -10,9 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
+import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { restorePost } from 'state/posts/actions';
-import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class PostActionsEllipsisMenuRestore extends Component {
 	static propTypes = {

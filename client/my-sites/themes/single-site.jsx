@@ -15,7 +15,7 @@ import sitesFactory from 'lib/sites-list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const { isJetpack, translate } = props;

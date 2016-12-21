@@ -11,8 +11,9 @@ import { localize } from 'i18n-calypso';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { trashPost, deletePost } from 'state/posts/actions';
+import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
-import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class PostActionsEllipsisMenuTrash extends Component {
 	static propTypes = {

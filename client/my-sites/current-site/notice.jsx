@@ -12,7 +12,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
