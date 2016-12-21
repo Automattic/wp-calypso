@@ -10,12 +10,17 @@ import { map, take, filter } from 'lodash';
 import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
+import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
 
 const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
 
 function getGalleryWorthyImages( post ) {
-	const worthyImages = filter( post.images, imageIsBigEnoughForGallery );
 	const numberOfImagesToDisplay = 4;
+	let worthyImages = filter( post.images, imageIsBigEnoughForGallery );
+	if ( post.display_type & CANONICAL_IN_CONTENT ) {
+		worthyImages = worthyImages.slice( 1 );
+	}
+
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 
