@@ -5,14 +5,14 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, map, noop, isEmpty } from 'lodash';
+import { get, map, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getEligibility } from 'state/automated-transfer/selectors';
+import { getEligibility, getIsEligible } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
@@ -69,8 +69,6 @@ function getHoldMessages( translate ) {
 		}
 	};
 }
-
-const checkEligibility = eligibilityData => isEmpty( eligibilityData.eligibilityHolds );
 
 const EligibilityWarnings = props => {
 	const {
@@ -184,7 +182,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		eligibilityData,
-		isEligible: dataLoaded && checkEligibility( eligibilityData ),
+		isEligible: getIsEligible( state, siteId ),
 		isPlaceholder: ! dataLoaded,
 	};
 };

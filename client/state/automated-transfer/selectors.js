@@ -41,10 +41,30 @@ export const getEligibilityData = state => get( state, 'eligibility', { lastUpda
  * Returns eligibility info for transfer
  *
  * @param {Object} state global app state
- * @param {number} siteId requested site for tranfer info
+ * @param {number} siteId requested site for transfer info
  * @returns {object} eligibility data if available else empty info
  */
 export const getEligibility = compose(
 	getEligibilityData,
 	getAutomatedTransfer,
+);
+
+/**
+ * Helper to get eligibility status from local transfer state sub-tree
+ *
+ * @param {Object} state global app state
+ * @returns {boolean} eligibility status for site
+ */
+export const getEligibilityStatus = state => !! get( state, 'lastUpdated', 0 ) && ! get( state, 'eligibilityHolds', [] );
+
+/**
+ * Returns eligibility status for transfer
+ *
+ * @param {Object} state global app state
+ * @param {number} siteId requested site for transfer info
+ * @returns {boolean} True if current site is eligible for transfer, otherwise false
+ */
+export const getIsEligible = compose(
+	getEligibilityStatus,
+	getEligibility
 );
