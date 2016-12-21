@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { filter, uniqBy } from 'lodash';
+import { map, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,37 +24,31 @@ class EditorSharingPublicizeServices extends Component {
 		post: Object.freeze( {} ),
 	};
 
-	renderServices() {
-		const services = uniqBy( this.props.connections.map( ( { label, service } ) => ( { label, service } ) ), 'service' );
-
-		return services.map( ( { label, service } ) =>
-			<li key={ service } className="editor-sharing__publicize-service">
-				<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
-				{ this.renderConnections( service ) }
-			</li>
-		);
-	}
-
-	/**
-	 * Displays Publicize connections for the passed service.
-	 *
-	 * @param {String} service Slug of Keyring service.
-	 * @return {Object|DOMElement} React Element.
-	 */
-	renderConnections( service ) {
-		return filter( this.props.connections, { service } ).map( ( connection ) =>
-			<EditorSharingPublicizeConnection
-				key={ connection.ID }
-				post={ this.props.post }
-				connection={ connection }
-				onRefresh={ this.props.newConnectionPopup } />
-		);
-	}
-
 	render() {
+		const services = reduce( this.props.connections, ( memo, connection ) => {
+			if ( connection.label in memo ) {
+				memo[ connection.label ].push( connection );
+			} else {
+				memo[ connection.label ] = [ connection ];
+			}
+
+			return memo;
+		}, {} );
+
 		return (
 			<ul className="editor-sharing__publicize-services">
-				{ this.renderServices() }
+				{ map( services, ( connections, label ) =>
+					<li key={ label } className="editor-sharing__publicize-service">
+						<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
+						{ connections.map( ( connection ) =>
+							<EditorSharingPublicizeConnection
+								key={ connection.ID }
+								post={ this.props.post }
+								connection={ connection }
+								onRefresh={ this.props.newConnectionPopup } />
+						) }
+					</li>
+				) }
 			</ul>
 		);
 	}
