@@ -133,7 +133,6 @@
 		{ "value": 73, "langSlug": "uk", "name": "uk - Українська", "wpLocale": "uk" },
 		{ "value": 74, "langSlug": "ur", "name": "ur - اردو", "wpLocale": "ur", "rtl": true },
 		{ "value": 458, "langSlug": "uz", "name": "uz - O‘zbekcha", "wpLocale": "uz_UZ" },
-		{ "value": 463, "langSlug": "va", "name": "va - valencià", "wpLocale": "" },
 		{ "value": 445, "langSlug": "vec", "name": "vec - Vèneta", "wpLocale": "" },
 		{ "value": 446, "langSlug": "vi", "name": "vi - Tiếng Việt", "wpLocale": "vi" },
 		{ "value": 75, "langSlug": "wa", "name": "wa - Walon", "wpLocale": "wa" },
