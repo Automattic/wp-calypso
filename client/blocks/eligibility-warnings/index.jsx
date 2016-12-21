@@ -95,8 +95,8 @@ const EligibilityWarnings = props => {
 			<QueryEligibility siteId={ siteId } />
 			<SectionHeader label={ translate( 'Conflicts' ) } />
 
-			{ map( holds, ( error, index ) =>
-				<Card key={ index } className={ classes }>
+			{ get( eligibilityData, 'eligibilityHolds', [] ).map( ( error ) =>
+				<Card key={ holdsMessage[ error ].title } className="eligibility-warnings__message">
 					<Gridicon icon="notice" className="eligibility-warnings__error-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
@@ -114,8 +114,8 @@ const EligibilityWarnings = props => {
 				</Card>
 			) }
 
-			{ map( warnings, ( { name, description, supportUrl }, index ) =>
-				<Card key={ index } className={ classes }>
+			{ get( eligibilityData, 'eligibilityWarnings', [] ).map( ( { name, description, supportUrl } ) =>
+				<Card key={ name } className="eligibility-warnings__message">
 					<Gridicon icon="notice" className="eligibility-warnings__warning-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
