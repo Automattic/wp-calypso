@@ -51,13 +51,15 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'post-editor/editor-title/container', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-page-slug', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-media-advanced', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-mobile-navigation', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-author', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-visibility', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-word-count', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-preview', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/invalid-url-dialog', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/restore-post-dialog', MOCK_COMPONENT );
-		mockery.registerMock( 'post-editor/editor-sidebar/header', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-sidebar', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-status-label', MOCK_COMPONENT );
 		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
 		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
 		mockery.registerMock( 'lib/preferences/actions', { set() {} } );

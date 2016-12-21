@@ -1,42 +1,41 @@
 .editor-mobile-navigation {
-	color: $gray;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: $gray-light;
+	background-color: $white;
+	border-bottom: 1px lighten( $gray, 20% ) solid;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
 }
 
-.editor-mobile-navigation__close {
+.editor-mobile-navigation__actions {
+	display: inline;
+	line-height: 0;
+}
+
+.editor-mobile-navigation__tabs {
+	display: inline-block;
+	border-left: 1px lighten( $gray, 20% ) solid;
+	border-right: 1px lighten( $gray, 20% ) solid;
+}
+
+.editor-mobile-navigation__icon {
 	cursor: pointer;
-	margin-right: 4px;
-	padding: 8px;
+	padding: 4px 12px;
+	color: lighten( $gray, 10% );
 
 	&:hover {
-		cursor: button;
-		fill: $gray-dark;
+		color: $gray-dark;
+	}
+
+	&.is-selected {
+		cursor: default;
+		color: $gray-dark;
 	}
 }
 
-.editor-mobile-navigation .site {
-	.site__title {
-		padding: 6px 0;
-	}
-
-	.site__domain {
-		display: none;
-	}
-
-	.site__title::after,
-	.site__domain::after {
-		@include long-content-fade( $color: $gray-light );
-	}
+.editor-mobile-navigation .editor-publish-button {
+	margin-right: 12px;
 }
-
-.editor-mobile-navigation__toggle {
-	margin-right: 8px;
-}
-

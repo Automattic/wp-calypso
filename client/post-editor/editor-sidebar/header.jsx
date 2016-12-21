@@ -20,7 +20,7 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import AsyncLoad from 'components/async-load';
 
-function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl, toggleSidebar } ) {
+function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl } ) {
 	const className = classnames( 'editor-sidebar__header', {
 		'is-drafts-visible': showDrafts
 	} );
@@ -55,11 +55,6 @@ function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPo
 			{ type === 'post' && (
 				<AsyncLoad require="post-editor/drafts-button" onClick={ toggleDrafts } />
 			) }
-			<Button
-				onClick={ toggleSidebar }
-				className="editor-sidebar__toggle-sidebar">
-				<span>{ translate( 'Write' ) }</span>
-			</Button>
 		</div>
 	);
 }
@@ -69,8 +64,7 @@ EditorSidebarHeader.propTypes = {
 	type: PropTypes.string,
 	showDrafts: PropTypes.bool,
 	toggleDrafts: PropTypes.func,
-	allPostsUrl: PropTypes.string,
-	toggleSidebar: PropTypes.func
+	allPostsUrl: PropTypes.string
 };
 
 export default connect(

@@ -10,6 +10,12 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+@include breakpoint( "<660px" ) {
+	.is-group-editor.focus-sidebar::before {
+		background-color: lighten( $gray, 30% );
+	}
+}
+
 .is-group-editor .layout__content {
 	padding: 47px 0 0;
 }
@@ -23,8 +29,14 @@
 	margin: 0;
 	backface-visibility: hidden;
 	perspective: 1000;
+	display: none;
+
+	.focus-content & {
+		display: block;
+	}
 
 	@include breakpoint( ">660px" ) {
+		display: block;
 		backface-visibility: visible;
 		perspective: none;
 	}
@@ -40,8 +52,31 @@
 	}
 }
 
-.post-editor__sidebar {
-	@extend .sidebar;
+.post-editor__site {
+	display:  flex;
+	background: lighten( $gray, 30% );
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+
+	.site__content {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
+
+	.site__title,
+	.site__domain {
+		&::after {
+			@include long-content-fade( $color: lighten( $gray, 30% ) );
+		}
+	}
+
+	.editor-status-label {
+		text-align: right;
+		align-self: center;
+		margin-right: 8px;
+	}
 }
 
 .editor__header,
@@ -107,14 +142,6 @@
 		right: 16px;
 	width: 160px;
 	z-index: z-index( 'root', '.editor__switch-mode' );
-
-	.focus-sidebar & {
-		z-index: auto;
-
-		@include breakpoint( ">660px" ) {
-			z-index: z-index( 'root', '.editor__switch-mode' );
-		}
-	}
 
 	@include breakpoint( ">960px" ) {
 		right: 32px;
@@ -186,7 +213,10 @@
 
 	&.is-assigned {
 		display: block;
-		margin: -24px 0 24px;
+
+		@include breakpoint( ">660px" ) {
+			margin: -24px 0 24px;
+		}
 	}
 
 	img {
