@@ -2,10 +2,8 @@
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/data-layer/utils';
-import automatedTransfer from './automated-transfer';
-import stats from './stats';
+import post from './post';
 
 export default mergeHandlers(
-	automatedTransfer,
-	stats,
+	post,
 );

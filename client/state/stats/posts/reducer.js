@@ -13,8 +13,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
+	POST_STATS_REQUEST_START,
 	POST_STATS_REQUEST_SUCCESS
 } from 'state/action-types';
 
@@ -28,13 +28,13 @@ import {
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_STATS_REQUEST:
+		case POST_STATS_REQUEST_START:
 		case POST_STATS_REQUEST_SUCCESS:
 		case POST_STATS_REQUEST_FAILURE:
 			return merge( {}, state, {
 				[ action.siteId ]: {
 					[ action.postId ]: {
-						[ action.stat ]: POST_STATS_REQUEST === action.type
+						[ action.stat ]: POST_STATS_REQUEST_START === action.type
 					}
 				}
 			} );

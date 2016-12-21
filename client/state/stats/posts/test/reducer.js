@@ -10,8 +10,8 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
+	POST_STATS_REQUEST_START,
 	POST_STATS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 
 		it( 'should set requesting value to true if request in progress', () => {
 			const state = requesting( undefined, {
-				type: POST_STATS_REQUEST,
+				type: POST_STATS_REQUEST_START,
 				stat: 'views',
 				siteId: 2916284,
 				postId: 2454
@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 				}
 			}	);
 			const state = requesting( previousState, {
-				type: POST_STATS_REQUEST,
+				type: POST_STATS_REQUEST_START,
 				stat: 'countComments',
 				siteId: 2916284,
 				postId: 2454
@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 				}
 			}	);
 			const state = requesting( previousState, {
-				type: POST_STATS_REQUEST,
+				type: POST_STATS_REQUEST_START,
 				stat: 'views',
 				siteId: 2916284,
 				postId: 2455
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 				}
 			}	);
 			const state = requesting( previousState, {
-				type: POST_STATS_REQUEST,
+				type: POST_STATS_REQUEST_START,
 				stat: 'views',
 				siteId: 2916285,
 				postId: 2454
