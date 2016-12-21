@@ -614,6 +614,10 @@ const RegisterDomainStep = React.createClass( {
 				message = translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
 				break;
 
+			case 'not_mappable_forbidden_domain':
+				message = translate( 'Only the owner of the domain can map it\'s subdomains.' );
+				break;
+
 			case 'not_mappable_invalid_tld':
 			case 'invalid_query':
 				message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
