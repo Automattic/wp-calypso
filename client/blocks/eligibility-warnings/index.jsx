@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, isEmpty } from 'lodash';
+import { get, map, noop, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +18,9 @@ import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 
-// Mapping eligibility hold constant to messages that will be shown to the user
+// Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldsMessages( translate ) {
+function getHoldMessages( translate ) {
 	return {
 		PLACEHOLDER: {
 			title: '',
@@ -83,15 +83,9 @@ const EligibilityWarnings = props => {
 		isPlaceholder,
 	} = props;
 
-	const holdsMessage = getHoldsMessages( translate );
-
-	const holds = ( eligibilityData && eligibilityData.eligibilityHolds )
-		? eligibilityData.eligibilityHolds
-		: [ 'PLACEHOLDER' ];
-
-	const warnings = ( eligibilityData && eligibilityData.eligibilityWarnings )
-		? eligibilityData.eligibilityWarnings
-		: [];
+	const holdMessages = getHoldMessages( translate );
+	const holds = get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] );
+	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
 	const classes = classNames( {
 		'eligibility-warnings__message': true,
@@ -103,27 +97,27 @@ const EligibilityWarnings = props => {
 			<QueryEligibility siteId={ siteId } />
 			<SectionHeader label={ translate( 'Conflicts' ) } />
 
-			{ holds.map( ( error ) =>
-				<Card key={ holdsMessage[ error ].title } className={ classes }>
+			{ map( holds, ( error, index ) =>
+				<Card key={ index } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__error-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
-							{ translate( 'Error: %(title)s', { args: { title: holdsMessage[ error ].title } } ) }
+							{ translate( 'Error: %(title)s', { args: { title: holdMessages[ error ].title } } ) }
 						</div>
 						<div className="eligibility-warnings__message-description">
-							{ holdsMessage[ error ].description }
+							{ holdMessages[ error ].description }
 						</div>
 					</div>
 					<div className="eligibility-warnings__message-action">
-						<Button href={ holdsMessage[ error ].supportUrl } target="_blank" rel="noopener noreferrer">
+						<Button href={ holdMessages[ error ].supportUrl } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Resolve' ) }
 						</Button>
 					</div>
 				</Card>
 			) }
 
-			{ warnings.map( ( { name, description, supportUrl } ) =>
-				<Card key={ name } className={ classes }>
+			{ map( warnings, ( { name, description, supportUrl }, index ) =>
+				<Card key={ index } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__warning-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
@@ -158,7 +152,6 @@ const EligibilityWarnings = props => {
 						}
 					) }
 				</div>
-
 				<div className="eligibility-warnings__buttons">
 					<Button href={ backUrl }>
 						{ translate( 'Cancel' ) }

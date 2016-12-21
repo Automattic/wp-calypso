@@ -19,10 +19,7 @@
 }
 
 .is-placeholder .eligibility-warnings__message-action .button {
-    color: $gray-light;
-    background-color: $gray-light;
-    cursor: default;
-    pointer-events: none;
+    display: none;
 }
 
 .eligibility-warnings .card {
