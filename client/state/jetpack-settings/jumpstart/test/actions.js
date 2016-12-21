@@ -33,7 +33,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/jumpstart/',
+						path: '/jetpack/v4/jumpstart/',
 						body: JSON.stringify( { active: true } )
 					} )
 					.reply( 200, {}, {
@@ -65,7 +65,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/jumpstart/',
+						path: '/jetpack/v4/jumpstart/',
 						body: JSON.stringify( { active: true } )
 					} )
 					.reply( 400, {
@@ -93,7 +93,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/jumpstart/',
+						path: '/jetpack/v4/jumpstart/',
 						body: JSON.stringify( { active: false } )
 					} )
 					.reply( 200, {}, {
@@ -125,7 +125,7 @@ describe( 'actions', () => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
-						path: '/jumpstart/',
+						path: '/jetpack/v4/jumpstart/',
 						body: JSON.stringify( { active: false } )
 					} )
 					.reply( 400, {
@@ -155,7 +155,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/jumpstart/'
+						path: '/jetpack/v4/jumpstart/'
 					} )
 					.reply( 200, {
 						status
@@ -195,7 +195,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/jumpstart/'
+						path: '/jetpack/v4/jumpstart/'
 					} )
 					.reply( 400, {
 						message: 'Invalid request.'

@@ -31,7 +31,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/connection/'
+						path: '/jetpack/v4/connection/'
 					} )
 					.reply( 200, { data: status }, {
 						'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
 					.query( {
-						path: '/connection/'
+						path: '/jetpack/v4/connection/'
 					} )
 					.reply( 400, {
 						message: 'Invalid request.'
