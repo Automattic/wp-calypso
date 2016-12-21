@@ -99,26 +99,6 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 	}
 };
 
-const emptyStore = {
-	get() {
-		return [];
-	},
-	isLastPage() {
-		return true;
-	},
-	isFetchingNextPage() {
-		return false;
-	},
-	getUpdateCount() {
-		return 0;
-	},
-	getSelectedIndex() {
-		return -1;
-	},
-	on() {},
-	off() {}
-};
-
 const SearchStream = React.createClass( {
 
 	propTypes: {
@@ -219,12 +199,11 @@ const SearchStream = React.createClass( {
 	},
 
 	render() {
+		const { store } = this.props.store;
 		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions } /> : null;
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
 			: blankContent;
-
-		const store = this.props.store || emptyStore;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
