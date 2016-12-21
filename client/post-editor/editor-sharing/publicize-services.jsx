@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, reduce } from 'lodash';
+import { groupBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,19 +21,9 @@ class EditorSharingPublicizeServices extends Component {
 	};
 
 	render() {
-		const services = reduce( this.props.connections, ( memo, connection ) => {
-			if ( connection.label in memo ) {
-				memo[ connection.label ].push( connection );
-			} else {
-				memo[ connection.label ] = [ connection ];
-			}
-
-			return memo;
-		}, {} );
-
 		return (
 			<ul className="editor-sharing__publicize-services">
-				{ map( services, ( connections, label ) =>
+				{ map( groupBy( this.props.connections, 'label' ), ( connections, label ) =>
 					<li key={ label } className="editor-sharing__publicize-service">
 						<h5 className="editor-sharing__publicize-service-heading">{ label }</h5>
 						{ connections.map( ( connection ) =>
