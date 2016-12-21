@@ -160,7 +160,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )
 					.query( {
-						path: '/module/all/'
+						path: '/jetpack/v4/module/all/'
 					} )
 					.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
 			} );
@@ -208,7 +208,7 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )
 					.query( {
-						path: '/module/all/'
+						path: '/jetpack/v4/module/all/'
 					} )
 					.reply( 400, {
 						message: 'Invalid request.'

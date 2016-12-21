@@ -115,7 +115,7 @@ Undocumented.prototype.jetpackModules = function( siteId, fn ) {
  */
 Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/module/all/' }, fn );
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/module/all/' }, fn );
 };
 
 /*
