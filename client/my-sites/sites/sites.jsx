@@ -71,6 +71,12 @@ export const Sites = React.createClass( {
 			case 'stats insights':
 				path = this.translate( 'Insights' );
 				break;
+			case 'domains':
+				path = this.translate( 'Domains' );
+				break;
+			case 'plans':
+				path = this.translate( 'Plans' );
+				break;
 		}
 
 		return this.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
