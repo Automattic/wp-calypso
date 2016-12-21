@@ -32,12 +32,12 @@ $date-picker_nav_button_size: 20px;
 	}
 
 	&:hover {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 10% );
 	}
 }
 
 .date-picker__day_event {
-	border-color: lighten( $gray, 20 );
+	border-color: lighten( $gray, 10% );
 }
 
 .date-picker__day-text {
@@ -131,7 +131,6 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker-Caption {
 	display: table-caption;
-	color: $gray;
 	text-align: center;
 	height: $date-picker_caption_height;
 	line-height: $date-picker_caption_height;
@@ -162,12 +161,13 @@ $date-picker_nav_button_size: 20px;
 	font-size: 11px;
 	text-align: center;
 	font-weight: 600;
-	color: lighten( $gray, 20% );
+	color: darken( $gray, 20% );
 	text-transform: uppercase;
 
 	abbr {
 		border-bottom: none;
 		cursor: auto;
+		text-decoration: none;
 	}
 }
 
@@ -189,7 +189,6 @@ $date-picker_nav_button_size: 20px;
 	cursor: pointer;
 	font-size: 11px;
 	font-weight: 600;
-	color: $gray;
 }
 
 .DayPicker--interactionDisabled .DayPicker-Day {
@@ -198,18 +197,17 @@ $date-picker_nav_button_size: 20px;
 
 // Modifiers
 
-.DayPicker-Day--today {
-	&::before {
-		content: '';
-		box-sizing: border-box;
-		width: 24px;
-		height: 24px;
-		position: absolute;
-			left: 50%;
-			top: 50%;
-		margin: -12px 0 0 -12px;
-		border: solid 1px $orange-jazzy;
-		border-radius: 50%;
+.DayPicker-Day--today .date-picker__day:not(.is-selected) {
+	color: $white;
+
+	.date-picker__day-selected {
+		background-color: $gray-dark;
+		opacity: 1;
+		transform: scale( 1 );
+	}
+
+	&:hover .date-picker__day-selected {
+		background-color: darken( $gray, 20% );
 	}
 }
 
@@ -227,7 +225,7 @@ $date-picker_nav_button_size: 20px;
 	font-weight: normal;
 
 	.date-picker__day {
-		color: lighten( $gray, 20% );
+		color: $gray;
 	}
 }
 

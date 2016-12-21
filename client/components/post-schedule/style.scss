@@ -8,7 +8,6 @@
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 47px;
-	color: $gray;
 	font-size: 18px;
 	font-weight: 300;
 	width: 80%;
@@ -26,6 +25,16 @@
 		padding-left: 16px;
 		padding-right: 16px;
 		border: 0;
+		color: $gray-dark;
+	}
+
+	::placeholder {
+		color: $gray-dark;
+	}
+
+	::-moz-placeholder {
+		color: $gray-dark;
+		opacity: 1;
 	}
 }
 
@@ -38,8 +47,7 @@
 	position: relative;
 	text-align: center;
 	font-size: 12px;
-	color: lighten( $gray, 10% );
-	height: 20;
+	height: 20px;
 	line-height: 20px;
 	padding: 0 5px;
 	margin-left: 10px;
@@ -89,7 +97,6 @@ input.post-schedule__clock_time {
 	width: 42px;
 	text-align: center;
 	padding: 0;
-	color: lighten( $gray, 10% );
 	font-size: 12px;
 }
 
