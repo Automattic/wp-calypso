@@ -166,28 +166,30 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 	mc.bumpStatWithPageView( params );
 }
 
-export function recordFollow( url, railcar ) {
+export function recordFollow( url, railcar, additionalProps = {} ) {
 	const source = getLocation();
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
 	recordTrack( 'calypso_reader_site_followed', {
 		url,
-		source
+		source,
+		...additionalProps,
 	} );
 	if ( railcar ) {
 		recordTracksRailcarInteract( 'site_followed', railcar );
 	}
 }
 
-export function recordUnfollow( url, railcar ) {
+export function recordUnfollow( url, railcar, additionalProps = {} ) {
 	const source = getLocation();
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );
 	recordTrack( 'calypso_reader_site_unfollowed', {
 		url,
-		source
+		source,
+		...additionalProps,
 	} );
 	if ( railcar ) {
 		recordTracksRailcarInteract( 'site_unfollowed', railcar );

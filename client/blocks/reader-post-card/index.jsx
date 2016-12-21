@@ -37,7 +37,8 @@ export default class ReaderPostCard extends React.Component {
 		originalPost: PropTypes.object, // used for Discover only
 		showEntireExcerpt: PropTypes.bool,
 		useBetterExcerpt: PropTypes.bool,
-		showSiteName: PropTypes.bool
+		showSiteName: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -106,7 +107,8 @@ export default class ReaderPostCard extends React.Component {
 			isSelected,
 			showEntireExcerpt,
 			useBetterExcerpt,
-			showSiteName
+			showSiteName,
+			followSource,
 		} = this.props;
 		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
@@ -151,7 +153,7 @@ export default class ReaderPostCard extends React.Component {
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
-				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } /> }
+				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				<div className="reader-post-card__post">
 					{ ! isGallery && featuredAsset }
 					{ isGallery && <PostGallery post={ post } /> }

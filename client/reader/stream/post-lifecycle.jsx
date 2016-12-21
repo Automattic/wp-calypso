@@ -78,6 +78,7 @@ export default class PostLifecycle extends React.PureComponent {
 				return <PostClass
 					post={ post }
 					isSelected={ this.props.isSelected }
+					followSource={ this.props.followSource }
 					xPostedTo={ this.props.store.getSitesCrossPostedTo( post.URL ) }
 					suppressSiteNameLink={ this.props.suppressSiteNameLink }
 					showPostHeader={ this.props.showPostHeader }
