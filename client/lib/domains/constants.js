@@ -13,7 +13,8 @@ const type = keyMirror( {
 const registrar = {
 	OPENHRS: 'OpenHRS',
 	OPENSRS: 'OpenSRS',
-	WWD: 'WWD'
+	WWD: 'WWD',
+	MAINTENANCE: 'Registrar TLD Maintenance'
 };
 
 export default {
