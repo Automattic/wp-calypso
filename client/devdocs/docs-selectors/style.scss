@@ -1,0 +1,138 @@
+.devdocs.docs-selectors {
+	@include breakpoint( ">960px" ) {
+		padding-right: 0;
+		padding-left: 0;
+	}
+}
+
+.docs-selectors__results {
+	list-style-type: none;
+	margin: 0;
+}
+
+.docs-selectors__result {
+	color: darken( $gray, 10% );
+}
+
+.docs-selectors__result-name {
+	@extend %content-font;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.8;
+
+	&,
+	& a {
+		color: $gray-dark;
+	}
+}
+
+.docs-selectors__result p {
+	font-size: 13px;
+	margin: 0;
+}
+
+.docs-selectors__result-description {
+	line-height: 1.4;
+}
+
+.docs-selectors__result-io:not( :empty ) {
+	display: flex;
+	margin: 28px -25px -17px;
+	position: relative;
+
+	@include breakpoint( "<960px" ) {
+		flex-direction: column;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin-right: -17px;
+		margin-left: -17px;
+	}
+}
+
+.docs-selectors__result-label {
+	background: $gray-light;
+	border: 1px solid lighten( $gray, 10% );
+	text-transform: uppercase;
+	text-align: left;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1.8;
+	color: $gray-dark;
+	padding: 2px 8px;
+	position: absolute;
+		top: -12px;
+}
+
+.docs-selectors__result-arguments,
+.docs-selectors__result-return {
+	position: relative;
+}
+
+.docs-selectors__result-arguments {
+	display: none;
+	padding: 24px;
+	flex: 3;
+	background: $gray-light;
+	border: 1px solid lighten( $gray, 10% );
+	font-size: 14px;
+
+	.docs-selectors__result.is-expanded & {
+		display: block;
+	}
+}
+
+.docs-selectors__result-arguments-content {
+	display: flex;
+	font-size: 16px;
+	margin: 0;
+
+	+ .docs-selectors__result-arguments-content {
+		margin-top: 16px;
+	}
+}
+
+.docs-selectors__result-return {
+	background: $gray-light;
+	border: 1px solid lighten( $gray, 10% );
+	border-top-width: 0;
+	padding: 24px;
+	flex: 2;
+
+	@include breakpoint( ">960px" ) {
+		border-left-width: 0;
+		border-top-width: 1px;
+	}
+}
+
+.docs-selectors__param-type,
+.docs-selectors__result-arguments-name {
+	color: $gray-dark;
+}
+
+.docs-selectors__param-type {
+	&,
+	& code {
+		font-size: 16px;
+		font-family: $monospace;
+	}
+
+	span {
+		padding-left: 4px;
+	}
+}
+
+.docs-selectors__result-arguments-name {
+	width: 30%;
+	padding-right: 24px;
+	text-align: right;
+	font-family: $monospace;
+}
+
+.docs-selectors__result-return {
+	display: none;
+
+	.docs-selectors__result.is-expanded & {
+		display: block;
+	}
+}
