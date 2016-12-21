@@ -84,7 +84,6 @@
 		"press-this": true,
 		"preview-layout": true,
 		"reader": true,
-		"reader/refresh/stream": true,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,

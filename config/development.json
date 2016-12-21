@@ -134,7 +134,6 @@
 		"reader/list-management": false,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/refresh/stream": true,
 		"reader/search": true,
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": false,

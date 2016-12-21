@@ -7,7 +7,6 @@ import url from 'url';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import resizeImageUrl from 'lib/resize-image-url';
 import DISPLAY_TYPES from './display-types';
 
@@ -38,10 +37,9 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
  * Module vars
  */
 const
-	isRefreshedStream = config.isEnabled( 'reader/refresh/stream' ),
 	READER_CONTENT_WIDTH = 720,
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
-	PHOTO_ONLY_MIN_WIDTH = isRefreshedStream ? 480 : 570,
+	PHOTO_ONLY_MIN_WIDTH = 480,
 	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
@@ -59,14 +57,6 @@ function discoverFullBleedImages( post, dom ) {
 	return post;
 }
 
-function getWordCount( post ) {
-	if ( ! post || ! post.better_excerpt_no_html ) {
-		return 0;
-	}
-
-	return ( post.better_excerpt_no_html.replace( /['";:,.?¿\-!¡]+/g, '' ).match( /\S+/g ) || [] ).length;
-}
-
 function getCharacterCount( post ) {
 	if ( ! post || ! post.better_excerpt_no_html ) {
 		return 0;
@@ -79,9 +69,7 @@ export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
 }
 
-const hasShortContent = isRefreshedStream
-	? post => getCharacterCount( post ) <= 100
-	: post => getWordCount( post ) < 100;
+const hasShortContent = post => getCharacterCount( post ) <= 100;
 
 /**
  * Attempt to classify the post into a display type
