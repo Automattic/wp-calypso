@@ -35,7 +35,7 @@ import {
 	themeActivated,
 	clearActivated,
 	activateTheme,
-	activateWpcomThemeOnJetpack,
+	installAndActivate,
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
@@ -518,7 +518,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#activateWpcomThemeOnJetpack', () => {
+	describe( '#installAndActivate', () => {
 		function isEqualFunction( f1, f2 ) {
 			// TODO: Also compare params!
 			return f1.toString() === f2.toString();
@@ -540,7 +540,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch activate theme request action when triggered', () => {
-			activateWpcomThemeOnJetpack( 'karuna', 2211667 )( stub );
+			installAndActivate( 'karuna', 2211667 )( stub );
 
 			expect( stub ).to.have.been.calledWith( {
 				type: THEME_ACTIVATE_REQUEST,
@@ -550,7 +550,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch THEME_ACTIVATE_REQUEST, installTheme(), and activateTheme()', ( done ) => {
-			activateWpcomThemeOnJetpack( 'karuna', 2211667 )( stub ).then( () => {
+			installAndActivate( 'karuna', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST,
 					themeId: 'karuna-wpcom',
@@ -569,7 +569,7 @@ describe( 'actions', () => {
 					rej();
 				} ) );
 
-			return activateWpcomThemeOnJetpack( 'pinboard', 2211667 )( stub ).then( () => {
+			return installAndActivate( 'pinboard', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( {
 					type: THEME_ACTIVATE_REQUEST_FAILURE,
 					siteId: 2211667,
