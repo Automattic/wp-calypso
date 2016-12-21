@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { defer, flatMap, lastIndexOf, noop, times, clamp } from 'lodash';
 
@@ -32,6 +32,7 @@ import XPostHelper from 'reader/xpost-helper';
 import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
+import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -105,20 +106,21 @@ function injectRecommendations( posts, recs = [] ) {
 export default class ReaderStream extends React.Component {
 
 	static propTypes = {
-		store: React.PropTypes.object.isRequired,
-		recommendationsStore: React.PropTypes.object,
-		trackScrollPage: React.PropTypes.func.isRequired,
-		suppressSiteNameLink: React.PropTypes.bool,
-		showPostHeader: React.PropTypes.bool,
-		showFollowInHeader: React.PropTypes.bool,
-		onUpdatesShown: React.PropTypes.func,
-		emptyContent: React.PropTypes.object,
-		className: React.PropTypes.string,
-		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
-		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
-		showMobileBackToSidebar: React.PropTypes.bool,
-		cardFactory: React.PropTypes.func,
-		placeholderFactory: React.PropTypes.func,
+		store: PropTypes.object.isRequired,
+		recommendationsStore: PropTypes.object,
+		trackScrollPage: PropTypes.func.isRequired,
+		suppressSiteNameLink: PropTypes.bool,
+		showPostHeader: PropTypes.bool,
+		showFollowInHeader: PropTypes.bool,
+		onUpdatesShown: PropTypes.func,
+		emptyContent: PropTypes.object,
+		className: PropTypes.string,
+		showDefaultEmptyContentIfMissing: PropTypes.bool,
+		showPrimaryFollowButtonOnCards: PropTypes.bool,
+		showMobileBackToSidebar: PropTypes.bool,
+		cardFactory: PropTypes.func,
+		placeholderFactory: PropTypes.func,
+		followSource: PropTypes.string,
 	}
 
 	static defaultProps = {
@@ -480,7 +482,9 @@ export default class ReaderStream extends React.Component {
 				recommendations={ postKey.recommendations }
 				index={ postKey.index }
 				storeId={ this.props.recommendationsStore.id }
-				key={ `recs-${ index }` } />;
+				key={ `recs-${ index }` }
+				followSource={ IN_STREAM_RECOMMENDATION }
+				/>;
 		}
 
 		const itemKey = this.getPostRef( postKey );
@@ -499,6 +503,7 @@ export default class ReaderStream extends React.Component {
 			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 			showSiteName={ this.props.showSiteNameOnCards }
 			cardClassForPost={ this.cardClassForPost }
+			followSource={ this.props.followSource }
 		/>;
 	}
 

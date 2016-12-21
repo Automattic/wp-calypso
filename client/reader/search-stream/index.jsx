@@ -23,6 +23,10 @@ import { suggestions } from './suggestions';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
+import {
+	EMPTY_SEARCH_RECOMMENDATIONS,
+	SEARCH_RESULTS,
+} from 'reader/follow-button/follow-sources';
 
 function RecommendedPosts( { post, site } ) {
 	function handlePostClick() {
@@ -46,7 +50,7 @@ function RecommendedPosts( { post, site } ) {
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
 			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } />
+				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
 		</div>
 	);
 }
@@ -88,6 +92,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 			site={ this.props.site }
 			feed={ this.props.feed }
 			onClick={ this.onCardClick }
+			followSource={ SEARCH_RESULTS }
 			onCommentClick={ this.onCommentClick }
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 		/>;
@@ -229,6 +234,10 @@ const SearchStream = React.createClass( {
 		const sugList = initial( flatMap( this.state.suggestions, query =>
 			[ <Suggestion suggestion={ query } />, ', ' ] ) );
 
+		const documentTitle = this.props.translate(
+			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
+		);
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
@@ -239,7 +248,7 @@ const SearchStream = React.createClass( {
 				placeholderFactory={ this.placeholderFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
+				<DocumentHead title={ documentTitle } />
 				<div ref={ this.handleStreamMounted } />
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
