@@ -7,12 +7,11 @@ import React from 'react' ;
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getSelectedDomain, getTld } from 'lib/domains';
+import { getTld } from 'lib/domains';
 import EmptyContent from 'components/empty-content';
 
-const MaintenanceCard = ( { domains, selectedDomainName, translate } ) => {
-	const domain = getSelectedDomain( { domains, selectedDomainName } ),
-		tld = getTld( domain.name );
+const MaintenanceCard = ( { selectedDomainName, translate } ) => {
+	const tld = getTld( selectedDomainName );
 
 	return (
 		<EmptyContent
