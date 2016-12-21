@@ -44,7 +44,7 @@ class PostPhoto extends React.Component {
 		};
 
 		const classes = classnames( {
-			'reader-post-card__featured-image': true, // Will need changing to __photo after styles are rejigged
+			'reader-post-card__photo': true,
 			'is-expanded': this.state.isExpanded
 		} );
 
