@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate, trim } from 'lodash';
+import { noop, truncate, trim, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -23,8 +23,7 @@ import PostGallery from './gallery';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import * as DiscoverHelper from 'reader/discover/helper';
-import DiscoverPostAttribution from 'reader/discover/post-attribution';
-import DiscoverSiteAttribution from 'reader/discover/site-attribution';
+import DiscoverFollowButton from 'reader/discover/follow-button';
 
 export default class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -125,7 +124,7 @@ export default class ReaderPostCard extends React.Component {
 			separator: /,? +/
 		} );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
-		const isDiscoverSitePick = DiscoverHelper.isDiscoverSitePick( post );
+		const discoverBlogName = isDiscoverPost && get( post, 'discover_metadata.attribution.blog_name' );
 
 		if ( ! title && isPhotoOnly ) {
 			title = '\xa0'; // force to non-breaking space if empty so that the title h1 doesn't collapse and complicate things
@@ -170,17 +169,10 @@ export default class ReaderPostCard extends React.Component {
 								</AutoDirection> )
 						}
 						{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
-						{ ( isDiscoverPost && post.discover_metadata && ! isDiscoverSitePick ) &&
-							<DiscoverPostAttribution
-									attribution={ post.discover_metadata.attribution }
-									siteUrl={ DiscoverHelper.getSiteUrl( post ) }
+						{ discoverBlogName &&
+							<DiscoverFollowButton
+									siteName={ get( post, 'discover_metadata.attribution.blog_name' ) }
 									followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } />
-						}
-						{ isDiscoverSitePick &&
-							<DiscoverSiteAttribution
-								attribution={ post.discover_metadata.attribution }
-								siteUrl={ DiscoverHelper.getSiteUrl( post ) }
-								followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } />
 						}
 
 						{ post &&
