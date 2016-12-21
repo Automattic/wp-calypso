@@ -61,7 +61,6 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 		<div className="checkout-thank-you__domain-mapping-details">
 			<PurchaseDetail
 				icon="cog"
-				title={ translate( 'Finish setting up your domain' ) }
 				description={ description }
 				buttonText={ translate( 'Learn more' ) }
 				href={ supportUrls.MAP_EXISTING_DOMAIN }
