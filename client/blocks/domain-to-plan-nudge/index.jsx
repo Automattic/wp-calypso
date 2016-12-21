@@ -28,7 +28,7 @@ import {
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 

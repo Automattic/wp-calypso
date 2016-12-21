@@ -12,9 +12,10 @@ import get from 'lodash/get';
 import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
 import { mc } from 'lib/analytics';
+import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, isValidCapability, canCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 function PostActionsEllipsisMenuEdit( { translate, siteId, canEdit, status, editUrl, isKnownType } ) {

@@ -9,12 +9,12 @@ import get from 'lodash/get';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 
