@@ -414,7 +414,7 @@ export function clearActivated( siteId ) {
  * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
  * @return {Function}           Action thunk
  */
-export function activateWpcomThemeOnJetpack( themeId, siteId, source = 'unknown', purchased = false ) {
+export function installAndActivate( themeId, siteId, source = 'unknown', purchased = false ) {
 	//Add -wpcom suffix. This suffix tells the endpoint that we want to
 	//install WordPress.com theme. Without the suffix endpoint would look
 	//for theme in .org
