@@ -188,6 +188,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	flex-grow: 1;
 	margin-right: 20px;
 	cursor: pointer;
+	position: relative;
+		top: 0;
+	height: 225px;
+	margin-right: 0;
+	margin-bottom: 0;
+	max-width: 100%;
 
 	@media #{$reader-post-card-breakpoint-medium} {
 		height: 100px;
@@ -204,15 +210,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	&.is-expanded {
-		border: 1px solid red;
+		background-size: 100% !important; //Overrides default background-size: cover set in all cards;
+		height: 100vh;
 	}
-
-	position: relative;
-		top: 0;
-	height: 225px;
-	margin-right: 0;
-	margin-bottom: 0;
-	max-width: 100%;
 
 	&::before {
 		content: '';
