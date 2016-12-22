@@ -35,15 +35,18 @@ class PluginAutomatedTransfer extends Component {
 
 	state = {
 		clickOutside: false,
-		shouldDisplay: true,
+		shouldDisplay: false,
 		transferComplete: false,
 	};
 
 	componentWillMount() {
-		const { COMPLETE } = transferStates;
+		const { COMPLETE, CONFLICTS } = transferStates;
 		const { isTransferring, transferState } = this.props;
-		if ( ! isTransferring || ! transferState || COMPLETE === transferState ) {
-			this.setState( { shouldDisplay: false } );
+
+		if ( COMPLETE === transferState ) {
+			this.setState( { transferComplete: true } );
+		} else if ( isTransferring || CONFLICTS === transferState ) {
+			this.setState( { shouldDisplay: true } );
 		}
 	}
 
@@ -54,17 +57,17 @@ class PluginAutomatedTransfer extends Component {
 
 		if ( COMPLETE === nextProps.transferState ) {
 			newState.transferComplete = true;
-		} else if ( transferComplete ) {
-			newState.shouldDisplay = true;
-		} else {
+			if ( ! transferComplete ) {
+				newState.shouldDisplay = true;
+			}
+		} else if ( ! transferComplete ) {
 			if ( this.props.transferState !== nextProps.transferState ) {
 				newState.clickOutside = false;
 			}
-
-			if ( ! nextProps.isTransferring && CONFLICTS !== nextProps.transferState ) {
-				newState.shouldDisplay = false;
-			} else {
+			if ( nextProps.isTransferring || CONFLICTS === nextProps.transferState ) {
 				newState.shouldDisplay = true;
+			} else {
+				newState.shouldDisplay = false;
 			}
 		}
 
