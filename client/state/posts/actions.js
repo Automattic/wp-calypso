@@ -14,7 +14,6 @@ import {
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -164,18 +163,21 @@ export function editPost( siteId, postId = null, post ) {
 }
 
 /**
- * Returns an action object to be used in signalling that any post edits for
- * the specified post should be discarded.
+ * Returns an action object to be used in signalling that a post has been saved
  *
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {Object}        Action object
+ * @param  {Number}   siteId    Site ID
+ * @param  {Number}   postId    Post ID
+ * @param  {Object}   savedPost Updated post
+ * @param  {Object}   post      Post attributes
+ * @return {Object}             Action thunk
  */
-export function resetPostEdits( siteId, postId ) {
+export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 	return {
-		type: POST_EDITS_RESET,
+		type: POST_SAVE_SUCCESS,
 		siteId,
-		postId
+		postId,
+		savedPost,
+		post
 	};
 }
 
@@ -201,13 +203,7 @@ export function savePost( siteId, postId = null, post ) {
 		const normalizedPost = normalizePostForApi( post );
 		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
 		return postHandle( { apiVersion: '1.2' }, normalizedPost ).then( ( savedPost ) => {
-			dispatch( {
-				type: POST_SAVE_SUCCESS,
-				siteId,
-				postId,
-				savedPost,
-				post
-			} );
+			dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
 			dispatch( receivePost( savedPost ) );
 		} ).catch( ( error ) => {
 			dispatch( {

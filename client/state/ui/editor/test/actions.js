@@ -9,37 +9,39 @@ import { forEach } from 'lodash';
  */
 import {
 	ANALYTICS_STAT_BUMP,
-	EDITOR_POST_ID_SET,
 	EDITOR_SHOW_DRAFTS_TOGGLE,
-	EDITOR_START
+	EDITOR_START,
+	EDITOR_STOP,
 } from 'state/action-types';
 import {
 	MODAL_VIEW_STAT_MAPPING,
-	setEditorPostId,
 	toggleEditorDraftsVisible,
 	setEditorMediaModalView,
-	startPostEditor
+	startEditingPost,
+	stopEditingPost,
 } from '../actions';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 
 describe( 'actions', () => {
-	describe( '#setEditorPostId()', () => {
+	describe( 'startEditingPost()', () => {
 		it( 'should return an action object', () => {
-			const action = setEditorPostId( 183 );
+			const action = startEditingPost( 10, 183, 'post' );
 
 			expect( action ).to.eql( {
-				type: EDITOR_POST_ID_SET,
-				postId: 183
+				type: EDITOR_START,
+				siteId: 10,
+				postId: 183,
+				postType: 'post'
 			} );
 		} );
 	} );
 
-	describe( 'startPostEditor()', () => {
+	describe( 'stopEditingPost()', () => {
 		it( 'should return an action object', () => {
-			const action = startPostEditor( 10, 183 );
+			const action = stopEditingPost( 10, 183 );
 
 			expect( action ).to.eql( {
-				type: EDITOR_START,
+				type: EDITOR_STOP,
 				siteId: 10,
 				postId: 183
 			} );

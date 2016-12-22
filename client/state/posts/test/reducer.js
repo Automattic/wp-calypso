@@ -10,17 +10,18 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	EDITOR_START,
+	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
+	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -893,7 +894,7 @@ describe( 'reducer', () => {
 		it( 'should ignore reset edits action when discarded site doesn\'t exist', () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
-				type: POST_EDITS_RESET,
+				type: POST_SAVE_SUCCESS,
 				siteId: 2916284,
 				postId: 841
 			} );
@@ -901,7 +902,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should discard edits when reset edits action dispatched', () => {
+		it( 'should discard edits when the post is saved', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
 					841: {
@@ -912,7 +913,7 @@ describe( 'reducer', () => {
 					}
 				}
 			} ), {
-				type: POST_EDITS_RESET,
+				type: POST_SAVE_SUCCESS,
 				siteId: 2916284,
 				postId: 841
 			} );
@@ -926,10 +927,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should ignore start editor action when site doesn\'t exist', () => {
+		it( 'should ignore stop editor action when site doesn\'t exist', () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
-				type: EDITOR_START,
+				type: EDITOR_STOP,
 				siteId: 2916284,
 				postId: 841
 			} );
@@ -937,7 +938,32 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should discard edits when start editor action is dispatched', () => {
+		it( 'should discard edits when we stop editing the post', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: EDITOR_STOP,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} );
+		} );
+
+		it( 'should reset edits when we start editing a post', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
 					841: {
@@ -950,11 +976,15 @@ describe( 'reducer', () => {
 			} ), {
 				type: EDITOR_START,
 				siteId: 2916284,
-				postId: 841
+				postId: 841,
+				postType: 'jetpack-testimonial',
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
+					841: {
+						type: 'jetpack-testimonial'
+					},
 					'': {
 						title: 'Ribs & Chicken'
 					}
