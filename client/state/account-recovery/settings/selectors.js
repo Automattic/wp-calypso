@@ -1,9 +1,9 @@
-export const isAccountRecoverySettingsReady = ( state ) => {
-	return null != state.accountRecovery.settings.data;
-};
-
 const getSettingsData = ( state ) => {
 	return state.accountRecovery.settings.data;
+};
+
+export const isAccountRecoverySettingsReady = ( state ) => {
+	return null != getSettingsData( state );
 };
 
 export const isAccountRecoveryPhoneValidated = ( state ) => {
