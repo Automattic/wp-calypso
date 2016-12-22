@@ -47,7 +47,7 @@ class PostPhoto extends React.Component {
 
 		if ( this.state.isExpanded ) {
 			const viewportHeight = this.getViewportHeight();
-			featuredImageStyle.height = Math.min( viewportHeight - 100, imageHeight );
+			featuredImageStyle.height = Math.min( viewportHeight - 176, imageHeight );
 		}
 
 		const classes = classnames( {
