@@ -503,14 +503,6 @@ SitesList.prototype.hasSiteWithPlugins = function() {
 	return ! isEmpty( this.getSelectedOrAllWithPlugins() );
 };
 
-SitesList.prototype.fetchAvailableUpdates = function() {
-	this.getJetpack().forEach( function( site ) {
-		if ( site.versionCompare( '4.2', '<' ) ) {
-			site.fetchAvailableUpdates();
-		}
-	}, this );
-};
-
 SitesList.prototype.removeSite = function( site ) {
 	var sites, changed;
 	if ( this.isSelected( site ) ) {

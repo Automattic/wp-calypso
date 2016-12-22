@@ -53,8 +53,6 @@ Layout = React.createClass( {
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
-	_sitesPoller: null,
-
 	propTypes: {
 		primary: React.PropTypes.element,
 		secondary: React.PropTypes.element,
@@ -74,33 +72,6 @@ Layout = React.createClass( {
 		isOffline: React.PropTypes.bool,
 	},
 
-	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section.group !== nextProps.section.group ) {
-			if ( nextProps.section.group === 'sites' ) {
-				setTimeout( function() {
-					if ( ! this.isMounted() || this._sitesPoller ) {
-						return;
-					}
-					this._sitesPoller = PollerPool.add( this.props.sites, 'fetchAvailableUpdates', { interval: 900000 } );
-				}.bind( this ), 0 );
-			} else {
-				this.removeSitesPoller();
-			}
-		}
-	},
-
-	componentWillUnmount: function() {
-		this.removeSitesPoller();
-	},
-
-	removeSitesPoller: function() {
-		if ( ! this._sitesPoller ) {
-			return;
-		}
-
-		PollerPool.remove( this._sitesPoller );
-		this._sitesPoller = null;
-	},
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
