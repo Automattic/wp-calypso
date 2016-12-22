@@ -68,6 +68,11 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 			return Promise.resolve();
 		}
+		case 'videopress': {
+			const thumbnailUrl = `https://thumbs.videopress.com/${ id }?c=1`;
+			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+			return Promise.resolve();
+		}
 		case 'vimeo': {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
 			dispatch( {
