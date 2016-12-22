@@ -4,12 +4,16 @@
  * This file generates an index of proptypes by component displayname, slug and folder name
  */
 
-const fs = require( 'fs' ),
-	path = require( 'path' ),
-	async = require( 'async' ),
-	reactDocgen = require( 'react-docgen' ),
-	root = path.dirname( path.join( __dirname, '..', '..' ) ),
-	pathSwap = new RegExp(path.sep, 'g');
+/**
+ * External Dependencies
+ */
+
+const fs = require( 'fs' );
+const path = require( 'path' );
+const reactDocgen = require( 'react-docgen' );
+
+const root = path.dirname( path.join( __dirname, '..', '..' ) );
+const pathSwap = new RegExp(path.sep, 'g');
 
 /**
  * Converts a camel cased string into a slug
