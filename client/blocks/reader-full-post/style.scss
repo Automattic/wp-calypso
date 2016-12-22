@@ -168,6 +168,14 @@
 	color: $gray-dark;
 }
 
+.reader-full-post__story-content img {
+	margin-bottom: 12px;
+}
+
+.reader-full-post__story-content figure img {
+	margin-bottom: 0;
+}
+
 .reader-full-post .author-compact-profile {
 	display: inline-flex;
 	flex-direction: column;
