@@ -12,7 +12,7 @@ import { get, map, noop } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getEligibility, getIsEligible } from 'state/automated-transfer/selectors';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
@@ -182,7 +182,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		eligibilityData,
-		isEligible: getIsEligible( state, siteId ),
+		isEligible: isEligibleForAutomatedTransfer( state, siteId ),
 		isPlaceholder: ! dataLoaded,
 	};
 };
