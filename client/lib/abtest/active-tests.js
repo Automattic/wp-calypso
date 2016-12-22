@@ -92,8 +92,8 @@ module.exports = {
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
+			showSiteTitleStep: 50,
+			hideSiteTitleStep: 50,
 		},
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
