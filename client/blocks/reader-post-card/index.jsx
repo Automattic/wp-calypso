@@ -148,8 +148,9 @@ export default class ReaderPostCard extends React.Component {
 		} else if ( post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <FeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } />;
 		} else {
-			const ImageComponent = isPhotoOnly ? PostPhoto : FeaturedImage;
-			featuredAsset = <ImageComponent imageUri={ post.canonical_media.src } href={ post.URL } />;
+			featuredAsset = isPhotoOnly
+				? <PostPhoto imageUri={ post.canonical_media.src } href={ post.URL } imageHeight={ post.canonical_media.height } />
+				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 
 		return (

@@ -26,8 +26,13 @@ class PostPhoto extends React.Component {
 		this.setState( { isExpanded: true } );
 	}
 
+	// might need to debounce this
+	getViewportHeight() {
+		return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	}
+
 	render() {
-		const { imageUri, href, children } = this.props;
+		const { imageUri, href, children, imageHeight } = this.props;
 
 		if ( imageUri === undefined ) {
 			return null;
@@ -39,6 +44,11 @@ class PostPhoto extends React.Component {
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'right center'
 		};
+
+		if ( this.state.isExpanded ) {
+			const viewportHeight = this.getViewportHeight();
+			featuredImageStyle.height = Math.min( viewportHeight, imageHeight );
+		}
 
 		const classes = classnames( {
 			'reader-post-card__photo': true,
@@ -55,6 +65,7 @@ class PostPhoto extends React.Component {
 
 PostPhoto.propTypes = {
 	imageUri: React.PropTypes.string,
+	imageHeight: React.PropTypes.number,
 	href: React.PropTypes.string,
 };
 
