@@ -113,6 +113,18 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
+const hasExpiredSecretError = function( state ) {
+	const authorizeData = getAuthorizationData( state );
+
+	return (
+		authorizeData &&
+		authorizeData.authorizeError &&
+		authorizeData.authorizeError.message &&
+		authorizeData.authorizationCode &&
+		authorizeData.authorizeError.message.indexOf( 'verify_secrets_expired' ) > -1
+	);
+};
+
 const getJetpackPlanSelected = function( state ) {
 	const selectedPlans = state.jetpackConnect.jetpackConnectSelectedPlans;
 	const siteUrl = getAuthorizationRemoteQueryData( state ).site;
@@ -148,6 +160,7 @@ export default {
 	getFlowType,
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
+	hasExpiredSecretError,
 	getJetpackPlanSelected,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
