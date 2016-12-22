@@ -13,7 +13,8 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 
 class RecoveryPhoneValidationNotice extends Component {
-	onSubmit() {
+	onSubmit( event ) {
+		event.preventDefault();
 	}
 
 	render() {
@@ -35,14 +36,14 @@ class RecoveryPhoneValidationNotice extends Component {
 				</FormSettingExplanation>
 				<FormButtonsBar>
 					<FormButton
-						isPrimary={ false }
-					>
-						{ translate( 'Resend' ) }
-					</FormButton>
-					<FormButton
 						isPrimary={ true }
 					>
 						{ translate( 'Validate' ) }
+					</FormButton>
+					<FormButton
+						isPrimary={ false }
+					>
+						{ translate( 'Resend' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
