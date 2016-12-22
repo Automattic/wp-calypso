@@ -154,10 +154,24 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__meta {
+		align-items: flex-start;
 		margin-bottom: 16px;
 
+		.reader-related-card-v2__byline,
+		.reader-related-card-v2__byline-author,
+		.reader-related-card-v2__byline-site {
+			margin-top: 0;
+		}
+
+		.reader-related-card-v2__byline-author {
+			margin-bottom: -3px;
+		}
+
 		.follow-button {
-			margin-top: -9px;
+			height: 25px;
+			margin-top: 0;
+			position: relative;
+				top: -2px;
 
 			@include breakpoint( "<480px" ) {
 				margin-right: 0;
@@ -165,11 +179,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 
 		.gravatar {
-			margin: 2px 8px 0 0;
-		}
-
-		.reader-related-card-v2__byline-site {
-			margin-top: -2px;
+			margin: 4px 8px 0 0;
 		}
 	}
  }
