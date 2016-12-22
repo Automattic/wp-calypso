@@ -535,27 +535,8 @@ describe( 'actions', () => {
 			res();
 		} ) );
 
-		beforeEach( () => {
-			stub.reset();
-		} );
-
-		it( 'should dispatch activate theme request action when triggered', () => {
-			installAndActivate( 'karuna', 2211667 )( stub );
-
-			expect( stub ).to.have.been.calledWith( {
-				type: THEME_ACTIVATE_REQUEST,
-				siteId: 2211667,
-				themeId: 'karuna'
-			} );
-		} );
-
 		it( 'should dispatch THEME_ACTIVATE_REQUEST, installTheme(), and activateTheme()', ( done ) => {
 			installAndActivate( 'karuna-wpcom', 2211667 )( stub ).then( () => {
-				expect( stub ).to.have.been.calledWith( {
-					type: THEME_ACTIVATE_REQUEST,
-					themeId: 'karuna-wpcom',
-					siteId: 2211667,
-				} );
 				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
 				expect( stub ).to.have.been.calledWith( matchFunction( activateTheme( 'karuna-wpcom', 2211667 ) ) );
 				done();
