@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
+import { noop, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -13,7 +13,8 @@ import cssSafeUrl from 'lib/css-safe-url';
 class PostPhoto extends React.Component {
 
 	state = {
-		isExpanded: false
+		isExpanded: false,
+		cardWidth: 800,
 	};
 
 	handleClick = ( event ) => {
@@ -30,8 +31,23 @@ class PostPhoto extends React.Component {
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
 
-	getCardWidth = () => {
-		return 800;
+	setCardWidth = () => {
+		const cardWidth = this.widthDivRef.getClientRects()[ 0 ].width;
+		if ( cardWidth > 0 ) {
+			this.setState( { cardWidth } );
+		}
+	}
+
+	handleWidthDivLoaded = ( ref ) => {
+		this.widthDivRef = ref;
+	}
+
+	componentDidMount() {
+		this.resizeListener = window.addEventListener( 'resize', debounce( this.setCardWidth, 50 ) );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
 	render() {
@@ -50,13 +66,14 @@ class PostPhoto extends React.Component {
 
 		if ( this.state.isExpanded ) {
 			const viewportHeight = this.getViewportHeight();
-			const cardWidth = this.getCardWidth();
+			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
 			const newHeight = Math.min(
 				( naturalHeight / naturalWidth ) * cardWidth,
 				viewportHeight - 176
 			);
+//			console.error( naturalHeight, naturalWidth, viewportHeight, ( naturalHeight / naturalWidth ) * cardWidth );
 			featuredImageStyle.height = newHeight;
 		}
 
@@ -67,6 +84,7 @@ class PostPhoto extends React.Component {
 
 		return (
 			<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
+				<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
 				{ children }
 			</a>
 		);
