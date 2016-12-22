@@ -10,7 +10,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { activateTheme, activateWpcomThemeOnJetpack } from 'state/themes/actions';
+import { activateTheme, installAndActivate } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
@@ -59,7 +59,8 @@ const activate = {
 const activateOnJetpack = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	action: activateWpcomThemeOnJetpack,
+	// Append `-wpcom` suffix to the theme ID so the installAndActivate() will install the theme from WordPress.com, not WordPress.org
+	action: ( themeId, siteId, ...args ) => installAndActivate( themeId + '-wpcom', siteId, ...args ),
 	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
