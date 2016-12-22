@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,90 +12,88 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'components/external-link';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import utils from 'lib/site/utils';
-import i18n from 'i18n-calypso';
 
-class PluginAutopdateToggle extends React.Component {
+export class PluginAutoUpdateToggle extends Component {
+	toggleAutoUpdates = () => {
+		const {
+			isMock,
+			disabled,
+			site,
+			plugin,
+			notices,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent
+		} = this.props;
 
-	constructor() {
-		super();
-		[ 'toggleAutoupdates', 'recordEvent' ].forEach(
-			( method ) => this[ method ] = this[ method ].bind( this )
-		);
-	}
-
-	toggleAutoupdates() {
-		if ( this.props.isMock || this.props.disabled ) {
+		if ( isMock || disabled ) {
 			return;
 		}
 
-		PluginsActions.togglePluginAutoUpdate( this.props.site, this.props.plugin );
-		PluginsActions.removePluginsNotices( this.props.notices.completed.concat( this.props.notices.errors ) );
+		PluginsActions.togglePluginAutoUpdate( site, plugin );
+		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
 
-		if ( this.props.plugin.autoupdate ) {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Disable Autoupdates Plugin', 'Plugin Name', this.props.plugin.slug );
-			analytics.tracks.recordEvent( 'calypso_plugin_autoupdate_disable_click', {
-				site: this.props.site.ID,
-				plugin: this.props.plugin.slug
+		if ( plugin.autoupdate ) {
+			recordGAEvent( 'Plugins', 'Clicked Toggle Disable Autoupdates Plugin', 'Plugin Name', plugin.slug );
+			recordEvent( 'calypso_plugin_autoupdate_disable_click', {
+				site: site.ID,
+				plugin: plugin.slug
 			} );
 		} else {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Toggle Enable Autoupdates Plugin', 'Plugin Name', this.props.plugin.slug );
-			analytics.tracks.recordEvent( 'calypso_plugin_autoupdate_enable_click', {
-				site: this.props.site.ID,
-				plugin: this.props.plugin.slug
+			recordGAEvent( 'Plugins', 'Clicked Toggle Enable Autoupdates Plugin', 'Plugin Name', plugin.slug );
+			recordEvent( 'calypso_plugin_autoupdate_enable_click', {
+				site: site.ID,
+				plugin: plugin.slug
 			} );
 		}
-	}
-
-	recordEvent() {
-		analytics.ga.recordEvent( 'Plugins', 'Clicked How do I fix disabled autoupdates' );
-	}
+	};
 
 	getDisabledInfo() {
-		if ( ! this.props.site ) { // we don't have enough info
+		const { site, wporg, translate } = this.props;
+		if ( ! site ) { // we don't have enough info
 			return null;
 		}
 
-		if ( ! this.props.wporg ) {
-			return i18n.translate( 'This plugin is not in the WordPress.org plugin repository, so we can\'t autoupdate it.' );
+		if ( ! wporg ) {
+			return translate( 'This plugin is not in the WordPress.org plugin repository, so we can\'t autoupdate it.' );
 		}
 
-		if ( ! this.props.site.hasMinimumJetpackVersion ) {
-			return i18n.translate( '%(site)s is not running an up to date version of Jetpack', {
-				args: { site: this.props.site.title }
+		if ( ! site.hasMinimumJetpackVersion ) {
+			return translate( '%(site)s is not running an up to date version of Jetpack', {
+				args: { site: site.title }
 			} );
 		}
 
-		if ( this.props.site.options.is_multi_network ) {
-			return i18n.translate( '%(site)s is part of a multi-network installation, which is not currently supported.', {
-				args: { site: this.props.site.title }
+		if ( site.options.is_multi_network ) {
+			return translate( '%(site)s is part of a multi-network installation, which is not currently supported.', {
+				args: { site: site.title }
 			} );
 		}
 
-		if ( ! utils.isMainNetworkSite( this.props.site ) ) {
-			return i18n.translate( 'Only the main site on a multi-site installation can enable autoupdates for plugins.', {
-				args: { site: this.props.site.title }
+		if ( ! utils.isMainNetworkSite( site ) ) {
+			return translate( 'Only the main site on a multi-site installation can enable autoupdates for plugins.', {
+				args: { site: site.title }
 			} );
 		}
 
-		if ( ! this.props.site.canAutoupdateFiles && this.props.site.options.file_mod_disabled ) {
-			const reasons = utils.getSiteFileModDisableReason( this.props.site, 'autoupdateFiles' );
+		if ( ! site.canAutoupdateFiles && site.options.file_mod_disabled ) {
+			const reasons = utils.getSiteFileModDisableReason( site, 'autoupdateFiles' );
 			const html = [];
 
 			if ( reasons.length > 1 ) {
 				html.push(
 					<p key="reason-shell">
-						{ i18n.translate( 'Autoupdates are not available for %(site)s:', { args: { site: this.props.site.title } } ) }
+						{ translate( 'Autoupdates are not available for %(site)s:', { args: { site: site.title } } ) }
 					</p>
 				);
-				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + this.props.site.ID } >{ reason }</li> ) );
+				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + site.ID } >{ reason }</li> ) );
 				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
 				html.push(
 					<p key="reason-shell">{
-						i18n.translate( 'Autoupdates are not available for %(site)s. %(reason)s', {
-							args: { site: this.props.site.title, reason: reasons[ 0 ] }
+						translate( 'Autoupdates are not available for %(site)s. %(reason)s', {
+							args: { site: site.title, reason: reasons[ 0 ] }
 						} )
 					}</p> );
 			}
@@ -103,7 +103,7 @@ class PluginAutopdateToggle extends React.Component {
 					onClick={ this.recordEvent }
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 					>
-					{ i18n.translate( 'How do I fix this?' ) }
+					{ translate( 'How do I fix this?' ) }
 				</ExternalLink>
 			);
 
@@ -113,43 +113,54 @@ class PluginAutopdateToggle extends React.Component {
 	}
 
 	render() {
-		if ( ! this.props.site.jetpack ) {
+		const { site, plugin, translate, disabled } = this.props;
+		if ( ! site.jetpack ) {
 			return null;
 		}
 
-		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
+		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
 				'ENABLE_AUTOUPDATE_PLUGIN',
 				'DISABLE_AUTOUPDATE_PLUGIN'
 			] ),
 			getDisabledInfo = this.getDisabledInfo(),
 			label = getDisabledInfo
-				? i18n.translate( 'Autoupdates disabled', {
+				? translate( 'Autoupdates disabled', {
 					context: 'this goes next to an icon that displays if the plugin has "autoupdates disabled" active'
 				} )
-				: i18n.translate( 'Autoupdates', {
+				: translate( 'Autoupdates', {
 					context: 'this goes next to an icon that displays if the plugin has "autoupdates" active'
 				} );
 
 		return (
 			<PluginAction
-				disabled={ this.props.disabled }
+				disabled={ disabled }
 				label={ label }
-				status={ this.props.plugin.autoupdate }
-				action={ this.toggleAutoupdates }
+				status={ plugin.autoupdate }
+				action={ this.toggleAutoUpdates }
 				inProgress={ inProgress }
 				disabledInfo={ getDisabledInfo }
-				htmlFor={ 'autoupdates-' + this.props.plugin.slug + '-' + this.props.site.ID } />
+				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID } />
 		);
 	}
 }
 
-PluginAutopdateToggle.displayName = 'PluginAutopdateToggle';
-
-PluginAutopdateToggle.propTypes = {
-	isMock: React.PropTypes.bool,
-	site: React.PropTypes.object.isRequired,
-	plugin: React.PropTypes.object.isRequired,
-	wporg: React.PropTypes.bool
+PluginAutoUpdateToggle.propTypes = {
+	isMock: PropTypes.bool,
+	site: PropTypes.object.isRequired,
+	plugin: PropTypes.object.isRequired,
+	wporg: PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
-export default PluginAutopdateToggle;
+PluginAutoUpdateToggle.defaultProps = {
+	isMock: false,
+	disabled: false,
+};
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		recordTracksEvent
+	}
+)( localize( PluginAutoUpdateToggle ) );
