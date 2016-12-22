@@ -19,6 +19,7 @@ import {
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -191,32 +192,41 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Filter wpcom themes from Jetpack theme list
- * Themes on Jetpack installed from WordPress.com have -wpcom suffix.
- * We filter out all those themes because they will also be visible on
- * second list specific to WordPress.com. This may be too simple aproach
- * so it may revisit it again later.
+ * Check if theme is a wpcom theme
+ * checking is done based on existance of -wpcom suffix
  *
- * TODO Veriy that this aproach is sufficien.
- *
- * @param  {Array}  themes Array of theme objects
- * @return {Array}         Filtered themes
+ * @param  {string}  themeId Theme id
+ * @return {Boolean}         Wheter theme is a wpcom theme
  */
-export function filterWpcomThemesFromJetpack( themes ) {
-	return filter( themes, theme => ! endsWith( theme.id, '-wpcom' ) );
+export function isWpcomTheme( themeId ) {
+	return endsWith( themeId, '-wpcom' );
 }
 
 /**
  * Returns a filtered themes array. Filtering is done based on particular themes
- * matching provided query
+ * matching provided query and isWpocmTheme predicate.
+ * Themes on Jetpack installed from WordPress.com have -wpcom suffix
+ * We filter out all those themes because they will also be visible on
+ * second list specific to WordPress.com. This may be too simple aproach
+ * so it may revisit it again later.
+ *
+ * TODO Veriy that wpcom filtering is sufficien.
  *
  * @param  {Array}  themes Array of theme objects
  * @param  {Object} query  Themes query
  * @return {Array}         Filtered themes
  */
 export function filterThemesForJetpack( themes, query ) {
+	// we can filter wpcom only if we have two lists
+	if ( config.isEnabled( 'manage/themes/upload' ) ) {
+		return filter(
+			themes,
+			theme => ! isWpcomTheme( theme.id ) && isThemeMatchingQuery( query, theme )
+		);
+	}
+
 	return filter(
-		filterWpcomThemesFromJetpack( themes ),
+		themes,
 		theme => isThemeMatchingQuery( query, theme )
 	);
 }
