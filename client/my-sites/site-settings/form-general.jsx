@@ -441,7 +441,7 @@ const SiteSettingsFormGeneral = React.createClass( {
 									checked={ !! this.state.jetpack_relatedposts_show_headline }
 									disabled={ this.state.fetchingSettings }
 									onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
-									<span>
+									<span className="site-settings__toggle-label">
 										{ translate(
 											'Show a "Related" header to more clearly separate the related section from posts'
 										) }
@@ -454,7 +454,11 @@ const SiteSettingsFormGeneral = React.createClass( {
 									checked={ !! this.state.jetpack_relatedposts_show_thumbnails }
 									disabled={ this.state.fetchingSettings }
 									onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
-									<span>{ translate( 'Use a large and visually striking layout' ) }</span>
+									<span className="site-settings__toggle-label">
+										{ translate(
+											'Use a large and visually striking layout'
+										) }
+									</span>
 								</FormToggle>
 							</li>
 						</ul>
@@ -499,7 +503,11 @@ const SiteSettingsFormGeneral = React.createClass( {
 									checked={ !! this.state.jetpack_sync_non_public_post_stati }
 									disabled={ this.state.fetchingSettings }
 									onChange={ this.handleToggle( 'jetpack_sync_non_public_post_stati' ) }>
-									<span>{ translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
+									<span className="site-settings__toggle-label">
+										{ translate(
+											'Allow synchronization of Posts and Pages with non-public post statuses'
+										) }
+									</span>
 								</FormToggle>
 								<FormSettingExplanation>
 									{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
@@ -552,7 +560,11 @@ const SiteSettingsFormGeneral = React.createClass( {
 					checked={ !! this.state.holidaysnow }
 					disabled={ this.state.fetchingSettings }
 					onChange={ this.handleToggle( 'holidaysnow' ) }>
-					<span>{ translate( 'Show falling snow on my blog until January 4th.' ) }</span>
+					<span className="site-settings__toggle-label">
+						{ translate(
+							'Show falling snow on my blog until January 4th.'
+						) }
+					</span>
 				</FormToggle>
 			</FormFieldset>
 		);
