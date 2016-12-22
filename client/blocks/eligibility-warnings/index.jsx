@@ -2,24 +2,31 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { get, map, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getEligibility } from 'state/automated-transfer/selectors';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import SectionHeader from 'components/section-header';
+import QueryEligibility from 'components/data/query-atat-eligibility';
 
-// Mapping eligibility hold constant to messages that will be shown to the user
+// Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldsMessages( translate ) {
+function getHoldMessages( translate ) {
 	return {
+		PLACEHOLDER: {
+			title: '',
+			description: '',
+			supportUrl: '',
+		},
 		MULTIPLE_USERS: {
 			title: translate( 'Multiple users' ),
 			description: translate( 'This feature is not supported on sites with multiple users.' ),
@@ -67,38 +74,48 @@ const EligibilityWarnings = props => {
 	const {
 		translate,
 		backUrl,
+		onProceed,
+		siteId,
 		isEligible,
 		eligibilityData,
-		onProceed,
+		isPlaceholder,
 	} = props;
 
-	const holdsMessage = getHoldsMessages( translate );
+	const holdMessages = getHoldMessages( translate );
+	const holds = get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] );
+	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
+
+	const classes = classNames( {
+		'eligibility-warnings__message': true,
+		'is-placeholder': isPlaceholder,
+	} );
 
 	return (
 		<div className="eligibility-warnings">
+			<QueryEligibility siteId={ siteId } />
 			<SectionHeader label={ translate( 'Conflicts' ) } />
 
-			{ eligibilityData.eligibilityHolds.map( ( error ) =>
-				<Card key={ holdsMessage[ error ].title } className="eligibility-warnings__message">
+			{ map( holds, ( error, index ) =>
+				<Card key={ index } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__error-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
-							{ translate( 'Error: %(title)s', { args: { title: holdsMessage[ error ].title } } ) }
+							{ translate( 'Error: %(title)s', { args: { title: holdMessages[ error ].title } } ) }
 						</div>
 						<div className="eligibility-warnings__message-description">
-							{ holdsMessage[ error ].description }
+							{ holdMessages[ error ].description }
 						</div>
 					</div>
 					<div className="eligibility-warnings__message-action">
-						<Button href={ holdsMessage[ error ].supportUrl } target="_blank" rel="noopener noreferrer">
+						<Button href={ holdMessages[ error ].supportUrl } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Resolve' ) }
 						</Button>
 					</div>
 				</Card>
 			) }
 
-			{ eligibilityData.eligibilityWarnings.map( ( { name, description, supportUrl } ) =>
-				<Card key={ name } className="eligibility-warnings__message">
+			{ map( warnings, ( { name, description, supportUrl }, index ) =>
+				<Card key={ index } className={ classes }>
 					<Gridicon icon="notice" className="eligibility-warnings__warning-icon" />
 					<div className="eligibility-warnings__message-content">
 						<div className="eligibility-warnings__message-title">
@@ -133,7 +150,6 @@ const EligibilityWarnings = props => {
 						}
 					) }
 				</div>
-
 				<div className="eligibility-warnings__buttons">
 					<Button href={ backUrl }>
 						{ translate( 'Cancel' ) }
@@ -149,10 +165,9 @@ const EligibilityWarnings = props => {
 };
 
 EligibilityWarnings.propTypes = {
-	isEligible: PropTypes.bool.isRequired,
+	onProceed: PropTypes.func,
 	backUrl: PropTypes.string,
 	translate: PropTypes.func,
-	onProceed: PropTypes.func,
 };
 
 EligibilityWarnings.defaultProps = {
@@ -161,9 +176,14 @@ EligibilityWarnings.defaultProps = {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
+	const eligibilityData = getEligibility( state, siteId );
+	const dataLoaded = !! eligibilityData.lastUpdate;
 
 	return {
-		eligibilityData: getEligibility( state, siteId )
+		siteId,
+		eligibilityData,
+		isEligible: isEligibleForAutomatedTransfer( state, siteId ),
+		isPlaceholder: ! dataLoaded,
 	};
 };
 

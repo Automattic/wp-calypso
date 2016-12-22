@@ -5,6 +5,23 @@
     line-height: 1.5;
 }
 
+.is-placeholder {
+    @include placeholder();
+}
+
+.is-placeholder .eligibility-warnings__message-content {
+    color: $gray-light;
+    background-color: $gray-light;
+}
+
+.is-placeholder .eligibility-warnings__error-icon{
+    color: $gray-light;
+}
+
+.is-placeholder .eligibility-warnings__message-action .button {
+    display: none;
+}
+
 .eligibility-warnings .card {
     margin: 0;
     display: flex;

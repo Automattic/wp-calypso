@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ class PluginEligibility extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const isEligible = false;
 
 		return (
 			<MainComponent>
@@ -41,7 +41,8 @@ class PluginEligibility extends Component {
 					{ translate( 'Install plugin' ) }
 				</HeaderCake>
 				<EligibilityWarnings
-					isEligible={ isEligible }
+					// TODO: Replace with transfer initiate call
+					onProceed={ noop }
 					backUrl={ this.getBackUrl() }
 				/>
 			</MainComponent>
