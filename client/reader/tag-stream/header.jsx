@@ -18,7 +18,7 @@ import cssSafeUrl from 'lib/css-safe-url';
 import { decodeEntities } from 'lib/formatting';
 import Gridicon from 'components/gridicon';
 
-const TAG_HEADER_WIDTH = 830;
+const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;
 
 class TagStreamHeader extends React.Component {
