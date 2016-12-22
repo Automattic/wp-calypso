@@ -144,19 +144,19 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 }
 
-PluginAutoUpdateToggle.displayName = 'PluginAutoUpdateToggle';
-
 PluginAutoUpdateToggle.propTypes = {
 	isMock: PropTypes.bool,
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
-	wporg: PropTypes.bool
+	wporg: PropTypes.bool,
+	disabled: PropTypes.bool,
 };
 
 PluginAutoUpdateToggle.defaultProps = {
 	isMock: false,
 	disabled: false,
 };
+
 export default connect(
 	null,
 	{
