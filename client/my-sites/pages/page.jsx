@@ -26,11 +26,12 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasStaticFrontPage } from 'state/sites/selectors';
+import { getSite, hasStaticFrontPage } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
 } from 'state/pages/selectors';
+import QuerySites from 'components/data/query-sites';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 import { updateSitesList } from './helpers';
@@ -364,6 +365,7 @@ const Page = React.createClass( {
 
 		return (
 			<CompactCard className="page">
+				{ ! this.props.site && <QuerySites siteId={ page.site_ID } /> }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
 				<a className="page__title"
 					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
@@ -423,6 +425,7 @@ export default connect(
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+			site: getSite( state, props.page.site_ID ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {
