@@ -196,23 +196,16 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	max-width: 100%;
 
 	@media #{$reader-post-card-breakpoint-medium} {
-		height: 100px;
-		max-width: none;
-		width: 100%;
 		margin-bottom: 10px;
 	}
 
 	@media #{$reader-post-card-breakpoint-small} {
-		height: 100px;
-		max-width: none;
-		width: 100%;
 		margin-bottom: 10px;
 	}
 
 	&.is-expanded {
 		background-position: center !important;
 		min-width: 100%;
-		max-height: 100%;
 		max-width: 100%;
 		background-size: cover;
 	}
