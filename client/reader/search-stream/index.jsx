@@ -12,7 +12,6 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
-import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
@@ -99,33 +98,15 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 	}
 };
 
-const emptyStore = {
-	get() {
-		return [];
-	},
-	isLastPage() {
-		return true;
-	},
-	isFetchingNextPage() {
-		return false;
-	},
-	getUpdateCount() {
-		return 0;
-	},
-	getSelectedIndex() {
-		return -1;
-	},
-	on() {},
-	off() {}
-};
+class SearchStream extends Component {
 
-const SearchStream = React.createClass( {
+	static propTypes = {
+		query: React.PropTypes.string,
+	};
 
-	propTypes: {
-		query: React.PropTypes.string
-	},
+	constructor( props ) {
+		super( props );
 
-	getInitialState() {
 		const lang = i18nUtils.getLocaleSlug();
 		let pickedSuggestions = null;
 
@@ -133,81 +114,75 @@ const SearchStream = React.createClass( {
 			pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
 		}
 
-		return {
+		this.state = {
 			suggestions: pickedSuggestions,
 			title: this.getTitle()
 		};
-	},
-
-	getDefaultProps() {
-		return {
-			showBlankContent: true
-		};
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
 		}
-	},
+	}
 
-	updateState( props = this.props ) {
+	updateState = ( props = this.props ) => {
 		const newState = {
 			title: this.getTitle( props )
 		};
 		if ( newState.title !== this.state.title ) {
 			this.setState( newState );
 		}
-	},
+	}
 
-	getTitle( props = this.props ) {
+	getTitle = ( props = this.props ) => {
 		return props.query;
-	},
+	}
 
-	updateQuery( newValue ) {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
-	},
+	}
 
-	scrollToTop() {
+	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
-	cardFactory() {
+	cardFactory = () => {
 		const isRecommendations = ! this.props.query;
 		return SearchCardAdapter( isRecommendations );
-	},
+	}
 
-	handleStreamMounted( ref ) {
+	handleStreamMounted = ( ref ) => {
 		this.streamRef = ref;
-	},
+	}
 
-	handleSearchBoxMounted( ref ) {
+	handleSearchBoxMounted = ( ref ) => {
 		this.searchBoxRef = ref;
-	},
+	}
 
-	resizeSearchBox() {
+	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
 			const width = this.streamRef.getClientRects()[ 0 ].width;
 			if ( width > 0 ) {
 				this.searchBoxRef.style.width = `${ width }px`;
 			}
 		}
-	},
+	}
 
 	componentDidMount() {
 		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
 		this.resizeSearchBox();
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeListener );
-	},
+	}
 
-	placeholderFactory( { key, ...rest } ) {
+	placeholderFactory = ( { key, ...rest } ) => {
 		if ( ! this.props.query ) {
 			return (
 				<div className="search-stream__recommendation-list-item" key={ key }>
@@ -216,15 +191,11 @@ const SearchStream = React.createClass( {
 			);
 		}
 		return null;
-	},
+	}
 
 	render() {
-		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions } /> : null;
-		const emptyContent = this.props.query
-			? <EmptyContent query={ this.props.query } />
-			: blankContent;
-
-		const store = this.props.store || emptyStore;
+		const { store } = this.props;
+		const emptyContent = <EmptyContent query={ this.props.query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -237,12 +208,10 @@ const SearchStream = React.createClass( {
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
-
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				placeholderFactory={ this.placeholderFactory }
@@ -269,6 +238,6 @@ const SearchStream = React.createClass( {
 			</Stream>
 		);
 	}
-} );
+}
 
 export default localize( SearchStream );
