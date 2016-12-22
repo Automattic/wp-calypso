@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
+import { includes, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,6 @@ import {
 import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import { getEligibility } from 'state/automated-transfer/selectors';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
@@ -59,7 +58,6 @@ class Upload extends React.Component {
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
 		isJetpackSite: React.PropTypes.bool,
-		isEligible: React.PropTypes.bool,
 	};
 
 	state = {
@@ -253,7 +251,6 @@ class Upload extends React.Component {
 			siteId,
 			selectedSite,
 			themeId,
-			isEligible,
 		} = this.props;
 
 		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
@@ -268,7 +265,6 @@ class Upload extends React.Component {
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
 				{ showEligibility && <EligibilityWarnings
-					isEligible={ isEligible }
 					backUrl="/design"
 					onProceed={ this.onProceedClick } /> }
 				{ ! showEligibility && this.renderUploadCard() }
@@ -289,10 +285,6 @@ const UploadWithOptions = ( props ) => {
 	);
 };
 
-const isEligible = ( ( eligibilityData ) => {
-	return isEmpty( eligibilityData.eligibilityHolds );
-} );
-
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
@@ -310,7 +302,6 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
-			isEligible: isEligible( getEligibility( state, siteId ) ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
