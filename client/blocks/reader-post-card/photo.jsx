@@ -26,10 +26,14 @@ class PostPhoto extends React.Component {
 		this.setState( { isExpanded: true } );
 	}
 
-	// might need to debounce this
+	// might need to put into state to respond to resizes + debounce
 	getViewportHeight() {
 		return Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
 	}
+
+	// getAspectRatio() {
+	// 	return this.props.imageWidth / this.props.imageHeight;
+	// }
 
 	render() {
 		const { imageUri, href, children, imageHeight } = this.props;
@@ -47,7 +51,10 @@ class PostPhoto extends React.Component {
 
 		if ( this.state.isExpanded ) {
 			const viewportHeight = this.getViewportHeight();
-			featuredImageStyle.height = Math.min( viewportHeight - 176, imageHeight );
+			//const aspectRatio = this.getAspectRatio();
+
+			const newImageHeight = Math.min( this.props.imageHeight, viewportHeight - 176 );
+			featuredImageStyle.height = Math.min( newImageHeight, imageHeight );
 		}
 
 		const classes = classnames( {

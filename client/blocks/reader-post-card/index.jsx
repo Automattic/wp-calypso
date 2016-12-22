@@ -149,7 +149,11 @@ export default class ReaderPostCard extends React.Component {
 			featuredAsset = <FeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } />;
 		} else {
 			featuredAsset = isPhotoOnly
-				? <PostPhoto imageUri={ post.canonical_media.src } href={ post.URL } imageHeight={ post.canonical_media.height } />
+				? <PostPhoto
+					imageUri={ post.canonical_media.src }
+					href={ post.URL }
+					imageHeight={ post.canonical_media.height }
+					imageWidth={ post.canonical_media.width } />
 				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 
