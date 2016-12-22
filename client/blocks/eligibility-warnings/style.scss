@@ -5,20 +5,20 @@
     line-height: 1.5;
 }
 
-.is-placeholder {
+.eligibility-warnings__placeholder {
     @include placeholder();
 }
 
-.is-placeholder .eligibility-warnings__message-content {
+.eligibility-warnings__placeholder .eligibility-warnings__message-content {
     color: $gray-light;
     background-color: $gray-light;
 }
 
-.is-placeholder .eligibility-warnings__error-icon{
+.eligibility-warnings__placeholder .eligibility-warnings__error-icon{
     color: $gray-light;
 }
 
-.is-placeholder .eligibility-warnings__message-action .button {
+.eligibility-warnings__placeholder .eligibility-warnings__message-action .button {
     display: none;
 }
 

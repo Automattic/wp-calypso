@@ -87,7 +87,7 @@ const EligibilityWarnings = props => {
 
 	const classes = classNames( {
 		'eligibility-warnings__message': true,
-		'is-placeholder': isPlaceholder,
+		'eligibility-warnings__placeholder': isPlaceholder,
 	} );
 
 	return (
