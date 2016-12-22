@@ -28,10 +28,6 @@ describe( 'legacy-routes', function() {
 			expect( isLegacyRoute( '/themes/sometheme' ) ).to.be.true;
 		} );
 
-		it( 'should return true for /notifications', () => {
-			expect( isLegacyRoute( '/notifications' ) ).to.be.true;
-		} );
-
 		it( 'should return false for /settings/general', () => {
 			expect( isLegacyRoute( '/settings/general' ) ).to.be.false;
 		} );
