@@ -1,11 +1,33 @@
 # Guided Tours API
 
-Guided Tours are declared as a tree of JSX components.
+Guided Tours are declared in JSX as a tree of elements. All of them are available as named exports from `client/layout/guided-tours/config-elements`.
 
+## All-in example
+
+Before we go into full details, let's look at this example. It includes most possible things you can use.
+
+<img src="https://cldup.com/QBoRhc-P0M.png" width="515" />
+
+Here is the code used:
+
+```
+<Step name="example" placement="below" target="my-sites" arrow="top-left">
+  <p>Plain text description.</p>
+  <p>Multiple lines.</p>
+  <Continue step="next-step" click target="my-sites" icon="my-sites" />
+  <ButtonRow>
+    <Next step="next-step" />
+    <Quit />
+  </ButtonRow>
+  <Link href="https://learn.wordpress.com">
+    { translate( 'Learn more about WordPress.com' ) }
+  </Link>
+</Step>
+```
 
 ## Tour
 
-Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` components as children.
+Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` elements as children.
 
 ### Props
 
@@ -13,6 +35,7 @@ Tour is a React component that declares the top-level of a tour. It defines cond
 * `version` (string): Version identifier. We use date string like "20161224".
 * `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `[ '/stats', '/settings' ]`
 * `when` (function, optional): This is a redux selector function. Use this to define conditions for the tour to start.
+* `children` (nodes): only supported type is `<Step>`
 
 ## Step
 
@@ -21,13 +44,14 @@ Step is a React component that defines a single Step of a tour. It is represente
 ### Props
 
 * `name`: (string) Unique identifier of the step.
-* `target`: (string, optional) Target which this step belongs to and will be used for positioning. This prop is value is used to look up according `[data-tip-target]` in DOM. If omitted, `<body>` will be used as target. TODO: mention querySelector hack?, is body really default target?
+* `target`: (string, optional) Target which this step belongs to and will be used for positioning. Value of this prop is used to look up according `[data-tip-target]` in DOM. If you start this value with `.` (dot), it will be evaluated as a query selector, so you can select elements that have no `[data-tip-target]` defined.
 * `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
 * `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'
-* `style`: (object, optional) Will be used as step's inline style.
+* `style`: (object, optional) Will be used as step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this is a way that could benefit all Guided Tours globally, please consider creating an issue.
 * `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of the step it should skip to. If you omit this prop, step will be rendered as expected.
 * `next`: (string, optional) Define this to tell Guided Tours name of the step it should skip to when `when` evaluates to false.
+* `children`: (nodes) Content of step. Usually a paragraph of instructions and some controls for tour. See below for available options.
 
 ### Example
 
@@ -45,7 +69,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
-This is just a quick and not very useful tour. You can see more examples in [TUTORIAL.md](TUTORIAL.md) or by exploring existing tours in client/layout/guided-tours/tours.
+For more comprehensive examples, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in client/layout/guided-tours/tours.
 
 ## ButtonRow
 
@@ -65,10 +89,7 @@ ButtonRow is a React component to display button controls in Step and takes care
 
 ## Continue
 
-Continue is a React component that you can use in Step to programmatically continue the tour to other step based on user interaction with Calypso. There are currently two ways to declare the condition to continue the tour.
-
-- Binding an `onClick` listener to a DOM node marked as `[data-tip-target]`
-- Redux selector function that evaluates to true in order to advance the tour
+Continue is a React component that you can use in Step to programmatically continue the tour to other step based on user interaction with Calypso.
 
 ### Props
 
@@ -78,19 +99,28 @@ Continue is a React component that you can use in Step to programmatically conti
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
 * `when`: (function, optional) Redux selector. Once it evaluates to true, tour will advance to `step`.
+* `children`: (nodes, optional) If you provide children, it will override the default content.
 
-### Content
+### Visual Options
 
-- text
-- text + props.icon
-- custom content
+There are three ways to define a content of this component.
 
-### Examples
+- default text is "Click to continue." Use just as `<Continue … />` with no children.
+- default text + Gridicon ("Click *icon* to continue.") - provide name of Gridicon as an `icon` prop. Example: `<Continue icon="my-sites" … />`
+- custom content - provide it as children: `<Continue …>My Content</Continue>`
+
+### Functionality Options
+
+There are currently two ways to declare the condition to continue the tour.
+
+- Binding an `onClick` listener to a DOM node marked as `[data-tip-target]`
+- Redux selector function that evaluates to true in order to advance the tour
 
 ```jsx
 // continue when user clicks DOM element with html attribute `data-tip-target="my-sites"`
 <Continue step="next-step" click target="my-sites" />
-// continue when Redux selector evaluates to true (in this case after user opens preview)
+
+// continue when Redux selector evaluates to true (in this case after the user opens a preview)
 <Continue step="next-step" when={ isPreviewShowing } />
 ```
 
@@ -111,8 +141,9 @@ Default label is "Next". To override, place your label as a child.
 ```jsx
 // with default label
 <Next step="next-step" />
+
 // or with a custom one
-<Next step="next-step">Custom Label</Next>`
+<Next step="next-step">{ translate( 'Custom Label' ) }</Next>`
 ```
 
 ## Quit
@@ -130,14 +161,14 @@ Default label is "Quit". To override, place your label a child.
 ### Example
 
 ```jsx
-// with default label
+// with a default label "Quit"
 <Quit />
 
 // with a custom label
-<Quit>Custom Label</Quit>`
+<Quit>{ translate( 'Custom Label' ) }</Quit>`
 
 // custom label + primary styling
-<Quit primary>Custom Label</Quit>`
+<Quit primary>{ translate( 'Custom Label' ) }</Quit>`
 ```
 
 ## Link
