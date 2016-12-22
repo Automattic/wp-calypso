@@ -97,6 +97,10 @@ export default class ReaderPostCard extends React.Component {
 		}
 	}
 
+	handlePhotoCardExpanded = () => {
+		stats.recordTrackForPost( 'calypso_reader_photo_expanded', this.props.post );
+	}
+
 	render() {
 		const {
 			post,
@@ -152,7 +156,7 @@ export default class ReaderPostCard extends React.Component {
 				? <PostPhoto imageUri={ post.canonical_media.src } href={ post.URL } imageSize={ {
 					height: post.canonical_media.height,
 					width: post.canonical_media.width,
-				} } />
+				} } onExpanded={ this.handlePhotoCardExpanded } />
 				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 

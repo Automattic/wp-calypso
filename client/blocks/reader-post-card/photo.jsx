@@ -25,6 +25,7 @@ class PostPhoto extends React.Component {
 		// If the photo's not expanded, don't open full post yet
 		event.preventDefault();
 		this.setState( { isExpanded: true } );
+		this.props.onExpanded();
 	}
 
 	// might need to debounce this
@@ -98,10 +99,13 @@ PostPhoto.propTypes = {
 	imageUri: React.PropTypes.string,
 	imageHeight: React.PropTypes.number,
 	href: React.PropTypes.string,
+	onClick: React.PropTypes.func,
+	onExpanded: React.PropTypes.func,
 };
 
 PostPhoto.defaultProps = {
 	onClick: noop,
+	onExpanded: noop,
 };
 
 export default PostPhoto;
