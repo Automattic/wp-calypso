@@ -69,6 +69,10 @@
 			margin-top: 8px;
 		}
 
+		&.is-broken {
+			cursor: not-allowed;
+		}
+
 		&.is-active {
 			color: black;
 
@@ -114,7 +118,12 @@
 			font-size: 13px;
 		}
 		.posts__post-share-wrapper .notice {
-			margin-bottom: 0;
+			margin-top: 4px;
+			margin-bottom: 0px;
+
+			&:first-of-type {
+				margin-top: 0px;
+			}
 		}
 	}
 

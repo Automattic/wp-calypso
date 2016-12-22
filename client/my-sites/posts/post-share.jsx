@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, map, without } from 'lodash';
+import { includes, map } from 'lodash';
 import SocialLogo from 'social-logos';
 
 /**
@@ -59,6 +59,13 @@ const PostSharing = React.createClass( {
 		this.setState( { skipped } );
 	},
 
+	isConnectionActive: function( connection ) {
+		return (
+			connection.status !== 'broken' &&
+			this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
+		);
+	},
+
 	renderServices: function() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
 			return;
@@ -70,10 +77,11 @@ const PostSharing = React.createClass( {
 				className={ classNames( {
 					'posts__post-share-service': true,
 					[ connection.service ]: true,
-					'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+					'is-active': this.isConnectionActive( connection ),
+					'is-broken': connection.status === 'broken'
 				} ) }
 			>
-				<FormToggle checked={ ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 ) }/>
+				<FormToggle checked={ this.isConnectionActive( connection ) }/>
 				<SocialLogo icon={ connection.service === 'google_plus' ? 'google-plus' : connection.service }/>
 				<div className="posts__post-share-service-account-name">
 					<span>{ connection && connection.external_display }</span>
@@ -83,10 +91,7 @@ const PostSharing = React.createClass( {
 		);
 	},
 	renderMessage: function() {
-		const skipped = this.state.skipped;
-		const targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
-				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
-			} ) : [];
+		const targeted = this.hasConnections() ? this.props.connections.filter( this.isConnectionActive ) : [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
 		const acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
 
@@ -114,12 +119,7 @@ const PostSharing = React.createClass( {
 			return true;
 		}
 
-		const activeConnectionIds = without(
-			map( this.props.connections, connection => connection.keyring_connection_ID ),
-			...this.state.skipped
-		);
-
-		return activeConnectionIds.length < 1;
+		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
@@ -157,7 +157,22 @@ const PostSharing = React.createClass( {
 							} ) }
 						</div>
 					</div>
-					{ this.hasConnections() &&
+					{ this.hasConnections() && <div>
+						<div>
+							{ this.props.connections
+								.filter( connection => connection.status === 'broken' )
+								.map( connection => <Notice
+									key={ connection.keyring_connection_ID }
+									status="is-warning"
+									showDismiss={ false }
+									text={ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+								>
+									<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
+										{ this.translate( 'Reconnect' ) }
+									</NoticeAction>
+								</Notice> )
+							}
+						</div>
 						<div className="posts__post-share-main">
 							<div className="posts__post-share-form">
 								{ this.renderMessage() }
@@ -180,7 +195,7 @@ const PostSharing = React.createClass( {
 								</Button>
 							</div>
 						</div>
-					}
+					</div> }
 					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'No social accounts connected' ) }>
 						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
