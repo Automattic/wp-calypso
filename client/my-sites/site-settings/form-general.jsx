@@ -23,6 +23,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormToggle from 'components/forms/form-toggle';
@@ -545,7 +546,7 @@ const SiteSettingsFormGeneral = React.createClass( {
 
 		return (
 			<FormFieldset>
-				<legend>{ translate( 'Holiday Snow' ) }</legend>
+				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
 				<FormToggle
 					className="is-compact"
 					checked={ !! this.state.holidaysnow }
