@@ -572,7 +572,6 @@ const SiteSettingsFormGeneral = React.createClass( {
 				</FormLabel>
 
 				<Timezone
-					value={ this.state.timezone_string }
 					selectedZone={ this.state.timezone_string }
 					disabled={ this.state.fetchingSettings }
 					onSelect={ this.handleTimezoneSelect }
