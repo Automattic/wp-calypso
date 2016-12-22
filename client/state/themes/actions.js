@@ -404,43 +404,23 @@ export function clearActivated( siteId ) {
 }
 
 /**
- * Triggers a network request to activate a specific wpcom theme on a given Jetpack site.
- * First step of the process is the installation of the theme on Jetpack site.
- * Second step is the actuall activation.
+ * Triggers a network request to install and activate a specific theme on a given
+ * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
+ * theme from WordPress.com. Otherwise, install from WordPress.org.
  *
- * Warning: this is working but not final version. It has a built in hack in form of
- * dispatching THEME_ACTIVATE_REQUEST twice to mark process start and has no handlin
- * of information about installation process except in failure scenario.
- *
- * @param  {String}   themeId   Theme ID, this should be standard id without -wpcom suffix.
+ * @param  {String}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
  * @param  {Number}   siteId    Site ID
  * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
  * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
  * @return {Function}           Action thunk
  */
-export function activateWpcomThemeOnJetpack( themeId, siteId, source = 'unknown', purchased = false ) {
-	//Add -wpcom suffix. This suffix tells the endpoint that we want to
-	//install WordPress.com theme. Without the suffix endpoint would look
-	//for theme in .org
-	const suffixedThemeId = themeId + '-wpcom';
-	return dispatch => {
-		dispatch( {
-			type: THEME_ACTIVATE_REQUEST,
-			themeId: suffixedThemeId,
-			siteId,
-		} );
-
-		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
+export function installAndActivate( themeId, siteId, source = 'unknown', purchased = false ) {
+	return ( dispatch ) => {
+		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
-				return activateTheme( suffixedThemeId, siteId, source, purchased )( dispatch );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					themeId: suffixedThemeId,
-					siteId,
-					error
-				} );
+				// This will be called even if `installTheme` silently fails. We rely on
+				// `activateTheme`'s own error handling here.
+				dispatch( activateTheme( themeId, siteId, source, purchased ) );
 			} );
 	};
 }
