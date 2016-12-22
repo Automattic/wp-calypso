@@ -25,6 +25,7 @@ AUTOPREFIXER ?= $(NODE_BIN)/postcss -r --use autoprefixer --autoprefixer.browser
 RECORD_ENV ?= $(BIN)/record-env
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
+COMPONENTS_PROPTYPES_JS ?= server/devdocs/bin/generate-proptypes-index.js
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -58,6 +59,13 @@ COMPONENTS_USAGE_STATS_FILES = $(shell \
 		-not \( -path '*/docs-example/*' -prune \) \
 		-type f \
 		\( -name '*.js' -or -name '*.jsx' \) \
+)
+COMPONENTS_PROPTYPE_FILES = $(shell \
+	find client \
+		-name 'index.jsx' \
+		-or -name 'index.js' \
+		-or -name 'example.jsx' \
+		-and -not -path '*/test/*' \
 )
 CLIENT_CONFIG_FILE := client/config/index.js
 
@@ -149,6 +157,9 @@ server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(COMPONENTS_USAGE_STATS_JS)
 	@$(COMPONENTS_USAGE_STATS_JS) $(COMPONENTS_USAGE_STATS_FILES)
 
+server/devdocs/proptypes-index.json: $(COMPONENTS_PROPTYPE_FILES) $(COMPONENTS_PROPTYPES_JS)
+	@$(COMPONENTS_PROPTYPES_JS) $(COMPONENTS_PROPTYPE_FILES)
+
 build-dll: node_modules
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
@@ -161,9 +172,9 @@ build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
-build-wpcalypso: server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
 
 build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
@@ -175,7 +186,7 @@ build-desktop build-desktop-mac-app-store: build-server $(CLIENT_CONFIG_FILE) bu
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json .babel-cache
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json .babel-cache
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean: clean
