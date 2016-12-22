@@ -210,7 +210,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	&.is-expanded {
-		background-position: center center !important;
+		background-position: center !important;
+		min-width: 100%;
+		max-height: 100%;
+		max-width: 100%;
+		background-size: cover;
 	}
 
 	&::before {

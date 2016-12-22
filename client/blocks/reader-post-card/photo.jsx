@@ -27,12 +27,15 @@ class PostPhoto extends React.Component {
 	}
 
 	// might need to debounce this
-	getViewportHeight() {
-		return Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+	getViewportHeight = () =>
+		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+
+	getCardWidth = () => {
+		return 800;
 	}
 
 	render() {
-		const { imageUri, href, children, imageHeight } = this.props;
+		const { imageUri, href, children, imageSize } = this.props;
 
 		if ( imageUri === undefined ) {
 			return null;
@@ -42,12 +45,19 @@ class PostPhoto extends React.Component {
 			backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
 			backgroundSize: 'cover',
 			backgroundRepeat: 'no-repeat',
-			backgroundPosition: 'right center'
+			backgroundPosition: 'center'
 		};
 
 		if ( this.state.isExpanded ) {
 			const viewportHeight = this.getViewportHeight();
-			featuredImageStyle.height = Math.min( viewportHeight - 176, imageHeight );
+			const cardWidth = this.getCardWidth();
+			const { width: naturalWidth, height: naturalHeight } = imageSize;
+
+			const newHeight = Math.min(
+				( naturalHeight / naturalWidth ) * cardWidth,
+				viewportHeight - 176
+			);
+			featuredImageStyle.height = newHeight;
 		}
 
 		const classes = classnames( {
