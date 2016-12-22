@@ -416,13 +416,6 @@ export function clearActivated( siteId ) {
  */
 export function installAndActivate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
-		// To the user, this is presented as just activation -- the install part is hidden.
-		// Thus, we want to trigger any UI changes that apply to activation here, too.
-		dispatch( {
-			type: THEME_ACTIVATE_REQUEST,
-			themeId,
-			siteId,
-		} );
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
 				dispatch( activateTheme( themeId, siteId, source, purchased ) );
