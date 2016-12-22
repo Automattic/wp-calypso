@@ -61,7 +61,11 @@ COMPONENTS_USAGE_STATS_FILES = $(shell \
 		\( -name '*.js' -or -name '*.jsx' \) \
 )
 COMPONENTS_PROPTYPE_FILES = $(shell \
-	find client -name 'index.jsx' -or -name 'example.jsx' \
+	find client \
+		-name 'index.jsx' \
+		-or -name 'index.js' \
+		-or -name 'example.jsx' \
+		-and -not -path '*/test/*' \
 )
 CLIENT_CONFIG_FILE := client/config/index.js
 
