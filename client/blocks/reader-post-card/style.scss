@@ -211,7 +211,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 	&.is-expanded {
 		background-size: contain !important; //Overrides default background-size: cover set in all cards;
-		height: 100vh;
+		//height: 100vh;
 	}
 
 	&::before {
