@@ -96,11 +96,8 @@ module.exports = React.createClass( {
 				icon: 'external'
 			} );
 
-			if ( config.isEnabled( 'manage/stats' ) ) {
-				statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
-			} else {
-				statsURL = '//wordpress.com/my-stats/?view=post&post=' + post.ID + '&blog=' + post.site_ID;
-			}
+			statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
+
 			availableControls.push( {
 				text: this.translate( 'Stats' ),
 				className: 'post-controls__stats',

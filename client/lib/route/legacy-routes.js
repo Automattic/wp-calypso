@@ -13,8 +13,6 @@ const notEnabled = feature => () => ! config.isEnabled( feature );
 const legacyRoutes = [
 	{ match: /.php$/ },
 	{ match: /^\/?$/, predicate: notEnabled( 'reader' ) },
-	{ match: /^\/my-stats/ },
-	{ match: /^\/notifications/ },
 	{ match: /^\/themes/ },
 	{ match: /^\/manage/ },
 	{ match: /^\/plans/, predicate: notEnabled( 'manage/plans' ) },
