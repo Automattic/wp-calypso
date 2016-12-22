@@ -15,8 +15,8 @@ import ExternalLink from 'components/external-link';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import utils from 'lib/site/utils';
 
-export class PluginAutopdateToggle extends Component {
-	toggleAutoupdates = () => {
+export class PluginAutoUpdateToggle extends Component {
+	toggleAutoUpdates = () => {
 		const {
 			isMock,
 			disabled,
@@ -51,7 +51,7 @@ export class PluginAutopdateToggle extends Component {
 
 	getDisabledInfo() {
 		const { site, wporg, translate } = this.props;
-		if ( ! this.props.site ) { // we don't have enough info
+		if ( ! site ) { // we don't have enough info
 			return null;
 		}
 
@@ -136,7 +136,7 @@ export class PluginAutopdateToggle extends Component {
 				disabled={ disabled }
 				label={ label }
 				status={ plugin.autoupdate }
-				action={ this.toggleAutoupdates }
+				action={ this.toggleAutoUpdates }
 				inProgress={ inProgress }
 				disabledInfo={ getDisabledInfo }
 				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID } />
@@ -144,16 +144,16 @@ export class PluginAutopdateToggle extends Component {
 	}
 }
 
-PluginAutopdateToggle.displayName = 'PluginAutopdateToggle';
+PluginAutoUpdateToggle.displayName = 'PluginAutoUpdateToggle';
 
-PluginAutopdateToggle.propTypes = {
+PluginAutoUpdateToggle.propTypes = {
 	isMock: PropTypes.bool,
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
 	wporg: PropTypes.bool
 };
 
-PluginAutopdateToggle.defaultProps = {
+PluginAutoUpdateToggle.defaultProps = {
 	isMock: false,
 	disabled: false,
 };
@@ -163,4 +163,4 @@ export default connect(
 		recordGoogleEvent,
 		recordTracksEvent
 	}
-)( localize( PluginAutopdateToggle ) );
+)( localize( PluginAutoUpdateToggle ) );
