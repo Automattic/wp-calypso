@@ -11,7 +11,7 @@ import {
 } from '../selectors';
 
 describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () => {
-	it( 'should return the correct property.', () => {
+	it( 'should return the field isFetchingSettings.', () => {
 		const state = {
 			accountRecovery: {
 				isFetchingSettings: true,
