@@ -426,13 +426,6 @@ export function installAndActivate( themeId, siteId, source = 'unknown', purchas
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
 				dispatch( activateTheme( themeId, siteId, source, purchased ) );
-			} )
-			.catch( () => {
-				dispatch( {
-					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					themeId,
-					siteId,
-				} );
 			} );
 	};
 }
