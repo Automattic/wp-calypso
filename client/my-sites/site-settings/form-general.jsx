@@ -140,7 +140,7 @@ const SiteSettingsFormGeneral = React.createClass( {
 
 	handleToggle( name ) {
 		return () => {
-			this.recordEvent.bind( this, `Toggled ${ name }` );
+			this.recordEvent( this, `Toggled ${ name }` );
 			this.setDirtyField( name );
 			this.setState( { [ name ]: ! this.state[ name ] } );
 		};
