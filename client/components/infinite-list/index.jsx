@@ -37,6 +37,7 @@ module.exports = React.createClass( {
 		fetchNextPage: React.PropTypes.func.isRequired,
 		getItemRef: React.PropTypes.func.isRequired,
 		renderItem: React.PropTypes.func.isRequired,
+		renderSeparator: React.PropTypes.func,
 		renderLoadingPlaceholders: React.PropTypes.func.isRequired,
 		renderTrailingItems: React.PropTypes.func,
 		context: React.PropTypes.oneOfType( [
@@ -340,6 +341,7 @@ module.exports = React.createClass( {
 		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
 			spacerClassName = 'infinite-list__spacer';
 		let i,
+			colIndex = 0,
 			lastRenderedIndex = this.state.lastRenderedIndex,
 			itemsToRender = [];
 
@@ -356,7 +358,20 @@ module.exports = React.createClass( {
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
+			if ( this.props.renderSeparator ) {
+				const separator = this.props.renderSeparator(
+					this.props.items[ i ],
+					i > 0 ? this.props.items[ i - 1 ] : null
+				);
+
+				if ( separator ) {
+					itemsToRender.push( separator );
+					colIndex = 0;
+				}
+			}
+
+			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i, colIndex ) );
+			colIndex++;
 		}
 
 		if ( this.props.fetchingNextPage ) {
