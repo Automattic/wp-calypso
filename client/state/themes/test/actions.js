@@ -561,22 +561,6 @@ describe( 'actions', () => {
 				done();
 			} );
 		} );
-
-		it( 'should dispatch wpcom theme install request failure action when theme install fails', () => {
-			// Fail on attempted install
-			stub.withArgs( matchFunction( installTheme( 'pinboard', 2211667 ) ) )
-				.returns( new Promise( ( res, rej ) => {
-					rej();
-				} ) );
-
-			return installAndActivate( 'pinboard', 2211667 )( stub ).then( () => {
-				expect( stub ).to.have.been.calledWith( {
-					type: THEME_ACTIVATE_REQUEST_FAILURE,
-					siteId: 2211667,
-					themeId: 'pinboard'
-				} );
-			} );
-		} );
 	} );
 
 	describe( '#requestActiveTheme', () => {
