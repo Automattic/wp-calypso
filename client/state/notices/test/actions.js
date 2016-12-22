@@ -40,7 +40,6 @@ describe( 'actions', function() {
 				showDismiss: true
 			} );
 		} );
-
 	} );
 
 	describe( 'errorNotice()', function() {

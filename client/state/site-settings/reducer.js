@@ -35,17 +35,17 @@ export const requesting = createReducer( {}, {
 } );
 
 /**
- * Returns the updated saving requests state after an action has been dispatched. The
- * state maps site ID to whether a save request is in progress.
+ * Returns the save Request status after an action has been dispatched. The
+ * state maps site ID to the request status
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const saving = createReducer( {}, {
-	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+export const saveRequests = createReducer( {}, {
+	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending' } } ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'success' } } ),
+	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error' } } )
 } );
 
 /**
@@ -71,5 +71,5 @@ export default combineReducers( {
 	exporter,
 	items,
 	requesting,
-	saving
+	saveRequests
 } );
