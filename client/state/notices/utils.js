@@ -3,10 +3,10 @@
  */
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-export function dispatchSuccess( message ) {
-	return ( dispatch ) => dispatch( successNotice( message ) );
+export function dispatchSuccess( ...args ) {
+	return ( dispatch ) => dispatch( successNotice( ...args ) );
 }
 
-export function dispatchError( message ) {
-	return ( dispatch ) => dispatch( errorNotice( message ) );
+export function dispatchError( ...args ) {
+	return ( dispatch ) => dispatch( errorNotice( ...args ) );
 }

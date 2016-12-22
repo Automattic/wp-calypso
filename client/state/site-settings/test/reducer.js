@@ -20,7 +20,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { items, requesting, saving } from '../reducer';
+import { items, requesting, saveRequests } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -111,72 +111,72 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'saving()', () => {
+	describe( 'saveRequests()', () => {
 		it( 'should default to an empty object', () => {
-			const state = saving( undefined, {} );
+			const state = saveRequests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting value to true if request in progress', () => {
-			const state = saving( undefined, {
+		it( 'should set request status to pending if request in progress', () => {
+			const state = saveRequests( undefined, {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916284
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
 		} );
 
-		it( 'should accumulate saving values', () => {
+		it( 'should accumulate save requests statuses', () => {
 			const previousState = deepFreeze( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
-			const state = saving( previousState, {
+			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916285
 			} );
 
 			expect( state ).to.eql( {
-				2916284: true,
-				2916285: true
+				2916284: { saving: true, status: 'pending' },
+				2916285: { saving: true, status: 'pending' }
 			} );
 		} );
 
-		it( 'should set save request to false if request finishes successfully', () => {
+		it( 'should set save request to success if request finishes successfully', () => {
 			const previousState = deepFreeze( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
-			const state = saving( previousState, {
+			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE_SUCCESS,
 				siteId: 2916284
 			} );
 
 			expect( state ).to.eql( {
-				2916284: false
+				2916284: { saving: false, status: 'success' }
 			} );
 		} );
 
-		it( 'should set save request to false if request finishes with failure', () => {
+		it( 'should set save request to error if request finishes with failure', () => {
 			const previousState = deepFreeze( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
-			const state = saving( previousState, {
+			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE_FAILURE,
 				siteId: 2916284
 			} );
 
 			expect( state ).to.eql( {
-				2916284: false
+				2916284: { saving: false, status: 'error' }
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const previousState = deepFreeze( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
-			const state = saving( previousState, {
+			const state = saveRequests( previousState, {
 				type: SERIALIZE
 			} );
 
@@ -185,9 +185,9 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
-				2916284: true
+				2916284: { saving: true, status: 'pending' }
 			} );
-			const state = saving( previousState, {
+			const state = saveRequests( previousState, {
 				type: DESERIALIZE
 			} );
 
