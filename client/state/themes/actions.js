@@ -418,6 +418,8 @@ export function installAndActivate( themeId, siteId, source = 'unknown', purchas
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
+				// This will be called even if `installTheme` silently fails. We rely on
+				// `activateTheme`'s own error handling here.
 				dispatch( activateTheme( themeId, siteId, source, purchased ) );
 			} );
 	};
