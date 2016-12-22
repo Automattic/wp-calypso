@@ -501,7 +501,7 @@ const SiteSettingsFormGeneral = React.createClass( {
 									onChange={ this.handleToggle( 'jetpack_sync_non_public_post_stati' ) }>
 									<span>{ translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
 								</FormToggle>
-								<FormSettingExplanation isIndented>
+								<FormSettingExplanation>
 									{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
 								</FormSettingExplanation>
 							</FormLabel>
