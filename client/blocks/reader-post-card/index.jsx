@@ -20,6 +20,7 @@ import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import FollowButton from 'reader/follow-button';
 import PostGallery from './gallery';
+import PostPhoto from './photo';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import * as DiscoverHelper from 'reader/discover/helper';
@@ -147,7 +148,13 @@ export default class ReaderPostCard extends React.Component {
 		} else if ( post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <FeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } />;
 		} else {
-			featuredAsset = <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
+			featuredAsset = isPhotoOnly
+				? <PostPhoto
+					imageUri={ post.canonical_media.src }
+					href={ post.URL }
+					imageHeight={ post.canonical_media.height }
+					imageWidth={ post.canonical_media.width } />
+				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 
 		return (
