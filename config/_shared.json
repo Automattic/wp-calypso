@@ -43,7 +43,6 @@
 		{ "value": 429, "langSlug": "eu", "name": "eu - Euskara", "wpLocale": "eu" },
 		{ "value": 21, "langSlug": "fa", "name": "fa - فارسی", "wpLocale": "fa_IR", "rtl": true },
 		{ "value": 22, "langSlug": "fi", "name": "fi - Suomi", "wpLocale": "fi" },
-		{ "value": 473, "langSlug": "fil", "name": "fil - Filipino", "wpLocale": "" },
 		{ "value": 23, "langSlug": "fo", "name": "fo - Føroyskt", "wpLocale": "fo" },
 		{ "value": 24, "langSlug": "fr", "name": "fr - Français", "wpLocale": "fr_FR", "popular": 5 },
 		{ "value": 478, "langSlug": "fr-be", "name": "fr-be - Français de Belgique", "wpLocale": "fr_BE" },
