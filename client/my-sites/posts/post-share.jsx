@@ -91,7 +91,7 @@ const PostSharing = React.createClass( {
 		);
 	},
 	renderMessage: function() {
-		const targeted = this.hasConnections() ? this.props.connections.filter( this.isConnectionActive.bind( this ) ) : [];
+		const targeted = this.hasConnections() ? this.props.connections.filter( this.isConnectionActive ) : [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
 		const acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
 
@@ -119,7 +119,7 @@ const PostSharing = React.createClass( {
 			return true;
 		}
 
-		return this.props.connections.filter( this.isConnectionActive.bind( this ) ).length < 1;
+		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
