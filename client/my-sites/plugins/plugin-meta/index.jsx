@@ -329,7 +329,7 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta">
-				{ config.isEnabled( 'automated-transfer' ) && this.props.selectedSite.ID &&
+				{ config.isEnabled( 'automated-transfer' ) && this.props.selectedSite &&
 					<QueryEligibility siteId={ this.props.selectedSite.ID } />
 				}
 				<Card>
