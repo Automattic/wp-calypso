@@ -67,6 +67,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
+import { externalRedirect } from 'lib/route/path';
 
 /**
  * Constants
@@ -342,7 +343,7 @@ const LoggedInForm = React.createClass( {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			window.location.href = queryObject.site + authUrl;
+			externalRedirect( queryObject.site + authUrl );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
