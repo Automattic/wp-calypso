@@ -7,6 +7,7 @@ import page from 'page';
 import { flowRight, omit, memoize } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,9 +26,9 @@ import trackForm from 'lib/track-form';
 import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
@@ -153,6 +154,13 @@ class SiteSettingsFormGeneral extends Component {
 
 		this.props.updateFields( { [ currentTargetName ]: ! currentTargetValue } );
 	};
+
+	handleToggle( name ) {
+		return () => {
+			this.props.trackToggle( `Toggled ${ name }` );
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+		};
+	}
 
 	handleSubmitForm = event => {
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -434,7 +442,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	relatedPostsOptions() {
-		const { fields, clickTracker, translate } = this.props;
+		const { fields, clickTracker, translate, isRequestingSettings } = this.props;
 		if ( ! fields.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -467,26 +475,30 @@ class SiteSettingsFormGeneral extends Component {
 							id="settings-reading-relatedposts-customize"
 							className={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
 							<li>
-								<FormLabel>
-									<FormCheckbox
-										name="jetpack_relatedposts_show_headline"
-										checked={ fields.jetpack_relatedposts_show_headline }
-										onChange={ this.handleCheckbox } />
-									<span>
+								<FormToggle
+									className="is-compact"
+									checked={ !! fields.jetpack_relatedposts_show_headline }
+									disabled={ isRequestingSettings }
+									onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
+									<span className="site-settings__toggle-label">
 										{ translate(
 											'Show a "Related" header to more clearly separate the related section from posts'
 										) }
 									</span>
-								</FormLabel>
+								</FormToggle>
 							</li>
 							<li>
-								<FormLabel>
-									<FormCheckbox
-										name="jetpack_relatedposts_show_thumbnails"
-										checked={ fields.jetpack_relatedposts_show_thumbnails }
-										onChange={ this.handleCheckbox } />
-									<span>{ translate( 'Use a large and visually striking layout' ) }</span>
-								</FormLabel>
+								<FormToggle
+									className="is-compact"
+									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+									disabled={ isRequestingSettings }
+									onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
+									<span className="site-settings__toggle-label">
+									{ translate(
+										'Use a large and visually striking layout'
+									) }
+									</span>
+								</FormToggle>
 							</li>
 						</ul>
 						<RelatedContentPreview
@@ -513,7 +525,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	syncNonPublicPostTypes() {
-		const { fields, translate } = this.props;
+		const { fields, translate, isRequestingSettings } = this.props;
 		if ( ! this.showPublicPostTypesCheckbox() ) {
 			return null;
 		}
@@ -523,17 +535,20 @@ class SiteSettingsFormGeneral extends Component {
 				<form onChange={ this.props.markChanged }>
 					<ul id="settings-jetpack">
 						<li>
-							<FormLabel>
-								<FormCheckbox
-									name="jetpack_sync_non_public_post_stati"
-									checked={ fields.jetpack_sync_non_public_post_stati }
-									onChange={ this.handleCheckbox }
-								/>
-								<span>{ translate( 'Allow synchronization of Posts and Pages with non-public post statuses' ) }</span>
-								<FormSettingExplanation isIndented>
-									{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
-								</FormSettingExplanation>
-							</FormLabel>
+							<FormToggle
+								className="is-compact"
+								checked={ !! fields.jetpack_sync_non_public_post_stati }
+								disabled={ isRequestingSettings }
+								onChange={ this.handleToggle( 'jetpack_sync_non_public_post_stati' ) }>
+								<span className="site-settings__toggle-label">
+									{ translate(
+										'Allow synchronization of Posts and Pages with non-public post statuses'
+									) }
+								</span>
+							</FormToggle>
+							<FormSettingExplanation>
+								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
+							</FormSettingExplanation>
 						</li>
 					</ul>
 				</form>
@@ -561,7 +576,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	holidaySnowOption() {
 		// Note that years and months below are zero indexed
-		const { fields, moment, site, translate } = this.props,
+		const { fields, moment, site, translate, isRequestingSettings } = this.props,
 			today = moment(),
 			startDate = moment( { year: today.year(), month: 11, day: 1 } ),
 			endDate = moment( { year: today.year(), month: 0, day: 4 } );
@@ -576,17 +591,20 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<legend>{ translate( 'Holiday Snow' ) }</legend>
+				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
 				<ul>
 					<li>
-						<FormLabel>
-							<FormCheckbox
-								name="holidaysnow"
-								checked={ !! fields.holidaysnow }
-								onChange={ this.handleCheckbox }
-							/>
-							<span>{ translate( 'Show falling snow on my blog until January 4th.' ) }</span>
-						</FormLabel>
+						<FormToggle
+							className="is-compact"
+							checked={ !! fields.holidaysnow }
+							disabled={ isRequestingSettings }
+							onChange={ this.handleToggle( 'holidaysnow' ) }>
+							<span className="site-settings__toggle-label">
+								{ translate(
+									'Show falling snow on my blog until January 4th.'
+								) }
+							</span>
+						</FormToggle>
 					</li>
 				</ul>
 			</FormFieldset>
@@ -639,8 +657,12 @@ class SiteSettingsFormGeneral extends Component {
 			return this.jetpackDisconnectOption();
 		}
 
+		const classes = classNames( 'site-settings__general-settings', {
+			'is-loading': isRequestingSettings
+		} );
+
 		return (
-			<div className={ isRequestingSettings ? 'is-loading' : '' }>
+			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
@@ -806,12 +828,14 @@ const connectComponent = connect(
 			saveSiteSettings
 		}, dispatch );
 		const trackClick = name => dispatch( recordGoogleEvent( 'Site Settings', `Clicked ${ name }` ) );
+		const trackToggle = name => dispatch( recordGoogleEvent( 'Site Settings', `Toggled ${ name }` ) );
 		const trackType = memoize( name => dispatch( recordGoogleEvent( 'Site Settings', `Typed in ${ name }` ) ) );
 		return {
 			...boundActionCreators,
 			clickTracker: message => () => trackClick( message ),
 			typeTracker: message => () => trackType( message ),
 			trackClick,
+			trackToggle,
 		};
 	}
 );
