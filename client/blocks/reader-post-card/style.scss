@@ -203,11 +203,19 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-bottom: 10px;
 	}
 
+	&:hover {
+		cursor: zoom-in;
+	}
+
 	&.is-expanded {
 		background-position: center !important;
 		min-width: 100%;
 		max-width: 100%;
 		background-size: cover;
+
+		&:hover {
+			cursor: pointer;
+		}
 	}
 
 	&::before {
