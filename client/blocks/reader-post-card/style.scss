@@ -95,9 +95,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			// Important needed to override default properties set for other cards
 			.reader-post-card__featured-image {
 				background-attachment: fixed;
-				background-position: center bottom !important;
 				background-repeat: no-repeat;
-				background-size: 100% !important;
+				background-size: 830px Auto !important;
+				background-position: 442px center !important;
 				height: 225px;
 				margin-right: 0;
 				margin-bottom: 0;
