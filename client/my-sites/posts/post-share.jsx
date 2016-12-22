@@ -77,7 +77,8 @@ const PostSharing = React.createClass( {
 				className={ classNames( {
 					'posts__post-share-service': true,
 					[ connection.service ]: true,
-					'is-active': this.isConnectionActive( connection )
+					'is-active': this.isConnectionActive( connection ),
+					'is-broken': connection.status === 'broken'
 				} ) }
 			>
 				<FormToggle checked={ this.isConnectionActive( connection ) }/>
