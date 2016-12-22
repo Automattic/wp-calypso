@@ -27,6 +27,7 @@ export class PluginInstallButton extends Component {
 			notices,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent } = this.props;
+
 		if ( isInstalling ) {
 			return;
 		}
@@ -55,6 +56,7 @@ export class PluginInstallButton extends Component {
 			selectedSite,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent } = this.props;
+
 		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
 		recordEvent( 'calypso_plugin_update_jetpack', {
 			site: selectedSite,
@@ -94,7 +96,7 @@ export class PluginInstallButton extends Component {
 
 		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
 			const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
-			let html = [];
+			const html = [];
 
 			if ( reasons.length > 1 ) {
 				html.push(
@@ -240,12 +242,11 @@ export class PluginInstallButton extends Component {
 	}
 }
 
-PluginInstallButton.displayName = 'PluginInstallButton';
 PluginInstallButton.propTypes = {
 	selectedSite: PropTypes.object.isRequired,
+	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	plugin: PropTypes.object.isRequired,
 	notices: React.PropTypes.object,
 	isMock: PropTypes.bool,
 	disabled: React.PropTypes.bool,
@@ -258,4 +259,3 @@ export default connect(
 		recordTracksEvent
 	}
 )( localize( PluginInstallButton ) );
-
