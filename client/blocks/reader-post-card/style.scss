@@ -92,13 +92,18 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 		&.is-photo {
 
+			// Important needed to override default properties set for other cards
 			.reader-post-card__featured-image {
-				position: relative;
-					top: 0;
+				background-attachment: fixed;
+				background-position: center bottom !important;
+				background-repeat: no-repeat;
+				background-size: 100% !important;
 				height: 225px;
 				margin-right: 0;
 				margin-bottom: 0;
 				max-width: 100%;
+				position: relative;
+					top: 0;
 
 				&::before {
 					content: '';
