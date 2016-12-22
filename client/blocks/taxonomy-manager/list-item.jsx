@@ -10,36 +10,20 @@ import { get, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
-import Gridicon from 'components/gridicon';
 import Count from 'components/count';
 import Dialog from 'components/dialog';
+import EllipsisMenu from 'components/ellipsis-menu';
+import Gridicon from 'components/gridicon';
+import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
+import Tooltip from 'components/tooltip';
+import WithPreviewProps from 'components/web-preview/with-preview-props';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
-import { setUrlScheme } from 'lib/url';
-import Tooltip from 'components/tooltip';
-
-const ViewTaxonomyMenuItem = ( { href, onClick, isPreviewable, children } ) => {
-	const props = {
-		href: isPreviewable ? undefined : href,
-		target: isPreviewable ? undefined : '_blank',
-		icon: isPreviewable ? 'visible' : 'external',
-		onClick: isPreviewable ? onClick : undefined,
-	};
-	return (
-		<PopoverMenuItem { ...props } rel="noopener noreferrer">
-			{ children }
-		</PopoverMenuItem>
-	);
-};
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -129,16 +113,6 @@ class TaxonomyManagerListItem extends Component {
 		return decodeEntities( term.name ) || translate( 'Untitled' );
 	};
 
-	viewTaxonomyPosts = () => {
-		// Avoid Mixed Content errors by forcing HTTPS, which is a requirement
-		// of previewable sites anyway. 10198-gh-wp-calypso
-		const url = setUrlScheme( this.getTaxonomyLink(), 'https' );
-
-		this.props.setPreviewUrl( url );
-		this.props.setPreviewType( 'site-preview' );
-		this.props.setLayoutFocus( 'preview' );
-	};
-
 	render() {
 		const { canSetAsDefault, isDefault, onClick, term, translate, isJetpack } = this.props;
 		const name = this.getName();
@@ -187,12 +161,17 @@ class TaxonomyManagerListItem extends Component {
 						</PopoverMenuItem>
 					}
 					{ ! isJetpack &&
-						<ViewTaxonomyMenuItem
+						<WithPreviewProps
 								href={ this.getTaxonomyLink() }
-								onClick={ this.viewTaxonomyPosts }
 								isPreviewable={ this.props.isPreviewable }>
-							{ translate( 'View Posts' ) }
-						</ViewTaxonomyMenuItem>
+							{ ( props ) =>
+								<PopoverMenuItem { ...props }
+										icon={ this.props.isPreviewable
+											? 'visible' : 'external' }>
+									{ translate( 'View Posts' ) }
+								</PopoverMenuItem>
+							}
+						</WithPreviewProps>
 					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
@@ -235,8 +214,5 @@ export default connect(
 	{
 		deleteTerm,
 		saveSiteSettings,
-		setLayoutFocus,
-		setPreviewType,
-		setPreviewUrl,
 	}
 )( localize( TaxonomyManagerListItem ) );
