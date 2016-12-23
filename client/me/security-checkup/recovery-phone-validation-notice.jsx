@@ -50,6 +50,8 @@ class RecoveryPhoneValidationNotice extends Component {
 			translate,
 		} = this.props;
 
+		const validationCodeLength = 8;
+
 		return (
 			<form onSubmit={ this.onSubmit }>
 				<Notice
@@ -67,12 +69,14 @@ class RecoveryPhoneValidationNotice extends Component {
 				<FormButtonsBar>
 					<FormButton
 						isPrimary={ true }
+						disabled={ validationCodeLength !== this.state.candidateCode.length }
 						onClick={ this.onValidate }
 					>
 						{ translate( 'Validate' ) }
 					</FormButton>
 					<FormButton
 						isPrimary={ false }
+						disabled={ this.props.hasSent }
 						onClick={ this.onResend }
 					>
 						{ translate( 'Resend' ) }
