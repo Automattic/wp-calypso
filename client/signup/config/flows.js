@@ -209,10 +209,17 @@ const flows = {
 
 	userfirst: {
 		steps: [ 'user' ],
-		destination: '/start',
+		destination: '/start/userfirst-secondary',
 		description: 'User-first signup flow',
-		lastModified: '2016-11-29',
+		lastModified: '2016-12-23',
 		autoContinue: true,
+	},
+
+	'userfirst-secondary': {
+		steps: [ 'design-type', 'themes', 'domains', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Secondary flow for User First signup',
+		lastModified: '2016-12-23'
 	},
 
 	'domain-first': {
