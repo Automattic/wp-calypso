@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { MEDIA_RECEIVE } from 'state/action-types';
+import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
 import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
@@ -39,6 +39,27 @@ describe( 'reducer', () => {
 						title: 'flowers'
 					}
 				}
+			} );
+		} );
+
+		it( 'should remove deleted media by site ID, media ID', () => {
+			const original = deepFreeze( {
+				2916284: {
+					42: {
+						ID: 42,
+						title: 'flowers'
+					}
+				}
+			} );
+
+			const state = items( original, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {}
 			} );
 		} );
 	} );

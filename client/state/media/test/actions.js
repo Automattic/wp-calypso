@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { MEDIA_RECEIVE } from 'state/action-types';
-import { receiveMedia } from '../actions';
+import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
+import { receiveMedia, deleteMedia } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'receiveMedia()', () => {
@@ -31,6 +31,32 @@ describe( 'actions', () => {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
 					media: [ { ID: 42, title: 'flowers' } ]
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'deleteMedia()', () => {
+		context( 'single', () => {
+			it( 'should return an action object', () => {
+				const action = deleteMedia( 2916284, 42 );
+
+				expect( action ).to.eql( {
+					type: MEDIA_DELETE,
+					siteId: 2916284,
+					mediaIds: [ 42 ]
+				} );
+			} );
+		} );
+
+		context( 'array', () => {
+			it( 'should return an action object', () => {
+				const action = deleteMedia( 2916284, [ 42 ] );
+
+				expect( action ).to.eql( {
+					type: MEDIA_DELETE,
+					siteId: 2916284,
+					mediaIds: [ 42 ]
 				} );
 			} );
 		} );

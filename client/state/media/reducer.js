@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { MEDIA_RECEIVE } from 'state/action-types';
+import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
 import { createReducer } from 'state/utils';
 
 export const items = createReducer( {}, {
@@ -20,6 +20,18 @@ export const items = createReducer( {}, {
 				...state[ siteId ],
 				...keyBy( media, 'ID' )
 			}
+		};
+	},
+	[ MEDIA_DELETE ]: ( state, action ) => {
+		const { siteId, mediaIds } = action;
+
+		if ( ! state[ siteId ] ) {
+			return state;
+		}
+
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], mediaIds )
 		};
 	}
 } );
