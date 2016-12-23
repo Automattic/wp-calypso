@@ -21,7 +21,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 	before( () => {
 		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );
 		mockery.registerMock( 'components/info-popover', EmptyComponent );
-		mockery.registerMock( 'react-virtualized/VirtualScroll', EmptyComponent );
+		mockery.registerMock( 'react-virtualized/List', EmptyComponent );
 
 		mount = require( 'enzyme' ).mount;
 		i18n = require( 'i18n-calypso' );
