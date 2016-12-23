@@ -28,7 +28,13 @@ describe( '#account-recovery/settings/selectors', () => {
 	const stateBeforeFetching = {
 		accountRecovery: {
 			settings: {
-				data: null,
+				data: {
+					email: '',
+					emailValidated: false,
+					phone: null,
+					phoneValidated: false,
+				},
+				isReady: false,
 			},
 		},
 	};
@@ -47,6 +53,7 @@ describe( '#account-recovery/settings/selectors', () => {
 					},
 					phoneValidated: true,
 				},
+				isReady: true,
 			},
 		},
 	};

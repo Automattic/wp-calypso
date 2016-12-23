@@ -1,25 +1,21 @@
-const getSettingsData = ( state ) => {
-	return state.accountRecovery.settings.data;
-};
-
 export const isAccountRecoverySettingsReady = ( state ) => {
-	return null != getSettingsData( state );
+	return state.accountRecovery.settings.isReady;
 };
 
 export const isAccountRecoveryPhoneValidated = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phoneValidated : false;
+	return state.accountRecovery.settings.data.phoneValidated;
 };
 
 export const isAccountRecoveryEmailValidated = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).emailValidated : false;
+	return state.accountRecovery.settings.data.emailValidated;
 };
 
 export const getAccountRecoveryEmail = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).email : '';
+	return state.accountRecovery.settings.data.email;
 };
 
 export const getAccountRecoveryPhone = ( state ) => {
-	return isAccountRecoverySettingsReady( state ) ? getSettingsData( state ).phone : null;
+	return state.accountRecovery.settings.data.phone;
 };
 
 export const isUpdatingAccountRecoveryPhone = ( state ) => {

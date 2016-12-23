@@ -116,6 +116,10 @@ const emailValidated = createReducer( false, {
 		'email' === target ? false : state,
 } );
 
+const isReady = createReducer( false, {
+	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: () => true,
+} );
+
 export default combineReducers( {
 	data: combineReducers( {
 		phone,
@@ -125,4 +129,5 @@ export default combineReducers( {
 	} ),
 	isUpdating,
 	isDeleting,
+	isReady,
 } );
