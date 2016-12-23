@@ -15,8 +15,8 @@ import Checkout from 'my-sites/upgrades/checkout';
 import CheckoutData from 'components/data/checkout';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Main from 'components/main';
+import Manage from './manage';
 import { navigation, siteSelection } from 'my-sites/controller';
-import PlanCompareCard from 'my-sites/plan-compare-card';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -26,6 +26,7 @@ import { setSection } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import SitePicker from 'components/site-selector';
 import styles from './styles';
+import Stylizer, { insertCss } from './stylizer';
 
 /**
  * Module variables
@@ -128,47 +129,28 @@ const getManageScreen = ( domain ) => {
 	}
 
 	return (
-		<Main wideLayout>
-			<h2 style={ styles.header }>What do you want to use { domain } for?</h2>
-			<div style={ styles.manageContainer }>
-				<PlanCompareCard
-					title="Landing Page"
-					line="Customize a simple, one-page placeholder."
-					buttonName="Create a landing page"
-					currentPlan={ false }/>
-
-				<PlanCompareCard
-					title="New Site"
-					line="Build a new website or blog."
-					buttonName="Create a new site"
-					currentPlan={ false }/>
-
-				<PlanCompareCard
-					title="Existing Site"
-					line="Connect an existing website or redirect to your social media."
-					buttonName="Connect a site"
-					currentPlan={ false }/>
-
-				<PlanCompareCard
-					title="Add Email"
-					line="Add professional email to your domain."
-					buttonName="Set up email"
-					currentPlan={ false }/>
-			</div>
-		</Main>
+		<Manage domain={ domain } />
 	);
+};
+
+const render = ( content, context ) => {
+	renderWithReduxStore( (
+		<Stylizer onInsertCss={ insertCss }>
+			{ content }
+		</Stylizer>
+	), document.getElementById( 'primary' ), context.store );
 };
 
 const manage = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( getManageScreen( domain ), document.getElementById( 'primary' ), context.store );
+	render( getManageScreen( domain ), context );
 };
 
 const landingPage = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
 		<Main>
-			<h2>Set up a landing page for { domain }</h2>
+			<h2 className={ styles.header }>Set up a landing page for { domain }</h2>
 			<p>I think we can probably just show the customizer here</p>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>

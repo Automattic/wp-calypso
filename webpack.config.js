@@ -4,7 +4,8 @@
 /**
  * External dependencies
  */
-const webpack = require( 'webpack' ),
+const autoprefixer = require( 'autoprefixer' ),
+	webpack = require( 'webpack' ),
 	path = require( 'path' );
 
 /**
@@ -37,6 +38,9 @@ const webpackConfig = {
 		chunkFilename: '[name].[chunkhash].js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
+	postcss() {
+		return [ autoprefixer ];
+	},
 	module: {
 		// avoids this warning:
 		// https://github.com/localForage/localForage/issues/577
@@ -50,6 +54,15 @@ const webpackConfig = {
 			{
 				test: /\.json$/,
 				loader: 'json-loader'
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'isomorphic-style',
+					'css?modules&importLoaders=1&localIdentName=[path][local]&camelCase=dashes&sourceMap',
+					'postcss',
+					'sass?sourceMap'
+				]
 			},
 			{
 				test: /\.html$/,
@@ -66,7 +79,7 @@ const webpackConfig = {
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.js', '.jsx', '.scss' ],
 		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
 		modulesDirectories: [ 'node_modules' ],
 		alias: {
