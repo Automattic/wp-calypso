@@ -9,7 +9,9 @@ import includes from 'lodash/includes';
 import difference from 'lodash/difference';
 import range from 'lodash/range';
 import size from 'lodash/size';
-import { AutoSizer, List, WindowScroller } from 'react-virtualized';
+import AutoSizer from 'react-virtualized/AutoSizer';
+import WindowScroller from 'react-virtualized/WindowScroller';
+import List from 'react-virtualized/List';
 
 /**
  * Internal dependencies

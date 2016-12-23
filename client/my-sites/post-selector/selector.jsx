@@ -5,7 +5,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import { AutoSizer, List } from 'react-virtualized';
+import List from 'react-virtualized/List';
+import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
 	memoize,

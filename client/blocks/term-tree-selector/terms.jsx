@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { List } from 'react-virtualized';
+import List from 'react-virtualized/List';
 import {
 	debounce,
 	difference,
