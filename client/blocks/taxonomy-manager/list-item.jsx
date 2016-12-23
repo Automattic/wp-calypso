@@ -162,7 +162,7 @@ class TaxonomyManagerListItem extends Component {
 					}
 					{ ! isJetpack &&
 						<WithPreviewProps
-								href={ this.getTaxonomyLink() }
+								url={ this.getTaxonomyLink() }
 								isPreviewable={ this.props.isPreviewable }>
 							{ ( props ) =>
 								<PopoverMenuItem { ...props }
