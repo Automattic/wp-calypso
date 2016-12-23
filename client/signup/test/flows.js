@@ -89,7 +89,7 @@ describe( 'Signup Flows Configuration', () => {
 
 		it( 'should check AB variation in main flow', () => {
 			assert.equal( flows.getABTestFilteredFlow( 'main', 'testflow' ), 'testflow' );
-			assert.equal( getABTestVariationSpy.callCount, 3 );
+			assert.equal( getABTestVariationSpy.callCount, 1 );
 			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
 
@@ -100,8 +100,8 @@ describe( 'Signup Flows Configuration', () => {
 			};
 
 			assert.equal( flows.getABTestFilteredFlow( 'main', myFlow ), myFlow );
-			assert.equal( getABTestVariationSpy.callCount, 4 );
-			assert.equal( flows.insertStepIntoFlow.callCount, 1 );
+			assert.equal( getABTestVariationSpy.callCount, 2 );
+			assert.equal( flows.insertStepIntoFlow.callCount, 0 );
 		} );
 	} );
 

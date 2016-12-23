@@ -62,15 +62,6 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
-	domainDotBlogSubdomain: {
-		datestamp: '20161208',
-		variations: {
-			excludeDotBlogSubdomain: 50,
-			includeDotBlogSubdomain: 50,
-		},
-		defaultVariation: 'excludeDotBlogSubdomain',
-		allowAnyLocale: true,
-	},
 	designShowcaseWelcomeTour: {
 		datestamp: '20161206',
 		variations: {
@@ -107,16 +98,6 @@ module.exports = {
 		},
 		defaultVariation: 'showPlansAfterAuth',
 		allowExistingUsers: true
-	},
-
-	noSurveyStep: {
-		datestamp: '20161202',
-		variations: {
-			showSurveyStep: 50,
-			hideSurveyStep: 50,
-		},
-		defaultVariation: 'showSurveyStep',
-		allowAnyLocale: true,
 	},
 
 	siteTitleTour: {

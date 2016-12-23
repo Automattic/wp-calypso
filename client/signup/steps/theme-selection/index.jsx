@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -14,15 +15,17 @@ import PressableThemeStep from './pressable-theme';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 
-module.exports = React.createClass( {
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
+
+const ThemeSelectionStep = React.createClass( {
 	displayName: 'ThemeSelection',
 
 	propTypes: {
-		designType: React.PropTypes.string,
-		goToNextStep: React.PropTypes.func.isRequired,
-		signupDependencies: React.PropTypes.object.isRequired,
-		stepName: React.PropTypes.string.isRequired,
-		useHeadstart: React.PropTypes.bool,
+		designType: PropTypes.string,
+		goToNextStep: PropTypes.func.isRequired,
+		signupDependencies: PropTypes.object.isRequired,
+		stepName: PropTypes.string.isRequired,
+		useHeadstart: PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -71,7 +74,7 @@ module.exports = React.createClass( {
 	renderThemesList() {
 		return (
 			<SignupThemesList
-				surveyQuestion={ this.props.signupDependencies.surveyQuestion }
+				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.handleScreenshotClick }
 				handleThemeUpload={ this.handleThemeUpload }
@@ -135,3 +138,11 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			chosenSurveyVertical: getSurveyVertical( state )
+		};
+	}
+)( ThemeSelectionStep );
