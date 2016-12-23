@@ -54,7 +54,7 @@ export const deactivateModule = ( siteId, moduleSlug ) => {
 			moduleSlug
 		} );
 
-		return wp.undocumented().jetpackModulesDeactivate( siteId, moduleSlug )
+		return wp.undocumented().jetpackModuleDeactivate( siteId, moduleSlug )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,

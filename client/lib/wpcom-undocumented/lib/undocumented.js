@@ -163,6 +163,24 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
 };
 
 /*
+ * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
+ * Similar to jetpackModulesDeactivate(), but uses the REST API of the Jetpack site.
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: false } ) },
+		fn
+	);
+};
+
+/*
  * Retrieve the settings of a Jetpack module with moduleSlug on the site with id siteId
  *
  * @param {int} [siteId]
