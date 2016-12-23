@@ -73,7 +73,7 @@ Undocumented.prototype.accountRecoveryReset = function( userData ) {
  */
 Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jumpstart/' }, fn );
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/jumpstart/' }, fn );
 };
 
 /*
@@ -88,7 +88,7 @@ Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jumpstart/', body: JSON.stringify( { active } ) },
+		{ path: '/jetpack/v4/jumpstart/', body: JSON.stringify( { active } ) },
 		fn
 	);
 };
@@ -141,7 +141,7 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
  */
 Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug, fn ) {
 	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/module/' + moduleSlug }, fn );
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/module/' + moduleSlug }, fn );
 };
 
 /*
@@ -157,7 +157,7 @@ Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlu
 	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/module/' + moduleSlug, body: JSON.stringify( settings ) },
+		{ path: '/jetpack/v4/module/' + moduleSlug, body: JSON.stringify( settings ) },
 		fn
 	);
 };
@@ -251,7 +251,7 @@ Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 	return this.wpcom.req.get( {
 		path: '/jetpack-blogs/' + siteId + '/rest-api/',
 		body: {
-			path: '/connection/'
+			path: '/jetpack/v4/connection/'
 		}
 	}, fn );
 };
