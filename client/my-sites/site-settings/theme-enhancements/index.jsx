@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
+import { pick, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,10 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackModuleSettings from 'components/data/query-jetpack-module-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isModuleActive } from 'state/jetpack-settings/modules/selectors';
+import { getCurrentModuleSettings } from 'state/jetpack-settings/module-settings/selectors';
 import { updateModuleSettings } from 'state/jetpack-settings/module-settings/actions';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -29,15 +31,26 @@ class ThemeEnhancements extends Component {
 		super( props );
 
 		this.state = {
-			infinite_scroll: 1,
-			infinite_scroll_google_analytics: 0,
+			infinite_scroll: true,
+			infinite_scroll_google_analytics: false,
 			wp_mobile_excerpt: 'disabled',
 			wp_mobile_featured_images: 'disabled',
-			wp_mobile_app_promos: 0
+			wp_mobile_app_promos: false
 		};
 
 		this.onCheckboxChange = this.onCheckboxChange.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const newState = {
+			...nextProps.infiniteScrollModuleSettings,
+			...nextProps.minilevenModuleSettings
+		};
+
+		if ( ! isEqual( newState, this.state ) ) {
+			this.setState( newState );
+		}
 	}
 
 	sanitizeFieldValue( fieldName, fieldValue ) {
@@ -97,6 +110,9 @@ class ThemeEnhancements extends Component {
 		return (
 			<div>
 				<QueryJetpackModules siteId={ selectedSiteId } />
+				<QueryJetpackModuleSettings siteId={ selectedSiteId } moduleSlug={ 'infinite-scroll' } />
+				<QueryJetpackModuleSettings siteId={ selectedSiteId } moduleSlug={ 'minileven' } />
+
 				<SectionHeader label={ translate( 'Theme Enhancements' ) }>
 					<Button
 						compact
@@ -129,6 +145,7 @@ class ThemeEnhancements extends Component {
 										<FormCheckbox
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
+											checked={ !! this.state.infinite_scroll }
 											name="infinite_scroll" />
 										<span>{ translate( 'Scroll infinitely (Shows 7 posts on each load)' ) }</span>
 									</FormLabel>
@@ -137,6 +154,7 @@ class ThemeEnhancements extends Component {
 										<FormCheckbox
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
+											checked={ !! this.state.infinite_scroll_google_analytics }
 											name="infinite_scroll_google_analytics" />
 										<span>
 											{ translate(
@@ -171,6 +189,7 @@ class ThemeEnhancements extends Component {
 										<FormCheckbox
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
+											checked={ this.state.wp_mobile_excerpt === 'enabled' }
 											name="wp_mobile_excerpt" />
 										<span>{ translate( 'Use excerpts instead of full posts on front page and archive pages' ) }</span>
 									</FormLabel>
@@ -179,6 +198,7 @@ class ThemeEnhancements extends Component {
 										<FormCheckbox
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
+											checked={ this.state.wp_mobile_featured_images === 'enabled' }
 											name="wp_mobile_featured_images" />
 										<span>{ translate( 'Hide all featured images' ) }</span>
 									</FormLabel>
@@ -187,6 +207,7 @@ class ThemeEnhancements extends Component {
 										<FormCheckbox
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
+											checked={ !! this.state.wp_mobile_app_promos }
 											name="wp_mobile_app_promos" />
 										<span>
 											{ translate(
@@ -222,6 +243,8 @@ export default connect(
 			selectedSiteId,
 			infiniteScrollModuleActive: !! isModuleActive( state, selectedSiteId, 'infinite-scroll' ),
 			minilevenModuleActive: !! isModuleActive( state, selectedSiteId, 'minileven' ),
+			infiniteScrollModuleSettings: getCurrentModuleSettings( state, selectedSiteId, 'infinite-scroll' ),
+			minilevenModuleSettings: getCurrentModuleSettings( state, selectedSiteId, 'minileven' ),
 		};
 	},
 	{
