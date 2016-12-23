@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { map, reduce, noop, compact } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
+import { abtest } from 'lib/abtest';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -39,6 +40,11 @@ import {
 	PLAN_BUSINESS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
+	FEATURES_LIST,
+	FEATURE_FREE_THEMES,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_SELECT_PREMIUM_THEMES,
+	FEATURE_ALL_PREMIUM_THEMES
 } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/plans';
 import {
@@ -412,10 +418,26 @@ class PlanFeatures extends Component {
 				features,
 				planName
 			} = properties;
+			
+			let planFeatures = features;
+			
+			const premiumSquaredShowMarketingCopy = abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy';
 
-			const featureKeys = Object.keys( features ),
+			if ( premiumSquaredShowMarketingCopy && /^(value_bundle|business-bundle)$/.test( planName ) ) {
+				planFeatures = map( planFeatures, ( feature ) => {
+					if ( 'value_bundle' === planName && FEATURE_FREE_THEMES === feature.getSlug() ) {
+						return FEATURES_LIST[ FEATURE_SELECT_PREMIUM_THEMES ];
+					} else if ( 'business-bundle' === planName && FEATURE_UNLIMITED_PREMIUM_THEMES === feature.getSlug() ) {
+						return FEATURES_LIST[ FEATURE_ALL_PREMIUM_THEMES ];
+					} else {
+						return feature;
+					}
+				} );
+			}
+
+			const featureKeys = Object.keys( planFeatures ),
 				key = featureKeys[ rowIndex ],
-				currentFeature = features[ key ];
+				currentFeature = planFeatures[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': rowIndex + 1 < featureKeys.length,

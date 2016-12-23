@@ -38,6 +38,8 @@ export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_FREE_THEMES = 'free-themes';
+export const FEATURE_SELECT_PREMIUM_THEMES = 'select-premium-themes';
+export const FEATURE_ALL_PREMIUM_THEMES = 'all-premium-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
@@ -400,6 +402,30 @@ export const FEATURES_LIST = {
 			'including templates specifically tailored for businesses.'
 		),
 		getStoreSlug: () => 'unlimited_themes'
+	},
+  
+	[ FEATURE_ALL_PREMIUM_THEMES ]: {
+		getSlug: () => FEATURE_ALL_PREMIUM_THEMES,
+		getTitle: () => i18n.translate( '{{strong}}All{{/strong}} Premium Themes', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate(
+			'Unlimited access to all of our advanced premium theme templates, ' +
+			'including templates specifically tailored for businesses.'
+		),
+		getStoreSlug: () => 'unlimited_themes'
+	},
+
+	[ FEATURE_SELECT_PREMIUM_THEMES ]: {
+		getSlug: () => FEATURE_SELECT_PREMIUM_THEMES,
+		getTitle: () => i18n.translate( 'Select Premium Themes' ),
+		getDescription: () => i18n.translate(
+			'Access a selection of our advanced premium theme templates, ' +
+			'including templates specifically tailored for businesses.'
+		),
+		getStoreSlug: () => FEATURE_SELECT_PREMIUM_THEMES
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
