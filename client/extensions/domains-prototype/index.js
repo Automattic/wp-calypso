@@ -14,6 +14,7 @@ import Card from 'components/card';
 import Checkout from 'my-sites/upgrades/checkout';
 import CheckoutData from 'components/data/checkout';
 import Gridicon from 'components/gridicon';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Main from 'components/main';
 import { navigation, siteSelection } from 'my-sites/controller';
 import productsFactory from 'lib/products-list';
@@ -215,11 +216,30 @@ const connecting = ( context ) => {
 	), document.getElementById( 'primary' ), context.store );
 };
 
+const connectSubmit = ( event, domain ) => {
+	event.preventDefault();
+	page( '/domains-prototype/manage/connect-existing/' + domain );
+};
+
 const connect = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
 		<Main>
-			<h2>{ domain } Connect to existing site</h2>
+			<h2>Connect { domain } to an existing site</h2>
+			<form onSubmit={ ( event ) => connectSubmit( event, domain ) }>
+				<FormTextInputWithAffixes type="text" placeholder="example.com" prefix="http://" />
+			</form>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const connectExisting = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main>
+			<h2>Connecting { domain } to an http://sitename.com</h2>
+			<p>Some stuff</p>
+			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
@@ -254,6 +274,7 @@ export default function() {
 	page( '/domains-prototype/manage/start/hosts/:type?/:domainName?', siteSelection, navigation, hosts );
 	page( '/domains-prototype/manage/start/connecting/:domainName?', siteSelection, navigation, connecting );
 	page( '/domains-prototype/manage/connect/:domainName?', siteSelection, navigation, connect );
+	page( '/domains-prototype/manage/connect-existing/:domainName?', siteSelection, navigation, connectExisting );
 	page( '/domains-prototype/manage/email/:domainName?', siteSelection, navigation, email );
 	page( '/domains-prototype/manage/settings/:domainName?', siteSelection, navigation, settings );
 }
