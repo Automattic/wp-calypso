@@ -13,7 +13,7 @@ import { setUrlScheme } from 'lib/url';
 
 class WithPreviewProps extends Component {
 	static propTypes = {
-		href: PropTypes.string.isRequired,
+		url: PropTypes.string.isRequired,
 		isPreviewable: PropTypes.bool.isRequired,
 		children: PropTypes.func.isRequired,
 		dispatch: PropTypes.func.isRequired,
@@ -25,21 +25,20 @@ class WithPreviewProps extends Component {
 	}
 }
 
-function makeProps( { href, isPreviewable, dispatch } ) {
+function makeProps( { url, isPreviewable, dispatch } ) {
 	return isPreviewable
-		? { onClick: openWebPreview.bind( null, href, dispatch ) }
+		? { onClick: openWebPreview.bind( null, url, dispatch ) }
 		: {
-			href,
+			href: url,
 			target: '_blank',
 			rel: 'noopener noreferrer',
 		};
 }
 
-function openWebPreview( href, dispatch ) {
+function openWebPreview( url, dispatch ) {
 	// Avoid Mixed Content errors by forcing HTTPS, which is a requirement
 	// of previewable sites anyway. 10198-gh-wp-calypso
-	const url = setUrlScheme( href, 'https' );
-	dispatch( setPreviewUrl( url ) );
+	dispatch( setPreviewUrl( setUrlScheme( url, 'https' ) ) );
 	dispatch( setPreviewType( 'site-preview' ) );
 	dispatch( setLayoutFocus( 'preview' ) );
 }
