@@ -191,3 +191,33 @@ Place Link after ButtonRow (if present) for correct styling.
   </Link>
 </Step>
 ```
+
+## makeTour
+
+This is a higher order component that makes sure your `Tour` gets all required data in order to work and connect with the guided tour framework. Every Tour needs to be wrapped in this.
+
+### Example
+
+In the file with your tour, wrap your `Tour` declaration with this higher order component and export the result.
+
+```jsx
+export const MyTour = makeTour(
+	<Tour name="my" …>
+    …
+  </Tour>
+);
+```
+
+## combineTours
+
+This is a factory for the top-level component of GT, called `<AllTours>`. This is an internal API of Guided Tours and you shouldn't be worrying about its internals, unless you are making framework changes. It accepts a single argument - object with Tours and is used in client/lib/guided-tours/config.js. Edit that file to add a new tour.
+
+### Example
+
+```jsx
+combineTours( {
+  main: MainTour,
+  anotherTour: AnotherTour,
+  thirdTour: ThirdTour,
+} );
+```
