@@ -113,9 +113,16 @@ const checkout = ( context ) => {
 	);
 };
 
-const manage = ( context ) => {
-	const domain = context.params.domainName;
-	renderWithReduxStore( (
+const getManageScreen = ( domain ) => {
+	if ( ! domain ) {
+		return (
+			<Main>
+				<h2>Select a domain</h2>
+			</Main>
+		);
+	}
+
+	return (
 		<Main>
 			<h2>What do you want to use { domain } for?</h2>
 			<Card>
@@ -149,7 +156,12 @@ const manage = ( context ) => {
 				</Button>
 			</Card>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	);
+};
+
+const manage = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( getManageScreen( domain ), document.getElementById( 'primary' ), context.store );
 };
 
 const landingPage = ( context ) => {
