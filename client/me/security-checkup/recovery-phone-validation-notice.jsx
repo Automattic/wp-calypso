@@ -13,6 +13,14 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 
 class RecoveryPhoneValidationNotice extends Component {
+	constructor() {
+		super();
+
+		this.state = {
+			candidateCode: '',
+		};
+	}
+
 	onSubmit( event ) {
 		event.preventDefault();
 	}
@@ -26,7 +34,15 @@ class RecoveryPhoneValidationNotice extends Component {
 	onValidate = ( event ) => {
 		event.preventDefault();
 
-		this.props.onValidate( 1234567 );
+		this.props.onValidate( this.state.candidateCode );
+	}
+
+	onChange = ( event ) => {
+		event.preventDefault();
+
+		this.setState( {
+			candidateCode: event.target.value,
+		} );
 	}
 
 	render() {
@@ -39,8 +55,9 @@ class RecoveryPhoneValidationNotice extends Component {
 				<FormTelInput
 					autoComplete="off"
 					disabled={ false }
-					name="verification-code"
-					placeholder={ 'e.g. 1234567' }
+					placeholder={ translate( 'e.g. 12345678' ) }
+					onChange={ this.onChange }
+					value={ this.state.candidateCode }
 				/>
 				<FormSettingExplanation>
 					{ translate( 'A code has been sent to your device via SMS. ' +
