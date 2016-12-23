@@ -389,7 +389,7 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
-	cellRendererWrapper: function( { key, style, ...rest } ) {
+	cellRendererWrapper( { key, style, ...rest } ) {
 		return (
 			<div key={ key } style={ style }>
 				{ this.renderRow( rest ) }
