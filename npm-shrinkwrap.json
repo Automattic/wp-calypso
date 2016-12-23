@@ -29,11 +29,11 @@
       "version": "0.8.2"
     },
     "ajv": {
-      "version": "4.10.0",
+      "version": "4.10.1",
       "dev": true
     },
     "ajv-keywords": {
-      "version": "1.2.0",
+      "version": "1.4.1",
       "dev": true
     },
     "align-text": {
@@ -569,7 +569,7 @@
       "version": "2.2.0"
     },
     "charenc": {
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dev": true
     },
     "cheerio": {
@@ -805,7 +805,7 @@
       "version": "2.2.5"
     },
     "crypt": {
-      "version": "0.0.1",
+      "version": "0.0.2",
       "dev": true
     },
     "cryptiles": {
@@ -1335,7 +1335,7 @@
       }
     },
     "esprima": {
-      "version": "3.1.2"
+      "version": "3.1.3"
     },
     "esrecurse": {
       "version": "4.1.0",
@@ -1728,7 +1728,7 @@
       "version": "0.0.42",
       "dependencies": {
         "bluebird": {
-          "version": "3.4.6"
+          "version": "3.4.7"
         },
         "source-map": {
           "version": "0.5.6"
@@ -2885,9 +2885,6 @@
     "percentage-regex": {
       "version": "3.0.0"
     },
-    "performance-now": {
-      "version": "0.2.0"
-    },
     "phone": {
       "version": "1.0.8",
       "from": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e",
@@ -3045,9 +3042,6 @@
     "querystring-es3": {
       "version": "0.2.1"
     },
-    "raf": {
-      "version": "3.3.0"
-    },
     "randomatic": {
       "version": "1.1.6"
     },
@@ -3154,7 +3148,7 @@
       }
     },
     "react-virtualized": {
-      "version": "7.9.1",
+      "version": "8.8.1",
       "dependencies": {
         "classnames": {
           "version": "2.2.5"
