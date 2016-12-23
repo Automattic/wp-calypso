@@ -43,7 +43,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 ### Props
 
-* `name`: (string) Unique identifier of the step.
+* `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`.
 * `target`: (string, optional) Target which this step belongs to and will be used for positioning. Value of this prop is used to look up according `[data-tip-target]` in DOM. If you start this value with `.` (dot), it will be evaluated as a query selector, so you can select elements that have no `[data-tip-target]` defined.
 * `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
 * `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
