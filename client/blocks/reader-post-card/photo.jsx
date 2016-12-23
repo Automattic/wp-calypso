@@ -28,7 +28,6 @@ class PostPhoto extends React.Component {
 		this.props.onExpanded();
 	}
 
-	// might need to debounce this
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
 
