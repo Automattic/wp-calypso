@@ -356,7 +356,7 @@ export default React.createClass( {
 					}
 				</Card>
 
-				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() &&
+				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 

@@ -222,7 +222,7 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button onClick={ this.installAction } is-primary={ true } disabled={ isInstalling } >
+				<Button onClick={ this.installAction } primary={ true } disabled={ isInstalling } >
 					{ label }
 				</Button>
 			</span>
