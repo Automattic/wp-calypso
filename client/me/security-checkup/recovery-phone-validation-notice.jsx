@@ -73,7 +73,7 @@ class RecoveryPhoneValidationNotice extends Component {
 				<FormButtonsBar className="security-checkup__recovery-phone-validation-buttons">
 					<FormButton
 						isPrimary={ true }
-						disabled={ ! isValidating || validationCodeLength !== this.state.candidateCode.length }
+						disabled={ isValidating || validationCodeLength !== this.state.candidateCode.length }
 						onClick={ this.onValidate }
 					>
 						{ validateButtonText }
