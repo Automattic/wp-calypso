@@ -13,7 +13,9 @@ import ButtonGroup from 'components/button';
 import Card from 'components/card';
 import Checkout from 'my-sites/upgrades/checkout';
 import CheckoutData from 'components/data/checkout';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
+import { navigation, siteSelection } from 'my-sites/controller';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -74,45 +76,6 @@ const select = ( context ) => {
 	), document.getElementById( 'primary' ), context.store );
 };
 
-const manage = ( context ) => {
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-	renderWithReduxStore( (
-		<Main className="">
-			{ header( 'Manage your addresses' ) }
-			<Card>
-				domain1.blog
-				<Button href="/domains-prototype/manage/domain1.blog" primary>Set up</Button>
-			</Card>
-			<Card>
-				domain2.blog
-				<Button href="/domains-prototype/manage/domain2.blog" primary>Set up</Button>
-			</Card>
-			<Card>
-				domain3.blog
-				<Button href="/domains-prototype/manage/domain3.blog" primary>Set up</Button>
-			</Card>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
-
-const manageDomain = ( context ) => {
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-	renderWithReduxStore( (
-		<Main className="">
-			{ header( 'Manage ' + context.params.domainName ) }
-			<Card>
-				<ButtonGroup>
-					<Button compact href="">Change name servers</Button>
-					<Button compact href="">Edit DNS</Button>
-					<Button compact href="" primary>Connect to WordPress.com</Button>
-				</ButtonGroup>
-			</Card>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
-
 const success = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
@@ -148,11 +111,100 @@ const checkout = ( context ) => {
 	);
 };
 
+const manage = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>What do you want to use test.blog for?</h2>
+			<Card>
+				<h3>Landing page</h3>
+				<Button href={ '/domains-prototype/manage/landing-page/' + domain } primary>
+					<Gridicon icon="house" /> Edit
+				</Button>
+			</Card>
+			<Card>
+				<h3>Start a site</h3>
+				<Button href={ '/domains-prototype/manage/start/' + domain } primary>
+					<Gridicon icon="add" /> Get started
+				</Button>
+			</Card>
+			<Card>
+				<h3>Connect to existing site</h3>
+				<Button href={ '/domains-prototype/manage/connect/' + domain } primary>
+					<Gridicon icon="plugins" /> Connect
+				</Button>
+			</Card>
+			<Card>
+				<h3>Add email</h3>
+				<Button href={ '/domains-prototype/manage/email/' + domain } primary>
+					<Gridicon icon="mention" /> Set up email
+				</Button>
+			</Card>
+			<Card>
+				<h3>Something else</h3>
+				<Button href={ '/domains-prototype/manage/settings/' + domain } primary>
+					<Gridicon icon="cog" /> Configure settings
+				</Button>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const landingPage = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>{ domain } Set up landing page</h2>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const start = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>{ domain } Start a site</h2>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const connect = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>{ domain } Connect to existing site</h2>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const email = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>{ domain } Add email</h2>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const settings = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main className="">
+			<h2>{ domain } Settings</h2>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
 export default function() {
+	page( '/domains-prototype', search );
 	page( '/domains-prototype/select/:domainName?', select );
-	page( '/domains-prototype/manage', manage );
-	page( '/domains-prototype/manage/:domainName?', manageDomain );
 	page( '/domains-prototype/checkout/:domainName?', checkout );
 	page( '/domains-prototype/success/:domainName?', success );
-	page( '/domains-prototype/', search );
+
+	page( '/domains-prototype/manage/:domainName?', siteSelection, navigation, manage );
+	page( '/domains-prototype/manage/landing-page/:domainName?', siteSelection, navigation, landingPage );
+	page( '/domains-prototype/manage/start/:domainName?', siteSelection, navigation, start );
+	page( '/domains-prototype/manage/connect/:domainName?', siteSelection, navigation, connect );
+	page( '/domains-prototype/manage/email/:domainName?', siteSelection, navigation, email );
+	page( '/domains-prototype/manage/settings/:domainName?', siteSelection, navigation, settings );
 }

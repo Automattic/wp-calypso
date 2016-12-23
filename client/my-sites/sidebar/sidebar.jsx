@@ -712,6 +712,43 @@ export class MySitesSidebar extends Component {
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
 			vip = !! this.vip();
 
+		if ( 1 === 1 ) {
+			return (
+				<Sidebar>
+					<SidebarRegion>
+					<CurrentSite
+						sites={ this.props.sites }
+						siteCount={ this.props.currentUser.visible_site_count }
+						onClick={ this.onPreviewSite }
+					/>
+					<SidebarMenu>
+						<ul>
+							<SidebarItem
+								label={ this.props.translate( 'Set up' ) }
+								className={ this.itemLinkClass( '/settings', 'settings' ) }
+								link={ '/domains-prototype/manage' +  this.siteSuffix() }
+								onNavigate={ this.onNavigate }
+								icon="customize"
+								preloadSectionName="settings"
+								tipTarget="settings" />
+							<SidebarItem
+								label={ this.props.translate( 'Settings' ) }
+								className={ this.itemLinkClass( '/settings', 'settings' ) }
+								link={ '/domains-prototype/manage/settings' +  this.siteSuffix() }
+								onNavigate={ this.onNavigate }
+								icon="cog"
+								preloadSectionName="settings"
+								tipTarget="settings" />
+						</ul>
+					</SidebarMenu>
+					</SidebarRegion>
+					<SidebarFooter>
+						{ this.addNewSite() }
+					</SidebarFooter>
+				</Sidebar>
+			);
+		}
+
 		return (
 			<Sidebar>
 				<SidebarRegion>
