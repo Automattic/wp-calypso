@@ -25,6 +25,7 @@ import SectionHeader from 'components/section-header';
 import { setSection } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import SitePicker from 'components/site-selector';
+import styles from './styles';
 
 /**
  * Module variables
@@ -128,37 +129,39 @@ const getManageScreen = ( domain ) => {
 
 	return (
 		<Main>
-			<h2>What do you want to use { domain } for?</h2>
-			<Card>
-				<h3>Landing page</h3>
-				<Button href={ '/domains-prototype/manage/landing-page/' + domain } primary>
-					<Gridicon icon="house" /> Edit
-				</Button>
-			</Card>
-			<Card>
-				<h3>Start a site</h3>
-				<Button href={ '/domains-prototype/manage/start/' + domain } primary>
-					<Gridicon icon="add" /> Get started
-				</Button>
-			</Card>
-			<Card>
-				<h3>Connect to existing site</h3>
-				<Button href={ '/domains-prototype/manage/connect/' + domain } primary>
-					<Gridicon icon="plugins" /> Connect
-				</Button>
-			</Card>
-			<Card>
-				<h3>Add email</h3>
-				<Button href={ '/domains/manage/email/' + domain } primary>
-					<Gridicon icon="mention" /> Set up email
-				</Button>
-			</Card>
-			<Card>
-				<h3>Something else</h3>
-				<Button href={ '/domains/manage/' + domain } primary>
-					<Gridicon icon="cog" /> Configure settings
-				</Button>
-			</Card>
+			<h2 style={ styles.header }>What do you want to use { domain } for?</h2>
+			<div style={ styles.manageContainer }>
+				<Card style={ styles.manageCard }>
+					<h3>Landing page</h3>
+					<Button href={ '/domains-prototype/manage/landing-page/' + domain } primary>
+						<Gridicon icon="house" /> Edit
+					</Button>
+				</Card>
+				<Card style={ styles.manageCard }>
+					<h3>Start a site</h3>
+					<Button href={ '/domains-prototype/manage/start/' + domain } primary>
+						<Gridicon icon="add" /> Get started
+					</Button>
+				</Card>
+				<Card style={ styles.manageCard }>
+					<h3>Connect to existing site</h3>
+					<Button href={ '/domains-prototype/manage/connect/' + domain } primary>
+						<Gridicon icon="plugins" /> Connect
+					</Button>
+				</Card>
+				<Card style={ styles.manageCard }>
+					<h3>Add email</h3>
+					<Button href={ '/domains/manage/email/' + domain } primary>
+						<Gridicon icon="mention" /> Set up email
+					</Button>
+				</Card>
+				<Card style={ styles.manageCard }>
+					<h3>Something else</h3>
+					<Button href={ '/domains/manage/' + domain } primary>
+						<Gridicon icon="cog" /> Configure settings
+					</Button>
+				</Card>
+			</div>
 		</Main>
 	);
 };
