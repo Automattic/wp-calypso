@@ -258,7 +258,11 @@ function filterDesignTypeInFlow( flow ) {
 
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
-	// do nothing. No flows to filter at the moment.
+
+	if ( includes( defaultFlows, flowName ) && abtest( 'userFirstSignup' ) === 'userFirst' ) {
+		return 'userfirst';
+	}
+
 	return flowName;
 }
 
