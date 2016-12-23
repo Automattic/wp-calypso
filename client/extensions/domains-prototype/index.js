@@ -41,7 +41,7 @@ const search = ( context ) => {
 
 	renderWithReduxStore(
 		(
-			<Main className="">
+			<Main>
 				{ header( 'Look for a web address' ) }
 				<RegisterDomainStep
 					path={ context.path }
@@ -65,7 +65,7 @@ const select = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			{ header( 'You have selected ' + context.params.domainName ) }
 			<Card>
 				You selected { context.params.domainName }.
@@ -80,13 +80,15 @@ const success = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			{ header( 'You now own ' + context.params.domainName ) }
 			<Card>
 				<ButtonGroup>
 					<Button compact href="/domains-prototype">Search again</Button>
 					<Button compact href="/domains-prototype/manage">Manage all domains</Button>
-					<Button compact href={ '/domains-prototype/manage/' + context.params.domainName }>Manage { context.params.domainName }</Button>
+					<Button compact href={ '/domains-prototype/manage/' + context.params.domainName }>
+						Manage { context.params.domainName }
+					</Button>
 				</ButtonGroup>
 			</Card>
 		</Main>
@@ -114,8 +116,8 @@ const checkout = ( context ) => {
 const manage = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
-			<h2>What do you want to use test.blog for?</h2>
+		<Main>
+			<h2>What do you want to use { domain } for?</h2>
 			<Card>
 				<h3>Landing page</h3>
 				<Button href={ '/domains-prototype/manage/landing-page/' + domain } primary>
@@ -153,7 +155,7 @@ const manage = ( context ) => {
 const landingPage = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			<h2>{ domain } Set up landing page</h2>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
@@ -162,8 +164,41 @@ const landingPage = ( context ) => {
 const start = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
-			<h2>{ domain } Start a site</h2>
+		<Main>
+			<h2>Start a site</h2>
+			<Card>
+				<h3>What type site will { domain } be?</h3>
+				<Button href={ '/domains-prototype/manage/start/hosts/blog/' + domain }>A blog</Button>
+				<Button href={ '/domains-prototype/manage/start/hosts/store/' + domain }>An online store</Button>
+				<Button href={ '/domains-prototype/manage/start/hosts/profile/' + domain }>Profile site</Button>
+				<Button href={ '/domains-prototype/manage/start/hosts/brochure/' + domain }>Brochure site</Button>
+				<Button href={ '/domains-prototype/manage/start/hosts/website/' + domain }>A website</Button>
+				<Button href={ '/domains-prototype/manage/start/hosts/' + domain }>Something else</Button>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const hosts = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main>
+			<h2>Select a host</h2>
+			<Card>
+				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>WordPress.com</Button>
+				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Tumblr</Button>
+				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Squarespace</Button>
+			</Card>
+		</Main>
+	), document.getElementById( 'primary' ), context.store );
+};
+
+const connecting = ( context ) => {
+	const domain = context.params.domainName;
+	renderWithReduxStore( (
+		<Main>
+			<h2>Connecting { domain }</h2>
+			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
@@ -171,7 +206,7 @@ const start = ( context ) => {
 const connect = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			<h2>{ domain } Connect to existing site</h2>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
@@ -180,7 +215,7 @@ const connect = ( context ) => {
 const email = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			<h2>{ domain } Add email</h2>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
@@ -189,7 +224,7 @@ const email = ( context ) => {
 const settings = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
-		<Main className="">
+		<Main>
 			<h2>{ domain } Settings</h2>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
@@ -204,6 +239,8 @@ export default function() {
 	page( '/domains-prototype/manage/:domainName?', siteSelection, navigation, manage );
 	page( '/domains-prototype/manage/landing-page/:domainName?', siteSelection, navigation, landingPage );
 	page( '/domains-prototype/manage/start/:domainName?', siteSelection, navigation, start );
+	page( '/domains-prototype/manage/start/hosts/:type?/:domainName?', siteSelection, navigation, hosts );
+	page( '/domains-prototype/manage/start/connecting/:domainName?', siteSelection, navigation, connecting );
 	page( '/domains-prototype/manage/connect/:domainName?', siteSelection, navigation, connect );
 	page( '/domains-prototype/manage/email/:domainName?', siteSelection, navigation, email );
 	page( '/domains-prototype/manage/settings/:domainName?', siteSelection, navigation, settings );
