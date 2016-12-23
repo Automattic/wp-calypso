@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit, map } from 'lodash';
+import { omit, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -97,7 +97,7 @@ export const fetchModuleList = ( siteId ) => {
 
 		return wp.undocumented().getJetpackModules( siteId )
 			.then( ( { data } ) => {
-				const modules = map(
+				const modules = mapValues(
 					data,
 					( module ) => ( {
 						active: module.activated,

@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { omit, map } from 'lodash';
+import { omit, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -201,7 +201,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
-						modules: map(
+						modules: mapValues(
 							API_MODULE_LIST_RESPONSE_FIXTURE.data,
 							( module ) => ( {
 								active: module.activated,
