@@ -33,6 +33,7 @@ class ThemeEnhancements extends Component {
 			infinite_scroll_google_analytics: 0,
 			wp_mobile_excerpt: 'disabled',
 			wp_mobile_featured_images: 'disabled',
+			wp_mobile_app_promos: 0
 		};
 
 		this.onCheckboxChange = this.onCheckboxChange.bind( this );
@@ -67,7 +68,7 @@ class ThemeEnhancements extends Component {
 				fields = [ 'infinite_scroll', 'infinite_scroll_google_analytics' ];
 				break;
 			case 'minileven':
-				fields = [ 'wp_mobile_excerpt', 'wp_mobile_featured_images' ];
+				fields = [ 'wp_mobile_excerpt', 'wp_mobile_featured_images', 'wp_mobile_app_promos' ];
 				break;
 		}
 
@@ -176,6 +177,14 @@ class ThemeEnhancements extends Component {
 											disabled={ submittingForm }
 											name="wp_mobile_featured_images" />
 										<span>{ translate( 'Hide all featured images' ) }</span>
+									</FormLabel>
+
+									<FormLabel>
+										<FormCheckbox
+											onChange={ this.onCheckboxChange }
+											disabled={ submittingForm }
+											name="wp_mobile_app_promos" />
+										<span>{ translate( 'Show an ad for the WordPress mobile apps in the footer of the mobile theme' ) }</span>
 									</FormLabel>
 								</div>
 							)
