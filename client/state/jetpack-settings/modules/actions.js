@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,9 +95,16 @@ export const fetchModuleList = ( siteId ) => {
 			siteId
 		} );
 
-		return wp.undocumented().jetpackModules( siteId )
-			.then( ( data ) => {
-				const modules = keyBy( data.modules, 'id' );
+		return wp.undocumented().getJetpackModules( siteId )
+			.then( ( { data } ) => {
+				const modules = map(
+					data,
+					( module ) => ( {
+						active: module.activated,
+						...omit( module, 'activated' )
+					} )
+				);
+
 				dispatch( receiveJetpackModules( siteId, modules ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_SUCCESS,
