@@ -26,7 +26,7 @@ First thing is to enable your new feature in Calypso. We'll do that by opening `
 "hello-world": true
 ```
 
-Features flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
+Feature flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
 
 ### 2. Set up folder structure
 
@@ -52,7 +52,7 @@ There you'll write your controller with a function called `helloWorld`:
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 const Controller = {
 	helloWorld() {
@@ -63,15 +63,16 @@ const Controller = {
 export default Controller;
 ```
 
-### 4. Setup the route
+### 4. Set up the route
 
-Next step is to create the main file for your section, called `index.js` within `hello-world`. Run the following command:
+The next step is to create the main file for your section, called `index.js` within `hello-world`.  
+Run the following command to create the file:
 
 ```
 touch client/my-sites/hello-world/index.js
 ```
 
-Here we'll require the `page` module, the My Sites controller, our own controller, and write our main route handler:
+Here we'll require the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
 /**
@@ -122,7 +123,7 @@ We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.
 
 Now let's build our main view using a React component. For this task we have two steps:
 
-1. Create JSX file called `main.jsx` in `client/my-sites/hello-world`.
+1. Create a JSX file called `main.jsx` in `client/my-sites/hello-world`.
 2. Hook up controller.
 
 ### 1. Create main view
@@ -133,7 +134,7 @@ Create an empty file `main.jsx` by running the following command:
 touch client/my-sites/hello-world/main.jsx
 ```
 
-Start by importing React as an external dependency at the top, then import the internal "Main" UI component from `components/main`. We'll use it to set up our view tree. Finally, create a new React class and set it up with the feature name as its "displayName":
+Start by importing React as an external dependency at the top, then import the internal "Main" UI component from `components/main`. We'll use it to set up our view tree. Finally, create and export a new React Component.
 
 ```javascript
 /**
@@ -146,14 +147,15 @@ import React from 'react';
  */
 import Main from 'components/main';
 
-export default React.createClass( {
-	displayName: 'HelloWorld',
-} );
+export default class HelloWorld extends React.Component {
+	
+};
 ```
 
-Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Inside the `React.createClass` object, after "displayName: 'HelloWorld',", insert before the closing "} );":
+Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:
 
 ```javascript
+export default class HelloWorld extends React.Component {
 	render() {
 		return (
 			<Main>
@@ -161,34 +163,42 @@ Cool. Let's make the React component render something for us. We'll do that by a
 			</Main>
 		);
 	}
+}
 ```
 
 If you want to learn more about our approach to writing React components, check out the [Components](../components.md) page.
 
 ### 2. Hook up controller
 
-Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import ReactDom and React at the top of the file:
+Time to hook this up with our controller function. Open `/hello-world/controller.js`.  
+Import ReactDom, React and your new component at the top of the file:
 
 ```javascript
-var React = require( 'react' ),
-	ReactDom = require( 'react-dom' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import ReactDom from 'react-dom';
+
+/**
+ * Internal dependencies
+ */
+import HelloWorld from 'my-sites/hello-world/main';
 ```
 
 Then remove the `console.log` call and enter the following instead:
 
 ```javascript
 helloWorld() {
-	const Main = require( 'my-sites/hello-world/main' );
-
 	// Render hello world...
 	ReactDom.render(
-		React.createElement( Main ),
-		document.getElementById( 'primary' )
+		<HelloWorld />, // Your component
+		document.getElementById( 'primary' ) // Element to render to
 	);
 }
 ```
 
-In the `Main` constant we are getting our main jsx file for our section. We then instruct React to render `Main` in `#primary`, an element that is already on the DOM.
+In the `Main` constant we are getting our main jsx file for our section. We then instruct ReactDom to render `Main` in `#primary`, an element that is already on the DOM.
 
 (If you want to see where `#primary` is created open `client/layout/index.jsx`.)
 
