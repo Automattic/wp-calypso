@@ -139,7 +139,8 @@ var CrossPost = React.createClass( {
 				<SiteAndAuthorIcon
 					siteId={ this.props.post.site_ID }
 					isExternal={ this.props.post.is_external }
-					user={ post.author } />
+					user={ post.author }
+					onClick={ this.handleTitleClick } href={ post.URL } />
 				<div className="reader__x-post">
 					{ post.title
 						? <h4 className="reader__post-title"><a className="reader__post-title-link" onClick={ this.handleTitleClick } href={ post.URL } target="_blank" rel="noopener noreferrer">{ xpostTitle }</a></h4>
