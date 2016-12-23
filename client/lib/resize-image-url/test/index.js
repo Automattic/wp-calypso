@@ -34,6 +34,72 @@ describe( 'resizeImageUrl()', () => {
 		expect( resizedUrl ).to.equal( expectedUrl );
 	} );
 
+	context( 'numeric width', () => {
+		context( 'wpcom', () => {
+			it( 'should append width as ?w query argument', () => {
+				const original = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg';
+				const resized = resizeImageUrl( original, 40 );
+				const expected = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=40';
+				expect( resized ).to.equal( expected );
+			} );
+
+			it( 'should append ?fit query argument if both width and height provided', () => {
+				const original = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg';
+				const resized = resizeImageUrl( original, 40, 20 );
+				const expected = 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?fit=40%2C20';
+				expect( resized ).to.equal( expected );
+			} );
+		} );
+
+		context( 'photon', () => {
+			it( 'should append width as ?w query argument', () => {
+				const original = 'https://i0.wp.com/example.com/foo.png';
+				const resized = resizeImageUrl( original, 40 );
+				const expected = 'https://i0.wp.com/example.com/foo.png?w=40';
+				expect( resized ).to.equal( expected );
+			} );
+
+			it( 'should append ?fit query argument if both width and height provided', () => {
+				const original = 'https://i0.wp.com/example.com/foo.png';
+				const resized = resizeImageUrl( original, 40, 20 );
+				const expected = 'https://i0.wp.com/example.com/foo.png?fit=40%2C20';
+				expect( resized ).to.equal( expected );
+			} );
+		} );
+
+		context( 'gravatar', () => {
+			it( 'should append width as ?s query argument', () => {
+				const original = 'https://gravatar.com/avatar/00000000000000000000000000000000';
+				const resized = resizeImageUrl( original, 40 );
+				const expected = 'https://gravatar.com/avatar/00000000000000000000000000000000?s=40';
+				expect( resized ).to.equal( expected );
+			} );
+
+			it( 'should ignore height', () => {
+				const original = 'https://gravatar.com/avatar/00000000000000000000000000000000';
+				const resized = resizeImageUrl( original, 40, 20 );
+				const expected = 'https://gravatar.com/avatar/00000000000000000000000000000000?s=40';
+				expect( resized ).to.equal( expected );
+			} );
+		} );
+
+		context( 'external', () => {
+			it( 'should return a Photonized (safe) resized image with width', () => {
+				const original = 'https://example.com/foo.png';
+				const resized = resizeImageUrl( original, 40 );
+				const expected = 'https://i0.wp.com/example.com/foo.png?ssl=1&w=40';
+				expect( resized ).to.equal( expected );
+			} );
+
+			it( 'should return a Photonized (safe) resized image with width and height', () => {
+				const original = 'https://example.com/foo.png';
+				const resized = resizeImageUrl( original, 40, 20 );
+				const expected = 'https://i0.wp.com/example.com/foo.png?ssl=1&fit=40%2C20';
+				expect( resized ).to.equal( expected );
+			} );
+		} );
+	} );
+
 	context( 'standard pixel density', () => {
 		it( 'should append resize argument', () => {
 			const resizedUrl = resizeImageUrl( imageUrl, { resize: '40,40' } );
