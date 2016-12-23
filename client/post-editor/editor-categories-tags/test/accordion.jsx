@@ -26,7 +26,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 		mount = require( 'enzyme' ).mount;
 		i18n = require( 'i18n-calypso' );
 
-		// require needs to be here in order for mocking of VirtualScroll to work
+		// require needs to be here in order for mocking of List to work
 		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
 	} );
 
