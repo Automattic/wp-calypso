@@ -4,7 +4,8 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { AutoSizer, List } from 'react-virtualized';
+import List from 'react-virtualized/List';
+import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
 	noop,
