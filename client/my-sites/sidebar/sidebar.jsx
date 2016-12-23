@@ -734,7 +734,7 @@ export class MySitesSidebar extends Component {
 							<SidebarItem
 								label={ this.props.translate( 'Settings' ) }
 								className={ this.itemLinkClass( '/settings', 'settings' ) }
-								link={ '/domains-prototype/manage/settings' +  this.siteSuffix() }
+								link={ '/domains/manage' +  this.siteSuffix() }
 								onNavigate={ this.onNavigate }
 								icon="cog"
 								preloadSectionName="settings"

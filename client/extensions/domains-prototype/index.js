@@ -146,13 +146,13 @@ const getManageScreen = ( domain ) => {
 			</Card>
 			<Card>
 				<h3>Add email</h3>
-				<Button href={ '/domains-prototype/manage/email/' + domain } primary>
+				<Button href={ '/domains/manage/email/' + domain } primary>
 					<Gridicon icon="mention" /> Set up email
 				</Button>
 			</Card>
 			<Card>
 				<h3>Something else</h3>
-				<Button href={ '/domains-prototype/manage/settings/' + domain } primary>
+				<Button href={ '/domains/manage/' + domain } primary>
 					<Gridicon icon="cog" /> Configure settings
 				</Button>
 			</Card>
@@ -169,7 +169,9 @@ const landingPage = ( context ) => {
 	const domain = context.params.domainName;
 	renderWithReduxStore( (
 		<Main>
-			<h2>{ domain } Set up landing page</h2>
+			<h2>Set up a landing page for { domain }</h2>
+			<p>I think we can probably just show the customizer here</p>
+			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
@@ -244,24 +246,6 @@ const connectExisting = ( context ) => {
 	), document.getElementById( 'primary' ), context.store );
 };
 
-const email = ( context ) => {
-	const domain = context.params.domainName;
-	renderWithReduxStore( (
-		<Main>
-			<h2>{ domain } Add email</h2>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
-
-const settings = ( context ) => {
-	const domain = context.params.domainName;
-	renderWithReduxStore( (
-		<Main>
-			<h2>{ domain } Settings</h2>
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
-};
-
 export default function() {
 	page( '/domains-prototype', search );
 	page( '/domains-prototype/select/:domainName?', select );
@@ -275,6 +259,4 @@ export default function() {
 	page( '/domains-prototype/manage/start/connecting/:domainName?', siteSelection, navigation, connecting );
 	page( '/domains-prototype/manage/connect/:domainName?', siteSelection, navigation, connect );
 	page( '/domains-prototype/manage/connect-existing/:domainName?', siteSelection, navigation, connectExisting );
-	page( '/domains-prototype/manage/email/:domainName?', siteSelection, navigation, email );
-	page( '/domains-prototype/manage/settings/:domainName?', siteSelection, navigation, settings );
 }
