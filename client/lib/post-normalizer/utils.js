@@ -159,3 +159,21 @@ export function isCandidateForCanonicalImage( image ) {
 	}
 	return true;
 }
+
+/** returns whether or not a posts featuredImages is contained within the contents
+ *
+ * @param {Object} post - the post to check
+ * @returns {Boolean} whether or not the featuredImage is also contained within the content
+ */
+export function isFeaturedImageInContent( post ) {
+	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
+		const featuredImageUrl = url.parse( post.post_thumbnail.URL, true, true );
+
+		return find( post.content_images, img => {
+			const imgUrl = url.parse( img.src, true, true );
+			return imgUrl.pathname === featuredImageUrl.pathname;
+		} );
+	}
+
+	return false;
+}

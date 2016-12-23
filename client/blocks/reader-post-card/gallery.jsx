@@ -10,14 +10,14 @@ import { map, take, filter } from 'lodash';
 import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
-import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
+import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
 const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
 	let worthyImages = filter( post.images, imageIsBigEnoughForGallery );
-	if ( post.display_type & CANONICAL_IN_CONTENT ) {
+	if ( isFeaturedImageInContent( post ) ) {
 		worthyImages = worthyImages.slice( 1 );
 	}
 
