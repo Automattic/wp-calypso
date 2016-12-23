@@ -31,7 +31,6 @@ import {
 	isFrontPage,
 	isPostsPage,
 } from 'state/pages/selectors';
-import QuerySites from 'components/data/query-sites';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 import { updateSitesList } from './helpers';
@@ -365,7 +364,6 @@ const Page = React.createClass( {
 
 		return (
 			<CompactCard className="page">
-				{ ! this.props.site && <QuerySites siteId={ page.site_ID } /> }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
 				<a className="page__title"
 					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }

@@ -20,6 +20,7 @@ var PageList = require( './page-list' ),
 	Main = require( 'components/main' ),
 	PagesFirstView = require( './first-view' );
 import { getSelectedSite } from 'state/ui/selectors';
+import QuerySites from 'components/data/query-sites';
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
@@ -71,6 +72,7 @@ const Pages = React.createClass( {
 		};
 		return (
 			<Main classname="pages">
+				<QuerySites allSites={ true } />
 				<PagesFirstView />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
