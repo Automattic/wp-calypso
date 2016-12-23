@@ -13,7 +13,6 @@ import {
 	deactivateModule,
 	fetchModuleList
 } from '../actions';
-import { moduleData as MODULE_DATA_FIXTURE } from './fixture';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
