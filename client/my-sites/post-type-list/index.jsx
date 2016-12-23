@@ -44,6 +44,7 @@ class PostTypeList extends Component {
 		super( ...arguments );
 
 		this.renderPostRow = this.renderPostRow.bind( this );
+		this.cellRendererWrapper = this.cellRendererWrapper.bind( this );
 		this.renderPlaceholder = this.renderPlaceholder.bind( this );
 		this.setRequestedPages = this.setRequestedPages.bind( this );
 
