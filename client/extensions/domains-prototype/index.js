@@ -23,11 +23,14 @@ import RegisterDomainStep from 'components/domains/register-domain-step';
 import route from 'lib/route';
 import SectionHeader from 'components/section-header';
 import { setSection } from 'state/ui/actions';
+import sitesFactory from 'lib/sites-list';
+import SitePicker from 'components/site-selector';
 
 /**
  * Module variables
  */
 const productsList = productsFactory();
+const sites = sitesFactory();
 
 const onAddDomain = ( suggestion ) => {
 	page( '/domains-prototype/select/' + suggestion.domain_name );
@@ -223,13 +226,33 @@ const connectSubmit = ( event, domain ) => {
 	page( '/domains-prototype/manage/connect-existing/' + domain );
 };
 
+const preventPickerDefault = ( event ) => {
+	event.preventDefault();
+	event.stopPropagation();
+};
+
 const connect = ( context ) => {
-	const domain = context.params.domainName;
+	const domain = context.params.domainName,
+		siteFragment = route.getSiteFragment( context.pathname );
+	let basePath = context.pathname;
+
+	if ( siteFragment ) {
+		basePath = route.sectionify( context.pathname );
+	}
+
 	renderWithReduxStore( (
 		<Main>
 			<h2>Connect { domain } to an existing site</h2>
 			<form onSubmit={ ( event ) => connectSubmit( event, domain ) }>
+				<label>Enter the address of the site to connect { domain } to</label>
 				<FormTextInputWithAffixes type="text" placeholder="example.com" prefix="http://" />
+				<p>or select a site from the list</p>
+				<SitePicker
+					sites={ sites }
+					allSitesPath={ basePath }
+					siteBasePath={ basePath }
+					onClose={ preventPickerDefault }
+				/>
 			</form>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
