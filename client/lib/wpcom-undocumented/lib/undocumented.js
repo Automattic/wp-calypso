@@ -132,6 +132,24 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn
 };
 
 /*
+ * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
+ * Similar to jetpackModulesActivate(), but uses the REST API of the Jetpack site.
+ *
+ * @param {int} [siteId]
+ * @param {string} [moduleSlug]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: true } ) },
+		fn
+	);
+};
+
+/*
  * Deactivate the Jetpack module with moduleSlug on the site with id siteId
  *
  * @param {int} [siteId]
