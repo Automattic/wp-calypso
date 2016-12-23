@@ -17,6 +17,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -47,6 +49,8 @@ import {
 	onAccountRecoverySettingsDeleteSuccess,
 	onResentAccountRecoveryEmailValidationSuccess,
 	onResentAccountRecoveryEmailValidationFailed,
+	onAccountRecoveryPhoneValidationSuccess,
+	onAccountRecoveryPhoneValidationFailed,
 } from './account-recovery';
 
 /**
@@ -161,6 +165,8 @@ export const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: onAccountRecoverySettingsDeleteFailed,
 	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS ]: onResentAccountRecoveryEmailValidationSuccess,
 	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: onResentAccountRecoveryEmailValidationFailed,
+	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: onAccountRecoveryPhoneValidationSuccess,
+	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: onAccountRecoveryPhoneValidationFailed,
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},
