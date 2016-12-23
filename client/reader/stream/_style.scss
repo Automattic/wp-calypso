@@ -119,6 +119,7 @@
 	}
 
 	&.is-headerless {
+
 		@include breakpoint( ">480px" ) {
 			padding-top: 25px;
 		}
@@ -230,6 +231,10 @@
 		margin: 0;
 		padding: 20px 42px;
 
+		&:hover {
+			box-shadow: none; // Disables hover for now until we implement hover in all card types
+		}
+
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
 			color: darken( $gray, 20% );
@@ -239,17 +244,13 @@
 			color: $gray-dark;
 		}
 
-		.reader__site-and-author-icon:hover {
-			cursor: pointer;
-		}
-
-		&:hover {
-			box-shadow: none; // Disables hover for now until we implement hover in all card types
-		}
-
 		.reader__site-and-author-icon {
 			margin-right: 12px;
 			width: auto;
+
+			&:hover {
+				cursor: pointer;
+			}
 		}
 
 		.site-icon {
