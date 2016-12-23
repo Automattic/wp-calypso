@@ -9,9 +9,7 @@ import includes from 'lodash/includes';
 import difference from 'lodash/difference';
 import range from 'lodash/range';
 import size from 'lodash/size';
-import AutoSizer from 'react-virtualized/AutoSizer';
-import WindowScroller from 'react-virtualized/WindowScroller';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import { AutoSizer, List, WindowScroller } from 'react-virtualized';
 
 /**
  * Internal dependencies
@@ -117,6 +115,17 @@ class PostTypeList extends Component {
 		return <PostItem key={ globalId } globalId={ globalId } />;
 	}
 
+	cellRendererWrapper( { key, style, ...rest } ) {
+		return (
+			<div
+				className="Grid__cell"
+				key={ key }
+				style={ style }>
+				{ this.renderPostRow( rest ) }
+			</div>
+		);
+	}
+
 	render() {
 		const { query, siteId, posts } = this.props;
 		const isEmpty = query && posts && ! posts.length && this.isLastPage();
@@ -142,13 +151,13 @@ class PostTypeList extends Component {
 						{ ( { height, scrollTop } ) => (
 							<AutoSizer disableHeight>
 								{ ( { width } ) => (
-									<VirtualScroll
+									<List
 										autoHeight
 										scrollTop={ scrollTop }
 										height={ height }
 										width={ width }
 										onRowsRendered={ this.setRequestedPages }
-										rowRenderer={ this.renderPostRow }
+										rowRenderer={ this.cellRendererWrapper }
 										rowHeight={ POST_ROW_HEIGHT }
 										rowCount={ size( this.props.posts ) } />
 								) }

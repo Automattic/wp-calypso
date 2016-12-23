@@ -5,8 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import { AutoSizer, List } from 'react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -115,7 +114,7 @@ const PostSelectorPosts = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.list.forceUpdate();
 		}
 
 		if ( this.props.posts !== prevProps.posts ) {
@@ -124,11 +123,11 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	recomputeRowHeights: function() {
-		if ( ! this.virtualScroll ) {
+		if ( ! this.list ) {
 			return;
 		}
 
-		this.virtualScroll.recomputeRowHeights();
+		this.list.recomputeRowHeights();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
@@ -137,10 +136,10 @@ const PostSelectorPosts = React.createClass( {
 		}
 	},
 
-	setVirtualScrollRef( virtualScroll ) {
+	setListRef( ref ) {
 		// Ref callback can be called with null reference, which is desirable
 		// since we'll want to know elsewhere if we can call recompute height
-		this.virtualScroll = virtualScroll;
+		this.list = ref;
 	},
 
 	setItemRef( item, itemRef ) {
@@ -384,6 +383,17 @@ const PostSelectorPosts = React.createClass( {
 		);
 	},
 
+	cellRendererWrapper: function( { key, style, ...rest } ) {
+		return (
+			<div
+				className="Grid__cell"
+				key={ key }
+				style={ style }>
+				{ this.renderRow( rest ) }
+			</div>
+		);
+	},
+
 	render() {
 		const { className, siteId, query } = this.props;
 		const { requestedPages, searchTerm } = this.state;
@@ -416,8 +426,8 @@ const PostSelectorPosts = React.createClass( {
 						key={ JSON.stringify( query ) }
 						disableHeight={ isCompact }>
 						{ ( { height, width } ) => (
-							<VirtualScroll
-								ref={ this.setVirtualScrollRef }
+							<List
+								ref={ this.setListRef }
 								width={ width }
 								height={ isCompact ? this.getCompactContainerHeight() : height }
 								onRowsRendered={ this.setRequestedPages }
@@ -425,7 +435,7 @@ const PostSelectorPosts = React.createClass( {
 								rowCount={ this.getRowCount() }
 								estimatedRowSize={ ITEM_HEIGHT }
 								rowHeight={ this.getRowHeight }
-								rowRenderer={ this.renderRow } />
+								rowRenderer={ this.cellRendererWrapper } />
 						) }
 					</AutoSizer>
 				</div>
