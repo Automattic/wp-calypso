@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { keyBy } from 'lodash';
+import { omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -154,26 +154,24 @@ describe( 'actions', () => {
 	describe( '#fetchModuleList', () => {
 		const siteId = 123456;
 
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/sites/123456/jetpack/modules' )
-				.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
-		} );
-
-		it( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
-			fetchModuleList( siteId )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: JETPACK_MODULES_REQUEST,
-				siteId
-			} );
-		} );
-
 		describe( '#success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/sites/123456/jetpack/modules' )
-				.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
+					.persist()
+					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )
+					.query( {
+						path: '/jetpack/v4/module/all/'
+					} )
+					.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
+			} );
+
+			it( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
+				fetchModuleList( siteId )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_MODULES_REQUEST,
+					siteId
+				} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
@@ -182,15 +180,15 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
-						modules: keyBy( API_MODULE_LIST_RESPONSE_FIXTURE.modules, 'id' )
+						modules: map(
+							API_MODULE_LIST_RESPONSE_FIXTURE.data,
+							( module ) => ( {
+								active: module.activated,
+								...omit( module, 'activated' )
+							} )
+						)
 					} );
 				} );
-			} );
-
-			useNock( ( nock ) => {
-				nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/sites/123456/jetpack/modules' )
-				.reply( 200, API_MODULE_LIST_RESPONSE_FIXTURE );
 			} );
 
 			it( 'should dispatch JETPACK_MODULES_REQUEST_SUCCESS when we get the response from the API', () => {
@@ -207,8 +205,14 @@ describe( 'actions', () => {
 		describe( '#failure', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/sites/123456/jetpack/modules' )
-				.reply( 500, {} );
+					.persist()
+					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )
+					.query( {
+						path: '/jetpack/v4/module/all/'
+					} )
+					.reply( 400, {
+						message: 'Invalid request.'
+					} );
 			} );
 
 			it( 'should dispatch JETPACK_MODULES_REQUEST_FAILURE when the requests fails', () => {
@@ -217,7 +221,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_REQUEST_FAILURE,
 						siteId,
-						error: '500 status code for " /rest/v1.1/sites/123456/jetpack/modules"'
+						error: 'Invalid request.'
 					} );
 				} );
 			} );

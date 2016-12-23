@@ -31,26 +31,26 @@ export const requests = {
 };
 
 export const api_module_list_response = {
-	modules: [
-		{
-			id: 'module-a',
-			active: false
+	data: {
+		'module-a': {
+			module: 'module-a',
+			activated: false
 		},
-		{
-			id: 'module-b',
-			active: true,
+		'module-b': {
+			module: 'module-b',
+			activated: true,
 			options: {
 				c: {
 					currentValue: 2
 				}
 			}
 		}
-	]
+	}
 };
 
 export const moduleData = {
 	'module-a': {
-		id: 'module-a',
+		module: 'module-a',
 		active: false,
 		name: 'Module A',
 		description: 'Just another awesome module',
@@ -61,7 +61,7 @@ export const moduleData = {
 		module_tags: [ 'Test tag' ]
 	},
 	'module-b': {
-		id: 'module-b',
+		module: 'module-b',
 		active: true,
 		name: 'Module A',
 		description: 'Just another awesome module',
