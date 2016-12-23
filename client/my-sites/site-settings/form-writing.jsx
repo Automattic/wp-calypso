@@ -195,7 +195,7 @@ class SiteSettingsFormWriting extends Component {
 					this.props.isJetpackSite && (
 						<ThemeEnhancements
 							submittingForm={ this.state.submittingForm }
-							onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+							onSubmitForm={ this.handleSubmitForm }
 							fetchingSettings={ this.state.fetchingSettings }
 							/>
 					)
