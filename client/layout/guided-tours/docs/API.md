@@ -27,7 +27,7 @@ Here is the code used:
 
 ## Tour
 
-Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` elements as children.
+Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` elements as children (at least one is required).
 
 ### Props
 
@@ -39,12 +39,12 @@ Tour is a React component that declares the top-level of a tour. It defines cond
 
 ## Step
 
-Step is a React component that defines a single Step of a tour. It is represented as dark box on top of Calypso UI. Step can be positioned in many ways in relation to any DOM node in Calypso that is marked with `[data-tip-target]` attribute.
+Step is a React component that defines a single Step of a tour. It is represented as dark box on top of Calypso UI. Step can be positioned in many ways in relation to any DOM node in Calypso.
 
 ### Props
 
-* `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`.
-* `target`: (string, optional) Target which this step belongs to and will be used for positioning. Value of this prop is used to look up according `[data-tip-target]` in DOM. If you start this value with `.` (dot), it will be evaluated as a query selector, so you can select elements that have no `[data-tip-target]` defined.
+* `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use name `init` to indicate the step that the tour should start with.
+* `target`: (string, optional) Target which this step belongs to and will be used for positioning. Value of this prop is used to look up according `[data-tip-target]` in DOM. If you start this value with a dot or a space character, it will be passed to `document.querySelector`, so you can select an element that has no `[data-tip-target]` defined.
 * `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
 * `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'
