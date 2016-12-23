@@ -138,7 +138,11 @@ class ThemeEnhancements extends Component {
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
 											name="infinite_scroll_google_analytics" />
-										<span>{ translate( 'Track each infinite Scroll post load as a page view in Google Analytics' ) }</span>
+										<span>
+											{ translate(
+												'Track each infinite Scroll post load as a page view in Google Analytics'
+											) }
+										</span>
 									</FormLabel>
 								</div>
 							)
@@ -148,8 +152,8 @@ class ThemeEnhancements extends Component {
 					<FormFieldset>
 						<div className="theme-enhancements__info-link-container">
 							<InfoPopover position={ 'left' }>
-								<ExternalLink icon={ true } href={ 'https://jetpack.com/support/infinite-scroll' } target="_blank">
-									{ translate( 'Learn more about Infinite Scroll' ) }
+								<ExternalLink icon={ true } href={ 'https://jetpack.com/support/mobile-theme' } target="_blank">
+									{ translate( 'Learn more about Mobile Theme' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>
@@ -184,7 +188,11 @@ class ThemeEnhancements extends Component {
 											onChange={ this.onCheckboxChange }
 											disabled={ submittingForm }
 											name="wp_mobile_app_promos" />
-										<span>{ translate( 'Show an ad for the WordPress mobile apps in the footer of the mobile theme' ) }</span>
+										<span>
+											{ translate(
+												'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
+											) }
+										</span>
 									</FormLabel>
 								</div>
 							)
