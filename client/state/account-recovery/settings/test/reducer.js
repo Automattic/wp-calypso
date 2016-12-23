@@ -19,6 +19,10 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
@@ -179,5 +183,37 @@ describe( '#account-recovery/settings reducer:', () => {
 		} );
 
 		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set phoneValidated as true', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+		} );
+
+		assert.isTrue( state.data.phoneValidated );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as true', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
+		} );
+
+		assert.isTrue( state.isValidatingPhone );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS action should set isValidatingPhone as false', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+		} );
+
+		assert.isFalse( state.isValidatingPhone );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE action should set isValidatingPhone as false', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
+		} );
+
+		assert.isFalse( state.isValidatingPhone );
 	} );
 } );
