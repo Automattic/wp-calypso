@@ -266,8 +266,21 @@ function filterDesignTypeInFlow( flow ) {
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
 
-	if ( includes( defaultFlows, flowName ) && abtest( 'userFirstSignup' ) === 'userFirst' ) {
-		return 'userfirst';
+	/**
+	 * Only run the User First Signup for logged out users.
+	 */
+	if ( ! user.get() ) {
+		if ( includes( defaultFlows, flowName ) && abtest( 'userFirstSignup' ) === 'userFirst' ) {
+			return 'userfirst';
+		}
+
+		/**
+		 * Users should not be able to reach `userfirst-secondary` without being logged in, since
+		 * it doesn't contain the `user` step to register a user and site respectively.
+ 		 */
+		if ( flowName === 'userfirst-secondary' ) {
+			return 'main';
+		}
 	}
 
 	return flowName;
