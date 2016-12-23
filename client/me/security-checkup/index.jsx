@@ -117,11 +117,13 @@ const SecurityCheckup = React.createClass( {
 							showDismiss={ false }
 						/>
 					}
-					<RecoveryPhoneValidationNotice
-						onResend={ this.props.resendAccountRecoveryPhoneValidation }
-						onValidate={ this.props.validateAccountRecoveryPhone }
-						hasSent={ this.props.hasSentPhoneValidation }
-					/>
+					{ this.shouldShowPhoneValidationNotice() &&
+						<RecoveryPhoneValidationNotice
+							onResend={ this.props.resendAccountRecoveryPhoneValidation }
+							onValidate={ this.props.validateAccountRecoveryPhone }
+							hasSent={ this.props.hasSentPhoneValidation }
+						/>
+					}
 				</CompactCard>
 
 			</Main>
