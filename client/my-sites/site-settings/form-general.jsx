@@ -203,6 +203,7 @@ class SiteSettingsFormGeneral extends Component {
 						<FormInput
 							name="blogname"
 							id="blogname"
+							data-tip-target="site-title-input"
 							type="text"
 							value={ fields.blogname || '' }
 							onChange={ this.onChangeField( 'blogname' ) }
@@ -216,6 +217,7 @@ class SiteSettingsFormGeneral extends Component {
 							name="blogdescription"
 							type="text"
 							id="blogdescription"
+							data-tip-target="site-tagline-input"
 							value={ fields.blogdescription || '' }
 							onChange={ this.onChangeField( 'blogdescription' ) }
 							disabled={ isRequestingSettings }
