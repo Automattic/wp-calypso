@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	MEDIA_DELETE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -388,6 +389,49 @@ describe( 'reducer', () => {
 					icon: {
 						media_id: 42
 					}
+				}
+			} );
+		} );
+
+		it( 'should return same state if media deleted but not including site icon setting', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					icon: {
+						media_id: 42
+					}
+				}
+			} );
+			const state = items( original, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 36 ]
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should return site with unset icon property if media deleted includes icon setting', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					icon: {
+						media_id: 42
+					}
+				}
+			} );
+			const state = items( original, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog'
 				}
 			} );
 		} );
