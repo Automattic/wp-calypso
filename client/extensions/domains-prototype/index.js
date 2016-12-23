@@ -34,6 +34,14 @@ import Stylizer, { insertCss } from './stylizer';
 const productsList = productsFactory();
 const sites = sitesFactory();
 
+const render = ( content, context ) => {
+	renderWithReduxStore( (
+		<Stylizer onInsertCss={ insertCss }>
+			{ content }
+		</Stylizer>
+	), document.getElementById( 'primary' ), context.store );
+};
+
 const onAddDomain = ( suggestion ) => {
 	page( '/domains-prototype/select/' + suggestion.domain_name );
 };
@@ -45,32 +53,27 @@ const header = ( text ) => {
 const search = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-	renderWithReduxStore(
-		(
-			<Main>
-				{ header( 'Look for a web address' ) }
-				<RegisterDomainStep
-					path={ context.path }
-					suggestion={ context.params.suggestion }
-					domainsWithPlansOnly={ false }
-					onDomainsAvailabilityChange={ noop }
-					onAddDomain={ onAddDomain }
-					selectedSite={ null }
-					offerMappingOption
-					basePath={ route.sectionify( context.path ) }
-					products={ productsList.get() } />
-				}
-			</Main>
-		),
-		document.getElementById( 'primary' ),
-		context.store
+	render( ( <Main>
+			{ header( 'Look for a web address' ) }
+			<RegisterDomainStep
+				path={ context.path }
+				suggestion={ context.params.suggestion }
+				domainsWithPlansOnly={ false }
+				onDomainsAvailabilityChange={ noop }
+				onAddDomain={ onAddDomain }
+				selectedSite={ null }
+				offerMappingOption
+				basePath={ route.sectionify( context.path ) }
+				products={ productsList.get() } />
+			}
+		</Main> ), context
 	);
 };
 
 const select = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			{ header( 'You have selected ' + context.params.domainName ) }
 			<Card>
@@ -79,13 +82,13 @@ const select = ( context ) => {
 			</Card>
 			<Button primary href={ '/domains-prototype/checkout/' + context.params.domainName }>Buy now</Button>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const success = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			{ header( 'You now own ' + context.params.domainName ) }
 			<Card>
@@ -104,7 +107,7 @@ const success = ( context ) => {
 const checkout = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
-	renderWithReduxStore(
+	render(
 		(
 			<CheckoutData>
 				<Checkout
@@ -114,8 +117,7 @@ const checkout = ( context ) => {
 				/>
 			</CheckoutData>
 		),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 };
 
@@ -133,14 +135,6 @@ const getManageScreen = ( domain ) => {
 	);
 };
 
-const render = ( content, context ) => {
-	renderWithReduxStore( (
-		<Stylizer onInsertCss={ insertCss }>
-			{ content }
-		</Stylizer>
-	), document.getElementById( 'primary' ), context.store );
-};
-
 const manage = ( context ) => {
 	const domain = context.params.domainName;
 	render( getManageScreen( domain ), context );
@@ -148,18 +142,18 @@ const manage = ( context ) => {
 
 const landingPage = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2 className={ styles.header }>Set up a landing page for { domain }</h2>
 			<p>I think we can probably just show the customizer here</p>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const start = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2>Start a site</h2>
 			<Card>
@@ -172,12 +166,12 @@ const start = ( context ) => {
 				<Button href={ '/domains-prototype/manage/start/hosts/' + domain }>Something else</Button>
 			</Card>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const hosts = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2>Select a host</h2>
 			<Card>
@@ -186,17 +180,17 @@ const hosts = ( context ) => {
 				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Squarespace</Button>
 			</Card>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const connecting = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2>Connecting { domain }</h2>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const connectSubmit = ( event, domain ) => {
@@ -218,33 +212,33 @@ const connect = ( context ) => {
 		basePath = route.sectionify( context.pathname );
 	}
 
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2>Connect { domain } to an existing site</h2>
 			<form onSubmit={ ( event ) => connectSubmit( event, domain ) }>
 				<label>Enter the address of the site to connect { domain } to</label>
 				<FormTextInputWithAffixes type="text" placeholder="example.com" prefix="http://" />
-				<p>or select a site from the list</p>
-				<SitePicker
-					sites={ sites }
-					allSitesPath={ basePath }
-					siteBasePath={ basePath }
-					onClose={ preventPickerDefault }
-				/>
 			</form>
+			<p>or select a site from the list</p>
+			<SitePicker
+				sites={ sites }
+				allSitesPath={ basePath }
+				siteBasePath={ basePath }
+				onClose={ preventPickerDefault }
+			/>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 const connectExisting = ( context ) => {
 	const domain = context.params.domainName;
-	renderWithReduxStore( (
+	render( (
 		<Main>
 			<h2>Connecting { domain } to an http://sitename.com</h2>
 			<p>Some stuff</p>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 export default function() {

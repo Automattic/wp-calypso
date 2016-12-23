@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
@@ -23,24 +24,28 @@ class Manage extends React.Component {
 						title="Landing Page"
 						line="Customize a simple, one-page placeholder."
 						buttonName="Create a landing page"
+						onClick={ () => page( '/domains-prototype/manage/landing-page/' + domain ) }
 						currentPlan={ false } />
 
 					<PlanCompareCard
 						title="New Site"
 						line="Build a new website or blog."
 						buttonName="Create a new site"
+						onClick={ () => page( '/domains-prototype/manage/start/' + domain ) }
 						currentPlan={ false } />
 
 					<PlanCompareCard
 						title="Existing Site"
 						line="Connect an existing website or redirect to your social media."
 						buttonName="Connect a site"
+						onClick={ () => page( '/domains-prototype/manage/connect/' + domain ) }
 						currentPlan={ false } />
 
 					<PlanCompareCard
 						title="Add Email"
 						line="Add professional email to your domain."
 						buttonName="Set up email"
+						onClick={ () => page( '/domains/manage/email/' + domain ) }
 						currentPlan={ false } />
 				</div>
 			</Main>
