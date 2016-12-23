@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_START,
@@ -9,6 +8,7 @@ import {
 	POST_STATS_REQUEST_FAILURE
 } from 'state/action-types';
 import { receivePostStat } from 'state/stats/posts/actions';
+import batch from 'state/data-layer/wpcom/batch';
 
 export const requestPostStat = ( { dispatch }, { stat, siteId, postId } ) => {
 	dispatch( {
@@ -18,9 +18,8 @@ export const requestPostStat = ( { dispatch }, { stat, siteId, postId } ) => {
 		siteId
 	} );
 
-	return wpcom.site( siteId ).statsPostViews( postId, {
-		fields: stat
-	} ).then( data => {
+	const path = `/sites/${ siteId }/stats/post/${ postId }?fields=${ stat }`;
+	return batch.request( path ).then( data => {
 		if ( stat in data ) {
 			dispatch( receivePostStat( stat, siteId, postId, data[ stat ] ) );
 		}
@@ -41,7 +40,7 @@ export const requestPostStat = ( { dispatch }, { stat, siteId, postId } ) => {
 	} );
 };
 
-export default  {
+export default {
 	[ POST_STATS_REQUEST ]: [ requestPostStat ],
 };
 
