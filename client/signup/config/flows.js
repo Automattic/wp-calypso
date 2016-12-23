@@ -58,7 +58,7 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -70,7 +70,7 @@ const flows = {
 	},
 
 	premium: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -82,7 +82,7 @@ const flows = {
 	},
 
 	free: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
 		lastModified: '2016-06-02'
@@ -103,6 +103,13 @@ const flows = {
 	},
 
 	main: {
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'The current best performing flow in AB tests',
+		lastModified: '2016-05-23'
+	},
+
+	surveystep: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
@@ -110,28 +117,28 @@ const flows = {
 	},
 
 	sitetitle: {
-		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
 	},
 
 	website: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
 		lastModified: '2016-05-23'
 	},
 
 	blog: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
 		lastModified: '2016-05-23'
 	},
 
 	personal: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/personal/' + dependencies.siteSlug;
 		},
@@ -154,21 +161,21 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go through this flow receive a blogging-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go through this flow receive a website-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	desktop: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2016-05-30'
@@ -182,7 +189,7 @@ const flows = {
 	},
 
 	pressable: {
-		steps: [ 'survey', 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for testing the pressable-store step',
 		lastModified: '2016-06-27'
@@ -209,7 +216,7 @@ const flows = {
 	},
 
 	'domain-first': {
-		steps: [ 'domains', 'survey', 'design-type', 'themes', 'plans', 'user' ],
+		steps: [ 'domains', 'design-type', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		lastModified: '2016-12-20'
@@ -328,16 +335,15 @@ const Flows = {
 		}
 
 		/**
-		 * This is called on Signup start (page initialization),
-		 * before the steps are rendered. Used if there is a need
-		 * to filter the first step in the flow.
+		 * If there is need to test the first step in a flow,
+		 * the best way to do it is to check for:
+		 *
+		 * 	if ( '' === stepName ) { ... }
+		 *
+		 * This will be fired at the beginning of the signup flow.
 		 */
-		if ( '' === stepName ) {
-			abtest( 'noSurveyStep' );
-		}
-
 		if ( 'main' === flowName ) {
-			if ( 'survey' === stepName ) {
+			if ( '' === stepName ) {
 				abtest( 'siteTitleStep' );
 			}
 		}
@@ -359,13 +365,8 @@ const Flows = {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
+				return Flows.insertStepIntoFlow( 'site-title', flow );
 			}
-		}
-
-		// no matter the flow
-		if ( getABTestVariation( 'noSurveyStep' ) === 'hideSurveyStep' ) {
-			return Flows.removeStepFromFlow( 'survey', flow );
 		}
 
 		return flow;

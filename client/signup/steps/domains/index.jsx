@@ -22,8 +22,6 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
 
-import { abtest, getABTestVariation } from 'lib/abtest';
-
 import Notice from 'components/notice';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
@@ -152,12 +150,7 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-
-		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' ) ||
-			(
-				getABTestVariation( 'noSurveyStep' ) === 'showSurveyStep' &&
-				abtest( 'domainDotBlogSubdomain' ) === 'includeDotBlogSubdomain'
-			);
+		const includeDotBlogSubdomain = ( this.props.flowName === 'subdomain' );
 
 		return (
 			<RegisterDomainStep
