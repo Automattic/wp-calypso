@@ -13,10 +13,10 @@ import ButtonGroup from 'components/button';
 import Card from 'components/card';
 import Checkout from 'my-sites/upgrades/checkout';
 import CheckoutData from 'components/data/checkout';
-import Gridicon from 'components/gridicon';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import Main from 'components/main';
 import { navigation, siteSelection } from 'my-sites/controller';
+import PlanCompareCard from 'my-sites/plan-compare-card';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -128,39 +128,32 @@ const getManageScreen = ( domain ) => {
 	}
 
 	return (
-		<Main>
+		<Main wideLayout>
 			<h2 style={ styles.header }>What do you want to use { domain } for?</h2>
 			<div style={ styles.manageContainer }>
-				<Card style={ styles.manageCard }>
-					<h3>Landing page</h3>
-					<Button href={ '/domains-prototype/manage/landing-page/' + domain } primary>
-						<Gridicon icon="house" /> Edit
-					</Button>
-				</Card>
-				<Card style={ styles.manageCard }>
-					<h3>Start a site</h3>
-					<Button href={ '/domains-prototype/manage/start/' + domain } primary>
-						<Gridicon icon="add" /> Get started
-					</Button>
-				</Card>
-				<Card style={ styles.manageCard }>
-					<h3>Connect to existing site</h3>
-					<Button href={ '/domains-prototype/manage/connect/' + domain } primary>
-						<Gridicon icon="plugins" /> Connect
-					</Button>
-				</Card>
-				<Card style={ styles.manageCard }>
-					<h3>Add email</h3>
-					<Button href={ '/domains/manage/email/' + domain } primary>
-						<Gridicon icon="mention" /> Set up email
-					</Button>
-				</Card>
-				<Card style={ styles.manageCard }>
-					<h3>Something else</h3>
-					<Button href={ '/domains/manage/' + domain } primary>
-						<Gridicon icon="cog" /> Configure settings
-					</Button>
-				</Card>
+				<PlanCompareCard
+					title="Landing Page"
+					line="Customize a simple, one-page placeholder."
+					buttonName="Create a landing page"
+					currentPlan={ false }/>
+
+				<PlanCompareCard
+					title="New Site"
+					line="Build a new website or blog."
+					buttonName="Create a new site"
+					currentPlan={ false }/>
+
+				<PlanCompareCard
+					title="Existing Site"
+					line="Connect an existing website or redirect to your social media."
+					buttonName="Connect a site"
+					currentPlan={ false }/>
+
+				<PlanCompareCard
+					title="Add Email"
+					line="Add professional email to your domain."
+					buttonName="Set up email"
+					currentPlan={ false }/>
 			</div>
 		</Main>
 	);
