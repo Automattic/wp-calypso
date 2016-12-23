@@ -161,10 +161,7 @@ export class VirtualList extends Component {
 
 	cellRendererWrapper = ( { key, style, ...rest } ) => {
 		return (
-			<div
-				className="Grid__cell"
-				key={ key }
-				style={ style }>
+			<div key={ key } style={ style }>
 				{ this.renderRow( rest ) }
 			</div>
 		);
