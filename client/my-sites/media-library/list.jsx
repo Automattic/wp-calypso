@@ -8,6 +8,7 @@ var ReactDom = require( 'react-dom' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
+import { AutoSizer, InfiniteLoader, Grid } from 'react-virtualized';
 import { connect } from 'react-redux';
 
 /**
@@ -18,7 +19,6 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
@@ -64,6 +64,12 @@ export const MediaLibraryList = React.createClass( {
 		};
 	},
 
+	componentWillMount() {
+		if ( ! this.props.media ) {
+			this.props.mediaOnFetchNextPage();
+		}
+	},
+
 	setListContext( component ) {
 		if ( ! component ) {
 			return;
@@ -74,36 +80,8 @@ export const MediaLibraryList = React.createClass( {
 		} );
 	},
 
-	getMediaItemHeight: function() {
-		return Math.round( this.props.containerWidth * this.props.mediaScale ) + this.props.rowPadding;
-	},
-
 	getItemsPerRow: function() {
 		return Math.floor( 1 / this.props.mediaScale );
-	},
-
-	getMediaItemStyle: function( index ) {
-		var itemsPerRow = this.getItemsPerRow(),
-			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
-			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
-			style, marginValue;
-
-		style = {
-			paddingBottom: this.props.rowPadding,
-			fontSize: this.props.mediaScale * 225
-		};
-
-		if ( ! isFillingEntireRow && ! isLastInRow ) {
-			marginValue = ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) * 100 + '%';
-
-			if ( user.isRTL() ) {
-				style.marginLeft = marginValue;
-			} else {
-				style.marginRight = marginValue;
-			}
-		}
-
-		return style;
 	},
 
 	toggleItem: function( item, shiftKeyPressed ) {
@@ -149,29 +127,32 @@ export const MediaLibraryList = React.createClass( {
 		}
 	},
 
-	getItemRef: function( item ) {
-		return 'item-' + item.ID;
-	},
+	renderItem: function( { rowIndex, columnIndex, key, style } ) {
+		var media = this.props.media || [];
+		var index = ( rowIndex * this.getItemsPerRow() ) + columnIndex;
+		var item = media[ index ];
 
-	renderItem: function( item ) {
-		var index = findIndex( this.props.media, { ID: item.ID } ),
-			selectedItems = this.props.mediaLibrarySelectedItems,
-			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
-			ref = this.getItemRef( item ),
-			showGalleryHelp;
+		if ( ! item ) {
+			return (
+				<div key={ key } style={ style } />
+			);
+		}
 
-		showGalleryHelp = (
+		var selectedItems = this.props.mediaLibrarySelectedItems;
+		var selectedIndex = findIndex( selectedItems, { ID: item.ID } );
+		var showGalleryHelp = (
 			! this.props.single &&
 			selectedIndex !== -1 &&
 			selectedItems.length === 1 &&
 			'image' === MediaUtils.getMimePrefix( item )
 		);
 
+		style.fontSize = this.props.mediaScale * 225;
+
 		return (
 			<ListItem
-				ref={ ref }
-				key={ ref }
-				style={ this.getMediaItemStyle( index ) }
+				key={ key }
+				style={ style }
 				media={ item }
 				scale={ this.props.mediaScale }
 				photon={ this.props.photon }
@@ -192,20 +173,33 @@ export const MediaLibraryList = React.createClass( {
 			return (
 				<ListItem
 					key={ 'placeholder-' + i }
-					style={ this.getMediaItemStyle( itemsVisible + i ) }
 					scale={ this.props.mediaScale } />
 			);
 		}, this );
 	},
 
-	render: function() {
-		var onFetchNextPage;
+	isRowLoaded: function( { index } ) {
+		console.log( 'isRowLoaded', index );
 
+		return !! this.props.media[ index ];
+	},
+
+	loadMoreRows: function( { startIndex, stopIndex } ) {
+		console.log( `Loading rows ${startIndex} - ${stopIndex}.` );
+
+		// InfiniteList passes its own parameter which would interfere
+		// with the optional parameters expected by mediaOnFetchNextPage
+		this.props.mediaOnFetchNextPage();
+	},
+
+	render: function() {
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
-		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
+		var media = this.props.media || [];
+
+		if ( ! this.props.mediaHasNextPage && media.length === 0 ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
@@ -213,26 +207,36 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
-		onFetchNextPage = function() {
-			// InfiniteList passes its own parameter which would interfere
-			// with the optional parameters expected by mediaOnFetchNextPage
-			this.props.mediaOnFetchNextPage();
-		}.bind( this );
+		var columnCount = this.getItemsPerRow();
+		var rowCount = Math.ceil( media.length / columnCount );
 
 		return (
-			<InfiniteList
-				ref={ this.setListContext }
-				context={ this.props.scrollable ? this.state.listContext : false }
-				items={ this.props.media || [] }
-				itemsPerRow={ this.getItemsPerRow() }
-				lastPage={ ! this.props.mediaHasNextPage }
-				fetchingNextPage={ this.props.mediaFetchingNextPage }
-				guessedItemHeight={ this.getMediaItemHeight() }
-				fetchNextPage={ onFetchNextPage }
-				getItemRef={ this.getItemRef }
-				renderItem={ this.renderItem }
-				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-				className="media-library__list" />
+			<div className="media-library__list">
+				<InfiniteLoader
+					isRowLoaded={ this.isRowLoaded }
+					loadMoreRows={ this.loadMoreRows }
+					rowCount={ 1000 }
+					threshold={ 1 }>
+					{ ( { onRowsRendered, registerChild } ) => (
+						<AutoSizer>
+							{ ( { height, width } ) => (
+								<Grid
+									width={ width }
+									height={ height }
+									columnCount={ columnCount }
+									columnWidth={ Math.floor( width / columnCount ) }
+									rowCount={ rowCount }
+									rowHeight={ Math.floor( width / columnCount ) }
+									cellRenderer={ this.renderItem }
+									onRowsRendered={ onRowsRendered }
+									ref={ registerChild }
+									// Trigger update on change.
+									selectedItems={ this.props.mediaLibrarySelectedItems } />
+							)}
+						</AutoSizer>
+					) }
+				</InfiniteLoader>
+			</div>
 		);
 	}
 } );
