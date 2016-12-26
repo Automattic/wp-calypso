@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-import { bindActionCreators, compose } from 'redux';
 import { localize } from 'i18n-calypso';
+import {
+	debounce,
+	flowRight as compose,
+	head,
+	isEmpty
+} from 'lodash';
+import { bindActionCreators } from 'redux';
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	debounce = require( 'lodash/debounce' ),
-	head = require( 'lodash/head' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect;
 
