@@ -257,7 +257,6 @@ const MapDomainStep = React.createClass( {
 
 			default:
 				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
-				break;
 		}
 
 		if ( message ) {
