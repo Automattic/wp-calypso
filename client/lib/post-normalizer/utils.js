@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { find, forEach, some, endsWith } from 'lodash';
+import { find, forEach, some, endsWith, findIndex } from 'lodash';
 import url from 'url';
 
 /**
@@ -163,16 +163,20 @@ export function isCandidateForCanonicalImage( image ) {
 /** returns whether or not a posts featuredImages is contained within the contents
  *
  * @param {Object} post - the post to check
- * @returns {Boolean} whether or not the featuredImage is also contained within the content
+ * @returns {Boolean|Number} false if featuredImage is not within content content_images.
+ *   otherwise returns the index of the dupe in post.images.
  */
 export function isFeaturedImageInContent( post ) {
 	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
 		const featuredImageUrl = url.parse( post.post_thumbnail.URL, true, true );
-
-		return find( post.content_images, img => {
+		const indexOfContentImage = findIndex( post.images, img => {
 			const imgUrl = url.parse( img.src, true, true );
 			return imgUrl.pathname === featuredImageUrl.pathname;
-		} );
+		}, 1 ); // skip first element in post.images because it is always the featuredImage
+
+		if ( indexOfContentImage > 0 ) {
+			return indexOfContentImage;
+		}
 	}
 
 	return false;

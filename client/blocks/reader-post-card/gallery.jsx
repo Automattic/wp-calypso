@@ -16,11 +16,13 @@ const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
-	let worthyImages = filter( post.images, imageIsBigEnoughForGallery );
-	if ( isFeaturedImageInContent( post ) ) {
-		worthyImages = worthyImages.slice( 1 );
+	const images = post.images && [ ...post.images ] || [];
+	const indexToRemove = isFeaturedImageInContent( post );
+	if ( indexToRemove ) {
+		images.splice( indexToRemove, 1 );
 	}
 
+	const worthyImages = filter( images, imageIsBigEnoughForGallery );
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 
