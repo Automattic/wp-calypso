@@ -93,7 +93,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var classes, props, style, title;
+		var classes, props, title;
 
 		classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
@@ -104,9 +104,7 @@ export default React.createClass( {
 
 		props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
-		style = assign( {
-			width: ( this.props.scale * 100 ) + '%'
-		}, this.props.style );
+		props.style = this.props.style;
 
 		if ( this.props.media ) {
 			title = this.props.media.file;
@@ -117,7 +115,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+			<div className={ classes } onClick={ this.clickItem } { ...props }>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>

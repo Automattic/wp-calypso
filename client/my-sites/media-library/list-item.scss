@@ -8,8 +8,8 @@
 	&.is-selected::after {
 		content: attr( data-selected-number ) '';
 		position: absolute;
-			right: 8px;
-			bottom: 18px;
+			right: 13px;
+			bottom: 13px;
 		z-index: z-index( '.media-library__list-item', '.media-library__list-item.is-selected::after' );
 		width: 28px;
 		height: 28px;
@@ -49,7 +49,8 @@
 	position: relative;
 	overflow: hidden;
 	height: 0;
-	padding-bottom: 100%;
+	margin: 5px;
+	padding-bottom: calc( 100% - 10px );
 	background-color: lighten( $gray, 20% );
 }
 
