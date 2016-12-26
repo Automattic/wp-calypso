@@ -39,14 +39,16 @@ class TransferOtherUser extends React.Component {
 			React.PropTypes.bool
 		] ).isRequired,
 		wapiDomainInfo: React.PropTypes.object.isRequired,
+		users: React.PropTypes.array.isRequired,
 		currentUser: React.PropTypes.object.isRequired
 	};
 
 	constructor( props ) {
 		super( props );
 
+		const defaultUser = head( this.filterAvailableUsers( props.users ) );
 		this.state = {
-			selectedUserId: '',
+			selectedUserId: defaultUser ? defaultUser.ID : '',
 			showConfirmationDialog: false,
 			disableDialogButtons: false
 		};
