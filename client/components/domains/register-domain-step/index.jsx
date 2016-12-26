@@ -654,7 +654,6 @@ const RegisterDomainStep = React.createClass( {
 				} );
 				break;
 
-			case 'server_error':
 			default:
 				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 				break;
