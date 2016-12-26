@@ -18,8 +18,7 @@ var MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
-	ListNoContent = require( './list-no-content' ),
-	user = require( 'lib/user' )();
+	ListNoContent = require( './list-no-content' );
 
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
@@ -107,7 +106,7 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			let interimIndex = findIndex( selectedItems, {
+			const interimIndex = findIndex( selectedItems, {
 				ID: this.props.media[ i ].ID
 			} );
 
@@ -128,9 +127,9 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	renderItem: function( { rowIndex, columnIndex, key, style } ) {
-		var media = this.props.media || [];
-		var index = ( rowIndex * this.getItemsPerRow() ) + columnIndex;
-		var item = media[ index ];
+		const media = this.props.media || [];
+		const index = ( rowIndex * this.getItemsPerRow() ) + columnIndex;
+		const item = media[ index ];
 
 		if ( ! item ) {
 			return (
@@ -138,9 +137,9 @@ export const MediaLibraryList = React.createClass( {
 			);
 		}
 
-		var selectedItems = this.props.mediaLibrarySelectedItems;
-		var selectedIndex = findIndex( selectedItems, { ID: item.ID } );
-		var showGalleryHelp = (
+		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
+		const showGalleryHelp = (
 			! this.props.single &&
 			selectedIndex !== -1 &&
 			selectedItems.length === 1 &&
@@ -179,13 +178,13 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	isRowLoaded: function( { index } ) {
-		console.log( 'isRowLoaded', index );
+		window.console.log( 'isRowLoaded', index );
 
 		return !! this.props.media[ index ];
 	},
 
 	loadMoreRows: function( { startIndex, stopIndex } ) {
-		console.log( `Loading rows ${startIndex} - ${stopIndex}.` );
+		window.console.log( `Loading rows ${ startIndex } - ${ stopIndex }.` );
 
 		// InfiniteList passes its own parameter which would interfere
 		// with the optional parameters expected by mediaOnFetchNextPage
@@ -197,7 +196,7 @@ export const MediaLibraryList = React.createClass( {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
-		var media = this.props.media || [];
+		const media = this.props.media || [];
 
 		if ( ! this.props.mediaHasNextPage && media.length === 0 ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
@@ -207,8 +206,8 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
-		var columnCount = this.getItemsPerRow();
-		var rowCount = Math.ceil( media.length / columnCount );
+		const columnCount = this.getItemsPerRow();
+		const rowCount = Math.ceil( media.length / columnCount );
 
 		return (
 			<div className="media-library__list">
