@@ -15,21 +15,36 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { decodeEntities } from 'lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
 import CompactCard from 'components/card/compact';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import Gridicon from 'components/gridicon';
 
-const TaxonomyCard = ( { count, defaultTerm, labels, site, taxonomy, translate } ) => {
+const TaxonomyCard = ( {
+		count,
+		defaultTerm,
+		labels,
+		site,
+		taxonomy,
+		translate,
+		recordGoogleEvent: recordGAEvent,
+		bumpStat: recordMCStat
+	} ) => {
 	const settingsLink = site ? `/settings/taxonomies/${ taxonomy }/${ site.slug }` : null;
 	const isLoading = ! labels.name || isUndefined( count );
 	const classes = classNames( 'taxonomies__card-title', {
 		'is-loading': isLoading
 	} );
 
+	const recordAnalytics = () => {
+		recordGAEvent( 'Site Settings', `Clicked Writing Manage ${ taxonomy }` );
+		recordMCStat( 'taxonomy_manager', `manage_${ taxonomy }` );
+	};
+
 	return (
-		<CompactCard href={ settingsLink }>
+		<CompactCard onClick={ recordAnalytics } href={ settingsLink }>
 			{ site && <QuerySiteSettings siteId={ site.ID } /> }
 			{ site && <QueryTerms siteId={ site.ID } taxonomy={ taxonomy }	query={ {} } /> }
 			<h2 className={ classes }>{ labels.name }</h2>
@@ -62,5 +77,6 @@ export default connect(
 			labels,
 			site
 		};
-	}
+	},
+	{ recordGoogleEvent, bumpStat }
 )( localize( TaxonomyCard ) );

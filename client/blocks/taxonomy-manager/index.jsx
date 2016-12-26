@@ -15,6 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TermFormDialog from 'blocks/term-form-dialog';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {
@@ -22,6 +23,8 @@ export class TaxonomyManager extends Component {
 		labels: PropTypes.object,
 		postType: PropTypes.string,
 		siteId: PropTypes.number,
+		recordGoogleEvent: PropTypes.func,
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -38,6 +41,9 @@ export class TaxonomyManager extends Component {
 	};
 
 	newTerm = () => {
+		const { taxonomy } = this.props;
+		this.props.recordGoogleEvent( 'Taxonomy Manager', `Clicked Add ${ taxonomy }` );
+		this.props.bumpStat( 'taxonomy_manager', `clicked_add_${ taxonomy }` );
 		this.setState( {
 			termFormDialogOpened: true,
 			selectedTerm: undefined
@@ -45,6 +51,9 @@ export class TaxonomyManager extends Component {
 	};
 
 	editTerm = term => {
+		const { taxonomy } = this.props;
+		this.props.recordGoogleEvent( 'Taxonomy Manager', `Clicked Edit ${ taxonomy }` );
+		this.props.bumpStat( 'taxonomy_manager', `clicked_edit_${ taxonomy }` );
 		this.setState( {
 			termFormDialogOpened: true,
 			selectedTerm: term
@@ -98,5 +107,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
 		return { labels, siteId };
-	}
+	},
+	{ recordGoogleEvent, bumpStat }
 )( TaxonomyManager );

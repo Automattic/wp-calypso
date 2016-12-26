@@ -24,6 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 import { addTerm, updateTerm } from 'state/terms/actions';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
 class TermFormDialog extends Component {
 	static initialState = {
@@ -47,7 +48,9 @@ class TermFormDialog extends Component {
 		taxonomy: PropTypes.string,
 		term: PropTypes.object,
 		terms: PropTypes.array,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		recordGoogleEvent: PropTypes.func,
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -110,10 +113,22 @@ class TermFormDialog extends Component {
 
 		this.setState( { saving: true } );
 		const { siteId, taxonomy } = this.props;
+		const statLabels = {
+			mc: `edited_${ taxonomy }`,
+			ga: `Edited ${ taxonomy }`
+		};
+
 		const isNew = ! this.props.term;
 		const savePromise = isNew
 			? this.props.addTerm( siteId, taxonomy, term )
 			: this.props.updateTerm( siteId, taxonomy, this.props.term.ID, this.props.term.slug, term );
+
+		if ( isNew ) {
+			statLabels.mc = `created_${ taxonomy }`;
+			statLabels.ga = `Created New ${ taxonomy }`;
+		}
+		this.props.bumpStat( 'taxonomy_manager', statLabels.mc );
+		this.props.recordGoogleEvent( 'Taxonomy Manager', statLabels.ga );
 
 		savePromise
 			.then( savedTerm => {
@@ -312,5 +327,5 @@ export default connect(
 			siteId
 		};
 	},
-	{ addTerm, updateTerm }
+	{ addTerm, updateTerm, recordGoogleEvent, bumpStat }
 )( localize( TermFormDialog ) );
