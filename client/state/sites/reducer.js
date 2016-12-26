@@ -12,6 +12,7 @@ import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
+import sharingButtons from './sharing-buttons/reducer';
 
 import mediaStorage from './media-storage/reducer';
 import {
@@ -197,5 +198,6 @@ export default combineReducers( {
 	guidedTransfer,
 	vouchers,
 	updates,
-	requesting
+	requesting,
+	sharingButtons,
 } );

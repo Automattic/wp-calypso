@@ -41,7 +41,8 @@ describe( 'reducer', () => {
 			'guidedTransfer',
 			'vouchers',
 			'updates',
-			'requesting'
+			'requesting',
+			'sharingButtons',
 		] );
 	} );
 
