@@ -205,7 +205,7 @@ class TransferOtherUser extends React.Component {
 										{ this.getUserDisplayName( user ) }
 									</option>
 								) )
-								: ( <option value="">{ translate( '-- Site has no administrators --' ) }</option> )
+								: ( <option value="">{ translate( '-- Site has no other administrators --' ) }</option> )
 							}
 						</FormSelect>
 					</FormFieldset>
