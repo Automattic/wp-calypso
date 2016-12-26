@@ -7,11 +7,14 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import i18n, { localize } from 'i18n-calypso';
 import Debug from 'debug';
 import emailValidator from 'email-validator';
-import debounce from 'lodash/debounce';
-import map from 'lodash/map';
-import size from 'lodash/size';
+import {
+	debounce,
+	flowRight as compose,
+	map,
+	size,
+} from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
