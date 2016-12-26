@@ -758,6 +758,39 @@ describe( 'index', function() {
 				}
 			);
 		} );
+
+		it( 'detects images intermixed with embeds and in the correct order', function( done ) {
+			normalizer(
+				{
+					content: '<img src="example1.png" /> <iframe src="https://vimeo.com/v/hi"></iframe> <img src="example2.png" />'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
+					assert.lengthOf( normalized.content_media, 3 );
+					assert.lengthOf( normalized.content_images, 2 );
+					assert.lengthOf( normalized.content_embeds, 1 );
+					assert.equal( normalized.content_media[ 0 ], normalized.content_images[ 0 ] );
+					assert.equal( normalized.content_media[ 1 ], normalized.content_embeds[ 0 ] );
+					assert.equal( normalized.content_media[ 2 ], normalized.content_images[ 1 ] );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'detects images', function( done ) {
+			normalizer(
+				{
+					content: '<img src="example1.png" /> <img src="/relativeurl.png" /> <img src="https://google.com/images/absoluteurl.jpg"> text in the middle</img>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
+					assert.lengthOf( normalized.content_media, 3 );
+					assert.lengthOf( normalized.content_images, 3 );
+					assert.lengthOf( normalized.content_embeds, 0 );
+
+					done( err );
+				}
+			);
+		} );
+
 		it( 'detects trusted iframes', function( done ) {
 			normalizer(
 				{
