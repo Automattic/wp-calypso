@@ -4,7 +4,6 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
-	assign = require( 'lodash/assign' ),
 	omit = require( 'lodash/omit' ),
 	isEqual = require( 'lodash/isEqual' );
 
