@@ -46,24 +46,25 @@ const RelatedContentPreview = ( { enabled, showHeadline, showThumbnails, transla
 	return (
 		<div id="settings-reading-relatedposts-preview" className={ enabled ? null : 'disabled-block' }>
 			<FormLabel>{ translate( 'Preview:' ) }</FormLabel>
+
 			<div id="jp-relatedposts" className="jp-relatedposts">
-				{ showHeadline
-					? <h3 className="jp-relatedposts-headline">{ translate( 'Related' ) }</h3>
-					: null
+				{
+					showHeadline &&
+					<h3 className="jp-relatedposts-headline">{ translate( 'Related' ) }</h3>
 				}
-				<div className="jp-relatedposts-items jp-relatedposts-items-visual">
+
+				<div className="jp-relatedposts-items">
 					{
 						posts.map( ( post, index ) => {
 							return (
-								<div className="jp-relatedposts-post jp-relatedposts-post0 jp-relatedposts-post-thumbs" data-post-format="image" key={ index }>
-									{ showThumbnails
-										? <a className="jp-relatedposts-post-a" href="#jetpack_relatedposts" rel="nofollow" data-origin="0" data-position="0">
-											<img className="jp-relatedposts-post-img" src={ post.image } width="350" alt={ post.title } scale="0" />
+								<div className="jp-relatedposts-post" key={ index }>
+									{ showThumbnails &&
+										<a className="jp-relatedposts-post-a">
+											<img className="jp-relatedposts-post-img" src={ post.image } alt={ post.title } />
 										</a>
-										: null
 									}
 									<h4 className="jp-relatedposts-post-title">
-										<a className="jp-relatedposts-post-a" href="#jetpack_relatedposts" rel="nofollow" data-origin="0" data-position="0">
+										<a className="jp-relatedposts-post-a">
 											{ post.title }
 										</a>
 									</h4>
