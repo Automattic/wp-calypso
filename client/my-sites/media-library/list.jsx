@@ -166,9 +166,11 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	loadMoreRows: function() {
-		// InfiniteList passes its own parameter which would interfere
-		// with the optional parameters expected by mediaOnFetchNextPage
-		this.props.mediaOnFetchNextPage();
+		if ( ! this.props.mediaFetchingNextPage && this.props.mediaHasNextPage ) {
+			// May be triggered while dispatching an action.
+			// We cannot create a new action while dispatching an old one.
+			setTimeout( this.props.mediaOnFetchNextPage );
+		}
 	},
 
 	render: function() {
@@ -220,7 +222,7 @@ export const MediaLibraryList = React.createClass( {
 									ref={ registerChild }
 									// Trigger update on change.
 									selectedItems={ this.props.mediaLibrarySelectedItems } />
-							)}
+							) }
 						</AutoSizer>
 					) }
 				</InfiniteLoader>
