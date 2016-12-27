@@ -55,7 +55,8 @@ const TermTreeSelectorList = React.createClass( {
 		defaultTermId: PropTypes.number,
 		lastPage: PropTypes.number,
 		onSearch: PropTypes.func,
-		onChange: PropTypes.func
+		onChange: PropTypes.func,
+		isError: PropTypes.bool
 	},
 
 	getInitialState() {
@@ -394,10 +395,11 @@ const TermTreeSelectorList = React.createClass( {
 		const searchLength = this.state.searchTerm.length;
 		const showSearch = ( searchLength > 0 || ! isCompact ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, loading, siteId, taxonomy, query } = this.props;
+		const { className, isError, loading, siteId, taxonomy, query } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
-			'is-compact': isCompact
+			'is-compact': isCompact,
+			'is-error': isError
 		} );
 
 		return (
