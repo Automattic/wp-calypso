@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+var React = require( 'react' ),
 	clone = require( 'lodash/clone' ),
 	noop = require( 'lodash/noop' ),
 	filter = require( 'lodash/filter' ),
@@ -28,6 +27,7 @@ export const MediaLibraryList = React.createClass( {
 
 	propTypes: {
 		site: React.PropTypes.object,
+		batchSize: React.PropTypes.number,
 		media: React.PropTypes.arrayOf( React.PropTypes.object ),
 		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
 		filter: React.PropTypes.string,
@@ -51,6 +51,8 @@ export const MediaLibraryList = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			batchSize: 20,
+			media: [],
 			mediaLibrarySelectedItems: Object.freeze( [] ),
 			containerWidth: 0,
 			rowPadding: 10,
@@ -61,26 +63,6 @@ export const MediaLibraryList = React.createClass( {
 			scrollable: false,
 			onEditItem: noop
 		};
-	},
-
-	componentWillMount() {
-		if ( ! this.props.media ) {
-			this.props.mediaOnFetchNextPage();
-		}
-	},
-
-	setListContext( component ) {
-		if ( ! component ) {
-			return;
-		}
-
-		this.setState( {
-			listContext: ReactDom.findDOMNode( component )
-		} );
-	},
-
-	getItemsPerRow: function() {
-		return Math.floor( 1 / this.props.mediaScale );
 	},
 
 	toggleItem: function( item, shiftKeyPressed ) {
@@ -127,13 +109,21 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	renderItem: function( { rowIndex, columnIndex, key, style } ) {
-		const media = this.props.media || [];
-		const index = ( rowIndex * this.getItemsPerRow() ) + columnIndex;
-		const item = media[ index ];
+		const index = rowIndex * this._columnCount + columnIndex;
+		const item = this._gridItems[ index ];
+
+		style.fontSize = this.props.mediaScale * 225;
 
 		if ( ! item ) {
+			return;
+		}
+
+		if ( item.loading ) {
 			return (
-				<div key={ key } style={ style } />
+				<ListItem
+					key={ key }
+					style={ style }
+					scale={ this.props.mediaScale } />
 			);
 		}
 
@@ -145,8 +135,6 @@ export const MediaLibraryList = React.createClass( {
 			selectedItems.length === 1 &&
 			'image' === MediaUtils.getMimePrefix( item )
 		);
-
-		style.fontSize = this.props.mediaScale * 225;
 
 		return (
 			<ListItem
@@ -162,30 +150,22 @@ export const MediaLibraryList = React.createClass( {
 		);
 	},
 
-	renderLoadingPlaceholders: function() {
-		var itemsPerRow = this.getItemsPerRow(),
-			itemsVisible = ( this.props.media || [] ).length,
-			placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
+	createOnSectionRendered( onRowsRendered ) {
+		const columnCount = this._columnCount;
 
-		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
-			return (
-				<ListItem
-					key={ 'placeholder-' + i }
-					scale={ this.props.mediaScale } />
-			);
-		}, this );
+		return function( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
+			const startIndex = rowStartIndex * columnCount + columnStartIndex;
+			const stopIndex = rowStopIndex * columnCount + columnStopIndex;
+
+			return onRowsRendered( { startIndex, stopIndex } );
+		};
 	},
 
 	isRowLoaded: function( { index } ) {
-		window.console.log( 'isRowLoaded', index );
-
-		return !! this.props.media[ index ];
+		return !! this.props.media[ index ] || ! this.props.mediaHasNextPage;
 	},
 
-	loadMoreRows: function( { startIndex, stopIndex } ) {
-		window.console.log( `Loading rows ${ startIndex } - ${ stopIndex }.` );
-
+	loadMoreRows: function() {
 		// InfiniteList passes its own parameter which would interfere
 		// with the optional parameters expected by mediaOnFetchNextPage
 		this.props.mediaOnFetchNextPage();
@@ -196,9 +176,7 @@ export const MediaLibraryList = React.createClass( {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
-		const media = this.props.media || [];
-
-		if ( ! this.props.mediaHasNextPage && media.length === 0 ) {
+		if ( ! this.props.mediaHasNextPage && this.props.media.length === 0 ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
@@ -206,28 +184,39 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
-		const columnCount = this.getItemsPerRow();
-		const rowCount = Math.ceil( media.length / columnCount );
+		if ( this.props.mediaHasNextPage ) {
+			this._gridItems = this.props.media.concat(
+				Array.apply( null, new Array( this.props.batchSize ) ).map( () => {
+					return { loading: true };
+				} )
+			);
+		} else {
+			this._gridItems = this.props.media;
+		}
+
+		this._columnCount = Math.floor( 1 / this.props.mediaScale );
+		this._rowCount = Math.ceil( this._gridItems.length / this._columnCount );
 
 		return (
 			<div className="media-library__list">
 				<InfiniteLoader
 					isRowLoaded={ this.isRowLoaded }
 					loadMoreRows={ this.loadMoreRows }
-					rowCount={ 1000 }
-					threshold={ 1 }>
+					rowCount={ this._gridItems.length }
+					threshold={ 1 }
+					minimumBatchSize={ this.props.batchSize }>
 					{ ( { onRowsRendered, registerChild } ) => (
 						<AutoSizer>
 							{ ( { height, width } ) => (
 								<Grid
 									width={ width }
 									height={ height }
-									columnCount={ columnCount }
-									columnWidth={ Math.floor( width / columnCount ) }
-									rowCount={ rowCount }
-									rowHeight={ Math.floor( width / columnCount ) }
+									columnCount={ this._columnCount }
+									columnWidth={ Math.floor( width / this._columnCount ) }
+									rowCount={ this._rowCount }
+									rowHeight={ Math.floor( width / this._columnCount ) }
 									cellRenderer={ this.renderItem }
-									onRowsRendered={ onRowsRendered }
+									onSectionRendered={ this.createOnSectionRendered( onRowsRendered ) }
 									ref={ registerChild }
 									// Trigger update on change.
 									selectedItems={ this.props.mediaLibrarySelectedItems } />
