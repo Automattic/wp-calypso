@@ -1,26 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
 
-/**
- * Main
- */
-var ActionPanel = React.createClass( {
+const ActionPanel = ( { children } ) => {
+	return (
+		<Card className="settings-action-panel">
+			{ children }
+		</Card>
+	);
+};
 
-	render: function() {
-		return (
-			<Card className="settings-action-panel">
-				{ this.props.children }
-			</Card>
-		);
-	}
-
-} );
-
-module.exports = ActionPanel;
+export default ActionPanel;
