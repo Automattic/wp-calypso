@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSharingButtons } from 'state/site-settings/selectors';
-import { requestSharingButtons } from 'state/site-settings/actions';
+import { isRequestingSharingButtons } from 'state/selectors';
+import { requestSharingButtons } from 'state/sites/sharing-buttons/actions';
 
 class QuerySharingButtons extends Component {
 	componentWillMount() {
