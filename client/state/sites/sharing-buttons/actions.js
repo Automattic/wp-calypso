@@ -29,7 +29,7 @@ export function receiveSharingButtons( siteId, settings ) {
 }
 
 /**
- * Returns an action object to be used in signalling that some sharing buttons have been update.
+ * Returns an action object to be used in signalling that some sharing buttons have been updated.
  *
  * @param  {Number} siteId Site ID
  * @param  {Object} settings The updated sharing buttons
