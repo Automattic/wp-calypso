@@ -32,12 +32,6 @@ export default React.createClass( {
 		};
 	},
 
-	componentDidMount: function() {
-		this.setState( {
-			containerWidth: this.refs.container.clientWidth
-		} );
-	},
-
 	onFilterChange: function( filter ) {
 		let redirect = '/media';
 
@@ -110,7 +104,7 @@ export default React.createClass( {
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
 		return (
-			<div ref="container" className="main main-column media" role="main">
+			<div className="main main-column media" role="main">
 				<SidebarNavigation />
 				{ ( this.state.editedItem || this.state.openedDetails ) &&
 					<Dialog
@@ -144,7 +138,7 @@ export default React.createClass( {
 					site={ site || false }
 					single={ true }
 					onEditItem={ this.openDetailsModal }
-					containerWidth={ this.state.containerWidth } />
+					disableHeight={ true } />
 			</div>
 		);
 	}

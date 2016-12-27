@@ -32,7 +32,7 @@ const MediaLibraryContent = React.createClass( {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
 		search: React.PropTypes.string,
-		containerWidth: React.PropTypes.number,
+		disableHeight: React.PropTypes.bool,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
 		onAddMedia: React.PropTypes.func,
@@ -174,7 +174,7 @@ const MediaLibraryContent = React.createClass( {
 						filter={ this.props.filter }
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
-						containerWidth={ this.props.containerWidth }
+						disableHeight={ this.props.disableHeight }
 						photon={ ! this.props.site.is_private }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }

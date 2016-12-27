@@ -33,8 +33,7 @@ export const MediaLibraryList = React.createClass( {
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool.isRequired,
 		search: React.PropTypes.string,
-		containerWidth: React.PropTypes.number,
-		rowPadding: React.PropTypes.number,
+		disableHeight: React.PropTypes.bool,
 		mediaScale: React.PropTypes.number.isRequired,
 		photon: React.PropTypes.bool,
 		mediaHasNextPage: React.PropTypes.bool,
@@ -54,8 +53,7 @@ export const MediaLibraryList = React.createClass( {
 			batchSize: 20,
 			media: [],
 			mediaLibrarySelectedItems: Object.freeze( [] ),
-			containerWidth: 0,
-			rowPadding: 10,
+			disableHeight: false,
 			mediaHasNextPage: false,
 			mediaFetchingNextPage: false,
 			mediaOnFetchNextPage: noop,
@@ -208,11 +206,13 @@ export const MediaLibraryList = React.createClass( {
 					threshold={ 1 }
 					minimumBatchSize={ this.props.batchSize }>
 					{ ( { onRowsRendered, registerChild } ) => (
-						<AutoSizer>
+						<AutoSizer disableHeight={ this.props.disableHeight }>
 							{ ( { height, width } ) => (
 								<Grid
 									width={ width }
-									height={ height }
+									height={ this.props.disableHeight
+										? Math.floor( width / this._columnCount ) * this._rowCount
+										: height }
 									columnCount={ this._columnCount }
 									columnWidth={ Math.floor( width / this._columnCount ) }
 									rowCount={ this._rowCount }
