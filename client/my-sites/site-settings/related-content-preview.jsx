@@ -44,31 +44,31 @@ const RelatedContentPreview = ( { enabled, showHeadline, showThumbnails, transla
 	];
 
 	return (
-		<div id="settings-reading-relatedposts-preview" className={ enabled ? null : 'disabled-block' }>
+		<div id="settings-reading-relatedposts-preview" className={ ! enabled && 'disabled-block' }>
 			<FormLabel>{ translate( 'Preview:' ) }</FormLabel>
 
-			<div id="jp-relatedposts" className="jp-relatedposts">
+			<div className="site-settings__related-posts">
 				{
 					showHeadline &&
-					<h3 className="jp-relatedposts-headline">{ translate( 'Related' ) }</h3>
+					<h3 className="site-settings__related-posts-headline">{ translate( 'Related' ) }</h3>
 				}
 
-				<div className="jp-relatedposts-items">
+				<div className="site-settings__related-posts-items">
 					{
 						posts.map( ( post, index ) => {
 							return (
-								<div className="jp-relatedposts-post" key={ index }>
+								<div className="site-settings__related-posts-post" key={ index }>
 									{ showThumbnails &&
-										<a className="jp-relatedposts-post-a">
-											<img className="jp-relatedposts-post-img" src={ post.image } alt={ post.title } />
+										<a className="site-settings__related-posts-post-a">
+											<img src={ post.image } alt={ post.title } />
 										</a>
 									}
-									<h4 className="jp-relatedposts-post-title">
-										<a className="jp-relatedposts-post-a">
+									<h4 className="site-settings__related-posts-post-title">
+										<a className="site-settings__related-posts-post-a">
 											{ post.title }
 										</a>
 									</h4>
-									<p className="jp-relatedposts-post-context">{ post.topic }</p>
+									<p className="site-settings__related-posts-post-context">{ post.topic }</p>
 								</div>
 							);
 						} )
