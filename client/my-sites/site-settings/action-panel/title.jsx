@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-/**
- * Main
- */
-var ActionPanelTitle = React.createClass( {
+const ActionPanelTitle = ( { children } ) => {
+	return (
+		<h2 className="settings-action-panel__title">
+			{ children }
+		</h2>
+	);
+};
 
-	render: function() {
-		return (
-			<h2 className="settings-action-panel__title">
-				{ this.props.children }
-			</h2>
-		);
-	}
-
-} );
-
-module.exports = ActionPanelTitle;
+export default ActionPanelTitle;
