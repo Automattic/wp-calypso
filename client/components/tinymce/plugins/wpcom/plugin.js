@@ -289,10 +289,15 @@ function wpcomPlugin( editor ) {
 
 	// Remove spaces from empty paragraphs.
 	editor.on( 'BeforeSetContent', function( event ) {
-		var paragraph = tinymce.Env.webkit ? '<p><br /></p>' : '<p></p>';
-
 		if ( event.content ) {
-			event.content = event.content.replace( /<p>(?:&nbsp;|\u00a0|\uFEFF|\s)+<\/p>/gi, paragraph );
+			var paragraph = tinymce.Env.webkit ? '<p><br /></p>' : '<p></p>';
+
+			event.content = event.content.replace( /<p>([^<>]+)<\/p>/gi, function( tag, text ) {
+				if ( /^(&nbsp;|\s|\u00a0|\ufeff)+$/i.test( text ) ) {
+					return paragraph;
+				}
+				return tag;
+			} );
 		}
 	} );
 
