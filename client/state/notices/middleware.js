@@ -31,8 +31,6 @@ import {
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE,
-	SITE_SETTINGS_SAVE_FAILURE,
-	SITE_SETTINGS_SAVE_SUCCESS
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -143,18 +141,6 @@ export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dis
 	} ) )
 );
 
-export function onSiteSettingsSaveFailed( dispatch, action ) {
-	let text;
-	switch ( action.error.error ) {
-		case 'invalid_ip':
-			text = translate( 'One of your IP Addresses was invalid. Please try again.' );
-			break;
-		default:
-			text = translate( 'There was a problem saving your changes. Please try again.' );
-	}
-	dispatch( errorNotice( text, { id: 'site-settings-save' } ) );
-}
-
 /**
  * Handler action type mapping
  */
@@ -183,8 +169,6 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!' ), { id: 'site-settings-save' } ),
-	[ SITE_SETTINGS_SAVE_FAILURE ]: onSiteSettingsSaveFailed
 };
 
 /**
