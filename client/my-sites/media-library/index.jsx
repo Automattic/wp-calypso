@@ -35,7 +35,7 @@ module.exports = React.createClass( {
 		onScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func,
 		fullScreenDropZone: React.PropTypes.bool,
-		containerWidth: React.PropTypes.number,
+		disableHeight: React.PropTypes.bool,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool
 	},
@@ -122,7 +122,7 @@ module.exports = React.createClass( {
 				filter={ this.props.filter }
 				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
-				containerWidth={ this.props.containerWidth }
+				disableHeight={ this.props.disableHeight }
 				single={ this.props.single }
 				scrollable={ this.props.scrollable }
 				onAddMedia={ this.onAddMedia }
