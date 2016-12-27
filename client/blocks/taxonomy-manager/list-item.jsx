@@ -24,6 +24,7 @@ import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -39,6 +40,8 @@ class TaxonomyManagerListItem extends Component {
 		slug: PropTypes.string,
 		isJetpack: PropTypes.bool,
 		isPreviewable: PropTypes.bool,
+		recordGoogleEvent: PropTypes.func,
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -59,6 +62,8 @@ class TaxonomyManagerListItem extends Component {
 	closeDeleteDialog = action => {
 		if ( action === 'delete' ) {
 			const { siteId, taxonomy, term } = this.props;
+			this.props.recordGoogleEvent( 'Taxonomy Manager', `Deleted ${ taxonomy }` );
+			this.props.bumpStat( 'taxonomy_manager', `delete_${ taxonomy }` );
 			this.props.deleteTerm( siteId, taxonomy, term.ID, term.slug );
 		}
 		this.setState( {
@@ -69,6 +74,8 @@ class TaxonomyManagerListItem extends Component {
 	setAsDefault = () => {
 		const { canSetAsDefault, siteId, term } = this.props;
 		if ( canSetAsDefault ) {
+			this.props.recordGoogleEvent( 'Taxonomy Manager', 'Set Default Category' );
+			this.props.bumpStat( 'taxonomy_manager', 'set_default_category' );
 			this.props.saveSiteSettings( siteId, { default_category: term.ID } );
 		}
 	};
@@ -214,5 +221,7 @@ export default connect(
 	{
 		deleteTerm,
 		saveSiteSettings,
+		recordGoogleEvent,
+		bumpStat,
 	}
 )( localize( TaxonomyManagerListItem ) );
