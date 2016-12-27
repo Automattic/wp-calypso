@@ -22,21 +22,23 @@ import Description from 'reader/list-item/description';
 import Icon from 'reader/list-item/icon';
 import SiteIcon from 'components/site-icon';
 
-function FeedSearchResults( { feeds, onFollowToggle = () => {}, } ) {
+function FeedSearchResults( { feeds, } ) {
 	if ( ! feeds ) {
 		return null;
 	}
 
+	const handleFollow = feed => () => FeedSubscriptionActions.follow( feed.URL, true );
+
 	const feedItems = feeds.map(
 		feed => (
-		<ListItem className={ 'is-search-result' } key={ feed.URL }>
-			<Icon><SiteIcon size={ 48 } /></Icon>
-			<Title>{ feed.URL }</Title>
-			<Description>{ feed.title }</Description>
-			<Actions>
-				<FollowButton disabled={ false } following={ false } onFollowToggle={ onFollowToggle } />
-			</Actions>
-		</ListItem>
+			<ListItem className={ 'is-search-result' } key={ feed.URL + feed.score }>
+				<Icon><SiteIcon size={ 48 } /></Icon>
+				<Title>{ feed.URL }</Title>
+				<Description>{ feed.title }</Description>
+				<Actions>
+					<FollowButton disabled={ false } following={ false } onFollowToggle={ handleFollow( feed ) } />
+				</Actions>
+			</ListItem>
 		)
 	);
 

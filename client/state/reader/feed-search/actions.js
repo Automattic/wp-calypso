@@ -61,15 +61,12 @@ export const requestFeedSearch = ( query ) => ( dispatch ) => {
 		query
 	} );
 
-	console.error( 'requestFeedSearch called' )
 	wpcom.undocumented().discoverFeed( { q: query } )
 		.then( response => {
-			console.error( response );
 			dispatch( requestSuccessful( query ) );
 			dispatch( receiveFeedSearch( query, response.feeds ) );
 		} )
-		.catch( err => {
-			console.error( err );
+		.catch( () => {
 			dispatch( requestFailure( query ) );
 		} );
-}
+};
