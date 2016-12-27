@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useNock from 'test/helpers/use-nock';
-import queue from '../batch';
+import { request } from '../batch';
 
 describe( 'wpcom-api', () => {
 	describe( 'request', () => {
@@ -46,8 +46,8 @@ describe( 'wpcom-api', () => {
 
 		it( 'should batch requests into one API call', () => {
 			return Promise.all( [
-				queue.request( '/endpointOne' ),
-				queue.request( '/endpointTwo' )
+				request( '/endpointOne' ),
+				request( '/endpointTwo' )
 			] ).then( ( [ response1, response2 ] ) => {
 				expect( response1 ).to.eql( {
 					response1: 'batched'
@@ -59,7 +59,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		it( 'should fail when we provide a status code', () => {
-			return queue.request( '/endpointFail' ).catch( response => {
+			return request( '/endpointFail' ).catch( response => {
 				expect( response ).to.eql( {
 					status_code: 400,
 					error: 'Bad Request'
@@ -69,9 +69,9 @@ describe( 'wpcom-api', () => {
 
 		it( 'should not batch requests if the delay is high enough', () => {
 			const delay = timeout => new Promise( resolve => setTimeout( resolve, timeout ) );
-			queue.request( '/endpointOne' );
+			request( '/endpointOne' );
 			return delay( 60 )
-				.then( () => queue.request( '/endpointTwo' ) )
+				.then( () => request( '/endpointTwo' ) )
 				.then( response => {
 					expect( response ).to.eql( {
 						response2: 'unbatched'
