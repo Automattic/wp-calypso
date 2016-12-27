@@ -116,7 +116,6 @@ module.exports = protectForm( React.createClass( {
 		return (
 			<form onSubmit={ this.saveChanges } id="sharing-buttons" className="sharing-settings sharing-buttons">
 				<ButtonsAppearance
-					site={ this.props.site }
 					buttons={ this.getPreviewButtons() }
 					values={ settings }
 					onChange={ this.handleChange }
