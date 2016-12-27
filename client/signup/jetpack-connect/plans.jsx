@@ -263,7 +263,7 @@ class Plans extends Component {
 			( ! this.props.showFirst && ! this.props.canPurchasePlans ) ||
 			( ! this.props.showFirst && this.hasPlan( this.props.selectedSite ) )
 		) {
-			return null;
+			return <QueryPlans />;
 		}
 
 		return (
