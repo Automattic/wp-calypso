@@ -114,22 +114,20 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className={ classes } onClick={ this.clickItem } { ...props }>
+			<figure className={ classes } onClick={ this.clickItem } { ...props }>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>
-				<figure className="media-library__list-item-figure" title={ title }>
-					{ this.renderItem() }
-					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
-					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Edit', { context: 'verb' } ) }
-						</span>
-						<Gridicon icon="pencil" />
-					</Button>
-				</figure>
-			</div>
+				{ this.renderItem() }
+				{ this.renderSpinner() }
+				{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
+				<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
+					<span className="screen-reader-text">
+						{ this.translate( 'Edit', { context: 'verb' } ) }
+					</span>
+					<Gridicon icon="pencil" />
+				</Button>
+			</figure>
 		);
 	}
 } );
