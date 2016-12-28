@@ -7,6 +7,7 @@ import {
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
 	getJetpackSettings,
+	getJetpackSetting,
 } from '../selectors';
 
 import {
@@ -102,15 +103,13 @@ describe( 'selectors', () => {
 			const stateIn = {
 					jetpackSettings: {
 						settings: {
-							items: {
-								12345678: SETTINGS_FIXTURE
-							}
+							items: SETTINGS_FIXTURE
 						}
 					}
 				},
 				siteId = 12345678;
 			const output = getJetpackSettings( stateIn, siteId );
-			expect( output ).to.eql( SETTINGS_FIXTURE );
+			expect( output ).to.eql( SETTINGS_FIXTURE[ siteId ] );
 		} );
 
 		it( 'should return null for an unknown site', () => {
@@ -125,6 +124,54 @@ describe( 'selectors', () => {
 				},
 				siteId = 12345678;
 			const output = getJetpackSettings( stateIn, siteId );
+			expect( output ).to.be.null;
+		} );
+	} );
+
+	describe( '#getJetpackSetting', () => {
+		it( 'should return a certain setting for a known site', () => {
+			const stateIn = {
+					jetpackSettings: {
+						settings: {
+							items: SETTINGS_FIXTURE
+						}
+					}
+				},
+				siteId = 12345678,
+				setting = 'setting_1';
+			const output = getJetpackSetting( stateIn, siteId, setting );
+			expect( output ).to.eql( SETTINGS_FIXTURE[ siteId ][ setting ] );
+		} );
+
+		it( 'should return null for an unknown site', () => {
+			const stateIn = {
+					jetpackSettings: {
+						settings: {
+							items: {
+								654321: SETTINGS_FIXTURE[ 12345678 ]
+							}
+						}
+					}
+				},
+				siteId = 12345678,
+				setting = 'setting_1';
+			const output = getJetpackSetting( stateIn, siteId, setting );
+			expect( output ).to.be.null;
+		} );
+
+		it( 'should return null for an unknown setting', () => {
+			const stateIn = {
+					jetpackSettings: {
+						settings: {
+							items: {
+								654321: SETTINGS_FIXTURE[ 12345678 ]
+							}
+						}
+					}
+				},
+				siteId = 12345678,
+				setting = 'unexisting_setting';
+			const output = getJetpackSetting( stateIn, siteId, setting );
 			expect( output ).to.be.null;
 		} );
 	} );

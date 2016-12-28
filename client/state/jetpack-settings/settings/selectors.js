@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns null if the status for the queried site is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jetpack settings are currently being requested
  */
 export function isRequestingJetpackSettings( state, siteId ) {
@@ -20,7 +20,7 @@ export function isRequestingJetpackSettings( state, siteId ) {
  * Returns null if the status for the queried site is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jetpack settings are currently being updated
  */
 export function isUpdatingJetpackSettings( state, siteId ) {
@@ -32,9 +32,22 @@ export function isUpdatingJetpackSettings( state, siteId ) {
  * Returns null if the site is unknown, or settings have not been fetched yet.
  *
  * @param  {Object}  state   Global state tree
- * @param  {String}  siteId  The ID of the site we're querying
+ * @param  {Number}  siteId  The ID of the site we're querying
  * @return {?Object}         Jetpack settings
  */
 export function getJetpackSettings( state, siteId ) {
 	return get( state.jetpackSettings.settings.items, [ siteId ], null );
+}
+
+/**
+ * Returns a certain Jetpack setting on a specified site.
+ * Returns null if the site is unknown, or settings have not been fetched yet.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   The ID of the site we're querying
+ * @param  {String}  setting  Name of the setting
+ * @return {*}                Value of the Jetpack setting
+ */
+export function getJetpackSetting( state, siteId, setting ) {
+	return get( state.jetpackSettings.settings.items, [ siteId, setting ], null );
 }
