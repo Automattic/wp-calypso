@@ -210,7 +210,7 @@ const SecurePaymentForm = React.createClass( {
 
 		return (
 			<Notice icon="notice" showDismiss={ false }>
-				{ preventWidows( this.translate( 'This is the payment information you entered on get.blog, ' +
+				{ preventWidows( this.translate( 'You can reuse the payment information you entered on get.blog, ' +
 					'a WordPress.com service. Confirm your order below.' ), 4 ) }
 			</Notice>
 		);
