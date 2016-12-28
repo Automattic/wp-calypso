@@ -3,8 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
-import times from 'lodash/times';
-import findIndex from 'lodash/findIndex';
+import { times, findIndex, some } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,6 +18,7 @@ import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Gridicon from 'components/gridicon';
@@ -37,6 +37,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
+import { type as domainTypes } from 'lib/domains/constants';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -179,6 +180,11 @@ export const List = React.createClass( {
 		this.recordEvent( 'changePrimary', this.props.domains.list[ previousDomainIndex ] );
 	},
 
+	clickAddRedirect() {
+		this.recordEvent( 'addRedirectClick' );
+		page( `/domains/add/site-redirect/${ this.props.selectedSite.slug }` );
+	},
+
 	clickAddDomain() {
 		this.recordEvent( 'addDomainClick' );
 		page( `/domains/add/${ this.props.selectedSite.slug }` );
@@ -215,7 +221,10 @@ export const List = React.createClass( {
 		}
 		return (
 			<div>
-				{ this.changePrimaryButton() }
+				<ButtonGroup>
+					{ this.changePrimaryButton() }
+					{ this.addRedirectButton() }
+				</ButtonGroup>
 				{ this.addDomainButton() }
 			</div>
 		);
@@ -232,6 +241,21 @@ export const List = React.createClass( {
 				className="domain-management-list__change-primary-button"
 				onClick={ this.enableChangePrimaryDomainMode }>
 				{ this.translate( 'Change Primary', { context: 'Button label for changing primary domain' } ) }
+			</Button>
+		);
+	},
+
+	addRedirectButton() {
+		const isRedirect = ( domain ) => domain.type === domainTypes.SITE_REDIRECT;
+		if ( ! this.props.domains.hasLoadedFromServer || some( this.props.domains.list, isRedirect ) ) {
+			return null;
+		}
+
+		return (
+			<Button
+				compact
+				onClick={ this.clickAddRedirect }>
+				{ this.translate( 'Add Redirect' ) }
 			</Button>
 		);
 	},

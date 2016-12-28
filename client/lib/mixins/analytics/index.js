@@ -670,6 +670,14 @@ const EVENTS = {
 
 				analytics.tracks.recordEvent( 'calypso_domain_management_list_add_domain_click' );
 			},
+			addRedirectClick() {
+				analytics.ga.recordEvent(
+					'Domain Management',
+					'Clicked "Add Redirect" Button in List'
+				);
+
+				analytics.tracks.recordEvent( 'calypso_domain_management_list_add_redirect_click' );
+			},
 			enablePrimaryDomainMode() {
 				analytics.ga.recordEvent(
 					'Domain Management',
