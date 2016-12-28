@@ -41,7 +41,8 @@ export const MediaLibraryList = React.createClass( {
 		mediaOnFetchNextPage: React.PropTypes.func,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
-		onEditItem: React.PropTypes.func
+		onEditItem: React.PropTypes.func,
+		padding: React.PropTypes.number
 	},
 
 	getInitialState: function() {
@@ -59,7 +60,8 @@ export const MediaLibraryList = React.createClass( {
 			mediaOnFetchNextPage: noop,
 			single: false,
 			scrollable: false,
-			onEditItem: noop
+			onEditItem: noop,
+			padding: 5
 		};
 	},
 
@@ -110,7 +112,14 @@ export const MediaLibraryList = React.createClass( {
 		const index = rowIndex * this._columnCount + columnIndex;
 		const item = this._gridItems[ index ];
 
-		style.fontSize = this.props.mediaScale * 225;
+		style = {
+			...style,
+			fontSize: this.props.mediaScale * 225,
+			top: style.top + this.props.padding,
+			left: style.left + this.props.padding,
+			width: style.width - this.props.padding * 2,
+			height: style.height - this.props.padding * 2,
+		}
 
 		if ( ! item ) {
 			return;
