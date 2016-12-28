@@ -20,24 +20,34 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 class SharingButtonsAppearance extends Component {
 	static propTypes = {
 		buttons: PropTypes.array,
-		values: PropTypes.object,
+		initialized: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		isLikesModuleActive: PropTypes.bool,
+		isPrivate: PropTypes.bool,
 		onChange: PropTypes.func,
 		onButtonsChange: PropTypes.func,
 		onButtonsSave: PropTypes.func,
-		initialized: PropTypes.bool,
+		recordGoogleEvent: PropTypes.func,
 		saving: PropTypes.bool,
-		isJetpack: PropTypes.bool,
-		isLikesModuleActive: PropTypes.bool,
+		values: PropTypes.object,
 	}
 
 	static defaultProps = {
 		buttons: Object.freeze( [] ),
 		values: Object.freeze( {} ),
-		onChange: function() {},
-		onButtonsChange: function() {},
+		onChange: () => {},
+		onButtonsChange: () => {},
 		initialized: false,
 		saving: false
 	};
+
+	isLikeButtonEnabled() {
+		return '' === this.props.values.disabled_likes || false === this.props.values.disabled_likes;
+	}
+
+	isReblogButtonEnabled() {
+		return '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs;
+	}
 
 	onReblogsLikesCheckboxClicked = event => {
 		this.props.onChange( event.target.name, ! event.target.checked );
@@ -60,12 +70,9 @@ class SharingButtonsAppearance extends Component {
 					buttons={ this.props.buttons }
 					showLike={
 						( ! this.props.isJetpack || this.props.isLikesModuleActive ) &&
-						( '' === this.props.values.disabled_likes || false === this.props.values.disabled_likes )
+						this.isLikeButtonEnabled()
 					}
-					showReblog={
-						! this.props.isJetpack &&
-						( '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs )
-					}
+					showReblog={ ! this.props.isJetpack && this.isReblogButtonEnabled() }
 					onLabelChange={ changeLabel }
 					onButtonsChange={ this.props.onButtonsChange } />
 			);
@@ -81,7 +88,7 @@ class SharingButtonsAppearance extends Component {
 					<input
 						name="disabled_reblogs"
 						type="checkbox"
-						checked={ '' === this.props.values.disabled_reblogs || false === this.props.values.disabled_reblogs }
+						checked={ this.isReblogButtonEnabled() }
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
 					/>
@@ -103,7 +110,7 @@ class SharingButtonsAppearance extends Component {
 						<input
 							name="disabled_likes"
 							type="checkbox"
-							checked={ '' === this.props.values.disabled_likes || false === this.props.values.disabled_likes }
+							checked={ this.isLikeButtonEnabled() }
 							onChange={ this.onReblogsLikesCheckboxClicked }
 							disabled={ ! this.props.initialized }
 						/>
