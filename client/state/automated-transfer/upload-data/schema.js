@@ -15,8 +15,4 @@ export const upload = {
 			minimum: 0
 		}
 	},
-	required: [
-		'bytesLoaded',
-		'bytesTotal'
-	],
 };
