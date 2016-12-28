@@ -114,7 +114,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<figure className={ classes } onClick={ this.clickItem } { ...props }>
+			<figure className={ classes } onClick={ this.clickItem } title={ title } { ...props }>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>
