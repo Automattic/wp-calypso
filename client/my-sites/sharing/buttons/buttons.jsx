@@ -124,7 +124,6 @@ module.exports = protectForm( React.createClass( {
 					initialized={ this.isInitialized( [ 'settings', 'buttons' ] ) }
 					saving={ this.state.isSaving } />
 				<ButtonsOptions
-					site={ this.props.site }
 					postTypes={ this.props.postTypes.get( this.props.site.ID ) }
 					buttons={ this.props.buttons.get( this.props.site.ID ) }
 					values={ settings }
