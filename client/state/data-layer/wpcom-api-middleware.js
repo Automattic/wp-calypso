@@ -1,8 +1,15 @@
 /**
  * Internal dependencies
  */
-import handlerMap from './wpcom';
-import { local } from './utils';
+import { local, mergeHandlers } from './utils';
+
+import httpHandlers from './wpcom-http';
+import wpcomHandlers from './wpcom';
+
+const handlerTree = mergeHandlers(
+	httpHandlers,
+	wpcomHandlers,
+);
 
 /**
  * WPCOM Middleware API

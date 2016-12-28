@@ -2,53 +2,70 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { fetch } from 'state/data-layer/wpcom-http/actions';
 import {
 	plansReceiveAction,
+	plansRequestFailureAction,
+	plansRequestSuccessAction,
 } from 'state/plans/actions';
-
 import {
+	receivePlans,
+	receiveError,
 	requestPlans,
 } from '../';
 
-import {
-	ACTION_PLANS_REQUEST_SUCCESS,
-	WPCOM_RESPONSE as wpcomResponse,
-} from 'state/plans/test/fixture';
+import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {
-	let dispatch;
-
-	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
-
 	describe( 'plans request', () => {
-		useNock( nock => (
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.4/plans' )
-				.reply( 200, wpcomResponse )
-		) );
+		describe( '#requestPlans', () => {
+			it( 'should dispatch HTTP request to plans endpoint', () => {
+				const action = { type: 'DUMMY' };
+				const dispatch = spy();
 
-		it( 'should dispatch SUCCESS action when request completes', () => {
-			return requestPlans( { dispatch } )
-				.then( () => (
-					expect( dispatch ).to.have.been.calledWith( ACTION_PLANS_REQUEST_SUCCESS )
-				) );
+				requestPlans( { dispatch }, action );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( fetch( {
+					apiVersion: '1.4',
+					method: 'GET',
+					path: '/plans',
+					onSuccess: action,
+					onFailure: action,
+				} ) );
+			} );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
-			const plans = wpcomResponse;
-			const actionResponse = plansReceiveAction( plans );
+		describe( '#receivePlans', () => {
+			it( 'should dispatch plan updates', () => {
+				const plans = WPCOM_RESPONSE;
+				const action = plansReceiveAction( plans );
+				const dispatch = spy();
 
-			return requestPlans( { dispatch } )
-				.then( () => (
-					expect( dispatch ).to.have.been.calledWith( actionResponse )
-				) );
+				receivePlans( { dispatch }, action, null, plans );
+
+				expect( dispatch ).to.have.been.calledTwice;
+				expect( dispatch ).to.have.been.calledWith( plansRequestSuccessAction() );
+				expect( dispatch ).to.have.been.calledWith( plansReceiveAction( plans ) );
+			} );
+		} );
+
+		describe( '#receiveError', () => {
+			it( 'should dispatch error', () => {
+				const error = 'could not find plans';
+				const action = plansRequestFailureAction( error );
+				const dispatch = spy();
+
+				receiveError( { dispatch }, action, null, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( plansRequestFailureAction( error ) );
+			} );
 		} );
 	} );
 } );
