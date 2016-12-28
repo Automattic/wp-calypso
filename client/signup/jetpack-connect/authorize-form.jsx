@@ -687,7 +687,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		}
 
 		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderMainForm();
+			this.renderForm();
 		}
 
 		if ( this.props.plansFirst && ! this.props.selectedPlan ) {
