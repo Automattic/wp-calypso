@@ -256,7 +256,7 @@ const MapDomainStep = React.createClass( {
 				break;
 
 			default:
-				throw new Error( 'Unrecognized error code: ' + error.code );
+				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 		}
 
 		if ( message ) {
