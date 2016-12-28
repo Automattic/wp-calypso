@@ -2,7 +2,7 @@
  * Removes empty spaces from empty paragraphs
  * This logic is borrowed from core's TinyMCE Plugin
  *
- * @see https://core.trac.wordpress.org/browser/trunk/src/wp-includes/js/tinymce/plugins/wordpress/plugin.js#L133
+ * @see https://core.trac.wordpress.org/changeset/39204
  *
  * @param  {String}   content TinyMCE Editor content
  * @return {String}           Content with strings removed from empty paragraphs
