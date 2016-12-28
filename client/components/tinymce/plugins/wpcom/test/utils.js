@@ -9,7 +9,6 @@ import { assert } from 'chai';
 import { removeEmptySpacesInParagraphs } from '../wpcom-utils';
 
 describe( 'remove empty spaces in paragraphs', () => {
-
 	it( 'should not modify paragraphs with content', () => {
 		const content = '<p>Chicken &amp; Ribs</p>';
 
@@ -43,5 +42,4 @@ describe( 'remove empty spaces in paragraphs', () => {
 		const content = '<p>chicken\u00a0ribs</p>';
 		assert.equal( content, removeEmptySpacesInParagraphs( content ) );
 	} );
-
 } );
