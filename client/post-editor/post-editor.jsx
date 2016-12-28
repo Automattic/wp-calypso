@@ -798,14 +798,54 @@ class BlockEditor extends React.Component {
 		this.setState( { ...args, content } );
 	}
 
+	parseContent = () => {
+		return parse( this.state.content );
+	}
+
 	render() {
-		const { content } = this.state;
-		const blocks = tryOr( parse.bind( null, content ), [] );
+		const blocks = tryOr( this.parseContent, [] );
 
 		debug( this.props, this.state );
 		debug( 'blocks', blocks );
 
-		return <div style={ this.blockStyle }>(editor)</div>;
+		return (
+			<div style={ this.blockStyle }>
+				{ blocks.map( handleBlock ) }
+			</div>
+		);
+	}
+}
+
+function handleBlock( block ) {
+	if ( block.type === 'Text' ) {
+		return <p>{ block.value }</p>;
+	}
+
+	if ( block.type === 'WP_Block' ) {
+		return <Block { ...block } />;
+	}
+
+	return null;
+}
+
+class Block extends React.Component {
+	blockStyle = {
+		margin: '0.2em',
+		padding: '0.3em',
+		border: '1px dashed black',
+	};
+
+	// fake impl
+	innerText() {
+		return this.props.children
+			.filter( c => c && c.type === 'Text' )
+			.map( c => c.value )
+			.join( '\n' );
+	}
+
+	render() {
+		debug( 'block', this.props );
+		return <div style={ this.blockStyle }>{ this.innerText() }</div>;
 	}
 }
 
