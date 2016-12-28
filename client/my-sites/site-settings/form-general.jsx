@@ -653,6 +653,34 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	renderApiCache() {
+		// Note that years and months below are zero indexed
+		const { fields, site, translate, isRequestingSettings } = this.props;
+			// today = moment(),
+			// startDate = moment( { year: today.year(), month: 11, day: 1 } ),
+			// endDate = moment( { year: today.year(), month: 0, day: 4 } );
+
+		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<FormToggle
+					className="is-compact"
+					checked={ !! fields.api_cache }
+					disabled={ isRequestingSettings }
+					onChange={ this.handleToggle( 'api_cache' ) }>
+					<span className="site-settings__toggle-label">
+						{ translate(
+							'Use synchronized data to boost performance'
+						) }
+					</span>
+				</FormToggle>
+			</CompactCard>
+		);
+	}
+
 	render() {
 		const { isRequestingSettings, isSavingSettings, site, translate } = this.props;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -775,6 +803,7 @@ class SiteSettingsFormGeneral extends Component {
 						</SectionHeader>
 
 						{ this.renderJetpackSyncPanel() }
+						{ this.renderApiCache() }
 						{ this.syncNonPublicPostTypes() }
 
 						<CompactCard href={ '../security/' + site.slug }>
