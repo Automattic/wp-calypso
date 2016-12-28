@@ -165,7 +165,7 @@
 	}
 }
 
-.editor-media-modal .media-library__list-item {
+.editor-media-modal .media-library__list-item:not( .is-placeholder ) {
 	background-color: $gray-light;
 	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
 }
