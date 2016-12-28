@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import debugFactory from 'debug';
+import page from 'page';
 import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,7 +20,7 @@ const actions = require( 'lib/posts/actions' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	TinyMCE = require( 'components/tinymce' ),
+	//TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
@@ -51,6 +52,8 @@ import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
+
+const debug = debugFactory( 'blocks:post-editor' );
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -266,7 +269,7 @@ export const PostEditor = React.createClass( {
 								</SegmentedControl>
 							</div>
 							<hr className="editor__header-divider" />
-							<TinyMCE
+							<BlockEditor
 								ref="editor"
 								mode={ mode }
 								tabIndex={ 2 }
@@ -763,6 +766,48 @@ export const PostEditor = React.createClass( {
 	}
 
 } );
+
+//import * as BlocksView from 'components/tinymce/plugins/wpcom-view/views/blocks';
+import { parse } from 'components/tinymce/plugins/wpcom-view/views/blocks/post-parser';
+
+function tryOr( fn, failureValue ) {
+	let result;
+	try {
+		result = fn();
+	} catch ( e ) {
+		result = failureValue;
+	}
+	return result;
+}
+
+class BlockEditor extends React.Component {
+	blockStyle = {
+		margin: '0.2em',
+		padding: '0.3em',
+		border: '1px dashed black',
+	};
+
+	state = {};
+
+	getContent() {
+		return this.state.content;
+	}
+
+	setEditorContent( content, args = {} ) {
+		debug( 'setEditorContent', content, args );
+		this.setState( { ...args, content } );
+	}
+
+	render() {
+		const { content } = this.state;
+		const blocks = tryOr( parse.bind( null, content ), [] );
+
+		debug( this.props, this.state );
+		debug( 'blocks', blocks );
+
+		return <div style={ this.blockStyle }>(editor)</div>;
+	}
+}
 
 export default connect(
 	( state ) => {
