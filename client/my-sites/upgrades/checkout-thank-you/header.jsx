@@ -17,32 +17,28 @@ import {
 	isSiteRedirect
 } from 'lib/products-values';
 import Gridicon from 'components/gridicon';
+import { localize } from 'i18n-calypso';
 
-const CheckoutThankYouHeader = React.createClass( {
-	propTypes: {
-		isDataLoaded: React.PropTypes.bool.isRequired,
-		primaryPurchase: React.PropTypes.object
-	},
-
+class CheckoutThankYouHeader extends React.Component {
 	getHeading() {
 		if ( ! this.props.isDataLoaded ) {
-			return this.translate( 'Loading…' );
+			return this.props.translate( 'Loading…' );
 		}
 
 		if ( this.props.primaryPurchase && isChargeback( this.props.primaryPurchase ) ) {
-			return this.translate( 'Thank you!' );
+			return this.props.translate( 'Thank you!' );
 		}
 
-		return this.translate( 'Thank you for your purchase!' );
-	},
+		return this.props.translate( 'Thank you for your purchase!' );
+	}
 
 	getText() {
 		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {
-			return this.translate( 'You will receive an email confirmation shortly.' );
+			return this.props.translate( 'You will receive an email confirmation shortly.' );
 		}
 
 		if ( isPlan( this.props.primaryPurchase ) ) {
-			return this.translate(
+			return this.props.translate(
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
 				"It's doing somersaults in excitement!", {
 					args: { productName: this.props.primaryPurchase.productName },
@@ -52,7 +48,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		if ( isDomainRegistration( this.props.primaryPurchase ) ) {
-			return this.translate(
+			return this.props.translate(
 				'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
 				'being set up. Your site is doing somersaults in excitement!', {
 					args: { domainName: this.props.primaryPurchase.meta },
@@ -62,9 +58,9 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		if ( isDomainMapping( this.props.primaryPurchase ) ) {
-			return this.translate(
+			return this.props.translate(
 				'Your domain {{strong}}%(domainName)s{{/strong}} was added to your site. ' +
-				"But it isn't working yet – follow the instructions below to complete the set up.", {
+				'It may take a little while to start working – see below for more information.', {
 					args: { domainName: this.props.primaryPurchase.meta },
 					components: { strong: <strong /> }
 				}
@@ -72,7 +68,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		if ( isGoogleApps( this.props.primaryPurchase ) ) {
-			return this.translate(
+			return this.props.translate(
 				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
 				"It's doing somersaults in excitement!", {
 					args: { domainName: this.props.primaryPurchase.meta },
@@ -83,7 +79,7 @@ const CheckoutThankYouHeader = React.createClass( {
 
 		if ( isGuidedTransfer( this.props.primaryPurchase ) ) {
 			if ( typeof this.props.primaryPurchase.meta === 'string' ) {
-				return this.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
+				return this.props.translate( 'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
 					'will begin very soon. We will be in touch with you via email.', {
 						args: { siteName: this.props.primaryPurchase.meta },
 						components: { strong: <strong /> },
@@ -91,7 +87,7 @@ const CheckoutThankYouHeader = React.createClass( {
 				);
 			}
 
-			return this.translate( 'The guided transfer for your site will ' +
+			return this.props.translate( 'The guided transfer for your site will ' +
 				'begin very soon. We will be in touch with you via email.', {
 					components: { strong: <strong /> },
 				}
@@ -99,7 +95,7 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		if ( isSiteRedirect( this.props.primaryPurchase ) ) {
-			return this.translate(
+			return this.props.translate(
 				'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
 				"It's doing somersaults in excitement!", {
 					args: { domainName: this.props.primaryPurchase.meta },
@@ -109,10 +105,10 @@ const CheckoutThankYouHeader = React.createClass( {
 		}
 
 		if ( isChargeback( this.props.primaryPurchase ) ) {
-			return this.translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' );
+			return this.props.translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' );
 		}
 
-		return this.translate(
+		return this.props.translate(
 			"You will receive an email confirmation shortly for your purchase of {{strong}}%(productName)s{{/strong}}. What's next?", {
 				args: {
 					productName: this.props.primaryPurchase.productName
@@ -122,7 +118,7 @@ const CheckoutThankYouHeader = React.createClass( {
 				}
 			}
 		);
-	},
+	}
 
 	render() {
 		const classes = {
@@ -150,6 +146,11 @@ const CheckoutThankYouHeader = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default CheckoutThankYouHeader;
+CheckoutThankYouHeader.propTypes = {
+	isDataLoaded: React.PropTypes.bool.isRequired,
+	primaryPurchase: React.PropTypes.object
+};
+
+export default localize( CheckoutThankYouHeader );
