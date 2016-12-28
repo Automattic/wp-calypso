@@ -68,7 +68,9 @@ class SiteSettingsFormGeneral extends Component {
 			amp_is_supported: settings.amp_is_supported,
 			amp_is_enabled: settings.amp_is_enabled,
 
-			holidaysnow: !! settings.holidaysnow
+			holidaysnow: !! settings.holidaysnow,
+
+			api_cache: settings.api_cache,
 		};
 
 		if ( settings.jetpack_relatedposts_allowed ) {
@@ -112,6 +114,7 @@ class SiteSettingsFormGeneral extends Component {
 			holidaysnow: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
+			api_cache: false,
 		} );
 		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
 	}
@@ -655,12 +658,12 @@ class SiteSettingsFormGeneral extends Component {
 
 	renderApiCache() {
 		// Note that years and months below are zero indexed
-		const { fields, site, translate, isRequestingSettings } = this.props;
+		const { fields, translate, isRequestingSettings } = this.props;
 			// today = moment(),
 			// startDate = moment( { year: today.year(), month: 11, day: 1 } ),
 			// endDate = moment( { year: today.year(), month: 0, day: 4 } );
 
-		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
+		if ( ! this.showApiCacheCheckbox() ) {
 			return null;
 		}
 
@@ -679,6 +682,19 @@ class SiteSettingsFormGeneral extends Component {
 				</FormToggle>
 			</CompactCard>
 		);
+	}
+
+	showApiCacheCheckbox() {
+		if ( ! config.isEnabled( 'jetpack/sync-panel' ) ) {
+			return false;
+		}
+
+		const { site } = this.props;
+		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	render() {
@@ -786,7 +802,7 @@ class SiteSettingsFormGeneral extends Component {
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
-							{ this.showPublicPostTypesCheckbox()
+							{ this.showPublicPostTypesCheckbox() || this.showApiCacheCheckbox()
 								? <Button
 									compact={ true }
 									onClick={ this.handleSubmitForm }
