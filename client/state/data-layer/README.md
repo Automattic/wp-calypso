@@ -57,8 +57,9 @@ Instead the components should be able to request that they require such data and
 ## Implementation
 
 The data layer _intercepts_ Redux actions.
-Once it has performed its behavior, this action will be dropped entirely from the dispatch path.
-This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain. For example, we could start polling from the WP-API for posts but leave all other requests up to the WordPress.com API.
+Once it has performed its behavior, this action will be dropped entirely from the dispatch path unless explicitly forwarded to the next middleware or dispatched again.
+This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain.
+For example, we could start polling from the WP-API for posts but leave all other requests up to the WordPress.com API.
 Note that we can still allow multiple functions within the same middleware to handle the same action.
 The WordPress.com API middleware demonstrates this in building a tree of handlers which can all respond to given action types.
 
@@ -77,8 +78,8 @@ The handlers are functions which take two arguments and whose return value, if a
 The type of a handler follows:
 
 ```js
-// middlewareHandler :: ReduxStore -> ReduxAction -> Any
-const myHandler = ( store, action ) => { … }
+// middlewareHandler :: ReduxStore -> ReduxAction -> Dispatcher -> Any
+const myHandler = ( store, action, next ) => { … }
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
@@ -117,9 +118,28 @@ const invalidateExisting = ( { dispatch } ) => {
 const requestReticulations = ( store, { splineSet } ) =>
 	requestSplines( store, { type: REQUEST_SPLINES, setId: splineSet } );
 
+const syncChanges = ( { dispatch, getState }, action, next ) => {
+	const oldSpline = getSpline( getState(), action.spline.id );
+
+	wpcom
+		.saveSpline( action.spline )
+		.then( noop ) // no need to respond if successful
+		.catch( () => {
+			// the request failed; give up and reset the
+			// spline to the former state; bypass all
+			// middleware/dispatch to reducers
+			next( local( reticulateSpline( oldSpline ) ) );
+		} );
+	
+	// pass along action to reducers
+	// and bypass all middleware
+	next( local( action ) );
+};
+
 export default {
 	[ REQUEST_RETICULATIONS ]: [ requestReticulations ],
 	[ REQUEST_SPLINES ]: [ invalidateExisting, requestSplines ],
+	[ RETICULATE_SPLINE ]: [ syncChanges ],
 }
 
 // middlware.js
