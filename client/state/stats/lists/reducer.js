@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import merge from 'lodash/merge';
+import { merge, unset } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,12 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_STATS_RECEIVE:
 			const queryKey = getSerializedStatsQuery( action.query );
-			return merge( {}, state, {
+
+			// To avoid corrupted stat data with massive arrays
+			// From causing _.merge to crash, first clone, then unset existing data
+			const existingItems = Object.assign( {}, state );
+			unset( existingItems, [ action.siteId, action.statType, queryKey ] );
+			return merge( {}, existingItems, {
 				[ action.siteId ]: {
 					[ action.statType ]: {
 						[ queryKey ]: action.data
