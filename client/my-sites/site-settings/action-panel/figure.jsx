@@ -1,37 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
-/**
- * Main
- */
-var ActionPanelFigure = React.createClass( {
+const ActionPanelFigure = ( { inlineBodyText, children } ) => {
+	const figureClasses = classNames( {
+		'settings-action-panel__figure': true,
+		'is-inline-body-text': inlineBodyText
+	} );
 
-	propTypes: {
-		inlineBodyText: React.PropTypes.bool // above `480px` does figure align with body text (below title)
-	},
+	return (
+		<div className={ figureClasses }>
+			{ children }
+		</div>
+	);
+};
 
-	getDefaultProps: function() {
-		return {
-			inlineBodyText: false
-		};
-	},
+ActionPanelFigure.propTypes = {
+	inlineBodyText: React.PropTypes.bool // above `480px` does figure align with body text (below title)
+};
 
-	render: function() {
-		var figureClasses = classNames( {
-			'settings-action-panel__figure': true,
-			'is-inline-body-text': this.props.inlineBodyText
-		} );
+ActionPanelFigure.defaultProps = {
+	inlineBodyText: false
+};
 
-		return (
-			<div className={ figureClasses }>
-				{ this.props.children }
-			</div>
-		);
-	}
-
-} );
-
-module.exports = ActionPanelFigure;
+export default ActionPanelFigure;
