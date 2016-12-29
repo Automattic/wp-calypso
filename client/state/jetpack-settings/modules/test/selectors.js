@@ -155,6 +155,32 @@ describe( 'selectors', () => {
 			const output = isFetchingModules( stateIn, siteId );
 			expect( output ).to.be.true;
 		} );
+
+		it( 'should return false if the list of modules is currently not being fetched', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 654321;
+			const output = isFetchingModules( stateIn, siteId );
+			expect( output ).to.be.false;
+		} );
+
+		it( 'should return null if that site is not known', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 888888;
+			const output = isFetchingModules( stateIn, siteId );
+			expect( output ).to.be.null;
+		} );
 	} );
 
 	describe( '#getModules', () => {
