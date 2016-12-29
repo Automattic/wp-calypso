@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-/**
- * Main
- */
-var ActionPanelBody = React.createClass( {
+const ActionPanelBody = ( { children } ) => {
+	return (
+		<div className="settings-action-panel__body">
+			{ children }
+		</div>
+	);
+};
 
-	render: function() {
-		return (
-			<div className="settings-action-panel__body">
-				{ this.props.children }
-			</div>
-		);
-	}
-
-} );
-
-module.exports = ActionPanelBody;
+export default ActionPanelBody;

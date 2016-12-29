@@ -1,21 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-/**
- * Main
- */
-var ActionPanelFooter = React.createClass( {
+const ActionPanelFooter = ( { children } ) => {
+	return (
+		<div className="settings-action-panel__footer">
+			{ children }
+		</div>
+	);
+};
 
-	render: function() {
-		return (
-			<div className="settings-action-panel__footer">
-				{ this.props.children }
-			</div>
-		);
-	}
-
-} );
-
-module.exports = ActionPanelFooter;
+export default ActionPanelFooter;
