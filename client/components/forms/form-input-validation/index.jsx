@@ -9,7 +9,7 @@ import classNames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormInputValidation',
 
