@@ -68,7 +68,9 @@ class SiteSettingsFormGeneral extends Component {
 			amp_is_supported: settings.amp_is_supported,
 			amp_is_enabled: settings.amp_is_enabled,
 
-			holidaysnow: !! settings.holidaysnow
+			holidaysnow: !! settings.holidaysnow,
+
+			api_cache: settings.api_cache,
 		};
 
 		if ( settings.jetpack_relatedposts_allowed ) {
@@ -112,6 +114,7 @@ class SiteSettingsFormGeneral extends Component {
 			holidaysnow: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
+			api_cache: false,
 		} );
 		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
 	}
@@ -653,6 +656,43 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	renderApiCache() {
+		const { fields, translate, isRequestingSettings } = this.props;
+
+		if ( ! this.showApiCacheCheckbox() ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<FormToggle
+					className="is-compact"
+					checked={ !! fields.api_cache }
+					disabled={ isRequestingSettings }
+					onChange={ this.handleToggle( 'api_cache' ) }>
+					<span className="site-settings__toggle-label">
+						{ translate(
+							'Use synchronized data to boost performance'
+						) }
+					</span>
+				</FormToggle>
+			</CompactCard>
+		);
+	}
+
+	showApiCacheCheckbox() {
+		if ( ! config.isEnabled( 'jetpack/api-cache' ) ) {
+			return false;
+		}
+
+		const { site } = this.props;
+		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	render() {
 		const { isRequestingSettings, isSavingSettings, site, translate } = this.props;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -758,7 +798,7 @@ class SiteSettingsFormGeneral extends Component {
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
-							{ this.showPublicPostTypesCheckbox()
+							{ this.showPublicPostTypesCheckbox() || this.showApiCacheCheckbox()
 								? <Button
 									compact={ true }
 									onClick={ this.handleSubmitForm }
@@ -775,6 +815,7 @@ class SiteSettingsFormGeneral extends Component {
 						</SectionHeader>
 
 						{ this.renderJetpackSyncPanel() }
+						{ this.renderApiCache() }
 						{ this.syncNonPublicPostTypes() }
 
 						<CompactCard href={ '../security/' + site.slug }>
