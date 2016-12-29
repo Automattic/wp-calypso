@@ -168,7 +168,7 @@ module.exports = {
 
 		renderPage(
 			context,
-			<StartOver sites={ sites } path={ context.path } />
+			<StartOver path={ context.path } />
 		);
 	},
 
