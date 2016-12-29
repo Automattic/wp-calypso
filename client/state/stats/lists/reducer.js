@@ -7,9 +7,7 @@ import merge from 'lodash/merge';
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
-import { itemSchema } from './schema';
 import {
 	DESERIALIZE,
 	SERIALIZE,
@@ -69,11 +67,8 @@ export function items( state = {}, action ) {
 				}
 			} );
 
+		case SERIALIZE:
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemSchema ) ) {
-				return state;
-			}
-
 			return {};
 	}
 

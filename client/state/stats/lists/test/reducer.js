@@ -168,7 +168,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should persist state', () => {
+		it( 'should not persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -177,30 +177,6 @@ describe( 'reducer', () => {
 				}
 			} );
 			const state = items( original, { type: SERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse
-					}
-				}
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( original );
-		} );
-
-		it( 'should not load invalid persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse
-				}
-			} );
-			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
