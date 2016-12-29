@@ -73,7 +73,7 @@
 		{ "value": 39, "langSlug": "kn", "name": "kn - ಕನ್ನಡ", "wpLocale": "kn" },
 		{ "value": 40, "langSlug": "ko", "name": "ko - 한국어", "wpLocale": "ko_KR", "popular": 15 },
 		{ "value": 433, "langSlug": "ks", "name": "ks - कश्मीरी", "wpLocale": "" },
-		{ "value": 41, "langSlug": "ku", "name": "ku - Kurdî / كوردي", "wpLocale": "" },
+		{ "value": 41, "langSlug": "ckb", "name": "ckb - كوردی", "wpLocale": "ckb", "rtl": true },
 		{ "value": 434, "langSlug": "kv", "name": "kv - Коми", "wpLocale": "" },
 		{ "value": 479, "langSlug": "kir", "name": "kir - Кыргызча", "wpLocale": "kir" },
 		{ "value": 42, "langSlug": "la", "name": "la - Latine", "wpLocale": "" },
