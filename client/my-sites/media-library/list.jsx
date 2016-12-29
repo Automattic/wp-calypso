@@ -119,7 +119,7 @@ export const MediaLibraryList = React.createClass( {
 			left: style.left + this.props.padding,
 			width: style.width - this.props.padding * 2,
 			height: style.height - this.props.padding * 2,
-		}
+		};
 
 		if ( ! item ) {
 			return;
