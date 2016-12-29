@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -9,9 +10,9 @@ import { assert } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
-	accountRecoveryFetch,
-	accountRecoveryFetchSuccess,
-	accountRecoveryFetchFailed,
+	accountRecoverySettingsFetch,
+	accountRecoverySettingsFetchSuccess,
+	accountRecoverySettingsFetchFailed,
 
 	updateAccountRecoveryPhone,
 	updateAccountRecoveryPhoneSuccess,
@@ -44,7 +45,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 } from 'state/action-types';
 
-import dummyData from './test-data';
+import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
 import { generateSuccessAndFailedTestsForThunk } from './utils';
 
 describe( 'account-recovery actions', () => {
@@ -54,42 +55,42 @@ describe( 'account-recovery actions', () => {
 	const errorResponse = { status: 400, message: 'Something wrong!' };
 
 	generateSuccessAndFailedTestsForThunk( {
-		testBaseName: '#accountRecoveryFetch',
+		testBaseName: '#accountRecoverySettingsFetch',
 		nockSettings: {
 			method: 'get',
 			endpoint: '/rest/v1.1/me/account-recovery',
 			successResponse: dummyData,
 			errorResponse: errorResponse,
 		},
-		thunk: () => accountRecoveryFetch()( spy ),
+		thunk: () => accountRecoverySettingsFetch()( spy ),
 		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } ) ),
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-				...dummyData,
+				settings: dummyData,
 			} ) );
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 				error: errorResponse,
-			} ) );
+			} ) ) );
 		},
 	} );
 
-	describe( '#accountRecoveryFetchSuccess()', () => {
+	describe( '#accountRecoverySettingsFetchSuccess()', () => {
 		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS', () => {
-			const action = accountRecoveryFetchSuccess( dummyData );
+			const action = accountRecoverySettingsFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-				...dummyData,
+				settings: dummyData,
 			} );
 		} );
 	} );
 
-	describe( '#accountRecoveryFetchFailed()', () => {
+	describe( '#accountRecoverySettingsFetchFailed()', () => {
 		it( 'should return ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED', () => {
-			const action = accountRecoveryFetchFailed( errorResponse );
+			const action = accountRecoverySettingsFetchFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
@@ -97,23 +98,16 @@ describe( 'account-recovery actions', () => {
 			} );
 		} );
 	} );
-
-	const newPhoneData = {
-		country_code: 'US',
-		country_numeric_code: '+1',
-		number: '8881234567',
-		number_full: '+18881234567',
-	};
 
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryPhone',
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/phone',
-			successResponse: newPhoneData,
+			successResponse: { phone: dummyNewPhone },
 			errorResponse: errorResponse,
 		},
-		thunk: () => updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy ),
+		thunk: () => updateAccountRecoveryPhone( dummyNewPhone.country_code, dummyNewPhone.number )( spy ),
 		preCondition: () =>
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -123,14 +117,14 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				value: newPhoneData,
+				value: dummyNewPhone,
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 				target: 'phone',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
@@ -178,11 +172,11 @@ describe( 'account-recovery actions', () => {
 				target: 'phone',
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 				target: 'phone',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
@@ -208,17 +202,15 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	const newEmail = 'newtest@example.com';
-
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryEmail',
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/email',
-			successResponse: { email: newEmail },
+			successResponse: { email: dummyNewEmail },
 			errorResponse: errorResponse,
 		},
-		thunk: () => updateAccountRecoveryEmail( newEmail )( spy ),
+		thunk: () => updateAccountRecoveryEmail( dummyNewEmail )( spy ),
 		preCondition: () =>
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -228,15 +220,15 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'email',
-				value: newEmail,
+				value: dummyNewEmail,
 			} ) );
 		},
 		postConditionFailed: () => {
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 				target: 'email',
 				error: errorResponse,
-			} ) );
+			} ) ) );
 		},
 	} );
 
@@ -284,11 +276,11 @@ describe( 'account-recovery actions', () => {
 				target: 'email',
 			} ) ),
 		postConditionFailed: () =>
-			assert( spy.calledWith( {
+			assert( spy.calledWith( sinon.match( {
 				type: ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 				target: 'email',
 				error: errorResponse,
-			} ) ),
+			} ) ) ),
 	} );
 
 	describe( '#deleteAccountRecoveryEmailSuccess', () => {
