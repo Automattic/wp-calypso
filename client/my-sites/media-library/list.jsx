@@ -13,6 +13,7 @@ import Grid from 'react-virtualized/Grid';
 import WindowScroller from 'react-virtualized/WindowScroller';
 import { connect } from 'react-redux';
 import { fill } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -46,7 +47,8 @@ export const MediaLibraryList = React.createClass( {
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
 		onEditItem: React.PropTypes.func,
-		padding: React.PropTypes.number
+		padding: React.PropTypes.number,
+		headingHeight: React.PropTypes.number
 	},
 
 	getInitialState: function() {
@@ -65,8 +67,20 @@ export const MediaLibraryList = React.createClass( {
 			single: false,
 			scrollable: false,
 			onEditItem: noop,
-			padding: 5
+			padding: 5,
+			headingHeight: 33
 		};
+	},
+
+	setRef: function( ref ) {
+		this.grid = ref;
+		this._registerChild( ref );
+	},
+
+	componentWillUpdate: function( props ) {
+		if ( this.grid && props.media.length > this.props.media.length ) {
+			this.grid.recomputeGridSize();
+		}
 	},
 
 	toggleItem: function( item, shiftKeyPressed ) {
@@ -118,7 +132,6 @@ export const MediaLibraryList = React.createClass( {
 
 		style = {
 			...style,
-			fontSize: this.props.mediaScale * 225,
 			top: style.top + this.props.padding,
 			left: style.left + this.props.padding,
 			width: style.width - this.props.padding * 2,
@@ -127,6 +140,12 @@ export const MediaLibraryList = React.createClass( {
 
 		if ( ! item ) {
 			return;
+		}
+
+		if ( item.heading ) {
+			return (
+				<h3 key={ key } style={ style }>{ item.heading }</h3>
+			);
 		}
 
 		if ( item.loading ) {
@@ -180,20 +199,20 @@ export const MediaLibraryList = React.createClass( {
 		}
 	},
 
-	renderGrid: function( { height, registerChild, scrollTop, width } ) {
-		const gridSize = Math.floor( width / this._columnCount );
+	renderGrid: function( { height, scrollTop, width } ) {
+		this._gridSize = Math.floor( width / this._columnCount );
 
 		return (
 			<Grid
 				autoHeight={ this.props.disableHeight }
 				cellRenderer={ this.renderItem }
 				columnCount={ this._columnCount }
-				columnWidth={ gridSize }
+				columnWidth={ this._gridSize }
 				height={ height }
 				onSectionRendered={ this.onSectionRendered }
-				ref={ registerChild }
+				ref={ this.setRef }
 				rowCount={ this._rowCount }
-				rowHeight={ gridSize }
+				rowHeight={ this.getRowHeight }
 				scrollTop={ scrollTop }
 				// Trigger update on change.
 				selectedItems={ this.props.mediaLibrarySelectedItems }
@@ -205,6 +224,7 @@ export const MediaLibraryList = React.createClass( {
 
 	renderSizer: function( { onRowsRendered, registerChild } ) {
 		this._onRowsRendered = onRowsRendered;
+		this._registerChild = registerChild;
 
 		if ( ! this.props.disableHeight ) {
 			return (
@@ -234,6 +254,63 @@ export const MediaLibraryList = React.createClass( {
 		);
 	},
 
+	getRowHeight: function( { index } ) {
+		const item = this._gridItems[ index * this._columnCount ];
+
+		if ( item && item.heading ) {
+			return this.props.headingHeight;
+		}
+
+		return this._gridSize;
+	},
+
+	formatDate: function( date ) {
+		const moment = this.props.moment( date );
+		const today = this.props.moment().startOf( 'day' );
+		const yesterday = today.clone().subtract( 1, 'days' );
+		const lastWeek = today.clone().subtract( 7, 'days' );
+
+		if ( today.isSame( moment, 'day' ) ) {
+			return this.props.translate( 'Today' );
+		} else if ( yesterday.isSame( moment, 'day' ) ) {
+			return this.props.translate( 'Yesterday' );
+		} else if ( lastWeek.isBefore( moment, 'day' ) ) {
+			return moment.format( 'dddd' );
+		}
+
+		return moment.format( 'D MMMM' );
+	},
+
+	getGridItems: function() {
+		const items = [];
+
+		this.props.media.forEach( ( item, index, media ) => {
+			if ( ! index || ! this.props.moment( media[ index - 1 ].date ).isSame( item.date, 'day' ) ) {
+				const trailing = items.length % this._columnCount;
+
+				if ( trailing ) {
+					items.push( ...Array( this._columnCount - trailing ) );
+				}
+
+				items.push( {
+					heading: this.formatDate( item.date ),
+				} );
+
+				items.push( ...Array( this._columnCount - 1 ) );
+			}
+
+			items.push( item );
+		} );
+
+		if ( this.props.mediaHasNextPage ) {
+			items.push( ...fill( Array( this.props.batchSize ), {
+				loading: true
+			} ) );
+		}
+
+		return items;
+	},
+
 	render: function() {
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
@@ -247,15 +324,8 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
-		this._gridItems = this.props.media;
-
-		if ( this.props.mediaHasNextPage ) {
-			this._gridItems = this._gridItems.concat(
-				fill( Array( this.props.batchSize ), { loading: true } )
-			);
-		}
-
 		this._columnCount = Math.floor( 1 / this.props.mediaScale );
+		this._gridItems = this.getGridItems();
 		this._rowCount = Math.ceil( this._gridItems.length / this._columnCount );
 
 		return (
@@ -275,4 +345,4 @@ export const MediaLibraryList = React.createClass( {
 
 export default connect( ( state ) => ( {
 	mediaScale: getPreference( state, 'mediaScale' )
-} ), null, null, { pure: false } )( MediaLibraryList );
+} ), null, null, { pure: false } )( localize( MediaLibraryList ) );
