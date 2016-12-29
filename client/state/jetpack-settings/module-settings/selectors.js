@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module settings are currently being requested
  */
@@ -21,7 +21,7 @@ export function isRequestingModuleSettings( state, siteId, moduleSlug ) {
  * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module settings are currently being updated
  */
@@ -34,7 +34,7 @@ export function isUpdatingModuleSettings( state, siteId, moduleSlug ) {
  * Returns null if the site is unknown, or modules have not been fetched yet.
  *
  * @param  {Object}  state   Global state tree
- * @param  {String}  siteId  The ID of the site we're querying
+ * @param  {Number}  siteId  The ID of the site we're querying
  * @return {?Object}         Modules settings
  */
 export function getModulesSettings( state, siteId ) {
@@ -46,7 +46,7 @@ export function getModulesSettings( state, siteId ) {
  * Returns null if the site or module is unknown, or modules have not been fetched yet.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Object}             Module data
  */

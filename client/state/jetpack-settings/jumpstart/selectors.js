@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns null if the site is unknown, or there is no information yet.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jumpstart is currently being activated
  */
 export function isActivatingJumpstart( state, siteId ) {
@@ -20,7 +20,7 @@ export function isActivatingJumpstart( state, siteId ) {
  * Returns null if the site is unknown, or there is no information yet.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jumpstart is currently being deactivated
  */
 export function isDeactivatingJumpstart( state, siteId ) {
@@ -32,7 +32,7 @@ export function isDeactivatingJumpstart( state, siteId ) {
  * Returns null if the site is unknown, or there is no information yet.
  *
  * @param  {Object}   state    Global state tree
- * @param  {String}   siteId   The ID of the site we're querying
+ * @param  {Number}   siteId   The ID of the site we're querying
  * @return {?Boolean}          Whether the Jumpstart status is being requested
  */
 export function isRequestingJumpstartStatus( state, siteId ) {
@@ -44,7 +44,7 @@ export function isRequestingJumpstartStatus( state, siteId ) {
  * Returns null if the site is unknown, or status hasn't been received yet.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?String}             Whether Jumpstart is active
  */
 export function getJumpstartStatus( state, siteId ) {

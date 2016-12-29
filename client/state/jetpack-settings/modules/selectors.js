@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether the module is active
  */
@@ -21,7 +21,7 @@ export function isModuleActive( state, siteId, moduleSlug ) {
  * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module is currently being activated
  */
@@ -34,7 +34,7 @@ export function isActivatingModule( state, siteId, moduleSlug ) {
  * Returns null if the status for the queried site and module is unknown.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module is currently being deactivated
  */
@@ -48,7 +48,7 @@ export function isDeactivatingModule( state, siteId, moduleSlug ) {
  * Returns null if the status for queried site and module is unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {String}  siteId The ID of the site we're querying
+ * @param  {Number}  siteId The ID of the site we're querying
  * @return {?Boolean}         Whether the list is being requested
  */
 export function isFetchingModules( state, siteId ) {
@@ -60,7 +60,7 @@ export function isFetchingModules( state, siteId ) {
  * Returns null if the site is unknown, or modules have not been fetched yet.
  *
  * @param  {Object}  state   Global state tree
- * @param  {String}  siteId  The ID of the site we're querying
+ * @param  {Number}  siteId  The ID of the site we're querying
  * @return {?Object}         Modules data
  */
 export function getModules( state, siteId ) {
@@ -72,7 +72,7 @@ export function getModules( state, siteId ) {
  * Returns null if the site or module is unknown, or modules have not been fetched yet.
  *
  * @param  {Object}  state       Global state tree
- * @param  {String}  siteId      The ID of the site we're querying
+ * @param  {Number}  siteId      The ID of the site we're querying
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Object}             Module data
  */
