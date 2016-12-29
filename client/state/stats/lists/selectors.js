@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forOwn, get, reduce } from 'lodash';
+import { forOwn, get, reduce, isArray } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -58,7 +58,8 @@ export const getSiteStatsPostStreakData = createSelector(
 		const { gmtOffset = 0 } = query;
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
-		if ( streakData && streakData.data ) {
+		// ensure streakData.data exists and it is not an array
+		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
