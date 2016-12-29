@@ -686,7 +686,7 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		const { site } = this.props;
-		if ( ! site.jetpack || site.versionCompare( '4.5', '<' ) ) {
+		if ( ! site.jetpack || site.versionCompare( '4.4', '<=' ) ) {
 			return false;
 		}
 
