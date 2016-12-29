@@ -657,11 +657,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderApiCache() {
-		// Note that years and months below are zero indexed
 		const { fields, translate, isRequestingSettings } = this.props;
-			// today = moment(),
-			// startDate = moment( { year: today.year(), month: 11, day: 1 } ),
-			// endDate = moment( { year: today.year(), month: 0, day: 4 } );
 
 		if ( ! this.showApiCacheCheckbox() ) {
 			return null;
@@ -685,7 +681,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	showApiCacheCheckbox() {
-		if ( ! config.isEnabled( 'jetpack/sync-panel' ) ) {
+		if ( ! config.isEnabled( 'jetpack/api-cache' ) ) {
 			return false;
 		}
 
