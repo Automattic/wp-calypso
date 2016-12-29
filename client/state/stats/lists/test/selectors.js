@@ -155,6 +155,27 @@ describe( 'selectors', () => {
 			} );
 		} );
 
+		it( 'should handle malformed data if matching data for query exists', () => {
+			const stats = getSiteStatsPostStreakData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
+										streak: {},
+										data: [ 1461889800 ]
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( stats ).to.eql( {} );
+		} );
+
 		it( 'should return post streak data based on the GMT offset of the current site', () => {
 			const state = {
 				stats: {
