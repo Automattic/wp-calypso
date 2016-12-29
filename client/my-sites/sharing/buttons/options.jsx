@@ -24,6 +24,7 @@ class SharingButtonsOptions extends Component {
 		postTypes: PropTypes.array,
 		recordGoogleEvent: PropTypes.func,
 		saving: PropTypes.bool,
+		translate: PropTypes.func,
 		values: PropTypes.object,
 	};
 
@@ -114,65 +115,69 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getTwitterViaOptionElement() {
-		if ( ! this.isTwitterButtonEnabled() || ! this.props.isTwitterButtonAllowed ) {
+		const { isJetpack, initialized, isTwitterButtonAllowed, translate, values } = this.props;
+		if ( ! this.isTwitterButtonEnabled() || ! isTwitterButtonAllowed ) {
 			return;
 		}
 
-		const option = this.props.isJetpack ? 'jetpack-twitter-cards-site-tag' : 'twitter_via';
+		const option = isJetpack ? 'jetpack-twitter-cards-site-tag' : 'twitter_via';
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">
-				<legend className="sharing-buttons__fieldset-heading">{ this.props.translate( 'Twitter username' ) }</legend>
+				<legend className="sharing-buttons__fieldset-heading">{ translate( 'Twitter username' ) }</legend>
 				<input
 					name={ option }
 					type="text"
-					placeholder={ '@' + this.props.translate( 'username', { textOnly: true } ) }
-					value={ this.getSanitizedTwitterUsername( this.props.values[ option ] ) }
+					placeholder={ '@' + translate( 'username', { textOnly: true } ) }
+					value={ this.getSanitizedTwitterUsername( values[ option ] ) }
 					onChange={ this.handleTwitterViaChange }
 					onFocus={ this.trackTwitterViaAnalyticsEvent }
-					disabled={ ! this.props.initialized } />
+					disabled={ ! initialized } />
 				<p className="sharing-buttons__fieldset-detail">
-					{ this.props.translate( 'This will be included in tweets when people share using the Twitter button.' ) }
+					{ translate( 'This will be included in tweets when people share using the Twitter button.' ) }
 				</p>
 			</fieldset>
 		);
 	}
 
 	getCommentLikesOptionElement() {
-		if ( this.props.isJetpack ) {
+		const { isJetpack, initialized, translate, values } = this.props;
+
+		if ( isJetpack ) {
 			return;
 		}
 
-		const checked = get( this.props.values, 'jetpack_comment_likes_enabled', false );
+		const checked = get( values, 'jetpack_comment_likes_enabled', false );
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
-					{ this.props.translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
+					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
 				<label>
 					<input name="jetpack_comment_likes_enabled"
 						type="checkbox"
 						checked={ checked }
 						onChange={ this.handleChange }
-						disabled={ ! this.props.initialized }
+						disabled={ ! initialized }
 					/>
-					<span>{ this.props.translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }</span>
+					<span>{ translate( 'On for all posts', { context: 'Sharing options: Comment Likes' } ) }</span>
 				</label>
 			</fieldset>
 		);
 	}
 
 	render() {
+		const { initialized, saving, translate, values } = this.props;
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 
 		return (
 			<div className="sharing-buttons__panel">
-				<h4>{ this.props.translate( 'Options' ) }</h4>
+				<h4>{ translate( 'Options' ) }</h4>
 				<div className="sharing-buttons__fieldset-group">
 					<fieldset className="sharing-buttons__fieldset">
 						<legend className="sharing-buttons__fieldset-heading">
-							{ this.props.translate( 'Show sharing buttons on', {
+							{ translate( 'Show sharing buttons on', {
 								context: 'Sharing options: Header',
 								comment: 'Possible values are: "Front page, Archive Pages, and Search Results", "Posts", "Pages", "Media"'
 							} ) }
@@ -180,9 +185,9 @@ class SharingButtonsOptions extends Component {
 						<MultiCheckbox
 							name="sharing_show"
 							options={ this.getDisplayOptions() }
-							checked={ this.props.values.sharing_show }
+							checked={ values.sharing_show }
 							onChange={ changeSharingPostTypes }
-							disabled={ ! this.props.initialized }
+							disabled={ ! initialized }
 						/>
 					</fieldset>
 					{ this.getCommentLikesOptionElement() }
@@ -192,9 +197,9 @@ class SharingButtonsOptions extends Component {
 				<button
 					type="submit"
 					className="button is-primary sharing-buttons__submit"
-					disabled={ this.props.saving || ! this.props.initialized }
+					disabled={ saving || ! initialized }
 				>
-					{ this.props.saving ? this.props.translate( 'Saving…' ) : this.props.translate( 'Save Changes' ) }
+					{ saving ? translate( 'Saving…' ) : translate( 'Save Changes' ) }
 				</button>
 			</div>
 		);
