@@ -441,7 +441,7 @@ export const getSeoTitle = ( state, type, data ) => {
  * @return {?Object}       Site object
  */
 export function getSiteByUrl( state, url ) {
-	const slug = withoutHttp( url ).replace( /\//g, '::' );
+	const slug = urlToSlug( url );
 	const site = find( state.sites.items, ( item, siteId ) => {
 		return getSiteSlug( state, siteId ) === slug;
 	} );
