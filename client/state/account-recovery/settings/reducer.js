@@ -77,7 +77,7 @@ const phone = createReducer( null, {
 		convertPhoneResponse( settings.phone ),
 
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
-		'phone' === target ? convertPhoneResponse( value ) : state,
+		'phone' === target ? value : state,
 
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
 		'phone' === target ? null : state,

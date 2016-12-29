@@ -41,7 +41,7 @@ class RecoveryPhone extends Component {
 	}
 
 	onSave = ( phone ) => {
-		this.props.updatePhone( phone.countryCode, phone.number );
+		this.props.updatePhone( phone );
 	}
 
 	onDelete = () => {
