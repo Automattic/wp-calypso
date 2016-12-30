@@ -312,6 +312,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = this.props.post && this.props.post.date
 				? this.props.post.date
 				: null;
