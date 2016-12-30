@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import React from 'react';
 
 /**
@@ -12,10 +11,6 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 const FailedPurchase = ( { failedPurchases, translate } ) => {
-	const classes = {
-		'checkout-thank-you__header': true,
-	};
-
 	const description = (
 		<div>
 			<p>
@@ -27,7 +22,7 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 			</p>
 			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
 				{ failedPurchases.map( item => {
-					return <li>{ item.productName }: { item.meta }</li>
+					return <li key={ `failed-purchase-${ item.productId }` }>{ item.productName }{ item.meta && `: ${ item.meta }` }</li>;
 				} ) }
 			</ul>
 			<p>
@@ -42,15 +37,15 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 
 	return (
 		<div>
-			<div className={ classNames( classes ) }>
+			<div className="checkout-thank-you__header">
 				<div className="checkout-thank-you__header-content">
 						<span className="checkout-thank-you__header-icon">
-							<Gridicon icon="notice" size={ 72 }/>
+							<Gridicon icon="notice" size={ 72 } />
 						</span>
 
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">
-							{ translate( 'Ooops...' ) }
+							{ translate( 'Ooops…' ) }
 						</h1>
 
 						<h2 className="checkout-thank-you__header-text">

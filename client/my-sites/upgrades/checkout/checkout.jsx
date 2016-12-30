@@ -1,16 +1,11 @@
 /**
  * External dependencies
  */
-const connect = require( 'react-redux' ).connect,
-	forEach = require( 'lodash/forEach' ),
-	find = require( 'lodash/find' ),
-	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	isEqual = require( 'lodash/isEqual' ),
-	page = require( 'page' ),
-	React = require( 'react' ),
-	reduce = require( 'lodash/reduce' ),
-	startsWith = require( 'lodash/startsWith' );
+import { connect } from 'react-redux';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -168,20 +163,14 @@ const Checkout = React.createClass( {
 	},
 
 	/**
-	 * Purchases are of the format { [siteId]: [ { product_id: ... } ] },
+	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
 	 *
-	 * @param purchases
-	 * @returns {Array}
+	 * @param {Object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+	 * @returns {Array} of product objects [ { productId: ... }, ... ]
 	 */
 	flattenPurchases: function( purchases ) {
-		let flatPurchases = [];
-
-		forEach( purchases, sitePurchases => {
-			flatPurchases = flatPurchases.concat( sitePurchases );
-		} );
-
-		return flatPurchases;
+		return flatten( Object.values( purchases ) );
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
