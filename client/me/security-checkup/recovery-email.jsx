@@ -33,7 +33,7 @@ class RecoveryEmail extends Component {
 				>
 					<EditEmail
 						primaryEmail={ primaryEmail }
-						storedEmail={ email ? email : '' }
+						storedEmail={ email || '' }
 						/>
 				</ManageContact>
 		);
