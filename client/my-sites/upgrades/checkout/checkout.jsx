@@ -167,13 +167,16 @@ const Checkout = React.createClass( {
 		return true;
 	},
 
-	getPurchasesFromReceipt: function() {
-		const purchases = this.props.transaction.step.data.purchases;
-
+	/**
+	 * Purchases are of the format { [siteId]: [ { product_id: ... } ] },
+	 * so we need to flatten them to get a list of purchases
+	 *
+	 * @param purchases
+	 * @returns {Array}
+	 */
+	flattenPurchases: function( purchases ) {
 		let flatPurchases = [];
 
-		// purchases are of the format { [siteId]: [ { product_id: ... } ] },
-		// so we need to flatten them to get a list of purchases
 		forEach( purchases, sitePurchases => {
 			flatPurchases = flatPurchases.concat( sitePurchases );
 		} );
@@ -247,7 +250,8 @@ const Checkout = React.createClass( {
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId: receiptId,
-				purchases: this.getPurchasesFromReceipt()
+				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
 			} );
 		}
 

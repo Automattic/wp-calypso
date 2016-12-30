@@ -12,8 +12,17 @@ export function createReceiptObject( data ) {
 				productName: purchase.product_name,
 				productNameShort: purchase.product_name_short,
 				registrarSupportUrl: purchase.registrar_support_url,
-				isEmailVerified: Boolean( purchase.is_email_verified )
+				isEmailVerified: Boolean( purchase.is_email_verified ),
 			};
-		} )
+		} ),
+		failedPurchases: data.failedPurchases && data.failedPurchases.map( purchase => {
+			return {
+				meta: purchase.product_meta,
+				productId: purchase.product_id,
+				productCost: purchase.product_cost,
+				productSlug: purchase.product_slug,
+				productName: purchase.product_name,
+			};
+		} ),
 	};
 }
