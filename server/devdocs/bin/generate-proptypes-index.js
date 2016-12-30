@@ -30,6 +30,16 @@ const camelCaseToSlug = ( name ) => {
 		.replace( /^-/, '' );
 };
 
+const slugToCamelCase = name => {
+	if ( ! name ) {
+		return name;
+	}
+
+	return name
+		.replace( /-([a-z])/g, s => s[ 1 ].toUpperCase() )
+		.replace( /^\w/, s => s.toUpperCase() );
+};
+
 /**
  * Wraps fs.readFile in a Promise
  * @param {string} filePath The path to of the file to read
@@ -73,6 +83,11 @@ const parseDocument = ( docObj ) => {
 		parsed.includePath = docObj.includePath;
 		if ( parsed.displayName ) {
 			parsed.slug = camelCaseToSlug( parsed.displayName );
+		}
+		else {
+			// we have to figure it out -- use the directory name to get the slug
+			parsed.slug = path.basename( docObj.includePath );
+			parsed.displayName = slugToCamelCase( parsed.slug );
 		}
 		return parsed;
 	} catch ( error ) {
