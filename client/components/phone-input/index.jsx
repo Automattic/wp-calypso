@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import noop from 'lodash/noop';
 import find from 'lodash/find';
+import identity from 'lodash/identity';
 import includes from 'lodash/includes';
 import React from 'react';
 import classnames from 'classnames';
@@ -17,106 +17,20 @@ import { countries } from './data';
 
 const PhoneInput = React.createClass( {
 	propTypes: {
-		onChange: React.PropTypes.func,
-		value: React.PropTypes.string,
-		initialCountryCode: React.PropTypes.string,
+		onChange: React.PropTypes.func.isRequired,
+		value: React.PropTypes.string.isRequired,
+		countryCode: React.PropTypes.string.isRequired,
 		countriesList: React.PropTypes.object.isRequired
 	},
 
-	getDefaultProps() {
-		return {
-			value: '',
-			onChange: noop,
-			initialCountryCode: 'us'
-		};
-	},
-
-	getInitialState() {
-		const selectedCountry = countries[ this.props.initialCountryCode ];
-		const formattedNumber = formatNumber( this.props.value, selectedCountry );
-		return {
-			selectedCountry,
-			formattedNumber,
-			queryString: '',
-			freezeSelection: false
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.value !== nextProps.value && nextProps.value ) {
-			this.setState( this.getFormattedNumberAndCountry( nextProps.value ) );
-		}
-	},
-
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.value && this.state.selectedCountry !== prevState.selectedCountry ) {
-			this.setState( {
-				formattedNumber: formatNumber( this.state.value, this.state.selectedCountry )
-			} );
-		}
-	},
-
-	getFormattedNumberAndCountry( value ) {
-		let formattedNumber = value,
-			selectedCountry = this.state.selectedCountry;
-
-		if ( value ) {
-			if ( includes( [ '+', '1' ], value[ 0 ] ) && ! this.state.freezeSelection ) {
-				selectedCountry = findCountryFromNumber( value ) || this.state.selectedCountry;
-			}
-
-			formattedNumber = formatNumber( value, selectedCountry );
-		}
-
-		return {
-			selectedCountry,
-			formattedNumber
-		};
-	},
-
-	handleInput( event ) {
-		const { value } = event.target;
-		if ( value === this.state.formattedNumber ) {
-			// nothing changed
-			return;
-		}
-
-		event.preventDefault();
-		const { formattedNumber, selectedCountry } = this.getFormattedNumberAndCountry( value );
-
-		let caretPosition = event.target.selectionStart;
-		const oldFormattedText = this.state.formattedNumber;
-		const diff = formattedNumber.length - oldFormattedText.length;
-
-		this.setState( {
-			value,
-			formattedNumber,
-			selectedCountry
-		}, () => {
-			if ( diff > 0 ) {
-				caretPosition = caretPosition - diff;
-			}
-
-			if ( caretPosition > 0 && oldFormattedText.length >= formattedNumber.length ) {
-				this.numberInput.setSelectionRange( caretPosition, caretPosition );
-			}
-		} );
-		this.props.onChange( event );
-	},
-
-	cursorToEnd() {
-		const pos = this.numberInput.value.length - 1;
-		this.numberInput.setSelectionRange( pos, pos );
-	},
-
-	setCountry( countryCode ) {
-		countryCode = countryCode.toLowerCase();
+	getCountry( countryCode = this.props.countryCode ) {
 		let selectedCountry = countries[ countryCode ];
-		// Special cases where the country is in a disputed region and not globally recognized.
-		// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
+
 		if ( ! selectedCountry ) {
 			const data = find( this.props.countriesList.get() || [],
 				country => country.code.toLowerCase() === countryCode );
+			// Special cases where the country is in a disputed region and not globally recognized.
+			// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
 			if ( data ) {
 				selectedCountry = {
 					isoCode: countryCode,
@@ -125,31 +39,93 @@ const PhoneInput = React.createClass( {
 				};
 			}
 		}
+		return selectedCountry;
+	},
 
-		this.setState( {
-			selectedCountry,
-			freezeSelection: true
-		} );
+	getInitialState() {
+		return {
+			freezeSelection: false
+		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.value !== nextProps.value && nextProps.value ) {
+			const country = this.guessCountryFromValue( nextProps.value );
+			if ( country && country.isoCode !== this.getCountry().isoCode ) {
+				this.props.onChange( { countryCode: country.isoCode, value: nextProps.value } );
+			}
+		}
+	},
+
+	componentWillUpdate( nextProps ) {
+		const currentFormat = this.format( this.props ),
+			currentCursorPoint = this.numberInput.selectionStart,
+			nextFormat = this.format( nextProps );
+
+		let newCursorPoint = currentCursorPoint;
+		this.numberInput.value = nextFormat;
+
+		const nonDigitCountOld = currentFormat
+			.substring( 0, currentCursorPoint )
+			.split( '' )
+			.map( char => /\D/.test( char ) )
+			.filter( identity ).length;
+
+		const nonDigitCountNew = nextFormat
+			.substring( 0, currentCursorPoint )
+			.split( '' )
+			.map( char => /\D/.test( char ) )
+			.filter( identity ).length;
+
+		if ( currentFormat !== nextFormat ) {
+			if ( currentCursorPoint >= currentFormat.length ) {
+				newCursorPoint = nextFormat.length;
+			} else {
+				newCursorPoint = currentCursorPoint + nonDigitCountNew - nonDigitCountOld;
+			}
+		}
+		this.numberInput.setSelectionRange( newCursorPoint, newCursorPoint );
+	},
+
+	guessCountryFromValue( value ) {
+		if ( value && includes( [ '+', '1' ], value[ 0 ] ) && ! this.state.freezeSelection ) {
+			return findCountryFromNumber( value ) || this.getCountry();
+		}
+
+		return this.getCountry();
+	},
+
+	format( { value, countryCode } = this.props ) {
+		return formatNumber( value, this.getCountry( countryCode ) );
+	},
+
+	handleInput( event ) {
+		const { value } = event.target;
+		if ( value === this.format() ) {
+			// nothing changed
+			return;
+		}
+
+		event.preventDefault();
+
+		const country = this.guessCountryFromValue( value );
+		this.props.onChange( { value, countryCode: country.isoCode } );
 	},
 
 	handleCountrySelection( event ) {
-		this.setCountry( event.target.value );
-	},
+		const countryCode = event.target.value.toLowerCase();
 
-	getCountry() {
-		return this.state.selectedCountry;
+		this.props.onChange( { countryCode, value: this.props.value } );
+		this.setState( { freezeSelection: true } );
 	},
 
 	render() {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ formatNumber(
-						( this.state.selectedCountry.nationalPrefix || '' ) + '9876543210', this.state.selectedCountry
-					) }
+					placeholder={ formatNumber( ( this.getCountry().nationalPrefix || '' ) + '9876543210', this.getCountry() ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
-					value={ this.state.formattedNumber }
 					ref={ c => this.numberInput = c }
 					type="tel" />
 				<div className="phone-input__select-container">
@@ -157,9 +133,9 @@ const PhoneInput = React.createClass( {
 						<FormCountrySelect
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
-							value={ ( this.state.selectedCountry.isoCode || '' ).toUpperCase() }
+							value={ ( this.getCountry().isoCode || '' ).toUpperCase() }
 							countriesList={ this.props.countriesList } />
-						<CountryFlag countryCode={ this.state.selectedCountry.isoCode } />
+						<CountryFlag countryCode={ this.getCountry().isoCode } />
 					</div>
 				</div>
 			</div>
