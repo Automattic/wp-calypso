@@ -150,7 +150,7 @@ const PostSharing = React.createClass( {
 							{ this.translate( 'Share post' ) }
 						</h4>
 						<div className="posts__post-share-subtitle">
-							{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}', {
+							{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}.', {
 								components: {
 									a: <a href={ '/sharing/' + this.props.siteSlug } />
 								}
