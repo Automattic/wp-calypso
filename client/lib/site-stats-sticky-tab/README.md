@@ -8,7 +8,7 @@ This enables us to provide direct links to where users were inside their Site St
 ### usage
 * To save the state:
 
-```
+```es6
 var siteStatsStickyTabActions = require( 'lib/site-stats-sticky-tab/actions' );
 /* ...component lifecycle methods: */
 {

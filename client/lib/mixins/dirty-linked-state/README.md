@@ -10,7 +10,7 @@ Usage
 
 Enable this per component by adding it to its `mixins`:
 
-```
+```jsx
 import dirtyLinkedState from ("lib/mixins/dirty-linked-state");
 app.TodoItem = React.createClass( {
     mixins: [ dirtyLinkedState ],
@@ -26,7 +26,7 @@ Example
 -----
 Before the user types in the field the state object might look like:
 
-```
+```js
 { 
 	blogname: 'default title',
 	blogdescription: 'default description'
@@ -35,7 +35,7 @@ Before the user types in the field the state object might look like:
 
 After typing:
 
-```
+```js
 {
 	blogname: 'new title',
 	blogdescription: 'default description',

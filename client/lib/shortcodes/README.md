@@ -9,7 +9,7 @@ A single action is made available, `fetch`, which accepts a site ID and shortcod
 
 Here's the typical structure of a store:
 
-```
+```js
 {
 	77203074: {
 		"[gallery ids=\"1,2,3\"]": {

@@ -7,7 +7,7 @@ MultiCheckbox is a React component that can be used in forms to simplify the cre
 
 Below is an example use for the MultiCheckbox component:
 
-```
+```jsx
 var options = [
 	{ value: 1, label: 'One' },
 	{ value: 2, label: 'Two' }

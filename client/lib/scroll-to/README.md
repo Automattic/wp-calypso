@@ -3,7 +3,7 @@ scroll-to
 A utility module to smoothly scroll to a window position.
 
 ## Usage
-```
+```es6
 import scrollTo from 'lib/scroll-to'; 
 
 scrollTo({

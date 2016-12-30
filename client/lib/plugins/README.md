@@ -9,7 +9,7 @@ The Plugins Store is responsible for keeping each site's plugin list up to date.
 ####The Data
 The Data that is stored in the sites plugin store looks like this:
 
-```
+```js
 {
 	123456 : { // site.ID
 		akismet : { // plugin.slug
@@ -77,7 +77,7 @@ Returns an array of sites that have a particular plugin.
 
 ####Example Component Code:
 
-```
+```es6
 /**
  * External dependencies
  */
@@ -180,7 +180,7 @@ Toggle AutoUpdates for a plugin on a site.
 
 ####Example Component Code:
 
-```
+```jsx
 /**
  * External dependencies
  */

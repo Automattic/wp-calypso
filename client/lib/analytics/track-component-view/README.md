@@ -12,7 +12,7 @@ Render the component passing one or both of:
 - Tracks: An `eventName` string and `eventProperties` object
 - MC Stats: `statGroup` and `statName` strings
 
-```
+```jsx
 <ContainerComponent>
 	<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 </ContainerComponent>

@@ -17,7 +17,7 @@ To display a page that will prompt the user to update Jetpack.
 You'll need to declare `site` which is simply the current site object.
 You can optionally declare `version` to display what version is necessary (defaults to 3.4).
 
-```
+```jsx
 JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 <JetpackManageErrorPage
@@ -31,7 +31,7 @@ JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 To display a page that will prompt the user to opt-in to Jetpack manage:
 
-```
+```jsx
 <JetpackManageErrorPage
     template="optInManage"
     site={ this.props.site }
@@ -47,7 +47,7 @@ As stated above, this component renders an `emptyContent` component by default. 
 If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
 
 
-```
+```jsx
 JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 // create the component using properties accepted by EmptyContent

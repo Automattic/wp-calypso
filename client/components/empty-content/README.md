@@ -5,7 +5,7 @@ This module provides a consistent rendering component for empty content cases in
 
 ## Usage
 
-```js
+```jsx
 
 // require the component
 var EmptyContentComponent = require( 'components/empty-content' );
@@ -53,7 +53,7 @@ The component also supports a secondary action. This should be used sparingly.
 
 ### Example: Sites
 
-```
+```es6
 ReactDom.render(
 	EmptyContentComponent({
 		title: "You don't have any WordPress sites yet.",
