@@ -105,7 +105,7 @@ Triggers api call to fetch the plugin data and update the store.
 
 ####Example Component Code:
 
-```es6
+```jsx
 /**
  * External dependencies
  */
