@@ -3,17 +3,20 @@
  */
 var React = require( 'react' ),
 	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
-	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:menu-items-list' ); // eslint-disable-line no-unused-vars
+import { connect } from 'react-redux';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 var MenuEditableItem = require( './menu-editable-item' ),
 	siteMenus = require( 'lib/menu-data' ),
-	itemTypes = require( './menu-item-types' ),
 	MenuItemDropTarget = require( './menu-item-drop-target' ),
 	analytics = require( 'lib/analytics' );
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRequestingPostTypes } from 'state/post-types/selectors';
+import { getMySitesMenuItemTypes } from 'state/selectors';
 
 /**
  * Components
@@ -48,6 +51,7 @@ var MenuItemList = React.createClass( {
 						return <MenuItem
 							key={ menuItem.id }
 							item={ menuItem }
+							itemTypes={ this.props.itemTypes }
 							items={ menuItem.items }
 							depth={ this.props.depth + 1 }
 							getEditItem={ this.props.getEditItem }
@@ -191,9 +195,10 @@ var MenuItem = React.createClass( {
 	},
 
 	renderLabel: function() {
-		var itemType = find( itemTypes.get(), { name: this.props.item.type } ) || {};
+		const itemType = find( this.props.itemTypes, { name: this.props.item.type } )
+		const icon = get( itemType, 'icon', 'standard' );
 		return (
-			<span className={ 'menu-item-name noticon noticon-' + ( itemType.icon || 'standard' ) }>
+			<span className={ `menu-item-name noticon noticon-${ icon }` }>
 				{ this.props.item.name }
 			</span>
 		);
@@ -333,7 +338,7 @@ var MenuItem = React.createClass( {
 					menu={ this.props.addState.menu }
 					position={ position }
 					depth={ depth }
-					itemTypes={ itemTypes }
+					itemTypes={ this.props.itemTypes }
 					close={ this.cancelCurrentOperation } />
 			);
 		}
@@ -349,7 +354,7 @@ var MenuItem = React.createClass( {
 						close={ this.cancelCurrentOperation }
 						markForDeletion={ this.markForDeletion }
 						moveState={ this.props.moveState }
-						itemTypes={ itemTypes }
+						itemTypes={ this.props.itemTypes }
 						startMoveItem={ this.startMoveItem } />;
 		} else {
 			item = this.renderItem();
@@ -435,7 +440,7 @@ var EmptyMenu = React.createClass( {
 					menu={ this.props.addState.menu }
 					position={ this.props.addState.position }
 					depth={ this.props.depth }
-					itemTypes={ itemTypes }
+					itemTypes={ this.props.itemTypes }
 					close={ this.props.doAddItem.bind( null, 'cancel') } />
 			);
 
@@ -448,4 +453,14 @@ var EmptyMenu = React.createClass( {
 
 } );
 
-module.exports = MenuItemList;
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isRequesting = isRequestingPostTypes( state, siteId );
+		const itemTypes = getMySitesMenuItemTypes( state, siteId );
+		return {
+			isRequesting,
+			itemTypes,
+		};
+	}
+)( MenuItemList );

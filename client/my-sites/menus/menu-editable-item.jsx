@@ -12,9 +12,7 @@ var React = require( 'react' ),
  */
 var siteMenus = require( 'lib/menu-data' ),
 	MenuUtils = require( './menu-utils' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	TaxonomyList = require( './item-options/taxonomy-list' ),
-	CategoryOptions = require( './item-options/category-options' ),
+	TaxonomyOptions = require( './item-options/taxonomy-options' ),
 	PostList = require( './item-options/post-list' ),
 	MenuPanelBackButton = require( './menu-panel-back-button' ),
 	analytics = require( 'lib/analytics' ),
@@ -44,8 +42,6 @@ var Button = React.createClass( {
 } );
 
 var MenuEditableItem = React.createClass( {
-	mixins: [ observe( 'itemTypes' ) ],
-
 	componentWillMount: function() {
 		this.initializeItemType();
 	},
@@ -73,7 +69,7 @@ var MenuEditableItem = React.createClass( {
 
 	initializeItemType: function() {
 		this.setState( {
-			itemType: find( this.props.itemTypes.get(), { name: this.state.item.type } )
+			itemType: find( this.props.itemTypes, { name: this.state.item.type } )
 		} );
 	},
 
@@ -220,24 +216,8 @@ var MenuEditableItem = React.createClass( {
 	},
 
 	renderTaxonomyOptions: function( itemType ) {
-		var contentsList = itemType.contentsList;
-
-		if ( contentsList.page === 0 ) {
-			contentsList.fetchNextPage();
-		}
-
-		return  (
-			<TaxonomyList contents={ contentsList }
-				item={ this.state.item }
-				back={ this.showLeftPanel }
-				onChange={ this.setItemContent }
-				itemType={ itemType } />
-		);
-	},
-
-	renderCategoryOptions: function( itemType ) {
 		return (
-			<CategoryOptions
+			<TaxonomyOptions
 				siteId={ siteMenus.siteID }
 				selected={ this.state.item }
 				onBackClick={ this.showLeftPanel }
@@ -249,7 +229,7 @@ var MenuEditableItem = React.createClass( {
 	renderItemTypes: function() {
 		return (
 			<ul className="menus__menu-item-form-types">
-				{ this.props.itemTypes.get().map( function( itemType ) {
+				{ this.props.itemTypes.map( function( itemType ) {
 					var isSelected;
 
 					if ( ! itemType.show ) {
@@ -306,7 +286,7 @@ var MenuEditableItem = React.createClass( {
 		if ( ! this.state.itemType ) {
 			return false;
 		}
-		var itemType = find( this.props.itemTypes.get(), { name: this.state.item.type } );
+		var itemType = find( this.props.itemTypes, { name: this.state.item.type } );
 		return itemType && itemType.show;
 	},
 

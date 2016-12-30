@@ -3,31 +3,32 @@
  */
 var React = require( 'react' ),
 	isEqual = require( 'lodash/isEqual' ),
-	debug = require( 'debug' )( 'calypso:menus:categories-options' );
+	debug = require( 'debug' )( 'calypso:menus:taxonomy-options' );
 
 /**
  * Internal dependencies
  */
-var MenuPanelBackButton = require( '../menu-panel-back-button' ),
-	CategorySelector = require( 'blocks/term-tree-selector' );
+import MenuPanelBackButton from '../menu-panel-back-button';
+import TermTreeSelector from 'blocks/term-tree-selector';
 
 // The `selected` prop item passed in from MenuEditableItem
-// Isn't a Category object, a quick transform to get the correct ID in place
-function categoryObjectFromItem( menuItem ) {
-	var selectedCategory = {};
+// Isn't a Term object, a quick transform to get the correct ID in place
+function termObjectFromItem( menuItem ) {
+	let selectedTerm = {};
 	if ( menuItem && menuItem.content_id ) {
-		selectedCategory = { ID: menuItem.content_id };
+		selectedTerm = { ID: menuItem.content_id };
 	}
 
-	return selectedCategory;
+	return selectedTerm;
 }
 
 module.exports = React.createClass( {
-	displayName: 'MenusCategoriesOptions',
+	displayName: 'MenusTaxonomyOptions',
 
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		selected: React.PropTypes.object,
+		taxonomy: React.PropTypes.string,
 		itemType: React.PropTypes.object,
 		onBackClick: React.PropTypes.func.isRequired,
 		onChange: React.PropTypes.func.isRequired
@@ -37,7 +38,7 @@ module.exports = React.createClass( {
 		var selected = [];
 
 		if ( this.props.selected ) {
-			selected.push( categoryObjectFromItem( this.props.selected ) );
+			selected.push( termObjectFromItem( this.props.selected ) );
 		}
 
 		return {
@@ -46,8 +47,8 @@ module.exports = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var nextSelection = categoryObjectFromItem( nextProps.selected ),
-			currentSelection = categoryObjectFromItem( this.props.selected );
+		const nextSelection = termObjectFromItem( nextProps.selected ),
+			currentSelection = termObjectFromItem( this.props.selected );
 
 		if ( ! isEqual( nextSelection, currentSelection ) ) {
 			this.setState( { selected: [ nextSelection ] } );
@@ -76,12 +77,14 @@ module.exports = React.createClass( {
 		return (
 			<div className="menu-item-options menu-item-options__term-tree-selector">
 				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
-				<CategorySelector
+				<TermTreeSelector
 					analyticsPrefix="Menus"
+					taxonomy={ this.props.itemType.name }
 					onChange={ this.onChange }
 					createLink={ this.props.itemType.createLink }
-					selected={ this.getSelectedIds() }>
-				</CategorySelector>
+					selected={ this.getSelectedIds() }
+					height={ 260 }>
+				</TermTreeSelector>
 			</div>
 		);
 	}
