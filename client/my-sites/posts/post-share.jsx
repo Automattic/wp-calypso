@@ -140,14 +140,14 @@ const PostSharing = React.createClass( {
 
 		return (
 			<div className="posts__post-share-wrapper">
-				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Scheduling...' ) }</Notice> }
-				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( `Updates sent. Please check your social media accounts.` ) }</Notice> }
+				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing...' ) }</Notice> }
+				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( `Post shared. Please check your social media accounts.` ) }</Notice> }
 				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( `Something went wrong. Please don't be mad.` ) }</Notice> }
 				<div className={ classes }>
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 					<div className="posts__post-share-head">
 						<h4 className="posts__post-share-title">
-							{ this.translate( 'Publicize your content' ) }
+							{ this.translate( 'Share post' ) }
 						</h4>
 						<div className="posts__post-share-subtitle">
 							{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}', {
