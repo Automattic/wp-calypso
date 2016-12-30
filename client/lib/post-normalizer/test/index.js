@@ -906,13 +906,33 @@ describe( 'index', function() {
 			} );
 		}
 
-		it( 'strips empty elements and leading and trailing brs', function( done ) {
+		it( 'strips empty elements and leading brs', function( done ) {
 			assertExcerptBecomes( `<br>
 <p>&nbsp;</p>
 <p class="wp-caption-text">caption</p>
 <p><img src="http://example.com/image.jpg"></p>
 <p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
 <p></p>`, '<p>Giraffes are <br>great</p>', done );
+		} );
+
+		it( 'strips leading brs even if they are nested', function( done ) {
+			assertExcerptBecomes(
+				'<p><br>deep meaning lies within</p>',
+				'<p>deep meaning lies within</p>',
+				done
+			);
+		} );
+
+		it( 'strips multiple leading brs even if nested', function( done ) {
+			assertExcerptBecomes(
+				'<p><br><br><br></p><br><p><br></p>deep meaning lies within',
+				'deep meaning lies within',
+				done
+			);
+		} );
+
+		it( 'only trims break if there is no preceding text', function( done ) {
+			assertExcerptBecomes( '<p>one<br>two</p>', '<p>one<br>two</p>', done );
 		} );
 
 		it( 'limits the excerpt to 3 elements', function( done ) {
@@ -925,10 +945,6 @@ describe( 'index', function() {
 				'<p>one</p><p>two</p><br>',
 				done
 			);
-		} );
-
-		it( 'only trims top-level breaks', function( done ) {
-			assertExcerptBecomes( '<p></p><p>one<br>two</p>', '<p>one<br>two</p>', done );
 		} );
 
 		it( 'removes style tags', done => {
