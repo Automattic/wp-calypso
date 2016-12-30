@@ -32,11 +32,8 @@ import {
 import {
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
-	isAccountRecoverySettingsReady,
-	isUpdatingAccountRecoveryEmail,
-	isUpdatingAccountRecoveryPhone,
-	isDeletingAccountRecoveryEmail,
-	isDeletingAccountRecoveryPhone,
+	isAccountRecoveryEmailActionInProgress,
+	isAccountRecoveryPhoneActionInProgress,
 } from 'state/account-recovery/settings/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUser } from 'state/users/selectors';
@@ -55,11 +52,7 @@ const SecurityCheckup = React.createClass( {
 
 		const {
 			translate,
-			accountRecoverySettingsReady
 		} = this.props;
-
-		const isRecoveryEmailLoading = ! accountRecoverySettingsReady || this.props.accountRecoveryEmailActionInProgress;
-		const isRecoveryPhoneLoading = ! accountRecoverySettingsReady || this.props.accountRecoveryPhoneActionInProgress;
 
 		const twoStepNoticeMessage = translate(
 			'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
@@ -92,7 +85,7 @@ const SecurityCheckup = React.createClass( {
 						email={ this.props.accountRecoveryEmail }
 						updateEmail={ this.props.updateAccountRecoveryEmail }
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
-						isLoading={ isRecoveryEmailLoading }
+						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
 				</CompactCard>
 
@@ -101,7 +94,7 @@ const SecurityCheckup = React.createClass( {
 						phone={ this.props.accountRecoveryPhone }
 						updatePhone={ this.props.updateAccountRecoveryPhone }
 						deletePhone={ this.props.deleteAccountRecoveryPhone }
-						isLoading={ isRecoveryPhoneLoading }
+						isLoading={ this.props.accountRecoveryPhoneActionInProgress }
 						disabled={ twoStepEnabled }
 					/>
 					{ twoStepEnabled &&
@@ -121,10 +114,9 @@ const SecurityCheckup = React.createClass( {
 export default connect(
 	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
-		accountRecoveryEmailActionInProgress: isUpdatingAccountRecoveryEmail( state ) || isDeletingAccountRecoveryEmail( state ),
-		accountRecoverySettingsReady: isAccountRecoverySettingsReady( state ),
+		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
-		accountRecoveryPhoneActionInProgress: isUpdatingAccountRecoveryPhone( state ) || isDeletingAccountRecoveryPhone( state ),
+		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
 		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
 	} ),
 	{
