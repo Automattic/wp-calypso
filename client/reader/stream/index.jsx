@@ -437,12 +437,12 @@ export default class ReaderStream extends React.Component {
 		}
 	}
 
-	showFullPost( post, options = {} ) {
+	showFullPost = ( post, options = {} ) => {
 		const hashtag = options.comments ? '#comments' : '';
-		let query = '';
+		let query = `?storeId=${ this.props.store.id }`;
 		if ( post.referral ) {
 			const { blogId, postId } = post.referral;
-			query = `?ref_blog=${ blogId }&ref_post=${ postId }`;
+			query += `ref_blog=${ blogId }&ref_post=${ postId }`;
 		}
 		const method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {

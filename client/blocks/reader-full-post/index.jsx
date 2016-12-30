@@ -8,7 +8,9 @@ import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
 import twemoji from 'twemoji';
-import { get } from 'lodash';
+import { get, defer } from 'lodash';
+import url from 'url';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -55,11 +57,24 @@ import ReaderFullPostUnavailable from './unavailable';
 import ReaderFullPostBack from './back';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import feedStreamFactory from 'lib/feed-stream-store';
+import CrossPost from 'reader/stream/x-post';
+import XPostHelper from 'reader/xpost-helper';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.hasScrolledToCommentAnchor = false;
+
+		defer( () => {
+			const query = url.parse( window.location.href, true ).query;
+			if ( query.storeId ) {
+				this.storeId = query.storeId;
+				this.feedStore = feedStreamFactory( this.storeId );
+				console.error( this.feedStore );
+			}
+		} );
 	}
 
 	static propTypes = {
@@ -71,6 +86,9 @@ export class FullPostView extends React.Component {
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.on( 'like-selection', this.handleLike );
+		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
+		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
+
 		this.parseEmoji();
 
 		// Send page view
@@ -116,6 +134,8 @@ export class FullPostView extends React.Component {
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
+		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
+		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 	}
 
 	handleBack = ( event ) => {
@@ -231,6 +251,80 @@ export class FullPostView extends React.Component {
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
 			recordTrackForPost( 'calypso_reader_article_opened', post );
 			this.hasLoaded = true;
+		}
+	}
+
+	showSelectedPost = ( options ) => {
+		if ( this.feedStore ) {
+			const postKey = this.feedStore.getSelectedPost();
+
+			if ( !! postKey ) {
+				const post = PostStore.get( postKey );
+				/*
+				if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
+					return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
+				}
+
+				*/
+				// normal
+				let mappedPost;
+				if ( !! postKey.feedId ) {
+					mappedPost = {
+						feed_ID: postKey.feedId,
+						feed_item_ID: postKey.postId
+					};
+				} else {
+					mappedPost = {
+						site_ID: postKey.blogId,
+						ID: postKey.postId
+					};
+				}
+				console.error( mappedPost )
+				this.showFullPost( mappedPost, options );
+			}
+		}
+	}
+
+	showFullXPost = ( xMetadata ) => {
+		if ( xMetadata.blogId && xMetadata.postId ) {
+			const mappedPost = {
+				site_ID: xMetadata.blogId,
+				ID: xMetadata.postId
+			};
+			this.showFullPost( mappedPost );
+		} else {
+			window.open( xMetadata.postURL );
+		}
+	}
+
+	showFullPost = ( post, options = {} ) => {
+		const hashtag = options.comments ? '#comments' : '';
+		let query = `?storeId=${ this.storeId }`;
+		if ( post.referral ) {
+			const { blogId, postId } = post.referral;
+			query += `ref_blog=${ blogId }&ref_post=${ postId }`;
+		}
+		const method = options && options.replaceHistory ? 'replace' : 'show';
+		if ( post.feed_ID && post.feed_item_ID ) {
+			page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
+		} else {
+			page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
+		}
+	}
+
+	goToNextPost = () => {
+		if ( this.feedStore ) {
+			console.error( this.feedStore.getSelectedPost(), 'hi' );
+			FeedStreamStoreActions.selectNextItem( this.storeId );
+			this.showSelectedPost();
+		}
+	}
+
+	goToPreviousPost = () => {
+		if ( this.feedStore ) {
+			console.error( this.feedStore.getSelectedPost(), 'hi' );
+			FeedStreamStoreActions.selectPrevItem( this.storeId );
+			this.showSelectedPost();
 		}
 	}
 
