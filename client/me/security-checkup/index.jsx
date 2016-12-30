@@ -19,7 +19,6 @@ import ReauthRequired from 'me/reauth-required';
 
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
-
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 
