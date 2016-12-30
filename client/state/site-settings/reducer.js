@@ -43,9 +43,12 @@ export const requesting = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const saveRequests = createReducer( {}, {
-	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending' } } ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'success' } } ),
-	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error' } } )
+	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending', error: false } } ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: { saving: false, status: 'success', error: false }
+	} ),
+	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId, error } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error', error } } )
 } );
 
 /**
