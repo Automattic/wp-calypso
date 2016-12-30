@@ -12,9 +12,8 @@ import SocialLogo from 'social-logos';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import { isJetpackModuleActive, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
@@ -210,7 +209,7 @@ const PostSharing = React.createClass( {
 
 export default connect(
 	( state, props ) => {
-		const siteId = getSelectedSiteId( state );
+		const siteId = props.site.ID;
 		const userId = getCurrentUserId( state );
 		const postType = props.post.type;
 		const isPublicizeEnabled = (
@@ -219,7 +218,7 @@ export default connect(
 		);
 
 		return {
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
 			isPublicizeEnabled,
 			connections: getSiteUserConnections( state, siteId, userId ),
