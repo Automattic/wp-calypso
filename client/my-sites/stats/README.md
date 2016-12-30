@@ -52,7 +52,7 @@ Stats List Markup
 We have spent quite a bit of time to create an extensive set of markup for stats lists that provide hooks for default actions, and action menus depending on screen size.  Below is some example markup:
 
 ### A Generic Stats List Item - No Action
-```
+```html
 <li className="module-content-list-item module-content-list-item-normal">
 	<span className="module-content-list-item-wrapper">
 		<span className="module-content-list-item-right">
@@ -64,7 +64,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 ```
 
 ### Stats List Item - Link Row Action
-```
+```html
 <li className="module-content-list-item module-content-list-item-link">
 	<span className="module-content-list-item-wrapper">
 		<span className="module-content-list-item-right">
@@ -76,7 +76,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 ```
 
 ### Stats List Item - With Additional Action Buttons
-```
+```html
 <li className="module-content-list-item module-content-list-item-link">
 	<span className="module-content-list-item-wrapper">
 		<span className="module-content-list-item-right">
@@ -92,7 +92,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 ```
 
 ### Kitchen Sink Example - Avatars, icons in Labels, Nested Lists
-```
+```html
 <li className="module-content-list-item module-content-list-item-link module-content-list-item-large module-content-list-item-toggle is-expanded">
 	<span className="module-content-list-item-wrapper">
 		<span className="module-content-list-item-right">

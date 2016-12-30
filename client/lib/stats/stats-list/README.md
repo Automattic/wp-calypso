@@ -4,13 +4,13 @@ The `StatsList` module aims to replace all the individual list modules that have
 
 To create an instance of a `StatsList`, you must pass in both a `siteID` and `statType` option.  `statType` is essentially the same as the endpoint name in `wpcom.js`:
 
-```
+```es6
 var clicksList = new StatsList( { siteID: 123, statType: 'statsClicks' } );
 ```
 
 Any additional options passed in are added as options to the api request so the following list would add in a `period` and `max` keys to the api call:
 
-```
+```es6
 var clicksList = new StatsList( { siteID: 123, statType: 'statsClicks', period: 'day', max: 10 } );
 ```
 

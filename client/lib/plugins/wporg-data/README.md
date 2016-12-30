@@ -8,7 +8,7 @@ The WPorg Store is responsible for storing the state of plugins from .org so tha
 ####The Data
 The data that is stored in the store looks like this:
 
-```
+```js
 {
 	akismet : { // plugin.slug
 		author: "Automattic",
@@ -46,7 +46,7 @@ Returns a plugin object or null
 
 ####Example Component Code:
 
-```
+```es6
 /**
  * External dependencies
  */
@@ -105,7 +105,7 @@ Triggers api call to fetch the plugin data and update the store.
 
 ####Example Component Code:
 
-```
+```jsx
 /**
  * External dependencies
  */

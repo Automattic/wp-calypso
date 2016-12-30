@@ -5,7 +5,7 @@ This module contains functions to identify the current viewport. This can be use
 
 ### Usage
 
-```
+```es6
 var viewport = require( 'viewport' );
 
 if ( viewport.isDesktop() ) {

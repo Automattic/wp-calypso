@@ -36,7 +36,7 @@ The `FormInputValidation` component is used to display a validation notice to th
 ### SelectOptGroups
 `SelectOptGroups` allows you to pass structured data to render a select element with `<option>` elements nested inside `<optgroup>` separators. You can use it like this:
 
-```
+```jsx
 var options = [
 	{
 		label: 'Group 1',
@@ -72,7 +72,7 @@ initialSelected = 3;
 
 And this would render:
 
-```
+```html
 <select name="example">
 	<optgroup label="Group 1">
 		<option value="1">Option 1</option>

@@ -9,13 +9,13 @@ Sometimes you want to enforce a canonical URL to a resource. You can use `normal
 as middleware to redirect any pathname ending in `/` to the same path minus the `/`.
 For instance, to redirect `/foo/` to `/foo`:
 
-```javascript
+```es6
 var normalize = require( 'lib/route/normalize' );
 page('/foo/?', normalize, displayFoo );
 ```
 
 Alternatively, to normalize all routes:
-```javascript
+```es6
 var normalize = require( 'normalize' );
 page( '*', normalize );
 ```
@@ -32,7 +32,7 @@ This module is meant to simplify the work of adding query arguments to a URL.
 
 
 #### Example
-```
+```es6
 import addQueryArgs from 'lib/route/add-query-args';
 
 addQueryArgs( { foo: 'bar' }, 'https://wordpress.com' );             // https://wordpress.com?foo=bar

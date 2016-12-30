@@ -9,7 +9,7 @@ You would add this mixin to the component that _contains_ the search component, 
 
 In your controller method, retrieve the search parameter from the URL and pass that into the component as a `search` prop. You also need to pass the context object itself into the component:
 
-```
+```js
 var search = search = qs.parse( context.querystring ).s;
 
 ReactDom.render(
@@ -23,7 +23,7 @@ ReactDom.render(
 
 Then in the component, apply the mixin:
 
-```
+```js
 /**
  * Internal dependencies
  */
@@ -39,7 +39,7 @@ module.exports = React.createClass({
 
 Then within your render method, apply the following properties to the `Search` component; `onSearch`, `initialValue`, and `ref` (with a value of "url-search").
 
-```
+```jsx
 	render: function() {
 
 		return (
@@ -49,7 +49,7 @@ Then within your render method, apply the following properties to the `Search` c
 
 _If_ your search component should only be displayed dynamically, you can use `this.getSearchOpen()` to determine whether the search should be open or closed, like so:
 
-```
+```jsx
 	render: function() {
 
 		var containerClass = classNames( {
