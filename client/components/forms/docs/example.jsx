@@ -42,7 +42,8 @@ var FormFields = React.createClass( {
 		return {
 			checkedRadio: 'first',
 			toggled: false,
-			compactToggled: false
+			compactToggled: false,
+			phoneInput: { countryCode: 'us', value: '' }
 		};
 	},
 
@@ -60,6 +61,10 @@ var FormFields = React.createClass( {
 
 	handleAction: function() {
 		alert( 'Thank you.' );
+	},
+
+	handlePhoneInputChange( data ) {
+		this.setState( { phoneInput: data } );
 	},
 
 	render: function() {
@@ -246,7 +251,7 @@ var FormFields = React.createClass( {
 
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
-						<PhoneInput initialCountryCode="us" countriesList={ countriesList } />
+						<PhoneInput countryCode={ this.state.phoneInput.countryCode } value={ this.state.phoneInput.value } countriesList={ countriesList } onChange={ this.handlePhoneInputChange } />
 					</FormFieldset>
 
 					<FormFieldset>
