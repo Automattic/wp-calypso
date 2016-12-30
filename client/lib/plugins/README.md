@@ -180,7 +180,7 @@ Toggle AutoUpdates for a plugin on a site.
 
 ####Example Component Code:
 
-```es6
+```jsx
 /**
  * External dependencies
  */

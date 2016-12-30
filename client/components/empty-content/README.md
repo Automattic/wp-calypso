@@ -5,7 +5,7 @@ This module provides a consistent rendering component for empty content cases in
 
 ## Usage
 
-```js
+```jsx
 
 // require the component
 var EmptyContentComponent = require( 'components/empty-content' );
