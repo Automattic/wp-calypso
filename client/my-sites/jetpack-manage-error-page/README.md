@@ -18,7 +18,7 @@ You'll need to declare `site` which is simply the current site object.
 You can optionally declare `version` to display what version is necessary (defaults to 3.4).
 
 ```jsx
-JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 <JetpackManageErrorPage
     template="updateJetpack"
@@ -48,7 +48,7 @@ If you initialize the component with a property `featureExample` containing jsx,
 
 
 ```jsx
-JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 // create the component using properties accepted by EmptyContent
 <JetpackManageErrorPage

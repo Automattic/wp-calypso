@@ -6,8 +6,8 @@ This module determines when a page has been rendered via the history event (back
 This can be used alongside the [page.js module](https://www.npmjs.com/package/page) by calling the `start()` method of this module _prior_ to the `start()` method of `page.js`.
 
 ```es6
-var page = require( 'page' ),
-    detectHistoryNavigation = require( 'detect-history-navigation' );
+import page from 'page';
+import detectHistoryNavigation from 'detect-history-navigation';
 
 detectHistoryNavigation.start();
 page.start();
