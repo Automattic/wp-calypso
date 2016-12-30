@@ -35,8 +35,7 @@ import {
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
 } from 'state/account-recovery/settings/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getUser } from 'state/users/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const SecurityCheckup = React.createClass( {
 	displayName: 'SecurityCheckup',
@@ -117,7 +116,7 @@ export default connect(
 		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
-		primaryEmail: getUser( state, getCurrentUserId( state ) ).email,
+		primaryEmail: getCurrentUserEmail( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
