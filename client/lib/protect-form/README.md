@@ -6,25 +6,25 @@ This [Higher Order Component](https://medium.com/@dan_abramov/mixins-are-dead-lo
 Usage
 -----
 
-```
+```es6
 import { protectForm } from 'lib/protect-form';
 ```
 
 ... and then later in your component definition like so:
 
-```
-    export default protectForm( MyComponent );
+```es6
+export default protectForm( MyComponent );
 ```
 
 The protect-form HoC provides a `markChanged` prop you can call on the `onChange` event of your form like this:
 
-```
+```jsx
 <form onChange={ this.props.markChanged } onSubmit={ this.handleSubmit }>
 ```
 
 And then very important, you also need to to call the second prop `markSaved` when your form has been successfully submitted. Here is an example onSubmit callback handler.
 
-```
+```es6
     submitForm( event ) {
         event.preventDefault();
         this.saveSettings( this.state ).then( () => {

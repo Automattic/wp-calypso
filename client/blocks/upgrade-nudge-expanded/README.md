@@ -17,7 +17,7 @@ It's meant to comprehensivly describe a plan and give enough reasons to upgrade.
 
 ## Example - minimal
 
-```
+```jsx
 <UpgradeNudgeExpanded
 	plan={ PLAN_BUSINESS }
 	title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }

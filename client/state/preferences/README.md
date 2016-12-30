@@ -8,7 +8,7 @@ They are persisted in `calypso_preferences` key of `/me/settings`.
 
 1. Render `QueryPreferences` from `components/data/query-preferences`
 2. Connect your component specifying proper option keys:
-```
+```es6
 export default connect(
 	( state ) => {
 		return {
