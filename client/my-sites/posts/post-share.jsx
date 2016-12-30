@@ -196,7 +196,7 @@ const PostSharing = React.createClass( {
 							</div>
 						</div>
 					</div> }
-					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'No social accounts connected' ) }>
+					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'Connect an account to get started.' ) }>
 						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
 						</NoticeAction>
