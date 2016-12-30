@@ -4,7 +4,7 @@ Adds local storage caching for api results.  With LocalList, other `list` module
 
 The LocalList creates an array of objects to cache API payloads.  An object itself looks like the following:
 
-```
+```js
 {
 	key: 'someKeyName', // the key sent in calls to set( key, value )
 	createdAt: timestamp, // a timestamp of when this record was saved locally for use in expiring cache or fetch()ing new data
@@ -22,11 +22,15 @@ Setup
 =====
 First require the module:
 
-`LocalList = require( 'local-list' )`
+```es6
+LocalList = require( 'local-list' )
+```
 
 Then create an instance of LocalList:
 
-`this.local = LocalList( { localStoreKey: 'keyUsedInLocalStorage', limit: 25 } );`
+```es6
+this.local = LocalList( { localStoreKey: 'keyUsedInLocalStorage', limit: 25 } );
+```
 
 The configuration options are:
 
@@ -47,7 +51,7 @@ Deletes any local storage for this key, and sets it to an empty array.
 ## set( key, value )
 Saves a record to the local storage array:
 
-```
+```js
 {
 	key: key,
 	createdAt: timestamp,
