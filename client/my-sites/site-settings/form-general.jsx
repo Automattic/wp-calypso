@@ -41,10 +41,12 @@ import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
-	getSiteSettings
+	getSiteSettings,
+	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -136,11 +138,23 @@ class SiteSettingsFormGeneral extends Component {
 
 		if (
 			this.props.isSavingSettings &&
-			! nextProps.isSavingSettings &&
-			nextProps.isSaveRequestSuccessful
+			! nextProps.isSavingSettings
 		) {
-			nextProps.clearDirtyFields();
-			nextProps.markSaved();
+			if ( nextProps.isSaveRequestSuccessful ) {
+				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
+				nextProps.clearDirtyFields();
+				nextProps.markSaved();
+			} else {
+				let text;
+				switch ( nextProps.saveRequestError.error ) {
+					case 'invalid_ip':
+						text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
+						break;
+					default:
+						text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
+				}
+				nextProps.errorNotice( text, { id: 'site-settings-save' } );
+			}
 		}
 	}
 
@@ -856,19 +870,23 @@ const connectComponent = connect(
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
+		const saveRequestError = getSiteSettingsSaveError( state, siteId );
 		return {
 			isRequestingSettings: isRequestingSettings && ! settings,
 			isSavingSettings,
 			isSaveRequestSuccessful,
+			saveRequestError,
 			settings,
 			siteId
 		};
 	},
 	dispatch => {
 		const boundActionCreators = bindActionCreators( {
+			errorNotice,
 			recordTracksEvent,
 			removeNotice,
-			saveSiteSettings
+			saveSiteSettings,
+			successNotice,
 		}, dispatch );
 		const trackClick = name => dispatch( recordGoogleEvent( 'Site Settings', `Clicked ${ name }` ) );
 		const trackToggle = name => dispatch( recordGoogleEvent( 'Site Settings', `Toggled ${ name }` ) );
