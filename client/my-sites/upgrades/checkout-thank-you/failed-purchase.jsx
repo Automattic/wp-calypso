@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 const FailedPurchase = ( { failedPurchases, translate } ) => {
-	const description = (
-		<div>
+	function getDescription() {
+		return <div>
 			<p>
 				{
 					translate(
@@ -32,8 +32,8 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 					)
 				}
 			</p>
-		</div>
-	);
+		</div>;
+	}
 
 	return (
 		<div>
@@ -58,7 +58,7 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 				<div className="checkout-thank-you__domain-mapping-details">
 					<PurchaseDetail
 						icon="redo"
-						description={ description }
+						description={ getDescription() }
 						target="_blank"
 						rel="noopener noreferrer"
 						isRequired />

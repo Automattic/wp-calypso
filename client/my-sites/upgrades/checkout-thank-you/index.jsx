@@ -58,7 +58,7 @@ import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
 function getPurchases( props ) {
-	return props.receipt.data.purchases;
+	return ( props.receipt.data && props.receipt.data.purchases ) || [];
 }
 
 function findPurchaseAndDomain( purchases, predicate ) {

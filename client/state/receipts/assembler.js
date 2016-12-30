@@ -15,7 +15,7 @@ export function createReceiptObject( data ) {
 				isEmailVerified: Boolean( purchase.is_email_verified )
 			};
 		} ),
-		failedPurchases: data.failedPurchases.map( purchase => {
+		failedPurchases: ( data.failedPurchases || [] ).map( purchase => {
 			return {
 				meta: purchase.product_meta,
 				productId: purchase.product_id,
