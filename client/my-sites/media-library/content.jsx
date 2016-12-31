@@ -17,7 +17,6 @@ import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
@@ -160,30 +159,6 @@ const MediaLibraryContent = React.createClass( {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
-	renderMediaList: function() {
-		if ( ! this.props.site ) {
-			return <MediaLibraryList key="list-loading" />;
-		}
-
-		return (
-			<MediaListData siteId={ this.props.site.ID } filter={ this.props.filter } search={ this.props.search }>
-				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-					<MediaLibraryList
-						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
-						site={ this.props.site }
-						filter={ this.props.filter }
-						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-						search={ this.props.search }
-						containerWidth={ this.props.containerWidth }
-						photon={ ! this.props.site.is_private }
-						single={ this.props.single }
-						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem } />
-				</MediaLibrarySelectedData>
-			</MediaListData>
-		);
-	},
-
 	render: function() {
 		return (
 			<div className="media-library__content">
@@ -193,10 +168,24 @@ const MediaLibraryContent = React.createClass( {
 						filter={ this.props.filter }
 						onMediaScaleChange={ this.props.onMediaScaleChange }
 						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage } />
-				}
+						onAddAndEditImage={ this.props.onAddAndEditImage } /> }
 				{ this.renderErrors() }
-				{ this.renderMediaList() }
+				{ ! this.props.site &&
+					<MediaLibraryList key="list-loading" /> }
+				{ this.props.site &&
+					<MediaLibrarySelectedData siteId={ this.props.site.ID }>
+						<MediaLibraryList
+							key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
+							site={ this.props.site }
+							filter={ this.props.filter }
+							filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+							search={ this.props.search }
+							containerWidth={ this.props.containerWidth }
+							photon={ ! this.props.site.is_private }
+							single={ this.props.single }
+							scrollable={ this.props.scrollable }
+							onEditItem={ this.props.onEditItem } />
+					</MediaLibrarySelectedData> }
 			</div>
 		);
 	}

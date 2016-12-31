@@ -6,7 +6,13 @@ import { castArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
+import {
+	MEDIA_DELETE,
+	MEDIA_RECEIVE,
+	MEDIA_ITEMS_RECEIVE,
+	MEDIA_ITEMS_REQUEST,
+	MEDIA_ITEMS_REQUESTING
+} from 'state/action-types';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -37,5 +43,31 @@ export function deleteMedia( siteId, mediaIds ) {
 		type: MEDIA_DELETE,
 		mediaIds: castArray( mediaIds ),
 		siteId
+	};
+}
+
+export function receiveMediaItems( siteId, query, items, found ) {
+	return {
+		type: MEDIA_ITEMS_RECEIVE,
+		siteId,
+		query,
+		items,
+		found
+	};
+}
+
+export function requestMediaItems( siteId, query ) {
+	return {
+		type: MEDIA_ITEMS_REQUEST,
+		siteId,
+		query
+	};
+}
+
+export function requestingMediaItems( siteId, query ) {
+	return {
+		type: MEDIA_ITEMS_REQUESTING,
+		siteId,
+		query
 	};
 }
