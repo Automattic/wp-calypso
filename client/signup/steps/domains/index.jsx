@@ -93,6 +93,23 @@ const DomainsStep = React.createClass( {
 		return `${repo}/${themeSlug}`;
 	},
 
+	goToNextStep( isPurchasingItem ) {
+		if ( ! isPurchasingItem ) {
+			this.props.goToNextStep();
+			return;
+		}
+
+		SignupActions.submitSignupStep( {
+			processingMessage: this.translate( 'Free plan selected' ),
+			stepName: 'plans',
+			stepSectionName: this.props.stepSectionName,
+			cartItem: null
+		}, [], { cartItem: null } );
+
+		const plansIndex = this.props.steps.indexOf( 'plans' );
+		this.props.goToStep( this.props.steps[ plansIndex + 1 ] );
+	},
+
 	submitWithDomain: function( googleAppsCartItem ) {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
@@ -118,7 +135,7 @@ const DomainsStep = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ), [], { domainItem } );
 
-		this.props.goToNextStep();
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
@@ -137,7 +154,7 @@ const DomainsStep = React.createClass( {
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
-		this.props.goToNextStep();
+		this.goToNextStep( isPurchasingItem );
 	},
 
 	handleSave: function( sectionName, state ) {
