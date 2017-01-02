@@ -11,6 +11,12 @@ describe( 'resizeImageUrl()', () => {
 		resizeImageUrl = require( '..' );
 	} );
 
+	it( 'should return non-string URLs unmodified', () => {
+		expect( resizeImageUrl() ).to.be.undefined;
+		expect( resizeImageUrl( null ) ).to.be.null;
+		expect( resizeImageUrl( 1 ) ).to.equal( 1 );
+	} );
+
 	it( 'should strip original query params', () => {
 		const resizedUrl = resizeImageUrl( imageUrl );
 		expect( resizedUrl ).to.equal( 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg' );
