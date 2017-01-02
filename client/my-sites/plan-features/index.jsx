@@ -418,26 +418,25 @@ class PlanFeatures extends Component {
 				features,
 				planName
 			} = properties;
-			
-			let planFeatures = features;
-			
+
+			let abTestVariantFeatures = features;
+
 			const premiumSquaredShowMarketingCopy = abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy';
 
 			if ( premiumSquaredShowMarketingCopy && /^(value_bundle|business-bundle)$/.test( planName ) ) {
-				planFeatures = map( planFeatures, ( feature ) => {
+				abTestVariantFeatures = map( features, ( feature ) => {
 					if ( 'value_bundle' === planName && FEATURE_FREE_THEMES === feature.getSlug() ) {
 						return FEATURES_LIST[ FEATURE_SELECT_PREMIUM_THEMES ];
 					} else if ( 'business-bundle' === planName && FEATURE_UNLIMITED_PREMIUM_THEMES === feature.getSlug() ) {
 						return FEATURES_LIST[ FEATURE_ALL_PREMIUM_THEMES ];
-					} else {
-						return feature;
 					}
+					return feature;
 				} );
 			}
 
-			const featureKeys = Object.keys( planFeatures ),
+			const featureKeys = Object.keys( abTestVariantFeatures ),
 				key = featureKeys[ rowIndex ],
-				currentFeature = planFeatures[ key ];
+				currentFeature = abTestVariantFeatures[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': rowIndex + 1 < featureKeys.length,
