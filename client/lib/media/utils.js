@@ -95,7 +95,7 @@ const MediaUtils = {
 		}
 
 		const isString = 'string' === typeof media;
-		const isFileObject = 'File' in window && media instanceof window.File;
+		const isFileObject = 'undefined' !== typeof window && 'File' in window && media instanceof window.File;
 
 		if ( isString ) {
 			let filePath;
@@ -165,7 +165,7 @@ const MediaUtils = {
 
 		if ( media.mime_type ) {
 			return media.mime_type;
-		} else if ( 'File' in window && media instanceof window.File ) {
+		} else if ( 'undefined' !== typeof window && 'File' in window && media instanceof window.File ) {
 			return media.type;
 		}
 
