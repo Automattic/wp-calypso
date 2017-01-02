@@ -8,6 +8,8 @@ import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-jsx';
 
 /**
  * Internal dependencies
@@ -26,6 +28,15 @@ const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
  */
 const SNIPPET_PAD_LENGTH = 40;
 const DEFAULT_SNIPPET_LENGTH = 100;
+
+/**
+ * Configure marked to use Prism for code-block highlighting
+ */
+marked.setOptions( {
+	highlight: function( code, language ) {
+		return Prism.highlight( code, Prism.languages[ language ] );
+	}
+} );
 
 /**
  * Query the index using lunr.
