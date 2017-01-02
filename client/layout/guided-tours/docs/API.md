@@ -34,7 +34,7 @@ Tour is a React component that declares the top-level of a tour. It defines cond
 * `name`: (string) Unique name of tour in camelCase.
 * `version` (string): Version identifier. We use date string like "20161224".
 * `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `[ '/stats', '/settings' ]`
-* `when` (function, optional): This is a redux selector function. Use this to define conditions for the tour to start.
+* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start.
 * `children` (nodes): only supported type is `<Step>`
 
 ## Step
@@ -43,15 +43,14 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 ### Props
 
-* `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use name `init` to indicate the step that the tour should start with.
-* `target`: (string, optional) Target which this step belongs to and will be used for positioning. Value of this prop is used to look up according `[data-tip-target]` in DOM. If you start this value with a dot or a space character, it will be passed to `document.querySelector`, so you can select an element that has no `[data-tip-target]` defined.
-* `placement`: (string, optional) Placement. Possible values: 'below', 'above', 'beside', 'center', 'middle', 'right'
-* `arrow`: (string, optional) If defined, step will get arrow pointing to a direction. Available: 'top-left', 'top-center', 'top-right',
-'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'
-* `style`: (object, optional) Will be used as step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this is a way that could benefit all Guided Tours globally, please consider creating an issue.
-* `when`: (function, optional) This is a redux selector that can prevent step from showing when it evaluates to false. Define `next` prop to tell Guided Tours name of the step it should skip to. If you omit this prop, step will be rendered as expected.
-* `next`: (string, optional) Define this to tell Guided Tours name of the step it should skip to when `when` evaluates to false.
-* `children`: (nodes) Content of step. Usually a paragraph of instructions and some controls for tour. See below for available options.
+* `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use `init` to indicate the step that the tour should start with.
+* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. The value of this prop is used to look up the corresponding DOM node. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to `document.querySelector`, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
+* `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
+* `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
+* `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue.
+* `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected.
+* `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
+* `children`: (node) Contents of the step. Usually a paragraph of instructions and some controls for the tour. See below for available options.
 
 ### Example
 
@@ -69,7 +68,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 
 Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
-For more comprehensive examples, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in client/layout/guided-tours/tours.
+For more comprehensive examples, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in `client/layout/guided-tours/tours`.
 
 ## ButtonRow
 
@@ -99,11 +98,11 @@ Continue is a React component that you can use in Step to programmatically conti
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
 * `when`: (function, optional) Redux selector. Once it evaluates to true, tour will advance to `step`.
-* `children`: (nodes, optional) If you provide children, it will override the default content.
+* `children`: (nodes, optional) If you provide children, the default content will be overridden.
 
 ### Visual Options
 
-There are three ways to define a content of this component.
+There are three ways to define the content of this component.
 
 - default text is "Click to continue." Use just as `<Continue … />` with no children.
 - default text + Gridicon ("Click *icon* to continue.") - provide name of Gridicon as an `icon` prop. Example: `<Continue icon="my-sites" … />`
@@ -113,8 +112,8 @@ There are three ways to define a content of this component.
 
 There are currently two ways to declare the condition to continue the tour.
 
-- Binding an `onClick` listener to a DOM node marked as `[data-tip-target]`
-- Redux selector function that evaluates to true in order to advance the tour
+- Binding an `onClick` listener to the step's target DOM node and waiting for the node to be clicked in order to advance the tour.
+- Providing a Redux selector and waiting for it to evaluate to true in order to advance the tour.
 
 ```jsx
 // continue when user clicks DOM element with html attribute `data-tip-target="my-sites"`
@@ -161,7 +160,7 @@ Default label is "Quit". To override, place your label a child.
 ### Example
 
 ```jsx
-// with a default label "Quit"
+// with a default label ("Quit")
 <Quit />
 
 // with a custom label
@@ -194,15 +193,15 @@ Place Link after ButtonRow (if present) for correct styling.
 
 ## makeTour
 
-This is a higher order component that makes sure your `Tour` gets all required data in order to work and connect with the guided tour framework. Every Tour needs to be wrapped in this.
+This is a higher-order component that makes sure your `Tour` gets all the required data in order to work and connect with the Guided Tours framework. Every Tour needs to be wrapped in this.
 
 ### Example
 
-In the file with your tour, wrap your `Tour` declaration with this higher order component and export the result.
+In the file where the tour is defined, wrap the `Tour` declaration with `makeTour` and export the result.
 
 ```jsx
 export const MyTour = makeTour(
-	<Tour name="my" …>
+  <Tour name="my" …>
     …
   </Tour>
 );
@@ -210,7 +209,7 @@ export const MyTour = makeTour(
 
 ## combineTours
 
-This is a factory for the top-level component of GT, called `<AllTours>`. This is an internal API of Guided Tours and you shouldn't be worrying about its internals, unless you are making framework changes. It accepts a single argument - object with Tours and is used in client/lib/guided-tours/config.js. Edit that file to add a new tour.
+This is a factory for the top-level component of Guided Tours. You shouldn't be worrying about its internals, unless you are making framework changes. It accepts a single argument — an object with Tours — and is used in `client/lib/guided-tours/config.js`. When adding a new tour, make sure to include it in that file.
 
 ### Example
 
