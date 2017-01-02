@@ -11,7 +11,8 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_ITEMS_RECEIVE,
 	MEDIA_ITEMS_REQUEST,
-	MEDIA_ITEMS_REQUESTING
+	MEDIA_ITEMS_REQUESTING,
+	MEDIA_ITEMS_SELECTED_SET
 } from 'state/action-types';
 
 /**
@@ -69,5 +70,13 @@ export function requestingMediaItems( siteId, query ) {
 		type: MEDIA_ITEMS_REQUESTING,
 		siteId,
 		query
+	};
+}
+
+export function selectMediaItems( siteId, ids ) {
+	return {
+		type: MEDIA_ITEMS_SELECTED_SET,
+		siteId,
+		ids
 	};
 }

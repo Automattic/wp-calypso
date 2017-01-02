@@ -11,9 +11,10 @@ import {
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
 	MEDIA_ITEMS_RECEIVE,
-	MEDIA_ITEMS_REQUESTING
+	MEDIA_ITEMS_REQUESTING,
+	MEDIA_ITEMS_SELECTED_SET
 } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { createReducer, keyedReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
 export const items = createReducer( {}, {
@@ -32,6 +33,11 @@ export const items = createReducer( {}, {
 		const { siteId, mediaIds } = action;
 
 		if ( ! state[ siteId ] ) {
+			return state;
+		}
+
+		return {
+			...state,
 			[ siteId ]: omit( state[ siteId ], mediaIds )
 		};
 	}
@@ -82,8 +88,15 @@ export const queries = ( () => {
 	} );
 } )();
 
+export const selected = keyedReducer( 'siteId', createReducer( [], {
+	[ MEDIA_ITEMS_SELECTED_SET ]: ( state, { ids } ) => {
+		return [ ...ids ];
+	}
+} ) );
+
 export default combineReducers( {
 	items,
 	queries,
-	queryRequests
+	queryRequests,
+	selected
 } );

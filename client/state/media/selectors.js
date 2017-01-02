@@ -26,3 +26,18 @@ export function getMediaItemsFoundForQuery( state, siteId, query ) {
 
 	return manager.getFound( query );
 }
+
+export function getSelectedMediaIds( state, siteId ) {
+	return state.media.selected[ siteId ] || [];
+}
+
+export function getSelectedMediaItems( state, siteId ) {
+	const manager = state.media.queries[ siteId ];
+	const selected = state.media.selected[ siteId ];
+
+	if ( ! manager || ! selected ) {
+		return [];
+	}
+
+	return selected.map( id => manager.getItem( id ) );
+}

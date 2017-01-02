@@ -8,7 +8,6 @@ import { some, partial, map, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import PostActions from 'lib/posts/actions';
 import { generateGalleryShortcode } from 'lib/media/utils';
@@ -78,11 +77,9 @@ class EditorMediaModal extends Component {
 		const { site } = this.props;
 
 		return (
-			<MediaLibrarySelectedData siteId={ get( site, 'ID' ) }>
-				<MediaModal
-					{ ...this.props }
-					onClose={ this.onClose } />
-			</MediaLibrarySelectedData>
+			<MediaModal
+				{ ...this.props }
+				onClose={ this.onClose } />
 		);
 	}
 }
