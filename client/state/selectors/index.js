@@ -15,6 +15,10 @@
 
 export canCurrentUser from './can-current-user';
 export getSharingButtons from './get-sharing-buttons';
+export getMediaItem from './get-media-item';
+export getMediaUrl from './get-media-url';
+export getSiteIconId from './get-site-icon-id';
+export getSiteIconUrl from './get-site-icon-url';
 export isPrivateSite from './is-private-site';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isSavingSharingButtons from './is-saving-sharing-buttons';

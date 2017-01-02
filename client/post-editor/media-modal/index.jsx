@@ -5,7 +5,7 @@ var React = require( 'react' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
 import { connect } from 'react-redux';
-import { noop, head, some, findIndex, partial, values } from 'lodash';
+import { noop, head, some, findIndex, partial, values, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import { getSite } from 'state/sites/selectors';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
 
@@ -56,7 +57,8 @@ export const EditorMediaModal = React.createClass( {
 			setView: noop,
 			resetView: noop,
 			view: ModalViews.LIST,
-			imageEditorProps: {}
+			imageEditorProps: {},
+			deleteMedia: () => {}
 		};
 	},
 
@@ -148,6 +150,7 @@ export const EditorMediaModal = React.createClass( {
 
 		MediaActions.delete( site.ID, toDelete );
 		analytics.mc.bumpStat( 'editor_media_actions', 'delete_media' );
+		this.props.deleteMedia( site.ID, map( toDelete, 'ID' ) );
 	},
 
 	deleteMedia: function() {
@@ -451,6 +454,7 @@ export default connect(
 	} ),
 	{
 		setView: setEditorMediaModalView,
-		resetView: resetMediaModalView
+		resetView: resetMediaModalView,
+		deleteMedia
 	}
 )( EditorMediaModal );

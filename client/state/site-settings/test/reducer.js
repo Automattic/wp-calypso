@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_REQUEST_FAILURE,
@@ -262,6 +263,54 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { blogdescription: 'ribs', blogname: 'chicken', lang_id: 1 }
+			} );
+		} );
+
+		it( 'should return same state on media delete for untracked site', () => {
+			const previousState = deepFreeze( {} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.equal( previousState );
+		} );
+
+		it( 'should return same state on media delete if set does not contain icon setting', () => {
+			const previousState = deepFreeze( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: 42
+				}
+			} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 36 ]
+			} );
+
+			expect( state ).to.equal( previousState );
+		} );
+
+		it( 'should unset icon setting on media delete if set contains icon', () => {
+			const previousState = deepFreeze( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: 42
+				}
+			} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: null
+				}
 			} );
 		} );
 
