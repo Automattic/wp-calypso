@@ -18,6 +18,7 @@ var siteMenus = require( 'lib/menu-data' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'components/gridicon' );
 
+import MenuItemTypeLabel from './menu-item-type-label';
 import { isInjectedNewPageItem } from 'lib/menu-data/menu-data';
 import has from 'lodash/has';
 /**
@@ -194,7 +195,7 @@ var MenuEditableItem = React.createClass( {
 	renderLinkOptions: function( itemType ) {
 		return (
 			<div className="menu-item-options menu-item-url">
-				<MenuPanelBackButton label={ itemType.label } onClick={ this.showLeftPanel } />
+				<MenuPanelBackButton name={ itemType.name } label={ itemType.label } onClick={ this.showLeftPanel } />
 				<label className="menu-item-form-label">{ this.translate( 'Link address (URL)' ) }</label>
 				<input className="menu-item-form-address" type="text" value={ this.state.item.url } onChange={ this.updateUrlValue } />
 				<input id="menu-flag-open-in-new-window" type="checkbox" defaultChecked={ this.state.item.link_target } onChange={ this.toggleUrlTarget } />
@@ -242,7 +243,7 @@ var MenuEditableItem = React.createClass( {
 						<li key={ itemType.name } className={ isSelected }
 									onClick={ this.changeItemType.bind( null, itemType ) } >
 							<label className={ 'noticon noticon-' + ( itemType.icon || 'cog' ) } >
-								{ itemType.label }
+								<MenuItemTypeLabel name={ itemType.name } label={ itemType.label } />
 							</label>
 						</li>
 						);

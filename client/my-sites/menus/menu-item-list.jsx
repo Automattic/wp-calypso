@@ -16,7 +16,7 @@ var MenuEditableItem = require( './menu-editable-item' ),
 	analytics = require( 'lib/analytics' );
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingPostTypes } from 'state/post-types/selectors';
-import { getMySitesMenuItemTypes } from 'state/selectors';
+import { getMenuItemTypes } from 'state/selectors';
 
 /**
  * Components
@@ -457,7 +457,7 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isRequesting = isRequestingPostTypes( state, siteId );
-		const itemTypes = getMySitesMenuItemTypes( state, siteId );
+		const itemTypes = getMenuItemTypes( state, siteId );
 		return {
 			isRequesting,
 			itemTypes,

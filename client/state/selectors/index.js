@@ -17,7 +17,7 @@ export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
-export getMySitesMenuItemTypes from './get-my-sites-menu-item-types';
+export getMenuItemTypes from './get-menu-item-types';
 export getPostLikes from './get-post-likes';
 export getSharingButtons from './get-sharing-buttons';
 export getMediaItem from './get-media-item';

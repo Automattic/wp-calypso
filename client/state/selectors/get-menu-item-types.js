@@ -2,15 +2,12 @@
  * External dependencies
  */
 import { endsWith, filter, find, get } from 'lodash';
- // TODO: Calling translate in selectors is not ideal
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { getRawSite, getSiteAdminUrl } from 'state/sites/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-
 
 function getDefaultItemTypes( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -26,8 +23,6 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'document',
 			renderer: 'renderPostOptions',
 			show: true,
-			label: translate( 'Page' ),
-			notFoundLabel: translate( 'No pages found.' ),
 			createLink: `/page/${ siteId }/new`,
 			gaEventLabel: 'Page'
 		},
@@ -37,7 +32,6 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'link',
 			renderer: 'renderLinkOptions',
 			show: true,
-			label: translate( 'Link' ),
 			gaEventLabel: 'Link'
 		},
 		{
@@ -46,8 +40,6 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'category',
 			renderer: 'renderTaxonomyOptions',
 			show: true,
-			label: translate( 'Category' ),
-			notFoundLabel: translate( 'No categories found.' ),
 			createLink: `${ adminUrl }edit-tags.php?taxonomy=category`,
 			gaEventLabel: 'Category'
 		},
@@ -57,8 +49,6 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'tag',
 			renderer: 'renderTaxonomyOptions',
 			show: true,
-			label: translate( 'Tag' ),
-			notFoundLabel: translate( 'No tags found.' ),
 			createLink: `${ adminUrl }edit-tags.php?taxonomy=post_tag`,
 			gaEventLabel: 'Tag'
 		},
@@ -68,8 +58,6 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'summary',
 			renderer: 'renderTaxonomyContents',
 			show: false,
-			label: translate( 'Post Format' ),
-			notFoundLabel: translate( 'No post formats found.' ),
 			gaEventLabel: 'Post Format'
 		},
 		{
@@ -78,15 +66,13 @@ function getDefaultItemTypes( state, siteId ) {
 			icon: 'standard',
 			renderer: 'renderPostOptions',
 			show: true,
-			label: translate( 'Post' ),
-			notFoundLabel: translate( 'No posts found.' ),
 			createLink: `/post/${ siteId }/new`,
 			gaEventLabel: 'Post'
 		}
 	];
 }
 
-export default function getMySitesMenuItemTypes( state, siteId ) {
+export default function getMenuItemTypes( state, siteId ) {
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return [];

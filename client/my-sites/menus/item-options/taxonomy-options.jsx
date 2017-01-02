@@ -76,7 +76,11 @@ module.exports = React.createClass( {
 		debug( 'rendering', this.props );
 		return (
 			<div className="menu-item-options menu-item-options__term-tree-selector">
-				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
+				<MenuPanelBackButton
+					name={ this.props.itemType.name }
+					label={ this.props.itemType.label }
+					onClick={ this.props.onBackClick }
+				/>
 				<TermTreeSelector
 					analyticsPrefix="Menus"
 					taxonomy={ this.props.itemType.name }
