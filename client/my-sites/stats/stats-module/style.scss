@@ -512,3 +512,20 @@ ul.module-header-actions {
 		@include long-content-fade( $color: $white, $size: 15% );
 	}
 }
+
+.stats-post-likes {
+	.stats-post-likes__content {
+		box-sizing: border-box;
+		padding: 8px 24px;
+		color: $gray-dark;
+		font-size: 13px;
+	}
+
+	.count {
+		margin-left: 8px;
+	}
+
+	.gravatar {
+		margin-right: 8px;
+	}
+}

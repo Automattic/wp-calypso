@@ -2,8 +2,10 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +19,8 @@ import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import PostLikes from '../stats-post-likes';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const StatsPostDetail = React.createClass( {
 	mixins: [ observe( 'postViewsList' ) ],
@@ -77,9 +81,22 @@ const StatsPostDetail = React.createClass( {
 					postViewsList={ this.props.postViewsList } />
 
 				<PostWeeks postViewsList={ this.props.postViewsList } />
+
+				{ post && <PostLikes postId={ post.ID } siteId={ this.props.siteId } /> }
 			</Main>
 		);
 	}
 } );
 
-export default localize( StatsPostDetail );
+const connectComponent = connect(
+	state => {
+		return {
+			siteId: getSelectedSiteId( state ),
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+)( StatsPostDetail );
