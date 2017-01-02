@@ -110,7 +110,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	premiumSquaredPlansWording: {
-		datestamp: '20161226',
+		datestamp: '20170103',
 		variations: {
 			withoutMarketingCopy: 50,
 			withMarketingCopy: 50
