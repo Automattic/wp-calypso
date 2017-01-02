@@ -91,7 +91,7 @@ export default React.createClass( {
 		}, this );
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section={ this.props.period } />

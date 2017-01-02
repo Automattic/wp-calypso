@@ -56,7 +56,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 
 				<HeaderCake onClick={ this.goBack }>

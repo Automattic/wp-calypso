@@ -216,7 +216,7 @@ const StatsSummary = React.createClass( {
 		summaryViews.push( summaryView );
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>
