@@ -32,12 +32,14 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
+import { isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
 		isJetpack: PropTypes.bool,
+		siteSupportsImageEditor: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
@@ -136,9 +138,9 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } = this.props;
+		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal } = this.state;
-		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
+		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' ) && siteSupportsImageEditor;
 
 		let buttonProps;
 		if ( isIconManagementEnabled ) {
@@ -213,6 +215,7 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
 			crop: getImageEditorCrop( state )
