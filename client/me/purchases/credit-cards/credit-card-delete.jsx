@@ -10,8 +10,8 @@ var React = require( 'react' ),
 var StoredCard = require( 'my-sites/upgrades/checkout/stored-card' ),
 	successNotice = require( 'state/notices/actions' ).successNotice,
 	errorNotice = require( 'state/notices/actions' ).errorNotice,
-	deleteStoredCard = require( 'state/stored-cards/actions' ).deleteStoredCard,
-	isDeletingStoredCard = require( 'state/stored-cards/selectors' ).isDeletingStoredCard;
+	deleteStoredCard = require( 'state/stored-cards/actions' ).deleteStoredCard;
+import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 
 const CreditCardDelete = React.createClass( {
 	handleClick: function() {
