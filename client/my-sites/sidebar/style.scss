@@ -1,0 +1,12 @@
+.sidebar__sparkline {
+	width: 80px;
+	height: 24px;
+	position: absolute;
+	right: 16px;
+	top: 6px;
+
+	@include breakpoint( "<660px" ) {
+		top: 13px;
+		right: 32px;
+	}
+}

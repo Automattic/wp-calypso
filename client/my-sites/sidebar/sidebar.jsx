@@ -150,6 +150,15 @@ export class MySitesSidebar extends Component {
 
 		const siteId = this.isSingle() ? site.slug : null;
 
+		let sparkline;
+		if ( ! site.jetpack && ! this.isItemLinkSelected( 'stats' ) ) {
+			sparkline = (
+				<img
+					className="sidebar__sparkline"
+					src={ `https://${ site.wpcom_url }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1` } />
+			);
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="menus"
@@ -157,7 +166,9 @@ export class MySitesSidebar extends Component {
 				className={ this.itemLinkClass( '/stats', 'stats' ) }
 				link={ getStatsPathForTab( 'day', siteId ) }
 				onNavigate={ this.onNavigate }
-				icon="stats-alt" />
+				icon="stats-alt">
+				{ sparkline }
+			</SidebarItem>
 		);
 	}
 
