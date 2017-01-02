@@ -111,7 +111,7 @@ const TermTreeSelectorList = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.list.forceUpdate();
+			this.list.forceUpdateGrid();
 		}
 
 		if ( this.props.terms !== prevProps.terms ) {
@@ -125,7 +125,6 @@ const TermTreeSelectorList = React.createClass( {
 		}
 
 		this.list.recomputeRowHeights();
-		this.list.forceUpdate();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
