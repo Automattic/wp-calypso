@@ -17,7 +17,7 @@ import Dialog from 'components/dialog';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { setSiteIcon } from 'state/sites/actions';
+import { receiveMedia } from 'state/media/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -29,7 +29,7 @@ import InfoPopover from 'components/info-popover';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import { isItemBeingUploaded, url as getMediaUrl } from 'lib/media/utils';
+import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 
 class SiteIconSetting extends Component {
@@ -91,10 +91,8 @@ class SiteIconSetting extends Component {
 		// below since component may have been unmounted in time since upload
 		const {
 			saveSiteSettings: dispatchSaveSiteSettings,
-			setSiteIcon: dispatchSetSiteIcon
+			receiveMedia: dispatchReceiveMedia
 		} = this.props;
-
-		dispatchSetSiteIcon( siteId, getMediaUrl( MediaStore.get( siteId, transientMediaId ) ) );
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
@@ -106,7 +104,7 @@ class SiteIconSetting extends Component {
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			dispatchSetSiteIcon( siteId, getMediaUrl( media ) );
+			dispatchReceiveMedia( siteId, media );
 			dispatchSaveSiteSettings( siteId, { site_icon: media.ID } );
 		};
 
@@ -206,6 +204,6 @@ export default connect(
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		resetAllImageEditorState,
 		saveSiteSettings,
-		setSiteIcon
+		receiveMedia
 	}
 )( localize( SiteIconSetting ) );

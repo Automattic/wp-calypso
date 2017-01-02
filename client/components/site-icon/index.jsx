@@ -3,15 +3,16 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { get, includes } from 'lodash';
 import { parse as parseUrl } from 'url';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import QuerySites from 'components/data/query-sites';
 import { getSite } from 'state/sites/selectors';
+import { getSiteIconUrl } from 'state/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
 import Gridicon from 'components/gridicon';
 
@@ -32,28 +33,33 @@ const SiteIcon = React.createClass( {
 		size: React.PropTypes.number
 	},
 
-	getIconSrcUrl( imageUrl ) {
-		const { host } = parseUrl( imageUrl, true, true );
+	getIconSrcUrl() {
+		const { iconUrl } = this.props;
+		if ( ! iconUrl ) {
+			return;
+		}
+
+		const { host } = parseUrl( iconUrl, true, true );
 		const sizeParam = includes( host, 'gravatar.com' ) ? 's' : 'w';
 
-		return resizeImageUrl( imageUrl, {
+		return resizeImageUrl( iconUrl, {
 			[ sizeParam ]: this.props.imgSize
 		} );
 	},
 
 	render() {
-		var iconSrc, iconClasses, style;
+		const { site, siteId } = this.props;
 
 		// Set the site icon path if it's available
-		iconSrc = ( this.props.site && this.props.site.icon ) ? this.getIconSrcUrl( this.props.site.icon.img ) : null;
+		const iconSrc = this.getIconSrcUrl();
 
-		iconClasses = classNames( {
+		const iconClasses = classNames( {
 			'site-icon': true,
 			'is-blank': ! iconSrc
 		} );
 
 		// Size inline styles
-		style = {
+		const style = {
 			height: this.props.size,
 			width: this.props.size,
 			lineHeight: this.props.size + 'px',
@@ -62,6 +68,7 @@ const SiteIcon = React.createClass( {
 
 		return (
 			<div className={ iconClasses } style={ style }>
+				{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
 				{ iconSrc
 					? <img className="site-icon__img" src={ iconSrc } />
 					: <Gridicon icon="globe" size={ Math.round( this.props.size / 1.3 ) } />
@@ -71,6 +78,22 @@ const SiteIcon = React.createClass( {
 	}
 } );
 
-export default connect( ( state, { site, siteId } ) => ( {
-	site: getSite( state, get( site, 'ID', siteId ) ) || site
-} ) )( SiteIcon );
+export default connect( ( state, { site, siteId, imgSize } ) => {
+	// Always prefer site from Redux state if available
+	const stateSite = getSite( state, get( site, 'ID', siteId ) );
+
+	// Until all sites state is within Redux, we provide compatibility in cases
+	// where sites-list object is passed to use the icon.img property as URL.
+	// Specifically this shows icon for non-selected <SiteSelector /> sites,
+	// since only the selected site is currently received into state.
+	if ( ! stateSite ) {
+		return {
+			iconUrl: get( site, 'icon.img' )
+		};
+	}
+
+	return {
+		site: stateSite,
+		iconUrl: getSiteIconUrl( state, stateSite.ID, imgSize )
+	};
+} )( SiteIcon );
