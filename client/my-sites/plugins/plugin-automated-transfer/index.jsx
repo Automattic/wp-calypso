@@ -55,15 +55,16 @@ class PluginAutomatedTransfer extends Component {
 		const { transferComplete } = this.state;
 		const newState = {};
 
+		if ( this.props.transferState !== nextProps.transferState ) {
+			newState.clickOutside = false;
+		}
+
 		if ( COMPLETE === nextProps.transferState ) {
 			newState.transferComplete = true;
 			if ( ! transferComplete ) {
 				newState.shouldDisplay = true;
 			}
 		} else if ( ! transferComplete ) {
-			if ( this.props.transferState !== nextProps.transferState ) {
-				newState.clickOutside = false;
-			}
 			if ( nextProps.isTransferring || CONFLICTS === nextProps.transferState ) {
 				newState.shouldDisplay = true;
 			} else {
