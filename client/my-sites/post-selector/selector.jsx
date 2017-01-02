@@ -115,7 +115,7 @@ const PostSelectorPosts = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.list.forceUpdate();
+			this.list.forceUpdateGrid();
 		}
 
 		if ( this.props.posts !== prevProps.posts ) {

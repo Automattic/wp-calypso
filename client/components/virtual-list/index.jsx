@@ -55,7 +55,7 @@ export class VirtualList extends Component {
 		);
 
 		if ( forceUpdate ) {
-			this.list.forceUpdate();
+			this.list.forceUpdateGrid();
 		}
 
 		if ( this.props.items !== prevProps.items ) {
@@ -69,7 +69,6 @@ export class VirtualList extends Component {
 		}
 
 		this.list.recomputeRowHeights();
-		this.list.forceUpdate();
 	}
 
 	getPageForIndex( index ) {
