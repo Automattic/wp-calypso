@@ -72,7 +72,7 @@ export default React.createClass( {
 			const date = this.moment().utcOffset( siteOffset ).format( 'YYYY-MM-DD' );
 
 			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
-				overview.push( <DatePicker period={ period } date={ date } /> );
+				overview.push( <DatePicker period={ period } date={ date } path={ statsPath } /> );
 			}
 
 			overview.push(

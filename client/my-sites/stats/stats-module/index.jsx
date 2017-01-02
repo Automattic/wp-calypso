@@ -45,7 +45,13 @@ export default React.createClass( {
 			return this.props.moduleStrings.title;
 		}
 
-		return ( <DatePicker period={ this.props.period.period } date={ this.props.period.startOf } summary={ true } /> );
+		return (
+			<DatePicker
+				period={ this.props.period.period }
+				date={ this.props.period.startOf }
+				path={ this.props.path }
+				summary={ true } />
+			);
 	},
 
 	getHref() {
