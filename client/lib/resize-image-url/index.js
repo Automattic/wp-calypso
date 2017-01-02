@@ -61,6 +61,10 @@ const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
  * @returns {String}                   Resize image URL
  */
 export default function resizeImageUrl( imageUrl, resize, height ) {
+	if ( 'string' !== typeof imageUrl ) {
+		return imageUrl;
+	}
+
 	const parsedUrl = parse( imageUrl, true, true );
 	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
 		return imageUrl;
