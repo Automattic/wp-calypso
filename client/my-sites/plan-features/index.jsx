@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, reduce, noop, compact } from 'lodash';
+import { map, reduce, noop, compact, each } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { abtest } from 'lib/abtest';
@@ -418,26 +418,22 @@ class PlanFeatures extends Component {
 				features,
 				planName
 			} = properties;
-			
-			let planFeatures = features;
-			
+
 			const premiumSquaredShowMarketingCopy = abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy';
 
 			if ( premiumSquaredShowMarketingCopy && /^(value_bundle|business-bundle)$/.test( planName ) ) {
-				planFeatures = map( planFeatures, ( feature ) => {
+				each( features, ( feature, i ) => {
 					if ( 'value_bundle' === planName && FEATURE_FREE_THEMES === feature.getSlug() ) {
-						return FEATURES_LIST[ FEATURE_SELECT_PREMIUM_THEMES ];
+						features[ i ] = FEATURES_LIST[ FEATURE_SELECT_PREMIUM_THEMES ];
 					} else if ( 'business-bundle' === planName && FEATURE_UNLIMITED_PREMIUM_THEMES === feature.getSlug() ) {
-						return FEATURES_LIST[ FEATURE_ALL_PREMIUM_THEMES ];
-					} else {
-						return feature;
+						features[ i ] = FEATURES_LIST[ FEATURE_ALL_PREMIUM_THEMES ];
 					}
 				} );
 			}
 
-			const featureKeys = Object.keys( planFeatures ),
+			const featureKeys = Object.keys( features ),
 				key = featureKeys[ rowIndex ],
-				currentFeature = planFeatures[ key ];
+				currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': rowIndex + 1 < featureKeys.length,
