@@ -81,10 +81,10 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	siteTitleStep: {
-		datestamp: '20160928',
+		datestamp: '20170102',
 		variations: {
-			showSiteTitleStep: 50,
-			hideSiteTitleStep: 50,
+			showSiteTitleStep: 5,
+			hideSiteTitleStep: 95,
 		},
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
