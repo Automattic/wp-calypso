@@ -13,12 +13,17 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3})",
 					replace: "$1 $2",
-					leadingDigitPattern: "[346-9]"
+					leadingDigitPattern: "[137-9]|6[0-8]"
 				},
 				{
-					match: "(180[02])(\\d{4})",
+					match: "(\\d{4})(\\d{4})",
 					replace: "$1 $2",
-					leadingDigitPattern: "1"
+					leadingDigitPattern: "180[02]"
+				},
+				{
+					match: "(\\d{3})(\\d{3})(\\d{3})",
+					replace: "$1 $2 $3",
+					leadingDigitPattern: "690"
 				}
 			]
 		},
@@ -122,7 +127,7 @@ module.exports = {
 					match: "(\\d{2})(\\d{6})",
 					replace: "$1 $2",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "4[139]|[5-7]|9[1-9]"
+					leadingDigitPattern: "4[1349]|[5-7]|9[1-9]"
 				},
 				{
 					match: "(\\d{3})(\\d{5})",
@@ -2470,13 +2475,13 @@ module.exports = {
 					match: "(\\d{5})(\\d{5})",
 					replace: "$1 $2",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "7(?:0|2(?:[0235679]|[14][017-9]|8(?:[0-569]|78)|9[389])|3(?:[05-8]|1(?:[089]|7[5-9])|2(?:[5-8]|[01][089])|3[017-9]|4(?:[07-9]|11)|9(?:[01689]|59|70))|4(?:0[1-9]|1(?:[015-9]|2[089]|4[08])|2(?:09|[1-7][089]|[89])|3(?:[0-8][089]|9)|4(?:[089]|11|7[02-8])|5(?:0[089]|[59]9)|7(?:0[3-9]|11|7[02-8]|[89])|8(?:[0-24-7][089]|[389])|9(?:[0-6][089]|7[08]|[89]))|5(?:[034678]|2[03-9]|5[017-9]|9[7-9])|6(?:0[0-47]|1[0-257-9]|2[0-4]|3[19]|5[4589]|[6-9])|7(?:0[2-9]|[1-79]|8[1-9])|8(?:[0-79]|88[01])|99[4-9])|8(?:0(?:[01589]|6[67])|1(?:[02-57-9]|1[0135-9])|2(?:[236-9]|5[1-9])|3(?:[0357-9]|4[1-9])|[45]|6[02457-9]|7(?:07|[1-69])|8(?:[0-26-9]|44|5[2-9])|9(?:[035-9]|2[2-9]|4[0-8]))|9"
+					leadingDigitPattern: "7(?:0|19[0-5]|2(?:[0235679]|[14][017-9]|8(?:[0-569]|78|8[089])|9[389])|3(?:[05-8]|1(?:[089]|7[5-9])|2(?:[5-8]|[0-49][089])|3[017-9]|4(?:[07-9]|11)|9(?:[01689]|[2345][089]|40|7[0189]))|4(?:[056]|1(?:[0135-9]|[23][089]|2[089]|4[089])|2(?:0[089]|[1-7][089]|[89])|3(?:[0-8][089]|9)|4(?:[089]|11|7[02-8])|7(?:[089]|11|7[02-8])|8(?:[0-24-7][089]|[389])|9(?:[0-7][089]|[89]))|5(?:[0346-9]|1[019]|2(?:[03-9]|[12][089])|5[017-9])|6(?:[06-9]|1[0-257-9]|2[0-5]|3[19]|5[4589])|7(?:0(?:[02-9]|10)|[1-9])|8(?:[0-79]|8(?:0[0189]|11|8[013-9]|9[012]))|9(?:0|7(?:[2-8]|9[7-9])|8[0246-9]|9(?:[04-9]|11|2[234])))|8(?:0(?:[01589]|6[67]|7(?:[2-7]|86|90))|1(?:[02-57-9]|1(?:[0135-9]|22|44)|6[089])|2(?:0[08]|[236-9]|5[1-9])|3(?:[0357-9]|170|28[0-6]|4[1-9])|[45]|6(?:[02457-9]|6(?:[08]|7[02-8]|9[01]))|7(?:0[07]|[1-69])|8(?:[0-26-9]|44|5[2-9])|9(?:[035-9]|19|2[2-9]|4[0-8]))|9"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "11|2[02]|33|4[04]|79|80[2-46]"
+					leadingDigitPattern: "11|2[02]|33|4[04]|79[1-9]|80[2-46]"
 				},
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
@@ -2593,8 +2598,8 @@ module.exports = {
 					leadingDigitPattern: "[1-8]"
 				},
 				{
-					match: "(\\d{3})(\\d{3})(\\d{3,4})",
-					replace: "$1 $2 $3",
+					match: "(\\d{3})(\\d{3})",
+					replace: "$1 $2",
 					nationalFormat: "0$1",
 					leadingDigitPattern: "9"
 				},
@@ -2605,8 +2610,8 @@ module.exports = {
 					leadingDigitPattern: "9"
 				},
 				{
-					match: "(\\d{3})(\\d{3})",
-					replace: "$1 $2",
+					match: "(\\d{3})(\\d{3})(\\d{3,4})",
+					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
 					leadingDigitPattern: "9"
 				}
@@ -3068,7 +3073,7 @@ module.exports = {
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
 					nationalFormat: "$1",
-					leadingDigitPattern: "1(?:5(?:44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
+					leadingDigitPattern: "1(?:5(?:22|44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
 				}
 			],
 			internationalPatterns: [
@@ -3130,7 +3135,7 @@ module.exports = {
 					match: "(\\d{4})(\\d{4})",
 					replace: "$1-$2",
 					nationalFormat: "$1",
-					leadingDigitPattern: "1(?:5(?:44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
+					leadingDigitPattern: "1(?:5(?:22|44|66|77|88|99)|6(?:00|44|6[16]|70|88)|8(?:00|33|55|77|99))"
 				}
 			]
 		},
@@ -3436,7 +3441,7 @@ module.exports = {
 					match: "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
 					replace: "$1 $2 $3 $4",
 					nationalFormat: "$1",
-					leadingDigitPattern: "9"
+					leadingDigitPattern: "[39]"
 				},
 				{
 					match: "(\\d{2})(\\d{3})(\\d{3})",
@@ -3758,7 +3763,7 @@ module.exports = {
 				{
 					match: "(\\d{3})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
-					leadingDigitPattern: "900"
+					leadingDigitPattern: "[89]00"
 				}
 			]
 		},
@@ -3986,16 +3991,16 @@ module.exports = {
 					leadingDigitPattern: "[12]|9(?:0[3-9]|[1-9])"
 				},
 				{
-					match: "(\\d{3})(\\d{3})(\\d{3,4})",
-					replace: "$1 $2 $3",
-					nationalFormat: "0$1",
-					leadingDigitPattern: "70|8[01]|90[2357-9]"
-				},
-				{
 					match: "(\\d{2})(\\d{3})(\\d{2,3})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
 					leadingDigitPattern: "[3-6]|7(?:[1-79]|0[1-9])|8[2-9]"
+				},
+				{
+					match: "(\\d{3})(\\d{3})(\\d{3,4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "70|8[01]|90[2357-9]"
 				},
 				{
 					match: "([78]00)(\\d{4})(\\d{4,5})",
@@ -5420,10 +5425,22 @@ module.exports = {
 			nationalPrefix: "0",
 			patterns: [
 				{
+					match: "(20)(\\d)(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "202"
+				},
+				{
+					match: "(20)(\\d{3})(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "20[013-9]"
+				},
+				{
 					match: "([2-8])(\\d{3,4})(\\d{4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "[2-6]|[78][1-9]"
+					leadingDigitPattern: "2[23-8]|[3-6]|[78][1-9]"
 				},
 				{
 					match: "([89]\\d{2})(\\d{3})(\\d{3})",
@@ -5848,6 +5865,74 @@ module.exports = {
 					leadingDigitPattern: "80"
 				}
 			]
+		},
+		uk: {
+			isoCode: "gb",
+			dialCode: "44",
+			nationalPrefix: "0",
+			patterns: [
+				{
+					match: "(\\d{2})(\\d{4})(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "2|5[56]|7(?:0|6(?:[013-9]|2[0-35-9]))"
+				},
+				{
+					match: "(\\d{3})(\\d{3})(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:1|\\d1)|3|9[018]"
+				},
+				{
+					match: "(\\d{5})(\\d{4,5})",
+					replace: "$1 $2",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1(?:3873|5(?:242|39[456])|697[347]|768[347]|9467)"
+				},
+				{
+					match: "(1\\d{3})(\\d{5,6})",
+					replace: "$1 $2",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "1"
+				},
+				{
+					match: "(7\\d{3})(\\d{6})",
+					replace: "$1 $2",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "7(?:[1-5789]|624)"
+				},
+				{
+					match: "(800)(\\d{4})",
+					replace: "$1 $2",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8001111"
+				},
+				{
+					match: "(845)(46)(4\\d)",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "845464"
+				},
+				{
+					match: "(8\\d{2})(\\d{3})(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "8(?:4[2-5]|7[0-3])"
+				},
+				{
+					match: "(80\\d)(\\d{3})(\\d{4})",
+					replace: "$1 $2 $3",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "80"
+				},
+				{
+					match: "([58]00)(\\d{6})",
+					replace: "$1 $2",
+					nationalFormat: "0$1",
+					leadingDigitPattern: "[58]00"
+				}
+			],
+			priority: 10
 		}
 	},
 	dialCodeMap: {

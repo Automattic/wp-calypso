@@ -76,7 +76,7 @@ export const findPattern = ( inputNumber, patterns ) => (
 		if ( leadingDigitPattern && inputNumber.search( leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
-		return new RegExp( '^(?:' + match + ')$' ).test( inputNumber )
+		return new RegExp( '^(?:' + match + ')$' ).test( inputNumber );
 	} )
 );
 
@@ -153,7 +153,7 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  * prefix. For everything else it will use the `nationalPrefix` for the given region.
  * @param {string} inputNumber - Unformatted number
  * @param {Object} numberRegion - The local/region for which we process the number
- * @returns {{nationalNumber: {string}, prefix: {string}}} - Phone is the national phone number and prefix is to be
+ * @returns {{nationalNumber: string, prefix: string}} - Phone is the national phone number and prefix is to be
  *   shown before the phone number
  */
 function processNumber( inputNumber, numberRegion ) {
@@ -161,7 +161,7 @@ function processNumber( inputNumber, numberRegion ) {
 	const nationalNumber = stripNonDigits( inputNumber )
 		.replace( new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ), '' );
 
-	debug( `National Number: ${nationalNumber} for ${inputNumber} in ${numberRegion.isoCode}` );
+	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 
 	if ( inputNumber[ 0 ] === '+' ) {
 		prefix = '+' + numberRegion.dialCode + ' ';
@@ -197,7 +197,10 @@ function processNumber( inputNumber, numberRegion ) {
 export function formatNumber( inputNumber, country ) {
 	const digitCount = stripNonDigits( inputNumber ).length;
 	if ( digitCount < MIN_LENGTH_TO_FORMAT || digitCount < ( country.dialCode || '' ).length ) {
-		return inputNumber;
+		if ( inputNumber[ 0 ] === '+' ) {
+			return '+' + stripNonDigits( inputNumber.substr( 1 ) );
+		}
+		return stripNonDigits( inputNumber );
 	}
 
 	// Some countries don't have their own patterns, but share / follow another country's patterns. Here we switch the
@@ -208,19 +211,19 @@ export function formatNumber( inputNumber, country ) {
 
 	const { nationalNumber, prefix } = processNumber( inputNumber, country );
 
-	const patterns = includes( [ '+', '1' ] , inputNumber[ 0 ] ) && country.internationalPatterns || country.patterns || [];
+	const patterns = includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns || country.patterns || [];
 	const pattern = findPattern( nationalNumber, patterns );
 
 	if ( pattern ) {
-		debug( `Will replace "${nationalNumber}" with "${pattern.match}" and "${pattern.replace}" with prefix "${prefix}"` );
+		debug( `Will replace "${ nationalNumber }" with "${ pattern.match }" and "${ pattern.replace }" with prefix "${ prefix }"` );
 		return prefix + nationalNumber.replace( new RegExp( pattern.match ), pattern.replace );
 	}
 
-	debug( `Couldn't find a ${country.isoCode} pattern for ${inputNumber}` );
+	debug( `Couldn't find a ${ country.isoCode } pattern for ${ inputNumber }` );
 
 	const template = makeTemplate( nationalNumber, patterns );
 	if ( template ) {
-		debug( `Will replace "${nationalNumber}" with "${template}" with prefix "${prefix}"` );
+		debug( `Will replace "${ nationalNumber }" with "${ template }" with prefix "${ prefix }"` );
 		return prefix + applyTemplate( nationalNumber, template );
 	}
 	return inputNumber;
@@ -229,4 +232,9 @@ export function formatNumber( inputNumber, country ) {
 export function toE164( inputNumber, country ) {
 	const { nationalNumber } = processNumber( inputNumber, country );
 	return '+' + country.dialCode + nationalNumber;
+}
+
+export function toIcannFormat( inputNumber, country ) {
+	const { nationalNumber } = processNumber( inputNumber, country );
+	return '+' + country.dialCode + '.' + nationalNumber;
 }
