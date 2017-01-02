@@ -13,8 +13,6 @@ var observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	fetchSitePlans = require( 'state/sites/plans/actions' ).fetchSitePlans,
 	FreeTrialNotice = require( './free-trial-notice' ),
-	getPlansBySite = require( 'state/sites/plans/selectors' ).getPlansBySite,
-	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
@@ -24,6 +22,8 @@ var observe = require( 'lib/mixins/data-observe' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import { currentUserHasFlag } from 'state/current-user/selectors';
 
 var DomainSearch = React.createClass( {
 	mixins: [ observe( 'productsList', 'sites' ), analyticsMixin( 'registerDomain' ) ],
