@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial } from 'lodash';
+import { uniqueId, head, partial, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
+import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -40,7 +41,8 @@ class SiteIconSetting extends Component {
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
-		resetAllImageEditorState: PropTypes.func
+		resetAllImageEditorState: PropTypes.func,
+		crop: PropTypes.object
 	};
 
 	state = {
@@ -67,32 +69,22 @@ class SiteIconSetting extends Component {
 		}
 	};
 
-	setSiteIcon = ( error, blob ) => {
-		if ( error || ! blob ) {
-			return;
-		}
+	saveSiteIconSetting( siteId, media ) {
+		this.props.receiveMedia( siteId, media );
+		this.props.saveSiteSettings( siteId, { site_icon: media.ID } );
+	}
 
+	uploadSiteIcon( blob, fileName ) {
 		const { siteId } = this.props;
-		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
-		if ( ! selectedItem ) {
-			return;
-		}
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'site-icon' );
 		MediaActions.add( siteId, {
 			ID: transientMediaId,
-			fileName: `cropped-${ selectedItem.file }`,
-			fileContents: blob
+			fileContents: blob,
+			fileName
 		} );
-
-		// Avoid calling to component instance within progress check closure
-		// below since component may have been unmounted in time since upload
-		const {
-			saveSiteSettings: dispatchSaveSiteSettings,
-			receiveMedia: dispatchReceiveMedia
-		} = this.props;
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
@@ -104,11 +96,36 @@ class SiteIconSetting extends Component {
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			dispatchReceiveMedia( siteId, media );
-			dispatchSaveSiteSettings( siteId, { site_icon: media.ID } );
+			this.saveSiteIconSetting( siteId, media );
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
+	}
+
+	setSiteIcon = ( error, blob ) => {
+		if ( error || ! blob ) {
+			return;
+		}
+
+		const { siteId } = this.props;
+		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
+		if ( ! selectedItem ) {
+			return;
+		}
+
+		const { crop } = this.props;
+		const isImageCropped = ! isEqual( crop, {
+			topRatio: 0,
+			leftRatio: 0,
+			widthRatio: 1,
+			heightRatio: 1
+		} );
+
+		if ( isImageCropped ) {
+			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
+		} else {
+			this.saveSiteIconSetting( siteId, selectedItem );
+		}
 
 		this.hideModal();
 		this.props.resetAllImageEditorState();
@@ -197,7 +214,8 @@ export default connect(
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
-			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' )
+			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
+			crop: getImageEditorCrop( state )
 		};
 	},
 	{
