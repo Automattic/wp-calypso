@@ -18,7 +18,8 @@ export const sitesSchema = {
 					type: 'object',
 					properties: {
 						img: { type: 'string' },
-						ico: { type: 'string' }
+						ico: { type: 'string' },
+						media_id: { type: 'number' }
 					}
 				},
 				logo: {
