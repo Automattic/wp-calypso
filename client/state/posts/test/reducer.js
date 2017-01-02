@@ -50,7 +50,8 @@ describe( 'reducer', () => {
 			'siteRequests',
 			'queryRequests',
 			'queries',
-			'edits'
+			'edits',
+			'likes',
 		] );
 	} );
 
