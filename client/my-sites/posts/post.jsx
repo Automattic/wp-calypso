@@ -21,7 +21,7 @@ import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
 
-import Comments from 'reader/comments';
+import Comments from 'blocks/comments';
 import PostShare from './post-share';
 
 function recordEvent( eventAction ) {
