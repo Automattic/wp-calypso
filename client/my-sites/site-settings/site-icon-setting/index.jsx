@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial, isEqual } from 'lodash';
+import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,9 @@ import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
+import accept from 'lib/accept';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import { receiveMedia } from 'state/media/actions';
@@ -32,7 +34,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
-import { isSiteSupportingImageEditor } from 'state/selectors';
+import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -133,17 +135,28 @@ class SiteIconSetting extends Component {
 		this.props.resetAllImageEditorState();
 	};
 
+	confirmRemoval = () => {
+		const { translate, siteId, removeSiteIcon } = this.props;
+		const message = translate( 'Are you sure you want to remove the site icon?' );
+
+		accept( message, ( accepted ) => {
+			if ( accepted ) {
+				removeSiteIcon( siteId );
+			}
+		} );
+	};
+
 	preloadModal() {
 		asyncRequire( 'post-editor/media-modal' );
 	}
 
 	render() {
-		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
+		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal } = this.state;
-		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' ) && siteSupportsImageEditor;
+		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
-		if ( isIconManagementEnabled ) {
+		if ( isIconManagementEnabled && siteSupportsImageEditor ) {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
@@ -162,6 +175,8 @@ class SiteIconSetting extends Component {
 			}
 		}
 
+		const { translate, siteId, isSaving, hasIcon } = this.props;
+
 		return (
 			<FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
@@ -176,10 +191,21 @@ class SiteIconSetting extends Component {
 				}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
 				<Button
 					{ ...buttonProps }
-					className="site-icon-setting__change-button"
+					className="site-icon-setting__button"
+					disabled={ isSaving }
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
+				{ isIconManagementEnabled && hasIcon && (
+					<Button
+						compact
+						scary
+						onClick={ this.confirmRemoval }
+						className="site-icon-setting__button"
+						disabled={ isSaving }>
+						{ translate( 'Remove' ) }
+					</Button>
+				) }
 				{ isIconManagementEnabled && hasToggledModal && (
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
@@ -215,6 +241,8 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			hasIcon: !! getSiteIconUrl( state, siteId ),
+			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
@@ -225,6 +253,7 @@ export default connect(
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		resetAllImageEditorState,
 		saveSiteSettings,
+		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		receiveMedia
 	}
 )( localize( SiteIconSetting ) );
