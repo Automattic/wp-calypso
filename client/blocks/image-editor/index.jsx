@@ -30,7 +30,8 @@ import {
 } from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
-	isImageEditorImageLoaded
+	isImageEditorImageLoaded,
+	getImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -77,13 +78,15 @@ const ImageEditor = React.createClass( {
 
 	getInitialState() {
 		return {
-			canvasError: null
+			canvasError: null,
+			isImageEditorInitialized: false
 		};
 	},
 
 	componentWillReceiveProps( newProps ) {
 		const {
-			media: currentMedia
+			media: currentMedia,
+			aspectRatio
 		} = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
@@ -92,6 +95,12 @@ const ImageEditor = React.createClass( {
 			this.updateFileInfo( newProps.media );
 
 			this.setDefaultAspectRatio();
+		}
+
+		const newAspectRatio = newProps.aspectRatio;
+
+		if ( newAspectRatio === aspectRatio ) {
+			this.setState( { isImageEditorInitialized: true } );
 		}
 	},
 
@@ -104,12 +113,20 @@ const ImageEditor = React.createClass( {
 	setDefaultAspectRatio() {
 		const {
 			defaultAspectRatio,
-			allowedAspectRatios
+			allowedAspectRatios,
+			aspectRatio
 		} = this.props;
 
-		this.props.setImageEditorAspectRatio(
-			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
-		);
+		const computedAspectRatio = getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios );
+
+		if ( computedAspectRatio !== aspectRatio ) {
+			const { isImageEditorInitialized } = this.state;
+
+			this.props.setImageEditorAspectRatio(
+				computedAspectRatio,
+				isImageEditorInitialized
+			);
+		}
 	},
 
 	updateFileInfo( media ) {
@@ -214,6 +231,10 @@ const ImageEditor = React.createClass( {
 			allowedAspectRatios
 		} = this.props;
 
+		const {
+			isImageEditorInitialized
+		} = this.state;
+
 		const classes = classNames(
 			'image-editor',
 			className
@@ -230,6 +251,7 @@ const ImageEditor = React.createClass( {
 						<ImageEditorCanvas
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
+							isImageEditorInitialized={ isImageEditorInitialized }
 						/>
 						<ImageEditorToolbar
 							allowedAspectRatios={ allowedAspectRatios }
@@ -257,7 +279,8 @@ export default connect(
 		return {
 			...getImageEditorFileInfo( state ),
 			site: getSite( state, siteId ),
-			isImageLoaded: isImageEditorImageLoaded( state )
+			isImageLoaded: isImageEditorImageLoaded( state ),
+			aspectRatio: getImageEditorAspectRatio( state )
 		};
 	},
 	( dispatch, ownProp ) => {
@@ -266,15 +289,11 @@ export default connect(
 			ownProp.allowedAspectRatios
 		);
 
-		const resetActionsAdditionalData = {
-			aspectRatio: defaultAspectRatio
-		};
-
 		return bindActionCreators( {
 			setImageEditorFileInfo,
 			setImageEditorAspectRatio,
-			resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
-			resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData )
+			resetImageEditorState: partial( resetImageEditorState, defaultAspectRatio ),
+			resetAllImageEditorState: partial( resetAllImageEditorState, defaultAspectRatio )
 
 		}, dispatch );
 	}

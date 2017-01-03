@@ -47,6 +47,12 @@ export const defaultCrop = {
 };
 
 export function hasChanges( state = false, action ) {
+	const { isImageEditorInitialized = true } = action;
+
+	if ( ! isImageEditorInitialized ) {
+		return false;
+	}
+
 	switch ( action.type ) {
 		case IMAGE_EDITOR_SET_ASPECT_RATIO:
 		case IMAGE_EDITOR_CROP:
@@ -152,11 +158,11 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
-			const { additionalData = {} } = action;
-			const { aspectRatio: payloadAspectRatio } = additionalData;
 
-			if ( payloadAspectRatio && AspectRatios[ payloadAspectRatio ] ) {
-				return payloadAspectRatio;
+			const { defaultAspectRatio } = action;
+
+			if ( defaultAspectRatio && AspectRatios[ defaultAspectRatio ] ) {
+				return defaultAspectRatio;
 			}
 
 			return AspectRatios.FREE;

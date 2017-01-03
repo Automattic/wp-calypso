@@ -13,21 +13,17 @@ import {
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 
-// Doesn't reset image file info (src, fileName, etc).
-// additionalData can contain arbitrarily needed data.
-export function resetImageEditorState( additionalData = {} ) {
+export function resetImageEditorState( defaultAspectRatio ) {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET,
-		additionalData
+		defaultAspectRatio
 	};
 }
 
-// Resets image file info as well (src, fileName, etc).
-// additionalData can contain arbitrarily needed data.
-export function resetAllImageEditorState( additionalData = {} ) {
+export function resetAllImageEditorState( defaultAspectRatio ) {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET_ALL,
-		additionalData
+		defaultAspectRatio
 	};
 }
 
@@ -43,10 +39,11 @@ export function imageEditorFlip() {
 	};
 }
 
-export function setImageEditorAspectRatio( ratio ) {
+export function setImageEditorAspectRatio( ratio, isImageEditorInitialized = true ) {
 	return {
 		type: IMAGE_EDITOR_SET_ASPECT_RATIO,
-		ratio
+		ratio,
+		isImageEditorInitialized
 	};
 }
 
