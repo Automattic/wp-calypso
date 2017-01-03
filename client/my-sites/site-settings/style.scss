@@ -158,6 +158,20 @@
 			white-space: nowrap;
 		}
 	}
+
+	.site-icon-setting__icon {
+		@include breakpoint( "<660px") {
+			float: left;
+			margin-right: 8px;
+		}
+	}
+
+	.site-icon-setting__button {
+		@include breakpoint( "<660px") {
+			display: block;
+			margin-bottom: 8px;
+		}
+	}
 }
 
 .site-settings__general-settings {
