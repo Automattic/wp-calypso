@@ -17,7 +17,10 @@ import {
 	getImageEditorCrop
 } from 'state/ui/editor/image-editor/selectors';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { imageEditorCrop } from 'state/ui/editor/image-editor/actions';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop
+} from 'state/ui/editor/image-editor/actions';
 
 class ImageEditorCrop extends Component {
 	static propTypes = {
@@ -36,6 +39,7 @@ class ImageEditorCrop extends Component {
 		} ),
 		aspectRatio: PropTypes.string,
 		imageEditorCrop: PropTypes.func,
+		imageEditorComputedCrop: PropTypes.func,
 		minCropSize: PropTypes.shape( {
 			width: PropTypes.number,
 			height: PropTypes.number
@@ -51,6 +55,7 @@ class ImageEditorCrop extends Component {
 			rightBound: 100
 		},
 		imageEditorCrop: noop,
+		imageEditorComputedCrop: noop,
 		minCropSize: {
 			width: 50,
 			height: 50
@@ -81,7 +86,11 @@ class ImageEditorCrop extends Component {
 	}
 
 	componentWillMount() {
-		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyCrop );
+		this.updateCrop(
+			this.getDefaultState( this.props ),
+			this.props,
+			this.applyComputedCrop
+		);
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -288,7 +297,7 @@ class ImageEditorCrop extends Component {
 		} );
 	}
 
-	applyCrop() {
+	getCropBounds() {
 		const {
 			top,
 			left,
@@ -310,12 +319,20 @@ class ImageEditorCrop extends Component {
 			imageWidth = rightBound - leftBound,
 			imageHeight = bottomBound - topBound;
 
-		this.props.imageEditorCrop(
+		return [
 			currentTop / imageHeight,
 			currentLeft / imageWidth,
 			currentWidth / imageWidth,
 			currentHeight / imageHeight
-		);
+		];
+	}
+
+	applyCrop() {
+		this.props.imageEditorCrop.apply( this, this.getCropBounds() );
+	}
+
+	applyComputedCrop() {
+		this.props.imageEditorComputedCrop.apply( this, this.getCropBounds() );
 	}
 
 	render() {
@@ -471,6 +488,7 @@ export default connect(
 		};
 	},
 	{
-		imageEditorCrop
+		imageEditorCrop,
+		imageEditorComputedCrop
 	}
 )( ImageEditorCrop );
