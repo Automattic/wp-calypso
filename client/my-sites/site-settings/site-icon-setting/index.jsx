@@ -33,7 +33,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
-import { isSiteSupportingImageEditor } from 'state/selectors';
+import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -163,7 +163,7 @@ class SiteIconSetting extends Component {
 			}
 		}
 
-		const { translate, siteId, isSaving } = this.props;
+		const { translate, siteId, isSaving, hasIcon } = this.props;
 
 		return (
 			<FormFieldset className="site-icon-setting">
@@ -184,7 +184,7 @@ class SiteIconSetting extends Component {
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
-				{ isIconManagementEnabled && (
+				{ isIconManagementEnabled && hasIcon && (
 					<Button
 						compact
 						onClick={ this.props.removeSiteIcon }
@@ -228,6 +228,7 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			hasIcon: !! getSiteIconUrl( state, siteId ),
 			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
