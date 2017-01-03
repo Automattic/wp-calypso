@@ -4,7 +4,13 @@
 import {
 	flowRight as compose,
 	get,
+	includes,
 } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { transferStates } from 'state/automated-transfer/constants';
 
 export const getAutomatedTransfer = ( state, siteId ) =>
 	get( state, [ 'automatedTransfer', siteId ], {} );
@@ -67,4 +73,27 @@ export const getEligibilityStatus = state => !! get( state, 'lastUpdated', 0 ) &
 export const isEligibleForAutomatedTransfer = compose(
 	getEligibilityStatus,
 	getEligibility
+);
+
+/**
+ * Helper to get transferring state from local transfer status
+ *
+ * @param {string|null} status automated transfer status
+ * @returns {bool} transferring check
+ */
+const getIsTransferring = status => includes(
+	[ transferStates.START, transferStates.SETUP ],
+	status,
+);
+
+/**
+ * Checks if the site is currently transferring
+ *
+ * @param {Object} state global app state
+ * @param {number} siteId requested site for tranfer info
+ * @returns {bool} transferring check
+ */
+export const isAutomatedTransferTransferring = compose(
+	getIsTransferring,
+	getAutomatedTransferStatus,
 );
