@@ -74,6 +74,10 @@ const phone = createReducer( null, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) =>
 		convertPhoneResponse( settings.phone ),
 
+	// There is no calling of convertPhoneResponse here, because the endpoint for updating
+	// recovery settings doesn't return the updated value in the response body. Thus,
+	// the `value` encapsulated here is actually passed down from the action creator and
+	// in the exactly the same form, hence no need of converting.
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
 		'phone' === target ? value : state,
 
