@@ -28,7 +28,7 @@ The Calypso sidebar shows up on the left of most screens in Calypso, and is the 
 
 <img alt="Actionbar" width="227" src="https://cldup.com/Arufy8bsZT.png" />
 
-The actionbar shows up only on the frontend of sites. It is there to provide contextual actions, based on whether you're signed or not, and what you're looking at. In all configurations, you'll see a follow button, and an overflow button with expanded information. If you're signed in, you'll also see a customize button (if on the posts page), or an edit button, (if on a single post or page). The actionbar shows up when a page first loads, then disappears when you scroll down. Scroll up to reveal it again.
+The actionbar shows up only on the frontend of sites. It is there to provide contextual actions, based on whether you're signed in or not, and what you're looking at. In all configurations, you'll see a follow button, and an overflow button with expanded information. If you're signed in, you'll also see a customize button (if on the posts page), or an edit button, (if on a single post or page). The actionbar shows up when a page first loads, then disappears when you scroll down. Scroll up to reveal it again.
 
 **Environment Badge**
 
