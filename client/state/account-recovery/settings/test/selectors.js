@@ -16,7 +16,7 @@ import {
 	isDeletingAccountRecoveryEmail,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
-
+	isResendingAccountRecoveryEmailValidation,
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
 } from '../selectors';
@@ -218,6 +218,34 @@ describe( '#account-recovery/settings/selectors', () => {
 
 		it( 'should return true if isDeleting.email is set', () => {
 			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateDuringDeleting ) );
+		} );
+	} );
+
+	describe( '#isResendingAccountRecoveryEmailValidation', () => {
+		it( 'should return false on absence', () => {
+			const state = {
+				accountRecovery: {
+					settings: {
+						isResending: {},
+					},
+				},
+			};
+
+			assert.isFalse( isResendingAccountRecoveryEmailValidation( state ) );
+		} );
+
+		it( 'should return isResending.email', () => {
+			const state = {
+				accountRecovery: {
+					settings: {
+						isResending: {
+							email: true,
+						},
+					},
+				},
+			};
+
+			assert.isTrue( isResendingAccountRecoveryEmailValidation( state ) );
 		} );
 	} );
 } );
