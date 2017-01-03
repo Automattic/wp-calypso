@@ -72,7 +72,7 @@ export function getCurrentUserDate( state ) {
  *  Returns the primary email of the current user.
  *
  *  @param {Object} state Global state tree
- *  @returns {String} The primary email of the current user. An empty string is returned if none.
+ *  @returns {?String} The primary email of the current user.
  */
 export function getCurrentUserEmail( state ) {
 	const user = getCurrentUser( state );
