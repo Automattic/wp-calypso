@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import {
 	head,
@@ -351,8 +352,12 @@ export class TitleFormatEditor extends Component {
 			? `${ translate( 'Preview' ) }: ${ previewText }`
 			: '';
 
+		const editorClassNames = classNames( 'title-format-editor', {
+			disabled
+		} );
+
 		return (
-			<div className="title-format-editor">
+			<div className={ editorClassNames }>
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
 					{ map( tokens, ( title, name ) => (
@@ -367,6 +372,7 @@ export class TitleFormatEditor extends Component {
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
+						readOnly={ disabled }
 						editorState={ editorState }
 						onChange={ disabled ? noop : this.updateEditor }
 						placeholder={ placeholder }
