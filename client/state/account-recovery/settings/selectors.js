@@ -42,6 +42,6 @@ export const isAccountRecoveryPhoneActionInProgress = ( state ) => {
 	return ! isAccountRecoverySettingsReady( state ) || isUpdatingAccountRecoveryPhone( state ) || isDeletingAccountRecoveryPhone( state );
 };
 
-export const hasResentAccountRecoveryEmailValidation = ( state ) => {
-	return !! state.accountRecovery.settings.hasResentValidation.email;
+export const hasSentAccountRecoveryEmailValidation = ( state ) => {
+	return !! state.accountRecovery.settings.hasSentValidation.email;
 };
