@@ -105,7 +105,7 @@
     "react-dom": "15.4.0",
     "react-masonry-component": "4.2.2",
     "react-pure-render": "1.0.2",
-    "react-redux": "4.4.5",
+    "react-redux": "5.0.1",
     "react-tap-event-plugin": "2.0.1",
     "react-virtualized": "7.9.1",
     "redux": "3.0.4",
