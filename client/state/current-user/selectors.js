@@ -69,6 +69,21 @@ export function getCurrentUserDate( state ) {
 }
 
 /**
+ *  Returns the primary email of the current user.
+ *
+ *  @param {Object} state Global state tree
+ *  @returns {?String} The primary email of the current user.
+ */
+export function getCurrentUserEmail( state ) {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return null;
+	}
+
+	return user.email || null;
+}
+
+/**
  * Returns true if the capability name is valid for the current user on a given
  * site, false if capabilities are known for the site but the name is invalid,
  * or null if capabilities are not known for the site.

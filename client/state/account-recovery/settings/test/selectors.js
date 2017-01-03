@@ -14,6 +14,8 @@ import {
 	isUpdatingAccountRecoveryEmail,
 	isDeletingAccountRecoveryPhone,
 	isDeletingAccountRecoveryEmail,
+	isAccountRecoveryEmailActionInProgress,
+	isAccountRecoveryPhoneActionInProgress,
 
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
@@ -188,6 +190,34 @@ describe( '#account-recovery/settings/selectors', () => {
 
 		it( 'should return isDeleting.email', () => {
 			assert.isTrue( isDeletingAccountRecoveryEmail( stateDuringDeleting ) );
+		} );
+	} );
+
+	describe( '#isAccountRecoveryEmailActionInProgress', () => {
+		it( 'should return true if the whole data is not in place yet', () => {
+			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateBeforeFetching ) );
+		} );
+
+		it( 'should return true if isUpdating.email is set', () => {
+			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateDuringUpdating ) );
+		} );
+
+		it( 'should return true if isDeleting.email is set', () => {
+			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateDuringDeleting ) );
+		} );
+	} );
+
+	describe( '#isAccountRecoveryPhoneActionInProgress', () => {
+		it( 'should return true if the whole data is not in place yet', () => {
+			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateBeforeFetching ) );
+		} );
+
+		it( 'should return true if isUpdating.email is set', () => {
+			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateDuringUpdating ) );
+		} );
+
+		it( 'should return true if isDeleting.email is set', () => {
+			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateDuringDeleting ) );
 		} );
 	} );
 } );
