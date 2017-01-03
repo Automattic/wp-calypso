@@ -24,19 +24,19 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 			const oldPhone = getAccountRecoveryPhone( getState() );
 
 			if ( null == oldPhone ) {
-				return translate( 'Successfully added new recovery SMS number.' );
+				return translate( 'Successfully added. Please check your phone for the validation code.' );
 			}
 
-			return translate( 'Successfully updated recovery SMS number.' );
+			return translate( 'Successfully updated. Please check your phone for the validation code.' );
 
 		case 'email':
 			const oldEmail = getAccountRecoveryEmail( getState() );
 
 			if ( ! oldEmail ) {
-				return translate( 'Successfully added new recovery email address.' );
+				return translate( 'Successfully added. Please check your mailbox for the validation email.' );
 			}
 
-			return translate( 'Successfully updated recovery email address.' );
+			return translate( 'Successfully updated. Please check your mailbox for the validation email.' );
 
 		default:
 			return translate( 'Successfully updated the recovery option.' );
@@ -90,11 +90,11 @@ const getResentSuccessMessage = ( target ) => {
 const getResentFailedMessage = ( target ) => {
 	switch ( target ) {
 		case 'phone':
-			return translate( 'We encountered a problem sending you the validation code. Please try again later.' );
+			return translate( 'We\'ve encountered a problem sending you the validation code. Please try again later.' );
 		case 'email':
-			return translate( 'We encountered a problem sending you the validation email. Please try again later.' );
+			return translate( 'We\'ve encountered a problem sending you the validation email. Please try again later.' );
 		default:
-			return translate( 'We encountered a problem sending you the validation. Please try again later.' );
+			return translate( 'We\'ve encountered a problem. Please try again later.' );
 	}
 };
 
