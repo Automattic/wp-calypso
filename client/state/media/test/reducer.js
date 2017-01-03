@@ -13,7 +13,9 @@ import reducer, { items } from '../reducer';
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items'
+			'items',
+			'queries',
+			'queryRequests'
 		] );
 	} );
 
