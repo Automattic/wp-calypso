@@ -64,7 +64,7 @@ class Select extends Component {
 				disabled={ shouldShowPlaceholders || ! isEnabled }
 				isError={ isEnabled && isError }
 				onChange={ this.setValue }
-				value={ value }
+				value={ value || '' }
 			>
 				<option value="">{ label }</option>
 				{ options }
