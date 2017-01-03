@@ -23,3 +23,4 @@ export isPrivateSite from './is-private-site';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
+export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
