@@ -24,6 +24,7 @@ const PhoneInput = React.createClass( {
 	},
 
 	getCountry( countryCode = this.props.countryCode ) {
+		countryCode = countryCode.toLowerCase();
 		let selectedCountry = countries[ countryCode ];
 
 		if ( ! selectedCountry ) {
@@ -31,10 +32,16 @@ const PhoneInput = React.createClass( {
 				country => country.code.toLowerCase() === countryCode );
 			// Special cases where the country is in a disputed region and not globally recognized.
 			// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
-			if ( data ) {
+			if ( data && data.numeric_code ) {
 				selectedCountry = {
 					isoCode: countryCode,
 					dialCode: data.numeric_code.replace( '+', '' ),
+					nationalPrefix: ''
+				};
+			} else {
+				selectedCountry = {
+					isoCode: countryCode,
+					dialCode: '',
 					nationalPrefix: ''
 				};
 			}
@@ -48,19 +55,14 @@ const PhoneInput = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.value !== nextProps.value && nextProps.value ) {
-			const country = this.guessCountryFromValue( nextProps.value );
-			if ( country && country.isoCode !== this.getCountry().isoCode ) {
-				this.props.onChange( { countryCode: country.isoCode, value: nextProps.value } );
-			}
-		}
+	componentWillReceiveProps() {
+		// todo ensure the number is formatted if when loading from somewhere else
 	},
 
 	componentWillUpdate( nextProps ) {
-		const currentFormat = this.format( this.props ),
+		const currentFormat = this.props.value,
 			currentCursorPoint = this.numberInput.selectionStart,
-			nextFormat = this.format( nextProps );
+			nextFormat = nextProps.value;
 
 		let newCursorPoint = currentCursorPoint;
 		this.numberInput.value = nextFormat;
@@ -89,7 +91,7 @@ const PhoneInput = React.createClass( {
 
 	guessCountryFromValue( value ) {
 		if ( value && includes( [ '+', '1' ], value[ 0 ] ) && ! this.state.freezeSelection ) {
-			return findCountryFromNumber( value ) || this.getCountry();
+			return findCountryFromNumber( value );
 		}
 
 		return this.getCountry();
@@ -101,7 +103,7 @@ const PhoneInput = React.createClass( {
 
 	handleInput( event ) {
 		const { value } = event.target;
-		if ( value === this.format() ) {
+		if ( value === this.props.value ) {
 			// nothing changed
 			return;
 		}
@@ -109,13 +111,42 @@ const PhoneInput = React.createClass( {
 		event.preventDefault();
 
 		const country = this.guessCountryFromValue( value );
-		this.props.onChange( { value, countryCode: country.isoCode } );
+		if ( this.state.freezeSelection && value.indexOf( country.dialCode ) === -1 ) {
+			return;
+		}
+		if ( country ) {
+			// todo ??
+			this.props.onChange( {
+				value: this.format( { value, countryCode: country.isoCode } ),
+				countryCode: country.isoCode
+			} );
+		} else if ( value.length > 3 ) {
+			this.props.onChange( {
+				value,
+				countryCode: 'world'
+			} );
+		} else {
+			this.props.onChange( {
+				value,
+				countryCode: this.props.countryCode
+			} );
+		}
 	},
 
 	handleCountrySelection( event ) {
-		const countryCode = event.target.value.toLowerCase();
-
-		this.props.onChange( { countryCode, value: this.props.value } );
+		const newCountryCode = event.target.value.toLowerCase();
+		if ( newCountryCode === this.props.countryCode ) {
+			return;
+		}
+		// if the country changes, we fix the dial code
+		const value = this.props.value.replace(
+			this.getCountry( this.props.countryCode ).dialCode,
+			this.getCountry( newCountryCode ).dialCode
+		);
+		this.props.onChange( {
+			countryCode: newCountryCode,
+			value: this.format( { value, countryCode: newCountryCode } )
+		} );
 		this.setState( { freezeSelection: true } );
 	},
 
@@ -123,7 +154,7 @@ const PhoneInput = React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ formatNumber( ( this.getCountry().nationalPrefix || '' ) + '9876543210', this.getCountry() ) }
+					placeholder={ formatNumber( ( this.getCountry().nationalPrefix ) + '9876543210', this.getCountry() ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
 					ref={ c => this.numberInput = c }
@@ -133,7 +164,7 @@ const PhoneInput = React.createClass( {
 						<FormCountrySelect
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
-							value={ ( this.getCountry().isoCode || '' ).toUpperCase() }
+							value={ ( this.getCountry().isoCode ).toUpperCase() }
 							countriesList={ this.props.countriesList } />
 						<CountryFlag countryCode={ this.getCountry().isoCode } />
 					</div>
