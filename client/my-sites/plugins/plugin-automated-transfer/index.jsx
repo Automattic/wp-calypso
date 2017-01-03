@@ -65,11 +65,7 @@ class PluginAutomatedTransfer extends Component {
 				newState.shouldDisplay = true;
 			}
 		} else if ( ! transferComplete ) {
-			if ( nextProps.isTransferring || CONFLICTS === nextProps.transferState ) {
-				newState.shouldDisplay = true;
-			} else {
-				newState.shouldDisplay = false;
-			}
+			newState.shouldDisplay = nextProps.isTransferring || CONFLICTS === nextProps.transferState;
 		}
 
 		this.setState( newState );
