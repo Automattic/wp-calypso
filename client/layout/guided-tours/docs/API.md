@@ -18,12 +18,9 @@ Tour is a React component that declares the top-level of a tour. It defines cond
 
 ```jsx
 // tour with a single step
-<Tour path="/me" name="uselessTour">
+<Tour path="/me" name="exampleTour">
   <Step>
-    <p>This is a page about you.</p>
-    <ButtonRow>
-      <Quit />
-    </ButtonRow>
+    …
   </Step>
 </Tour>
 ```
