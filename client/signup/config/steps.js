@@ -90,7 +90,7 @@ module.exports = {
 		stepName: 'domain-only',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		props: {
-			domainOnlySite: true
+			isDomainOnly: true
 		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
