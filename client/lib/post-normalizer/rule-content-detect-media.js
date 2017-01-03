@@ -145,6 +145,7 @@ export default function detectMedia( post, dom ) {
 
 	post.content_media = compact( contentMedia );
 	post.content_embeds = filter( post.content_media, m => m.mediaType === 'video' );
+	post.content_images = filter( post.content_media, m => m.mediaType === 'image' );
 
 	return post;
 }
