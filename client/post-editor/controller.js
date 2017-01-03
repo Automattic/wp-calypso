@@ -21,10 +21,9 @@ var actions = require( 'lib/posts/actions' ),
 	userUtils = require( 'lib/user/utils' ),
 	analytics = require( 'lib/analytics' );
 import PostEditor from './post-editor';
-import { setEditorPostId } from 'state/ui/editor/actions';
+import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { editPost } from 'state/posts/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -114,8 +113,7 @@ module.exports = {
 		const postID = getPostID( context );
 
 		function startEditing( siteId ) {
-			context.store.dispatch( setEditorPostId( postID ) );
-			context.store.dispatch( editPost( siteId, postID, { type: postType } ) );
+			context.store.dispatch( startEditingPost( siteId, postID, postType ) );
 
 			if ( maybeRedirect( context ) ) {
 				return;
@@ -175,6 +173,15 @@ module.exports = {
 		startEditingOnSiteSelected();
 
 		renderEditor( context, postType );
+	},
+
+	exitPost: function( context, next ) {
+		const postId = getPostID( context );
+		const siteId = getSelectedSiteId( context.store.getState() );
+		if ( siteId ) {
+			context.store.dispatch( stopEditingPost( siteId, postId ) );
+		}
+		next();
 	},
 
 	pressThis: function( context, next ) {
