@@ -48,6 +48,17 @@ const SecurityCheckup = React.createClass( {
 		this.props.userSettings.getSettings();
 	},
 
+	shouldShowEmailValidationNotice: function() {
+		const {
+			accountRecoveryEmail,
+			accountRecoveryEmailValidated,
+			accountRecoveryEmailActionInProgress,
+			hasSentEmailValidation,
+		} = this.props;
+
+		return ! accountRecoveryEmailActionInProgress && accountRecoveryEmail && ! accountRecoveryEmailValidated && ! hasSentEmailValidation;
+	},
+
 	render: function() {
 		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
 
@@ -88,7 +99,7 @@ const SecurityCheckup = React.createClass( {
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
-					{ this.props.shouldShowEmailValidationNotice &&
+					{ this.shouldShowEmailValidationNotice() &&
 						<RecoveryEmailValidationNotice
 							onResend={ this.props.resendAccountRecoveryEmailValidation }
 						/>
@@ -121,10 +132,12 @@ export default connect(
 	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
+		accountRecoveryEmailValidated: isAccountRecoveryEmailValidated( state ),
+		hasSentEmailValidation: hasSentAccountRecoveryEmailValidation( state ),
+		primaryEmail: getCurrentUserEmail( state ),
+		shouldShowEmailValidationNotice: ! isAccountRecoveryEmailValidated( state ) && ! hasSentAccountRecoveryEmailValidation( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
-		primaryEmail: getCurrentUserEmail( state ),
-		shouldShowEmailValidationNotice: ! isAccountRecoveryEmailValidated( state ) && ! hasSentAccountRecoveryEmailValidation( state )
 	} ),
 	{
 		updateAccountRecoveryEmail,
