@@ -19,6 +19,7 @@ class RecoveryEmailValidationNotice extends Component {
 
 		return (
 			<Notice
+				className="security-checkup__validation-notice"
 				status="is-warning"
 				text={ translate( 'Please verify your recovery email address. ' +
 						'Check your inbox for a confirmation link.' ) }
