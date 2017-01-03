@@ -25,7 +25,7 @@ export const MODAL_VIEW_STATS = {
  * @param  {String}  postType Post Type
  * @return {Object}           Action object
  */
-export function startEditingPost( siteId, postId, postType ) {
+export function startEditingPost( siteId, postId, postType = 'post' ) {
 	return {
 		type: EDITOR_START,
 		siteId,
