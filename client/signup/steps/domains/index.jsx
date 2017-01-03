@@ -163,10 +163,10 @@ const DomainsStep = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! this.props.domainOnlySite }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom
+				includeWordPressDotCom={ ! this.props.domainOnlySite }
 				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
