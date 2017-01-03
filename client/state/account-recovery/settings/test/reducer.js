@@ -19,8 +19,6 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 } from 'state/action-types';
 
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
@@ -165,30 +163,12 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set isResending sub field', () => {
+	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set hasResentValidation sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 			target: arbitraryTargetName,
 		} );
 
-		assert.isTrue( state.isResending[ arbitraryTargetName ] );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS action should unset isResending sub field', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-			target: arbitraryTargetName,
-		} );
-
-		assert.isFalse( state.isResending[ arbitraryTargetName ] );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED action should unset isResending sub field', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-			target: arbitraryTargetName,
-		} );
-
-		assert.isFalse( state.isResending[ arbitraryTargetName ] );
+		assert.isTrue( state.hasResentValidation[ arbitraryTargetName ] );
 	} );
 } );

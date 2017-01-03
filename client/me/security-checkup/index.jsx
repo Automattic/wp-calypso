@@ -35,6 +35,7 @@ import {
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
 	isAccountRecoveryEmailValidated,
+	hasResentAccountRecoveryEmailValidation,
 } from 'state/account-recovery/settings/selectors';
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
@@ -87,7 +88,7 @@ const SecurityCheckup = React.createClass( {
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
-					{ ! this.props.isEmailValidated &&
+					{ this.props.shouldShowEmailValidationNotice &&
 						<RecoveryEmailValidationNotice
 							onResend={ this.props.resendAccountRecoveryEmailValidation }
 						/>
@@ -123,7 +124,7 @@ export default connect(
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
 		primaryEmail: getCurrentUserEmail( state ),
-		isEmailValidated: isAccountRecoveryEmailValidated( state ),
+		shouldShowEmailValidationNotice: ! isAccountRecoveryEmailValidated( state ) && ! hasResentAccountRecoveryEmailValidation( state )
 	} ),
 	{
 		updateAccountRecoveryEmail,

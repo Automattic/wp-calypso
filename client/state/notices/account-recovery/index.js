@@ -76,6 +76,28 @@ const getDeleteErrorMessage = ( target ) => {
 	}
 };
 
+const getResentSuccessMessage = ( target ) => {
+	switch ( target ) {
+		case 'phone':
+			return translate( 'The validation code has been resent successfully. Please check your phone.' );
+		case 'email':
+			return translate( 'The validation email has been resent successfully. Please check your mailbox.' );
+		default:
+			return translate( 'The validation has been resent successfully.' );
+	}
+};
+
+const getResentFailedMessage = ( target ) => {
+	switch ( target ) {
+		case 'phone':
+			return translate( 'We encountered a problem sending you the validation code. Please try again later.' );
+		case 'email':
+			return translate( 'We encountered a problem sending you the validation email. Please try again later.' );
+		default:
+			return translate( 'We encountered a problem sending you the validation. Please try again later.' );
+	}
+};
+
 export const onAccountRecoverySettingsFetchFailed = dispatchError(
 	translate( 'An error occurred while fetching your account recovery settings.' )
 );
@@ -91,3 +113,9 @@ export const onAccountRecoverySettingsDeleteSuccess = ( dispatch, { target } ) =
 
 export const onAccountRecoverySettingsDeleteFailed = ( dispatch, { target } ) =>
 	dispatch( errorNotice( getDeleteErrorMessage( target ) ) );
+
+export const onResentAccountRecoveryEmailValidationSuccess = ( dispatch, { target } ) =>
+	dispatch( successNotice( getResentSuccessMessage( target ) ) );
+
+export const onResentAccountRecoveryEmailValidationFailed = ( dispatch, { target } ) =>
+	dispatch( errorNotice( getResentFailedMessage( target ) ) );
