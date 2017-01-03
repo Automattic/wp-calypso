@@ -6,11 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPostLikes } from '../';
+import { countPostLikes } from '../';
 
-describe( 'getPostLikes()', () => {
+describe( 'countPostLikes()', () => {
 	it( 'should return null if the site has never been fetched', () => {
-		const postLikes = getPostLikes( {
+		const count = countPostLikes( {
 			posts: {
 				likes: {
 					items: {}
@@ -18,40 +18,38 @@ describe( 'getPostLikes()', () => {
 			}
 		}, 12345678, 50 );
 
-		expect( postLikes ).to.be.null;
+		expect( count ).to.be.null;
 	} );
 
 	it( 'should return null if the post has never been fetched', () => {
-		const likes = [ { ID: 1, login: 'chicken' } ];
-		const postLikes = getPostLikes( {
+		const count = countPostLikes( {
 			posts: {
 				likes: {
 					items: {
 						12345678: {
-							10: { likes }
+							10: { found: 42 }
 						}
 					}
 				}
 			}
 		}, 12345678, 50 );
 
-		expect( postLikes ).to.be.null;
+		expect( count ).to.be.null;
 	} );
 
-	it( 'should return the post likes', () => {
-		const likes = [ { ID: 1, login: 'chicken' } ];
-		const postLikes = getPostLikes( {
+	it( 'should return the total of post likes', () => {
+		const count = countPostLikes( {
 			posts: {
 				likes: {
 					items: {
 						12345678: {
-							50: { likes }
+							50: { found: 42 }
 						}
 					}
 				}
 			}
 		}, 12345678, 50 );
 
-		expect( postLikes ).to.eql( likes );
+		expect( count ).to.eql( 42 );
 	} );
 } );

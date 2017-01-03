@@ -25,12 +25,14 @@ export function requestPostLikes( siteId, postId ) {
 			postId,
 		} );
 
-		return wpcom.site( siteId ).post( postId ).likesList().then( ( { likes } ) => {
+		return wpcom.site( siteId ).post( postId ).likesList().then( ( { likes, i_like: iLike, found } ) => {
 			dispatch( {
 				type: POST_LIKES_RECEIVE,
 				siteId,
 				postId,
 				likes,
+				iLike,
+				found,
 			} );
 
 			dispatch( {

@@ -29,7 +29,9 @@ describe( 'actions', () => {
 				.reply( 200, {
 					likes: [
 						{ id: 1, login: 'chicken' }
-					]
+					],
+					found: 2,
+					i_like: false,
 				} )
 				.get( '/rest/v1.1/sites/87654321/posts/50/likes' )
 				.reply( 403, {
@@ -56,7 +58,9 @@ describe( 'actions', () => {
 					postId: 50,
 					likes: [
 						{ id: 1, login: 'chicken' }
-					]
+					],
+					found: 2,
+					iLike: false,
 				} );
 			} );
 		} );

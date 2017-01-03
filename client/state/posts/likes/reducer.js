@@ -51,12 +51,12 @@ export const requesting = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ POST_LIKES_RECEIVE ]: ( state, { siteId, postId, likes } ) => {
+	[ POST_LIKES_RECEIVE ]: ( state, { siteId, postId, likes, iLike, found } ) => {
 		return {
 			...state,
 			[ siteId ]: {
 				...state[ siteId ],
-				[ postId ]: likes
+				[ postId ]: { likes, iLike, found }
 			}
 		};
 	}

@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set site ID to false if request finishes unsuccessfully', () => {
+		it( 'should set post ID to false if request finishes unsuccessfully', () => {
 			const state = requesting( deepFreeze( {
 				12345678: {
 					50: true,
@@ -167,12 +167,18 @@ describe( 'reducer', () => {
 				type: POST_LIKES_RECEIVE,
 				siteId: 12345678,
 				postId: 50,
-				likes
+				likes,
+				found: 2,
+				iLike: false,
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} );
 		} );
@@ -186,21 +192,35 @@ describe( 'reducer', () => {
 			];
 			const state = items( deepFreeze( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} ), {
 				type: POST_LIKES_RECEIVE,
 				siteId: 87654321,
 				postId: 10,
-				likes: likes2
+				likes: likes2,
+				found: 3,
+				iLike: true,
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				},
 				87654321: {
-					10: likes2
+					10: {
+						likes: likes2,
+						found: 3,
+						iLike: true,
+					}
 				}
 			} );
 		} );
@@ -214,19 +234,33 @@ describe( 'reducer', () => {
 			];
 			const state = items( deepFreeze( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} ), {
 				type: POST_LIKES_RECEIVE,
 				siteId: 12345678,
 				postId: 10,
-				likes: likes2
+				likes: likes2,
+				found: 3,
+				iLike: true,
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes,
-					10: likes2
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					},
+					10: {
+						likes: likes2,
+						found: 3,
+						iLike: true,
+					}
 				}
 			} );
 		} );
@@ -240,18 +274,28 @@ describe( 'reducer', () => {
 			];
 			const state = items( deepFreeze( {
 				12345678: {
-					50: likes
+					50: {
+						found: 2,
+						iLike: false,
+						likes,
+					}
 				}
 			} ), {
 				type: POST_LIKES_RECEIVE,
 				siteId: 12345678,
 				postId: 50,
-				likes: likes2
+				likes: likes2,
+				found: 3,
+				iLike: true,
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes2
+					50: {
+						likes: likes2,
+						found: 3,
+						iLike: true,
+					}
 				}
 			} );
 		} );
@@ -262,7 +306,11 @@ describe( 'reducer', () => {
 			];
 			const state = items( deepFreeze( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} ), {
 				type: SERIALIZE
@@ -270,7 +318,11 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} );
 		} );
@@ -281,7 +333,11 @@ describe( 'reducer', () => {
 			];
 			const state = items( deepFreeze( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} ), {
 				type: DESERIALIZE
@@ -289,7 +345,11 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: {
-					50: likes
+					50: {
+						likes,
+						found: 2,
+						iLike: false,
+					}
 				}
 			} );
 		} );
