@@ -63,3 +63,4 @@ ReactDom.render(
 	}),
 	document.getElementById( 'primary' )
 );
+```
