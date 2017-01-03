@@ -32,7 +32,7 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 		case 'email':
 			const oldEmail = getAccountRecoveryEmail( getState() );
 
-			if ( '' === oldEmail ) {
+			if ( ! oldEmail ) {
 				return translate( 'Successfully added new recovery email address.' );
 			}
 
