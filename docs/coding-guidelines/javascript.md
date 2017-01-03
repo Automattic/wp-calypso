@@ -656,7 +656,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-npm install -g eslint eslint-plugin-wpcalypso eslint-plugin-react babel-eslint
+npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-wpcalypso eslint-config-wpcalypso
 ```
 
 #### Identifying Spaces with Sublime Text
