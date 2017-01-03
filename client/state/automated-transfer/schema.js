@@ -1,7 +1,10 @@
+/**
+ * Internal dependencies
+ */
 import { eligibility } from './eligibility/schema';
 
 export const status = {
-	type: 'string',
+	type: [ 'string', 'null' ],
 };
 
 export const automatedTransferSite = {
