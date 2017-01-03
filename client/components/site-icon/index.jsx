@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
-import { parse as parseUrl } from 'url';
+import { get } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -33,25 +32,10 @@ const SiteIcon = React.createClass( {
 		size: React.PropTypes.number
 	},
 
-	getIconSrcUrl() {
-		const { iconUrl } = this.props;
-		if ( ! iconUrl ) {
-			return;
-		}
-
-		const { host } = parseUrl( iconUrl, true, true );
-		const sizeParam = includes( host, 'gravatar.com' ) ? 's' : 'w';
-
-		return resizeImageUrl( iconUrl, {
-			[ sizeParam ]: this.props.imgSize
-		} );
-	},
-
 	render() {
-		const { site, siteId } = this.props;
+		const { site, siteId, iconUrl, imgSize } = this.props;
 
-		// Set the site icon path if it's available
-		const iconSrc = this.getIconSrcUrl();
+		const iconSrc = resizeImageUrl( iconUrl, imgSize );
 
 		const iconClasses = classNames( {
 			'site-icon': true,

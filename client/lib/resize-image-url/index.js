@@ -1,8 +1,13 @@
 /**
  * External Dependencies
  */
-import { get, assign, omit, includes, mapValues } from 'lodash';
+import { get, assign, omit, includes, mapValues, findKey } from 'lodash';
 import { parse, format } from 'url';
+
+/**
+ * Internal dependencies
+ */
+import safeImageUrl from 'lib/safe-image-url';
 
 /**
  * Pattern matching valid http(s) URLs
@@ -28,6 +33,16 @@ const IMAGE_SCALE_FACTOR = get( global.window, 'devicePixelRatio', 1 ) > 1 ? 2 :
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 
 /**
+ * Mappings of supported safe services to patterns by which they can be matched
+ *
+ * @type {Object}
+ */
+const SERVICE_HOSTNAME_PATTERNS = {
+	photon: /(^i\d\.wp\.com|(^|\.)wordpress\.com)$/,
+	gravatar: /(^|\.)gravatar\.com$/
+};
+
+/**
  * Given a numberic value, returns the value multiplied by image scale factor
  *
  * @param  {Number} value Original value
@@ -39,11 +54,17 @@ const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
  * Changes the sizing parameters on a URL. Works for WordPress.com, Photon, and
  * Gravatar images
  *
- * @param   {String} imageUrl Original image url
- * @param   {Object} params   Resize parameters to add
- * @returns {String}          Resize image URL
+ * @param   {String}          imageUrl Original image url
+ * @param   {(Number|Object)} resize   Resize pixel width, or object of query
+ *                                     arguments (assuming Photon or Gravatar)
+ * @param   {?Number}         height   Pixel height if specifying resize width
+ * @returns {String}                   Resize image URL
  */
-export default function resizeImageUrl( imageUrl, params ) {
+export default function resizeImageUrl( imageUrl, resize, height ) {
+	if ( 'string' !== typeof imageUrl ) {
+		return imageUrl;
+	}
+
 	const parsedUrl = parse( imageUrl, true, true );
 	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
 		return imageUrl;
@@ -51,8 +72,25 @@ export default function resizeImageUrl( imageUrl, params ) {
 
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
+	if ( 'number' === typeof resize ) {
+		const service = findKey( SERVICE_HOSTNAME_PATTERNS, String.prototype.match.bind( parsedUrl.hostname ) );
+		if ( 'gravatar' === service ) {
+			resize = { s: resize };
+		} else {
+			resize = height > 0
+				? { fit: [ resize, height ].join() }
+				: { w: resize };
+
+			// External URLs are made "safe" (i.e. passed through Photon), so
+			// recurse with an assumed set of query arguments for Photon
+			if ( ! service ) {
+				return resizeImageUrl( safeImageUrl( imageUrl ), resize );
+			}
+		}
+	}
+
 	// Map sizing parameters, multiplying their values by the scale factor
-	assign( parsedUrl.query, mapValues( params, ( value, key ) => {
+	assign( parsedUrl.query, mapValues( resize, ( value, key ) => {
 		if ( 'resize' === key || 'fit' === key ) {
 			return value.split( ',' ).map( scaleByFactor ).join( ',' );
 		} else if ( includes( SIZE_PARAMS, key ) ) {
