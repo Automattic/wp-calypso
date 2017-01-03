@@ -15,6 +15,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import { receiveMedia } from 'state/media/actions';
@@ -138,7 +139,7 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
+		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' ) && siteSupportsImageEditor;
 
@@ -162,6 +163,8 @@ class SiteIconSetting extends Component {
 			}
 		}
 
+		const { translate, siteId, isSaving } = this.props;
+
 		return (
 			<FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
@@ -177,6 +180,7 @@ class SiteIconSetting extends Component {
 				<Button
 					{ ...buttonProps }
 					className="site-icon-setting__button"
+					disabled={ isSaving }
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
@@ -184,7 +188,8 @@ class SiteIconSetting extends Component {
 					<Button
 						compact
 						onClick={ this.props.removeSiteIcon }
-						className="site-icon-setting__button">
+						className="site-icon-setting__button"
+						disabled={ isSaving }>
 						{ translate( 'Remove' ) }
 					</Button>
 				) }
@@ -223,6 +228,7 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
