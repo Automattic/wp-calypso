@@ -159,7 +159,7 @@ const ManagePurchase = React.createClass( {
 
 	getExpiringText( purchase ) {
 		if ( purchase.expiryStatus === 'manualRenew' ) {
-			return this.translate( '%(purchaseName)s will expire and be removed from your site in %(expiry)s days. ' +
+			return this.translate( '%(purchaseName)s will expire and be removed from your site in %(expiry)s. ' +
 				'Please, add a credit card if you want it to autorenew. ',
 				{
 					args: {
