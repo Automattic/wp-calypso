@@ -192,8 +192,7 @@ export default class FeedStream {
 
 		// If we are getting close to the end of the loaded stream, or are already at the end,
 		// start fetching new posts
-		if (	nextIndex + 4 > this.postKeys.length ||
-					nextIndex === -1 ) {
+		if ( nextIndex + 4 > this.postKeys.length || nextIndex === -1 ) {
 			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
 			defer( fetchNextPage );
 		}
