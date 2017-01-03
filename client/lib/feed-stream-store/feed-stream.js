@@ -8,7 +8,8 @@ import {
 	forEach,
 	get,
 	map,
-	noop
+	noop,
+	defer,
 } from 'lodash';
 import moment from 'moment';
 import url from 'url';
@@ -193,7 +194,8 @@ export default class FeedStream {
 		// start fetching new posts
 		if (	nextIndex + 4 > this.postKeys.length ||
 					nextIndex === -1 ) {
-			FeedStreamActions.fetchNextPage( this.getID() );
+			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
+			defer( fetchNextPage );
 		}
 	}
 
