@@ -16,6 +16,21 @@
 
 .title-format-editor {
 	margin-bottom: 20px;
+
+	&.disabled {
+		.title-format-editor__editor-wrapper {
+			border: 1px solid lighten( $gray, 20% );
+			background-color: $gray-light;
+		}
+
+		.title-format-editor__token, .title-format-editor__button {
+			pointer-events: none;
+		}
+
+		.title-format-editor__token {
+			background-color: $gray;
+		}
+	}
 }
 
 .title-format-editor__header {
