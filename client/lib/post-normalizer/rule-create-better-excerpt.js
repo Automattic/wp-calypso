@@ -58,7 +58,7 @@ export function formatExcerpt( content ) {
 	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
 
 	// limit to paras and brs
-	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br' ] );
+	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
 
 	// strip any p's that are empty
 	toArray( dom.querySelectorAll( 'p' ) )
