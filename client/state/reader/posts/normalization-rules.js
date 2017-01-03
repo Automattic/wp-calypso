@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import { filter, find, flow, forEach } from 'lodash';
-import url from 'url';
 
 /**
  * Internal Dependencies
@@ -105,15 +104,6 @@ function classifyPost( post ) {
 			} else if ( canonicalAspect > 0.7 && canonicalAspect < 1.3 && canonicalImage.width < 200 ) {
 				displayType ^= DISPLAY_TYPES.THUMBNAIL;
 			}
-		}
-
-		const canonicalImageUrl = url.parse( canonicalImage.uri, true, true ),
-			canonicalImagePath = canonicalImageUrl.pathname;
-		if ( find( post.content_images, ( img ) => {
-			const imgUrl = url.parse( img.src, true, true );
-			return imgUrl.pathname === canonicalImagePath;
-		} ) ) {
-			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
 		}
 	}
 

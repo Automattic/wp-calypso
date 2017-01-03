@@ -42,7 +42,6 @@ import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
-import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
 import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
@@ -54,6 +53,7 @@ import ExternalLink from 'components/external-link';
 import DocumentHead from 'components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
 import ReaderFullPostBack from './back';
+import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -319,7 +319,7 @@ export class FullPostView extends React.Component {
 					<article className="reader-full-post__story" ref="article">
 						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
-						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
+						{ post.featured_image && ! isFeaturedImageInContent( post ) &&
 							<FeaturedImage src={ post.featured_image } />
 						}
 						{ post.use_excerpt
