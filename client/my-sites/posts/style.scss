@@ -475,6 +475,10 @@
 	animation: appear .3s ease-in-out;
 }
 
+.post .comments__comment-timestamp {
+	margin-top: -4px;
+}
+
 .post .posts__post-share {
 	margin: 0;
 	animation: appear .3s ease-in-out;
