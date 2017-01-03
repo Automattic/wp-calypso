@@ -11,13 +11,18 @@ import analytics from 'lib/analytics';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import feedStreamFactory from 'lib/feed-stream-store';
 
 let storeId;
-export function getLastStoreId() {
-	return storeId;
-}
 export function setLastStoreId( id ) {
 	storeId = id;
+}
+
+export function getLastStore() {
+	if ( storeId ) {
+		return feedStreamFactory( storeId );
+	}
+	return null;
 }
 
 export function ensureStoreLoading( store, context ) {
