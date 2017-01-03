@@ -77,10 +77,10 @@ export function getCurrentUserDate( state ) {
 export function getCurrentUserEmail( state ) {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
-		return '';
+		return null;
 	}
 
-	return user.email || '';
+	return user.email || null;
 }
 
 /**

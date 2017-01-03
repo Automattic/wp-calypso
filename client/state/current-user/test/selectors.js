@@ -205,7 +205,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentUserEmail', () => {
-		it( 'should return an empty string it the current user is not there for whatever reasons', () => {
+		it( 'should return a null it the current user is not there for whatever reasons', () => {
 			const selected = getCurrentUserEmail( {
 				users: {
 					items: {}
@@ -215,10 +215,10 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.equal( '' );
+			expect( selected ).to.equal( null );
 		} );
 
-		it( 'should return an empty string if the primary email is not set', () => {
+		it( 'should return a null if the primary email is not set', () => {
 			const selected = getCurrentUserEmail( {
 				users: {
 					items: {
@@ -232,7 +232,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.equal( '' );
+			expect( selected ).to.equal( null );
 		} );
 
 		it( 'should return value if the email is set', () => {
