@@ -188,6 +188,13 @@ export default class FeedStream {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
 		}
+
+		// If we are getting close to the end of the loaded stream, or are already at the end,
+		// start fetching new posts
+		if (	nextIndex + 4 > this.postKeys.length ||
+					nextIndex === -1 ) {
+			FeedStreamActions.fetchNextPage( this.getID() );
+		}
 	}
 
 	selectPrevItem() {

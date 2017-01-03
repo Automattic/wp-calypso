@@ -35,7 +35,9 @@ class ReaderPostCardAdapter extends React.Component {
 				}
 			};
 		}
-		this.props.handleClick && this.props.handleClick( referredPost || postToOpen );
+		this.props.handleClick && this.props.handleClick( {
+			post: referredPost || postToOpen
+		} );
 	}
 
 	onCommentClick = () => {
@@ -43,7 +45,10 @@ class ReaderPostCardAdapter extends React.Component {
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_post_comments_button_clicked', this.props.post );
 
-		this.props.handleClick && this.props.handleClick( this.props.post, { comments: true } );
+		this.props.handleClick && this.props.handleClick( {
+			post: this.props.post,
+			comments: true
+		} );
 	}
 
 	// take what the stream hands to a card and adapt it

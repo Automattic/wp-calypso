@@ -21,7 +21,6 @@ import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import CrossPost from './x-post';
 import Post from './post';
-import page from 'page';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
 import UpdateNotice from 'reader/update-notice';
@@ -33,6 +32,8 @@ import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import { showSelectedPost, showFullPost, showFullXPost } from 'reader/utils';
+import { setLastStoreId } from 'reader/controller-helper';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -171,7 +172,10 @@ export default class ReaderStream extends React.Component {
 		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
-				this.showSelectedPost( { replaceHistory: true } );
+				showSelectedPost( {
+					store: this.props.store,
+					replaceHistory: true,
+				} );
 			}
 		}
 	}
@@ -215,12 +219,14 @@ export default class ReaderStream extends React.Component {
 	}
 
 	componentDidMount() {
+		setLastStoreId( this.props.store && this.props.store.id );
+
 		this.props.store.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.on( 'open-selection', this.showSelectedPost );
+		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
 		window.addEventListener( 'popstate', this._popstate );
@@ -235,7 +241,7 @@ export default class ReaderStream extends React.Component {
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.off( 'open-selection', this.showSelectedPost );
+		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
 		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
 		window.removeEventListener( 'popstate', this._popstate );
@@ -246,6 +252,8 @@ export default class ReaderStream extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.store !== this.props.store ) {
+			setLastStoreId( this.props.store && this.props.store.id );
+
 			this.props.store.off( 'change', this.updateState );
 			this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
 
@@ -257,41 +265,11 @@ export default class ReaderStream extends React.Component {
 		}
 	}
 
-	showSelectedPost = ( options ) => {
-		const postKey = this.props.store.getSelectedPost();
-
-		if ( !! postKey ) {
-			// gap
-			if ( postKey.isGap === true ) {
-				return this._selectedGap.handleClick();
-			}
-
-			// rec block
-			if ( postKey.isRecommendationBlock ) {
-				return;
-			}
-
-			// xpost
-			const post = PostStore.get( postKey );
-			if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
-				return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
-			}
-
-			// normal
-			let mappedPost;
-			if ( !! postKey.feedId ) {
-				mappedPost = {
-					feed_ID: postKey.feedId,
-					feed_item_ID: postKey.postId
-				};
-			} else {
-				mappedPost = {
-					site_ID: postKey.blogId,
-					ID: postKey.postId
-				};
-			}
-			this.showFullPost( mappedPost, options );
-		}
+	handleOpenSelection = () => {
+		showSelectedPost( {
+			store: this.props.store,
+			selectedGap: this._selectedGap,
+		} );
 	}
 
 	toggleLikeOnSelectedPost = () => {
@@ -425,33 +403,6 @@ export default class ReaderStream extends React.Component {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	}
 
-	showFullXPost = ( xMetadata ) => {
-		if ( xMetadata.blogId && xMetadata.postId ) {
-			const mappedPost = {
-				site_ID: xMetadata.blogId,
-				ID: xMetadata.postId
-			};
-			this.showFullPost( mappedPost );
-		} else {
-			window.open( xMetadata.postURL );
-		}
-	}
-
-	showFullPost = ( post, options = {} ) => {
-		const hashtag = options.comments ? '#comments' : '';
-		let query = `?storeId=${ this.props.store.id }`;
-		if ( post.referral ) {
-			const { blogId, postId } = post.referral;
-			query += `ref_blog=${ blogId }&ref_post=${ postId }`;
-		}
-		const method = options && options.replaceHistory ? 'replace' : 'show';
-		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
-		} else {
-			page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
-		}
-	}
-
 	renderPost = ( postKey, index ) => {
 		const selectedPostKey = this.props.store.getSelectedPost();
 		const isSelected = !! ( selectedPostKey &&
@@ -493,8 +444,8 @@ export default class ReaderStream extends React.Component {
 			key={ itemKey }
 			ref={ itemKey }
 			isSelected={ isSelected }
-			handleXPostClick={ this.showFullXPost }
-			handleClick={ this.showFullPost }
+			handleXPostClick={ showFullXPost }
+			handleClick={ showFullPost }
 			postKey={ postKey }
 			store={ this.props.store }
 			suppressSiteNameLink={ this.props.suppressSiteNameLink }

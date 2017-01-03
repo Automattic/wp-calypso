@@ -12,6 +12,14 @@ import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 
+let storeId;
+export function getLastStoreId() {
+	return storeId;
+}
+export function setLastStoreId( id ) {
+	storeId = id;
+}
+
 export function ensureStoreLoading( store, context ) {
 	if ( store.getPage() === 1 ) {
 		if ( context && context.query && context.query.at ) {

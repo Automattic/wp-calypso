@@ -8,20 +8,18 @@ import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
 import twemoji from 'twemoji';
-import { get, defer } from 'lodash';
-import url from 'url';
-import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import PostStore from 'lib/feed-post-store';
 import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
 import smartSetState from 'lib/react-smart-set-state';
-import PostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
@@ -59,22 +57,18 @@ import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
-import CrossPost from 'reader/stream/x-post';
-import XPostHelper from 'reader/xpost-helper';
+import { getLastStoreId } from 'reader/controller-helper';
+import { showSelectedPost } from 'reader/utils';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.hasScrolledToCommentAnchor = false;
 
-		defer( () => {
-			const query = url.parse( window.location.href, true ).query;
-			if ( query.storeId ) {
-				this.storeId = query.storeId;
-				this.feedStore = feedStreamFactory( this.storeId );
-				console.error( this.feedStore );
-			}
-		} );
+		const storeId = getLastStoreId();
+		if ( storeId ) {
+			this.feedStore = feedStreamFactory( storeId );
+		}
 	}
 
 	static propTypes = {
@@ -254,77 +248,17 @@ export class FullPostView extends React.Component {
 		}
 	}
 
-	showSelectedPost = ( options ) => {
-		if ( this.feedStore ) {
-			const postKey = this.feedStore.getSelectedPost();
-
-			if ( !! postKey ) {
-				const post = PostStore.get( postKey );
-				/*
-				if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
-					return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
-				}
-
-				*/
-				// normal
-				let mappedPost;
-				if ( !! postKey.feedId ) {
-					mappedPost = {
-						feed_ID: postKey.feedId,
-						feed_item_ID: postKey.postId
-					};
-				} else {
-					mappedPost = {
-						site_ID: postKey.blogId,
-						ID: postKey.postId
-					};
-				}
-				console.error( mappedPost )
-				this.showFullPost( mappedPost, options );
-			}
-		}
-	}
-
-	showFullXPost = ( xMetadata ) => {
-		if ( xMetadata.blogId && xMetadata.postId ) {
-			const mappedPost = {
-				site_ID: xMetadata.blogId,
-				ID: xMetadata.postId
-			};
-			this.showFullPost( mappedPost );
-		} else {
-			window.open( xMetadata.postURL );
-		}
-	}
-
-	showFullPost = ( post, options = {} ) => {
-		const hashtag = options.comments ? '#comments' : '';
-		let query = `?storeId=${ this.storeId }`;
-		if ( post.referral ) {
-			const { blogId, postId } = post.referral;
-			query += `ref_blog=${ blogId }&ref_post=${ postId }`;
-		}
-		const method = options && options.replaceHistory ? 'replace' : 'show';
-		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
-		} else {
-			page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
-		}
-	}
-
 	goToNextPost = () => {
 		if ( this.feedStore ) {
-			console.error( this.feedStore.getSelectedPost(), 'hi' );
-			FeedStreamStoreActions.selectNextItem( this.storeId );
-			this.showSelectedPost();
+			FeedStreamStoreActions.selectNextItem( getLastStoreId() );
+			showSelectedPost( { store: this.feedStore } );
 		}
 	}
 
 	goToPreviousPost = () => {
 		if ( this.feedStore ) {
-			console.error( this.feedStore.getSelectedPost(), 'hi' );
-			FeedStreamStoreActions.selectPrevItem( this.storeId );
-			this.showSelectedPost();
+			FeedStreamStoreActions.selectPrevItem( getLastStoreId() );
+			showSelectedPost( { store: this.feedStore } );
 		}
 	}
 

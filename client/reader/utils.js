@@ -1,10 +1,20 @@
-const url = require( 'url' );
+/**
+ * External Dependencies
+ */
+import url from 'url';
+import page from 'page';
 
-const i18n = require( 'i18n-calypso' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
-	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' );
+/**
+ * Internal Dependencies
+ */
+import i18n from 'i18n-calypso';
+import { state as SiteState } from 'lib/reader-site-store/constants';
+import FeedDisplayHelper from 'reader/lib/feed-display-helper';
+import PostStore from 'lib/feed-post-store';
 
-function siteNameFromSiteAndPost( site, post ) {
+import XPostHelper, { isXPost } from 'reader/xpost-helper';
+
+export function siteNameFromSiteAndPost( site, post ) {
 	let siteName;
 
 	if ( site && ( site.title || site.domain ) ) {
@@ -34,7 +44,7 @@ function siteNameFromSiteAndPost( site, post ) {
  * @param  {Object} post A Reader post
  * @return {Object}      A site like object
  */
-function siteishFromSiteAndPost( site, post ) {
+export function siteishFromSiteAndPost( site, post ) {
 	if ( site ) {
 		return site.toJS();
 	}
@@ -52,11 +62,11 @@ function siteishFromSiteAndPost( site, post ) {
 	};
 }
 
-function isSpecialClick( event ) {
+export function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 }
 
-function isPostNotFound( post ) {
+export function isPostNotFound( post ) {
 	if ( post === undefined ) {
 		return false;
 	}
@@ -64,9 +74,75 @@ function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-module.exports = {
-	siteNameFromSiteAndPost,
-	siteishFromSiteAndPost,
-	isSpecialClick,
-	isPostNotFound
-};
+export function showSelectedPost( { store, replaceHistory, selectedGap } ) {
+	if ( ! store || ! store.getSelectedPost() ) {
+		return;
+	}
+
+	const postKey = store.getSelectedPost();
+
+	if ( postKey.isGap === true ) {
+		return selectedGap.handleClick();
+	}
+
+	// rec block
+	if ( postKey.isRecommendationBlock ) {
+		return;
+	}
+
+	const post = PostStore.get( postKey );
+
+	if ( isXPost( post ) && ! replaceHistory ) {
+		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
+	}
+
+	// normal
+	let mappedPost;
+	if ( !! postKey.feedId ) {
+		mappedPost = {
+			feed_ID: postKey.feedId,
+			feed_item_ID: postKey.postId
+		};
+	} else {
+		mappedPost = {
+			site_ID: postKey.blogId,
+			ID: postKey.postId
+		};
+	}
+
+	showFullPost( {
+		post: mappedPost,
+		replaceHistory,
+	} );
+}
+
+export function showFullXPost( xMetadata ) {
+	if ( xMetadata.blogId && xMetadata.postId ) {
+		const mappedPost = {
+			site_ID: xMetadata.blogId,
+			ID: xMetadata.postId
+		};
+
+		showFullPost( {
+			post: mappedPost,
+		} );
+	} else {
+		window.open( xMetadata.postURL );
+	}
+}
+
+export function showFullPost( { post, replaceHistory, comments } ) {
+	const hashtag = comments ? '#comments' : '';
+	let query = '';
+	if ( post.referral ) {
+		const { blogId, postId } = post.referral;
+		query += `ref_blog=${ blogId }&ref_post=${ postId }`;
+	}
+
+	const method = replaceHistory ? 'replace' : 'show';
+	if ( post.feed_ID && post.feed_item_ID ) {
+		page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
+	} else {
+		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
+	}
+}
