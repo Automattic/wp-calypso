@@ -1,0 +1,39 @@
+.props-viewer__card {
+  color: darken($gray, 10%);
+}
+
+.props-viewer__usage {
+  margin: 28px -25px -17px;
+}
+
+.props-viewer__card p {
+  font-size: 13px;
+  margin: 0;
+}
+
+.props-viewer__description {
+  line-height: 1.4;
+}
+
+.props-viewer__heading {
+  background: $gray-light;
+  border: 1px solid lighten( $gray, 10% );
+  text-transform: uppercase;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.8;
+  color: $gray-dark;
+  padding: 2px 8px;
+  position: absolute;
+  top: -12px;
+}
+
+.props-viewer__example, .props-viewer__table {
+  padding: 24px;
+  flex: 3;
+  background: $gray-light;
+  border: 1px solid lighten( $gray, 10% );
+  font-size: 14px;
+  position: relative;
+}
