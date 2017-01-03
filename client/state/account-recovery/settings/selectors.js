@@ -47,8 +47,8 @@ export const hasSentAccountRecoveryEmailValidation = ( state ) => {
 };
 
 export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
-	return ! isAccountRecoveryEmailActionInProgress( state )
-		&& !! getAccountRecoveryEmail( state )
-		&& ! isAccountRecoveryEmailValidated( state )
-		&& ! hasSentAccountRecoveryEmailValidation( state );
+	return ! isAccountRecoveryEmailActionInProgress( state ) &&
+		!! getAccountRecoveryEmail( state ) &&
+		! isAccountRecoveryEmailValidated( state ) &&
+		! hasSentAccountRecoveryEmailValidation( state );
 };
