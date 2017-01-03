@@ -11,8 +11,6 @@ import React, { PropTypes, PureComponent } from 'react';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 
-import styles from './styles.scss';
-
 // todo: move this file!
 const components = require( '../../../server/devdocs/proptypes-index.json' );
 
@@ -69,11 +67,27 @@ class PropsViewer extends PureComponent {
 		 */
 		const row = ( propName ) => {
 			const prop = component.props[ propName ];
+			let type = 'unknown';
+			if ( prop.type ) {
+				switch ( prop.type.name ) {
+					default:
+						type = prop.type.name;
+						break;
+					case 'arrayOf':
+					case 'oneOf':
+					case 'oneOfType':
+					case 'objectOf':
+					case 'instanceOf':
+						type = `${ prop.type.name }( ${ prop.type.value.name || 'unknown' } )`;
+						break;
+				}
+			}
+
 			return (
-				<tr key={ propName } className={ styles.tr } >
+				<tr key={ propName }>
 					<td>{ prop.required ? <Gridicon icon="checkmark" /> : <Gridicon icon="cross-small" /> }</td>
 					<td>{ propName }</td>
-					<td>{ prop.type ? prop.type.name : 'not in propTypes' }</td>
+					<td>{ type }</td>
 					<td>{ prop.defaultValue ? prop.defaultValue.value : 'undefined' }</td>
 					<td>{ prop.description }</td>
 				</tr>
@@ -110,34 +124,36 @@ class PropsViewer extends PureComponent {
 			}
 
 			return (
-				<Card compact={ true } tagName="div">
-					<h1 className={ styles.name }>{ component.displayName }</h1>
-					<p className={ styles.description } >{ component.description }</p>
-					<div className={ styles.example }>
-						<p><code>
-							import { component.displayName } from '{ component.includePath }';
-							{ null }
-						</code></p>
-					</div>
-					<div className={ styles.tableWrapper }>
-						<table className={ styles.table }>
-							<thead>
-							<tr>
-								<td>Required</td>
-								<td>Name</td>
-								<td>Type</td>
-								<td>Default</td>
-								<td>Description</td>
-							</tr>
-							</thead>
-							<tbody>
-							{ component.props
-								? Object.keys( component.props )
-									.sort( sortProps )
-									.map( ( propName ) => row( propName ) )
-								: null }
-							</tbody>
-						</table>
+				<Card compact={ true } className="props-viewer__card" tagName="div">
+					<p className="props-viewer__description" >{ component.description || 'Add jsdoc to the component see it here' }</p>
+					<div className="props-viewer__usage">
+						<div className="props-viewer__example" >
+							<span className="props-viewer__heading">Use It</span>
+							<p><code>
+								import { component.displayName } from '{ component.includePath }';
+							</code></p>
+						</div>
+						<div className="props-viewer__table">
+							<span className="props-viewer__heading">Props</span>
+							<table>
+								<thead>
+								<tr>
+									<td>Required</td>
+									<td>Name</td>
+									<td>Type</td>
+									<td>Default</td>
+									<td>Description</td>
+								</tr>
+								</thead>
+								<tbody>
+								{ component.props
+									? Object.keys( component.props )
+										.sort( sortProps )
+										.map( ( propName ) => row( propName ) )
+									: null }
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</Card>
 			);
