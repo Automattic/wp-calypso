@@ -64,7 +64,7 @@ class Select extends Component {
 				disabled={ shouldShowPlaceholders || ! isEnabled }
 				isError={ isEnabled && isError }
 				onChange={ this.setValue }
-				value={ value }
+				value={ value || '' }
 			>
 				<option value="">{ label }</option>
 				{ options }
@@ -77,7 +77,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { siteId, postType, fieldName } = ownProps;
 
 	const options = getPostTypeFieldOptions( state, siteId, postType, fieldName );
-	const value = getPostTypeFieldValue( state, siteId, postType, fieldName ) || '';
+	const value = getPostTypeFieldValue( state, siteId, postType, fieldName );
 
 	return {
 		shouldShowPlaceholders: ! options,
