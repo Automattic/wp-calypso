@@ -36,4 +36,4 @@ as that has a lot of dependencies that aren't ready for server-side rendering.
 * Realistically, you will probably need to write separate `index.node.js` and
 `index.web.js` files for the server and client side inside your section, as many
 components needed on the client side aren't server-side ready yet. For more on
-that, see [Server-side Rendering docs](/docs/server-side-rendering.md).
+that, see [Server-side Rendering docs](../docs/server-side-rendering.md).

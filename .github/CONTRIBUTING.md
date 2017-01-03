@@ -25,7 +25,7 @@ If you’d like to contribute code, first, you will need to run Calypso locally.
 4.	Execute `make run` from the root directory of the repository.
 5.	Open `http://calypso.localhost:3000` in your browser.
 
-For more detailed instructions, see [Installing Calypso](/docs/install.md).
+For more detailed instructions, see [Installing Calypso](../docs/install.md).
 
 
 ## Development Workflow
@@ -90,11 +90,11 @@ Then, you may ask that person to review your code by mentioning his/her GitHub u
 
 Consistent coding style makes the code so much easier to read. Here are ours:
 
-* [All Coding Guidelines](/docs/coding-guidelines.md)
-	- [JavaScript](/docs/coding-guidelines/javascript.md)
-	- [CSS/SASS](/docs/coding-guidelines/css.md)
-	- [HTML](/docs/coding-guidelines/html.md)
-	- [React Components](/docs/components.md)
+* [All Coding Guidelines](../docs/coding-guidelines.md)
+	- [JavaScript](../docs/coding-guidelines/javascript.md)
+	- [CSS/SASS](../docs/coding-guidelines/css.md)
+	- [HTML](../docs/coding-guidelines/html.md)
+	- [React Components](../docs/components.md)
 * [I18n Guidelines »](https://github.com/Automattic/i18n-calypso/blob/master/README.md)
 
 
@@ -102,22 +102,22 @@ Consistent coding style makes the code so much easier to read. Here are ours:
 
 When you’re first starting out, your natural instinct when creating a new feature will be to create a local feature branch, and start building away. If you start doing this, *stop*, take your hands off the keyboard, grab a coffee and read on. :)
 
-**It’s important to break your feature down into small pieces first**, each piece should become its own pull request. Even if after finishing the first piece your feature isn’t functional, that is okay, we love merging unfinished code early and often. You can place your feature behind a [feature-check](/config/README.md#feature-flags) to make sure it’s not exposed until all pieces are completed.
+**It’s important to break your feature down into small pieces first**, each piece should become its own pull request. Even if after finishing the first piece your feature isn’t functional, that is okay, we love merging unfinished code early and often. You can place your feature behind a [feature-check](../config/README.md#feature-flags) to make sure it’s not exposed until all pieces are completed.
 
 Once you know what the first small piece of your feature will be, follow this general process while working:
 
-1. Create a new branch, using [the branch naming scheme](/docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
+1. Create a new branch, using [the branch naming scheme](../docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
 2. Make your first commit: any will do even if empty or trivial, but we need something in order to create the initial pull request. Create the pull request and prefix the name with the section of the product, _e.g._ _Posts: Prepare store for desktop app_. Don’t worry too much if there’s no obvious prefix.
   - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
   - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
 3. Start developing and pushing out commits to your new branch.
   - Push your changes out frequently and try to avoid getting stuck in a long-running branch or a merge nightmare. Smaller changes are much easier to review and to deal with potential conflicts.
-  - Follow the [merge checklist](/docs/merge-checklist.md) before pushing. This ensures that your code follows the style guidelines and doesn’t accidentally introduce any errors or regressions.
-  - Note that you can automate some of these tasks by setting up [githooks](/docs/coding-guidelines/javascript.md#setting-up-githooks) and they will run whenever you `git commit`.
+  - Follow the [merge checklist](../docs/merge-checklist.md) before pushing. This ensures that your code follows the style guidelines and doesn’t accidentally introduce any errors or regressions.
+  - Note that you can automate some of these tasks by setting up [githooks](../docs/coding-guidelines/javascript.md#setting-up-githooks) and they will run whenever you `git commit`.
   - Don’t be afraid to change, [squash](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html), and rearrange commits or to force push - `git push -f origin fix/something-broken`. Keep in mind, however, that if other people are committing on the same branch then you can mess up their history. You are perfectly safe if you are the only one pushing commits to that branch.
   - Squash minor commits such as typo fixes or [fixes to previous commits](http://fle.github.io/git-tip-keep-your-branch-clean-with-fixup-and-autosquash.html) in the pull request.
 4. If you end up needing more than a few commits, consider splitting the pull request into separate components. Discuss in the new pull request and in the comments why the branch was broken apart and any changes that may have taken place that necessitated the split. Our goal is to catch early in the review process those pull requests that attempt to do too much.
-5. When you feel that you are ready for a formal review or for merging into `master` make sure you check this list and our [merge checklist](/docs/merge-checklist.md).
+5. When you feel that you are ready for a formal review or for merging into `master` make sure you check this list and our [merge checklist](../docs/merge-checklist.md).
   - Make sure your branch merges cleanly and consider rebasing against `master` to keep the branch history short and clean.
   - If there are visual changes, add before and after screenshots in the pull request comments.
   - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so he or she can test your changes. This will help speed up the review process.
@@ -136,11 +136,11 @@ We encourage you to ask for help at any point. We want your first experience wit
 
 ## License
 
-Calypso is licensed under [GNU General Public License v2 (or later)](/LICENSE.md).
+Calypso is licensed under [GNU General Public License v2 (or later)](../LICENSE.md).
 
 All materials contributed should be compatible with the GPLv2. This means that if you own the material, you agree to license it under the GPLv2 license. If you are contributing code that is not your own, such as adding a component from another Open Source project, or adding an `npm` package, you need to make sure you follow these steps:
 
 1. Check that the code has a license. If you can't find one, you can try to contact the original author and get permission to use, or ask them to release under a compatible Open Source license.
 2. Check the license is compatible with [GPLv2](http://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses), note that the Apache 2.0 license is *not* compatible.
-3. Add the code source URL (e.g. a GitHub URL), the files where it's used in `wp-calypso` and the full license terms to [`CREDITS.md`](/CREDITS.md)
-4. Add attribution to the code, if applicable. This line should include the copyright notice of the source, and a reference to the license contained in [`CREDITS.md`](/CREDITS.md)
+3. Add the code source URL (e.g. a GitHub URL), the files where it's used in `wp-calypso` and the full license terms to [`CREDITS.md`](../CREDITS.md)
+4. Add attribution to the code, if applicable. This line should include the copyright notice of the source, and a reference to the license contained in [`CREDITS.md`](../CREDITS.md)
