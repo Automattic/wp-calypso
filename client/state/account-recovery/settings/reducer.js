@@ -70,14 +70,16 @@ const convertPhoneResponse = ( phoneResponse ) => {
 	};
 };
 
-const convertEmailResponse = ( emailResponse ) => emailResponse || '';
-
 const phone = createReducer( null, {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) =>
 		convertPhoneResponse( settings.phone ),
 
+	// There is no calling of convertPhoneResponse here, because the endpoint for updating
+	// recovery settings doesn't return the updated value in the response body. Thus,
+	// the `value` encapsulated here is actually passed down from the action creator and
+	// in the exactly the same form, hence no need of converting.
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
-		'phone' === target ? convertPhoneResponse( value ) : state,
+		'phone' === target ? value : state,
 
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
 		'phone' === target ? null : state,
@@ -85,10 +87,10 @@ const phone = createReducer( null, {
 
 const email = createReducer( '', {
 	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS ]: ( state, { settings } ) =>
-		convertEmailResponse( settings.email ),
+		settings.email,
 
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: ( state, { target, value } ) =>
-		'email' === target ? convertEmailResponse( value ) : state,
+		'email' === target ? value : state,
 
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: ( state, { target } ) =>
 		'email' === target ? '' : state,

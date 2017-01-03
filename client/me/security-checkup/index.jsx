@@ -2,20 +2,38 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
+import Notice from 'components/notice';
+import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
+import MeSidebarNavigation from 'me/sidebar-navigation';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
+
+import {
+	updateAccountRecoveryEmail,
+	updateAccountRecoveryPhone,
+	deleteAccountRecoveryPhone,
+	deleteAccountRecoveryEmail,
+} from 'state/account-recovery/settings/actions';
+
+import {
+	getAccountRecoveryEmail,
+	getAccountRecoveryPhone,
+	isAccountRecoveryEmailActionInProgress,
+	isAccountRecoveryPhoneActionInProgress,
+} from 'state/account-recovery/settings/selectors';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const SecurityCheckup = React.createClass( {
 	displayName: 'SecurityCheckup',
@@ -27,8 +45,23 @@ const SecurityCheckup = React.createClass( {
 	},
 
 	render: function() {
+		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
+
+		const {
+			translate,
+		} = this.props;
+
+		const twoStepNoticeMessage = translate(
+			'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
+				components: {
+					a: <a href="/me/security/two-step" />
+				},
+			} );
+
 		return (
 			<Main className="security-checkup">
+				<QueryAccountRecoverySettings />
+
 				<MeSidebarNavigation />
 
 				<SecuritySectionNav path={ this.props.path } />
@@ -44,11 +77,30 @@ const SecurityCheckup = React.createClass( {
 				</CompactCard>
 
 				<CompactCard>
-					<RecoveryEmail userSettings={ this.props.userSettings } />
+					<RecoveryEmail
+						primaryEmail={ this.props.primaryEmail }
+						email={ this.props.accountRecoveryEmail }
+						updateEmail={ this.props.updateAccountRecoveryEmail }
+						deleteEmail={ this.props.deleteAccountRecoveryEmail }
+						isLoading={ this.props.accountRecoveryEmailActionInProgress }
+					/>
 				</CompactCard>
 
 				<CompactCard>
-					<RecoveryPhone userSettings={ this.props.userSettings } />
+					<RecoveryPhone
+						phone={ this.props.accountRecoveryPhone }
+						updatePhone={ this.props.updateAccountRecoveryPhone }
+						deletePhone={ this.props.deleteAccountRecoveryPhone }
+						isLoading={ this.props.accountRecoveryPhoneActionInProgress }
+						disabled={ twoStepEnabled }
+					/>
+					{ twoStepEnabled &&
+						<Notice
+							status="is-error"
+							text={ twoStepNoticeMessage }
+							showDismiss={ false }
+						/>
+					}
 				</CompactCard>
 
 			</Main>
@@ -56,4 +108,18 @@ const SecurityCheckup = React.createClass( {
 	},
 } );
 
-export default localize( SecurityCheckup );
+export default connect(
+	( state ) => ( {
+		accountRecoveryEmail: getAccountRecoveryEmail( state ),
+		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
+		accountRecoveryPhone: getAccountRecoveryPhone( state ),
+		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
+		primaryEmail: getCurrentUserEmail( state ),
+	} ),
+	{
+		updateAccountRecoveryEmail,
+		deleteAccountRecoveryEmail,
+		updateAccountRecoveryPhone,
+		deleteAccountRecoveryPhone,
+	}
+)( localize( SecurityCheckup ) );

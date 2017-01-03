@@ -99,15 +99,22 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
+	const newPhoneValue = {
+		countryCode: dummyNewPhone.country_code,
+		countryNumericCode: dummyNewPhone.country_numeric_code,
+		number: dummyNewPhone.number,
+		numberFull: dummyNewPhone.number_full,
+	};
+
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryPhone',
 		nockSettings: {
 			method: 'post',
 			endpoint: '/rest/v1.1/me/account-recovery/phone',
-			successResponse: { phone: dummyNewPhone },
+			successResponse: { success: true },
 			errorResponse: errorResponse,
 		},
-		thunk: () => updateAccountRecoveryPhone( dummyNewPhone.country_code, dummyNewPhone.number )( spy ),
+		thunk: () => updateAccountRecoveryPhone( newPhoneValue )( spy ),
 		preCondition: () =>
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -117,7 +124,7 @@ describe( 'account-recovery actions', () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 				target: 'phone',
-				value: dummyNewPhone,
+				value: newPhoneValue,
 			} ) ),
 		postConditionFailed: () =>
 			assert( spy.calledWith( sinon.match( {

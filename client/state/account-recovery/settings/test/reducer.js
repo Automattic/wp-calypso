@@ -58,20 +58,22 @@ describe( '#account-recovery/settings reducer:', () => {
 	} );
 
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action with phone target should update the phone field', () => {
+		const newPhoneValue = {
+			countryCode: dummyNewPhone.country_code,
+			countryNumericCode: dummyNewPhone.country_numeric_code,
+			number: dummyNewPhone.number,
+			numberFull: dummyNewPhone.number_full,
+		};
+
 		const state = reducer( initState, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
 			target: 'phone',
-			value: dummyNewPhone,
+			value: newPhoneValue,
 		} );
 
 		assert.deepEqual( state.data, {
 			...initState.data,
-			phone: {
-				countryCode: dummyNewPhone.country_code,
-				countryNumericCode: dummyNewPhone.country_numeric_code,
-				number: dummyNewPhone.number,
-				numberFull: dummyNewPhone.number_full,
-			},
+			phone: newPhoneValue,
 		} );
 	} );
 
