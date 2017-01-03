@@ -36,8 +36,8 @@ const actions = require( 'lib/posts/actions' ),
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
-import { receivePost, resetPostEdits } from 'state/posts/actions';
+import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -137,9 +137,6 @@ export const PostEditor = React.createClass( {
 
 	componentWillUnmount: function() {
 		PostEditStore.removeListener( 'change', this.onEditedPostChange );
-
-		// Reset post edits after leaving editor
-		this.props.resetPostEdits( this.props.siteId, this.props.postId );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
@@ -690,18 +687,11 @@ export const PostEditor = React.createClass( {
 			this.props.resetEditorLastDraft();
 		}
 
-		// Assign editor post ID to saved value (especially important when
-		// transitioning from an unsaved post to a saved one)
-		if ( post.ID !== this.props.postId ) {
-			this.props.setEditorPostId( post.ID );
-		}
+		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
+		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
 
 		// Receive updated post into state
 		this.props.receivePost( post );
-
-		// Reset previous edits, preserving type
-		this.props.resetPostEdits( this.props.siteId );
-		this.props.resetPostEdits( post.site_ID, post.ID );
 
 		const nextState = {
 			isSaving: false,
@@ -785,8 +775,7 @@ export default connect(
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
-			resetPostEdits,
-			setEditorPostId,
+			savePostSuccess,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setLayoutFocus,
 		}, dispatch );

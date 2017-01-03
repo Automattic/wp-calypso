@@ -13,7 +13,6 @@ import {
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -35,8 +34,8 @@ import {
 	requestSitePost,
 	requestPosts,
 	editPost,
-	resetPostEdits,
 	savePost,
+	savePostSuccess,
 	trashPost,
 	deletePost,
 	restorePost,
@@ -71,6 +70,22 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: POSTS_RECEIVE,
 				posts
+			} );
+		} );
+	} );
+
+	describe( 'savePostSuccess()', () => {
+		it( 'should return an action object', () => {
+			const savedPost = { ID: 841, title: 'Hello World' };
+			const attributes = { status: 'draft' };
+			const action = savePostSuccess( 10, 841, savedPost, attributes );
+
+			expect( action ).to.eql( {
+				type: POST_SAVE_SUCCESS,
+				siteId: 10,
+				postId: 841,
+				savedPost: savedPost,
+				post: attributes,
 			} );
 		} );
 	} );
@@ -270,18 +285,6 @@ describe( 'actions', () => {
 				siteId: 2916284,
 				postId: 413,
 				post: { title: 'Hello World' }
-			} );
-		} );
-	} );
-
-	describe( '#resetPostEdits()', () => {
-		it( 'should return an action object', () => {
-			const action = resetPostEdits( 2916284 );
-
-			expect( action ).to.eql( {
-				type: POST_EDITS_RESET,
-				siteId: 2916284,
-				postId: undefined
 			} );
 		} );
 	} );
