@@ -141,10 +141,10 @@ class SiteIconSetting extends Component {
 	render() {
 		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal } = this.state;
-		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' ) && siteSupportsImageEditor;
+		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
-		if ( isIconManagementEnabled ) {
+		if ( isIconManagementEnabled && siteSupportsImageEditor ) {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
