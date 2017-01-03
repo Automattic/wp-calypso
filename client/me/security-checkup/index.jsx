@@ -12,11 +12,9 @@ import Main from 'components/main';
 import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
-
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
-
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
