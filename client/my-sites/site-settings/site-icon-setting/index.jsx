@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial, isEqual } from 'lodash';
+import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
+import accept from 'lib/accept';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -134,6 +135,17 @@ class SiteIconSetting extends Component {
 		this.props.resetAllImageEditorState();
 	};
 
+	confirmRemoval = () => {
+		const { translate, siteId, removeSiteIcon } = this.props;
+		const message = translate( 'Are you sure you want to remove the site icon?' );
+
+		accept( message, ( accepted ) => {
+			if ( accepted ) {
+				removeSiteIcon( siteId );
+			}
+		} );
+	};
+
 	preloadModal() {
 		asyncRequire( 'post-editor/media-modal' );
 	}
@@ -187,7 +199,8 @@ class SiteIconSetting extends Component {
 				{ isIconManagementEnabled && hasIcon && (
 					<Button
 						compact
-						onClick={ this.props.removeSiteIcon }
+						scary
+						onClick={ this.confirmRemoval }
 						className="site-icon-setting__button"
 						disabled={ isSaving }>
 						{ translate( 'Remove' ) }
@@ -240,15 +253,7 @@ export default connect(
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		resetAllImageEditorState,
 		saveSiteSettings,
-		removeSiteIcon: saveSiteSettings,
+		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		receiveMedia
-	},
-	( stateProps, dispatchProps, ownProps ) => {
-		return {
-			...ownProps,
-			...stateProps,
-			...dispatchProps,
-			removeSiteIcon: partial( dispatchProps.saveSiteSettings, stateProps.siteId, { site_icon: '' } )
-		};
 	}
 )( localize( SiteIconSetting ) );
