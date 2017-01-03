@@ -176,10 +176,18 @@ class SiteIconSetting extends Component {
 				}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
 				<Button
 					{ ...buttonProps }
-					className="site-icon-setting__change-button"
+					className="site-icon-setting__button"
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
+				{ isIconManagementEnabled && (
+					<Button
+						compact
+						onClick={ this.props.removeSiteIcon }
+						className="site-icon-setting__button">
+						{ translate( 'Remove' ) }
+					</Button>
+				) }
 				{ isIconManagementEnabled && hasToggledModal && (
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
@@ -225,6 +233,15 @@ export default connect(
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		resetAllImageEditorState,
 		saveSiteSettings,
+		removeSiteIcon: saveSiteSettings,
 		receiveMedia
+	},
+	( stateProps, dispatchProps, ownProps ) => {
+		return {
+			...ownProps,
+			...stateProps,
+			...dispatchProps,
+			removeSiteIcon: partial( dispatchProps.saveSiteSettings, stateProps.siteId, { site_icon: null } )
+		};
 	}
 )( localize( SiteIconSetting ) );
