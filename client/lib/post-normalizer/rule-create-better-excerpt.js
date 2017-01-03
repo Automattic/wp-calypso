@@ -29,7 +29,7 @@ export function formatExcerpt( content ) {
 	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
 
 	// limit to paras and brs
-	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br' ] );
+	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
 
 	// Strip any empty p and br elements from the beginning of the content
 	forEach( dom.querySelectorAll( 'p,br' ), function( element ) {
