@@ -89,7 +89,7 @@ const flows = {
 	},
 
 	'with-theme': {
-		steps: [ 'domains-only', 'plans', 'user' ],
+		steps: [ 'domains-theme-preselected', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
@@ -216,10 +216,10 @@ const flows = {
 	},
 
 	'domain-first': {
-		steps: [ 'domains', 'design-type', 'themes', 'plans', 'user' ],
+		steps: [ 'domain-only', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2016-12-20'
+		lastModified: '2017-01-03'
 	},
 };
 
