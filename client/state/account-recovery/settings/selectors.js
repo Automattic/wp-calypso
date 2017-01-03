@@ -45,3 +45,10 @@ export const isAccountRecoveryPhoneActionInProgress = ( state ) => {
 export const hasSentAccountRecoveryEmailValidation = ( state ) => {
 	return !! state.accountRecovery.settings.hasSentValidation.email;
 };
+
+export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
+	return ! isAccountRecoveryEmailActionInProgress( state )
+		&& !! getAccountRecoveryEmail( state )
+		&& ! isAccountRecoveryEmailValidated( state )
+		&& ! hasSentAccountRecoveryEmailValidation( state );
+};
