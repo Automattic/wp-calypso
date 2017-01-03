@@ -86,6 +86,11 @@
 	box-sizing: border-box;
 	padding: 0px;
 	-webkit-appearance: none;
+	padding-top: 14px;
+	font-size: 16px;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 600px;
 
 	&::-webkit-search-cancel-button {
 		-webkit-appearance: none;
@@ -94,6 +99,15 @@
 	&:focus {
 		box-shadow: none;
 		border: none;
+	}
+
+	br {
+		display: none;
+	}
+
+	* {
+		display: inline;
+		white-space: nowrap;
 	}
 }
 
