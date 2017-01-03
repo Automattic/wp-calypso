@@ -248,7 +248,7 @@ export default connect(
 			...ownProps,
 			...stateProps,
 			...dispatchProps,
-			removeSiteIcon: partial( dispatchProps.saveSiteSettings, stateProps.siteId, { site_icon: null } )
+			removeSiteIcon: partial( dispatchProps.saveSiteSettings, stateProps.siteId, { site_icon: '' } )
 		};
 	}
 )( localize( SiteIconSetting ) );
