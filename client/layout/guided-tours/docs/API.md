@@ -105,7 +105,7 @@ There are three ways to define the content of this component.
 
 ### Functionality Options
 
-There are currently two ways to declare the condition to continue the tour.
+There are currently two ways to declare the condition to continue the tour with Continue.
 
 - Binding an `onClick` listener to the step's target DOM node and waiting for the node to be clicked in order to advance the tour.
 - Providing a Redux selector and waiting for it to evaluate to true in order to advance the tour.
