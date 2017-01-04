@@ -19,7 +19,8 @@ import {
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isThemeActive,
-	isThemePurchased
+	isThemePurchased,
+	isInstallingTheme
 } from 'state/themes/selectors';
 import config from 'config';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -44,6 +45,7 @@ const ThemesSelection = React.createClass( {
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
+		isInstallingTheme: PropTypes.func
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -114,6 +116,7 @@ const ThemesSelection = React.createClass( {
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
+					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting } />
 			</div>
 		);
@@ -155,7 +158,8 @@ const ConnectedThemesSelection = connect(
 				// The same is true for the `hasFeature` selector, which relies on the presence of
 				// a `<QuerySitePlans />` component in a parent component.
 				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-			)
+			),
+			isInstallingTheme: themeId => isInstallingTheme( state, suffixThemeId( themeId ), siteId )
 		};
 	}
 )( ThemesSelection );
