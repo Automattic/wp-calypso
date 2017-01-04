@@ -17,6 +17,7 @@ import {
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
 	hasSentAccountRecoveryEmailValidation,
+	shouldPromptAccountRecoveryEmailValidationNotice,
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
 } from '../selectors';
@@ -246,6 +247,53 @@ describe( '#account-recovery/settings/selectors', () => {
 			};
 
 			assert.isTrue( hasSentAccountRecoveryEmailValidation( state ) );
+		} );
+	} );
+
+	describe( '#shouldPromptAccountRecoveryEmailValidationNotice', () => {
+		it( 'should prompt if the email exists and is not validated.', () => {
+			const state = {
+				accountRecovery: {
+					settings: {
+						data: {
+							email: 'aaa@example.com',
+							emailValidated: false,
+						},
+						isReady: true,
+						hasSentValidation: {},
+						isUpdating: {},
+						isDeleting: {},
+					},
+				},
+			};
+
+			assert.isTrue( shouldPromptAccountRecoveryEmailValidationNotice( state ) );
+		} );
+
+		it( 'should not prompt if hasSentValidation.email is set.', () => {
+			const state = {
+				accountRecovery: {
+					settings: {
+						hasSentValidation: {
+							email: true,
+						},
+					},
+				},
+			};
+
+			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( state ) );
+		} );
+
+		it( 'should not prompt if the settings data is not ready.', () => {
+			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateBeforeFetching ) );
+		} );
+
+		it( 'should not prompt if isUpdating.email is set.', () => {
+			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringUpdating ) );
+		} );
+
+		it( 'should not prompt if isDeleting.email is set.', () => {
+			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringDeleting ) );
 		} );
 	} );
 } );
