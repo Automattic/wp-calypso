@@ -8,9 +8,11 @@ import { expect } from 'chai';
  */
 import {
 	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_COMPUTED_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
+	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
@@ -96,6 +98,42 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.false;
 		} );
+
+		it( 'should remain the same on computed crop', () => {
+			const init = hasChanges( undefined, {
+				type: IMAGE_EDITOR_COMPUTED_CROP
+			} );
+
+			const withChanges = hasChanges( true, {
+				type: IMAGE_EDITOR_COMPUTED_CROP
+			} );
+
+			const noChanges = hasChanges( false, {
+				type: IMAGE_EDITOR_COMPUTED_CROP
+			} );
+
+			expect( init ).to.be.false;
+			expect( withChanges ).to.be.true;
+			expect( noChanges ).to.be.false;
+		} );
+
+		it( 'should remain the same on default aspect ratio', () => {
+			const init = hasChanges( undefined, {
+				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO
+			} );
+
+			const withChanges = hasChanges( true, {
+				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO
+			} );
+
+			const noChanges = hasChanges( false, {
+				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO
+			} );
+
+			expect( init ).to.be.false;
+			expect( withChanges ).to.be.true;
+			expect( noChanges ).to.be.false;
+		} );
 	} );
 
 	describe( '#aspectRatio()', () => {
@@ -108,6 +146,15 @@ describe( 'reducer', () => {
 		it( 'should update the aspect ratio', () => {
 			const state = aspectRatio( undefined, {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
+				ratio: AspectRatios.ORIGINAL
+			} );
+
+			expect( state ).to.eql( AspectRatios.ORIGINAL );
+		} );
+
+		it( 'should update the default aspect ratio', () => {
+			const state = aspectRatio( undefined, {
+				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 				ratio: AspectRatios.ORIGINAL
 			} );
 
@@ -176,6 +223,23 @@ describe( 'reducer', () => {
 		it( 'should update the crop ratios', () => {
 			const state = crop( undefined, {
 				type: IMAGE_EDITOR_CROP,
+				topRatio: 0.4,
+				leftRatio: 0.5,
+				widthRatio: 0.6,
+				heightRatio: 0.7
+			} );
+
+			expect( state ).to.eql( {
+				topRatio: 0.4,
+				leftRatio: 0.5,
+				widthRatio: 0.6,
+				heightRatio: 0.7
+			} );
+		} );
+
+		it( 'should update the computed crop ratios', () => {
+			const state = crop( undefined, {
+				type: IMAGE_EDITOR_COMPUTED_CROP,
 				topRatio: 0.4,
 				leftRatio: 0.5,
 				widthRatio: 0.6,
