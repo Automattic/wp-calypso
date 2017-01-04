@@ -48,7 +48,7 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
+import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	filterThemesForJetpack,
@@ -381,7 +381,6 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
-				return { theme }; //needed for connected actions
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -390,7 +389,6 @@ export function installTheme( themeId, siteId ) {
 					themeId,
 					error
 				} );
-				return { error }; //needed for connected action
 			} );
 	};
 }
@@ -421,12 +419,12 @@ export function clearActivated( siteId ) {
 export function installAndTryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		return dispatch( installTheme( themeId, siteId ) )
-			.then( ( status ) => {
-				if ( status.error ) {
-					//should we dispatch here?
+			.then( () => {
+				const theme = getTheme( getState(), siteId, themeId );
+				if ( ! theme ) {
 					return;
 				}
-				const url = getThemeCustomizeUrl( getState(), status.theme, siteId );
+				const url = getThemeCustomizeUrl( getState(), theme, siteId );
 				page( url );
 			} );
 	};
