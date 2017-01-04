@@ -36,7 +36,7 @@ export default function MyMediaList( { media } ) {
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
 	<tr><th>Default</th><td><code>null</code></td></tr>
 </table>
 
