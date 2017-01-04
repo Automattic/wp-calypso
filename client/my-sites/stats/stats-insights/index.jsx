@@ -74,7 +74,7 @@ export default React.createClass( {
 		// TODO: should be refactored into separate components
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation section="insights" site={ site } />

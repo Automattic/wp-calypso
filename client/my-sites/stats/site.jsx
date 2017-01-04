@@ -132,7 +132,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation

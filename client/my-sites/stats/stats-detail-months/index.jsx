@@ -83,7 +83,7 @@ export default React.createClass( {
 				const year = data[ dataKey ][ i ];
 				const cells = [];
 
-				cells.push( <th key={ 'header' + i }>{ i }</th> );
+				cells.push( <td key={ 'header' + i } className="stats-detail__row-label">{ i }</td> );
 
 				for ( let j = 1; j <= 12; j++ ) {
 					const hasData = ( year.months[ j ] || 0 === year.months[ j ] );
