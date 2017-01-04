@@ -328,11 +328,11 @@ class ImageEditorCrop extends Component {
 	}
 
 	applyCrop() {
-		this.props.imageEditorCrop.apply( this, this.getCropBounds() );
+		this.props.imageEditorCrop( ...this.getCropBounds() );
 	}
 
 	applyComputedCrop() {
-		this.props.imageEditorComputedCrop.apply( this, this.getCropBounds() );
+		this.props.imageEditorComputedCrop( ...this.getCropBounds() );
 	}
 
 	render() {

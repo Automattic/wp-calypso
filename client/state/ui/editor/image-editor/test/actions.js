@@ -128,7 +128,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#imageEditorCrop()', () => {
+	describe( '#imageEditorComputedCrop()', () => {
 		it( 'should return an action object', () => {
 			const action = imageEditorComputedCrop( 0.2, 0.3, 0.4, 0.5 );
 
