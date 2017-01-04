@@ -41,6 +41,10 @@ module.exports = React.createClass( {
 		recordEvent( 'Posts', 'Clicked Edit Post' );
 	},
 
+	copy: function() {
+		recordEvent( 'Posts', 'Clicked Copy Post' );
+	},
+
 	viewStats: function() {
 		recordEvent( 'Posts', 'Clicked View Post Stats' );
 	},
@@ -165,6 +169,16 @@ module.exports = React.createClass( {
 					icon: 'trash'
 				} );
 			}
+		}
+
+		if ( post.status === 'publish' && utils.userCan( 'edit_post', post ) ) {
+			availableControls.push( {
+				text: this.translate( 'Copy' ),
+				className: 'post-controls__copy',
+				href: `/post/${ this.props.site.slug }?copy=${ post.ID }`,
+				onClick: this.copy,
+				icon: 'clipboard'
+			} );
 		}
 
 		// --- Extra Controls (behind ... more link) ---
