@@ -27,6 +27,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 export const EditorMediaModal = React.createClass( {
 	propTypes: {
@@ -404,6 +405,7 @@ export const EditorMediaModal = React.createClass( {
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
 						{ ...imageEditorProps }
+						allowedAspectRatios={ [AspectRatios.ASPECT_1X1 ] }
 					/>
 				);
 				break;

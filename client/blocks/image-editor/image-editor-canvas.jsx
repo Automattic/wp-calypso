@@ -41,7 +41,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: PropTypes.func,
 		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
-		isImageLoaded: PropTypes.bool
+		isImageLoaded: PropTypes.bool,
+		isImageEditorInitialized: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -59,7 +60,8 @@ class ImageEditorCanvas extends Component {
 		setImageEditorCropBounds: noop,
 		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
-		isImageLoaded: false
+		isImageLoaded: false,
+		isImageEditorInitialized: false
 	};
 
 	constructor( props ) {
@@ -81,6 +83,8 @@ class ImageEditorCanvas extends Component {
 		if ( this.props.src !== newProps.src ) {
 			this.getImage( newProps.src );
 		}
+
+		console.log('isImageEditorInitialized in canvas componentWillReceiveProps: ', this.props.isImageEditorInitialized);
 	}
 
 	isBlobSrc( src ) {
@@ -264,7 +268,10 @@ class ImageEditorCanvas extends Component {
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
 
-		const { isImageLoaded } = this.props;
+		const {
+			isImageLoaded,
+			isImageEditorInitialized
+		} = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded
@@ -278,7 +285,11 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ isImageLoaded && <ImageEditorCrop /> }
+				{ isImageLoaded &&
+					<ImageEditorCrop
+						isImageEditorInitialized={ isImageEditorInitialized }
+					/>
+				}
 			</div>
 		);
 	}

@@ -39,7 +39,8 @@ class ImageEditorCrop extends Component {
 		minCropSize: PropTypes.shape( {
 			width: PropTypes.number,
 			height: PropTypes.number
-		} )
+		} ),
+		isImageEditorInitialized: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -54,7 +55,8 @@ class ImageEditorCrop extends Component {
 		minCropSize: {
 			width: 50,
 			height: 50
-		}
+		},
+		isImageEditorInitialized: false
 	};
 
 	constructor( props ) {
@@ -302,6 +304,11 @@ class ImageEditorCrop extends Component {
 			rightBound,
 			bottomBound
 		} = this.props.bounds;
+
+		console.log(
+			'isImageEditorInitialized in applyCrop (should be false as no user action was fired): ',
+			this.props.isImageEditorInitialized
+		);
 
 		const currentTop = top - topBound,
 			currentLeft = left - leftBound,
