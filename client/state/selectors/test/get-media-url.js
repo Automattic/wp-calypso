@@ -7,49 +7,41 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getMediaUrl } from '../';
+import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getMediaUrl()', () => {
-	it( 'should return null if the item is not in state', () => {
-		const url = getMediaUrl( {
-			media: {
-				items: {
-					2916284: {}
-				}
-			}
-		}, 2916284, 42 );
+	const url = 'https://example.files.wordpress.com/2014/06/flower.gif';
 
-		expect( url ).to.be.null;
-	} );
-
-	it( 'should return null if the media item URL is invalid', () => {
-		const url = getMediaUrl( {
-			media: {
-				items: {
-					2916284: {
-						42: { ID: 42, title: 'flowers' }
-					}
-				}
-			}
-		}, 2916284, 42 );
-
-		expect( url ).to.be.null;
-	} );
-
-	it( 'should return a safe variation of the media URL', () => {
-		const url = getMediaUrl( {
-			media: {
-				items: {
-					2916284: {
+	const state = {
+		media: {
+			queries: {
+				2916284: new MediaQueryManager( {
+					items: {
 						42: {
 							ID: 42,
 							title: 'flowers',
-							URL: 'https://example.files.wordpress.com/2014/06/flower.gif'
+							URL: url
+						},
+						43: {
+							ID: 43,
+							title: 'flowers'
 						}
-					}
-				}
+					},
+					queries: {}
+				} )
 			}
-		}, 2916284, 42 );
+		}
+	};
 
-		expect( url ).to.equal( 'https://example.files.wordpress.com/2014/06/flower.gif' );
+	it( 'should return null if the item is not in state', () => {
+		expect( getMediaUrl( state, 2916285, 42 ) ).to.be.null;
+	} );
+
+	it( 'should return null if the media item URL is invalid', () => {
+		expect( getMediaUrl( state, 2916284, 43 ) ).to.be.null;
+	} );
+
+	it( 'should return a safe variation of the media URL', () => {
+		expect( getMediaUrl( state, 2916284, 42 ) ).to.be.equal( url );
 	} );
 } );

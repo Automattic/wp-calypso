@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,32 +13,6 @@ import {
 	MEDIA_REQUESTING } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
-
-export const items = createReducer( {}, {
-	[ MEDIA_RECEIVE ]: ( state, action ) => {
-		const { siteId, media } = action;
-
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				...keyBy( media, 'ID' )
-			}
-		};
-	},
-	[ MEDIA_DELETE ]: ( state, action ) => {
-		const { siteId, mediaIds } = action;
-
-		if ( ! state[ siteId ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: omit( state[ siteId ], mediaIds )
-		};
-	}
-} );
 
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
@@ -68,6 +42,9 @@ export const queries = ( () => {
 	return createReducer( {}, {
 		[ MEDIA_RECEIVE ]: ( state, { siteId, media, found, query } ) => {
 			return applyToManager( state, siteId, 'receive', true, media, { found, query } );
+		},
+		[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
+			return applyToManager( state, siteId, 'removeItems', true, mediaIds );
 		}
 	} );
 } )();
@@ -91,7 +68,6 @@ export const queryRequests = createReducer( {}, {
 } );
 
 export default combineReducers( {
-	items,
 	queries,
 	queryRequests
 } );

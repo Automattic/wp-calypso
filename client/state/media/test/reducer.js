@@ -13,62 +13,115 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_REQUESTING,
 	SERIALIZE } from 'state/action-types';
-import reducer, { items, queryRequests } from '../reducer';
+import reducer, { queries, queryRequests } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'items',
 			'queries',
 			'queryRequests'
 		] );
 	} );
 
-	describe( 'items()', () => {
+	describe( 'queries()', () => {
+		const items = [ {
+			ID: 42,
+			title: 'flowers'
+		} ];
+
+		const query1 = {
+			search: 'flower'
+		};
+
+		const query2 = {
+			search: 'flowers'
+		};
+
+		const action1 = {
+			type: MEDIA_RECEIVE,
+			siteId: 2916284,
+			media: items,
+			found: 1,
+			query: query1
+		};
+
+		const action2 = {
+			type: MEDIA_RECEIVE,
+			siteId: 2916284,
+			media: items,
+			found: 1,
+			query: query2
+		};
+
 		it( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+			const state = queries( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should key received media items by site ID, media ID', () => {
-			const original = deepFreeze( {} );
-			const state = items( original, {
-				type: MEDIA_RECEIVE,
-				siteId: 2916284,
-				media: [ { ID: 42, title: 'flowers' } ]
-			} );
+		it( 'should track media receive', () => {
+			const state = queries( deepFreeze( {} ), action1 );
 
-			expect( state ).to.eql( {
-				2916284: {
-					42: {
-						ID: 42,
-						title: 'flowers'
-					}
-				}
-			} );
+			expect( state ).to.have.keys( '2916284' );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
+			expect( state[ 2916284 ].getItems( query1 ) ).to.eql( items );
 		} );
 
-		it( 'should remove deleted media by site ID, media ID', () => {
-			const original = deepFreeze( {
-				2916284: {
-					42: {
-						ID: 42,
-						title: 'flowers'
-					}
-				}
+		it( 'should accumulate query requests', () => {
+			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
+			const state = queries( previousState, action2 );
+
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
+			expect( state[ 2916284 ].getItems( query1 ) ).to.have.length( 1 );
+			expect( state[ 2916284 ].getItems( query2 ) ).to.have.length( 1 );
+		} );
+
+		it( 'should return the same state if successful request has no changes', () => {
+			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
+			const state = queries( previousState, action1 );
+
+			expect( state ).to.equal( previousState );
+		} );
+
+		it( 'should track posts even if not associated with a query', () => {
+			const state = queries( deepFreeze( {} ), {
+				type: MEDIA_RECEIVE,
+				siteId: 2916284,
+				media: items
 			} );
 
-			const state = items( original, {
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( MediaQueryManager );
+			expect( state[ 2916284 ].getItems() ).to.eql( items );
+		} );
+
+		it( 'should update received posts', () => {
+			const updatedItem = {
+				ID: 42,
+				title: 'test'
+			};
+
+			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
+			const state = queries( previousState, {
+				...action1,
+				media: [ updatedItem ]
+			} );
+
+			expect( state[ 2916284 ].getItem( 42 ) ).to.eql( updatedItem );
+		} );
+
+		it( 'should remove item when post delete action success dispatched', () => {
+			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
+			const state = queries( previousState, {
 				type: MEDIA_DELETE,
 				siteId: 2916284,
 				mediaIds: [ 42 ]
 			} );
 
-			expect( state ).to.eql( {
-				2916284: {}
-			} );
+			expect( state[ 2916284 ].getItem( 42 ) ).to.be.undefined;
+			expect( state[ 2916284 ].getItems() ).to.be.empty;
 		} );
 	} );
 
