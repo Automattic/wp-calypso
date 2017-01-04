@@ -45,7 +45,7 @@ class QueryMedia extends Component {
 }
 
 QueryMedia.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	query: PropTypes.object,
 	requesting: PropTypes.bool,
 	request: PropTypes.func
