@@ -7,9 +7,12 @@ var React = require( 'react' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
-import { AutoSizer, InfiniteLoader, Grid, WindowScroller } from 'react-virtualized';
+import AutoSizer from 'react-virtualized/AutoSizer';
+import InfiniteLoader from 'react-virtualized/InfiniteLoader';
+import Grid from 'react-virtualized/Grid';
+import WindowScroller from 'react-virtualized/WindowScroller';
 import { connect } from 'react-redux';
-import fill from 'lodash/fill';
+import { fill } from 'lodash';
 
 /**
  * Internal dependencies
