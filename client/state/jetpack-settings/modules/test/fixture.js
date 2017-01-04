@@ -27,6 +27,9 @@ export const requests = {
 			deactivating: false
 		},
 		fetchingModules: true
+	},
+	654321: {
+		fetchingModules: false
 	}
 };
 
