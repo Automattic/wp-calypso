@@ -106,22 +106,3 @@
 .author-compact-profile__follow-count.is-placeholder {
 	@include placeholder();
 }
-
-// .author-compact-profile__site-link.is-placeholder {
-// 	@include breakpoint( ">660px" ) {
-// 		margin-left: 20%;
-// 		margin-right: 20%;
-// 	}
-// }
-
-// .author-compact-profile__avatar-placeholder {
-// 	width: 32px;
-// 	height: 32px;
-// 	margin-right: 10px;
-
-// 	@include breakpoint( ">660px" ) {
-// 		width: 96px;
-// 		height: 96px;
-// 		margin-right: 0;
-// 	}
-// }
