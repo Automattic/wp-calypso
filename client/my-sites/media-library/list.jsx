@@ -261,7 +261,7 @@ export const MediaLibraryList = React.createClass( {
 					rowCount={ this._gridItems.length }
 					threshold={ 1 }
 					minimumBatchSize={ this.props.batchSize }>
-					{ this.renderSizer }
+					{ ( args ) => this.renderSizer( args ) }
 				</InfiniteLoader>
 			</div>
 		);
