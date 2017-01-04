@@ -328,7 +328,7 @@ const phpToMomentMapping = {
 	d: 'DD',
 	jS: 'Mo',
 	j: 'D',
-	//S: 'Mo',
+	S: 'Mo',
 	l: 'dddd',
 	D: 'ddd',
 	m: 'MM',
@@ -337,6 +337,14 @@ const phpToMomentMapping = {
 	M: 'MMM',
 	Y: 'YYYY',
 	y: 'YY',
+	//a: 'a',
+	//A: 'A',
+	g: 'h',
+	h: 'hh',
+	G: 'H',
+	H: 'HH',
+	i: 'mm',
+	s: 'ss',
 };
 
 /**

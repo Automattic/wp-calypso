@@ -63,6 +63,7 @@ class SiteSettingsFormGeneral extends Component {
 			blog_public: settings.blog_public,
 			timezone_string: settings.timezone_string,
 			date_format: settings.date_format,
+			time_format: settings.time_format,
 
 			jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
 			jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
@@ -107,6 +108,7 @@ class SiteSettingsFormGeneral extends Component {
 			lang_id: '',
 			timezone_string: '',
 			date_format: '',
+			time_format: '',
 			blog_public: '',
 			admin_url: '',
 			jetpack_relatedposts_allowed: false,
@@ -694,6 +696,59 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	timeFormatOption() {
+		const {
+			fields: { time_format },
+			isRequestingSettings,
+			moment,
+			translate,
+		} = this.props;
+
+		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
+		const today = moment();
+
+		return (
+			<FormFieldset>
+				<FormLabel>
+					{ translate( 'Time Format' ) }
+				</FormLabel>
+				{ defaultFormats.map( ( format, key ) =>
+					<FormLabel key={ key }>
+						<FormRadio
+							name="time_format"
+							value={ format }
+							checked={ format === time_format }
+							onChange={ this.handleRadio }
+							disabled={ isRequestingSettings }
+						/>
+						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
+					</FormLabel>
+				) }
+				<FormLabel>
+					<FormRadio
+						name="time_format"
+						value={ time_format }
+						checked={ ! includes( defaultFormats, time_format ) }
+						onChange={ this.handleRadio }
+						disabled={ isRequestingSettings }
+					/>
+					<span>
+						{ translate( 'Custom' ) }
+						<FormInput
+							name="time_format_custom"
+							id="time_format_custom"
+							type="text"
+							value={ time_format || defaultFormats[ 0 ] }
+							onChange={ this.onChangeField( 'time_format' ) }
+							disabled={ isRequestingSettings }
+						/>
+						{ time_format ? today.format( phpToMomentDatetimeFormat( time_format ) ) : '' }
+					</span>
+				</FormLabel>
+			</FormFieldset>
+		);
+	}
+
 	renderJetpackSyncPanel() {
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
@@ -775,6 +830,7 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.languageOptions() }
 						{ this.Timezone() }
 						{ this.dateFormatOption() }
+						{ this.timeFormatOption() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
