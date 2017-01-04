@@ -545,3 +545,20 @@
 .reader-full-post__unavailable-message {
 	margin-top: 1em;
 }
+
+// Placeholders
+.reader-full-post__header-title,
+.reader-full-post__header-date {
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.reader-full-post__header-date.is-placeholder {
+	margin-top: 4px;
+}
+
+.reader-full-post__story-content-placeholder-text {
+	@include placeholder();
+	margin-bottom: 16px;
+}

@@ -54,20 +54,11 @@ import DocumentHead from 'components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
 import ReaderFullPostBack from './back';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import ReaderFullPostContentPlaceholder from './placeholders/content';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
 		super( props );
-		[
-			'handleBack',
-			'handleCommentClick',
-			'handleVisitSiteClick',
-			'handleLike',
-			'handleRelatedPostFromSameSiteClicked',
-			'handleRelatedPostFromOtherSiteClicked',
-		].forEach( fn => {
-			this[ fn ] = this[ fn ].bind( this );
-		} );
 		this.hasScrolledToCommentAnchor = false;
 	}
 
@@ -127,7 +118,7 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 	}
 
-	handleBack( event ) {
+	handleBack = ( event ) => {
 		event.preventDefault();
 		recordAction( 'full_post_close' );
 		recordGaEvent( 'Closed Full Post Dialog' );
@@ -136,14 +127,14 @@ export class FullPostView extends React.Component {
 		this.props.onClose && this.props.onClose();
 	}
 
-	handleCommentClick() {
+	handleCommentClick = () => {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
 		this.scrollToComments();
 	}
 
-	handleLike() {
+	handleLike = () => {
 		const { site_ID: siteId, ID: postId } = this.props.post;
 		let liked;
 
@@ -161,15 +152,15 @@ export class FullPostView extends React.Component {
 				{ context: 'full-post', event_source: 'keyboard' } );
 	}
 
-	handleRelatedPostFromSameSiteClicked() {
+	handleRelatedPostFromSameSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
 	}
 
-	handleVisitSiteClick() {
+	handleVisitSiteClick = () => {
 		recordPermalinkClick( 'full_post_visit_link', this.props.post );
 	}
 
-	handleRelatedPostFromOtherSiteClicked() {
+	handleRelatedPostFromOtherSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_other_site_clicked', this.props.post );
 	}
 
@@ -270,6 +261,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
+		const isLoading = ! post || post._state === 'pending';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -322,6 +314,7 @@ export class FullPostView extends React.Component {
 						{ post.featured_image && ! isFeaturedImageInContent( post ) &&
 							<FeaturedImage src={ post.featured_image } />
 						}
+						{ isLoading && <ReaderFullPostContentPlaceholder / > }
 						{ post.use_excerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
@@ -333,20 +326,17 @@ export class FullPostView extends React.Component {
 							</EmbedContainer>
 						}
 
-						{ post.use_excerpt && ! isDiscoverPost( post )
-							? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-							: null
+						{ post.use_excerpt && ! isDiscoverPost( post ) &&
+							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
 						}
-						{ isDiscoverSitePick( post )
-							? <DiscoverSiteAttribution
+						{ isDiscoverSitePick( post ) &&
+							<DiscoverSiteAttribution
 									attribution={ post.discover_metadata.attribution }
 									siteUrl={ getSiteUrl( post ) }
 									followUrl={ getSourceFollowUrl( post ) } />
-							: null
 						}
-						{ isDailyPostChallengeOrPrompt( post )
-							? <DailyPostButton post={ post } tagName="span" />
-							: null
+						{ isDailyPostChallengeOrPrompt( post ) &&
+							<DailyPostButton post={ post } tagName="span" />
 						}
 
 						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
