@@ -113,8 +113,8 @@ module.exports = {
 	userFirstSignup: {
 		datestamp: '20161223',
 		variations: {
-			userLast: 95,
-			userFirst: 5,
+			userLast: 99,
+			userFirst: 1,
 		},
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
