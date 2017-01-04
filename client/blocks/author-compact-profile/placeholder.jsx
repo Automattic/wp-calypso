@@ -12,7 +12,7 @@ const AuthorCompactProfilePlaceholder = () => {
 	return (
 		<div className="author-compact-profile is-placeholder">
 			<div className="author-compact-profile__avatar-link">
-				<ReaderAvatar showBlankGravatar={ true } />
+				<ReaderAvatar showPlaceholder={ true } />
 			</div>
 			<div className="author-compact-profile__site-link is-placeholder">
 				Site name
