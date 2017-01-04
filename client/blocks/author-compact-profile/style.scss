@@ -100,3 +100,9 @@
 	color: lighten( $gray, 10% );
 	padding: 5px;
 }
+
+// Placeholders
+.author-compact-profile__site-link-placeholder,
+.author-compact-profile__follow-count.is-placeholder {
+	@include placeholder();
+}

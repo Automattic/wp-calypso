@@ -261,7 +261,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
-		const isLoading = ! post || post._state === 'pending';
+		const isLoading = true; //! post || post._state === 'pending';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -281,7 +281,8 @@ export class FullPostView extends React.Component {
 				</div>
 				<div className="reader-full-post__content">
 					<div className="reader-full-post__sidebar">
-						{ post.author &&
+						{ isLoading && <AuthorCompactProfile author={ null } /> }
+						{ ! isLoading && post.author &&
 							<AuthorCompactProfile
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
@@ -411,7 +412,7 @@ export default class FullPostFluxContainer extends React.Component {
 	}
 
 	static propTypes = {
-		blogId: React.PropTypes.string.isRequired,
+		blogId: React.PropTypes.string,
 		postId: React.PropTypes.string.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		onPostNotFound: React.PropTypes.func.isRequired,

@@ -15,10 +15,11 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import AuthorCompactProfilePlaceholder from './placeholder';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
-		author: React.PropTypes.object.isRequired,
+		author: React.PropTypes.object,
 		siteName: React.PropTypes.string,
 		siteUrl: React.PropTypes.string,
 		feedUrl: React.PropTypes.string,
@@ -34,7 +35,7 @@ const AuthorCompactProfile = React.createClass( {
 		const { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount, feedId, siteId, post } = this.props;
 
 		if ( ! author ) {
-			return null;
+			return <AuthorCompactProfilePlaceholder />;
 		}
 
 		const hasAuthorName = has( author, 'name' );
