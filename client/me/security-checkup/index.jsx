@@ -36,6 +36,7 @@ import {
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
 	isAccountRecoveryEmailValidated,
+	isAccountRecoveryPhoneValidated,
 	hasSentAccountRecoveryEmailValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
 } from 'state/account-recovery/settings/selectors';
@@ -113,7 +114,9 @@ const SecurityCheckup = React.createClass( {
 							showDismiss={ false }
 						/>
 					}
-					<RecoveryPhoneValidationNotice />
+					<RecoveryPhoneValidationNotice
+						onResend={ () => {} }
+					/>
 				</CompactCard>
 
 			</Main>
@@ -131,6 +134,7 @@ export default connect(
 		shouldPromptEmailValidationNotice: shouldPromptAccountRecoveryEmailValidationNotice( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
+		accountRecoveryPhoneValidated: isAccountRecoveryPhoneValidated( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
