@@ -40,8 +40,7 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 
 		default:
 			return translate( 'Successfully updated the recovery option.', {
-				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
-					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
 			} );
 	}
 };
@@ -54,8 +53,7 @@ const getUpdateErrorMessage = ( target ) => {
 			return translate( 'An error occurred while updating your account recovery email.' );
 		default:
 			return translate( 'An error occurred while updating your account recovery options.', {
-				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
-					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
 			} );
 	}
 };
@@ -68,8 +66,7 @@ const getDeleteSuccessMessage = ( target ) => {
 			return translate( 'Successfully removed recovery email address.' );
 		default:
 			return translate( 'Successfully removed the recovery option.', {
-				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
-					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
 			} );
 	}
 };
@@ -82,8 +79,7 @@ const getDeleteErrorMessage = ( target ) => {
 			return translate( 'An error occurred while deleting your account recovery email.' );
 		default:
 			return translate( 'An error occurred while deleting your account recovery options.', {
-				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
-					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
 			} );
 	}
 };
