@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import trim from 'lodash/trim';
+import { keys, trim } from 'lodash';
 import stripTags from 'striptags';
 
 /**
@@ -324,6 +324,34 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
+const phpToMomentMapping = {
+	d: 'DD',
+	jS: 'Mo',
+	j: 'D',
+	//S: 'Mo',
+	l: 'dddd',
+	D: 'ddd',
+	m: 'MM',
+	n: 'M',
+	F: 'MMMM',
+	M: 'MMM',
+	Y: 'YYYY',
+	y: 'YY',
+};
+
+/**
+ * Convert a PHP datetime format string into a Moment.js one.
+ *
+ * @param  {String} str PHP datetime format string
+ * @return {String} Moment.js datetime format string
+ */
+function phpToMomentDatetimeFormat( str ) {
+	return str.replace(
+		new RegExp( keys( phpToMomentMapping ).join( '|' ), 'g' ),
+		match => phpToMomentMapping[ match ],
+	);
+}
+
 module.exports = {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
@@ -333,5 +361,6 @@ module.exports = {
 	removep: removep,
 	capitalPDangit: capitalPDangit,
 	parseHtml: parseHtml,
-	unescapeAndFormatSpaces: unescapeAndFormatSpaces
+	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
+	phpToMomentDatetimeFormat,
 };

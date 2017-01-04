@@ -4,8 +4,12 @@
 import React, { Component } from 'react';
 import page from 'page';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { flowRight, includes, keys, omit, memoize } from 'lodash';
+=======
+import { flowRight, includes, omit, memoize } from 'lodash';
+>>>>>>> Move the format mapping function to util/formatting
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 >>>>>>> Create new date format option in site settings
@@ -39,6 +43,7 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import { phpToMomentDatetimeFormat } from 'lib/formatting';
 
 class SiteSettingsFormGeneral extends Component {
 <<<<<<< HEAD
@@ -644,26 +649,9 @@ class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 
-		const phpToMoment = {
-			d: 'DD',
-			jS: 'Mo',
-			j: 'D',
-			S: 'Mo',
-			l: 'dddd',
-			D: 'ddd',
-			m: 'MM',
-			n: 'M',
-			F: 'MMMM',
-			M: 'MMM',
-			Y: 'YYYY',
-			y: 'YY',
-		};
 		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
-		const mapFormats = str => str.replace(
-			new RegExp( keys( phpToMoment ).join( '|' ), 'g' ),
-			match => phpToMoment[ match ],
-		);
 		const today = moment();
+
 		return (
 			<FormFieldset>
 				<FormLabel>
@@ -678,7 +666,7 @@ class SiteSettingsFormGeneral extends Component {
 							onChange={ this.handleRadio }
 							disabled={ isRequestingSettings }
 						/>
-						<span>{ today.format( mapFormats( format ) ) }</span>
+						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
 				<FormLabel>
@@ -699,7 +687,7 @@ class SiteSettingsFormGeneral extends Component {
 							onChange={ this.onChangeField( 'date_format' ) }
 							disabled={ isRequestingSettings }
 						/>
-						{ date_format ? today.format( mapFormats( date_format ) ) : '' }
+						{ date_format ? today.format( phpToMomentDatetimeFormat( date_format ) ) : '' }
 					</span>
 				</FormLabel>
 			</FormFieldset>
