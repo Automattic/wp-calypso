@@ -7,12 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingPostStat,
-	getPostStat
+	isRequestingPostStats,
+	getPostStat,
+	getPostStats,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingPostStat()', () => {
+	describe( 'isRequestingPostStats()', () => {
 		it( 'should return false if the stat is not attached', () => {
 			const state = {
 				stats: {
@@ -25,7 +26,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const isRequesting = isRequestingPostStat( state, 'countComments', 2916284, 2454 );
+			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'countComments' ] );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -36,13 +37,13 @@ describe( 'selectors', () => {
 					posts: {
 						requesting: {
 							2916284: {
-								2454: { views: false }
+								2454: { 'views,years': false }
 							}
 						}
 					}
 				}
 			};
-			const isRequesting = isRequestingPostStat( state, 'views', 2916284, 2454 );
+			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
 			expect( isRequesting ).to.be.false;
 		} );
@@ -53,13 +54,13 @@ describe( 'selectors', () => {
 					posts: {
 						requesting: {
 							2916284: {
-								2454: { views: true }
+								2454: { 'views,years': true }
 							}
 						}
 					}
 				}
 			};
-			const isRequesting = isRequestingPostStat( state, 'views', 2916284, 2454 );
+			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
 			expect( isRequesting ).to.be.true;
 		} );
@@ -78,7 +79,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const statValue = getPostStat( state, 'countComments', 2916284, 2454 );
+			const statValue = getPostStat( state, 2916284, 2454, 'countComments' );
 
 			expect( statValue ).to.be.null;
 		} );
@@ -95,9 +96,45 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const statValue = getPostStat( state, 'views', 2916284, 2454 );
+			const statValue = getPostStat( state, 2916284, 2454, 'views' );
 
 			expect( statValue ).to.eql( 2 );
+		} );
+	} );
+
+	describe( 'getPostStats()', () => {
+		it( 'should return null if the site is not tracked', () => {
+			const state = {
+				stats: {
+					posts: {
+						items: {
+							2916284: {
+								2454: { views: 2 }
+							}
+						}
+					}
+				}
+			};
+			const statValue = getPostStats( state, 2916285, 2454 );
+
+			expect( statValue ).to.be.null;
+		} );
+
+		it( 'should return the post stats for a siteId, postId', () => {
+			const state = {
+				stats: {
+					posts: {
+						items: {
+							2916284: {
+								2454: { views: 2 }
+							}
+						}
+					}
+				}
+			};
+			const statValue = getPostStats( state, 2916284, 2454 );
+
+			expect( statValue ).to.eql( { views: 2 } );
 		} );
 	} );
 } );

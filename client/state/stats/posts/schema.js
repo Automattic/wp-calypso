@@ -9,12 +9,7 @@ export const items = {
 			patternProperties: {
 				// Post Id
 				'^\\d+$': {
-					type: 'object',
-					additionalProperties: false,
-					patternProperties: {
-						// Stat Key
-						'^[0-9a-zA-Z]+$': { type: 'integer' }
-					}
+					type: 'object'
 				}
 			}
 		}

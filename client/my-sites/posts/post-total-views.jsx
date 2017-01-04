@@ -45,7 +45,7 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 			} ) }
 			title={ viewsTitle }
 			onClick={ clickHandler }>
-			<QueryPostStats siteId= { siteId } postId={ postId } stat="views" />
+			<QueryPostStats siteId= { siteId } postId={ postId } fields={ [ 'views' ] } />
 			<Gridicon icon="visible" size={ 24 } />
 			<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
 		</a>
@@ -63,7 +63,7 @@ PostTotalViews.propTypes = {
 
 export default connect( ( state, ownProps ) => {
 	const { post } = ownProps;
-	const viewCount = getPostStat( state, 'views', post.site_ID, post.ID );
+	const viewCount = getPostStat( state, post.site_ID, post.ID, 'views' );
 
 	return {
 		slug: getSiteSlug( state, post.site_ID ),
