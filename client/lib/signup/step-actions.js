@@ -26,6 +26,7 @@ import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
 	domainItem,
+	isDomainOnly,
 	googleAppsCartItem,
 	isPurchasingItem,
 	siteUrl,
@@ -41,7 +42,8 @@ function createSiteWithCart( callback, dependencies, {
 		blog_title: siteTitle,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
-			vertical: surveyVertical || undefined
+			vertical: surveyVertical || undefined,
+			is_domain_only: isDomainOnly
 		},
 		validate: false,
 		find_available_url: isPurchasingItem

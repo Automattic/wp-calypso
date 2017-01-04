@@ -112,6 +112,7 @@ const DomainsStep = React.createClass( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
+			isDomainOnly: this.props.isDomainOnly ? 1 : 0,
 			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
@@ -162,10 +163,10 @@ const DomainsStep = React.createClass( {
 				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerMappingOption
+				offerMappingOption={ ! this.props.isDomainOnly }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom
+				includeWordPressDotCom={ ! this.props.isDomainOnly }
 				includeDotBlogSubdomain={ includeDotBlogSubdomain }
 				isSignupStep
 				showExampleSuggestions
