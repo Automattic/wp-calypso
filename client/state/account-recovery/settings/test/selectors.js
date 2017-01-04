@@ -370,20 +370,6 @@ describe( '#account-recovery/settings/selectors', () => {
 			assert.isTrue( shouldPromptAccountRecoveryPhoneValidationNotice( state ) );
 		} );
 
-		it( 'should not prompt if hasSentValidation.phone is set.', () => {
-			const state = {
-				accountRecovery: {
-					settings: {
-						hasSentValidation: {
-							phone: true,
-						},
-					},
-				},
-			};
-
-			assert.isFalse( shouldPromptAccountRecoveryPhoneValidationNotice( state ) );
-		} );
-
 		it( 'should not prompt if the settings data is not ready.', () => {
 			assert.isFalse( shouldPromptAccountRecoveryPhoneValidationNotice( stateBeforeFetching ) );
 		} );
