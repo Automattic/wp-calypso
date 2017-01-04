@@ -513,6 +513,17 @@ export function hasActivatedTheme( state, siteId ) {
 }
 
 /**
+ * Whether the theme is currently being installed on the (Jetpack) site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Site ID
+ * @return {Boolean}         True if theme installation is ongoing
+ */
+export function isInstallingTheme( state, siteId ) {
+	return get( state.themes.themeInstalls, siteId, false );
+}
+
+/**
  * Whether a WPCOM theme given by its ID is premium.
  *
  * @param  {Object} state   Global state tree
