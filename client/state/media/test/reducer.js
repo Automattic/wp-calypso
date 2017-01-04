@@ -7,8 +7,12 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
-import reducer, { items } from '../reducer';
+import {
+	MEDIA_DELETE,
+	MEDIA_RECEIVE,
+	MEDIA_REQUESTING } from 'state/action-types';
+import reducer, { items, queryRequests } from '../reducer';
+import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
@@ -63,6 +67,63 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: {}
 			} );
+		} );
+	} );
+
+	describe( 'queryRequests()', () => {
+		const query1 = {
+			search: 'flower'
+		};
+
+		const query2 = {
+			search: 'flowers'
+		};
+
+		const state1 = {
+			2916284: [ MediaQueryManager.QueryKey.stringify( query1 ) ]
+		};
+
+		const state2 = {
+			2916284: [
+				...state1[ 2916284 ],
+				MediaQueryManager.QueryKey.stringify( query2 )
+			]
+		};
+
+		it( 'should default to an empty object', () => {
+			const state = queryRequests( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track media requesting', () => {
+			const state = queryRequests( deepFreeze( {} ), {
+				type: MEDIA_REQUESTING,
+				siteId: 2916284,
+				query: query1
+			} );
+
+			expect( state ).to.deep.eql( state1 );
+		} );
+
+		it( 'should accumulate queries', () => {
+			const state = queryRequests( deepFreeze( state1 ), {
+				type: MEDIA_REQUESTING,
+				siteId: 2916284,
+				query: query2
+			} );
+
+			expect( state ).to.deep.eql( state2 );
+		} );
+
+		it( 'should track media receiving', () => {
+			const state = queryRequests( deepFreeze( state2 ), {
+				type: MEDIA_RECEIVE,
+				siteId: 2916284,
+				query: query2
+			} );
+
+			expect( state ).to.deep.eql( state1 );
 		} );
 	} );
 } );
