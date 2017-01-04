@@ -5,12 +5,19 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import classNames from 'classnames';
 
+import {
+	propEq
+} from 'ramda';
+
 /**
  * Internal dependencies
  */
 import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
+import wpcom from 'lib/wp';
+
+import fromApi from 'notifications/from-api';
 
 export default React.createClass( {
 	displayName: 'MasterbarItemNotifications',
@@ -23,6 +30,21 @@ export default React.createClass( {
 		tooltip: React.PropTypes.string,
 	},
 
+	componentDidMount() {
+		wpcom
+			.req
+			.get( {
+				path: '/notifications/',
+				apiVersion: '1.1'
+			}, { number: 100 } )
+			.then( response => {
+				const { notes } = fromApi( response );
+				console.log( notes[0] );
+
+				this.setState( { notes } );
+			} );
+	},
+
 	getInitialState() {
 		let user = this.props.user.get();
 
@@ -30,25 +52,29 @@ export default React.createClass( {
 			isShowingPopover: false,
 			newNote: user && user.has_unseen_notes,
 			animationState: 0,
+			notes: [],
+			selectedNote: null,
+			selectedFilter: 'All'
 		};
 	},
 
-	checkToggleNotes( event, forceToggle ) {
-		const target = event ? event.target : false;
-		const notificationNode = this.getNotificationLinkDomNode();
+	selectNote( selectedNote ) {
+		this.setState( { selectedNote } );
+	},
 
-		if ( target && notificationNode.contains( target ) ) {
-			return;
-		}
-
-		if ( this.state.isShowingPopover || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
+	selectFilter( selectedFilter ) {
+		this.setState( { selectedFilter } );
 	},
 
 	toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
+
+			const notesPanel = document.getElementById( 'wpnt-notes-panel2' );
+			if ( notesPanel && notesPanel.contains( event.target ) ) {
+				event.stopPropagation();
+				return;
+			}
 		}
 
 		this.setState( {
@@ -119,11 +145,21 @@ export default React.createClass( {
 				className={ classes }
 			>
 				{ this.props.children }
-				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) } />
-				<Notifications
-					visible={ this.state.isShowingPopover }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator } />
+				<span
+					className="masterbar__notifications-bubble"
+					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+				/>
+				{ this.state.isShowingPopover &&
+					<Notifications
+						notes={ this.state.notes }
+						selectNote={ this.selectNote }
+						selectedNote={ this.state.selectedNote }
+						selectedFilter={ this.state.selectedFilter }
+						selectFilter={ this.selectFilter }
+						setIndicator={ this.setNotesIndicator }
+						unselectNote={ () => this.selectNote( null ) }
+					/>
+				}
 			</MasterbarItem>
 		);
 	}
