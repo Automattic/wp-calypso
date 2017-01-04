@@ -561,4 +561,5 @@
 .reader-full-post__story-content-placeholder-text {
 	@include placeholder();
 	margin-bottom: 16px;
+	min-height: 200px;
 }
