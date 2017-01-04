@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy, omit, without } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import {
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUESTING } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
 export const items = createReducer( {}, {
@@ -72,17 +72,23 @@ export const queries = ( () => {
 	} );
 } )();
 
-export const queryRequests = keyedReducer( 'siteId', createReducer( [], {
-	[ MEDIA_REQUESTING ]: ( state, { query } ) => {
-		return [
+export const queryRequests = createReducer( {}, {
+	[ MEDIA_REQUESTING ]: ( state, { siteId, query } ) => {
+		return {
 			...state,
-			MediaQueryManager.QueryKey.stringify( query )
-		];
+			[ siteId ]: {
+				...state[ siteId ],
+				[ MediaQueryManager.QueryKey.stringify( query ) ]: true
+			}
+		};
 	},
-	[ MEDIA_RECEIVE ]: ( state, { query } ) => {
-		return without( state, MediaQueryManager.QueryKey.stringify( query ) );
+	[ MEDIA_RECEIVE ]: ( state, { siteId, query } ) => {
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )
+		};
 	}
-} ) );
+} );
 
 export default combineReducers( {
 	items,
