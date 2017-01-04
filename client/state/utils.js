@@ -2,7 +2,7 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge } from 'lodash';
+import { merge, flow, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -146,7 +146,7 @@ export function extendAction( action, data ) {
 	}
 
 	return ( dispatch ) => {
-		const newDispatch = ( thunkAction ) => dispatch( merge( {}, thunkAction, data ) );
+		const newDispatch = flow( partialRight( extendAction, data ), dispatch );
 		return action( newDispatch );
 	};
 }
