@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
@@ -11,10 +12,9 @@ import classNames from 'classnames';
 import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
-	displayName: 'MasterbarItemNotifications',
-
+const MasterbarItemNotifications = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
@@ -24,7 +24,7 @@ export default React.createClass( {
 	},
 
 	getInitialState() {
-		let user = this.props.user.get();
+		const user = this.props.user.get();
 
 		return {
 			isShowingPopover: false,
@@ -57,6 +57,7 @@ export default React.createClass( {
 			this.props.onClick( this.state.isShowingPopover );
 
 			if ( this.state.isShowingPopover ) {
+				this.props.recordOpening( store.get( 'wpnotes_unseen_count' ) );
 				this.setNotesIndicator( 0 );
 			}
 
@@ -81,7 +82,7 @@ export default React.createClass( {
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
 	setNotesIndicator( currentUnseenCount ) {
-		let existingUnseenCount = store.get( 'wpnotes_unseen_count' );
+		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
 		if ( 0 === currentUnseenCount ) {
@@ -119,7 +120,10 @@ export default React.createClass( {
 				className={ classes }
 			>
 				{ this.props.children }
-				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) } />
+				<span
+					className="masterbar__notifications-bubble"
+					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+				/>
 				<Notifications
 					visible={ this.state.isShowingPopover }
 					checkToggle={ this.checkToggleNotes }
@@ -128,3 +132,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )
+} );
+
+export default connect( null, mapDispatchToProps )( MasterbarItemNotifications );
