@@ -13,11 +13,12 @@ import MediaQueryManager from 'lib/query-manager/media';
  */
 export default function isRequestingMedia( state, siteId, query ) {
 	const queryRequests = state.media.queryRequests[ siteId ];
-	const stringifiedQuery = MediaQueryManager.QueryKey.stringify( query );
 
 	if ( ! queryRequests ) {
 		return false;
 	}
+
+	const stringifiedQuery = MediaQueryManager.QueryKey.stringify( query );
 
 	return queryRequests.indexOf( stringifiedQuery ) !== -1;
 }
