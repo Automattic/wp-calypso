@@ -18,6 +18,9 @@ import {
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
+	THEME_DELETE_REQUEST,
+	THEME_DELETE_SUCCESS,
+	THEME_DELETE_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -582,5 +585,39 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				} );
 		};
 		return new Promise( pollStatus );
+	};
+}
+
+/**
+ * Deletes a theme from the given Jetpack site.
+ *
+ * @param {String} themeId -- Theme to delete
+ * @param {Number} siteId -- Site to delete theme from
+ *
+ * @return {Function} Action thunk
+ */
+export function deleteTheme( themeId, siteId ) {
+	return dispatch => {
+		dispatch( {
+			type: THEME_DELETE_REQUEST,
+			themeId,
+			siteId,
+		} );
+		return wpcom.undocumented().deleteThemeFromJetpack( siteId, themeId )
+			.then( () => {
+				dispatch( {
+					type: THEME_DELETE_SUCCESS,
+					themeId,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_DELETE_FAILURE,
+					themeId,
+					siteId,
+					error
+				} );
+			} );
 	};
 }
