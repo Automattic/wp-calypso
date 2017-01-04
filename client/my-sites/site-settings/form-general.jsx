@@ -3,6 +3,12 @@
  */
 import React, { Component } from 'react';
 import page from 'page';
+<<<<<<< HEAD
+=======
+import { flowRight, includes, keys, omit, memoize } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+>>>>>>> Create new date format option in site settings
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -35,8 +41,163 @@ import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 
 class SiteSettingsFormGeneral extends Component {
+<<<<<<< HEAD
 	componentWillMount() {
 		this._showWarning( this.props.site );
+=======
+	getFormSettings( settings ) {
+		if ( ! settings ) {
+			return {};
+		}
+
+		const formSettings = {
+			blogname: settings.blogname,
+			blogdescription: settings.blogdescription,
+
+			lang_id: settings.lang_id,
+			blog_public: settings.blog_public,
+			timezone_string: settings.timezone_string,
+			date_format: settings.date_format,
+
+			jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
+			jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
+
+			amp_is_supported: settings.amp_is_supported,
+			amp_is_enabled: settings.amp_is_enabled,
+
+			holidaysnow: !! settings.holidaysnow,
+
+			api_cache: settings.api_cache,
+		};
+
+		if ( settings.jetpack_relatedposts_allowed ) {
+			Object.assign( formSettings, {
+				jetpack_relatedposts_enabled: ( settings.jetpack_relatedposts_enabled ) ? 1 : 0,
+				jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
+				jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
+			} );
+		}
+
+		// handling `gmt_offset` and `timezone_string` values
+		const gmt_offset = settings.gmt_offset;
+
+		if (
+			! settings.timezone_string &&
+			typeof gmt_offset === 'string' &&
+			gmt_offset.length
+		) {
+			formSettings.timezone_string = 'UTC' +
+				( /\-/.test( gmt_offset ) ? '' : '+' ) +
+				gmt_offset;
+		}
+
+		return formSettings;
+	}
+
+	componentWillMount() {
+		this._showWarning( this.props.site );
+		this.props.replaceFields( {
+			blogname: '',
+			blogdescription: '',
+			lang_id: '',
+			timezone_string: '',
+			date_format: '',
+			blog_public: '',
+			admin_url: '',
+			jetpack_relatedposts_allowed: false,
+			jetpack_relatedposts_enabled: false,
+			jetpack_relatedposts_show_headline: false,
+			jetpack_relatedposts_show_thumbnails: false,
+			jetpack_sync_non_public_post_stati: false,
+			holidaysnow: false,
+			amp_is_supported: false,
+			amp_is_enabled: false,
+			api_cache: false,
+		} );
+		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		this._showWarning( nextProps.site );
+
+		if ( nextProps.siteId !== this.props.siteId ) {
+			nextProps.clearDirtyFields();
+		}
+
+		if ( nextProps.settings !== this.props.settings ) {
+			let newState = this.getFormSettings( nextProps.settings );
+			//If we have any fields that the user has updated,
+			//do not wipe out those fields from the poll update.
+			newState = omit( newState, nextProps.dirtyFields );
+			nextProps.replaceFields( newState );
+		}
+
+		if (
+			this.props.isSavingSettings &&
+			! nextProps.isSavingSettings
+		) {
+			if ( nextProps.isSaveRequestSuccessful ) {
+				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
+				nextProps.clearDirtyFields();
+				nextProps.markSaved();
+			} else {
+				let text;
+				switch ( nextProps.saveRequestError.error ) {
+					case 'invalid_ip':
+						text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
+						break;
+					default:
+						text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
+				}
+				nextProps.errorNotice( text, { id: 'site-settings-save' } );
+			}
+		}
+	}
+
+	handleRadio = event => {
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = event.currentTarget.value;
+
+		this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
+	};
+
+	handleCheckbox = event => {
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = this.props.fields[ currentTargetName ];
+
+		this.props.updateFields( { [ currentTargetName ]: ! currentTargetValue } );
+	};
+
+	handleToggle( name ) {
+		return () => {
+			this.props.trackToggle( `Toggled ${ name }` );
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+		};
+	}
+
+	handleSubmitForm = event => {
+		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+			event.preventDefault();
+		}
+
+		this.submitForm();
+		this.props.trackClick( 'Save Settings Button' );
+	};
+
+	submitForm() {
+		const { fields, site } = this.props;
+		this.props.removeNotice( 'site-settings-save' );
+		this.props.saveSiteSettings( site.ID, fields );
+	}
+
+	onChangeField( field ) {
+		return event => {
+			const { updateFields } = this.props;
+			updateFields( {
+				[ field ]: event.target.value
+			} );
+		};
+>>>>>>> Create new date format option in site settings
 	}
 
 	onTimezoneSelect = timezone => {
@@ -475,6 +636,76 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	dateFormatOption() {
+		const {
+			fields: { date_format },
+			isRequestingSettings,
+			moment,
+			translate,
+		} = this.props;
+
+		const phpToMoment = {
+			d: 'DD',
+			jS: 'Mo',
+			j: 'D',
+			S: 'Mo',
+			l: 'dddd',
+			D: 'ddd',
+			m: 'MM',
+			n: 'M',
+			F: 'MMMM',
+			M: 'MMM',
+			Y: 'YYYY',
+			y: 'YY',
+		};
+		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
+		const mapFormats = str => str.replace(
+			new RegExp( keys( phpToMoment ).join( '|' ), 'g' ),
+			match => phpToMoment[ match ],
+		);
+		const today = moment();
+		return (
+			<FormFieldset>
+				<FormLabel>
+					{ translate( 'Date Format' ) }
+				</FormLabel>
+				{ defaultFormats.map( ( format, key ) =>
+					<FormLabel key={ key }>
+						<FormRadio
+							name="date_format"
+							value={ format }
+							checked={ format === date_format }
+							onChange={ this.handleRadio }
+							disabled={ isRequestingSettings }
+						/>
+						<span>{ today.format( mapFormats( format ) ) }</span>
+					</FormLabel>
+				) }
+				<FormLabel>
+					<FormRadio
+						name="date_format"
+						value={ date_format }
+						checked={ ! includes( defaultFormats, date_format ) }
+						onChange={ this.handleRadio }
+						disabled={ isRequestingSettings }
+					/>
+					<span>
+						{ translate( 'Custom' ) }
+						<FormInput
+							name="date_format_custom"
+							id="date_format_custom"
+							type="text"
+							value={ date_format || defaultFormats[ 0 ] }
+							onChange={ this.onChangeField( 'date_format' ) }
+							disabled={ isRequestingSettings }
+						/>
+						{ date_format ? today.format( mapFormats( date_format ) ) : '' }
+					</span>
+				</FormLabel>
+			</FormFieldset>
+		);
+	}
+
 	renderJetpackSyncPanel() {
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
@@ -555,6 +786,7 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
+						{ this.dateFormatOption() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
