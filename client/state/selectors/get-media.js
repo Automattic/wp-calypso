@@ -4,13 +4,13 @@
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Object}  query  Query object
- * @return {Array}          Media
+ * @return {?Array}         Media
  */
 export default function getMedia( state, siteId, query ) {
 	const queries = state.media.queries[ siteId ];
 
 	if ( ! queries ) {
-		return [];
+		return null;
 	}
 
 	return queries.getItems( query );
