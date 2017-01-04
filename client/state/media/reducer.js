@@ -10,6 +10,7 @@ import { omit } from 'lodash';
 import {
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
+	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUESTING } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
@@ -60,6 +61,12 @@ export const queryRequests = createReducer( {}, {
 		};
 	},
 	[ MEDIA_RECEIVE ]: ( state, { siteId, query } ) => {
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )
+		};
+	},
+	[ MEDIA_REQUEST_FAILURE ]: ( state, { siteId, query } ) => {
 		return {
 			...state,
 			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )
