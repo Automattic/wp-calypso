@@ -161,15 +161,11 @@ export const MediaLibraryList = React.createClass( {
 		);
 	},
 
-	createOnSectionRendered( onRowsRendered ) {
-		const columnCount = this._columnCount;
+	onSectionRendered( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
+		const startIndex = rowStartIndex * this._columnCount + columnStartIndex;
+		const stopIndex = rowStopIndex * this._columnCount + columnStopIndex;
 
-		return function( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
-			const startIndex = rowStartIndex * columnCount + columnStartIndex;
-			const stopIndex = rowStopIndex * columnCount + columnStopIndex;
-
-			return onRowsRendered( { startIndex, stopIndex } );
-		};
+		return this._onRowsRendered( { startIndex, stopIndex } );
 	},
 
 	isRowLoaded: function( { index } ) {
@@ -184,7 +180,7 @@ export const MediaLibraryList = React.createClass( {
 		}
 	},
 
-	renderGrid: function( { height, onRowsRendered, registerChild, scrollTop, width } ) {
+	renderGrid: function( { height, registerChild, scrollTop, width } ) {
 		const gridSize = Math.floor( width / this._columnCount );
 
 		return (
@@ -194,7 +190,7 @@ export const MediaLibraryList = React.createClass( {
 				columnCount={ this._columnCount }
 				columnWidth={ gridSize }
 				height={ height }
-				onSectionRendered={ this.createOnSectionRendered( onRowsRendered ) }
+				onSectionRendered={ this.onSectionRendered }
 				ref={ registerChild }
 				rowCount={ this._rowCount }
 				rowHeight={ gridSize }
@@ -206,12 +202,15 @@ export const MediaLibraryList = React.createClass( {
 	},
 
 	renderSizer: function( { onRowsRendered, registerChild } ) {
+		this._onRowsRendered = onRowsRendered;
+
 		if ( ! this.props.disableHeight ) {
 			return (
 				<AutoSizer>
 					{ ( { height, width } ) => this.renderGrid( {
-						onRowsRendered, registerChild,
-						height, width
+						registerChild,
+						height,
+						width
 					} ) }
 				</AutoSizer>
 			);
@@ -222,8 +221,9 @@ export const MediaLibraryList = React.createClass( {
 				{ ( { height, scrollTop } ) => (
 					<AutoSizer disableHeight>
 						{ ( { width } ) => this.renderGrid( {
-							onRowsRendered, registerChild,
-							height, scrollTop,
+							registerChild,
+							height,
+							scrollTop,
 							width
 						} ) }
 					</AutoSizer>
