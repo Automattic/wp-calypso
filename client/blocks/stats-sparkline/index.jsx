@@ -18,7 +18,7 @@ const StatsSparkline = ( { isJetpack, siteDomain, className, siteId } ) => {
 		<img
 			className={ className }
 			src={ `https://${ siteDomain }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }` } />
-	)
+	);
 };
 
 StatsSparkline.propTypes = {
