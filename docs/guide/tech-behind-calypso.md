@@ -102,4 +102,4 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 * [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
 * [make](http://www.gnu.org/software/make/manual/make.html) – our build tool of choice
 
-Previous: [Hello, World!](hello-world.md) Next: [Contributing to Calypso](../../.github/CONTRIBUTING.md)
+Previous: [Hello, World!](hello-world.md) Next: [Glossary of Terms](glossary.md)
