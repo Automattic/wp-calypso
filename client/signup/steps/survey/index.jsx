@@ -15,8 +15,8 @@ import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import TextInput from 'components/forms/form-text-input';
 import signupUtils from 'signup/utils';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
@@ -51,7 +51,7 @@ const SurveyStep = React.createClass( {
 				key={ vertical.value }
 				data-value={ vertical.value }
 				data-label={ vertical.label() }
-				onClick={ this.handleNextStep }
+				onClick={ this.handleVerticalButton }
 			>
 				<span
 					className="survey__vertical-label"
@@ -69,19 +69,13 @@ const SurveyStep = React.createClass( {
 		const otherWriteIn = this.getOtherWriteIn();
 		return (
 			<div className="survey__other">
-				<TextInput className="survey__other-write-in"
-					placeholder={ this.translate( 'Please describe what your site is about' ) }
+				<FormTextInputWithAction
+					action={ this.translate( 'Continue' ) }
 					defaultValue={ otherWriteIn }
+					placeholder={ this.translate( 'Please describe what your site is about' ) }
+					onAction={ this.handleVerticalOther }
 					onChange={ this.handleOtherWriteIn }
-					ref={ ( input ) => input && input.focus() } />
-				<Button className="survey__other-button" primary compact
-					disabled={ otherWriteIn.length === 0 }
-					data-value="a8c.24"
-					data-label="Uncategorized"
-					onClick={ this.handleNextStep }
-				>
-					{ this.translate( 'Continue' ) }
-				</Button>
+				/>
 				<p className="survey__other-copy">{ this.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
 			</div>
 		);
@@ -123,22 +117,31 @@ const SurveyStep = React.createClass( {
 		);
 	},
 
-	handleOtherWriteIn( e ) {
-		this.setState( {
-			otherWriteIn: e.target.value.replace( /^\W+|\W+$/g, '' ),
-		} );
+	handleVerticalButton( e ) {
+		const { value, label } = e.target.dataset;
+		this.submitStep( label, value );
 	},
 
 	handleOther() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	},
 
-	handleNextStep( e ) {
-		const { value, label } = e.target.dataset;
-		const otherWriteIn = ( value === 'a8c.24' && this.getOtherWriteIn().length !== 0 )
-			? this.getOtherWriteIn()
+	handleVerticalOther( otherTextValue ) {
+		const otherText = otherTextValue.replace( /^\W+|\W+$/g, '' );
+		const otherWriteIn = otherText.length !== 0
+			? otherText
 			: undefined;
 
+		this.submitStep( 'Uncategorized', 'a8c.24', otherWriteIn );
+	},
+
+	handleOtherWriteIn( value ) {
+		this.setState( {
+			otherWriteIn: value.replace( /^\W+|\W+$/g, '' ),
+		} );
+	},
+
+	submitStep( label, value, otherWriteIn = '' ) {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
