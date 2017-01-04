@@ -8,9 +8,11 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	DESERIALIZE,
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
-	MEDIA_REQUESTING } from 'state/action-types';
+	MEDIA_REQUESTING,
+	SERIALIZE } from 'state/action-types';
 import reducer, { items, queryRequests } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 
@@ -80,14 +82,16 @@ describe( 'reducer', () => {
 		};
 
 		const state1 = {
-			2916284: [ MediaQueryManager.QueryKey.stringify( query1 ) ]
+			2916284: {
+				[ MediaQueryManager.QueryKey.stringify( query1 ) ]: true
+			}
 		};
 
 		const state2 = {
-			2916284: [
+			2916284: {
 				...state1[ 2916284 ],
-				MediaQueryManager.QueryKey.stringify( query2 )
-			]
+				[ MediaQueryManager.QueryKey.stringify( query2 ) ]: true
+			}
 		};
 
 		it( 'should default to an empty object', () => {
@@ -124,6 +128,18 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.eql( state1 );
+		} );
+
+		it( 'should never persist state', () => {
+			const state = queryRequests( deepFreeze( state1 ), { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should never load persisted state', () => {
+			const state = queryRequests( deepFreeze( state1 ), { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

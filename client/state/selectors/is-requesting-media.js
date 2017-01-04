@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import MediaQueryManager from 'lib/query-manager/media';
@@ -23,7 +18,5 @@ export default function isRequestingMedia( state, siteId, query ) {
 		return false;
 	}
 
-	const stringifiedQuery = MediaQueryManager.QueryKey.stringify( query );
-
-	return includes( queryRequests, stringifiedQuery );
+	return queryRequests[ MediaQueryManager.QueryKey.stringify( query ) ] || false;
 }

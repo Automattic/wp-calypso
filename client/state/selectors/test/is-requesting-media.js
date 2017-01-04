@@ -17,7 +17,9 @@ describe( 'isRequestingMedia()', () => {
 	const state = {
 		media: {
 			queryRequests: {
-				2916284: [ MediaQueryManager.QueryKey.stringify( query ) ]
+				2916284: {
+					[ MediaQueryManager.QueryKey.stringify( query ) ]: true
+				}
 			}
 		}
 	};
