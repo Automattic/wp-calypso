@@ -37,6 +37,7 @@ export const ThemesList = React.createClass( {
 		getActionLabel: React.PropTypes.func,
 		isActive: React.PropTypes.func,
 		isPurchased: React.PropTypes.func,
+		isInstalling: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
@@ -59,7 +60,8 @@ export const ThemesList = React.createClass( {
 			optionsGenerator: () => [],
 			getActionLabel: () => '',
 			isActive: () => false,
-			isPurchased: () => false
+			isPurchased: () => false,
+			isInstalling: () => false
 		};
 	},
 
@@ -83,7 +85,8 @@ export const ThemesList = React.createClass( {
 			index={ index }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
-			purchased={ this.props.isPurchased( theme.id ) } />;
+			purchased={ this.props.isPurchased( theme.id ) }
+			installing={ this.props.isInstalling( theme.id ) } />;
 	},
 
 	renderLoadingPlaceholders() {

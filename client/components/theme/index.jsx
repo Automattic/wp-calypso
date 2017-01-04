@@ -38,6 +38,8 @@ const Theme = React.createClass( {
 		active: React.PropTypes.bool,
 		// If true, the user has 'purchased' the theme
 		purchased: React.PropTypes.bool,
+		// If true, the theme is being installed
+		installing: React.PropTypes.bool,
 		// If true, render a placeholder
 		isPlaceholder: React.PropTypes.bool,
 		// URL the screenshot link points to
