@@ -24,6 +24,11 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+<<<<<<< 2732bec668974ba4f1c0959c9a454b2691b65e31
+=======
+import SiteStatsStickyLink from 'components/site-stats-sticky-link';
+import StatsSparkline from 'blocks/stats-sparkline';
+>>>>>>> create StatsSparkline block
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

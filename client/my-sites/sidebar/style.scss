@@ -3,10 +3,14 @@
 	height: 24px;
 	position: absolute;
 	right: 16px;
-	top: 6px;
+	top: 8px;
 
 	@include breakpoint( "<660px" ) {
 		top: 13px;
 		right: 32px;
 	}
+}
+
+.sidebar__menu li.stats a:after {
+	background: none;
 }
