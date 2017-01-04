@@ -7,7 +7,7 @@ var React = require( 'react' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
-import { AutoSizer, InfiniteLoader, Grid } from 'react-virtualized';
+import { AutoSizer, InfiniteLoader, Grid, WindowScroller } from 'react-virtualized';
 import { connect } from 'react-redux';
 import fill from 'lodash/fill';
 
@@ -181,6 +181,54 @@ export const MediaLibraryList = React.createClass( {
 		}
 	},
 
+	renderGrid: function( { height, onRowsRendered, registerChild, scrollTop, width } ) {
+		const gridSize = Math.floor( width / this._columnCount );
+
+		return (
+			<Grid
+				autoHeight={ this.props.disableHeight }
+				cellRenderer={ this.renderItem }
+				columnCount={ this._columnCount }
+				columnWidth={ gridSize }
+				height={ height }
+				onSectionRendered={ this.createOnSectionRendered( onRowsRendered ) }
+				ref={ registerChild }
+				rowCount={ this._rowCount }
+				rowHeight={ gridSize }
+				scrollTop={ scrollTop }
+				// Trigger update on change.
+				selectedItems={ this.props.mediaLibrarySelectedItems }
+				width={ width } />
+		);
+	},
+
+	renderSizer: function( { onRowsRendered, registerChild } ) {
+		if ( ! this.props.disableHeight ) {
+			return (
+				<AutoSizer>
+					{ ( { height, width } ) => this.renderGrid( {
+						onRowsRendered, registerChild,
+						height, width
+					} ) }
+				</AutoSizer>
+			);
+		}
+
+		return (
+			<WindowScroller>
+				{ ( { height, scrollTop } ) => (
+					<AutoSizer disableHeight>
+						{ ( { width } ) => this.renderGrid( {
+							onRowsRendered, registerChild,
+							height, scrollTop,
+							width
+						} ) }
+					</AutoSizer>
+				) }
+			</WindowScroller>
+		);
+	},
+
 	render: function() {
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
@@ -213,26 +261,7 @@ export const MediaLibraryList = React.createClass( {
 					rowCount={ this._gridItems.length }
 					threshold={ 1 }
 					minimumBatchSize={ this.props.batchSize }>
-					{ ( { onRowsRendered, registerChild } ) => (
-						<AutoSizer disableHeight={ this.props.disableHeight }>
-							{ ( { height, width } ) => (
-								<Grid
-									width={ width }
-									height={ this.props.disableHeight
-										? Math.floor( width / this._columnCount ) * this._rowCount
-										: height }
-									columnCount={ this._columnCount }
-									columnWidth={ Math.floor( width / this._columnCount ) }
-									rowCount={ this._rowCount }
-									rowHeight={ Math.floor( width / this._columnCount ) }
-									cellRenderer={ this.renderItem }
-									onSectionRendered={ this.createOnSectionRendered( onRowsRendered ) }
-									ref={ registerChild }
-									// Trigger update on change.
-									selectedItems={ this.props.mediaLibrarySelectedItems } />
-							) }
-						</AutoSizer>
-					) }
+					{ this.renderSizer }
 				</InfiniteLoader>
 			</div>
 		);
