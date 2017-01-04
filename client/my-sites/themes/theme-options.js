@@ -12,7 +12,7 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
 import config from 'config';
 import {
 	activateTheme,
-	activateWpcomThemeOnJetpack,
+	installAndActivate,
 	installWpcomThemeAndTryAndCustomize
 } from 'state/themes/actions';
 import {
