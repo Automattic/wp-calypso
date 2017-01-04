@@ -878,9 +878,25 @@ describe( 'actions', () => {
 	describe( '#installAndTryAndCustomize', () => {
 		let installAndTryAndCustomize;
 		const pageSpy = sinon.spy();
+		const getThemeSpy = ( state, siteId, themeId ) => {
+			let theme;
+			switch ( themeId ) {
+				case 'karuna-wpcom': //for success case
+					theme = { themeId: 'karuna-wpco' };
+					break;
+				case 'typist-wpcom': //for fail case
+					theme = null;
+					break;
+			}
+			return theme;
+		};
+
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'page', pageSpy );
-			mockery.registerMock( './selectors', { getThemeCustomizeUrl: () => 'customizer/url' } );
+			mockery.registerMock( './selectors', {
+				getThemeCustomizeUrl: () => 'customizer/url',
+				getTheme: getThemeSpy
+			} );
 			installAndTryAndCustomize =
 				require( '../actions' ).installAndTryAndCustomize;
 		} );
