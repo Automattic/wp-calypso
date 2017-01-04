@@ -17,13 +17,25 @@ class RecoveryPhoneValidationNotice extends Component {
 		event.preventDefault();
 	}
 
+	onResend = ( event ) => {
+		event.preventDefault();
+
+		this.props.onResend();
+	}
+
+	onValidate = ( event ) => {
+		event.preventDefault();
+
+		this.props.onValidate( 1234567 );
+	}
+
 	render() {
 		const {
 			translate,
 		} = this.props;
 
 		return (
-			<form onSubmit={ this.onCodeSubmit }>
+			<form onSubmit={ this.onSubmit }>
 				<FormTelInput
 					autoComplete="off"
 					disabled={ false }
@@ -37,11 +49,13 @@ class RecoveryPhoneValidationNotice extends Component {
 				<FormButtonsBar>
 					<FormButton
 						isPrimary={ true }
+						onClick={ this.onValidate }
 					>
 						{ translate( 'Validate' ) }
 					</FormButton>
 					<FormButton
 						isPrimary={ false }
+						onClick={ this.onResend }
 					>
 						{ translate( 'Resend' ) }
 					</FormButton>

@@ -28,6 +28,8 @@ import {
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryEmail,
 	resendAccountRecoveryEmailValidation,
+	resendAccountRecoveryPhoneValidation,
+	validateAccountRecoveryPhone,
 } from 'state/account-recovery/settings/actions';
 
 import {
@@ -38,6 +40,7 @@ import {
 	isAccountRecoveryEmailValidated,
 	isAccountRecoveryPhoneValidated,
 	hasSentAccountRecoveryEmailValidation,
+	hasSentAccountRecoveryPhoneValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
 } from 'state/account-recovery/settings/selectors';
 
@@ -115,7 +118,9 @@ const SecurityCheckup = React.createClass( {
 						/>
 					}
 					<RecoveryPhoneValidationNotice
-						onResend={ () => {} }
+						onResend={ this.props.resendAccountRecoveryPhoneValidation }
+						onValidate={ this.props.validateAccountRecoveryPhone }
+						hasSent={ this.props.hasSentPhoneValidation }
 					/>
 				</CompactCard>
 
@@ -135,6 +140,7 @@ export default connect(
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
 		accountRecoveryPhoneValidated: isAccountRecoveryPhoneValidated( state ),
+		hasSentPhoneValidation: hasSentAccountRecoveryPhoneValidation( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
@@ -142,5 +148,7 @@ export default connect(
 		updateAccountRecoveryPhone,
 		deleteAccountRecoveryPhone,
 		resendAccountRecoveryEmailValidation,
+		resendAccountRecoveryPhoneValidation,
+		validateAccountRecoveryPhone,
 	}
 )( localize( SecurityCheckup ) );
