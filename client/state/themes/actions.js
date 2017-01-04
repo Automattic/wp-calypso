@@ -603,7 +603,7 @@ export function deleteTheme( themeId, siteId ) {
 			themeId,
 			siteId,
 		} );
-		return wpcom.undocumented().deleteTheme( themeId, siteId )
+		return wpcom.undocumented().deleteThemeFromJetpack( siteId, themeId )
 			.then( () => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,
