@@ -23,7 +23,7 @@ import { createReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer( null, {
+export const items = createReducer( {}, {
 	[ BILLING_DATA_RECEIVE ]: ( state, { past, upcoming } ) => ( { ...state, past, upcoming } ),
 }, billingDataItemsSchema );
 

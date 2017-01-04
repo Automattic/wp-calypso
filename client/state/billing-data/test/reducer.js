@@ -94,10 +94,10 @@ describe( 'reducer', () => {
 			]
 		};
 
-		it( 'should default to null', () => {
+		it( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( null );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should store the billing history properly', () => {
@@ -156,7 +156,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.eql( null );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );
