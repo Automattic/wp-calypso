@@ -149,6 +149,7 @@ module.exports = React.createClass( {
 			this.resetAnalyticsData();
 
 			SignupActions.submitSignupStep( {
+				flowName: this.props.flowName,
 				processingMessage: this.translate( 'Setting up your site' ),
 				stepName: this.props.stepName,
 				form: this.state.form,

@@ -26,6 +26,7 @@ import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
 	domainItem,
+	flowName,
 	googleAppsCartItem,
 	isPurchasingItem,
 	siteUrl,
@@ -41,7 +42,8 @@ function createSiteWithCart( callback, dependencies, {
 		blog_title: siteTitle,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
-			vertical: surveyVertical || undefined
+			vertical: surveyVertical || undefined,
+			flow: flowName,
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -203,11 +205,11 @@ module.exports = {
 		} );
 	},
 
-	createSite( callback, { theme }, { site } ) {
+	createSite( callback, { theme }, { site, flowName } ) {
 		var data = {
 			blog_name: site,
 			blog_title: '',
-			options: { theme },
+			options: { theme, flow: flowName },
 			validate: false
 		};
 
