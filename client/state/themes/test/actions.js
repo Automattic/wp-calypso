@@ -15,6 +15,8 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
+	THEME_DELETE_SUCCESS,
+	THEME_DELETE_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -43,7 +45,8 @@ import {
 	requestTheme,
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
-	installTheme
+	installTheme,
+	deleteTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
@@ -833,6 +836,37 @@ describe( 'actions', () => {
 					siteId: 2211667,
 					themeId: 'pinboard-wpcom',
 					error: sinon.match( { message: 'The theme is already installed' } ),
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'deleteTheme', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/sites/2211667/themes/karuna/delete' )
+				.reply( 200 )
+				.post( '/rest/v1.1/sites/2211667/themes/blahblah/delete' )
+				.reply( 404, { code: 'unknown_theme' } );
+		} );
+
+		it( 'should dispatch success action on success response', () => {
+			return deleteTheme( 'karuna', 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_DELETE_SUCCESS,
+					siteId: 2211667,
+					themeId: 'karuna',
+				} );
+			} );
+		} );
+
+		it( 'should dispatch failure action on error response', () => {
+			return deleteTheme( 'blahblah', 2211667 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: THEME_DELETE_FAILURE,
+					siteId: 2211667,
+					themeId: 'blahblah',
+					error: sinon.match.truthy,
 				} );
 			} );
 		} );
