@@ -39,7 +39,9 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 			return translate( 'Successfully updated recovery email address.' );
 
 		default:
-			return translate( 'Successfully updated the recovery option.' );
+			return translate( 'Successfully updated the recovery option.', {
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
+			} );
 	}
 };
 
@@ -50,7 +52,9 @@ const getUpdateErrorMessage = ( target ) => {
 		case 'email':
 			return translate( 'An error occurred while updating your account recovery email.' );
 		default:
-			return translate( 'An error occurred while updating your account recovery options.' );
+			return translate( 'An error occurred while updating your account recovery options.', {
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
+			} );
 	}
 };
 
@@ -61,7 +65,9 @@ const getDeleteSuccessMessage = ( target ) => {
 		case 'email':
 			return translate( 'Successfully removed recovery email address.' );
 		default:
-			return translate( 'Successfully removed the recovery option.' );
+			return translate( 'Successfully removed the recovery option.', {
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
+			} );
 	}
 };
 
@@ -72,7 +78,9 @@ const getDeleteErrorMessage = ( target ) => {
 		case 'email':
 			return translate( 'An error occurred while deleting your account recovery email.' );
 		default:
-			return translate( 'An error occurred while deleting your account recovery options.' );
+			return translate( 'An error occurred while deleting your account recovery options.', {
+				comment: 'Recovery option: generic term for methods of account recovery, i.e emails or sms.',
+			} );
 	}
 };
 
