@@ -17,7 +17,7 @@ var i18nCalypso = require( '../cli' );
 /**
  * Internal variables/
  */
-var keywords, format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths;
+var keywords, format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths, linesFile, lines;
 
 function collect( val, memo ) {
 	memo.push( val );
@@ -36,6 +36,7 @@ program
 	.option( '-i, --input-file <filename>', 'files in which to search for translation methods', collect, [] )
 	.option( '-p, --project-name <name>', 'name of the project' )
 	.option( '-e, --extra <name>', 'Extra type of strings to add to the generated file (for now only `date` is available)' )
+	.option( '-l, --lines-filter <file>', 'Json file containing files and line numbers filters. Only included line numbers will be pased.' )
 	.option( '-a, --array-name <name>', 'name of variable in generated php file that contains array of method calls' )
 	.usage( '-o outputFile -i inputFile -f format [inputFile ...]' )
 	.on( '--help', function() {
@@ -50,6 +51,7 @@ format = program.format;
 outputFile = program.outputFile;
 arrayName = program.arrayName;
 projectName = program.projectName;
+linesFile = program.linesFilter;
 extras = Array.isArray( program.extra ) ? program.extra : ( program.extra ? [ program.extra ] : null );
 inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args;
 
@@ -65,6 +67,18 @@ inputPaths.forEach( function( inputFile ) {
 	}
 } );
 
+if ( linesFile ) {
+		if ( !fs.existsSync( linesFile ) ) {
+        console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
+    }
+
+		lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
+		for ( var line in lines ) {
+				lines[path.relative( __dirname, line ).replace( /^[\/.]+/, '' )] = lines[line];
+				delete lines[line];
+		}
+}
+
 var result = i18nCalypso( {
 	keywords: keywords,
 	output: outputFile,
@@ -72,6 +86,7 @@ var result = i18nCalypso( {
 	inputPaths: inputPaths,
 	format: format,
 	extras: extras,
+	lines: lines,
 	projectName: projectName
 } );
 
