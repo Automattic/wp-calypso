@@ -60,3 +60,10 @@ export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
 		! isAccountRecoveryEmailValidated( state ) &&
 		! hasSentAccountRecoveryEmailValidation( state );
 };
+
+export const shouldPromptAccountRecoveryPhoneValidationNotice = ( state ) => {
+	return ! isAccountRecoveryPhoneActionInProgress( state ) &&
+		!! getAccountRecoveryPhone( state ) &&
+		! isAccountRecoveryPhoneValidated( state ) &&
+		! hasSentAccountRecoveryPhoneValidation( state );
+};

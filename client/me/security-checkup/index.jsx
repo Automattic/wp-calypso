@@ -43,6 +43,7 @@ import {
 	hasSentAccountRecoveryEmailValidation,
 	hasSentAccountRecoveryPhoneValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
+	shouldPromptAccountRecoveryPhoneValidationNotice,
 } from 'state/account-recovery/settings/selectors';
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
@@ -118,7 +119,7 @@ const SecurityCheckup = React.createClass( {
 							showDismiss={ false }
 						/>
 					}
-					{ this.shouldShowPhoneValidationNotice() &&
+					{ this.props.shouldPromptPhoneValidationNotice &&
 						<RecoveryPhoneValidationNotice
 							onResend={ this.props.resendAccountRecoveryPhoneValidation }
 							onValidate={ this.props.validateAccountRecoveryPhone }
@@ -146,6 +147,7 @@ export default connect(
 		accountRecoveryPhoneValidated: isAccountRecoveryPhoneValidated( state ),
 		validatingAccountRecoveryPhone: isValidatingAccountRecoveryPhone( state ),
 		hasSentPhoneValidation: hasSentAccountRecoveryPhoneValidation( state ),
+		shouldPromptPhoneValidationNotice: shouldPromptAccountRecoveryPhoneValidationNotice( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
