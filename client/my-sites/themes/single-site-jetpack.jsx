@@ -113,7 +113,7 @@ export default connectOptions(
 									return getScreenshotOption( theme ).label;
 								} }
 								trackScrollPage={ props.trackScrollPage }
-								queryWpcom= { true }
+								queryWpcom={ true }
 							/>
 						</div>
 					}
