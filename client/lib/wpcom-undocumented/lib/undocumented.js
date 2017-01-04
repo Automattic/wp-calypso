@@ -211,6 +211,35 @@ Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlu
 	);
 };
 
+/*
+ * Retrieve all Jetpack settings of a site with id siteId
+ *
+ * @param {int} [siteId]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/settings/' }, fn );
+};
+
+/*
+ * Update any Jetpack settings on the site with id siteId to the specified settings
+ *
+ * @param {int} [siteId]
+ * @param {object} [settings]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) {
+	//@TODO: implement and test this endpoint, it's currently not working
+	return this.wpcom.req.post(
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/settings/', body: JSON.stringify( settings ), json: true },
+		fn
+	);
+};
+
 /**
  * Update WordPress core install on the site with id siteId
  *
