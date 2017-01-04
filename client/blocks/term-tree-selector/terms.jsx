@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 import {
 	debounce,
 	difference,
@@ -82,7 +82,7 @@ const TermTreeSelectorList = React.createClass( {
 	componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
-		this.virtualScroll = null;
+		this.list = null;
 
 		this.termIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
@@ -111,7 +111,7 @@ const TermTreeSelectorList = React.createClass( {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.list.forceUpdateGrid();
 		}
 
 		if ( this.props.terms !== prevProps.terms ) {
@@ -120,12 +120,11 @@ const TermTreeSelectorList = React.createClass( {
 	},
 
 	recomputeRowHeights: function() {
-		if ( ! this.virtualScroll ) {
+		if ( ! this.list ) {
 			return;
 		}
 
-		this.virtualScroll.recomputeRowHeights();
-		this.virtualScroll.forceUpdate();
+		this.list.recomputeRowHeights();
 
 		// Compact mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
@@ -294,8 +293,8 @@ const TermTreeSelectorList = React.createClass( {
 		this.debouncedSearch();
 	},
 
-	setVirtualScrollRef( ref ) {
-		this.virtualScroll = ref;
+	setListRef( ref ) {
+		this.list = ref;
 	},
 
 	renderItem( item, _recurse = false ) {
@@ -389,6 +388,14 @@ const TermTreeSelectorList = React.createClass( {
 		);
 	},
 
+	cellRendererWrapper( { key, style, ...rest } ) {
+		return (
+			<div key={ key } style={ style }>
+				{ this.renderRow( rest ) }
+			</div>
+		);
+	},
+
 	render() {
 		const rowCount = this.getRowCount();
 		const isCompact = this.isCompact();
@@ -416,15 +423,15 @@ const TermTreeSelectorList = React.createClass( {
 						searchTerm={ this.state.searchTerm }
 						onSearch={ this.onSearch } />
 				) }
-				<VirtualScroll
-					ref={ this.setVirtualScrollRef }
+				<List
+					ref={ this.setListRef }
 					width={ this.getResultsWidth() }
 					height={ isCompact ? this.getCompactContainerHeight() : 300 }
 					onRowsRendered={ this.setRequestedPages }
 					rowCount={ rowCount }
 					estimatedRowSize={ ITEM_HEIGHT }
 					rowHeight={ this.getRowHeight }
-					rowRenderer={ this.renderRow }
+					rowRenderer={ this.cellRendererWrapper }
 					noRowsRenderer={ this.renderNoResults }
 					className="term-tree-selector__results" />
 			</div>
