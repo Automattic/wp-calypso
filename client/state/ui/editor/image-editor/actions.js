@@ -3,9 +3,11 @@
  */
 import {
 	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_COMPUTED_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
+	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
@@ -50,6 +52,13 @@ export function setImageEditorAspectRatio( ratio ) {
 	};
 }
 
+export function setImageEditorDefaultAspectRatio( ratio ) {
+	return {
+		type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
+		ratio
+	};
+}
+
 export function setImageEditorFileInfo( src, fileName, mimeType, title ) {
 	return {
 		type: IMAGE_EDITOR_SET_FILE_INFO,
@@ -67,6 +76,16 @@ export function setImageEditorCropBounds( topBound, leftBound, bottomBound, righ
 		leftBound,
 		bottomBound,
 		rightBound
+	};
+}
+
+export function imageEditorComputedCrop( topRatio, leftRatio, widthRatio, heightRatio ) {
+	return {
+		type: IMAGE_EDITOR_COMPUTED_CROP,
+		topRatio,
+		leftRatio,
+		widthRatio,
+		heightRatio
 	};
 }
 

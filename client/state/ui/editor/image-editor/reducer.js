@@ -8,9 +8,11 @@ import { combineReducers } from 'redux';
  */
 import {
 	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_COMPUTED_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
+	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
@@ -57,6 +59,10 @@ export function hasChanges( state = false, action ) {
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return false;
+
+		case IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO:
+		case IMAGE_EDITOR_COMPUTED_CROP:
+			return state;
 	}
 
 	return state;
@@ -121,6 +127,7 @@ export function cropBounds( state = defaultCropBounds, action ) {
 export function crop( state = defaultCrop, action ) {
 	switch ( action.type ) {
 		case IMAGE_EDITOR_CROP:
+		case IMAGE_EDITOR_COMPUTED_CROP:
 			return Object.assign( {}, state, {
 				topRatio: action.topRatio,
 				leftRatio: action.leftRatio,
@@ -149,6 +156,7 @@ export function crop( state = defaultCrop, action ) {
 export function aspectRatio( state = AspectRatios.FREE, action ) {
 	switch ( action.type ) {
 		case IMAGE_EDITOR_SET_ASPECT_RATIO:
+		case IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO:
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
