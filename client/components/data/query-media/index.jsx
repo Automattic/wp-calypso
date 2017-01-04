@@ -5,22 +5,15 @@ import { Component, PropTypes } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import debug from 'debug';
 
 /**
  * Internal dependencies
  */
-import { isRequestingMedia } from 'state/selectors';
 import { requestMedia } from 'state/media/actions';
-
-/**
- * Module variables
- */
-const log = debug( 'calypso:query-media' );
 
 class QueryMedia extends Component {
 	componentWillMount() {
-		this.request( this.props );
+		this.props.request( this.props.siteId, this.props.query );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -29,14 +22,7 @@ class QueryMedia extends Component {
 			return;
 		}
 
-		this.request( nextProps );
-	}
-
-	request( props ) {
-		if ( ! props.requesting ) {
-			log( 'Request media for site %d using query %o', props.siteId, props.query );
-			props.request( props.siteId, props.query );
-		}
+		nextProps.request( nextProps.siteId, nextProps.query );
 	}
 
 	render() {
@@ -47,7 +33,6 @@ class QueryMedia extends Component {
 QueryMedia.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	query: PropTypes.object,
-	requesting: PropTypes.bool,
 	request: PropTypes.func
 };
 
@@ -56,13 +41,7 @@ QueryMedia.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
-		const { siteId, query } = ownProps;
-
-		return {
-			requesting: isRequestingMedia( state, siteId, query )
-		};
-	},
+	null,
 	( dispatch ) => {
 		return bindActionCreators( {
 			request: requestMedia
