@@ -31,6 +31,7 @@ import {
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
+	isInstallingTheme,
 	isThemePremium,
 	isThemePurchased,
 } from '../selectors';
@@ -1574,6 +1575,33 @@ describe( 'themes selectors', () => {
 		);
 
 			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isInstallingTheme', () => {
+		it( 'given no site, should return false', () => {
+			const installing = isInstallingTheme( {
+				themes: {
+					themeInstalls: {}
+				}
+			} );
+
+			expect( installing ).to.be.false;
+		} );
+
+		it( 'given a site, should return true if theme is currently being installed', () => {
+			const installing = isInstallingTheme(
+				{
+					themes: {
+						themeInstalls: {
+							2916284: true
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( installing ).to.be.true;
 		} );
 	} );
 
