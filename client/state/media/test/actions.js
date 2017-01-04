@@ -18,7 +18,9 @@ describe( 'actions', () => {
 				expect( action ).to.eql( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
-					media: [ { ID: 42, title: 'flowers' } ]
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: undefined,
+					query: undefined
 				} );
 			} );
 		} );
@@ -30,7 +32,24 @@ describe( 'actions', () => {
 				expect( action ).to.eql( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
-					media: [ { ID: 42, title: 'flowers' } ]
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: undefined,
+					query: undefined
+				} );
+			} );
+		} );
+
+		context( 'query', () => {
+			it( 'should return an action object', () => {
+				const action = receiveMedia( 2916284, [ { ID: 42, title: 'flowers' } ],
+					1, { search: 'flowers' } );
+
+				expect( action ).to.eql( {
+					type: MEDIA_RECEIVE,
+					siteId: 2916284,
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: 1,
+					query: { search: 'flowers' }
 				} );
 			} );
 		} );
