@@ -9,6 +9,7 @@ var React = require( 'react' ),
 
 import { AutoSizer, InfiniteLoader, Grid } from 'react-virtualized';
 import { connect } from 'react-redux';
+import fill from 'lodash/fill';
 
 /**
  * Internal dependencies
@@ -193,14 +194,12 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
+		this._gridItems = this.props.media;
+
 		if ( this.props.mediaHasNextPage ) {
-			this._gridItems = this.props.media.concat(
-				Array.apply( null, new Array( this.props.batchSize ) ).map( () => {
-					return { loading: true };
-				} )
+			this._gridItems = this._gridItems.concat(
+				fill( Array( this.props.batchSize ), { loading: true } )
 			);
-		} else {
-			this._gridItems = this.props.media;
 		}
 
 		this._columnCount = Math.floor( 1 / this.props.mediaScale );
