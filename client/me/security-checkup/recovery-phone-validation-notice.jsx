@@ -48,9 +48,13 @@ class RecoveryPhoneValidationNotice extends Component {
 	render() {
 		const {
 			translate,
+			isValidating,
+			hasSent,
 		} = this.props;
 
 		const validationCodeLength = 8;
+		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
+		const resendButtonText = hasSent ? translate( 'Sent' ) : translate( 'Resend' );
 
 		return (
 			<form onSubmit={ this.onSubmit }>
@@ -69,17 +73,17 @@ class RecoveryPhoneValidationNotice extends Component {
 				<FormButtonsBar>
 					<FormButton
 						isPrimary={ true }
-						disabled={ validationCodeLength !== this.state.candidateCode.length }
+						disabled={ ! isValidating || validationCodeLength !== this.state.candidateCode.length }
 						onClick={ this.onValidate }
 					>
-						{ translate( 'Validate' ) }
+						{ validateButtonText }
 					</FormButton>
 					<FormButton
 						isPrimary={ false }
 						disabled={ this.props.hasSent }
 						onClick={ this.onResend }
 					>
-						{ translate( 'Resend' ) }
+						{ resendButtonText }
 					</FormButton>
 				</FormButtonsBar>
 			</form>

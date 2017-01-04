@@ -37,6 +37,7 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
+	isValidatingAccountRecoveryPhone,
 	isAccountRecoveryEmailValidated,
 	isAccountRecoveryPhoneValidated,
 	hasSentAccountRecoveryEmailValidation,
@@ -122,6 +123,7 @@ const SecurityCheckup = React.createClass( {
 							onResend={ this.props.resendAccountRecoveryPhoneValidation }
 							onValidate={ this.props.validateAccountRecoveryPhone }
 							hasSent={ this.props.hasSentPhoneValidation }
+							isValidating={ this.props.validatingAccountRecoveryPhone }
 						/>
 					}
 				</CompactCard>
@@ -142,6 +144,7 @@ export default connect(
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
 		accountRecoveryPhoneValidated: isAccountRecoveryPhoneValidated( state ),
+		validatingAccountRecoveryPhone: isValidatingAccountRecoveryPhone( state ),
 		hasSentPhoneValidation: hasSentAccountRecoveryPhoneValidation( state ),
 	} ),
 	{
