@@ -376,6 +376,13 @@ export const PostEditor = React.createClass( {
 			this.setState( this.getInitialState(), function() {
 				this.refs.editor.setEditorContent( '' );
 			} );
+		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
+			// Is a copy of an existing post.
+			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
+			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
+			this.setState( this.getInitialState(), function() {
+				this.refs.editor.setEditorContent( this.state.post.content );
+			} );
 		} else {
 			postEditState = this.getPostEditState();
 			post = postEditState.post;

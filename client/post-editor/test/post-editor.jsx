@@ -174,5 +174,53 @@ describe( 'PostEditor', function() {
 
 			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
 		} );
+
+		it( 'is a copy and it should set the copied content', function() {
+			const tree = TestUtils.renderIntoDocument(
+				<PostEditor
+					preferences={ {} }
+					sites={ new SitesList() }
+					{ ...defaultProps }
+				/>
+			);
+
+			const content = 'copied content';
+			tree.setState( {
+				isNew: true,
+				hasContent: true,
+				isDirty: false,
+			} );
+
+			sandbox.stub( PostEditStore, 'get' ).returns( { content: content } );
+
+			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.onEditedPostChange();
+
+			expect( tree.refs.editor.setEditorContent ).to.have.been.calledWith( content );
+		} );
+
+		it( 'should not set the copied content more than once', function() {
+			const tree = TestUtils.renderIntoDocument(
+				<PostEditor
+					preferences={ {} }
+					sites={ new SitesList() }
+					{ ...defaultProps }
+				/>
+			);
+
+			const content = 'copied content';
+			tree.setState( {
+				isNew: true,
+				hasContent: true,
+				isDirty: true,
+			} );
+
+			sandbox.stub( PostEditStore, 'get' ).returns( { content: content } );
+
+			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.onEditedPostChange();
+
+			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
+		} );
 	} );
 } );
