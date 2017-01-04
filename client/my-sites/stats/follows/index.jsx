@@ -56,7 +56,7 @@ const StatsFollows = React.createClass( {
 		const { followType, followersList, followList, perPage, translate } = this.props;
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 
 				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + followType }>
