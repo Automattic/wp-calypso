@@ -39,10 +39,10 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 			return translate( 'Successfully updated recovery email address.' );
 
 		default:
-			// "Recovery option" here is a generic term for all the possible ways we provid for account recovery.
-			// e.g. an email and a sms number are the recovery options we are providing at the moment.
-			// As this default case is for capturing accidental unimplemented ones, we use this generic term here.
-			return translate( 'Successfully updated the recovery option.' );
+			return translate( 'Successfully updated the recovery option.', {
+				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
+					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+			} );
 	}
 };
 
@@ -53,7 +53,10 @@ const getUpdateErrorMessage = ( target ) => {
 		case 'email':
 			return translate( 'An error occurred while updating your account recovery email.' );
 		default:
-			return translate( 'An error occurred while updating your account recovery options.' );
+			return translate( 'An error occurred while updating your account recovery options.', {
+				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
+					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+			} );
 	}
 };
 
@@ -64,9 +67,10 @@ const getDeleteSuccessMessage = ( target ) => {
 		case 'email':
 			return translate( 'Successfully removed recovery email address.' );
 		default:
-			// "Recovery option" here is a generic term for all the possible ways we provid for account recovery.
-			// For more details, please see the comment in getUpdateSuccessMessage()
-			return translate( 'Successfully removed the recovery option.' );
+			return translate( 'Successfully removed the recovery option.', {
+				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
+					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+			} );
 	}
 };
 
@@ -77,9 +81,10 @@ const getDeleteErrorMessage = ( target ) => {
 		case 'email':
 			return translate( 'An error occurred while deleting your account recovery email.' );
 		default:
-			// "Recovery option" here is a generic term for all the possible ways we provid for account recovery.
-			// For more details, please see the comment in getUpdateSuccessMessage()
-			return translate( 'An error occurred while deleting your account recovery options.' );
+			return translate( 'An error occurred while deleting your account recovery options.', {
+				comment: 'Recovery option here is a generic term for all the ways for account recovery.' +
+					'e.g. emails and sms numbers are two ways we are providing at the moment.'
+			} );
 	}
 };
 
