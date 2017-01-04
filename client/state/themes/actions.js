@@ -375,7 +375,7 @@ export function installTheme( themeId, siteId ) {
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
-				dispatch( receiveTheme( theme ) );
+				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
