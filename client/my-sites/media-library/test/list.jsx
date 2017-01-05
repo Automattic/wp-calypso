@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import { noop, toArray } from 'lodash';
 import React from 'react';
 import mockery from 'mockery';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +21,8 @@ const DUMMY_SITE_ID = 2916284;
 
 describe( 'MediaLibraryList item selection', function() {
 	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
-		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
+		MediaActions, fixtures, Dispatcher, MediaList, wrapper,
+		mediaList, LocalizedMediaList;
 
 	useFakeDom();
 	useMockery();
@@ -64,6 +66,7 @@ describe( 'MediaLibraryList item selection', function() {
 		} );
 
 		MediaList = require( '../list' ).MediaLibraryList;
+		LocalizedMediaList = localize( MediaList );
 	} );
 
 	beforeEach( function() {
@@ -78,7 +81,7 @@ describe( 'MediaLibraryList item selection', function() {
 		beforeEach( () => {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
+					<LocalizedMediaList
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
@@ -160,7 +163,7 @@ describe( 'MediaLibraryList item selection', function() {
 		beforeEach( () => {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
+					<LocalizedMediaList
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
