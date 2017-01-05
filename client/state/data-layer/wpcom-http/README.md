@@ -23,7 +23,7 @@ Let's look at how this system works from a high-level perspective.
 Wow, how confusing!
 Well, this isn't promising to make everything easier, but it _is_ promising to make things worth while.
 
-### Step A: Component needs data
+### Step A: Component needs to update data
 
 A React component wants to indicate that a given post ought to be marked as liked.
 It's API includes two functions for accomplishing this: `likePost( siteId, postId )` and `unlikePost( siteId, postId )`.
