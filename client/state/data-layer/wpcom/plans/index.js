@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { fetch } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
 import {
@@ -18,7 +18,7 @@ import {
  * @returns {Object} HTTP request action
  */
 export const requestPlans = ( { dispatch }, action ) =>
-	dispatch( fetch( {
+	dispatch( http( {
 		apiVersion: '1.4',
 		method: 'GET',
 		path: '/plans',

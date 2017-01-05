@@ -7,7 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetch } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	plansReceiveAction,
 	plansRequestFailureAction,
@@ -31,7 +31,7 @@ describe( 'wpcom-api', () => {
 				requestPlans( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( fetch( {
+				expect( dispatch ).to.have.been.calledWith( http( {
 					apiVersion: '1.4',
 					method: 'GET',
 					path: '/plans',
