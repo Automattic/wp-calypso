@@ -17,6 +17,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import Main from 'components/main';
 import Manage from './manage';
 import { navigation, siteSelection } from 'my-sites/controller';
+import Plans from 'my-sites/plans/main';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -175,10 +176,27 @@ const hosts = ( context ) => {
 		<Main>
 			<h2>Select a host</h2>
 			<Card>
-				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>WordPress.com</Button>
+				<Button href={ '/domains-prototype/manage/start/plans/' + domain }>WordPress.com</Button>
 				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Tumblr</Button>
 				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Squarespace</Button>
 			</Card>
+		</Main>
+	), context );
+};
+
+const plans = ( context ) => {
+	render( (
+		<Main>
+			<h2>Select a plan</h2>
+			
+			<CheckoutData>
+				<Plans
+					context={ context }
+					intervalType={ context.params.intervalType }
+					destinationType={ context.params.destinationType }
+					selectedFeature={ context.query.feature }
+				/>
+			</CheckoutData>,
 		</Main>
 	), context );
 };
@@ -265,6 +283,7 @@ export default function() {
 	page( '/domains-prototype/manage/landing-page/:domainName?', siteSelection, navigation, landingPage );
 	page( '/domains-prototype/manage/start/:domainName?', siteSelection, navigation, start );
 	page( '/domains-prototype/manage/start/hosts/:type?/:domainName?', siteSelection, navigation, hosts );
+	page( '/domains-prototype/manage/start/plans/:type?/:domainName?', siteSelection, navigation, plans );
 	page( '/domains-prototype/manage/start/connecting/:domainName?', siteSelection, navigation, connecting );
 	page( '/domains-prototype/manage/connect/:domainName?', siteSelection, navigation, connect );
 	page( '/domains-prototype/manage/connect-existing/:domainName?', siteSelection, navigation, connectExisting );
