@@ -68,20 +68,42 @@ function loadInitialStateFailed( error ) {
 }
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
-	let state;
-	reduxStore.subscribe( throttle( function() {
+	let lastState;
+
+	function save() {
+		console.log( 'saving redux tree' );
 		const nextState = reduxStore.getState();
-		if ( state && nextState === state ) {
+		if ( lastState && nextState === lastState ) {
+			console.log( 'skipped, no changes' );
 			return;
 		}
 
-		state = nextState;
+		lastState = nextState;
 
-		localforage.setItem( 'redux-state', serializeState( state ) )
+		console.time( 'serialize-state' );
+		const serializedState = serializeState( lastState );
+		console.timeEnd( 'serialize-state' );
+
+		console.time( 'serialize-save' );
+		console.time( 'serialize-set' );
+		localforage.setItem( 'redux-state', serializedState )
+			.then( () => {
+				console.timeEnd( 'serialize-save' );
+			} )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
-	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
+		console.timeEnd( 'serialize-set' );
+	}
+
+	let saver = save;
+	if ( global.requestIdleCallback ) {
+		saver = () => {
+			global.requestIdleCallback( save, { timeout: 5000 } );
+		};
+	}
+
+	reduxStore.subscribe( throttle( saver, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
 
 	return reduxStore;
 }
