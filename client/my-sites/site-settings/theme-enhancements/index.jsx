@@ -21,7 +21,11 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isModuleActive, isFetchingModules } from 'state/jetpack-settings/modules/selectors';
-import { getJetpackSettings, isRequestingJetpackSettings } from 'state/jetpack-settings/settings/selectors';
+import {
+	getJetpackSettings,
+	isRequestingJetpackSettings,
+	isUpdatingJetpackSettings
+} from 'state/jetpack-settings/settings/selectors';
 import { updateSettings } from 'state/jetpack-settings/settings/actions';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -76,12 +80,13 @@ class ThemeEnhancements extends Component {
 			fetchingSettings,
 			fetchingModuleData,
 			submittingForm,
+			updatingSettings,
 			selectedSiteId,
 			infiniteScrollModuleActive,
 			minilevenModuleActive,
 			translate
 		} = this.props;
-		const isFormPending = fetchingSettings || fetchingModuleData || submittingForm;
+		const isFormPending = fetchingSettings || fetchingModuleData || submittingForm || updatingSettings;
 
 		return (
 			<div>
@@ -228,7 +233,8 @@ export default connect(
 			infiniteScrollModuleActive: !! isModuleActive( state, selectedSiteId, 'infinite-scroll' ),
 			minilevenModuleActive: !! isModuleActive( state, selectedSiteId, 'minileven' ),
 			moduleSettings,
-			fetchingModuleData: !! ( fetchingModules || fetchingSettings )
+			fetchingModuleData: !! ( fetchingModules || fetchingSettings ),
+			updatingSettings: isUpdatingJetpackSettings( state, selectedSiteId ),
 		};
 	},
 	{
