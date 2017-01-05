@@ -14,6 +14,7 @@ import Card from 'components/card';
 import Checkout from 'my-sites/upgrades/checkout';
 import CheckoutData from 'components/data/checkout';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import Manage from './manage';
 import { navigation, siteSelection } from 'my-sites/controller';
@@ -22,7 +23,6 @@ import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import route from 'lib/route';
-import SectionHeader from 'components/section-header';
 import { setSection } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import SitePicker from 'components/site-selector';
@@ -47,8 +47,12 @@ const onAddDomain = ( suggestion ) => {
 	page( '/domains-prototype/select/' + suggestion.domain_name );
 };
 
+const back = () => {
+	window.history.back();
+};
+
 const header = ( text ) => {
-	return ( <SectionHeader label={ text }>🐬</SectionHeader> );
+	return ( <HeaderCake onClick={ back }>{ text }</HeaderCake> );
 };
 
 const search = ( context ) => {
@@ -126,13 +130,16 @@ const getManageScreen = ( domain ) => {
 	if ( ! domain ) {
 		return (
 			<Main>
-				<h2>Select a domain</h2>
+				{ 'Select a domain' }
 			</Main>
 		);
 	}
 
 	return (
-		<Manage domain={ domain } />
+		<Main>
+			{ header( 'Set up ' + domain ) }
+			<Manage domain={ domain } />
+		</Main>
 	);
 };
 
@@ -145,7 +152,8 @@ const landingPage = ( context ) => {
 	const domain = context.params.domainName;
 	render( (
 		<Main>
-			<h2 className={ styles.header }>Set up a landing page for { domain }</h2>
+			{ header( 'Landing page' ) }
+			<h3>Set up a landing page for { domain }</h3>
 			<p>I think we can probably just show the customizer here</p>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
@@ -156,7 +164,7 @@ const start = ( context ) => {
 	const domain = context.params.domainName;
 	render( (
 		<Main>
-			<h2>Start a site</h2>
+			{ header( 'Start a site' ) }
 			<Card>
 				<h3>What type site will { domain } be?</h3>
 				<Button href={ '/domains-prototype/manage/start/hosts/blog/' + domain }>A blog</Button>
@@ -174,7 +182,7 @@ const hosts = ( context ) => {
 	const domain = context.params.domainName;
 	render( (
 		<Main>
-			<h2>Select a host</h2>
+			{ header( 'Select a host' ) }
 			<Card>
 				<Button href={ '/domains-prototype/manage/start/plans/' + domain }>WordPress.com</Button>
 				<Button href={ '/domains-prototype/manage/start/connecting/' + domain }>Tumblr</Button>
@@ -187,8 +195,7 @@ const hosts = ( context ) => {
 const plans = ( context ) => {
 	render( (
 		<Main>
-			<h2>Select a plan</h2>
-			
+			{ header( 'Select a plan' ) }
 			<CheckoutData>
 				<Plans
 					context={ context }
@@ -205,7 +212,7 @@ const connecting = ( context ) => {
 	const domain = context.params.domainName;
 	render( (
 		<Main>
-			<h2>Connecting { domain }</h2>
+			{ header( 'Connecting ' + domain ) }
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>
 		</Main>
 	), context );
@@ -232,7 +239,8 @@ const connect = ( context ) => {
 
 	render( (
 		<Main>
-			<h2>Connect { domain } to an existing site</h2>
+			{ header( 'Connect' ) }
+			<h2 className={ styles.header }>Connect { domain } to an existing site</h2>
 			<form onSubmit={ ( event ) => connectSubmit( event, domain ) }>
 				<label>Enter the address of the site to connect { domain } to</label>
 				<FormTextInputWithAffixes type="text" placeholder="example.com" prefix="http://" />
@@ -252,6 +260,7 @@ const connectExisting = ( context ) => {
 	const domain = context.params.domainName;
 	render( (
 		<Main>
+			{ header( 'Connecting' ) }
 			<h2>Connecting { domain } to an http://sitename.com</h2>
 			<p>Some stuff</p>
 			<Button href={ '/domains-prototype/manage/' + domain }>Finish</Button>

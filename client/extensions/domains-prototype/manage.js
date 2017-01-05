@@ -8,7 +8,6 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Main from 'components/main';
 import styles from './styles';
 
 class Manage extends React.Component {
@@ -16,7 +15,7 @@ class Manage extends React.Component {
 	render() {
 		const { domain } = this.props;
 		return (
-			<Main wideLayout>
+			<div>
 				<h2 className={ styles.header }>What do you want to use { domain } for?</h2>
 				<Card href={ '/domains-prototype/manage/landing-page/' + domain }>
 					<h2 className={ styles.cardHeader }>Landing Page</h2>
@@ -47,8 +46,7 @@ class Manage extends React.Component {
 					<h2 className={ styles.cardHeader }>Advanced</h2>
 					<div>Make advanced changes to your domain; change the name servers or DNS.</div>
 				</Card>
-
-			</Main>
+			</div>
 		);
 	}
 }
