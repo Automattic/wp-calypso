@@ -11,6 +11,7 @@ import {
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import {
 	makeTour,
 	Tour,
@@ -48,11 +49,14 @@ export const DesignShowcaseWelcomeTour = makeTour(
 	>
 		<Step name="init" placement="right" next="search">
 			<p>
-				{ 'From this page you can change the design of your site. Want to see how to search for your ideal style?' }
+				{
+					translate( 'On this page, you can explore our many themes. ' +
+						"Want to learn how to find the design that fits the site you're building?" )
+				}
 			</p>
 			<ButtonRow>
 				<Next step="search">{ translate( "Let's go!" ) }</Next>
-				<Quit>{ translate( 'No thanks.' ) }</Quit>
+				<Quit>{ translate( 'No, thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -63,7 +67,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			next="theme-options"
 		>
 			<p>
-				{ 'Here you can search for themes and apply filters.' }
+				{ translate( 'Search for your ideal theme by feature, look, or topic — you can use words like "business", "photography", or "food".' ) }
 			</p>
 			<ButtonRow>
 				<Next step="theme-options" />
@@ -79,7 +83,13 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			shouldScrollTo
 		>
 			<p>
-				{ 'Here you can access all the extra theme options.' }
+				{
+					translate( 'Scroll down to discover more themes. Found anything you like? ' +
+						'Try clicking the three dots — {{icon/}} — for more theme options.', {
+							components: { icon: <Gridicon icon="ellipsis" /> }
+						}
+					)
+				}
 			</p>
 			<Continue
 				icon="ellipsis"
@@ -94,8 +104,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 			placement="beside"
 		>
 			<p>
-				This menu contains everything you can do with a theme.
-				Try it out!
+				{ translate( 'This menu lets you preview and set up any theme, or learn more about it.' ) }
 			</p>
 			<ButtonRow>
 				<Quit primary>
