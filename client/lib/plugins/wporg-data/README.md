@@ -31,7 +31,8 @@ The data that is stored in the store looks like this:
 		version: "3.1.1"
 	},
 	nokismet: null // this plugin doesn't exist in on .org
-	}, etc.
+	},
+	// etc.
 }
 ```
 
@@ -50,45 +51,41 @@ Returns a plugin object or null
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsDataStore = require( 'lib/plugins/wporg-data/store' );
+import PluginsDataStore from 'lib/plugins/wporg-data/store';
 
-module.exports = React.createClass( {
+export class YourComponent extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = this.getWPorgPlugins();
+	}
 
-	displayName: 'yourComponent',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		PluginsDataStore.on( 'change', this.refreshWPorgPlugins );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		PluginsDataStore.removeListener( 'change', this.refreshWPorgPlugins );
-	},
+	}
 
-	getInitialState: function() {
-		return this.getWPorgPlugins();
-	},
-
-	getWPorgPlugins: function() {
-
+	getWPorgPlugins() {
 		return {
 			akismet: PluginsDataStore.get( 'akismet' )
 		};
-	},
-
-	refreshWPorgPlugins: function() {
-		this.setState( this.getWPorgPlugins() );
-	},
-
-	render: function() {
-
 	}
 
-} );
+	refreshWPorgPlugins() {
+		this.setState( this.getWPorgPlugins() );
+	}
+
+	render() {
+		// ...
+	}
+}
 
 ```
 
@@ -109,25 +106,25 @@ Triggers api call to fetch the plugin data and update the store.
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsDataActions = require( 'lib/plugins/wporg-data/actions' );
+import PluginsDataActions from 'lib/plugins/wporg-data/actions';
 
-module.exports = React.createClass( {
-
-	displayName: 'yourComponent',
-
-	updatePlugin: function() {
+export class YourComponent extends Component {
+	updatePlugin() {
 		PluginsDataActions.fetchPluginData( this.props.plugin.slug );
-	},
-
-	render: function() {
-		<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 	}
 
-} );
+	render() {
+		return (
+			<button onClick={ this.updatePlugin }>
+				Update { this.props.plugin.name }
+			</button>
+		);
+	}
+}
 
 ```
