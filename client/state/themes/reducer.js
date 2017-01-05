@@ -18,6 +18,7 @@ import {
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_CLEAR_ACTIVATED,
+	THEME_DELETE_SUCCESS,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -307,6 +308,9 @@ export const queries = ( () => {
 		},
 		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes );
+		},
+		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
+			return applyToManager( state, siteId, 'removeItem', false, themeId );
 		},
 		[ SERIALIZE ]: ( state ) => {
 			return mapValues( state, ( { data, options } ) => ( { data, options } ) );

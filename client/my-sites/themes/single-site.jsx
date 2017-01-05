@@ -40,6 +40,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 					'purchase',
 					'activate',
 					'tryandcustomize',
+					'deleteTheme',
 					'separator',
 					'info',
 					'support',
