@@ -46,8 +46,7 @@ import {
 	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
-	getCustomizerUrl,
-	areSitePermalinksEditable
+	getCustomizerUrl
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -2271,52 +2270,6 @@ describe( 'selectors', () => {
 
 				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
-		} );
-	} );
-
-	describe( 'areSitePermalinksEditable()', () => {
-		it( 'should return false if site ID is not tracked', () => {
-			const permalinksEditable = areSitePermalinksEditable( {
-				sites: {
-					items: {}
-				}
-			}, 77203199 );
-
-			expect( permalinksEditable ).to.be.false;
-		} );
-
-		it( 'should return true if the permalinks structure contains postname', () => {
-			const permalinksEditable = areSitePermalinksEditable( {
-				sites: {
-					items: {
-						77203199: {
-							ID: 77203199,
-							options: {
-								permalink_structure: '/%postname%/'
-							}
-						}
-					}
-				}
-			}, 77203199 );
-
-			expect( permalinksEditable ).to.be.true;
-		} );
-
-		it( 'should return false if the permalinks structure does not contain postname', () => {
-			const permalinksEditable = areSitePermalinksEditable( {
-				sites: {
-					items: {
-						77203199: {
-							ID: 77203199,
-							options: {
-								permalink_structure: '/%year%/%month%/%ID%'
-							}
-						}
-					}
-				}
-			}, 77203199 );
-
-			expect( permalinksEditable ).to.be.false;
 		} );
 	} );
 } );

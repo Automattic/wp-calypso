@@ -38,7 +38,7 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
-import { getPostEdits, isEditedPostDirty, editedPostHasContent } from 'state/posts/selectors';
+import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -51,6 +51,7 @@ import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
+import { editedPostHasContent } from 'state/selectors';
 
 export const PostEditor = React.createClass( {
 	propTypes: {

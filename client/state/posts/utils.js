@@ -32,8 +32,6 @@ import stripHtml from 'lib/post-normalizer/rule-strip-html';
  */
 
 const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
-const REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/;
-const CONTENT_LENGTH_ASSUME_SET = 50;
 
 /**
  * Utility
@@ -250,13 +248,4 @@ export function normalizePostForApi( post ) {
 	}
 
 	return normalizeApiFlow( post );
-}
-
-/**
- * Check if the content is empty (ignoring empty tags)
- * @param  {string}  content Raw post content
- * @return {Boolean}         Whether it's considered empty
- */
-export function isEmptyContent( content ) {
-	return ! content || ( content.length < CONTENT_LENGTH_ASSUME_SET && REGEXP_EMPTY_CONTENT.test( content ) );
 }
