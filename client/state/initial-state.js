@@ -12,7 +12,6 @@ import { createReduxStore, reducer } from 'state';
 import {
 	SERIALIZE,
 	DESERIALIZE,
-	SERVER_DESERIALIZE
 } from 'state/action-types';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
@@ -31,7 +30,7 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
 	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
-		const serverState = reducer( window.initialReduxState, { type: SERVER_DESERIALIZE } );
+		const serverState = reducer( window.initialReduxState, { type: DESERIALIZE } );
 		return pick( serverState, Object.keys( window.initialReduxState ) );
 	}
 	return {};
