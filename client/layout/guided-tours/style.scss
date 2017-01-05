@@ -102,6 +102,11 @@
 	.button {
 		width: 100%;
 	}
+	.guided-tours__subtle-button, {
+		color: darken( $white, 20% );
+		background: none;
+		border: none;
+	}
 }
 
 .guided-tours__external-link,
