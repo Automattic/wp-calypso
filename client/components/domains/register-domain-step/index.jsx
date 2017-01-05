@@ -614,7 +614,7 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'not_mappable_forbidden_domain':
-				message = translate( 'Only the owner of the domain can map it\'s subdomains.' );
+				message = translate( 'Only the owner of the domain can map its subdomains.' );
 				break;
 
 			case 'not_mappable_invalid_tld':
