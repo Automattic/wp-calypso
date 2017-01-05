@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { find, defer } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -90,7 +89,8 @@ const SecurePaymentForm = React.createClass( {
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
 		event.preventDefault();
-		page( '/domains-prototype/success/testdomain.blog' );
+		window.location.href = this.props.redirectTo();
+
 		if ( false ) {
 			this.submitTransaction( event );
 		}

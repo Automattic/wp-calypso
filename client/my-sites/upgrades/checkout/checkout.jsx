@@ -184,6 +184,10 @@ const Checkout = React.createClass( {
 
 		this.props.clearPurchases();
 
+		if( this.props.selectedSite.options.is_domain_only ) {
+			return '/domains-prototype/manage/' + this.props.selectedSite.domain;
+		}
+
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 			// group all purchases into an array
