@@ -81,7 +81,7 @@ module.exports = React.createClass( {
 			debug( 'infinite-list positions loaded from store' );
 		} else {
 			debug( 'infinite-list positions reset for new list' );
-			newState = {
+			this.scrollState = {
 				firstRenderedIndex: 0,
 				topPlaceholderHeight: 0,
 				lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
@@ -90,19 +90,18 @@ module.exports = React.createClass( {
 			};
 		}
 		debug( 'infinite list mounting', newState );
-		this.setState( newState );
 	},
 
 	componentDidMount() {
 		if ( this._contextLoaded() ) {
-			this._setContainerY( this.state.scrollTop );
+			this._setContainerY( this.scrollState.scrollTop );
 		}
 
 		// only override browser history scroll if navigated via history
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
 			this._overrideHistoryScroll();
 		}
-		debug( 'setting scrollTop:', this.state.scrollTop );
+		debug( 'setting scrollTop:', this.scrollState.scrollTop );
 		this.updateScroll( {
 			triggeredByScroll: false
 		} );
@@ -173,13 +172,13 @@ module.exports = React.createClass( {
 
 		this.isScrolling = false;
 
-		this.setState( {
+		this.scrollState = {
 			firstRenderedIndex: 0,
 			topPlaceholderHeight: 0,
 			lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
 			bottomPlaceholderHeight: 0,
 			scrollTop: 0
-		} );
+		};
 	},
 
 	componentWillUnmount() {
@@ -266,8 +265,7 @@ module.exports = React.createClass( {
 		this.scrollHelper.scrollPosition = this.lastScrollTop;
 		this.scrollHelper.triggeredByScroll = options.triggeredByScroll;
 		this.scrollHelper.updatePlaceholderDimensions();
-
-		this.scrollHelper.scrollChecks( this.state );
+		this.scrollHelper.scrollChecks( this.scrollState );
 
 		if ( this.scrollHelper.stateUpdated ) {
 			newState = {
@@ -283,7 +281,7 @@ module.exports = React.createClass( {
 			this.lastScrollTop = -1;
 
 			debug( 'new scroll positions', newState, this.state );
-			this.smartSetState( newState );
+			this.scrollState = newState;
 			InfiniteListActions.storePositions( url, newState );
 		}
 
@@ -308,8 +306,8 @@ module.exports = React.createClass( {
 	getVisibleItemIndexes( options ) {
 		const container = ReactDom.findDOMNode( this ),
 			visibleItemIndexes = [],
-			firstIndex = this.state.firstRenderedIndex,
-			lastIndex = this.state.lastRenderedIndex,
+			firstIndex = this.scrollState.firstRenderedIndex,
+			lastIndex = this.scrollState.lastRenderedIndex,
 			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
 		let windowHeight, rect, children, i,
 			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
@@ -340,22 +338,22 @@ module.exports = React.createClass( {
 		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
 			spacerClassName = 'infinite-list__spacer';
 		let i,
-			lastRenderedIndex = this.state.lastRenderedIndex,
+			lastRenderedIndex = this.scrollState.lastRenderedIndex,
 			itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
 			debug( 'resetting lastRenderedIndex, currently at %s, %d items', lastRenderedIndex, this.props.items.length );
 			lastRenderedIndex = Math.min(
-				this.state.firstRenderedIndex +
+				this.scrollState.firstRenderedIndex +
 				this.scrollHelper.initialLastRenderedIndex(),
 				this.props.items.length - 1
 			);
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
 
-		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
+		debug( 'rendering %d to %d', this.scrollState.firstRenderedIndex, lastRenderedIndex );
 
-		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
+		for ( i = this.scrollState.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
 			itemsToRender.push( this.props.renderItem( this.props.items[ i ], i ) );
 		}
 
@@ -367,12 +365,12 @@ module.exports = React.createClass( {
 			<div { ...propsToTransfer }>
 				<div ref="topPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.topPlaceholderHeight } } />
+					style={ { height: this.scrollState.topPlaceholderHeight } } />
 				{ itemsToRender }
 				{ this.props.renderTrailingItems() }
 				<div ref="bottomPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.bottomPlaceholderHeight } } />
+					style={ { height: this.scrollState.bottomPlaceholderHeight } } />
 			</div>
 		);
 	},
@@ -398,7 +396,7 @@ module.exports = React.createClass( {
 	},
 
 	_resetScroll( event ) {
-		const position = this.state.scrollTop;
+		const position = this.scrollState.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
