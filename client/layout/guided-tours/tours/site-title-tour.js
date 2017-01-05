@@ -46,12 +46,16 @@ export const SiteTitleTour = makeTour(
 	>
 		<Step name="init" placement="right" next="click-settings">
 			<p>
-				Hey there! We noticed you haven't changed the title of your site yet.
-				Want to change it?
+				{
+					translate( "Hey there! We noticed you haven't changed the title of your site yet. Want to change it?" )
+				}
+			</p>
+			<p>
+				{ translate( 'The site title appears in places like the top of your web browser and in search results.' ) }
 			</p>
 			<ButtonRow>
-				<Next step="click-settings">Yes, please!</Next>
-				<Quit>No thanks</Quit>
+				<Next step="click-settings">{ translate( 'Yes, please!' ) }</Next>
+				<Quit>{ translate( 'No, thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -63,7 +67,14 @@ export const SiteTitleTour = makeTour(
 			shouldScrollTo
 		>
 			<Continue target="settings" step="site-title-input" click>
-				Click <strong><Gridicon icon="cog" size={ 24 } /> Settings</strong> to continue.
+				{
+					translate( 'Click {{strong}}{{icon/}} Settings{{/strong}} to continue.', {
+						components: {
+							icon: <Gridicon icon="cog" />,
+							strong: <strong />
+						}
+					} )
+				}
 			</Continue>
 		</Step>
 
@@ -73,12 +84,11 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<p>
-				You can change the site title here. The site title appears in places
-				like the top of your web browser and in search results.
+				{ translate( 'You can change the site title here. A good title can help others find your site.' ) }
 			</p>
 			<ButtonRow>
-				<Next step="site-tagline-input">Looks Good!</Next>
-				<Quit>Cancel</Quit>
+				<Next step="site-tagline-input">{ translate( 'Looks Good!' ) }</Next>
+				<Quit>{ translate( 'Cancel' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -88,12 +98,14 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<p>
-				This is the tagline of your site. It should explain what your site
-				is about in few words. It usually appears right bellow your site title.
+				{
+					translate( "While you're at it, why not add a tagline? It should explain what your site is about in a few words. " +
+						'It usually appears right below your site title.' )
+				}
 			</p>
 			<ButtonRow>
-				<Next step="click-save">Great!</Next>
-				<Quit>Cancel</Quit>
+				<Next step="click-save">{ translate( 'Great!' ) }</Next>
+				<Quit>{ translate( 'Cancel' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -103,18 +115,22 @@ export const SiteTitleTour = makeTour(
 			placement="below"
 		>
 			<Continue target="settings-site-profile-save" step="finish" click>
-				Don't forget to save your changes.
+				{ translate( "Don't forget to save your changes." ) }
 			</Continue>
 		</Step>
 
 		<Step name="finish" placement="center">
 			<p>
-				<strong>That's it!</strong> Your visitors can now easily identify your website by its title.
+				{ translate( "{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.", {
+					components: {
+						strong: <strong />
+					}
+				} ) }
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( "We're all done!" ) }</Quit>
 			</ButtonRow>
-			<Link href="https://learn.wordpress.com">
+			<Link href="https://en.support.wordpress.com/start">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
 		</Step>

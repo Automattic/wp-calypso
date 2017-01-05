@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import {
 	ButtonRow,
 	Continue,
@@ -39,13 +40,13 @@ export const ThemeSheetWelcomeTour = makeTour(
 		<Step name="init" placement="right" next="live-preview">
 			<p>
 				{
-					'This page shows all the details about a specific theme. ' +
-					'May I show you around?'
+					translate( 'This page shows all the details about a specific theme. ' +
+						'Ready for a little tour?' )
 				}
 			</p>
 			<ButtonRow>
 				<Next step="live-preview">{ translate( "Let's go!" ) }</Next>
-				<Quit>{ translate( 'No, thanks' ) }</Quit>
+				<Quit>{ translate( 'No, thanks.' ) }</Quit>
 			</ButtonRow>
 		</Step>
 
@@ -56,10 +57,10 @@ export const ThemeSheetWelcomeTour = makeTour(
 			next="close-preview"
 		>
 			<p>
-				{ 'Here you can see the design in action in a demo site.' }
+				{ translate( "Nothing beats seeing a theme in action. Try the live demo!" ) }
 			</p>
 			<ButtonRow>
-				<Continue step="close-preview" target="theme-sheet-preview" click />
+				<Continue icon="themes" step="close-preview" target="theme-sheet-preview" click />
 			</ButtonRow>
 		</Step>
 
@@ -71,11 +72,17 @@ export const ThemeSheetWelcomeTour = makeTour(
 		>
 			<p>
 				{
-					'This is the live demo. Take a look around, see if the design suits you! Then close the preview to return.'
+					translate( "This is what this theme looks like in action. Move around, click on things. Do you like what you're seeing?" )
 				}
 			</p>
 			<ButtonRow>
-				<Continue when={ not( isPreviewShowing ) } step="theme-docs" icon="cross" />
+				<Continue when={ not( isPreviewShowing ) } step="theme-docs">
+				{
+					translate( "Tap {{icon/}} to close the live demo.", {
+						components: { icon: <Gridicon icon="cross" /> }
+					} )
+				}
+				</Continue>
 			</ButtonRow>
 		</Step>
 
@@ -86,9 +93,8 @@ export const ThemeSheetWelcomeTour = makeTour(
 		>
 			<p>
 				{
-					'There\'s more to your theme than meets the eye! Unlock its ' +
-					'full potential, discover its features — everything is ' +
-					'in the documentation.'
+					translate( 'Each theme comes with a range of powerful features. ' +
+						'Learn more about unlocking its full potential and setting it up on your site.' )
 				}
 			</p>
 			<ButtonRow>
@@ -103,15 +109,12 @@ export const ThemeSheetWelcomeTour = makeTour(
 			next="back-to-list"
 		>
 			<p>
-				{
-					'This would activate the design you\'re currently seeing on your site.'
-				}
+				{ translate( 'Is this the right theme for you? This button would pick the design for your site.' ) }
 			</p>
 			<ButtonRow>
-				<Next step="back-to-list">{ translate( 'Got it' ) }</Next>
-				<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
-				<Quit />
+				<Next step="back-to-list">{ translate( 'Maybe later' ) }</Next>
 			</ButtonRow>
+			<Continue step="back-to-list" target=".theme__sheet-primary-button" click hidden />
 		</Step>
 
 		<Step name="back-to-list"
@@ -122,7 +125,10 @@ export const ThemeSheetWelcomeTour = makeTour(
 		>
 			<p>
 				{
-					'That\'s it! You can return to our design showcase anytime through here.'
+					translate( "That's it! " +
+						'You can click on {{strong}}All Themes{{/strong}} at any time to return to our design showcase.', {
+							components: { strong: <strong /> }
+						} )
 				}
 			</p>
 			<ButtonRow>
