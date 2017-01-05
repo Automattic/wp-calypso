@@ -24,7 +24,8 @@ const debug = debugModule( 'calypso:state' );
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
-export const SERIALIZE_THROTTLE = 500;
+const MINUTE_IN_MS = 1000 * 60;
+export const SERIALIZE_THROTTLE = MINUTE_IN_MS;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
