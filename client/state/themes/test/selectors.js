@@ -826,10 +826,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				}
+				'twentysixteen'
 			);
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen' );
 		} );
@@ -846,10 +843,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
+				'twentysixteen',
 				2916284
 			);
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
@@ -874,10 +868,7 @@ describe( 'themes selectors', () => {
 								}
 							}
 						},
-						{
-							id: 'twentysixteen',
-							stylesheet: 'pub/twentysixteen'
-						},
+						'twentysixteen',
 						77203074
 					);
 					expect( detailsUrl ).to.equal( 'https://example.net/wp-admin/themes.php?theme=twentysixteen' );
@@ -904,10 +895,7 @@ describe( 'themes selectors', () => {
 									}
 								}
 							},
-							{
-								id: 'twentysixteen',
-								stylesheet: 'pub/twentysixteen'
-							},
+							'twentysixteen',
 							77203074
 						);
 						expect( detailsUrl ).to.equal( 'https://example.net/wp-admin/themes.php?theme=twentysixteen' );
@@ -932,10 +920,7 @@ describe( 'themes selectors', () => {
 									}
 								}
 							},
-							{
-								id: 'twentysixteen',
-								stylesheet: 'pub/twentysixteen'
-							},
+							'twentysixteen',
 							77203074
 						);
 						expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.net' );
@@ -966,9 +951,7 @@ describe( 'themes selectors', () => {
 							}
 						}
 					},
-					{
-						id: 'mood'
-					}
+					'mood'
 				);
 				expect( supportUrl ).to.equal( '/theme/mood/setup' );
 			} );
@@ -992,9 +975,7 @@ describe( 'themes selectors', () => {
 							}
 						}
 					},
-					{
-						id: 'mood'
-					},
+					'mood',
 					2916284
 				);
 				expect( supportUrl ).to.equal( '/theme/mood/setup/example.wordpress.com' );
@@ -1021,9 +1002,7 @@ describe( 'themes selectors', () => {
 							}
 						}
 					},
-					{
-						id: 'twentysixteen'
-					}
+					'twentysixteen'
 				);
 				expect( supportUrl ).to.be.null;
 			} );
@@ -1047,9 +1026,7 @@ describe( 'themes selectors', () => {
 							}
 						}
 					},
-					{
-						id: 'twentysixteen'
-					},
+					'twentysixteen',
 					2916284
 				);
 				expect( supportUrl ).to.be.null;
@@ -1078,9 +1055,7 @@ describe( 'themes selectors', () => {
 							}
 						}
 					},
-					{
-						id: 'twentysixteen'
-					},
+					'twentysixteen',
 					77203074
 				);
 				expect( supportUrl ).to.be.null;
@@ -1101,10 +1076,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
-				}
+				'mood'
 			);
 			expect( helpUrl ).to.equal( '/theme/mood/support' );
 		} );
@@ -1128,9 +1100,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'mood'
-				},
+				'mood',
 				2916284
 			);
 			expect( helpUrl ).to.equal( '/theme/mood/support/example.wordpress.com' );
@@ -1152,10 +1122,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
+				'twentysixteen',
 				77203074
 			);
 			expect( helpUrl ).to.be.equal( '/theme/twentysixteen/support/example.net' );
@@ -1182,9 +1149,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'twentysixteen'
-				},
+				'twentysixteen',
 				2916284
 			);
 			expect( purchaseUrl ).to.be.null;
@@ -1209,9 +1174,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'mood'
-				},
+				'mood',
 				2916284
 			);
 			expect( purchaseUrl ).to.equal( '/checkout/example.wordpress.com/theme:mood' );
@@ -1235,10 +1198,7 @@ describe( 'themes selectors', () => {
 						items: {}
 					}
 				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				}
+				'twentysixteen'
 			);
 			expect( customizeUrl ).to.equal( '/customize' );
 		} );
@@ -1253,12 +1213,16 @@ describe( 'themes selectors', () => {
 								URL: 'https://example.wordpress.com'
 							}
 						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
 					}
 				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
+				'twentysixteen',
 				2916284
 			);
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
@@ -1302,7 +1266,7 @@ describe( 'themes selectors', () => {
 					} );
 
 					it( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
 						);
@@ -1311,7 +1275,7 @@ describe( 'themes selectors', () => {
 
 				context( 'on the server', () => {
 					it( 'should return customizer URL with un-suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
 					} );
 				} );
@@ -1354,7 +1318,7 @@ describe( 'themes selectors', () => {
 					} );
 
 					it( 'should return customizer URL with return arg and suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
 							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen-wpcom'
 						);
@@ -1363,7 +1327,7 @@ describe( 'themes selectors', () => {
 
 				context( 'on the server', () => {
 					it( 'should return customizer URL with suffixed theme ID', () => {
-						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen-wpcom' );
 					} );
 				} );
@@ -1383,9 +1347,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'twentysixteen'
-				}
+				'twentysixteen'
 			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
@@ -1402,9 +1364,7 @@ describe( 'themes selectors', () => {
 						}
 					}
 				},
-				{
-					id: 'mood'
-				}
+				'mood'
 			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );

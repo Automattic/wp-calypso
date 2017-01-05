@@ -79,11 +79,11 @@ export const ThemesList = React.createClass( {
 	renderTheme( theme, index ) {
 		return <Theme
 			key={ 'theme-' + theme.id }
-			buttonContents={ this.props.getButtonOptions( theme ) }
-			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme ) }
+			buttonContents={ this.props.getButtonOptions( theme.id ) }
+			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id ) }
 			onScreenshotClick={ this.props.onScreenshotClick }
 			onMoreButtonClick={ this.props.onMoreButtonClick }
-			actionLabel={ this.props.getActionLabel( theme ) }
+			actionLabel={ this.props.getActionLabel( theme.id ) }
 			index={ index }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }
