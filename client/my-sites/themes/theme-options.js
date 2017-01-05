@@ -99,7 +99,7 @@ const tryAndCustomizeOnJetpack = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
+	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
