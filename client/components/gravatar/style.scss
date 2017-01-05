@@ -6,8 +6,7 @@
 	border-radius: 50%;
 
 	&.is-placeholder {
-		background: lighten( $gray, 20% );
 		display: inline-block;
-		animation: pulse-light 0.8s ease-in-out infinite;
+		@include placeholder();
 	}
 }
