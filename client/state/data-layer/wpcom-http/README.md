@@ -74,8 +74,7 @@ Each of these functions will take the normal middleware arguments but the succes
 ```js
 // API Middleware, Post Like
 import { LIKE_POST } from 'state/action-types';
-import { local } from 'state/data-layer/utils';
-import { fetch } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
 import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
 
 /**
@@ -83,7 +82,7 @@ import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
  */
 const likePost = ( { dispatch }, action, next ) => {
 	// dispatch intent to issue HTTP request
-	dispatch( fetch( {
+	dispatch( http( {
 		method: 'POST',
 		path: '/sites/%s/posts/%d/likes/new',
 		pathArgs: [ action.siteId, action.postId ],
@@ -102,8 +101,8 @@ const likePost = ( { dispatch }, action, next ) => {
 	} ) );
 	
 	// feed LIKE_POST action along to reducers
-	// and skip additional middleware (the local part)
-	next( local( action ) );
+	// and skip additional data-layer middleware
+	next( action );
 }
 
 /**
@@ -113,25 +112,25 @@ const likePost = ( { dispatch }, action, next ) => {
  */
 const verifyLike = ( { dispatch }, { siteId, postId }, next, data ) => {
 	// this is a response to data coming in from the data layer,
-	// so skip any data middleware processing with `local`
-	dispatch( local( {
+	// so skip further data-layer middleware with next vs. dispatch
+	next( {
 		type: data.i_like ? LIKE_POST : UNLIKE_POST,
 		siteId,
 		postId,
 		likeCount: data.like_count,
-	} ) );
+	} );
 }
 
 /**
  * Called on failure from the HTTP middleware with `error` parameter
  */
 const undoLike = ( { dispatch }, { siteId, postId }, next, error ) => {
-	// skip data layer middleware with `local`
-	dispatch( local( {
+	// skip data-layer middleware
+	next( {
 		type: UNLIKE_POST,
 		siteId,
 		postId,
-	} ) );
+	} );
 }
 
 export default {
