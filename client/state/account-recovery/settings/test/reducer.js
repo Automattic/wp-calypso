@@ -17,6 +17,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 } from 'state/action-types';
 
 import { dummyData, dummyNewPhone, dummyNewEmail } from './test-data';
@@ -125,6 +127,15 @@ describe( '#account-recovery/settings reducer:', () => {
 		assert.isFalse( state.isUpdating[ arbitraryTargetName ] );
 	} );
 
+	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS action should set the hasSentValidation sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
+	} );
+
 	it( 'ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED action should unset the isUpdating sub field', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
@@ -159,5 +170,14 @@ describe( '#account-recovery/settings reducer:', () => {
 		} );
 
 		assert.isFalse( state.isDeleting[ arbitraryTargetName ] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION action should set hasSentValidation sub field', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+			target: arbitraryTargetName,
+		} );
+
+		assert.isTrue( state.hasSentValidation[ arbitraryTargetName ] );
 	} );
 } );

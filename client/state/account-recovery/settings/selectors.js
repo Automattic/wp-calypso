@@ -41,3 +41,14 @@ export const isAccountRecoveryEmailActionInProgress = ( state ) => {
 export const isAccountRecoveryPhoneActionInProgress = ( state ) => {
 	return ! isAccountRecoverySettingsReady( state ) || isUpdatingAccountRecoveryPhone( state ) || isDeletingAccountRecoveryPhone( state );
 };
+
+export const hasSentAccountRecoveryEmailValidation = ( state ) => {
+	return !! state.accountRecovery.settings.hasSentValidation.email;
+};
+
+export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
+	return ! isAccountRecoveryEmailActionInProgress( state ) &&
+		!! getAccountRecoveryEmail( state ) &&
+		! isAccountRecoveryEmailValidated( state ) &&
+		! hasSentAccountRecoveryEmailValidation( state );
+};
