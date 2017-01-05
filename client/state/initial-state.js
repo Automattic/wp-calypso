@@ -98,8 +98,19 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 	let saver = save;
 	if ( global.requestIdleCallback ) {
+		let saveScheduled;
 		saver = () => {
-			global.requestIdleCallback( save, { timeout: 5000 } );
+			if ( saveScheduled ) {
+				console.log( 'save scheduled with ric, skipping' );
+				return;
+			}
+			saveScheduled = true;
+			global.requestIdleCallback( ( deadline ) => {
+				console.log( 'i have %d to live', deadline.timeRemaining() );
+				saveScheduled = false;
+				save();
+				console.log( 'done with %d to live', deadline.timeRemaining() );
+			}, { timeout: 5000 } );
 		};
 	}
 
