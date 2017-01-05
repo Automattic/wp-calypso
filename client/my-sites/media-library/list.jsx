@@ -68,7 +68,7 @@ export const MediaLibraryList = React.createClass( {
 			scrollable: false,
 			onEditItem: noop,
 			padding: 5,
-			headingHeight: 33
+			headingHeight: 50
 		};
 	},
 
@@ -130,21 +130,23 @@ export const MediaLibraryList = React.createClass( {
 		const index = rowIndex * this._columnCount + columnIndex;
 		const item = this._gridItems[ index ];
 
-		style = {
-			...style,
-			top: style.top + this.props.padding,
-			left: style.left + this.props.padding,
-			width: style.width - this.props.padding * 2,
-			height: style.height - this.props.padding * 2,
-		};
-
 		if ( ! item ) {
 			return;
 		}
 
+		style = {
+			...style,
+			top: style.top + this.props.padding,
+			left: style.left + this.props.padding,
+			width: item.heading
+				? style.width * this._columnCount - this.props.padding * 2
+				: style.width - this.props.padding * 2,
+			height: style.height - this.props.padding * 2,
+		};
+
 		if ( item.heading ) {
 			return (
-				<h3 key={ key } style={ style }>{ item.heading }</h3>
+				<h3 key={ key } style={ style }><span>{ item.heading }</span></h3>
 			);
 		}
 

@@ -116,6 +116,27 @@
 	margin: 0 -5px;
 }
 
+.media-library__list h3 {
+	overflow: hidden;
+}
+
+.media-library__list h3 span {
+	padding-right: 5px;
+	position: absolute;
+		bottom: 0;
+
+	&:before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		position: absolute;
+			top: 60%;
+			left: 100%;
+		width: 10000px;
+	}
+}
+
 .media-library__list-item:hover .media-library__list-item-edit {
 	opacity: 1;
 }
