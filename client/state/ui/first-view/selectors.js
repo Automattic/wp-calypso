@@ -47,7 +47,7 @@ export function isUserEligible( state, config ) {
 		return false;
 	}
 
-	return moment( userStartDate ).isAfter( config.startDate );
+	return moment.utc( userStartDate ).isAfter( moment.utc( config.startDate ) );
 }
 
 export function isQueryStringEnabled( state, config ) {
