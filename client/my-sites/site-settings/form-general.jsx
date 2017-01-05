@@ -461,7 +461,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	relatedPostsOptions() {
-		const { fields, clickTracker, translate, isRequestingSettings } = this.props;
+		const { fields, translate, isRequestingSettings } = this.props;
 		if ( ! fields.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -470,61 +470,52 @@ class SiteSettingsFormGeneral extends Component {
 			<FormFieldset>
 				<ul id="settings-reading-relatedposts">
 					<li>
-						<FormLabel>
-							<FormRadio
-								name="jetpack_relatedposts_enabled"
-								value="0"
-								checked={ 0 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
-								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
-							<span>{ translate( 'Hide related content after posts' ) }</span>
-						</FormLabel>
+						<FormToggle
+							className="is-compact"
+							checked={ !! fields.jetpack_relatedposts_enabled }
+							disabled={ isRequestingSettings }
+							onChange={ this.handleToggle( 'jetpack_relatedposts_enabled' ) }>
+							<span className="site-settings__toggle-label">
+								{ translate( 'Hide related content after posts' ) }
+							</span>
+						</FormToggle>
 					</li>
-					<li>
-						<FormLabel>
-							<FormRadio
-								name="jetpack_relatedposts_enabled"
-								value="1"
-								checked={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
-								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
-							<span>{ translate( 'Show related content after posts' ) }</span>
-						</FormLabel>
-						<ul
-							id="settings-reading-relatedposts-customize"
-							className={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_headline }
-									disabled={ isRequestingSettings }
-									onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
-									<span className="site-settings__toggle-label">
+					{ !! fields.jetpack_relatedposts_enabled && (
+						<li>
+							<ul id="settings-reading-relatedposts-customize">
+								<li>
+									<FormToggle
+										className="is-compact"
+										checked={ !! fields.jetpack_relatedposts_show_headline }
+										disabled={ isRequestingSettings }
+										onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
+										<span className="site-settings__toggle-label">
+											{ translate(
+												'Show a "Related" header to more clearly separate the related section from posts'
+											) }
+										</span>
+									</FormToggle>
+								</li>
+								<li>
+									<FormToggle
+										className="is-compact"
+										checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+										disabled={ isRequestingSettings }
+										onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
+										<span className="site-settings__toggle-label">
 										{ translate(
-											'Show a "Related" header to more clearly separate the related section from posts'
+											'Use a large and visually striking layout'
 										) }
-									</span>
-								</FormToggle>
-							</li>
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
-									disabled={ isRequestingSettings }
-									onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
-									<span className="site-settings__toggle-label">
-									{ translate(
-										'Use a large and visually striking layout'
-									) }
-									</span>
-								</FormToggle>
-							</li>
-						</ul>
-						<RelatedContentPreview
-							enabled={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-							showHeadline={ fields.jetpack_relatedposts_show_headline }
-							showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
-					</li>
+										</span>
+									</FormToggle>
+								</li>
+							</ul>
+							<RelatedContentPreview
+								enabled={ true }
+								showHeadline={ fields.jetpack_relatedposts_show_headline }
+								showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
+						</li>
+					) }
 				</ul>
 			</FormFieldset>
 		);
