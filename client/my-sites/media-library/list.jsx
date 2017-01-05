@@ -161,7 +161,7 @@ export const MediaLibraryList = React.createClass( {
 		);
 	},
 
-	onSectionRendered( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
+	onSectionRendered: function( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
 		const startIndex = rowStartIndex * this._columnCount + columnStartIndex;
 		const stopIndex = rowStopIndex * this._columnCount + columnStopIndex;
 
