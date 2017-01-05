@@ -11,7 +11,7 @@ Turn on debugging in the JavaScript developer console to view details about what
 
 In `active-tests.js`, add your test info to the exported object:
 
-```
+```js
 module.exports = {
 	freeTrialButtonWording: {
 		datestamp: '20150216',
@@ -34,18 +34,18 @@ There are also several optional configuration settings available:
 
 * `allowAnyLocale` - Relaxes the locale restraint on the A/B test, allowing users of any locale to be allocated to a test.  Don't forget: this means strings will need to be translated.
 
-Next, in your code, require the `abtest` module's `abtest` method:
+Next, in your code, import the `abtest` method from the `abtest` module:
 
-```js
-var abtest = require( 'lib/abtest' ).abtest;
+```es6
+import { abtest } from 'lib/abtest';
 ```
 
 The exported `abtest` method takes a test name and returns one of the variations you defined in the config file.
 
-Here's how you would use it:
+Here's how you would use it to vary the text attribute of a button:
 
-```
-var buttonWording;
+```jsx
+let buttonWording;
 
 if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
     buttonWording = this.translate( 'Start Free Trial', { textOnly: true } );
@@ -65,15 +65,15 @@ Also, the user's variation is saved in local storage. You can see this in Chrome
 
 ## Determining whether the user is a participant in an A/B test
 
-If you want to determine whether the user is a participant in a specific A/B test, you can require the `abtest` module's `getABTestVariation` method:
+If you want to determine whether the user is a participant in a specific A/B test, you can import the `abtest` module's `getABTestVariation` method:
 
-```
-var getABTestVariation = require( 'lib/abtest' ).getABTestVariation;
+```es6
+import { getABTestVariation } from 'lib/abtest';
 
 // ...
 
 // currentVariation will either be the variation or null if the user is not participating in the test
-var currentVariation = getABTestVariation( 'freeTrialButtonWording' );
+const currentVariation = getABTestVariation( 'freeTrialButtonWording' );
 ```
 
 This is useful when your A/B test affects multiple pages and you just want to check on one page whether the user is a participant without assigning them to the test.
@@ -82,11 +82,11 @@ This is useful when your A/B test affects multiple pages and you just want to ch
 
 If you would like to manually add yourself to a variant group to test it out visually, you can do so by modifying the `localStorage` setting for the test.  For the example above, to add yourself to the `beginYourFreeTrial` group you would execute:
 
-```
+```es6
 // localStorage values are comprised of:
-// localStorage.setItem('ABTests','{"<testObjectKey>_<datestamp>":"<variationName>"}')
+// localStorage.setItem( 'ABTests', '{"<testObjectKey>_<datestamp>":"<variationName>"}' );
 
-localStorage.setItem('ABTests','{"freeTrialButtonWording_20150216":"beginYourFreeTrial"}')
+localStorage.setItem( 'ABTests', '{"freeTrialButtonWording_20150216":"beginYourFreeTrial"}' );
 ```
 
 The key used in the `ABTests` object above is comprised object key name from the test config object ( In our example `freeTrialButtonWording` ), followed by the `datestamp` of the test start date ( `20150216` in the example ).
