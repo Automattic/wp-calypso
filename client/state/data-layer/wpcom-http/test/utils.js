@@ -7,7 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { getData, getError, dispatchRequest } from '../utils.js';
+import { getData, getError, getProgress, dispatchRequest } from '../utils.js';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	describe( 'Utils', () => {
@@ -38,6 +38,15 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				const action = { type: 'SLUGGER' };
 
 				expect( getError( action ) ).to.be.null;
+			} );
+		} );
+
+		describe( '#getProgress', () => {
+			it( 'should return progress data if available', () => {
+				const progress = { total: 1234, loaded: 123 };
+				const action = { type: 'UPLOAD_PROGRESS', meta: { dataLayer: { progress } } };
+
+				expect( getProgress( action ) ).to.equal( progress );
 			} );
 		} );
 

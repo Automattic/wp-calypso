@@ -25,20 +25,32 @@ const fetcherMap = method => get( {
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
+export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
 const queueRequest = ( { dispatch }, action, next ) => {
 	const {
 		body,
+		formData,
 		method,
 		onSuccess,
 		onFailure,
+		onProgress,
 		path,
 		query,
 	} = action;
 
-	fetcherMap( method.toUpperCase() )( path, query, body )
-		.then( response => dispatch( extendAction( onSuccess, successMeta( response ) ) ) )
-		.catch( error => dispatch( extendAction( onFailure, failureMeta( error ) ) ) );
+	const request = fetcherMap( method.toUpperCase() )(
+		{ path, formData },
+		query,
+		body,
+		( error, data ) => !! error
+			? dispatch( extendAction( onFailure, failureMeta( error ) ) )
+			: dispatch( extendAction( onSuccess, successMeta( data ) ) )
+	);
+
+	if ( 'POST' === method && onProgress ) {
+		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );
+	}
 
 	next( action );
 };

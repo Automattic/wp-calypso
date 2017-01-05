@@ -20,6 +20,21 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
 export const getError = action => get( action, 'meta.dataLayer.error', null );
 
 /**
+ * @typedef {Object} ProgressData
+ * @property {number} loaded number of bytes already transferred
+ * @property {number} total total number of bytes to transfer
+ */
+
+/**
+ * Returns progress data from an HTTP request progress action if available
+ *
+ * @param {Object} action may contain HTTP progress data
+ * @returns {Object|null} progress data if available
+ * @returns {ProgressData}
+ */
+export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
+
+/**
  * Dispatches to appropriate function based on HTTP request meta
  *
  * @see state/data-layer/wpcom-http/actions#fetch creates HTTP requests
