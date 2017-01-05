@@ -121,7 +121,6 @@
 }
 
 .media-library__list h3 span {
-	padding-right: 5px;
 	position: absolute;
 		bottom: 0;
 
@@ -132,8 +131,14 @@
 		height: 1px;
 		position: absolute;
 			top: 60%;
-			left: 100%;
+			left: calc( 100% + 5px );
 		width: 10000px;
+	}
+
+	&:empty {
+		background: lighten( $gray, 20% );
+		height: 22px;
+		width: 50px;
 	}
 }
 

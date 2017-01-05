@@ -138,13 +138,13 @@ export const MediaLibraryList = React.createClass( {
 			...style,
 			top: style.top + this.props.padding,
 			left: style.left + this.props.padding,
-			width: item.heading
+			width: 'heading' in item
 				? style.width * this._columnCount - this.props.padding * 2
 				: style.width - this.props.padding * 2,
 			height: style.height - this.props.padding * 2,
 		};
 
-		if ( item.heading ) {
+		if ( 'heading' in item ) {
 			return (
 				<h3 key={ key } style={ style }><span>{ item.heading }</span></h3>
 			);
@@ -259,7 +259,7 @@ export const MediaLibraryList = React.createClass( {
 	getRowHeight: function( { index } ) {
 		const item = this._gridItems[ index * this._columnCount ];
 
-		if ( item && item.heading ) {
+		if ( item && 'heading' in item ) {
 			return this.props.headingHeight;
 		}
 
@@ -306,6 +306,14 @@ export const MediaLibraryList = React.createClass( {
 
 			items.push( item );
 		} );
+
+		if ( ! this.props.media.length ) {
+			items.push( {
+				heading: '',
+			} );
+
+			items.push( ...Array( this._columnCount - 1 ) );
+		}
 
 		if ( this.props.mediaHasNextPage ) {
 			items.push( ...fill( Array( this.props.batchSize ), {
