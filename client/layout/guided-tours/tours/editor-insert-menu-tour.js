@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
 
@@ -19,6 +20,7 @@ import {
 	isEnabled,
 	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
+import { getPreference } from 'state/preferences/selectors';
 import { isDesktop } from 'lib/viewport';
 import Gridicon from 'components/gridicon';
 
@@ -36,7 +38,18 @@ class RepositioningStep extends Step {
 		clearInterval( this.interval );
 	}
 
+	render() {
+		if ( this.props.isEditorModeVisual ) {
+			return super.render();
+		}
+		return null;
+	}
+
 }
+
+const ConnectedStep = connect( state => ( {
+	isEditorModeVisual: 'html' !== getPreference( state, 'editor-mode' ),
+} ) )( RepositioningStep );
 
 export const EditorInsertMenuTour = makeTour(
 	<Tour
@@ -49,7 +62,7 @@ export const EditorInsertMenuTour = makeTour(
 			isDesktop,
 		) }
 	>
-		<RepositioningStep
+		<ConnectedStep
 			arrow="left-top"
 			name="init"
 			placement="beside"
@@ -77,6 +90,6 @@ export const EditorInsertMenuTour = makeTour(
 			<ButtonRow>
 				<Quit primary>{ translate( 'Got it' ) }</Quit>
 			</ButtonRow>
-		</RepositioningStep>
+		</ConnectedStep>
 	</Tour>
 );
