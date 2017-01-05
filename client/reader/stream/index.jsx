@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -218,8 +218,8 @@ export default class ReaderStream extends React.Component {
 		this.props.store.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
 
-		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
+		KeyboardShortcuts.on( 'move-selection-down', throttle( this.selectNextItem, 17 ) ); // only call once per frame max
+		KeyboardShortcuts.on( 'move-selection-up', throttle( this.selectPrevItem, 17 ) );
 		KeyboardShortcuts.on( 'open-selection', this.showSelectedPost );
 		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
 		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
