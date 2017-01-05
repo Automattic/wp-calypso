@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should update settings in the items object', () => {
+		it( 'should replace settings in the items object when settings are already loaded for a site', () => {
 			const siteId = 12345678,
 				stateIn = {
 					12345678: SETTINGS_FIXTURE[ siteId ]
@@ -87,6 +87,22 @@ describe( 'reducer', () => {
 					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
 					settings: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+			} );
+		} );
+
+		it( 'should update settings in the items object', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: SETTINGS_FIXTURE[ siteId ]
+				},
+				action = {
+					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
+					siteId,
+					settings: { test_setting: 123 }
 				};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
