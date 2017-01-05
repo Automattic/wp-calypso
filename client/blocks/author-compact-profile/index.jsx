@@ -40,7 +40,8 @@ const AuthorCompactProfile = React.createClass( {
 
 		const hasAuthorName = has( author, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, author.name );
-		const classes = classnames( 'author-compact-profile', {
+		const classes = classnames( {
+			'author-compact-profile': true,
 			'has-author-link': ! hasMatchingAuthorAndSiteNames,
 			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
 		} );

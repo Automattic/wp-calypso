@@ -56,7 +56,7 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = f
 	);
 
 	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ 96 } site={ fakeSite } />;
-	const feedIconElement = hasAvatar || showPlaceholder && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const feedIconElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
 	const iconElements = [ siteIconElement, feedIconElement ];
 
 	return (

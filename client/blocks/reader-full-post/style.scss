@@ -189,8 +189,11 @@
 		white-space: nowrap;
 
 		&::after {
-			@include long-content-fade( $size: 15% );
 			height: 40px;
+		}
+
+		&:not( .is-placeholder )::after {
+			@include long-content-fade( $size: 15% );
 		}
 	}
 
