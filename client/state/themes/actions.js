@@ -431,21 +431,6 @@ export function installAndTryAndCustomize( themeId, siteId ) {
 }
 
 /**
- * thin wrapper arround installAndTryAndCustomize so it can be used int theme action
- *
- * @param  {String}   themeId      WP.com Theme ID
- * @param  {String}   siteId       Jetpack Site ID
- * @return {Function}              Action thunk
- */
-export function installWpcomThemeAndTryAndCustomize( themeId, siteId ) {
-	//Add -wpcom suffix. This suffix tells the endpoint that we want to
-	//install WordPress.com theme. Without the suffix endpoint would look
-	//for theme in .org
-	const suffixedThemeId = themeId + '-wpcom';
-	return installAndTryAndCustomize( suffixedThemeId, siteId );
-}
-
-/**
  * Triggers a network request to install and activate a specific theme on a given
  * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
  * theme from WordPress.com. Otherwise, install from WordPress.org.
