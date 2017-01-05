@@ -13,10 +13,9 @@ import { protectForm } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
-import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormToggle from 'components/forms/form-toggle';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -36,7 +35,6 @@ class ThemeEnhancements extends Component {
 
 		this.state = {};
 
-		this.onCheckboxChange = this.onCheckboxChange.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
 	}
 
@@ -58,13 +56,22 @@ class ThemeEnhancements extends Component {
 		return fieldValue;
 	}
 
-	onCheckboxChange( event ) {
-		const currentTargetName = event.currentTarget.name,
-			currentTargetChecked = !! event.currentTarget.checked;
+	isFieldTruthy( fieldName ) {
+		switch ( fieldName ) {
+			case 'wp_mobile_excerpt':
+			case 'wp_mobile_featured_images':
+				return this.state[ fieldName ] === 'enabled';
+		}
 
-		this.setState( {
-			[ currentTargetName ]: this.sanitizeFieldValue( currentTargetName, currentTargetChecked )
-		} );
+		return !! this.state[ fieldName ];
+	}
+
+	handleToggle( name ) {
+		return () => {
+			this.setState( {
+				[ name ]: this.sanitizeFieldValue( name, ! this.isFieldTruthy( name ) )
+			} );
+		};
 	}
 
 	onSubmitForm( event ) {
@@ -121,27 +128,29 @@ class ThemeEnhancements extends Component {
 						{
 							infiniteScrollModuleActive && (
 								<div className="theme-enhancements__module-settings is-indented">
-									<FormLabel>
-										<FormCheckbox
-											onChange={ this.onCheckboxChange }
-											disabled={ isFormPending }
-											checked={ !! this.state.infinite_scroll }
-											name="infinite_scroll" />
-										<span>{ translate( 'Scroll infinitely (Shows 7 posts on each load)' ) }</span>
-									</FormLabel>
+									<FormToggle
+										className="theme-enhancements__module-settings-toggle is-compact"
+										checked={ this.isFieldTruthy( 'infinite_scroll' ) }
+										disabled={ isFormPending }
+										onChange={ this.handleToggle( 'infinite_scroll' ) }>
+										<span>
+											{ translate(
+												'Scroll infinitely (Shows 7 posts on each load)'
+											) }
+										</span>
+									</FormToggle>
 
-									<FormLabel>
-										<FormCheckbox
-											onChange={ this.onCheckboxChange }
-											disabled={ isFormPending }
-											checked={ !! this.state.infinite_scroll_google_analytics }
-											name="infinite_scroll_google_analytics" />
+									<FormToggle
+										className="theme-enhancements__module-settings-toggle is-compact"
+										checked={ this.isFieldTruthy( 'infinite_scroll_google_analytics' ) }
+										disabled={ isFormPending }
+										onChange={ this.handleToggle( 'infinite_scroll_google_analytics' ) }>
 										<span>
 											{ translate(
 												'Track each infinite Scroll post load as a page view in Google Analytics'
 											) }
 										</span>
-									</FormLabel>
+									</FormToggle>
 								</div>
 							)
 						}
@@ -165,36 +174,41 @@ class ThemeEnhancements extends Component {
 						{
 							minilevenModuleActive && (
 								<div className="theme-enhancements__module-settings is-indented">
-									<FormLabel>
-										<FormCheckbox
-											onChange={ this.onCheckboxChange }
-											disabled={ isFormPending }
-											checked={ this.state.wp_mobile_excerpt === 'enabled' }
-											name="wp_mobile_excerpt" />
-										<span>{ translate( 'Use excerpts instead of full posts on front page and archive pages' ) }</span>
-									</FormLabel>
+									<FormToggle
+										className="theme-enhancements__module-settings-toggle is-compact"
+										checked={ this.isFieldTruthy( 'wp_mobile_excerpt' ) }
+										disabled={ isFormPending }
+										onChange={ this.handleToggle( 'wp_mobile_excerpt' ) }>
+										<span>
+											{ translate(
+												'Use excerpts instead of full posts on front page and archive pages'
+											) }
+										</span>
+									</FormToggle>
 
-									<FormLabel>
-										<FormCheckbox
-											onChange={ this.onCheckboxChange }
-											disabled={ isFormPending }
-											checked={ this.state.wp_mobile_featured_images === 'enabled' }
-											name="wp_mobile_featured_images" />
-										<span>{ translate( 'Hide all featured images' ) }</span>
-									</FormLabel>
+									<FormToggle
+										className="theme-enhancements__module-settings-toggle is-compact"
+										checked={ this.isFieldTruthy( 'wp_mobile_featured_images' ) }
+										disabled={ isFormPending }
+										onChange={ this.handleToggle( 'wp_mobile_featured_images' ) }>
+										<span>
+											{ translate(
+												'Hide all featured images'
+											) }
+										</span>
+									</FormToggle>
 
-									<FormLabel>
-										<FormCheckbox
-											onChange={ this.onCheckboxChange }
-											disabled={ isFormPending }
-											checked={ !! this.state.wp_mobile_app_promos }
-											name="wp_mobile_app_promos" />
+									<FormToggle
+										className="theme-enhancements__module-settings-toggle is-compact"
+										checked={ this.isFieldTruthy( 'wp_mobile_app_promos' ) }
+										disabled={ isFormPending }
+										onChange={ this.handleToggle( 'wp_mobile_app_promos' ) }>
 										<span>
 											{ translate(
 												'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
 											) }
 										</span>
-									</FormLabel>
+									</FormToggle>
 								</div>
 							)
 						}
