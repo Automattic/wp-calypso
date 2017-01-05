@@ -241,8 +241,22 @@ const connectExisting = ( context ) => {
 	), context );
 };
 
+const domains = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	render( (
+		<Main>
+			<h1>Create a website</h1>
+			<div>Choosing an address is the best way to get started with your very own site</div>
+			<Button href="/start/domain-first">Get started</Button>
+		</Main> ),
+		context
+	);
+};
+
 export default function() {
-	page( '/domains-prototype', search );
+	page( '/domains-prototype', domains );
+	page( '/domains-prototype/search', search );
 	page( '/domains-prototype/select/:domainName?', select );
 	page( '/domains-prototype/checkout/:domainName?', checkout );
 	page( '/domains-prototype/success/:domainName?', success );
