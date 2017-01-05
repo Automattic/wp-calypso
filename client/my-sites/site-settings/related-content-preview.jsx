@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormLabel from 'components/forms/form-label';
 
-const RelatedContentPreview = ( { enabled, showHeadline, showThumbnails, translate } ) => {
+const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
 	const posts = [
 		{
 			image: '/calypso/images/related-posts/cat-blog.png',
@@ -44,7 +44,7 @@ const RelatedContentPreview = ( { enabled, showHeadline, showThumbnails, transla
 	];
 
 	return (
-		<div id="settings-reading-relatedposts-preview" className={ ! enabled && 'disabled-block' }>
+		<div id="settings-reading-relatedposts-preview">
 			<FormLabel>{ translate( 'Preview:' ) }</FormLabel>
 
 			<div className="site-settings__related-posts">

@@ -511,7 +511,6 @@ class SiteSettingsFormGeneral extends Component {
 								</li>
 							</ul>
 							<RelatedContentPreview
-								enabled={ true }
 								showHeadline={ fields.jetpack_relatedposts_show_headline }
 								showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
 						</li>
