@@ -15,6 +15,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -43,6 +45,8 @@ import {
 	onAccountRecoverySettingsDeleteFailed,
 	onAccountRecoverySettingsUpdateSuccess,
 	onAccountRecoverySettingsDeleteSuccess,
+	onResentAccountRecoveryEmailValidationSuccess,
+	onResentAccountRecoveryEmailValidationFailed,
 } from './account-recovery';
 
 /**
@@ -155,6 +159,8 @@ export const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: onAccountRecoverySettingsUpdateFailed,
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: onAccountRecoverySettingsDeleteSuccess,
 	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: onAccountRecoverySettingsDeleteFailed,
+	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS ]: onResentAccountRecoveryEmailValidationSuccess,
+	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: onResentAccountRecoveryEmailValidationFailed,
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},

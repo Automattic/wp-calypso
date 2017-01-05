@@ -19,12 +19,14 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
+import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
 
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryEmail,
+	resendAccountRecoveryEmailValidation,
 } from 'state/account-recovery/settings/actions';
 
 import {
@@ -32,7 +34,11 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
+	isAccountRecoveryEmailValidated,
+	hasSentAccountRecoveryEmailValidation,
+	shouldPromptAccountRecoveryEmailValidationNotice,
 } from 'state/account-recovery/settings/selectors';
+
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const SecurityCheckup = React.createClass( {
@@ -84,6 +90,11 @@ const SecurityCheckup = React.createClass( {
 						deleteEmail={ this.props.deleteAccountRecoveryEmail }
 						isLoading={ this.props.accountRecoveryEmailActionInProgress }
 					/>
+					{ this.props.shouldPromptEmailValidationNotice &&
+						<RecoveryEmailValidationNotice
+							onResend={ this.props.resendAccountRecoveryEmailValidation }
+						/>
+					}
 				</CompactCard>
 
 				<CompactCard>
@@ -112,14 +123,18 @@ export default connect(
 	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
+		accountRecoveryEmailValidated: isAccountRecoveryEmailValidated( state ),
+		hasSentEmailValidation: hasSentAccountRecoveryEmailValidation( state ),
+		primaryEmail: getCurrentUserEmail( state ),
+		shouldPromptEmailValidationNotice: shouldPromptAccountRecoveryEmailValidationNotice( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
-		primaryEmail: getCurrentUserEmail( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
 		deleteAccountRecoveryEmail,
 		updateAccountRecoveryPhone,
 		deleteAccountRecoveryPhone,
+		resendAccountRecoveryEmailValidation,
 	}
 )( localize( SecurityCheckup ) );
