@@ -6,7 +6,7 @@ import { local, mergeHandlers } from './utils';
 import httpHandlers from './wpcom-http';
 import wpcomHandlers from './wpcom';
 
-const handlerTree = mergeHandlers(
+const mergedHandlers = mergeHandlers(
 	httpHandlers,
 	wpcomHandlers,
 );
