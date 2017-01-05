@@ -25,7 +25,7 @@ the following tools, be sure to use paths that do not have spaces in them.
 3. Install [MSYS2](https://msys2.github.io/).  The default settings are fine.
 
 4. For the following commands and generally for working with Calypso, use the
-   `MSYS2 Shell` that's been added to your `Start` menu.
+   `MSYS2 Shell` that's been added to your `Start` menu. Run as administrator the program to avoid possible permission errors during the build.
 
 5. Make sure to follow the installation instructions for MSYS2 and update:
     ```
