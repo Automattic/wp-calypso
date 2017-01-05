@@ -23,6 +23,10 @@
 		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
 	}
 
+	&.is-placeholder {
+		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
+	}
+
 	&.is-paypal {
 		background-image: url( '/calypso/images/upgrades/paypal.svg' );
 		background-size: 70px;
