@@ -116,6 +116,7 @@ class ThemeEnhancements extends Component {
 			minilevenModuleActive,
 			translate
 		} = this.props;
+		const formPending = this.isFormPending();
 
 		return (
 			<div>
@@ -127,7 +128,7 @@ class ThemeEnhancements extends Component {
 						compact
 						primary
 						onClick={ this.onSubmitForm }
-						disabled={ this.isFormPending() }
+						disabled={ formPending }
 					>
 						{ submittingForm || updatingSettings
 							? translate( 'Saving…' )
@@ -149,6 +150,7 @@ class ThemeEnhancements extends Component {
 							siteId={ selectedSiteId }
 							moduleSlug="infinite-scroll"
 							label={ translate( 'Add support for infinite scroll to your theme.' ) }
+							disabled={ formPending }
 							/>
 
 						{
@@ -182,6 +184,7 @@ class ThemeEnhancements extends Component {
 							siteId={ selectedSiteId }
 							moduleSlug="minileven"
 							label={ translate( 'Optimize your site with a phone-friendly theme.' ) }
+							disabled={ formPending }
 							/>
 
 						{
