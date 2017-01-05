@@ -26,6 +26,14 @@ const createRequestsReducer = ( data ) => {
 	};
 };
 
+const createItemsReducer = () => {
+	return ( state, { siteId, settings } ) => {
+		return merge( {}, state, {
+			[ siteId ]: settings
+		} );
+	};
+};
+
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack settings updates
@@ -35,11 +43,8 @@ const createRequestsReducer = ( data ) => {
  * @return {Array}         Updated state
  */
 export const items = createReducer( {}, {
-	[ JETPACK_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => {
-		return merge( {}, state, {
-			[ siteId ]: settings
-		} );
-	}
+	[ JETPACK_SETTINGS_RECEIVE ]: createItemsReducer(),
+	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createItemsReducer()
 } );
 
 /**
