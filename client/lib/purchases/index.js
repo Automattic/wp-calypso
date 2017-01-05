@@ -68,7 +68,7 @@ function hasIncludedDomain( purchase ) {
 }
 
 function hasPaymentMethod( purchase ) {
-	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase );
+	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase ) || isPaidWithPayPalDirect( purchase );
 }
 
 function hasPrivateRegistration( purchase ) {
@@ -190,6 +190,10 @@ function isPaidWithCreditCard( purchase ) {
 	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
 }
 
+function isPaidWithPayPalDirect( purchase ) {
+	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryMoment;
+}
+
 function hasCreditCardData( purchase ) {
 	return Boolean( purchase.payment.creditCard.expiryMoment );
 }
@@ -209,6 +213,10 @@ function paymentLogoType( purchase ) {
 
 	if ( isPaidWithPaypal( purchase ) ) {
 		return 'paypal';
+	}
+
+	if ( isPaidWithPayPalDirect( purchase ) ) {
+		return 'placeholder';
 	}
 
 	return null;
@@ -252,6 +260,7 @@ export {
 	hasPrivateRegistration,
 	isCancelable,
 	isPaidWithCreditCard,
+	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
 	isExpired,
 	isExpiring,
