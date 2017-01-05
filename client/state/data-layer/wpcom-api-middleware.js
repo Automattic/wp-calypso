@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import handlerTree from './wpcom';
+import handlerMap from './wpcom';
+import { local } from './utils';
 
 /**
  * WPCOM Middleware API
@@ -24,28 +25,32 @@ import handlerTree from './wpcom';
  * The optimizations reduce function-calling and object
  * property lookup where possible.
  */
-export const middleware = handlers => store => next => action => {
-	const handlerChain = handlers[ action.type ];
+export const middleware = handlers => store => next => {
+	const localNext = action => next( local( action ) );
 
-	// if no handler is defined for the action type
-	// then pass it along the chain untouched
-	if ( ! handlerChain ) {
-		return next( action );
-	}
+	return action => {
+		const handlerChain = handlers[ action.type ];
 
-	const meta = action.meta;
-	if ( meta ) {
-		const dataLayer = meta.dataLayer;
-
-		// if the action indicates that we should
-		// bypass the data layer, then pass it
-		// along the chain untouched
-		if ( true === dataLayer.doBypass ) {
+		// if no handler is defined for the action type
+		// then pass it along the chain untouched
+		if ( ! handlerChain ) {
 			return next( action );
 		}
-	}
 
-	return handlerChain.forEach( handler => handler( store, action, next ) )
+		const meta = action.meta;
+		if ( meta ) {
+			const dataLayer = meta.dataLayer;
+
+			// if the action indicates that we should
+			// bypass the data layer, then pass it
+			// along the chain untouched
+			if ( true === dataLayer.doBypass ) {
+				return next( action );
+			}
+		}
+
+		return handlerChain.forEach( handler => handler( store, action, localNext ) );
+	}
 };
 
-export default middleware( handlerTree );
+export default middleware( handlerMap );

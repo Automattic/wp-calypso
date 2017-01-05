@@ -60,12 +60,11 @@ describe( 'WordPress.com API Middleware', () => {
 		middleware( handlers )( store )( next )( action );
 
 		expect( next ).to.not.have.been.calledWith( action );
-		expect( adder ).to.have.been.calledWith( store, action, next );
+		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
 	it( 'should allow continuing the action down the chain', () => {
-		const sentinel = { type: 'SENTINEL' };
-		const adder = spy( () => next( sentinel ) );
+		const adder = spy( ( _store, _action, _next ) => _next( _action ) );
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -74,8 +73,8 @@ describe( 'WordPress.com API Middleware', () => {
 		middleware( handlers )( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
-		expect( next ).to.have.been.calledWith( sentinel );
-		expect( adder ).to.have.been.calledWith( store, action, next );
+		expect( next ).to.have.been.calledWith( local( action ) );
+		expect( adder ).to.have.been.calledWith( store, action );
 	} );
 
 	it( 'should call all given handlers (same list)', () => {
@@ -88,8 +87,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( adder ).to.have.been.calledWith( store, action, next );
-		expect( doubler ).to.have.been.calledWith( store, action, next );
+		expect( adder ).to.have.been.calledWith( store, action );
+		expect( doubler ).to.have.been.calledWith( store, action );
 		expect( next ).to.not.have.beenCalled;
 	} );
 
@@ -105,8 +104,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( handlers )( store )( next )( action );
 
-		expect( adder ).to.have.been.calledWith( store, action, next );
-		expect( doubler ).to.have.been.calledWith( store, action, next );
+		expect( adder ).to.have.been.calledWith( store, action );
+		expect( doubler ).to.have.been.calledWith( store, action );
 		expect( next ).to.not.have.beenCalled;
 	} );
 } );

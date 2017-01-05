@@ -78,11 +78,15 @@ The handlers are functions which take two arguments and whose return value, if a
 The type of a handler follows:
 
 ```js
-// middlewareHandler :: ReduxStore -> ReduxAction -> Dispatcher -> Any
+// middlewareHandler :: ReduxStore -> ReduxAction -> BypassingDispatcher -> Any
 const myHandler = ( store, action, next ) => { … }
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
+Also note that there is a distinction between the store's dispatcher and `next` passed in as input arguments.
+When dispatching through the store's `dispatch` function the action will start at the beginning of the entire middleware chain.
+When using `next` there will be data-layer-specific meta information added to the action which will cause all further data-layer middleware in the chain to ignore the action and pass it along untouched.
+This `next` dispatcher exists to prevent triggering endless loops inside the middleware, such as issuing an action from the middleware handler which then triggers the same handler again, which reissues a new action, etc…
 
 ```js
 const {
@@ -127,13 +131,15 @@ const syncChanges = ( { dispatch, getState }, action, next ) => {
 		.catch( () => {
 			// the request failed; give up and reset the
 			// spline to the former state; bypass all
-			// middleware/dispatch to reducers
-			next( local( reticulateSpline( oldSpline ) ) );
+			// further data-layer middleware by using
+			// next() instead of dispatch()
+			next( reticulateSpline( oldSpline ) );
 		} );
-	
+
 	// pass along action to reducers
-	// and bypass all middleware
-	next( local( action ) );
+	// and bypass all further
+	// data-layer middleware
+	next( action );
 };
 
 export default {
