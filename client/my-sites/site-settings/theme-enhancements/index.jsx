@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { pick, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,10 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackModuleSettings from 'components/data/query-jetpack-module-settings';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isModuleActive, isFetchingModules } from 'state/jetpack-settings/modules/selectors';
-import { getCurrentModuleSettings, isRequestingModuleSettings } from 'state/jetpack-settings/module-settings/selectors';
+import { getJetpackSettings, isRequestingJetpackSettings } from 'state/jetpack-settings/settings/selectors';
 import { updateSettings } from 'state/jetpack-settings/settings/actions';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -37,12 +37,7 @@ class ThemeEnhancements extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const moduleSettings = {
-			...nextProps.infiniteScrollModuleSettings,
-			...nextProps.minilevenModuleSettings
-		};
-
-		map( moduleSettings, ( settingValue, settingName ) => {
+		map( nextProps.moduleSettings, ( settingValue, settingName ) => {
 			if ( ! this.state.hasOwnProperty( settingName ) ) {
 				this.setState( { [ settingName ]: settingValue } );
 			}
@@ -91,8 +86,7 @@ class ThemeEnhancements extends Component {
 		return (
 			<div>
 				<QueryJetpackModules siteId={ selectedSiteId } />
-				<QueryJetpackModuleSettings siteId={ selectedSiteId } moduleSlug={ 'infinite-scroll' } />
-				<QueryJetpackModuleSettings siteId={ selectedSiteId } moduleSlug={ 'minileven' } />
+				<QueryJetpackSettings siteId={ selectedSiteId } />
 
 				<SectionHeader label={ translate( 'Theme Enhancements' ) }>
 					<Button
@@ -220,16 +214,21 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const fetchingModules = isFetchingModules( state, selectedSiteId );
-		const fetchingInfiniteScrollModuleSettings = isRequestingModuleSettings( state, selectedSiteId, 'infinite-scroll' );
-		const fetchingMinilevenModuleSettings = isRequestingModuleSettings( state, selectedSiteId, 'minileven' );
+		const fetchingSettings = isRequestingJetpackSettings( state, selectedSiteId );
+		const moduleSettings = pick( getJetpackSettings( state, selectedSiteId ), [
+			'infinite_scroll',
+			'infinite_scroll_google_analytics',
+			'wp_mobile_excerpt',
+			'wp_mobile_featured_images',
+			'wp_mobile_app_promos'
+		] );
 
 		return {
 			selectedSiteId,
 			infiniteScrollModuleActive: !! isModuleActive( state, selectedSiteId, 'infinite-scroll' ),
 			minilevenModuleActive: !! isModuleActive( state, selectedSiteId, 'minileven' ),
-			infiniteScrollModuleSettings: getCurrentModuleSettings( state, selectedSiteId, 'infinite-scroll' ),
-			minilevenModuleSettings: getCurrentModuleSettings( state, selectedSiteId, 'minileven' ),
-			fetchingModuleData: !! ( fetchingModules || fetchingInfiniteScrollModuleSettings || fetchingMinilevenModuleSettings )
+			moduleSettings,
+			fetchingModuleData: !! ( fetchingModules || fetchingSettings )
 		};
 	},
 	{
