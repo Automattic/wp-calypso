@@ -436,6 +436,7 @@ export function tryAndCustomize( themeId, siteId ) {
 				themeId,
 				siteId
 			} );
+			return;
 		}
 		const url = getThemeCustomizeUrl( getState(), theme, siteId );
 		page( url );
