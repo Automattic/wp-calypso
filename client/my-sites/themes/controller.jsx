@@ -107,7 +107,7 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		const cachedData = themesQueryCache.get( cacheKey );
 		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( receiveThemes( cachedData.themes ), siteId );
+			context.store.dispatch( receiveThemes( cachedData.themes, siteId ) );
 			context.renderCacheKey = context.path + cachedData.timestamp;
 			return next();
 		}
