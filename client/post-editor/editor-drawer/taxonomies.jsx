@@ -22,7 +22,7 @@ import TermTokenField from 'post-editor/term-token-field';
 import TermSelector from 'post-editor/editor-term-selector';
 
 function isSkippedTaxonomy( postType, taxonomy ) {
-	if ( includes( [ 'post_format', 'mentions' ], taxonomy ) ) {
+	if ( includes( [ 'post_format', 'mentions', 'xposts' ], taxonomy ) ) {
 		return true;
 	}
 
