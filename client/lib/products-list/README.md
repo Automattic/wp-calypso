@@ -4,7 +4,8 @@ Products List
 `products-list` is a collection of all the products users can have on WordPress.com, as returned from the `/products` REST API endpoint. It can be required into a file like:
 
 ```es6
-var productsList = require( 'lib/products-list' )();
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
 ```
 
 Currently `productsList` just has two public methods, `get()`, and `fetch()`:
