@@ -280,7 +280,10 @@ export const MediaLibraryList = React.createClass( {
 		} else if ( oneWeekAgo.isBefore( moment, 'day' ) ) {
 			return moment.format( 'dddd' );
 		} else if ( oneYearAgo.isBefore( moment, 'day' ) ) {
-			return moment.format( 'D MMMM' );
+			return moment.format( this.props.translate( '%(month)s %(day)s', {
+				comment: 'Date format.',
+				args: { day: 'D', month: 'MMMM' }
+			} ) );
 		}
 
 		return moment.format( 'LL' );
