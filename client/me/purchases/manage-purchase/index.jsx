@@ -26,6 +26,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPaidWithPayPalDirect,
 	isRedeemable,
 	isRefundable,
 	isRenewable,
@@ -324,6 +325,12 @@ const ManagePurchase = React.createClass( {
 
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = purchase.payment.creditCard.number;
+			} else if ( isPaidWithPayPalDirect( purchase ) ) {
+				paymentInfo = this.translate( 'expiring %(cardExpiry)s', {
+					args: {
+						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' )
+					},
+				} );
 			}
 
 			return (
