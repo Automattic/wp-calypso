@@ -197,6 +197,8 @@ export const MediaLibraryList = React.createClass( {
 				scrollTop={ scrollTop }
 				// Trigger update on change.
 				selectedItems={ this.props.mediaLibrarySelectedItems }
+				// Never show a hortizontal scrollbar.
+				style={ { overflowX: 'hidden' } }
 				width={ width } />
 		);
 	},
