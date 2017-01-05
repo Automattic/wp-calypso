@@ -408,8 +408,9 @@ export function clearActivated( siteId ) {
 }
 
 /**
- * Triggers a network request to install WordPress.com theme on Jetpack site.
+ * Triggers a network request to install theme on Jetpack site.
  * After installataion it switches page to the customizer
+ * See installTheme doc for install options.
  * Requires Jetpack 4.4
  *
  * @param  {String}   themeId      WP.com Theme ID
