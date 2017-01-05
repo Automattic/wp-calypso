@@ -33,14 +33,16 @@ describe( 'reducer', () => {
 		it( 'should set requesting value to true if request in progress', () => {
 			const state = requesting( undefined, {
 				type: POST_STATS_REQUEST,
-				stat: 'views',
 				siteId: 2916284,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'views', 'years' ],
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					2454: { views: true }
+					2454: {
+						'views,years': true
+					}
 				}
 			} );
 		} );
@@ -53,9 +55,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = requesting( previousState, {
 				type: POST_STATS_REQUEST,
-				stat: 'countComments',
 				siteId: 2916284,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'countComments' ],
 			} );
 
 			expect( state ).to.eql( {
@@ -76,9 +78,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = requesting( previousState, {
 				type: POST_STATS_REQUEST,
-				stat: 'views',
 				siteId: 2916284,
-				postId: 2455
+				postId: 2455,
+				fields: [ 'views' ]
 			} );
 
 			expect( state ).to.eql( {
@@ -97,9 +99,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = requesting( previousState, {
 				type: POST_STATS_REQUEST,
-				stat: 'views',
 				siteId: 2916285,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'views' ],
 			} );
 
 			expect( state ).to.eql( {
@@ -120,9 +122,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = requesting( previousState, {
 				type: POST_STATS_REQUEST_SUCCESS,
-				stat: 'views',
 				siteId: 2916284,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'views' ],
 			} );
 
 			expect( state ).to.eql( {
@@ -140,9 +142,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = requesting( previousState, {
 				type: POST_STATS_REQUEST_FAILURE,
-				stat: 'views',
 				siteId: 2916284,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'views' ],
 			} );
 
 			expect( state ).to.eql( {
@@ -189,15 +191,14 @@ describe( 'reducer', () => {
 		it( 'should index post stats by site ID, post id and stat', () => {
 			const state = items( null, {
 				type: POST_STATS_RECEIVE,
-				stat: 'views',
 				siteId: 2916284,
 				postId: 2454,
-				value: 2
+				stats: { views: 2, years: [] },
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					2454: { views: 2 }
+					2454: { views: 2, years: [] }
 				}
 			} );
 		} );
@@ -210,10 +211,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = items( previousState, {
 				type: POST_STATS_RECEIVE,
-				stat: 'countComments',
 				siteId: 2916284,
 				postId: 2454,
-				value: 3
+				stats: { countComments: 3 },
 			} );
 
 			expect( state ).to.eql( {
@@ -234,10 +234,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = items( previousState, {
 				type: POST_STATS_RECEIVE,
-				stat: 'views',
 				siteId: 2916284,
 				postId: 2455,
-				value: 3
+				stats: { views: 3 },
 			} );
 
 			expect( state ).to.eql( {
@@ -256,10 +255,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = items( previousState, {
 				type: POST_STATS_RECEIVE,
-				stat: 'views',
 				siteId: 2916285,
 				postId: 2454,
-				value: 3
+				stats: { views: 3 },
 			} );
 
 			expect( state ).to.eql( {
@@ -280,10 +278,9 @@ describe( 'reducer', () => {
 			}	);
 			const state = items( previousState, {
 				type: POST_STATS_RECEIVE,
-				stat: 'views',
 				siteId: 2916284,
 				postId: 2454,
-				value: 3
+				stats: { views: 3 },
 			} );
 
 			expect( state ).to.eql( {

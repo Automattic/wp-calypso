@@ -15,8 +15,8 @@ import {
 	POST_STATS_REQUEST_SUCCESS
 } from 'state/action-types';
 import {
-	receivePostStat,
-	requestPostStat
+	receivePostStats,
+	requestPostStats
 } from '../actions';
 
 describe( 'actions', () => {
@@ -28,14 +28,13 @@ describe( 'actions', () => {
 
 	describe( '#receivePostStat()', () => {
 		it( 'should return an action object', () => {
-			const action = receivePostStat( 'views', 2916284, 2454, 2 );
+			const action = receivePostStats( 2916284, 2454, { views: 2 } );
 
 			expect( action ).to.eql( {
 				type: POST_STATS_RECEIVE,
-				stat: 'views',
 				siteId: 2916284,
 				postId: 2454,
-				value: 2
+				stats: { views: 2 }
 			} );
 		} );
 	} );
@@ -44,8 +43,8 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views' )
-				.reply( 200, { views: 2 } )
+				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views%2Cyears' )
+				.reply( 200, { views: 2, years: {} } )
 				.get( '/rest/v1.1/sites/2916285/stats/post/2455?fields=views' )
 				.reply( 403, {
 					error: 'authorization_required',
@@ -54,42 +53,42 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
-			requestPostStat( 'views', 2916284, 2454 )( spy );
+			requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_STATS_REQUEST,
-				stat: 'views',
 				siteId: 2916284,
-				postId: 2454
+				postId: 2454,
+				fields: [ 'views', 'years' ],
 			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {
-			return requestPostStat( 'views', 2916284, 2454 )( spy ).then( () => {
+			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith(
-					receivePostStat( 'views', 2916284, 2454, 2 )
+					receivePostStats( 2916284, 2454, { views: 2, years: {} } )
 				);
 			} );
 		} );
 
 		it( 'should dispatch request success action when request completes', () => {
-			return requestPostStat( 'views', 2916284, 2454 )( spy ).then( () => {
+			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_STATS_REQUEST_SUCCESS,
-					stat: 'views',
 					siteId: 2916284,
-					postId: 2454
+					postId: 2454,
+					fields: [ 'views', 'years' ],
 				} );
 			} );
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return requestPostStat( 'views', 2916285, 2455 )( spy ).then( () => {
+			return requestPostStats( 2916285, 2455, [ 'views' ] )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_STATS_REQUEST_FAILURE,
-					stat: 'views',
 					siteId: 2916285,
 					postId: 2455,
+					fields: [ 'views' ],
 					error: sinon.match( { message: 'User cannot access this private blog.' } )
 				} );
 			} );
