@@ -79,7 +79,7 @@ export const ThemesList = React.createClass( {
 	renderTheme( theme, index ) {
 		return <Theme
 			key={ 'theme-' + theme.id }
-			buttonContents={ this.props.getButtonOptions( theme ) }
+			buttonContents={ this.props.getButtonOptions( theme.id ) }
 			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme ) }
 			onScreenshotClick={ this.props.onScreenshotClick }
 			onMoreButtonClick={ this.props.onMoreButtonClick }
