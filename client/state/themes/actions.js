@@ -34,6 +34,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
@@ -418,16 +419,26 @@ export function clearActivated( siteId ) {
  * @return {Function}              Action thunk
  */
 export function installAndTryAndCustomize( themeId, siteId ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
-				const theme = getTheme( getState(), siteId, themeId );
-				if ( ! theme ) {
-					return;
-				}
-				const url = getThemeCustomizeUrl( getState(), theme, siteId );
-				page( url );
+				dispatch( tryAndCustomize( themeId, siteId ) );
 			} );
+	};
+}
+
+export function tryAndCustomize( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		const theme = getTheme( getState(), siteId, themeId );
+		if ( ! theme ) {
+			dispatch( {
+				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
+				themeId,
+				siteId
+			} );
+		}
+		const url = getThemeCustomizeUrl( getState(), theme, siteId );
+		page( url );
 	};
 }
 
