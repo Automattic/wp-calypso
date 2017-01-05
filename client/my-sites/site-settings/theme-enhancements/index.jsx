@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pick, map } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import QueryJetpackModuleSettings from 'components/data/query-jetpack-module-set
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isModuleActive, isFetchingModules } from 'state/jetpack-settings/modules/selectors';
 import { getCurrentModuleSettings, isRequestingModuleSettings } from 'state/jetpack-settings/module-settings/selectors';
-import { updateModuleSettings } from 'state/jetpack-settings/module-settings/actions';
+import { updateSettings } from 'state/jetpack-settings/settings/actions';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
@@ -68,31 +68,10 @@ class ThemeEnhancements extends Component {
 		} );
 	}
 
-	updateSettingsForModule( module ) {
-		const { selectedSiteId } = this.props;
-		let fields = [];
-
-		switch ( module ) {
-			case 'infinite-scroll':
-				fields = [ 'infinite_scroll', 'infinite_scroll_google_analytics' ];
-				break;
-			case 'minileven':
-				fields = [ 'wp_mobile_excerpt', 'wp_mobile_featured_images', 'wp_mobile_app_promos' ];
-				break;
-		}
-
-		if ( ! fields.length ) {
-			return;
-		}
-
-		return this.props.updateModuleSettings( selectedSiteId, module, pick( this.state, fields ) );
-	}
-
 	onSubmitForm( event ) {
-		const { onSubmitForm } = this.props;
+		const { onSubmitForm, selectedSiteId } = this.props;
 
-		this.updateSettingsForModule( 'infinite-scroll' );
-		this.updateSettingsForModule( 'minileven' );
+		this.props.updateSettings( selectedSiteId, this.state );
 
 		onSubmitForm( event );
 	}
@@ -254,6 +233,6 @@ export default connect(
 		};
 	},
 	{
-		updateModuleSettings
+		updateSettings
 	}
 )( protectForm( localize( ThemeEnhancements ) ) );
