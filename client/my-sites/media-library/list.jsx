@@ -267,18 +267,21 @@ export const MediaLibraryList = React.createClass( {
 	formatDate: function( date ) {
 		const moment = this.props.moment( date );
 		const today = this.props.moment().startOf( 'day' );
-		const yesterday = today.clone().subtract( 1, 'days' );
-		const lastWeek = today.clone().subtract( 7, 'days' );
+		const yesterday = today.clone().subtract( 1, 'day' );
+		const oneWeekAgo = today.clone().subtract( 7, 'days' );
+		const oneYearAgo = today.clone().subtract( 1, 'year' );
 
 		if ( today.isSame( moment, 'day' ) ) {
 			return this.props.translate( 'Today' );
 		} else if ( yesterday.isSame( moment, 'day' ) ) {
 			return this.props.translate( 'Yesterday' );
-		} else if ( lastWeek.isBefore( moment, 'day' ) ) {
+		} else if ( oneWeekAgo.isBefore( moment, 'day' ) ) {
 			return moment.format( 'dddd' );
+		} else if ( oneYearAgo.isBefore( moment, 'day' ) ) {
+			return moment.format( 'D MMMM' );
 		}
 
-		return moment.format( 'D MMMM' );
+		return moment.format( 'LL' );
 	},
 
 	getGridItems: function() {
