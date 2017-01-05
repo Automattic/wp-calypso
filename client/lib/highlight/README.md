@@ -1,17 +1,28 @@
 highlight
 =========
 
-This module searches a given html string and wraps all matching strings with a `<mark>` or custom elements.
+This module searches a given html string and wraps all matching strings with a `<mark>` or a custom wrapper.
 
-If you give a custom element, it will be cloned every time it is added via `cloneNode()`
+If you give a custom element as a wrapper, it will be cloned every time it is added via `cloneNode()`
 
 # How to use
+```es6
+const html = '<div>hello world</div>';
+const highlighted = highlight( 'hello', html );
+```
+Will produce:
+```html
+<div><mark>hello</mark> world</div>
+```
 
-	var html = '<div>hello world</div>';
-	var highlighted = highlight( 'hello', html );
-	// <div><mark>hello</mark> world</div>
+Using a custom highlight wrapper:
+```es6
+const customWrapper = document.createElement('span');
+customWrapper.setAttribute( 'class', 'my-wrapper' );
 	
-	var customWrapper = document.createElement('span');
-	customWrapper.setAttribute( 'class', 'my-wrapper' );
-	var customHighlighted = highlight( 'hello', html, customWrapper );
-	// <div><span class="my-wrapper">hello</span> world</div>
+const customHighlighted = highlight( 'hello', html, customWrapper );
+```
+Will produce:
+```html
+<div><span class="my-wrapper">hello</span> world</div>
+```
