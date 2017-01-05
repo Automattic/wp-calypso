@@ -47,7 +47,7 @@ class StatsSummaryChart extends Component {
 
 			const tooltipData = [
 				{
-					label: record.period,
+					label: record.periodLabel || record.period,
 					className: 'is-date-label',
 					value: null
 				},

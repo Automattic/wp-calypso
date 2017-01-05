@@ -11,8 +11,8 @@ import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodas
  */
 import SummaryChart from '../stats-summary';
 import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 import QueryPostStats from 'components/data/query-post-stats';
 import { getPostStats } from 'state/stats/posts/selectors';
 
@@ -53,8 +53,10 @@ class StatsPostSummary extends Component {
 				return stats.data
 					.slice( Math.max( stats.data.length - 10, 1 ) )
 					.map( ( [ date, value ] ) => {
+						const momentDate = moment( date );
 						return {
-							period: moment( date ).format( 'MMM D' ),
+							period: momentDate.format( 'MMM D' ),
+							periodLabel: momentDate.format( 'LL' ),
 							value,
 						};
 					} );
@@ -66,6 +68,7 @@ class StatsPostSummary extends Component {
 				return Object.keys( stats.years ).map( year => {
 					return {
 						period: year,
+						periodLabel: year,
 						value: stats.years[ year ].total,
 					};
 				} );
@@ -77,9 +80,11 @@ class StatsPostSummary extends Component {
 				const months = flatten(
 					Object.keys( stats.years ).map( year => {
 						return range( 1, 13 ).map( month => {
+							const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
 							return {
-								period: moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' ).format( 'MMM YYYY' ),
-								value: get( stats.years, [ year, 'months', month ], 0 )
+								period: firstDayOfMonth.format( 'MMM YYYY' ),
+								periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+								value: get( stats.years, [ year, 'months', month ], 0 ),
 							};
 						} );
 					} )
@@ -94,9 +99,10 @@ class StatsPostSummary extends Component {
 				}
 
 				return stats.weeks.map( week => {
-					const firstDay = week.days[ 0 ].day;
+					const firstDay = moment( week.days[ 0 ].day );
 					return {
-						period: moment( firstDay ).format( 'MMM D' ),
+						period: firstDay.format( 'MMM D' ),
+						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
 						value: week.total,
 					};
 				} );
@@ -123,13 +129,13 @@ class StatsPostSummary extends Component {
 			<div className="stats-post-summary">
 				<QueryPostStats siteId={ siteId } postId={ postId } />
 				<SectionNav>
-					<NavTabs label={ translate( 'Post Stats' ) }>
+					<SegmentedControl compact>
 						{ periods.map( ( { id, label } ) =>
-							<NavItem key={ id } onClick={ this.selectPeriod( id ) } selected={ this.state.period === id }>
+							<ControlItem key={ id } onClick={ this.selectPeriod( id ) } selected={ this.state.period === id }>
 								{ label }
-							</NavItem>
+							</ControlItem>
 						) }
-					</NavTabs>
+					</SegmentedControl>
 				</SectionNav>
 
 				<SummaryChart
@@ -138,7 +144,7 @@ class StatsPostSummary extends Component {
 					selected={ selectedRecord }
 					activeKey="period"
 					dataKey="value"
-					labelKey="period"
+					labelKey="periodLabel"
 					labelClass="visible"
 					sectionClass="is-views"
 					tabLabel={ translate( 'Views' ) }
