@@ -82,10 +82,33 @@ class ThemeEnhancements extends Component {
 		onSubmitForm( event );
 	}
 
-	render() {
+	isFormPending() {
 		const {
 			fetchingSettings,
 			fetchingModuleData,
+			submittingForm,
+			updatingSettings
+		} = this.props;
+
+		return fetchingSettings || fetchingModuleData || submittingForm || updatingSettings;
+	}
+
+	renderToggle( name, label ) {
+		return (
+			<FormToggle
+				className="theme-enhancements__module-settings-toggle is-compact"
+				checked={ this.isFieldTruthy( name ) }
+				disabled={ this.isFormPending() }
+				onChange={ this.handleToggle( name ) }>
+				<span>
+					{ label }
+				</span>
+			</FormToggle>
+		);
+	}
+
+	render() {
+		const {
 			submittingForm,
 			updatingSettings,
 			selectedSiteId,
@@ -93,7 +116,6 @@ class ThemeEnhancements extends Component {
 			minilevenModuleActive,
 			translate
 		} = this.props;
-		const isFormPending = fetchingSettings || fetchingModuleData || submittingForm || updatingSettings;
 
 		return (
 			<div>
@@ -105,8 +127,12 @@ class ThemeEnhancements extends Component {
 						compact
 						primary
 						onClick={ this.onSubmitForm }
-						disabled={ isFormPending }>
-						{ submittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						disabled={ this.isFormPending() }
+					>
+						{ submittingForm || updatingSettings
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
 					</Button>
 				</SectionHeader>
 				<Card className="theme-enhancements__card site-settings">
@@ -128,29 +154,16 @@ class ThemeEnhancements extends Component {
 						{
 							infiniteScrollModuleActive && (
 								<div className="theme-enhancements__module-settings is-indented">
-									<FormToggle
-										className="theme-enhancements__module-settings-toggle is-compact"
-										checked={ this.isFieldTruthy( 'infinite_scroll' ) }
-										disabled={ isFormPending }
-										onChange={ this.handleToggle( 'infinite_scroll' ) }>
-										<span>
-											{ translate(
-												'Scroll infinitely (Shows 7 posts on each load)'
-											) }
-										</span>
-									</FormToggle>
-
-									<FormToggle
-										className="theme-enhancements__module-settings-toggle is-compact"
-										checked={ this.isFieldTruthy( 'infinite_scroll_google_analytics' ) }
-										disabled={ isFormPending }
-										onChange={ this.handleToggle( 'infinite_scroll_google_analytics' ) }>
-										<span>
-											{ translate(
-												'Track each infinite Scroll post load as a page view in Google Analytics'
-											) }
-										</span>
-									</FormToggle>
+									{
+										this.renderToggle( 'infinite_scroll', translate(
+											'Scroll infinitely (Shows 7 posts on each load)'
+										) )
+									}
+									{
+										this.renderToggle( 'infinite_scroll_google_analytics', translate(
+											'Track each infinite Scroll post load as a page view in Google Analytics'
+										) )
+									}
 								</div>
 							)
 						}
@@ -174,41 +187,21 @@ class ThemeEnhancements extends Component {
 						{
 							minilevenModuleActive && (
 								<div className="theme-enhancements__module-settings is-indented">
-									<FormToggle
-										className="theme-enhancements__module-settings-toggle is-compact"
-										checked={ this.isFieldTruthy( 'wp_mobile_excerpt' ) }
-										disabled={ isFormPending }
-										onChange={ this.handleToggle( 'wp_mobile_excerpt' ) }>
-										<span>
-											{ translate(
-												'Use excerpts instead of full posts on front page and archive pages'
-											) }
-										</span>
-									</FormToggle>
-
-									<FormToggle
-										className="theme-enhancements__module-settings-toggle is-compact"
-										checked={ this.isFieldTruthy( 'wp_mobile_featured_images' ) }
-										disabled={ isFormPending }
-										onChange={ this.handleToggle( 'wp_mobile_featured_images' ) }>
-										<span>
-											{ translate(
-												'Hide all featured images'
-											) }
-										</span>
-									</FormToggle>
-
-									<FormToggle
-										className="theme-enhancements__module-settings-toggle is-compact"
-										checked={ this.isFieldTruthy( 'wp_mobile_app_promos' ) }
-										disabled={ isFormPending }
-										onChange={ this.handleToggle( 'wp_mobile_app_promos' ) }>
-										<span>
-											{ translate(
-												'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
-											) }
-										</span>
-									</FormToggle>
+									{
+										this.renderToggle( 'wp_mobile_excerpt', translate(
+											'Use excerpts instead of full posts on front page and archive pages'
+										) )
+									}
+									{
+										this.renderToggle( 'wp_mobile_featured_images', translate(
+											'Hide all featured images'
+										) )
+									}
+									{
+										this.renderToggle( 'wp_mobile_app_promos', translate(
+											'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
+										) )
+									}
 								</div>
 							)
 						}
