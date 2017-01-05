@@ -117,7 +117,10 @@
 }
 
 .media-library__list h3 {
+	color: darken( $gray, 20% );
+	font-size: 11px;
 	overflow: hidden;
+	text-transform: uppercase;
 }
 
 .media-library__list h3 span {
@@ -130,14 +133,14 @@
 		display: block;
 		height: 1px;
 		position: absolute;
-			top: 60%;
+			top: 50%;
 			left: calc( 100% + 5px );
 		width: 10000px;
 	}
 
 	&:empty {
 		background: lighten( $gray, 20% );
-		height: 22px;
+		height: 16px;
 		width: 50px;
 	}
 }
