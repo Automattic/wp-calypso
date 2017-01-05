@@ -16,7 +16,7 @@ module.exports = function( i18n ) {
 	return function( ComposedComponent ) {
 		var componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		return React.createClass( {
+		var component = React.createClass( {
 			displayName: 'Localized' + componentName,
 
 			componentDidMount: function() {
@@ -37,5 +37,7 @@ module.exports = function( i18n ) {
 				return React.createElement( ComposedComponent, props );
 			}
 		} );
+		component._composedComponent = ComposedComponent;
+		return component;
 	};
 };
