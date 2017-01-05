@@ -670,32 +670,31 @@ class SiteSettingsFormGeneral extends Component {
 				{ defaultFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
-							name="date_format"
-							value={ format }
 							checked={ format === date_format }
-							onChange={ this.handleRadio }
 							disabled={ isRequestingSettings }
+							name="date_format"
+							onChange={ this.handleRadio }
+							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
-				<FormLabel>
+				<FormLabel className="site-settings__date-time-format-custom">
 					<FormRadio
-						name="date_format"
-						value={ date_format }
 						checked={ ! includes( defaultFormats, date_format ) }
-						onChange={ this.handleRadio }
 						disabled={ isRequestingSettings }
+						name="date_format"
+						onChange={ this.handleRadio }
+						value={ date_format }
 					/>
 					<span>
 						{ translate( 'Custom' ) }
 						<FormInput
-							name="date_format_custom"
-							id="date_format_custom"
-							type="text"
-							value={ date_format || defaultFormats[ 0 ] }
-							onChange={ this.onChangeField( 'date_format' ) }
 							disabled={ isRequestingSettings }
+							name="date_format_custom"
+							onChange={ this.onChangeField( 'date_format' ) }
+							type="text"
+							value={ date_format || '' }
 						/>
 						{ date_format ? today.format( phpToMomentDatetimeFormat( date_format ) ) : '' }
 					</span>
@@ -723,35 +722,39 @@ class SiteSettingsFormGeneral extends Component {
 				{ defaultFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
-							name="time_format"
-							value={ format }
 							checked={ format === time_format }
-							onChange={ this.handleRadio }
 							disabled={ isRequestingSettings }
+							name="time_format"
+							onChange={ this.handleRadio }
+							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
-				<FormLabel>
+				<FormLabel className="site-settings__date-time-format-custom">
 					<FormRadio
-						name="time_format"
-						value={ time_format }
 						checked={ ! includes( defaultFormats, time_format ) }
-						onChange={ this.handleRadio }
 						disabled={ isRequestingSettings }
+						name="time_format"
+						onChange={ this.handleRadio }
+						value={ time_format }
 					/>
 					<span>
 						{ translate( 'Custom' ) }
 						<FormInput
-							name="time_format_custom"
-							id="time_format_custom"
-							type="text"
-							value={ time_format || defaultFormats[ 0 ] }
-							onChange={ this.onChangeField( 'time_format' ) }
 							disabled={ isRequestingSettings }
+							name="time_format_custom"
+							onChange={ this.onChangeField( 'time_format' ) }
+							type="text"
+							value={ time_format || '' }
 						/>
 						{ time_format ? today.format( phpToMomentDatetimeFormat( time_format ) ) : '' }
 					</span>
+					<FormSettingExplanation>
+						<a href="https://codex.wordpress.org/Formatting_Date_and_Time">
+							{ translate( 'Documentation on date and time formatting.' ) }
+						</a>
+					</FormSettingExplanation>
 				</FormLabel>
 			</FormFieldset>
 		);

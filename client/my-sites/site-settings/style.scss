@@ -405,3 +405,13 @@
 .site-settings__child-settings {
 	margin: 16px 36px 0;
 }
+
+.site-settings__date-time-format-custom {
+	.form-radio {
+		margin-top: 12px;
+	}
+	.form-text-input {
+		margin: 0 12px;
+		width: 80px;
+	}
+}

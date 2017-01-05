@@ -326,9 +326,9 @@ function unescapeAndFormatSpaces( str ) {
 
 const phpToMomentMapping = {
 	d: 'DD',
-	jS: 'Mo',
+	jS: 'Do',
 	j: 'D',
-	S: 'Mo',
+	//S: 'Do',
 	l: 'dddd',
 	D: 'ddd',
 	m: 'MM',
