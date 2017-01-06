@@ -3,8 +3,6 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import useMockery from 'test/helpers/use-mockery';
 
 /**
@@ -49,12 +47,25 @@ import {
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
+	installAndTryAndCustomize,
+	tryAndCustomize,
 	deleteTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
+
+	function isEqualFunction( f1, f2 ) {
+		// TODO: Also compare params!
+		return f1.toString() === f2.toString();
+	}
+
+	function matchFunction( fn ) {
+		return sinon.match( ( value ) => (
+			isEqualFunction( value, fn )
+		) );
+	}
 
 	beforeEach( () => {
 		spy.reset();
@@ -525,17 +536,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installAndActivate', () => {
-		function isEqualFunction( f1, f2 ) {
-			// TODO: Also compare params!
-			return f1.toString() === f2.toString();
-		}
-
-		function matchFunction( fn ) {
-			return sinon.match( ( value ) => (
-				isEqualFunction( value, fn )
-			) );
-		}
-
 		const stub = sinon.stub();
 		stub.returns( new Promise( ( res ) => {
 			res();
@@ -875,143 +875,51 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#installAndTryAndCustomize', () => {
-		let installAndTryAndCustomize;
+	describe( '#tryAndCustomize', () => {
 		const pageSpy = sinon.spy();
-		const getThemeSpy = ( state, siteId, themeId ) => {
-			let theme;
-			switch ( themeId ) {
-				case 'karuna-wpcom': //for success case
-					theme = { themeId: 'karuna-wpco' };
-					break;
-				case 'typist-wpcom': //for fail case
-					theme = null;
-					break;
+		const getThemeSpy = ( store, siteId, themeId ) => {
+			if ( themeId === 'karuna-wpcom' ) {
+				return { theme: themeId };
 			}
-			return theme;
+			return null;
 		};
+
+		// we import it again with different name because we want to mock functions inside.
+		let _tryAndCustomize;
 
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'page', pageSpy );
 			mockery.registerMock( './selectors', {
 				getThemeCustomizeUrl: () => 'customizer/url',
-				getTheme: getThemeSpy
+				getTheme: getThemeSpy,
 			} );
-			installAndTryAndCustomize =
-				require( '../actions' ).installAndTryAndCustomize;
+			_tryAndCustomize = require( '../actions' ).tryAndCustomize;
 		} );
 
-		afterEach( () => {
+		it( 'page should be called, when theme is available', () => {
+			_tryAndCustomize( 'karuna-wpcom', 2211667 )( spy, () => {} );
+			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
+		} );
+
+		it( 'page should not be called, when theme is not available', () => {
 			pageSpy.reset();
+			_tryAndCustomize( 'typist-wpcom', 2211667 )( spy, () => {} );
+			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
 		} );
+	} );
 
-		const middlewares = [ thunk ];
-		const mockStore = configureMockStore( middlewares );
-		const storeDefault = {
-			sites: {
-				items: {
-					2211667: {
-						ID: 2211667,
-						URL: 'https://example.com',
-						jetpack: true
-					}
-				}
-			}
-		};
+	describe( '#installAndTryAndCustomize', () => {
+		const stub = sinon.stub();
+		stub.returns( new Promise( ( res ) => {
+			res();
+		} ) );
 
-		const successResponse = {
-			id: 'karuna-wpcom',
-			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
-			active: false,
-			name: 'Karuna',
-			theme_uri: 'https://wordpress.com/themes/karuna/',
-			description: 'Karuna is a clean business theme designed with health and wellness-focused sites in mind.' +
-				' With bright, bold colors, prominent featured images, and support for customer testimonials',
-			author: 'Automattic',
-			author_uri: 'http://wordpress.com/themes/',
-			version: '1.1.0',
-			autoupdate: false,
-			log: [
-				[
-					'Unpacking the package&#8230;',
-					'Installing the theme&#8230;',
-					'Theme installed successfully.'
-				]
-			]
-		};
-
-		const alreadyInstalledFailureResponse = {
-			status: 400,
-			code: 'theme_already_installed',
-			message: 'The theme is already installed'
-		};
-
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/karuna-wpcom/install' )
-				.reply( 200, successResponse )
-				.post( '/rest/v1.1/sites/2211667/themes/typist-wpcom/install' )
-				.reply( 400, alreadyInstalledFailureResponse );
-		} );
-
-		it( 'should dispatch install request/success and themes receive action when triggered, page should be called', () => {
-			const store = mockStore( storeDefault );
-			const expectedActions = [
-				{
-					type: 'THEME_INSTALL',
-					siteId: 2211667,
-					themeId: 'karuna-wpcom'
-				},
-				{
-					type: 'THEMES_RECEIVE',
-					themes: [ successResponse ],
-					siteId: 2211667
-				},
-				{
-					type: 'THEME_INSTALL_SUCCESS',
-					siteId: 2211667,
-					themeId: 'karuna-wpcom'
-				}
-			];
-
-			return store.dispatch( installAndTryAndCustomize( 'karuna-wpcom', 2211667 ) )
-				.then( () => {
-					expect( store.getActions() ).to.deep.equal( expectedActions );
-					expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
-				}
-			);
-		} );
-
-		it( 'should dispatch install request and failure action when triggered, page should not be called', () => {
-			const store = mockStore( storeDefault );
-			const expectedActions = [
-				{
-					type: 'THEME_INSTALL',
-					siteId: 2211667,
-					themeId: 'typist-wpcom'
-				},
-				{
-					type: 'THEME_INSTALL_FAILURE',
-					siteId: 2211667,
-					themeId: 'typist-wpcom',
-					error: sinon.match( { message: 'The theme is already installed' } )
-				}
-			];
-
-			return store.dispatch( installAndTryAndCustomize( 'typist-wpcom', 2211667 ) )
-				.then( () => {
-					// using spy here is just a trick to be able to use sinon.match that needs
-					// to be used inside calledWith - this is important for failure scenarios
-					// that can have env dependant strings
-					const storeCallSpy = sinon.spy();
-					storeCallSpy( store.getActions()[ 0 ] );
-					storeCallSpy( store.getActions()[ 1 ] );
-					expect( storeCallSpy ).to.have.been.calledWith( expectedActions[ 0 ] );
-					expect( storeCallSpy ).to.have.been.calledWith( expectedActions[ 1 ] );
-					expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
-				}
-			);
+		it( 'should dispatch installTheme(), and tryAndCustomize()', ( done ) => {
+			installAndTryAndCustomize( 'karuna-wpcom', 2211667 )( stub ).then( () => {
+				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
+				expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomize( 'karuna-wpcom', 2211667 ) ) );
+				done();
+			} );
 		} );
 	} );
 } );
