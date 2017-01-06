@@ -63,9 +63,9 @@ class RecoveryPhoneValidationNotice extends Component {
 					showDismiss={ false }
 				>
 					{ ! hasSent &&
-							<NoticeAction href="#" onClick={ this.props.onResend }>
-								{ translate( 'Resend' ) }
-							</NoticeAction>
+						<NoticeAction href="#" onClick={ this.props.onResend }>
+							{ translate( 'Resend' ) }
+						</NoticeAction>
 					}
 				</Notice>
 				<FormLabel className="security-checkup__recovery-phone-validation-label">
