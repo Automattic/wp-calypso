@@ -3,6 +3,7 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
@@ -46,12 +48,25 @@ import {
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
+	installAndTryAndCustomize,
+	tryAndCustomize,
 	deleteTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
+
+	function isEqualFunction( f1, f2 ) {
+		// TODO: Also compare params!
+		return f1.toString() === f2.toString();
+	}
+
+	function matchFunction( fn ) {
+		return sinon.match( ( value ) => (
+			isEqualFunction( value, fn )
+		) );
+	}
 
 	beforeEach( () => {
 		spy.reset();
@@ -522,17 +537,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installAndActivate', () => {
-		function isEqualFunction( f1, f2 ) {
-			// TODO: Also compare params!
-			return f1.toString() === f2.toString();
-		}
-
-		function matchFunction( fn ) {
-			return sinon.match( ( value ) => (
-				isEqualFunction( value, fn )
-			) );
-		}
-
 		const stub = sinon.stub();
 		stub.returns( new Promise( ( res ) => {
 			res();
@@ -868,6 +872,61 @@ describe( 'actions', () => {
 					themeId: 'blahblah',
 					error: sinon.match.truthy,
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#tryAndCustomize', () => {
+		const pageSpy = sinon.spy();
+		const getThemeSpy = ( store, siteId, themeId ) => {
+			if ( themeId === 'karuna-wpcom' ) {
+				return { theme: themeId };
+			}
+			return null;
+		};
+
+		// we import it again with different name because we want to mock functions inside.
+		let _tryAndCustomize;
+
+		useMockery( ( mockery ) => {
+			mockery.registerMock( 'page', pageSpy );
+			mockery.registerMock( './selectors', {
+				getThemeCustomizeUrl: () => 'customizer/url',
+				getTheme: getThemeSpy,
+			} );
+			_tryAndCustomize = require( '../actions' ).tryAndCustomize;
+		} );
+
+		it( 'page should be called, when theme is available', () => {
+			_tryAndCustomize( 'karuna-wpcom', 2211667 )( spy, () => {} );
+			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
+		} );
+
+		const tryAndActivateFalilureAction = {
+			type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
+			themeId: 'typist-wpcom',
+			siteId: 2211667,
+		};
+
+		it( 'page should not be called, when theme is not available and FAILURE action shoudl be dispatched', () => {
+			pageSpy.reset();
+			_tryAndCustomize( 'typist-wpcom', 2211667 )( spy, () => {} );
+			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
+			expect( spy ).to.have.been.calledWith( tryAndActivateFalilureAction );
+		} );
+	} );
+
+	describe( '#installAndTryAndCustomize', () => {
+		const stub = sinon.stub();
+		stub.returns( new Promise( ( res ) => {
+			res();
+		} ) );
+
+		it( 'should dispatch installTheme(), and tryAndCustomize()', ( done ) => {
+			installAndTryAndCustomize( 'karuna-wpcom', 2211667 )( stub ).then( () => {
+				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
+				expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomize( 'karuna-wpcom', 2211667 ) ) );
+				done();
 			} );
 		} );
 	} );
