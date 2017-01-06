@@ -18,7 +18,7 @@ class Manage extends React.Component {
 		return (
 			<Card>
 				<h2 className={ styles.header }>{ domain } is not set up yet</h2>
-				<Button href={ '/domains-prototype/manage/start/' + domain }>Set up site</Button>
+				<Button href={ '/start/site-selected/?siteSlug=' + domain }>Set up site</Button>
 				<p>Plans start at $123 per year. Get your first year free.</p>
 
 				<div>
