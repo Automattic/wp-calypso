@@ -30,6 +30,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import counts from './counts/reducer';
+import likes from './likes/reducer';
 import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
@@ -295,5 +296,6 @@ export default combineReducers( {
 	siteRequests,
 	queryRequests,
 	queries,
-	edits
+	edits,
+	likes,
 } );
