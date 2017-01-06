@@ -441,7 +441,6 @@ export default class ReaderStream extends React.Component {
 			key={ itemKey }
 			ref={ itemKey }
 			isSelected={ isSelected }
-			handleXPostClick={ showPost }
 			handleClick={ showPost }
 			postKey={ postKey }
 			store={ this.props.store }
