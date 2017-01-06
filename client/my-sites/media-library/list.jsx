@@ -293,31 +293,39 @@ export const MediaLibraryList = React.createClass( {
 		const items = [];
 
 		this.props.media.forEach( ( item, index, media ) => {
+			// If it's the first item or the day has changed, add a heading.
 			if ( ! index || ! this.props.moment( media[ index - 1 ].date ).isSame( item.date, 'day' ) ) {
+				// Amount of items that don't fill an entire row.
 				const trailing = items.length % this._columnCount;
 
+				// Fill the last row with empty slots.
 				if ( trailing ) {
 					items.push( ...Array( this._columnCount - trailing ) );
 				}
 
+				// Add a heading with the date.
 				items.push( {
 					heading: this.formatDate( item.date ),
 				} );
 
+				// Fill the rest of the row with empty slots.
 				items.push( ...Array( this._columnCount - 1 ) );
 			}
 
 			items.push( item );
 		} );
 
+		// If there are no media, add a placeholder heading.
 		if ( ! this.props.media.length ) {
 			items.push( {
 				heading: '',
 			} );
 
+			// Fill the rest of the row with empty slots.
 			items.push( ...Array( this._columnCount - 1 ) );
 		}
 
+		// If there is more media to come, show placeholders for them.
 		if ( this.props.mediaHasNextPage ) {
 			items.push( ...fill( Array( this.props.batchSize ), {
 				loading: true
