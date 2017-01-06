@@ -57,12 +57,9 @@ export const hasSentAccountRecoveryPhoneValidation = ( state ) => {
 export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
 	return ! isAccountRecoveryEmailActionInProgress( state ) &&
 		!! getAccountRecoveryEmail( state ) &&
-		! isAccountRecoveryEmailValidated( state ) &&
-		! hasSentAccountRecoveryEmailValidation( state );
+		! isAccountRecoveryEmailValidated( state );
 };
 
-// It doesn't include hasSentAccountRecoveryPhoneValidation() like shouldPromptAccountRecoveryEmailValidationNotice() intentionall.
-// We want to keep the phone validation notice there, because it is expected to include the form for users to input validation code.
 export const shouldPromptAccountRecoveryPhoneValidationNotice = ( state ) => {
 	return ! isAccountRecoveryPhoneActionInProgress( state ) &&
 		!! getAccountRecoveryPhone( state ) &&

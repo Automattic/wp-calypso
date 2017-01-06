@@ -318,20 +318,6 @@ describe( '#account-recovery/settings/selectors', () => {
 			assert.isTrue( shouldPromptAccountRecoveryEmailValidationNotice( state ) );
 		} );
 
-		it( 'should not prompt if hasSentValidation.email is set.', () => {
-			const state = {
-				accountRecovery: {
-					settings: {
-						hasSentValidation: {
-							email: true,
-						},
-					},
-				},
-			};
-
-			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( state ) );
-		} );
-
 		it( 'should not prompt if the settings data is not ready.', () => {
 			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateBeforeFetching ) );
 		} );

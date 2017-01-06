@@ -100,6 +100,7 @@ const SecurityCheckup = React.createClass( {
 					{ this.props.shouldPromptEmailValidationNotice &&
 						<RecoveryEmailValidationNotice
 							onResend={ this.props.resendAccountRecoveryEmailValidation }
+							hasSent={ this.props.hasSentEmailValidation }
 						/>
 					}
 				</CompactCard>
