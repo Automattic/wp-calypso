@@ -27,7 +27,9 @@ const RX_JS_EXTENSION = /\.js$/;
 describe( 'selectors', () => {
 	it( 'should match every selector to its default export', () => {
 		each( selectors, ( selector, key ) => {
-			expect( require( '../' + kebabCase( key ) ) ).to.equal( selector );
+			const module = require( '../' + kebabCase( key ) );
+			const defaultExport = module.default ? module.default : module;
+			expect( defaultExport ).to.equal( selector );
 		} );
 	} );
 
