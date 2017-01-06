@@ -109,4 +109,14 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
+
+	userFirstSignup: {
+		datestamp: '20161223',
+		variations: {
+			userLast: 99,
+			userFirst: 1,
+		},
+		defaultVariation: 'userLast',
+		allowExistingUsers: false,
+	},
 };
