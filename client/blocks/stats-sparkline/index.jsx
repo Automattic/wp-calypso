@@ -23,6 +23,9 @@ const StatsSparkline = ( { isJetpack, siteDomain, className, siteId } ) => {
 
 StatsSparkline.propTypes = {
 	className: PropTypes.string,
+	siteId: PropTypes.number,
+	isJetpack: PropTypes.bool,
+	siteDomain: PropTypes.string,
 };
 
 export default connect(
