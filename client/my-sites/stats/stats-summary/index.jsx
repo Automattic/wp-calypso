@@ -3,8 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { isEqual, find } from 'lodash';
+import { isEqual, find, flowRight } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ class StatsSummaryChart extends Component {
 	};
 
 	buildChartData() {
-		const { data, labelClass, sectionClass, selected, tabLabel } = this.props;
+		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
 		return data.map( record => {
 			const className = classNames( {
 				'is-selected': isEqual( selected, record )
@@ -54,7 +55,7 @@ class StatsSummaryChart extends Component {
 				{
 					label: tabLabel,
 					className: sectionClass,
-					value: record.value,
+					value: numberFormat( record.value ),
 					icon: labelClass
 				}
 			];
@@ -71,11 +72,11 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const { dataKey, isLoading, labelClass, labelKey, selected, tabLabel } = this.props;
+		const { dataKey, isLoading, labelClass, labelKey, numberFormat, selected, tabLabel } = this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,
-			value: selected ? selected[ dataKey ] : null,
+			value: selected ? numberFormat( selected[ dataKey ] ) : null,
 			selected: true,
 			gridicon: labelClass,
 			label: tabLabel + label
@@ -95,7 +96,12 @@ class StatsSummaryChart extends Component {
 	}
 }
 
-export default connect(
+const connectComponent = connect(
 	() => ( {} ),
 	{ recordGoogleEvent }
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
 )( StatsSummaryChart );
