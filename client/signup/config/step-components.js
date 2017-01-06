@@ -24,11 +24,13 @@ module.exports = {
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
+	'plans-site-preselected': PlansStepComponent,
 	site: SiteComponent,
 	'site-title': SiteTitleComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
+	'themes-site-preselected': ThemeSelectionComponent,
 	user: UserSignupComponent
 };
