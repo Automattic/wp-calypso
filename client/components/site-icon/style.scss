@@ -1,7 +1,5 @@
 .site-icon {
 	position: relative;
-	background: lighten( $gray, 20% );
-	border: 1px solid white;
 	overflow: hidden;
 	align-self: center;
 	margin: 0;
@@ -9,6 +7,8 @@
 
 	// Globe icon for sites without an icon
 	&.is-blank {
+		border: 1px solid $white;
+		background: lighten( $gray, 20% );
 		.gridicon {
 			color: $white;
 			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
@@ -17,6 +17,6 @@
 }
 
 .site-icon__img {
-	background: $white;
+	background: $transparent;
 	position: relative;
 }

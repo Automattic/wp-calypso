@@ -55,8 +55,7 @@
 // within a Site item
 .site .site-icon {
 	position: relative;
-	background: lighten( $gray, 20% );
-	border: 1px solid white;
+	border: 1px solid $transparent;
 	height: 30px;
 	width: 30px;
 	overflow: hidden;
