@@ -12,6 +12,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 class RecoveryPhoneValidationNotice extends Component {
 	constructor() {
@@ -24,12 +25,6 @@ class RecoveryPhoneValidationNotice extends Component {
 
 	onSubmit( event ) {
 		event.preventDefault();
-	}
-
-	onResend = ( event ) => {
-		event.preventDefault();
-
-		this.props.onResend();
 	}
 
 	onValidate = ( event ) => {
@@ -55,17 +50,24 @@ class RecoveryPhoneValidationNotice extends Component {
 
 		const validationCodeLength = 8;
 		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
-		const resendButtonText = hasSent ? translate( 'Sent' ) : translate( 'Resend' );
 
 		return (
 			<form onSubmit={ this.onSubmit }>
-				<Notice
-					className="security-checkup__validation-notice"
-					status="is-warning"
-					text={ translate( 'Please validate your recovery SMS number. Check your phone for a validation code.' ) }
-					showDismiss={ false }
-				/>
-				<FormLabel>{ translate( 'Enter the code you receive via SMS:' ) }</FormLabel>
+				{ ! hasSent &&
+					<Notice
+						className="security-checkup__validation-notice"
+						status="is-warning"
+						text={ translate( 'Please validate your recovery SMS number. Check your phone for a validation code.' ) }
+						showDismiss={ false }
+					>
+						<NoticeAction href="#" onClick={ this.props.onResend }>
+							{ translate( 'Resend' ) }
+						</NoticeAction>
+					</Notice>
+				}
+				<FormLabel className="security-checkup__recovery-phone-validation-label">
+					{ translate( 'Enter the code you receive via SMS:' ) }
+				</FormLabel>
 				<FormTelInput
 					autoComplete="off"
 					disabled={ false }
@@ -80,13 +82,6 @@ class RecoveryPhoneValidationNotice extends Component {
 						onClick={ this.onValidate }
 					>
 						{ validateButtonText }
-					</FormButton>
-					<FormButton
-						isPrimary={ false }
-						disabled={ this.props.hasSent }
-						onClick={ this.onResend }
-					>
-						{ resendButtonText }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
