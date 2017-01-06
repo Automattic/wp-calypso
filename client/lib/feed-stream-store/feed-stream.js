@@ -216,7 +216,7 @@ export default class FeedStream {
 			selectedIndex < this.postKeys.length &&
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
 			this.selectedIndex = selectedIndex;
-			setLastStoreId( id )
+			setLastStoreId( id );
 			this.emitChange();
 		}
 	}

@@ -435,7 +435,8 @@ export default class ReaderStream extends React.Component {
 		}
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = this.enhanceWithPostSelectionMetadata( showSelectedPost, postKey, this.props.store );
+		const showPost = this.enhanceWithPostSelectionMetadata( showSelectedPost,
+			postKey, this.props.store );
 
 		return <PostLifecycle
 			key={ itemKey }

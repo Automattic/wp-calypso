@@ -3,6 +3,7 @@
  */
 import url from 'url';
 import page from 'page';
+import { isNumber } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,8 +13,8 @@ import { state as SiteState } from 'lib/reader-site-store/constants';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import PostStore from 'lib/feed-post-store';
 import { selectItem } from 'lib/feed-stream-store/actions';
-
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
+import { setLastStoreId } from 'reader/controller-helper';
 
 export function siteNameFromSiteAndPost( site, post ) {
 	let siteName;
@@ -80,8 +81,10 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 		return;
 	}
 
-	if ( store && index ) {
+	if ( store && isNumber( index ) ) {
 		selectItem( store.getID(), index );
+	} else if ( ! store ) {
+		setLastStoreId( undefined );
 	}
 
 	if ( postKey.isGap === true ) {
