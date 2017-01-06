@@ -48,7 +48,10 @@ class RecoveryPhoneValidationNotice extends Component {
 			hasSent,
 		} = this.props;
 
+		const { candidateCode } = this.state;
+
 		const validationCodeLength = 8;
+		const isCodeLengthValid = validationCodeLength !== candidateCode.length;
 		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
 
 		return (
@@ -73,12 +76,12 @@ class RecoveryPhoneValidationNotice extends Component {
 					disabled={ false }
 					placeholder={ translate( 'e.g. 12345678' ) }
 					onChange={ this.onChange }
-					value={ this.state.candidateCode }
+					value={ candidateCode }
 				/>
 				<FormButtonsBar className="security-checkup__recovery-phone-validation-buttons">
 					<FormButton
 						isPrimary={ true }
-						disabled={ isValidating || validationCodeLength !== this.state.candidateCode.length }
+						disabled={ isValidating || isCodeLengthValid }
 						onClick={ this.onValidate }
 					>
 						{ validateButtonText }
