@@ -168,9 +168,9 @@ export function isCandidateForCanonicalImage( image ) {
  */
 export function isFeaturedImageInContent( post ) {
 	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
-		const featuredImageUrl = url.parse( post.post_thumbnail.URL, true, true );
+		const featuredImageUrl = url.parse( post.post_thumbnail.URL );
 		const indexOfContentImage = findIndex( post.images, img => {
-			const imgUrl = url.parse( img.src, true, true );
+			const imgUrl = url.parse( img.src );
 			return imgUrl.pathname === featuredImageUrl.pathname;
 		}, 1 ); // skip first element in post.images because it is always the featuredImage
 

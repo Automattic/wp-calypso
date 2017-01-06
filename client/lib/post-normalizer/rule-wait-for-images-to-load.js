@@ -8,7 +8,6 @@ import {
 	forEach,
 	map,
 	pull,
-	uniq
 } from 'lodash';
 
 /**
@@ -74,7 +73,7 @@ export default function waitForImagesToLoad( post ) {
 			resolve( post );
 		}
 
-		let imagesToCheck = [];
+		const imagesToCheck = [];
 
 		if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
 			imagesToCheck.push( post.post_thumbnail.URL );
@@ -90,9 +89,6 @@ export default function waitForImagesToLoad( post ) {
 			resolve( post );
 			return;
 		}
-
-		// dedupe the set of images
-		imagesToCheck = uniq( imagesToCheck );
 
 		// convert to image objects to start the load process
 		let promises = map( imagesToCheck, promiseForURL );
