@@ -12,6 +12,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import FollowersCount from 'blocks/followers-count';
+import { isEnabled } from 'config';
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -40,9 +41,9 @@ class StatsNavigation extends Component {
 			day: translate( 'Days' ),
 			week: translate( 'Weeks' ),
 			month: translate( 'Months' ),
-			year: translate( 'Years' )
+			year: translate( 'Years' ),
+			settings: translate( 'Settings' ),
 		};
-
 
 		return (
 			<SectionNav selectedText={ sectionTitles[ section ] }>
@@ -62,6 +63,12 @@ class StatsNavigation extends Component {
 					<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
 						{ sectionTitles.year }
 					</NavItem>
+					{
+						isEnabled( 'stats/settings' ) &&
+						<NavItem path={ '/stats/settings' + siteFragment } selected={ section === 'settings' }>
+							{ sectionTitles.settings }
+						</NavItem>
+					}
 				</NavTabs>
 				<FollowersCount />
 			</SectionNav>
