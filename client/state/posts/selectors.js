@@ -286,19 +286,22 @@ export function isRequestingSitePost( state, siteId, postId ) {
  * @param  {Number} postId Post ID
  * @return {Object}        Post object with revisions
  */
-export function getEditedPost( state, siteId, postId ) {
-	const post = getSitePost( state, siteId, postId );
-	const edits = getPostEdits( state, siteId, postId );
-	if ( ! edits ) {
-		return post;
-	}
+export const getEditedPost = createSelector(
+	( state, siteId, postId ) => {
+		const post = getSitePost( state, siteId, postId );
+		const edits = getPostEdits( state, siteId, postId );
+		if ( ! edits ) {
+			return post;
+		}
 
-	if ( ! post ) {
-		return edits;
-	}
+		if ( ! post ) {
+			return edits;
+		}
 
-	return mergeIgnoringArrays( {}, post, edits );
-}
+		return mergeIgnoringArrays( {}, post, edits );
+	},
+	( state ) => [ state.posts.items, state.posts.edits ]
+);
 
 /**
  * Returns an object of edited post attributes for the site ID post ID pairing.

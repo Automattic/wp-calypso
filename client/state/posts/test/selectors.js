@@ -595,14 +595,22 @@ describe( 'selectors', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
 					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' }
+						'3d097cb7c5473c169bba0eb8e3c6cb64': {
+							ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World'
+						},
+						'6c831c187ffef321eb43a67761a525a3': {
+							ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken'
+						}
 					},
 					queries: {
 						2916284: new PostQueryManager( {
 							items: {
-								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken' }
+								841: {
+									ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World'
+								},
+								413: {
+									ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs &amp; Chicken'
+								}
 							},
 							queries: {
 								'[]': {
@@ -624,12 +632,16 @@ describe( 'selectors', () => {
 			const sitePosts = getSitePostsForQueryIgnoringPage( {
 				posts: {
 					items: {
-						'48b6010b559efe6a77a429773e0cbf12': { ID: 1204, site_ID: 2916284, global_ID: '48b6010b559efe6a77a429773e0cbf12', title: 'Sweet &amp; Savory' }
+						'48b6010b559efe6a77a429773e0cbf12': {
+							ID: 1204, site_ID: 2916284, global_ID: '48b6010b559efe6a77a429773e0cbf12', title: 'Sweet &amp; Savory'
+						}
 					},
 					queries: {
 						2916284: new PostQueryManager( {
 							items: {
-								1204: { ID: 1204, site_ID: 2916284, global_ID: '48b6010b559efe6a77a429773e0cbf12', title: 'Sweet &amp; Savory' }
+								1204: {
+									ID: 1204, site_ID: 2916284, global_ID: '48b6010b559efe6a77a429773e0cbf12', title: 'Sweet &amp; Savory'
+								}
 							},
 							queries: {
 								'[["search","Sweet"]]': {
@@ -685,6 +697,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getEditedPost()', () => {
+		beforeEach( () => {
+			getEditedPost.memoizedSelector.cache.clear();
+		} );
+
 		it( 'should return the original post if no revisions exist on site', () => {
 			const postObject = {
 				ID: 841,

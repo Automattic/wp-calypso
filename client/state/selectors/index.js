@@ -13,7 +13,9 @@
  * to its individual file.
  */
 
+export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
+export editedPostHasContent from './edited-post-has-content';
 export getSharingButtons from './get-sharing-buttons';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';

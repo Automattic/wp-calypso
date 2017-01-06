@@ -17,7 +17,7 @@ const actions = require( 'lib/posts/actions' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
+	EditorTitle = require( 'post-editor/editor-title' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
@@ -51,6 +51,7 @@ import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
+import { editedPostHasContent } from 'state/selectors';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -201,7 +202,7 @@ export const PostEditor = React.createClass( {
 						onPublish={ this.onPublish }
 						isPublishing={ this.state.isPublishing }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						onClose={ this.onClose }
 						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
@@ -235,7 +236,7 @@ export const PostEditor = React.createClass( {
 								post={ this.state.post }
 								maxWidth={ 1462 } />
 							<div className="editor__header">
-								<EditorTitleContainer
+								<EditorTitle
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
@@ -286,7 +287,7 @@ export const PostEditor = React.createClass( {
 						isNew={ this.state.isNew }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						isSaving={ this.state.isSaving }
 						isPublishing={ this.state.isPublishing }
 						onSave={ this.onSave }
@@ -774,6 +775,7 @@ export default connect(
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
+			hasContent: editedPostHasContent( state, siteId, postId )
 		};
 	},
 	( dispatch ) => {
