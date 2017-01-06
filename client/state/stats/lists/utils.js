@@ -18,12 +18,12 @@ import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
  * @return {Object}        Period range
  */
 export function rangeOfPeriod( period, date ) {
-	date = new moment( date ).locale( 'en' );
-	const startOf = date.clone().startOf( period );
-	const endOf = date.clone().endOf( period );
+	const momentDate = new moment( date ).locale( 'en' );
+	const startOf = momentDate.clone().startOf( period );
+	const endOf = momentDate.clone().endOf( period );
 
 	if ( 'week' === period ) {
-		if ( '0' === date.format( 'd' ) ) {
+		if ( '0' === momentDate.format( 'd' ) ) {
 			startOf.subtract( 6, 'd' );
 		} else {
 			startOf.add( 1, 'd' );
