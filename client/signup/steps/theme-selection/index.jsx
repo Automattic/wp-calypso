@@ -40,6 +40,14 @@ const ThemeSelectionStep = React.createClass( {
 		};
 	},
 
+	gettSiteSlug: function() {
+		const siteSlug = this.props.queryObject ? this.props.queryObject.siteSlug : undefined;
+
+		return {
+			siteSlug
+		};
+	},
+
 	pickTheme( theme ) {
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
@@ -48,11 +56,11 @@ const ThemeSelectionStep = React.createClass( {
 			headstart: true
 		} );
 
-		SignupActions.submitSignupStep( {
+		SignupActions.submitSignupStep( Object.assign( {
 			stepName: this.props.stepName,
 			processingMessage: this.translate( 'Adding your theme' ),
 			repoSlug
-		}, null, {
+		}, this.gettSiteSlug() ), null, {
 			theme: repoSlug
 		} );
 

@@ -25,6 +25,7 @@ module.exports = {
 	},
 
 	'themes-site-preselected': {
+		apiRequestFunction: stepActions.setThemeOnSite,
 		stepName: 'themes-site-preselected',
 		providesDependencies: [ 'theme' ]
 	},

@@ -230,8 +230,8 @@ const flows = {
 	},
 
 	'site-selected': {
-		steps: [ 'design-type', 'themes-site-preselected', 'plans-site-preselected', 'user' ],
-		destination: getSiteDestination,
+		steps: [ 'themes-site-preselected', 'plans-site-preselected', 'user' ],
+		destination: '/domains-prototype',
 		description: 'A test',
 		lastModified: '2017-01-03'
 	},
