@@ -325,26 +325,52 @@ function unescapeAndFormatSpaces( str ) {
 }
 
 const phpToMomentMapping = {
+	// Days
 	d: 'DD',
+	D: 'ddd',
 	jS: 'Do',
 	j: 'D',
-	//S: 'Do',
 	l: 'dddd',
-	D: 'ddd',
-	m: 'MM',
-	n: 'M',
+	N: 'E',
+	//S: '',
+	w: 'd',
+	z: 'DDD',
+	// Week
+	W: 'W',
+	// Month
 	F: 'MMMM',
+	m: 'MM',
 	M: 'MMM',
+	n: 'M',
+	//t: '',
+	// Year
+	//L: '',
+	o: 'Y',
 	Y: 'YYYY',
 	y: 'YY',
-	//a: 'a',
-	//A: 'A',
+	// Time
+	a: 'a',
+	A: 'A',
+	//B: '',
 	g: 'h',
-	h: 'hh',
 	G: 'H',
+	h: 'hh',
 	H: 'HH',
 	i: 'mm',
 	s: 'ss',
+	u: 'SSSSSS',
+	v: 'SSS',
+	// Timezone
+	e: 'z',
+	//I: '',
+	O: 'ZZ',
+	P: 'Z',
+	//T: '',
+	//Z: '',
+	// Full Date/Time
+	c: 'YYYY-MM-DDTHH:mm-ssZ',
+	r: 'ddd, DD MMM YYYY HH:mm:ss ZZ',
+	U: 'X',
 };
 
 /**
