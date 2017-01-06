@@ -100,7 +100,12 @@ const tryAndCustomizeOnJetpack = {
 	} ),
 	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
+	hideForTheme: ( state, theme, siteId ) => (
+		isActive( state, theme.id, siteId ) || (
+			isPremium( state, theme.id ) &&
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
+		)
+	)
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
