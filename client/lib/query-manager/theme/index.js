@@ -9,6 +9,7 @@ import { cloneDeep, get, isEqual, keyBy, range } from 'lodash';
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
+import { DELETE_PATCH_KEY } from 'lib/query-manager';
 
 /**
  * ThemeQueryManager manages themes which can be queried
@@ -122,6 +123,29 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 			},
 			this.options
 		);
+	}
+
+	/**
+	 * Removes multiple items given an array of item keys, returning a new
+	 * instance of QueryManager if the tracked items have changed, or the
+	 * current instance otherwise.
+	 *
+	 * This method is overridden to call the parent receive() method, which
+	 * maintains the ability to delete items, unlike the cut-down receive()
+	 * method in this class.
+	 *
+	 * @param  {String[]}     itemKeys Keys of items to remove
+	 * @return {QueryManager}          New instance if changed, or same
+	 *                                 instance otherwise
+	 */
+	removeItems( itemKeys = [] ) {
+		return PaginatedQueryManager.prototype.receive.call( this,
+			itemKeys.map( ( itemKey ) => {
+				return {
+					[ this.options.itemKey ]: itemKey,
+					[ DELETE_PATCH_KEY ]: true
+				};
+			} ), { patch: true } );
 	}
 }
 
