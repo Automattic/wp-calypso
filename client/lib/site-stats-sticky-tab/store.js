@@ -88,7 +88,11 @@ function handleSitesChange() {
 function getUrl() {
 	var tab = _cachedPlace.tab,
 		slug = _cachedPlace.slug,
-		site;
+		site = sites.getSelectedSite();
+
+	if ( site && site.options.is_domain_only ) {
+		return '/domains-prototype/manage/' + site.slug;
+	}
 
 	// The site in the store gets priority
 	if ( slug ) {
@@ -96,7 +100,6 @@ function getUrl() {
 	}
 
 	// The slug store is empty, is there a selected site?
-	site = sites.getSelectedSite();
 	if ( site && site.slug ) {
 		slug = site.slug;
 	}
