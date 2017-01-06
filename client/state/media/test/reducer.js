@@ -13,15 +13,17 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUESTING,
+	MEDIA_SELECTED_SET,
 	SERIALIZE } from 'state/action-types';
-import reducer, { queries, queryRequests } from '../reducer';
+import reducer, { queries, queryRequests, selected } from '../reducer';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'queries',
-			'queryRequests'
+			'queryRequests',
+			'selected'
 		] );
 	} );
 
@@ -202,6 +204,64 @@ describe( 'reducer', () => {
 
 		it( 'should never load persisted state', () => {
 			const state = queryRequests( deepFreeze( state1 ), { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'selected()', () => {
+		it( 'should default to an empty object', () => {
+			const state = selected( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set selected media', () => {
+			const state = selected( deepFreeze( {} ), {
+				type: MEDIA_SELECTED_SET,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: [ 42 ]
+			} );
+		} );
+
+		it( 'should not accumulate selected media when setting', () => {
+			const state = selected( deepFreeze( {
+				2916284: [ 42 ]
+			} ), {
+				type: MEDIA_SELECTED_SET,
+				siteId: 2916284,
+				mediaIds: [ 43 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: [ 43 ]
+			} );
+		} );
+
+		it( 'should remove deleted media', () => {
+			const state = selected( deepFreeze( {
+				2916284: [ 42, 43, 44 ]
+			} ), {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 43 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: [ 42, 44 ]
+			} );
+		} );
+
+		it( 'should never load persisted state', () => {
+			const state = selected( deepFreeze( {
+				2916284: [ 42 ]
+			} ), {
+				type: DESERIALIZE
+			} );
 
 			expect( state ).to.eql( {} );
 		} );

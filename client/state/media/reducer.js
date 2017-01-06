@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { omit } from 'lodash';
+import { omit, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,8 @@ import {
 	MEDIA_DELETE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUESTING } from 'state/action-types';
+	MEDIA_REQUESTING,
+	MEDIA_SELECTED_SET } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
@@ -74,7 +75,23 @@ export const queryRequests = createReducer( {}, {
 	}
 } );
 
+export const selected = createReducer( {}, {
+	[ MEDIA_SELECTED_SET ]: ( state, { siteId, mediaIds } ) => {
+		return {
+			...state,
+			[ siteId ]: [ ...mediaIds ]
+		};
+	},
+	[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
+		return {
+			...state,
+			[ siteId ]: without( state[ siteId ], ...mediaIds )
+		};
+	}
+} );
+
 export default combineReducers( {
 	queries,
-	queryRequests
+	queryRequests,
+	selected
 } );

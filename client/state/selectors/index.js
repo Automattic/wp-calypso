@@ -22,6 +22,7 @@ export getSharingButtons from './get-sharing-buttons';
 export getMedia from './get-media';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
+export getSelectedMedia from './get-selected-media';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export isPrivateSite from './is-private-site';

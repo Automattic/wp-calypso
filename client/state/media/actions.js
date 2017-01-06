@@ -11,7 +11,8 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUESTING } from 'state/action-types';
+	MEDIA_REQUESTING,
+	MEDIA_SELECTED_SET } from 'state/action-types';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -92,6 +93,22 @@ export function failMediaRequest( siteId, query ) {
 export function deleteMedia( siteId, mediaIds ) {
 	return {
 		type: MEDIA_DELETE,
+		mediaIds: castArray( mediaIds ),
+		siteId
+	};
+}
+
+/**
+ * Returns an action object used in signalling that media item(s) for the site
+ * are to be selected.
+ *
+ * @param  {Number}         siteId   Site ID
+ * @param  {(Array|Number)} mediaIds ID(s) of media to be selected
+ * @return {Object}                  Action object
+ */
+export function selectMedia( siteId, mediaIds ) {
+	return {
+		type: MEDIA_SELECTED_SET,
 		mediaIds: castArray( mediaIds ),
 		siteId
 	};
