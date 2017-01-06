@@ -82,10 +82,9 @@ class StatsSummaryChart extends Component {
 		};
 
 		return (
-			<Card className={ classNames( 'stats-module', 'is-summary-chart', { 'i-loading': isLoading } ) }>
+			<Card className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart
-					loading={ isLoading }
 					data={ this.buildChartData() }
 					barClick={ this.barClick } />
 				<StatsTabs>

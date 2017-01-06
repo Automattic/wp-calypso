@@ -14,7 +14,7 @@ import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import QueryPostStats from 'components/data/query-post-stats';
-import { getPostStats } from 'state/stats/posts/selectors';
+import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
 
 class StatsPostSummary extends Component {
 	static propTypes = {
@@ -112,7 +112,7 @@ class StatsPostSummary extends Component {
 	}
 
 	render() {
-		const { postId, siteId, translate } = this.props;
+		const { isRequesting, postId, siteId, translate } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
@@ -139,7 +139,7 @@ class StatsPostSummary extends Component {
 				</SectionNav>
 
 				<SummaryChart
-					isLoading={ false }
+					isLoading={ isRequesting && ! chartData.length }
 					data={ chartData }
 					selected={ selectedRecord }
 					activeKey="period"
@@ -159,6 +159,7 @@ const connectComponent = connect(
 	( state, { siteId, postId } ) => {
 		return {
 			stats: getPostStats( state, siteId, postId ),
+			isRequesting: isRequestingPostStats( state, siteId, postId ),
 		};
 	}
 );
