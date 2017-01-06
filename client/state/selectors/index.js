@@ -23,6 +23,7 @@ export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
+export isAutomatedTransferActive from './is-automated-transfer-active';
 export isPrivateSite from './is-private-site';
 export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
