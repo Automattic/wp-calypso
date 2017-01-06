@@ -19,7 +19,7 @@ describe( 'selectors', () => {
 	describe( '#isRequestingJetpackSettings', () => {
 		it( 'should return true if settings are currently being requested', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if settings are currently not being requested', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that site is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 	describe( '#isUpdatingJetpackSettings', () => {
 		it( 'should return true if settings are currently being updated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -73,7 +73,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if settings are currently not being updated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that site is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -101,7 +101,7 @@ describe( 'selectors', () => {
 	describe( '#getJetpackSettings', () => {
 		it( 'should return settings for all modules for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							items: SETTINGS_FIXTURE
 						}
@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							items: {
 								654321: SETTINGS_FIXTURE
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 	describe( '#getJetpackSetting', () => {
 		it( 'should return a certain setting for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							items: SETTINGS_FIXTURE
 						}
@@ -145,7 +145,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							items: {
 								654321: SETTINGS_FIXTURE[ 12345678 ]
@@ -161,7 +161,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown setting', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						settings: {
 							items: {
 								654321: SETTINGS_FIXTURE[ 12345678 ]
