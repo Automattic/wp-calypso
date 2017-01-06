@@ -279,7 +279,7 @@ function filterFlowName( flowName ) {
 		 * it doesn't contain the `user` step to register a user and site respectively.
  		 */
 		if ( flowName === 'userfirst-secondary' ) {
-			return 'main';
+			return 'userfirst';
 		}
 	}
 
