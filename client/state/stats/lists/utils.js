@@ -18,7 +18,7 @@ import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
  * @return {Object}        Period range
  */
 export function rangeOfPeriod( period, date ) {
-	const momentDate = new moment( date ).locale( 'en' );
+	const momentDate = moment( date ).locale( 'en' );
 	const startOf = momentDate.clone().startOf( period );
 	const endOf = momentDate.clone().endOf( period );
 
