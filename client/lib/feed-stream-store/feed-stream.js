@@ -26,6 +26,7 @@ import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
+import { setLastStoreId } from 'reader/controller-helper';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -115,7 +116,7 @@ export default class FeedStream {
 				this.setIsFetchingNextPage( true );
 				break;
 			case ActionTypes.SELECT_ITEM:
-				this.selectItem( action.selectedIndex );
+				this.selectItem( action.selectedIndex, action.id );
 				break;
 			case ActionTypes.SELECT_NEXT_ITEM:
 				this.selectNextItem( action.selectedIndex );
@@ -210,11 +211,12 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( selectedIndex ) {
+	selectItem( selectedIndex, id ) {
 		if ( selectedIndex >= 0 &&
 			selectedIndex < this.postKeys.length &&
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
 			this.selectedIndex = selectedIndex;
+			setLastStoreId( id )
 			this.emitChange();
 		}
 	}

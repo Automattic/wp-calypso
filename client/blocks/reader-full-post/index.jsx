@@ -243,7 +243,7 @@ export class FullPostView extends React.Component {
 		if ( getLastStore() ) {
 			const store = getLastStore();
 			FeedStreamStoreActions.selectNextItem( store.getID() );
-			showSelectedPost( { store } );
+			showSelectedPost( { store, postKey: store.getSelectedPost() } );
 		}
 	}
 
@@ -251,7 +251,7 @@ export class FullPostView extends React.Component {
 		if ( getLastStore() ) {
 			const store = getLastStore();
 			FeedStreamStoreActions.selectPrevItem( store.getID() );
-			showSelectedPost( { store } );
+			showSelectedPost( { store, postKey: store.getSelectedPost() } );
 		}
 	}
 

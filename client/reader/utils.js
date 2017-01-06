@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
 import { state as SiteState } from 'lib/reader-site-store/constants';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import PostStore from 'lib/feed-post-store';
+import { selectItem } from 'lib/feed-stream-store/actions';
 
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 
@@ -74,12 +75,14 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap } ) {
-	if ( ! store || ! store.getSelectedPost() ) {
+export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, index } ) {
+	if ( ! postKey ) {
 		return;
 	}
 
-	const postKey = store.getSelectedPost();
+	if ( store && index ) {
+		selectItem( store.getID(), index );
+	}
 
 	if ( postKey.isGap === true ) {
 		return selectedGap.handleClick();

@@ -32,8 +32,7 @@ import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
-import { showSelectedPost, showFullPost, showFullXPost } from 'reader/utils';
-import { setLastStoreId } from 'reader/controller-helper';
+import { showSelectedPost } from 'reader/utils';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -219,8 +218,6 @@ export default class ReaderStream extends React.Component {
 	}
 
 	componentDidMount() {
-		setLastStoreId( this.props.store && this.props.store.id );
-
 		this.props.store.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
 
@@ -252,8 +249,6 @@ export default class ReaderStream extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.store !== this.props.store ) {
-			setLastStoreId( this.props.store && this.props.store.id );
-
 			this.props.store.off( 'change', this.updateState );
 			this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
 
@@ -269,6 +264,7 @@ export default class ReaderStream extends React.Component {
 		showSelectedPost( {
 			store: this.props.store,
 			selectedGap: this._selectedGap,
+			postKey: this.props.store.getSelectedPost()
 		} );
 	}
 
@@ -439,13 +435,14 @@ export default class ReaderStream extends React.Component {
 		}
 
 		const itemKey = this.getPostRef( postKey );
+		const showPost = this.enhanceWithPostSelectionMetadata( showSelectedPost, postKey, this.props.store );
 
 		return <PostLifecycle
 			key={ itemKey }
 			ref={ itemKey }
 			isSelected={ isSelected }
-			handleXPostClick={ showFullXPost }
-			handleClick={ showFullPost }
+			handleXPostClick={ showPost }
+			handleClick={ showPost }
 			postKey={ postKey }
 			store={ this.props.store }
 			suppressSiteNameLink={ this.props.suppressSiteNameLink }
@@ -457,6 +454,17 @@ export default class ReaderStream extends React.Component {
 			followSource={ this.props.followSource }
 		/>;
 	}
+
+	// input fn must only take a single object-like argument.
+	// output is a function that is identical to the input fn except that its option
+	// argument will also have postKey and store, and index in it
+	enhanceWithPostSelectionMetadata = ( fn, postKey, store ) => args =>
+		fn( {
+			...args,
+			postKey,
+			store,
+			index: this.state.posts.indexOf( postKey )
+		} );
 
 	render() {
 		const store = this.props.store,
