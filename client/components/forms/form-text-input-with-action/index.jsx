@@ -46,43 +46,38 @@ export default class FormTextInputWithAction extends Component {
 	}
 
 	handleFocus = ( e ) => {
-		this.props.onFocus( e );
-		if ( e.defaultPrevented ) {
-			return;
-		}
 		this.setState( {
 			focused: true,
 		} );
+
+		this.props.onFocus( e );
 	};
 
 	handleBlur = ( e ) => {
-		this.props.onBlur( e );
-		if ( e.defaultPrevented ) {
-			return;
-		}
 		this.setState( {
 			focused: false,
 		} );
+
+		this.props.onBlur( e );
 	};
 
 	handleKeyDown = ( e ) => {
 		this.props.onKeyDown( e );
-		if ( e.defaultPrevented ) {
-			return;
-		}
 		if ( e.which === 13 && this.getValue() !== '' ) {
-			this.props.onAction( e );
+			this.handleAction( e );
 		}
 	};
 
 	handleChange = ( e ) => {
-		this.props.onChange( e );
-		if ( e.defaultPrevented ) {
-			return;
-		}
 		this.setState( {
 			value: e.target.value,
 		} );
+
+		this.props.onChange( e.target.value, e );
+	};
+
+	handleAction = ( e ) => {
+		this.props.onAction( this.getValue(), e );
 	};
 
 	getValue() {
@@ -117,7 +112,7 @@ export default class FormTextInputWithAction extends Component {
 				<FormButton
 					className="form-text-input-with-action__button is-compact"
 					disabled={ this.props.disabled || this.getValue() === '' }
-					onClick={ this.props.onAction }
+					onClick={ this.handleAction }
 				>
 					{ this.props.action }
 				</FormButton>
