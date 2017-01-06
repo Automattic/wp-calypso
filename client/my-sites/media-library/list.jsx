@@ -266,21 +266,21 @@ export const MediaLibraryList = React.createClass( {
 		return this._gridSize;
 	},
 
-	formatDate: function( date ) {
-		const moment = this.props.moment( date );
+	formatDate: function( moment ) {
+		const { translate } = this.props;
 		const today = this.props.moment().startOf( 'day' );
 		const yesterday = today.clone().subtract( 1, 'day' );
 		const oneWeekAgo = today.clone().subtract( 7, 'days' );
 		const oneYearAgo = today.clone().subtract( 1, 'year' );
 
-		if ( today.isSame( moment, 'day' ) ) {
-			return this.props.translate( 'Today' );
-		} else if ( yesterday.isSame( moment, 'day' ) ) {
-			return this.props.translate( 'Yesterday' );
-		} else if ( oneWeekAgo.isBefore( moment, 'day' ) ) {
+		if ( moment.isSame( today, 'day' ) ) {
+			return translate( 'Today' );
+		} else if ( moment.isSame( yesterday, 'day' ) ) {
+			return translate( 'Yesterday' );
+		} else if ( moment.isAfter( oneWeekAgo, 'day' ) ) {
 			return moment.format( 'dddd' );
-		} else if ( oneYearAgo.isBefore( moment, 'day' ) ) {
-			return moment.format( this.props.translate( '%(month)s %(day)s', {
+		} else if ( moment.isAfter( oneYearAgo, 'day' ) ) {
+			return moment.format( translate( '%(month)s %(day)s', {
 				comment: 'Date format.',
 				args: { day: 'D', month: 'MMMM' }
 			} ) );
@@ -293,8 +293,10 @@ export const MediaLibraryList = React.createClass( {
 		const items = [];
 
 		this.props.media.forEach( ( item, index, media ) => {
+			const itemMoment = this.props.moment( item.date );
+
 			// If it's the first item or the day has changed, add a heading.
-			if ( ! index || ! this.props.moment( media[ index - 1 ].date ).isSame( item.date, 'day' ) ) {
+			if ( ! index || ! itemMoment.isSame( media[ index - 1 ].date, 'day' ) ) {
 				// Amount of items that don't fill an entire row.
 				const trailing = items.length % this._columnCount;
 
@@ -305,7 +307,7 @@ export const MediaLibraryList = React.createClass( {
 
 				// Add a heading with the date.
 				items.push( {
-					heading: this.formatDate( item.date ),
+					heading: this.formatDate( itemMoment ),
 				} );
 
 				// Fill the rest of the row with empty slots.
