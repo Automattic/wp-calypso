@@ -7,17 +7,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isJetpackSite, getSiteDomain } from 'state/sites/selectors';
+import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
 
-const StatsSparkline = ( { isJetpack, siteDomain, className, siteId } ) => {
-	if ( ! siteId || ! siteDomain || isJetpack ) {
+const StatsSparkline = ( { isJetpack, siteUrl, className, siteId } ) => {
+	if ( ! siteId || ! siteUrl || isJetpack ) {
 		return null;
 	}
 
 	return (
 		<img
 			className={ className }
-			src={ `https://${ siteDomain }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }` } />
+			src={ `${ siteUrl }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }` } />
 	);
 };
 
@@ -25,7 +25,7 @@ StatsSparkline.propTypes = {
 	className: PropTypes.string,
 	siteId: PropTypes.number,
 	isJetpack: PropTypes.bool,
-	siteDomain: PropTypes.string,
+	siteUrl: PropTypes.string,
 };
 
 export default connect(
@@ -34,7 +34,7 @@ export default connect(
 
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
-			siteDomain: getSiteDomain( state, siteId )
+			siteUrl: getSiteOption( state, siteId, 'unmapped_url' )
 		};
 	}
 )( StatsSparkline );
