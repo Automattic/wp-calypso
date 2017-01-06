@@ -151,8 +151,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
-					{ ( this.props.showFollow || isEditPossible ) && ( isBlockPossible || isDiscoverPost )
-						&& <hr className="reader-post-options-menu__hr" /> }
+					{ ( this.props.showFollow || isEditPossible ) && ( isBlockPossible || isDiscoverPost ) &&
+						<hr className="reader-post-options-menu__hr" /> }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
 					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
 				</EllipsisMenu>
