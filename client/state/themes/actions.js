@@ -3,6 +3,7 @@
  */
 import { map, property, delay } from 'lodash';
 import debugFactory from 'debug';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
@@ -47,7 +49,7 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getActiveTheme, getLastThemeQuery } from './selectors';
+import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	filterThemesForJetpack,
@@ -374,7 +376,7 @@ export function installTheme( themeId, siteId ) {
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
-				dispatch( receiveTheme( theme ) );
+				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
@@ -403,6 +405,50 @@ export function clearActivated( siteId ) {
 	return {
 		type: THEME_CLEAR_ACTIVATED,
 		siteId
+	};
+}
+
+/**
+ * Triggers a network request to install theme on Jetpack site.
+ * After installataion it switches page to the customizer
+ * See installTheme doc for install options.
+ * Requires Jetpack 4.4
+ *
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
+ */
+export function installAndTryAndCustomize( themeId, siteId ) {
+	return ( dispatch ) => {
+		return dispatch( installTheme( themeId, siteId ) )
+			.then( () => {
+				dispatch( tryAndCustomize( themeId, siteId ) );
+			} );
+	};
+}
+
+/**
+ * Triggers a switch to the try&customize page of theme.
+ * When theme is not available dispatches FAILURE action
+ * that trigers displaying error notice by notices middlewaere
+ *
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
+ */
+export function tryAndCustomize( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		const theme = getTheme( getState(), siteId, themeId );
+		if ( ! theme ) {
+			dispatch( {
+				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
+				themeId,
+				siteId
+			} );
+			return;
+		}
+		const url = getThemeCustomizeUrl( getState(), theme, siteId );
+		page( url );
 	};
 }
 

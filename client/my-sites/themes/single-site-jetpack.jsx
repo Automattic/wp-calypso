@@ -90,7 +90,8 @@ export default connectOptions(
 							/>
 							<ConnectedThemesSelection
 								options={ [
-									'activateOnJetpack'
+									'activateOnJetpack',
+									'tryAndCustomizeOnJetpack'
 								] }
 								search={ search }
 								tier={ tier }
