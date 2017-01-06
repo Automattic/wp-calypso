@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
+import SupportUserActiveDialog from './active-dialog';
 import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 
@@ -42,6 +43,15 @@ const SupportUser = React.createClass( {
 	},
 
 	render: function() {
+		if ( this.props.isSupportUser ) {
+			return (
+				<SupportUserActiveDialog
+					isVisible={ this.props.showDialog }
+					onCloseDialog={ this.props.supportUserToggleDialog }
+					onRestoreUser={ this.props.supportUserRestore } />
+			);
+		}
+
 		return (
 			<SupportUserLoginDialog
 				isVisible={ this.props.showDialog }
