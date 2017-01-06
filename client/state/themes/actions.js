@@ -427,6 +427,15 @@ export function installAndTryAndCustomize( themeId, siteId ) {
 	};
 }
 
+/**
+ * Triggers a switch to the try&customize page of theme.
+ * When theme is not available dispatches FAILURE action
+ * that trigers displaying error notice by notices middlewaere
+ *
+ * @param  {String}   themeId      WP.com Theme ID
+ * @param  {String}   siteId       Jetpack Site ID
+ * @return {Function}              Action thunk
+ */
 export function tryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const theme = getTheme( getState(), siteId, themeId );
