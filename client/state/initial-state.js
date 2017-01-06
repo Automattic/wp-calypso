@@ -38,12 +38,13 @@ function getInitialServerState() {
 
 function serialize( state ) {
 	const serializedState = reducer( state, { type: SERIALIZE } );
-	return Object.assign( serializedState, { _timestamp: Date.now() } );
+	return JSON.stringify( Object.assign( serializedState, { _timestamp: Date.now() } ) );
 }
 
 function deserialize( state ) {
-	delete state._timestamp;
-	return reducer( state, { type: DESERIALIZE } );
+	const stateObj = JSON.parse( state );
+	delete stateObj._timestamp;
+	return reducer( stateObj, { type: DESERIALIZE } );
 }
 
 function loadInitialState( initialState ) {
@@ -71,6 +72,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let lastState;
 
 	function save() {
+
 		console.log( 'saving redux tree' );
 		const nextState = reduxStore.getState();
 		if ( lastState && nextState === lastState ) {
@@ -78,22 +80,27 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			return;
 		}
 
+		console.profile( 'save-state' );
+
 		lastState = nextState;
 
 		console.time( 'serialize-state' );
 		const serializedState = serializeState( lastState );
+		console.log( 'serializing %s bytes', ( serializedState.length * 2 ).toLocaleString() ); // times two because js uses wide chars
 		console.timeEnd( 'serialize-state' );
 
 		console.time( 'serialize-save' );
 		console.time( 'serialize-set' );
-		localforage.setItem( 'redux-state', serializedState )
+		const setPromise = localforage.setItem( 'redux-state', serializedState )
 			.then( () => {
 				console.timeEnd( 'serialize-save' );
+				console.profileEnd( 'save-state' );
 			} )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
 		console.timeEnd( 'serialize-set' );
+		return setPromise;
 	}
 
 	let saver = save;
@@ -107,8 +114,10 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			saveScheduled = true;
 			global.requestIdleCallback( ( deadline ) => {
 				console.log( 'i have %d to live', deadline.timeRemaining() );
-				saveScheduled = false;
-				save();
+				save().then(
+					() => { saveScheduled = false; },
+					() => { saveScheduled = false; }
+				);
 				console.log( 'done with %d to live', deadline.timeRemaining() );
 			}, { timeout: 5000 } );
 		};
