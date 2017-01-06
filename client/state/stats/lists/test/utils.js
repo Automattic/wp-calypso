@@ -8,10 +8,49 @@ import { expect } from 'chai';
  */
 import {
 	getSerializedStatsQuery,
-	normalizers
+	normalizers,
+	rangeOfPeriod,
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'rangeOfPeriod()', () => {
+		it( 'should return a period object for day', () => {
+			const period = rangeOfPeriod( 'day', '2016-06-01' );
+
+			expect( period ).to.eql( {
+				startOf: '2016-06-01',
+				endOf: '2016-06-01'
+			} );
+		} );
+
+		it( 'should return a period object for week', () => {
+			const period = rangeOfPeriod( 'week', '2016-06-01' );
+
+			expect( period ).to.eql( {
+				startOf: '2016-05-30',
+				endOf: '2016-06-05'
+			} );
+		} );
+
+		it( 'should return a period object for month', () => {
+			const period = rangeOfPeriod( 'month', '2016-06-05' );
+
+			expect( period ).to.eql( {
+				startOf: '2016-06-01',
+				endOf: '2016-06-30'
+			} );
+		} );
+
+		it( 'should return a period object for year', () => {
+			const period = rangeOfPeriod( 'year', '2016-06-05' );
+
+			expect( period ).to.eql( {
+				startOf: '2016-01-01',
+				endOf: '2016-12-31'
+			} );
+		} );
+	} );
+
 	describe( 'getSerializedStatsQuery()', () => {
 		it( 'should return a JSON string of a query', () => {
 			const serializedQuery = getSerializedStatsQuery( {
@@ -67,6 +106,280 @@ describe( 'utils', () => {
 					viewsBestDay: '2010-09-29',
 					viewsBestDayTotal: 100
 				} );
+			} );
+		} );
+
+		describe( 'statsCountryViews()', () => {
+			it( 'should return an empty array if data is null', () => {
+				const parsedData = normalizers.statsCountryViews();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsCountryViews( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsCountryViews( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should properly parse day period response', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-25': {
+							views: [ {
+								country_code: 'US',
+								views: 1
+							} ],
+							other_views: 0,
+							total_views: 1
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 1,
+						region: '021',
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+					}
+				] );
+			} );
+
+			it( 'should properly parse week period response', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-21': {
+							views: [ {
+								country_code: 'US',
+								views: 10
+							} ],
+							other_views: 0,
+							total_views: 10
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'week',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 10,
+						region: '021',
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+					}
+				] );
+			} );
+
+			it( 'should properly parse summarized response', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					summary: {
+						views: [ {
+							country_code: 'US',
+							views: 100
+						} ],
+						other_views: 0,
+						total_views: 100
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'day',
+					summarize: 1,
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 100,
+						region: '021',
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+					}
+				] );
+			} );
+
+			it( 'should properly parse month period response', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-01': {
+							views: [ {
+								country_code: 'US',
+								views: 100
+							} ],
+							other_views: 0,
+							total_views: 100
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'month',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 100,
+						region: '021',
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+					}
+				] );
+			} );
+
+			it( 'should ignore missing grey flag icons', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-01': {
+							views: [ {
+								country_code: 'US',
+								views: 100
+							} ],
+							other_views: 0,
+							total_views: 100
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'month',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 100,
+						region: '021',
+						icon: null
+					}
+				] );
+			} );
+
+			it( 'should sanitize ’ from country names', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-01': {
+							views: [ {
+								country_code: 'US',
+								views: 100
+							} ],
+							other_views: 0,
+							total_views: 100
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
+							country_full: 'US’A',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'month',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'US\'A',
+						value: 100,
+						region: '021',
+						icon: null
+					}
+				] );
+			} );
+
+			it( 'should ignore country_codes with no country-info', () => {
+				const parsedData = normalizers.statsCountryViews( {
+					date: '2015-12-25',
+					days: {
+						'2015-12-01': {
+							views: [ {
+								country_code: 'US',
+								views: 100
+							}, {
+								country_code: 'DERP',
+								views: 100
+							} ],
+							other_views: 0,
+							total_views: 100
+						}
+					},
+					'country-info': {
+						US: {
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+							country_full: 'United States',
+							map_region: '021'
+						}
+					}
+				}, {
+					period: 'month',
+					date: '2015-12-25'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						label: 'United States',
+						value: 100,
+						region: '021',
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+					}
+				] );
 			} );
 		} );
 

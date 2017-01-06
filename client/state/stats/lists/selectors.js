@@ -157,7 +157,7 @@ export const getSiteStatsNormalizedData = createSelector(
 		const data = getSiteStatsForQuery( state, siteId, statType, query );
 
 		if ( 'function' === typeof normalizers[ statType ] ) {
-			return normalizers[ statType ].call( this, data );
+			return normalizers[ statType ].call( this, data, query );
 		}
 
 		return data;
