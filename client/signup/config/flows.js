@@ -34,7 +34,7 @@ function getSiteDestination( dependencies ) {
 	 *
 	 * Redirect them
 	 */
-	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
 		protocol = 'http';
 	}
 
@@ -231,7 +231,7 @@ const flows = {
 
 	'site-selected': {
 		steps: [ 'themes-site-preselected', 'plans-site-preselected', 'user' ],
-		destination: '/domains-prototype',
+		destination: '/domains-prototype/success',
 		description: 'A test',
 		lastModified: '2017-01-03'
 	},

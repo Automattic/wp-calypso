@@ -100,9 +100,22 @@ const domains = ( context ) => {
 	);
 };
 
+const success = ( context ) => {
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+
+	render( (
+		<Main>
+			<h1 className={ styles.header }>Site is setup</h1>
+			<div>You have created a site. blah blah blah.</div>
+		</Main> ),
+		context
+	);
+};
+
 export default function() {
 	page( '/domains-prototype', domains );
 	page( '/domains-prototype/search', search );
+	page( '/domains-prototype/success', success );
 
 	page( '/domains-prototype/manage/:domainName?', siteSelection, navigation, manage );
 }
