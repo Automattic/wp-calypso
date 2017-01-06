@@ -4,9 +4,10 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import {
+	identity,
 	includes,
 	noop,
-	identity
+	pull,
 } from 'lodash';
 
 /**
@@ -46,6 +47,8 @@ export class MediaLibraryFilterBar extends Component {
 	getSearchPlaceholderText() {
 		const { filter, translate } = this.props;
 		switch ( filter ) {
+			case 'this-post':
+				return translate( 'Search media uploaded to this post…' );
 			case 'images':
 				return translate( 'Search images…' );
 			case 'audio':
@@ -63,6 +66,8 @@ export class MediaLibraryFilterBar extends Component {
 		const { translate } = this.props;
 
 		switch ( filter ) {
+			case 'this-post':
+				return translate( 'This Post', { comment: 'Filter label for media list' } );
 			case 'images':
 				return translate( 'Images', { comment: 'Filter label for media list' } );
 			case 'audio':
@@ -100,7 +105,11 @@ export class MediaLibraryFilterBar extends Component {
 			return null;
 		}
 
-		const tabs = [ '', 'images', 'documents', 'videos', 'audio' ];
+		const tabs = [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
+
+		if ( ! this.props.post ) {
+			pull( tabs, 'this-post' );
+		}
 
 		return (
 			<SectionNavTabs>

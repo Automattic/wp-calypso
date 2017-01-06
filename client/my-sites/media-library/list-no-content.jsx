@@ -21,6 +21,12 @@ export default React.createClass( {
 
 	getLabel() {
 		switch ( this.props.filter ) {
+			case 'this-post':
+				return this.translate( 'There are no media uploaded to this post.', {
+					textOnly: true,
+					context: 'Media no results'
+				} );
+
 			case 'images':
 				return this.translate( 'You don\'t have any images.', {
 					textOnly: true,
