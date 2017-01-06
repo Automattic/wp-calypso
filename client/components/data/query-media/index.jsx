@@ -12,6 +12,16 @@ import { bindActionCreators } from 'redux';
 import { requestMedia } from 'state/media/actions';
 
 class QueryMedia extends Component {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		query: PropTypes.object,
+		request: PropTypes.func
+	};
+
+	static defaultProps = {
+		request: () => {}
+	};
+
 	componentWillMount() {
 		this.props.request( this.props.siteId, this.props.query );
 	}
@@ -29,16 +39,6 @@ class QueryMedia extends Component {
 		return null;
 	}
 }
-
-QueryMedia.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	query: PropTypes.object,
-	request: PropTypes.func
-};
-
-QueryMedia.defaultProps = {
-	request: () => {}
-};
 
 export default connect(
 	null,
