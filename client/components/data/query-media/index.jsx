@@ -4,12 +4,18 @@
 import { Component, PropTypes } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { requestMedia } from 'state/media/actions';
+
+/**
+ * Module variables
+ */
+const mapDispatchToProps = {
+	request: requestMedia
+};
 
 class QueryMedia extends Component {
 	static propTypes = {
@@ -40,11 +46,4 @@ class QueryMedia extends Component {
 	}
 }
 
-export default connect(
-	null,
-	( dispatch ) => {
-		return bindActionCreators( {
-			request: requestMedia
-		}, dispatch );
-	}
-)( QueryMedia );
+export default connect( null, mapDispatchToProps )( QueryMedia );
