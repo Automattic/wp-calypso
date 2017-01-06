@@ -190,9 +190,10 @@ export default class FeedStream {
 			this.emitChange();
 		}
 
+		const PREFETCH_THRESHOLD = 10;
 		// If we are getting close to the end of the loaded stream, or are already at the end,
 		// start fetching new posts
-		if ( nextIndex + 4 > this.postKeys.length || nextIndex === -1 ) {
+		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
 			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
 			defer( fetchNextPage );
 		}
