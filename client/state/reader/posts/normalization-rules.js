@@ -35,7 +35,7 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
 /**
  * Module vars
  */
-const
+export const
 	READER_CONTENT_WIDTH = 720,
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = 480,
