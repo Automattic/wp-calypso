@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import FormTelInput from 'components/forms/form-tel-input';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
+import FormLabel from 'components/forms/form-label';
 import Notice from 'components/notice';
 
 class RecoveryPhoneValidationNotice extends Component {
@@ -64,6 +65,7 @@ class RecoveryPhoneValidationNotice extends Component {
 					text={ translate( 'Please validate your recovery SMS number. Check your phone for a validation code.' ) }
 					showDismiss={ false }
 				/>
+				<FormLabel>{ translate( 'Enter the code you receive via SMS:' ) }</FormLabel>
 				<FormTelInput
 					autoComplete="off"
 					disabled={ false }
