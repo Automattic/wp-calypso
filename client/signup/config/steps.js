@@ -24,6 +24,11 @@ module.exports = {
 		providesDependencies: [ 'theme' ]
 	},
 
+	'themes-site-preselected': {
+		stepName: 'themes-site-preselected',
+		providesDependencies: [ 'theme' ]
+	},
+
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'designType' ]
@@ -60,6 +65,12 @@ module.exports = {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'domainItem' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
+	},
+
+	'plans-site-preselected': {
+		stepName: 'plans-site-preselected',
+		apiRequestFunction: stepActions.addPlanToCart,
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 

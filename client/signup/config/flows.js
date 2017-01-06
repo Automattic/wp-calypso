@@ -228,6 +228,14 @@ const flows = {
 		description: 'An experimental approach for WordPress.com/domains',
 		lastModified: '2017-01-03'
 	},
+
+	'site-selected': {
+		steps: [ 'design-type', 'themes-site-preselected', 'plans-site-preselected', 'user' ],
+		destination: getSiteDestination,
+		description: 'A test',
+		lastModified: '2017-01-03'
+	},
+
 };
 
 if ( config( 'env' ) === 'development' ) {
