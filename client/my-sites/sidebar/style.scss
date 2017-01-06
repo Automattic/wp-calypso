@@ -11,6 +11,10 @@
 	}
 }
 
+.sidebar__menu li.stats.selected .sidebar__sparkline {
+	display: none;
+}
+
 .sidebar__menu li.stats a:after,
 .notouch .sidebar__menu li.stats:hover:not(.selected) a:first-child:after  {
 	background: none;
