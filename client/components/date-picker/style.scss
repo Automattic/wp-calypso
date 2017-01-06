@@ -36,7 +36,7 @@ $date-picker_nav_button_size: 20px;
 	}
 }
 
-.date-picker__day_event {
+.date-picker__day_event:not(.is-selected) {
 	border-color: lighten( $gray, 10% );
 }
 
@@ -224,7 +224,7 @@ $date-picker_nav_button_size: 20px;
 	cursor: pointer;
 	font-weight: normal;
 
-	.date-picker__day {
+	.date-picker__day:not(.is-selected) {
 		color: $gray;
 	}
 }
