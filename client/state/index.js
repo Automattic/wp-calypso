@@ -7,6 +7,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
@@ -120,20 +121,20 @@ if ( typeof window === 'object' ) {
 	);
 }
 
-let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
-
 export function createReduxStore( initialState = {} ) {
-	if (
-		typeof window === 'object' &&
-		window.app &&
-		window.app.isDebug &&
-		window.devToolsExtension
-	) {
-		createStoreWithMiddleware = compose(
-			consoleDispatcher,
-			createStoreWithMiddleware,
-			window.devToolsExtension(),
-		);
+	const enhancers = [ applyMiddleware( ...middleware ) ];
+
+	if ( 'object' === typeof window ) {
+		enhancers.push( sitesSync );
+
+		if ( window.app && window.app.isDebug ) {
+			enhancers.push( consoleDispatcher );
+		}
+
+		if ( window.devToolsExtension ) {
+			enhancers.push( window.devToolsExtension() );
+		}
 	}
-	return createStoreWithMiddleware( createStore )( reducer, initialState );
+
+	return compose( ...enhancers )( createStore )( reducer, initialState );
 }
