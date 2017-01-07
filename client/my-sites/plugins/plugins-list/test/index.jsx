@@ -40,7 +40,7 @@ describe( 'PluginsList', () => {
 
 		testRenderer = TestUtils.renderIntoDocument;
 
-		siteListMock = { getSelectedSite: () => sites[ 0 ], get: () => sites };
+		siteListMock = { getSelectedSite: () => sites[ 0 ], get: () => sites, sync() {} };
 		PluginsList = require( '../' ).PluginsList;
 	} );
 
