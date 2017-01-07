@@ -65,6 +65,14 @@ files = files.reduce( ( memo, filePath ) => {
 
 	// Append individual file argument
 	if ( /\.jsx?$/i.test( filePath ) ) {
+		if ( ! filePath.includes( '/test/' ) ) {
+			console.warn(
+				chalk.red.bold( 'WARNING:' ),
+				chalk.yellow( 'It appears you\'re trying to use the test runner on a file under test, not a test file.\n  Try:' ),
+				chalk.green( `npm run test-client ${ filePath.replace( /\/([^\/]*)$/, '/test/$1' ) }\n` )
+			);
+		}
+
 		return memo.concat( filePath );
 	}
 
