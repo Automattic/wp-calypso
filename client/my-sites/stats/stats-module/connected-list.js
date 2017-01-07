@@ -59,11 +59,11 @@ class StatsConnectedModule extends Component {
 	}
 
 	getHref() {
-		const { summary, period, path, siteSlug, date } = this.props;
+		const { summary, period, path, siteSlug } = this.props;
 
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + date;
+			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + period.startOf.format( 'YYYY-MM-DD' );
 		}
 	}
 
@@ -111,6 +111,7 @@ class StatsConnectedModule extends Component {
 				<Card compact className={ cardClasses }>
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
+					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />

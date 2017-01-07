@@ -4,6 +4,10 @@
 .stats-geochart {
 	@extend %mobile-interface-element;
 	margin: 0 24px;
+
+	&.is-loading {
+		display: none;
+	}
 }
 
 .countryviews {
