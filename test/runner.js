@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict'; // eslint-disable-line strict
-var files;
+let files;
 
 require( 'babel-register' );
 
@@ -8,11 +8,13 @@ require( 'babel-register' );
  * External dependencies
  */
 const debug = require( 'debug' )( 'test-runner' ),
+	fs = require( 'fs' ),
 	glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
 	program = require( 'commander' ),
-	chalk = require( 'chalk' );
+	chalk = require( 'chalk' ),
+	readlineSync = require( 'readline-sync' );
 
 /**
  * Internal dependencies
@@ -66,11 +68,41 @@ files = files.reduce( ( memo, filePath ) => {
 	// Append individual file argument
 	if ( /\.jsx?$/i.test( filePath ) ) {
 		if ( ! filePath.includes( '/test/' ) ) {
-			console.warn(
-				chalk.red.bold( 'WARNING:' ),
-				chalk.yellow( 'It appears you\'re trying to use the test runner on a file under test, not a test file.\n  Try:' ),
-				chalk.green( `npm run test-${ process.env.TEST_ROOT } ${ filePath.replace( /\/([^\/]*)$/, '/test/$1' ) }\n` )
+			// did we just forget the test directory?
+			const pathGuess = path.join(
+				path.dirname( filePath ),
+				'test',
+				path.basename( filePath )
 			);
+
+			console.warn( pathGuess );
+			if ( fs.existsSync( pathGuess ) ) {
+				console.warn(
+					chalk.red.bold( 'WARNING:' ),
+					chalk.yellow(
+						'It appears that you\'re trying to use the test runner ' +
+						'on a file under test, not the test file itself.\n'
+					),
+					chalk.green( 'Did you mean to run against…\n\t' ),
+					chalk.blue( pathGuess ),
+					chalk.green( '\n…instead of…\n\t' ),
+					chalk.blue( filePath )
+				);
+
+				if ( 'Y' === readlineSync.question( 'Y to continue, N to abort: ' ).toUpperCase() ) {
+					return memo.concat( pathGuess );
+				}
+
+				process.exit( 1 ); // eslint-disable-line no-process-exit
+			}
+
+			console.warn(
+				chalk.red.bold( 'ERROR:' ),
+				chalk.yellow( 'Could not find chosen test file.\n\t' ),
+				chalk.blue( filePath )
+			);
+
+			process.exit( 1 ); // eslint-disable-line no-process-exit
 		}
 
 		return memo.concat( filePath );

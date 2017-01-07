@@ -1793,6 +1793,9 @@
         }
       }
     },
+    "has-color": {
+      "version": "0.1.7"
+    },
     "has-cors": {
       "version": "1.1.0"
     },
@@ -2688,6 +2691,9 @@
       "dependencies": {
         "minimatch": {
           "version": "3.0.3"
+        },
+        "npmlog": {
+          "version": "3.1.2"
         }
       }
     },
@@ -2767,7 +2773,15 @@
       }
     },
     "npmlog": {
-      "version": "4.0.2"
+      "version": "4.0.2",
+      "dependencies": {
+        "gauge": {
+          "version": "2.7.2"
+        },
+        "supports-color": {
+          "version": "0.2.0"
+        }
+      }
     },
     "nth-check": {
       "version": "1.0.1",
@@ -3255,6 +3269,10 @@
           "version": "2.2.2"
         }
       }
+    },
+    "readline-sync": {
+      "version": "1.4.5",
+      "dev": true
     },
     "readline2": {
       "version": "1.0.1",
