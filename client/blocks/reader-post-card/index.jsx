@@ -22,7 +22,7 @@ import FollowButton from 'reader/follow-button';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import { getSourceFollowUrl as getDiscoverFollowUrl, isDiscoverPost } from 'reader/discover/helper';
+import { getSourceFollowUrl as getDiscoverFollowUrl, isDiscoverPost as isDiscover } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
 export default class ReaderPostCard extends React.Component {
@@ -35,7 +35,6 @@ export default class ReaderPostCard extends React.Component {
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
 		originalPost: PropTypes.object, // used for Discover only
-		showEntireExcerpt: PropTypes.bool,
 		useBetterExcerpt: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
@@ -45,7 +44,6 @@ export default class ReaderPostCard extends React.Component {
 		onClick: noop,
 		onCommentClick: noop,
 		isSelected: false,
-		showEntireExcerpt: false,
 		useBetterExcerpt: true
 	};
 
@@ -113,7 +111,6 @@ export default class ReaderPostCard extends React.Component {
 			onCommentClick,
 			showPrimaryFollowButton,
 			isSelected,
-			showEntireExcerpt,
 			useBetterExcerpt,
 			showSiteName,
 			followSource,
@@ -121,14 +118,16 @@ export default class ReaderPostCard extends React.Component {
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
+		const isDiscoverPost = isDiscover( post );
 
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-showing-entire-excerpt': showEntireExcerpt
+			'is-discover': isDiscoverPost
 		} );
+
 		const excerptAttribute = useBetterExcerpt && trim( post.better_excerpt ) ? 'better_excerpt' : 'excerpt';
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 
@@ -142,7 +141,7 @@ export default class ReaderPostCard extends React.Component {
 									visitUrl = { post.URL }
 									showVisit={ true }
 									showMenu={ true }
-									showMenuFollow={ isDiscoverPost( post ) }
+									showMenuFollow={ isDiscoverPost }
 									onCommentClick={ onCommentClick }
 									showEdit={ false }
 									className="ignore-click"
