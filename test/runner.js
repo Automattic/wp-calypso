@@ -69,7 +69,7 @@ files = files.reduce( ( memo, filePath ) => {
 			console.warn(
 				chalk.red.bold( 'WARNING:' ),
 				chalk.yellow( 'It appears you\'re trying to use the test runner on a file under test, not a test file.\n  Try:' ),
-				chalk.green( `npm run test-client ${ filePath.replace( /\/([^\/]*)$/, '/test/$1' ) }\n` )
+				chalk.green( `npm run test-${ process.env.TEST_ROOT } ${ filePath.replace( /\/([^\/]*)$/, '/test/$1' ) }\n` )
 			);
 		}
 
