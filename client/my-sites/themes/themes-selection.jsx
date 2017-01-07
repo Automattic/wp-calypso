@@ -11,9 +11,11 @@ import { compact, isEqual, omit } from 'lodash';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
+import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	isRequestingThemesForQuery,
@@ -23,6 +25,7 @@ import {
 	isInstallingTheme
 } from 'state/themes/selectors';
 import config from 'config';
+import { localize } from 'i18n-calypso';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -100,13 +103,17 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { siteIdOrWpcom, query } = this.props;
+		const { siteIdOrWpcom, query, listLabel, hideUploadButton } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes
 					query={ query }
 					siteId={ siteIdOrWpcom } />
+				<ThemeUploadCard
+					label={ listLabel }
+					href={ hideUploadButton ? null : `/design/upload/${ this.props.siteSlug }` }
+				/>
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
@@ -145,6 +152,7 @@ const ConnectedThemesSelection = connect(
 		return {
 			query,
 			siteIdOrWpcom,
+			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
@@ -193,4 +201,4 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 }
 
-export default ThemesSelectionWithPage;
+export default localize( ThemesSelectionWithPage );
