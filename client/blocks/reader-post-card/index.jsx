@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate, trim, get } from 'lodash';
+import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -35,7 +35,6 @@ export default class ReaderPostCard extends React.Component {
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
 		originalPost: PropTypes.object, // used for Discover only
-		useBetterExcerpt: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
 	};
@@ -44,7 +43,6 @@ export default class ReaderPostCard extends React.Component {
 		onClick: noop,
 		onCommentClick: noop,
 		isSelected: false,
-		useBetterExcerpt: true
 	};
 
 	propagateCardClick = () => {
@@ -111,7 +109,6 @@ export default class ReaderPostCard extends React.Component {
 			onCommentClick,
 			showPrimaryFollowButton,
 			isSelected,
-			useBetterExcerpt,
 			showSiteName,
 			followSource,
 		} = this.props;
@@ -128,7 +125,6 @@ export default class ReaderPostCard extends React.Component {
 			'is-discover': isDiscoverPost
 		} );
 
-		const excerptAttribute = useBetterExcerpt && trim( post.better_excerpt ) ? 'better_excerpt' : 'excerpt';
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 
 		const discoverBlogName = get( post, 'discover_metadata.attribution.blog_name' );
@@ -159,11 +155,11 @@ export default class ReaderPostCard extends React.Component {
 					{ readerPostActions }
 				</PhotoPost>;
 		} else if ( isGalleryPost ) {
-			readerPostCard = <GalleryPost post={ post } title={ title } excerptAttribute={ excerptAttribute } >
+			readerPostCard = <GalleryPost post={ post } title={ title } >
 					{ readerPostActions }
 				</GalleryPost>;
 		} else {
-			readerPostCard = <StandardPost post={ post } title={ title } excerptAttribute={ excerptAttribute } >
+			readerPostCard = <StandardPost post={ post } title={ title } >
 					{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }

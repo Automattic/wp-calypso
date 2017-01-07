@@ -27,7 +27,7 @@ function getGalleryWorthyImages( post ) {
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 
-const PostGallery = ( { post, excerptAttribute, children } ) => {
+const PostGallery = ( { post, children } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
@@ -57,7 +57,7 @@ const PostGallery = ( { post, excerptAttribute, children } ) => {
 				</AutoDirection>
 				<AutoDirection>
 					<div className="reader-post-card__excerpt"
-						dangerouslySetInnerHTML={ { __html: post[ excerptAttribute ] } } // eslint-disable-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
 					/>
 				</AutoDirection> )
 				{ children }
@@ -66,8 +66,7 @@ const PostGallery = ( { post, excerptAttribute, children } ) => {
 };
 
 PostGallery.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	excerptAttribute: React.PropTypes.string.isRequired
+	post: React.PropTypes.object.isRequired
 };
 
 export default PostGallery;

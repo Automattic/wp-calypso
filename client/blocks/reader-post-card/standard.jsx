@@ -10,7 +10,7 @@ import AutoDirection from 'components/auto-direction';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 
-const StandardPost = ( { post, excerptAttribute, children } )=> {
+const StandardPost = ( { post, children } )=> {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -32,7 +32,7 @@ const StandardPost = ( { post, excerptAttribute, children } )=> {
 				</AutoDirection>
 				<AutoDirection>
 					<div className="reader-post-card__excerpt"
-						dangerouslySetInnerHTML={ { __html: post[ excerptAttribute ] } } // eslint-disable-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
 					/>
 				</AutoDirection>
 				{ children }
