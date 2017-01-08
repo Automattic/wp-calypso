@@ -67,7 +67,7 @@ const options = [
 			}
 		]
 	}
-]
+];
 const initialSelected = 3;
 
 <SelectOptGroups name="example" value={ initialSelected } options={ options } />

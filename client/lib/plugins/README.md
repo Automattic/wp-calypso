@@ -56,7 +56,7 @@ Note: pluginFilter can be any of the following string: 'none' , 'all', 'active',
 
 ---
 
-** PluginsStore.getSitePlugins( site ); **
+**PluginsStore.getSitePlugins( site );**
 
 Returns an array of plugin objects for a particular site.
 
@@ -88,16 +88,18 @@ import PluginsStore from 'lib/plugins/store';
 
 class YourComponent extends Component {
 
+	constructor( props ) {
+		super( props );
+
+		this.state = this.getPlugins();
+	}
+
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 	}
 
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-	}
-
-	getInitialState() {
-		return this.getPlugins();
 	}
 
 	getPlugins() {
@@ -118,7 +120,6 @@ class YourComponent extends Component {
 
 }
 ```
-
 
 ###Actions
 Actions get triggered by views and stores.
