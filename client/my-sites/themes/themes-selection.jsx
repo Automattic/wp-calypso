@@ -25,7 +25,6 @@ import {
 	isInstallingTheme
 } from 'state/themes/selectors';
 import config from 'config';
-import { localize } from 'i18n-calypso';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -201,4 +200,4 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 }
 
-export default localize( ThemesSelectionWithPage );
+export default ThemesSelectionWithPage;
