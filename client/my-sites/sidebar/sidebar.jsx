@@ -27,6 +27,7 @@ import SidebarRegion from 'layout/sidebar/region';
 import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
@@ -179,8 +180,9 @@ export class MySitesSidebar extends Component {
 		var site = this.getSelectedSite(),
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			themesLink;
+		const { canUserCustomizeSite } = this.props;
 
-		if ( site && ! ( site.capabilities && site.capabilities.edit_theme_options ) ) {
+		if ( site && ! canUserCustomizeSite ) {
 			return null;
 		}
 
@@ -217,6 +219,7 @@ export class MySitesSidebar extends Component {
 		var site = this.getSelectedSite(),
 			menusLink = '/menus' + this.siteSuffix(),
 			showClassicLink = ! config.isEnabled( 'manage/menus' );
+		const { canUserCustomizeSite } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -226,7 +229,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.capabilities && ! site.capabilities.edit_theme_options ) {
+		if ( ! canUserCustomizeSite ) {
 			return null;
 		}
 
@@ -792,6 +795,7 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		currentUser: getCurrentUser( state ),
+		canUserCustomizeSite: canCurrentUser( state, selectedSiteId, 'edit_theme_options' ),
 		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
