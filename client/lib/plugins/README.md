@@ -73,56 +73,50 @@ Returns a plugin objects for a particular site.
 Returns an array of sites that have a particular plugin.
 
 
-
-
 ####Example Component Code:
 
 ```es6
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsStore = require( 'lib/plugins/store' );
+import PluginsStore from 'lib/plugins/store';
 
-module.exports = React.createClass( {
+class YourComponent extends Component {
 
-	displayName: 'yourComponent',
-
-	componentDidMount: function() {
+	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-	},
+	}
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getPlugins();
-	},
+	}
 
-	getPlugins: function() {
-
-		var sites = this.props.sites.getSelectedOrAllWithPlugins();
+	getPlugins() {
+		const sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
 			plugins: PluginsStore.getPlugins( sites )
 		};
-	},
-
-	refreshSitesAndPlugins: function() {
-		this.setState( this.getPlugins() );
-	},
-
-	render: function() {
-
 	}
 
-} );
+	refreshSitesAndPlugins() {
+		this.setState( this.getPlugins() );
+	}
 
+	render() {
+		...
+	}
+
+}
 ```
 
 
@@ -184,28 +178,28 @@ Toggle AutoUpdates for a plugin on a site.
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsActions = require( 'lib/plugins/actions' );
+import PluginsStore from 'lib/plugins/store';
 
-module.exports = React.createClass( {
+class YourComponent extends Component {
 
-	displayName: 'yourComponent',
-
-	updatePlugin: function() {
+	updatePlugin() {
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
-	},
-
-	render: function() {
-		return (
-			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
-		)
 	}
 
-} );
+	render() {
+		return (
+			<button onClick={ this.updatePlugin } >
+				Update { this.props.plugin.name }
+			</button>
+		);
+	}
+
+}
 
 ```
 
