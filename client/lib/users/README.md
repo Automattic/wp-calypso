@@ -3,11 +3,11 @@ Users
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for managing a site's users in Calypso.
 
-###The Data
+### The Data
 
 The Data is stored in a private variable but can be accessed though the stores public methods.
  
-####Public Methods
+#### Public Methods
  
 **UsersStore.getUsers( options );**
  
@@ -20,10 +20,10 @@ Returns an array of users that have been fetched with the given options describi
 Returns an object: ```{ totalUsers: int, fetchingUsers: bool, usersCurrentOffset: int, numUsersFetched: int }``
 This data will help with pagination and infinite scroll.
 
-###Actions 
+### Actions
 Actions get triggered by views and stores. 
 
-####Public methods.
+#### Public methods.
 
 **UsersActions.fetchUsers( options );**
 
@@ -36,54 +36,51 @@ Actions get triggered by views and stores.
 }
 ```
 
-###Example Component Code
+### Example Component Code
 
 ```es6
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var UsersStore = require( 'lib/users/store' );
+import UsersStore from 'lib/users/store';
 
-module.exports = React.createClass( { 
-
-	displayName: 'yourComponent',
+class YourComponent extends Component {
 	
-	componentDidMount: function() {
+	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUsers );
-	},
+	}
 	
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUsers );
-	},
+	}
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getUsers();
-	},
+	}
 	
-	getUsers: function() {
+	getUsers() {
 		return {
 			users: UsersStore.fetch( { siteId: this.props.site.ID } )
 		};
-	},
+	}
 
-	refreshUsers: function() {
+	refreshUsers() {
 		this.setState( this.getUsers() );
-	},
-	
-	render: function() {
-		
 	}
 	
-} );
-
+	render() {
+		...
+	}
+	
+}
 ```
 
-####Testing
+#### Testing
 
 To run tests go to 
 ```cd client/lib/users/ && make test```
