@@ -22,6 +22,7 @@ const AllSites = require( 'my-sites/all-sites' ),
 
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const CurrentSite = React.createClass( {
 	displayName: 'CurrentSite',
@@ -79,11 +80,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	getSelectedSite: function() {
-		if ( this.props.sites.get().length === 1 ) {
-			return this.props.sites.getPrimary();
-		}
-
-		return this.props.sites.getSelectedSite();
+		return this.props.selectedSite || this.props.sites.getPrimary();
 	},
 
 	getDomainWarnings: function() {
@@ -114,7 +111,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	render: function() {
-		let site;
+		const site = this.getSelectedSite();
 
 		if ( ! this.props.sites.initialized ) {
 			return (
@@ -134,12 +131,6 @@ const CurrentSite = React.createClass( {
 			);
 		}
 
-		if ( this.props.sites.selected ) {
-			site = this.props.sites.getSelectedSite();
-		} else {
-			site = this.props.sites.getPrimary();
-		}
-
 		return (
 			<Card className="current-site">
 				{ this.props.siteCount > 1 &&
@@ -150,7 +141,7 @@ const CurrentSite = React.createClass( {
 						</Button>
 					</span>
 				}
-				{ this.props.sites.selected
+				{ this.props.selectedSite
 					? <Site
 						site={ site }
 						homeLink={ true }
@@ -168,4 +159,11 @@ const CurrentSite = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-module.exports = connect( null, { setLayoutFocus }, null, { pure: false } )( CurrentSite );
+module.exports = connect(
+	( state ) => ( {
+		selectedSite: getSelectedSite( state ),
+	} ),
+	{ setLayoutFocus },
+	null,
+	{ pure: false }
+)( CurrentSite );
