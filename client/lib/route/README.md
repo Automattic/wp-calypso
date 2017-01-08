@@ -10,13 +10,13 @@ as middleware to redirect any pathname ending in `/` to the same path minus the 
 For instance, to redirect `/foo/` to `/foo`:
 
 ```es6
-var normalize = require( 'lib/route/normalize' );
+import normalize from 'lib/route/normalize';
 page('/foo/?', normalize, displayFoo );
 ```
 
 Alternatively, to normalize all routes:
 ```es6
-var normalize = require( 'normalize' );
+import normalize from 'lib/route/normalize';
 page( '*', normalize );
 ```
 
