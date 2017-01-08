@@ -4,8 +4,9 @@ Async Script Loader
 This utility function allows us to use a standardized method of loading remote scripts and injecting them into the `<head>` of our document to bring external functionality into the app.
 
 ### Usage
-```js
-loadScript = require( 'lib/load-script' );
+```es6
+import loadScript from 'lib/load-script';
+
 loadScript.loadScript( REMOTE_SCRIPT_URL, function( error ) {
 	if ( error ) {
 		debug( 'Script ' + error.src + ' failed to load.' );
