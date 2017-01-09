@@ -9,10 +9,11 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
+import support from 'lib/url/support';
 
 const FailedPurchase = ( { failedPurchases, translate } ) => {
-	function getDescription() {
-		return <div>
+	const description = (
+		<div>
 			<p>
 				{
 					translate(
@@ -22,18 +23,27 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 			</p>
 			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
 				{ failedPurchases.map( item => {
-					return <li key={ `failed-purchase-${ item.productId }` }>{ item.productName }{ item.meta && `: ${ item.meta }` }</li>;
+					return (
+						<li key={ `failed-purchase-${ item.productId }-${ item.meta }` }>
+							{ item.productName }{ item.meta && `: ${ item.meta }` }
+						</li>
+					);
 				} ) }
 			</ul>
 			<p>
 				{
 					translate( 'We have filled your account with credits so you can retry the failed purchases. ' +
-						'If the problem persists, please don\'t hesitate to contact support!'
+						'If the problem persists, please don\'t hesitate to {{a}}contact support{{/a}}!',
+						{
+							components: {
+								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
+							}
+						}
 					)
 				}
 			</p>
-		</div>;
-	}
+		</div>
+	);
 
 	return (
 		<div>
@@ -58,7 +68,7 @@ const FailedPurchase = ( { failedPurchases, translate } ) => {
 				<div className="checkout-thank-you__domain-mapping-details">
 					<PurchaseDetail
 						icon="redo"
-						description={ getDescription() }
+						description={ description }
 						target="_blank"
 						rel="noopener noreferrer"
 						isRequired />
