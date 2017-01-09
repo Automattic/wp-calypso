@@ -20,6 +20,7 @@ import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
+import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
 
 import {
 	updateAccountRecoveryEmail,
@@ -27,6 +28,8 @@ import {
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryEmail,
 	resendAccountRecoveryEmailValidation,
+	resendAccountRecoveryPhoneValidation,
+	validateAccountRecoveryPhone,
 } from 'state/account-recovery/settings/actions';
 
 import {
@@ -34,9 +37,13 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryPhoneActionInProgress,
+	isValidatingAccountRecoveryPhone,
 	isAccountRecoveryEmailValidated,
+	isAccountRecoveryPhoneValidated,
 	hasSentAccountRecoveryEmailValidation,
+	hasSentAccountRecoveryPhoneValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
+	shouldPromptAccountRecoveryPhoneValidationNotice,
 } from 'state/account-recovery/settings/selectors';
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
@@ -74,8 +81,8 @@ const SecurityCheckup = React.createClass( {
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<CompactCard className="security-checkup-intro">
-					<p className="security-checkup-intro__text">
+				<CompactCard>
+					<p className="security-checkup__text">
 						{ this.props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
 								'If you ever have problems accessing your account, WordPress.com will use what ' +
 								'you enter here to verify your identity.' ) }
@@ -93,6 +100,7 @@ const SecurityCheckup = React.createClass( {
 					{ this.props.shouldPromptEmailValidationNotice &&
 						<RecoveryEmailValidationNotice
 							onResend={ this.props.resendAccountRecoveryEmailValidation }
+							hasSent={ this.props.hasSentEmailValidation }
 						/>
 					}
 				</CompactCard>
@@ -112,6 +120,14 @@ const SecurityCheckup = React.createClass( {
 							showDismiss={ false }
 						/>
 					}
+					{ this.props.shouldPromptPhoneValidationNotice &&
+						<RecoveryPhoneValidationNotice
+							onResend={ this.props.resendAccountRecoveryPhoneValidation }
+							onValidate={ this.props.validateAccountRecoveryPhone }
+							hasSent={ this.props.hasSentPhoneValidation }
+							isValidating={ this.props.validatingAccountRecoveryPhone }
+						/>
+					}
 				</CompactCard>
 
 			</Main>
@@ -129,6 +145,10 @@ export default connect(
 		shouldPromptEmailValidationNotice: shouldPromptAccountRecoveryEmailValidationNotice( state ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		accountRecoveryPhoneActionInProgress: isAccountRecoveryPhoneActionInProgress( state ),
+		accountRecoveryPhoneValidated: isAccountRecoveryPhoneValidated( state ),
+		validatingAccountRecoveryPhone: isValidatingAccountRecoveryPhone( state ),
+		hasSentPhoneValidation: hasSentAccountRecoveryPhoneValidation( state ),
+		shouldPromptPhoneValidationNotice: shouldPromptAccountRecoveryPhoneValidationNotice( state ),
 	} ),
 	{
 		updateAccountRecoveryEmail,
@@ -136,5 +156,7 @@ export default connect(
 		updateAccountRecoveryPhone,
 		deleteAccountRecoveryPhone,
 		resendAccountRecoveryEmailValidation,
+		resendAccountRecoveryPhoneValidation,
+		validateAccountRecoveryPhone,
 	}
 )( localize( SecurityCheckup ) );

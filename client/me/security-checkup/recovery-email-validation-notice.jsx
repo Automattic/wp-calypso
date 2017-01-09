@@ -15,6 +15,7 @@ class RecoveryEmailValidationNotice extends Component {
 		const {
 			translate,
 			onResend,
+			hasSent,
 		} = this.props;
 
 		return (
@@ -25,9 +26,11 @@ class RecoveryEmailValidationNotice extends Component {
 						'Check your inbox for a confirmation link.' ) }
 				showDismiss={ false }
 			>
+			{ ! hasSent &&
 				<NoticeAction href="#" onClick={ onResend }>
 					{ translate( 'Resend' ) }
 				</NoticeAction>
+			}
 			</Notice>
 		);
 	}
