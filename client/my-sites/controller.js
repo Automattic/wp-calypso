@@ -5,6 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
+import startsWith from 'lodash/startsWith';
 import { uniq } from 'lodash';
 
 /**
@@ -171,6 +172,11 @@ module.exports = {
 			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
 			context.store.dispatch( receiveSite( selectedSite ) );
 			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
+
+			if ( selectedSite && selectedSite.options.is_domain_only && ! startsWith( context.pathname, '/domains/manage/' ) ) {
+				page.redirect( '/domains/manage/' + selectedSite.slug );
+				return;
+			}
 
 			// Update recent sites preference
 			const state = context.store.getState();
