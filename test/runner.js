@@ -81,11 +81,11 @@ files = files.reduce( ( memo, filePath ) => {
 					chalk.red.bold( 'WARNING:' ),
 					chalk.yellow(
 						'It appears that you\'re trying to use the test runner ' +
-						'on a file under test, not the test file itself.\n'
+						'on a file under test, not the test file itself.'
 					),
-					chalk.green( 'Did you mean to run against…\n\t' ),
+					chalk.green( '\n Did you mean to run against…\n  ' ),
 					chalk.blue( pathGuess ),
-					chalk.green( '\n…instead of…\n\t' ),
+					chalk.green( '\n …instead of…\n  ' ),
 					chalk.blue( filePath )
 				);
 
