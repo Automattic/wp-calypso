@@ -242,7 +242,7 @@ const MapDomainStep = React.createClass( {
 				break;
 
 			case 'forbidden_domain':
-				message = translate( 'Only the owner of the domain can map it\'s subdomains.' );
+				message = translate( 'Only the owner of the domain can map its subdomains.' );
 				break;
 
 			case 'invalid_tld':
