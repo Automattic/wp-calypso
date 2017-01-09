@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -10,13 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
 import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
@@ -48,29 +46,8 @@ import {
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-const SecurityCheckup = React.createClass( {
-	displayName: 'SecurityCheckup',
-
-	mixins: [ observe( 'userSettings' ) ],
-
-	componentDidMount: function() {
-		this.props.userSettings.getSettings();
-	},
-
-	render: function() {
-		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
-
-		const {
-			translate,
-		} = this.props;
-
-		const twoStepNoticeMessage = translate(
-			'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
-				components: {
-					a: <a href="/me/security/two-step" />
-				},
-			} );
-
+class SecurityCheckup extends Component {
+	render() {
 		return (
 			<Main className="security-checkup">
 				<QueryAccountRecoverySettings />
@@ -111,15 +88,7 @@ const SecurityCheckup = React.createClass( {
 						updatePhone={ this.props.updateAccountRecoveryPhone }
 						deletePhone={ this.props.deleteAccountRecoveryPhone }
 						isLoading={ this.props.accountRecoveryPhoneActionInProgress }
-						disabled={ twoStepEnabled }
 					/>
-					{ twoStepEnabled &&
-						<Notice
-							status="is-error"
-							text={ twoStepNoticeMessage }
-							showDismiss={ false }
-						/>
-					}
 					{ this.props.shouldPromptPhoneValidationNotice &&
 						<RecoveryPhoneValidationNotice
 							onResend={ this.props.resendAccountRecoveryPhoneValidation }
@@ -132,8 +101,8 @@ const SecurityCheckup = React.createClass( {
 
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state ) => ( {
