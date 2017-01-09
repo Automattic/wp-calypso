@@ -18,6 +18,7 @@ const PlanFeaturesActions = ( {
 	available = true,
 	current = false,
 	isRelatedToCurrentPlan = false,
+	isMonthly = false,
 	primaryUpgrade = false,
 	freePlan = false,
 	onUpgradeClick = noop,
@@ -28,6 +29,14 @@ const PlanFeaturesActions = ( {
 	isLandingPage
 } ) => {
 	let upgradeButton;
+
+	const renderRelatedPlanText = () => {
+		if ( ! isMonthly ) {
+			return canPurchase ? translate( 'Your plan (monthly)' ) : translate( 'Current plan (monthly)' );
+		}
+		return canPurchase ? translate( 'Your plan (yearly)' ) : translate( 'Current plan (yearly)' );
+	};
+
 	const classes = classNames(
 		'plan-features__actions-button',
 		{
@@ -44,11 +53,11 @@ const PlanFeaturesActions = ( {
 				{ canPurchase ? translate( 'Your plan' ) : translate( 'Current plan' ) }
 			</Button>
 		);
-	}  else if ( isRelatedToCurrentPlan && ! isInSignup ) {
+	} else if ( isRelatedToCurrentPlan && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				<Gridicon size={ 18 } icon="checkmark" />
-				{ canPurchase ? translate( 'Your plan (period)' ) : translate( 'Current plan' ) }
+				{ renderRelatedPlanText( canPurchase, isMonthly ) }
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {

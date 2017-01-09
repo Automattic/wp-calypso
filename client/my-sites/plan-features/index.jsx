@@ -25,8 +25,7 @@ import {
 	getPlanRawPrice,
 	getPlan,
 	getPlanSlug,
-	getPlanBySlug,
-	isRelatedPlan
+	getPlanBySlug
 } from 'state/plans/selectors';
 import {
 	isPopular,
@@ -163,7 +162,8 @@ class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
-				isRelatedToCurrentPlan
+				isRelatedToCurrentPlan,
+				monthly
 			} = properties;
 
 			return (
@@ -199,6 +199,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isRelatedToCurrentPlan = { isRelatedToCurrentPlan }
+						isMonthly = { monthly }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -530,8 +531,8 @@ export default connect(
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const isRelatedToCurrentPlan = planObject ? isRelatedPlan( state, planProductId, planObject.product_id ) : false;
 
+				const isRelatedToCurrentPlan = planObject ? planConstantObj.relatedPlan === sitePlan.product_slug : false;
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
@@ -571,7 +572,8 @@ export default connect(
 					),
 					rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
 					relatedMonthlyPlan: relatedMonthlyPlan,
-					isRelatedToCurrentPlan
+					isRelatedToCurrentPlan,
+					monthly: isMonthly( plan )
 				};
 			} )
 		);

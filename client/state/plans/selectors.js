@@ -77,10 +77,3 @@ export function getPlanSlug( state, productId ) {
 
 	return get( plan, 'product_slug', null );
 }
-
-export function isRelatedPlan( state, productId, relatedPlanProductId ) {
-	const plan = getPlan( state, productId );
-	const relatedPlan = getPlan( state, relatedPlanProductId );
-
-	return plan.relatedPlan === relatedPlan.product_slug;
-}
