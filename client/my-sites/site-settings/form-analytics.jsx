@@ -29,7 +29,7 @@ import { isEnabled } from 'config';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
-const googleAnalyticsCodeValidator = code => ! code || code.match( /^UA-\d+-\d+$/i );
+const googleAnalyticsCodeIsValid = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 const GoogleAnalyticsForm = React.createClass( {
@@ -73,7 +73,7 @@ const GoogleAnalyticsForm = React.createClass( {
 
 	handleCodeChange( event ) {
 		const code = event.target.value;
-		const isCodeValid = googleAnalyticsCodeValidator( code );
+		const isCodeValid = googleAnalyticsCodeIsValid( code );
 		let notice = this.state.notice;
 
 		if ( ! isCodeValid && ! notice ) {
@@ -133,7 +133,10 @@ const GoogleAnalyticsForm = React.createClass( {
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						title={ this.translate( 'Add Google Analytics' ) }
-						message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
+						message={ jetpack
+							? this.translate( 'Upgrade to the Professional Plan and include your own analytics tracking ID.' )
+							: this.translate( 'Upgrade to the Business Plan and include your own analytics tracking ID.' )
+						}
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						event="google_analytics_settings"
 						icon="stats-alt"
@@ -156,7 +159,7 @@ const GoogleAnalyticsForm = React.createClass( {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ this.translate( 'Google Analytics module is disabled in Jetpack.' ) } >
+						text={ this.translate( 'The Google Analytics module is disabled in Jetpack.' ) } >
 						<NoticeAction href={ '//' + domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
 							{ this.translate( 'Enable' ) }
 						</NoticeAction>
