@@ -48,8 +48,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
-				showUploadButton={ true }
-				uploadLabel={ translate( 'Custom themes' ) }
+				listLabel={ translate( 'Custom themes' ) }
 			/>
 		);
 	}
@@ -72,8 +71,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			source="showcase"
-			showUploadButton={ true }
-			uploadLabel={ translate( 'WordPress.com themes' ) }
+			listLabel={ translate( 'WordPress.com themes' ) }
 		/>
 	);
 };

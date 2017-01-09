@@ -11,9 +11,11 @@ import { compact, isEqual, omit } from 'lodash';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
+import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	isRequestingThemesForQuery,
@@ -40,12 +42,19 @@ const ThemesSelection = React.createClass( {
 			PropTypes.number,
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ),
+		showUploadButton: PropTypes.bool,
 		themes: PropTypes.array,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
 		isInstallingTheme: PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			showUploadButton: true
+		};
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -100,13 +109,19 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { siteIdOrWpcom, query } = this.props;
+		const { siteIdOrWpcom, query, listLabel, showUploadButton } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes
 					query={ query }
 					siteId={ siteIdOrWpcom } />
+				{ config.isEnabled( 'manage/themes/upload' ) &&
+					<ThemeUploadCard
+						label={ listLabel }
+						href={ showUploadButton ? `/design/upload/${ this.props.siteSlug }` : null }
+					/>
+				}
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
@@ -145,6 +160,7 @@ const ConnectedThemesSelection = connect(
 		return {
 			query,
 			siteIdOrWpcom,
+			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
