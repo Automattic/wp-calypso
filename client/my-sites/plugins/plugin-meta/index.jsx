@@ -166,11 +166,12 @@ export default React.createClass( {
 		}
 
 		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
-			return <WpcomPluginInstallButton
-						disabled={ ! this.hasBusinessPlan() }
-						plugin={ this.props.plugin }
-						site={ this.props.selectedSite }
-			/>;
+			return (
+				<WpcomPluginInstallButton
+					disabled={ ! this.hasBusinessPlan() }
+					plugin={ this.props.plugin }
+				/>
+			);
 		}
 	},
 

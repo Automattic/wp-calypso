@@ -12,8 +12,9 @@ import page from 'page';
 import MainComponent from 'components/main';
 import HeaderCake from 'components/header-cake';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
-import { initiateThemeTransfer as initiateAutomatedTransfer } from 'state/themes/actions';
+import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 class PluginEligibility extends Component {
 	static propTypes = {
@@ -22,7 +23,8 @@ class PluginEligibility extends Component {
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
 		navigateTo: PropTypes.func,
-		initiateAutomatedTransfer: PropTypes.func
+		initiateTransfer: PropTypes.func,
+		setStatus: PropTypes.func
 	};
 
 	getBackUrl = () => {
@@ -35,7 +37,9 @@ class PluginEligibility extends Component {
 
 	pluginTransferInitiate = () => {
 		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
-		this.props.initiateAutomatedTransfer( this.props.siteId, null );
+		// TODO: refactor to use plugin slug
+		this.props.initiateTransfer( this.props.siteId, null );
+		this.props.setStatus( this.props.siteId, 'start' );
 		this.goBack();
 	};
 
@@ -71,7 +75,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateAutomatedTransfer,
+	initiateTransfer: initiateThemeTransfer,
+	setStatus: setAutomatedTransferStatus
 };
 
 export default connect(
