@@ -1,0 +1,28 @@
+.editor-html-toolbar {
+	border-color: lighten( $gray, 20% );
+	border-style: solid;
+	border-bottom-width: 1px;
+	box-sizing: border-box;
+	margin: 0 auto;
+	max-width: 100%;
+	padding: 0 2px;
+	position: relative;
+
+	@include breakpoint( ">960px" ) {
+		border-left-width: 1px;
+		border-right-width: 1px;
+		width: 700px;
+	}
+
+	.button {
+		margin: 4px 2px;
+		text-transform: lowercase;
+	}
+}
+
+.editor-html-toolbar__button-bold {
+	font-weight: bold;
+}
+.editor-html-toolbar__button-italic {
+	font-style: italic;
+}
