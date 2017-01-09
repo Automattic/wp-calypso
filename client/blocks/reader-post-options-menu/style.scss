@@ -21,18 +21,41 @@
 	background: lighten( $gray, 30% );
 }
 
-.reader-post-options-menu__ellipsis-menu .follow-button {
+.reader-post-options-menu__popover {
 
-	&.is-following {
+	.popover__menu .follow-button {
+
+		.gridicon {
+			position: absolute;
+				left: 14px;
+				top: 11px;
+		}
 
 		&:hover,
 		&:focus {
-			color: $white;
-			background: $alert-green;
+			background-color: $blue-medium;
+			color: white;
 
 			.gridicon {
 				fill: $white;
 			}
 		}
+
+		&.is-following {
+
+			&:hover,
+			&:focus {
+				color: $white;
+				background: $alert-green;
+
+				.gridicon {
+					fill: $white;
+				}
+			}
+		}
+	}
+
+	.popover__menu .follow-button__label {
+		display: inline-block;
 	}
 }
