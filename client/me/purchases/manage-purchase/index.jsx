@@ -44,6 +44,7 @@ import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
+import ManagePurchaseApiKeys from '../api-keys';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PaymentLogo from 'components/payment-logo';
@@ -680,6 +681,13 @@ const ManagePurchase = React.createClass( {
 					{ renewButton }
 					{ contactSupportToRenewMessage }
 				</Card>
+
+				<ManagePurchaseApiKeys
+					hasLoadedSites={ this.props.hasLoadedSites }
+					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+					selectedSite={ this.props.selectedSite }
+					selectedPurchase={ this.props.selectedPurchase }
+				/>
 
 				{ expiredRenewNotice }
 				{ editPaymentMethodNavItem }
