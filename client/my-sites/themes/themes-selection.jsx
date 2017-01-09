@@ -109,10 +109,12 @@ const ThemesSelection = React.createClass( {
 				<QueryThemes
 					query={ query }
 					siteId={ siteIdOrWpcom } />
-				<ThemeUploadCard
-					label={ listLabel }
-					href={ hideUploadButton ? null : `/design/upload/${ this.props.siteSlug }` }
-				/>
+				{ config.isEnabled( 'manage/themes/upload' ) &&
+					<ThemeUploadCard
+						label={ listLabel }
+						href={ hideUploadButton ? null : `/design/upload/${ this.props.siteSlug }` }
+					/>
+				}
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
