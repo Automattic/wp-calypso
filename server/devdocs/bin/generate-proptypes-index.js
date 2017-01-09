@@ -7,38 +7,14 @@
 /**
  * External Dependencies
  */
-
+require( 'babel-register' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const reactDocgen = require( 'react-docgen' );
+const util = require( 'client/devdocs/docs-example/util' );
 
 const root = path.dirname( path.join( __dirname, '..', '..' ) );
 const pathSwap = new RegExp(path.sep, 'g');
-
-/**
- * Converts a camel cased string into a slug
- * @param {String} name The camel cased string to slugify
- * @return {String}
- */
-const camelCaseToSlug = ( name ) => {
-	if ( ! name ) {
-		return name;
-	}
-
-	return name
-		.replace( /\.?([A-Z])/g, ( x, y ) => '-' + y.toLowerCase() )
-		.replace( /^-/, '' );
-};
-
-const slugToCamelCase = name => {
-	if ( ! name ) {
-		return name;
-	}
-
-	return name
-		.replace( /-([a-z])/g, s => s[ 1 ].toUpperCase() )
-		.replace( /^\w/, s => s.toUpperCase() );
-};
 
 /**
  * Wraps fs.readFile in a Promise
@@ -82,12 +58,12 @@ const parseDocument = ( docObj ) => {
 		const parsed = reactDocgen.parse( docObj.document );
 		parsed.includePath = docObj.includePath;
 		if ( parsed.displayName ) {
-			parsed.slug = camelCaseToSlug( parsed.displayName );
+			parsed.slug = util.camelCaseToSlug( parsed.displayName );
 		}
 		else {
 			// we have to figure it out -- use the directory name to get the slug
 			parsed.slug = path.basename( docObj.includePath );
-			parsed.displayName = slugToCamelCase( parsed.slug );
+			parsed.displayName = util.slugToCamelCase( parsed.slug );
 		}
 		return parsed;
 	} catch ( error ) {
@@ -122,6 +98,7 @@ const writeFile = ( contents ) => {
 };
 
 const main = ( () => {
+	console.log( 'building: proptypes-index.json' );
 	const fileList = process
 		.argv
 		.splice( 2, process.argv.length )
