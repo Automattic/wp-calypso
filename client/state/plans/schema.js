@@ -41,7 +41,8 @@ export const itemsSchema = {
 			store: { type: [ 'number', 'null' ] },
 			support_document: { type: 'string' },
 			tagline: { type: 'string' },
-			width: { type: 'number' }
+			width: { type: 'number' },
+			relatedPlan: { type: 'boolean' }
 		}
 	}
 };

@@ -25,7 +25,8 @@ import {
 	getPlanRawPrice,
 	getPlan,
 	getPlanSlug,
-	getPlanBySlug
+	getPlanBySlug,
+	isRelatedPlan
 } from 'state/plans/selectors';
 import {
 	isPopular,
@@ -161,7 +162,8 @@ class PlanFeatures extends Component {
 				rawPrice,
 				relatedMonthlyPlan,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
+				isRelatedToCurrentPlan
 			} = properties;
 
 			return (
@@ -196,6 +198,7 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isRelatedToCurrentPlan = { isRelatedToCurrentPlan }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -294,7 +297,8 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
+				isRelatedToCurrentPlan
 			} = properties;
 
 			const classes = classNames(
@@ -317,6 +321,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						isRelatedToCurrentPlan={ isRelatedToCurrentPlan }
 					/>
 				</td>
 			);
@@ -443,7 +448,8 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
+				isRelatedToCurrentPlan
 			} = properties;
 			const classes = classNames(
 				'plan-features__table-item',
@@ -464,6 +470,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						isRelatedToCurrentPlan={ isRelatedToCurrentPlan }
 					/>
 				</td>
 			);
@@ -523,6 +530,7 @@ export default connect(
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
+				const isRelatedToCurrentPlan = planObject ? isRelatedPlan( state, planProductId, planObject.product_id ) : false;
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
@@ -562,7 +570,8 @@ export default connect(
 						newPlan
 					),
 					rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
-					relatedMonthlyPlan: relatedMonthlyPlan
+					relatedMonthlyPlan: relatedMonthlyPlan,
+					isRelatedToCurrentPlan
 				};
 			} )
 		);

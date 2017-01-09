@@ -17,6 +17,7 @@ const PlanFeaturesActions = ( {
 	className,
 	available = true,
 	current = false,
+	isRelatedToCurrentPlan = false,
 	primaryUpgrade = false,
 	freePlan = false,
 	onUpgradeClick = noop,
@@ -41,6 +42,13 @@ const PlanFeaturesActions = ( {
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				<Gridicon size={ 18 } icon="checkmark" />
 				{ canPurchase ? translate( 'Your plan' ) : translate( 'Current plan' ) }
+			</Button>
+		);
+	}  else if ( isRelatedToCurrentPlan && ! isInSignup ) {
+		upgradeButton = (
+			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
+				<Gridicon size={ 18 } icon="checkmark" />
+				{ canPurchase ? translate( 'Your plan (period)' ) : translate( 'Current plan' ) }
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {
