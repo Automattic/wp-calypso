@@ -7,12 +7,12 @@ import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
 import { get } from 'lodash';
+import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import Button from 'components/button';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
@@ -20,6 +20,7 @@ import upgradesActions from 'lib/upgrades/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
+import SearchCard from 'components/search-card';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -280,12 +281,28 @@ module.exports = {
 			return;
 		}
 
+		const onSearch = ( searchTerm ) => {
+			page( '/start/domain-first/?new=' + searchTerm );
+		};
+
 		renderWithReduxStore(
 			(
 				<Main>
 					<h1>Create a website</h1>
 					<div>Choosing an address is the best way to get started with your very own site</div>
-					<Button href="/start/domain-first">Get started</Button>
+
+					<SearchCard
+						initialValue=""
+						onSearch={ onSearch }
+						onSearchChange={ noop }
+						onBlur={ noop }
+						placeholder={ i18n.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+						autoFocus={ true }
+						delaySearch={ true }
+						delayTimeout={ 1000 }
+						dir="ltr"
+						maxLength={ 60 }
+					/>
 				</Main>
 			),
 			document.getElementById( 'primary' ),
