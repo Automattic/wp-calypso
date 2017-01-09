@@ -20,7 +20,6 @@ import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
-import ThemeUploadCard from './themes-upload-card';
 import config from 'config';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
@@ -71,7 +70,7 @@ const ThemeShowcase = React.createClass( {
 		return {
 			tier: '',
 			search: '',
-			showUploadButton: false
+			showUploadButton: true
 		};
 	},
 
@@ -191,18 +190,14 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
-				{ this.props.showUploadButton && config.isEnabled( 'manage/themes/upload' ) &&
-					<ThemeUploadCard
-						href={ `/design/upload/${ this.props.siteSlug }` }
-						label={ this.props.uploadLabel }
-					/>
-				}
 				<ThemesSelection
 					search={ search }
 					tier={ this.props.tier }
 					filter={ filter }
 					vertical={ this.props.vertical }
 					siteId={ this.props.siteId }
+					listLabel={ this.props.listLabel }
+					showUploadButton={ this.props.showUploadButton }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;

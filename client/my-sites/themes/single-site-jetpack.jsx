@@ -20,7 +20,6 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
-import ThemeUploadCard from './themes-upload-card';
 import { addTracking } from './helpers';
 import { translate } from 'i18n-calypso';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -88,9 +87,6 @@ const ConnectedSingleSiteJetpack = connectOptions(
 						source={ 'list' } />
 					{ config.isEnabled( 'manage/themes/upload' ) &&
 						<div>
-							<ThemeUploadCard
-								label={ translate( 'WordPress.com themes' ) }
-							/>
 							<ConnectedThemesSelection
 								options={ [
 									'activateOnJetpack',
@@ -100,7 +96,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								tier={ wpcomTier }
 								filter={ filter }
 								vertical={ vertical }
-								siteId = { siteId /* This is for the options in the '...' menu only */ }
+								siteId={ siteId /* This is for the options in the '...' menu only */ }
+								listLabel={ translate( 'WordPress.com themes' ) }
+								showUploadButton={ false }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
