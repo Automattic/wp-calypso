@@ -501,9 +501,9 @@ const HelpContact = React.createClass( {
 		}
 	},
 
-	getContactFormCommonProps: function() {
+	getContactFormCommonProps: function( variationSlug ) {
 		const { olark, isSubmitting } = this.state;
-		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
+		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() ) && SUPPORT_FORUM !== variationSlug;
 
 		return {
 			disabled: isSubmitting,
@@ -568,7 +568,7 @@ const HelpContact = React.createClass( {
 		const supportVariation = this.getSupportVariation();
 
 		const contactFormProps = Object.assign(
-			this.getContactFormCommonProps(),
+			this.getContactFormCommonProps( supportVariation ),
 			this.getContactFormPropsVariation( supportVariation ),
 		);
 
