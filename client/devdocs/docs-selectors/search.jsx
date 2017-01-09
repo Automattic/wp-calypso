@@ -62,11 +62,11 @@ export default class DocsSelectorsSearch extends Component {
 						line="Try another search query" />
 				) }
 				<ul className="docs-selectors__results">
-					{ map( results, ( { name, description, tags } ) => (
-						<li key={ name }>
+					{ map( results, result => (
+						<li key={ result.name }>
 							<DocsSelectorsResult
-								{ ...{ name, description, tags } }
-								url={ addQueryArgs( { search }, `/devdocs/selectors/${ name }` ) } />
+								jsDocInfo={ result }
+								url={ addQueryArgs( { search }, `/devdocs/selectors/${ result.name }` ) } />
 						</li>
 					) ) }
 				</ul>

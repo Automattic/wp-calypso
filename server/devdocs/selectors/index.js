@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
+const chalk = require( 'chalk' );
 const fs = require( 'fs' );
+const jsdoc = require( 'jsdoc-api' );
 const path = require( 'path' );
 const express = require( 'express' );
 const Fuse = require( 'fuse.js' );
-const doctrine = require( 'doctrine' );
 const camelCase = require( 'lodash/camelCase' );
-const forEach = require( 'lodash/forEach' );
+const find = require( 'lodash/find' );
+const matchesProperty = require( 'lodash/matchesProperty' );
 
 /**
  * Constants
  */
 
-const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors' );
 
 /**
@@ -23,36 +24,36 @@ const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors'
 const router = express.Router();
 let prepareFuse;
 
-function parseSelectorFile( file ) {
-	return new Promise( ( resolve, reject ) => {
-		fs.readFile( SELECTORS_DIR + '/' + file, 'utf8', ( error, contents ) => {
-			if ( error ) {
-				return reject( error );
+const parseSelectorFile = file =>
+	jsdoc.explain( { cache: true, files: path.resolve( SELECTORS_DIR, file ) } )
+		.then( ast => {
+			const expectedExport = camelCase( path.basename( file, '.js' ) );
+
+			const actualExport = find( ast, matchesProperty( 'alias', expectedExport ) );
+
+			if ( ! actualExport ) {
+				console.warn(
+					chalk.red( '\nWARNING: ' ) +
+					chalk.yellow( 'Could not find expected exported function.\n' ) +
+					chalk.yellow( 'Based on the filename: ' ) +
+					chalk.blue( path.basename( file ) ) +
+					chalk.yellow( '\nWe expected to find a function with ' ) +
+					chalk.blue( '@alias ' + expectedExport ) +
+					chalk.yellow( ' in its JSDoc header\n' )
+				);
+
+				throw new Error( 'Could not find expected selector' );
 			}
 
-			const selector = {
-				name: camelCase( path.basename( file, '.js' ) )
-			};
-
-			forEach( contents.match( REGEXP_DOCBLOCKS ), ( docblock ) => {
-				const doc = doctrine.parse( docblock, { unwrap: true } );
-				if ( doc.tags.length > 0 ) {
-					Object.assign( selector, doc );
-					return false;
-				}
-			} );
-
-			resolve( selector );
+			return actualExport;
+		} )
+		.catch( error => {
+			console.warn( error );
+			return null;
 		} );
-	} );
-}
 
 function prime() {
-	if ( prepareFuse ) {
-		return;
-	}
-
-	prepareFuse = new Promise( ( resolve ) => {
+	prepareFuse = new Promise( ( resolve, reject ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
@@ -63,7 +64,7 @@ function prime() {
 
 			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
 				// Sort selectors by name alphabetically
-				selectors.sort( ( a, b ) => a.name > b.name );
+				selectors.filter( a => a ).sort( ( a, b ) => a.name > b.name );
 
 				resolve( new Fuse( selectors, {
 					keys: [ {
@@ -76,7 +77,7 @@ function prime() {
 					threshold: 0.4,
 					distance: 20
 				} ) );
-			} );
+			} ).catch( () => reject( 'Parse failure' ) );
 		} );
 	} ).then( ( fuse ) => {
 		prepareFuse = Promise.resolve( fuse );

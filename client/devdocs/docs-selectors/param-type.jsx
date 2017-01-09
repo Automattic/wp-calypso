@@ -2,30 +2,87 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { get } from 'lodash';
+import { get, has, union } from 'lodash';
+
+/** @type {RegExp} */
+const ARRAY_TYPE_PATTERN = /^Array[.]<([^>]+)>/;
+
+/** @type {RegExp} */
+const OBJECT_TYPE_PATTERN = /^Object[.]<([^,]+), ([^>]+)>/;
 
 /**
- * Matches an expression type
+ * Returns a unified textual description of data types
  *
- * @type {RegExp}
+ * @param {String} name type name from JSDoc output
+ * @returns {String} description of type
  */
-const REGEXP_EXPRESSION_TYPE = /(.*)Type$/;
+const describeType = name => {
+	/** @type {?String[]} */
+	const arrayInfo = name.match( ARRAY_TYPE_PATTERN );
 
-export default function DocsSelectorsParamType( { expression, name, type } ) {
+	if ( arrayInfo ) {
+		const [ /* match */, type ] = arrayInfo;
+		return `${ type }[]`;
+	}
+
+	/** @type {?String[]} */
+	const objectInfo = name.match( OBJECT_TYPE_PATTERN );
+
+	if ( objectInfo ) {
+		const [ /* match */, keyType, valueType ] = objectInfo;
+		return `{ ${ keyType }: ${ valueType } }`;
+	}
+
+	return name;
+};
+
+/**
+ * Returns a new list with `element` between every existing list item
+ *
+ * @param {Array} list existing list of items
+ * @param {*} element separator to insert between items
+ * @returns {Array} new list with element interspersed between items
+ */
+const intersperse = ( list, element ) =>
+	list
+		.reduce( ( final, next ) => [ ...final, next, element ], [] )
+		.slice( 0, -1 );
+
+/**
+ * @typedef {Object} ReactElement
+ */
+
+/**
+ * Renders a JSDoc param type
+ *
+ * @param {?Boolean} nullable whether or not the parameter can have the value `null`
+ * @param {String} type normalized string representation of JSDoc type
+ * @returns {ReactElement} rendered ParamType React component
+ */
+export default function DocsSelectorsParamType( { nullable, type } ) {
+	/** @type {String[]} **/
+	const types = union(
+		get( type, 'names', [] ),
+		nullable ? [ 'null' ] : [],
+	);
+
 	return (
 		<div className="docs-selectors__param-type">
-			<code>{ get( expression, 'name', name ) }</code>
-			{ expression && REGEXP_EXPRESSION_TYPE.test( type ) && (
-				<span>({ type.match( REGEXP_EXPRESSION_TYPE )[ 1 ] })</span>
-			) }
+			{ intersperse( types, { separator: 'or' } ).map( ( name, index ) => (
+				has( name, 'separator' )
+					? <div key={ index } className="docs-selectors__param-type-separator">{ name.separator }</div>
+					: (
+						<div key={ name }>
+							{ describeType( name ) }
+							{ false === nullable && <span className="docs-selectors__param-type-non-nullable">(not nullable)</span> }
+						</div>
+					)
+			) ) }
 		</div>
 	);
 }
 
 DocsSelectorsParamType.propTypes = {
-	expression: PropTypes.shape( {
-		name: PropTypes.string
-	} ),
-	name: PropTypes.string,
-	type: PropTypes.string
+	nullable: PropTypes.bool,
+	type: PropTypes.shape( { names: PropTypes.arrayOf( PropTypes.string ) } ),
 };
