@@ -37,6 +37,7 @@ import {
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
 import support from 'lib/url/support';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -220,22 +221,7 @@ const RegisterDomainStep = React.createClass( {
 		const queryObject = getQueryObject( this.props );
 		return (
 			<div className="register-domain-step">
-					<div className="register-domain-step__search">
-						<SearchCard
-							ref="searchCard"
-							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-							initialValue={ this.state.lastQuery }
-							onSearch={ this.onSearch }
-							onSearchChange={ this.onSearchChange }
-							onBlur={ this.save }
-							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
-							autoFocus={ true }
-							delaySearch={ true }
-							delayTimeout={ 1000 }
-							dir="ltr"
-							maxLength={ 60 }
-						/>
-					</div>
+				{ ( 'domainSearchWithoutSubmit' === abtest( 'domainSearchForm' ) ) ? this.searchForm() : this.searchFormWithSubmit() }
 				{
 					this.state.notice &&
 					<Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />

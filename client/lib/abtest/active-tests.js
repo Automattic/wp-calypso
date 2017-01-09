@@ -130,4 +130,14 @@ module.exports = {
 		allowExistingUsers: true
 	},
 
+	domainSearchForm: {
+		datestamp: '20170110',
+		variations: {
+			domainSearchWithoutSubmit: 100,
+			domainSearchWithSubmit: 0,
+		},
+		defaultVariation: 'domainSearchWithoutSubmit',
+		allowExistingUsers: true,
+	},
+>>>>>>> Add `domainSearchForm` AB test.
 };
