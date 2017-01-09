@@ -220,6 +220,7 @@ module.exports = function() {
 
 	page(
 		'/domains',
+		upgradesController.domainsLoggedOut,
 		controller.siteSelection,
 		controller.sites
 	);

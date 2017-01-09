@@ -12,6 +12,7 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import Button from 'components/button';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
@@ -268,5 +269,27 @@ module.exports = {
 
 			next();
 		};
-	}
+	},
+
+	domainsLoggedOut: function( context, next ) {
+		const state = context.store.getState();
+		const user = getCurrentUser( state );
+
+		if ( user ) {
+			next();
+			return;
+		}
+
+		renderWithReduxStore(
+			(
+				<Main>
+					<h1>Create a website</h1>
+					<div>Choosing an address is the best way to get started with your very own site</div>
+					<Button href="/start/domain-first">Get started</Button>
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
 };

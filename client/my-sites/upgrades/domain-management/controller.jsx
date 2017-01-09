@@ -13,7 +13,9 @@ import DnsData from 'components/data/domain-management/dns' ;
 import DomainManagement from './domain-management';
 import DomainManagementData from 'components/data/domain-management';
 import EmailData from 'components/data/domain-management/email' ;
-import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
+import EmailForwardingData from 'components/data/domain-management/email-forwarding';
+import EmptyContent from 'components/empty-content';
+import Main from 'components/main';
 import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/upgrades/paths';
 import ProductsList from 'lib/products-list';
@@ -42,6 +44,27 @@ module.exports = {
 			paths.domainManagementList( ':site' ),
 			'Domain Management'
 		);
+
+		const selectedSite = sites.getSelectedSite();
+		const domain = selectedSite.domain;
+		if ( selectedSite.options.is_domain_only ) {
+			renderWithReduxStore(
+				<Main>
+					<EmptyContent
+						title= { domain + ' is not set up yet.' }
+						line={ 'Plans start at $123 per year. Get your first year free.' }
+						action={ 'Set Up Site' }
+						actionURL={ '/start/site-selected/?siteSlug=' + domain }
+						illustration={ '/calypso/images/drake/drake-browser.svg' }
+						secondaryActionURL={ '/domains/manage/' + domain + '/edit/' + domain }
+						secondaryAction={ i18n.translate( 'Advanced' ) } />
+
+				</Main>,
+				document.getElementById( 'primary' ),
+				pageContext.store
+			);
+			return;
+		}
 
 		renderWithReduxStore(
 			<DomainManagementData
