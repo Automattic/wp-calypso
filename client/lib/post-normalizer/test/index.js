@@ -988,29 +988,4 @@ describe( 'index', function() {
 			);
 		} );
 	} );
-
-	describe( 'The refreshed fancy excerpt creator', () => {
-		function assertExcerptBecomes( source, expected, done ) {
-			normalizer( { content: source }, [ normalizer.createBetterExcerptRefresh ], function( err, normalized ) {
-				assert.strictEqual( normalized.better_excerpt, expected );
-				done( err );
-			} );
-		}
-
-		it( 'removes tags but inserts spaces between p tags', function( done ) {
-			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four', done );
-		} );
-
-		it( 'turns br tags into spaces', function( done ) {
-			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three', done );
-		} );
-
-		it( 'trims whitespace from the excerpt', function( done ) {
-			assertExcerptBecomes( '<p> </p><p>one</p><p>two</p><p>three</p><p>four</p><p> </p>', 'one two three four', done );
-		} );
-
-		it( 'removes tables from the content', function( done ) {
-			assertExcerptBecomes( '<p>test</p><table><tr><td>in a table</td></tr></table><p>more</p>', 'test more', done );
-		} );
-	} );
 } );
