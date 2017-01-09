@@ -74,7 +74,7 @@ if ( linesFile ) {
 
 		lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
 		for ( var line in lines ) {
-				lines[path.relative( __dirname, line ).replace( /^[\/.]+/, '' )] = lines[line];
+				lines[path.relative( __dirname, line ).replace( /^[\/.]+/, '' )] = lines[line].map( String );
 				delete lines[line];
 		}
 }
