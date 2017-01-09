@@ -35,7 +35,6 @@ export const WpcomPluginInstallButton = props => {
 
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
-			// TODO: refactor to use plugin slug
 			initiateTransfer( siteId, null, plugin );
 		} else {
 			// Show eligibility warnings before proceeding
