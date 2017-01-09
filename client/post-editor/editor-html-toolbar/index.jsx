@@ -2,17 +2,20 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { reduce } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 
-export default class EditorHtmlToolbar extends Component {
+export class EditorHtmlToolbar extends Component {
 
 	static propTypes = {
 		content: PropTypes.object,
-		onToolbarChangeContent: React.PropTypes.func,
+		moment: PropTypes.func,
+		onToolbarChangeContent: PropTypes.func,
 	};
 
 	state = {
@@ -32,20 +35,27 @@ export default class EditorHtmlToolbar extends Component {
 		this.props.content.focus();
 	}
 
-	insertHtmlTag( tag ) {
+	attributesToString = ( attributes = {} ) => reduce(
+		attributes,
+		( attributesString, attributeValue, attributeName ) => ` ${ attributeName }="${ attributeValue }"`,
+		''
+	);
+
+	insertHtmlTag( tag, attributes = {} ) {
 		const { content: {
 			selectionEnd,
 			selectionStart,
 			value,
 		} } = this.props;
 		const { openTags } = this.state;
+		const attributesString = this.attributesToString( attributes );
 
 		if ( selectionEnd === selectionStart ) {
 			const isTagOpen = -1 !== openTags.indexOf( tag );
 
 			this.updateContent(
 				value.substring( 0, selectionStart ) +
-				`<${ isTagOpen ? '/' : '' }${ tag }>` +
+				`<${ isTagOpen ? '/' : '' }${ tag }${ isTagOpen ? '' : attributesString }>` +
 				value.substring( selectionStart, value.length )
 			);
 
@@ -61,7 +71,7 @@ export default class EditorHtmlToolbar extends Component {
 		} else {
 			this.updateContent(
 				value.substring( 0, selectionStart ) +
-				`<${ tag }>` +
+				`<${ tag }${ attributesString }>` +
 				value.substring( selectionStart, selectionEnd ) +
 				`</${ tag }>` +
 				value.substring( selectionEnd, value.length )
@@ -75,6 +85,38 @@ export default class EditorHtmlToolbar extends Component {
 
 	handleClickItalic = () => {
 		this.insertHtmlTag( 'em' );
+	}
+
+	handleClickQuote = () => {
+		this.insertHtmlTag( 'blockquote' );
+	}
+
+	handleClickDelete = () => {
+		this.insertHtmlTag( 'del', {
+			datetime: this.props.moment().format(),
+		} );
+	}
+
+	handleClickInsert = () => {
+		this.insertHtmlTag( 'ins', {
+			datetime: this.props.moment().format(),
+		} );
+	}
+
+	handleClickCode = () => {
+		this.insertHtmlTag( 'code' );
+	}
+
+	handleClickMore = () => {
+		const { content: {
+			selectionEnd,
+			value,
+		} } = this.props;
+		this.updateContent(
+			value.substring( 0, selectionEnd ) +
+			'<!--more-->' +
+			value.substring( selectionEnd, value.length )
+		);
 	}
 
 	tagLabel( tag, label ) {
@@ -99,7 +141,44 @@ export default class EditorHtmlToolbar extends Component {
 				>
 					{ this.tagLabel( 'em', 'i' ) }
 				</Button>
+				<Button
+					className="editor-html-toolbar__button-quote"
+					compact
+					onClick={ this.handleClickQuote }
+				>
+					{ this.tagLabel( 'blockquote', 'b-quote' ) }
+				</Button>
+				<Button
+					className="editor-html-toolbar__button-delete"
+					compact
+					onClick={ this.handleClickDelete }
+				>
+					{ this.tagLabel( 'del', 'del' ) }
+				</Button>
+				<Button
+					className="editor-html-toolbar__button-insert"
+					compact
+					onClick={ this.handleClickInsert }
+				>
+					{ this.tagLabel( 'ins', 'ins' ) }
+				</Button>
+				<Button
+					className="editor-html-toolbar__button-code"
+					compact
+					onClick={ this.handleClickCode }
+				>
+					{ this.tagLabel( 'code', 'code' ) }
+				</Button>
+				<Button
+					className="editor-html-toolbar__button-more"
+					compact
+					onClick={ this.handleClickMore }
+				>
+					more
+				</Button>
 			</div>
 		);
 	}
 }
+
+export default localize( EditorHtmlToolbar );

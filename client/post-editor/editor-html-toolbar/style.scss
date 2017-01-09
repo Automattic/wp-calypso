@@ -26,3 +26,12 @@
 .editor-html-toolbar__button-italic {
 	font-style: italic;
 }
+.editor-html-toolbar__button-delete {
+	text-decoration: line-through;
+}
+.editor-html-toolbar__button-insert {
+	text-decoration: underline;
+}
+.editor-html-toolbar__button-code {
+	font-family: $code;
+}
