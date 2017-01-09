@@ -34,6 +34,10 @@ export const isDeletingAccountRecoveryEmail = ( state ) => {
 	return !! state.accountRecovery.settings.isDeleting.email;
 };
 
+export const isValidatingAccountRecoveryPhone = ( state ) => {
+	return state.accountRecovery.settings.isValidatingPhone;
+};
+
 export const isAccountRecoveryEmailActionInProgress = ( state ) => {
 	return ! isAccountRecoverySettingsReady( state ) || isUpdatingAccountRecoveryEmail( state ) || isDeletingAccountRecoveryEmail( state );
 };
@@ -46,9 +50,18 @@ export const hasSentAccountRecoveryEmailValidation = ( state ) => {
 	return !! state.accountRecovery.settings.hasSentValidation.email;
 };
 
+export const hasSentAccountRecoveryPhoneValidation = ( state ) => {
+	return !! state.accountRecovery.settings.hasSentValidation.phone;
+};
+
 export const shouldPromptAccountRecoveryEmailValidationNotice = ( state ) => {
 	return ! isAccountRecoveryEmailActionInProgress( state ) &&
 		!! getAccountRecoveryEmail( state ) &&
-		! isAccountRecoveryEmailValidated( state ) &&
-		! hasSentAccountRecoveryEmailValidation( state );
+		! isAccountRecoveryEmailValidated( state );
+};
+
+export const shouldPromptAccountRecoveryPhoneValidationNotice = ( state ) => {
+	return ! isAccountRecoveryPhoneActionInProgress( state ) &&
+		!! getAccountRecoveryPhone( state ) &&
+		! isAccountRecoveryPhoneValidated( state );
 };

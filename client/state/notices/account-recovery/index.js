@@ -127,3 +127,9 @@ export const onResentAccountRecoveryEmailValidationSuccess = ( dispatch, { targe
 
 export const onResentAccountRecoveryEmailValidationFailed = ( dispatch, { target } ) =>
 	dispatch( errorNotice( getResentFailedMessage( target ) ) );
+
+export const onAccountRecoveryPhoneValidationSuccess = ( dispatch ) =>
+	dispatch( successNotice( translate( 'Your recovery SMS number has been validated successfully.' ) ) );
+
+export const onAccountRecoveryPhoneValidationFailed = ( dispatch ) =>
+	dispatch( errorNotice( translate( 'There was a problem validating your recovery SMS number. Please try again later.' ) ) );
