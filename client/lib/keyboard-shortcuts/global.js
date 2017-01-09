@@ -28,7 +28,6 @@ function GlobalShortcuts( sites ) {
 
 GlobalShortcuts.prototype.bindShortcuts = function() {
 	KeyboardShortcuts.on( 'go-to-reader', this.goToReader.bind( this ) );
-	KeyboardShortcuts.on( 'go-to-my-comments', this.goToMyComments.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-my-likes', this.goToMyLikes.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-stats', this.goToStats.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-blog-posts', this.goToBlogPosts.bind( this ) );
@@ -41,10 +40,6 @@ GlobalShortcuts.prototype.bindShortcuts = function() {
 
 GlobalShortcuts.prototype.goToReader = function() {
 	page( '/' );
-};
-
-GlobalShortcuts.prototype.goToMyComments = function() {
-	page( '/activities/comments' );
 };
 
 GlobalShortcuts.prototype.goToMyLikes = function() {
