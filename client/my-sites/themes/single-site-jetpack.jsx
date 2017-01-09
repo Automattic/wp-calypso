@@ -98,7 +98,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }
 								listLabel={ translate( 'WordPress.com themes' ) }
-								hideUploadButton={ true }
+								showUploadButton={ false }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;

@@ -70,7 +70,7 @@ const ThemeShowcase = React.createClass( {
 		return {
 			tier: '',
 			search: '',
-			showUploadButton: false
+			showUploadButton: true
 		};
 	},
 
@@ -197,7 +197,7 @@ const ThemeShowcase = React.createClass( {
 					vertical={ this.props.vertical }
 					siteId={ this.props.siteId }
 					listLabel={ this.props.listLabel }
-					hideUploadButton={ this.props.hideUploadButton }
+					showUploadButton={ this.props.showUploadButton }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;
