@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-'use strict'; // eslint-disable-line strict
+/* eslint-disable strict, no-process-exit */
+'use strict';
 let files;
 
 require( 'babel-register' );
@@ -93,7 +94,7 @@ files = files.reduce( ( memo, filePath ) => {
 					return memo.concat( pathGuess );
 				}
 
-				process.exit( 1 ); // eslint-disable-line no-process-exit
+				process.exit( 1 );
 			}
 
 			console.warn(
@@ -102,7 +103,7 @@ files = files.reduce( ( memo, filePath ) => {
 				chalk.blue( filePath )
 			);
 
-			process.exit( 1 ); // eslint-disable-line no-process-exit
+			process.exit( 1 );
 		}
 
 		return memo.concat( filePath );
@@ -131,6 +132,6 @@ mocha.addFile( path.join( __dirname, 'load-suite.js' ) );
 
 mocha.run( function( failures ) {
 	process.on( 'exit', function() {
-		process.exit( failures ); //eslint-disable-line no-process-exit
+		process.exit( failures );
 	} );
 } );
