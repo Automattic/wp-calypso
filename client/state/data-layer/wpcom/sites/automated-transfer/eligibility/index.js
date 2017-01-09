@@ -12,34 +12,14 @@ import {
 } from 'state/action-types';
 
 import { updateEligibility } from 'state/automated-transfer/actions';
-import {
-	transferStates,
-	eligibilityHolds,
-} from 'state/automated-transfer/constants';
+import { transferStates } from 'state/automated-transfer/constants';
 
-/**
- * Maps the constants used in the WordPress.com API with
- * those used inside of Calypso. Somewhat redundant, this
- * provides safety for when the API changes. We need not
- * changes the constants in the Calypso side, only here
- * in the code directly dealing with the API.
- */
-const statusMapping = {
-	multiple_users: eligibilityHolds.MULTIPLE_USERS,
-	no_vip_sites: eligibilityHolds.NO_VIP_SITES,
-	no_business_plan: eligibilityHolds.NO_BUSINESS_PLAN,
-	no_wpcom_nameservers: eligibilityHolds.NO_WPCOM_NAMESERVERS,
-	not_using_custom_domain: eligibilityHolds.NOT_USING_CUSTOM_DOMAIN,
-	non_admin_user: eligibilityHolds.NON_ADMIN_USER,
-	site_graylisted: eligibilityHolds.SITE_GRAYLISTED,
-	site_private: eligibilityHolds.SITE_PRIVATE,
-};
+import { statusMapping } from '../constants';
 
 /**
  * Maps from API response the issues which prevent automated transfer
  *
- * @param {Object} response API response data
- * @param {Array} response.errors List of { code, message } pairs describing issues
+ * @param {Array} errors List of { code, message } pairs describing issues
  * @returns {Array} list of hold constants associated with issues listed in API response
  */
 const eligibilityHoldsFromApi = ( { errors = [] } ) =>
@@ -50,8 +30,7 @@ const eligibilityHoldsFromApi = ( { errors = [] } ) =>
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
  *
- * @param {Object} response API response data
- * @param {Object} response.warnings Lists of warnings by type, { plugins, themes }
+ * @param {Object} warnings Lists of warnings by type, { plugins, themes }
  * @returns {Array} flat list of warnings with { name, description, supportUrl }
  */
 const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
@@ -93,8 +72,7 @@ const apiFailure = error => {
 /**
  * Issues an API request to fetch eligibility information for a site
  *
- * @param {Object} store Redux store
- * @param {Function} store.dispatch action dispatcher
+ * @param {Function} dispatch action dispatcher
  * @param {number} siteId Site for which eligibility information is requested
  * @returns {Promise} response promise from API fetch
  */
