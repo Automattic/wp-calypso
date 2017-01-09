@@ -76,7 +76,6 @@ files = files.reduce( ( memo, filePath ) => {
 				path.basename( filePath )
 			);
 
-			console.warn( pathGuess );
 			if ( fs.existsSync( pathGuess ) ) {
 				console.warn(
 					chalk.red.bold( 'WARNING:' ),
