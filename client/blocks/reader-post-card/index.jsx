@@ -161,7 +161,7 @@ export default class ReaderPostCard extends React.Component {
 				? <PostPhoto imageUri={ post.canonical_media.src } href={ post.URL } imageSize={ {
 					height: post.canonical_media.height,
 					width: post.canonical_media.width,
-				} } onExpanded={ this.handlePhotoCardExpanded } />
+				} } onExpanded={ this.handlePhotoCardExpanded } title={ title } />
 				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 
@@ -173,11 +173,13 @@ export default class ReaderPostCard extends React.Component {
 					{ ! isGallery && featuredAsset }
 					{ isGallery && <PostGallery post={ post } /> }
 					<div className="reader-post-card__post-details">
-						<AutoDirection>
-							<h1 className="reader-post-card__title">
-								<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
-							</h1>
-						</AutoDirection>
+						{ ! isPhotoOnly &&
+							<AutoDirection>
+								<h1 className="reader-post-card__title">
+									<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
+								</h1>
+							</AutoDirection>
+						}
 						{ showExcerpt && (
 								<AutoDirection>
 									<div className="reader-post-card__excerpt"
