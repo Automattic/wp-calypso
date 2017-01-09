@@ -66,18 +66,19 @@ class PostPhoto extends React.Component {
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center'
 		};
-
+		let newWidth, newHeight;
 		if ( this.state.isExpanded ) {
 			const viewportHeight = this.getViewportHeight();
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
-			const newHeight = Math.min(
+			newHeight = Math.min(
 				( naturalHeight / naturalWidth ) * cardWidth,
 				viewportHeight - 176
 			);
-
+			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
 			featuredImageStyle.height = newHeight;
+			featuredImageStyle.width = newWidth;
 		}
 
 		const classes = classnames( {
@@ -85,11 +86,20 @@ class PostPhoto extends React.Component {
 			'is-expanded': this.state.isExpanded
 		} );
 
+		const divStyle = this.state.isExpanded
+			? { height: newHeight, width: newWidth, margin: 'auto' }
+			: {};
+
 		return (
-			<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
-				<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
-				{ children }
-			</a>
+			<div style={ divStyle }>
+				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
+					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+					{ children }
+				</a>
+				<h1 className="reader-post-card__title">
+					<a className="reader-post-card__title-link" href={ this.props.href }>{ this.props.title }</a>
+				</h1>
+			</div>
 		);
 	}
 }
