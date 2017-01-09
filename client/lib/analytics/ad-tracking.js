@@ -38,6 +38,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
+	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -47,7 +48,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
-		yahooPixelId: '10014088'
+		yahooPixelId: '10014088',
+		twitterPixelId: 'nvzbs'
 	},
 
 	// For converting other currencies into USD for tracking purposes
@@ -81,6 +83,10 @@ if ( ! window._qevents ) {
 	window._qevents = [];
 }
 
+if ( ! window.twq ) {
+	setUpTwitterGlobal();
+}
+
 /**
  * This sets up the globals that the Facebook event library expects.
  * More info here: https://www.facebook.com/business/help/952192354843755
@@ -104,6 +110,18 @@ function setUpFacebookGlobal() {
 	facebookEvents.queue = [];
 }
 
+/**
+ * This sets up the global `twq` function that Twitter expects.
+ * More info here: https://github.com/Automattic/wp-calypso/pull/10235
+ */
+function setUpTwitterGlobal() {
+	const twq = window.twq = function() {
+		twq.exe ? twq.exe.apply( twq, arguments ) : twq.queue.push( arguments );
+	};
+	twq.version = '1.1';
+	twq.queue = [];
+}
+
 function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
@@ -125,6 +143,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -136,6 +157,9 @@ function loadTrackingScripts( callback ) {
 				ti: TRACKING_IDS.bingInit,
 				q: window.uetq
 			};
+
+			// update Twitter's tracking global
+			window.twq( 'init', TRACKING_IDS.twitterPixelId );
 
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
@@ -175,6 +199,9 @@ function retarget() {
 
 	// Facebook
 	window.fbq( 'track', 'PageView' );
+
+	// Twitter
+	window.twq( 'track', 'PageView' );
 
 	// AdWords
 	if ( window.google_trackConversion ) {
@@ -317,6 +344,21 @@ function recordProduct( product, orderId ) {
 				product_slug: product.product_slug,
 				value: product.cost,
 				user_id: userId,
+				order_id: orderId
+			}
+		);
+
+		// Twitter
+		window.twq(
+			'track',
+			'Purchase',
+			{
+				value: product.cost.toString(),
+				currency: product.currency,
+				content_name: product.product_name,
+				content_type: 'product',
+				content_ids: [ product.product_slug ],
+				num_items: product.volume,
 				order_id: orderId
 			}
 		);
