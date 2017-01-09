@@ -1,0 +1,14 @@
+.stats-post-summary .section-nav {
+	margin-bottom: 0;
+	padding: 16px 0;
+	box-shadow: 0 -1px 0 0 transparentize( lighten( $gray, 20% ), .5 ),
+		-1px -1px 0 0 transparentize( lighten( $gray, 20% ), .5 ),
+		1px -1px 0 0 transparentize( lighten( $gray, 20% ), .5 );
+	z-index: z-index( '.stats-post-summary', '.section-nav' );
+	.segmented-control {
+		margin: 0 auto;
+		.segmented-control__link {
+			padding: 4px 16px;
+		}
+	}
+}
