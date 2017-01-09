@@ -68,15 +68,19 @@ inputPaths.forEach( function( inputFile ) {
 } );
 
 if ( linesFile ) {
-		if ( !fs.existsSync( linesFile ) ) {
-        console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
-    }
+	if ( ! fs.existsSync( linesFile ) ) {
+      console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
+  }
 
-		lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
-		for ( var line in lines ) {
-				lines[path.relative( __dirname, line ).replace( /^[\/.]+/, '' )] = lines[line].map( String );
-				delete lines[line];
+	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
+	for ( var line in lines ) {
+		lines[line] = lines[line].map( String );
+		var modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
+		if (  modPath !== line ) {
+			lines[ modPath ] = lines[line];
+			delete lines[line];
 		}
+	}
 }
 
 var result = i18nCalypso( {
