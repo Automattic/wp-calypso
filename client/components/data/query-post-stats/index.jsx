@@ -3,7 +3,7 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
+import { isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ class QueryPostStats extends Component {
 
 	componentWillMount() {
 		const { requestingPostStats, siteId, postId } = this.props;
-		if ( ! requestingPostStats && siteId && postId ) {
+		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
 			this.requestPostStats( this.props );
 		}
 	}
@@ -40,7 +40,7 @@ class QueryPostStats extends Component {
 	componentWillReceiveProps( nextProps ) {
 		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
-			! ( siteId && postId ) ||
+			! ( siteId && ! isUndefined( postId ) ) ||
 			( siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
 				isEqual( fields, nextProps.fields ) &&
