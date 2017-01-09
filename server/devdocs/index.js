@@ -29,12 +29,13 @@ const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 const SNIPPET_PAD_LENGTH = 40;
 const DEFAULT_SNIPPET_LENGTH = 100;
 
-/**
- * Configure marked to use Prism for code-block highlighting
- */
+// Configure marked to use Prism for code-block highlighting.
 marked.setOptions( {
 	highlight: function( code, language ) {
-		return Prism.highlight( code, Prism.languages[ language ] );
+		const syntax = Prism.languages[ language ];
+		return syntax
+			? Prism.highlight( code, syntax )
+			: code;
 	}
 } );
 
