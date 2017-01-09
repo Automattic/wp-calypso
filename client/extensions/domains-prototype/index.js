@@ -8,11 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import Manage from './manage';
-import { navigation, siteSelection } from 'my-sites/controller';
 import productsFactory from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import RegisterDomainStep from 'components/domains/register-domain-step';
@@ -66,40 +63,6 @@ const search = ( context ) => {
 	);
 };
 
-const getManageScreen = ( domain ) => {
-	if ( ! domain ) {
-		return (
-			<Main>
-				{ 'Select a domain' }
-			</Main>
-		);
-	}
-
-	return (
-		<Main>
-			<Manage domain={ domain } />
-		</Main>
-	);
-};
-
-const manage = ( context ) => {
-	const domain = context.params.domainName;
-	render( getManageScreen( domain ), context );
-};
-
-const domains = ( context ) => {
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-	render( (
-		<Main>
-			<h1 className={ styles.header }>Create a website</h1>
-			<div>Choosing an address is the best way to get started with your very own site</div>
-			<Button href="/start/domain-first">Get started</Button>
-		</Main> ),
-		context
-	);
-};
-
 const success = ( context ) => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
@@ -113,9 +76,6 @@ const success = ( context ) => {
 };
 
 export default function() {
-	page( '/domains-prototype', domains );
 	page( '/domains-prototype/search', search );
 	page( '/domains-prototype/success', success );
-
-	page( '/domains-prototype/manage/:domainName?', siteSelection, navigation, manage );
 }
