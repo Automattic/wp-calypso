@@ -184,8 +184,8 @@ const Checkout = React.createClass( {
 
 		this.props.clearPurchases();
 
-		if( this.props.selectedSite.options.is_domain_only ) {
-			return '/domains-prototype/manage/' + this.props.selectedSite.domain;
+		if ( this.props.selectedSite.options.is_domain_only ) {
+			return '/domains/manage/' + this.props.selectedSite.domain;
 		}
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
@@ -265,16 +265,6 @@ const Checkout = React.createClass( {
 				<DomainDetailsForm
 					cart={ this.props.cart }
 					productsList={ this.props.productsList } />
-			);
-		} else if ( this.props.cart.hasLoadedFromServer === null && this.props.cart.hasPendingServerUpdates === null ) {
-			return (
-				<SecurePaymentForm
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					cards={ this.props.cards }
-					products={ this.props.productsList.get() }
-					selectedSite={ selectedSite }
-					redirectTo={ this.getCheckoutCompleteRedirectPath } />
 			);
 		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
 			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart

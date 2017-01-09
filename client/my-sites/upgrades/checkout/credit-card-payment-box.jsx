@@ -63,7 +63,10 @@ var CreditCardPaymentBox = React.createClass( {
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 
-					<a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
+					{ cartValues.isPayPalExpressEnabled( cart )
+						? <a className={ paypalButtonClasses } href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
+						: null
+					}
 
 					{
 						showPaymentChatButton &&

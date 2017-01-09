@@ -53,10 +53,6 @@ const SecurePaymentForm = React.createClass( {
 	},
 
 	getVisiblePaymentBox( cart ) {
-		if ( true ) {
-			return 'credit-card';
-		}
-
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
 		} else if ( isFree( cart ) ) {
@@ -88,12 +84,7 @@ const SecurePaymentForm = React.createClass( {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
-		event.preventDefault();
-		window.location.href = this.props.redirectTo();
-
-		if ( false ) {
-			this.submitTransaction( event );
-		}
+		this.submitTransaction( event );
 	},
 
 	getInitialCard() {
