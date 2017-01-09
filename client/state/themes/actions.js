@@ -534,16 +534,17 @@ export function clearThemeUpload( siteId ) {
  *
  * @param {Number} siteId -- the site to transfer
  * @param {File} file -- theme zip to upload
+ * @param {String} plugin -- plugin slug
  *
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer( siteId, file ) {
+export function initiateThemeTransfer( siteId, file, plugin ) {
 	return dispatch => {
 		dispatch( {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
 		} );
-		return wpcom.undocumented().initiateTransfer( siteId, null, file, ( event ) => {
+		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
 			dispatch( {
 				type: THEME_TRANSFER_INITIATE_PROGRESS,
 				siteId,

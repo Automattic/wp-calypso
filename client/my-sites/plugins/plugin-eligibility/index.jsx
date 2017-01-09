@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,13 +12,17 @@ import { noop } from 'lodash';
 import MainComponent from 'components/main';
 import HeaderCake from 'components/header-cake';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
+import { initiateThemeTransfer } from 'state/themes/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PluginEligibility extends Component {
 	static propTypes = {
 		pluginSlug: PropTypes.string,
+		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
-		navigateTo: PropTypes.func
+		navigateTo: PropTypes.func,
+		initiateTransfer: PropTypes.func
 	};
 
 	getBackUrl = () => {
@@ -28,6 +32,12 @@ class PluginEligibility extends Component {
 	};
 
 	goBack = () => this.props.navigateTo( this.getBackUrl() );
+
+	pluginTransferInitiate = () => {
+		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
+		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
+		this.goBack();
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -41,8 +51,7 @@ class PluginEligibility extends Component {
 					{ translate( 'Install plugin' ) }
 				</HeaderCake>
 				<EligibilityWarnings
-					// TODO: Replace with transfer initiate call
-					onProceed={ noop }
+					onProceed={ this.pluginTransferInitiate }
 					backUrl={ this.getBackUrl() }
 				/>
 			</MainComponent>
@@ -53,4 +62,19 @@ class PluginEligibility extends Component {
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
 
-export default withNavigation( localize( PluginEligibility ) );
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteId,
+	};
+};
+
+const mapDispatchToProps = {
+	initiateTransfer: initiateThemeTransfer
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( withNavigation( localize( PluginEligibility ) ) );
