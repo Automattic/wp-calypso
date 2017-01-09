@@ -60,7 +60,6 @@ export default React.createClass( {
 			<DatePicker
 				period={ this.props.period.period }
 				date={ this.props.period.startOf }
-				path={ this.props.path }
 				summary={ true } />
 			);
 	},

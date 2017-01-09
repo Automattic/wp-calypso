@@ -8,6 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from './stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -148,9 +149,15 @@ module.exports = React.createClass( {
 						queryDate={ queryDate }
 						period={ this.props.period }
 						chartTab={ this.state.chartTab } />
-					<DatePicker
-						period={ period }
-						date={ this.state.chartDate } />
+					<StatsPeriodNavigation
+						date={ this.props.date }
+						period={ this.props.period.period }
+						url={ `/stats/${ this.props.period.period }/${ site.slug }` }
+					>
+						<DatePicker
+							period={ this.props.period.period }
+							date={ this.props.date } />
+					</StatsPeriodNavigation>
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
 							<StatsModule

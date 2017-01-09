@@ -2,15 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import userUtils from 'lib/user/utils';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class StatsDatePicker extends Component {
 	static propTypes = {
@@ -18,16 +10,13 @@ class StatsDatePicker extends Component {
 			PropTypes.object.isRequired,
 			PropTypes.string.isRequired
 		] ),
-		path: PropTypes.string,
 		period: PropTypes.string.isRequired,
-		slug: PropTypes.string,
 		summary: PropTypes.bool,
 	};
 
 	dateForDisplay() {
 		const { date, moment, period, translate } = this.props;
-		const locale = userUtils.getLocaleSlug();
-		const localizedDate = moment( date ).locale( locale );
+		const localizedDate = moment( date );
 		let formattedDate;
 
 		switch ( period ) {
@@ -62,29 +51,15 @@ class StatsDatePicker extends Component {
 	}
 
 	render() {
-		const { date, moment, path, period, slug, summary, translate } = this.props;
-		const showYesterdayLink = period === 'day' && moment( date ).isSame( moment(), 'day' );
-		const pathUrlPart = path ? '/' + path : '';
-		const yesteday = period === 'day' ? moment( date ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' ) : null;
-		const yesterdayLink = slug && showYesterdayLink
-			? (
-				<a
-					className="stats-date-picker__yesterday"
-					href={ `/stats/day${ pathUrlPart }/${ slug }?startDate=${ yesteday }` }
-				>
-					{ translate( '[ yesterday ]' ) }
-				</a>
-			)
-			: null;
+		const { summary, translate } = this.props;
 
-		const sectionTitle = translate( 'Stats for {{period/}} {{yesterday/}}', {
+		const sectionTitle = translate( 'Stats for {{period/}}', {
 			components: {
 				period: (
 					<span className="period">
 						<span className="date">{ this.dateForDisplay() }</span>
 					</span>
-				),
-				yesterday: yesterdayLink
+				)
 			},
 			context: 'Stats: Main stats page heading',
 			comment: 'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"'
@@ -101,16 +76,4 @@ class StatsDatePicker extends Component {
 	}
 }
 
-const connectComponent = connect(
-	state => {
-		const slug = getSelectedSiteSlug( state );
-		return {
-			slug
-		};
-	}
-);
-
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDatePicker );
+export default localize( StatsDatePicker );

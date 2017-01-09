@@ -1,0 +1,23 @@
+.stats-period-navigation {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 1.5em 0;
+
+	.stats-section-title {
+		margin: 0;
+	}
+
+	.stats-period-navigation__previous, .stats-period-navigation__next {
+		cursor: pointer;
+		color: darken( $gray, 20% );
+
+		&:hover {
+			color: $blue-medium;
+		}
+
+		&.is-disabled {
+			visibility: hidden;
+		}
+	}
+}
