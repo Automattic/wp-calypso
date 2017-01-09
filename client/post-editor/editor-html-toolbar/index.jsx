@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
 
 export class EditorHtmlToolbar extends Component {
@@ -21,7 +22,18 @@ export class EditorHtmlToolbar extends Component {
 
 	state = {
 		openTags: [],
+		selectedText: '',
+		showLinkDialog: false,
 	};
+
+	getSelectedText() {
+		const { content: {
+			selectionEnd,
+			selectionStart,
+			value,
+		} } = this.props;
+		return value.substring( selectionStart, selectionEnd );
+	}
 
 	setCursorPosition( previousSelectionEnd, insertedContentLength ) {
 		this.props.content.selectionEnd = this.props.content.selectionStart =
@@ -38,7 +50,10 @@ export class EditorHtmlToolbar extends Component {
 
 	attributesToString = ( attributes = {} ) => reduce(
 		attributes,
-		( attributesString, attributeValue, attributeName ) => attributesString + ` ${ attributeName }="${ attributeValue }"`,
+		( attributesString, attributeValue, attributeName ) =>
+			attributeValue
+				? attributesString + ` ${ attributeName }="${ attributeValue }"`
+				: attributesString,
 		''
 	);
 
@@ -60,7 +75,15 @@ export class EditorHtmlToolbar extends Component {
 		} } = this.props;
 		const { openTags } = this.state;
 
-		if ( selectionEnd === selectionStart ) {
+		if ( options.text ) {
+			this.updateContent(
+				value.substring( 0, selectionStart ) +
+				this.openHtmlTag( tag, attributes, options ) +
+				options.text +
+				this.closeHtmlTag( tag, options ) +
+				value.substring( selectionEnd, value.length )
+			);
+		} else if ( selectionEnd === selectionStart ) {
 			const isTagOpen = -1 !== openTags.indexOf( tag );
 
 			if ( isTagOpen ) {
@@ -100,6 +123,10 @@ export class EditorHtmlToolbar extends Component {
 	handleClickItalic = () => {
 		this.insertHtmlTag( 'em' );
 	}
+
+	handleClickLink = ( attributes, text ) => {
+		this.insertHtmlTag( 'a', attributes, { text } );
+	};
 
 	handleClickQuote = () => {
 		this.insertHtmlTag( 'blockquote' );
@@ -172,7 +199,19 @@ export class EditorHtmlToolbar extends Component {
 		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
 	}
 
+	openLinkDialog = () => {
+		this.setState( {
+			selectedText: this.getSelectedText(),
+			showLinkDialog: true,
+		} );
+	}
+
+	closeLinkDialog = () => {
+		this.setState( { showLinkDialog: false } );
+	}
+
 	render() {
+		const { translate } = this.props;
 		return (
 			<div className="editor-html-toolbar">
 				<Button
@@ -188,6 +227,13 @@ export class EditorHtmlToolbar extends Component {
 					onClick={ this.handleClickItalic }
 				>
 					{ this.tagLabel( 'em', 'i' ) }
+				</Button>
+				<Button
+					className="editor-html-toolbar__button-link"
+					compact
+					onClick={ this.openLinkDialog }
+				>
+					link
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-quote"
@@ -250,8 +296,15 @@ export class EditorHtmlToolbar extends Component {
 					compact
 					onClick={ this.handleClickCloseTags }
 				>
-					{ this.props.translate( 'Close Tags' ) }
+					{ translate( 'Close Tags' ) }
 				</Button>
+
+				<AddLinkDialog
+					onClose={ this.closeLinkDialog }
+					onInsert={ this.handleClickLink }
+					selectedText={ this.state.selectedText }
+					shouldDisplay={ this.state.showLinkDialog }
+				/>
 			</div>
 		);
 	}

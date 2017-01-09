@@ -35,3 +35,18 @@
 .editor-html-toolbar__button-code {
 	font-family: $code;
 }
+
+.editor-html-toolbar__dialog .dialog__content {
+	min-width: 40vw;
+}
+.editor-html-toolbar__dialog .post-selector {
+	margin-bottom: 16px;
+}
+@include breakpoint( "<660px" ) {
+	.editor-html-toolbar__dialog {
+		width: 90%;
+	}
+	.editor-html-toolbar__dialog .dialog__content {
+		min-width: none;
+	}
+}
