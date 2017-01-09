@@ -173,7 +173,7 @@ module.exports = {
 			context.store.dispatch( receiveSite( selectedSite ) );
 			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
-			if ( selectedSite && selectedSite.options.is_domain_only && ! startsWith( context.pathname, '/domains/manage/' ) ) {
+			if ( selectedSite && selectedSite.options.is_domain_only && ! startsWith( context.pathname, '/domains/manage/' ) && ! startsWith( context.pathname, '/checkout/' ) ) {
 				page.redirect( '/domains/manage/' + selectedSite.slug );
 				return;
 			}
