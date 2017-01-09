@@ -139,6 +139,11 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		// Reset state on site change
+		if ( nextProps.selectedSite && nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug ) {
+			this.setState( this.getInitialState() );
+		}
+
 		if ( this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
 			( ! this.props.defaultSuggestionsError && ! nextProps.defaultSuggestionsError ) ) {
 			return;
@@ -187,7 +192,6 @@ const RegisterDomainStep = React.createClass( {
 
 	componentDidUpdate: function( prevProps ) {
 		if ( this.props.selectedSite && this.props.selectedSite.domain !== prevProps.selectedSite.domain ) {
-			this.setState( this.getInitialState() );
 			this.focusSearchCard();
 		}
 	},
