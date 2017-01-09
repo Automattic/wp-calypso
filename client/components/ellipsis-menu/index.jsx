@@ -20,7 +20,8 @@ class EllipsisMenu extends Component {
 		position: PropTypes.string,
 		children: PropTypes.node,
 		disabled: PropTypes.bool,
-		onToggle: PropTypes.func
+		onToggle: PropTypes.func,
+		popoverClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -55,12 +56,13 @@ class EllipsisMenu extends Component {
 	}
 
 	render() {
-		const { toggleTitle, translate, position, children, disabled } = this.props;
+		const { toggleTitle, translate, position, children, disabled, className, popoverClassName } = this.props;
 		const { isMenuVisible, popoverContext } = this.state;
-		const classes = classnames( 'ellipsis-menu', {
+		const classes = classnames( 'ellipsis-menu', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled
 		} );
+		const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
 
 		return (
 			<span className={ classes }>
@@ -80,7 +82,7 @@ class EllipsisMenu extends Component {
 					onClose={ this.hideMenu }
 					position={ position }
 					context={ popoverContext }
-					className="ellipsis-menu__menu popover">
+					className={ popoverClasses }>
 					{ children }
 				</PopoverMenu>
 			</span>

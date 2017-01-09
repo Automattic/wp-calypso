@@ -143,6 +143,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
+					popoverClassName="reader-post-options-menu__popover"
 					onToggle={ this.onMenuToggle }>
 					{ this.props.showFollow && <FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
@@ -150,7 +151,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
-					{ isBlockPossible || isDiscoverPost ? <hr className="reader-post-options-menu__hr" /> : null }
+					{ ( this.props.showFollow || isEditPossible ) && ( isBlockPossible || isDiscoverPost ) &&
+						<hr className="reader-post-options-menu__hr" /> }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
 					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
 				</EllipsisMenu>
