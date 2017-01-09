@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight, partialRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,15 +24,10 @@ import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
-		this.props.trackToggle( 'Comment Order on Page' );
+		this.props.trackEvent( 'Comment Order on Page' );
 		this.props.updateFields( {
 			comment_order: this.props.fields.comment_order === 'desc' ? 'asc' : 'desc'
 		} );
-	};
-
-	onTrackSelectAndStop = recordObject => clickEvent => {
-		this.trackSelect( recordObject );
-		clickEvent.preventDefault();
 	};
 
 	defaultArticleSettings() {
@@ -172,7 +167,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	renderInputNumberDays() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, typeTracker } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, uniqueEventTracker } = this.props;
 		return (
 			<FormTextInput
 				name="close_comments_days_old"
@@ -184,14 +179,14 @@ class SiteSettingsFormDiscussion extends Component {
 				value={ 'undefined' === typeof fields.close_comments_days_old ? 14 : fields.close_comments_days_old }
 				onChange={ onChangeField( 'close_comments_days_old' ) }
 				disabled={ isRequestingSettings }
-				onClick={ clickTracker( 'Automatically Close Days Field' ) }
-				onKeyPress={ typeTracker( 'Automatically Close Days Field' ) }
+				onClick={ eventTracker( 'Clicked Automatically Close Days Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Automatically Close Days Field' ) }
 			/>
 		);
 	}
 
 	renderInputThreadDepth() {
-		const { fields, isRequestingSettings, onChangeField } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField } = this.props;
 		return (
 			<FormSelect
 				className="is-compact"
@@ -199,7 +194,7 @@ class SiteSettingsFormDiscussion extends Component {
 				value={ fields.thread_comments_depth }
 				onChange={ onChangeField( 'thread_comments_depth' ) }
 				disabled={ isRequestingSettings }
-				onClick={ this.onTrackSelectAndStop( 'Comment Nesting Level' ) }>
+				onClick={ eventTracker( 'Selected Comment Nesting Level' ) }>
 					{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( level =>
 						<option value={ level } key={ 'comment-depth-' + level }>{ level }</option>
 					) }
@@ -208,7 +203,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	renderInputNumComments() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, typeTracker } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, uniqueEventTracker } = this.props;
 		return (
 			<FormTextInput
 				name="comments_per_page"
@@ -220,13 +215,13 @@ class SiteSettingsFormDiscussion extends Component {
 				onChange={ onChangeField( 'comments_per_page' ) }
 				className="small-text"
 				disabled={ isRequestingSettings }
-				onClick={ clickTracker( 'Comments Per Page Field' ) }
-				onKeyPress={ typeTracker( 'Comments Per Page Field' ) } />
+				onClick={ eventTracker( 'Clicked Comments Per Page Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Comments Per Page Field' ) } />
 		);
 	}
 
 	renderInputDisplayDefault() {
-		const { fields, isRequestingSettings, onChangeField, translate } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, translate } = this.props;
 		return (
 			<FormSelect
 				className="is-compact"
@@ -235,7 +230,7 @@ class SiteSettingsFormDiscussion extends Component {
 				value={ fields.default_comments_page }
 				onChange={ onChangeField( 'default_comments_page' ) }
 				disabled={ isRequestingSettings }
-				onClick={ this.onTrackSelectAndStop( 'Comment Page Display Default' ) }>
+				onClick={ eventTracker( 'Selected Comment Page Display Default' ) }>
 					<option value="newest">{ translate( 'last' ) }</option>
 					<option value="oldest">{ translate( 'first' ) }</option>
 			</FormSelect>
@@ -346,7 +341,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentModerationSettings() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, translate, typeTracker } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, translate, uniqueEventTracker } = this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
@@ -383,15 +378,15 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ onChangeField( 'moderation_keys' ) }
 					disabled={ isRequestingSettings }
 					autoCapitalize="none"
-					onClick={ clickTracker( 'Moderation Queue Field' ) }
-					onKeyPress={ typeTracker( 'Moderation Queue Field' ) }>
+					onClick={ eventTracker( 'Clicked Moderation Queue Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Moderation Queue Field' ) }>
 				</FormTextarea>
 			</FormFieldset>
 		);
 	}
 
 	commentBlacklistSettings() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, translate, typeTracker } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, translate, uniqueEventTracker } = this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
@@ -406,15 +401,15 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ onChangeField( 'blacklist_keys' ) }
 					disabled={ isRequestingSettings }
 					autoCapitalize="none"
-					onClick={ clickTracker( 'Blacklist Field' ) }
-					onKeyPress={ typeTracker( 'Blacklist Field' ) }>
+					onClick={ eventTracker( 'Clicked Blacklist Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Blacklist Field' ) }>
 				</FormTextarea>
 			</FormFieldset>
 		);
 	}
 
 	renderInputNumLinks() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, typeTracker } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, uniqueEventTracker } = this.props;
 		return (
 			<FormTextInput
 				name="comment_max_links"
@@ -425,8 +420,8 @@ class SiteSettingsFormDiscussion extends Component {
 				value={ 'undefined' === typeof fields.comment_max_links ? 2 : fields.comment_max_links }
 				onChange={ onChangeField( 'comment_max_links' ) }
 				disabled={ isRequestingSettings }
-				onClick={ clickTracker( 'Comment Queue Link Count Field' ) }
-				onKeyPress={ typeTracker( 'Comment Queue Link Count Field' ) } />
+				onClick={ eventTracker( 'Clicked Comment Queue Link Count Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Comment Queue Link Count Field' ) } />
 		);
 	}
 
@@ -485,45 +480,34 @@ const connectComponent = connect(
 	}
 );
 
-const getFormSettings = settings => {
-	if ( ! settings ) {
-		return {};
-	}
-
-	const discussionAttributes = [
-		'default_pingback_flag',
-		'default_ping_status',
-		'default_comment_status',
-		'require_name_email',
-		'comment_registration',
-		'close_comments_for_old_posts',
-		'close_comments_days_old',
-		'thread_comments',
-		'thread_comments_depth',
-		'page_comments',
-		'comments_per_page',
-		'default_comments_page',
-		'comment_order',
-		'comments_notify',
-		'moderation_notify',
-		'social_notifications_like',
-		'social_notifications_reblog',
-		'social_notifications_subscribe',
-		'comment_moderation',
-		'comment_whitelist',
-		'comment_max_links',
-		'moderation_keys',
-		'blacklist_keys',
-		'admin_url',
-		'wpcom_publish_comments_with_markdown',
-		'markdown_supported',
-	];
-
-	return discussionAttributes.reduce( ( memo, attribute ) => {
-		memo[ attribute ] = settings[ attribute ];
-		return memo;
-	}, {} );
-};
+const getFormSettings = partialRight( pick, [
+	'default_pingback_flag',
+	'default_ping_status',
+	'default_comment_status',
+	'require_name_email',
+	'comment_registration',
+	'close_comments_for_old_posts',
+	'close_comments_days_old',
+	'thread_comments',
+	'thread_comments_depth',
+	'page_comments',
+	'comments_per_page',
+	'default_comments_page',
+	'comment_order',
+	'comments_notify',
+	'moderation_notify',
+	'social_notifications_like',
+	'social_notifications_reblog',
+	'social_notifications_subscribe',
+	'comment_moderation',
+	'comment_whitelist',
+	'comment_max_links',
+	'moderation_keys',
+	'blacklist_keys',
+	'admin_url',
+	'wpcom_publish_comments_with_markdown',
+	'markdown_supported',
+] );
 
 export default flowRight(
 	connectComponent,

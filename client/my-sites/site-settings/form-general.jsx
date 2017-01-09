@@ -46,7 +46,7 @@ class SiteSettingsFormGeneral extends Component {
 	};
 
 	siteOptions() {
-		const { translate, isRequestingSettings, fields, clickTracker, typeTracker, onChangeField } = this.props;
+		const { translate, isRequestingSettings, fields, eventTracker, onChangeField, uniqueEventTracker } = this.props;
 
 		return (
 			<div className="site-settings__site-options">
@@ -61,8 +61,8 @@ class SiteSettingsFormGeneral extends Component {
 							value={ fields.blogname || '' }
 							onChange={ onChangeField( 'blogname' ) }
 							disabled={ isRequestingSettings }
-							onClick={ clickTracker( 'Site Title Field' ) }
-							onKeyPress={ typeTracker( 'Site Title Field' ) } />
+							onClick={ eventTracker( 'Clicked Site Title Field' ) }
+							onKeyPress={ uniqueEventTracker( 'Typed in Site Title Field' ) } />
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="blogdescription">{ translate( 'Site Tagline' ) }</FormLabel>
@@ -74,8 +74,8 @@ class SiteSettingsFormGeneral extends Component {
 							value={ fields.blogdescription || '' }
 							onChange={ onChangeField( 'blogdescription' ) }
 							disabled={ isRequestingSettings }
-							onClick={ clickTracker( 'Site Tagline Field' ) }
-							onKeyPress={ typeTracker( 'Site Tagline Field' ) } />
+							onClick={ eventTracker( 'Clicked Site Tagline Field' ) }
+							onKeyPress={ uniqueEventTracker( 'Typed in Site Tagline Field' ) } />
 						<FormSettingExplanation>
 							{ translate( 'In a few words, explain what this site is about.' ) }
 						</FormSettingExplanation>
@@ -149,7 +149,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	languageOptions() {
-		const { clickTracker, fields, isRequestingSettings, onChangeField, site, translate } = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, site, translate } = this.props;
 		if ( site.jetpack ) {
 			return null;
 		}
@@ -163,7 +163,7 @@ class SiteSettingsFormGeneral extends Component {
 					value={ fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings }
-					onClick={ clickTracker( 'Language Field' ) } />
+					onClick={ eventTracker( 'Clicked Language Field' ) } />
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
@@ -175,7 +175,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	visibilityOptions() {
-		const { fields, handleRadio, isRequestingSettings, clickTracker, site, translate } = this.props;
+		const { fields, handleRadio, isRequestingSettings, eventTracker, site, translate } = this.props;
 
 		return (
 			<FormFieldset>
@@ -186,7 +186,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ 1 === parseInt( fields.blog_public, 10 ) }
 						onChange={ handleRadio }
 						disabled={ isRequestingSettings }
-						onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
+						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Public' ) }</span>
 					<FormSettingExplanation isIndented>
 						{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
@@ -200,7 +200,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ 0 === parseInt( fields.blog_public, 10 ) }
 						onChange={ handleRadio }
 						disabled={ isRequestingSettings }
-						onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
+						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Hidden' ) }</span>
 					<FormSettingExplanation isIndented>
 						{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
@@ -215,7 +215,7 @@ class SiteSettingsFormGeneral extends Component {
 							checked={ -1 === parseInt( fields.blog_public, 10 ) }
 							onChange={ handleRadio }
 							disabled={ isRequestingSettings }
-							onClick={ clickTracker( 'Site Visibility Radio Button' ) } />
+							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 						<span>{ translate( 'Private' ) }</span>
 						<FormSettingExplanation isIndented>
 							{ translate( 'Your site is only visible to you and users you approve.' ) }
@@ -228,15 +228,15 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	handleAmpToggle = () => {
-		const { fields, submitForm, trackClick, updateFields } = this.props;
+		const { fields, submitForm, trackEvent, updateFields } = this.props;
 		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
 			submitForm();
-			trackClick( 'AMP Toggle' );
+			trackEvent( 'Toggled AMP Toggle' );
 		} );
 	};
 
 	handleAmpCustomize = () => {
-		this.props.trackClick( 'AMP Customize button' );
+		this.props.trackEvent( 'Clicked AMP Customize button' );
 		page( '/customize/amp/' + this.props.site.slug );
 	};
 

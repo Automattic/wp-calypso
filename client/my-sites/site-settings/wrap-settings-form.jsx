@@ -44,8 +44,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if (
-			this.props.isSavingSettings &&
-			! nextProps.isSavingSettings
+				this.props.isSavingSettings &&
+				! nextProps.isSavingSettings
 			) {
 				if ( nextProps.isSaveRequestSuccessful ) {
 					nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
@@ -65,23 +65,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 		}
 
-		render() {
-			const utils = {
-				handleRadio: this.handleRadio,
-				handleSubmitForm: this.handleSubmitForm,
-				handleToggle: this.handleToggle,
-				onChangeField: this.onChangeField,
-				submitForm: this.submitForm,
-			};
-
-			return (
-				<div>
-					<QuerySiteSettings siteId={ this.props.siteId } />
-					<SettingsForm { ...this.props } { ...utils } />
-				</div>
-			);
-		}
-
 		// Some Utils
 		handleSubmitForm = event => {
 			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -89,7 +72,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			this.submitForm();
-			this.props.trackClick( 'Save Settings Button' );
+			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
 
 		submitForm = () => {
@@ -106,7 +89,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		handleToggle = name => () => {
-			this.props.trackToggle( name );
+			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
@@ -117,6 +100,22 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
+		render() {
+			const utils = {
+				handleRadio: this.handleRadio,
+				handleSubmitForm: this.handleSubmitForm,
+				handleToggle: this.handleToggle,
+				onChangeField: this.onChangeField,
+				submitForm: this.submitForm,
+			};
+
+			return (
+				<div>
+					<QuerySiteSettings siteId={ this.props.siteId } />
+					<SettingsForm { ...this.props } { ...utils } />
+				</div>
+			);
+		}
 	}
 
 	const connectComponent = connect(
@@ -142,18 +141,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				saveSiteSettings,
 				successNotice,
 			}, dispatch );
-			const trackClick = name => dispatch( recordGoogleEvent( 'Site Settings', `Clicked ${ name }` ) );
-			const trackSelect = name => dispatch( recordGoogleEvent( 'Site Settings', `Selected ${ name }` ) );
-			const trackToggle = name => dispatch( recordGoogleEvent( 'Site Settings', `Toggled ${ name }` ) );
-			const trackType = memoize( name => dispatch( recordGoogleEvent( 'Site Settings', `Typed in ${ name }` ) ) );
+			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
+			const trackEventOnce = memoize( name => dispatch( recordGoogleEvent( 'Site Settings', name ) ) );
 			return {
 				...boundActionCreators,
-				clickTracker: message => () => trackClick( message ),
-				selectTracker: message => () => trackSelect( message ),
-				typeTracker: message => () => trackType( message ),
-				trackClick,
-				trackSelect,
-				trackToggle,
+				eventTracker: message => () => trackEvent( message ),
+				uniqueEventTracker: message => () => trackEventOnce( message ),
+				trackEvent,
 			};
 		}
 	);
