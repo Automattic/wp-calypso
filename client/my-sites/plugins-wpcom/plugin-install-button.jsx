@@ -14,7 +14,6 @@ import Button from 'components/button';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
-import { setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -25,8 +24,7 @@ export const WpcomPluginInstallButton = props => {
 		siteId,
 		eligibilityData,
 		navigateTo,
-		initiateTransfer,
-		setStatus
+		initiateTransfer
 	} = props;
 
 	function installButtonAction( event ) {
@@ -38,8 +36,7 @@ export const WpcomPluginInstallButton = props => {
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			// TODO: refactor to use plugin slug
-			initiateTransfer( siteId, null );
-			setStatus( siteId, 'start' );
+			initiateTransfer( siteId, null, plugin );
 		} else {
 			// Show eligibility warnings before proceeding
 			navigateTo( `/plugins/${ plugin.slug }/${ siteSlug }/eligibility` );
@@ -68,8 +65,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	setStatus: setAutomatedTransferStatus,
-	initiateTransfer: initiateThemeTransfer,
+	initiateTransfer: initiateThemeTransfer
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;

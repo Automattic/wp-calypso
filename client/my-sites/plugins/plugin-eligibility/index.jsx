@@ -14,7 +14,6 @@ import HeaderCake from 'components/header-cake';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { setAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 class PluginEligibility extends Component {
 	static propTypes = {
@@ -23,8 +22,7 @@ class PluginEligibility extends Component {
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
 		navigateTo: PropTypes.func,
-		initiateTransfer: PropTypes.func,
-		setStatus: PropTypes.func
+		initiateTransfer: PropTypes.func
 	};
 
 	getBackUrl = () => {
@@ -38,8 +36,7 @@ class PluginEligibility extends Component {
 	pluginTransferInitiate = () => {
 		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
 		// TODO: refactor to use plugin slug
-		this.props.initiateTransfer( this.props.siteId, null );
-		this.props.setStatus( this.props.siteId, 'start' );
+		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
 		this.goBack();
 	};
 
@@ -75,8 +72,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer,
-	setStatus: setAutomatedTransferStatus
+	initiateTransfer: initiateThemeTransfer
 };
 
 export default connect(
