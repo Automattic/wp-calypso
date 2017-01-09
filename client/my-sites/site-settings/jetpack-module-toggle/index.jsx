@@ -54,11 +54,12 @@ class JetpackModuleToggle extends Component {
 		if ( ! this.props.isJetpackSite ) {
 			return null;
 		}
+
 		return (
 			<span className="jetpack-module-toggle">
 				<CompactFormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
-					checked={ this.props.checked }
+					checked={ this.props.checked || false }
 					toggling={ this.props.toggling }
 					onChange={ this.handleChange }
 					disabled={ this.props.disabled || this.props.toggleDisabled } >
