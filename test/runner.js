@@ -89,7 +89,7 @@ files = files.reduce( ( memo, filePath ) => {
 					chalk.blue( filePath )
 				);
 
-				if ( 'Y' === readlineSync.question( 'Y to continue, N to abort: ' ).toUpperCase() ) {
+				if ( true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' ) ) {
 					return memo.concat( pathGuess );
 				}
 
