@@ -71,15 +71,19 @@ class ThemeEnhancements extends Component {
 			this.setState( {
 				[ name ]: this.sanitizeFieldValue( name, ! this.isFieldTruthy( name ) )
 			} );
+			this.props.markChanged();
 		};
 	}
 
 	onSubmitForm( event ) {
 		const { onSubmitForm, selectedSiteId } = this.props;
 
-		this.props.updateSettings( selectedSiteId, this.state );
-
-		onSubmitForm( event );
+		Promise.all( [
+			this.props.updateSettings( selectedSiteId, this.state ),
+			onSubmitForm( event )
+		] ).then( () => {
+			this.props.markSaved();
+		} );
 	}
 
 	isFormPending() {
