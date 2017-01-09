@@ -55,13 +55,15 @@ export const PostLikes = ( { countLikes, isRequesting, likes, opened, postId, si
 			{ likes && !! likes.length &&
 				<div className="stats-post-likes__content">
 					{ likes.map( like =>
-						<Gravatar key={ like.ID } user={ like } />
+						<a key={ like.ID } href={ like.URL } rel="noopener noreferrer" target="_blank">
+							<Gravatar user={ like } />
+						</a>
 					) }
 				</div>
 			}
 			{ countLikes === 0 && ! isRequesting &&
 				<div className="stats-post-likes__content">
-					{ translate( 'This post has not likes yet!' ) }
+					{ translate( 'There are no likes on this post yet.' ) }
 				</div>
 			}
 		</Card>

@@ -68,6 +68,8 @@ const StatsPostDetail = React.createClass( {
 
 				<PostSummary siteId={ this.props.siteId } postId={ this.props.postId } />
 
+				{ !! this.props.postId && <PostLikes siteId={ this.props.siteId } postId={ this.props.postId } /> }
+
 				<PostMonths
 					dataKey="years"
 					title={ this.props.translate( 'Months and Years' ) }
@@ -81,8 +83,6 @@ const StatsPostDetail = React.createClass( {
 					postViewsList={ this.props.postViewsList } />
 
 				<PostWeeks postViewsList={ this.props.postViewsList } />
-
-				{ post && <PostLikes postId={ post.ID } siteId={ this.props.siteId } /> }
 			</Main>
 		);
 	}
