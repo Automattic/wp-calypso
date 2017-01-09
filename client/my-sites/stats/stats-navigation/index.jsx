@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import FollowersCount from 'blocks/followers-count';
 
 class StatsNavigation extends Component {
@@ -20,16 +19,6 @@ class StatsNavigation extends Component {
 			PropTypes.bool,
 			PropTypes.object
 		] )
-	}
-
-	componentDidMount() {
-		const slug = this.props.site ? this.props.site.slug : '';
-		siteStatsStickyTabActions.saveFilterAndSlug( this.props.section, slug );
-	}
-
-	componentDidUpdate() {
-		const slug = this.props.site ? this.props.site.slug : '';
-		siteStatsStickyTabActions.saveFilterAndSlug( this.props.section, slug );
 	}
 
 	render() {
