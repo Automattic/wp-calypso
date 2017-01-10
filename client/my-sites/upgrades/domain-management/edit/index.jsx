@@ -7,8 +7,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
 import { getSelectedDomain } from 'lib/domains';
+import Gridicon from 'components/gridicon';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
@@ -35,9 +37,56 @@ const Edit = React.createClass( {
 				<Header onClick={ this.goToDomainManagement } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Domain Settings' ) }
 				</Header>
+				{ this.renderSetup( domain ) }
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
+	},
+
+	renderSetup( domain ) {
+		const styles = {
+			header: {
+				color: 'grey',
+				textTransform: 'uppercase'
+			},
+			row: {
+				display: 'flex'
+			},
+			column: {
+				borderLeft: '1px solid grey',
+				'flexGrow': 1,
+				textAlign: 'center'
+			},
+			firstColumn: {
+				'flexGrow': 2,
+			}
+
+		};
+
+		return (
+			<Card>
+				<div style={ styles.row }>
+					<div style={ styles.firstColumn }>
+						<span style={ styles.header }>Current setup</span><br />
+						{ this.getCurrentSetup() }
+					</div>
+
+					<a style={ styles.column } href={ '/customize/' + domain.name }>
+						<Gridicon icon="customize" /><br />
+						Customize
+					</a>
+
+					<a style={ styles.column } href={ '/change-type' + domain.name }>
+						<Gridicon icon="cog" /><br />
+						Change type
+					</a>
+				</div>
+			</Card>
+		);
+	},
+
+	getCurrentSetup() {
+		return 'Landing Page';
 	},
 
 	getDetailsForType( type ) {
