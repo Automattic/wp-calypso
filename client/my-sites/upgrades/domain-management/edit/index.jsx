@@ -44,6 +44,7 @@ const Edit = React.createClass( {
 	},
 
 	renderSetup( domain ) {
+		// Only show this for is_domain_only sites obviously
 		const styles = {
 			header: {
 				color: 'grey',
@@ -60,7 +61,6 @@ const Edit = React.createClass( {
 			firstColumn: {
 				'flexGrow': 2,
 			}
-
 		};
 
 		return (
@@ -76,7 +76,7 @@ const Edit = React.createClass( {
 						Customize
 					</a>
 
-					<a style={ styles.column } href={ '/change-type' + domain.name }>
+					<a style={ styles.column } href={ '/link-to-theme-selection/' + domain.name }>
 						<Gridicon icon="cog" /><br />
 						Change type
 					</a>
