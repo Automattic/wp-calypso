@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
 
@@ -23,6 +24,7 @@ export class EditorHtmlToolbar extends Component {
 	state = {
 		openTags: [],
 		selectedText: '',
+		showImageDialog: false,
 		showLinkDialog: false,
 	};
 
@@ -144,6 +146,18 @@ export class EditorHtmlToolbar extends Component {
 		} );
 	}
 
+	handleClickImage = attributes => {
+		const { content: {
+			selectionEnd,
+			value,
+		} } = this.props;
+		this.updateContent(
+			value.substring( 0, selectionEnd ) +
+			`<img${ this.attributesToString( attributes ) } />` +
+			value.substring( selectionEnd, value.length )
+		);
+	}
+
 	handleClickUnorderedList = () => {
 		this.insertHtmlTag( 'ul', {}, {
 			newLine: true,
@@ -197,6 +211,14 @@ export class EditorHtmlToolbar extends Component {
 	tagLabel( tag, label ) {
 		const { openTags } = this.state;
 		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
+	}
+
+	openImageDialog = () => {
+		this.setState( { showImageDialog: true } );
+	}
+
+	closeImageDialog = () => {
+		this.setState( { showImageDialog: false } );
 	}
 
 	openLinkDialog = () => {
@@ -257,6 +279,13 @@ export class EditorHtmlToolbar extends Component {
 					{ this.tagLabel( 'ins', 'ins' ) }
 				</Button>
 				<Button
+					className="editor-html-toolbar__button-image"
+					compact
+					onClick={ this.openImageDialog }
+				>
+					img
+				</Button>
+				<Button
 					className="editor-html-toolbar__button-unordered-list"
 					compact
 					onClick={ this.handleClickUnorderedList }
@@ -299,6 +328,11 @@ export class EditorHtmlToolbar extends Component {
 					{ translate( 'Close Tags' ) }
 				</Button>
 
+				<AddImageDialog
+					onClose={ this.closeImageDialog }
+					onInsert={ this.handleClickImage }
+					shouldDisplay={ this.state.showImageDialog }
+				/>
 				<AddLinkDialog
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.handleClickLink }

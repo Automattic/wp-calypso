@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +21,15 @@ const REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
 const REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 export class AddLinkDialog extends Component {
+
+	static propTypes = {
+		onClose: PropTypes.func,
+		onInsert: PropTypes.func,
+		selectedText: PropTypes.string,
+		shouldDisplay: PropTypes.bool,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
+	};
 
 	state = {
 		linkNewTab: false,
@@ -71,15 +80,11 @@ export class AddLinkDialog extends Component {
 	}
 
 	setLinkText = event => {
-		this.setState( {
-			linkText: event.target.value,
-		} );
+		this.setState( { linkText: event.target.value } );
 	}
 
 	setLinkNewTab = event => {
-		this.setState( {
-			linkNewTab: event.target.checked,
-		} );
+		this.setState( { linkNewTab: event.target.checked } );
 	}
 
 	onSelectPost = post => {
