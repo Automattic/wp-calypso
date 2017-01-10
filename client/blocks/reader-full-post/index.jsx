@@ -240,16 +240,16 @@ export class FullPostView extends React.Component {
 	}
 
 	goToNextPost = () => {
-		if ( getLastStore() ) {
-			const store = getLastStore();
+		const store = getLastStore();
+		if ( store ) {
 			FeedStreamStoreActions.selectNextItem( store.getID() );
 			showSelectedPost( { store, postKey: store.getSelectedPost() } );
 		}
 	}
 
 	goToPreviousPost = () => {
-		if ( getLastStore() ) {
-			const store = getLastStore();
+		const store = getLastStore();
+		if ( store ) {
 			FeedStreamStoreActions.selectPrevItem( store.getID() );
 			showSelectedPost( { store, postKey: store.getSelectedPost() } );
 		}
