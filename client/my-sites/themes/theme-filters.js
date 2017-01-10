@@ -71,6 +71,7 @@ const taxonomies = {
         "microformats",
         "multiple-menus",
         "one-page",
+        "portfolio",
         "post-formats",
         "post-slider",
         "rtl-language-support",
@@ -86,6 +87,7 @@ const taxonomies = {
     "layout": [
         "fixed-layout",
         "fluid-layout",
+        "grid-layout",
         "responsive-layout"
     ],
     "picks": [
