@@ -27,6 +27,7 @@ import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
+import * as stats from 'reader/stats';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -197,7 +198,12 @@ export default class FeedStream {
 		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
 			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
 			defer( fetchNextPage );
+			this.onKeyboardFetchPerformed();
 		}
+	}
+
+	onKeyboardFetchPerformed() {
+		stats.recordTrack( 'calypso_reader_fullpost_keyboard_fetch' );
 	}
 
 	selectPrevItem() {
