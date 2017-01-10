@@ -4,14 +4,14 @@
 	border-bottom-width: 1px;
 	box-sizing: border-box;
 	margin: 0 auto;
-	max-width: 100%;
+	max-width: 700px;
+	width: 100%;
 	padding: 0 2px;
 	position: relative;
 
-	@include breakpoint( ">960px" ) {
+	@media ( min-width: 930px ) {
 		border-left-width: 1px;
 		border-right-width: 1px;
-		width: 700px;
 	}
 
 	.button {
@@ -26,10 +26,14 @@
 .editor-html-toolbar__button-italic {
 	font-style: italic;
 }
-.editor-html-toolbar__button-delete {
+.editor-html-toolbar__button-link.button {
+	color: $blue-wordpress;
+	text-decoration: underline;
+}
+.editor-html-toolbar__button-del {
 	text-decoration: line-through;
 }
-.editor-html-toolbar__button-insert {
+.editor-html-toolbar__button-ins {
 	text-decoration: underline;
 }
 .editor-html-toolbar__button-code {

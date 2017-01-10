@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isMobile } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
@@ -284,7 +285,7 @@ export class EditorHtmlToolbar extends Component {
 				{ map( buttons, ( { label, onClick }, tag ) =>
 					<Button
 						className={ `editor-html-toolbar__button-${ tag }` }
-						compact
+						compact={ ! isMobile() }
 						key={ tag }
 						onClick={ onClick }
 					>
