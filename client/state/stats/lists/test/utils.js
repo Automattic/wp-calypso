@@ -10,9 +10,61 @@ import {
 	getSerializedStatsQuery,
 	normalizers,
 	rangeOfPeriod,
+	buildExportArray,
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'buildExportArray()', () => {
+		it( 'should an empty array if data not supplied', () => {
+			const data = buildExportArray( {} );
+
+			expect( data ).to.eql( [] );
+		} );
+
+		it( 'should parse simple object to csv', () => {
+			const data = buildExportArray( {
+				label: 'Chicken',
+				value: 10
+			} );
+
+			expect( data ).to.eql( [ [ '"Chicken"', 10 ] ] );
+		} );
+
+		it( 'should escape simple object to csv', () => {
+			const data = buildExportArray( {
+				label: 'Chicken and "Ribs"',
+				value: 10
+			} );
+
+			expect( data ).to.eql( [ [ '"Chicken and ""Ribs""', 10 ] ] );
+		} );
+
+		it( 'should recurse child data', () => {
+			const data = buildExportArray( {
+				label: 'BBQ',
+				value: 10,
+				children: [ {
+					label: 'Chicken',
+					value: 5
+				}, {
+					label: 'Ribs',
+					value: 2,
+					children: [ {
+						label: 'Babyback',
+						value: 1
+					} ]
+				} ]
+			} );
+
+			expect( data ).to.eql( [
+				[ '"BBQ"', 10 ],
+				[ '"BBQ > Chicken"', 5 ],
+				[ '"BBQ > Ribs"', 2 ],
+				[ '"BBQ > Ribs > Babyback"', 1 ]
+			] );
+		} );
+	} );
+
 	describe( 'rangeOfPeriod()', () => {
 		it( 'should return a period object for day', () => {
 			const period = rangeOfPeriod( 'day', '2016-06-01' );

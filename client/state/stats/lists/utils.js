@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map } from 'lodash';
+import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -34,6 +34,32 @@ export function rangeOfPeriod( period, date ) {
 		startOf: startOf.format( 'YYYY-MM-DD' ),
 		endOf: endOf.format( 'YYYY-MM-DD' )
 	};
+}
+
+/**
+ * Builds data into escaped array for CSV export
+ *
+ * @param  {Object} data   Normalized stats data object
+ * @param  {String} parent Label of parent
+ * @return {Array}         CSV Row
+ */
+export function buildExportArray( data, parent = null ) {
+	if ( ! data || ! data.label || ! data.value ) {
+		return [];
+	}
+	const label = parent ? ( parent + ' > ' + data.label ) : data.label;
+	const escapedLabel = label.replace( /\"/, '""' );
+	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
+
+	if ( data.children ) {
+		const childData = map( data.children, ( child ) => {
+			return buildExportArray( child, label );
+		} );
+
+		exportData = concat( exportData, flatten( childData ) );
+	}
+
+	return exportData;
 }
 
 /**

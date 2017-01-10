@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forOwn, get, reduce, isArray } from 'lodash';
+import { forOwn, get, reduce, isArray, map, flatten } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -10,7 +10,8 @@ import i18n from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import {
 	getSerializedStatsQuery,
-	normalizers
+	normalizers,
+	buildExportArray,
 } from './utils';
 
 /**
@@ -149,6 +150,7 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
  *
  * @param  {Object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
+ * @param  {String}  statType Type of stat
  * @param  {Object}  query    Stats query object
  * @return {*}                Normalized Data for the query, typically an array or object
  */
@@ -168,3 +170,21 @@ export const getSiteStatsNormalizedData = createSelector(
 		return [ siteId, statType, serializedQuery ].join();
 	}
 );
+
+/**
+ * Returns an array of stats data ready for csv export
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  statType Type of stat
+ * @param  {Object}  query    Stats query object
+ * @return {Array}            Array of stats data ready for CSV export
+ */
+export function getSiteStatsCSVData( state, siteId, statType, query ) {
+	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
+	if ( ! data || ! isArray( data ) ) {
+		return [];
+	}
+
+	return flatten( map( data, buildExportArray ) );
+}
