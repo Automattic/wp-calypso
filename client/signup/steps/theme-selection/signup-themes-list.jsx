@@ -42,6 +42,18 @@ module.exports = React.createClass( {
 	},
 
 	getScreenshotUrl( theme ) {
+		if ( theme.slug === 'landingpage1' ) {
+			return '/calypso/images/signup/landingpage1.png';
+		}
+
+		if ( theme.slug === 'landingpage2' ) {
+			return '/calypso/images/signup/landingpage2.png';
+		}
+
+		if ( theme.slug === 'landingpage3' ) {
+			return '/calypso/images/signup/landingpage3.png';
+		}
+
 		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
 	},
 

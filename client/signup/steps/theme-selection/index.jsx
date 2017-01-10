@@ -124,6 +124,14 @@ const ThemeSelectionStep = React.createClass( {
 			'is-hidden': this.state.showPressable,
 		} );
 
+		let headerText = this.translate( 'Choose a theme.' );
+		let subHeaderText = this.translate( 'No need to overthink it. You can always switch to a different theme later.' );
+
+		if ( this.props.signupDependencies.designType && this.props.signupDependencies.designType === 'domain' ) {
+			headerText = this.translate( 'Choose a landing page' );
+			subHeaderText = this.translate( "We'll show this until you're ready to start using your doamin" );
+		}
+
 		return (
 			<div>
 				<div className={ pressableWrapperClassName } >
@@ -134,8 +142,8 @@ const ThemeSelectionStep = React.createClass( {
 				</div>
 				<div className={ themesWrapperClassName } >
 					<StepWrapper
-						fallbackHeaderText={ this.translate( 'Choose a theme.' ) }
-						fallbackSubHeaderText={ this.translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
+						fallbackHeaderText={ headerText }
+						fallbackSubHeaderText={ subHeaderText }
 						subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
 						stepContent={ this.renderThemesList() }
 						defaultDependencies={ defaultDependencies }

@@ -260,4 +260,31 @@ export const themes = [
 		demo_uri: 'https://twentysixteendemo.wordpress.com',
 		verticals: []
 	},
+	{
+		name: 'Landing Page 1',
+		slug: 'landingpage1',
+		repo: 'pub',
+		fallback: true,
+		design: 'domain',
+		demo_uri: 'https://landingpage1.wordpress.com',
+		verticals: []
+	},
+	{
+		name: 'Landing Page 2',
+		slug: 'landingpage2',
+		repo: 'pub',
+		fallback: true,
+		design: 'domain',
+		demo_uri: 'https://landingpage2.wordpress.com',
+		verticals: []
+	},
+	{
+		name: 'Landing Page 3',
+		slug: 'landingpage3',
+		repo: 'pub',
+		fallback: true,
+		design: 'domain',
+		demo_uri: 'https://landingpage3.wordpress.com',
+		verticals: []
+	},
 ];
