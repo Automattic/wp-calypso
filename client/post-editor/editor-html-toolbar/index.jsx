@@ -182,20 +182,12 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onClickCloseTags = () => {
-		const { content: {
-			selectionEnd,
-			value,
-		} } = this.props;
 		const closedTags = reduce(
 			this.state.openTags,
 			( tags, openTag ) => this.closeHtmlTag( { name: openTag } ) + tags,
 			''
 		);
-		this.updateEditorContent(
-			value.substring( 0, selectionEnd ) +
-			closedTags +
-			value.substring( selectionEnd, value.length )
-		);
+		this.insertCustomContent( closedTags );
 		this.setState( { openTags: [] } );
 	}
 
