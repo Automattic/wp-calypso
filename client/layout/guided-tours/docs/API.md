@@ -50,7 +50,7 @@ This example includes most possible things you can use as a content of Step.
 
 Here is the code used:
 
-```
+```jsx
 <Step name="example" placement="below" target="my-sites" arrow="top-left">
   <p>Plain text description.</p>
   <p>Multiple lines.</p>
@@ -147,6 +147,7 @@ Quit is a React component that shows a button that allows users to quit current 
 ### Props
 
 * `primary` (bool, optional) If true, button will be rendered as primary. Use only if Quit is the only available action in that step.
+* `subtle` (bool, optional) If true, button will be rendered the same color as the step background. For use when we need that style but only have a single button to display.
 
 ### Label
 
@@ -159,10 +160,10 @@ Default label is "Quit". To override, place your label a child.
 <Quit />
 
 // with a custom label
-<Quit>{ translate( 'Custom Label' ) }</Quit>`
+<Quit>{ translate( 'Custom Label' ) }</Quit>
 
 // custom label + primary styling
-<Quit primary>{ translate( 'Custom Label' ) }</Quit>`
+<Quit primary>{ translate( 'Custom Label' ) }</Quit>
 ```
 
 ## Link
@@ -173,7 +174,7 @@ Place Link after ButtonRow (if present) for correct styling.
 
 ### Example
 
-```
+```jsx
 // last step of tour with option to quit or visit learn.wordpress.com
 <Step>
   <p>This is the last step!</p>
