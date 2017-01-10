@@ -1,0 +1,15 @@
+{
+	"name": "contact-form-7",
+	"author": "Takayuki Miyoshi",
+	"description": "Contact Form 7",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "contact-form-7",
+		"paths": [ "/contact-form-7" ],
+		"module": "contact-form-7",
+		"group": "sites",
+		"secondary": true,
+		"enableLoggedOut": true
+	}
+}
