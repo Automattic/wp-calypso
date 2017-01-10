@@ -65,6 +65,15 @@ export const getTheme = createSelector(
 		if ( siteId === 'wpcom' || siteId === 'wporg' ) {
 			return theme;
 		}
+
+		if ( ! theme ) {
+			// We may be looking up a wpcom theme from a jetpack site
+			const wpcomManager = state.themes.queries.wpcom;
+			if ( wpcomManager ) {
+				return wpcomManager.getItem( themeId );
+			}
+		}
+
 		// We're dealing with a Jetpack site. If we have theme info obtained from the
 		// WordPress.org API, merge it.
 		const wporgTheme = getTheme( state, 'wporg', themeId );

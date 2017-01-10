@@ -485,6 +485,7 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="theme__sheet">
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
+				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wpcom" /> }
 				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
