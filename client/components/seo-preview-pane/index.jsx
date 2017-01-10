@@ -36,8 +36,16 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
 const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+
+const largeBlavatar = site => {
+	const siteIcon = get( site, 'icon.img' );
+	if ( ! siteIcon ) {
+		return null;
+	}
+
+	return `${ siteIcon }?s=${ PREVIEW_IMAGE_WIDTH }`;
+};
 
 const getPostImage = ( post ) => {
 	if ( ! post ) {
