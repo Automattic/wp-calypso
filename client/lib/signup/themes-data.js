@@ -261,7 +261,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Landing Page 1',
+		name: 'Default landing page',
 		slug: 'landingpage1',
 		repo: 'pub',
 		fallback: true,
@@ -270,7 +270,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Landing Page 2',
+		name: 'Under construction',
 		slug: 'landingpage2',
 		repo: 'pub',
 		fallback: true,
@@ -279,7 +279,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Landing Page 3',
+		name: 'All about you',
 		slug: 'landingpage3',
 		repo: 'pub',
 		fallback: true,
