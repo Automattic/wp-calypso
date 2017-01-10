@@ -38,11 +38,14 @@ module.exports = React.createClass( {
 		const selectedSite = this.props.site;
 		const changeAddressLink = `/domains/manage/${selectedSite.slug}`;
 		const startOverLink = `/settings/start-over/${selectedSite.slug}`;
+		const themeSetupLink = `/settings/theme-setup/${selectedSite.slug}`;
 		const deleteSiteLink = `/settings/delete-site/${selectedSite.slug}`;
 		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
+		const themeSetupLinkText = this.translate( 'Make your site look like your theme\'s demo.' );
 		const strings = {
 			changeSiteAddress: this.translate( 'Change Site Address' ),
 			startOver: this.translate( 'Start Over' ),
+			themeSetup: this.translate( 'Theme Setup' ),
 			deleteSite: this.translate( 'Delete Site' )
 		};
 
@@ -70,6 +73,15 @@ module.exports = React.createClass( {
 								}
 							} ) }
 						</p>
+					</div>
+				</CompactCard>
+				<CompactCard
+					href={ themeSetupLink }
+					onClick={ this.trackThemeSetup }
+					className="delete-site-options__link">
+					<div className="delete-site-options__content">
+						<h2 className="delete-site-options__section-title">{ strings.themeSetup }</h2>
+						<p className="delete-site-options__section-desc">{ themeSetupLinkText }</p>
 					</div>
 				</CompactCard>
 				<CompactCard
