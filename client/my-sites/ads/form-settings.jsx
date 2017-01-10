@@ -374,6 +374,7 @@ const AdsFormSettings = React.createClass( {
 					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
 						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" rel="noopener noreferrer" /> }
 					} ) }</span>
+          <span>{ this.translate( 'Bogus test string' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
