@@ -23,12 +23,21 @@ import SitesList from 'lib/sites-list';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
+import Stylizer, { insertCss } from 'lib/stylizer';
 
 const productsList = new ProductsList(),
 	sites = new SitesList();
 
 const setTitle = function( title, pageContext ) {
 	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
+};
+
+const render = ( content, context ) => {
+	renderWithReduxStore( (
+		<Stylizer onInsertCss={ insertCss }>
+			{ content }
+		</Stylizer>
+	), document.getElementById( 'primary' ), context.store );
 };
 
 module.exports = {
@@ -43,14 +52,12 @@ module.exports = {
 			'Domain Management'
 		);
 
-		renderWithReduxStore(
+		render(
 			<DomainManagementData
 				component={ DomainManagement.List.default }
 				context={ pageContext }
 				productsList={ productsList }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>, pageContext
 		);
 	},
 
@@ -67,15 +74,14 @@ module.exports = {
 			'Domain Management › Edit'
 		);
 
-		renderWithReduxStore(
+		render(
 			<DomainManagementData
 				component={ DomainManagement.Edit }
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			pageContext
 		);
 	},
 
