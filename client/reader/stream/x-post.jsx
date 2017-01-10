@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
+const ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classnames = require( 'classnames' ),
@@ -11,10 +11,10 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var Card = require( 'components/card' ),
+const Card = require( 'components/card' ),
 	SiteAndAuthorIcon = require( 'reader/site-and-author-icon' );
 
-var CrossPost = React.createClass( {
+const CrossPost = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
@@ -36,7 +36,7 @@ var CrossPost = React.createClass( {
 	},
 
 	handleCardClick: function( event ) {
-		var rootNode = ReactDom.findDOMNode( this );
+		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
 			setTimeout( function() {
@@ -66,7 +66,7 @@ var CrossPost = React.createClass( {
 	},
 
 	getSiteNameFromURL: function( siteURL ) {
-		return `+${url.parse( siteURL ).hostname.split( '.' )[ 0 ]}`;
+		return `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	},
 
 	getDescription: function( authorFirstName ) {
@@ -139,11 +139,15 @@ var CrossPost = React.createClass( {
 				<SiteAndAuthorIcon
 					siteId={ this.props.post.site_ID }
 					isExternal={ this.props.post.is_external }
-					user={ post.author } />
+					user={ post.author }
+					onClick={ this.handleTitleClick }
+					href={ post.URL } />
 				<div className="reader__x-post">
-					{ post.title
-						? <h4 className="reader__post-title"><a className="reader__post-title-link" onClick={ this.handleTitleClick } href={ post.URL } target="_blank" rel="noopener noreferrer">{ xpostTitle }</a></h4>
-						: null }
+					{ post.title &&
+						<h1 className="reader__post-title">
+							<a className="reader__post-title-link" onClick={ this.handleTitleClick } href={ post.URL } target="_blank" rel="noopener noreferrer">{ xpostTitle }</a>
+						</h1>
+						}
 					{ this.getDescription( post.author.first_name ) }
 				</div>
 			</Card> );

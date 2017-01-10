@@ -1,4 +1,4 @@
-const dummyData = {
+export const dummyData = {
 	email: 'dummytest@example.com',
 	email_validated: false,
 	phone: {
@@ -10,4 +10,11 @@ const dummyData = {
 	phone_validated: false,
 };
 
-export default dummyData;
+export const dummyNewPhone = {
+	country_code: 'US',
+	country_numeric_code: '+1',
+	number: '8881234567',
+	number_full: '+18881234567',
+};
+
+export const dummyNewEmail = 'newtest@example.com';

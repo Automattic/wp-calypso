@@ -216,6 +216,9 @@ $z-layers: (
 	'.list-stream__header-follow': (
 		'.follow-button': 1
 	),
+	'.stats-post-summary': (
+		'.section-nav': 1
+	),
 
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.

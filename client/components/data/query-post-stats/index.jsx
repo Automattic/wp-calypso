@@ -3,19 +3,33 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostStat } from 'state/stats/posts/selectors';
-import { requestPostStat } from 'state/stats/posts/actions';
+import { isRequestingPostStats } from 'state/stats/posts/selectors';
+import { requestPostStats } from 'state/stats/posts/actions';
 
 class QueryPostStats extends Component {
+	static defaultProps = {
+		requestPostStats: () => {},
+		heartbeat: 0,
+	};
+
+	static propTypes = {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		fields: PropTypes.array,
+		requestingPostStats: PropTypes.bool,
+		requestPostStats: PropTypes.func,
+		heartbeat: PropTypes.number
+	};
+
 	componentWillMount() {
-		const { requestingPostStat, siteId, postId, stat } = this.props;
-		if ( ! requestingPostStat && siteId && postId && stat ) {
-			this.requestPostStat( this.props );
+		const { requestingPostStats, siteId, postId } = this.props;
+		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
+			this.requestPostStats( this.props );
 		}
 	}
 
@@ -24,27 +38,27 @@ class QueryPostStats extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, postId, stat, heartbeat } = this.props;
+		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
-			! ( siteId && postId && stat ) ||
+			! ( siteId && ! isUndefined( postId ) ) ||
 			( siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
-				stat === nextProps.stat &&
+				isEqual( fields, nextProps.fields ) &&
 				heartbeat === nextProps.heartbeat )
 			) {
 			return;
 		}
 
-		this.requestPostStat( nextProps );
+		this.requestPostStats( nextProps );
 	}
 
-	requestPostStat( props ) {
-		const { siteId, postId, stat, heartbeat } = props;
-		props.requestPostStat( stat, siteId, postId );
+	requestPostStats( props ) {
+		const { siteId, postId, fields, heartbeat } = props;
+		props.requestPostStats( siteId, postId, fields );
 		this.clearInterval();
 		if ( heartbeat ) {
 			this.interval = setInterval( () => {
-				props.requestPostStat( stat, siteId, postId );
+				props.requestPostStats( siteId, postId, fields );
 			}, heartbeat );
 		}
 	}
@@ -60,31 +74,13 @@ class QueryPostStats extends Component {
 	}
 }
 
-QueryPostStats.propTypes = {
-	siteId: PropTypes.number,
-	postId: PropTypes.number,
-	stat: PropTypes.string,
-	requestingPostStat: PropTypes.bool,
-	requestPostStat: PropTypes.func,
-	heartbeat: PropTypes.number
-};
-
-QueryPostStats.defaultProps = {
-	requestPostStat: () => {},
-	heartbeat: 0
-};
-
 export default connect(
-	( state, ownProps ) => {
+	( state, { siteId, postId, fields } ) => {
 		return {
-			requestingPostStat: isRequestingPostStat(
-				state, ownProps.stat, ownProps.siteId, ownProps.postId
+			requestingPostStats: isRequestingPostStats(
+				state, siteId, postId, fields
 			)
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestPostStat
-		}, dispatch );
-	}
+	{ requestPostStats }
 )( QueryPostStats );

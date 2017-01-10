@@ -170,9 +170,26 @@ const Search = React.createClass( {
 	scrollOverlay: function() {
 		this.refs.overlay && window.requestAnimationFrame( () => {
 			if ( this.refs.overlay && this.refs.searchInput ) {
-				this.refs.overlay.scrollLeft = this.refs.searchInput.scrollLeft;
+				this.refs.overlay.scrollLeft = this.getScrollLeft( this.refs.searchInput );
 			}
 		} );
+	},
+
+	//This is fix for IE11. Does not work on Edge.
+	//On IE11 scrollLeft value for input is always 0.
+	//We are calculating it manually using TextRange object.
+	getScrollLeft: function( inputElement ) {
+		//TextRange is IE11 specific so this checks if we are not on IE11.
+		if ( ! inputElement.createTextRange ) {
+			return inputElement.scrollLeft;
+		}
+
+		const range = inputElement.createTextRange();
+		const inputStyle = window.getComputedStyle( inputElement, undefined );
+		const paddingLeft = parseFloat( inputStyle.paddingLeft );
+		const rangeRect = range.getBoundingClientRect();
+		const scrollLeft = inputElement.getBoundingClientRect().left + inputElement.clientLeft + paddingLeft - rangeRect.left;
+		return scrollLeft;
 	},
 
 	focus: function() {
@@ -335,7 +352,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onChange={ this.onChange }
+						onInput={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }

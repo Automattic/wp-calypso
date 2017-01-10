@@ -25,6 +25,7 @@ import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import * as DiscoverHelper from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
+import PostStoreActions from 'lib/feed-post-store/actions';
 
 export default class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -99,6 +100,10 @@ export default class ReaderPostCard extends React.Component {
 
 	handlePhotoCardExpanded = () => {
 		stats.recordTrackForPost( 'calypso_reader_photo_expanded', this.props.post );
+
+		// Record page view
+		PostStoreActions.markSeen( this.props.post );
+		stats.recordTrackForPost( 'calypso_reader_article_opened', this.props.post );
 	}
 
 	render() {

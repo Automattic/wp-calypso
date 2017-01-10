@@ -10,7 +10,11 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { activateTheme, installAndActivate } from 'state/themes/actions';
+import {
+	activateTheme,
+	installAndActivate,
+	installAndTryAndCustomize
+} from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
@@ -89,6 +93,21 @@ const tryandcustomize = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
+const tryAndCustomizeOnJetpack = {
+	label: i18n.translate( 'Try & Customize' ),
+	header: i18n.translate( 'Try & Customize on:', {
+		comment: 'label in the dialog for opening the Customizer with the theme in preview'
+	} ),
+	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
+	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
+	hideForTheme: ( state, theme, siteId ) => (
+		isActive( state, theme.id, siteId ) || (
+			isPremium( state, theme.id ) &&
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
+		)
+	)
+};
+
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
@@ -141,6 +160,7 @@ const ALL_THEME_OPTIONS = {
 	activate,
 	activateOnJetpack,
 	tryandcustomize,
+	tryAndCustomizeOnJetpack,
 	signup,
 	separator,
 	info,

@@ -114,12 +114,19 @@ const RegisterDomainStep = React.createClass( {
 		surveyVertical: React.PropTypes.string,
 		includeWordPressDotCom: React.PropTypes.bool,
 		includeDotBlogSubdomain: React.PropTypes.bool,
+		showExampleSuggestions: React.PropTypes.bool,
+		onSave: React.PropTypes.func,
+		onAddMapping: React.PropTypes.func,
+		onAddDomain: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
 			onDomainsAvailabilityChange: noop,
-			analyticsSection: 'domains'
+			analyticsSection: 'domains',
+			onSave: noop,
+			onAddMapping: noop,
+			onAddDomain: noop
 		};
 	},
 
@@ -139,6 +146,11 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		// Reset state on site change
+		if ( nextProps.selectedSite && nextProps.selectedSite.slug !== ( this.props.selectedSite || {} ).slug ) {
+			this.setState( this.getInitialState() );
+		}
+
 		if ( this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
 			( ! this.props.defaultSuggestionsError && ! nextProps.defaultSuggestionsError ) ) {
 			return;
@@ -187,7 +199,6 @@ const RegisterDomainStep = React.createClass( {
 
 	componentDidUpdate: function( prevProps ) {
 		if ( this.props.selectedSite && this.props.selectedSite.domain !== prevProps.selectedSite.domain ) {
-			this.setState( this.getInitialState() );
 			this.focusSearchCard();
 		}
 	},
@@ -209,51 +220,46 @@ const RegisterDomainStep = React.createClass( {
 		this.setState( { dotBlogNotice: false } );
 	},
 
-	dotBlogNotice() {
-		return this.state.dotBlogNotice && ! this.props.isSignupStep &&
-			<Notice
-				text={ this.props.translate(
-					'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
-					{ components: { strong: <strong /> } }
-				) }
-				status={ 'is-info' }
-				showDismiss={ true }
-				onDismissClick={ this.dismissDotBlogNotice }
-			/>;
-	},
-
 	render: function() {
+		const queryObject = getQueryObject( this.props );
 		return (
 			<div className="register-domain-step">
-				{ this.searchForm() }
-				{ this.dotBlogNotice() }
-				{ this.notices() }
+					<div className="register-domain-step__search">
+						<SearchCard
+							ref="searchCard"
+							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+							initialValue={ this.state.lastQuery }
+							onSearch={ this.onSearch }
+							onSearchChange={ this.onSearchChange }
+							onBlur={ this.save }
+							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+							autoFocus={ true }
+							delaySearch={ true }
+							delayTimeout={ 1000 }
+							dir="ltr"
+							maxLength={ 60 }
+						/>
+					</div>
+				{
+					this.state.dotBlogNotice && ! this.props.isSignupStep &&
+					<Notice
+						text={ this.props.translate(
+							'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
+							{ components: { strong: <strong /> } }
+						) }
+						status={ 'is-info' }
+						showDismiss={ true }
+						onDismissClick={ this.dismissDotBlogNotice }
+					/>
+				}
+				{
+					this.state.notice &&
+					<Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />
+				}
 				{ this.content() }
-				{ this.queryDomainsSuggestions() }
+				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 			</div>
 		);
-	},
-
-	queryDomainsSuggestions() {
-		const queryObject = getQueryObject( this.props );
-		if ( ! queryObject ) {
-			return null;
-		}
-		const { query, quantity, vendor, includeSubdomain } = queryObject;
-		return (
-			<QueryDomainsSuggestions
-				query={ query }
-				quantity={ quantity }
-				vendor={ vendor }
-				includeSubdomain={ includeSubdomain }
-			/>
-		);
-	},
-
-	notices: function() {
-		if ( this.state.notice ) {
-			return <Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />;
-		}
 	},
 
 	handleClickExampleSuggestion: function() {
@@ -281,31 +287,8 @@ const RegisterDomainStep = React.createClass( {
 		return this.initialSuggestions();
 	},
 
-	searchForm: function() {
-		return (
-			<div className="register-domain-step__search">
-				<SearchCard
-					ref="searchCard"
-					additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-					initialValue={ this.state.lastQuery }
-					onSearch={ this.onSearch }
-					onSearchChange={ this.onSearchChange }
-					onBlur={ this.save }
-					placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
-					autoFocus={ true }
-					delaySearch={ true }
-					delayTimeout={ 1000 }
-					dir="ltr"
-					maxLength={ 60 }
-				/>
-			</div>
-		);
-	},
-
 	save: function() {
-		if ( this.props.onSave ) {
-			this.props.onSave( this.state );
-		}
+		this.props.onSave( this.state );
 	},
 
 	onSearchChange: function( searchQuery ) {
@@ -431,7 +414,7 @@ const RegisterDomainStep = React.createClass( {
 			} );
 		} else {
 			// only display two suggestions initially
-			suggestions = this.props.defaultSuggestions ? this.props.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY ) : [];
+			suggestions = ( this.props.defaultSuggestions || [] ).slice( 0, INITIAL_SUGGESTION_QUANTITY );
 
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
@@ -466,18 +449,13 @@ const RegisterDomainStep = React.createClass( {
 
 	allSearchResults: function() {
 		const lastDomainSearched = this.state.lastDomainSearched,
-			isSearchedDomain = function( suggestion ) {
+			matchesSearchedDomain = function( suggestion ) {
 				return suggestion.domain_name === lastDomainSearched;
 			},
-			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, isSearchedDomain );
-		let suggestions = reject( this.state.searchResults, isSearchedDomain ),
-			onAddMapping;
+			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, matchesSearchedDomain ),
+			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
-		if ( this.props.onAddMapping ) {
-			onAddMapping = ( domain ) => {
-				return this.props.onAddMapping( domain, this.state );
-			};
-		}
+		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
 
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
@@ -540,10 +518,7 @@ const RegisterDomainStep = React.createClass( {
 
 	addRemoveDomainToCart: function( suggestion, event ) {
 		event.preventDefault();
-
-		if ( this.props.onAddDomain ) {
-			return this.props.onAddDomain( suggestion );
-		}
+		return this.props.onAddDomain( suggestion );
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
@@ -614,7 +589,7 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'not_mappable_forbidden_domain':
-				message = translate( 'Only the owner of the domain can map it\'s subdomains.' );
+				message = translate( 'Only the owner of the domain can map its subdomains.' );
 				break;
 
 			case 'not_mappable_invalid_tld':
@@ -654,12 +629,8 @@ const RegisterDomainStep = React.createClass( {
 				} );
 				break;
 
-			case 'server_error':
-				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
-				break;
-
 			default:
-				throw new Error( 'Unrecognized error code: ' + error.code );
+				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 		}
 
 		if ( message ) {

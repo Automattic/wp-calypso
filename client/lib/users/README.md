@@ -29,7 +29,7 @@ Actions get triggered by views and stores.
 
 `options` is an object that describes any custom query params you want to pass into the `wpcom.js` [usersList method](https://github.com/Automattic/wpcom.js/blob/master/docs/site.md#siteuserslistquery-fn) which passes parameters into the REST API [`/site/$site/users` endpoint](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/users/). The only required attribute is siteId. Current default values include:
 
-```
+```js
 {
 	number: 100,
 	offset: 0
@@ -38,7 +38,7 @@ Actions get triggered by views and stores.
 
 ###Example Component Code
 
-```
+```es6
 /**
  * External dependencies
  */

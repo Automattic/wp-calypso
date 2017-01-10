@@ -26,6 +26,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isPaidWithPayPalDirect,
 	isRedeemable,
 	isRefundable,
 	isRenewable,
@@ -279,7 +280,7 @@ const ManagePurchase = React.createClass( {
 			period = productSlug && isMonthly( productSlug ) ? this.translate( 'month' ) : this.translate( 'year' );
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}(one-time){{/period}}', {
+			return this.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}', {
 				args: { amount, currencyCode, currencySymbol },
 				components: {
 					period: <span className="manage-purchase__time-period" />
@@ -291,7 +292,7 @@ const ManagePurchase = React.createClass( {
 			return this.translate( 'Free with Plan' );
 		}
 
-		return this.translate( '%(currencySymbol)s%(amount)d %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+		return this.translate( '%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
 			args: {
 				amount,
 				currencyCode,
@@ -324,6 +325,12 @@ const ManagePurchase = React.createClass( {
 
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = purchase.payment.creditCard.number;
+			} else if ( isPaidWithPayPalDirect( purchase ) ) {
+				paymentInfo = this.translate( 'expiring %(cardExpiry)s', {
+					args: {
+						cardExpiry: purchase.payment.expiryMoment.format( 'MMMM YYYY' )
+					},
+				} );
 			}
 
 			return (

@@ -30,7 +30,7 @@ describe( 'metadata:', () => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( country =>
 						it( country.isoCode, () =>
-							ok( country.priority, `"${country.isoCode}" has no priority` ) ) );
+							ok( country.priority, `"${ country.isoCode }" has no priority` ) ) );
 				} );
 			} );
 		} );
@@ -208,6 +208,13 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '14256559999', countries.us ), '1 425-655-9999' );
 			} );
 		} );
+
+		describe( 'sanitization', () => {
+			it( 'should strip non-digits on <3 length strings', () => {
+				equal( formatNumber( '1aaaa', countries.us ), '1' );
+				equal( formatNumber( '1a', countries.us ), '1' );
+			} );
+		} );
 	} );
 
 	describe( 'toE164', () => {
@@ -220,7 +227,7 @@ describe( 'metadata:', () => {
 				equal( toE164( '05325556677', countries.tr ), '+905325556677' );
 				equal( toE164( '01234567890', countries.gb ), '+441234567890' );
 				equal( toE164( '012345678', countries.it ), '+39012345678' );
-			} )
+			} );
 		} );
 	} );
 } );

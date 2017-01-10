@@ -4,7 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import VirtualScroll from 'react-virtualized/VirtualScroll';
+import List from 'react-virtualized/List';
 import AutoSizer from 'react-virtualized/AutoSizer';
 import {
 	debounce,
@@ -43,7 +43,7 @@ export class VirtualList extends Component {
 
 	componentWillMount() {
 		this.rowHeights = {};
-		this.virtualScroll = null;
+		this.list = null;
 
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 	}
@@ -55,7 +55,7 @@ export class VirtualList extends Component {
 		);
 
 		if ( forceUpdate ) {
-			this.virtualScroll.forceUpdate();
+			this.list.forceUpdateGrid();
 		}
 
 		if ( this.props.items !== prevProps.items ) {
@@ -64,12 +64,11 @@ export class VirtualList extends Component {
 	}
 
 	recomputeRowHeights() {
-		if ( ! this.virtualScroll ) {
+		if ( ! this.list ) {
 			return;
 		}
 
-		this.virtualScroll.recomputeRowHeights();
-		this.virtualScroll.forceUpdate();
+		this.list.recomputeRowHeights();
 	}
 
 	getPageForIndex( index ) {
@@ -118,8 +117,8 @@ export class VirtualList extends Component {
 		return count;
 	}
 
-	setVirtualScrollRef = ref => {
-		this.virtualScroll = ref;
+	setListRef = ref => {
+		this.list = ref;
 	}
 
 	renderNoResults = () => {
@@ -148,7 +147,7 @@ export class VirtualList extends Component {
 		if ( height !== nextHeight ) {
 			this.queueRecomputeRowHeights();
 		}
-	};
+	}
 
 	renderRow = props => {
 		const element = this.props.renderRow( props );
@@ -157,7 +156,15 @@ export class VirtualList extends Component {
 		}
 		const setRowRef = ( ...args ) => this.setRowRef( props.index, ...args );
 		return React.cloneElement( element, { ref: setRowRef } );
-	};
+	}
+
+	cellRendererWrapper = ( { key, style, ...rest } ) => {
+		return (
+			<div key={ key } style={ style }>
+				{ this.renderRow( rest ) }
+			</div>
+		);
+	}
 
 	render() {
 		const rowCount = this.getRowCount();
@@ -170,13 +177,13 @@ export class VirtualList extends Component {
 			<AutoSizer disableHeight>
 				{ ( { width } ) => (
 					<div className={ classes }>
-						<VirtualScroll
-							ref={ this.setVirtualScrollRef }
+						<List
+							ref={ this.setListRef }
 							onRowsRendered={ this.setRequestedPages }
 							rowCount={ rowCount }
 							estimatedRowSize={ defaultRowHeight }
 							rowHeight={ getRowHeight }
-							rowRenderer={ this.renderRow }
+							rowRenderer={ this.cellRendererWrapper }
 							noRowsRenderer={ this.renderNoResults }
 							className={ className }
 							width={ width }

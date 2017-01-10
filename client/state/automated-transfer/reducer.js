@@ -12,15 +12,20 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 } from 'state/utils';
+import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE,
+	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
+	THEME_TRANSFER_INITIATE_SUCCESS as INITIATE,
+	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'state/action-types';
 
 export const status = ( state = null, action ) => get( {
+	[ ELIGIBILITY_UPDATE ]: action.status,
+	[ INITIATE ]: transferStates.START,
 	[ SET_STATUS ]: action.status,
-	[ UPDATE ]: action.status,
+	[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
 }, action.type, state );
 
 export const siteReducer = combineReducers( {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import { createReducer } from 'state/utils';
 import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
 import {
+	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_REQUEST_FAILURE,
@@ -43,9 +45,12 @@ export const requesting = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const saveRequests = createReducer( {}, {
-	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending' } } ),
-	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'success' } } ),
-	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error' } } )
+	[ SITE_SETTINGS_SAVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: { saving: true, status: 'pending', error: false } } ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: { saving: false, status: 'success', error: false }
+	} ),
+	[ SITE_SETTINGS_SAVE_FAILURE ]: ( state, { siteId, error } ) => ( { ...state, [ siteId ]: { saving: false, status: 'error', error } } )
 } );
 
 /**
@@ -64,7 +69,21 @@ export const items = createReducer( {}, {
 			...state[ siteId ],
 			...settings
 		}
-	} )
+	} ),
+	[ MEDIA_DELETE ]: ( state, { siteId, mediaIds } ) => {
+		const settings = state[ siteId ];
+		if ( ! settings || ! includes( mediaIds, settings.site_icon ) ) {
+			return state;
+		}
+
+		return {
+			...state,
+			[ siteId ]: {
+				...settings,
+				site_icon: null
+			}
+		};
+	}
 }, itemSchemas );
 
 export default combineReducers( {

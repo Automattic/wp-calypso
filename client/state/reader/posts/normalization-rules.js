@@ -1,13 +1,11 @@
 /**
  * External Dependencies
  */
-import { filter, find, flow, forEach } from 'lodash';
-import url from 'url';
+import { filter, flow } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import resizeImageUrl from 'lib/resize-image-url';
 import DISPLAY_TYPES from './display-types';
 
 /**
@@ -36,26 +34,12 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
 /**
  * Module vars
  */
-const
+export const
 	READER_CONTENT_WIDTH = 720,
-	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = 480,
 	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
-
-function discoverFullBleedImages( post, dom ) {
-	if ( post.site_ID === DISCOVER_BLOG_ID ) {
-		const images = dom.querySelectorAll( '.fullbleed img, img.fullbleed' );
-		forEach( images, function( image ) {
-			const newSrc = resizeImageUrl( image.src, { w: DISCOVER_FULL_BLEED_WIDTH } );
-			const oldImageObject = find( post.content_images, { src: image.src } );
-			oldImageObject.src = newSrc;
-			image.src = newSrc;
-		} );
-	}
-	return post;
-}
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.better_excerpt_no_html ) {
@@ -106,15 +90,6 @@ function classifyPost( post ) {
 				displayType ^= DISPLAY_TYPES.THUMBNAIL;
 			}
 		}
-
-		const canonicalImageUrl = url.parse( canonicalImage.uri, true, true ),
-			canonicalImagePath = canonicalImageUrl.pathname;
-		if ( find( post.content_images, ( img ) => {
-			const imgUrl = url.parse( img.src, true, true );
-			return imgUrl.pathname === canonicalImagePath;
-		} ) ) {
-			displayType ^= DISPLAY_TYPES.CANONICAL_IN_CONTENT;
-		}
 	}
 
 	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
@@ -145,7 +120,6 @@ const fastPostNormalizationRules = flow( [
 		removeStyles,
 		removeElementsBySelector,
 		makeImagesSafe(),
-		discoverFullBleedImages,
 		makeEmbedsSafe,
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,

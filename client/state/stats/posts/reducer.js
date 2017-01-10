@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import merge from 'lodash/merge';
+import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ export function requesting( state = {}, action ) {
 			return merge( {}, state, {
 				[ action.siteId ]: {
 					[ action.postId ]: {
-						[ action.stat ]: POST_STATS_REQUEST === action.type
+						[ action.fields.join() ]: POST_STATS_REQUEST === action.type
 					}
 				}
 			} );
@@ -58,13 +58,16 @@ export function requesting( state = {}, action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_STATS_RECEIVE:
-			return merge( {}, state, {
+			return {
+				...state,
 				[ action.siteId ]: {
+					...( get( state, [ action.siteId ], {} ) ),
 					[ action.postId ]: {
-						[ action.stat ]: action.value
+						...( get( state, [ action.siteId, action.postId ], {} ) ),
+						...action.stats,
 					}
 				}
-			} );
+			};
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, itemSchemas ) ) {

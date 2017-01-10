@@ -10,12 +10,19 @@ import { map, take, filter } from 'lodash';
 import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
+import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
 const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
 
 function getGalleryWorthyImages( post ) {
-	const worthyImages = filter( post.images, imageIsBigEnoughForGallery );
 	const numberOfImagesToDisplay = 4;
+	const images = post.images && [ ...post.images ] || [];
+	const indexToRemove = isFeaturedImageInContent( post );
+	if ( indexToRemove ) {
+		images.splice( indexToRemove, 1 );
+	}
+
+	const worthyImages = filter( images, imageIsBigEnoughForGallery );
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 

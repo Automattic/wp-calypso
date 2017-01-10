@@ -27,6 +27,7 @@
 		"jetpack/seo-tools": true,
 		"jetpack/sso": true,
 		"jetpack/sync-panel": true,
+		"jetpack/api-cache": false,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,

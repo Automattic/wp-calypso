@@ -243,7 +243,7 @@ button {
 
 // Buttons within sentences sit on the text baseline.
 .layout__content p .button {
-	vertical-align: baseline
+	vertical-align: baseline;
 }
 
 // Firefox Junk
@@ -251,10 +251,8 @@ button {
 .layout__content input[type=reset]::-moz-focus-inner,
 .layout__content input[type=button]::-moz-focus-inner,
 .layout__content input[type=submit]::-moz-focus-inner {
-	border-width: 1px 0;
-	border-style: solid none;
-	border-color: transparent;
-	padding: 0
+	border: 0;
+	padding: 0;
 }
 
 // ==========================================================================

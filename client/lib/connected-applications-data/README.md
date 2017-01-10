@@ -3,8 +3,8 @@ Connected Applications Data
 
 This component is a wrapper module for interacting with the wpcom.js `/me` endpoint to retrieve a list of connected applications as well as revoke an application's access.
 
-```
-var ConnectedApplications = require( 'lib/connected-applications-data' );
+```es6
+import ConnectedApplications from 'lib/connected-applications-data';
 ```
 
 ### `ConnectedApplications#get()`

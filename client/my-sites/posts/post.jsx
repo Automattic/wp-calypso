@@ -21,7 +21,7 @@ import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
 
-import Comments from 'reader/comments';
+import Comments from 'blocks/comments';
 import PostShare from './post-share';
 
 function recordEvent( eventAction ) {
@@ -404,7 +404,7 @@ module.exports = React.createClass( {
 					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
-				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
+				{ this.state.showComments && <Comments showCommentCount={ false } post={ this.props.post } onCommentsUpdate={ () => {} } /> }
 				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
 			</Card>
 		);

@@ -9,6 +9,10 @@
 		background-color: transparent;
 		border: none;
 	}
+
+	&.is-error {
+		border-color: $alert-red;
+	}
 }
 
 .term-tree-selector__search {

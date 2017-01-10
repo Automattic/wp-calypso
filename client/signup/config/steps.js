@@ -79,9 +79,19 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
-	'domains-only': {
-		stepName: 'domains-only',
+	'domains-theme-preselected': {
+		stepName: 'domains-theme-preselected',
 		apiRequestFunction: stepActions.createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		delayApiRequestUntilComplete: true
+	},
+
+	'domain-only': {
+		stepName: 'domain-only',
+		apiRequestFunction: stepActions.createSiteWithCart,
+		props: {
+			isDomainOnly: true
+		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},

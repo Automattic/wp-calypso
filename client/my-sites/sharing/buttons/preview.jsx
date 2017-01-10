@@ -19,7 +19,7 @@ module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {
-		site: React.PropTypes.object.isRequired,
+		isPrivateSite: React.PropTypes.bool,
 		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
 		label: React.PropTypes.string,
 		buttons: React.PropTypes.array,
@@ -189,7 +189,7 @@ module.exports = React.createClass( {
 					onButtonsChange={ this.props.onButtonsChange }
 					onClose={ this.hideButtonsTray }
 					active={ null !== this.state.buttonsTrayVisibility }
-					limited={ this.props.site.is_private } />
+					limited={ this.props.isPrivateSite } />
 			</div>
 		);
 	}

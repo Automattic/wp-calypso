@@ -1,14 +1,18 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
+import {
+	debounce,
+	flowRight as compose,
+	head,
+	isEmpty
+} from 'lodash';
+import { bindActionCreators } from 'redux';
 var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	debounce = require( 'lodash/debounce' ),
-	head = require( 'lodash/head' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	classNames = require( 'classnames' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect;
 
 /**
@@ -76,7 +80,11 @@ const AccountPassword = React.createClass( {
 	},
 
 	submitForm: function( event ) {
-		const { errorNotice: showErrorNotice } = this.props;
+		const {
+			translate,
+			errorNotice: showErrorNotice,
+		} = this.props;
+
 		event.preventDefault();
 
 		this.setState( {
@@ -92,7 +100,7 @@ const AccountPassword = React.createClass( {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
 
 					// handle error case here
-					showErrorNotice( this.translate( 'There was a problem saving your password. Please, try again.' ) );
+					showErrorNotice( translate( 'There was a problem saving your password. Please, try again.' ) );
 					this.setState( { submittingForm: false } );
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
@@ -106,11 +114,12 @@ const AccountPassword = React.createClass( {
 	},
 
 	renderValidationNotices: function() {
-		var failure = head( this.props.accountPasswordData.getValidationFailures() );
+		const { translate } = this.props;
+		const failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
 			return (
-				<FormInputValidation text={ this.translate( 'Your password can be saved.' ) } />
+				<FormInputValidation text={ translate( 'Your password can be saved.' ) } />
 			);
 		} else if ( ! isEmpty( failure ) ) {
 			return (
@@ -120,20 +129,20 @@ const AccountPassword = React.createClass( {
 	},
 
 	render: function() {
-		var passwordValueLink = {
-				value: this.state.password,
-				requestChange: this.handlePasswordChange
-			},
-			passwordInputClasses = classNames( {
-				'account-password__password-field': true,
-				'is-error': this.props.accountPasswordData.getValidationFailures().length
-			}
-		);
+		const { translate } = this.props;
+		const passwordValueLink = {
+			value: this.state.password,
+			requestChange: this.handlePasswordChange,
+		};
+		const passwordInputClasses = classNames( {
+			'account-password__password-field': true,
+			'is-error': this.props.accountPasswordData.getValidationFailures().length,
+		} );
 
 		return (
 			<form className="account-password" onSubmit={ this.submitForm }>
 				<FormFieldset>
-					<FormLabel htmlFor="password">{ this.translate( 'New Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'New Password' ) }</FormLabel>
 					<FormPasswordInput
 						autoCapitalize="off"
 						autoComplete="off"
@@ -148,7 +157,7 @@ const AccountPassword = React.createClass( {
 					{ this.renderValidationNotices() }
 
 					<FormSettingExplanation>
-						{ this.translate(
+						{ translate(
 							"If you can't think of a good password use the button below to generate one."
 						) }
 					</FormSettingExplanation>
@@ -158,7 +167,7 @@ const AccountPassword = React.createClass( {
 					<FormButton
 						disabled={ this.state.pendingValidation || this.props.accountPasswordData.passwordValidationFailed() }
 						onClick={ this.recordClickEvent( 'Save Password Button' ) }>
-						{ this.state.savingPassword ? this.translate( 'Saving…' ) : this.translate( 'Save Password' ) }
+						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
 					</FormButton>
 
 					<FormButton
@@ -166,7 +175,7 @@ const AccountPassword = React.createClass( {
 						isPrimary={ false }
 						onClick={ this.recordClickEvent( 'Generate Strong Password Button', this.generateStrongPassword ) }
 						type="button">
-						{ this.translate( 'Generate strong password' ) }
+						{ translate( 'Generate strong password' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
@@ -174,7 +183,11 @@ const AccountPassword = React.createClass( {
 	}
 } );
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { errorNotice }, dispatch )
-)( protectForm( AccountPassword ) );
+export default compose(
+	connect(
+		null,
+		dispatch => bindActionCreators( { errorNotice }, dispatch ),
+	),
+	localize,
+	protectForm,
+)( AccountPassword );

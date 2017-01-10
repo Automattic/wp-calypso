@@ -8,9 +8,11 @@ import { expect } from 'chai';
  */
 import {
 	IMAGE_EDITOR_CROP,
+	IMAGE_EDITOR_COMPUTED_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
+	IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
@@ -24,9 +26,11 @@ import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
+	setImageEditorDefaultAspectRatio,
 	setImageEditorFileInfo,
 	setImageEditorCropBounds,
 	imageEditorCrop,
+	imageEditorComputedCrop,
 	setImageEditorImageHasLoaded
 } from '../actions';
 import { AspectRatios } from '../constants';
@@ -124,17 +128,29 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#imageEditorCrop()', () => {
+	describe( '#imageEditorComputedCrop()', () => {
 		it( 'should return an action object', () => {
-			const action = imageEditorCrop( 0.2, 0.3, 0.4, 0.5 );
+			const action = imageEditorComputedCrop( 0.2, 0.3, 0.4, 0.5 );
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_CROP,
+				type: IMAGE_EDITOR_COMPUTED_CROP,
 				topRatio: 0.2,
 				leftRatio: 0.3,
 				widthRatio: 0.4,
 				heightRatio: 0.5
 			} );
+		} );
+	} );
+
+	it( 'should return an action object', () => {
+		const action = imageEditorCrop( 0.2, 0.3, 0.4, 0.5 );
+
+		expect( action ).to.eql( {
+			type: IMAGE_EDITOR_CROP,
+			topRatio: 0.2,
+			leftRatio: 0.3,
+			widthRatio: 0.4,
+			heightRatio: 0.5
 		} );
 	} );
 
@@ -144,6 +160,17 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
+				ratio: AspectRatios.ORIGINAL
+			} );
+		} );
+	} );
+
+	describe( '#setImageEditorDefaultAspectRatio()', () => {
+		it( 'should return an action object', () => {
+			const action = setImageEditorDefaultAspectRatio( AspectRatios.ORIGINAL );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 				ratio: AspectRatios.ORIGINAL
 			} );
 		} );

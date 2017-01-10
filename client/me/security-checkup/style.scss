@@ -1,4 +1,4 @@
-.security-checkup-intro__text {
+.security-checkup__text {
 	margin-bottom: 0;
 }
 
@@ -111,4 +111,17 @@
 			display: inline;
 		}
 	}
+}
+
+.security-checkup__validation-notice {
+	margin-top: 4px;
+	margin-bottom: 12px;
+}
+
+.security-checkup__recovery-phone-validation-buttons {
+	margin-top: 12px;
+}
+
+.security-checkup__recovery-phone-validation-label {
+	margin-top: 12px;
 }

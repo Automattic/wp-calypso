@@ -2,11 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:posts' ),
-	defer = require( 'lodash/defer' ),
-	store = require( 'store' ),
-	clone = require( 'lodash/clone' ),
-	fromPairs = require( 'lodash/fromPairs' ),
-	assign = require( 'lodash/assign' );
+	store = require( 'store' );
+import { assign, clone, defer, fromPairs } from 'lodash';
 
 /**
  * Internal dependencies

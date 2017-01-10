@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { pickBy } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,15 +20,15 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
-import ThemeUploadCard from './themes-upload-card';
 import { addTracking } from './helpers';
 import { translate } from 'i18n-calypso';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
 	( props ) => {
 		return (
 			<ThemesSelection { ...props }
-				siteId={ null /* Override props.siteId to get themes from WPCOM here */ }
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
@@ -38,7 +39,7 @@ const ConnectedThemesSelection = connectOptions(
 	}
 );
 
-export default connectOptions(
+const ConnectedSingleSiteJetpack = connectOptions(
 	( props ) => {
 		const {
 			analyticsPath,
@@ -47,7 +48,7 @@ export default connectOptions(
 			search,
 			site,
 			siteId,
-			tier,
+			wpcomTier,
 			filter,
 			vertical
 		} = props;
@@ -86,18 +87,18 @@ export default connectOptions(
 						source={ 'list' } />
 					{ config.isEnabled( 'manage/themes/upload' ) &&
 						<div>
-							<ThemeUploadCard
-								label={ translate( 'WordPress.com themes' ) }
-							/>
 							<ConnectedThemesSelection
 								options={ [
-									'activateOnJetpack'
+									'activateOnJetpack',
+									'tryAndCustomizeOnJetpack'
 								] }
 								search={ search }
-								tier={ tier }
+								tier={ wpcomTier }
 								filter={ filter }
 								vertical={ vertical }
-								siteId = { siteId /* This is for the options in the '...' menu only */ }
+								siteId={ siteId /* This is for the options in the '...' menu only */ }
+								listLabel={ translate( 'WordPress.com themes' ) }
+								showUploadButton={ false }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
@@ -114,6 +115,7 @@ export default connectOptions(
 									return getScreenshotOption( theme ).label;
 								} }
 								trackScrollPage={ props.trackScrollPage }
+								queryWpcom={ true }
 							/>
 						</div>
 					}
@@ -122,3 +124,11 @@ export default connectOptions(
 		);
 	}
 );
+
+export default connect(
+	( state, { siteId, tier } ) => {
+		return {
+			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free'
+		};
+	}
+)( ConnectedSingleSiteJetpack );

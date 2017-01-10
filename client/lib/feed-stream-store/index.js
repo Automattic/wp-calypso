@@ -109,7 +109,7 @@ function getStoreForTag( storeId ) {
 }
 
 function getStoreForSearch( storeId ) {
-	const slug = storeId.split( ':' )[ 1 ];
+	const slug = storeId.substring( storeId.indexOf( ':' ) + 1 );
 	const stream = new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,

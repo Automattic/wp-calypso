@@ -7,7 +7,7 @@ Pass the collections prototype into Searchable, along with an object to specify 
 
 Adding mixin to a Collection:
 
-```
+```js
 // SomeCollection module
 
 /**
@@ -43,7 +43,7 @@ module.exports = SomeCollection;
 
 Example usage:
 
-```
+```js
 var list = require( 'some-collection' )(),
     results = list.search( 'test' );
 ```
@@ -52,7 +52,7 @@ When you add the mixin, you need to pass in a set of `searchNodes` where you spe
 
 The `searchNodes` parameter is an array that contains strings (for each single node) and/or or a javascript object (to reach a nested node). Objects contain arrays that describe the searchable nodes at the nested level. Nesting can go as deep as you want. An example is in order:
 
-```
+```js
 /*
     given a set of items that looks like this:
  */

@@ -72,6 +72,10 @@ function createPurchaseObject( purchase ) {
 		return Object.assign( {}, object, { payment } );
 	}
 
+	if ( 'paypal_direct' === purchase.payment_type ) {
+		object.payment.expiryMoment = purchase.payment_expiry ? i18n.moment( purchase.payment_expiry, 'MM/YY' ) : null;
+	}
+
 	return object;
 }
 

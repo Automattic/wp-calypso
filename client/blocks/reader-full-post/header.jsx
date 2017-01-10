@@ -15,6 +15,7 @@ import PostTime from 'reader/post-time';
 import ReaderFullPostHeaderTags from './header-tags';
 import Gridicon from 'components/gridicon';
 import { isDiscoverPost } from 'reader/discover/helper';
+import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	const handlePermalinkClick = ( { } ) => {
@@ -31,6 +32,10 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	}
 
 	const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
+
+	if ( ! post || post._state === 'pending' ) {
+		return <ReaderFullPostHeaderPlaceholder />;
+	}
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (

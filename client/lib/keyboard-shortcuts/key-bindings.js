@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import i18n from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
 import Emitter from 'lib/mixins/emitter';
 
 function KeyBindings() {
@@ -15,13 +22,6 @@ KeyBindings.prototype.emitLanguageChange = function() {
 };
 
 KeyBindings.prototype.get = function() {
-	let descriptionCtrlKey = 'ctrl';
-
-	if ( typeof navigator !== 'undefined' && navigator.userAgent.indexOf( 'Mac OS X' ) !== -1 ) {
-		// the ctrl key in the description is platform dependent and displays the command symbol on OS X
-		descriptionCtrlKey = '\u2318';
-	}
-
 	return {
 		listNavigation: [
 			{
@@ -80,15 +80,6 @@ KeyBindings.prototype.get = function() {
 				description: {
 					keys: [ 'g', 'r' ],
 					text: i18n.translate( 'Go to Reader' )
-				}
-			},
-			{
-				eventName: 'go-to-my-comments',
-				keys: [ 'g', 'c' ],
-				type: 'sequence',
-				description: {
-					keys: [ 'g', 'c' ],
-					text: i18n.translate( 'Go to My Comments' )
 				}
 			},
 			{
@@ -156,17 +147,6 @@ KeyBindings.prototype.get = function() {
 				}
 			},
 			{
-				eventName: 'reply-to-section',
-				keys: [
-					[ 'control', 'enter' ],
-					[ 'command', 'enter' ]
-				],
-				description: {
-					keys: [ descriptionCtrlKey, 'enter' ],
-					text: i18n.translate( 'Reply to post' )
-				}
-			},
-			{
 				eventName: 'close-full-post',
 				keys: [ 'esc' ],
 				description: {
@@ -209,4 +189,4 @@ KeyBindings.prototype.get = function() {
 	};
 };
 
-module.exports = new KeyBindings();
+export default new KeyBindings();

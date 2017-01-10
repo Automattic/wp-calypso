@@ -469,10 +469,18 @@
 	cursor: pointer;
 }
 
-.post .comments {
+.post .comments__comment-list {
 	margin: 0;
 	padding: 0 24px 24px;
 	animation: appear .3s ease-in-out;
+}
+
+.post .comments__comment-timestamp {
+	margin-top: -4px;
+}
+
+.post .comments__view-earlier {
+	margin-top: 15px;
 }
 
 .post .posts__post-share {

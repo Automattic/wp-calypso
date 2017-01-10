@@ -41,10 +41,12 @@ import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
-	getSiteSettings
+	getSiteSettings,
+	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -68,7 +70,9 @@ class SiteSettingsFormGeneral extends Component {
 			amp_is_supported: settings.amp_is_supported,
 			amp_is_enabled: settings.amp_is_enabled,
 
-			holidaysnow: !! settings.holidaysnow
+			holidaysnow: !! settings.holidaysnow,
+
+			api_cache: settings.api_cache,
 		};
 
 		if ( settings.jetpack_relatedposts_allowed ) {
@@ -112,6 +116,7 @@ class SiteSettingsFormGeneral extends Component {
 			holidaysnow: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
+			api_cache: false,
 		} );
 		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
 	}
@@ -133,11 +138,23 @@ class SiteSettingsFormGeneral extends Component {
 
 		if (
 			this.props.isSavingSettings &&
-			! nextProps.isSavingSettings &&
-			nextProps.isSaveRequestSuccessful
+			! nextProps.isSavingSettings
 		) {
-			nextProps.clearDirtyFields();
-			nextProps.markSaved();
+			if ( nextProps.isSaveRequestSuccessful ) {
+				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
+				nextProps.clearDirtyFields();
+				nextProps.markSaved();
+			} else {
+				let text;
+				switch ( nextProps.saveRequestError.error ) {
+					case 'invalid_ip':
+						text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
+						break;
+					default:
+						text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
+				}
+				nextProps.errorNotice( text, { id: 'site-settings-save' } );
+			}
 		}
 	}
 
@@ -444,7 +461,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	relatedPostsOptions() {
-		const { fields, clickTracker, translate, isRequestingSettings } = this.props;
+		const { fields, translate, isRequestingSettings } = this.props;
 		if ( ! fields.jetpack_relatedposts_allowed ) {
 			return null;
 		}
@@ -453,61 +470,51 @@ class SiteSettingsFormGeneral extends Component {
 			<FormFieldset>
 				<ul id="settings-reading-relatedposts">
 					<li>
-						<FormLabel>
-							<FormRadio
-								name="jetpack_relatedposts_enabled"
-								value="0"
-								checked={ 0 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
-								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
-							<span>{ translate( 'Hide related content after posts' ) }</span>
-						</FormLabel>
+						<FormToggle
+							className="is-compact"
+							checked={ !! fields.jetpack_relatedposts_enabled }
+							disabled={ isRequestingSettings }
+							onChange={ this.handleToggle( 'jetpack_relatedposts_enabled' ) }>
+							<span className="site-settings__toggle-label">
+								{ translate( 'Hide related content after posts' ) }
+							</span>
+						</FormToggle>
 					</li>
-					<li>
-						<FormLabel>
-							<FormRadio
-								name="jetpack_relatedposts_enabled"
-								value="1"
-								checked={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-								onChange={ this.handleRadio }
-								onClick={ clickTracker( 'Related Posts Radio Button' ) } />
-							<span>{ translate( 'Show related content after posts' ) }</span>
-						</FormLabel>
-						<ul
-							id="settings-reading-relatedposts-customize"
-							className={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) ? null : 'disabled-block' }>
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_headline }
-									disabled={ isRequestingSettings }
-									onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
-									<span className="site-settings__toggle-label">
+					{ !! fields.jetpack_relatedposts_enabled && (
+						<li>
+							<ul id="settings-reading-relatedposts-customize" className="site-settings__child-settings">
+								<li>
+									<FormToggle
+										className="is-compact"
+										checked={ !! fields.jetpack_relatedposts_show_headline }
+										disabled={ isRequestingSettings }
+										onChange={ this.handleToggle( 'jetpack_relatedposts_show_headline' ) }>
+										<span className="site-settings__toggle-label">
+											{ translate(
+												'Show a "Related" header to more clearly separate the related section from posts'
+											) }
+										</span>
+									</FormToggle>
+								</li>
+								<li>
+									<FormToggle
+										className="is-compact"
+										checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+										disabled={ isRequestingSettings }
+										onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
+										<span className="site-settings__toggle-label">
 										{ translate(
-											'Show a "Related" header to more clearly separate the related section from posts'
+											'Use a large and visually striking layout'
 										) }
-									</span>
-								</FormToggle>
-							</li>
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
-									disabled={ isRequestingSettings }
-									onChange={ this.handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
-									<span className="site-settings__toggle-label">
-									{ translate(
-										'Use a large and visually striking layout'
-									) }
-									</span>
-								</FormToggle>
-							</li>
-						</ul>
-						<RelatedContentPreview
-							enabled={ 1 === parseInt( fields.jetpack_relatedposts_enabled, 10 ) }
-							showHeadline={ fields.jetpack_relatedposts_show_headline }
-							showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
-					</li>
+										</span>
+									</FormToggle>
+								</li>
+							</ul>
+							<RelatedContentPreview
+								showHeadline={ fields.jetpack_relatedposts_show_headline }
+								showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
+						</li>
+					) }
 				</ul>
 			</FormFieldset>
 		);
@@ -653,6 +660,43 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	renderApiCache() {
+		const { fields, translate, isRequestingSettings } = this.props;
+
+		if ( ! this.showApiCacheCheckbox() ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<FormToggle
+					className="is-compact"
+					checked={ !! fields.api_cache }
+					disabled={ isRequestingSettings }
+					onChange={ this.handleToggle( 'api_cache' ) }>
+					<span className="site-settings__toggle-label">
+						{ translate(
+							'Use synchronized data to boost performance'
+						) }
+					</span>
+				</FormToggle>
+			</CompactCard>
+		);
+	}
+
+	showApiCacheCheckbox() {
+		if ( ! config.isEnabled( 'jetpack/api-cache' ) ) {
+			return false;
+		}
+
+		const { site } = this.props;
+		if ( ! site.jetpack || site.versionCompare( '4.4', '<=' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	render() {
 		const { isRequestingSettings, isSavingSettings, site, translate } = this.props;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
@@ -758,7 +802,7 @@ class SiteSettingsFormGeneral extends Component {
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
-							{ this.showPublicPostTypesCheckbox()
+							{ this.showPublicPostTypesCheckbox() || this.showApiCacheCheckbox()
 								? <Button
 									compact={ true }
 									onClick={ this.handleSubmitForm }
@@ -775,6 +819,7 @@ class SiteSettingsFormGeneral extends Component {
 						</SectionHeader>
 
 						{ this.renderJetpackSyncPanel() }
+						{ this.renderApiCache() }
 						{ this.syncNonPublicPostTypes() }
 
 						<CompactCard href={ '../security/' + site.slug }>
@@ -815,19 +860,23 @@ const connectComponent = connect(
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
+		const saveRequestError = getSiteSettingsSaveError( state, siteId );
 		return {
 			isRequestingSettings: isRequestingSettings && ! settings,
 			isSavingSettings,
 			isSaveRequestSuccessful,
+			saveRequestError,
 			settings,
 			siteId
 		};
 	},
 	dispatch => {
 		const boundActionCreators = bindActionCreators( {
+			errorNotice,
 			recordTracksEvent,
 			removeNotice,
-			saveSiteSettings
+			saveSiteSettings,
+			successNotice,
 		}, dispatch );
 		const trackClick = name => dispatch( recordGoogleEvent( 'Site Settings', `Clicked ${ name }` ) );
 		const trackToggle = name => dispatch( recordGoogleEvent( 'Site Settings', `Toggled ${ name }` ) );

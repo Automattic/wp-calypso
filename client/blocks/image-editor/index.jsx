@@ -26,7 +26,7 @@ import {
 	resetImageEditorState,
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
-	setImageEditorAspectRatio
+	setImageEditorDefaultAspectRatio
 } from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
@@ -59,6 +59,7 @@ const ImageEditor = React.createClass( {
 		site: PropTypes.object,
 		fileName: PropTypes.string,
 		setImageEditorFileInfo: PropTypes.func,
+		setImageEditorDefaultAspectRatio: PropTypes.func,
 		translate: PropTypes.func,
 		isImageLoaded: PropTypes.bool
 	},
@@ -71,7 +72,8 @@ const ImageEditor = React.createClass( {
 			onReset: noop,
 			isImageLoaded: false,
 			defaultAspectRatio: AspectRatios.FREE,
-			allowedAspectRatios: AspectRatiosValues
+			allowedAspectRatios: AspectRatiosValues,
+			setImageEditorDefaultAspectRatio: noop
 		};
 	},
 
@@ -107,7 +109,7 @@ const ImageEditor = React.createClass( {
 			allowedAspectRatios
 		} = this.props;
 
-		this.props.setImageEditorAspectRatio(
+		this.props.setImageEditorDefaultAspectRatio(
 			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
 		);
 	},
@@ -272,7 +274,7 @@ export default connect(
 
 		return bindActionCreators( {
 			setImageEditorFileInfo,
-			setImageEditorAspectRatio,
+			setImageEditorDefaultAspectRatio,
 			resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
 			resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData )
 

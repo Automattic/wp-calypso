@@ -1,44 +1,48 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import ReactDom from 'react-dom';
 import classNames from 'classnames';
-import { omit, get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
 import PostUtils from 'lib/posts/utils';
-import SiteUtils from 'lib/site/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { areSitePermalinksEditable } from 'state/selectors';
+import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
 /**
  * Constants
  */
 const REGEXP_NEWLINES = /[\r\n]+/g;
 
-export default React.createClass( {
-	displayName: 'EditorTitle',
-
-	propTypes: {
+class EditorTitle extends Component {
+	static propTypes = {
+		editPost: PropTypes.func,
+		isNew: PropTypes.bool,
+		onChange: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
-		isNew: PropTypes.bool,
-		onChange: PropTypes.func
-	},
+		siteId: PropTypes.number,
+		tabIndex: PropTypes.number,
+		translate: PropTypes.func
+	};
 
-	getDefaultProps() {
-		return {
-			isNew: true,
-			onChange: () => {}
-		};
-	},
+	static defaultProps = {
+		isNew: true,
+		onChange: () => {}
+	};
 
 	componentDidUpdate( prevProps ) {
 		if ( isMobile() ) {
@@ -46,47 +50,43 @@ export default React.createClass( {
 		}
 
 		// If next post is new, or the next site is different, focus title
-		const { isNew, site } = this.props;
+		const { isNew, siteId } = this.props;
 		if ( ( isNew && ! prevProps.isNew ) ||
-				( isNew && get( prevProps.site, 'ID' ) !== get( site, 'ID' ) ) ) {
+				( isNew && prevProps.siteId !== siteId ) ) {
 			const input = ReactDom.findDOMNode( this.refs.titleInput );
 			input.focus();
 		}
-	},
+	}
 
-	onChange( event ) {
-		if ( ! this.props.post ) {
-			return;
-		}
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			title: event.target.value.replace( REGEXP_NEWLINES, ' ' )
+	onChange = event => {
+		const { siteId, editedPostId } = this.props;
+		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
+		this.props.editPost( siteId, editedPostId, {
+			title: newTitle
 		} );
-		this.props.onChange( event );
-	},
+		this.props.onChange( newTitle );
+	};
 
-	resizeAfterNewlineInput( event ) {
+	resizeAfterNewlineInput = event => {
 		const title = event.target.value;
 		if ( REGEXP_NEWLINES.test( title ) ) {
 			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
 			this.refs.titleInput.resize();
 		}
-	},
+	};
 
-	recordChangeStats() {
+	recordChangeStats = () => {
 		const isPage = PostUtils.isPage( this.props.post );
 		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
 		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
-	},
+	};
 
-	onBlur( event ) {
+	onBlur = event => {
 		this.onChange( event );
-	},
+	};
 
 	render() {
-		const { post, site, isNew } = this.props;
-		const isPermalinkEditable = SiteUtils.isPermalinkEditable( site );
+		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 
 		const classes = classNames( 'editor-title', {
 			'is-loading': ! post
@@ -101,19 +101,38 @@ export default React.createClass( {
 				}
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<TextareaAutosize
-						{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
+						tabIndex={ tabIndex }
 						className="editor-title__input"
-						placeholder={ this.translate( 'Title' ) }
+						placeholder={ translate( 'Title' ) }
 						onChange={ this.onChange }
 						onInput={ this.resizeAfterNewlineInput }
 						onBlur={ this.onBlur }
 						autoFocus={ isNew && ! isMobile() }
-						value={ post ? post.title : '' }
-						aria-label={ this.translate( 'Edit title' ) }
+						value={ post && post.title ? post.title : '' }
+						aria-label={ translate( 'Edit title' ) }
 						ref="titleInput"
 						rows="1" />
 				</TrackInputChanges>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
+		const editedPostId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, editedPostId );
+		const isNew = isEditorNewPost( state );
+
+		return {
+			editedPostId,
+			isPermalinkEditable,
+			isNew,
+			post,
+			siteId
+		};
+	},
+	{ editPost }
+)( localize( EditorTitle ) );

@@ -9,17 +9,19 @@ import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } fr
  */
 import PostQueryManager from 'lib/query-manager/post';
 import {
+	EDITOR_START,
+	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_EDITS_RESET,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
+	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -28,6 +30,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import counts from './counts/reducer';
+import likes from './likes/reducer';
 import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
@@ -261,7 +264,16 @@ export function edits( state = {}, action ) {
 				}
 			} );
 
-		case POST_EDITS_RESET:
+		case EDITOR_START:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: {
+					...state[ action.siteId ],
+					[ action.postId || '' ]: { type: action.postType }
+				}
+			} );
+
+		case EDITOR_STOP:
+		case POST_SAVE_SUCCESS:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
 				break;
 			}
@@ -284,5 +296,6 @@ export default combineReducers( {
 	siteRequests,
 	queryRequests,
 	queries,
-	edits
+	edits,
+	likes,
 } );

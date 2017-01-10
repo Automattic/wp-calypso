@@ -1,9 +1,8 @@
 /**
  * External Dependencies
  */
-import forEach from 'lodash/forEach';
 import striptags from 'striptags';
-import trim from 'lodash/trim';
+import { trim, toArray, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,13 +10,43 @@ import trim from 'lodash/trim';
 import { domForHtml } from './utils';
 import { stripHTML } from 'lib/formatting';
 
+/**
+ *  removes an html element from the dom
+ */
+function removeElement( element ) {
+	element.parentNode && element.parentNode.removeChild( element );
+}
+
+/**
+ *  Trims any empty starting br tags.  Recurses into non-empty tags.
+ *  will remove all of the leading brs it can find.
+ */
+function stripLeadingBreaklines( dom ) {
+	if ( ! dom ) {
+		return;
+	}
+
+	// first element is breakline actually returns the node in case of success
+	while ( firstElementIsBreakline( dom ) ) {
+		removeElement( firstElementIsBreakline( dom ) );
+	}
+}
+
+/**
+ *  Returns the node if first element ( checking nested ) is a br
+ *  else returns falsy
+ */
+function firstElementIsBreakline( dom ) {
+	if ( dom.childNodes.length === 0 ) {
+		return dom.nodeName === 'BR' && dom;
+	}
+
+	return firstElementIsBreakline( dom.firstChild );
+}
+
 export function formatExcerpt( content ) {
 	if ( ! content ) {
 		return '';
-	}
-
-	function removeElement( element ) {
-		element.parentNode && element.parentNode.removeChild( element );
 	}
 
 	// Spin up a new DOM for the linebreak markup
@@ -29,25 +58,18 @@ export function formatExcerpt( content ) {
 	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
 
 	// limit to paras and brs
-	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br' ] );
+	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
 
-	// Strip any empty p and br elements from the beginning of the content
-	forEach( dom.querySelectorAll( 'p,br' ), function( element ) {
-		// is this element non-empty? bail on our iteration.
-		if ( element.childNodes.length > 0 && trim( element.textContent ).length > 0 ) {
-			return false;
-		}
-		element.parentNode && element.parentNode.removeChild( element );
-	} );
+	// strip any p's that are empty
+	toArray( dom.querySelectorAll( 'p' ) )
+		.filter( element => trim( element.textContent ).length === 0 )
+		.forEach( removeElement );
 
-	// now strip any p's that are empty and remove styles
-	forEach( dom.querySelectorAll( 'p' ), function( element ) {
-		if ( trim( element.textContent ).length === 0 ) {
-			element.parentNode && element.parentNode.removeChild( element );
-		} else {
-			element.removeAttribute( 'style' );
-		}
-	} );
+	// remove styles for all p's that remain
+	toArray( dom.querySelectorAll( 'p' ) )
+		.forEach( element => element.removeAttribute( 'style' ) );
+
+	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
 	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function( element, index ) {

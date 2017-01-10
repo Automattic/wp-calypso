@@ -215,7 +215,7 @@ module.exports = {
 	},
 
 	checkoutThankYou: function( context ) {
-		var CheckoutThankYouComponent = require( './checkout-thank-you' ),
+		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
 			basePath = route.sectionify( context.path ),
 			receiptId = Number( context.params.receiptId );
 

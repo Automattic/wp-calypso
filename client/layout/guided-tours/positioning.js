@@ -87,7 +87,7 @@ export function targetForSlug( targetSlug ) {
 	if ( ! targetSlug ) {
 		return null;
 	}
-	if ( targetSlug.indexOf( '.' ) !== -1 || targetSlug.indexOf( ' ' ) !== -1 ) {
+	if ( targetSlug.indexOf( '.' ) !== -1 || targetSlug.indexOf( '#' ) !== -1 || targetSlug.indexOf( ' ' ) !== -1 ) {
 		// a sort of hacky way to discern tip targets and regular css for now
 		// (e.g. misses #ids, ...)
 		// TODO(lsinger): fix this

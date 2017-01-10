@@ -19,6 +19,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
+import QuerySites from 'components/data/query-sites';
 import {
 	createAccount,
 	authorize,
@@ -95,6 +96,7 @@ const SiteCard = React.createClass( {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
+				<QuerySites allSites />
 				<Site site={ site } />
 			</CompactCard>
 		);
@@ -246,6 +248,8 @@ const LoggedInForm = React.createClass( {
 			this.props.authorize( queryObject );
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManageAndRedirect();
+		} else if ( this.props.isAlreadyOnSitesList && queryObject.already_authorized && ! isActivating ) {
+			this.activateManageAndRedirect();
 		}
 		if (
 			authorizeError &&
@@ -305,9 +309,16 @@ const LoggedInForm = React.createClass( {
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites(),
 			queryObject.already_authorized ) {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
+
+		if ( this.props.isAlreadyOnSitesList &&
+			queryObject.already_authorized ) {
+			return this.activateManageAndRedirect();
+		}
+
 		if ( activateManageSecret && ! manageActivated ) {
 			return this.activateManageAndRedirect();
 		}
@@ -315,7 +326,7 @@ const LoggedInForm = React.createClass( {
 			return this.handleResolve();
 		}
 		if ( this.props.isAlreadyOnSitesList ) {
-			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+			return this.activateManageAndRedirect();
 		}
 
 		return this.props.authorize( queryObject );
@@ -394,7 +405,7 @@ const LoggedInForm = React.createClass( {
 
 	renderNotices() {
 		const { authorizeError, queryObject, isAuthorizing, authorizeSuccess } = this.props.jetpackConnectAuthorize;
-		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
+		if ( queryObject.already_authorized && ! this.props.isFetchingSites() && ! this.props.isAlreadyOnSitesList ) {
 			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
 		}
 
@@ -437,6 +448,7 @@ const LoggedInForm = React.createClass( {
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites() &&
 			queryObject.already_authorized ) {
 			return this.translate( 'Go back to your site' );
 		}
@@ -687,7 +699,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		}
 
 		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderMainForm();
+			this.renderForm();
 		}
 
 		if ( this.props.plansFirst && ! this.props.selectedPlan ) {
@@ -730,7 +742,7 @@ export default connect(
 			requestHasXmlrpcError,
 			requestHasExpiredSecretError,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
-			authAttempts: getAuthAttempts( state, siteSlug )
+			authAttempts: getAuthAttempts( state, siteSlug ),
 		};
 	},
 	dispatch => bindActionCreators( {

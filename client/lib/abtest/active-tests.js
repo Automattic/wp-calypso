@@ -81,10 +81,10 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	siteTitleStep: {
-		datestamp: '20160928',
+		datestamp: '20170102',
 		variations: {
-			showSiteTitleStep: 50,
-			hideSiteTitleStep: 50,
+			showSiteTitleStep: 5,
+			hideSiteTitleStep: 95,
 		},
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
@@ -109,13 +109,25 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
-	premiumSquaredPlansWording: {
-		datestamp: '20170103',
+
+	userFirstSignup: {
+		datestamp: '20161223',
+		variations: {
+			userLast: 99,
+			userFirst: 1,
+		},
+		defaultVariation: 'userLast',
+		allowExistingUsers: false,
+	},
+  
+  premiumSquaredPlansWording: {
+		datestamp: '20170111',
 		variations: {
 			withoutMarketingCopy: 50,
 			withMarketingCopy: 50
 		},
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
-	}
+	},
+
 };

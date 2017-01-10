@@ -89,7 +89,7 @@ const flows = {
 	},
 
 	'with-theme': {
-		steps: [ 'domains-only', 'plans', 'user' ],
+		steps: [ 'domains-theme-preselected', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Preselect a theme to activate/buy from an external source',
 		lastModified: '2016-01-27'
@@ -209,17 +209,24 @@ const flows = {
 
 	userfirst: {
 		steps: [ 'user' ],
-		destination: '/start',
+		destination: '/start/userfirst-secondary',
 		description: 'User-first signup flow',
-		lastModified: '2016-11-29',
+		lastModified: '2016-12-23',
 		autoContinue: true,
 	},
 
+	'userfirst-secondary': {
+		steps: [ 'design-type', 'themes', 'domains', 'plans' ],
+		destination: getSiteDestination,
+		description: 'Secondary flow for User First signup',
+		lastModified: '2016-12-23'
+	},
+
 	'domain-first': {
-		steps: [ 'domains', 'design-type', 'themes', 'plans', 'user' ],
+		steps: [ 'domain-only', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2016-12-20'
+		lastModified: '2017-01-03'
 	},
 };
 
@@ -258,7 +265,24 @@ function filterDesignTypeInFlow( flow ) {
 
 function filterFlowName( flowName ) {
 	const defaultFlows = [ 'main', 'website' ];
-	// do nothing. No flows to filter at the moment.
+
+	/**
+	 * Only run the User First Signup for logged out users.
+	 */
+	if ( ! user.get() ) {
+		if ( includes( defaultFlows, flowName ) && abtest( 'userFirstSignup' ) === 'userFirst' ) {
+			return 'userfirst';
+		}
+
+		/**
+		 * Users should not be able to reach `userfirst-secondary` without being logged in, since
+		 * it doesn't contain the `user` step to register a user and site respectively.
+ 		 */
+		if ( flowName === 'userfirst-secondary' ) {
+			return 'userfirst';
+		}
+	}
+
 	return flowName;
 }
 

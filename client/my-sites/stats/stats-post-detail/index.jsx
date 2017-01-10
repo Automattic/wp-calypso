@@ -3,13 +3,14 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
 import Emojify from 'components/emojify';
-import SummaryChart from '../stats-summary-chart';
+import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import HeaderCake from 'components/header-cake';
@@ -17,9 +18,7 @@ import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
 
-export default React.createClass( {
-	displayName: 'StatsPostDetail',
-
+const StatsPostDetail = React.createClass( {
 	mixins: [ observe( 'postViewsList' ) ],
 
 	propTypes: {
@@ -52,38 +51,29 @@ export default React.createClass( {
 		}
 
 		if ( ! postOnRecord && ! isLoading ) {
-			title = this.translate( 'We don\'t have that post on record yet.' );
+			title = this.props.translate( 'We don\'t have that post on record yet.' );
 		}
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 
 				<HeaderCake onClick={ this.goBack }>
 					{ title }
 				</HeaderCake>
 
-				<SummaryChart
-					key="chart"
-					loading={ isLoading }
-					dataList={ this.props.postViewsList }
-					barClick={ this.props.barClick }
-					activeKey="period"
-					dataKey="value"
-					labelKey="period"
-					labelClass="visible"
-					tabLabel={ this.translate( 'Views' ) } />
+				<PostSummary siteId={ this.props.siteId } postId={ this.props.postId } />
 
 				<PostMonths
 					dataKey="years"
-					title={ this.translate( 'Months and Years' ) }
-					total={ this.translate( 'Total' ) }
+					title={ this.props.translate( 'Months and Years' ) }
+					total={ this.props.translate( 'Total' ) }
 					postViewsList={ this.props.postViewsList } />
 
 				<PostMonths
 					dataKey="averages"
-					title={ this.translate( 'Average per Day' ) }
-					total={ this.translate( 'Overall' ) }
+					title={ this.props.translate( 'Average per Day' ) }
+					total={ this.props.translate( 'Overall' ) }
 					postViewsList={ this.props.postViewsList } />
 
 				<PostWeeks postViewsList={ this.props.postViewsList } />
@@ -91,3 +81,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( StatsPostDetail );

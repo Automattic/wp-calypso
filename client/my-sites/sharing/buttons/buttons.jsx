@@ -1,137 +1,149 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	async = require( 'async' );
+import React, { Component, PropTypes } from 'react';
+import { flowRight } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	ButtonsAppearance = require( './appearance' ),
-	ButtonsOptions = require( './options' ),
-	notices = require( 'notices' ),
-	analytics = require( 'lib/analytics' );
+import ButtonsAppearance from './appearance';
+import ButtonsOptions from './options';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySharingButtons from 'components/data/query-sharing-buttons';
+import QueryPostTypes from 'components/data/query-post-types';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
+import { getPostTypes } from 'state/post-types/selectors';
+import { getSharingButtons, isSavingSharingButtons, isSharingButtonsSaveSuccessful } from 'state/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
 import { protectForm } from 'lib/protect-form';
 
-module.exports = protectForm( React.createClass( {
-	displayName: 'SharingButtons',
+class SharingButtons extends Component {
+	state = {
+		values: {},
+		buttonsPendingSave: null
+	};
 
-	mixins: [
-		observe( 'site', 'buttons', 'postTypes' )
-	],
+	static propTypes = {
+		buttons: PropTypes.array,
+		isSaving: PropTypes.bool.isRequired,
+		isSaveSettingsSuccessful: PropTypes.bool.isRequired,
+		isSaveButtonsSuccessful: PropTypes.bool.isRequired,
+		postTypes: PropTypes.object,
+		markSaved: PropTypes.func.isRequired,
+		markChanged: PropTypes.func.isRequired,
+		settings: PropTypes.object,
+		siteId: PropTypes.number.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		buttons: React.PropTypes.object.isRequired,
-		postTypes: React.PropTypes.object.isRequired,
-		markSaved: React.PropTypes.func.isRequired,
-		markChanged: React.PropTypes.func.isRequired
-	},
-
-	getInitialState: function() {
-		return {
-			values: {},
-			isSaving: false,
-			buttonsPendingSave: null
-		};
-	},
-
-	saveChanges: function( event ) {
-		var tasks = [
-			this.props.site.saveSettings.bind( this.props.site, this.state.values )
-		];
-
-		if ( this.state.buttonsPendingSave ) {
-			tasks.push(
-				this.props.buttons.saveAll.bind( this.props.buttons, this.props.site.ID, this.state.buttonsPendingSave )
-			);
-		}
-
-		async.parallel( tasks, this.onSaveComplete );
-
-		this.setState( {
-			isSaving: true
-		} );
-
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Save Changes Button' );
-
+	saveChanges = event => {
 		event.preventDefault();
-	},
-
-	onSaveComplete: function( error ) {
-		if ( error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
-		} else {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+		this.props.saveSiteSettings( this.props.siteId, this.state.values );
+		if ( this.state.buttonsPendingSave ) {
+			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
 		}
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
+	};
 
-		this.props.markSaved();
-		this.setState( {
-			values: {},
-			isSaving: false,
-			buttonsPendingSave: null
-		} );
-	},
-
-	handleChange: function( option, value ) {
-		var pairs;
-
-		if ( undefined === value ) {
-			pairs = option;
-		} else {
-			pairs = {};
-			pairs[ option ] = value;
-		}
-
+	handleChange = ( option, value ) => {
+		const pairs = undefined === value
+			? option
+			: { [ option ]: value };
 		this.props.markChanged();
 		this.setState( {
-			values: assign( {}, this.state.values, pairs )
+			values: Object.assign( {}, this.state.values, pairs )
 		} );
-	},
+	};
 
-	handleButtonsChange: function( buttons ) {
+	handleButtonsChange = buttons => {
 		this.props.markChanged();
 		this.setState( { buttonsPendingSave: buttons } );
-	},
+	};
 
-	getPreviewButtons: function() {
-		return this.state.buttonsPendingSave || this.props.buttons.get( this.props.site.ID );
-	},
-
-	isInitialized: function( sources ) {
-		return sources.every( function( source ) {
-			if ( 'settings' === source ) {
-				return this.props.site.settings;
+	componentWillReceiveProps( nextProps ) {
+		// Save request has been performed
+		if (
+			this.props.isSaving &&
+			! nextProps.isSaving
+		) {
+			if (
+				nextProps.isSaveSettingsSuccessful &&
+				( nextProps.isSaveButtonsSuccessful || ! this.state.buttonsPendingSave )
+			) {
+				nextProps.successNotice( nextProps.translate( 'Settings saved successfully!' ) );
+				nextProps.markSaved();
+				this.setState( {
+					values: {},
+					buttonsPendingSave: null
+				} );
 			} else {
-				return this.props[ source ].hasDataForSiteId( this.props.site.ID );
+				nextProps.errorNotice( nextProps.translate( 'There was a problem saving your changes. Please, try again.' ) );
 			}
-		}, this );
-	},
+		}
+	}
 
-	render: function() {
-		var settings = assign( {}, this.props.site.settings, this.state.values );
+	render() {
+		const { buttons, isSaving, postTypes, settings, siteId } = this.props;
+		const updatedSettings = Object.assign( {}, settings, this.state.values );
+		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
 		return (
 			<form onSubmit={ this.saveChanges } id="sharing-buttons" className="sharing-settings sharing-buttons">
+				<QuerySiteSettings siteId={ siteId } />
+				<QueryPostTypes siteId={ siteId } />
+				<QuerySharingButtons siteId={ siteId } />
 				<ButtonsAppearance
-					site={ this.props.site }
-					buttons={ this.getPreviewButtons() }
-					values={ settings }
+					buttons={ updatedButtons }
+					values={ updatedSettings }
 					onChange={ this.handleChange }
 					onButtonsChange={ this.handleButtonsChange }
-					initialized={ this.isInitialized( [ 'settings', 'buttons' ] ) }
-					saving={ this.state.isSaving } />
+					initialized={ !! buttons && !! settings }
+					saving={ isSaving } />
 				<ButtonsOptions
-					site={ this.props.site }
-					postTypes={ this.props.postTypes.get( this.props.site.ID ) }
-					buttons={ this.props.buttons.get( this.props.site.ID ) }
-					values={ settings }
+					postTypes={ Object.values( postTypes ) }
+					buttons={ buttons }
+					values={ updatedSettings }
 					onChange={ this.handleChange }
-					initialized={ this.isInitialized( [ 'settings', 'postTypes' ] ) }
-					saving={ this.state.isSaving } />
+					initialized={ !! postTypes && !! settings }
+					saving={ isSaving } />
 			</form>
 		);
 	}
-} ) );
+}
+
+const connectComponent = connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const settings = getSiteSettings( state, siteId );
+		const postTypes = getPostTypes( state, siteId );
+		const buttons = getSharingButtons( state, siteId );
+		const isSavingSettings = isSavingSiteSettings( state, siteId );
+		const isSavingButtons = isSavingSharingButtons( state, siteId );
+		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+
+		return {
+			isSaving: isSavingSettings || isSavingButtons,
+			isSaveSettingsSuccessful,
+			isSaveButtonsSuccessful,
+			postTypes,
+			settings,
+			buttons,
+			siteId
+		};
+	},
+	{ errorNotice, recordGoogleEvent, saveSiteSettings, saveSharingButtons, successNotice }
+);
+
+export default flowRight(
+	connectComponent,
+	protectForm,
+	localize,
+)( SharingButtons );

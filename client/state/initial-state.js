@@ -12,7 +12,6 @@ import { createReduxStore, reducer } from 'state';
 import {
 	SERIALIZE,
 	DESERIALIZE,
-	SERVER_DESERIALIZE
 } from 'state/action-types';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
@@ -25,13 +24,14 @@ const debug = debugModule( 'calypso:state' );
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
-export const SERIALIZE_THROTTLE = 500;
+const MINUTE_IN_MS = 1000 * 60;
+export const SERIALIZE_THROTTLE = MINUTE_IN_MS;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
 	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
-		const serverState = reducer( window.initialReduxState, { type: SERVER_DESERIALIZE } );
+		const serverState = reducer( window.initialReduxState, { type: DESERIALIZE } );
 		return pick( serverState, Object.keys( window.initialReduxState ) );
 	}
 	return {};

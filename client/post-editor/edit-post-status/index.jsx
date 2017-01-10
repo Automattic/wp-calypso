@@ -36,7 +36,8 @@ class EditPostStatus extends Component {
 		savedPost: PropTypes.object,
 		site: PropTypes.object,
 		translate: PropTypes.func,
-		type: PropTypes.string
+		type: PropTypes.string,
+		postDate: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -113,7 +114,7 @@ class EditPostStatus extends Component {
 			this.props.site.options.admin_url;
 
 		const fullDate = postScheduleUtils.convertDateToUserLocation(
-			( postUtils.getEditedTime( this.props.post ) || new Date() ),
+			( this.props.postDate || new Date() ),
 			siteUtils.timezone( this.props.site ),
 			siteUtils.gmtOffset( this.props.site )
 		).format( 'll LT' );
@@ -188,8 +189,8 @@ class EditPostStatus extends Component {
 	renderPostSchedulePopover() {
 		const tz = siteUtils.timezone( this.props.site ),
 			gmt = siteUtils.gmtOffset( this.props.site ),
-			selectedDay = this.props.post && this.props.post.date
-				? this.props.moment( this.props.post.date )
+			selectedDay = this.props.postDate
+				? this.props.moment( this.props.postDate )
 				: null;
 
 		return (

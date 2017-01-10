@@ -758,6 +758,39 @@ describe( 'index', function() {
 				}
 			);
 		} );
+
+		it( 'detects images intermixed with embeds and in the correct order', function( done ) {
+			normalizer(
+				{
+					content: '<img src="example1.png" /> <iframe src="https://vimeo.com/v/hi"></iframe> <img src="example2.png" />'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
+					assert.lengthOf( normalized.content_media, 3 );
+					assert.lengthOf( normalized.content_images, 2 );
+					assert.lengthOf( normalized.content_embeds, 1 );
+					assert.equal( normalized.content_media[ 0 ], normalized.content_images[ 0 ] );
+					assert.equal( normalized.content_media[ 1 ], normalized.content_embeds[ 0 ] );
+					assert.equal( normalized.content_media[ 2 ], normalized.content_images[ 1 ] );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'detects images', function( done ) {
+			normalizer(
+				{
+					content: '<img src="example1.png" /> <img src="/relativeurl.png" /> <img src="https://google.com/images/absoluteurl.jpg"> text in the middle</img>'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
+					assert.lengthOf( normalized.content_media, 3 );
+					assert.lengthOf( normalized.content_images, 3 );
+					assert.lengthOf( normalized.content_embeds, 0 );
+
+					done( err );
+				}
+			);
+		} );
+
 		it( 'detects trusted iframes', function( done ) {
 			normalizer(
 				{
@@ -906,13 +939,33 @@ describe( 'index', function() {
 			} );
 		}
 
-		it( 'strips empty elements and leading and trailing brs', function( done ) {
+		it( 'strips empty elements and leading brs', function( done ) {
 			assertExcerptBecomes( `<br>
 <p>&nbsp;</p>
 <p class="wp-caption-text">caption</p>
 <p><img src="http://example.com/image.jpg"></p>
 <p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
 <p></p>`, '<p>Giraffes are <br>great</p>', done );
+		} );
+
+		it( 'strips leading brs even if they are nested', function( done ) {
+			assertExcerptBecomes(
+				'<p><br>deep meaning lies within</p>',
+				'<p>deep meaning lies within</p>',
+				done
+			);
+		} );
+
+		it( 'strips multiple leading brs even if nested', function( done ) {
+			assertExcerptBecomes(
+				'<p><br><br><br></p><br><p><br></p>deep meaning lies within',
+				'deep meaning lies within',
+				done
+			);
+		} );
+
+		it( 'only trims break if there is no preceding text', function( done ) {
+			assertExcerptBecomes( '<p>one<br>two</p>', '<p>one<br>two</p>', done );
 		} );
 
 		it( 'limits the excerpt to 3 elements', function( done ) {
@@ -927,41 +980,12 @@ describe( 'index', function() {
 			);
 		} );
 
-		it( 'only trims top-level breaks', function( done ) {
-			assertExcerptBecomes( '<p></p><p>one<br>two</p>', '<p>one<br>two</p>', done );
-		} );
-
 		it( 'removes style tags', done => {
 			assertExcerptBecomes(
 				'<style>#foo{ color: blue; }</style><p>hi there</p>',
 				'<p>hi there</p>',
 				done
 			);
-		} );
-	} );
-
-	describe( 'The refreshed fancy excerpt creator', () => {
-		function assertExcerptBecomes( source, expected, done ) {
-			normalizer( { content: source }, [ normalizer.createBetterExcerptRefresh ], function( err, normalized ) {
-				assert.strictEqual( normalized.better_excerpt, expected );
-				done( err );
-			} );
-		}
-
-		it( 'removes tags but inserts spaces between p tags', function( done ) {
-			assertExcerptBecomes( '<p>one</p><p>two</p><p>three</p><p>four</p>', 'one two three four', done );
-		} );
-
-		it( 'turns br tags into spaces', function( done ) {
-			assertExcerptBecomes( '<p>one<br>two<br/>three</p>', 'one two three', done );
-		} );
-
-		it( 'trims whitespace from the excerpt', function( done ) {
-			assertExcerptBecomes( '<p> </p><p>one</p><p>two</p><p>three</p><p>four</p><p> </p>', 'one two three four', done );
-		} );
-
-		it( 'removes tables from the content', function( done ) {
-			assertExcerptBecomes( '<p>test</p><table><tr><td>in a table</td></tr></table><p>more</p>', 'test more', done );
 		} );
 	} );
 } );

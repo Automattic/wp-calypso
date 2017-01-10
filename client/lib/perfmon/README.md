@@ -17,7 +17,7 @@ You can enable this in development by running `ENABLE_FEATURES=perfmon make run`
 
 You can see how many active placeholders (visible and non visible) there detected during each check by running this in your console:
 
-```
+```js
 localStorage.setItem('debug', 'calypso:perfmon')
 ```
 

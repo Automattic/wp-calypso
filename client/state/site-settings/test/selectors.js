@@ -11,7 +11,8 @@ import {
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveRequestStatus,
-	getSiteSettings
+	getSiteSettings,
+	getSiteSettingsSaveError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -189,6 +190,47 @@ describe( 'selectors', () => {
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
 			expect( isSuccessful ).to.be.false;
+		} );
+	} );
+
+	describe( 'getSiteSettingsSaveError()', () => {
+		it( 'should return false if the site is not attached', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: true, status: 'pending', error: false }
+					}
+				}
+			};
+			const error = getSiteSettingsSaveError( state, 2916285 );
+
+			expect( error ).to.be.false;
+		} );
+
+		it( 'should return false if the save the last request has no error', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'success', error: false }
+					}
+				}
+			};
+			const error = getSiteSettingsSaveError( state, 2916284 );
+
+			expect( error ).to.be.false;
+		} );
+
+		it( 'should return the error if the save request status has an error', () => {
+			const state = {
+				siteSettings: {
+					saveRequests: {
+						2916284: { saving: false, status: 'error', error: 'my Error' }
+					}
+				}
+			};
+			const error = getSiteSettingsSaveError( state, 2916284 );
+
+			expect( error ).to.eql( 'my Error' );
 		} );
 	} );
 

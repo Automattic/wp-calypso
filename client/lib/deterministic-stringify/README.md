@@ -7,7 +7,7 @@ One important difference between using this module and using node.js's `queystri
 
 This is useful for obtaining a deterministic namespace for query options so that two equivalent queries resolve to the same namespace.
 
-```
+```js
 deterministicStringify( true ); // true
 deterministicStringify( 1 ); // 1
 deterministicStringify( false ); // false

@@ -17,7 +17,7 @@ const actions = require( 'lib/posts/actions' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	EditorActionBar = require( 'post-editor/editor-action-bar' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
+	EditorTitle = require( 'post-editor/editor-title' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
@@ -36,8 +36,8 @@ const actions = require( 'lib/posts/actions' ),
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
-import { receivePost, resetPostEdits } from 'state/posts/actions';
+import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -51,6 +51,7 @@ import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
+import { editedPostHasContent } from 'state/selectors';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -138,9 +139,6 @@ export const PostEditor = React.createClass( {
 	componentWillUnmount: function() {
 		PostEditStore.removeListener( 'change', this.onEditedPostChange );
 
-		// Reset post edits after leaving editor
-		this.props.resetPostEdits( this.props.siteId, this.props.postId );
-
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.stopEditing();
 
@@ -204,7 +202,7 @@ export const PostEditor = React.createClass( {
 						onPublish={ this.onPublish }
 						isPublishing={ this.state.isPublishing }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						onClose={ this.onClose }
 						onTabChange={ this.hideNotice } />
 					<div className="post-editor__content">
@@ -238,7 +236,7 @@ export const PostEditor = React.createClass( {
 								post={ this.state.post }
 								maxWidth={ 1462 } />
 							<div className="editor__header">
-								<EditorTitleContainer
+								<EditorTitle
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
@@ -289,7 +287,7 @@ export const PostEditor = React.createClass( {
 						isNew={ this.state.isNew }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.state.hasContent || this.props.hasContent }
 						isSaving={ this.state.isSaving }
 						isPublishing={ this.state.isPublishing }
 						onSave={ this.onSave }
@@ -378,6 +376,13 @@ export const PostEditor = React.createClass( {
 			// is new or loading
 			this.setState( this.getInitialState(), function() {
 				this.refs.editor.setEditorContent( '' );
+			} );
+		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
+			// Is a copy of an existing post.
+			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
+			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
+			this.setState( this.getInitialState(), function() {
+				this.refs.editor.setEditorContent( this.state.post.content );
 			} );
 		} else {
 			postEditState = this.getPostEditState();
@@ -690,18 +695,11 @@ export const PostEditor = React.createClass( {
 			this.props.resetEditorLastDraft();
 		}
 
-		// Assign editor post ID to saved value (especially important when
-		// transitioning from an unsaved post to a saved one)
-		if ( post.ID !== this.props.postId ) {
-			this.props.setEditorPostId( post.ID );
-		}
+		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
+		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
 
 		// Receive updated post into state
 		this.props.receivePost( post );
-
-		// Reset previous edits, preserving type
-		this.props.resetPostEdits( this.props.siteId );
-		this.props.resetPostEdits( post.site_ID, post.ID );
 
 		const nextState = {
 			isSaving: false,
@@ -777,6 +775,7 @@ export default connect(
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
+			hasContent: editedPostHasContent( state, siteId, postId )
 		};
 	},
 	( dispatch ) => {
@@ -785,8 +784,7 @@ export default connect(
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
-			resetPostEdits,
-			setEditorPostId,
+			savePostSuccess,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
 			setLayoutFocus,
 		}, dispatch );

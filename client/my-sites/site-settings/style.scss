@@ -158,6 +158,24 @@
 			white-space: nowrap;
 		}
 	}
+
+	.site-icon-setting__icon {
+		@include breakpoint( "<660px") {
+			float: left;
+			margin-right: 8px;
+		}
+	}
+
+	.site-icon-setting__button {
+		@include breakpoint( "<660px") {
+			display: block;
+			margin-bottom: 8px;
+		}
+	}
+
+	.site-settings__child-settings {
+		margin-left: 36px;
+	}
 }
 
 .site-settings__general-settings {
@@ -173,6 +191,48 @@
 	.site-settings__toggle-label {
 		flex: 0 1 100%;
 		margin-left: 12px;
+	}
+}
+
+.site-settings__discussion-settings {
+	label:first-of-type {
+		font-weight: normal;
+	}
+
+	.form-toggle__label {
+		display: flex;
+		align-items: center;
+	}
+
+	.form-toggle__switch {
+		flex: 1 0 auto;
+	}
+
+	.form-toggle__switch + span {
+		flex: 0 1 100%;
+		margin-left: 12px;
+	}
+
+	hr {
+		margin: 0 -24px 1.5em;
+	}
+
+	.site-settings__other-comment-settings {
+		.form-toggle__label {
+			align-items: flex-start;
+		}
+
+		.form-toggle__switch {
+			margin-top: 5px;
+		}
+
+		.form-toggle__switch + span {
+			line-height: 26px;
+		}
+
+		.form-select {
+			margin-top: 2px;
+		}
 	}
 }
 
@@ -292,7 +352,7 @@
 	margin-top: 16px;
 }
 
-.jp-relatedposts {
+.site-settings__related-posts {
 	position: relative;
 	margin-top: 8px;
 	padding: 16px 8px;
@@ -302,19 +362,19 @@
 
 	@include clear-fix;
 
-	.jp-relatedposts-headline {
+	.site-settings__related-posts-headline {
  		margin: 0 0 1em 8px;
  		font-size: 11px;
  		font-weight: 600;
  	}
 
-	.jp-relatedposts-items {
+	.site-settings__related-posts-items {
 
 
 		@include breakpoint( ">480px" ) {
 			display: flex;
 			flex-wrap: wrap;
-			.jp-relatedposts-post {
+			.site-settings__related-posts-post {
 				width: 50%;
 			}
 		}
@@ -324,27 +384,31 @@
 		}
 	}
 
-	.jp-relatedposts-post .jp-relatedposts-post-title a {
+	.site-settings__related-posts-post .site-settings__related-posts-post-title a {
 		font-weight: normal;
 		text-decoration: none;
 		opacity: 1;
 	}
 
-	.jp-relatedposts-post {
+	.site-settings__related-posts-post {
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0 8px;
 	}
 
-	.jp-relatedposts-post span {
+	.site-settings__related-posts-post span {
 		display: block;
 		max-width: 90%;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.jp-relatedposts-post .jp-relatedposts-post-context {
+	.site-settings__related-posts-post .site-settings__related-posts-post-context {
 		opacity: .6;
+	}
+
+	.site-settings__related-posts-post-a {
+		cursor: pointer;
 	}
 }
 

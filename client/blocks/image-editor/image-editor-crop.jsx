@@ -14,10 +14,15 @@ import {
 	getImageEditorCropBounds,
 	getImageEditorAspectRatio,
 	getImageEditorTransform,
-	getImageEditorCrop
+	getImageEditorCrop,
+	imageEditorHasChanges
 } from 'state/ui/editor/image-editor/selectors';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { imageEditorCrop } from 'state/ui/editor/image-editor/actions';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop
+} from 'state/ui/editor/image-editor/actions';
+import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
 
 class ImageEditorCrop extends Component {
 	static propTypes = {
@@ -36,10 +41,12 @@ class ImageEditorCrop extends Component {
 		} ),
 		aspectRatio: PropTypes.string,
 		imageEditorCrop: PropTypes.func,
+		imageEditorComputedCrop: PropTypes.func,
 		minCropSize: PropTypes.shape( {
 			width: PropTypes.number,
 			height: PropTypes.number
-		} )
+		} ),
+		imageEditorHasChanges: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -51,10 +58,12 @@ class ImageEditorCrop extends Component {
 			rightBound: 100
 		},
 		imageEditorCrop: noop,
+		imageEditorComputedCrop: noop,
 		minCropSize: {
 			width: 50,
 			height: 50
-		}
+		},
+		imageEditorHasChanges: false
 	};
 
 	constructor( props ) {
@@ -81,13 +90,18 @@ class ImageEditorCrop extends Component {
 	}
 
 	componentWillMount() {
-		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyCrop );
+		this.updateCrop(
+			this.getDefaultState( this.props ),
+			this.props,
+			this.applyComputedCrop
+		);
 	}
 
 	componentWillReceiveProps( newProps ) {
 		const {
 			bounds,
-			aspectRatio
+			aspectRatio,
+			crop
 		} = this.props;
 
 		if ( ! isEqual( bounds, newProps.bounds ) ) {
@@ -114,6 +128,15 @@ class ImageEditorCrop extends Component {
 
 		if ( aspectRatio !== newProps.aspectRatio ) {
 			this.updateCrop( this.getDefaultState( newProps ), newProps, this.applyCrop );
+		}
+
+		// After clicking the "Reset" button, we need to recompute and set crop.
+		if (
+			! newProps.imageEditorHasChanges &&
+			isEqual( newProps.crop, defaultCrop ) &&
+			! isEqual( crop, newProps.crop )
+		) {
+			this.updateCrop( this.getDefaultState( newProps ), newProps, this.applyComputedCrop );
 		}
 	}
 
@@ -288,7 +311,7 @@ class ImageEditorCrop extends Component {
 		} );
 	}
 
-	applyCrop() {
+	getCropBounds() {
 		const {
 			top,
 			left,
@@ -310,12 +333,20 @@ class ImageEditorCrop extends Component {
 			imageWidth = rightBound - leftBound,
 			imageHeight = bottomBound - topBound;
 
-		this.props.imageEditorCrop(
+		return [
 			currentTop / imageHeight,
 			currentLeft / imageWidth,
 			currentWidth / imageWidth,
 			currentHeight / imageHeight
-		);
+		];
+	}
+
+	applyCrop() {
+		this.props.imageEditorCrop( ...this.getCropBounds() );
+	}
+
+	applyComputedCrop() {
+		this.props.imageEditorComputedCrop( ...this.getCropBounds() );
 	}
 
 	render() {
@@ -467,10 +498,12 @@ export default connect(
 			bounds,
 			crop,
 			aspectRatio,
-			degrees
+			degrees,
+			imageEditorHasChanges: imageEditorHasChanges( state )
 		};
 	},
 	{
-		imageEditorCrop
+		imageEditorCrop,
+		imageEditorComputedCrop
 	}
 )( ImageEditorCrop );

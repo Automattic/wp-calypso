@@ -18,7 +18,7 @@ const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 		backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
-		backgroundPosition: 'right center'
+		backgroundPosition: 'center center'
 	};
 
 	return (

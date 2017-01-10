@@ -166,11 +166,12 @@ export default React.createClass( {
 		}
 
 		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
-			return <WpcomPluginInstallButton
-						disabled={ ! this.hasBusinessPlan() }
-						plugin={ this.props.plugin }
-						site={ this.props.selectedSite }
-			/>;
+			return (
+				<WpcomPluginInstallButton
+					disabled={ ! this.hasBusinessPlan() }
+					plugin={ this.props.plugin }
+				/>
+			);
 		}
 	},
 
@@ -356,7 +357,7 @@ export default React.createClass( {
 					}
 				</Card>
 
-				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() &&
+				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 

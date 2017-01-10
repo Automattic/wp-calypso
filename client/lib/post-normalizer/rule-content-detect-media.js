@@ -7,7 +7,8 @@ import getEmbedMetadata from 'get-video-id';
 /**
  * Internal Dependencies
  */
-import { iframeIsWhitelisted } from './utils';
+import { iframeIsWhitelisted, maxWidthPhotonishURL } from './utils';
+import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 /** Checks whether or not an image is a tracking pixel
 * @param {Node} image - DOM node for an img
@@ -52,7 +53,7 @@ function isCandidateForContentImage( image ) {
 const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {
 		return {
-			src: image.getAttribute( 'src' ),
+			src: maxWidthPhotonishURL( image.getAttribute( 'src' ), READER_CONTENT_WIDTH ),
 			width: image.width,
 			height: image.height,
 			mediaType: 'image',
@@ -145,6 +146,13 @@ export default function detectMedia( post, dom ) {
 
 	post.content_media = compact( contentMedia );
 	post.content_embeds = filter( post.content_media, m => m.mediaType === 'video' );
+	post.content_images = filter( post.content_media, m => m.mediaType === 'image' );
+
+	// TODO: figure out a more sane way of combining featured_image + content media
+	// so that changes to logic don't need to exist in multiple places
+	if ( post.featured_image ) {
+		post.featured_image = maxWidthPhotonishURL( post.featured_image, READER_CONTENT_WIDTH );
+	}
 
 	return post;
 }

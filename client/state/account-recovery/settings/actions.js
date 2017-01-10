@@ -15,33 +15,41 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
 const TARGET_PHONE = 'phone';
 const TARGET_EMAIL = 'email';
 
-export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
+export const accountRecoverySettingsFetchSuccess = ( settings ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
-		...accountRecoverySettings,
+		settings,
 	};
 };
 
-export const accountRecoveryFetchFailed = ( error ) => {
+export const accountRecoverySettingsFetchFailed = ( error ) => {
 	return {
 		type: ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 		error,
 	};
 };
 
-export const accountRecoveryFetch = () => ( dispatch ) => {
+export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
 
 	return wpcom.undocumented().me().getAccountRecovery()
 		.then( ( accountRecoverySettings ) =>
-			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) )
-		).catch( ( { status, message } ) =>
-			dispatch( accountRecoveryFetchFailed( { status, message } ) )
+			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
+		).catch( ( error ) =>
+			dispatch( accountRecoverySettingsFetchFailed( error ) )
 		);
 };
 
@@ -72,17 +80,17 @@ export const updateAccountRecoveryPhoneSuccess = ( phone ) => updateSuccessActio
 
 export const updateAccountRecoveryPhoneFailed = ( error ) => updateFailedAction( TARGET_PHONE, error );
 
-export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch ) => {
+export const updateAccountRecoveryPhone = ( newPhone ) => ( dispatch ) => {
 	dispatch( {
 		type: ACCOUNT_RECOVERY_SETTINGS_UPDATE,
 		target: TARGET_PHONE,
 	} );
 
-	return wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number )
-		.then( ( phone ) =>
-			dispatch( updateAccountRecoveryPhoneSuccess( phone ) )
-		).catch( ( { status, message } ) =>
-			dispatch( updateAccountRecoveryPhoneFailed( { status, message } ) )
+	return wpcom.undocumented().me().updateAccountRecoveryPhone( newPhone.countryCode, newPhone.number )
+		.then( () =>
+			dispatch( updateAccountRecoveryPhoneSuccess( newPhone ) )
+		).catch( ( error ) =>
+			dispatch( updateAccountRecoveryPhoneFailed( error ) )
 		);
 };
 
@@ -99,8 +107,8 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 	return wpcom.undocumented().me().deleteAccountRecoveryPhone()
 		.then( () =>
 			dispatch( deleteAccountRecoveryPhoneSuccess() )
-		).catch( ( { status, message } ) =>
-			dispatch( deleteAccountRecoveryPhoneFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( deleteAccountRecoveryPhoneFailed( error ) )
 		);
 };
 
@@ -115,10 +123,10 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 	} );
 
 	return wpcom.undocumented().me().updateAccountRecoveryEmail( newEmail )
-		.then( ( { email } ) =>
-			dispatch( updateAccountRecoveryEmailSuccess( email ) )
-		).catch( ( { status, message } ) =>
-			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) )
+		.then( () =>
+			dispatch( updateAccountRecoveryEmailSuccess( newEmail ) )
+		).catch( ( error ) =>
+			dispatch( updateAccountRecoveryEmailFailed( error ) )
 		);
 };
 
@@ -135,7 +143,91 @@ export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 	return wpcom.undocumented().me().deleteAccountRecoveryEmail()
 		.then( () =>
 			dispatch( deleteAccountRecoveryEmailSuccess() )
-		).catch( ( { status, message } ) =>
-			dispatch( deleteAccountRecoveryEmailFailed( { status, message } ) )
+		).catch( ( error ) =>
+			dispatch( deleteAccountRecoveryEmailFailed( error ) )
+		);
+};
+
+export const resendAccountRecoveryEmailValidationSuccess = () => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+		target: 'email',
+	};
+};
+
+export const resendAccountRecoveryEmailValidationFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+		target: 'email',
+		error,
+	};
+};
+
+export const resendAccountRecoveryEmailValidation = () => ( dispatch ) => {
+	dispatch( {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+		target: TARGET_EMAIL,
+	} );
+
+	return wpcom.undocumented().me().newValidationAccountRecoveryEmail()
+		.then( () =>
+			dispatch( resendAccountRecoveryEmailValidationSuccess() )
+		).catch( ( error ) =>
+			dispatch( resendAccountRecoveryEmailValidationFailed( error ) )
+		);
+};
+
+export const resendAccountRecoveryPhoneValidationSuccess = () => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
+		target: 'phone',
+	};
+};
+
+export const resendAccountRecoveryPhoneValidationFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
+		target: 'phone',
+		error,
+	};
+};
+
+export const resendAccountRecoveryPhoneValidation = () => ( dispatch ) => {
+	dispatch( {
+		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
+		target: TARGET_PHONE,
+	} );
+
+	return wpcom.undocumented().me().newValidationAccountRecoveryPhone()
+		.then( () =>
+			dispatch( resendAccountRecoveryPhoneValidationSuccess() )
+		).catch( ( error ) =>
+			dispatch( resendAccountRecoveryPhoneValidationFailed( error ) )
+		);
+};
+
+export const validateAccountRecoveryPhoneSuccess = () => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
+	};
+};
+
+export const validateAccountRecoveryPhoneFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
+		error,
+	};
+};
+
+export const validateAccountRecoveryPhone = ( code ) => ( dispatch ) => {
+	dispatch( {
+		type: ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
+	} );
+
+	return wpcom.undocumented().me().validateAccountRecoveryPhone( code )
+		.then( () =>
+			dispatch( validateAccountRecoveryPhoneSuccess() )
+		).catch( ( error ) =>
+			dispatch( validateAccountRecoveryPhoneFailed( error ) )
 		);
 };

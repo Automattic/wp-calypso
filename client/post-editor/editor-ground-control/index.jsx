@@ -312,6 +312,10 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
+		const postDate = this.props.post && this.props.post.date
+				? this.props.post.date
+				: null;
 		return (
 			<Card className="editor-ground-control">
 				<Site
@@ -347,6 +351,7 @@ export default React.createClass( {
 					this.state.showAdvanceStatus &&
 						<EditPostStatus
 							savedPost={ this.props.savedPost }
+							postDate={ postDate }
 							type={ this.props.type }
 							onSave={ this.props.onSave }
 							onTrashingPost={ this.props.onTrashingPost }

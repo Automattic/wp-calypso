@@ -10,19 +10,21 @@ import { get, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
-import Gridicon from 'components/gridicon';
 import Count from 'components/count';
 import Dialog from 'components/dialog';
+import EllipsisMenu from 'components/ellipsis-menu';
+import Gridicon from 'components/gridicon';
+import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
+import Tooltip from 'components/tooltip';
+import WithPreviewProps from 'components/web-preview/with-preview-props';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { decodeEntities } from 'lib/formatting';
 import { deleteTerm } from 'state/terms/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { decodeEntities } from 'lib/formatting';
-import Tooltip from 'components/tooltip';
+import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -37,6 +39,9 @@ class TaxonomyManagerListItem extends Component {
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
 		isJetpack: PropTypes.bool,
+		isPreviewable: PropTypes.bool,
+		recordGoogleEvent: PropTypes.func,
+		bumpStat: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -57,6 +62,8 @@ class TaxonomyManagerListItem extends Component {
 	closeDeleteDialog = action => {
 		if ( action === 'delete' ) {
 			const { siteId, taxonomy, term } = this.props;
+			this.props.recordGoogleEvent( 'Taxonomy Manager', `Deleted ${ taxonomy }` );
+			this.props.bumpStat( 'taxonomy_manager', `delete_${ taxonomy }` );
 			this.props.deleteTerm( siteId, taxonomy, term.ID, term.slug );
 		}
 		this.setState( {
@@ -67,6 +74,8 @@ class TaxonomyManagerListItem extends Component {
 	setAsDefault = () => {
 		const { canSetAsDefault, siteId, term } = this.props;
 		if ( canSetAsDefault ) {
+			this.props.recordGoogleEvent( 'Taxonomy Manager', 'Set Default Category' );
+			this.props.bumpStat( 'taxonomy_manager', 'set_default_category' );
 			this.props.saveSiteSettings( siteId, { default_category: term.ID } );
 		}
 	};
@@ -159,9 +168,17 @@ class TaxonomyManagerListItem extends Component {
 						</PopoverMenuItem>
 					}
 					{ ! isJetpack &&
-						<PopoverMenuItem href={ this.getTaxonomyLink() } target="_blank" rel="noopener noreferrer" icon="external">
-							{ translate( 'View Posts' ) }
-						</PopoverMenuItem>
+						<WithPreviewProps
+								url={ this.getTaxonomyLink() }
+								isPreviewable={ this.props.isPreviewable }>
+							{ ( props ) =>
+								<PopoverMenuItem { ...props }
+										icon={ this.props.isPreviewable
+											? 'visible' : 'external' }>
+									{ translate( 'View Posts' ) }
+								</PopoverMenuItem>
+							}
+						</WithPreviewProps>
 					}
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault && ! isDefault &&
@@ -185,15 +202,18 @@ class TaxonomyManagerListItem extends Component {
 export default connect(
 	( state, { taxonomy, term } ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSite( state, siteId );
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const siteUrl = get( getSite( state, siteId ), 'URL' );
+		const isPreviewable = get( site, 'is_previewable' );
+		const siteUrl = get( site, 'URL' );
 
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
-			isDefault,
 			canSetAsDefault,
+			isDefault,
+			isJetpack: isJetpackSite( state, siteId ),
+			isPreviewable,
 			siteId,
 			siteUrl,
 		};
@@ -201,5 +221,7 @@ export default connect(
 	{
 		deleteTerm,
 		saveSiteSettings,
+		recordGoogleEvent,
+		bumpStat,
 	}
 )( localize( TaxonomyManagerListItem ) );

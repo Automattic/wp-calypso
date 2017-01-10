@@ -36,6 +36,7 @@ import QueryTicketSupportConfiguration from 'components/data/query-ticket-suppor
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -206,7 +207,7 @@ const HelpContact = React.createClass( {
 
 	submitSupportForumsTopic: function( contactForm ) {
 		const { subject, message } = contactForm;
-		const { locale } = this.state.olark;
+		const locale = this.props.currentUserLocale;
 
 		this.setState( { isSubmitting: true } );
 
@@ -500,9 +501,18 @@ const HelpContact = React.createClass( {
 		}
 	},
 
-	getContactFormCommonProps: function() {
+	getContactFormCommonProps: function( variationSlug ) {
 		const { olark, isSubmitting } = this.state;
-		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
+
+		// Let the user know we only offer support in English.
+		// We only need to show the message if:
+		// 1. The user's locale doesn't match the live chat locale (usually English)
+		// 2. The support request isn't sent to the forums. Because forum support
+		//    requests are sent to the language specific forums (for popular languages)
+		//    we don't tell the user that support is only offered in English.
+		const showHelpLanguagePrompt =
+			( olark.locale !== i18n.getLocaleSlug() ) &&
+			SUPPORT_FORUM !== variationSlug;
 
 		return {
 			disabled: isSubmitting,
@@ -567,7 +577,7 @@ const HelpContact = React.createClass( {
 		const supportVariation = this.getSupportVariation();
 
 		const contactFormProps = Object.assign(
-			this.getContactFormCommonProps(),
+			this.getContactFormCommonProps( supportVariation ),
 			this.getContactFormPropsVariation( supportVariation ),
 		);
 
@@ -604,6 +614,7 @@ const HelpContact = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
+			currentUserLocale: getCurrentUserLocale( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),

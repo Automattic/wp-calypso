@@ -16,7 +16,7 @@ import HeaderCake from 'components/header-cake';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
-import SummaryChart from '../stats-summary-chart';
+import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
@@ -182,16 +182,7 @@ const StatsSummary = React.createClass( {
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 				summaryViews.push( chartTitle );
-
-				barChart = <SummaryChart
-					key="video-chart"
-					loading={ this.props.summaryList.isLoading() }
-					dataList={ this.props.summaryList }
-					activeKey="period"
-					dataKey="value"
-					labelKey="period"
-					labelClass="video"
-					tabLabel={ translate( 'Plays' ) } />;
+				barChart = <StatsVideoSummary key="video-chart" dataList={ this.props.summaryList } />;
 
 				summaryViews.push( barChart );
 
@@ -216,7 +207,7 @@ const StatsSummary = React.createClass( {
 		summaryViews.push( summaryView );
 
 		return (
-			<Main>
+			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>

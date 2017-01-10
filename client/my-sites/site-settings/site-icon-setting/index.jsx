@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial } from 'lodash';
+import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,10 +14,12 @@ import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
+import accept from 'lib/accept';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { setSiteIcon } from 'state/sites/actions';
+import { receiveMedia } from 'state/media/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -29,18 +31,22 @@ import InfoPopover from 'components/info-popover';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import { isItemBeingUploaded, url as getMediaUrl } from 'lib/media/utils';
+import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
+import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
+import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
 		isJetpack: PropTypes.bool,
+		siteSupportsImageEditor: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
-		resetAllImageEditorState: PropTypes.func
+		resetAllImageEditorState: PropTypes.func,
+		crop: PropTypes.object
 	};
 
 	state = {
@@ -67,34 +73,22 @@ class SiteIconSetting extends Component {
 		}
 	};
 
-	setSiteIcon = ( error, blob ) => {
-		if ( error || ! blob ) {
-			return;
-		}
+	saveSiteIconSetting( siteId, media ) {
+		this.props.receiveMedia( siteId, media );
+		this.props.saveSiteSettings( siteId, { site_icon: media.ID } );
+	}
 
+	uploadSiteIcon( blob, fileName ) {
 		const { siteId } = this.props;
-		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
-		if ( ! selectedItem ) {
-			return;
-		}
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'site-icon' );
 		MediaActions.add( siteId, {
 			ID: transientMediaId,
-			fileName: `cropped-${ selectedItem.file }`,
-			fileContents: blob
+			fileContents: blob,
+			fileName
 		} );
-
-		// Avoid calling to component instance within progress check closure
-		// below since component may have been unmounted in time since upload
-		const {
-			saveSiteSettings: dispatchSaveSiteSettings,
-			setSiteIcon: dispatchSetSiteIcon
-		} = this.props;
-
-		dispatchSetSiteIcon( siteId, getMediaUrl( MediaStore.get( siteId, transientMediaId ) ) );
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
@@ -106,14 +100,50 @@ class SiteIconSetting extends Component {
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			dispatchSetSiteIcon( siteId, getMediaUrl( media ) );
-			dispatchSaveSiteSettings( siteId, { site_icon: media.ID } );
+			this.saveSiteIconSetting( siteId, media );
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
+	}
+
+	setSiteIcon = ( error, blob ) => {
+		if ( error || ! blob ) {
+			return;
+		}
+
+		const { siteId } = this.props;
+		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
+		if ( ! selectedItem ) {
+			return;
+		}
+
+		const { crop } = this.props;
+		const isImageCropped = ! isEqual( crop, {
+			topRatio: 0,
+			leftRatio: 0,
+			widthRatio: 1,
+			heightRatio: 1
+		} );
+
+		if ( isImageCropped ) {
+			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
+		} else {
+			this.saveSiteIconSetting( siteId, selectedItem );
+		}
 
 		this.hideModal();
 		this.props.resetAllImageEditorState();
+	};
+
+	confirmRemoval = () => {
+		const { translate, siteId, removeSiteIcon } = this.props;
+		const message = translate( 'Are you sure you want to remove the site icon?' );
+
+		accept( message, ( accepted ) => {
+			if ( accepted ) {
+				removeSiteIcon( siteId );
+			}
+		} );
 	};
 
 	preloadModal() {
@@ -121,12 +151,12 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const { translate, siteId, isJetpack, customizerUrl, generalOptionsUrl } = this.props;
+		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
-		if ( isIconManagementEnabled ) {
+		if ( isIconManagementEnabled && siteSupportsImageEditor ) {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
@@ -145,6 +175,8 @@ class SiteIconSetting extends Component {
 			}
 		}
 
+		const { translate, siteId, isSaving, hasIcon } = this.props;
+
 		return (
 			<FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
@@ -159,10 +191,21 @@ class SiteIconSetting extends Component {
 				}, <SiteIcon size={ 96 } siteId={ siteId } /> ) }
 				<Button
 					{ ...buttonProps }
-					className="site-icon-setting__change-button"
+					className="site-icon-setting__button"
+					disabled={ isSaving }
 					compact>
 					{ translate( 'Change', { context: 'verb' } ) }
 				</Button>
+				{ isIconManagementEnabled && hasIcon && (
+					<Button
+						compact
+						scary
+						onClick={ this.confirmRemoval }
+						className="site-icon-setting__button"
+						disabled={ isSaving }>
+						{ translate( 'Remove' ) }
+					</Button>
+				) }
 				{ isIconManagementEnabled && hasToggledModal && (
 					<MediaLibrarySelectedData siteId={ siteId }>
 						<AsyncLoad
@@ -198,14 +241,19 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			hasIcon: !! getSiteIconUrl( state, siteId ),
+			isSaving: isSavingSiteSettings( state, siteId ),
+			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
-			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' )
+			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
+			crop: getImageEditorCrop( state )
 		};
 	},
 	{
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		resetAllImageEditorState,
 		saveSiteSettings,
-		setSiteIcon
+		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
+		receiveMedia
 	}
 )( localize( SiteIconSetting ) );

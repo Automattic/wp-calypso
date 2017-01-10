@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_REQUEST_FAILURE,
@@ -125,13 +126,13 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 		} );
 
 		it( 'should accumulate save requests statuses', () => {
 			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE,
@@ -139,14 +140,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { saving: true, status: 'pending' },
-				2916285: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false },
+				2916285: { saving: true, status: 'pending', error: false }
 			} );
 		} );
 
 		it( 'should set save request to success if request finishes successfully', () => {
 			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE_SUCCESS,
@@ -154,27 +155,28 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { saving: false, status: 'success' }
+				2916284: { saving: false, status: 'success', error: false }
 			} );
 		} );
 
 		it( 'should set save request to error if request finishes with failure', () => {
 			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 			const state = saveRequests( previousState, {
 				type: SITE_SETTINGS_SAVE_FAILURE,
-				siteId: 2916284
+				siteId: 2916284,
+				error: 'my error'
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { saving: false, status: 'error' }
+				2916284: { saving: false, status: 'error', error: 'my error' }
 			} );
 		} );
 
 		it( 'should not persist state', () => {
 			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 			const state = saveRequests( previousState, {
 				type: SERIALIZE
@@ -185,7 +187,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' }
+				2916284: { saving: true, status: 'pending', error: false }
 			} );
 			const state = saveRequests( previousState, {
 				type: DESERIALIZE
@@ -261,6 +263,54 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { blogdescription: 'ribs', blogname: 'chicken', lang_id: 1 }
+			} );
+		} );
+
+		it( 'should return same state on media delete for untracked site', () => {
+			const previousState = deepFreeze( {} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.equal( previousState );
+		} );
+
+		it( 'should return same state on media delete if set does not contain icon setting', () => {
+			const previousState = deepFreeze( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: 42
+				}
+			} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 36 ]
+			} );
+
+			expect( state ).to.equal( previousState );
+		} );
+
+		it( 'should unset icon setting on media delete if set contains icon', () => {
+			const previousState = deepFreeze( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: 42
+				}
+			} );
+			const state = items( previousState, {
+				type: MEDIA_DELETE,
+				siteId: 2916284,
+				mediaIds: [ 42 ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					blogname: 'Example',
+					site_icon: null
+				}
 			} );
 		} );
 

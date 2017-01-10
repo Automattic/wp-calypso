@@ -12,7 +12,7 @@ import SiteIcon from 'components/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = false } ) => {
+const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = false, showPlaceholder = false } ) => {
 	let fakeSite;
 	if ( siteIcon ) {
 		fakeSite = {
@@ -51,12 +51,12 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = f
 		{
 			'has-site-and-author-icon': hasBothIcons,
 			'has-site-icon': hasSiteIcon,
-			'has-gravatar': hasAvatar
+			'has-gravatar': hasAvatar || showPlaceholder
 		}
 	);
 
 	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ 96 } site={ fakeSite } />;
-	const feedIconElement = hasAvatar && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const feedIconElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
 	const iconElements = [ siteIconElement, feedIconElement ];
 
 	return (
@@ -71,7 +71,8 @@ ReaderAvatar.propTypes = {
 	siteIcon: React.PropTypes.string,
 	feedIcon: React.PropTypes.string,
 	siteUrl: React.PropTypes.string,
-	preferGravatar: React.PropTypes.bool
+	preferGravatar: React.PropTypes.bool,
+	showPlaceholder: React.PropTypes.bool
 };
 
 export default localize( ReaderAvatar );

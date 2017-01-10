@@ -122,7 +122,7 @@
 	margin: 0;
 
 	&.is-root {
-		margin-top: 0 !important; // the !important can go when the old reader/comments is retired
+		margin-top: 0;
 	}
 
 	&.is-children {

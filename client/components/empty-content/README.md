@@ -1,26 +1,26 @@
 Empty Content
 =============
 
-This module provides a consistent rendering component for empty content cases in Calypso's sections. Empty content should be used to display an alternate layout when the user has no data of a given resource. Not to be confused with subsets of data being contextually empty (searches, filters, etc.). The component accepts a set of predefined properties.
+This module provides a consistent rendering component for empty content cases in Calypso's sections. EmptyContent should be used to display an alternate layout when the user has no data of a given resource. Not to be confused with subsets of data being contextually empty (searches, filters, etc.). The component accepts a set of predefined properties.
 
 ## Usage
 
-```js
+```jsx
 
-// require the component
-var EmptyContentComponent = require( 'components/empty-content' );
+// import the component
+import EmptyContentComponent from 'components/empty-content';
 
 // Render the component
 ReactDom.render(
-	EmptyContentComponent({
+	EmptyContentComponent( {
 		title: "You don't have any content yet.",
 		line: 'Would you like to create some?'
-	}),
+	} ),
 	document.getElementById( 'primary' )
 );
 
 // Or as an inline component
-var EmptyContent = require( 'components/empty-content' );
+import EmptyContent from 'components/empty-content';
 
 // And use it inline inside the render method of another component
 render: function() {
@@ -53,13 +53,14 @@ The component also supports a secondary action. This should be used sparingly.
 
 ### Example: Sites
 
-```
+```es6
 ReactDom.render(
-	EmptyContentComponent({
+	EmptyContentComponent( {
 		title: "You don't have any WordPress sites yet.",
 		line: 'Would you like to start one?',
 		action: 'Create Site',
 		actionURL: config( 'signup_url' ) + '?ref=calypso-section'
-	}),
+	} ),
 	document.getElementById( 'primary' )
 );
+```

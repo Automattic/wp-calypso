@@ -11,7 +11,7 @@ This module contains functions for creating WordPress.com Store transactions usi
 
 ### User with a Stored Card
 
-```
+```es6
 var steps = submit({
 	cart: <CartValue>,
 	payment: {
@@ -23,7 +23,7 @@ var steps = submit({
 
 ### User with a New Card
 
-```
+```es6
 var steps = submit({
 	cart: <CartValue>,
 	payment: {
@@ -41,7 +41,7 @@ var steps = submit({
 
 ### User Paying Fully with Credits
 
-```
+```es6
 var steps = submit({
 	cart: <CartValue>,
 	payment: {

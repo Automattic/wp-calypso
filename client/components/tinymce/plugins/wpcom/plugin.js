@@ -15,6 +15,7 @@ var translate = require( 'i18n-calypso' ).translate;
  * Internal dependencies
  */
 var formatting = require( 'lib/formatting' );
+import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */
 function wpcomPlugin( editor ) {
@@ -289,10 +290,8 @@ function wpcomPlugin( editor ) {
 
 	// Remove spaces from empty paragraphs.
 	editor.on( 'BeforeSetContent', function( event ) {
-		var paragraph = tinymce.Env.webkit ? '<p><br /></p>' : '<p></p>';
-
 		if ( event.content ) {
-			event.content = event.content.replace( /<p>(?:&nbsp;|\u00a0|\uFEFF|\s)+<\/p>/gi, paragraph );
+			event.content = removeEmptySpacesInParagraphs( event.content );
 		}
 	} );
 

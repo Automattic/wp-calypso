@@ -3,8 +3,8 @@ Application Passwords Data
 
 This component is a wrapper module for interacting with the wpcom.js `/me` endpoint to retrieve, create, and delete  application passwords for the current user.
 
-```
-var AppPasswords = require( 'lib/application-passwords-data' );
+```es6
+import AppPasswords from 'lib/application-passwords-data';
 ```
 
 ### `ApplicationPasswords#get()`

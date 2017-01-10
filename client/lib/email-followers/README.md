@@ -26,7 +26,7 @@ Fetches followers in batches of 100 starting from the given page, which defaults
 
 ###Example Component Code
 
-```
+```es6
 /**
  * External dependencies
  */

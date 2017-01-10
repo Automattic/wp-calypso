@@ -66,6 +66,7 @@
 
 		&.emoji {
 			height: 1em;
+			margin-bottom: 0;
 		}
 	}
 
@@ -197,6 +198,29 @@
 			}
 		}
 	}
+
+	sup, sub {
+		vertical-align: baseline;
+		position: relative;
+		font-size: 0.83em;
+	}
+
+	sup {
+		top: -0.4em;
+	}
+
+	sub {
+		bottom: -0.2em;
+	}
+
+	table th,
+	table td {
+		padding: 10px;
+	}
+
+	img:first-child {
+		margin-top: 0;
+	}
 }
 
 // Discover-Specific Full Post View Styles
@@ -263,28 +287,6 @@
 			}
 		}
 	}
-
-	sup, sub {
-		position: relative;
-		font-size: 0.83em;
-	}
-
-	sup {
-		top: -0.5em;
-	}
-
-	sub {
-		bottom: -0.5em;
-	}
-
-	table th,
-	table td {
-		padding: 10px;
-	}
-
-	img:first-child {
-		margin-top: 0;
-	}
 }
 
 // Daily Post-Specific Full Post View Styles
@@ -349,5 +351,5 @@
 }
 
 .is-reader-page .reader-full-post__story-content {
-	padding-top: 0!important;
+	padding-top: 0 !important;
 }
