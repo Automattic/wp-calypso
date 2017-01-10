@@ -308,7 +308,7 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	trackUpgradeClick() {
+	trackUpgradeClick = () => {
 		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'settings_site_address' } );
 	}
 
