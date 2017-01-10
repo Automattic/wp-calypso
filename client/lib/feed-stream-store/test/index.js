@@ -1,15 +1,24 @@
 /**
  * External Dependencies
  */
-var expect = require( 'chai' ).expect,
-	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' ),
-	sinon = require( 'sinon' ),
-	set = require( 'lodash/set' );
+import { expect } from 'chai';
+import sinon from 'sinon';
+import set from 'lodash/set';
 
-var PostListStore, FeedPostStore, FeedSubscriptionStore;
+/**
+ * Internal Dependencies
+ */
+import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import useMockery from 'test/helpers/use-mockery';
+
+let PostListStore, FeedPostStore, FeedSubscriptionStore;
 
 describe( 'FeedPostList', function() {
 	useFilesystemMocks( __dirname );
+
+	useMockery( mockery => {
+		mockery.registerMock( 'reader/stats', { recordTrack: sinon.spy() } );
+	} );
 
 	before( function() {
 		PostListStore = require( '../feed-stream' );

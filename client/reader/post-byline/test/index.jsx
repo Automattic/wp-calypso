@@ -5,7 +5,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { assert, expect } from 'chai';
 import { spy } from 'sinon';
-import { each, omit } from 'lodash';
+import { each, omit, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ describe( 'PostByline', () => {
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'reader/stats', statsSpies );
+		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 	} );
 
 	before( () => {
