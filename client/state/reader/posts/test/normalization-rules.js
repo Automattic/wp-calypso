@@ -19,11 +19,11 @@ function verifyClassification( post, displayTypes ) {
 
 describe( 'normalization-rules', () => {
 	describe( 'classifyPost', () => {
-		it( 'empty post should get UNCLASSIFIED', () => {
+		it( 'should mark an empty post UNCLASSIFIED', () => {
 			verifyClassification( {}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
 
-		it( 'PHOTO_ONLY', () => {
+		it( 'should classify a PHOTO_ONLY post', () => {
 			verifyClassification( {
 				canonical_media: {
 					mediaType: 'image',
@@ -33,7 +33,7 @@ describe( 'normalization-rules', () => {
 			}, [ DISPLAY_TYPES.PHOTO_ONLY ] );
 		} );
 
-		it( 'no PHOTO_ONLY, content too long', () => {
+		it( 'should not classify a PHOTO_ONLY post if the content is too long', () => {
 			verifyClassification( {
 				canonical_media: {
 					mediaType: 'image',
@@ -43,7 +43,7 @@ describe( 'normalization-rules', () => {
 			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
 
-		it( 'CANONICAL_IN_CONTENT', () => {
+		it( 'should classify a post as CANONICAL_IN_CONTENT', () => {
 			verifyClassification( {
 				canonical_image: {
 					mediaType: 'image',
@@ -58,7 +58,7 @@ describe( 'normalization-rules', () => {
 			}, [ DISPLAY_TYPES.CANONICAL_IN_CONTENT ] );
 		} );
 
-		it( 'canonical image, but not CANONICAL_IN_CONTENT', () => {
+		it( 'should not classify a post as CANONICAL_IN_CONTENT if the canonical image is not in the content', () => {
 			verifyClassification( {
 				canonical_image: {
 					mediaType: 'image',
@@ -67,7 +67,7 @@ describe( 'normalization-rules', () => {
 				},
 				content_images: [
 					{
-						src: 'http://example2.com/foo/bar/ping.jpg?w=20'
+						src: 'http://example2.com/foo/bar/different.jpg?w=20'
 					}
 				]
 			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
