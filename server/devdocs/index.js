@@ -10,6 +10,7 @@ import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-json';
 
 /**
  * Internal dependencies
@@ -28,6 +29,9 @@ const root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
  */
 const SNIPPET_PAD_LENGTH = 40;
 const DEFAULT_SNIPPET_LENGTH = 100;
+
+// Alias `javascript` language to `es6`
+Prism.languages.es6 = Prism.languages.javascript;
 
 // Configure marked to use Prism for code-block highlighting.
 marked.setOptions( {
