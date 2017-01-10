@@ -536,7 +536,7 @@ export default connect(
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthly } ),
-					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
+					features: getPlanFeaturesObject( planConstantObj.getFeatures() ),
 					onUpgradeClick: onUpgradeClick
 						? () => {
 							const planSlug = getPlanSlug( state, planProductId );
