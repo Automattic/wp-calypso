@@ -14,6 +14,7 @@ export default class Quit extends Component {
 	static propTypes = {
 		children: PropTypes.node,
 		primary: PropTypes.bool,
+		subtle: PropTypes.bool,
 	};
 
 	static contextTypes = contextTypes;
@@ -29,9 +30,10 @@ export default class Quit extends Component {
 	}
 
 	render() {
-		const { children, primary } = this.props;
+		const { children, primary, subtle } = this.props;
+		const classes = subtle ? 'guided-tours__subtle-button' : '';
 		return (
-			<Button onClick={ this.onClick } primary={ primary }>
+			<Button className={ classes } onClick={ this.onClick } primary={ primary }>
 				{ children || translate( 'Quit' ) }
 			</Button>
 		);
