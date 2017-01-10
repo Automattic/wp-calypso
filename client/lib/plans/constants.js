@@ -9,7 +9,7 @@ import { compact, includes } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
+
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_PREMIUM = 'value_bundle';
@@ -140,11 +140,11 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => [ // pay attention to ordering, shared features should align on /plan page
+		getFeatures: ( abtest ) => [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy' ? FEATURE_SELECT_PREMIUM_THEMES : FEATURE_FREE_THEMES,
+			abtest && abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy' ? FEATURE_SELECT_PREMIUM_THEMES : FEATURE_FREE_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -174,11 +174,11 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
+		getFeatures: ( abtest ) => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy' ? FEATURE_ALL_PREMIUM_THEMES : FEATURE_UNLIMITED_PREMIUM_THEMES,
+			abtest && abtest( 'premiumSquaredPlansWording' ) === 'withMarketingCopy' ? FEATURE_ALL_PREMIUM_THEMES : FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
