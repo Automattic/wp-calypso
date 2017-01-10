@@ -1,15 +1,9 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-var SelectDropdownSeparator = React.createClass( {
+const SelectDropdownSeparator = () =>
+	<li className="select-dropdown__separator" />;
 
-	render: function() {
-		return (
-			<li className="select-dropdown__separator" />
-		);
-	}
-} );
-
-module.exports = SelectDropdownSeparator;
+export default SelectDropdownSeparator;
