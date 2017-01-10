@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -46,63 +46,58 @@ import {
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-class SecurityCheckup extends Component {
-	render() {
-		return (
-			<Main className="security-checkup">
-				<QueryAccountRecoverySettings />
+const SecurityCheckup = ( props ) => (
+	<Main className="security-checkup">
+		<QueryAccountRecoverySettings />
 
-				<MeSidebarNavigation />
+		<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+		<SecuritySectionNav path={ props.path } />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<CompactCard>
-					<p className="security-checkup__text">
-						{ this.props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
-								'If you ever have problems accessing your account, WordPress.com will use what ' +
-								'you enter here to verify your identity.' ) }
-					</p>
-				</CompactCard>
+		<CompactCard>
+			<p className="security-checkup__text">
+				{ props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
+						'If you ever have problems accessing your account, WordPress.com will use what ' +
+						'you enter here to verify your identity.' ) }
+			</p>
+		</CompactCard>
 
-				<CompactCard>
-					<RecoveryEmail
-						primaryEmail={ this.props.primaryEmail }
-						email={ this.props.accountRecoveryEmail }
-						updateEmail={ this.props.updateAccountRecoveryEmail }
-						deleteEmail={ this.props.deleteAccountRecoveryEmail }
-						isLoading={ this.props.accountRecoveryEmailActionInProgress }
-					/>
-					{ this.props.shouldPromptEmailValidationNotice &&
-						<RecoveryEmailValidationNotice
-							onResend={ this.props.resendAccountRecoveryEmailValidation }
-							hasSent={ this.props.hasSentEmailValidation }
-						/>
-					}
-				</CompactCard>
+		<CompactCard>
+			<RecoveryEmail
+				primaryEmail={ props.primaryEmail }
+				email={ props.accountRecoveryEmail }
+				updateEmail={ props.updateAccountRecoveryEmail }
+				deleteEmail={ props.deleteAccountRecoveryEmail }
+				isLoading={ props.accountRecoveryEmailActionInProgress }
+			/>
+			{ props.shouldPromptEmailValidationNotice &&
+				<RecoveryEmailValidationNotice
+					onResend={ props.resendAccountRecoveryEmailValidation }
+					hasSent={ props.hasSentEmailValidation }
+				/>
+			}
+		</CompactCard>
 
-				<CompactCard>
-					<RecoveryPhone
-						phone={ this.props.accountRecoveryPhone }
-						updatePhone={ this.props.updateAccountRecoveryPhone }
-						deletePhone={ this.props.deleteAccountRecoveryPhone }
-						isLoading={ this.props.accountRecoveryPhoneActionInProgress }
-					/>
-					{ this.props.shouldPromptPhoneValidationNotice &&
-						<RecoveryPhoneValidationNotice
-							onResend={ this.props.resendAccountRecoveryPhoneValidation }
-							onValidate={ this.props.validateAccountRecoveryPhone }
-							hasSent={ this.props.hasSentPhoneValidation }
-							isValidating={ this.props.validatingAccountRecoveryPhone }
-						/>
-					}
-				</CompactCard>
-
-			</Main>
-		);
-	}
-}
+		<CompactCard>
+			<RecoveryPhone
+				phone={ props.accountRecoveryPhone }
+				updatePhone={ props.updateAccountRecoveryPhone }
+				deletePhone={ props.deleteAccountRecoveryPhone }
+				isLoading={ props.accountRecoveryPhoneActionInProgress }
+			/>
+			{ props.shouldPromptPhoneValidationNotice &&
+				<RecoveryPhoneValidationNotice
+					onResend={ props.resendAccountRecoveryPhoneValidation }
+					onValidate={ props.validateAccountRecoveryPhone }
+					hasSent={ props.hasSentPhoneValidation }
+					isValidating={ props.validatingAccountRecoveryPhone }
+				/>
+			}
+		</CompactCard>
+	</Main>
+);
 
 export default connect(
 	( state ) => ( {
