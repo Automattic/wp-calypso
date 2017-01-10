@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import ReactDom from 'react-dom';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
 import findIndex from 'lodash/findIndex';
@@ -19,14 +19,8 @@ import DropdownLabel from 'components/select-dropdown/label';
 import Count from 'components/count';
 
 /**
- * Module variables
- */
-const { Component, PropTypes } = React;
-
-/**
  * SelectDropdown
  */
-
 class SelectDropdown extends Component {
 	static propTypes = {
 		selectedText: PropTypes.string,
@@ -53,6 +47,8 @@ class SelectDropdown extends Component {
 		onToggle: () => {},
 		style: {}
 	}
+
+	static instances = 0
 
 	constructor( props ) {
 		super( props );
@@ -128,11 +124,11 @@ class SelectDropdown extends Component {
 	getSelectedText() {
 		const { options, selectedText } = this.props;
 		const { selected } = this.state;
-		
+
 		if ( selectedText ) {
 			return selectedText;
 		}
-		
+
 		// return currently selected text
 		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
 		return result( find( options, { value: selectedValue } ), 'label' );
@@ -152,6 +148,7 @@ class SelectDropdown extends Component {
 				const newChild = React.cloneElement( child, {
 					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
+					isDropdownOpen: this.state.isOpen,
 					onClick: function( event ) {
 						self.refs.dropdownContainer.focus();
 						if ( typeof child.props.onClick === 'function' ) {
@@ -191,6 +188,7 @@ class SelectDropdown extends Component {
 				<DropdownItem
 					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
 					ref={ 'item-' + refIndex }
+					isDropdownOpen={ this.state.isOpen }
 					selected={ this.state.selected === item.value }
 					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
@@ -396,8 +394,5 @@ class SelectDropdown extends Component {
 		}
 	}
 }
-
-// statics
-SelectDropdown.instances = 0;
 
 export default SelectDropdown;

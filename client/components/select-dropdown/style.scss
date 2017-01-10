@@ -9,7 +9,6 @@ $compact-header-height: 35;
 
 .select-dropdown {
 	height: #{ $header-height }px;
-	overflow: hidden;
 
 	&.is-open {
 		overflow: visible;
@@ -31,17 +30,22 @@ $compact-header-height: 35;
 	.accessible-focus &:focus,
 	.accessible-focus .select-dropdown.is-open & {
 		z-index: z-index( 'root', '.accessible-focus .select-dropdown.is-open .select-dropdown__container' );
-		box-shadow: 0 0 0 2px $blue-light;
 		.select-dropdown__header {
 			border-color: $blue-wordpress;
 		}
 	}
 
+	.accessible-focus & {
+		border-radius: 4px;
+	}
+
 	.accessible-focus &:focus {
 		border-color: #00aadc;
-		box-shadow: 0 0 0 2px #78dcfa;
 		outline: 0;
-		border-radius: 4px;
+	}
+
+	.accessible-focus .select-dropdown.is-open & {
+		box-shadow: 0 0 0 2px $blue-light;
 	}
 }
 
@@ -106,6 +110,10 @@ $compact-header-height: 35;
 		}
 	}
 
+	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
+		box-shadow: 0 0 0 2px $blue-light;
+	}
+
 	.count {
 		position: absolute;
 		right: 40px;
@@ -130,6 +138,9 @@ $compact-header-height: 35;
 	border-top: 0;
 	// $blue-wordpress for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
+	height: 0;
+	overflow: hidden;
+	opacity: 0;
 
 	.accessible-focus & {
 		border: solid 1px $blue-wordpress;
@@ -138,6 +149,8 @@ $compact-header-height: 35;
 
 	.select-dropdown.is-open & {
 		margin-top: -1px;
+		height: auto;
+		opacity: 1;
 	}
 }
 
