@@ -22,7 +22,10 @@ import FollowButton from 'reader/follow-button';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import { getSourceFollowUrl as getDiscoverFollowUrl, isDiscoverPost as isDiscover } from 'reader/discover/helper';
+import { getDiscoverBlogName,
+	getSourceFollowUrl as getDiscoverFollowUrl,
+	isDiscoverPost as isDiscover
+} from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
 export default class ReaderPostCard extends React.Component {
@@ -133,24 +136,24 @@ export default class ReaderPostCard extends React.Component {
 			: null;
 
 		const readerPostActions = <ReaderPostActions
-									post={ originalPost ? originalPost : post }
-									visitUrl = { post.URL }
-									showVisit={ true }
-									showMenu={ true }
-									showMenuFollow={ isDiscoverPost }
-									onCommentClick={ onCommentClick }
-									showEdit={ false }
-									className="ignore-click"
-									iconSize={ 18 } />;
+			post={ originalPost ? originalPost : post }
+			visitUrl = { post.URL }
+			showVisit={ true }
+			showMenu={ true }
+			showMenuFollow={ isDiscoverPost }
+			onCommentClick={ onCommentClick }
+			showEdit={ false }
+			className="ignore-click"
+			iconSize={ 18 } />;
 
 		let readerPostCard;
 		if ( isPhotoPost ) {
 			const { height, width } = post.canonical_media;
 			readerPostCard = <PhotoPost imageUri={ post.canonical_media.src }
-								href={ post.URL }
-								imageSize={ { height, width } }
-								onExpanded={ this.handlePhotoCardExpanded }
-								title={ title } >
+				href={ post.URL }
+				imageSize={ { height, width } }
+				onExpanded={ this.handlePhotoCardExpanded }
+				title={ title } >
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>;
