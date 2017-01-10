@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -37,7 +39,8 @@ class StatsConnectedModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		showSummaryLink: PropTypes.bool
+		showSummaryLink: PropTypes.bool,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -80,6 +83,7 @@ class StatsConnectedModule extends Component {
 			statType,
 			query,
 			period,
+			translate,
 		} = this.props;
 
 		const noData = (
@@ -120,6 +124,14 @@ class StatsConnectedModule extends Component {
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
 					{ this.props.showSummaryLink && <StatsModuleExpand href={ summaryLink } /> }
+					{ summary && 'countryviews' === path &&
+						<UpgradeNudge
+							title={ translate( 'Add Google Analytics' ) }
+							message={ translate( 'Upgrade to a Business Plan for Google Analytics integration.' ) }
+							event="googleAnalytics-stats-countries"
+							feature="google-analytics"
+						/>
+					}
 				</Card>
 			</div>
 
@@ -138,4 +150,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug
 	};
-} )( StatsConnectedModule );
+} )( localize( StatsConnectedModule ) );
