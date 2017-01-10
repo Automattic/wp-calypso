@@ -139,8 +139,8 @@
     "wpcom-xhr-request": "1.0.0"
   },
   "engines": {
-    "node": "6.9.1",
-    "npm": "3.10.8"
+    "node": "6.9.4",
+    "npm": "3.10.10"
   },
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",
