@@ -190,7 +190,7 @@ const SiteSettingsFormWriting = React.createClass( {
 					}
 				</Card>
 
-				{ config.isEnabled( 'manage/custom-post-types' ) && this.props.jetpackVersionSupportsCustomTypes && (
+				{ config.isEnabled( 'manage/custom-post-types' ) && (
 					<div>
 						{ this.renderSectionHeader( this.translate( 'Custom Content Types' ) ) }
 						<Card className="site-settings">
