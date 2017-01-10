@@ -70,7 +70,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 
 	onCardClick = ( post ) => {
 		recordTrackForPost( 'calypso_reader_searchcard_clicked', post );
-		this.props.handleClick( post, {} );
+		this.props.handleClick( { post } );
 	}
 
 	onCommentClick = () => {

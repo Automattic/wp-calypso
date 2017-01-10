@@ -72,7 +72,7 @@ export default class PostLifecycle extends React.PureComponent {
 						isSelected={ this.props.isSelected }
 						xMetadata={ xMetadata }
 						xPostedTo={ this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL ) }
-						handleClick={ this.props.handleXPostClick } />;
+						handleClick={ this.props.handleClick } />;
 				}
 
 				return <PostClass

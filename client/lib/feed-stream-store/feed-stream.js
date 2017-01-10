@@ -8,7 +8,8 @@ import {
 	forEach,
 	get,
 	map,
-	noop
+	noop,
+	defer,
 } from 'lodash';
 import moment from 'moment';
 import url from 'url';
@@ -25,6 +26,8 @@ import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
+import { setLastStoreId } from 'reader/controller-helper';
+import * as stats from 'reader/stats';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -114,7 +117,7 @@ export default class FeedStream {
 				this.setIsFetchingNextPage( true );
 				break;
 			case ActionTypes.SELECT_ITEM:
-				this.selectItem( action.selectedIndex );
+				this.selectItem( action.selectedIndex, action.id );
 				break;
 			case ActionTypes.SELECT_NEXT_ITEM:
 				this.selectNextItem( action.selectedIndex );
@@ -188,6 +191,19 @@ export default class FeedStream {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
 		}
+
+		const PREFETCH_THRESHOLD = 10;
+		// If we are getting close to the end of the loaded stream, or are already at the end,
+		// start fetching new posts
+		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
+			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
+			defer( fetchNextPage );
+			this.onKeyboardFetchPerformed();
+		}
+	}
+
+	onKeyboardFetchPerformed() {
+		stats.recordTrack( 'calypso_reader_fullpost_keyboard_fetch' );
 	}
 
 	selectPrevItem() {
@@ -201,11 +217,12 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( selectedIndex ) {
+	selectItem( selectedIndex, id ) {
 		if ( selectedIndex >= 0 &&
 			selectedIndex < this.postKeys.length &&
 			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
 			this.selectedIndex = selectedIndex;
+			setLastStoreId( id );
 			this.emitChange();
 		}
 	}
