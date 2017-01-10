@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { isMobile } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
@@ -224,6 +225,9 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	render() {
+		if ( ! config.isEnabled( 'post-editor/html-toolbar' ) ) {
+			return null;
+		}
 		const { translate } = this.props;
 		const buttons = {
 			bold: {
