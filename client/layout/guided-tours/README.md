@@ -38,7 +38,7 @@ Tutorial: [Building a Simple Tour](docs/TUTORIAL.md)
 
 ## API Overview
 
-_(TODO: document all the elements in `config-elements.js`)_
+See [docs/API.md](docs/API.md)
 
 ## List of Tours
 
