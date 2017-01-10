@@ -42,7 +42,7 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details {
+.checkout-thank-you__domain-mapping-details, .checkout-thank-you__failed-purchases-details {
 	.purchase-detail__icon {
 		top: 30%;
 	}
@@ -52,7 +52,7 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details-nameservers {
+.checkout-thank-you__domain-mapping-details-nameservers, .checkout-thank-you__failed-purchases-details-list {
 	border-left: solid 5px lighten( $gray, 25% );
 	list-style: none;
 	margin-left: 0;

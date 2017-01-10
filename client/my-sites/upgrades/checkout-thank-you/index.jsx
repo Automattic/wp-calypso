@@ -50,7 +50,7 @@ import Main from 'components/main';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
-import FailedPurchase from './failed-purchase';
+import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
@@ -61,6 +61,10 @@ function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
 }
 
+function getFailedPurchases( props ) {
+	return ( props.receipt.data && props.receipt.data.failedPurchases ) || [];
+}
+
 function findPurchaseAndDomain( purchases, predicate ) {
 	const purchase = find( purchases, predicate );
 
@@ -69,6 +73,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 
 const CheckoutThankYou = React.createClass( {
 	propTypes: {
+		failedPurchases: React.PropTypes.array,
 		productsList: React.PropTypes.object.isRequired,
 		receiptId: React.PropTypes.number,
 		selectedFeature: React.PropTypes.string,
@@ -179,12 +184,10 @@ const CheckoutThankYou = React.createClass( {
 
 	render() {
 		let purchases = null,
-			failedPurchases = [],
 			wasJetpackPlanPurchased = false,
 			wasOnlyDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
-			failedPurchases = this.props.receipt.data.failedPurchases;
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasOnlyDotcomPlanPurchased = purchases.every( isDotComPlan );
 		}
@@ -212,12 +215,6 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		let content = this.productRelatedMessages();
-
-		if ( failedPurchases.length > 0 ) {
-			content = <FailedPurchase failedPurchases={ failedPurchases } />;
-		}
-
 		// standard thanks page
 		return (
 			<Main className="checkout-thank-you">
@@ -227,7 +224,7 @@ const CheckoutThankYou = React.createClass( {
 					backText={ this.translate( 'Back to my site' ) } />
 
 				<Card className="checkout-thank-you__content">
-					{ content }
+					{ this.productRelatedMessages() }
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
@@ -246,9 +243,12 @@ const CheckoutThankYou = React.createClass( {
 	 */
 	getComponentAndPrimaryPurchaseAndDomain() {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			const purchases = getPurchases( this.props );
+			const purchases = getPurchases( this.props ),
+				failedPurchases = getFailedPurchases( this.props );
 
-			if ( purchases.some( isJetpackPlan ) ) {
+			if ( failedPurchases.length > 0 ) {
+				return [ FailedPurchaseDetails ];
+			} else if ( purchases.some( isJetpackPlan ) ) {
 				return [ JetpackPlanDetails, find( purchases, isJetpackPlan ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
@@ -276,7 +276,10 @@ const CheckoutThankYou = React.createClass( {
 
 	productRelatedMessages() {
 		const { selectedSite, sitePlans } = this.props,
-			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
+			purchases = getPurchases( this.props ),
+			failedPurchases = getFailedPurchases( this.props ),
+			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
+			registrarSupportUrl = ( this.isGenericReceipt() || failedPurchases.length > 0 ) ? null : primaryPurchase.registrarSupportUrl;
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -297,23 +300,20 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		let purchases;
-
-		if ( ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props );
-		}
-
 		return (
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite } />
+					selectedSite={ selectedSite }
+					failedPurchases={ failedPurchases }
+				/>
 
 				<CheckoutThankYouFeaturesHeader
 					isDataLoaded={ this.isDataLoaded() }
 					isGenericReceipt={ this.isGenericReceipt() }
 					purchases={ purchases }
+					failedPurchases={ failedPurchases }
 				/>
 
 				{ ComponentClass && (
@@ -321,7 +321,8 @@ const CheckoutThankYou = React.createClass( {
 						<ComponentClass
 							domain={ domain }
 							purchases={ purchases }
-							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
+							failedPurchases={ failedPurchases }
+							registrarSupportUrl={ registrarSupportUrl }
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
 							sitePlans={ sitePlans } />
