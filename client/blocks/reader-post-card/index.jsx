@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate, get } from 'lodash';
+import { noop, truncate } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -127,7 +127,7 @@ export default class ReaderPostCard extends React.Component {
 
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 
-		const discoverBlogName = get( post, 'discover_metadata.attribution.blog_name' );
+		const discoverBlogName = getDiscoverBlogName( post );
 		const discoverFollowButton = !! ( discoverBlogName )
 			? <DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />
 			: null;

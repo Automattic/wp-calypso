@@ -42,6 +42,9 @@ export function getSiteUrl( post ) {
 	return blogId ? readerRouteGetSiteUrl( blogId ) : get( post, 'discover_metadata.permalink' );
 }
 
+export function getDiscoverBlogName( post ) {
+	return get( post, 'discover_metadata.attribution.blog_name' );
+}
 export function hasSource( post ) {
 	return isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 }
