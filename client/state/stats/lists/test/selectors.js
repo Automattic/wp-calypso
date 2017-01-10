@@ -13,7 +13,8 @@ import {
 	getSiteStatsPostsCountByDay,
 	getSiteStatsTotalPostsForStreakQuery,
 	getSiteStatsNormalizedData,
-	isRequestingSiteStatsForQuery
+	isRequestingSiteStatsForQuery,
+	getSiteStatsCSVData,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -453,6 +454,61 @@ describe( 'selectors', () => {
 				viewsBestDay: '2010-09-29',
 				viewsBestDayTotal: 100
 			} );
+		} );
+	} );
+
+	describe( 'getSiteStatsCSVData()', () => {
+		it( 'should return an empty array if no matching query results exist', () => {
+			const stats = getSiteStatsCSVData( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				}
+			}, 2916284, 'stats', {} );
+
+			expect( stats ).to.eql( [] );
+		} );
+
+		it( 'should return normalized data, if normalizer exists', () => {
+			const stats = getSiteStatsCSVData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsCountryViews: {
+									'[["date","2015-12-25"],["period","day"]]': {
+										date: '2015-12-25',
+										days: {
+											'2015-12-25': {
+												views: [ {
+													country_code: 'US',
+													views: 1
+												} ],
+												other_views: 0,
+												total_views: 1
+											}
+										},
+										'country-info': {
+											US: {
+												flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+												flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+												country_full: 'United States',
+												map_region: '021'
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'statsCountryViews', {
+				date: '2015-12-25',
+				period: 'day',
+			} );
+
+			expect( stats ).to.eql( [ [ '"United States"', 1 ] ] );
 		} );
 	} );
 } );
