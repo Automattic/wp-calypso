@@ -333,7 +333,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="city">{ this.translate( 'City' ) }</FormLabel>
+					<FormLabel htmlFor="city">{ this.translate( 'Country' ) }</FormLabel>
 					<FormTextInput
 						name="city"
 						id="city"
