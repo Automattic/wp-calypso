@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { reduce } from 'lodash';
+import { map, reduce } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -197,11 +197,6 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { openTags: [] } );
 	}
 
-	tagLabel( tag, label ) {
-		const { openTags } = this.state;
-		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
-	}
-
 	openImageDialog = () => {
 		this.setState( { showImageDialog: true } );
 	}
@@ -222,102 +217,80 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showLinkDialog: false } );
 	}
 
+	tagLabel( tag, label ) {
+		const { openTags } = this.state;
+		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
+	}
+
 	render() {
 		const { translate } = this.props;
+		const buttons = {
+			bold: {
+				label: this.tagLabel( 'strong', 'b' ),
+				onClick: this.onClickBold,
+			},
+			italic: {
+				label: this.tagLabel( 'em', 'i' ),
+				onClick: this.onClickItalic,
+			},
+			link: {
+				label: 'link',
+				onClick: this.openLinkDialog,
+			},
+			quote: {
+				label: this.tagLabel( 'blockquote', 'b-quote' ),
+				onClick: this.onClickQuote,
+			},
+			del: {
+				label: this.tagLabel( 'del', 'del' ),
+				onClick: this.onClickDelete,
+			},
+			ins: {
+				label: this.tagLabel( 'ins', 'ins' ),
+				onClick: this.onClickInsert,
+			},
+			image: {
+				label: 'img',
+				onClick: this.openImageDialog,
+			},
+			unorderedList: {
+				label: this.tagLabel( 'ul', 'ul' ),
+				onClick: this.onClickUnorderedList,
+			},
+			orderedList: {
+				label: this.tagLabel( 'ol', 'ol' ),
+				onClick: this.onClickOrderedList,
+			},
+			listItem: {
+				label: this.tagLabel( 'li', 'li' ),
+				onClick: this.onClickListItem,
+			},
+			code: {
+				label: this.tagLabel( 'code', 'code' ),
+				onClick: this.onClickCode,
+			},
+			more: {
+				label: 'more',
+				onClick: this.onClickMore,
+			},
+			closeTags: {
+				label: translate( 'Close Tags' ),
+				onClick: this.onClickCloseTags,
+			},
+		};
+
 		return (
 			<div className="editor-html-toolbar">
-				<Button
-					className="editor-html-toolbar__button-bold"
-					compact
-					onClick={ this.onClickBold }
-				>
-					{ this.tagLabel( 'strong', 'b' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-italic"
-					compact
-					onClick={ this.onClickItalic }
-				>
-					{ this.tagLabel( 'em', 'i' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-link"
-					compact
-					onClick={ this.openLinkDialog }
-				>
-					link
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-quote"
-					compact
-					onClick={ this.onClickQuote }
-				>
-					{ this.tagLabel( 'blockquote', 'b-quote' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-delete"
-					compact
-					onClick={ this.onClickDelete }
-				>
-					{ this.tagLabel( 'del', 'del' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-insert"
-					compact
-					onClick={ this.onClickInsert }
-				>
-					{ this.tagLabel( 'ins', 'ins' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-image"
-					compact
-					onClick={ this.openImageDialog }
-				>
-					img
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-unordered-list"
-					compact
-					onClick={ this.onClickUnorderedList }
-				>
-					{ this.tagLabel( 'ul', 'ul' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-ordered-list"
-					compact
-					onClick={ this.onClickOrderedList }
-				>
-					{ this.tagLabel( 'ol', 'ol' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-list-item"
-					compact
-					onClick={ this.onClickListItem }
-				>
-					{ this.tagLabel( 'li', 'li' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-code"
-					compact
-					onClick={ this.onClickCode }
-				>
-					{ this.tagLabel( 'code', 'code' ) }
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-more"
-					compact
-					onClick={ this.onClickMore }
-				>
-					more
-				</Button>
-				<Button
-					className="editor-html-toolbar__button-close-tags"
-					compact
-					onClick={ this.onClickCloseTags }
-				>
-					{ translate( 'Close Tags' ) }
-				</Button>
-
+				{ map( buttons, ( { label, onClick }, tag ) =>
+					<Button
+						className={ `editor-html-toolbar__button-${ tag }` }
+						compact
+						key={ tag }
+						onClick={ onClick }
+					>
+						{ label }
+					</Button>
+				) }
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
