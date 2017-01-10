@@ -482,7 +482,7 @@ class SiteSettingsFormGeneral extends Component {
 					</li>
 					{ !! fields.jetpack_relatedposts_enabled && (
 						<li>
-							<ul id="settings-reading-relatedposts-customize">
+							<ul id="settings-reading-relatedposts-customize" className="site-settings__child-settings">
 								<li>
 									<FormToggle
 										className="is-compact"
