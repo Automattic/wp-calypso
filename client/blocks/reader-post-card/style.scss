@@ -293,7 +293,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	overflow: hidden;
 	position: relative;
 	height: 20px;
-
+	width: 100%;
+	
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
