@@ -186,8 +186,5 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 		return [];
 	}
 
-	const csvData = map( data, ( item ) => {
-		return buildExportArray( item );
-	} );
-	return flatten( csvData );
+	return flatten( map( data, buildExportArray ) );
 }
