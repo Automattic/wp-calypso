@@ -127,7 +127,21 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	handleClickLink = ( attributes, text ) => {
-		this.insertHtmlTag( 'a', attributes, { text } );
+		if ( text ) {
+			this.insertHtmlTag( 'a', attributes, { text } );
+		} else {
+			const { content: {
+				selectionEnd,
+				value,
+			} } = this.props;
+			this.updateContent(
+				value.substring( 0, selectionEnd ) +
+				this.openHtmlTag( 'a', attributes ) +
+				this.closeHtmlTag( 'a' ) +
+				value.substring( selectionEnd, value.length )
+			);
+			this.setCursorPosition( this.props.content.selectionEnd, -4 );
+		}
 	};
 
 	handleClickQuote = () => {
