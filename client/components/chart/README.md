@@ -5,10 +5,10 @@ This module renders a dataset as an HTML-based chart representing the data.
 
 ## Usage
 
-```js
+```jsx
 
-// require the component
-var ElementChart = require( 'my-sites/chart' );
+// import the component
+import ElementChart from 'my-sites/chart';
 
 // And use it inline inside the render method of another component
 render: function() {

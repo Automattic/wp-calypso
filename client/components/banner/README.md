@@ -27,7 +27,7 @@ If `dismissPreferenceName` is provided, `href` is only applied if `callToAction`
 
 ## Usage:
 
-```js
+```jsx
 import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 import Banner from 'components/banner';
 
@@ -37,7 +37,7 @@ render() {
 			callToAction="Upgrade now!"
 			description="Obtain more features."
 			dismissPreferenceName="example-banner"
-			dismissTemporary={ true }
+			dismissTemporary
 			event="track_event"
 			feature={ FEATURE_ADVANCED_SEO }
 			href="https://wordpress.com/"
