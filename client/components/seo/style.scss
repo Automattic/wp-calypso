@@ -218,7 +218,6 @@
 	float: left;
 	width: 125px;
 	height: 125px;
-	border-right: 1px solid #E1E8ED;
 }
 
 .twitter-card-preview__large_image_summary
@@ -242,6 +241,8 @@
 .twitter-card-preview__summary
 .twitter-card-preview__body {
 	margin-left: 125px;
+	border-left: 1px solid #E1E8ED;
+	height: 100%;
 }
 
 .twitter-card-preview__large_image_summary
