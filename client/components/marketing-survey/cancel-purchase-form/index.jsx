@@ -43,7 +43,6 @@ const CancelPurchaseForm = React.createClass( {
 		if ( this.props.isJetpack ) {
 			questionOneOrder = shuffle( [
 				'couldNotActivate',
-				'wpTooHard',
 				'didNotInclude',
 				'onlyNeedFree'
 			] );
@@ -51,6 +50,7 @@ const CancelPurchaseForm = React.createClass( {
 			questionTwoOrder = shuffle( [
 				'stayingHere',
 				'otherPlugin',
+				'leavingWP',
 				'noNeed'
 			] );
 		}
@@ -245,27 +245,6 @@ const CancelPurchaseForm = React.createClass( {
 			</FormLabel>
 		);
 
-		const wpTooHardInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="wpTooHardInput"
-				id="wpTooHardInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ this.translate( 'Where did you run into problems?' ) } />
-		);
-		reasons.wpTooHard = (
-			<FormLabel key="wpTooHard">
-				<FormRadio
-					name="wpTooHard"
-					value="wpTooHard"
-					checked={ 'wpTooHard' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange } />
-				<span>{ this.translate( 'WordPress was too hard to use.' ) }</span>
-				{ 'wpTooHard' === this.state.questionOneRadio && wpTooHardInput }
-			</FormLabel>
-		);
-
 		const { questionOneOrder } = this.state,
 			orderedReasons = questionOneOrder.map( question => reasons[ question ] );
 
@@ -393,6 +372,27 @@ const CancelPurchaseForm = React.createClass( {
 					onChange={ this.onRadioTwoChange } />
 				<span>{ this.translate( 'I found a better plugin or service.' ) }</span>
 				{ 'otherPlugin' === this.state.questionTwoRadio && otherPluginInput }
+			</FormLabel>
+		);
+
+		const leavingWPInput = (
+			<FormTextInput
+				className="cancel-purchase-form__reason-input"
+				name="leavingWPInput"
+				id="leavingWPInput"
+				value={ this.state.questionTwoText }
+				onChange={ this.onTextTwoChange }
+				placeholder={ this.translate( 'Any particular reason(s)?' ) } />
+		);
+		reasons.leavingWP = (
+			<FormLabel key="leavingWP">
+				<FormRadio
+					name="leavingWP"
+					value="leavingWP"
+					checked={ 'leavingWP' === this.state.questionTwoRadio }
+					onChange={ this.onRadioTwoChange } />
+				<span>{ this.translate( 'I\'m moving my site off of WordPress.' ) }</span>
+				{ 'leavingWP' === this.state.questionTwoRadio && leavingWPInput }
 			</FormLabel>
 		);
 
