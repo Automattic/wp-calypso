@@ -1,16 +1,11 @@
 /**
  * External dependencies
  */
-const connect = require( 'react-redux' ).connect,
-	forEach = require( 'lodash/forEach' ),
-	find = require( 'lodash/find' ),
-	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	isEqual = require( 'lodash/isEqual' ),
-	page = require( 'page' ),
-	React = require( 'react' ),
-	reduce = require( 'lodash/reduce' ),
-	startsWith = require( 'lodash/startsWith' );
+import { connect } from 'react-redux';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import i18n from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -167,18 +162,15 @@ const Checkout = React.createClass( {
 		return true;
 	},
 
-	getPurchasesFromReceipt: function() {
-		const purchases = this.props.transaction.step.data.purchases;
-
-		let flatPurchases = [];
-
-		// purchases are of the format { [siteId]: [ { product_id: ... } ] },
-		// so we need to flatten them to get a list of purchases
-		forEach( purchases, sitePurchases => {
-			flatPurchases = flatPurchases.concat( sitePurchases );
-		} );
-
-		return flatPurchases;
+	/**
+	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
+	 * so we need to flatten them to get a list of purchases
+	 *
+	 * @param {Object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+	 * @returns {Array} of product objects [ { productId: ... }, ... ]
+	 */
+	flattenPurchases: function( purchases ) {
+		return flatten( Object.values( purchases ) );
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
@@ -247,7 +239,8 @@ const Checkout = React.createClass( {
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId: receiptId,
-				purchases: this.getPurchasesFromReceipt()
+				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
 			} );
 		}
 

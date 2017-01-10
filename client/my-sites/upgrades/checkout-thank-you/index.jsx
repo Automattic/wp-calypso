@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import page from 'page';
 import React from 'react';
 import moment from 'moment';
@@ -50,6 +50,7 @@ import Main from 'components/main';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
+import FailedPurchase from './failed-purchase';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
@@ -57,7 +58,7 @@ import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
 function getPurchases( props ) {
-	return props.receipt.data.purchases;
+	return ( props.receipt.data && props.receipt.data.purchases ) || [];
 }
 
 function findPurchaseAndDomain( purchases, predicate ) {
@@ -144,8 +145,10 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	redirectIfThemePurchased() {
-		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
-			const themeId = getPurchases( this.props )[ 0 ].meta;
+		const purchases = getPurchases( this.props );
+
+		if ( this.props.receipt.hasLoadedFromServer && purchases.length > 0 && purchases.every( isTheme ) ) {
+			const themeId = purchases[ 0 ].meta;
 			this.props.activatedTheme( 'premium/' + themeId, this.props.selectedSite.ID );
 
 			page.redirect( '/design/' + this.props.selectedSite.slug );
@@ -158,28 +161,30 @@ const CheckoutThankYou = React.createClass( {
 			const site = this.props.selectedSite.slug;
 
 			if ( purchases.some( isPlan ) ) {
-				page( `/plans/my-plan/${ site }` );
+				return page( `/plans/my-plan/${ site }` );
 			} else if (
 				purchases.some( isDomainProduct ) ||
 				purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) )
 			) {
-				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
+				return page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
 
-				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+				return page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
 			}
-		} else {
-			page( `/stats/insights/${ this.props.selectedSite.slug }` );
 		}
+
+		return page( `/stats/insights/${ this.props.selectedSite.slug }` );
 	},
 
 	render() {
 		let purchases = null,
+			failedPurchases = [],
 			wasJetpackPlanPurchased = false,
 			wasOnlyDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
+			failedPurchases = this.props.receipt.data.failedPurchases;
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasOnlyDotcomPlanPurchased = purchases.every( isDotComPlan );
 		}
@@ -207,6 +212,12 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
+		let content = this.productRelatedMessages();
+
+		if ( failedPurchases.length > 0 ) {
+			content = <FailedPurchase failedPurchases={ failedPurchases } />;
+		}
+
 		// standard thanks page
 		return (
 			<Main className="checkout-thank-you">
@@ -216,7 +227,7 @@ const CheckoutThankYou = React.createClass( {
 					backText={ this.translate( 'Back to my site' ) } />
 
 				<Card className="checkout-thank-you__content">
-					{ this.productRelatedMessages() }
+					{ content }
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
@@ -302,7 +313,8 @@ const CheckoutThankYou = React.createClass( {
 				<CheckoutThankYouFeaturesHeader
 					isDataLoaded={ this.isDataLoaded() }
 					isGenericReceipt={ this.isGenericReceipt() }
-					purchases={ purchases } />
+					purchases={ purchases }
+				/>
 
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
