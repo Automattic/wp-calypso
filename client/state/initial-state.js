@@ -3,14 +3,14 @@
  */
 import debugModule from 'debug';
 import pick from 'lodash/pick';
-import throttle from 'lodash/throttle';
+//import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
 import {
-	SERIALIZE,
+//	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
 import localforage from 'lib/localforage';
@@ -37,10 +37,10 @@ function getInitialServerState() {
 	return {};
 }
 
-function serialize( state ) {
+/* function serialize( state ) {
 	const serializedState = reducer( state, { type: SERIALIZE } );
 	return Object.assign( serializedState, { _timestamp: Date.now() } );
-}
+} */
 
 function deserialize( state ) {
 	delete state._timestamp;
@@ -68,9 +68,9 @@ function loadInitialStateFailed( error ) {
 	return createReduxStore();
 }
 
-export function persistOnChange( reduxStore, serializeState = serialize ) {
-	let state;
-	reduxStore.subscribe( throttle( function() {
+export function persistOnChange( reduxStore, /* serializeState = serialize */ ) {
+	//let state;
+	/* reduxStore.subscribe( throttle( function() {
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -83,7 +83,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 				debug( 'failed to set redux-store state', setError );
 			} );
 	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
-
+ */
 	return reduxStore;
 }
 
