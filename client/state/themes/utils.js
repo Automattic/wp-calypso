@@ -204,31 +204,34 @@ export function isThemeFromWpcom( themeId ) {
 
 /**
  * Returns a filtered themes array. Filtering is done based on particular themes
- * matching provided query and isWpocmTheme predicate.
+ * matching provided query and isWpocmTheme predicate if filterWpcom is true
  * Themes on Jetpack installed from WordPress.com have -wpcom suffix
- * We filter out all those themes because they will also be visible on
- * second list specific to WordPress.com. This may be too simple aproach
- * so it may revisit it again later.
+ * We can filter out all those themes because they will also be visible on
+ * second list specific to WordPress.com for Jetpack versions from 4.4.2.
+ * This may be too simple aproach so it may revisit it again later.
  *
  * TODO Veriy that wpcom filtering is sufficien.
  *
- * @param  {Array}  themes Array of theme objects
- * @param  {Object} query  Themes query
- * @return {Array}         Filtered themes
+ * @param  {Array}   themes      Array of theme objects
+ * @param  {Object}  query       Themes query
+ * @param  {Boolean} filterWpcom Switch to filter out themes with -wpcom suffix
+ * @return {Array}               Filtered themes
  */
-export function filterThemesForJetpack( themes, query ) {
-	// we can filter wpcom only if we have two lists
-	if ( config.isEnabled( 'manage/themes/upload' ) ) {
-		return filter(
-			themes,
-			theme => ! isThemeFromWpcom( theme.id ) && isThemeMatchingQuery( query, theme )
-		);
-	}
-
-	return filter(
+export function filterThemesForJetpack( themes, query, filterWpcom = false ) {
+	const queryFilteredThemes = filter(
 		themes,
 		theme => isThemeMatchingQuery( query, theme )
 	);
+
+	// we can filter wpcom only if we have two lists
+	if ( config.isEnabled( 'manage/themes/upload' ) && filterWpcom ) {
+		return filter(
+			queryFilteredThemes,
+			theme => ! isWpcomTheme( theme.id )
+		);
+	}
+
+	return queryFilteredThemes;
 }
 
 /**
