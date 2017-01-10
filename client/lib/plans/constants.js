@@ -234,7 +234,8 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		relatedPlan: PLAN_JETPACK_PREMIUM_MONTHLY
 	},
 	[ PLAN_JETPACK_PERSONAL ]: {
 		getTitle: () => i18n.translate( 'Personal' ),
@@ -254,7 +255,8 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		relatedPlan: PLAN_JETPACK_PERSONAL_MONTHLY
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -275,7 +277,8 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		relatedPlan: PLAN_JETPACK_PREMIUM
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -296,7 +299,8 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		relatedPlan: PLAN_JETPACK_PERSONAL
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
@@ -320,7 +324,8 @@ export const PLANS_LIST = {
 			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		relatedPlan: PLAN_JETPACK_BUSINESS_MONTHLY
 
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
@@ -344,7 +349,8 @@ export const PLANS_LIST = {
 			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
+		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		relatedPlan: PLAN_JETPACK_BUSINESS
 	}
 };
 
@@ -743,3 +749,4 @@ export function getMonthlyPlanByYearly( plan ) {
 			return '';
 	}
 }
+
