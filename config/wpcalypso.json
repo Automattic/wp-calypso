@@ -40,6 +40,7 @@
 		"jetpack/sync-panel": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
+		"jetpack/google-analytics": true,
 		"keyboard-shortcuts": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
