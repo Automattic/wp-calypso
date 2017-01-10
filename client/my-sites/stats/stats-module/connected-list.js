@@ -13,6 +13,7 @@ import StatsModuleExpand from './expand';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
+import DownloadCsv from '../stats-download-csv';
 import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
@@ -77,7 +78,8 @@ class StatsConnectedModule extends Component {
 			moduleStrings,
 			requesting,
 			statType,
-			query
+			query,
+			period,
 		} = this.props;
 
 		const noData = (
@@ -107,7 +109,9 @@ class StatsConnectedModule extends Component {
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null } />
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
+					{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+				</SectionHeader>
 				<Card compact className={ cardClasses }>
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }

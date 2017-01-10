@@ -33,8 +33,7 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { dataList, siteSlug, path, period } = this.props;
-		const data = dataList.csvData();
+		const { siteSlug, path, period, data } = this.props;
 
 		const fileName = [
 			siteSlug,
@@ -87,7 +86,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isLoading = dataList.isLoading();
 	} else {
 		data = getSiteStatsCSVData( state, siteId, statType, query );
-		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
+		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query ) && ! data;
 	}
 
 	return { data, siteSlug, siteId, isLoading };
