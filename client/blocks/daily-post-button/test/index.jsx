@@ -86,7 +86,7 @@ describe( 'DailyPostButton', () => {
 		it( 'rediects to primary site if the user only has one site', () => {
 			sitesListMock.data = sitesListMock.data.slice( 0, 1 );
 			dailyPostButton.simulate( 'touchTap', { preventDefault: noop } );
-			assert.isTrue( pageSpy.calledWithMatch( /post\/calypsop2.wordpress.com?/ ) );
+			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
 		it( 'shows the site selector if the user has more than one site', ( done ) => {
@@ -98,7 +98,7 @@ describe( 'DailyPostButton', () => {
 	describe( 'starting a post', () => {
 		it( 'adds the daily post prompt attributes to the redirect url', () => {
 			const prompt = shallow( <DailyPostButton post={ dailyPromptPost } /> );
-			prompt.instance().openEditorWithSite( 'calypsop2.wordpress.com' );
+			prompt.instance().openEditorWithSite( 'apps.wordpress.com' );
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
 			const query = qs.parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
