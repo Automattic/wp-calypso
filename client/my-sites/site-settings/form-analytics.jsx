@@ -29,7 +29,7 @@ import { isEnabled } from 'config';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
-const googleAnalyticsCodeIsValid = code => ! code || code.match( /^UA-\d+-\d+$/i );
+const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 const GoogleAnalyticsForm = React.createClass( {
@@ -73,7 +73,7 @@ const GoogleAnalyticsForm = React.createClass( {
 
 	handleCodeChange( event ) {
 		const code = event.target.value;
-		const isCodeValid = googleAnalyticsCodeIsValid( code );
+		const isCodeValid = validateGoogleAnalyticsCode( code );
 		let notice = this.state.notice;
 
 		if ( ! isCodeValid && ! notice ) {
