@@ -435,8 +435,12 @@ export default class ReaderStream extends React.Component {
 		}
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = this.enhanceWithPostSelectionMetadata( showSelectedPost,
-			postKey, this.props.store );
+		const showPost = ( args ) => showSelectedPost( {
+			...args,
+			postKey,
+			store: this.props.store,
+			index,
+		} );
 
 		return <PostLifecycle
 			key={ itemKey }
@@ -454,17 +458,6 @@ export default class ReaderStream extends React.Component {
 			followSource={ this.props.followSource }
 		/>;
 	}
-
-	// input fn must only take a single object-like argument.
-	// output is a function that is identical to the input fn except that its option
-	// argument will also have postKey and store, and index in it
-	enhanceWithPostSelectionMetadata = ( fn, postKey, store ) => args =>
-		fn( {
-			...args,
-			postKey,
-			store,
-			index: this.state.posts.indexOf( postKey )
-		} );
 
 	render() {
 		const store = this.props.store,
