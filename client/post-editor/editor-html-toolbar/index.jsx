@@ -271,6 +271,7 @@ export class EditorHtmlToolbar extends Component {
 				onClick: this.onClickMore,
 			},
 			closeTags: {
+				disabled: ! this.state.openTags.length,
 				label: translate( 'Close Tags' ),
 				onClick: this.onClickCloseTags,
 			},
@@ -278,10 +279,11 @@ export class EditorHtmlToolbar extends Component {
 
 		return (
 			<div className="editor-html-toolbar">
-				{ map( buttons, ( { label, onClick }, tag ) =>
+				{ map( buttons, ( { disabled, label, onClick }, tag ) =>
 					<Button
 						className={ `editor-html-toolbar__button-${ tag }` }
 						compact={ ! isMobile() }
+						disabled={ disabled }
 						key={ tag }
 						onClick={ onClick }
 					>
