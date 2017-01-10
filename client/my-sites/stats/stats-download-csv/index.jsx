@@ -13,7 +13,7 @@ import { flowRight } from 'lodash';
 import titlecase from 'to-title-case';
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
-import { getSiteStatsCSVData } from 'state/stats/lists/selectors';
+import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -56,7 +56,7 @@ class StatsDownloadCsv extends Component {
 	}
 
 	render() {
-		const { siteId, statType, query, translate } = this.props;
+		const { siteId, statType, query, translate, isLoading } = this.props;
 		try {
 			const isFileSaverSupported = !! new Blob(); // eslint-disable-line no-unused-vars
 		} catch ( e ) {
@@ -64,7 +64,7 @@ class StatsDownloadCsv extends Component {
 		}
 
 		return (
-			<Button compact onClick={ this.downloadCsv }>
+			<Button compact onClick={ this.downloadCsv } disabled={ isLoading }>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Gridicon icon="cloud-download" /> { translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.'
@@ -79,16 +79,19 @@ const connectComponent = connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	let data;
+	let isLoading;
 
 	// TODO: When `stats-list` is no longer, this can be removed
 	if ( dataList ) {
 		data = dataList.csvData();
+		isLoading = dataList.isLoading();
 	} else {
 		data = getSiteStatsCSVData( state, siteId, statType, query );
+		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 	}
 
-	return { data, siteSlug, siteId };
-}, { recordGoogleEvent } );
+	return { data, siteSlug, siteId, isLoading };
+}, { recordGoogleEvent }, null, { pure: false } );
 
 export default flowRight(
 	connectComponent,
