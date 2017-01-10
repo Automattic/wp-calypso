@@ -38,7 +38,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	componentWillMount() {
-		const selectedSite = this.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		if ( selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
@@ -59,7 +59,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	componentWillUpdate() {
-		const selectedSite = this.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		if ( selectedSite && this.prevSelectedSite !== selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
@@ -79,18 +79,15 @@ const CurrentSite = React.createClass( {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	},
 
-	getSelectedSite: function() {
-		return this.props.selectedSite || this.props.sites.getPrimary();
-	},
-
 	getDomainWarnings: function() {
-		const domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
-			domains = domainStore && domainStore.list || [];
+		const { selectedSite: site } = this.props;
+		const domainStore = this.state.domainsStore.getBySite( site.ID );
+		const domains = domainStore && domainStore.list || [];
 
 		return (
 			<DomainWarnings
 				isCompact
-				selectedSite={ this.getSelectedSite() }
+				selectedSite={ site }
 				domains={ domains }
 				ruleWhiteList={ [
 					'unverifiedDomainsCanManage',
@@ -101,7 +98,8 @@ const CurrentSite = React.createClass( {
 					'expiringDomainsCannotManage',
 					'wrongNSMappedDomains',
 					'pendingGappsTosAcceptanceDomains'
-				] } />
+				] }
+			/>
 		);
 	},
 
@@ -111,7 +109,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	render: function() {
-		const site = this.getSelectedSite();
+		const { selectedSite } = this.props;
 
 		if ( ! this.props.sites.initialized ) {
 			return (
@@ -141,9 +139,9 @@ const CurrentSite = React.createClass( {
 						</Button>
 					</span>
 				}
-				{ this.props.selectedSite
+				{ selectedSite
 					? <Site
-						site={ site }
+						site={ selectedSite }
 						homeLink={ true }
 						externalLink={ true }
 						onClick={ this.previewSite }
@@ -151,8 +149,8 @@ const CurrentSite = React.createClass( {
 						tipTarget="site-card-preview" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
-				{ ! site.jetpack && this.getDomainWarnings() }
-				<SiteNotice site={ site } />
+				{ ! selectedSite.jetpack && this.getDomainWarnings() }
+				<SiteNotice site={ selectedSite } />
 			</Card>
 		);
 	}
@@ -160,9 +158,12 @@ const CurrentSite = React.createClass( {
 
 // TODO: make this pure when sites can be retrieved from the Redux state
 module.exports = connect(
-	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
-	} ),
+	( state, ownProps ) => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			selectedSite: selectedSite || ownProps.sites.getPrimary()
+		};
+	},
 	{ setLayoutFocus },
 	null,
 	{ pure: false }
