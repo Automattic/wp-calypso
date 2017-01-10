@@ -28,13 +28,17 @@ export class EditorHtmlToolbar extends Component {
 		showLinkDialog: false,
 	};
 
-	getSelectedText() {
+	splitEditorContent() {
 		const { content: {
 			selectionEnd,
 			selectionStart,
 			value,
 		} } = this.props;
-		return value.substring( selectionStart, selectionEnd );
+		return {
+			before: value.substring( 0, selectionStart ),
+			inner: value.substring( selectionStart, selectionEnd ),
+			after: value.substring( selectionEnd, value.length ),
+		};
 	}
 
 	setCursorPosition( previousSelectionEnd, insertedContentLength ) {
@@ -42,7 +46,7 @@ export class EditorHtmlToolbar extends Component {
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	updateContent( newContent ) {
+	updateEditorContent( newContent ) {
 		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
 		this.props.content.value = newContent;
 		onToolbarChangeContent( newContent );
@@ -59,162 +63,133 @@ export class EditorHtmlToolbar extends Component {
 		''
 	);
 
-	openHtmlTag = ( tag, attributes = {}, options = {} ) =>
+	openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
 		( options.newLine ? '\n' : '' ) +
-		`<${ tag }${ this.attributesToString( attributes ) }>` +
+		`<${ name }${ this.attributesToString( attributes ) }>` +
 		( options.newLine ? '\n\t' : '' );
 
-	closeHtmlTag = ( tag, options = {} ) =>
+	closeHtmlTag = ( { name, options = {} } ) =>
 		( options.newLine ? '\n' : '' ) +
-		`</${ tag }>` +
+		`</${ name }>` +
 		( options.newLine ? '\n\n' : '' );
 
-	insertHtmlTag( tag, attributes = {}, options = {} ) {
+	insertHtmlTagOpen( tag ) {
+		const { openTags } = this.state;
+		const { before, after } = this.splitEditorContent();
+		this.updateEditorContent( before + this.openHtmlTag( tag ) + after );
+		this.setState( { openTags: openTags.concat( tag.name ) } );
+	}
+
+	insertHtmlTagClose( tag ) {
+		const { openTags } = this.state;
+		const { before, after } = this.splitEditorContent();
+		this.updateEditorContent( before + this.closeHtmlTag( tag ) + after );
+		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
+	}
+
+	insertHtmlTagOpenClose( tag ) {
+		const { before, inner, after } = this.splitEditorContent();
+		this.updateEditorContent( before + this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ) + after );
+	}
+
+	insertHtmlTagSelfClosed( tag ) {
+		const { before, inner, after } = this.splitEditorContent();
+		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
+		const content = tag.options && tag.options.newLine ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
+		this.updateEditorContent( before + inner + content + after );
+	}
+
+	insertHtmlTagWithText( tag ) {
+		const { before, after } = this.splitEditorContent();
+		this.updateEditorContent( before + this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ) + after );
+	}
+
+	insertCustomContent( content ) {
+		const { before, inner, after } = this.splitEditorContent();
+		this.updateEditorContent( before + inner + content + after );
+	}
+
+	insertHtmlTag( tag ) {
 		const { content: {
 			selectionEnd,
 			selectionStart,
-			value,
 		} } = this.props;
 		const { openTags } = this.state;
-
-		if ( options.text ) {
-			this.updateContent(
-				value.substring( 0, selectionStart ) +
-				this.openHtmlTag( tag, attributes, options ) +
-				options.text +
-				this.closeHtmlTag( tag, options ) +
-				value.substring( selectionEnd, value.length )
-			);
-		} else if ( selectionEnd === selectionStart ) {
-			const isTagOpen = -1 !== openTags.indexOf( tag );
-
-			if ( isTagOpen ) {
-				this.updateContent(
-					value.substring( 0, selectionStart ) +
-					this.closeHtmlTag( tag, options ) +
-					value.substring( selectionStart, value.length )
-				);
-				this.setState( {
-					openTags: openTags.filter( openTag => openTag !== tag ),
-				} );
-			} else {
-				this.updateContent(
-					value.substring( 0, selectionStart ) +
-					this.openHtmlTag( tag, attributes, options ) +
-					value.substring( selectionStart, value.length )
-				);
-				this.setState( {
-					openTags: openTags.concat( tag ),
-				} );
-			}
+		if ( selectionEnd === selectionStart ) {
+			const isTagOpen = -1 !== openTags.indexOf( tag.name );
+			isTagOpen ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
 		} else {
-			this.updateContent(
-				value.substring( 0, selectionStart ) +
-				this.openHtmlTag( tag, attributes, options ) +
-				value.substring( selectionStart, selectionEnd ) +
-				this.closeHtmlTag( tag, options ) +
-				value.substring( selectionEnd, value.length )
-			);
+			this.insertHtmlTagOpenClose( tag );
 		}
 	}
 
-	handleClickBold = () => {
-		this.insertHtmlTag( 'strong' );
+	onClickBold = () => {
+		this.insertHtmlTag( { name: 'strong' } );
 	}
 
-	handleClickItalic = () => {
-		this.insertHtmlTag( 'em' );
+	onClickItalic = () => {
+		this.insertHtmlTag( { name: 'em' } );
 	}
 
-	handleClickLink = ( attributes, text ) => {
+	onClickLink = ( attributes, text ) => {
 		if ( text ) {
-			this.insertHtmlTag( 'a', attributes, { text } );
+			this.insertHtmlTagWithText( { name: 'a', attributes, options: { text } } );
 		} else {
-			const { content: {
-				selectionEnd,
-				value,
-			} } = this.props;
-			this.updateContent(
-				value.substring( 0, selectionEnd ) +
-				this.openHtmlTag( 'a', attributes ) +
-				this.closeHtmlTag( 'a' ) +
-				value.substring( selectionEnd, value.length )
-			);
+			this.insertHtmlTagOpenClose( { name: 'a', attributes } );
+			// Move the cursor inside <a></a>
 			this.setCursorPosition( this.props.content.selectionEnd, -4 );
 		}
 	};
 
-	handleClickQuote = () => {
-		this.insertHtmlTag( 'blockquote' );
+	onClickQuote = () => {
+		this.insertHtmlTag( { name: 'blockquote' } );
 	}
 
-	handleClickDelete = () => {
-		this.insertHtmlTag( 'del', {
-			datetime: this.props.moment().format(),
-		} );
+	onClickDelete = () => {
+		const datetime = this.props.moment().format();
+		this.insertHtmlTag( { name: 'del', attributes: { datetime } } );
 	}
 
-	handleClickInsert = () => {
-		this.insertHtmlTag( 'ins', {
-			datetime: this.props.moment().format(),
-		} );
+	onClickInsert = () => {
+		const datetime = this.props.moment().format();
+		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
 	}
 
-	handleClickImage = attributes => {
-		const { content: {
-			selectionEnd,
-			value,
-		} } = this.props;
-		this.updateContent(
-			value.substring( 0, selectionEnd ) +
-			`<img${ this.attributesToString( attributes ) } />` +
-			value.substring( selectionEnd, value.length )
-		);
+	onClickImage = attributes => {
+		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
 	}
 
-	handleClickUnorderedList = () => {
-		this.insertHtmlTag( 'ul', {}, {
-			newLine: true,
-		} );
+	onClickUnorderedList = () => {
+		this.insertHtmlTag( { name: 'ul', options: { newLine: true } } );
 	}
 
-	handleClickOrderedList = () => {
-		this.insertHtmlTag( 'ol', {}, {
-			newLine: true,
-		} );
+	onClickOrderedList = () => {
+		this.insertHtmlTag( { name: 'ol', options: { newLine: true } } );
 	}
 
-	handleClickListItem = () => {
-		this.insertHtmlTag( 'li' );
+	onClickListItem = () => {
+		this.insertHtmlTag( { name: 'li' } );
 	}
 
-	handleClickCode = () => {
-		this.insertHtmlTag( 'code' );
+	onClickCode = () => {
+		this.insertHtmlTag( { name: 'code' } );
 	}
 
-	handleClickMore = () => {
-		const { content: {
-			selectionEnd,
-			value,
-		} } = this.props;
-		this.updateContent(
-			value.substring( 0, selectionEnd ) +
-			'<!--more-->' +
-			value.substring( selectionEnd, value.length )
-		);
+	onClickMore = () => {
+		this.insertCustomContent( '<!--more-->' );
 	}
 
-	handleClickCloseTags = () => {
+	onClickCloseTags = () => {
 		const { content: {
 			selectionEnd,
 			value,
 		} } = this.props;
 		const closedTags = reduce(
 			this.state.openTags,
-			( tags, openTag ) => this.closeHtmlTag( openTag ) + tags,
+			( tags, openTag ) => this.closeHtmlTag( { name: openTag } ) + tags,
 			''
 		);
-		this.updateContent(
+		this.updateEditorContent(
 			value.substring( 0, selectionEnd ) +
 			closedTags +
 			value.substring( selectionEnd, value.length )
@@ -236,8 +211,9 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	openLinkDialog = () => {
+		const { inner: selectedText } = this.splitEditorContent();
 		this.setState( {
-			selectedText: this.getSelectedText(),
+			selectedText,
 			showLinkDialog: true,
 		} );
 	}
@@ -253,14 +229,14 @@ export class EditorHtmlToolbar extends Component {
 				<Button
 					className="editor-html-toolbar__button-bold"
 					compact
-					onClick={ this.handleClickBold }
+					onClick={ this.onClickBold }
 				>
 					{ this.tagLabel( 'strong', 'b' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-italic"
 					compact
-					onClick={ this.handleClickItalic }
+					onClick={ this.onClickItalic }
 				>
 					{ this.tagLabel( 'em', 'i' ) }
 				</Button>
@@ -274,21 +250,21 @@ export class EditorHtmlToolbar extends Component {
 				<Button
 					className="editor-html-toolbar__button-quote"
 					compact
-					onClick={ this.handleClickQuote }
+					onClick={ this.onClickQuote }
 				>
 					{ this.tagLabel( 'blockquote', 'b-quote' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-delete"
 					compact
-					onClick={ this.handleClickDelete }
+					onClick={ this.onClickDelete }
 				>
 					{ this.tagLabel( 'del', 'del' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-insert"
 					compact
-					onClick={ this.handleClickInsert }
+					onClick={ this.onClickInsert }
 				>
 					{ this.tagLabel( 'ins', 'ins' ) }
 				</Button>
@@ -302,54 +278,54 @@ export class EditorHtmlToolbar extends Component {
 				<Button
 					className="editor-html-toolbar__button-unordered-list"
 					compact
-					onClick={ this.handleClickUnorderedList }
+					onClick={ this.onClickUnorderedList }
 				>
 					{ this.tagLabel( 'ul', 'ul' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-ordered-list"
 					compact
-					onClick={ this.handleClickOrderedList }
+					onClick={ this.onClickOrderedList }
 				>
 					{ this.tagLabel( 'ol', 'ol' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-list-item"
 					compact
-					onClick={ this.handleClickListItem }
+					onClick={ this.onClickListItem }
 				>
 					{ this.tagLabel( 'li', 'li' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-code"
 					compact
-					onClick={ this.handleClickCode }
+					onClick={ this.onClickCode }
 				>
 					{ this.tagLabel( 'code', 'code' ) }
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-more"
 					compact
-					onClick={ this.handleClickMore }
+					onClick={ this.onClickMore }
 				>
 					more
 				</Button>
 				<Button
 					className="editor-html-toolbar__button-close-tags"
 					compact
-					onClick={ this.handleClickCloseTags }
+					onClick={ this.onClickCloseTags }
 				>
 					{ translate( 'Close Tags' ) }
 				</Button>
 
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
-					onInsert={ this.handleClickImage }
+					onInsert={ this.onClickImage }
 					shouldDisplay={ this.state.showImageDialog }
 				/>
 				<AddLinkDialog
 					onClose={ this.closeLinkDialog }
-					onInsert={ this.handleClickLink }
+					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
 					shouldDisplay={ this.state.showLinkDialog }
 				/>
