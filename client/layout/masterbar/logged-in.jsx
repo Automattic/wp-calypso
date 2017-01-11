@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import Masterbar from './masterbar';
 import Item from './item';
+import Stats from './stats';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
@@ -16,9 +17,6 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -26,7 +24,6 @@ const MasterbarLoggedIn = React.createClass( {
 		sites: React.PropTypes.object,
 		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		setNextLayoutFocus: React.PropTypes.func.isRequired,
-		siteSlug: React.PropTypes.string,
 	},
 
 	getInitialState() {
@@ -66,8 +63,7 @@ const MasterbarLoggedIn = React.createClass( {
 	render() {
 		return (
 			<Masterbar>
-				<Item
-					url={ getStatsPathForTab( 'day', this.props.siteSlug ) }
+				<Stats
 					tipTarget="my-sites"
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
@@ -79,7 +75,7 @@ const MasterbarLoggedIn = React.createClass( {
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 						: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					}
-				</Item>
+				</Stats>
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
@@ -131,10 +127,4 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		siteSlug: getSiteSlug( state, siteId )
-	};
-}, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
+export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
