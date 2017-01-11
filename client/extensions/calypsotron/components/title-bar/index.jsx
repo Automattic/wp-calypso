@@ -1,8 +1,15 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons/react/gridicon';
 
+/**
+ * Internal dependencies
+ */
+
 export default class TitleBar extends React.Component {
-	propTypes: {
+	static propTypes = {
 		icon: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 	}
@@ -15,7 +22,7 @@ export default class TitleBar extends React.Component {
 			<div className="title-bar">
 				<div className="title-bar__title">
 					<h1>
-						<Gridicon icon={ icon } size={ iconSize } className="title-bar__title-icon"/>
+						<Gridicon icon={ icon } size={ iconSize } className="title-bar__title-icon" />
 						{ title }
 					</h1>
 				</div>

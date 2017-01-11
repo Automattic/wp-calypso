@@ -1,11 +1,17 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash.omit';
 
-import FormNumberInput from 'components/forms/form-number-input';
+/**
+ * Internal dependencies
+ */
+import FormNumberInput from '../form-number-input';
 
 export default class FormNumberInputWithAffixes extends React.Component {
-	propTypes: {
+	static propTypes = {
 		noWrap: PropTypes.bool,
 		prefix: PropTypes.string,
 		suffix: PropTypes.string,
@@ -13,7 +19,7 @@ export default class FormNumberInputWithAffixes extends React.Component {
 
 	render() {
 		const { noWrap, prefix, suffix } = this.props;
-		const passThruProps = omit ( this.props, [ 'noWrap', 'prefix', 'suffix' ] );
+		const passThruProps = omit( this.props, [ 'noWrap', 'prefix', 'suffix' ] );
 
 		const className = classNames( {
 			'form-number-input-with-affixes': true,

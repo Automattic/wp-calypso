@@ -1,11 +1,17 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import omit from 'lodash.omit';
 
-import FormNumberInputWithAffixes from 'components/forms/form-number-input-with-affixes';
+/**
+ * Internal dependencies
+ */
+import FormNumberInputWithAffixes from '../form-number-input-with-affixes';
 
 export default class FormCurrencyInput extends React.Component {
-	static propTypes: {
+	static propTypes = {
 		currencySymbol: PropTypes.string.required,
 		currencySymbolIsPrefix: PropTypes.string.required,
 	}

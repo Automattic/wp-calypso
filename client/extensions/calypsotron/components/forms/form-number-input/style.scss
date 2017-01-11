@@ -6,7 +6,7 @@
 			border-color: $alert-red;
 		}
 
-		&.is-error:hover {
+		&.form-number-input__is-error:hover {
 			border-color: darken( $alert-red, 10 );
 		}
 	}
