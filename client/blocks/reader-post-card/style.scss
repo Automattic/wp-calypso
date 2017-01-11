@@ -695,3 +695,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .is-section-devdocs .reader-post-card__featured-image {
 	bottom: 16px;
 }
+
+// IE11 fix for photo cards
+.is-reader-page .reader-post-card.is-photos .reader-post-card__post-details {
+	flex: none;
+}
