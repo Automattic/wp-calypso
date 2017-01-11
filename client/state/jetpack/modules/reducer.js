@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge } from 'lodash';
+import { forEach, merge, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,8 @@ import {
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
-	JETPACK_MODULES_REQUEST_SUCCESS
+	JETPACK_MODULES_REQUEST_SUCCESS,
+	JETPACK_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 
@@ -61,6 +62,29 @@ const createModuleListRequestReducer = ( fetchingModules ) => {
 	};
 };
 
+const createSettingsItemsReducer = () => {
+	return ( state, { siteId, settings } ) => {
+		let updatedState = state;
+		const moduleActivationState = pickBy( settings, ( settingValue, settingName ) => {
+			return state[ siteId ].hasOwnProperty( settingName );
+		} );
+
+		forEach( moduleActivationState, ( active, moduleSlug ) => {
+			updatedState = Object.assign( {}, updatedState, {
+				[ siteId ]: {
+					...updatedState[ siteId ],
+					[ moduleSlug ]: {
+						...updatedState[ siteId ][ moduleSlug ],
+						active
+					}
+				}
+			} );
+		} );
+
+		return updatedState;
+	};
+};
+
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules data updates
@@ -72,7 +96,8 @@ const createModuleListRequestReducer = ( fetchingModules ) => {
 export const items = createReducer( {}, {
 	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
-	[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer()
+	[ JETPACK_MODULES_RECEIVE ]: createItemsListReducer(),
+	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createSettingsItemsReducer()
 } );
 
 /**
