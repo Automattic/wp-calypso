@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import classNames from 'classnames';
@@ -15,52 +15,45 @@ import { getSiteIconUrl } from 'state/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
 import Gridicon from 'components/gridicon';
 
-const SiteIcon = React.createClass( {
-	getDefaultProps() {
-		return {
-			// Cache a larger image so there's no need to download different
-			// assets to display the site icons in different contexts.
-			imgSize: 120,
-			size: 32
-		};
-	},
+function SiteIcon( { siteId, site, iconUrl, size, imgSize } ) {
+	const iconSrc = resizeImageUrl( iconUrl, imgSize );
 
-	propTypes: {
-		imgSize: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		site: React.PropTypes.object,
-		size: React.PropTypes.number
-	},
+	const classes = classNames( 'site-icon', {
+		'is-blank': ! iconSrc
+	} );
 
-	render() {
-		const { site, siteId, iconUrl, imgSize } = this.props;
+	const style = {
+		height: size,
+		width: size,
+		lineHeight: size + 'px',
+		fontSize: size + 'px'
+	};
 
-		const iconSrc = resizeImageUrl( iconUrl, imgSize );
+	return (
+		<div className={ classes } style={ style }>
+			{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
+			{ iconSrc
+				? <img className="site-icon__img" src={ iconSrc } />
+				: <Gridicon icon="globe" size={ Math.round( size / 1.3 ) } />
+			}
+		</div>
+	);
+}
 
-		const iconClasses = classNames( {
-			'site-icon': true,
-			'is-blank': ! iconSrc
-		} );
+SiteIcon.propTypes = {
+	siteId: PropTypes.number,
+	site: PropTypes.object,
+	iconUrl: PropTypes.string,
+	size: PropTypes.number,
+	imgSize: PropTypes.number
+};
 
-		// Size inline styles
-		const style = {
-			height: this.props.size,
-			width: this.props.size,
-			lineHeight: this.props.size + 'px',
-			fontSize: this.props.size + 'px'
-		};
-
-		return (
-			<div className={ iconClasses } style={ style }>
-				{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
-				{ iconSrc
-					? <img className="site-icon__img" src={ iconSrc } />
-					: <Gridicon icon="globe" size={ Math.round( this.props.size / 1.3 ) } />
-				}
-			</div>
-		);
-	}
-} );
+SiteIcon.defaultProps = {
+	// Cache a larger image so there's no need to download different assets to
+	// display the site icons in different contexts.
+	imgSize: 120,
+	size: 32
+};
 
 export default connect( ( state, { site, siteId, imgSize } ) => {
 	// Always prefer site from Redux state if available
