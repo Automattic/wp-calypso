@@ -278,8 +278,9 @@ const CheckoutThankYou = React.createClass( {
 		const { selectedSite, sitePlans } = this.props,
 			purchases = getPurchases( this.props ),
 			failedPurchases = getFailedPurchases( this.props ),
+			hasFailedPurchases = failedPurchases.length > 0,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
-			registrarSupportUrl = ( this.isGenericReceipt() || failedPurchases.length > 0 ) ? null : primaryPurchase.registrarSupportUrl;
+			registrarSupportUrl = ( this.isGenericReceipt() || hasFailedPurchases ) ? null : primaryPurchase.registrarSupportUrl;
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -306,14 +307,14 @@ const CheckoutThankYou = React.createClass( {
 					isDataLoaded={ this.isDataLoaded() }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
-					failedPurchases={ failedPurchases }
+					hasFailedPurchases={ hasFailedPurchases }
 				/>
 
 				<CheckoutThankYouFeaturesHeader
 					isDataLoaded={ this.isDataLoaded() }
 					isGenericReceipt={ this.isGenericReceipt() }
 					purchases={ purchases }
-					failedPurchases={ failedPurchases }
+					hasFailedPurchases={ hasFailedPurchases }
 				/>
 
 				{ ComponentClass && (

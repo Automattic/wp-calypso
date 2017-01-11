@@ -25,7 +25,7 @@ class CheckoutThankYouHeader extends React.Component {
 			return this.props.translate( 'Loading…' );
 		}
 
-		if ( this.props.failedPurchases.length > 0 ) {
+		if ( this.props.hasFailedPurchases ) {
 			return this.props.translate( 'Ooops…' );
 		}
 
@@ -37,7 +37,7 @@ class CheckoutThankYouHeader extends React.Component {
 	}
 
 	getText() {
-		if ( this.props.failedPurchases.length > 0 ) {
+		if ( this.props.hasFailedPurchases ) {
 			return this.props.translate( 'Seems we had problems obtaining some of your items.' );
 		}
 
@@ -129,7 +129,7 @@ class CheckoutThankYouHeader extends React.Component {
 	}
 
 	render() {
-		const icon = this.props.failedPurchases.length > 0 ? 'notice' : 'trophy',
+		const icon = this.props.hasFailedPurchases ? 'notice' : 'trophy',
 			classes = {
 				'checkout-thank-you__header': true,
 				'is-placeholder': ! this.props.isDataLoaded
@@ -160,7 +160,7 @@ class CheckoutThankYouHeader extends React.Component {
 CheckoutThankYouHeader.propTypes = {
 	isDataLoaded: React.PropTypes.bool.isRequired,
 	primaryPurchase: React.PropTypes.object,
-	failedPurchases: React.PropTypes.array
+	hasFailedPurchases: React.PropTypes.bool
 };
 
 export default localize( CheckoutThankYouHeader );
