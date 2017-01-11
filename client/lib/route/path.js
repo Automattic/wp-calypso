@@ -74,7 +74,7 @@ function sectionify( path ) {
 }
 
 function getStatsDefaultSitePage( slug ) {
-	const path = '/stats/day/';
+	const path = '/stats/insights/';
 
 	if ( slug ) {
 		return path + slug;

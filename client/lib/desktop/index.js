@@ -7,7 +7,8 @@ var debug = require( 'debug' )( 'calypso:desktop' ),
 /**
  * Internal dependencies
  */
-var paths = require( 'lib/paths' ),
+var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' ),
+	paths = require( 'lib/paths' ),
 	user = require( 'lib/user' )(),
 	sites = require( 'lib/sites-list' )(),
 	ipc = require( 'electron' ).ipcRenderer,          // From Electron
@@ -15,7 +16,6 @@ var paths = require( 'lib/paths' ),
 	oAuthToken = require( 'lib/oauth-token' ),
 	userUtilities = require( 'lib/user/utils' ),
 	location = require( 'lib/route/page-notifier' );
-import { getStatsPathForTab } from 'lib/route/path';
 
 /**
  * Module variables
@@ -117,11 +117,9 @@ var Desktop = {
 
 	onShowMySites: function() {
 		debug( 'Showing my sites' );
-		const site = this.getSelectedSite();
-		const siteId = this.isSingle() ? site.slug : null;
 
 		this.clearNotificationBar();
-		page( getStatsPathForTab( 'day', siteId ) );
+		page( siteStatsStickyTabStore.getUrl() );
 	},
 
 	onShowReader: function() {
