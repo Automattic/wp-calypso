@@ -20,10 +20,6 @@ class ThemeUploadCard extends React.Component {
 		count: PropTypes.number,
 	};
 
-	constructor( props ) {
-		super( props );
-	}
-
 	trackClick = () => trackClick( 'upload theme' );
 
 	render() {
