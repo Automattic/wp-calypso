@@ -7,7 +7,6 @@ import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
 import { get } from 'lodash';
-import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies
@@ -20,7 +19,6 @@ import upgradesActions from 'lib/upgrades/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
-import SearchCard from 'components/search-card';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -275,6 +273,7 @@ module.exports = {
 	domainsLoggedOut: function( context, next ) {
 		const state = context.store.getState();
 		const user = getCurrentUser( state );
+		const DomainsLandingComponent = require( './domains-landing' );
 
 		if ( user ) {
 			next();
@@ -287,23 +286,9 @@ module.exports = {
 
 		renderWithReduxStore(
 			(
-				<Main>
-					<h1>Create a website</h1>
-					<div>Choosing an address is the best way to get started with your very own site</div>
-
-					<SearchCard
-						initialValue=""
-						onSearch={ onSearch }
-						onSearchChange={ noop }
-						onBlur={ noop }
-						placeholder={ i18n.translate( 'Enter a domain or keyword', { textOnly: true } ) }
-						autoFocus={ true }
-						delaySearch={ true }
-						delayTimeout={ 1000 }
-						dir="ltr"
-						maxLength={ 60 }
+				<DomainsLandingComponent
+					onSearch={ onSearch }
 					/>
-				</Main>
 			),
 			document.getElementById( 'primary' ),
 			context.store
