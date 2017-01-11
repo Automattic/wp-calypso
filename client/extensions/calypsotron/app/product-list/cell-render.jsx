@@ -2,17 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons/react/gridicon';
+import Gridicon from 'components/gridicon';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
-import FormNumberInput from 'components/forms/form-number-input';
-import FormCurrencyInput from 'components/forms/form-currency-input';
 import TokenField from 'components/token-field';
 
 /**
  * Internal dependencies
  */
+import FormNumberInput from '../../components/forms/form-number-input';
+import FormCurrencyInput from '../../components/forms/form-currency-input';
 
 // View Renderers
 // Parameter Format: product, key, constraints, helpers
