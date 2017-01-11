@@ -19,7 +19,7 @@ describe( 'selectors', () => {
 	describe( '#isRequestingModuleSettings', () => {
 		it( 'should return true if module settings are currently being requested', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if module settings are currently not being requested', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -45,7 +45,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that module is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 	describe( '#isUpdatingModuleSettings', () => {
 		it( 'should return true if module settings are currently being updated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -73,7 +73,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if module settings are currently not being updated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -86,7 +86,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that module is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -101,7 +101,7 @@ describe( 'selectors', () => {
 	describe( '#getModulesSettings', () => {
 		it( 'should return settings for all modules for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							items: {
 								12345678: MODULE_SETTINGS_FIXTURE
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							items: {
 								654321: MODULE_SETTINGS_FIXTURE
@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 	describe( '#getModuleSettings', () => {
 		it( 'should return settings for a specified module for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							items: {
 								12345678: MODULE_SETTINGS_FIXTURE
@@ -148,7 +148,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							items: {
 								654321: MODULE_SETTINGS_FIXTURE
@@ -163,7 +163,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown module', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModuleSettings: {
 							items: {
 								12345678: MODULE_SETTINGS_FIXTURE

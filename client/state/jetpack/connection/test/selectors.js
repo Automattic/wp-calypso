@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 	describe( '#isRequestingJetpackConnectionStatus', () => {
 		it( 'should return true if the connection status is being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the connection status is not being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 	describe( '#getJetpackConnectionStatus', () => {
 		it( 'should return connection status for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -75,7 +75,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -90,7 +90,7 @@ describe( 'selectors', () => {
 	describe( '#isJetpackSiteInDevelopmentMode', () => {
 		it( 'should return true if the site is in development mode', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -103,7 +103,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the site is not in development mode', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 	describe( '#isJetpackSiteInStagingMode', () => {
 		it( 'should return true if the site is in staging mode', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -144,7 +144,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the site is not in staging mode', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}
@@ -157,7 +157,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackConnection: {
 							items: ITEMS_FIXTURE
 						}

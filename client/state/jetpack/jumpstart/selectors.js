@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether Jumpstart is currently being activated
  */
 export function isActivatingJumpstart( state, siteId ) {
-	return get( state.jetpackSettings.jetpackJumpstart.requests, [ siteId, 'activating' ], null );
+	return get( state.jetpack.jetpackJumpstart.requests, [ siteId, 'activating' ], null );
 }
 
 /**
@@ -24,7 +24,7 @@ export function isActivatingJumpstart( state, siteId ) {
  * @return {?Boolean}            Whether Jumpstart is currently being deactivated
  */
 export function isDeactivatingJumpstart( state, siteId ) {
-	return get( state.jetpackSettings.jetpackJumpstart.requests, [ siteId, 'deactivating' ], null );
+	return get( state.jetpack.jetpackJumpstart.requests, [ siteId, 'deactivating' ], null );
 }
 
 /**
@@ -36,7 +36,7 @@ export function isDeactivatingJumpstart( state, siteId ) {
  * @return {?Boolean}          Whether the Jumpstart status is being requested
  */
 export function isRequestingJumpstartStatus( state, siteId ) {
-	return get( state.jetpackSettings.jetpackJumpstart.requests, [ siteId, 'requesting' ], null );
+	return get( state.jetpack.jetpackJumpstart.requests, [ siteId, 'requesting' ], null );
 }
 
 /**
@@ -48,5 +48,5 @@ export function isRequestingJumpstartStatus( state, siteId ) {
  * @return {?String}             Whether Jumpstart is active
  */
 export function getJumpstartStatus( state, siteId ) {
-	return get( state.jetpackSettings.jetpackJumpstart.items, [ siteId ], null );
+	return get( state.jetpack.jetpackJumpstart.items, [ siteId ], null );
 }

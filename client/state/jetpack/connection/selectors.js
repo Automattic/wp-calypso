@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * @return {?Boolean}          Whether the connection status is being requested
  */
 export function isRequestingJetpackConnectionStatus( state, siteId ) {
-	return get( state.jetpackSettings.jetpackConnection.requests, [ siteId ], null );
+	return get( state.jetpack.jetpackConnection.requests, [ siteId ], null );
 }
 
 /**
@@ -24,7 +24,7 @@ export function isRequestingJetpackConnectionStatus( state, siteId ) {
  * @return {?Object}             Details about connection status
  */
 export function getJetpackConnectionStatus( state, siteId ) {
-	return get( state.jetpackSettings.jetpackConnection.items, [ siteId ], null );
+	return get( state.jetpack.jetpackConnection.items, [ siteId ], null );
 }
 
 /**

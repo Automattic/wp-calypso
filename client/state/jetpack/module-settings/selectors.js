@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether module settings are currently being requested
  */
 export function isRequestingModuleSettings( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModuleSettings.requests, [ siteId, moduleSlug, 'requesting' ], null );
+	return get( state.jetpack.jetpackModuleSettings.requests, [ siteId, moduleSlug, 'requesting' ], null );
 }
 
 /**
@@ -26,7 +26,7 @@ export function isRequestingModuleSettings( state, siteId, moduleSlug ) {
  * @return {?Boolean}            Whether module settings are currently being updated
  */
 export function isUpdatingModuleSettings( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModuleSettings.requests, [ siteId, moduleSlug, 'updating' ], null );
+	return get( state.jetpack.jetpackModuleSettings.requests, [ siteId, moduleSlug, 'updating' ], null );
 }
 
 /**
@@ -38,7 +38,7 @@ export function isUpdatingModuleSettings( state, siteId, moduleSlug ) {
  * @return {?Object}         Modules settings
  */
 export function getModulesSettings( state, siteId ) {
-	return get( state.jetpackSettings.jetpackModuleSettings.items, [ siteId ], null );
+	return get( state.jetpack.jetpackModuleSettings.items, [ siteId ], null );
 }
 
 /**
@@ -51,5 +51,5 @@ export function getModulesSettings( state, siteId ) {
  * @return {?Object}             Module data
  */
 export function getModuleSettings( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModuleSettings.items, [ siteId, moduleSlug ], null );
+	return get( state.jetpack.jetpackModuleSettings.items, [ siteId, moduleSlug ], null );
 }
