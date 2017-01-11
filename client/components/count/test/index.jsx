@@ -9,6 +9,9 @@ var expect = require( 'chai' ).expect,
  */
 import { Count } from '../';
 
+// this emulates numberFormat for testing purposes
+const mockNumberFormat = ( num ) => num.toLocaleString( 'en-US', { maximumFractionDigits: 0 } )
+
 describe( 'Count', function() {
 	var React, TestUtils, renderer;
 
@@ -27,7 +30,7 @@ describe( 'Count', function() {
 	it( 'should render the passed count', function() {
 		var result;
 
-		renderer.render( <Count count={ 23 } /> );
+		renderer.render( <Count count={ 23 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.className ).to.equal( 'count' );
@@ -37,7 +40,7 @@ describe( 'Count', function() {
 	it( 'should use the correct class name', function() {
 		var result;
 
-		renderer.render( <Count count={ 23 } /> );
+		renderer.render( <Count count={ 23 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.className ).to.equal( 'count' );
@@ -46,7 +49,7 @@ describe( 'Count', function() {
 	it( 'should internationalize the passed count', function() {
 		var result;
 
-		renderer.render( <Count count={ 2317 } /> );
+		renderer.render( <Count count={ 2317 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.children ).to.equal( '2,317' );
@@ -55,7 +58,7 @@ describe( 'Count', function() {
 	it( 'should render zero', function() {
 		var result;
 
-		renderer.render( <Count count={ 0 } /> );
+		renderer.render( <Count count={ 0 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.children ).to.equal( '0' );
@@ -64,7 +67,7 @@ describe( 'Count', function() {
 	it( 'should render negative numbers', function() {
 		var result;
 
-		renderer.render( <Count count={ -1000 } /> );
+		renderer.render( <Count count={ -1000 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.children ).to.equal( '-1,000' );
@@ -73,7 +76,7 @@ describe( 'Count', function() {
 	it( 'should cut off floating point numbers', function() {
 		var result;
 
-		renderer.render( <Count count={ 3.1415926 } /> );
+		renderer.render( <Count count={ 3.1415926 } numberFormat={ mockNumberFormat } /> );
 		result = renderer.getRenderOutput();
 
 		expect( result.props.children ).to.equal( '3' );
