@@ -13,9 +13,9 @@ import columns, { defaultColumnSelections } from './columns';
 
 class ListBody extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
+		products: PropTypes.array.isRequired,
 		categories: PropTypes.array.isRequired,
-		edits: PropTypes.object.isRequired,
+		edits: PropTypes.object,
 		editable: PropTypes.bool.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		display: PropTypes.object.isRequired,

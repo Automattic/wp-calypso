@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import Card from 'components/card';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -30,8 +31,8 @@ export function createRenderHelpers(
 
 export default class ListTable extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
-		edits: PropTypes.object.isRequired,
+		products: PropTypes.array.isRequired,
+		edits: PropTypes.object,
 		editable: PropTypes.bool.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		columns: PropTypes.array.isRequired,
@@ -83,10 +84,13 @@ export default class ListTable extends React.Component {
 		// Copy all props and pass down to ListHeader for extension reasons.
 		const headerProps = Object.assign( {}, this.props, { selectedColumns } );
 
-		const classes = 'product-list__list-table product-list__list-table-columns-' + columns.length;
+		const cardClasses = classNames(
+			'product-list__list-table',
+			'product-list__list-table-columns-' + columns.length
+		);
 
 		return (
-			<Card className={ classes }>
+			<Card className={ cardClasses }>
 				<ul className="product-list__list">
 					<ListHeader ref="listHeader" { ...headerProps } />
 					{
