@@ -18,6 +18,7 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
+	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
@@ -109,6 +110,41 @@ describe( 'reducer', () => {
 				},
 				action = {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
+					siteId,
+					settings: {
+						'related-posts': true,
+						'infinite-scroll': false,
+					}
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ] ).to.eql( {
+				'related-posts': {
+					module: 'related-posts',
+					active: true,
+				},
+				'infinite-scroll': {
+					module: 'infinite-scroll',
+					active: false,
+				}
+			} );
+		} );
+
+		it( 'should update modules activation state when receiving new settings', () => {
+			const siteId = 123456,
+				stateIn = {
+					123456: {
+						'related-posts': {
+							module: 'related-posts',
+							active: false,
+						},
+						'infinite-scroll': {
+							module: 'infinite-scroll',
+							active: true,
+						}
+					}
+				},
+				action = {
+					type: JETPACK_SETTINGS_RECEIVE,
 					siteId,
 					settings: {
 						'related-posts': true,
