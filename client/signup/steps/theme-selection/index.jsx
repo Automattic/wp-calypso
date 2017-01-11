@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,20 +25,18 @@ class ThemeSelectionStep extends Component {
 		goToNextStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object.isRequired,
 		stepName: PropTypes.string.isRequired,
+		translate: PropTypes.func,
 		useHeadstart: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		useHeadstart: true
+		useHeadstart: true,
+		translate: identity,
 	};
 
-	constructor() {
-		super();
-
-		this.state = {
-			showPressable: false,
-		};
-	}
+	state = {
+		showPressable: false,
+	};
 
 	pickTheme = ( theme ) => {
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
@@ -112,6 +111,8 @@ class ThemeSelectionStep extends Component {
 			'is-hidden': this.state.showPressable,
 		} );
 
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<div className={ pressableWrapperClassName } >
@@ -122,9 +123,9 @@ class ThemeSelectionStep extends Component {
 				</div>
 				<div className={ themesWrapperClassName } >
 					<StepWrapper
-						fallbackHeaderText={ this.props.translate( 'Choose a theme.' ) }
-						fallbackSubHeaderText={ this.props.translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
-						subHeaderText={ this.props.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
+						fallbackHeaderText={ translate( 'Choose a theme.' ) }
+						fallbackSubHeaderText={ translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
+						subHeaderText={ translate( 'Choose a theme. You can always switch to a different theme later.' ) }
 						stepContent={ this.renderThemesList() }
 						defaultDependencies={ defaultDependencies }
 						headerButton={ this.renderJetpackButton() }
