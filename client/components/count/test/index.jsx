@@ -4,19 +4,20 @@
 var expect = require( 'chai' ).expect,
 	useMockery = require( 'test/helpers/use-mockery' );
 
+/**
+ * Internal dependencies
+ */
+import { Count } from '../';
+
 describe( 'Count', function() {
-	var React, ReactClass, TestUtils, Count, renderer;
+	var React, TestUtils, renderer;
 
 	// really only using Mockery for the clean module cache
 	useMockery();
 
 	before( function() {
 		React = require( 'react' );
-		ReactClass = require( 'react/lib/ReactClass' );
 		TestUtils = require( 'react-addons-test-utils' );
-
-		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-		Count = require( '../' );
 	} );
 
 	beforeEach( function() {

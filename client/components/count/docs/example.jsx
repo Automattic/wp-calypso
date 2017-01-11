@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
 
 module.exports = React.createClass( {
 	displayName: 'Count',

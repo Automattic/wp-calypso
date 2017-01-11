@@ -3,9 +3,10 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, omit } from 'lodash';
+import { omit } from 'lodash';
 
-const Count = ( { count, numberFormat, ...inheritProps } ) => (
+export const Count = ( { count, numberFormat, ...inheritProps } ) => (
+	// Omit props passed from the `localize` higher-order component that we don't need.
 	<span className="count" { ...omit( inheritProps, [ 'translate', 'moment' ] ) }>
 		{ numberFormat( count ) }
 	</span>
@@ -17,7 +18,8 @@ Count.propTypes = {
 };
 
 Count.defaultProps = {
-	numberFormat: identity
+	// this emulates numberFormat for SSR,Formated in a way to represent desired results in tests
+	numberFormat: ( num ) => num.toLocaleString( 'en-US', { maximumFractionDigits: 0 } )
 };
 
 export default localize( Count );
