@@ -5,6 +5,8 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET,
+	AUTOMATED_TRANSFER_STATUS_REQUEST,
+	AUTOMATED_TRANSFER_STATUS_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -49,4 +51,26 @@ export const updateEligibility = ( siteId, { eligibilityHolds, eligibilityWarnin
 	lastUpdate,
 	siteId,
 	status,
+} );
+
+export const requestStatus = siteId => ( {
+	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
+	siteId,
+} );
+
+/**
+ * Merges transfer status updates into the app state for a given site
+ *
+ * @see statea/automated-transfer/reducer
+ *
+ * @param {Number} siteId site associated with transfer
+ * @param {String} status status of transfer
+ * @param {Number} [transferId] id for currently active transfer
+ * @returns {Object} Redux action
+ */
+export const updateStatus = ( { siteId, status, transferId } ) => ( {
+	type: AUTOMATED_TRANSFER_STATUS_UPDATE,
+	siteId,
+	status,
+	transferId,
 } );
