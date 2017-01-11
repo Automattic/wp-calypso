@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +16,12 @@ import { abtest } from 'lib/abtest';
 class SignupThemesList extends Component {
 
 	static propTypes = {
-		surveyQuestion: React.PropTypes.string,
-		designType: React.PropTypes.string,
-		handleScreenshotClick: React.PropTypes.func,
-		handleThemeUpload: React.PropTypes.func,
-		showThemeUpload: React.PropTypes.bool
+		surveyQuestion: PropTypes.string,
+		designType: PropTypes.string,
+		handleScreenshotClick: PropTypes.func,
+		handleThemeUpload: PropTypes.func,
+		showThemeUpload: PropTypes.bool,
+		translate: PropTypes.func
 	};
 
 	static defaultProps = {
@@ -27,7 +29,8 @@ class SignupThemesList extends Component {
 		designType: null,
 		handleScreenshotClick: noop,
 		handleThemeUpload: noop,
-		showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' )
+		showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ),
+		translate: identity
 	};
 
 	shouldComponentUpdate( nextProps ) {
