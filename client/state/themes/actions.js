@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, property, delay } from 'lodash';
+import { filter, map, property, delay } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -53,7 +53,8 @@ import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } fro
 import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import {
 	getThemeIdFromStylesheet,
-	filterThemesForJetpack,
+	isThemeMatchingQuery,
+	isThemeFromWpcom,
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme
@@ -61,6 +62,7 @@ import {
 import i18n from 'i18n-calypso';
 import { getSiteTitle } from 'state/sites/selectors';
 import accept from 'lib/accept';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -131,8 +133,20 @@ export function requestThemes( siteId, query = {} ) {
 			let filteredThemes;
 			if ( siteId !== 'wpcom' ) {
 				themes = map( rawThemes, normalizeJetpackTheme );
-				const filterWpcom = hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId );
-				filteredThemes = filterThemesForJetpack( themes, query, filterWpcom );
+
+				// A Jetpack site's themes endpoint ignores the query,
+				// returning an unfiltered list of all installed themes instead.
+				// So we have to filter on the client side.
+				// Also if Jetpack plugin has Themes Extended Features,
+				// we filter out -wpcom suffixed themes because we will show them in
+				// second list that is specific to WorpPress.com themes.
+				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
+					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId );
+
+				filteredThemes = filter(
+					themes,
+					theme => isThemeMatchingQuery( query, theme ) && ( keepWpcom || ! isThemeFromWpcom( theme.id ) )
+				);
 				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
 				found = filteredThemes.length;
 			} else {
