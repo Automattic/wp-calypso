@@ -2,9 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:index' ); // eslint-disable-line no-unused-vars
-import { connect } from 'react-redux';
-import { flowRight, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,20 +21,18 @@ var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'lib/analytics' ),
 	EmailVerificationGate = require( 'components/email-verification/email-verification-gate' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingPostTypes } from 'state/post-types/selectors';
 import { protectForm } from 'lib/protect-form';
 
 var Menus = React.createClass( {
 
-	mixins: [ observe( 'site', 'siteMenus' ) ],
+	mixins: [ observe( 'site', 'siteMenus', 'itemTypes' ) ],
 
 	componentWillMount: function() {
 		this.props.siteMenus.on( 'change', this.maybeMarkChanged );
 		this.props.siteMenus.on( 'saved', this.props.markSaved );
 		this.props.siteMenus.on( 'error', this.displayError );
 		window.addEventListener( 'unload', this.recordUnloadEvent );
+		this.props.itemTypes.get();
 	},
 
 	componentWillUnmount: function() {
@@ -214,7 +211,7 @@ var Menus = React.createClass( {
 		let featureExample;
 
 		if ( data.menus && data.locations &&
-			data.hasDefaultMenu && ! this.props.isRequesting ) {
+			data.hasDefaultMenu && this.props.itemTypes.fetched ) {
 			featureExample = this.renderMenus();
 		}
 
@@ -242,7 +239,7 @@ var Menus = React.createClass( {
 			menu;
 
 		if ( ! data.menus || ! data.locations || ! data.hasDefaultMenu ||
-			this.props.isRequesting || this.state.isBusy ) {
+			! this.props.itemTypes.fetched || this.state.isBusy ) {
 			return <LoadingPlaceholder />;
 		}
 
@@ -286,7 +283,6 @@ var Menus = React.createClass( {
 
 		return (
 			<Main className="manage-menus">
-				<QueryPostTypes siteId={ this.props.siteId } />
 				<SidebarNavigation />
 				<EmailVerificationGate>
 					{ this.renderMenus() }
@@ -296,18 +292,4 @@ var Menus = React.createClass( {
 	}
 } );
 
-const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const isRequesting = isRequestingPostTypes( state, siteId );
-		return {
-			isRequesting,
-			siteId,
-		};
-	}
-);
-
-export default flowRight(
-	connectComponent,
-	protectForm
-)( Menus );
+module.exports = protectForm( Menus );
