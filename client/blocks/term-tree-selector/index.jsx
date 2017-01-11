@@ -19,7 +19,8 @@ export default React.createClass( {
 		selected: PropTypes.array,
 		createLink: PropTypes.string,
 		analyticsPrefix: PropTypes.string,
-		taxonomy: PropTypes.string
+		taxonomy: PropTypes.string,
+		height: PropTypes.number,
 	},
 
 	getDefaultProps() {
@@ -27,7 +28,8 @@ export default React.createClass( {
 			analyticsPrefix: 'Category Selector',
 			selected: [],
 			taxonomy: 'category',
-			onChange: () => {}
+			onChange: () => {},
+			height: 300
 		};
 	},
 
@@ -45,8 +47,14 @@ export default React.createClass( {
 		}
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.taxonomy !== this.props.taxonomy ) {
+			this.setState( { search: '' } );
+		}
+	},
+
 	render() {
-		const { className, taxonomy, onChange, selected, createLink, multiple } = this.props;
+		const { className, taxonomy, onChange, selected, createLink, multiple, height } = this.props;
 
 		const classes = classNames( className );
 		const { search } = this.state;
@@ -65,6 +73,7 @@ export default React.createClass( {
 					selected={ selected }
 					createLink={ createLink }
 					multiple={ multiple }
+					height={ height }
 				/>
 			</div>
 		);

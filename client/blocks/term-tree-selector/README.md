@@ -102,3 +102,13 @@ The prefix to be used when recording search events in Google Analytics
 </table>
 
 An optional classname to apply to the term selector wrapping element.
+
+### `height`
+
+<table>
+	<tr><th>Type</th><td>Number</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>300</code></td></tr>
+</table>
+
+An optional height to apply to the term selector results element
