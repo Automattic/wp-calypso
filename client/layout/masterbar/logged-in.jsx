@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -133,8 +135,13 @@ const MasterbarLoggedIn = React.createClass( {
 // TODO: make this pure when sites can be retrieved from the Redux state
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	let siteSlug = getSiteSlug( state, siteId );
 
-	return {
-		siteSlug: getSiteSlug( state, siteId )
-	};
+	// If siteId has not been set in redux, fall back to currentUser.primarySiteSlug
+	if ( ! siteId ) {
+		const currentUser = getCurrentUser( state );
+		siteSlug = get( currentUser, 'primarySiteSlug' );
+	}
+
+	return { siteSlug };
 }, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
