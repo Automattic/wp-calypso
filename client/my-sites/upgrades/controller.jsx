@@ -7,11 +7,13 @@ import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
 import { get } from 'lodash';
+import noop from 'lodash/noop';
 
 /**
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import HeaderCake from 'components/header-cake';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
@@ -23,6 +25,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import SignupThemesList from 'signup/steps/theme-selection/signup-themes-list';
 
 /**
  * Module variables
@@ -294,4 +297,26 @@ module.exports = {
 			context.store
 		);
 	},
+
+	landingPage: function( context, next ) {
+		renderWithReduxStore(
+			(
+				<div>
+					<HeaderCake>
+						{ i18n.translate( 'Choose a landing page' ) }
+					</HeaderCake>
+					<SignupThemesList
+						surveyQuestion={ null }
+						designType="domain"
+						handleScreenshotClick={ noop }
+						handleThemeUpload={ noop }
+					/>
+				</div>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);	
+
+		next();
+	}
 };

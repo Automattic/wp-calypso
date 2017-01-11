@@ -76,7 +76,7 @@ const Edit = React.createClass( {
 						Customize
 					</a>
 
-					<a style={ styles.column } href={ '/link-to-theme-selection/' + domain.name }>
+					<a style={ styles.column } href={ '/domains/landing-page/' + domain.name }>
 						<Gridicon icon="cog" /><br />
 						Change type
 					</a>
