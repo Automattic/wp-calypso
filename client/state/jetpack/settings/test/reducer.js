@@ -8,6 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
@@ -107,6 +109,50 @@ describe( 'reducer', () => {
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {
 				12345678: { ...SETTINGS_FIXTURE[ siteId ], test_setting: 123 }
+			} );
+		} );
+
+		it( 'should mark the module as active upon successful module activation', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: {
+						setting_123: 'test',
+						'module-a': false
+					}
+				},
+				action = {
+					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
+					siteId,
+					moduleSlug: 'module-a'
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: {
+					setting_123: 'test',
+					'module-a': true
+				}
+			} );
+		} );
+
+		it( 'should mark the module as inactive upon successful module deactivation', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: {
+						setting_123: 'test',
+						'module-a': true
+					}
+				},
+				action = {
+					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
+					siteId,
+					moduleSlug: 'module-a'
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: {
+					setting_123: 'test',
+					'module-a': false
+				}
 			} );
 		} );
 
