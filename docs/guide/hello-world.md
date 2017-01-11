@@ -124,7 +124,8 @@ We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.
 Now let's build our main view using a React component. For this task we have two steps:
 
 1. Create a JSX file called `main.jsx` in `client/my-sites/hello-world`.
-2. Hook up controller.
+2. Create component's style.scss file.
+3. Hook up controller.
 
 ### 1. Create main view
 
@@ -168,7 +169,9 @@ export default class HelloWorld extends React.Component {
 
 If you want to learn more about our approach to writing React components, check out the [Components](../components.md) page.
 
-### 2. Hook up controller
+### 2. Create style.scss file
+
+### 3. Hook up controller
 
 Time to hook this up with our controller function. Open `/hello-world/controller.js`.  
 Import ReactDom, React and your new component at the top of the file:
