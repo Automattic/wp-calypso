@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -131,10 +132,15 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
+	let siteSlug = getSiteSlug( state, siteId );
 
-	return {
-		siteSlug: getSiteSlug( state, siteId )
-	};
+	// fall back to sites list to see if a site is selected
+	if ( ! siteId ) {
+		const site = ownProps.sites.getPrimary();
+		siteSlug = get( site, 'slug' );
+	}
+
+	return { siteSlug };
 }, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
