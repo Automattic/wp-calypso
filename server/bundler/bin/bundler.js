@@ -106,13 +106,4 @@ webpack( webpackConfig, function( error, stats ) {
 	assets = utils.getAssets( stats.toJson() );
 
 	fs.writeFileSync( path.join( __dirname, '..', 'assets.json' ), JSON.stringify( assets, null, '\t' ) );
-
-	// sort by size to make parallel minification go a bit quicker. don't get stuck doing the big stuff last.
-	files = assets.sort( function( a, b ) {
-		return b.size - a.size;
-	} ).map( function( chunk ) {
-		return path.join( process.cwd(), 'public', chunk.file );
-	} );
-
-	minify( files );
 });
