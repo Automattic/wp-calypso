@@ -56,7 +56,12 @@ export default React.createClass( {
 			return this.translate( 'Countries' );
 		}
 
-		return ( <DatePicker period={ this.props.period.period } date={ this.props.period.startOf } summary={ true } /> );
+		return (
+			<DatePicker
+				period={ this.props.period.period }
+				date={ this.props.period.startOf }
+				summary={ true } />
+			);
 	},
 
 	render() {
