@@ -22,7 +22,8 @@ const AllSites = require( 'my-sites/all-sites' ),
 
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const CurrentSite = React.createClass( {
 	displayName: 'CurrentSite',
@@ -38,12 +39,10 @@ const CurrentSite = React.createClass( {
 	},
 
 	componentWillMount() {
-		const { selectedSite } = this.props;
-
-		if ( selectedSite && ! selectedSite.jetpack ) {
-			UpgradesActions.fetchDomains( selectedSite.ID );
+		const { selectedSiteId, isJetpack } = this.props;
+		if ( selectedSiteId && ! isJetpack ) {
+			UpgradesActions.fetchDomains( selectedSiteId );
 		}
-		this.prevSelectedSite = selectedSite;
 
 		DomainsStore.on( 'change', this.handleStoreChange );
 	},
@@ -58,13 +57,11 @@ const CurrentSite = React.createClass( {
 		};
 	},
 
-	componentWillUpdate() {
-		const { selectedSite } = this.props;
-
-		if ( selectedSite && this.prevSelectedSite !== selectedSite && ! selectedSite.jetpack ) {
-			UpgradesActions.fetchDomains( selectedSite.ID );
+	componentDidUpdate( prevProps ) {
+		const { selectedSiteId, isJetpack } = this.props;
+		if ( selectedSiteId && ! isJetpack && selectedSiteId !== prevProps.selectedSiteId ) {
+			UpgradesActions.fetchDomains( selectedSiteId );
 		}
-		this.prevSelectedSite = selectedSite;
 	},
 
 	handleStoreChange: function() {
@@ -109,7 +106,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	render: function() {
-		const { selectedSite } = this.props;
+		const { selectedSite, isJetpack } = this.props;
 
 		if ( ! this.props.sites.initialized ) {
 			return (
@@ -149,7 +146,7 @@ const CurrentSite = React.createClass( {
 						tipTarget="site-card-preview" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
-				{ ! selectedSite.jetpack && this.getDomainWarnings() }
+				{ ! isJetpack && this.getDomainWarnings() }
 				<SiteNotice site={ selectedSite } />
 			</Card>
 		);
@@ -159,9 +156,13 @@ const CurrentSite = React.createClass( {
 // TODO: make this pure when sites can be retrieved from the Redux state
 module.exports = connect(
 	( state, ownProps ) => {
+		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
+
 		return {
-			selectedSite: selectedSite || ownProps.sites.getPrimary()
+			selectedSiteId,
+			selectedSite: selectedSite || ownProps.sites.getPrimary(),
+			isJetpack: isJetpackSite( state, selectedSiteId )
 		};
 	},
 	{ setLayoutFocus },
