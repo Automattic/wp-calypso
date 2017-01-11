@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,10 +16,14 @@ import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Notice from 'components/notice';
 import Button from 'components/button';
 
-const ThemeSetup = ( { translate } ) => {
+const ThemeSetup = ( { translate, site } ) => {
+	const onBack = () => {
+		page( '/settings/general/' + site );
+	}
+
 	return (
 		<div className="main main-column" role="main">
-			<HeaderCake><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
+			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
 			<ActionPanel>
 				<ActionPanelBody>
 					<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>

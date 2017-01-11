@@ -183,7 +183,7 @@ module.exports = {
 	themeSetup( context ) {
 		renderPage(
 			context,
-			<ThemeSetup />
+			<ThemeSetup site={ sites.selected } />
 		);
 	},
 
