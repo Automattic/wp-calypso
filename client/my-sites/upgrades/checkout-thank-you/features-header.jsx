@@ -15,7 +15,7 @@ import {
 	isGuidedTransfer,
 } from 'lib/products-values';
 
-const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases } ) => {
+const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {
 		'is-placeholder': ! isDataLoaded
 	} );
@@ -28,7 +28,8 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases } ) => {
 		return <div />;
 	}
 
-	const shouldHideFeaturesHeading = purchases.some( isGoogleApps ) ||
+	const shouldHideFeaturesHeading = hasFailedPurchases ||
+		purchases.some( isGoogleApps ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
 		purchases.some( isGuidedTransfer );
@@ -37,7 +38,7 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases } ) => {
 		return <div />;
 	}
 
-	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>
+	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>;
 };
 
 FeaturesHeader.propTypes = {
