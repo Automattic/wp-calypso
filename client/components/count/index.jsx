@@ -17,9 +17,4 @@ Count.propTypes = {
 	numberFormat: React.PropTypes.func
 };
 
-Count.defaultProps = {
-	// this emulates numberFormat for SSR,Formated in a way to represent desired results in tests
-	numberFormat: ( num ) => num.toLocaleString( 'en-US', { maximumFractionDigits: 0 } )
-};
-
 export default localize( Count );
