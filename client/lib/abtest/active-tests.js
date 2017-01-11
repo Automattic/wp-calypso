@@ -119,4 +119,15 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
+
+	premiumSquaredPlansWording: {
+		datestamp: '20170111',
+		variations: {
+			withoutMarketingCopy: 50,
+			withMarketingCopy: 50
+		},
+		defaultVariation: 'withoutMarketingCopy',
+		allowExistingUsers: true
+	},
+
 };

@@ -52,6 +52,7 @@ import SpinnerLine from 'components/spinner-line';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
+import { abtest } from 'lib/abtest';
 
 class PlanFeatures extends Component {
 
@@ -513,7 +514,7 @@ export default connect(
 					return;
 				}
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan );
+				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
