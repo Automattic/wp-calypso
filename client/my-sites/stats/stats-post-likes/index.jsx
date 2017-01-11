@@ -54,7 +54,7 @@ export const PostLikes = props => {
 				</ul>
 			</div>
 			<StatsModuleContent className="module-content-text-info">
-				<p>{ translate( 'This panel shows the list of people who likes your post.' ) }</p>
+				{ translate( 'This panel shows the list of people who like your post.' ) }
 			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
 			{ likes && !! likes.length &&
@@ -69,7 +69,7 @@ export const PostLikes = props => {
 									className="stats-post-likes__like"
 									onClick={ trackLikeClick }
 								>
-									<Gravatar user={ like } />
+									<Gravatar user={ like } size={ 24 } />
 								</a>
 							).concat(
 								countLikes > likes.length && <span key="placeholder" className="stats-post-likes__placeholder">

@@ -10,25 +10,29 @@
 		font-size: 13px;
 	}
 
-	.gravatar {
-	}
-
 	.stats-post-likes__like {
 		display: inline-block;
-		margin: 0 8px 6px 0;
+		margin: 2px 8px 2px 0;
 		vertical-align: top;
+		.gravatar {
+			display: block;
+		}
 	}
 
 	.stats-post-likes__placeholder {
-		height: 32px;
-		line-height: 30px;
-		border-radius: 16px;
-		display: inline-block;
-		border: solid 1px $gray;
-		color: $gray;
-		padding: 0 8px;
 		vertical-align: top;
-		box-sizing: border-box;
-		margin: 0 8px 6px 0;
+		margin-top: 6px;
+		line-height: 14px;
+		border-radius: 12px;
+		display: inline-block;
+		border: solid 1px #87a6bc;
+		color: #87a6bc;
+		padding: 1px 6px;
+		font-weight: 600;
+		font-size: 11px;
+	}
+
+	.module-content-text-info {
+		padding: 16px;
 	}
 }
