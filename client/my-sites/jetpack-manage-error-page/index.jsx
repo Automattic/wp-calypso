@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React from 'react'
-import { connect } from 'react-redux'
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics'
-import EmptyContent from 'components/empty-content'
-import FeatureExample from 'components/feature-example'
-import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors'
+import analytics from 'lib/analytics';
+import EmptyContent from 'components/empty-content';
+import FeatureExample from 'components/feature-example';
+import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
 const JetpackManageErrorPage = React.createClass( {
 	actionCallbacks: {
