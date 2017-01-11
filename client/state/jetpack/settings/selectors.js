@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether Jetpack settings are currently being requested
  */
 export function isRequestingJetpackSettings( state, siteId ) {
-	return get( state.jetpackSettings.settings.requests, [ siteId, 'requesting' ], null );
+	return get( state.jetpack.settings.requests, [ siteId, 'requesting' ], null );
 }
 
 /**
@@ -24,7 +24,7 @@ export function isRequestingJetpackSettings( state, siteId ) {
  * @return {?Boolean}            Whether Jetpack settings are currently being updated
  */
 export function isUpdatingJetpackSettings( state, siteId ) {
-	return get( state.jetpackSettings.settings.requests, [ siteId, 'updating' ], null );
+	return get( state.jetpack.settings.requests, [ siteId, 'updating' ], null );
 }
 
 /**
@@ -36,7 +36,7 @@ export function isUpdatingJetpackSettings( state, siteId ) {
  * @return {?Object}         Jetpack settings
  */
 export function getJetpackSettings( state, siteId ) {
-	return get( state.jetpackSettings.settings.items, [ siteId ], null );
+	return get( state.jetpack.settings.items, [ siteId ], null );
 }
 
 /**
@@ -49,5 +49,5 @@ export function getJetpackSettings( state, siteId ) {
  * @return {*}                Value of the Jetpack setting
  */
 export function getJetpackSetting( state, siteId, setting ) {
-	return get( state.jetpackSettings.settings.items, [ siteId, setting ], null );
+	return get( state.jetpack.settings.items, [ siteId, setting ], null );
 }

@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 	describe( '#isActivatingModule', () => {
 		it( 'should return true if module is currently being activated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if module is currently not being activated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -48,7 +48,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that module is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 	describe( '#isDeactivatingModule', () => {
 		it( 'should return true if module is currently being deactivated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if module is currently not being deactivated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that module is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 	describe( '#isModuleActive', () => {
 		it( 'should return true if the module is currently active', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: MODULES_FIXTURE
 						}
@@ -117,7 +117,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the module is currently not active', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: MODULES_FIXTURE
 						}
@@ -130,7 +130,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that module is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: MODULES_FIXTURE
 						}
@@ -145,7 +145,7 @@ describe( 'selectors', () => {
 	describe( '#isFetchingModules', () => {
 		it( 'should return true if the list of modules is being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -158,7 +158,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the list of modules is currently not being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -171,7 +171,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that site is not known', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -186,7 +186,7 @@ describe( 'selectors', () => {
 	describe( '#getModules', () => {
 		it( 'should return data for all modules for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: {
 								123456: MODULE_DATA_FIXTURE
@@ -201,7 +201,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: {
 								654321: MODULE_DATA_FIXTURE
@@ -218,7 +218,7 @@ describe( 'selectors', () => {
 	describe( '#getModule', () => {
 		it( 'should return data for a specified module for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: {
 								123456: MODULE_DATA_FIXTURE
@@ -233,7 +233,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: {
 								654321: MODULE_DATA_FIXTURE
@@ -248,7 +248,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown module', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackModules: {
 							items: {
 								123456: MODULE_DATA_FIXTURE

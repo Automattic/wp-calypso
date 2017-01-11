@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether the module is active
  */
 export function isModuleActive( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug, 'active' ], null );
+	return get( state.jetpack.jetpackModules.items, [ siteId, moduleSlug, 'active' ], null );
 }
 
 /**
@@ -26,7 +26,7 @@ export function isModuleActive( state, siteId, moduleSlug ) {
  * @return {?Boolean}            Whether module is currently being activated
  */
 export function isActivatingModule( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'activating' ], null );
+	return get( state.jetpack.jetpackModules.requests, [ siteId, moduleSlug, 'activating' ], null );
 }
 
 /**
@@ -39,7 +39,7 @@ export function isActivatingModule( state, siteId, moduleSlug ) {
  * @return {?Boolean}            Whether module is currently being deactivated
  */
 export function isDeactivatingModule( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
+	return get( state.jetpack.jetpackModules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
 }
 
 /**
@@ -52,7 +52,7 @@ export function isDeactivatingModule( state, siteId, moduleSlug ) {
  * @return {?Boolean}         Whether the list is being requested
  */
 export function isFetchingModules( state, siteId ) {
-	return get( state.jetpackSettings.jetpackModules.requests, [ siteId, 'fetchingModules' ], null );
+	return get( state.jetpack.jetpackModules.requests, [ siteId, 'fetchingModules' ], null );
 }
 
 /**
@@ -64,7 +64,7 @@ export function isFetchingModules( state, siteId ) {
  * @return {?Object}         Modules data
  */
 export function getModules( state, siteId ) {
-	return get( state.jetpackSettings.jetpackModules.items, [ siteId ], null );
+	return get( state.jetpack.jetpackModules.items, [ siteId ], null );
 }
 
 /**
@@ -77,5 +77,5 @@ export function getModules( state, siteId ) {
  * @return {?Object}             Module data
  */
 export function getModule( state, siteId, moduleSlug ) {
-	return get( state.jetpackSettings.jetpackModules.items, [ siteId, moduleSlug ], null );
+	return get( state.jetpack.jetpackModules.items, [ siteId, moduleSlug ], null );
 }

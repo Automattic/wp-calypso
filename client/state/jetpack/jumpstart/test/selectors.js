@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 	describe( '#isActivatingJumpstart', () => {
 		it( 'should return true if jumpstart is currently being activated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if jumpstart is currently not being activated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 	describe( '#isDeactivatingJumpstart', () => {
 		it( 'should return true if jumpstart is currently being deactivated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -75,7 +75,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if jumpstart is currently not being deactivated', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -88,7 +88,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if that site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -103,7 +103,7 @@ describe( 'selectors', () => {
 	describe( '#isRequestingJumpstartStatus', () => {
 		it( 'should return true if the jumpstart status is being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -116,7 +116,7 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the jumpstart status is not being fetched', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -129,7 +129,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null if the site is not known yet', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							requests: REQUESTS_FIXTURE
 						}
@@ -144,7 +144,7 @@ describe( 'selectors', () => {
 	describe( '#getJumpstartStatus', () => {
 		it( 'should return jumpstart status for a known site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							items: ITEMS_FIXTURE
 						}
@@ -157,7 +157,7 @@ describe( 'selectors', () => {
 
 		it( 'should return null for an unknown site', () => {
 			const stateIn = {
-					jetpackSettings: {
+					jetpack: {
 						jetpackJumpstart: {
 							items: ITEMS_FIXTURE
 						}
