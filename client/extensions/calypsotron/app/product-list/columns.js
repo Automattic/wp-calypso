@@ -1,6 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
-import * as cell from './cell-render';
 import { translate as __ } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import * as cell from './cell-render';
 import ColumnSelectIcon from './column-select-icon';
 
 // Custom cell render functions.
@@ -9,6 +16,60 @@ const TAX_STATUS_NAMES = {
 	shipping: __( 'Shipping only' ),
 	none: __( 'None' ),
 };
+
+const columnGroups = [
+	{
+		name: __( 'General' ),
+		selections: [
+			{ key: 'sku',	title: __( 'SKU' ) },
+			{
+				key: 'dimensions', title: __( 'Dimensions' ),
+				columnKeys: [ 'length', 'width', 'height' ]
+			},
+			{ key: 'weight', title: __( 'Weight' ) },
+			{ key: 'price', title: __( 'Current Price' ) },
+			{ key: 'regular_price', title: __( 'Regular Price' ) },
+			{ key: 'sale_price', title: __( 'Sale Price' ) },
+		],
+	},
+	{
+		name: __( 'Inventory' ),
+		selections: [
+			{ key: 'in_stock', title: __( 'Stock' ) },
+			{ key: 'manage_stock', title: __( 'Manage Stock' ) },
+			{ key: 'stock_quantity', title: __( 'Stock Quantity' ) },
+			{ key: 'shipping_class', title: __( 'Shipping Class' ) },
+		],
+	},
+	{
+		name: __( 'Tax' ),
+		selections: [
+			{ key: 'tax_status', title: __( 'Tax status' ) },
+			{ key: 'tax_class', title: __( 'Tax class' ) },
+		],
+	},
+	{
+		name: __( 'Organization' ),
+		selections: [
+			{ key: 'categories', title: __( 'Categories' ) },
+			{ key: 'tags', title: __( 'Tags' ) },
+		],
+	},
+	{
+		name: __( 'Exposure' ),
+		selections: [
+			{ key: 'catalog_visibility', title: __( 'Visibility' ) },
+			{ key: 'featured', title: __( 'Featured' ) },
+		],
+	},
+	{
+		name: __( 'Misc' ),
+		selections: [
+			{ key: 'backorders', title: __( 'Backorders' ) },
+			{ key: 'sold_individually', title: __( 'Sold individually' ) },
+		],
+	},
+];
 
 // Column table for products: Index order matters!!
 export default [
@@ -27,24 +88,24 @@ export default [
 	{
 		key: 'length',
 		title: __( 'L' ),
-		renderView: ( product, key, constraints, helpers ) => {
-			const value = product[ 'dimensions' ] || {};
+		renderView: ( product ) => {
+			const value = product.dimensions || {};
 			return value.length ? Number( value.length ) : '';
 		},
 	},
 	{
 		key: 'width',
 		title: __( 'W' ),
-		renderView: ( product, key, constraints, helpers ) => {
-			const value = product[ 'dimensions' ] || {};
+		renderView: ( product ) => {
+			const value = product.dimensions || {};
 			return value.width ? Number( value.width ) : '';
 		},
 	},
 	{
 		key: 'height',
 		title: __( 'H' ),
-		renderView: ( product, key, constraints, helpers ) => {
-			const value = product[ 'dimensions' ] || {};
+		renderView: ( product ) => {
+			const value = product.dimensions || {};
 			return value.height ? Number( value.height ) : '';
 		},
 	},
@@ -106,13 +167,13 @@ export default [
 		key: 'tax_status',
 		title: __( 'Tax status' ),
 		group: __( 'Tax' ),
-		renderView: ( product, key, constraints, helpers ) => {
+		renderView: ( product, key ) => {
 			return TAX_STATUS_NAMES[ product[ key ] ];
 		},
 		renderEdit: cell.renderSelectInput,
 		constraints: {
-			getOptions: ( product, key, helpers ) => {
-				let options = Object.keys( TAX_STATUS_NAMES ).map( ( value ) => {
+			getOptions: () => {
+				const options = Object.keys( TAX_STATUS_NAMES ).map( ( value ) => {
 					return { name: TAX_STATUS_NAMES[ value ], value };
 				} );
 				return options;
@@ -127,13 +188,13 @@ export default [
 			// If it's blank, it should show the first tax class from the list.
 
 			const value = product[ key ];
-			const taxClass = helpers.data.taxClasses.find( ( taxClass, index ) => {
+			const taxClassResult = helpers.data.taxClasses.find( ( taxClass, index ) => {
 				if ( value === taxClass.slug || 0 === value.length && 0 === index ) {
 					return taxClass;
 				}
 			} );
 
-			return ( taxClass ? taxClass.name : '' );
+			return ( taxClassResult ? taxClassResult.name : '' );
 		},
 		renderEdit: cell.renderSelectInput,
 		constraints: {
@@ -142,7 +203,7 @@ export default [
 					return {
 						name: taxClass.name,
 						value: taxClass.slug,
-					}
+					};
 				} );
 			},
 		},
@@ -153,7 +214,7 @@ export default [
 		renderView: cell.renderCategories,
 		renderEdit: cell.renderTokenField,
 		constraints: {
-			inConvert: ( categories, helpers ) => {
+			inConvert: ( categories ) => {
 				return categories.map( ( category ) => {
 					return category.name;
 				} );
@@ -224,57 +285,3 @@ export const defaultColumnSelections = {
 	stock_quantity: { key: 'stock_quantity' },
 	action: { key: 'action' },
 };
-
-const columnGroups = [
-	{
-		name: __( 'General' ),
-		selections: [
-			{ key: 'sku',                title: __( 'SKU' ) },
-			{
-				key: 'dimensions',       title: __( 'Dimensions' ),
-				columnKeys: [ 'length', 'width', 'height' ]
-			},
-			{ key: 'weight',             title: __( 'Weight' ) },
-			{ key: 'price',              title: __( 'Current Price' ) },
-			{ key: 'regular_price',      title: __( 'Regular Price' ) },
-			{ key: 'sale_price',         title: __( 'Sale Price' ) },
-		],
-	},
-	{
-		name: __( 'Inventory' ),
-		selections: [
-			{ key: 'in_stock',           title: __( 'Stock' ) },
-			{ key: 'manage_stock',       title: __( 'Manage Stock' ) },
-			{ key: 'stock_quantity',     title: __( 'Stock Quantity' ) },
-			{ key: 'shipping_class',     title: __( 'Shipping Class' ) },
-		],
-	},
-	{
-		name: __( 'Tax' ),
-		selections: [
-			{ key: 'tax_status',         title: __( 'Tax status' ) },
-			{ key: 'tax_class',          title: __( 'Tax class' ) },
-		],
-	},
-	{
-		name: __( 'Organization' ),
-		selections: [
-			{ key: 'categories',         title: __( 'Categories' ) },
-			{ key: 'tags',               title: __( 'Tags' ) },
-		],
-	},
-	{
-		name: __( 'Exposure' ),
-		selections: [
-			{ key: 'catalog_visibility', title: __( 'Visibility' ) },
-			{ key: 'featured',           title: __( 'Featured' ) },
-		],
-	},
-	{
-		name: __( 'Misc' ),
-		selections: [
-			{ key: 'backorders',         title: __( 'Backorders' ) },
-			{ key: 'sold_individually',  title: __( 'Sold individually' ) },
-		],
-	},
-];

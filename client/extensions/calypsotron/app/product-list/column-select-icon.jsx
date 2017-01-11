@@ -1,11 +1,18 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Gridicon from 'gridicons/react/gridicon';
+
+/**
+ * Internal dependencies
+ */
 import ColumnMenu from './column-menu';
 
 class ColumnSelectIcon extends React.Component {
-	propTypes: {
+	static propTypes = {
 		columns: PropTypes.array.isRequired,
 		columnGroups: PropTypes.array.isRequired,
 		display: PropTypes.object.isRequired,
@@ -14,7 +21,6 @@ class ColumnSelectIcon extends React.Component {
 	}
 
 	render() {
-		const __ = this.props.translate;
 		const { display, columns, columnGroups, columnSelections, onColumnSelectIconClick, onColumnSelect } = this.props;
 
 		return (

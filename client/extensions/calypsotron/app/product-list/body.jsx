@@ -1,12 +1,18 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import SearchCard from 'components/search-card';
+
+/**
+ * Internal dependencies
+ */
 import ListTable, { createRenderHelpers } from './list-table';
-import * as cell from './cell-render';
 import columns, { defaultColumnSelections } from './columns';
 
 class ListBody extends React.Component {
-	propTypes: {
+	static propTypes = {
 		products: PropTypes.object.isRequired,
 		categories: PropTypes.array.isRequired,
 		edits: PropTypes.object.isRequired,
@@ -52,7 +58,7 @@ class ListBody extends React.Component {
 	}
 
 	onEdit( product, key, value ) {
-		const { products, editProduct } = this.props;
+		const { editProduct } = this.props;
 
 		editProduct( product.id, key, value );
 	}

@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import Gridicon from 'gridicons/react/gridicon';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -5,50 +8,52 @@ import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormNumberInput from 'components/forms/form-number-input';
 import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormNumberInputWithAffixes from 'components/forms/form-number-input-with-affixes';
 import TokenField from 'components/token-field';
+
+/**
+ * Internal dependencies
+ */
 
 // View Renderers
 // Parameter Format: product, key, constraints, helpers
 
-export function renderString( product, key, constraints, helpers ) {
-	return product[key];
+export function renderString( product, key ) {
+	return product[ key ];
 }
 
 // Constraint (optional): nanString - Custom string for when value is NaN
-export function renderInteger( product, key, constraints, helpers ) {
-	const value = Number( product[key] );
+export function renderInteger( product, key, constraints ) {
+	const value = Number( product[ key ] );
 	const nanString = constraints && constraints.nanString || '';
 
 	if ( value ) {
 		return ( ! isNaN( value ) ? value : nanString );
-	} else {
-		return '';
 	}
+
+	return '';
 }
 
 // Constraint (optional): trueValues - Custom set of values that denote true
 // Constraint (optional): trueIcon - Custom icon for when value is true
 // Constraint (optional): falseIcon - Custom icon for when value is false
-export function renderBoolean( product, key, constraints, helpers ) {
+export function renderBoolean( product, key, constraints ) {
 	const trueValues = constraints && constraints.trueValues || [ true, 'true', 'yes' ];
 	const trueIcon = ( constraints && constraints.hasOwnProperty( 'trueIcon' ) ? constraints.trueIcon : 'checkmark' );
 	const falseIcon = ( constraints && constraints.hasOwnProperty( 'falseIcon' ) ? constraints.falseIcon : 'cross-small' );
-	const value = trueValues.includes( product[key] );
+	const value = trueValues.includes( product[ key ] );
 
 	if ( value ) {
 		return trueIcon && <Gridicon icon={ trueIcon } />;
-	} else {
-		return falseIcon && <Gridicon icon={ falseIcon } />;
 	}
+
+	return falseIcon && <Gridicon icon={ falseIcon } />;
 }
 
 export function renderCurrency( product, key, constraints, helpers ) {
-	const value = product[key];
+	const value = product[ key ];
 	const { currencySymbol, currencyIsPrefix, currencyDecimals, numberFormat } = helpers;
 	if ( value ) {
-		let number = numberFormat( value, currencyDecimals );
+		const number = numberFormat( value, currencyDecimals );
 		let text;
 
 		if ( currencyIsPrefix ) {
@@ -57,33 +62,33 @@ export function renderCurrency( product, key, constraints, helpers ) {
 			text = number + currencySymbol;
 		}
 		return text;
-	} else {
-		return '';
 	}
+
+	return '';
 }
 
-export function renderCategories( product, key, constraints, helpers ) {
-	const value = product[key];
+export function renderCategories( product, key ) {
+	const value = product[ key ];
 
 	if ( value ) {
-		let names = value.map( ( c ) => c.name );
+		const names = value.map( ( c ) => c.name );
 
 		return names.join();
-	} else {
-		return '';
 	}
+
+	return '';
 }
 
-export function renderTags( product, key, constraints, helpers ) {
-	const value = product[key];
+export function renderTags( product, key ) {
+	const value = product[ key ];
 
 	if ( value ) {
-		let names = value.map( ( c ) => c.name );
+		const names = value.map( ( c ) => c.name );
 
 		return names.join();
-	} else {
-		return '';
 	}
+
+	return '';
 }
 
 // Edit Renderers
@@ -142,7 +147,6 @@ export function renderCurrencyInput( product, key, constraints, helpers, disable
 	const constraintsProps = {};
 
 	if ( constraints ) {
-
 		if ( constraints.min ) {
 			constraintsProps.min = constraints.min;
 		} else if ( constraints.max ) {
@@ -173,9 +177,9 @@ export function renderCheckboxInput( product, key, constraints, helpers, disable
 	const value = trueValue === product[ key ];
 
 	const onChange = ( evt ) => {
-		const value = ( evt.target.checked ? trueValue : falseValue );
-		onEdit( product, key, value );
-	}
+		const changeValue = ( evt.target.checked ? trueValue : falseValue );
+		onEdit( product, key, changeValue );
+	};
 
 	return (
 		<FormCheckbox id={ key } disabled={ disabled } checked={ value } onChange={ onChange } />
@@ -196,9 +200,9 @@ export function renderSelectInput( product, key, constraints, helpers, disabled,
 	const onChange = ( evt ) => {
 		const convertedValue = outConvert( evt.target.value, helpers );
 		onEdit( product, key, convertedValue );
-	}
+	};
 
-	let optionTags = [];
+	const optionTags = [];
 	options.forEach( ( option ) => {
 		optionTags.push( <option key={ option.name } value={ option.value } >{ option.name }</option> );
 	} );
@@ -216,17 +220,16 @@ export function renderSelectInput( product, key, constraints, helpers, disabled,
 // Constraint (optional): outConvert - Function ( tokenFieldValue, helpers ),
 //                        converts from TokenField-compatible values to product[ key ] value.
 export function renderTokenField( product, key, constraints, helpers, disabled, onEdit ) {
-	const getSuggestions = constraints.getSuggestions || ( () => [] );
 	const inConvert = constraints.inConvert || ( ( value ) => value );
 	const outConvert = constraints.outConvert || ( ( value ) => value );
 
 	const suggestions = constraints.getSuggestions( product, key, helpers );
 	const value = inConvert( product[ key ], helpers );
 
-	const onChange = ( value ) => {
-		const convertedValue = outConvert( value, helpers );
+	const onChange = ( changeValue ) => {
+		const convertedValue = outConvert( changeValue, helpers );
 		onEdit( product, key, convertedValue );
-	}
+	};
 
 	return (
 		<TokenField

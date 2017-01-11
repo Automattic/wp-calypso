@@ -1,32 +1,30 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Button from 'components/button';
+
+/**
+ * Internal dependencies
+ */
 import TitleBar from '../../components/title-bar';
 import ProductsBody from './body';
-import Button from 'components/button';
 import screenData from '../../utils/screen-data';
 import * as wcApi from '../../data/wc-api';
 import fetchConnect from '../../state/fetch-data/fetch-connect';
+import * as actions from '../../state/products/actions';
 
 // TODO: Combine product-specific code from index and body into one file.
 // TODO: Make the entire list-table component general and move it to client/components
-
-import {
-	fetchProducts,
-	setDisplayOption,
-	initEdits,
-	addProduct,
-	editProduct,
-	cancelEdits,
-	saveEdits,
-} from '../../state/products/actions';
 
 // TODO: Do this in a more universal way.
 const data = screenData( 'wc_synchrotron_data' );
 
 class ProductList extends React.Component {
-	propTypes: {
+	static propTypes = {
 		products: PropTypes.object.isRequired,
 		fetchProducts: PropTypes.func.isRequired,
 		setDisplayOption: PropTypes.func.isRequired,
@@ -53,7 +51,6 @@ class ProductList extends React.Component {
 	}
 
 	render() {
-		const __ = this.props.translate;
 		const { products, categories, taxClasses, setDisplayOption, editProduct } = this.props;
 		const { currencySymbol, currencyIsPrefix, currencyDecimals } = this.props;
 		const { edits, saving } = products;
@@ -93,18 +90,26 @@ class ProductList extends React.Component {
 		);
 	}
 
+	onCancelClick() {
+		this.props.cancelEdits();
+	}
+
+	onSaveClick() {
+		const { edits } = this.props.products;
+		this.props.saveEdits( edits );
+	}
+
 	renderEditTitle() {
 		const __ = this.props.translate;
-		const { cancelEdits, saveEdits } = this.props;
 		const { edits, saving } = this.props.products;
 
 		return (
 			<TitleBar icon="product" title={ __( 'Products' ) }>
-				<Button onClick={ cancelEdits } >{ __( 'Cancel' ) }</Button>
+				<Button onClick={ this.onCancelClick } >{ __( 'Cancel' ) }</Button>
 				<Button
 					primary
-					onClick={ ( e ) => saveEdits( edits ) }
-					disabled={ saving || 0 === Object.keys(edits).length }
+					onClick={ this.onSaveClick }
+					disabled={ saving || 0 === Object.keys( edits ).length }
 				>
 					{ ( saving ? __( 'Saving' ) : __( 'Save' ) ) }
 				</Button>
@@ -113,7 +118,7 @@ class ProductList extends React.Component {
 	}
 }
 
-function mapFetchProps( props ) {
+function mapFetchProps() {
 	return {
 		categories: wcApi.fetchCategories(),
 		taxClasses: wcApi.fetchTaxClasses(),
@@ -129,6 +134,16 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
+	const {
+		fetchProducts,
+		setDisplayOption,
+		initEdits,
+		addProduct,
+		editProduct,
+		cancelEdits,
+		saveEdits,
+	} = actions;
+
 	return bindActionCreators(
 		{
 			fetchProducts,

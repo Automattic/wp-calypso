@@ -1,9 +1,23 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
-import ListHeader from './list-header';
-import ListRow from './list-row';
 import Card from 'components/card';
 
-export function createRenderHelpers( currencySymbol, currencyIsPrefix, currencyDecimals, numberFormat, translate, data ) {
+/**
+ * Internal dependencies
+ */
+import ListHeader from './list-header';
+import ListRow from './list-row';
+
+export function createRenderHelpers(
+	currencySymbol,
+	currencyIsPrefix,
+	currencyDecimals,
+	numberFormat,
+	translate,
+	data
+) {
 	return {
 		currencySymbol,
 		currencyIsPrefix,
@@ -15,14 +29,13 @@ export function createRenderHelpers( currencySymbol, currencyIsPrefix, currencyD
 }
 
 export default class ListTable extends React.Component {
-	propTypes: {
+	static propTypes = {
 		products: PropTypes.object.isRequired,
 		edits: PropTypes.object.isRequired,
 		editable: PropTypes.bool.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		columns: PropTypes.array.isRequired,
 		columnSelections: PropTypes.object.isRequired,
-		editable: PropTypes.bool.isRequired,
 		renderHelpers: PropTypes.object.isRequired,
 	}
 
@@ -36,7 +49,7 @@ export default class ListTable extends React.Component {
 		const { columnSelections } = this.props;
 
 		// Iterate through all the selections and see if it's included.
-		for ( let selectionKey in columnSelections ) {
+		for ( const selectionKey in columnSelections ) {
 			const selection = columnSelections[ selectionKey ];
 
 			if ( selection.hasOwnProperty( 'columnKeys' ) ) {
@@ -44,18 +57,24 @@ export default class ListTable extends React.Component {
 					// It's in a selection's columnKeys
 					return true;
 				}
-			} else {
-				if ( key === selection.key ) {
-					// It's a simple selection (without columnKeys)
-					return true;
-				}
+			} else if ( key === selection.key ) {
+				// It's a simple selection (without columnKeys)
+				return true;
 			}
 		}
 		return false;
 	}
 
 	render() {
-		const { products, edits, editable, disabled, columns, columnSelections, onEdit, renderHelpers } = this.props;
+		const {
+			products,
+			edits,
+			editable,
+			disabled,
+			columns,
+			onEdit,
+			renderHelpers
+		} = this.props;
 
 		// Pass down a complete set of selected columns to children components.
 		// Do the filtering once here and make use of it many times.
@@ -70,7 +89,17 @@ export default class ListTable extends React.Component {
 			<Card className={ classes }>
 				<ul className="product-list__list">
 					<ListHeader ref="listHeader" { ...headerProps } />
-					{ products.map( ( data ) => this.renderRow( data, edits, selectedColumns, editable, disabled, onEdit, renderHelpers ) ) }
+					{
+						products.map( ( data ) => this.renderRow(
+							data,
+							edits,
+							selectedColumns,
+							editable,
+							disabled,
+							onEdit,
+							renderHelpers
+						) )
+					}
 				</ul>
 			</Card>
 		);

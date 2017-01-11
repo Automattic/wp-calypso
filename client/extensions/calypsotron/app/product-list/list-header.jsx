@@ -1,7 +1,15 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
 
 export default class ListHeader extends React.Component {
-	propTypes: {
+	static propTypes = {
 		selectedColumns: PropTypes.array.isRequired,
 	}
 
@@ -14,17 +22,25 @@ export default class ListHeader extends React.Component {
 	render() {
 		const { selectedColumns } = this.props;
 
+		const liClasses = classNames(
+			'product-list__list-row',
+			'product-list__list-row-header'
+		);
+
 		return (
-			<li className="product-list__list-row product-list__list-row-header">
+			<li className={ liClasses }>
 				{ selectedColumns.map( this.renderTitle ) }
 			</li>
 		);
 	}
 
 	renderTitle( col ) {
-		const classes = 'product-list__list-cell product-list__list-cell-' + col.key;
+		const spanClasses = classNames(
+			'product-list__list-cell',
+			'product-list__list-cell-' + col.key
+		);
 		const title = ( 'function' === typeof col.title ? col.title( this.props ) : col.title );
 
-		return <span className={ classes } key={ col.key }>{ title }</span>;
+		return <span className={ spanClasses } key={ col.key }>{ title }</span>;
 	}
 }

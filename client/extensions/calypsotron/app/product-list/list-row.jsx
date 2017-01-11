@@ -1,7 +1,15 @@
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
 
 export default class ListRow extends React.Component {
-	propTypes: {
+	static propTypes = {
 		selectedColumns: PropTypes.array.isRequired,
 		data: PropTypes.object.isRequired,
 		editable: PropTypes.bool.isRequired,
@@ -28,10 +36,13 @@ export default class ListRow extends React.Component {
 	}
 
 	renderField( col ) {
-		const classes = 'product-list__list-cell product-list__list-cell-' + col.key;
+		const spanClasses = classNames(
+			'product-list__list-cell',
+			'product-list__list-cell-' + col.key
+		);
 
 		return (
-			<span className={ classes } key={ col.key }>
+			<span className={ spanClasses } key={ col.key }>
 				{ this.renderFieldContents( col ) }
 			</span>
 		);
@@ -44,9 +55,9 @@ export default class ListRow extends React.Component {
 			return col.renderEdit( data, col.key, col.constraints, renderHelpers, disabled, onEdit );
 		} else if ( col.renderView ) {
 			return col.renderView( data, col.key, col.constraints, renderHelpers );
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 }
 
