@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,73 +13,72 @@ import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-const JetpackManageErrorPage = React.createClass( {
-	actionCallbacks: {
+class JetpackManageErrorPage extends Component {
+	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
 		optInManage: 'actionCallbackActivate'
-	},
+	}
 
-	actionCallbackActivate() {
+	actionCallbackActivate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
-	},
+	}
 
-	actionCallbackUpdate() {
+	actionCallbackUpdate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.site ? this.props.site.ID : null );
-	},
+	}
 
 	getSettings() {
+		const { remoteManagementUrl, section, siteSlug, template, translate } = this.props;
 		const version = this.props.version || '3.4';
 		const defaults = {
 			updateJetpack: {
-				title: this.translate( 'Your version of Jetpack is out of date.' ),
-				line: this.translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version: version } } ),
-				action: this.translate( 'Update Jetpack' ),
+				title: translate( 'Your version of Jetpack is out of date.' ),
+				line: translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version } } ),
+				action: translate( 'Update Jetpack' ),
 				illustration: null,
-				actionURL: '../../plugins/jetpack/' + this.props.siteSlug,
-				version: version
+				actionURL: '../../plugins/jetpack/' + siteSlug,
+				version
 			},
 			optInManage: {
-				title: this.translate( 'Looking to manage this site from WordPress.com?' ),
-				line: this.translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
+				title: translate( 'Looking to manage this site from WordPress.com?' ),
+				line: translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
 				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
-				action: this.translate( 'Enable Jetpack Manage' ),
-				actionURL: this.props.remoteManagementUrl + ( this.props.section ? '&section=' + this.props.section : '' ),
+				action: translate( 'Enable Jetpack Manage' ),
+				actionURL: remoteManagementUrl + ( section ? '&section=' + section : '' ),
 				actionTarget: '_blank'
 			},
 			noDomainsOnJetpack: {
-				title: this.translate( 'Domains are not available for this site.' ),
-				line: this.translate( 'You can only purchase domains for sites hosted on WordPress.com at this time.' ),
-				action: this.translate( 'View Plans' ),
-				actionURL: '/plans/' + ( this.props.siteSlug || '' )
+				title: translate( 'Domains are not available for this site.' ),
+				line: translate( 'You can only purchase domains for sites hosted on WordPress.com at this time.' ),
+				action: translate( 'View Plans' ),
+				actionURL: '/plans/' + ( siteSlug || '' )
 			},
 			'default': {}
 		};
-		return Object.assign( {}, defaults[ this.props.template ] || defaults.default, this.props );
-	},
+		return Object.assign( {}, defaults[ template ] || defaults.default, this.props );
+	}
 
 	render() {
 		const settings = this.getSettings();
-		if ( this.actionCallbacks[ this.props.template ] ) {
-			settings.actionCallback = this[ this.actionCallbacks[ this.props.template ] ];
+		if ( JetpackManageErrorPage.actionCallbacks[ this.props.template ] ) {
+			settings.actionCallback = this[ JetpackManageErrorPage.actionCallbacks[ this.props.template ] ];
 		}
-		const emptyContent = React.createElement( EmptyContent, settings );
 		const featureExample = this.props.featureExample
 			? <FeatureExample>{ this.props.featureExample }</FeatureExample>
 			: null;
 
 		return (
 			<div>
-				{ emptyContent }
+				<EmptyContent { ...settings } />
 				{ featureExample }
 			</div>
 		);
 	}
-
-} );
+}
 
 export default connect(
 	( state, { site } ) => ( {
 		siteSlug: getSiteSlug( state, site.ID ),
 		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, site.ID )
 	} )
-)( JetpackManageErrorPage );
+)( localize( JetpackManageErrorPage ) );
