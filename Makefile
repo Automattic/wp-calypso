@@ -217,9 +217,13 @@ shrinkwrap: node-version
 	@$(NPM) install --no-optional # remove this when this is fixed in npm 3
 	@shonkwrap --dev
 
+analyze-bundles: node_modules
+	@WEBPACK_OUTPUT_STATS=1 CALYPSO_ENV=production make build
+	@$(NODE_BIN)/webpack-bundle-analyzer stats.json public -p 9898
+
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
 .PHONY: build build-development build-server build-dll build-desktop build-desktop-mac-app-store build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
-.PHONY: githooks githooks-commit githooks-push
+.PHONY: githooks githooks-commit githooks-push analyze-bundles
