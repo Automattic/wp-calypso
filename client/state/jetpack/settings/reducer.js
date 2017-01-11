@@ -2,12 +2,15 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge } from 'lodash';
+import { mapValues, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
@@ -34,6 +37,17 @@ const createItemsReducer = () => {
 	};
 };
 
+const createActivationItemsReducer = ( active ) => {
+	return ( state, { siteId, moduleSlug } ) => {
+		return Object.assign( {}, state, {
+			[ siteId ]: {
+				...state[ siteId ],
+				[ moduleSlug ]: active,
+			}
+		} );
+	};
+};
+
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack settings updates
@@ -44,7 +58,19 @@ const createItemsReducer = () => {
  */
 export const items = createReducer( {}, {
 	[ JETPACK_SETTINGS_RECEIVE ]: createItemsReducer(),
-	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createItemsReducer()
+	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createItemsReducer(),
+	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createActivationItemsReducer( true ),
+	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createActivationItemsReducer( false ),
+	[ JETPACK_MODULES_RECEIVE ]: ( state, { siteId, modules } ) => {
+		const modulesActivationState = mapValues( modules, module => module.active );
+
+		return Object.assign( {}, state, {
+			[ siteId ]: {
+				...state[ siteId ],
+				...modulesActivationState
+			}
+		} );
+	}
 } );
 
 /**
