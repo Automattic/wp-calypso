@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
 
