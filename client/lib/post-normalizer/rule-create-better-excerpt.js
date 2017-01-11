@@ -54,8 +54,9 @@ export function formatExcerpt( content ) {
 	dom.id = '__better_excerpt__';
 	dom.innerHTML = content;
 
-	// Ditch any photo captions with the wp-caption-text class, styles, scripts
-	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
+	// Ditch any photo captions, styles, scripts
+	const stripSelectors = '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
+	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
 
 	// limit to paras and brs
 	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
