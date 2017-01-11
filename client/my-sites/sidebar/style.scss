@@ -7,12 +7,16 @@
 
 	@include breakpoint( "<660px" ) {
 		top: 13px;
-		right: 32px;
+		right: 20px;
 	}
 }
 
 .sidebar__menu li.stats.selected .sidebar__sparkline {
 	display: none;
+
+	@include breakpoint( "<480px" ) {
+		display: block;
+	}
 }
 
 .sidebar__menu li.stats a:after,
