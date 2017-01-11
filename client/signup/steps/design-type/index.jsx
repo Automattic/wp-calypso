@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,11 +18,21 @@ import PageImage from '../design-type-with-store/page-image';
 import GridImage from '../design-type-with-store/grid-image';
 
 class DesignTypeStep extends Component {
+	static propTypes = {
+		translate: PropTypes.func
+	};
+
+	static defaultProps = {
+		translate: identity
+	};
+
 	getChoices() {
+		const { translate } = this.props;
+
 		return [
-			{ type: 'blog', label: this.props.translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: this.props.translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: this.props.translate( 'A grid of my latest posts' ), image: <GridImage /> },
+			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
 		];
 	}
 
