@@ -13,9 +13,6 @@ import FeatureExample from 'components/feature-example'
 import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors'
 
 const JetpackManageErrorPage = React.createClass( {
-
-	mixins: [ 'pluginsData' ],
-
 	actionCallbacks: {
 		updateJetpack: 'actionCallbackUpdate',
 		optInManage: 'actionCallbackActivate'
