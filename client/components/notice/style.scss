@@ -79,11 +79,7 @@
 }
 
 .notice__text {
-
-	& > span,
-	& > div {
-		max-width: 680px;
-	}
+	max-width: 680px;
 
 	a {
 		text-decoration: underline;
