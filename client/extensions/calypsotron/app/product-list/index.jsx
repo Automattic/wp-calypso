@@ -12,16 +12,18 @@ import Button from 'components/button';
  */
 import TitleBar from '../../components/title-bar';
 import ProductsBody from './body';
-import screenData from '../../utils/screen-data';
-import * as wcApi from '../../data/wc-api';
-import fetchConnect from '../../state/fetch-data/fetch-connect';
-import * as actions from '../../state/products/actions';
+
+// TODO: Restore redux state handling to this component.
+//import screenData from '../../utils/screen-data';
+//import * as wcApi from '../../data/wc-api';
+//import fetchConnect from '../../state/fetch-data/fetch-connect';
+//import * as actions from '../../state/products/actions';
 
 // TODO: Combine product-specific code from index and body into one file.
 // TODO: Make the entire list-table component general and move it to client/components
 
 // TODO: Do this in a more universal way.
-const data = screenData( 'wc_synchrotron_data' );
+//const data = screenData( 'wc_synchrotron_data' );
 
 class ProductList extends React.Component {
 	static propTypes = {
@@ -47,7 +49,8 @@ class ProductList extends React.Component {
 
 	componentDidMount() {
 		// TODO: Fetch this through wc-api-redux
-		this.props.fetchProducts( data.endpoints.products, data.nonce );
+		// TODO: Restore redux state handling to this component.
+		//this.props.fetchProducts( data.endpoints.products, data.nonce );
 	}
 
 	render() {
@@ -118,6 +121,8 @@ class ProductList extends React.Component {
 	}
 }
 
+// TODO: Restore redux state handling to this component.
+/*
 function mapFetchProps() {
 	return {
 		categories: wcApi.fetchCategories(),
@@ -157,8 +162,11 @@ function mapDispatchToProps( dispatch ) {
 		dispatch
 	);
 }
+*/
 
-const localizedComponent = localize( ProductList );
-const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );
-export default connect( mapStateToProps, mapDispatchToProps )( fetchComponent );
+export const localizedComponent = localize( ProductList );
+
+// TODO: Restore redux state handling to this component.
+//const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );
+//export default connect( mapStateToProps, mapDispatchToProps )( fetchComponent );
 
