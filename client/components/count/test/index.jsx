@@ -1,84 +1,26 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	useMockery = require( 'test/helpers/use-mockery' );
+import React from 'react';
+import { shallow } from 'enzyme';
+import { expect } from 'chai';
+import { spy } from 'sinon';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Count } from '../';
 
-// this emulates numberFormat for testing purposes
-const mockNumberFormat = ( num ) => num.toLocaleString( 'en-US', { maximumFractionDigits: 0 } )
-
 describe( 'Count', function() {
-	var React, TestUtils, renderer;
-
-	// really only using Mockery for the clean module cache
-	useMockery();
-
-	before( function() {
-		React = require( 'react' );
-		TestUtils = require( 'react-addons-test-utils' );
-	} );
-
-	beforeEach( function() {
-		renderer = TestUtils.createRenderer();
-	} );
-
-	it( 'should render the passed count', function() {
-		var result;
-
-		renderer.render( <Count count={ 23 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.className ).to.equal( 'count' );
-		expect( result.props.children ).to.equal( '23' );
-	} );
-
 	it( 'should use the correct class name', function() {
-		var result;
-
-		renderer.render( <Count count={ 23 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.className ).to.equal( 'count' );
+		const count = shallow( <Count count={ 23 } numberFormat={ identity } /> );
+		expect( count ).to.have.className( 'count' );
 	} );
 
-	it( 'should internationalize the passed count', function() {
-		var result;
-
-		renderer.render( <Count count={ 2317 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.children ).to.equal( '2,317' );
-	} );
-
-	it( 'should render zero', function() {
-		var result;
-
-		renderer.render( <Count count={ 0 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.children ).to.equal( '0' );
-	} );
-
-	it( 'should render negative numbers', function() {
-		var result;
-
-		renderer.render( <Count count={ -1000 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.children ).to.equal( '-1,000' );
-	} );
-
-	it( 'should cut off floating point numbers', function() {
-		var result;
-
-		renderer.render( <Count count={ 3.1415926 } numberFormat={ mockNumberFormat } /> );
-		result = renderer.getRenderOutput();
-
-		expect( result.props.children ).to.equal( '3' );
+	it( 'should call provided', function() {
+		const numberFormatSpy = spy();
+		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
+		expect( numberFormatSpy ).to.have.been.calledWith( 23 );
 	} );
 } );
