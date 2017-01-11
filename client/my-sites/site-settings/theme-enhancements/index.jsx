@@ -19,13 +19,13 @@ import FormToggle from 'components/forms/form-toggle';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isModuleActive, isFetchingModules } from 'state/jetpack-settings/modules/selectors';
+import { isModuleActive, isFetchingModules } from 'state/jetpack/modules/selectors';
 import {
 	getJetpackSettings,
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings
-} from 'state/jetpack-settings/settings/selectors';
-import { updateSettings } from 'state/jetpack-settings/settings/actions';
+} from 'state/jetpack/settings/selectors';
+import { updateSettings } from 'state/jetpack/settings/actions';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
