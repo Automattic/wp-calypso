@@ -12,6 +12,7 @@ import route from 'lib/route';
 import analytics from 'lib/analytics';
 import MainComponent from 'components/main';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import itemTypes from 'my-sites/menus/menu-item-types';
 import MenusComponent from 'my-sites/menus/main';
 import notices from 'notices';
 import siteMenus from 'lib/menu-data';
@@ -70,6 +71,7 @@ var controller = {
 		renderWithReduxStore(
 			React.createElement( MenusComponent, {
 				siteMenus: siteMenus,
+				itemTypes: itemTypes,
 				key: siteMenus.siteID,
 				site: site
 			} ),
