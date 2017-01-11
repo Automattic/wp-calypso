@@ -182,7 +182,7 @@ const StatsSummary = React.createClass( {
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 				summaryViews.push( chartTitle );
-				barChart = <StatsVideoSummary key="video-chart" dataList={ this.props.summaryList } />;
+				barChart = <StatsVideoSummary key="video-chart" postId={ this.props.postId } />;
 
 				summaryViews.push( barChart );
 
