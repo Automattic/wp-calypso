@@ -13,6 +13,7 @@ import {
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
+	SITE_SETTINGS_RECEIVE,
 } from 'state/action-types';
 
 const relevantTypes = {
@@ -22,6 +23,7 @@ const relevantTypes = {
 	THEMES_RECEIVE,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
+	SITE_SETTINGS_RECEIVE,
 };
 
 const isRelevantAction = ( action ) =>
