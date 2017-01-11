@@ -40,7 +40,7 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
-	getJetpackSiteRemoteManagementURL,
+	getJetpackSiteRemoteManagementUrl,
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
 	siteHasMinimumJetpackVersion,
@@ -1865,9 +1865,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getJetpackSiteRemoteManagementURL()', () => {
+	describe( '#getJetpackSiteRemoteManagementUrl()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const managementUrl = getJetpackSiteRemoteManagementURL( stateWithNoItems, nonExistingSiteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( stateWithNoItems, nonExistingSiteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
@@ -1879,7 +1879,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
@@ -1897,7 +1897,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
 			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
 		} );
 
@@ -1915,7 +1915,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
 			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
 		} );
 	} );

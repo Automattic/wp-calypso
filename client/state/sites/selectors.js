@@ -856,7 +856,7 @@ export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
  * @param {Number} siteId Site ID
  * @return {?String} the remote management url for the site
  */
-export function getJetpackSiteRemoteManagementURL( state, siteId ) {
+export function getJetpackSiteRemoteManagementUrl( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
