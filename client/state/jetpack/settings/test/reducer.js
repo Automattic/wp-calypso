@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
@@ -152,6 +153,37 @@ describe( 'reducer', () => {
 				12345678: {
 					setting_123: 'test',
 					'module-a': false
+				}
+			} );
+		} );
+
+		it( 'should update the module activation state upon receiving new modules', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: {
+						setting_123: 'test',
+						'module-a': true,
+						'module-b': false
+					}
+				},
+				action = {
+					type: JETPACK_MODULES_RECEIVE,
+					siteId,
+					modules: {
+						'module-a': {
+							active: false
+						},
+						'module-b': {
+							active: true
+						}
+					}
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: {
+					setting_123: 'test',
+					'module-a': false,
+					'module-b': true,
 				}
 			} );
 		} );
