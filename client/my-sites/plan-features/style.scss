@@ -352,7 +352,6 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__item {
 	display: flex;
-	flex: none;
 	margin: 0 24px;
 	padding: 12px 0;
 	font-size: 14px;
@@ -370,13 +369,16 @@ $plan-features-sidebar-width: 272px;
 .plan-features__item-title {
 	flex: 1 0 0;
 	margin-left: 10px;
+	width: 100%;
 }
 
 .plan-features__item-checkmark {
+	flex: 0 1 auto;
 	fill: $blue-wordpress;
 }
 
 .plan-features__item-tip-info {
+	flex: 0 1 auto;
 	align-self: center;
 }
 
