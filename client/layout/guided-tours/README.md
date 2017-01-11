@@ -2,8 +2,6 @@
 
 Step-by-step tour framework for WordPress.com.
 
-_(Documentation in progress)_
-
 ## What are Guided Tours? 
 
 Guided Tours is a framework for easily building tours that show users around a specific part of Calypso. 
