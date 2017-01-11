@@ -1,0 +1,141 @@
+.product-list {
+}
+
+.product-list__header {
+}
+
+.product-list__body {
+	margin: 42px;
+
+	.search-card {
+		margin-bottom: 1px;
+		max-width: none;
+	}
+}
+
+.product-list__list-table {
+	padding: 0;
+	max-width: none;
+}
+
+.product-list__list {
+	margin: 0;
+	list-style: none;
+}
+
+.product-list__list-row {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-bottom: 1px solid $gray-border-lighter;
+	box-sizing: border-box;
+}
+
+.product-list__list-row-header {
+	border-bottom-color: $gray-border;
+	font-weight: bold;
+
+	.button {
+		padding: 0;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+
+		.gridicon {
+			top: 3px;
+		}
+	}
+
+	.product-list__list-cell {
+		line-height: 27px;
+	}
+
+	.product-list__list-cell-action {
+		text-align: right;
+	}
+}
+
+.product-list__list-cell {
+	flex: 1;
+	flex-direction: column;
+	max-width: 10%;
+	padding: 16px 24px;
+
+	input, select {
+		min-height: 40px;
+	}
+}
+
+.product-list__list-cell-name {
+	max-width: none;
+}
+
+.product-list__list-cell-tax_class, .product-list__list-cell-tax_status {
+	max-width: 15%;
+
+	select {
+		width: 100%;
+	}
+}
+
+.column-menu__list {
+	list-style: none;
+	margin: 0;
+	font-size: 13px;
+	text-align: left;
+}
+
+.column-menu__row {
+	width: 100%;
+	padding: 8px 16px;
+	border-bottom: 1px solid $light-gray;
+	box-sizing: border-box;
+}
+
+.column-menu__group-item {
+	display: inline-block;
+	vertical-align: middle;
+	width: 150px;
+}
+
+.column-menu__group-label {
+	margin: 14px 4px;
+	text-align: right;
+	font-weight: bold;
+}
+
+.column-menu__button {
+	margin: 8px 4px;
+	padding: 4px 16px;
+	box-shadow: none;
+	border-radius: 2px;
+	border: 1px solid $light-gray;
+	line-height: 1;
+	min-width: 140px;
+
+	&.selected {
+		background: $gray;
+		border-color: $gray;
+		color: white;
+
+		&:hover {
+			background: $dark-gray;
+			color: white;
+		}
+	}
+
+	&.unselected {
+		background: white;
+		color: $dark-gray;
+	}
+}
+
+.column-menu__popover {
+
+	@include breakpoint( ">660px" ) {
+
+	}
+
+	@include breakpoint( ">960px" ) {
+		max-width: 90%;
+	}
+}
