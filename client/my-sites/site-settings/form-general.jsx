@@ -3,18 +3,9 @@
  */
 import React, { Component } from 'react';
 import page from 'page';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { flowRight, includes, keys, omit, memoize } from 'lodash';
-=======
-import { flowRight, includes, omit, memoize } from 'lodash';
->>>>>>> Move the format mapping function to util/formatting
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
->>>>>>> Create new date format option in site settings
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,173 +38,14 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
 
 class SiteSettingsFormGeneral extends Component {
-<<<<<<< HEAD
 	componentWillMount() {
 		this._showWarning( this.props.site );
-=======
-	getFormSettings( settings ) {
-		if ( ! settings ) {
-			return {};
-		}
-
-		const formSettings = {
-			blogname: settings.blogname,
-			blogdescription: settings.blogdescription,
-
-			lang_id: settings.lang_id,
-			blog_public: settings.blog_public,
-			timezone_string: settings.timezone_string,
-			date_format: settings.date_format,
-			time_format: settings.time_format,
-			start_of_week: settings.start_of_week,
-
-			jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
-			jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
-
-			amp_is_supported: settings.amp_is_supported,
-			amp_is_enabled: settings.amp_is_enabled,
-
-			holidaysnow: !! settings.holidaysnow,
-
-			api_cache: settings.api_cache,
-		};
-
-		if ( settings.jetpack_relatedposts_allowed ) {
-			Object.assign( formSettings, {
-				jetpack_relatedposts_enabled: ( settings.jetpack_relatedposts_enabled ) ? 1 : 0,
-				jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
-				jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
-			} );
-		}
-
-		// handling `gmt_offset` and `timezone_string` values
-		const gmt_offset = settings.gmt_offset;
-
-		if (
-			! settings.timezone_string &&
-			typeof gmt_offset === 'string' &&
-			gmt_offset.length
-		) {
-			formSettings.timezone_string = 'UTC' +
-				( /\-/.test( gmt_offset ) ? '' : '+' ) +
-				gmt_offset;
-		}
-
-		return formSettings;
 	}
-
-	componentWillMount() {
-		this._showWarning( this.props.site );
-		this.props.replaceFields( {
-			blogname: '',
-			blogdescription: '',
-			lang_id: '',
-			timezone_string: '',
-			date_format: '',
-			time_format: '',
-			start_of_week: 0,
-			blog_public: '',
-			admin_url: '',
-			jetpack_relatedposts_allowed: false,
-			jetpack_relatedposts_enabled: false,
-			jetpack_relatedposts_show_headline: false,
-			jetpack_relatedposts_show_thumbnails: false,
-			jetpack_sync_non_public_post_stati: false,
-			holidaysnow: false,
-			amp_is_supported: false,
-			amp_is_enabled: false,
-			api_cache: false,
-		} );
-		this.props.replaceFields( this.getFormSettings( this.props.settings ) );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this._showWarning( nextProps.site );
-
-		if ( nextProps.siteId !== this.props.siteId ) {
-			nextProps.clearDirtyFields();
-		}
-
-		if ( nextProps.settings !== this.props.settings ) {
-			let newState = this.getFormSettings( nextProps.settings );
-			//If we have any fields that the user has updated,
-			//do not wipe out those fields from the poll update.
-			newState = omit( newState, nextProps.dirtyFields );
-			nextProps.replaceFields( newState );
-		}
-
-		if (
-			this.props.isSavingSettings &&
-			! nextProps.isSavingSettings
-		) {
-			if ( nextProps.isSaveRequestSuccessful ) {
-				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
-				nextProps.clearDirtyFields();
-				nextProps.markSaved();
-			} else {
-				let text;
-				switch ( nextProps.saveRequestError.error ) {
-					case 'invalid_ip':
-						text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
-						break;
-					default:
-						text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
-				}
-				nextProps.errorNotice( text, { id: 'site-settings-save' } );
-			}
-		}
-	}
-
-	handleRadio = event => {
-		const currentTargetName = event.currentTarget.name,
-			currentTargetValue = event.currentTarget.value;
-
-		this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
-	};
-
-	handleCheckbox = event => {
-		const currentTargetName = event.currentTarget.name,
-			currentTargetValue = this.props.fields[ currentTargetName ];
-
-		this.props.updateFields( { [ currentTargetName ]: ! currentTargetValue } );
-	};
 
 	handleSelect = event => {
 		const { name, value } = event.currentTarget;
 		this.props.updateFields( { [ name ]: value } );
 	};
-
-	handleToggle( name ) {
-		return () => {
-			this.props.trackToggle( `Toggled ${ name }` );
-			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
-		};
-	}
-
-	handleSubmitForm = event => {
-		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
-			event.preventDefault();
-		}
-
-		this.submitForm();
-		this.props.trackClick( 'Save Settings Button' );
-	};
-
-	submitForm() {
-		const { fields, site } = this.props;
-		this.props.removeNotice( 'site-settings-save' );
-		this.props.saveSiteSettings( site.ID, fields );
-	}
-
-	onChangeField( field ) {
-		return event => {
-			const { updateFields } = this.props;
-			updateFields( {
-				[ field ]: event.target.value
-			} );
-		};
->>>>>>> Create new date format option in site settings
-	}
 
 	onTimezoneSelect = timezone => {
 		this.props.updateFields( {
@@ -653,15 +485,19 @@ class SiteSettingsFormGeneral extends Component {
 
 	dateFormatOption() {
 		const {
-			fields: { date_format },
+			fields: { date_format, timezone_string },
+			handleRadio,
 			isRequestingSettings,
 			moment,
+			onChangeField,
 			translate,
 		} = this.props;
 
 		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
 		const isCustomFormat = ! includes( defaultFormats, date_format );
-		const today = moment();
+		const today = startsWith( timezone_string, 'UTC' )
+			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
+			: moment.tz( timezone_string );
 
 		return (
 			<FormFieldset>
@@ -674,7 +510,7 @@ class SiteSettingsFormGeneral extends Component {
 							checked={ format === date_format }
 							disabled={ isRequestingSettings }
 							name="date_format"
-							onChange={ this.handleRadio }
+							onChange={ handleRadio }
 							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
@@ -685,7 +521,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
 						name="date_format"
-						onChange={ this.handleRadio }
+						onChange={ handleRadio }
 						value={ date_format }
 					/>
 					<span>
@@ -693,7 +529,7 @@ class SiteSettingsFormGeneral extends Component {
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="date_format_custom"
-							onChange={ this.onChangeField( 'date_format' ) }
+							onChange={ onChangeField( 'date_format' ) }
 							type="text"
 							value={ date_format || '' }
 						/>
@@ -709,15 +545,19 @@ class SiteSettingsFormGeneral extends Component {
 
 	timeFormatOption() {
 		const {
-			fields: { time_format },
+			fields: { time_format, timezone_string },
+			handleRadio,
 			isRequestingSettings,
 			moment,
+			onChangeField,
 			translate,
 		} = this.props;
 
 		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
 		const isCustomFormat = ! includes( defaultFormats, time_format );
-		const today = moment();
+		const today = startsWith( timezone_string, 'UTC' )
+			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
+			: moment.tz( timezone_string );
 
 		return (
 			<FormFieldset>
@@ -730,7 +570,7 @@ class SiteSettingsFormGeneral extends Component {
 							checked={ format === time_format }
 							disabled={ isRequestingSettings }
 							name="time_format"
-							onChange={ this.handleRadio }
+							onChange={ handleRadio }
 							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
@@ -741,7 +581,7 @@ class SiteSettingsFormGeneral extends Component {
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
 						name="time_format"
-						onChange={ this.handleRadio }
+						onChange={ handleRadio }
 						value={ time_format }
 					/>
 					<span>
@@ -749,7 +589,7 @@ class SiteSettingsFormGeneral extends Component {
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="time_format_custom"
-							onChange={ this.onChangeField( 'time_format' ) }
+							onChange={ onChangeField( 'time_format' ) }
 							type="text"
 							value={ time_format || '' }
 						/>
