@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import analytics from 'lib/analytics'
 import EmptyContent from 'components/empty-content'
 import FeatureExample from 'components/feature-example'
-import { getSiteSlug, getJetpackSiteRemoteManagementUrl, isJetpackSite } from 'state/sites/selectors'
+import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors'
 
 const JetpackManageErrorPage = React.createClass( {
 
@@ -37,9 +37,7 @@ const JetpackManageErrorPage = React.createClass( {
 				line: this.translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version: version } } ),
 				action: this.translate( 'Update Jetpack' ),
 				illustration: null,
-				actionURL: ( this.props.site && this.props.isJetpack )
-					? '../../plugins/jetpack/' + this.props.siteSlug
-					: undefined,
+				actionURL: '../../plugins/jetpack/' + this.props.siteSlug,
 				version: version
 			},
 			optInManage: {
@@ -47,9 +45,7 @@ const JetpackManageErrorPage = React.createClass( {
 				line: this.translate( 'We need you to enable the Manage feature in the Jetpack plugin on your remote site' ),
 				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
 				action: this.translate( 'Enable Jetpack Manage' ),
-				actionURL: ( this.props.site && this.props.isJetpack )
-					? this.props.remoteManagementUrl + ( this.props.section ? '&section=' + this.props.section : '' )
-					: undefined,
+				actionURL: this.props.remoteManagementUrl + ( this.props.section ? '&section=' + this.props.section : '' ),
 				actionTarget: '_blank'
 			},
 			noDomainsOnJetpack: {
@@ -86,7 +82,6 @@ const JetpackManageErrorPage = React.createClass( {
 export default connect(
 	( state, { site } ) => ( {
 		siteSlug: getSiteSlug( state, site.ID ),
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, site.ID ),
-		isJetpack: isJetpackSite( state, site.ID )
+		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, site.ID )
 	} )
 )( JetpackManageErrorPage );
