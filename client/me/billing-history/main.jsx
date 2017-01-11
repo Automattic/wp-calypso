@@ -1,33 +1,32 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import React from 'react';
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	Card = require( 'components/card' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	config = require( 'config' ),
-	CreditCards = require( 'me/purchases/credit-cards' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	PurchasesHeader = require( '../purchases/list/header' ),
-	BillingHistoryTable = require( './billing-history-table' ),
-	UpcomingChargesTable = require( './upcoming-charges-table' ),
-	SectionHeader = require( 'components/section-header' );
-
+import observe from 'lib/mixins/data-observe';
+import Card from 'components/card';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import config from 'config';
+import CreditCards from 'me/purchases/credit-cards';
+import eventRecorder from 'me/event-recorder';
+import PurchasesHeader from '../purchases/list/header';
+import BillingHistoryTable from './billing-history-table';
+import UpcomingChargesTable from './upcoming-charges-table';
+import SectionHeader from 'components/section-header';
 import Main from 'components/main';
 import purchasesPaths from 'me/purchases/paths';
 
-module.exports = React.createClass( {
-	displayName: 'BillingHistory',
-
+const BillingHistory = React.createClass( {
 	mixins: [ observe( 'billingData', 'sites' ), eventRecorder ],
 
-	render: function() {
-		var data = this.props.billingData.get();
+	render() {
+		const { billingData, sites, translate } = this.props;
+		const data = billingData.get();
 		const hasBillingHistory = ! isEmpty( data.billingHistory );
 
 		return (
@@ -38,18 +37,22 @@ module.exports = React.createClass( {
 					<BillingHistoryTable transactions={ data.billingHistory } />
 				</Card>
 				<Card href={ purchasesPaths.purchasesRoot() }>
-					{ this.translate( 'Go to "Purchases" to add or cancel a plan.' ) }
+					{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
 				</Card>
 				{ hasBillingHistory &&
 					<div>
-						<SectionHeader label={ this.translate( 'Upcoming Charges' ) } />
+						<SectionHeader label={ translate( 'Upcoming Charges' ) } />
 						<Card className="billing-history__upcoming-charges">
-							<UpcomingChargesTable sites={ this.props.sites } transactions={ data.upcomingCharges } />
+							<UpcomingChargesTable sites={ sites } transactions={ data.upcomingCharges } />
 						</Card>
-					</div> }
+					</div>
+				}
 				{ config.isEnabled( 'upgrades/credit-cards' ) &&
-					<CreditCards /> }
+					<CreditCards />
+				}
 			</Main>
 		);
 	}
 } );
+
+export default localize( BillingHistory );
