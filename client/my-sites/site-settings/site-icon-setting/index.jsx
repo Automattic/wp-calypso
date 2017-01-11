@@ -33,7 +33,7 @@ import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
-import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
+import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
 import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
@@ -117,15 +117,21 @@ class SiteIconSetting extends Component {
 			return;
 		}
 
-		const { crop } = this.props;
-		const isImageCropped = ! isEqual( crop, {
+		const { crop, transform } = this.props;
+		const isImageEdited = ! isEqual( {
+			...crop,
+			...transform
+		}, {
 			topRatio: 0,
 			leftRatio: 0,
 			widthRatio: 1,
-			heightRatio: 1
+			heightRatio: 1,
+			degrees: 0,
+			scaleX: 1,
+			scaleY: 1
 		} );
 
-		if ( isImageCropped ) {
+		if ( isImageEdited ) {
 			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
 		} else {
 			this.saveSiteIconSetting( siteId, selectedItem );
@@ -246,7 +252,8 @@ export default connect(
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
-			crop: getImageEditorCrop( state )
+			crop: getImageEditorCrop( state ),
+			transform: getImageEditorTransform( state )
 		};
 	},
 	{
