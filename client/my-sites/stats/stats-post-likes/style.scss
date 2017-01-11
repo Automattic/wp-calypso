@@ -1,0 +1,34 @@
+.stats-post-likes {
+	.count {
+		margin-left: 8px;
+	}
+
+	.stats-post-likes__content {
+		box-sizing: border-box;
+		padding: 8px 24px;
+		color: $gray-dark;
+		font-size: 13px;
+	}
+
+	.gravatar {
+	}
+
+	.stats-post-likes__like {
+		display: inline-block;
+		margin: 0 8px 6px 0;
+		vertical-align: top;
+	}
+
+	.stats-post-likes__placeholder {
+		height: 32px;
+		line-height: 30px;
+		border-radius: 16px;
+		display: inline-block;
+		border: solid 1px $gray;
+		color: $gray;
+		padding: 0 8px;
+		vertical-align: top;
+		box-sizing: border-box;
+		margin: 0 8px 6px 0;
+	}
+}

@@ -19,12 +19,17 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export const PostLikes = ( { countLikes, isRequesting, likes, opened, postId, siteId, toggle, translate } ) => {
+export const PostLikes = props => {
+	const { countLikes, isRequesting, likes, opened, postId, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
+	const isLoading = isRequesting && ! likes;
 	const classes = {
 		'is-showing-info': opened,
+		'is-loading': isLoading,
 	};
+	const trackLikeClick = () => props.recordGoogleEvent( 'Stats Post Likes', 'Clicked on Gravatar' );
 
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
@@ -51,14 +56,27 @@ export const PostLikes = ( { countLikes, isRequesting, likes, opened, postId, si
 			<StatsModuleContent className="module-content-text-info">
 				<p>{ translate( 'This panel shows the list of people who likes your post.' ) }</p>
 			</StatsModuleContent>
-			<StatsModulePlaceholder isLoading={ isRequesting && ! likes } />
+			<StatsModulePlaceholder isLoading={ isLoading } />
 			{ likes && !! likes.length &&
 				<div className="stats-post-likes__content">
-					{ likes.map( like =>
-						<a key={ like.ID } href={ like.URL } rel="noopener noreferrer" target="_blank">
-							<Gravatar user={ like } />
-						</a>
-					) }
+					{ likes
+							.map( like =>
+								<a
+									key={ like.ID }
+									href={ `https://gravatar.com/${ like.login }` }
+									rel="noopener noreferrer"
+									target="_blank"
+									className="stats-post-likes__like"
+									onClick={ trackLikeClick }
+								>
+									<Gravatar user={ like } />
+								</a>
+							).concat(
+								countLikes > likes.length && <span key="placeholder" className="stats-post-likes__placeholder">
+									{ `+ ${ countLikes - likes.length }` }
+								</span>
+							)
+					}
 				</div>
 			}
 			{ countLikes === 0 && ! isRequesting &&
@@ -80,7 +98,8 @@ const connectComponent = connect(
 			isRequesting,
 			likes,
 		};
-	}
+	},
+	{ recordGoogleEvent }
 );
 
 export default flowRight(
