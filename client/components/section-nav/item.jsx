@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var Count = require( 'components/count' );
-
+import Count from 'components/count';
 /**
  * Main
  */
