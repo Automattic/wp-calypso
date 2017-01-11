@@ -18,7 +18,7 @@ describe( 'Count', function() {
 		expect( count ).to.have.className( 'count' );
 	} );
 
-	it( 'should call provided', function() {
+	it( 'should call provided as prop numberFormat function', function() {
 		const numberFormatSpy = spy();
 		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
 		expect( numberFormatSpy ).to.have.been.calledWith( 23 );
