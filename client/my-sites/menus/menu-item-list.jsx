@@ -40,7 +40,6 @@ var MenuItemList = React.createClass( {
 	},
 
 	render: function() {
-
 		if ( 0 === this.props.items.length ) {
 			return this.renderEmptyMenu();
 		}
@@ -54,7 +53,7 @@ var MenuItemList = React.createClass( {
 							itemTypes={ this.props.itemTypes }
 							items={ menuItem.items }
 							depth={ this.props.depth + 1 }
-							getEditItem={ this.props.getEditItem }
+							editedItem={ this.props.editedItem }
 							setEditItem={ this.props.setEditItem }
 							moveState={ this.props.moveState }
 							doMoveItem={ this.props.doMoveItem }
@@ -142,7 +141,7 @@ var MenuItem = React.createClass( {
 	},
 
 	isEditing: function() {
-		return this.props.getEditItem() === this.props.item.id;
+		return this.props.editedItem === this.props.item.id;
 	},
 
 	addNewItemInProgress: function() {
@@ -150,7 +149,7 @@ var MenuItem = React.createClass( {
 	},
 
 	canEdit: function() {
-		return ! this.props.getEditItem() &&
+		return ! this.props.editedItem &&
 			! this.props.moveState.moving &&
 			! this.addNewItemInProgress() &&
 			! this.props.confirmDeleteItem;
@@ -346,7 +345,6 @@ var MenuItem = React.createClass( {
 
 	render: function() {
 		var item;
-
 		if ( this.isEditing() ) {
 			item = <MenuEditableItem
 						initialItem={ this.props.item }
