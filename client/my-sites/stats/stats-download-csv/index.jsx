@@ -86,7 +86,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isLoading = dataList.isLoading();
 	} else {
 		data = getSiteStatsCSVData( state, siteId, statType, query );
-		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query ) && ! data;
+		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query ) && ! data.length;
 	}
 
 	return { data, siteSlug, siteId, isLoading };

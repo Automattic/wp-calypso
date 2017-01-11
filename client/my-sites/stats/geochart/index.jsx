@@ -89,36 +89,38 @@ class StatsGeochart extends Component {
 	drawData = () => {
 		const { data } = this.props;
 
-		if ( data && data.length ) {
-			const mapData = map( data, ( country ) => {
-				return [ country.label, country.value ];
-			} );
-			mapData.unshift( [
-				this.props.translate( 'Country' ).toString(),
-				this.props.translate( 'Views' ).toString()
-			] );
-
-			const chartData = window.google.visualization.arrayToDataTable( mapData );
-			const node = this.refs.chart;
-			const width = node.clientWidth;
-
-			const options = {
-				width: 100 + '%',
-				height: width <= 480 ? '238' : '480',
-				keepAspectRatio: true,
-				enableRegionInteractivity: true,
-				region: 'world',
-				colorAxis: { colors: [ '#FFF088', '#F34605' ] }
-			};
-
-			const regions = uniq( map( data, 'region' ) );
-
-			if ( 1 === regions.length ) {
-				options.region = regions[ 0 ];
-			}
-
-			this.visualization.draw( chartData, options );
+		if ( ! data || ! data.length ) {
+			return;
 		}
+
+		const mapData = map( data, ( country ) => {
+			return [ country.label, country.value ];
+		} );
+		mapData.unshift( [
+			this.props.translate( 'Country' ).toString(),
+			this.props.translate( 'Views' ).toString()
+		] );
+
+		const chartData = window.google.visualization.arrayToDataTable( mapData );
+		const node = this.refs.chart;
+		const width = node.clientWidth;
+
+		const options = {
+			width: 100 + '%',
+			height: width <= 480 ? '238' : '480',
+			keepAspectRatio: true,
+			enableRegionInteractivity: true,
+			region: 'world',
+			colorAxis: { colors: [ '#FFF088', '#F34605' ] }
+		};
+
+		const regions = uniq( map( data, 'region' ) );
+
+		if ( 1 === regions.length ) {
+			options.region = regions[ 0 ];
+		}
+
+		this.visualization.draw( chartData, options );
 	}
 
 	loadVisualizations = () => {
