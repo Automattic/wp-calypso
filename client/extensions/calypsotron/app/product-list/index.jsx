@@ -3,8 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Button from 'components/button';
 
 /**
@@ -14,6 +12,8 @@ import TitleBar from '../../components/title-bar';
 import ProductsBody from './body';
 
 // TODO: Restore redux state handling to this component.
+//import { connect } from 'react-redux';
+//import { bindActionCreators } from 'redux';
 //import screenData from '../../utils/screen-data';
 //import * as wcApi from '../../data/wc-api';
 //import fetchConnect from '../../state/fetch-data/fetch-connect';
@@ -68,7 +68,7 @@ class ProductList extends React.Component {
 					categories={ categories }
 					taxClasses={ taxClasses }
 					edits={ edits }
-					editable={ edits }
+					editable={ edits != null }
 					disabled={ Boolean( saving ) }
 					display={ products.display }
 					setDisplayOption={ setDisplayOption }
@@ -164,9 +164,10 @@ function mapDispatchToProps( dispatch ) {
 }
 */
 
-export const localizedComponent = localize( ProductList );
+export default localize( ProductList );
 
 // TODO: Restore redux state handling to this component.
+//const localizedComponent = localize( ProductList );
 //const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );
 //export default connect( mapStateToProps, mapDispatchToProps )( fetchComponent );
 
