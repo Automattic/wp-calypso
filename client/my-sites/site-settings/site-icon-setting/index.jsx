@@ -9,7 +9,7 @@ import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';

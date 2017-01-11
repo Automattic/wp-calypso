@@ -6,7 +6,7 @@ This component is used to display the icon for a site. It takes a Site object as
 #### How to use:
 
 ```js
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 
 render: function() {
 	return <SiteIcon site={ site } />
