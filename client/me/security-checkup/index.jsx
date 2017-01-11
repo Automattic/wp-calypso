@@ -10,13 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
 import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
@@ -48,92 +46,58 @@ import {
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-const SecurityCheckup = React.createClass( {
-	displayName: 'SecurityCheckup',
+const SecurityCheckup = ( props ) => (
+	<Main className="security-checkup">
+		<QueryAccountRecoverySettings />
 
-	mixins: [ observe( 'userSettings' ) ],
+		<MeSidebarNavigation />
 
-	componentDidMount: function() {
-		this.props.userSettings.getSettings();
-	},
+		<SecuritySectionNav path={ props.path } />
 
-	render: function() {
-		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
+		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-		const {
-			translate,
-		} = this.props;
+		<CompactCard>
+			<p className="security-checkup__text">
+				{ props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
+						'If you ever have problems accessing your account, WordPress.com will use what ' +
+						'you enter here to verify your identity.' ) }
+			</p>
+		</CompactCard>
 
-		const twoStepNoticeMessage = translate(
-			'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
-				components: {
-					a: <a href="/me/security/two-step" />
-				},
-			} );
+		<CompactCard>
+			<RecoveryEmail
+				primaryEmail={ props.primaryEmail }
+				email={ props.accountRecoveryEmail }
+				updateEmail={ props.updateAccountRecoveryEmail }
+				deleteEmail={ props.deleteAccountRecoveryEmail }
+				isLoading={ props.accountRecoveryEmailActionInProgress }
+			/>
+			{ props.shouldPromptEmailValidationNotice &&
+				<RecoveryEmailValidationNotice
+					onResend={ props.resendAccountRecoveryEmailValidation }
+					hasSent={ props.hasSentEmailValidation }
+				/>
+			}
+		</CompactCard>
 
-		return (
-			<Main className="security-checkup">
-				<QueryAccountRecoverySettings />
-
-				<MeSidebarNavigation />
-
-				<SecuritySectionNav path={ this.props.path } />
-
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-
-				<CompactCard>
-					<p className="security-checkup__text">
-						{ this.props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
-								'If you ever have problems accessing your account, WordPress.com will use what ' +
-								'you enter here to verify your identity.' ) }
-					</p>
-				</CompactCard>
-
-				<CompactCard>
-					<RecoveryEmail
-						primaryEmail={ this.props.primaryEmail }
-						email={ this.props.accountRecoveryEmail }
-						updateEmail={ this.props.updateAccountRecoveryEmail }
-						deleteEmail={ this.props.deleteAccountRecoveryEmail }
-						isLoading={ this.props.accountRecoveryEmailActionInProgress }
-					/>
-					{ this.props.shouldPromptEmailValidationNotice &&
-						<RecoveryEmailValidationNotice
-							onResend={ this.props.resendAccountRecoveryEmailValidation }
-							hasSent={ this.props.hasSentEmailValidation }
-						/>
-					}
-				</CompactCard>
-
-				<CompactCard>
-					<RecoveryPhone
-						phone={ this.props.accountRecoveryPhone }
-						updatePhone={ this.props.updateAccountRecoveryPhone }
-						deletePhone={ this.props.deleteAccountRecoveryPhone }
-						isLoading={ this.props.accountRecoveryPhoneActionInProgress }
-						disabled={ twoStepEnabled }
-					/>
-					{ twoStepEnabled &&
-						<Notice
-							status="is-error"
-							text={ twoStepNoticeMessage }
-							showDismiss={ false }
-						/>
-					}
-					{ this.props.shouldPromptPhoneValidationNotice &&
-						<RecoveryPhoneValidationNotice
-							onResend={ this.props.resendAccountRecoveryPhoneValidation }
-							onValidate={ this.props.validateAccountRecoveryPhone }
-							hasSent={ this.props.hasSentPhoneValidation }
-							isValidating={ this.props.validatingAccountRecoveryPhone }
-						/>
-					}
-				</CompactCard>
-
-			</Main>
-		);
-	},
-} );
+		<CompactCard>
+			<RecoveryPhone
+				phone={ props.accountRecoveryPhone }
+				updatePhone={ props.updateAccountRecoveryPhone }
+				deletePhone={ props.deleteAccountRecoveryPhone }
+				isLoading={ props.accountRecoveryPhoneActionInProgress }
+			/>
+			{ props.shouldPromptPhoneValidationNotice &&
+				<RecoveryPhoneValidationNotice
+					onResend={ props.resendAccountRecoveryPhoneValidation }
+					onValidate={ props.validateAccountRecoveryPhone }
+					hasSent={ props.hasSentPhoneValidation }
+					isValidating={ props.validatingAccountRecoveryPhone }
+				/>
+			}
+		</CompactCard>
+	</Main>
+);
 
 export default connect(
 	( state ) => ( {
