@@ -6,6 +6,8 @@ It's not a comprehensive tutorial, but walks you through many of the different t
 
 For more complete technical information, please see the existing tours (linked to [in the README.md](../README.md)), the [API documentation](./docs/API.md), and the [architecture documentation](./ARCHITECTURE.md). 
 
+**PLEASE NOTE:** This tour is merely an example. It is not a real tour that we're showing to users. The step sequence and copy especially didn't go through multiple iterations like we'd normally do with a new tour.
+
 ## What Do We Want To Achieve? 
 
 Before we think about what steps we want our tour to have, we should take a step back and think about **what goals we want to achieve** with our tour. 
