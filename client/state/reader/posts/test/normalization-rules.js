@@ -9,6 +9,7 @@ import { expect } from 'chai';
  */
 import { classifyPost } from '../normalization-rules';
 import * as DISPLAY_TYPES from '../display-types';
+import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );
@@ -42,35 +43,40 @@ describe( 'normalization-rules', () => {
 				better_excerpt_no_html: repeat( 'no ', 100 )
 			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
+	} );
 
-		it( 'should classify a post as CANONICAL_IN_CONTENT', () => {
-			verifyClassification( {
-				canonical_image: {
-					mediaType: 'image',
-					width: 1000,
-					uri: 'http://example.com/foo/bar/ping.jpg?w=2'
+	describe( 'isFeaturedImageInContent', () => {
+		it( 'should say that a post has featured image in content if the featured image is in the content', () => {
+			// post.images has the same src twice because that how our posts actually are.
+			// featured_image is always first and then content_images follow
+			const post = {
+				post_thumbnail: {
+					URL: 'http://example.com/foo/bar/ping.jpg?w=2',
 				},
-				content_images: [
+				images: [
 					{
-						src: 'http://example2.com/foo/bar/ping.jpg?w=20'
-					}
+						src: 'http://example.com/foo/bar/ping.jpg?w=2'
+					},
+					{
+						src: 'http://example.com/foo/bar/ping.jpg?w=20'
+					},
 				]
-			}, [ DISPLAY_TYPES.CANONICAL_IN_CONTENT ] );
+			};
+			expect( isFeaturedImageInContent( post ) ).to.be.equal( 1 );
 		} );
 
-		it( 'should not classify a post as CANONICAL_IN_CONTENT if the canonical image is not in the content', () => {
-			verifyClassification( {
-				canonical_image: {
-					mediaType: 'image',
-					width: 1000,
-					uri: 'http://example.com/foo/baz/ping.jpg?w=2'
+		it( 'should say that featured image is not in content if featured image is not in content', () => {
+			const post = {
+				post_thumbnail: {
+					URL: 'http://example.com/foo/baz/ping.jpg?w=2',
 				},
-				content_images: [
+				images: [
 					{
-						src: 'http://example2.com/foo/bar/different.jpg?w=20'
+						src: 'http://example2.com/foo/bar/different.jpg?w=20',
 					}
-				]
-			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
+				],
+			};
+			expect( isFeaturedImageInContent( post ) ).to.be.not.ok;
 		} );
 	} );
 } );
