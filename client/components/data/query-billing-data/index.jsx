@@ -17,15 +17,11 @@ class QueryBillingData extends Component {
 	};
 
 	componentWillMount() {
-		this.request( this.props );
-	}
-
-	request( props ) {
-		if ( props.requestingBillingData ) {
+		if ( this.props.requestingBillingData ) {
 			return;
 		}
 
-		props.requestBillingData();
+		this.props.requestBillingData();
 	}
 
 	render() {
