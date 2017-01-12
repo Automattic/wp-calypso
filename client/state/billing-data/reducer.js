@@ -24,7 +24,7 @@ import { createReducer } from 'state/utils';
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ BILLING_DATA_RECEIVE ]: ( state, { past, upcoming } ) => ( { ...state, past, upcoming } ),
+	[ BILLING_DATA_RECEIVE ]: ( state, { past, upcoming } ) => ( { past, upcoming } ),
 }, billingDataItemsSchema );
 
 /**
