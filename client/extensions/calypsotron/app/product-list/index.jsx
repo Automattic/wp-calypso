@@ -127,6 +127,10 @@ function mapFetchProps() {
 }
 */
 
+function mapStateToProps() {
+	return {};
+}
+
 function mapDispatchToProps( dispatch ) {
 	const {
 		setDisplayOption,
@@ -151,7 +155,7 @@ function mapDispatchToProps( dispatch ) {
 }
 
 const localizedComponent = localize( ProductList );
-export default connect( () => {}, mapDispatchToProps )( localizedComponent );
+export default connect( mapStateToProps, mapDispatchToProps )( localizedComponent );
 
 // TODO: Restore redux state handling to this component.
 //const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );

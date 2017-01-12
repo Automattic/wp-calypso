@@ -18,6 +18,7 @@ const registered = registerActionTypes( 'S9N_PRODUCT_LIST', [
 	'SET_DISPLAY_OPTION',
 ] );
 
+export const TYPES = registered.types;
 const ACTIONS = registered.actions;
 
 export function initEdits() {
