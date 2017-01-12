@@ -59,7 +59,7 @@ const PostGallery = ( { post, children } ) => {
 					<div className="reader-post-card__excerpt"
 						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
 					/>
-				</AutoDirection> )
+				</AutoDirection>
 				{ children }
 				</div>
 		</div> );
