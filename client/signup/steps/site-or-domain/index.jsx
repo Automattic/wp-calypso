@@ -63,6 +63,9 @@ export default React.createClass( {
 
 	handleNextStep( designType ) {
 		//analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+		if ( designType === 'domain' ) {
+			this.props.goToStep( 'user', '' );
+		}
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
