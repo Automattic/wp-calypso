@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign } from 'lodash';
-import { moment } from 'i18n-calypso';
 
 /**
  * Parses the date within a transaction.
@@ -13,6 +12,6 @@ import { moment } from 'i18n-calypso';
  */
 export const parseDate = ( transaction ) => {
 	return assign( {}, transaction, {
-		date: moment( transaction.date ).toDate()
+		date: new Date( transaction.date )
 	} );
 };

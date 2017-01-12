@@ -3,7 +3,6 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,7 +21,7 @@ describe( 'util', () => {
 
 			expect( updatedTransaction ).to.eql( {
 				id: 123456,
-				date: moment( transaction.date ).toDate()
+				date: new Date( transaction.date )
 			} );
 		} );
 	} );
