@@ -301,7 +301,7 @@ const PluginsBrowser = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-					site={ selectedSite }
+					siteId={ selectedSite.ID }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
 					featureExample={ this.getMockPluginItems() } />

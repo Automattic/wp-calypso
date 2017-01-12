@@ -20,11 +20,11 @@ class JetpackManageErrorPage extends Component {
 	}
 
 	actionCallbackActivate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
+		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
 	}
 
 	actionCallbackUpdate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.site ? this.props.site.ID : null );
+		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
 	}
 
 	getSettings() {
@@ -77,8 +77,8 @@ class JetpackManageErrorPage extends Component {
 }
 
 export default connect(
-	( state, { site } ) => ( {
-		siteSlug: getSiteSlug( state, site.ID ),
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, site.ID )
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
+		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId )
 	} )
 )( localize( JetpackManageErrorPage ) );

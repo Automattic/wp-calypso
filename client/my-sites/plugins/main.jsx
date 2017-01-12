@@ -332,6 +332,7 @@ const PluginsMain = React.createClass( {
 			category,
 			search,
 			selectedSite,
+			selectedSiteId,
 		} = this.props;
 
 		if ( selectedSite && ! this.props.selectedSiteIsJetpack ) {
@@ -368,7 +369,7 @@ const PluginsMain = React.createClass( {
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
-						site={ selectedSite }
+						siteId={ selectedSiteId }
 						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
 						section="plugins"
 						featureExample={ this.getMockPluginItems() } />
@@ -431,6 +432,7 @@ export default connect(
 
 		return {
 			selectedSite,
+			selectedSiteId: selectedSite && selectedSite.ID,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
