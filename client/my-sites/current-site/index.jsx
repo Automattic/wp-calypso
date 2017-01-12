@@ -36,6 +36,9 @@ const CurrentSite = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
+		selectedSiteId: React.PropTypes.number,
+		selectedSite: React.PropTypes.object,
+		isJetpack: React.PropTypes.bool
 	},
 
 	componentWillMount() {
@@ -77,8 +80,13 @@ const CurrentSite = React.createClass( {
 	},
 
 	getDomainWarnings: function() {
-		const { selectedSite: site } = this.props;
-		const domainStore = this.state.domainsStore.getBySite( site.ID );
+		const { selectedSiteId, selectedSite: site } = this.props;
+
+		if ( ! selectedSiteId ) {
+			return null;
+		}
+
+		const domainStore = this.state.domainsStore.getBySite( selectedSiteId );
 		const domains = domainStore && domainStore.list || [];
 
 		return (
@@ -155,13 +163,12 @@ const CurrentSite = React.createClass( {
 
 // TODO: make this pure when sites can be retrieved from the Redux state
 module.exports = connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const selectedSite = getSelectedSite( state );
 
 		return {
 			selectedSiteId,
-			selectedSite: selectedSite || ownProps.sites.getPrimary(),
+			selectedSite: getSelectedSite( state ),
 			isJetpack: isJetpackSite( state, selectedSiteId )
 		};
 	},
