@@ -160,6 +160,7 @@ class PostSchedule extends Component {
 				timezone={ this.props.timezone }
 				gmtOffset={ this.props.gmtOffset }
 				siteId={ this.props.site ? this.props.site.ID : null }
+				siteSlug={ this.props.site ? this.props.site.slug : null }
 				onChange={ this.updateDate }
 			/>
 		);

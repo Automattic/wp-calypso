@@ -88,6 +88,7 @@ class PostScheduleClock extends Component {
 			date,
 			gmtOffset,
 			siteId,
+			siteSlug,
 			timezone,
 			translate
 		} = this.props;
@@ -121,7 +122,7 @@ class PostScheduleClock extends Component {
 			'You can change it in {{a}}General Settings{{/a}}.', {
 				args: { timezoneText },
 				components: {
-					a: <a href={ `/settings/general/${ siteId }` } />
+					a: <a href={ `/settings/general/${ siteSlug || siteId }` } />
 				}
 			}
 		);
@@ -185,6 +186,7 @@ PostScheduleClock.propTypes = {
 	timezone: PropTypes.string,
 	gmtOffset: PropTypes.number,
 	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
 	onChange: PropTypes.func
 };
 
