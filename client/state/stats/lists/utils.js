@@ -172,5 +172,15 @@ export const normalizers = {
 			const { label, icon } = PUBLICIZE_SERVICES_LABEL_ICON[ service.service ];
 			return { label, icon, value: service.followers };
 		} );
-	}
+	},
+
+	statsVideo( payload ) {
+		if ( ! payload || ! payload.data ) {
+			return [];
+		}
+
+		return payload.data.map( item => {
+			return { period: item[ 0 ], value: item[ 1 ] };
+		} ).slice( Math.max( payload.data.length - 10, 1 ) );
+	},
 };
