@@ -197,11 +197,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	width: 100%;
 
 	@media #{$reader-post-card-breakpoint-medium} {
-		margin-bottom: 10px;
+		padding-bottom: 10px;
 	}
 
 	@media #{$reader-post-card-breakpoint-small} {
-		margin-bottom: 10px;
+		padding-bottom: 10px;
 	}
 
 	&:hover {
