@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,7 +13,7 @@ import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-class JetpackManageErrorPage extends Component {
+class JetpackManageErrorPage extends PureComponent {
 	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
 		optInManage: 'actionCallbackActivate'
