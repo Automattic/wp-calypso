@@ -46,7 +46,8 @@ import {
 	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
-	getCustomizerUrl
+	getCustomizerUrl,
+	siteSupportsCalypsoSettingsUI
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -2270,6 +2271,96 @@ describe( 'selectors', () => {
 
 				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
+		} );
+	} );
+
+	describe( 'siteSupportsCalypsoSettingsUI()', () => {
+		it( 'should return null if the Jetpack version is not known', () => {
+			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsCalypsoSettingsUI ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsCalypsoSettingsUI ).to.be.null;
+		} );
+
+		it( 'should return false if the Jetpack version is older than 4.5', () => {
+			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.4.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsCalypsoSettingsUI ).to.be.false;
+		} );
+
+		it( 'should return true if the Jetpack version is 4.5', () => {
+			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.5.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsCalypsoSettingsUI ).to.be.true;
+		} );
+
+		it( 'should return true if the Jetpack version is newer than 4.5', () => {
+			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.6.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsCalypsoSettingsUI ).to.be.true;
 		} );
 	} );
 } );
