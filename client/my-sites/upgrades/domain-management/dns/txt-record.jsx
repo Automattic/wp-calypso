@@ -12,7 +12,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import Gridicon from 'components/gridicon';
 
 const TxtRecord = React.createClass( {
 	statics: {
@@ -36,7 +35,7 @@ const TxtRecord = React.createClass( {
 			isValid = this.props.isValid,
 			isNameValid = isValid( 'name' ),
 			isDataValid = isValid( 'data' ),
-			hasNonAsciiData = ! /^[\u0000-\u007f]*$/.test( this.props.fieldValues.data );
+			hasNonAsciiData = /[^\u0000-\u007f]/.test( this.props.fieldValues.data );
 
 		return (
 			<div className={ classes }>
@@ -54,7 +53,7 @@ const TxtRecord = React.createClass( {
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.name }
 						suffix={ '.' + this.props.selectedDomainName } />
-					{ ! isNameValid && <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError={ true } /> }
+					{ ! isNameValid && <FormInputValidation text={ this.translate( 'Invalid Name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -64,12 +63,8 @@ const TxtRecord = React.createClass( {
 						onChange={ this.props.onChange }
 						value={ this.props.fieldValues.data }
 						placeholder={ this.translate( 'e.g. %(example)s', { args: { example: 'v=spf1 include:example.com ~all' } } ) } />
-					{ hasNonAsciiData && (
-						<div className="form-input-validation dns__warning">
-							<span><Gridicon size={ 24 } icon="notice" /> { this.translate( 'TXT Record has non-ASCII data' ) }</span>
-						</div>
-					) }
-					{ ! isDataValid && <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError={ true } /> }
+					{ hasNonAsciiData && <FormInputValidation text={ this.translate( 'TXT Record has non-ASCII data' ) } isWarning /> }
+					{ ! isDataValid && <FormInputValidation text={ this.translate( 'Invalid TXT Record' ) } isError /> }
 				</FormFieldset>
 			</div>
 		);
