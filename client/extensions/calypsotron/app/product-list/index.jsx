@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Button from 'components/button';
 
 /**
@@ -10,6 +12,7 @@ import Button from 'components/button';
  */
 import TitleBar from '../../components/title-bar';
 import ProductsBody from './body';
+import * as actions from '../../state/product-list/actions';
 
 // TODO: Restore redux state handling to this component.
 //import { connect } from 'react-redux';
@@ -27,13 +30,12 @@ import ProductsBody from './body';
 
 class ProductList extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
-		fetchProducts: PropTypes.func.isRequired,
+		productListState: PropTypes.object.isRequired,
 		setDisplayOption: PropTypes.func.isRequired,
 		initEdits: PropTypes.func.isRequired,
 		addProduct: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
-		cancelEdit: PropTypes.func.isRequired,
+		cancelEdits: PropTypes.func.isRequired,
 		saveEdits: PropTypes.func.isRequired,
 		currencySymbol: PropTypes.string.isRequired,
 		currencyIsPrefix: PropTypes.bool.isRequired,
@@ -47,16 +49,10 @@ class ProductList extends React.Component {
 		this.renderEditTitle = this.renderEditTitle.bind( this );
 	}
 
-	componentDidMount() {
-		// TODO: Fetch this through wc-api-redux
-		// TODO: Restore redux state handling to this component.
-		//this.props.fetchProducts( data.endpoints.products, data.nonce );
-	}
-
 	render() {
-		const { products, categories, taxClasses, setDisplayOption, editProduct } = this.props;
+		const { productListState, categories, taxClasses, setDisplayOption, editProduct } = this.props;
 		const { currencySymbol, currencyIsPrefix, currencyDecimals } = this.props;
-		const { edits, saving } = products;
+		const { edits, saving, display, products } = productListState;
 
 		return (
 			<div className="product-list">
@@ -64,13 +60,13 @@ class ProductList extends React.Component {
 					{ edits ? this.renderEditTitle() : this.renderViewTitle() }
 				</div>
 				<ProductsBody
-					products={ products.products }
+					products={ products }
 					categories={ categories }
 					taxClasses={ taxClasses }
 					edits={ edits }
 					editable={ edits != null }
 					disabled={ Boolean( saving ) }
-					display={ products.display }
+					display={ display }
 					setDisplayOption={ setDisplayOption }
 					editProduct={ editProduct }
 					currencySymbol={ currencySymbol }
@@ -98,13 +94,13 @@ class ProductList extends React.Component {
 	}
 
 	onSaveClick() {
-		const { edits } = this.props.products;
+		const { edits } = this.props.productListState;
 		this.props.saveEdits( edits );
 	}
 
 	renderEditTitle() {
 		const __ = this.props.translate;
-		const { edits, saving } = this.props.products;
+		const { edits, saving } = this.props.productListState;
 
 		return (
 			<TitleBar icon="product" title={ __( 'Products' ) }>
@@ -129,18 +125,10 @@ function mapFetchProps() {
 		taxClasses: wcApi.fetchTaxClasses(),
 	};
 }
-
-function mapStateToProps( state ) {
-	const { products } = state;
-
-	return {
-		products,
-	};
-}
+*/
 
 function mapDispatchToProps( dispatch ) {
 	const {
-		fetchProducts,
 		setDisplayOption,
 		initEdits,
 		addProduct,
@@ -151,7 +139,6 @@ function mapDispatchToProps( dispatch ) {
 
 	return bindActionCreators(
 		{
-			fetchProducts,
 			setDisplayOption,
 			initEdits,
 			addProduct,
@@ -162,12 +149,11 @@ function mapDispatchToProps( dispatch ) {
 		dispatch
 	);
 }
-*/
 
-export default localize( ProductList );
+const localizedComponent = localize( ProductList );
+export default connect( () => {}, mapDispatchToProps )( localizedComponent );
 
 // TODO: Restore redux state handling to this component.
-//const localizedComponent = localize( ProductList );
 //const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );
 //export default connect( mapStateToProps, mapDispatchToProps )( fetchComponent );
 
