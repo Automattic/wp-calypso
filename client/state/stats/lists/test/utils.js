@@ -502,5 +502,35 @@ describe( 'utils', () => {
 				] );
 			} );
 		} );
+
+		describe( 'statsVideo()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsVideo();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if not data has no services attribute', () => {
+				const parsedData = normalizers.statsVideo( { bad: [] } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsVideo( {
+					data: [
+						[ '2016-11-12', 1 ],
+						[ '2016-11-13', 0 ]
+					]
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						period: '2016-11-13',
+						value: 0,
+					}
+				] );
+			} );
+		} );
 	} );
 } );

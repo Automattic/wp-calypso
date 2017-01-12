@@ -477,7 +477,7 @@ module.exports = {
 
 			const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 				? site.slug : siteFragment;
-
+			let extraProps = {};
 			switch ( context.params.module ) {
 
 				case 'posts':
@@ -520,6 +520,7 @@ module.exports = {
 				case 'videodetails':
 					summaryList = new StatsList( { statType: 'statsVideo', post: queryOptions.post,
 						siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					extraProps = { postId: queryOptions.post };
 					break;
 
 				case 'searchterms':
@@ -549,7 +550,8 @@ module.exports = {
 					visitsList: visitsList,
 					followList: followList,
 					siteId: siteId,
-					period: period
+					period: period,
+					...extraProps
 				} ),
 				document.getElementById( 'primary' ),
 				context.store
