@@ -6,6 +6,7 @@ import { get, find, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { parseTransactionDate } from './util';
 
 /**
@@ -26,14 +27,16 @@ export function isRequestingBillingData( state ) {
  * @param  {Object}  state   Global state tree
  * @return {?Object}         Billing data
  */
-export function getBillingData( state ) {
-	const allTransactions = get( state, 'billingData.items', null );
-	if ( ! allTransactions ) {
-		return null;
-	}
+export const getBillingData = createSelector(
+	( state ) => {
+		const allTransactions = get( state, 'billingData.items', null );
+		if ( ! allTransactions ) {
+			return null;
+		}
 
-	return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
-}
+		return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
+	}
+);
 
 /**
  * Returns a past billing transaction.
@@ -43,11 +46,14 @@ export function getBillingData( state ) {
  * @param  {String}  id      ID of the transaction
  * @return {?Object}         The transaction object
  */
-export function getPastBillingTransaction( state, id ) {
-	const pastTransactions = get( getBillingData( state ), [ 'past' ], null );
-	if ( ! pastTransactions ) {
-		return null;
-	}
+export const getPastBillingTransaction = createSelector(
+	( state, id ) => {
+		const pastTransactions = get( getBillingData( state ), [ 'past' ], null );
+		if ( ! pastTransactions ) {
+			return null;
+		}
 
-	return find( pastTransactions, { id } ) || null;
-}
+		return find( pastTransactions, { id } ) || null;
+	},
+	getBillingData
+);
