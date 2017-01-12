@@ -16,14 +16,20 @@ import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Notice from 'components/notice';
 import Button from 'components/button';
+import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryTheme from 'components/data/query-theme';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getActiveTheme, getTheme } from 'state/themes/selectors';
 
-let ThemeSetup = ( { translate, activeSiteDomain } ) => {
+let ThemeSetup = ( { site, themeId, translate, activeSiteDomain } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
 
 	return (
 		<div className="main main-column" role="main">
+			{ site && <QueryActiveTheme siteId={ site.ID } /> }
+			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
 			<ActionPanel>
 				<ActionPanelBody>
@@ -49,6 +55,16 @@ let ThemeSetup = ( { translate, activeSiteDomain } ) => {
 
 ThemeSetup = localize( ThemeSetup );
 
+const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+	const themeId = site && getActiveTheme( state, site.ID );
+	const theme = themeId && getTheme( state, 'wpcom', themeId );
+	return {
+		site,
+		themeId,
+		theme,
+	};
+};
 
-export default connect()( ThemeSetup );
+export default connect( mapStateToProps )( ThemeSetup );
 
