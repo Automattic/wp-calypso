@@ -4,17 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import PropsViewer from '../index';
-
-const components = require( '../../../../server/devdocs/proptypes-index.json' );
-
-const findRealComponent = ( slug ) => {
-	// remove the last character. As of right now, all plural display names are with just an 's'
-	const singular = slug.slice( 0, -1 );
-	return components.filter( ( component ) => {
-		return ( slug === component.slug || singular === component.slug ) && component.includePath.indexOf( 'example' ) < 0;
-	} );
-};
+import PropsViewer, { findRealComponent } from '../index';
 
 describe( 'PropsViewer', () => {
 	context( 'no matching component', () => {

@@ -1,18 +1,29 @@
 /**
  * External Dependencies
  */
-
 import React, { PropTypes, PureComponent } from 'react';
 
 /**
  * Internal Dependencies
  */
-
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 
 // todo: move this file!
 const components = require( '../../../server/devdocs/proptypes-index.json' );
+
+/**
+ * Finds a non-example component in the library of components
+ * @param {string} slug The slug to search for
+ * @return {Array} An array of component matches
+ */
+export function findRealComponent( slug ) {
+	// remove the last character. As of right now, all plural display names are with just an 's'
+	const singular = slug.slice( 0, -1 );
+	return components.filter( ( component ) => {
+		return ( slug === component.slug || singular === component.slug ) && component.includePath.indexOf( 'example' ) < 0;
+	} );
+}
 
 /**
  * Renders a table of prop-types for auto-documentation
@@ -25,24 +36,11 @@ class PropsViewer extends PureComponent {
 	}
 
 	/**
-	 * Finds a non-example component in the library of components
-	 * @param {string} slug The slug to search for
-	 * @return {Array} An array of component matches
-	 */
-	findRealComponent = ( slug ) => {
-		// remove the last character. As of right now, all plural display names are with just an 's'
-		const singular = slug.slice( 0, -1 );
-		return components.filter( ( component ) => {
-			return ( slug === component.slug || singular === component.slug ) && component.includePath.indexOf( 'example' ) < 0;
-		} );
-	};
-
-	/**
 	 * Set the state of this component to the first matching slug
 	 * @param {string} slug The slug to search for
 	 */
 	setComponent = ( slug ) => {
-		let component = this.findRealComponent( slug );
+		let component = findRealComponent( slug );
 		if ( component.length > 0 ) {
 			component = component[ 0 ];
 		} else {
@@ -90,7 +88,7 @@ class PropsViewer extends PureComponent {
 	 * @param {string} propName The name of the prop to render
 	 * @return {ReactElement} The rendered row
 	 */
-	renderRow = ( component, propName ) => {
+	renderRow( component, propName ) {
 		const prop = component.props[ propName ];
 		let type = 'unknown';
 		if ( prop.type ) {
@@ -117,14 +115,14 @@ class PropsViewer extends PureComponent {
 				<td>{ prop.description }</td>
 			</tr>
 		);
-	};
+	}
 
 	/**
 	 * Renders a table if it can
 	 * @param {object} component The component to render for
 	 * @return {ReactComponent|null} The table or nothing
 	 */
-	renderTable = ( component ) => {
+	renderTable( component ) {
 		if ( ! component ) {
 			return null; //todo: explain why this table is missing
 		}
@@ -163,7 +161,7 @@ class PropsViewer extends PureComponent {
 				</div>
 			</Card>
 		);
-	};
+	}
 
 	render() {
 		const component = this.state.component;
