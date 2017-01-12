@@ -19,10 +19,10 @@ class PostPhoto extends React.Component {
 
 	handleClick = ( event ) => {
 		if ( this.state.isExpanded ) {
+			this.props.onClick( event );
 			return;
 		}
 
-		// If the photo's not expanded, don't open full post yet
 		event.preventDefault();
 		this.setState( { isExpanded: true } );
 		this.props.onExpanded();
@@ -30,6 +30,15 @@ class PostPhoto extends React.Component {
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+
+	/* We want photos to be able to expand to be essentially full-screen
+	 * We settled on viewport height - 176px because the
+	 *  - masterbar is 47px tall
+	 *  - card header is 74px tall
+	 *  - card footer is 55px tall
+	 * 47 + 74 + 55 = 176
+	 */
+	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
 		if ( this.widthDivRef ) {
@@ -68,13 +77,12 @@ class PostPhoto extends React.Component {
 		};
 		let newWidth, newHeight;
 		if ( this.state.isExpanded ) {
-			const viewportHeight = this.getViewportHeight();
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
 			newHeight = Math.min(
 				( naturalHeight / naturalWidth ) * cardWidth,
-				viewportHeight - 176
+				this.getMaxPhotoHeight(),
 			);
 			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
 			featuredImageStyle.height = newHeight;
@@ -87,11 +95,11 @@ class PostPhoto extends React.Component {
 		} );
 
 		const divStyle = this.state.isExpanded
-			? { height: newHeight, width: newWidth, margin: 'auto' }
+			? { height: newHeight, width: newWidth, margin: 'auto', paddingBottom: '20px' }
 			: {};
 
 		return (
-			<div style={ divStyle }>
+			<div style={ divStyle } >
 				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
 					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
 					{ children }

@@ -161,12 +161,12 @@ export default class ReaderPostCard extends React.Component {
 				? <PostPhoto imageUri={ post.canonical_media.src } href={ post.URL } imageSize={ {
 					height: post.canonical_media.height,
 					width: post.canonical_media.width,
-				} } onExpanded={ this.handlePhotoCardExpanded } title={ title } />
+				} } onExpanded={ this.handlePhotoCardExpanded } title={ title } onClick={ this.handleCardClick } />
 				: <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
 		}
 
 		return (
-			<Card className={ classes } onClick={ this.handleCardClick }>
+			<Card className={ classes } onClick={ ! isPhotoOnly && this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				<div className="reader-post-card__post">
