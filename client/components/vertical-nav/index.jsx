@@ -3,10 +3,15 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import style from './style';
+
 const VerticalNav = React.createClass( {
 	render() {
 		return (
-			<div className="vertical-nav">
+			<div className={ style.verticalNav }>
 				{ this.props.children }
 			</div>
 		);
