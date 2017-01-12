@@ -4,21 +4,21 @@ Guided Tours are declared in JSX as a tree of elements. All of them are availabl
 
 ## Tour
 
-Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` elements as children (at least one is required).
+Tour is a React component that declares the top-level of a tour. It consists of series of Step elements and it also defines when tour should start by setting appropriate props.
 
 ### Props
 
 * `name`: (string) Unique name of tour in camelCase.
 * `version` (string): Version identifier. We use date string like "20161224".
-* `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `[ '/stats', '/settings' ]`
-* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)). 
+* `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `path={ [ '/stats', '/settings' ] }`
+* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)).
 * `children` (nodes): only supported type is `<Step>`
 
 ### Example
 
 ```jsx
 // tour with a single step
-<Tour path="/me" name="exampleTour">
+<Tour path="/me" name="exampleTour" when={ isNewUser }>
   <Step>
     …
   </Step>
@@ -38,7 +38,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
 * `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
 * `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue. Example: `style={{backgroundColor: 'red'}}`
-* `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected.
+* `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected. Example usage would be to show a certain step only for non-mobile environments: `when={ not( isMobile ) }`
 * `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
 * `children`: (node) Contents of the step. Usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
@@ -216,3 +216,10 @@ combineTours( {
   thirdTour: ThirdTour,
 } );
 ```
+
+## Targeting elements in Calypso
+
+In few places in GT you need to target a DOM elements in Calypso. There are currently two ways to do this:
+
+- `data-tip-target` attribute on the target element
+- using any css selector
