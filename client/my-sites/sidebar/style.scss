@@ -14,7 +14,7 @@
 .sidebar__menu li.stats.selected .sidebar__sparkline {
 	display: none;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		display: block;
 	}
 }
