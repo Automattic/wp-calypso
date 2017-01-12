@@ -62,7 +62,7 @@ const JetpackManageDisabledMessage = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.props.translate( 'Looking to manage this site\'s themes?' ) }
-					site={ this.props.site }
+					siteId={ this.props.site.ID }
 					section="themes"
 					secondaryAction={ this.props.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }

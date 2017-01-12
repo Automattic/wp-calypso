@@ -224,7 +224,7 @@ var Menus = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s menus?' ) }
-					site={ site }
+					siteId={ site.ID }
 					section="menus"
 					secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
 					secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
