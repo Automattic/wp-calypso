@@ -78,8 +78,9 @@ class ThemeSelectionStep extends Component {
 
 	renderJetpackButton() {
 		return (
-			<Button compact
-					href="/jetpack/connect">{ this.props.translate( 'Or Install Jetpack on a Self-Hosted Site' ) }</Button>
+			<Button compact href="/jetpack/connect">
+				{ this.props.translate( 'Or Install Jetpack on a Self-Hosted Site' ) }
+			</Button>
 		);
 	}
 
@@ -124,8 +125,12 @@ class ThemeSelectionStep extends Component {
 				<div className={ themesWrapperClassName } >
 					<StepWrapper
 						fallbackHeaderText={ translate( 'Choose a theme.' ) }
-						fallbackSubHeaderText={ translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
-						subHeaderText={ translate( 'Choose a theme. You can always switch to a different theme later.' ) }
+						fallbackSubHeaderText={
+							translate( 'No need to overthink it. You can always switch to a different theme later.' )
+						}
+						subHeaderText={
+							translate( 'Choose a theme. You can always switch to a different theme later.' )
+						}
 						stepContent={ this.renderThemesList() }
 						defaultDependencies={ defaultDependencies }
 						headerButton={ this.renderJetpackButton() }
