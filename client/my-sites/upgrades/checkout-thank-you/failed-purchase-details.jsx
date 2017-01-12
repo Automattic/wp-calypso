@@ -13,7 +13,6 @@ import support from 'lib/url/support';
 const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 	const successfulPurchases = purchases.length > 0 && (
 			<div>
-				<hr />
 				<p>
 					{
 						translate(
