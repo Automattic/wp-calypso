@@ -7,17 +7,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { parseDate } from '../util';
+import { parseTransactionDate } from '../util';
 
 describe( 'util', () => {
-	describe( '#parseDate()', () => {
+	describe( '#parseTransactionDate()', () => {
 		const transaction = deepFreeze( {
 			id: 123456,
 			date: '2016-12-12T11:22:33+0000'
 		} );
 
 		it( 'should parse the date of the transaction', () => {
-			const updatedTransaction = parseDate( transaction );
+			const updatedTransaction = parseTransactionDate( transaction );
 
 			expect( updatedTransaction ).to.eql( {
 				id: 123456,

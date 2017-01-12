@@ -16,7 +16,7 @@ import {
 	BILLING_DATA_REQUEST_FAILURE
 } from 'state/action-types';
 import { requestBillingData } from '../actions';
-import { parseDate } from '../util';
+import { parseTransactionDate } from '../util';
 
 describe( 'actions', () => {
 	let spy;
@@ -60,8 +60,8 @@ describe( 'actions', () => {
 				return requestBillingData()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: BILLING_DATA_RECEIVE,
-						past: successResponse.billing_history.map( parseDate ),
-						upcoming: successResponse.upcoming_charges.map( parseDate )
+						past: successResponse.billing_history.map( parseTransactionDate ),
+						upcoming: successResponse.upcoming_charges.map( parseTransactionDate )
 					} );
 				} );
 			} );
