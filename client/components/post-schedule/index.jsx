@@ -159,6 +159,7 @@ class PostSchedule extends Component {
 				date={ date }
 				timezone={ this.props.timezone }
 				gmtOffset={ this.props.gmtOffset }
+				siteId={ this.props.site ? this.props.site.ID : null }
 				onChange={ this.updateDate }
 			/>
 		);
@@ -205,6 +206,7 @@ PostSchedule.propTypes = {
 	posts: PropTypes.array,
 	timezone: PropTypes.string,
 	gmtOffset: PropTypes.number,
+	site: PropTypes.object,
 
 	onDateChange: PropTypes.func,
 	onMonthChange: PropTypes.func
