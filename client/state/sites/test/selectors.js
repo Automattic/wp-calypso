@@ -1898,7 +1898,7 @@ describe( 'selectors', () => {
 			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
+			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
 		} );
 
 		it( 'it should return the correct url for versions of jetpack greater than or equal to 3.4', () => {
@@ -1916,7 +1916,7 @@ describe( 'selectors', () => {
 			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
+			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
 		} );
 	} );
 
