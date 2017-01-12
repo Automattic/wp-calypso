@@ -86,6 +86,9 @@ class PostPhoto extends React.Component {
 			'is-expanded': this.state.isExpanded
 		} );
 
+		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
+		const linkTitle = title || '\xa0';
+
 		return (
 			<div className="reader-post-card__post" >
 				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
@@ -93,7 +96,7 @@ class PostPhoto extends React.Component {
 				</a>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ href }>{ title || '\xa0' }</a>
+						<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
 					</h1>
 				</AutoDirection>
 				{ children }
