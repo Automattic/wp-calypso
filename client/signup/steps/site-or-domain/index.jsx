@@ -63,12 +63,15 @@ export default React.createClass( {
 
 	handleNextStep( designType ) {
 		//analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
-		if ( designType === 'domain' ) {
-			// The problem with this approach is that the back button doesn't behave as expected - the back button should go back to the site-or-domain step
-			this.props.goToStep( 'user', '' );
-		}
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
-		this.props.goToNextStep();
+		if ( designType === 'domain' ) {
+			SignupActions.submitSignupStep( { stepName: 'themes' }, [], { theme: 'twentysixteen' } );
+			SignupActions.submitSignupStep( { stepName: 'plans' }, [], { cartItem: null, privacyItem: null } ); // hax
+			// The problem with this approach is that the back button doesn't behave as expected - the back button should go back to the site-or-domain step
+			this.props.goToStep( 'user', '' );
+		} else {
+			this.props.goToNextStep();			
+		}
 	}
 } );
