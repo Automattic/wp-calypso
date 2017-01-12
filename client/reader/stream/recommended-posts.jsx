@@ -113,7 +113,7 @@ export class RecommendedPosts extends React.PureComponent {
 
 RecommendedPosts.propTypes = {
 	index: PropTypes.number,
-	translate: PropTypes.function,
+	translate: PropTypes.func,
 	recommendations: PropTypes.object,
 };
 
