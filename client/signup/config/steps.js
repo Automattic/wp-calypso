@@ -122,4 +122,13 @@ module.exports = {
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
 	},
+
+	'site-or-domain': {
+		stepName: 'site-or-domain',
+		props: {
+			headerText: i18n.translate( 'Do you want to use this domain yet?' ),
+			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready" )
+		},
+		providesDependencies: [ 'designType' ]
+	},
 };
