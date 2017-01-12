@@ -119,7 +119,7 @@ export default class ReaderPostCard extends React.Component {
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
 		const isDiscover = isDiscoverPost( post );
-
+		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -128,12 +128,13 @@ export default class ReaderPostCard extends React.Component {
 			'is-discover': isDiscover
 		} );
 
-		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
+		let discoverFollowButton;
 
-		const discoverBlogName = getDiscoverBlogName( post );
-		const discoverFollowButton = !! ( discoverBlogName )
-			? <DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />
-			: null;
+		if ( isDiscover ) {
+			const discoverBlogName = getDiscoverBlogName( post ) || null;
+			discoverFollowButton = discoverBlogName &&
+					<DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />;
+		}
 
 		const readerPostActions = <ReaderPostActions
 			post={ originalPost ? originalPost : post }
@@ -181,3 +182,4 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 }
+
