@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, mapValues } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { parseTransactionDate } from './util';
 
 /**
  * Returns true if we are currently making a request to get the billing data.
@@ -22,7 +27,12 @@ export function isRequestingBillingData( state ) {
  * @return {?Object}         Billing data
  */
 export function getBillingData( state ) {
-	return get( state, 'billingData.items', null );
+	const allTransactions = get( state, 'billingData.items', null );
+	if ( ! allTransactions ) {
+		return null;
+	}
+
+	return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
 }
 
 /**

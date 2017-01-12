@@ -8,7 +8,6 @@ import {
 	BILLING_DATA_REQUEST_SUCCESS
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { parseTransactionDate } from './util';
 
 export const requestBillingData = () => {
 	return ( dispatch ) => {
@@ -20,8 +19,8 @@ export const requestBillingData = () => {
 			.then( ( { billing_history, upcoming_charges } ) => {
 				dispatch( {
 					type: BILLING_DATA_RECEIVE,
-					past: billing_history.map( parseTransactionDate ),
-					upcoming: upcoming_charges.map( parseTransactionDate ),
+					past: billing_history,
+					upcoming: upcoming_charges,
 				} );
 				dispatch( {
 					type: BILLING_DATA_REQUEST_SUCCESS,

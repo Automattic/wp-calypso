@@ -49,19 +49,36 @@ describe( 'selectors', () => {
 							{
 								id: '12345678',
 								amount: '$1.23',
+								date: '2016-12-12T11:22:33+0000',
 							}
 						],
 						upcoming: [
 							{
 								id: '87654321',
 								amount: '$4.56',
+								date: '2016-13-12T11:22:33+0000',
 							}
 						]
 					}
 				}
 			};
 			const output = getBillingData( state );
-			expect( output ).to.eql( state.billingData.items );
+			expect( output ).to.eql( {
+				past: [
+					{
+						id: '12345678',
+						amount: '$1.23',
+						date: new Date( '2016-12-12T11:22:33+0000' ),
+					}
+				],
+				upcoming: [
+					{
+						id: '87654321',
+						amount: '$4.56',
+						date: new Date( '2016-13-12T11:22:33+0000' ),
+					}
+				]
+			} );
 		} );
 
 		it( 'should return null if billing data has not been fetched yet', () => {
@@ -83,12 +100,14 @@ describe( 'selectors', () => {
 						{
 							id: '12345678',
 							amount: '$1.23',
+							date: '2016-12-12T11:22:33+0000',
 						}
 					],
 					upcoming: [
 						{
 							id: '87654321',
 							amount: '$4.56',
+							date: '2016-13-12T11:22:33+0000',
 						}
 					]
 				}
@@ -97,7 +116,10 @@ describe( 'selectors', () => {
 
 		it( 'should return the billing transaction data for a known transaction', () => {
 			const output = getPastBillingTransaction( state, '12345678' );
-			expect( output ).to.eql( state.billingData.items.past[ 0 ] );
+			expect( output ).to.eql( {
+				...state.billingData.items.past[ 0 ],
+				date: new Date( '2016-12-12T11:22:33+0000' )
+			} );
 		} );
 
 		it( 'should return null for an unknown billing transaction', () => {
