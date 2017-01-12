@@ -45,19 +45,24 @@ class SiteIconSetting extends Component {
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
+		onCancelEditingIcon: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
 		crop: PropTypes.object
 	};
 
 	state = {
 		isModalVisible: false,
-		hasToggledModal: false
+		hasToggledModal: false,
+		isEditingSiteIcon: false
 	};
 
 	toggleModal = ( isModalVisible ) => {
+		const { isEditingSiteIcon } = this.state;
+
 		this.setState( {
 			isModalVisible,
-			hasToggledModal: true
+			hasToggledModal: true,
+			isEditingSiteIcon: isModalVisible ? isEditingSiteIcon : false
 		} );
 	};
 
@@ -67,6 +72,7 @@ class SiteIconSetting extends Component {
 
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
+			this.setState( { isEditingSiteIcon: true } );
 			this.props.onEditSelectedMedia();
 		} else {
 			this.hideModal();
@@ -152,13 +158,19 @@ class SiteIconSetting extends Component {
 		} );
 	};
 
+	cancelEditingSiteIcon = () => {
+		this.props.onCancelEditingIcon();
+		this.props.resetAllImageEditorState();
+		this.setState( { isEditingSiteIcon: false } );
+	};
+
 	preloadModal() {
 		asyncRequire( 'post-editor/media-modal' );
 	}
 
 	render() {
 		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
-		const { isModalVisible, hasToggledModal } = this.state;
+		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
@@ -224,10 +236,13 @@ class SiteIconSetting extends Component {
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
 							enabledFilters={ [ 'images' ] }
-							imageEditorProps={ {
-								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-								onDone: this.setSiteIcon
-							} }
+							{ ...( isEditingSiteIcon ? {
+								imageEditorProps: {
+									allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+									onDone: this.setSiteIcon,
+									onCancel: this.cancelEditingSiteIcon
+								}
+							} : {} ) }
 							visible={ isModalVisible }
 							labels={ {
 								confirm: translate( 'Continue' )
@@ -258,6 +273,7 @@ export default connect(
 	},
 	{
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
 		saveSiteSettings,
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
