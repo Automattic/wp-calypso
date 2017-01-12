@@ -87,7 +87,8 @@ function handleSitesChange() {
 
 function getUrl() {
 	var tab = _cachedPlace.tab,
-		slug = _cachedPlace.slug;
+		slug = _cachedPlace.slug,
+		site;
 
 	// The site in the store gets priority
 	if ( slug ) {
@@ -95,7 +96,7 @@ function getUrl() {
 	}
 
 	// The slug store is empty, is there a selected site?
-	var site = sites.getSelectedSite();
+	site = sites.getSelectedSite();
 	if ( site && site.slug ) {
 		slug = site.slug;
 	}
