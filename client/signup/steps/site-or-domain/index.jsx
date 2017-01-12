@@ -64,6 +64,7 @@ export default React.createClass( {
 	handleNextStep( designType ) {
 		//analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
 		if ( designType === 'domain' ) {
+			// The problem with this approach is that the back button doesn't behave as expected - the back button should go back to the site-or-domain step
 			this.props.goToStep( 'user', '' );
 		}
 
