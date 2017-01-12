@@ -13,6 +13,7 @@ import Card from 'components/card';
 import ThemeMoreButton from './more-button';
 import Gridicon from 'components/gridicon';
 import TrackInteractions from 'components/track-interactions';
+import PulsingDot from 'components/pulsing-dot';
 
 /**
  * Component
@@ -67,6 +68,7 @@ const Theme = React.createClass( {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
 			( nextProps.purchased !== this.props.purchased ) ||
+			( nextProps.installing !== this.props.installing ) ||
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
@@ -109,6 +111,16 @@ const Theme = React.createClass( {
 		}
 	},
 
+	renderInstalling() {
+		if ( this.props.installing ) {
+			return (
+				<div className="theme__installing" >
+					<PulsingDot active={ true } />
+				</div>
+			);
+		}
+	},
+
 	render() {
 		const {
 			name,
@@ -137,6 +149,7 @@ const Theme = React.createClass( {
 				<div className="theme__content">
 					{ this.renderHover() }
 					<a href={ this.props.screenshotClickUrl }>
+						{ this.renderInstalling() }
 						{ screenshot
 							? <img className="theme__img"
 								src={ screenshot + '?w=' + screenshotWidth }
