@@ -27,14 +27,8 @@ class StatsGeochart extends Component {
 		data: PropTypes.array,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.visualizationsLoaded = false;
-		this.visualization = null;
-		this.tick = () => {
-			this.timer = setTimeout( this.loadVisualizations, 1000 );
-		};
-	}
+	visualizationsLoaded = false;
+	visualization = null;
 
 	componentDidMount() {
 		if ( ! window.google ) {
@@ -87,7 +81,7 @@ class StatsGeochart extends Component {
 	}
 
 	drawData = () => {
-		const { data } = this.props;
+		const { data, translate } = this.props;
 
 		if ( ! data || ! data.length ) {
 			return;
@@ -97,8 +91,8 @@ class StatsGeochart extends Component {
 			return [ country.label, country.value ];
 		} );
 		mapData.unshift( [
-			this.props.translate( 'Country' ).toString(),
-			this.props.translate( 'Views' ).toString()
+			translate( 'Country' ).toString(),
+			translate( 'Views' ).toString()
 		] );
 
 		const chartData = window.google.visualization.arrayToDataTable( mapData );
@@ -133,6 +127,10 @@ class StatsGeochart extends Component {
 		}
 	}
 
+	tick = () => {
+		this.timer = setTimeout( this.loadVisualizations, 1000 );
+	}
+
 	render() {
 		const { siteId, statType, query, data } = this.props;
 		const isLoading = ! data;
@@ -142,7 +140,7 @@ class StatsGeochart extends Component {
 		return (
 			<div>
 				<div ref="chart" className={ classes } />
-				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
 			</div>
 		);

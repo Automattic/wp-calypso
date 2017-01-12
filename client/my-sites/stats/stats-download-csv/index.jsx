@@ -55,15 +55,16 @@ class StatsDownloadCsv extends Component {
 	}
 
 	render() {
-		const { siteId, statType, query, translate, isLoading } = this.props;
+		const { data, siteId, statType, query, translate, isLoading } = this.props;
 		try {
 			const isFileSaverSupported = !! new Blob(); // eslint-disable-line no-unused-vars
 		} catch ( e ) {
 			return null;
 		}
+		const disabled = isLoading || ! data.length;
 
 		return (
-			<Button compact onClick={ this.downloadCsv } disabled={ isLoading }>
+			<Button compact onClick={ this.downloadCsv } disabled={ disabled }>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Gridicon icon="cloud-download" /> { translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.'
@@ -86,7 +87,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isLoading = dataList.isLoading();
 	} else {
 		data = getSiteStatsCSVData( state, siteId, statType, query );
-		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query ) && ! data.length;
+		isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 	}
 
 	return { data, siteSlug, siteId, isLoading };
