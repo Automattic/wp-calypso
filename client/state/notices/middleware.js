@@ -23,6 +23,10 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+	JETPACK_MODULE_ACTIVATE_SUCCESS,
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULE_ACTIVATE_FAILURE,
+	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	KEYRING_CONNECTION_DELETE,
 	POST_DELETE_FAILURE,
 	POST_DELETE_SUCCESS,
@@ -56,6 +60,7 @@ import {
 	onAccountRecoveryPhoneValidationSuccess,
 	onAccountRecoveryPhoneValidationFailed,
 } from './account-recovery';
+import { onJetpackModuleActivationActionMessage } from './jetpack-modules';
 
 /**
  * Handlers
@@ -190,6 +195,10 @@ export const handlers = {
 	},
 	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: dispatchError( translate( 'New Gravatar was not saved.' ) ),
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: dispatchSuccess( translate( 'New Gravatar uploaded successfully!' ) ),
+	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
+	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
+	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
+	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ KEYRING_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
 	[ POST_DELETE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully deleted' ) ),
