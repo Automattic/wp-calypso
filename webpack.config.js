@@ -62,11 +62,19 @@ const webpackConfig = {
 			{
 				include: /node_modules\/tinymce/,
 				loader: 'imports?this=>window',
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'style-loader',
+					'css-loader?modules&camelCase&importLoaders=1&localIdentName=[path][local]',
+					'sass-loader'
+				]
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.js', '.jsx', '.scss' ],
 		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
 		modulesDirectories: [ 'node_modules' ],
 		alias: {
