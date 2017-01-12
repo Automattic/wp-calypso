@@ -863,7 +863,7 @@ export function getJetpackSiteRemoteManagementUrl( state, siteId ) {
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' ),
 		siteAdminUrl = getSiteOption( state, siteId, 'admin_url' ),
-		configure = versionCompare( siteJetpackVersion, '3.4' ) < 0 ? 'manage' : 'json-api';
+		configure = versionCompare( siteJetpackVersion, '3.4', '>=' ) ? 'manage' : 'json-api';
 
 	return siteAdminUrl + 'admin.php?page=jetpack&configure=' + configure;
 }
