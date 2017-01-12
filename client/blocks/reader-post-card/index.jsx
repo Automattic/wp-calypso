@@ -24,7 +24,7 @@ import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import { getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
-	isDiscoverPost as isDiscover
+	isDiscoverPost
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
@@ -118,14 +118,14 @@ export default class ReaderPostCard extends React.Component {
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isDiscoverPost = isDiscover( post );
+		const isDiscover = isDiscoverPost( post );
 
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-discover': isDiscoverPost
+			'is-discover': isDiscover
 		} );
 
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
@@ -140,7 +140,7 @@ export default class ReaderPostCard extends React.Component {
 			visitUrl = { post.URL }
 			showVisit={ true }
 			showMenu={ true }
-			showMenuFollow={ isDiscoverPost }
+			showMenuFollow={ isDiscover }
 			onCommentClick={ onCommentClick }
 			showEdit={ false }
 			className="ignore-click"
