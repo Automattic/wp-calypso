@@ -7,7 +7,11 @@
  */
 import { TYPES } from './actions';
 
+// TODO: Remove this temporary code.
+import dummyProducts from '../../dummy-products.json';
+
 export const initialState = {
+	products: dummyProducts,
 	edits: null,
 	display: {
 		showColumnPanel: false,

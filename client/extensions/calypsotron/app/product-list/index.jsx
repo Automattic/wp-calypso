@@ -127,8 +127,10 @@ function mapFetchProps() {
 }
 */
 
-function mapStateToProps() {
-	return {};
+function mapStateToProps( state ) {
+	const myState = state.extensions.calypsotron.productList;
+
+	return { productListState: myState };
 }
 
 function mapDispatchToProps( dispatch ) {
