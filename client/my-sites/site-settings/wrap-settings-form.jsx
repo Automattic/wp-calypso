@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, omit, memoize } from 'lodash';
+import { flowRight, omit } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,6 +26,10 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
+		state = {
+			uniqueEvents: {}
+		};
+
 		componentWillMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
@@ -79,7 +83,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const { fields, site } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 			this.props.saveSiteSettings( site.ID, fields );
-		}
+		};
 
 		handleRadio = event => {
 			const currentTargetName = event.currentTarget.name,
@@ -100,6 +104,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
+		uniqueEventTracker = message => () => {
+			if ( this.state.uniqueEvents[ message ] ) {
+				return;
+			}
+			const uniqueEvents = {
+				...this.state.uniqueEvents,
+				[ message ]: true,
+			};
+			this.setState( { uniqueEvents } );
+			this.state.uniqueEvents[ message ] = true;
+			this.props.trackEvent( message );
+		};
+
 		render() {
 			const utils = {
 				handleRadio: this.handleRadio,
@@ -107,6 +124,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleToggle: this.handleToggle,
 				onChangeField: this.onChangeField,
 				submitForm: this.submitForm,
+				uniqueEventTracker: this.uniqueEventTracker,
 			};
 
 			return (
@@ -142,11 +160,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				successNotice,
 			}, dispatch );
 			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
-			const trackEventOnce = memoize( name => dispatch( recordGoogleEvent( 'Site Settings', name ) ) );
 			return {
 				...boundActionCreators,
 				eventTracker: message => () => trackEvent( message ),
-				uniqueEventTracker: message => () => trackEventOnce( message ),
 				trackEvent,
 			};
 		}

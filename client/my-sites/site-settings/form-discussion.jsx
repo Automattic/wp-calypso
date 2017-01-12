@@ -24,7 +24,7 @@ import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
-		this.props.trackEvent( 'Comment Order on Page' );
+		this.props.trackEvent( 'Toggled Comment Order on Page' );
 		this.props.updateFields( {
 			comment_order: this.props.fields.comment_order === 'desc' ? 'asc' : 'desc'
 		} );
