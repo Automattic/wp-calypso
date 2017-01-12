@@ -218,7 +218,8 @@ shrinkwrap: node-version
 	@shonkwrap --dev
 
 analyze-bundles: node_modules
-	@WEBPACK_OUTPUT_STATS=1 CALYPSO_ENV=production make build
+	@rm -f stats.json
+	@WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production $(MAKE) build
 	@$(NODE_BIN)/webpack-bundle-analyzer stats.json public -p 9898
 
 # rule that can be used as a prerequisite for other rules to force them to always run
