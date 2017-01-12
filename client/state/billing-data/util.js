@@ -8,7 +8,7 @@ import { assign } from 'lodash';
  * Returns a copy of the updated transaction.
  *
  * @param  {Object}  transaction  Transaction object
- * @return {Object}               Updated transaction with parsed date
+ * @return {Object}               Updated transaction with date converted from string to a Date object.
  */
 export const parseDate = ( transaction ) => {
 	return assign( {}, transaction, {
