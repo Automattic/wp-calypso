@@ -139,5 +139,4 @@ module.exports = {
 		defaultVariation: 'domainSearchWithoutSubmit',
 		allowExistingUsers: true,
 	},
->>>>>>> Add `domainSearchForm` AB test.
 };
