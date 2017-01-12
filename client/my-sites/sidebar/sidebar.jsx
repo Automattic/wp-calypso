@@ -706,20 +706,19 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	render() {
-		var publish = !! this.publish(),
+	renderSidebarMenus() {
+		const publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
-			vip = !! this.vip();
+			vip = !! this.vip(),
+			selectedSite = this.getSelectedSite();
+
+		if ( selectedSite && selectedSite.options.is_domain_only ) {
+			return null;
+		}
 
 		return (
-			<Sidebar>
-				<SidebarRegion>
-				<CurrentSite
-					sites={ this.props.sites }
-					siteCount={ this.props.currentUser.visible_site_count }
-					onClick={ this.onPreviewSite }
-				/>
+			<div>
 				<SidebarMenu>
 					<ul>
 						{ this.stats() }
@@ -776,6 +775,20 @@ export class MySitesSidebar extends Component {
 					</SidebarMenu>
 					: null
 				}
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<Sidebar>
+				<SidebarRegion>
+				<CurrentSite
+					sites={ this.props.sites }
+					siteCount={ this.props.currentUser.visible_site_count }
+					onClick={ this.onPreviewSite }
+				/>
+				{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>
 					{ this.addNewSite() }

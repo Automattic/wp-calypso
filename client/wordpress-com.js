@@ -168,6 +168,7 @@ sections = [
 		name: 'upgrades',
 		paths: [ '/domains', '/checkout' ],
 		module: 'my-sites/upgrades',
+		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites'
 	},

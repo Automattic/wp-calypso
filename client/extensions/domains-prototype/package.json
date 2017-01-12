@@ -1,0 +1,15 @@
+{
+	"name": "domains-prototype",
+	"author": "Automattic",
+	"description": "WordPress.com Domains",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "domains-prototype",
+		"paths": [ "/domains-prototype" ],
+		"module": "domains-prototype",
+		"group": "sites",
+		"secondary": true,
+		"enableLoggedOut": true
+	}
+}

@@ -220,6 +220,7 @@ module.exports = function() {
 
 	page(
 		'/domains',
+		upgradesController.domainsLoggedOut,
 		controller.siteSelection,
 		controller.sites
 	);
@@ -230,6 +231,14 @@ module.exports = function() {
 		controller.navigation,
 		controller.jetPackWarning,
 		domainManagementController.domainManagementIndex
+	);
+
+	page(
+		'/domains/landing-page/:site',
+		controller.siteSelection,
+		controller.navigation,
+		controller.jetPackWarning,
+		upgradesController.landingPage
 	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {

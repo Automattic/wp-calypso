@@ -184,6 +184,10 @@ const Checkout = React.createClass( {
 
 		this.props.clearPurchases();
 
+		if ( this.props.selectedSite.options.is_domain_only ) {
+			return '/domains/manage/' + this.props.selectedSite.domain;
+		}
+
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
 			// group all purchases into an array
@@ -264,7 +268,6 @@ const Checkout = React.createClass( {
 			);
 		} else if ( this.isLoading() || this.props.cart.hasPendingServerUpdates ) {
 			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
-
 			return (
 				<SecurePaymentFormPlaceholder />
 			);

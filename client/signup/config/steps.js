@@ -24,6 +24,12 @@ module.exports = {
 		providesDependencies: [ 'theme' ]
 	},
 
+	'themes-site-preselected': {
+		apiRequestFunction: stepActions.setThemeOnSite,
+		stepName: 'themes-site-preselected',
+		providesDependencies: [ 'theme' ]
+	},
+
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'designType' ]
@@ -60,6 +66,12 @@ module.exports = {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'domainItem' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
+	},
+
+	'plans-site-preselected': {
+		stepName: 'plans-site-preselected',
+		apiRequestFunction: stepActions.addPlanToCart,
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
@@ -122,4 +134,19 @@ module.exports = {
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
 	},
+
+	'site-or-domain': {
+		stepName: 'site-or-domain',
+		props: {
+			headerText: i18n.translate( 'Do you want to use this domain yet?' ),
+			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready" )
+		},
+		providesDependencies: [ 'designType' ]
+	},
+
+	'landing-page': {
+		stepName: 'landing-page',
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'theme' ]
+	}
 };

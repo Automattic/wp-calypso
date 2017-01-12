@@ -34,7 +34,7 @@ function getSiteDestination( dependencies ) {
 	 *
 	 * Redirect them
 	 */
-	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
 		protocol = 'http';
 	}
 
@@ -223,11 +223,19 @@ const flows = {
 	},
 
 	'domain-first': {
-		steps: [ 'domain-only', 'user' ],
+		steps: [ 'domain-only', 'site-or-domain', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		lastModified: '2017-01-03'
 	},
+
+	'site-selected': { // this should just be the same as the default flow, but with a preselected siteSlug - maybe the best way to do that is to add support for a preselected slug to the default flow?
+		steps: [ 'themes-site-preselected', 'plans-site-preselected', 'user' ],
+		destination: '/domains-prototype/success',
+		description: 'A test',
+		lastModified: '2017-01-03'
+	},
+
 };
 
 if ( config( 'env' ) === 'development' ) {
