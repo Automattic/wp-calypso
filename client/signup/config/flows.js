@@ -229,7 +229,7 @@ const flows = {
 		lastModified: '2017-01-03'
 	},
 
-	'site-selected': {
+	'site-selected': { // this should just be the same as the default flow, but with a preselected siteSlug - maybe the best way to do that is to add support for a preselected slug to the default flow?
 		steps: [ 'themes-site-preselected', 'plans-site-preselected', 'user' ],
 		destination: '/domains-prototype/success',
 		description: 'A test',
