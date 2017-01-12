@@ -41,10 +41,10 @@ let ThemeSetup = ( { site, themeId, translate, activeSiteDomain } ) => {
 					<p>{ translate( 'You can choose to start from scratch, in which Theme Setup {{strong}}deletes all of your existing content{{/strong}}, or you can save your current content. In either case, you will see some placeholder content which is needed by Theme Setup.', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button scary={ true } disabled={ true }>
+					<Button scary={ true } disabled={ site ? false : true }>
 						{ translate( 'Set Up From Scratch' ) }
 					</Button>
-					<Button disabled={ true }>
+					<Button disabled={ site ? false : true }>
 						{ translate( 'Set Up And Keep Content' ) }
 					</Button>
 				</ActionPanelFooter>
