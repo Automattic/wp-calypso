@@ -16,9 +16,10 @@ import Card from 'components/card';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import {
-	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
+	isInScrollableContent,
+	posToCss,
 	query,
 	targetForSlug,
 } from '../positioning';
@@ -231,6 +232,7 @@ export default class Step extends Component {
 			this.props.className,
 			'guided-tours__step',
 			'guided-tours__step-glow',
+			isInScrollableContent( this.props ) && 'is-scrolling',
 			this.context.step === 'init' && 'guided-tours__step-first',
 			isLastStep && 'guided-tours__step-finish',
 			targetSlug && 'guided-tours__step-pointing',
