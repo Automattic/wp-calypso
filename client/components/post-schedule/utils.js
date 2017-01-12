@@ -104,5 +104,5 @@ export default {
 	getLocalizedDate,
 	getTimeOffset,
 	isValidGMTOffset,
-	parseAndValidateNumber
+	parseAndValidateNumber,
 };
