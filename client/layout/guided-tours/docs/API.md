@@ -34,7 +34,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 ### Props
 
 * `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use `init` to indicate the step that the tour should start with.
-* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. The value of this prop is used to look up the corresponding DOM node. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to `document.querySelector`, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
+* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. See "Targeting elements in Calypso" for info about the format.
 * `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
 * `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
 * `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue. Example: `style={{backgroundColor: 'red'}}`
@@ -88,7 +88,7 @@ Continue is a React component that you can use in Step to programmatically conti
 ### Props
 
 * `step`: (string) Name of the step the tour will advance to.
-* `target`: (string, optional) Name of `[data-tip-target]` that would be watched.
+* `target`: (string, optional) Name of `[data-tip-target]` that would be watched. See "Targeting elements in Calypso" for info about the format.
 * `click`: (bool, optional) If true, `onClick` will be listened on `target` DOM node.
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
@@ -223,3 +223,46 @@ In few places in GT you need to target a DOM elements in Calypso. There are curr
 
 - `data-tip-target` attribute on the target element
 - using any css selector
+
+By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to `document.querySelector`, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
+
+### [data-tip-target]
+
+You mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case.
+
+In tour you just put a value of your `[data-tip-target]` into `target` prop.
+
+Example: you want to position a step of your tour to point to some input element.
+
+```jsx
+// code somewhere in Calypso
+<input type="text" name="example" value={ … } data-tip-target="my-example-input" />
+
+// in your tour
+<Step name="example-step" target="my-example-input">…</Step>
+```
+
+### CSS selector
+
+There are cases when it might be a better idea to target an element by a CSS selector.
+
+You declare that you are using a css selector by starting a value of `target` prop with a dot or a space character. This value will be internally passed directly to `document.querySelector`.
+
+Some examples:
+
+```jsx
+// select by class
+<Step target=".sidebar-activity__likes">
+
+// use a combo of classes to determine state - this selects the active item from masterbar
+<Step target=".masterbar__item.is-active">
+
+// detect state (has-thumbnail) and select a child (featured image)
+<Step target=".reader-post-card.has-thumbnail:first-child .reader-post-card__featured-image">
+
+// target id (notice the required space before #)
+<Step target=" #header">
+
+// target element (again, space at the beginning)
+<Step target=" body">
+```
