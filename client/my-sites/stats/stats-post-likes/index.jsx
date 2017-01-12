@@ -30,6 +30,9 @@ export const PostLikes = props => {
 		'is-loading': isLoading,
 	};
 	const trackLikeClick = () => props.recordGoogleEvent( 'Stats Post Likes', 'Clicked on Gravatar' );
+	const getLikeUrl = like => {
+		return like.URL ? like.URL : `https://gravatar.com/${ like.login }`;
+	};
 
 	return (
 		<Card className={ classNames( 'stats-module', 'stats-post-likes', 'is-expanded', classes ) }>
@@ -63,7 +66,7 @@ export const PostLikes = props => {
 							.map( like =>
 								<a
 									key={ like.ID }
-									href={ `https://gravatar.com/${ like.login }` }
+									href={ getLikeUrl( like ) }
 									rel="noopener noreferrer"
 									target="_blank"
 									className="stats-post-likes__like"
