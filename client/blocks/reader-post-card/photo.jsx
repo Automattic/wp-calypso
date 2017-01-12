@@ -96,7 +96,7 @@ class PostPhoto extends React.Component {
 		} );
 
 		const divStyle = this.state.isExpanded
-			? { height: newHeight, width: newWidth, margin: 'auto', paddingBottom: '12px' }
+			? { height: newHeight, width: newWidth, margin: '0 auto' }
 			: {};
 
 		return (
