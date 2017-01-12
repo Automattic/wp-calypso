@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import cssSafeUrl from 'lib/css-safe-url';
+import AutoDirection from 'components/auto-direction';
 
 class PostPhoto extends React.Component {
 
@@ -104,9 +105,11 @@ class PostPhoto extends React.Component {
 					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
 					{ children }
 				</a>
-				<h1 className="reader-post-card__title">
-					<a className="reader-post-card__title-link" href={ this.props.href }>{ this.props.title }</a>
-				</h1>
+				<AutoDirection>
+					<h1 className="reader-post-card__title">
+						<a className="reader-post-card__title-link" href={ this.props.href }>{ this.props.title }</a>
+					</h1>
+				</AutoDirection>
 			</div>
 		);
 	}
