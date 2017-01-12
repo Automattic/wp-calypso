@@ -11,7 +11,7 @@ import { get, find } from 'lodash';
  * @return {Boolean}          Whether the billing data is being requested
  */
 export function isRequestingBillingData( state ) {
-	return get( state.billingData, 'requesting', false );
+	return get( state, 'billingData.requesting', false );
 }
 
 /**
@@ -22,7 +22,7 @@ export function isRequestingBillingData( state ) {
  * @return {?Object}         Billing data
  */
 export function getBillingData( state ) {
-	return get( state.billingData, 'items', null );
+	return get( state, 'billingData.items', null );
 }
 
 /**
