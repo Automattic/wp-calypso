@@ -129,7 +129,11 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return null if billing transactions have not been fetched yet', () => {
-			const output = getPastBillingTransaction( {}, '12345678' );
+			const output = getPastBillingTransaction( {
+				billingTransactions: {
+					items: {}
+				}
+			}, '12345678' );
 			expect( output ).to.be.null;
 		} );
 	} );

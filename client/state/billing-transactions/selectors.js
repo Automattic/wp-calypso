@@ -35,7 +35,8 @@ export const getBillingTransactions = createSelector(
 		}
 
 		return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
-	}
+	},
+	( state ) => [ state.billingTransactions.items ]
 );
 
 /**
