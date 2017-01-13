@@ -10,6 +10,7 @@ import sinon from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'actions', function() {
 	let Dispatcher, PostActions, PostEditStore, sandbox;
@@ -29,6 +30,7 @@ describe( 'actions', function() {
 				} )
 			} )
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

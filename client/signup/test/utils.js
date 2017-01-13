@@ -12,6 +12,7 @@ import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * Module variables
@@ -30,6 +31,7 @@ describe( 'utils', function() {
 		mockery.registerMock( 'lib/abtest', {
 			abtest: () => ''
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

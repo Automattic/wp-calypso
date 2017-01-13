@@ -11,6 +11,7 @@ import { noop } from 'lodash';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
@@ -73,6 +74,8 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'react-redux', {
 			connect: () => ( component ) => component
 		} );
+
+		mockConfig( mockery );
 
 		SitesList = require( 'lib/sites-list/list' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );

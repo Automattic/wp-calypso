@@ -14,6 +14,7 @@ import { identity, noop } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * Module variables
@@ -35,6 +36,7 @@ describe( 'EditorPublishButton', function() {
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop
 		} );
+		mockConfig( mockery );
 		EditorPublishButton = require( '../' ).EditorPublishButton;
 	} );
 

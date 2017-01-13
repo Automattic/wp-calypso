@@ -12,6 +12,7 @@ import mockery from 'mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * Module variables
@@ -46,6 +47,7 @@ describe( 'EditorGroundControl', function() {
 			recordEvent: noop,
 			recordStat: noop
 		} );
+		mockConfig( mockery );
 		EditorGroundControl = require( '../' );
 
 		EditorGroundControl.prototype.translate = i18n.translate;

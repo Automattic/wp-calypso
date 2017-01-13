@@ -10,6 +10,7 @@ import sinon from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
@@ -30,6 +31,7 @@ describe( 'MediaStore', function() {
 			} ),
 			site: noop
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( function() {

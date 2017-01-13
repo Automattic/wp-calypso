@@ -12,6 +12,7 @@ import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'index', function() {
 	let React,
@@ -43,6 +44,7 @@ describe( 'index', function() {
 			} )
 		} );
 		mockery.registerMock( 'blocks/domain-to-plan-nudge', EmptyComponent );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

@@ -14,6 +14,7 @@ import defer from 'lodash/defer';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery' ;
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'progress-store', function() {
 	let SignupProgressStore, SignupActions, Dispatcher;
@@ -21,16 +22,16 @@ describe( 'progress-store', function() {
 	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
-	before( () => {
+	useMockery( ( mockery ) => {
+		mockConfig( mockery );
 		Dispatcher = require( 'dispatcher' );
-
-		useMockery( ( mockery ) => {
-			mockery.registerMock( 'dispatcher', Dispatcher );
-			mockery.registerMock( './dependency-store', {
-				dispatchToken: Dispatcher.register( ()=> {} )
-			} );
+		mockery.registerMock( 'dispatcher', Dispatcher );
+		mockery.registerMock( './dependency-store', {
+			dispatchToken: Dispatcher.register( ()=> {} )
 		} );
+	} );
 
+	before( () => {
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
 	} );

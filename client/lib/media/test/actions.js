@@ -11,6 +11,7 @@ import mockery from 'mockery';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * Module variables
@@ -43,9 +44,7 @@ describe( 'MediaActions', function() {
 		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
 
 	useFakeDom();
-	useMockery();
-
-	before( function() {
+	useMockery( mockery => {
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
@@ -88,7 +87,10 @@ describe( 'MediaActions', function() {
 
 			return isPlainObject( obj );
 		} );
+		mockConfig( mockery );
+	} );
 
+	before( function() {
 		Dispatcher = require( 'dispatcher' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
 		MediaListStore = require( '../list-store' );

@@ -16,6 +16,7 @@ import multiSite from './fixtures/multi-site';
 import actions from './fixtures/actions';
 import updatePluginData from './fixtures/updated-plugin';
 import mockedSitesList from './mocks/sites-list';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * setup a react test enviroment
@@ -27,6 +28,7 @@ describe( 'Plugins Store', () => {
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/sites-list', mockedSitesList );
 		mockery.registerMock( 'lib/analytics', {} );
+		mockConfig( mockery );
 	} );
 
 	useFakeDom();

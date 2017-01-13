@@ -13,6 +13,7 @@ import noop from 'lodash/noop';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'index', function() {
 	useFakeDom();
@@ -21,6 +22,7 @@ describe( 'index', function() {
 
 	useMockery( mockery => {
 		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
+		mockConfig( mockery );
 	} );
 
 	let SitesDropdown;

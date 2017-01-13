@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'EditorCategoriesTagsAccordion', function() {
 	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
@@ -22,6 +23,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );
 		mockery.registerMock( 'components/info-popover', EmptyComponent );
 		mockery.registerMock( 'react-virtualized/List', EmptyComponent );
+		mockConfig( mockery );
 
 		mount = require( 'enzyme' ).mount;
 		i18n = require( 'i18n-calypso' );

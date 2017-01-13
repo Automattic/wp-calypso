@@ -11,19 +11,21 @@ import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import mockedFlows from './fixtures/flows';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		let flows, user;
 
 		useFakeDom();
-		useFilesystemMocks( __dirname );
 
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'lib/abtest', {
 				abtest: noop,
 			} );
+			mockConfig( mockery );
 		} );
+		useFilesystemMocks( __dirname );
 
 		before( () => {
 			user = require( 'lib/user' )();
@@ -50,7 +52,6 @@ describe( 'Signup Flows Configuration', () => {
 		let flows;
 
 		useFakeDom();
-		useFilesystemMocks( __dirname );
 
 		const ABTestMock = {
 			abtest: noop,
@@ -68,7 +69,10 @@ describe( 'Signup Flows Configuration', () => {
 
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'lib/abtest', ABTestMock );
+			mockConfig( mockery );
 		} );
+
+		useFilesystemMocks( __dirname );
 
 		before( () => {
 			flows = require( 'signup/config/flows' );
@@ -107,6 +111,10 @@ describe( 'Signup Flows Configuration', () => {
 
 	describe( 'insertStepIntoFlow', () => {
 		let flows;
+
+		useMockery( ( mockery ) => {
+			mockConfig( mockery );
+		} );
 
 		useFakeDom();
 		useFilesystemMocks( __dirname );

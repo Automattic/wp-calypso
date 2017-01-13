@@ -10,6 +10,7 @@ import { spy } from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'post-edit-store', function() {
 	let Dispatcher, PostEditStore, dispatcherCallback;
@@ -22,6 +23,7 @@ describe( 'post-edit-store', function() {
 				get: noop
 			} )
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

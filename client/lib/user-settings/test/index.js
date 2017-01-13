@@ -8,6 +8,7 @@ import { assert } from 'chai';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 import wpMock from './mocks/wp';
 import userUtilsMock from './mocks/user-utils';
 
@@ -17,6 +18,7 @@ describe( 'User Settings', () => {
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', wpMock );
 		mockery.registerMock( 'lib/user/utils', userUtilsMock );
+		mockConfig( mockery );
 	} );
 
 	useFakeDom();

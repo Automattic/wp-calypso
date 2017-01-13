@@ -9,6 +9,8 @@ import ary from 'lodash/ary';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 import { createStore } from 'redux';
 import { reducer } from 'state';
 
@@ -20,6 +22,9 @@ describe( 'flow-controller', function() {
 		signupFlowController;
 
 	useFakeDom();
+	useMockery( mockery => {
+		mockConfig( mockery );
+	} );
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {

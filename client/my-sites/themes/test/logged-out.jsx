@@ -17,6 +17,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'state';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 import { THEMES_REQUEST_SUCCESS, THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
@@ -28,6 +29,7 @@ describe( 'logged-out', () => {
 			mockery.registerMock( './theme-preview', EmptyComponent );
 			mockery.registerMock( 'components/popover', EmptyComponent );
 			mockery.registerMock( 'lib/analytics/page-view-tracker', EmptyComponent );
+			mockConfig( mockery );
 
 			this.LoggedOutShowcase = require( '../logged-out' );
 
