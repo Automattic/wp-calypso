@@ -1,7 +1,7 @@
-Query Billing Data
+Query Billing Transactions
 ================
 
-`<QueryBillingData />` is a React component used in managing network requests for billing data.
+`<QueryBillingTransactions />` is a React component used in managing network requests for billing transactions.
 
 ## Usage
 
@@ -9,16 +9,16 @@ Render the component as a child in any component. It does not accept any childre
 
 ```jsx
 import React from 'react';
-import QueryBillingData from 'components/data/query-billing-data';
-import MyBillingDataList from './list';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import MyBillingTransactionsList from './list';
 
-export default function MyBillingData( { billingData } ) {
+export default function MyBillingTransactions( { billingTransactions } ) {
 	return (
 		<div>
-			<QueryBillingData />
-			{ billingData.map( ( billingEntries, billingEntryType ) => {
+			<QueryBillingTransactions />
+			{ billingTransactions.map( ( billingEntries, billingEntryType ) => {
 				return (
-					<MyBillingDataList items={ billingEntries } />
+					<MyBillingTransactionsList items={ billingEntries } />
 				);
 			} }
 		</div>
