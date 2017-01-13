@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -68,14 +69,14 @@ describe( 'selectors', () => {
 					{
 						id: '12345678',
 						amount: '$1.23',
-						date: new Date( '2016-12-12T11:22:33+0000' ),
+						date: moment( '2016-12-12T11:22:33+0000' ).toDate(),
 					}
 				],
 				upcoming: [
 					{
 						id: '87654321',
 						amount: '$4.56',
-						date: new Date( '2016-13-12T11:22:33+0000' ),
+						date: moment( '2016-13-12T11:22:33+0000' ).toDate(),
 					}
 				]
 			} );
@@ -118,7 +119,7 @@ describe( 'selectors', () => {
 			const output = getPastBillingTransaction( state, '12345678' );
 			expect( output ).to.eql( {
 				...state.billingTransactions.items.past[ 0 ],
-				date: new Date( '2016-12-12T11:22:33+0000' )
+				date: moment( '2016-12-12T11:22:33+0000' ).toDate()
 			} );
 		} );
 
