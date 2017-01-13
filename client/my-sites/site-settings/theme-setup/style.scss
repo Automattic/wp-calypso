@@ -1,3 +1,11 @@
 .theme-setup button {
 	margin-right: 8px;
 }
+
+.theme-setup__active-theme-screenshot {
+	min-height: 200px;
+
+	&.is-placeholder {
+		@include placeholder;
+	}
+}

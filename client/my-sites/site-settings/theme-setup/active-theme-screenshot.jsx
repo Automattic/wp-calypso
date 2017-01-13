@@ -7,14 +7,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 
 const ActiveThemeScreenshot = ( { theme, translate } ) => {
 	if ( ! theme ) {
-		return null;
+		return (
+			<div className="theme-setup__active-theme-screenshot is-placeholder">
+			</div>
+		);
 	}
 	return (
-		<ActionPanelFigure>
+		<div className="theme-setup__active-theme-screenshot">
 			<a href={ theme.demo_uri }>
 				<img src={ theme.screenshot } />
 				<p>
@@ -25,7 +27,7 @@ const ActiveThemeScreenshot = ( { theme, translate } ) => {
 					} ) }
 				</p>
 			</a>
-		</ActionPanelFigure>
+		</div>
 	);
 };
 

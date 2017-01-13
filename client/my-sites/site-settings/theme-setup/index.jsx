@@ -14,6 +14,7 @@ import ActionPanel from 'my-sites/site-settings/action-panel';
 import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
 import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
+import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import QueryActiveTheme from 'components/data/query-active-theme';
@@ -41,15 +42,17 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 					<Notice status={ isJetpack ? 'is-error' : 'is-warning' } showDismiss={ false }>
 						{ noticeText }
 					</Notice>
-					<ActiveThemeScreenshot theme={ theme } />
+					<ActionPanelFigure>
+						<ActiveThemeScreenshot theme={ theme } />
+					</ActionPanelFigure>
 					<p>{ translate( 'Getting your site to look like your theme\'s demo can be confusing. The Theme Setup tool will copy the demo site\'s settings over to your site automatically.' ) }</p>
 					<p>{ translate( 'You can choose to start from scratch, in which Theme Setup {{strong}}deletes all of your existing content{{/strong}}, or you can save your current content. In either case, you will see some placeholder content which is needed by Theme Setup.', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button scary={ true } disabled={ site && ! isJetpack ? false : true }>
+					<Button scary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
 						{ translate( 'Set Up From Scratch' ) }
 					</Button>
-					<Button disabled={ site && ! isJetpack ? false : true }>
+					<Button disabled={ site && theme && ! isJetpack ? false : true }>
 						{ translate( 'Set Up And Keep Content' ) }
 					</Button>
 				</ActionPanelFooter>
