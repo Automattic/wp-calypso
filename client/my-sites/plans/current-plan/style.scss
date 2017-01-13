@@ -106,7 +106,7 @@
 	}
 
 	.button.is-compact {
-		white-space: pre;
+		flex-shrink: 0;
 	}
 }
 
