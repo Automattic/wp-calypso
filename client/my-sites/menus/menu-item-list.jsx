@@ -389,8 +389,9 @@ var MenuItem = React.createClass( {
 					depth={ this.props.depth }
 					menuData={ this.props.menuData }
 					items={ this.props.items }
+					itemTypes={ this.props.itemTypes }
 					setEditItem={ this.props.setEditItem }
-					getEditItem={ this.props.getEditItem }
+					editedItem={ this.props.editedItem }
 					moveState={ this.props.moveState }
 					doMoveItem={ this.props.doMoveItem }
 					addState={ this.props.addState }
@@ -419,7 +420,6 @@ var EmptyMenu = React.createClass( {
 	},
 
 	render: function() {
-
 		var addFirstItemButton = (
 				<ul className="menus__items">
 					<a className="menus__menu-item is-empty">
