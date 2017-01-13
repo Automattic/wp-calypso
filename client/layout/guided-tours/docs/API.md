@@ -230,7 +230,7 @@ To find the DOM node, `document.querySelector` is used. By default, the query us
 
 You mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case.
 
-In tour you just put a value of your `[data-tip-target]` into `target` prop.
+In your tour, just put a value of your desired `[data-tip-target]` into the `target` prop.
 
 Example: you want to position a step of your tour to point to some input element.
 
@@ -246,7 +246,7 @@ Example: you want to position a step of your tour to point to some input element
 
 There are cases when it might be a better idea to target an element by a CSS selector.
 
-You declare that you are using a css selector by starting a value of `target` prop with a dot or a space character. Only single element can be used as a target - it will be the first one matching the selector.
+You declare that you are using a CSS selector by starting a value of the `target` prop with a dot or a space character. Only single element can be used as a target - it will be the first one matching the selector.
 
 Some examples:
 
