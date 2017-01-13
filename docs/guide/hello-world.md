@@ -149,7 +149,7 @@ import React from 'react';
 import Main from 'components/main';
 
 export default class HelloWorld extends React.Component {
-	
+
 };
 ```
 
@@ -170,6 +170,37 @@ export default class HelloWorld extends React.Component {
 If you want to learn more about our approach to writing React components, check out the [Components](../components.md) page.
 
 ### 2. Create style.scss file
+
+According to [Components](../components.md) guidelines, there is only one style file per component, it's named `style.scss` and lives in the same component folder.
+
+We'll create an empty `style.scss` file with the following command:
+
+```
+touch client/my-sites/hello-world/style.scss
+```
+
+Then add some styles for our `HelloWorld` component:
+
+```
+.hello-world__title {
+  color: #37a000;
+  font-size: 3rem;
+}
+```
+
+Let's update `h1` tag from the component we wrote above to include our title style:
+
+```
+<h1 className="hello-world__title">Hello, World!</h1>
+```
+
+We need to do one more step to include the component's style file in the main application style file. It's done by importing `style.scss` in `assets/stylesheets/_components.scss`, add following line at the end of `_components.scss`:
+
+```
+@import 'my-sites/hello-world/style';
+```
+
+That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guidelines/css.md) to learn more about working with stylesheet in the project.
 
 ### 3. Hook up controller
 
