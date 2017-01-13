@@ -16,7 +16,7 @@ class QueryBillingData extends Component {
 		requestBillingData: PropTypes.func
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		if ( this.props.requestingBillingData ) {
 			return;
 		}
