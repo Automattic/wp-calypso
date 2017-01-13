@@ -135,8 +135,10 @@ class StatsGeochart extends Component {
 		const { siteId, statType, query, data } = this.props;
 		const isLoading = ! data;
 		const classes = classNames( 'stats-geochart', {
-			'is-loading': isLoading
+			'is-loading': isLoading,
+			'has-no-data': data && ! data.length
 		} );
+
 		return (
 			<div>
 				<div ref="chart" className={ classes } />
