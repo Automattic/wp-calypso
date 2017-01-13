@@ -2276,7 +2276,7 @@ describe( 'selectors', () => {
 
 	describe( 'siteSupportsJetpackSettingsUI()', () => {
 		it( 'should return null if the Jetpack version is not known', () => {
-			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2288,11 +2288,11 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( supportsCalypsoSettingsUI ).to.be.null;
+			expect( supportsJetpackSettingsUI ).to.be.null;
 		} );
 
 		it( 'should return null if the site is not a Jetpack site', () => {
-			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2303,11 +2303,11 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( supportsCalypsoSettingsUI ).to.be.null;
+			expect( supportsJetpackSettingsUI ).to.be.null;
 		} );
 
 		it( 'should return false if the Jetpack version is older than 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2322,11 +2322,11 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( supportsCalypsoSettingsUI ).to.be.false;
+			expect( supportsJetpackSettingsUI ).to.be.false;
 		} );
 
 		it( 'should return true if the Jetpack version is 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2341,11 +2341,11 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( supportsCalypsoSettingsUI ).to.be.true;
+			expect( supportsJetpackSettingsUI ).to.be.true;
 		} );
 
 		it( 'should return true if the Jetpack version is newer than 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2360,7 +2360,7 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( supportsCalypsoSettingsUI ).to.be.true;
+			expect( supportsJetpackSettingsUI ).to.be.true;
 		} );
 	} );
 } );
