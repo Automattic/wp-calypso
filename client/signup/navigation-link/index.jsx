@@ -23,7 +23,7 @@ const NavigationLink = React.createClass( {
 		flowName: React.PropTypes.string.isRequired,
 		positionInFlow: React.PropTypes.number,
 		previousPath: React.PropTypes.string,
-		signupProgressStore: React.PropTypes.array,
+		signupProgress: React.PropTypes.array,
 		stepName: React.PropTypes.string.isRequired
 	},
 
@@ -34,11 +34,11 @@ const NavigationLink = React.createClass( {
 	 * @return {string|null} The previous step name
 	 */
 	getPreviousStepName() {
-		const { stepName, signupProgressStore } = this.props;
+		const { stepName, signupProgress } = this.props;
 
-		const currentStepIndex = findIndex( signupProgressStore, { stepName } );
+		const currentStepIndex = findIndex( signupProgress, { stepName } );
 
-		const previousStep = find( signupProgressStore.slice( 0, currentStepIndex ).reverse(), step => ! step.wasSkipped );
+		const previousStep = find( signupProgress.slice( 0, currentStepIndex ).reverse(), step => ! step.wasSkipped );
 
 		return previousStep ? previousStep.stepName : null;
 	},
@@ -54,7 +54,7 @@ const NavigationLink = React.createClass( {
 
 		const previousStepName = this.getPreviousStepName();
 
-		const stepSectionName = get( find( this.props.signupProgressStore, { stepName: previousStepName } ), 'stepSectionName', '' );
+		const stepSectionName = get( find( this.props.signupProgress, { stepName: previousStepName } ), 'stepSectionName', '' );
 
 		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},

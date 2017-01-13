@@ -106,9 +106,9 @@ function getFlowSteps( flowName ) {
 	return flow.steps;
 }
 
-function getValueFromProgressStore( { signupProgressStore, stepName, fieldName } ) {
+function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find(
-		signupProgressStore,
+		signupProgress,
 		step => step.stepName === stepName
 	);
 	return siteStepProgress ? siteStepProgress[fieldName] : null;

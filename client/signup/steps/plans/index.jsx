@@ -82,7 +82,7 @@ class PlansStep extends Component {
 			flowName,
 			stepName,
 			positionInFlow,
-			signupProgressStore,
+			signupProgress,
 			translate
 		} = this.props;
 
@@ -95,7 +95,7 @@ class PlansStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				signupProgressStore={ signupProgressStore }
+				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() } />
 		);
