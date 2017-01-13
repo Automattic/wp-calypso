@@ -130,6 +130,10 @@ module.exports = React.createClass( {
 		trackDeleteSiteOption( 'change-address' );
 	},
 
+	trackThemeSetup() {
+		trackDeleteSiteOption( 'theme-setup' );
+	},
+
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
 	},
