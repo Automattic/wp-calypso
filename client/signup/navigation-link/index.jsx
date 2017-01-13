@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import find from 'lodash/find';
+import findIndex from 'lodash/findIndex';
 import i18n from 'i18n-calypso';
 
 /**
@@ -26,6 +27,22 @@ const NavigationLink = React.createClass( {
 		stepName: React.PropTypes.string.isRequired
 	},
 
+	/**
+	 * Returns the previous step name, skipping over steps with the
+	 * `wasSkipped` property.
+	 *
+	 * @return {string|null} The previous step name
+	 */
+	getPreviousStepName() {
+		const { stepName, signupProgressStore } = this.props;
+
+		const currentStepIndex = findIndex( signupProgressStore, { stepName } );
+
+		const previousStep = find( signupProgressStore.slice( 0, currentStepIndex ).reverse(), step => ! step.wasSkipped );
+
+		return previousStep ? previousStep.stepName : null;
+	},
+
 	getBackUrl() {
 		if ( this.props.direction !== 'back' ) {
 			return;
@@ -35,7 +52,7 @@ const NavigationLink = React.createClass( {
 			return this.props.backUrl;
 		}
 
-		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
+		const previousStepName = this.getPreviousStepName();
 
 		const stepSectionName = get( find( this.props.signupProgressStore, { stepName: previousStepName } ), 'stepSectionName', '' );
 
