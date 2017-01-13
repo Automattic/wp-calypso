@@ -407,7 +407,7 @@ export const FEATURES_LIST = {
 		),
 		getStoreSlug: () => 'unlimited_themes'
 	},
-  
+
 	[ FEATURE_ALL_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_ALL_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( '{{strong}}All{{/strong}} Premium Themes', {
@@ -558,7 +558,7 @@ export const FEATURES_LIST = {
 		} ),
 		getDescription: () => i18n.translate(
 			"With increased storage space you'll be able to upload " +
-			'more images, videos, audio, and documents to your website.'
+			'more images, audio, and documents to your website.'
 		)
 	},
 
