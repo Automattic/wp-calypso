@@ -54,7 +54,7 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 			<p>
 				{
 					translate( 'We added credits to your account, so you can try adding these items again. ' +
-						'If the problem persists, please don’t hesitate to {{a}}contact support{{/a}}.',
+						'If the problem persists, please don\'t hesitate to {{a}}contact support{{/a}}.',
 						{
 							components: {
 								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
