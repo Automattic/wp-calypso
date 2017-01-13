@@ -36,7 +36,7 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
  */
 export const
 	READER_CONTENT_WIDTH = 720,
-	PHOTO_ONLY_MIN_WIDTH = 480,
+	PHOTO_ONLY_MIN_WIDTH = 440,
 	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
