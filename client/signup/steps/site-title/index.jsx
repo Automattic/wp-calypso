@@ -23,7 +23,7 @@ const SiteTitleStep = React.createClass( {
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
 		setSiteTitle: PropTypes.func.isRequired,
-		signupProgressStore: PropTypes.array,
+		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 	},
 
@@ -67,7 +67,7 @@ const SiteTitleStep = React.createClass( {
 					fallbackHeaderText={ headerText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderSiteTitleStep() }
 					goToNextStep={ this.skipStep }
 				/>

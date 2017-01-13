@@ -182,11 +182,11 @@ describe( 'utils', function() {
 	} );
 
 	describe( 'getValueFromProgressStore', function() {
-		const testStore = [ { stepName: 'empty' }, { stepName: 'site', site: 'calypso' } ];
+		const signupProgress = [ { stepName: 'empty' }, { stepName: 'site', site: 'calypso' } ];
 		const config = {
 			stepName: 'site',
 			fieldName: 'site',
-			signupProgressStore: testStore
+			signupProgress
 		};
 
 		it( 'should return the value of the field if it exists', function() {
@@ -194,7 +194,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return null if the field is not present', function() {
-			delete testStore[ 1 ].site;
+			delete signupProgress[ 1 ].site;
 			assert.equal( utils.getValueFromProgressStore( config ), null );
 		} );
 	} );

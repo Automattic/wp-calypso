@@ -84,7 +84,7 @@ export default class SiteOrDomain extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
-				signupProgressStore={ this.props.signupProgressStore }
+				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderChoices() } />
 		);
 	}

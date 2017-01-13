@@ -51,7 +51,7 @@ export default React.createClass( {
 					positionInFlow={ this.props.positionInFlow }
 					fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
 					fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderChoices() } />
 			</div>
 		);

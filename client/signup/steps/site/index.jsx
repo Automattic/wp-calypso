@@ -270,7 +270,7 @@ module.exports = React.createClass( {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your site.' ) }
-				signupProgressStore={ this.props.signupProgressStore }
+				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() } />
 		);
 	}
