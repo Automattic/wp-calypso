@@ -13,29 +13,15 @@ import viewport from 'lib/viewport';
 /**
  * Local dependencies
  */
-import utils from './utils';
+import {
+	isValidGMTOffset,
+	parseAndValidateNumber
+} from './utils';
 
 /**
  * Globals
  */
 const noop = () => {};
-
-/**
- * Check if the given value is useful to use in time format
- * @param {String} value - time value to check
- * @return {String} checked value or `false`
- */
-function checkTimeValue( value ) {
-	if ( value !== '0' && value !== '00' && ( value[ 0 ] === '0' || Number( value ) > 99 ) ) {
-		value = value.substr( 1 );
-	}
-
-	if ( ! ( isNaN( Number( value ) ) || Number( value ) < 0 || value.length > 2 ) ) {
-		return value;
-	}
-
-	return false;
-}
 
 class PostScheduleClock extends Component {
 	constructor() {
@@ -75,8 +61,8 @@ class PostScheduleClock extends Component {
 			minuteRef
 		} = this.refs;
 
-		const hour = checkTimeValue( hourReference.value );
-		const minute = checkTimeValue( minuteRef.value );
+		const hour = parseAndValidateNumber( hourReference.value );
+		const minute = parseAndValidateNumber( minuteRef.value );
 		const modifiers = {};
 
 		if ( false !== hour && hour < 24 ) {
@@ -103,7 +89,7 @@ class PostScheduleClock extends Component {
 			translate
 		} = this.props;
 
-		if ( ! ( timezone || utils.isValidGMTOffset( gmtOffset ) ) ) {
+		if ( ! ( timezone || isValidGMTOffset( gmtOffset ) ) ) {
 			return;
 		}
 
@@ -113,7 +99,7 @@ class PostScheduleClock extends Component {
 			const tzDate = date.clone().tz( timezone );
 			diffInHours = tzDate.utcOffset() - moment().utcOffset();
 			formatZ = tzDate.format( ' Z ' );
-		} else if ( utils.isValidGMTOffset( gmtOffset ) ) {
+		} else if ( isValidGMTOffset( gmtOffset ) ) {
 			const utcDate = date.clone().utcOffset( gmtOffset );
 			diffInHours = utcDate.utcOffset() - moment().utcOffset();
 			formatZ = utcDate.format( ' Z ' );
