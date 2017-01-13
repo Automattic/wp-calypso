@@ -224,6 +224,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			left: 0;
 		width: 100%;
 	}
+
+
 }
 
 .reader-post-card__byline {
@@ -289,7 +291,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 	height: 20px;
 	width: 100%;
-	
+
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
@@ -680,6 +682,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card.card .daily-post-button {
 	margin-bottom: 10px;
+}
+
+.reader-post-card__blocked_description {
+	margin-bottom: 0;
+	color: $gray-dark;
+}
+
+.reader-post-card__blocked_button {
+	position: absolute;
+	right: 0;
+	margin-top: -2px;
 }
 
 // For these borderless cards to look more presentable on Devdocs

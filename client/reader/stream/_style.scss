@@ -108,16 +108,6 @@
 		}
 	}
 
-	&.is-blocked {
-		p {
-			margin-bottom: 0;
-		}
-
-		a {
-			padding-left: 2px;
-		}
-	}
-
 	&.is-headerless {
 
 		@include breakpoint( ">480px" ) {
