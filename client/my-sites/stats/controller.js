@@ -352,14 +352,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
 				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
-			const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
-			const wpcomFollowersList = new StatsList( {
-				siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
-			const emailFollowersList = new StatsList( {
-				siteID: siteId, statType: 'statsFollowers', type: 'email', domain: siteDomain, max: 7 } );
-			const commentFollowersList = new StatsList( {
-				siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
@@ -379,11 +371,6 @@ module.exports = {
 				siteId,
 				period,
 				chartPeriod,
-				tagsList,
-				commentsList,
-				wpcomFollowersList,
-				emailFollowersList,
-				commentFollowersList,
 				followList,
 				searchTermsList,
 				slug: siteDomain,
