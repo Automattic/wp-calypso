@@ -246,7 +246,7 @@ Example: you want to position a step of your tour to point to some input element
 
 There are cases when it might be a better idea to target an element by a CSS selector.
 
-You declare that you are using a css selector by starting a value of `target` prop with a dot or a space character.
+You declare that you are using a css selector by starting a value of `target` prop with a dot or a space character. Only single element can be used as a target - it will be the first one matching the selector.
 
 Some examples:
 
@@ -258,7 +258,7 @@ Some examples:
 <Step target=".masterbar__item.is-active">
 
 // detect state (has-thumbnail) and select a child (featured image)
-<Step target=".reader-post-card.has-thumbnail:first-child .reader-post-card__featured-image">
+<Step target=".reader-post-card.has-thumbnail .reader-post-card__featured-image">
 
 // target id (notice the required space before #)
 <Step target=" #header">
