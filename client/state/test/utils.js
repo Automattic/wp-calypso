@@ -2,8 +2,6 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import { expect } from 'chai';
 import noop from 'lodash/noop';
 import { stub, spy } from 'sinon';
@@ -90,11 +88,7 @@ describe( 'utils', () => {
 		} );
 
 		it( 'should return an updated nested action thunk, merging data on dispatch', () => {
-			const dispatched = [];
-			const { dispatch } = applyMiddleware( thunk, () => ( next ) => ( action ) => {
-				dispatched.push( action );
-				return next( action );
-			} )( createStore )( () => null );
+			const dispatch = spy();
 			const action = extendAction(
 				( thunkDispatch ) => thunkDispatch(
 					( nestedThunkDispatch ) => nestedThunkDispatch( {
@@ -111,8 +105,9 @@ describe( 'utils', () => {
 				}
 			);
 
-			dispatch( action );
-			expect( dispatched ).to.include( {
+			action( dispatch );
+			dispatch.getCall( 0 ).args[ 0 ]( dispatch );
+			expect( dispatch ).to.have.been.calledWithExactly( {
 				type: 'ACTION_TEST',
 				meta: {
 					preserve: true,
