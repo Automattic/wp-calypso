@@ -35,6 +35,16 @@ describe( 'ThemeQueryManager', () => {
 
 			expect( manager ).to.equal( newManager );
 		} );
+
+		it( 'should decrement the found count', () => {
+			const query = { term: 'blah' };
+			manager = manager.receive( [ { ID: 122 }, { ID: 133 }, { ID: 144 }, { ID: 155 } ], { query } );
+			expect( manager.getFound( query ) ).to.equal( 4 );
+
+			const newManager = manager.removeItem( 144 );
+			expect( manager ).to.not.equal( newManager );
+			expect( newManager.getFound( query ) ).to.equal( 3 );
+		} );
 	} );
 
 	describe( '#removeItems()', () => {
