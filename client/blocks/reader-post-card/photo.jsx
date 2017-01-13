@@ -102,8 +102,8 @@ class PostPhoto extends React.Component {
 			: {};
 
 		return (
-			<div style={ divStyle } >
-				<div className="reader-post-card__post" >
+			<div className="reader-post-card__post" >
+				<div style={ divStyle } >
 					<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
 						<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
 					</a>
