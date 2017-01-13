@@ -61,14 +61,16 @@ export default class SiteOrDomain extends Component {
 	handleClickChoice( event, designType ) {
 		event.preventDefault();
 
-		const { stepName, goToNextStep } = this.props;
+		const { stepName, goToStep, goToNextStep } = this.props;
 
 		SignupActions.submitSignupStep( { stepName }, [], { designType } );
 
 		if ( designType === 'domain' ) {
-			SignupActions.submitSignupStep( { stepName: 'themes' } );
-			SignupActions.submitSignupStep( { stepName: 'plans' } );
-			goToNextStep();
+			// we can skip the next two sites in the `domain-first` flow if the
+			// user is only purchasing a domain
+			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { theme: 'pub/twentysixteen' } );
+			SignupActions.submitSignupStep( { stepName: 'domain-first-plans', wasSkipped: true } );
+			goToStep( 'user' );
 		} else {
 			goToNextStep();
 		}
