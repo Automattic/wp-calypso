@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import analytics from 'lib/analytics';
 import { localize } from 'i18n-calypso';
-import { identity, omit } from 'lodash';
+import { identity, omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,11 +68,9 @@ export class UserStep extends Component {
 	};
 
 	submitForm = ( form, userData, analyticsData ) => {
-		const queryArgs = {};
-
-		if ( this.props.queryObject && this.props.queryObject.jetpack_redirect ) {
-			queryArgs.jetpackRedirect = this.props.queryObject.jetpack_redirect;
-		}
+		const queryArgs = {
+			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
+		};
 
 		const formWithoutPassword = {
 			...form,
