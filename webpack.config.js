@@ -20,13 +20,12 @@ const config = require( './server/config' ),
 /**
  * Internal variables
  */
-const CALYPSO_ENV = process.env.CALYPSO_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const bundleEnv = config( 'env' );
 const sectionCount = sections.length;
 
 const webpackConfig = {
-	bail: CALYPSO_ENV !== 'development',
+	bail: config( 'env' ) !== 'production',
 	cache: true,
 	entry: {},
 	devtool: '#eval',
@@ -89,7 +88,7 @@ const webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env': {
-				NODE_ENV: JSON.stringify( bundleEnv )
+				NODE_ENV: JSON.stringify( config( 'env' ) )
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
@@ -99,14 +98,14 @@ const webpackConfig = {
 	externals: [ 'electron' ]
 };
 
-if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
+if ( config( 'env' ) === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
 	webpackConfig.plugins.push(
 		new webpack.DllReferencePlugin( {
 			context: path.join( __dirname, 'client' ),
-			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
+			manifest: require( './build/dll/vendor-manifest.json' )
 		} )
 	);
 
@@ -165,11 +164,11 @@ const jsLoader = {
 	}
 };
 
-if ( CALYPSO_ENV === 'development' ) {
+if ( NODE_ENV === 'development' ) {
 	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
+	webpackConfig.entry.build = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
 		path.join( __dirname, 'client', 'boot' )
@@ -189,12 +188,12 @@ if ( CALYPSO_ENV === 'development' ) {
 		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 	}
 } else {
-	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot' );
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
 
-if ( CALYPSO_ENV === 'production' ) {
+if ( NODE_ENV === 'production' ) {
 	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
 		/^debug$/,
 		path.join( __dirname, 'client', 'lib', 'debug-noop' )

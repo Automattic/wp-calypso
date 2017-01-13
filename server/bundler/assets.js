@@ -1,9 +1,7 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
-
-var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development';
+/***** WARNING: node-compat code only here. Not transpiled! *****/
 
 function middleware( app ) {
-	var assets = require( './assets-' + CALYPSO_ENV + '.json' );
+	const assets = require( './assets.json' );
 	app.use( function( request, response, next ) {
 		app.set( 'assets', assets );
 		next();

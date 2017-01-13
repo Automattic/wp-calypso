@@ -3,11 +3,10 @@ machine:
     version: 6.9.4
 test:
   pre:
-    - NODE_ENV=test make client/config/index.js:
+    - NODE_ENV=test make test:
         parallel: true
     - ? |
           # make the build-server and i18n string data in parallel
-          if [[ "$CIRCLE_NODE_INDEX" == 0 ]]; then NODE_ENV=test make build-server; fi
           if ( [[ "$CIRCLE_NODE_INDEX" == 1 ]] || [[ "$CIRCLE_NODE_TOTAL" == 1 ]] ) && [[ "$CIRCLE_BRANCH" == "master" ]]; then
             make translate; mkdir -p $CIRCLE_ARTIFACTS/translate; mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
           elif [[ "$CIRCLE_NODE_INDEX" == 1 ]] || [[ "$CIRCLE_NODE_TOTAL" == 1 ]]; then

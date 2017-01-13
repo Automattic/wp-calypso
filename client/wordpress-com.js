@@ -1,15 +1,4 @@
-/**
- * External dependencies
- */
-var config = require( 'config' );
-
-/**
- * Module variables
- */
-var sections,
-	editorPaths;
-
-sections = [
+const sections = [
 	{
 		name: 'sites',
 		paths: [ '/sites' ],
@@ -158,7 +147,7 @@ sections = [
 		name: 'themes',
 		paths: [ '/design' ],
 		module: 'my-sites/themes',
-		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
+		enableLoggedOut: true, // FIXME: config.isEnabled( 'manage/themes/logged-out' ),
 		secondary: true,
 		group: 'sites',
 		isomorphic: true,
@@ -177,210 +166,180 @@ sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites'
-	}
-];
-
-editorPaths = [ '/post', '/page' ];
-if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-	editorPaths.push( '/edit' );
-}
-
-sections.push( {
-	name: 'post-editor',
-	paths: editorPaths,
-	module: 'post-editor',
-	group: 'editor',
-	secondary: true
-} );
-
-if ( config.isEnabled( 'account-recovery' ) ) {
-	sections.push( {
+	},
+	{
+		name: 'post-editor',
+		paths: [ '/post', '/page', '/edit' ], // FIXME: custom-post-types edit feature flag
+		module: 'post-editor',
+		group: 'editor',
+		secondary: true,
+	},
+	{
 		name: 'account-recovery',
 		paths: [ '/account-recovery' ],
 		module: 'account-recovery',
 		secondary: false,
 		enableLoggedOut: true,
-	} );
-}
-
-if ( config.isEnabled( 'manage/ads' ) ) {
-	sections.push( {
+		feature: 'account-recovery',
+	},
+	{
 		name: 'ads',
 		paths: [ '/ads' ],
 		module: 'my-sites/ads',
 		secondary: true,
-		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'manage/drafts' ) ) {
-	sections.push( {
+		group: 'sites',
+		feature: 'manage/ads',
+	},
+	{
 		name: 'posts-pages',
 		paths: [ '/drafts' ],
 		module: 'my-sites/drafts',
 		secondary: true,
-		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'reader' ) ) {
+		group: 'sites',
+		feature: 'manage/drafts',
+	},
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
-	sections.push( {
+	{
 		name: 'reader',
 		paths: [ '/', '/read' ],
 		module: 'reader',
 		secondary: true,
 		group: 'reader',
-	} );
-
-	sections.push( {
+		feature: 'reader',
+	},
+	{
 		name: 'reader',
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'reader/full-post',
 		secondary: false,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-post-recomendations',
 		paths: [ '/recommendations/posts' ],
 		module: 'reader/recommendations',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-recomendations',
 		paths: [ '/recommendations' ],
 		module: 'reader/recommendations',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'discover',
 		paths: [ '/discover' ],
 		module: 'reader/discover',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-following',
 		paths: [ '/following' ],
 		module: 'reader/following',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-tags',
 		paths: [ '/tags', '/tag' ],
 		module: 'reader/tag-stream',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-activities',
 		paths: [ '/activities' ],
 		module: 'reader/liked-stream',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-search',
 		paths: [ '/read/search' ],
 		module: 'reader/search',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
 		name: 'reader-list',
 		paths: [ '/read/list' ],
 		module: 'reader/list',
 		secondary: true,
-		group: 'reader'
-	} );
-
-	if ( config.isEnabled( 'reader/start' ) ) {
-		sections.push( {
-			name: 'reader-start',
-			paths: [ '/recommendations/start' ],
-			module: 'reader/start',
-			secondary: true,
-			group: 'reader'
-		} );
-	}
-}
-
-if ( config.isEnabled( 'vip' ) ) {
-	sections.push( {
+		group: 'reader',
+		feature: 'reader',
+	},
+	{
+		name: 'reader-start',
+		paths: [ '/recommendations/start' ],
+		module: 'reader/start',
+		secondary: true,
+		group: 'reader',
+		feature: 'reader/start',
+	},
+	{
 		name: 'vip',
 		paths: [ '/vip', '/vip/deploys', '/vip/billing', '/vip/support', '/vip/backups', '/vip/logs' ],
 		module: 'vip',
-		secondary: true
-	} );
-}
-
-if ( config.isEnabled( 'help' ) ) {
-	sections.push( {
+		secondary: true,
+		feature: 'vip',
+	},
+	{
 		name: 'help',
 		paths: [ '/help' ],
 		module: 'me/help',
 		secondary: true,
-		group: 'me'
-	} );
-}
-
-if ( config.isEnabled( 'accept-invite' ) ) {
-	sections.push( {
+		group: 'me',
+		feature: 'help',
+	},
+	{
 		name: 'accept-invite',
 		paths: [ '/accept-invite' ],
 		module: 'my-sites/invites',
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'oauth' ) ) {
-	sections.push( {
+		enableLoggedOut: true,
+		feature: 'accept-invite',
+	},
+	{
 		name: 'auth',
 		paths: [ '/login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
 		secondary: false,
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-	sections.push( {
+		enableLoggedOut: true,
+		feature: 'oauth',
+	},
+	{
 		name: 'mailing-lists',
 		paths: [ '/mailing-lists' ],
 		module: 'mailing-lists',
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-	sections.push( {
+		enableLoggedOut: true,
+		feature: 'mailing-lists/unsubscribe',
+	},
+	{
 		name: 'posts-custom',
 		paths: [ '/types' ],
 		module: 'my-sites/types',
 		secondary: true,
-		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'happychat' ) ) {
-	sections.push( {
+		group: 'sites',
+		feature: 'manage/custom-post-types',
+	},
+	{
 		name: 'happychat',
 		paths: [ '/me/chat' ],
 		module: 'me/happychat',
 		group: 'me',
-		secondary: true
-	} );
-}
+		secondary: true,
+		feature: 'happychat',
+	},
+];
 
 module.exports = sections;

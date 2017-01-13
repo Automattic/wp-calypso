@@ -20,8 +20,6 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
  */
 var _children = [],
 	start = new Date().getTime(),
-	CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
-	bundleEnv = config( 'env' ),
 	outputOptions;
 
 outputOptions = {
@@ -81,12 +79,12 @@ webpack( webpackConfig, function( error, stats ) {
 
 	assets = utils.getAssets( stats.toJson() );
 
-	fs.writeFileSync( path.join( __dirname, '..', 'assets-' + CALYPSO_ENV + '.json' ), JSON.stringify( assets, null, '\t' ) );
+	fs.writeFileSync( path.join( __dirname, '..', 'assets.json' ), JSON.stringify( assets, null, '\t' ) );
 
 	files = assets.map( function( chunk ) {
 		return path.join( process.cwd(), 'public', chunk.file );
 	} );
-	files.push( path.join( process.cwd(), 'public', 'vendor.' + bundleEnv + '.js' ) );
+	files.push( path.join( process.cwd(), 'public', 'vendor.js' ) );
 
 	minify( files );
 });
