@@ -290,22 +290,22 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsCountryViews()', () => {
-			it( 'should return an empty array if data is null', () => {
+			it( 'should return null if data is null', () => {
 				const parsedData = normalizers.statsCountryViews();
 
-				expect( parsedData ).to.eql( [] );
+				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return an empty array if query.period is null', () => {
+			it( 'should return null if query.period is null', () => {
 				const parsedData = normalizers.statsCountryViews( {}, { date: '2016-12-25' } );
 
-				expect( parsedData ).to.eql( [] );
+				expect( parsedData ).to.be.null;
 			} );
 
-			it( 'should return an empty array if query.date is null', () => {
+			it( 'should return null if query.date is null', () => {
 				const parsedData = normalizers.statsCountryViews( {}, { period: 'day' } );
 
-				expect( parsedData ).to.eql( [] );
+				expect( parsedData ).to.be.null;
 			} );
 
 			it( 'should properly parse day period response', () => {

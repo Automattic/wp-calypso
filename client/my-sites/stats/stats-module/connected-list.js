@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,10 +14,12 @@ import StatsModuleExpand from './expand';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
+import DownloadCsv from '../stats-download-csv';
 import Card from 'components/card';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -36,7 +39,8 @@ class StatsConnectedModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		showSummaryLink: PropTypes.bool
+		showSummaryLink: PropTypes.bool,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -59,11 +63,11 @@ class StatsConnectedModule extends Component {
 	}
 
 	getHref() {
-		const { summary, period, path, siteSlug, date } = this.props;
+		const { summary, period, path, siteSlug } = this.props;
 
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + date;
+			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + period.startOf.format( 'YYYY-MM-DD' );
 		}
 	}
 
@@ -77,7 +81,9 @@ class StatsConnectedModule extends Component {
 			moduleStrings,
 			requesting,
 			statType,
-			query
+			query,
+			period,
+			translate,
 		} = this.props;
 
 		const noData = (
@@ -107,14 +113,25 @@ class StatsConnectedModule extends Component {
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null } />
+				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
+					{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+				</SectionHeader>
 				<Card compact className={ cardClasses }>
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
+					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
 					{ this.props.showSummaryLink && <StatsModuleExpand href={ summaryLink } /> }
+					{ summary && 'countryviews' === path &&
+						<UpgradeNudge
+							title={ translate( 'Add Google Analytics' ) }
+							message={ translate( 'Upgrade to a Business Plan for Google Analytics integration.' ) }
+							event="googleAnalytics-stats-countries"
+							feature="google-analytics"
+						/>
+					}
 				</Card>
 			</div>
 
@@ -133,4 +150,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug
 	};
-} )( StatsConnectedModule );
+} )( localize( StatsConnectedModule ) );
