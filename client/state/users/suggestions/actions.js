@@ -13,14 +13,14 @@ import {
  * Returns an action object to be used in signalling that user suggestions for a site
  * have been received.
  *
- * @param  {Number} siteId  Site ID
- * @param  {Object} data    User suggestions
- * @return {Object}         Action object
+ * @param  {Number} siteId  	Site ID
+ * @param  {Object} suggestions User suggestions
+ * @return {Object}         	Action object
  */
-export function receiveUserSuggestions( siteId, data ) {
+export function receiveUserSuggestions( siteId, suggestions ) {
 	return {
 		type: USER_SUGGESTIONS_RECEIVE,
-		suggestions: data.suggestions,
+		suggestions,
 		siteId,
 	};
 }
@@ -41,10 +41,11 @@ export function requestUserSuggestions( siteId ) {
 
 		return wpcom.users().suggest( { site_id: siteId } )
 			.then( ( data ) => {
-				dispatch( receiveUserSuggestions( siteId, data ) );
+				dispatch( receiveUserSuggestions( siteId, data.suggestions ) );
 				dispatch( {
 					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
 					siteId,
+					data,
 				} );
 			} )
 			.catch( ( error ) =>
