@@ -10,26 +10,26 @@ import createSelector from 'lib/create-selector';
 import { parseTransactionDate } from './util';
 
 /**
- * Returns true if we are currently making a request to get the billing data.
+ * Returns true if we are currently making a request to get the billing transactions.
  * False otherwise.
  *
  * @param  {Object}    state  Global state tree
- * @return {Boolean}          Whether the billing data is being requested
+ * @return {Boolean}          Whether the billing transactions is being requested
  */
-export function isRequestingBillingData( state ) {
-	return get( state, 'billingData.requesting', false );
+export function isRequestingBillingTransactions( state ) {
+	return get( state, 'billingTransactions.requesting', false );
 }
 
 /**
- * Returns all billing data.
- * Returns null if the billing data has not been fetched yet.
+ * Returns all billing transactions.
+ * Returns null if the billing transactions has not been fetched yet.
  *
  * @param  {Object}  state   Global state tree
- * @return {?Object}         Billing data
+ * @return {?Object}         Billing transactions
  */
-export const getBillingData = createSelector(
+export const getBillingTransactions = createSelector(
 	( state ) => {
-		const allTransactions = get( state, 'billingData.items', null );
+		const allTransactions = get( state, 'billingTransactions.items', null );
 		if ( ! allTransactions ) {
 			return null;
 		}
@@ -40,7 +40,7 @@ export const getBillingData = createSelector(
 
 /**
  * Returns a past billing transaction.
- * Returns null if the billing data has not been fetched yet, or there is no transaction with that ID.
+ * Returns null if the billing transactions has not been fetched yet, or there is no transaction with that ID.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  id      ID of the transaction
@@ -48,12 +48,12 @@ export const getBillingData = createSelector(
  */
 export const getPastBillingTransaction = createSelector(
 	( state, id ) => {
-		const pastTransactions = get( getBillingData( state ), [ 'past' ], null );
+		const pastTransactions = get( getBillingTransactions( state ), [ 'past' ], null );
 		if ( ! pastTransactions ) {
 			return null;
 		}
 
 		return find( pastTransactions, { id } ) || null;
 	},
-	getBillingData
+	getBillingTransactions
 );

@@ -7,43 +7,43 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingBillingData,
-	getBillingData,
+	isRequestingBillingTransactions,
+	getBillingTransactions,
 	getPastBillingTransaction
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingBillingData', () => {
-		it( 'should return true if the billing data is being fetched', () => {
+	describe( '#isRequestingBillingTransactions', () => {
+		it( 'should return true if the billing transactions is being fetched', () => {
 			const state = {
-				billingData: {
+				billingTransactions: {
 					requesting: true
 				}
 			};
-			const output = isRequestingBillingData( state );
+			const output = isRequestingBillingTransactions( state );
 			expect( output ).to.be.true;
 		} );
 
-		it( 'should return false if the billing data is currently not being fetched', () => {
+		it( 'should return false if the billing transactions is currently not being fetched', () => {
 			const state = {
-				billingData: {
+				billingTransactions: {
 					requesting: false
 				}
 			};
-			const output = isRequestingBillingData( state );
+			const output = isRequestingBillingTransactions( state );
 			expect( output ).to.be.false;
 		} );
 
-		it( 'should return false if the billing data has never been requested', () => {
-			const output = isRequestingBillingData( {} );
+		it( 'should return false if the billing transactions has never been requested', () => {
+			const output = isRequestingBillingTransactions( {} );
 			expect( output ).to.be.false;
 		} );
 	} );
 
-	describe( '#getBillingData', () => {
-		it( 'should return all billing data if it has been fetched', () => {
+	describe( '#getBillingTransactions', () => {
+		it( 'should return all billing transactions if it has been fetched', () => {
 			const state = {
-				billingData: {
+				billingTransactions: {
 					items: {
 						past: [
 							{
@@ -62,7 +62,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const output = getBillingData( state );
+			const output = getBillingTransactions( state );
 			expect( output ).to.eql( {
 				past: [
 					{
@@ -81,20 +81,20 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return null if billing data has not been fetched yet', () => {
+		it( 'should return null if billing transactions has not been fetched yet', () => {
 			const state = {
-				billingData: {
+				billingTransactions: {
 					items: null
 				}
 			};
-			const output = getBillingData( state );
+			const output = getBillingTransactions( state );
 			expect( output ).to.be.null;
 		} );
 	} );
 
 	describe( '#getPastBillingTransaction', () => {
 		const state = {
-			billingData: {
+			billingTransactions: {
 				items: {
 					past: [
 						{
@@ -117,7 +117,7 @@ describe( 'selectors', () => {
 		it( 'should return the billing transaction data for a known transaction', () => {
 			const output = getPastBillingTransaction( state, '12345678' );
 			expect( output ).to.eql( {
-				...state.billingData.items.past[ 0 ],
+				...state.billingTransactions.items.past[ 0 ],
 				date: new Date( '2016-12-12T11:22:33+0000' )
 			} );
 		} );
@@ -127,7 +127,7 @@ describe( 'selectors', () => {
 			expect( output ).to.be.null;
 		} );
 
-		it( 'should return null if billing data has not been fetched yet', () => {
+		it( 'should return null if billing transactions has not been fetched yet', () => {
 			const output = getPastBillingTransaction( {}, '12345678' );
 			expect( output ).to.be.null;
 		} );

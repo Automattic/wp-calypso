@@ -8,10 +8,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	BILLING_DATA_RECEIVE,
-	BILLING_DATA_REQUEST,
-	BILLING_DATA_REQUEST_FAILURE,
-	BILLING_DATA_REQUEST_SUCCESS,
+	BILLING_TRANSACTIONS_RECEIVE,
+	BILLING_TRANSACTIONS_REQUEST,
+	BILLING_TRANSACTIONS_REQUEST_FAILURE,
+	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 
 		it( 'should set requesting to true value if a request is initiated', () => {
 			const state = requesting( undefined, {
-				type: BILLING_DATA_REQUEST,
+				type: BILLING_TRANSACTIONS_REQUEST,
 			} );
 
 			expect( state ).to.be.true;
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 
 		it( 'should set requesting to false if request finishes successfully', () => {
 			const state = requesting( true, {
-				type: BILLING_DATA_REQUEST_SUCCESS,
+				type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 			} );
 
 			expect( state ).to.eql( false );
@@ -55,7 +55,7 @@ describe( 'reducer', () => {
 
 		it( 'should set requesting to false if request finishes unsuccessfully', () => {
 			const state = requesting( true, {
-				type: BILLING_DATA_REQUEST_FAILURE,
+				type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -79,7 +79,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		const billingData = {
+		const billingTransactions = {
 			past: [
 				{
 					id: '12345678',
@@ -102,11 +102,11 @@ describe( 'reducer', () => {
 
 		it( 'should store the billing history properly', () => {
 			const state = items( null, {
-				type: BILLING_DATA_RECEIVE,
-				...billingData
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				...billingTransactions
 			} );
 
-			expect( state ).to.eql( billingData );
+			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should override previous billing history', () => {
@@ -126,27 +126,27 @@ describe( 'reducer', () => {
 					}
 				]
 			} ), {
-				type: BILLING_DATA_RECEIVE,
-				...billingData
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				...billingTransactions
 			} );
 
-			expect( state ).to.eql( billingData );
+			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should persist state', () => {
-			const state = items( deepFreeze( billingData ), {
+			const state = items( deepFreeze( billingTransactions ), {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.eql( billingData );
+			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should load valid persisted state', () => {
-			const state = items( deepFreeze( billingData ), {
+			const state = items( deepFreeze( billingTransactions ), {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.eql( billingData );
+			expect( state ).to.eql( billingTransactions );
 		} );
 
 		it( 'should not load invalid persisted state', () => {

@@ -10,18 +10,18 @@ import useNock from 'test/helpers/use-nock';
  * Internal dependencies
  */
 import {
-	BILLING_DATA_RECEIVE,
-	BILLING_DATA_REQUEST,
-	BILLING_DATA_REQUEST_SUCCESS,
-	BILLING_DATA_REQUEST_FAILURE
+	BILLING_TRANSACTIONS_RECEIVE,
+	BILLING_TRANSACTIONS_REQUEST,
+	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
+	BILLING_TRANSACTIONS_REQUEST_FAILURE
 } from 'state/action-types';
-import { requestBillingData } from '../actions';
+import { requestBillingTransactions } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
-	describe( '#requestBillingData()', () => {
+	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
 			const successResponse = {
 				billing_history: [
@@ -48,17 +48,17 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch fetch action when thunk triggered', () => {
-				requestBillingData()( spy );
+				requestBillingTransactions()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
-					type: BILLING_DATA_REQUEST,
+					type: BILLING_TRANSACTIONS_REQUEST,
 				} );
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
-				return requestBillingData()( spy ).then( () => {
+				return requestBillingTransactions()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: BILLING_DATA_RECEIVE,
+						type: BILLING_TRANSACTIONS_RECEIVE,
 						past: successResponse.billing_history,
 						upcoming: successResponse.upcoming_charges
 					} );
@@ -66,9 +66,9 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch request success action when request completes', () => {
-				return requestBillingData()( spy ).then( () => {
+				return requestBillingTransactions()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: BILLING_DATA_REQUEST_SUCCESS,
+						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 					} );
 				} );
 			} );
@@ -88,9 +88,9 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch request failure action when request fails', () => {
-				return requestBillingData( 87654321 )( spy ).then( () => {
+				return requestBillingTransactions( 87654321 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: BILLING_DATA_REQUEST_FAILURE,
+						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 						error: sinon.match( {
 							message
 						} )

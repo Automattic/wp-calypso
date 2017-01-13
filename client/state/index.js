@@ -11,7 +11,7 @@ import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
-import billingData from './billing-data/reducer';
+import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
@@ -64,7 +64,7 @@ export const reducer = combineReducers( {
 	application,
 	accountRecovery,
 	automatedTransfer,
-	billingData,
+	billingTransactions,
 	comments,
 	componentsUsageStats,
 	countryStates,
