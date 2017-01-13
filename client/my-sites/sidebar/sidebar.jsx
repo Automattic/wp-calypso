@@ -25,11 +25,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-<<<<<<< 2732bec668974ba4f1c0959c9a454b2691b65e31
-=======
-import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import StatsSparkline from 'blocks/stats-sparkline';
->>>>>>> create StatsSparkline block
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -156,15 +152,6 @@ export class MySitesSidebar extends Component {
 
 		const siteId = this.isSingle() ? site.slug : null;
 
-		let sparkline;
-		if ( ! site.jetpack && ! this.isItemLinkSelected( 'stats' ) ) {
-			sparkline = (
-				<img
-					className="sidebar__sparkline"
-					src={ `https://${ site.wpcom_url }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1` } />
-			);
-		}
-
 		return (
 			<SidebarItem
 				tipTarget="menus"
@@ -173,7 +160,7 @@ export class MySitesSidebar extends Component {
 				link={ getStatsPathForTab( 'day', siteId ) }
 				onNavigate={ this.onNavigate }
 				icon="stats-alt">
-				{ sparkline }
+				<StatsSparkline className="sidebar__sparkline" siteId={ get( site, 'ID' ) } />
 			</SidebarItem>
 		);
 	}
