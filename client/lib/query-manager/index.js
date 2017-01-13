@@ -86,6 +86,16 @@ export default class QueryManager {
 	}
 
 	/**
+	 * Default behavior is to sort items in a query according to #sort. Override
+	 * to prevent sorting.
+	 *
+	 * @return {Boolean} Whether to sort items in a query should be sorted
+	 */
+	shouldSort() {
+		return true;
+	}
+
+	/**
 	 * A sort comparison function that defines the sort order of items under
 	 * consideration of the specified query.
 	 *
@@ -344,7 +354,7 @@ export default class QueryManager {
 					memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat( receivedItemKey );
 
 					// Re-sort the set
-					memo[ queryKey ].itemKeys.sort( ( keyA, keyB ) => {
+					this.shouldSort() && memo[ queryKey ].itemKeys.sort( ( keyA, keyB ) => {
 						if ( ! nextItems[ keyA ] || ! nextItems[ keyB ] ) {
 							// One of the items has yet to be removed from the
 							// set at this point in iteration, so don't bother
