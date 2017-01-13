@@ -34,7 +34,7 @@ class PostBlocked extends React.PureComponent {
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked_description">
-					{ this.props.translate( 'You have blocked posts from %(site_name)s.', { args: { site_name: post.site_name } } ) }
+					{ this.props.translate( 'You have blocked all posts from %(site_name)s.', { args: { site_name: post.site_name } } ) }
 					<Button compact primary className="reader-post-card__blocked_button" onClick={ this.unblock }>
 						{ this.props.translate( 'Unblock' ) }
 					</Button>
