@@ -149,7 +149,7 @@ class EditContactInfoFormCard extends React.Component {
 	render() {
 		const { translate } = this.props,
 			{ OPENHRS, OPENSRS } = registrarNames,
-			isTucowsDomain = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
+			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
 			saveButtonLabel = translate( 'Save Contact Info' );
 
 		return (
@@ -245,8 +245,8 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
-					{ isTucowsDomain && this.renderTransferLockOptOut() }
-					{ isTucowsDomain && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
+					{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+					{ canUseDesignatedAgent && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
 
 					<FormFooter>
 						<FormButton
