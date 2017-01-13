@@ -14,7 +14,7 @@ import { parseTransactionDate } from './util';
  * False otherwise.
  *
  * @param  {Object}    state  Global state tree
- * @return {Boolean}          Whether the billing transactions is being requested
+ * @return {Boolean}          Whether the billing transactions are being requested
  */
 export function isRequestingBillingTransactions( state ) {
 	return get( state, 'billingTransactions.requesting', false );
@@ -22,7 +22,7 @@ export function isRequestingBillingTransactions( state ) {
 
 /**
  * Returns all billing transactions.
- * Returns null if the billing transactions has not been fetched yet.
+ * Returns null if the billing transactions have not been fetched yet.
  *
  * @param  {Object}  state   Global state tree
  * @return {?Object}         Billing transactions
@@ -40,7 +40,7 @@ export const getBillingTransactions = createSelector(
 
 /**
  * Returns a past billing transaction.
- * Returns null if the billing transactions has not been fetched yet, or there is no transaction with that ID.
+ * Returns null if the billing transactions have not been fetched yet, or there is no transaction with that ID.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  id      ID of the transaction

@@ -14,7 +14,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#isRequestingBillingTransactions', () => {
-		it( 'should return true if the billing transactions is being fetched', () => {
+		it( 'should return true if the billing transactions are being fetched', () => {
 			const state = {
 				billingTransactions: {
 					requesting: true
@@ -24,7 +24,7 @@ describe( 'selectors', () => {
 			expect( output ).to.be.true;
 		} );
 
-		it( 'should return false if the billing transactions is currently not being fetched', () => {
+		it( 'should return false if the billing transactions are currently not being fetched', () => {
 			const state = {
 				billingTransactions: {
 					requesting: false
@@ -34,14 +34,14 @@ describe( 'selectors', () => {
 			expect( output ).to.be.false;
 		} );
 
-		it( 'should return false if the billing transactions has never been requested', () => {
+		it( 'should return false if the billing transactions have never been requested', () => {
 			const output = isRequestingBillingTransactions( {} );
 			expect( output ).to.be.false;
 		} );
 	} );
 
 	describe( '#getBillingTransactions', () => {
-		it( 'should return all billing transactions if it has been fetched', () => {
+		it( 'should return all billing transactions if they have been fetched', () => {
 			const state = {
 				billingTransactions: {
 					items: {
@@ -81,7 +81,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return null if billing transactions has not been fetched yet', () => {
+		it( 'should return null if billing transactions have not been fetched yet', () => {
 			const state = {
 				billingTransactions: {
 					items: null
@@ -127,7 +127,7 @@ describe( 'selectors', () => {
 			expect( output ).to.be.null;
 		} );
 
-		it( 'should return null if billing transactions has not been fetched yet', () => {
+		it( 'should return null if billing transactions have not been fetched yet', () => {
 			const output = getPastBillingTransaction( {}, '12345678' );
 			expect( output ).to.be.null;
 		} );

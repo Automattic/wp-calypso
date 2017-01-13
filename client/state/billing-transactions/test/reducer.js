@@ -100,7 +100,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should store the billing history properly', () => {
+		it( 'should store the billing transactions properly', () => {
 			const state = items( null, {
 				type: BILLING_TRANSACTIONS_RECEIVE,
 				...billingTransactions
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( billingTransactions );
 		} );
 
-		it( 'should override previous billing history', () => {
+		it( 'should override previous billing transactions', () => {
 			const state = items( deepFreeze( {
 				past: [
 					{

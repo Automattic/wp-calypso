@@ -1,4 +1,4 @@
-export const billingTransactionsItemsSchema = {
+export const billingTransactionsSchema = {
 	type: 'object',
 	additionalProperties: false,
 	properties: {

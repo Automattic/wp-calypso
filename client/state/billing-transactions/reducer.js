@@ -12,7 +12,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS
 } from 'state/action-types';
-import { billingTransactionsItemsSchema } from './schema';
+import { billingTransactionsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 /**
@@ -25,7 +25,7 @@ import { createReducer } from 'state/utils';
  */
 export const items = createReducer( {}, {
 	[ BILLING_TRANSACTIONS_RECEIVE ]: ( state, { past, upcoming } ) => ( { past, upcoming } ),
-}, billingTransactionsItemsSchema );
+}, billingTransactionsSchema );
 
 /**
  * Returns the updated requests state after an action has been dispatched.
