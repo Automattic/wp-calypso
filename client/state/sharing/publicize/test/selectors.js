@@ -236,7 +236,7 @@ describe( '#hasFetchedConnections()', () => {
 		const hasFetched = hasFetchedConnections( {
 			sharing: {
 				publicize: {
-					fetchingConnections: {}
+					fetchedConnections: {}
 				}
 			}
 		}, 2916284 );
@@ -244,26 +244,12 @@ describe( '#hasFetchedConnections()', () => {
 		expect( hasFetched ).to.be.false;
 	} );
 
-	it( 'should return true if connections are currently fetching for a site', () => {
-		const hasFetched = hasFetchedConnections( {
-			sharing: {
-				publicize: {
-					fetchingConnections: {
-						2916284: true
-					}
-				}
-			}
-		}, 2916284 );
-
-		expect( hasFetched ).to.be.true;
-	} );
-
 	it( 'should return true if connections have completed fetching for a site', () => {
 		const hasFetched = hasFetchedConnections( {
 			sharing: {
 				publicize: {
-					fetchingConnections: {
-						2916284: false
+					fetchedConnections: {
+						2916284: true
 					}
 				}
 			}
