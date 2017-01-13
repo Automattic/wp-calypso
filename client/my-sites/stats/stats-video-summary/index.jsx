@@ -26,16 +26,6 @@ class StatsVideoSummary extends Component {
 		selectedBar: null
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		const chartDataLength = nextProps.summaryData ? nextProps.summaryData.length : null;
-		// Always default to the last bar being selected
-		if ( ! this.state.selectedBar && chartDataLength ) {
-			this.setState( {
-				selectedBar: nextProps.summaryData[ chartDataLength - 1 ]
-			} );
-		}
-	}
-
 	selectBar = bar => {
 		this.setState( {
 			selectedBar: bar
