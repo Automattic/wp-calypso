@@ -171,7 +171,7 @@ module.exports = React.createClass( {
 			}
 		}
 
-		if ( post.status === 'publish' && utils.userCan( 'edit_post', post ) ) {
+		if ( ( post.status === 'publish' || post.status === 'private' ) && utils.userCan( 'edit_post', post ) ) {
 			availableControls.push( {
 				text: this.translate( 'Copy' ),
 				className: 'post-controls__copy',
