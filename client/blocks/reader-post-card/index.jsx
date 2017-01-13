@@ -141,7 +141,7 @@ export default class ReaderPostCard extends React.Component {
 			visitUrl = { post.URL }
 			showVisit={ true }
 			showMenu={ true }
-			showMenuFollow={ isDiscover }
+			showMenuFollow={ ! isDiscover }
 			onCommentClick={ onCommentClick }
 			showEdit={ false }
 			className="ignore-click"
