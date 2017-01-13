@@ -161,6 +161,134 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsTopPosts()', () => {
+			it( 'should return an empty array if data is null', () => {
+				const parsedData = normalizers.statsTopPosts();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsTopPosts( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsTopPosts( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should properly parse day period response', () => {
+				const parsedData = normalizers.statsTopPosts( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							postviews: [ {
+								id: 0,
+								href: 'http://en.blog.wordpress.com',
+								date: null,
+								title: 'Home Page / Archives',
+								type: 'homepage',
+								views: 3939
+							} ],
+							total_views: 0
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					domain: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [ {
+					label: 'Home Page / Archives',
+					value: 3939,
+					page: '/stats/post/0/en.blog.wordpress.com',
+					actions: [ {
+						type: 'link',
+						data: 'http://en.blog.wordpress.com'
+					} ],
+					labelIcon: null,
+					children: null,
+					className: null
+				} ] );
+			} );
+
+			it( 'should properly add published className for posts published in period', () => {
+				const parsedData = normalizers.statsTopPosts( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							postviews: [ {
+								id: 777,
+								href: 'http://en.blog.wordpress.com/2017/01/12/wordpress-com-lightroom/',
+								date: '2017-01-12 15:55:34',
+								title: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
+								type: 'post',
+								views: 774
+							} ],
+							total_views: 0
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					domain: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [ {
+					label: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
+					value: 774,
+					page: '/stats/post/777/en.blog.wordpress.com',
+					actions: [ {
+						type: 'link',
+						data: 'http://en.blog.wordpress.com/2017/01/12/wordpress-com-lightroom/'
+					} ],
+					labelIcon: null,
+					children: null,
+					className: 'published'
+				}
+				] );
+			} );
+
+			it( 'should properly parse summarized response', () => {
+				const parsedData = normalizers.statsTopPosts( {
+					date: '2017-01-12',
+					summary: {
+						postviews: [ {
+							id: 0,
+							href: 'http://en.blog.wordpress.com',
+							date: null,
+							title: 'Home Page / Archives',
+							type: 'homepage',
+							views: 3939
+						} ],
+						total_views: 0
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					domain: 'en.blog.wordpress.com',
+					summarize: 1
+				} );
+
+				expect( parsedData ).to.eql( [ {
+					label: 'Home Page / Archives',
+					value: 3939,
+					page: '/stats/post/0/en.blog.wordpress.com',
+					actions: [ {
+						type: 'link',
+						data: 'http://en.blog.wordpress.com'
+					} ],
+					labelIcon: null,
+					children: null,
+					className: null
+				} ] );
+			} );
+		} );
+
 		describe( 'statsCountryViews()', () => {
 			it( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsCountryViews();
