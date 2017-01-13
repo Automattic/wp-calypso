@@ -43,6 +43,30 @@ describe( 'normalization-rules', () => {
 				better_excerpt_no_html: repeat( 'no ', 100 )
 			}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
+
+		it( 'should classify a PHOTO_ONLY post if it has enough images for a gallery, but not all of them are big enough', () => {
+			verifyClassification( {
+				canonical_media: {
+					mediaType: 'image',
+					width: 1000
+				},
+				content_images: [
+					{
+						width: 1000
+					},
+					{
+						width: 150
+					},
+					{
+						width: 150
+					},
+					{
+						width: 150
+					},
+				],
+				better_excerpt_no_html: repeat( 'no ', 5 )
+			}, [ DISPLAY_TYPES.PHOTO_ONLY ] );
+		} );
 	} );
 
 	describe( 'isFeaturedImageInContent', () => {

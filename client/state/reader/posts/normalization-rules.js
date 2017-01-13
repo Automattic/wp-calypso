@@ -62,12 +62,13 @@ const hasShortContent = post => getCharacterCount( post ) <= 100;
  */
 export function classifyPost( post ) {
 	const canonicalImage = post.canonical_image;
+	const imagesForGallery = post.content_images && filter( post.content_images, imageIsBigEnoughForGallery );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
 		canonicalAspect;
 
 	if ( post.canonical_media &&
 			post.canonical_media.mediaType === 'image' &&
-			( ! post.content_images || post.content_images.length < GALLERY_MIN_IMAGES ) &&
+			( ! post.content_images || imagesForGallery.length < GALLERY_MIN_IMAGES ) &&
 			post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
 			hasShortContent( post ) ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
@@ -96,7 +97,7 @@ export function classifyPost( post ) {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 	}
 
-	if ( post.content_images && filter( post.content_images, imageIsBigEnoughForGallery ).length >= GALLERY_MIN_IMAGES ) {
+	if ( post.content_images && imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	}
 
