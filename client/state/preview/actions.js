@@ -7,50 +7,65 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'state/action-types';
+import {
+	PREVIEW_MARKUP_FETCH_ERROR,
+	PREVIEW_MARKUP_RECEIVE,
+	PREVIEW_CUSTOMIZATIONS_CLEAR,
+	PREVIEW_CUSTOMIZATIONS_UPDATE,
+	PREVIEW_CUSTOMIZATIONS_UNDO,
+	PREVIEW_CUSTOMIZATIONS_SAVED,
+} from 'state/action-types';
 import * as customizationSaveFunctions from './save-functions';
 
 const debug = debugFactory( 'calypso:preview-actions' );
 
-export function fetchPreviewMarkup( site, slug, customizations ) {
-	return function( dispatch ) {
-		const postData = {};
-		if ( customizations ) {
-			if ( customizations.homePage && customizations.homePage.hasOwnProperty( 'isPageOnFront' ) ) {
-				postData.show_on_front = customizations.homePage.isPageOnFront ? 'page' : 'posts';
-				if ( customizations.homePage.pageOnFrontId ) {
-					postData.page_on_front = customizations.homePage.pageOnFrontId;
-				}
-				if ( customizations.homePage.pageForPostsId ) {
-					postData.page_for_posts = customizations.homePage.pageForPostsId;
-				}
-			}
+function getDataForPreview( customizations = {} ) {
+	const postData = {};
+	if ( customizations.homePage && customizations.homePage.hasOwnProperty( 'isPageOnFront' ) ) {
+		postData.show_on_front = customizations.homePage.isPageOnFront ? 'page' : 'posts';
+		if ( customizations.homePage.pageOnFrontId ) {
+			postData.page_on_front = customizations.homePage.pageOnFrontId;
 		}
-		debug( 'fetching preview markup', site, slug, customizations, 'postData', postData );
-		wpcom.undocumented().fetchPreviewMarkup( site, slug, postData )
-		.then( markup => dispatch( gotMarkup( site, markup ) ) );
-		// TODO: handle errors
+		if ( customizations.homePage.pageForPostsId ) {
+			postData.page_for_posts = customizations.homePage.pageForPostsId;
+		}
+	}
+	return postData;
+}
+
+export function fetchPreviewMarkup( site, path, customizations ) {
+	return function( dispatch ) {
+		const postData = getDataForPreview( customizations );
+		debug( 'fetching preview markup', site, path, customizations, 'postData', postData );
+		wpcom.undocumented().fetchPreviewMarkup( site, path, postData )
+		.then( markup => dispatch( gotMarkup( site, markup ) ) )
+		.catch( error => {
+			dispatch( {
+				type: PREVIEW_MARKUP_FETCH_ERROR,
+				error
+			} );
+		} );
 	};
 }
 
 export function gotMarkup( siteId, markup ) {
-	return { type: ActionTypes.PREVIEW_MARKUP_RECEIVE, markup, siteId };
+	return { type: PREVIEW_MARKUP_RECEIVE, markup, siteId };
 }
 
 export function clearCustomizations( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_CLEAR, siteId };
 }
 
 export function updateCustomizations( siteId, customizations ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UPDATE, customizations, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_UPDATE, customizations, siteId };
 }
 
 export function undoCustomization( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_UNDO, siteId };
 }
 
 export function customizationsSaved( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
 }
 
 export function saveCustomizations() {
@@ -65,7 +80,7 @@ export function saveCustomizations() {
 		debug( 'saving customizations', customizations );
 		Object.keys( customizations ).map( id => saveCustomizationsFor( id, customizations[ id ], siteId, dispatch ) );
 		dispatch( customizationsSaved( siteId ) );
-	}
+	};
 }
 
 function saveCustomizationsFor( id, customizations, siteId, dispatch ) {
