@@ -31,7 +31,7 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 	const noticeText = site && isJetpack ? translate( 'This feature is currently unavailable for Jetpack sites.' ) : translate( 'This action cannot be undone.' );
 
 	return (
-		<div className="main main-column" role="main">
+		<div className="main theme-setup" role="main">
 			{ site && <QueryActiveTheme siteId={ site.ID } /> }
 			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
