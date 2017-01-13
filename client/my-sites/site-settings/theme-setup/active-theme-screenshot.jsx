@@ -18,7 +18,7 @@ const ActiveThemeScreenshot = ( { theme, translate } ) => {
 			<a href={ theme.demo_uri }>
 				<img src={ theme.screenshot } />
 				<p>
-					{ translate( 'Current theme: %(name)', {
+					{ translate( 'Current theme: %(name)s', {
 						args: {
 							name: theme.name
 						}
