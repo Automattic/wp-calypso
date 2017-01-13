@@ -256,7 +256,8 @@ const LoggedInForm = React.createClass( {
 			this.props.authAttempts < MAX_AUTH_ATTEMPTS &&
 			! this.retryingAuth &&
 			! props.requestHasXmlrpcError() &&
-			! props.requestHasExpiredSecretError()
+			! props.requestHasExpiredSecretError() &&
+			queryObject.site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
 			// Any other type of error, we will immediately and automatically retry the request as many times
