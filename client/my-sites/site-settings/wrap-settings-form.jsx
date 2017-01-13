@@ -113,7 +113,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				[ message ]: true,
 			};
 			this.setState( { uniqueEvents } );
-			this.state.uniqueEvents[ message ] = true;
 			this.props.trackEvent( message );
 		};
 
