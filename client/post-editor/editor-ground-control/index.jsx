@@ -143,25 +143,14 @@ export default React.createClass( {
 	},
 
 	getVerificationNoticeLabel: function() {
-		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
-		let buttonLabels;
+		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ),
+			buttonLabels = {
+				update: i18n.translate( 'To update, check your email and confirm your address.' ),
+				schedule: i18n.translate( 'To schedule, check your email and confirm your address.' ),
+				publish: i18n.translate( 'To publish, check your email and confirm your address.' ),
+				requestReview: i18n.translate( 'To submit for review, check your email and confirm your address.' ),
+			};
 
-		// TODO: switch entirely to new wording once translations catch up
-		if ( i18n.getLocaleSlug() === 'en' ) {
-			buttonLabels = {
-				update: this.translate( 'To update, check your email and confirm your address.' ),
-				schedule: this.translate( 'To schedule, check your email and confirm your address.' ),
-				publish: this.translate( 'To publish, check your email and confirm your address.' ),
-				requestReview: this.translate( 'To submit for review, check your email and confirm your address.' ),
-			};
-		} else {
-			buttonLabels = {
-				update: this.translate( 'To update, please confirm your email address.' ),
-				schedule: this.translate( 'To schedule, please confirm your email address.' ),
-				publish: this.translate( 'To publish, please confirm your email address.' ),
-				requestReview: this.translate( 'To submit for review, please confirm your email address.' ),
-			};
-		}
 		return buttonLabels[ primaryButtonState ];
 	},
 
