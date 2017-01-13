@@ -7,21 +7,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingBillingData } from 'state/billing-data/selectors';
-import { requestBillingData } from 'state/billing-data/actions';
+import { isRequestingBillingTransactions } from 'state/billing-transactions/selectors';
+import { requestBillingTransactions } from 'state/billing-transactions/actions';
 
-class QueryBillingData extends Component {
+class QueryBillingTransactions extends Component {
 	static propTypes = {
-		requestingBillingData: PropTypes.bool,
-		requestBillingData: PropTypes.func
+		requestingBillingTransactions: PropTypes.bool,
+		requestBillingTransactions: PropTypes.func
 	};
 
 	componentDidMount() {
-		if ( this.props.requestingBillingData ) {
+		if ( this.props.requestingBillingTransactions ) {
 			return;
 		}
 
-		this.props.requestBillingData();
+		this.props.requestBillingTransactions();
 	}
 
 	render() {
@@ -31,7 +31,7 @@ class QueryBillingData extends Component {
 
 export default connect(
 	( state ) => ( {
-		requestingBillingData: isRequestingBillingData( state )
+		requestingBillingTransactions: isRequestingBillingTransactions( state )
 	} ),
-	{ requestBillingData }
-)( QueryBillingData );
+	{ requestBillingTransactions }
+)( QueryBillingTransactions );
