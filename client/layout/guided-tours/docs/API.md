@@ -4,7 +4,7 @@ Guided Tours are declared in JSX as a tree of elements. All of them are availabl
 
 ## Tour
 
-Tour is a React component that declares the top-level of a tour. It consists of series of Step elements and it also defines when tour should start by setting appropriate props.
+Tour is a React component that declares the top-level of a tour. It consists of a series of Step elements and defines when a tour should start by setting appropriate props.
 
 ### Props
 
@@ -34,7 +34,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 ### Props
 
 * `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use `init` to indicate the step that the tour should start with.
-* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. See [Targeting elements in Calypso](#targeting-elements-in-calypso) section for more info about the format.
+* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. See [Targeting elements in Calypso](#targeting-elements-in-calypso) for more info about the format.
 * `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
 * `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
 * `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue. Example: `style={{backgroundColor: 'red'}}`
@@ -88,7 +88,7 @@ Continue is a React component that you can use in Step to programmatically conti
 ### Props
 
 * `step`: (string) Name of the step the tour will advance to.
-* `target`: (string, optional) DOM node that would be watched. See [Targeting elements in Calypso](#targeting-elements-in-calypso) section for more info about the format.
+* `target`: (string, optional) DOM node that would be watched. See [Targeting elements in Calypso](#targeting-elements-in-calypso) for more info about the format.
 * `click`: (bool, optional) If true, `onClick` will be listened on `target` DOM node.
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
@@ -219,18 +219,18 @@ combineTours( {
 
 ## Targeting elements in Calypso
 
-In few places in GT you need to target a DOM elements in Calypso. There are currently two ways to do this:
+One of the features of Guided Tours is the ability to target DOM elements in Calypso. Targeting can be achieved in two ways:
 
 - `data-tip-target` attribute on the target element
-- using any css selector
+- using any CSS selector
 
 To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
 
 ### [data-tip-target]
 
-You mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case.
+Mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case.
 
-In your tour, just put a value of your desired `[data-tip-target]` into the `target` prop.
+In your tour, just insert the value of your desired `[data-tip-target]` into the `target` prop.
 
 Example: you want to position a step of your tour to point to some input element.
 
@@ -246,7 +246,7 @@ Example: you want to position a step of your tour to point to some input element
 
 There are cases when it might be a better idea to target an element by a CSS selector.
 
-You declare that you are using a CSS selector by starting a value of the `target` prop with a dot or a space character. Only single element can be used as a target - it will be the first one matching the selector.
+You declare that you are using a CSS selector by starting a value of the `target` prop with a dot or a space character. Only one element can be used as a target: the first one matching the selector will be used.
 
 Some examples:
 
