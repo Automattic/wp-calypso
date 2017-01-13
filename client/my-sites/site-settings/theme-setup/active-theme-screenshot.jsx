@@ -10,14 +10,10 @@ import { localize } from 'i18n-calypso';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 
 const ActiveThemeScreenshot = ( { theme, translate } ) => {
-	const placeholder = () => {
-		return (
-		<ActionPanelFigure className="is-placeholder">
-		</ActionPanelFigure>
-		);
-	};
-	const activeTheme = () => {
-		return (
+	if ( ! theme ) {
+		return null;
+	}
+	return (
 		<ActionPanelFigure>
 			<a href={ theme.demo_uri }>
 				<img src={ theme.screenshot } />
@@ -30,9 +26,7 @@ const ActiveThemeScreenshot = ( { theme, translate } ) => {
 				</p>
 			</a>
 		</ActionPanelFigure>
-		);
-	};
-	return theme ? activeTheme() : placeholder();
+	);
 };
 
 export default localize( ActiveThemeScreenshot );
