@@ -46,7 +46,7 @@ describe( '#signupStep User', () => {
 	} );
 
 	before( () => {
-		User = require( '../' );
+		User = require( '../' ).UserStep;
 		User.prototype.translate = ( string ) => string;
 	} );
 

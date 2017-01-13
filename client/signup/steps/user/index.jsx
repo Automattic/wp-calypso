@@ -14,7 +14,7 @@ import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
 
-class UserStep extends Component {
+export class UserStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
 		translate: PropTypes.func,
