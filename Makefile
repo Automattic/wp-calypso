@@ -115,7 +115,10 @@ node_modules: package.json | node-version
 test: build
 	@$(NPM) test
 
-lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
+selectorhandslap:
+	@if [[ ! -z "$$(git diff --name-only $$(git merge-base $$(git rev-parse --abbrev-ref HEAD) master)..HEAD -G '^export' | grep 'selectors\.js$$')" ]]; then ( echo "Selectors must be implemented in \`client/state/selectors\`" && exit 1 ); fi;
+
+lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint selectorhandslap
 	@$(NPM) run lint
 
 eslint: lint
@@ -221,5 +224,5 @@ shrinkwrap: node-version
 FORCE:
 
 .PHONY: build build-development build-server build-dll build-desktop build-desktop-mac-app-store build-horizon build-stage build-production build-wpcalypso
-.PHONY: run install test clean distclean translate route node-version
+.PHONY: run install test clean distclean translate route node-version selectorhandslap
 .PHONY: githooks githooks-commit githooks-push
