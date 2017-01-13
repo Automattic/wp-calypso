@@ -1029,6 +1029,6 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
  * @param {Object} siteId Site ID
  * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
  */
-export const siteSupportsCalypsoSettingsUI = ( state, siteId ) => {
+export const siteSupportsJetpackSettingsUI = ( state, siteId ) => {
 	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
 };

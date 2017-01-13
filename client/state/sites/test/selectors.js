@@ -47,7 +47,7 @@ import {
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
-	siteSupportsCalypsoSettingsUI
+	siteSupportsJetpackSettingsUI
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -2274,9 +2274,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'siteSupportsCalypsoSettingsUI()', () => {
+	describe( 'siteSupportsJetpackSettingsUI()', () => {
 		it( 'should return null if the Jetpack version is not known', () => {
-			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2292,7 +2292,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return null if the site is not a Jetpack site', () => {
-			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2307,7 +2307,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return false if the Jetpack version is older than 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2326,7 +2326,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true if the Jetpack version is 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
@@ -2345,7 +2345,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return true if the Jetpack version is newer than 4.5', () => {
-			const supportsCalypsoSettingsUI = siteSupportsCalypsoSettingsUI( {
+			const supportsCalypsoSettingsUI = siteSupportsJetpackSettingsUI( {
 				sites: {
 					items: {
 						77203074: {
