@@ -27,7 +27,7 @@ function getGalleryWorthyImages( post ) {
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 
-const PostGallery = ( { post } ) => {
+const PostGallery = ( { post, children } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
@@ -60,6 +60,7 @@ const PostGallery = ( { post } ) => {
 						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
 					/>
 				</AutoDirection>
+				{ children }
 				</div>
 		</div> );
 };

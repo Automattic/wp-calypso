@@ -10,7 +10,7 @@ import AutoDirection from 'components/auto-direction';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 
-const StandardPost = ( { post } )=> {
+const StandardPost = ( { post, children } )=> {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -35,6 +35,7 @@ const StandardPost = ( { post } )=> {
 						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
 					/>
 				</AutoDirection>
+				{ children }
 			</div>
 		</div> );
 };

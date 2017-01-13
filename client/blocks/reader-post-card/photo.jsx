@@ -55,7 +55,7 @@ class PostPhoto extends React.Component {
 	}
 
 	render() {
-		const { title, imageUri, href, imageSize } = this.props;
+		const { title, imageUri, href, children, imageSize } = this.props;
 
 		if ( imageUri === undefined ) {
 			return null;
@@ -99,6 +99,7 @@ class PostPhoto extends React.Component {
 						<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
 					</h1>
 				</AutoDirection>
+				{ children }
 			</div> );
 	}
 }
