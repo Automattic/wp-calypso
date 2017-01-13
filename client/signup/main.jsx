@@ -292,7 +292,7 @@ const Signup = React.createClass( {
 		) );
 	},
 
-	goToNextStep() {
+	goToStep( stepName, stepSectionName ) {
 		if ( this.state.scrolling ) {
 			return;
 		}
@@ -304,28 +304,25 @@ const Signup = React.createClass( {
 				window.scrollBy( 0, -10 );
 			} else {
 				this.setState( { scrolling: false } );
-				this.loadNextStep();
+				clearInterval( this.windowScroller );
+
+				if ( ! this.isEveryStepSubmitted() ) {
+					page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+				} else if ( this.isEveryStepSubmitted() ) {
+					this.goToFirstInvalidStep();
+				}
 			}
 		}, 1 );
 	},
 
-	loadNextStep() {
+	goToNextStep() {
 		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+
 		this.goToStep( nextStepName, nextStepSection );
-	},
-
-	goToStep( stepName, stepSection ) {
-		clearInterval( this.windowScroller );
-
-		if ( ! this.isEveryStepSubmitted() && stepName ) {
-			page( utils.getStepUrl( this.props.flowName, stepName, stepSection, this.props.locale ) );
-		} else if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
-		}
 	},
 
 	goToFirstInvalidStep() {
