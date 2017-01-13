@@ -123,16 +123,13 @@ const setChildDirection = ( child ) => {
  */
 const AutoDirection = ( props ) => {
 	const { children } = props;
-	const directionedChildren = React.Children.map( children, setChildDirection );
+	const directionedChild = setChildDirection( children );
 
-	return <div>{ directionedChildren }</div>;
+	return directionedChild;
 };
 
 AutoDirection.propTypes = {
-	children: PropTypes.oneOfType( [
-		PropTypes.arrayOf( PropTypes.node ),
-		PropTypes.node
-	] )
+	children: PropTypes.node,
 };
 
 export default AutoDirection;

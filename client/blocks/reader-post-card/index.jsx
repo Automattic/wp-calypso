@@ -173,7 +173,7 @@ export default class ReaderPostCard extends React.Component {
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
-			<Card className={ classes } onClick={ this.handleCardClick }>
+			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }

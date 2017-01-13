@@ -20,10 +20,10 @@ class PostPhoto extends React.Component {
 
 	handleClick = ( event ) => {
 		if ( this.state.isExpanded ) {
+			this.props.onClick( event );
 			return;
 		}
 
-		// If the photo's not expanded, don't open full post yet
 		event.preventDefault();
 		this.setState( { isExpanded: true } );
 		this.props.onExpanded();
@@ -31,6 +31,15 @@ class PostPhoto extends React.Component {
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+
+	/* We want photos to be able to expand to be essentially full-screen
+	 * We settled on viewport height - 176px because the
+	 *  - masterbar is 47px tall
+	 *  - card header is 74px tall
+	 *  - card footer is 55px tall
+	 * 47 + 74 + 55 = 176
+	 */
+	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
 		if ( this.widthDivRef ) {
@@ -63,22 +72,22 @@ class PostPhoto extends React.Component {
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
-			backgroundSize: 'cover',
+			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center'
 		};
-
+		let newWidth, newHeight;
 		if ( this.state.isExpanded ) {
-			const viewportHeight = this.getViewportHeight();
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
-			const newHeight = Math.min(
+			newHeight = Math.min(
 				( naturalHeight / naturalWidth ) * cardWidth,
-				viewportHeight - 176
+				this.getMaxPhotoHeight(),
 			);
-
+			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
 			featuredImageStyle.height = newHeight;
+			featuredImageStyle.width = newWidth;
 		}
 
 		const classes = classnames( {
@@ -88,19 +97,25 @@ class PostPhoto extends React.Component {
 
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
 		const linkTitle = title || '\xa0';
+		const divStyle = this.state.isExpanded
+			? { height: newHeight, width: newWidth, margin: '0 auto' }
+			: {};
 
 		return (
-			<div className="reader-post-card__post" >
-				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
-				</a>
-				<AutoDirection>
-					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
-					</h1>
-				</AutoDirection>
-				{ children }
-			</div> );
+			<div style={ divStyle } >
+				<div className="reader-post-card__post" >
+					<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
+						<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+					</a>
+					<AutoDirection>
+						<h1 className="reader-post-card__title">
+							<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
+						</h1>
+					</AutoDirection>
+					{ children }
+				</div> );
+			</div>
+		);
 	}
 }
 

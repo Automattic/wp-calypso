@@ -12,9 +12,8 @@ import SocialLogo from 'social-logos';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import { isJetpackModuleActive, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
@@ -140,17 +139,17 @@ const PostSharing = React.createClass( {
 
 		return (
 			<div className="posts__post-share-wrapper">
-				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Scheduling...' ) }</Notice> }
-				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( `Updates sent. Please check your social media accounts.` ) }</Notice> }
+				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing...' ) }</Notice> }
+				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( `Post shared. Please check your social media accounts.` ) }</Notice> }
 				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( `Something went wrong. Please don't be mad.` ) }</Notice> }
 				<div className={ classes }>
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 					<div className="posts__post-share-head">
 						<h4 className="posts__post-share-title">
-							{ this.translate( 'Publicize your content' ) }
+							{ this.translate( 'Share post' ) }
 						</h4>
 						<div className="posts__post-share-subtitle">
-							{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}', {
+							{ this.translate( 'Share your post on all of your connected social media accounts using {{a}}Publicize{{/a}}.', {
 								components: {
 									a: <a href={ '/sharing/' + this.props.siteSlug } />
 								}
@@ -196,7 +195,7 @@ const PostSharing = React.createClass( {
 							</div>
 						</div>
 					</div> }
-					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'No social accounts connected' ) }>
+					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'Connect an account to get started.' ) }>
 						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
 						</NoticeAction>
@@ -210,7 +209,7 @@ const PostSharing = React.createClass( {
 
 export default connect(
 	( state, props ) => {
-		const siteId = getSelectedSiteId( state );
+		const siteId = props.site.ID;
 		const userId = getCurrentUserId( state );
 		const postType = props.post.type;
 		const isPublicizeEnabled = (
@@ -219,7 +218,7 @@ export default connect(
 		);
 
 		return {
-			siteSlug: getSelectedSiteSlug( state ),
+			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
 			isPublicizeEnabled,
 			connections: getSiteUserConnections( state, siteId, userId ),

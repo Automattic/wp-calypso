@@ -100,11 +100,16 @@ module.exports = React.createClass( {
 		const site = this.props.sites.getSite( this.props.siteId );
 		const charts = this.props.charts();
 		const queryDate = this.props.date.format( 'YYYY-MM-DD' );
-		const period = this.props.period.period;
+		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 		let nonPeriodicModules;
 		let videoList;
 		let podcastList;
+
+		const query = {
+			period: period,
+			date: endOf.format( 'YYYY-MM-DD' )
+		};
 
 		debug( 'Rendering site stats component', this.props );
 
@@ -197,11 +202,10 @@ module.exports = React.createClass( {
 						</div>
 						<div className="stats__module-column">
 							<Countries
-								path={ 'countries' }
-								site={ site }
-								dataList={ this.props.countriesList }
+								path="countries"
 								period={ this.props.period }
-								date={ queryDate } />
+								query={ query }
+								summary={ false } />
 							<StatsModule
 								path={ 'searchterms' }
 								moduleStrings={ moduleStrings.search }

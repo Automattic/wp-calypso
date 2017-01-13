@@ -856,14 +856,14 @@ export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
  * @param {Number} siteId Site ID
  * @return {?String} the remote management url for the site
  */
-export function getJetpackSiteRemoteManagementURL( state, siteId ) {
+export function getJetpackSiteRemoteManagementUrl( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' ),
 		siteAdminUrl = getSiteOption( state, siteId, 'admin_url' ),
-		configure = versionCompare( siteJetpackVersion, '3.4' ) < 0 ? 'manage' : 'json-api';
+		configure = versionCompare( siteJetpackVersion, '3.4', '>=' ) ? 'manage' : 'json-api';
 
 	return siteAdminUrl + 'admin.php?page=jetpack&configure=' + configure;
 }
@@ -1019,4 +1019,16 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	const slug = getSiteSlug( state, siteId );
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
 	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
+};
+
+/**
+ * Returns true if the site supports managing Jetpack settings remotely.
+ * False otherwise.
+ *
+ * @param {Object} state  Global state tree
+ * @param {Object} siteId Site ID
+ * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
+ */
+export const siteSupportsJetpackSettingsUI = ( state, siteId ) => {
+	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
 };

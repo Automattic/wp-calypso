@@ -13,7 +13,9 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 const JetpackUpgradeMessage = React.createClass( {
 	propTypes: {
-		site: PropTypes.object
+		site: PropTypes.shape( {
+			options: PropTypes.shape( { admin_url: PropTypes.string.isRequired } ).isRequired
+		} ).isRequired
 	},
 
 	render() {

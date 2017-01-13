@@ -20,7 +20,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-
+import Emitter from 'lib/mixins/emitter';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
@@ -348,8 +348,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const authorsList = new StatsList( {
 				siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const countriesList = new StatsList( {
-				siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const videoPlaysList = new StatsList( {
 				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
@@ -377,7 +375,6 @@ module.exports = {
 				referrersList,
 				clicksList,
 				authorsList,
-				countriesList,
 				videoPlaysList,
 				siteId,
 				period,
@@ -437,6 +434,7 @@ module.exports = {
 		let summaryList;
 		let visitsList;
 		const followList = new FollowList();
+
 		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms' ];
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
@@ -477,6 +475,11 @@ module.exports = {
 
 			const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 				? site.slug : siteFragment;
+			let extraProps = {};
+
+			// When old list summaries are transitioned to redux, we need a "fake" emitter
+			// TODO when all lists are moved to redux, remove this logic
+			const fakeStatsList = Emitter( {} );
 
 			switch ( context.params.module ) {
 
@@ -501,9 +504,7 @@ module.exports = {
 					break;
 
 				case 'countryviews':
-					summaryList = new StatsList( {
-						siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period,
-						date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 
 				case 'authors':
@@ -520,6 +521,7 @@ module.exports = {
 				case 'videodetails':
 					summaryList = new StatsList( { statType: 'statsVideo', post: queryOptions.post,
 						siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					extraProps = { postId: queryOptions.post };
 					break;
 
 				case 'searchterms':
@@ -549,7 +551,8 @@ module.exports = {
 					visitsList: visitsList,
 					followList: followList,
 					siteId: siteId,
-					period: period
+					period: period,
+					...extraProps
 				} ),
 				document.getElementById( 'primary' ),
 				context.store
