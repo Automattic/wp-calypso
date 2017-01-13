@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 class StatsDatePicker extends Component {
 	static propTypes = {
@@ -12,7 +13,35 @@ class StatsDatePicker extends Component {
 		] ),
 		period: PropTypes.string.isRequired,
 		summary: PropTypes.bool,
+		query: PropTypes.object,
 	};
+
+	dateForSummarize() {
+		const { query, moment, translate } = this.props;
+		const localizedDate = moment();
+		let formattedDate;
+
+		switch ( query.num ) {
+			case '-1':
+				formattedDate = translate( 'All Time' );
+				break;
+
+			default:
+				formattedDate = translate(
+					'%(number)s days ending %(endDate)s (Summarized)',
+					{
+						context: 'Date range for which stats are being displayed',
+						args: {
+							// LL is a date localized by momentjs
+							number: parseInt( query.num ),
+							endDate: localizedDate.format( 'LL' )
+						}
+					}
+				);
+		}
+
+		return formattedDate;
+	}
 
 	dateForDisplay() {
 		const { date, moment, period, translate } = this.props;
@@ -51,13 +80,14 @@ class StatsDatePicker extends Component {
 	}
 
 	render() {
-		const { summary, translate } = this.props;
+		const { summary, translate, query } = this.props;
+		const isSummarizeQuery = get( query, 'summarize' );
 
 		const sectionTitle = translate( 'Stats for {{period/}}', {
 			components: {
 				period: (
 					<span className="period">
-						<span className="date">{ this.dateForDisplay() }</span>
+						<span className="date">{ isSummarizeQuery ? this.dateForSummarize() : this.dateForDisplay() }</span>
 					</span>
 				)
 			},

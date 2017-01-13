@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import AllTimeNav from './all-time-nav';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -52,12 +54,15 @@ class StatsConnectedModule extends Component {
 		if ( ! this.props.summary ) {
 			return this.props.moduleStrings.title;
 		}
+		const { period, startOf } = this.props.period;
+		const { path, query } = this.props;
 
 		return (
 			<DatePicker
-				period={ this.props.period.period }
-				date={ this.props.period.startOf }
-				path={ this.props.path }
+				period={ period }
+				date={ startOf }
+				path={ path }
+				query={ query }
 				summary={ true } />
 			);
 	}
@@ -69,6 +74,11 @@ class StatsConnectedModule extends Component {
 		if ( ! summary && period && path && siteSlug ) {
 			return '/stats/' + period.period + '/' + path + '/' + siteSlug + '?startDate=' + period.startOf.format( 'YYYY-MM-DD' );
 		}
+	}
+
+	isAllTimeList() {
+		const { summary, statType } = this.props;
+		return summary && includes( [ 'statsCountryViews' ], statType );
 	}
 
 	render() {
@@ -110,12 +120,14 @@ class StatsConnectedModule extends Component {
 
 		const summaryLink = this.getHref();
 		const displaySummaryLink = data && data.length >= 10;
+		const isAllTime = this.isAllTimeList();
 
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
-					{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+					{ isAllTime && <AllTimeNav path={ path } query={ query } /> }
+					{ summary && ! isAllTime && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
 				</SectionHeader>
 				<Card compact className={ cardClasses }>
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }

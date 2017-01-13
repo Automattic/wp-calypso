@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import debugFactory from 'debug';
-import { find } from 'lodash';
+import { find, merge } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -65,7 +65,7 @@ const StatsSummary = React.createClass( {
 	},
 
 	render: function() {
-		const { site, translate } = this.props;
+		const { site, translate, statsQueryOptions } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -112,7 +112,7 @@ const StatsSummary = React.createClass( {
 						key="countries-summary"
 						path="countryviews"
 						period={ this.props.period }
-						query={ query }
+						query={ merge( statsQueryOptions, query ) }
 						summary={ true } />;
 				break;
 
