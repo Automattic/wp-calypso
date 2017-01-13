@@ -2,6 +2,12 @@
 @import 'placeholder';
 @import 'expand';
 
+.stats-module {
+	.upgrade-nudge.card {
+		margin: 16px;
+	}
+}
+
 // Select Dropdown
 .stats-module__select-dropdown-wrapper {
 	padding: 16px;

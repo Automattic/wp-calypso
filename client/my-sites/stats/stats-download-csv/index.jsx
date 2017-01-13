@@ -33,8 +33,7 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { dataList, siteSlug, path, period } = this.props;
-		const data = dataList.csvData();
+		const { siteSlug, path, period, data } = this.props;
 
 		const fileName = [
 			siteSlug,
@@ -56,15 +55,16 @@ class StatsDownloadCsv extends Component {
 	}
 
 	render() {
-		const { siteId, statType, query, translate, isLoading } = this.props;
+		const { data, siteId, statType, query, translate, isLoading } = this.props;
 		try {
 			const isFileSaverSupported = !! new Blob(); // eslint-disable-line no-unused-vars
 		} catch ( e ) {
 			return null;
 		}
+		const disabled = isLoading || ! data.length;
 
 		return (
-			<Button compact onClick={ this.downloadCsv } disabled={ isLoading }>
+			<Button compact onClick={ this.downloadCsv } disabled={ disabled }>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Gridicon icon="cloud-download" /> { translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.'

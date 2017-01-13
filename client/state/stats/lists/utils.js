@@ -177,7 +177,7 @@ export const normalizers = {
 	statsCountryViews: ( data, query = {} ) => {
 		// parsing a country-views response requires a period and date
 		if ( ! data || ! query.period || ! query.date ) {
-			return [];
+			return null;
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const countryInfo = get( data, [ 'country-info' ], {} );
