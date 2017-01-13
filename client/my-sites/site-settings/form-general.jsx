@@ -40,11 +40,10 @@ import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
-	isSavingSiteSettingsRequest,
 	isSiteSettingsSaveSuccessful,
-	isSiteSettingsSaveRequestSuccessful,
 	getSiteSettings,
 	getSiteSettingsSaveError,
+	getSiteSettingsSaveRequestId
 } from 'state/site-settings/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
@@ -141,13 +140,15 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		if (
-			this.props.isSavingForm &&
-			! nextProps.isSavingForm
+			this.props.isSavingSettings &&
+			! nextProps.isSavingSettings
 		) {
-			if ( nextProps.isFormSaveRequestSuccessful ) {
+			if ( nextProps.isSaveRequestSuccessful ) {
 				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
-				nextProps.clearDirtyFields();
-				nextProps.markSaved();
+				if ( nextProps.saveRequestId === FORM_ID ) {
+					nextProps.clearDirtyFields();
+					nextProps.markSaved();
+				}
 			} else {
 				let text;
 				switch ( nextProps.saveRequestError.error ) {
@@ -862,19 +863,16 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const isRequestingSettings = isRequestingSiteSettings( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
-		const isSavingForm = isSavingSiteSettingsRequest( state, siteId, FORM_ID );
-		const settings = getSiteSettings( state, siteId );
-		const saveRequestError = getSiteSettingsSaveError( state, siteId, FORM_ID );
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
-		const isFormSaveRequestSuccessful = isSiteSettingsSaveRequestSuccessful( state, siteId, FORM_ID );
-
+		const settings = getSiteSettings( state, siteId );
+		const saveRequestError = getSiteSettingsSaveError( state, siteId );
+		const saveRequestId = getSiteSettingsSaveRequestId( state, siteId );
 		return {
 			isRequestingSettings: isRequestingSettings && ! settings,
-			isFormSaveRequestSuccessful,
-			isSavingForm,
 			isSavingSettings,
 			isSaveRequestSuccessful,
 			saveRequestError,
+			saveRequestId,
 			settings,
 			siteId
 		};
