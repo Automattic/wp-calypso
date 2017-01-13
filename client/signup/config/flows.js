@@ -223,10 +223,10 @@ const flows = {
 	},
 
 	'domain-first': {
-		steps: [ 'domain-only', 'site-or-domain', 'themes', 'plans', 'user' ],
+		steps: [ 'domain-only', 'site-or-domain', 'themes', 'domain-first-plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2017-01-03'
+		lastModified: '2017-01-16'
 	},
 };
 
