@@ -14,7 +14,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate,
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner && ! isPressableSite ) {
 		return ( <PurchaseDetail
 				icon="globe"
-				title={ translate( 'Select Your Custom Domain' ) }
+				title={ translate( 'Select your custom domain' ) }
 				description={
 					translate(
 						'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +

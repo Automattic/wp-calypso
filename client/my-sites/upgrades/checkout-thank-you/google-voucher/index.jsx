@@ -112,7 +112,7 @@ class GoogleVoucherDetails extends Component {
 			<div className="google-voucher__initial-step">
 				<PurchaseButton
 					onClick={ this.onGenerateCode }
-					text={ this.props.translate( 'Generate Code' ) } />
+					text={ this.props.translate( 'Generate code' ) } />
 
 				<TipInfo
 					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
