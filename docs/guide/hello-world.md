@@ -155,7 +155,7 @@ export default class HelloWorld extends React.Component {
 
 Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:
 
-```javascript
+```jsx
 export default class HelloWorld extends React.Component {
 	render() {
 		return (
@@ -181,7 +181,7 @@ touch client/my-sites/hello-world/style.scss
 
 Then add some styles for our `HelloWorld` component:
 
-```
+```css
 .hello-world__title {
   color: #37a000;
   font-size: 3rem;
@@ -190,17 +190,25 @@ Then add some styles for our `HelloWorld` component:
 
 Let's update `h1` tag from the component we wrote above to include our title style:
 
-```
-<h1 className="hello-world__title">Hello, World!</h1>
+```jsx
+export default class HelloWorld extends React.Component {
+	render() {
+		return (
+			<Main>
+				<h1 className="hello-world__title">Hello, World!</h1>
+			</Main>
+		);
+	}
+}
 ```
 
 We need to do one more step to include the component's style file in the main application style file. It's done by importing `style.scss` in `assets/stylesheets/_components.scss`, add following line at the end of `_components.scss`:
 
-```
+```css
 @import 'my-sites/hello-world/style';
 ```
 
-That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guidelines/css.md) to learn more about working with stylesheet in the project.
+That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guidelines/css.md) to learn more about working with stylesheets in the project.
 
 ### 3. Hook up controller
 
@@ -222,7 +230,7 @@ import HelloWorld from 'my-sites/hello-world/main';
 
 Then remove the `console.log` call and enter the following instead:
 
-```javascript
+```jsx
 helloWorld() {
 	// Render hello world...
 	ReactDom.render(
