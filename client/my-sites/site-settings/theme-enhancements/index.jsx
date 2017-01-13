@@ -111,108 +111,139 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
-	render() {
+	renderHeader() {
 		const {
 			submittingForm,
 			updatingSettings,
+			translate
+		} = this.props;
+		const formPending = this.isFormPending();
+
+		return (
+			<SectionHeader label={ translate( 'Theme Enhancements' ) }>
+				<Button
+					compact
+					primary
+					onClick={ this.onSubmitForm }
+					disabled={ formPending }
+				>
+					{ submittingForm || updatingSettings
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
+				</Button>
+			</SectionHeader>
+		);
+	}
+
+	renderInfiniteScrollSettings() {
+		const {
 			selectedSiteId,
 			infiniteScrollModuleActive,
+			translate
+		} = this.props;
+		const formPending = this.isFormPending();
+
+		return (
+			<FormFieldset>
+				<div className="theme-enhancements__info-link-container">
+					<InfoPopover position={ 'left' }>
+						<ExternalLink icon={ true } href={ 'https://jetpack.com/support/infinite-scroll' } target="_blank">
+							{ translate( 'Learn more about Infinite Scroll' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
+				<JetpackModuleToggle
+					siteId={ selectedSiteId }
+					moduleSlug="infinite-scroll"
+					label={ translate( 'Add support for infinite scroll to your theme.' ) }
+					disabled={ formPending }
+					/>
+
+				{
+					infiniteScrollModuleActive && (
+						<div className="theme-enhancements__module-settings is-indented">
+							{
+								this.renderToggle( 'infinite_scroll', translate(
+									'Scroll infinitely (Shows 7 posts on each load)'
+								) )
+							}
+							{
+								this.renderToggle( 'infinite_scroll_google_analytics', translate(
+									'Track each infinite Scroll post load as a page view in Google Analytics'
+								) )
+							}
+						</div>
+					)
+				}
+			</FormFieldset>
+		);
+	}
+
+	renderMinilevenSettings() {
+		const {
+			selectedSiteId,
 			minilevenModuleActive,
 			translate
 		} = this.props;
 		const formPending = this.isFormPending();
 
 		return (
+			<FormFieldset>
+				<div className="theme-enhancements__info-link-container">
+					<InfoPopover position={ 'left' }>
+						<ExternalLink icon={ true } href={ 'https://jetpack.com/support/mobile-theme' } target="_blank">
+							{ translate( 'Learn more about the Mobile Theme' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
+				<JetpackModuleToggle
+					siteId={ selectedSiteId }
+					moduleSlug="minileven"
+					label={ translate( 'Optimize your site with a phone-friendly theme.' ) }
+					disabled={ formPending }
+					/>
+
+				{
+					minilevenModuleActive && (
+						<div className="theme-enhancements__module-settings is-indented">
+							{
+								this.renderToggle( 'wp_mobile_excerpt', translate(
+									'Use excerpts instead of full posts on front page and archive pages'
+								) )
+							}
+							{
+								this.renderToggle( 'wp_mobile_featured_images', translate(
+									'Hide all featured images'
+								) )
+							}
+							{
+								this.renderToggle( 'wp_mobile_app_promos', translate(
+									'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
+								) )
+							}
+						</div>
+					)
+				}
+			</FormFieldset>
+		);
+	}
+
+	render() {
+		const { selectedSiteId } = this.props;
+
+		return (
 			<div>
 				<QueryJetpackModules siteId={ selectedSiteId } />
 				<QueryJetpackSettings siteId={ selectedSiteId } />
 
-				<SectionHeader label={ translate( 'Theme Enhancements' ) }>
-					<Button
-						compact
-						primary
-						onClick={ this.onSubmitForm }
-						disabled={ formPending }
-					>
-						{ submittingForm || updatingSettings
-							? translate( 'Saving…' )
-							: translate( 'Save Settings' )
-						}
-					</Button>
-				</SectionHeader>
+				{ this.renderHeader() }
+
 				<Card className="theme-enhancements__card site-settings">
-					<FormFieldset>
-						<div className="theme-enhancements__info-link-container">
-							<InfoPopover position={ 'left' }>
-								<ExternalLink icon={ true } href={ 'https://jetpack.com/support/infinite-scroll' } target="_blank">
-									{ translate( 'Learn more about Infinite Scroll' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
-						<JetpackModuleToggle
-							siteId={ selectedSiteId }
-							moduleSlug="infinite-scroll"
-							label={ translate( 'Add support for infinite scroll to your theme.' ) }
-							disabled={ formPending }
-							/>
-
-						{
-							infiniteScrollModuleActive && (
-								<div className="theme-enhancements__module-settings is-indented">
-									{
-										this.renderToggle( 'infinite_scroll', translate(
-											'Scroll infinitely (Shows 7 posts on each load)'
-										) )
-									}
-									{
-										this.renderToggle( 'infinite_scroll_google_analytics', translate(
-											'Track each infinite Scroll post load as a page view in Google Analytics'
-										) )
-									}
-								</div>
-							)
-						}
-					</FormFieldset>
-
-					<FormFieldset>
-						<div className="theme-enhancements__info-link-container">
-							<InfoPopover position={ 'left' }>
-								<ExternalLink icon={ true } href={ 'https://jetpack.com/support/mobile-theme' } target="_blank">
-									{ translate( 'Learn more about the Mobile Theme' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
-						<JetpackModuleToggle
-							siteId={ selectedSiteId }
-							moduleSlug="minileven"
-							label={ translate( 'Optimize your site with a phone-friendly theme.' ) }
-							disabled={ formPending }
-							/>
-
-						{
-							minilevenModuleActive && (
-								<div className="theme-enhancements__module-settings is-indented">
-									{
-										this.renderToggle( 'wp_mobile_excerpt', translate(
-											'Use excerpts instead of full posts on front page and archive pages'
-										) )
-									}
-									{
-										this.renderToggle( 'wp_mobile_featured_images', translate(
-											'Hide all featured images'
-										) )
-									}
-									{
-										this.renderToggle( 'wp_mobile_app_promos', translate(
-											'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
-										) )
-									}
-								</div>
-							)
-						}
-					</FormFieldset>
+					{ this.renderInfiniteScrollSettings() }
+					{ this.renderMinilevenSettings() }
 				</Card>
 			</div>
 		);
