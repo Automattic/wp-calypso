@@ -88,7 +88,7 @@ Continue is a React component that you can use in Step to programmatically conti
 ### Props
 
 * `step`: (string) Name of the step the tour will advance to.
-* `target`: (string, optional) Name of `[data-tip-target]` that would be watched. See [Targeting elements in Calypso](#targeting-elements-in-calypso) section for more info about the format.
+* `target`: (string, optional) DOM node that would be watched. See [Targeting elements in Calypso](#targeting-elements-in-calypso) section for more info about the format.
 * `click`: (bool, optional) If true, `onClick` will be listened on `target` DOM node.
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
