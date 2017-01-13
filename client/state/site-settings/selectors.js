@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { every, get, some } from 'lodash';
 
 /**
  * Returns true if we are requesting settings for the specified site ID, false otherwise.
@@ -22,7 +22,19 @@ export function isRequestingSiteSettings( state, siteId ) {
  * @return {Boolean}        Whether site settings is being requested
  */
 export function isSavingSiteSettings( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'saving' ], false );
+	return some( get( state.siteSettings.saveRequests, [ siteId ] ), ( request ) => request.saving );
+}
+
+/**
+ * Returns true if we the save settings request for the specified site ID, false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {String}  id     Save Request id
+ * @return {Boolean}        Whether the site settings request is being requested
+ */
+export function isSavingSiteSettingsRequest( state, siteId, id = 'default' ) {
+	return get( state.siteSettings.saveRequests, [ siteId, id, 'saving' ] );
 }
 
 /**
@@ -30,10 +42,11 @@ export function isSavingSiteSettings( state, siteId ) {
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
+ * @param  {String}  id     Save Request id
  * @return {String}         The request status (peding, success or error)
  */
-export function getSiteSettingsSaveRequestStatus( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'status' ] );
+export function getSiteSettingsSaveRequestStatus( state, siteId, id = 'default' ) {
+	return get( state.siteSettings.saveRequests, [ siteId, id, 'status' ] );
 }
 
 /**
@@ -48,14 +61,26 @@ export function getSiteSettings( state, siteId ) {
 }
 
 /**
+ * Returns true fi the all save site settings requests are successful
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether the requests are successful or not
+ */
+export function isSiteSettingsSaveSuccessful( state, siteId ) {
+	return every( get( state.siteSettings.saveRequests, [ siteId ] ), ( request ) => request.status === 'success' );
+}
+
+/**
  * Returns true fi the save site settings requests is successful
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {Boolean}         Whether the requests is successful or not
+ * @param  {String}  id     Save Request id
+ * @return {Boolean}        Whether the request is successful or not
  */
-export function isSiteSettingsSaveSuccessful( state, siteId ) {
-	return getSiteSettingsSaveRequestStatus( state, siteId ) === 'success';
+export function isSiteSettingsSaveRequestSuccessful( state, siteId, id = 'default' ) {
+	return getSiteSettingsSaveRequestStatus( state, siteId, id ) === 'success';
 }
 
 /**
@@ -63,8 +88,9 @@ export function isSiteSettingsSaveSuccessful( state, siteId ) {
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
+ * @param  {String}  id     Save Request id
  * @return {String}         The request error
  */
-export function getSiteSettingsSaveError( state, siteId ) {
-	return get( state.siteSettings.saveRequests, [ siteId, 'error' ], false );
+export function getSiteSettingsSaveError( state, siteId, id = 'default' ) {
+	return get( state.siteSettings.saveRequests, [ siteId, id, 'error' ], false );
 }

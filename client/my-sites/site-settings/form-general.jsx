@@ -40,7 +40,9 @@ import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
+	isSavingSiteSettingsRequest,
 	isSiteSettingsSaveSuccessful,
+	isSiteSettingsSaveRequestSuccessful,
 	getSiteSettings,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
@@ -50,6 +52,8 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
+
+const FORM_ID = 'GENERAL_SETTINGS_FORM';
 
 class SiteSettingsFormGeneral extends Component {
 	getFormSettings( settings ) {
@@ -137,10 +141,10 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		if (
-			this.props.isSavingSettings &&
-			! nextProps.isSavingSettings
+			this.props.isSavingForm &&
+			! nextProps.isSavingForm
 		) {
-			if ( nextProps.isSaveRequestSuccessful ) {
+			if ( nextProps.isFormSaveRequestSuccessful ) {
 				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
 				nextProps.clearDirtyFields();
 				nextProps.markSaved();
@@ -191,7 +195,7 @@ class SiteSettingsFormGeneral extends Component {
 	submitForm() {
 		const { fields, site } = this.props;
 		this.props.removeNotice( 'site-settings-save' );
-		this.props.saveSiteSettings( site.ID, fields );
+		this.props.saveSiteSettings( site.ID, fields, FORM_ID );
 	}
 
 	onChangeField( field ) {
@@ -858,11 +862,16 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const isRequestingSettings = isRequestingSiteSettings( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
-		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+		const isSavingForm = isSavingSiteSettingsRequest( state, siteId, FORM_ID );
 		const settings = getSiteSettings( state, siteId );
-		const saveRequestError = getSiteSettingsSaveError( state, siteId );
+		const saveRequestError = getSiteSettingsSaveError( state, siteId, FORM_ID );
+		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+		const isFormSaveRequestSuccessful = isSiteSettingsSaveRequestSuccessful( state, siteId, FORM_ID );
+
 		return {
 			isRequestingSettings: isRequestingSettings && ! settings,
+			isFormSaveRequestSuccessful,
+			isSavingForm,
 			isSavingSettings,
 			isSaveRequestSuccessful,
 			saveRequestError,
