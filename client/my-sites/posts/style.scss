@@ -570,6 +570,12 @@
 	}
 }
 
+.post-controls__disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 .post-controls__more-options {
 	transform: scale(0);
 	opacity: 0;
