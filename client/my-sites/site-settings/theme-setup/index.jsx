@@ -21,8 +21,9 @@ import QueryTheme from 'components/data/query-theme';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import ActiveThemeScreenshot from './active-theme-screenshot';
 
-let ThemeSetup = ( { site, isJetpack, themeId, translate, activeSiteDomain } ) => {
+let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomain } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
@@ -40,6 +41,7 @@ let ThemeSetup = ( { site, isJetpack, themeId, translate, activeSiteDomain } ) =
 					<Notice status={ isJetpack ? 'is-error' : 'is-warning' } showDismiss={ false }>
 						{ noticeText }
 					</Notice>
+					<ActiveThemeScreenshot theme={ theme } />
 					<p>{ translate( 'Getting your site to look like your theme\'s demo can be confusing. The Theme Setup tool will copy the demo site\'s settings over to your site automatically.' ) }</p>
 					<p>{ translate( 'You can choose to start from scratch, in which Theme Setup {{strong}}deletes all of your existing content{{/strong}}, or you can save your current content. In either case, you will see some placeholder content which is needed by Theme Setup.', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
