@@ -532,7 +532,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000604"
+      "version": "1.0.30000609"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1035,6 +1035,10 @@
     "ee-first": {
       "version": "1.1.1"
     },
+    "ejs": {
+      "version": "2.5.5",
+      "dev": true
+    },
     "email-validator": {
       "version": "1.0.1"
     },
@@ -1046,6 +1050,10 @@
     },
     "emojis-list": {
       "version": "2.1.0"
+    },
+    "encodeurl": {
+      "version": "1.0.1",
+      "dev": true
     },
     "encoding": {
       "version": "0.1.12"
@@ -1719,6 +1727,10 @@
     },
     "growl": {
       "version": "1.9.2",
+      "dev": true
+    },
+    "gzip-size": {
+      "version": "3.0.0",
       "dev": true
     },
     "har-validator": {
@@ -2788,6 +2800,10 @@
       "version": "1.1.0",
       "dev": true
     },
+    "opener": {
+      "version": "1.4.2",
+      "dev": true
+    },
     "optimist": {
       "version": "0.6.1"
     },
@@ -2935,7 +2951,7 @@
       "dev": true
     },
     "postcss": {
-      "version": "5.2.9",
+      "version": "5.2.10",
       "dependencies": {
         "chalk": {
           "version": "1.1.3",
@@ -3611,7 +3627,7 @@
       "dev": true
     },
     "source-list-map": {
-      "version": "0.1.7"
+      "version": "0.1.8"
     },
     "source-map": {
       "version": "0.1.39"
@@ -4121,6 +4137,104 @@
               "version": "0.2.10"
             }
           }
+        }
+      }
+    },
+    "webpack-bundle-analyzer": {
+      "version": "2.2.1",
+      "dev": true,
+      "dependencies": {
+        "accepts": {
+          "version": "1.3.3",
+          "dev": true
+        },
+        "acorn": {
+          "version": "4.0.4",
+          "dev": true
+        },
+        "chalk": {
+          "version": "1.1.3",
+          "dev": true
+        },
+        "commander": {
+          "version": "2.9.0",
+          "dev": true
+        },
+        "content-disposition": {
+          "version": "0.5.1",
+          "dev": true
+        },
+        "cookie": {
+          "version": "0.3.1",
+          "dev": true
+        },
+        "cookie-signature": {
+          "version": "1.0.6",
+          "dev": true
+        },
+        "destroy": {
+          "version": "1.0.4",
+          "dev": true
+        },
+        "escape-html": {
+          "version": "1.0.3",
+          "dev": true
+        },
+        "express": {
+          "version": "4.14.0",
+          "dev": true
+        },
+        "filesize": {
+          "version": "3.3.0",
+          "dev": true
+        },
+        "finalhandler": {
+          "version": "0.5.0",
+          "dev": true
+        },
+        "ipaddr.js": {
+          "version": "1.1.1",
+          "dev": true
+        },
+        "lodash": {
+          "version": "4.17.4",
+          "dev": true
+        },
+        "merge-descriptors": {
+          "version": "1.0.1",
+          "dev": true
+        },
+        "negotiator": {
+          "version": "0.6.1",
+          "dev": true
+        },
+        "proxy-addr": {
+          "version": "1.1.2",
+          "dev": true
+        },
+        "qs": {
+          "version": "6.2.0",
+          "dev": true
+        },
+        "range-parser": {
+          "version": "1.2.0",
+          "dev": true
+        },
+        "send": {
+          "version": "0.14.1",
+          "dev": true
+        },
+        "serve-static": {
+          "version": "1.11.1",
+          "dev": true
+        },
+        "supports-color": {
+          "version": "2.0.0",
+          "dev": true
+        },
+        "vary": {
+          "version": "1.1.0",
+          "dev": true
         }
       }
     },
