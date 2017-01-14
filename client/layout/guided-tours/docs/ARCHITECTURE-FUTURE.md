@@ -2,7 +2,7 @@
 
 ## On the nature of `actionLog`
 
-`actionLog` is a collection of actions — another name for events — that grows: 1) over time, and 2) in only one direction. It is thus, by nature, equivalent to a **stream**, even though that concept is AFAIK never used in Calypso.
+`actionLog`<sup>[1](#note-1)</sup> is a collection of actions — another name for events — that grows: 1) over time, and 2) in only one direction. It is thus, by nature, equivalent to a **stream**, even though that concept is AFAIK never used in Calypso.
 
 Most (if not all) of the ways `actionLog` is processed — with `map`, `filter`, `reduce`, `find` — have their stream-centric counterparts. This is very important to be aware of, since any suite for stream manipulation, such as [RxJS][rxjs], will excel at those manipulations and optimize them far more than we could with our basic caching and heuristics.
 
@@ -11,13 +11,13 @@ Most (if not all) of the ways `actionLog` is processed — with `map`, `filter`,
 By design, `actionLog`'s reducer will react to all sorts of actions coming in through the dispatcher. As of this writing, the [list][relevant-types] of subscribed types is relatively limited:
 
 ```
-- COMPONENT_INTERACTION_TRACKED
-- FIRST_VIEW_HIDE
-- GUIDED_TOUR_UPDATE
-- THEMES_RECEIVE
-- PREVIEW_IS_SHOWING
-- ROUTE_SET
-- SITE_SETTINGS_RECEIVE
+COMPONENT_INTERACTION_TRACKED
+FIRST_VIEW_HIDE
+GUIDED_TOUR_UPDATE
+THEMES_RECEIVE
+PREVIEW_IS_SHOWING
+ROUTE_SET
+SITE_SETTINGS_RECEIVE
 ```
 
 Yet, a few things are clear:
@@ -127,7 +127,7 @@ The major benefits of this approach are:
 
 In short, the **pro** would be that, _if_ the solution turned out to be robust enough for all the scenarios that Guided Tours developers can throw at it, it would likely be _very_ fast (much less work happening in selector calls).
 
-The **con** is that it's less flexible than a system — like `actionLog` — that merely logs all essential state and doesn't prematurely derive it. `actionLog` was chosen specifically because of how little committed that solution is and because of how all sorts of selectors can peacefully consume the log without conflicting with one another. A deep structure would require some planning of how and where to store pieces of data. The last minor con is that some of the computation taken away from the selector calls would be offloaded to the reducer calls.
+The **con** is that it's less flexible than a system — like `actionLog` — that merely logs all essential state and doesn't prematurely derive it. `actionLog` was [chosen specifically][architecture] because of how little committed that solution is and because of how all sorts of selectors can peacefully consume the log without conflicting with one another. A deep structure would require some planning of how and where to store pieces of data. The last minor con is that some of the computation taken away from the selector calls would be offloaded to the reducer calls.
 
 ### Different kinds of "relevant" action types
 
@@ -140,6 +140,8 @@ With this distinction, assuming we could keep `relevantTourEntryTypes` small, ma
 
 * * *
 
+<a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
+[architecture]: ./ARCHITECTURE.md
 [relevant-types]: https://github.com/Automattic/wp-calypso/blob/25cdc9141129757530c66b3b2525c9fd3a0aebb8/client/state/ui/action-log/reducer.js#L19-L27
 [rxjs]: https://github.com/ReactiveX/rxjs
 [monoids]: http://learnyouahaskell.com/functors-applicative-functors-and-monoids#monoids
