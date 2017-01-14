@@ -8,6 +8,8 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 
+import SectionNav from 'components/section-nav';
+
 export default class TitleBar extends React.Component {
 	static propTypes = {
 		icon: PropTypes.string.isRequired,
@@ -19,17 +21,17 @@ export default class TitleBar extends React.Component {
 		const iconSize = 24;
 
 		return (
-			<div className="title-bar">
+			<SectionNav className="title-bar">
 				<div className="title-bar__title">
-					<h1>
-						<Gridicon icon={ icon } size={ iconSize } className="title-bar__title-icon" />
+					<Gridicon icon={ icon } size={ iconSize } className="title-bar__title-icon" />
+					<h1 className="title-bar__title-name">
 						{ title }
 					</h1>
 				</div>
 				<div className="title-bar__sidebar">
 					{ this.props.children }
 				</div>
-			</div>
+			</SectionNav>
 		);
 	}
 }
