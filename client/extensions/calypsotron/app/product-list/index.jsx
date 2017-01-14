@@ -83,8 +83,8 @@ class ProductList extends React.Component {
 
 		return (
 			<TitleBar icon="product" title={ __( 'Products' ) }>
-				<Button onClick={ initEdits } >{ __( 'Edit products' ) }</Button>
-				<Button primary onClick={ addProduct } >{ __( 'Add product' ) }</Button>
+				<Button compact primary onClick={ addProduct } >{ __( 'Add product' ) }</Button>
+				<Button compact onClick={ initEdits } >{ __( 'Edit products' ) }</Button>
 			</TitleBar>
 		);
 	}
@@ -104,9 +104,10 @@ class ProductList extends React.Component {
 
 		return (
 			<TitleBar icon="product" title={ __( 'Products' ) }>
-				<Button onClick={ this.onCancelClick } >{ __( 'Cancel' ) }</Button>
+				<Button compact onClick={ this.onCancelClick } >{ __( 'Cancel' ) }</Button>
 				<Button
 					primary
+					compact
 					onClick={ this.onSaveClick }
 					disabled={ saving || 0 === Object.keys( edits ).length }
 				>
@@ -162,4 +163,3 @@ export default connect( mapStateToProps, mapDispatchToProps )( localizedComponen
 // TODO: Restore redux state handling to this component.
 //const fetchComponent = fetchConnect( mapFetchProps )( localizedComponent );
 //export default connect( mapStateToProps, mapDispatchToProps )( fetchComponent );
-
