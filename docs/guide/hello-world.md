@@ -181,20 +181,24 @@ touch client/my-sites/hello-world/style.scss
 
 Then add some styles for our `HelloWorld` component:
 
-```css
+```scss
+.hello-world {
+  background-color: #fafafa;
+}
+
 .hello-world__title {
   color: #37a000;
   font-size: 3rem;
 }
 ```
 
-Let's update `h1` tag from the component we wrote above to include our title style:
+Let's update the component we wrote above to include our new styles:
 
 ```jsx
 export default class HelloWorld extends React.Component {
 	render() {
 		return (
-			<Main>
+			<Main className="hello-world">
 				<h1 className="hello-world__title">Hello, World!</h1>
 			</Main>
 		);
@@ -204,7 +208,7 @@ export default class HelloWorld extends React.Component {
 
 We need to do one more step to include the component's style file in the main application style file. It's done by importing `style.scss` in `assets/stylesheets/_components.scss`, add following line at the end of `_components.scss`:
 
-```css
+```scss
 @import 'my-sites/hello-world/style';
 ```
 
