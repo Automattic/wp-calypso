@@ -311,10 +311,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.jetpack ) {
-			return null;
-		}
-
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Domains' ) }
