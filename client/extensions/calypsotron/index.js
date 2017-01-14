@@ -26,7 +26,7 @@ const dummyProps = {
 
 const render = ( context ) => {
 	renderWithReduxStore( (
-		<Main className="calypsotron__main">
+		<Main className="calypsotron__main" wideLayout>
 			<ProductList { ...dummyProps } />
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
@@ -35,4 +35,3 @@ const render = ( context ) => {
 export default function() {
 	page( '/calypsotron/:site?', siteSelection, navigation, render );
 }
-
