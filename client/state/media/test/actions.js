@@ -6,8 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { MEDIA_DELETE, MEDIA_RECEIVE } from 'state/action-types';
-import { receiveMedia, deleteMedia } from '../actions';
+import {
+	MEDIA_DELETE,
+	MEDIA_RECEIVE,
+	MEDIA_SELECTED_SET } from 'state/action-types';
+import { receiveMedia, deleteMedia, selectMedia } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'receiveMedia()', () => {
@@ -18,7 +21,9 @@ describe( 'actions', () => {
 				expect( action ).to.eql( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
-					media: [ { ID: 42, title: 'flowers' } ]
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: undefined,
+					query: undefined
 				} );
 			} );
 		} );
@@ -30,7 +35,24 @@ describe( 'actions', () => {
 				expect( action ).to.eql( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
-					media: [ { ID: 42, title: 'flowers' } ]
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: undefined,
+					query: undefined
+				} );
+			} );
+		} );
+
+		context( 'query', () => {
+			it( 'should return an action object', () => {
+				const action = receiveMedia( 2916284, [ { ID: 42, title: 'flowers' } ],
+					1, { search: 'flowers' } );
+
+				expect( action ).to.eql( {
+					type: MEDIA_RECEIVE,
+					siteId: 2916284,
+					media: [ { ID: 42, title: 'flowers' } ],
+					found: 1,
+					query: { search: 'flowers' }
 				} );
 			} );
 		} );
@@ -55,6 +77,32 @@ describe( 'actions', () => {
 
 				expect( action ).to.eql( {
 					type: MEDIA_DELETE,
+					siteId: 2916284,
+					mediaIds: [ 42 ]
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'selectMedia()', () => {
+		context( 'single', () => {
+			it( 'should return an action object', () => {
+				const action = selectMedia( 2916284, 42 );
+
+				expect( action ).to.eql( {
+					type: MEDIA_SELECTED_SET,
+					siteId: 2916284,
+					mediaIds: [ 42 ]
+				} );
+			} );
+		} );
+
+		context( 'array', () => {
+			it( 'should return an action object', () => {
+				const action = selectMedia( 2916284, [ 42 ] );
+
+				expect( action ).to.eql( {
+					type: MEDIA_SELECTED_SET,
 					siteId: 2916284,
 					mediaIds: [ 42 ]
 				} );

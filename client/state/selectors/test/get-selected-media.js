@@ -6,10 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMediaItem } from '../';
+import { getSelectedMedia } from '../';
 import MediaQueryManager from 'lib/query-manager/media';
 
-describe( 'getMediaItem()', () => {
+describe( 'getSelectedMedia()', () => {
 	const item = {
 		ID: 42,
 		title: 'flowers'
@@ -23,19 +23,18 @@ describe( 'getMediaItem()', () => {
 						42: item
 					}
 				} )
+			},
+			selected: {
+				2916284: [ 42 ]
 			}
 		}
 	};
 
 	it( 'should return null if the site is not in state', () => {
-		expect( getMediaItem( state, 2916285, 42 ) ).to.be.null;
+		expect( getSelectedMedia( state, 2916285 ) ).to.be.null;
 	} );
 
-	it( 'should return null if the media for the site is not in state', () => {
-		expect( getMediaItem( state, 2916284, 43 ) ).to.be.null;
-	} );
-
-	it( 'should return the media item', () => {
-		expect( getMediaItem( state, 2916284, 42 ) ).to.eql( item );
+	it( 'should return the selected media', () => {
+		expect( getSelectedMedia( state, 2916284 ) ).to.eql( [ item ] );
 	} );
 } );
