@@ -14,6 +14,46 @@ const user = userModule();
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
+const SPACE_CHARACTERS = {
+	'\n': true,
+	'\r': true,
+	'\t': true,
+	' ': true,
+};
+
+/***
+ * Checks whether a character is a space character
+ * @param {String} character character to examine
+ * @returns {bool} true if character is a space character, false otherwise
+ */
+const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
+
+/***
+ * Get index of the first character that is not within a tag
+ * @param {String} text text to examine
+ * @returns {number} index not within a tag
+ */
+const getTaglessIndex = ( text ) => {
+	let isTagOpen = false;
+
+	for ( let i = 0; i < text.length; i++ ) {
+		// skip spaces
+		if ( isSpaceCharacter( text[ i ] ) ) {
+			continue;
+		}
+
+		if ( text[ i ] === '<' ) {
+			isTagOpen = true;
+		} else if ( isTagOpen && text[ i ] === '>' ) {
+			isTagOpen = false;
+		} else if ( ! isTagOpen ) {
+			return i;
+		}
+	}
+
+	return 0;
+};
+
 /***
  * Gets text content from react element in case that's a leaf element
  * @param {React.Element} reactElement react element
@@ -37,9 +77,18 @@ const getContent = ( reactElement ) => {
 	// This child has it's content set to external HTML
 	if ( typeof props.dangerouslySetInnerHTML === 'object' ) {
 		// Strip tags because we're only interested in the text, not markup
-		return props.dangerouslySetInnerHTML.__html
-			? stripHTML( props.dangerouslySetInnerHTML.__html.substring( 0, Math.floor( MAX_LENGTH_OF_TEXT_TO_EXAMINE * 1.25 ) ) )
-			: '';
+		// We examine from the first position without tags of the string, so we won't get an empty text
+		// because we might get only tags in the beginning
+		const html = props.dangerouslySetInnerHTML.__html;
+		if ( ! html ) {
+			return '';
+		}
+
+		const examinedLength = Math.floor( MAX_LENGTH_OF_TEXT_TO_EXAMINE * 1.25 );
+		const taglessIndex = getTaglessIndex( html );
+		const startIndex = taglessIndex + examinedLength < html.length ? taglessIndex : 0;
+
+		return stripHTML( html.substring( startIndex, startIndex + examinedLength ) );
 	}
 
 	// This child is some kind of input
