@@ -127,11 +127,9 @@ const PostSharing = React.createClass( {
 		}
 
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
-				</div>
-			);
+			return ( <div className="posts__post-share-wrapper">
+				<Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing is permanently disabled on this site.' ) }</Notice>
+			</div> );
 		}
 
 		const classes = classNames( 'posts__post-share', {
