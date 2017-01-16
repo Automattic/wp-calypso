@@ -2,22 +2,24 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
-import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import { getPastBillingTransaction } from 'state/selectors';
 
 const BillingReceipt = React.createClass( {
-	mixins: [ observe( 'billingData' ), eventRecorder ],
+	mixins: [ eventRecorder ],
 
 	render() {
 		const { transaction, translate } = this.props;
@@ -27,6 +29,7 @@ const BillingReceipt = React.createClass( {
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Billing History' ) } />
+				<QueryBillingTransactions />
 				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ translate( 'Billing History' ) }
 				</HeaderCake>
@@ -190,4 +193,8 @@ const BillingReceipt = React.createClass( {
 	}
 } );
 
-export default localize( BillingReceipt );
+export default connect(
+	( state, ownProps ) => ( {
+		transaction: getPastBillingTransaction( state, ownProps.transactionId )
+	} ),
+)( localize( BillingReceipt ) );
