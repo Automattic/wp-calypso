@@ -27,6 +27,7 @@ export getPastBillingTransaction from './get-past-billing-transaction';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export isAutomatedTransferActive from './is-automated-transfer-active';
+export isDomainOnlySite from './is-domain-only-site';
 export isPrivateSite from './is-private-site';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
 export isRequestingPostLikes from './is-requesting-post-likes';
