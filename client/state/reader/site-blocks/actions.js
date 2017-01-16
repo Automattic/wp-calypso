@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-//import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -15,11 +14,6 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 } from 'state/action-types';
-
-/**
- * Module variables
- */
-//const debug = debugModule( 'calypso:redux:reader-site-blocks' );
 
 /**
  * Triggers a network request to block a site.
