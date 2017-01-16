@@ -225,8 +225,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-			'Advanced security features to keep your site safe and sound.' +
-			' With daily backups, malware scanning, and spam defense.'
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -239,7 +239,6 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_PREMIUM_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -270,8 +269,9 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-			'Advanced security features to keep your site safe and sound.' +
-			' With daily backups, malware scanning, and spam defense.'		),
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
+		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -283,7 +283,6 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-			FEATURE_PREMIUM_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -315,7 +314,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate(
-			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -324,11 +324,11 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
 		] ),
@@ -341,7 +341,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -350,13 +351,11 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
 		] ),
