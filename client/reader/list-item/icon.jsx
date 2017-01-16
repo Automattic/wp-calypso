@@ -8,7 +8,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 
 const genericFeedIcon = ( <SiteIcon size={ 48 } /> );
 

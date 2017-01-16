@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SiteIcon = require( 'components/site-icon' );
+var SiteIcon = require( 'blocks/site-icon' );
 
 module.exports = React.createClass( {
 
