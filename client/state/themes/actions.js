@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, property, delay } from 'lodash';
+import { map, property } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -49,6 +49,7 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
+import { requestStatus as requestAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -553,6 +554,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
+				dispatch( requestAutomatedTransferStatus( siteId ) );
 				dispatch( {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
@@ -609,7 +611,8 @@ function transferStatusFailure( siteId, transferId, error ) {
 export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return dispatch => {
-		const pollStatus = ( resolve, reject ) => {
+		dispatch( requestAutomatedTransferStatus( siteId ) );
+		const pollStatus = resolve => {
 			if ( Date.now() > endTime ) {
 				// timed-out, stop polling
 				dispatch( transferStatusFailure( siteId, transferId, 'client timeout' ) );
@@ -622,8 +625,6 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 						// finished, stop polling
 						return resolve();
 					}
-					// poll again
-					return delay( pollStatus, interval, resolve, reject );
 				} )
 				.catch( ( error ) => {
 					dispatch( transferStatusFailure( siteId, transferId, error ) );
