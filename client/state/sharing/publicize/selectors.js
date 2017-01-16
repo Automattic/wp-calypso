@@ -98,8 +98,7 @@ export function getRemovableConnections( state, service ) {
  * @return {Array}         Site connections
  */
 export function hasFetchedConnections( state, siteId ) {
-	const { fetchingConnections } = state.sharing.publicize;
-	return fetchingConnections.hasOwnProperty( siteId );
+	return get( state.sharing.publicize.fetchedConnections, [ siteId ], false );
 }
 
 /**
@@ -110,8 +109,7 @@ export function hasFetchedConnections( state, siteId ) {
  * @return {Array}         Site connections
  */
 export function isFetchingConnections( state, siteId ) {
-	const { fetchingConnections } = state.sharing.publicize;
-	return hasFetchedConnections( state, siteId ) && fetchingConnections[ siteId ];
+	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
 }
 
 /**
