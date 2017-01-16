@@ -68,3 +68,14 @@ export function isSiteSettingsSaveSuccessful( state, siteId ) {
 export function getSiteSettingsSaveError( state, siteId ) {
 	return get( state.siteSettings.saveRequests, [ siteId, 'error' ], false );
 }
+
+/**
+ * Returns the last site settings request ID
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {String}         The request error
+ */
+export function getSiteSettingsSaveRequestId( state, siteId ) {
+	return get( state.siteSettings.saveRequests, [ siteId, 'id' ] );
+}

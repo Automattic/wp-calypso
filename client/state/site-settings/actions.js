@@ -82,11 +82,22 @@ export function requestSiteSettings( siteId ) {
 	};
 }
 
-export function saveSiteSettings( siteId, settings ) {
+/**
+ *
+ * Returns an action thunk which, when invoked, triggers a network request to
+ * save site settings
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {Object} settings Settings to be saved
+ * @param  {String} id       Save Request id
+ * @return {Function}        Action thunk
+ */
+export function saveSiteSettings( siteId, settings, id = 'default' ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
-			siteId
+			siteId,
+			id
 		} );
 		// Optimistic update
 		dispatch( updateSiteSettings( siteId, settings ) );
@@ -96,14 +107,16 @@ export function saveSiteSettings( siteId, settings ) {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
-					siteId
+					siteId,
+					id
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId,
-					error
+					error,
+					id
 				} );
 			} );
 	};

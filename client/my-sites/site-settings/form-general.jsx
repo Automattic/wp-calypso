@@ -43,6 +43,7 @@ import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettings,
 	getSiteSettingsSaveError,
+	getSiteSettingsSaveRequestId
 } from 'state/site-settings/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
@@ -50,6 +51,8 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
+
+const FORM_ID = 'GENERAL_SETTINGS_FORM';
 
 class SiteSettingsFormGeneral extends Component {
 	getFormSettings( settings ) {
@@ -142,8 +145,10 @@ class SiteSettingsFormGeneral extends Component {
 		) {
 			if ( nextProps.isSaveRequestSuccessful ) {
 				nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
-				nextProps.clearDirtyFields();
-				nextProps.markSaved();
+				if ( nextProps.saveRequestId === FORM_ID ) {
+					nextProps.clearDirtyFields();
+					nextProps.markSaved();
+				}
 			} else {
 				let text;
 				switch ( nextProps.saveRequestError.error ) {
@@ -191,7 +196,7 @@ class SiteSettingsFormGeneral extends Component {
 	submitForm() {
 		const { fields, site } = this.props;
 		this.props.removeNotice( 'site-settings-save' );
-		this.props.saveSiteSettings( site.ID, fields );
+		this.props.saveSiteSettings( site.ID, fields, FORM_ID );
 	}
 
 	onChangeField( field ) {
@@ -861,11 +866,13 @@ const connectComponent = connect(
 		const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const settings = getSiteSettings( state, siteId );
 		const saveRequestError = getSiteSettingsSaveError( state, siteId );
+		const saveRequestId = getSiteSettingsSaveRequestId( state, siteId );
 		return {
 			isRequestingSettings: isRequestingSettings && ! settings,
 			isSavingSettings,
 			isSaveRequestSuccessful,
 			saveRequestError,
+			saveRequestId,
 			settings,
 			siteId
 		};
