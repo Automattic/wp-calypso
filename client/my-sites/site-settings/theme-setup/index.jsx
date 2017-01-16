@@ -49,11 +49,11 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 					<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button scary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
-						{ translate( 'Set Up From Scratch' ) }
-					</Button>
-					<Button disabled={ site && theme && ! isJetpack ? false : true }>
+					<Button primary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
 						{ translate( 'Set Up And Keep Content' ) }
+					</Button>
+					<Button scary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
+						{ translate( 'Set Up And Delete Content' ) }
 					</Button>
 				</ActionPanelFooter>
 			</ActionPanel>
