@@ -142,7 +142,6 @@ module.exports = {
 			? site.slug : route.getSiteFragment( context.path );
 
 		const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
-		const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
 		const wpcomFollowersList = new StatsList( {
 			siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
 		const emailFollowersList = new StatsList( {
@@ -157,7 +156,6 @@ module.exports = {
 				site: site,
 				followList: followList,
 				commentsList: commentsList,
-				tagsList: tagsList,
 				wpcomFollowersList: wpcomFollowersList,
 				emailFollowersList: emailFollowersList,
 				commentFollowersList: commentFollowersList,
