@@ -497,7 +497,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderApiCache() {
-		const { fields, translate, isRequestingSettings } = this.props;
+		const { fields, translate, isRequestingSettings, handleToggle } = this.props;
 
 		if ( ! this.showApiCacheCheckbox() ) {
 			return null;
@@ -509,7 +509,7 @@ class SiteSettingsFormGeneral extends Component {
 					className="is-compact"
 					checked={ !! fields.api_cache }
 					disabled={ isRequestingSettings }
-					onChange={ this.handleToggle( 'api_cache' ) }>
+					onChange={ handleToggle( 'api_cache' ) }>
 					<span className="site-settings__toggle-label">
 						{ translate(
 							'Use synchronized data to boost performance'
