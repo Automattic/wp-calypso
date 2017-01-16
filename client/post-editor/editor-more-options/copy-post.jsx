@@ -89,7 +89,7 @@ class EditorMoreOptionsCopyPost extends Component {
 				>
 					<Button borderless compact onClick={ this.openDialog }>
 						<Gridicon icon="clipboard" />
-						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a post to copy' ) }
+						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a page to copy' ) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
