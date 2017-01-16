@@ -94,6 +94,7 @@
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"signup/domain-first-flow": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,

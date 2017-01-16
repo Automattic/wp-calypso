@@ -100,6 +100,7 @@
 		"republicize": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
+		"signup/domain-first-flow": false,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
 		"support-user": true,

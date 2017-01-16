@@ -81,6 +81,7 @@
 		"republicize": false,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
+		"signup/domain-first-flow": false,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
