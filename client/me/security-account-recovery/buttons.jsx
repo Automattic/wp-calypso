@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 				{
 					this.props.isDeletable
 					? (
-						<button className={ 'security-accountrecovery-contact__remove' } onClick={ this.props.onDelete }>
+						<button className={ 'security-account-recovery-contact__remove' } onClick={ this.props.onDelete }>
 							<Gridicon icon="trash" size={ 24 } />
 							<span>{ this.translate( 'Remove' ) }</span>
 						</button>

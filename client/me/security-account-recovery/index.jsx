@@ -47,7 +47,7 @@ import {
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
 const SecurityAccountRecovery = ( props ) => (
-	<Main className="security-accountrecovery">
+	<Main className="security-account-recovery">
 		<QueryAccountRecoverySettings />
 
 		<MeSidebarNavigation />
@@ -57,7 +57,7 @@ const SecurityAccountRecovery = ( props ) => (
 		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 		<CompactCard>
-			<p className="security-accountrecovery__text">
+			<p className="security-account-recovery__text">
 				{ props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
 						'If you ever have problems accessing your account, WordPress.com will use what ' +
 						'you enter here to verify your identity.' ) }
