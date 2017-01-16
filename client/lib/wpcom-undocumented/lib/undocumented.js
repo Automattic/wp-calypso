@@ -72,7 +72,6 @@ Undocumented.prototype.accountRecoveryReset = function( userData ) {
  * @api public
  */
 Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/jumpstart/' }, fn );
 };
 
@@ -85,7 +84,6 @@ Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/jumpstart/', body: JSON.stringify( { active } ) },
@@ -114,7 +112,6 @@ Undocumented.prototype.jetpackModules = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/module/all/' }, fn );
 };
 
@@ -141,7 +138,6 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn
  * @api public
  */
 Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: true } ) },
@@ -172,7 +168,6 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
  * @api public
  */
 Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: false } ) },
@@ -188,7 +183,6 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
  * @api public
  */
 Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/settings/' }, fn );
 };
 
@@ -201,7 +195,6 @@ Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/settings/', body: JSON.stringify( settings ), json: true },
@@ -294,7 +287,6 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( {
 		path: '/jetpack-blogs/' + siteId + '/rest-api/',
 		body: {
