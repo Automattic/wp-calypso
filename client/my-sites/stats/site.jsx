@@ -102,7 +102,6 @@ module.exports = React.createClass( {
 		const queryDate = this.props.date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let nonPeriodicModules;
 		let videoList;
 		let podcastList;
 
@@ -218,7 +217,6 @@ module.exports = React.createClass( {
 							{ podcastList }
 						</div>
 					</div>
-					{ nonPeriodicModules }
 				</div>
 			</Main>
 		);
