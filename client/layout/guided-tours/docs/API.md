@@ -221,16 +221,16 @@ combineTours( {
 
 One of the features of Guided Tours is the ability to target DOM elements in Calypso. Targeting can be achieved in two ways:
 
-- `data-tip-target` attribute on the target element
+- `data-tip-target` attribute on the target element (recommended)
 - using any CSS selector
 
-To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
+To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute. We run the query selector on every render so it possible to move elements around.
 
 ### [data-tip-target]
 
-Mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case.
+Mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case. In your tour, just insert the value of your desired `[data-tip-target]` into the `target` prop.
 
-In your tour, just insert the value of your desired `[data-tip-target]` into the `target` prop.
+Using this method over CSS classes has several benefits, some of them are more explicit tagging of elements and decoupling the logic from CSS which should generally be used for styling. It is also less likely to be changed by somebody else as it has uncommon name and can be easily traced to Guided Tours Framework.
 
 Example: you want to position a step of your tour to point to some input element.
 
@@ -244,7 +244,7 @@ Example: you want to position a step of your tour to point to some input element
 
 ### CSS selector
 
-There are cases when it might be a better idea to target an element by a CSS selector.
+There are cases when it might be a better idea to target an element by a CSS selector. You might use some classes to get elements in certain state or you might not be 100% in control of the markup (think controls of an external library).
 
 You declare that you are using a CSS selector by starting a value of the `target` prop with a dot or a space character. Only one element can be used as a target: the first one matching the selector will be used.
 
