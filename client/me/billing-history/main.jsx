@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { isEmpty } from 'lodash';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,32 +20,33 @@ import UpcomingChargesTable from './upcoming-charges-table';
 import SectionHeader from 'components/section-header';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import { getBillingTransactions } from 'state/selectors';
 
 const BillingHistory = React.createClass( {
-	mixins: [ observe( 'billingData', 'sites' ), eventRecorder ],
+	mixins: [ observe( 'sites' ), eventRecorder ],
 
 	render() {
-		const { billingData, sites, translate } = this.props;
-		const data = billingData.get();
-		const hasBillingHistory = ! isEmpty( data.billingHistory );
+		const { transactions, sites, translate } = this.props;
 
 		return (
 			<Main className="billing-history">
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<MeSidebarNavigation />
+				<QueryBillingTransactions />
 				<PurchasesHeader section={ 'billing' } />
 				<Card className="billing-history__receipts">
-					<BillingHistoryTable transactions={ data.billingHistory } />
+					<BillingHistoryTable transactions={ transactions.past } />
 				</Card>
 				<Card href={ purchasesPaths.purchasesRoot() }>
 					{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
 				</Card>
-				{ hasBillingHistory &&
+				{ transactions.past &&
 					<div>
 						<SectionHeader label={ translate( 'Upcoming Charges' ) } />
 						<Card className="billing-history__upcoming-charges">
-							<UpcomingChargesTable sites={ sites } transactions={ data.upcomingCharges } />
+							<UpcomingChargesTable sites={ sites } transactions={ transactions.upcoming } />
 						</Card>
 					</div>
 				}
@@ -57,4 +58,8 @@ const BillingHistory = React.createClass( {
 	}
 } );
 
-export default localize( BillingHistory );
+export default connect(
+	( state ) => ( {
+		transactions: getBillingTransactions( state )
+	} ),
+)( localize( BillingHistory ) );
