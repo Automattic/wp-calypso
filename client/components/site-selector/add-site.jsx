@@ -37,6 +37,9 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	getAddNewSiteUrl() {
+		if ( sites.getJetpack().length ) {
+			return '/jetpack/new/?ref=calypso-selector';
+		}
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	}
 
@@ -107,9 +110,9 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	render() {
-		if ( sites.getJetpack().length ) {
-			return this.renderButtonWithPopover();
-		}
+		//if ( sites.getJetpack().length ) {
+		//	return this.renderButtonWithPopover();
+		//}
 
 		return this.renderButton();
 	}

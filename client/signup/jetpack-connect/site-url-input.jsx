@@ -18,6 +18,12 @@ import untrailingslashit from 'lib/route/untrailingslashit';
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',
 
+	componentDidMount() {
+		if ( this.props.url ) {
+			this.setState( { value: untrailingslashit( this.props.url ), shownValue: this.props.url } );
+		}
+	},
+
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
 			return;
@@ -32,13 +38,15 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			value: ''
+			value: '',
+			shownValue: ''
 		};
 	},
 
 	onChange( event ) {
 		this.setState( {
-			value: untrailingslashit( event.target.value )
+			value: untrailingslashit( event.target.value ),
+			shownValue: event.target.value
 		}, this.props.onChange );
 	},
 
@@ -84,6 +92,17 @@ export default React.createClass( {
 
 	render() {
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
+		const textInputProps = {
+			ref: "siteUrl",
+			id: "siteUrl",
+			autoCapitalize: "off",
+			autoFocus: "autofocus",
+			onChange: this.onChange ,
+			disabled: this.props.isFetching,
+			placeholder: this.translate( 'http://www.yoursite.com' ),
+			onKeyUp: this.handleKeyPress,
+			value: this.state.shownValue || ''
+		}
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
@@ -91,15 +110,7 @@ export default React.createClass( {
 					<Gridicon
 						size={ 24 }
 						icon="globe" />
-					<FormTextInput
-						ref="siteUrl"
-						id="siteUrl"
-						autoCapitalize="off"
-						autoFocus="autofocus"
-						onChange={ this.onChange }
-						disabled={ this.props.isFetching }
-						placeholder={ this.translate( 'http://www.yoursite.com' ) }
-						onKeyUp={ this.handleKeyPress } />
+					<FormTextInput { ...textInputProps } />
 					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
 						: null }

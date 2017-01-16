@@ -1,0 +1,235 @@
+[
+	{
+		"hash": "f1c04a491c8f1943f796",
+		"file": "commons.dc511793f80b8ab1183e.js",
+		"url": "/calypso/commons.dc511793f80b8ab1183e.js"
+	},
+	{
+		"name": "posts-pages",
+		"hash": "576e22bbb4629f1e207d",
+		"file": "posts-pages.576e22bbb4629f1e207d.js",
+		"url": "/calypso/posts-pages.576e22bbb4629f1e207d.js"
+	},
+	{
+		"name": "signup",
+		"hash": "60ee18b1c82fa4863f2f",
+		"file": "signup.60ee18b1c82fa4863f2f.js",
+		"url": "/calypso/signup.60ee18b1c82fa4863f2f.js"
+	},
+	{
+		"name": "post-editor",
+		"hash": "bb8698964b3e3627ba85",
+		"file": "post-editor.bb8698964b3e3627ba85.js",
+		"url": "/calypso/post-editor.bb8698964b3e3627ba85.js"
+	},
+	{
+		"name": "devdocs",
+		"hash": "3a1dae6fc95c13603d2c",
+		"file": "devdocs.3a1dae6fc95c13603d2c.js",
+		"url": "/calypso/devdocs.3a1dae6fc95c13603d2c.js"
+	},
+	{
+		"name": "reader-post-recomendations",
+		"hash": "a96380a91431ca13785b",
+		"file": "reader-post-recomendations.a96380a91431ca13785b.js",
+		"url": "/calypso/reader-post-recomendations.a96380a91431ca13785b.js"
+	},
+	{
+		"name": "upgrades",
+		"hash": "822c15188d05e711b1fa",
+		"file": "upgrades.822c15188d05e711b1fa.js",
+		"url": "/calypso/upgrades.822c15188d05e711b1fa.js"
+	},
+	{
+		"name": "reader-tags",
+		"hash": "e9440de77b4389900a8d",
+		"file": "reader-tags.e9440de77b4389900a8d.js",
+		"url": "/calypso/reader-tags.e9440de77b4389900a8d.js"
+	},
+	{
+		"name": "reader",
+		"hash": "2fb46cb1de86effa7c06",
+		"file": "reader.2fb46cb1de86effa7c06.js",
+		"url": "/calypso/reader.2fb46cb1de86effa7c06.js"
+	},
+	{
+		"name": "themes",
+		"hash": "25d9553d1fb26e55a75f",
+		"file": "themes.25d9553d1fb26e55a75f.js",
+		"url": "/calypso/themes.25d9553d1fb26e55a75f.js"
+	},
+	{
+		"name": "plugins",
+		"hash": "885cc6e5a6bdcc2ad437",
+		"file": "plugins.885cc6e5a6bdcc2ad437.js",
+		"url": "/calypso/plugins.885cc6e5a6bdcc2ad437.js"
+	},
+	{
+		"name": "theme",
+		"hash": "9da0226034e1b56a974e",
+		"file": "theme.9da0226034e1b56a974e.js",
+		"url": "/calypso/theme.9da0226034e1b56a974e.js"
+	},
+	{
+		"name": "settings",
+		"hash": "b691b32ba9c659c6b7a4",
+		"file": "settings.b691b32ba9c659c6b7a4.js",
+		"url": "/calypso/settings.b691b32ba9c659c6b7a4.js"
+	},
+	{
+		"name": "security",
+		"hash": "a245c403012633c851c6",
+		"file": "security.a245c403012633c851c6.js",
+		"url": "/calypso/security.a245c403012633c851c6.js"
+	},
+	{
+		"name": "stats",
+		"hash": "7ff733af13ecf6150d6a",
+		"file": "stats.7ff733af13ecf6150d6a.js",
+		"url": "/calypso/stats.7ff733af13ecf6150d6a.js"
+	},
+	{
+		"name": "purchases",
+		"hash": "8d34c83b7ab2d3d15618",
+		"file": "purchases.8d34c83b7ab2d3d15618.js",
+		"url": "/calypso/purchases.8d34c83b7ab2d3d15618.js"
+	},
+	{
+		"name": "notification-settings",
+		"hash": "cd9c030babb0ef5aa631",
+		"file": "notification-settings.cd9c030babb0ef5aa631.js",
+		"url": "/calypso/notification-settings.cd9c030babb0ef5aa631.js"
+	},
+	{
+		"name": "plans",
+		"hash": "3ec9c35dffd12686ddcf",
+		"file": "plans.3ec9c35dffd12686ddcf.js",
+		"url": "/calypso/plans.3ec9c35dffd12686ddcf.js"
+	},
+	{
+		"name": "people",
+		"hash": "b60bb339a3c3bf8898ee",
+		"file": "people.b60bb339a3c3bf8898ee.js",
+		"url": "/calypso/people.b60bb339a3c3bf8898ee.js"
+	},
+	{
+		"name": "menus",
+		"hash": "033a6299d08f0935c98c",
+		"file": "menus.033a6299d08f0935c98c.js",
+		"url": "/calypso/menus.033a6299d08f0935c98c.js"
+	},
+	{
+		"name": "help",
+		"hash": "b5812ab738e03d4774f3",
+		"file": "help.b5812ab738e03d4774f3.js",
+		"url": "/calypso/help.b5812ab738e03d4774f3.js"
+	},
+	{
+		"name": "sharing",
+		"hash": "51ff4869b9e460bdcc96",
+		"file": "sharing.51ff4869b9e460bdcc96.js",
+		"url": "/calypso/sharing.51ff4869b9e460bdcc96.js"
+	},
+	{
+		"name": "media",
+		"hash": "9c642abe5263e75f0184",
+		"file": "media.9c642abe5263e75f0184.js",
+		"url": "/calypso/media.9c642abe5263e75f0184.js"
+	},
+	{
+		"name": "billing",
+		"hash": "71c55d18761ad9588c56",
+		"file": "billing.71c55d18761ad9588c56.js",
+		"url": "/calypso/billing.71c55d18761ad9588c56.js"
+	},
+	{
+		"name": "account",
+		"hash": "c699b0fb33cb8d45ac94",
+		"file": "account.c699b0fb33cb8d45ac94.js",
+		"url": "/calypso/account.c699b0fb33cb8d45ac94.js"
+	},
+	{
+		"name": "reader-following",
+		"hash": "55af54c59aac06db5676",
+		"file": "reader-following.55af54c59aac06db5676.js",
+		"url": "/calypso/reader-following.55af54c59aac06db5676.js"
+	},
+	{
+		"name": "accept-invite",
+		"hash": "d56f0541fddcb88bfc88",
+		"file": "accept-invite.d56f0541fddcb88bfc88.js",
+		"url": "/calypso/accept-invite.d56f0541fddcb88bfc88.js"
+	},
+	{
+		"name": "reader-list",
+		"hash": "601a07afff5ff52abc95",
+		"file": "reader-list.601a07afff5ff52abc95.js",
+		"url": "/calypso/reader-list.601a07afff5ff52abc95.js"
+	},
+	{
+		"name": "me",
+		"hash": "427cd5295b5616be2115",
+		"file": "me.427cd5295b5616be2115.js",
+		"url": "/calypso/me.427cd5295b5616be2115.js"
+	},
+	{
+		"name": "posts-custom",
+		"hash": "ef0415a8a0d68ced87d9",
+		"file": "posts-custom.ef0415a8a0d68ced87d9.js",
+		"url": "/calypso/posts-custom.ef0415a8a0d68ced87d9.js"
+	},
+	{
+		"name": "customize",
+		"hash": "b3cb584eac37a71aca3a",
+		"file": "customize.b3cb584eac37a71aca3a.js",
+		"url": "/calypso/customize.b3cb584eac37a71aca3a.js"
+	},
+	{
+		"name": "ads",
+		"hash": "78cab7d8b0c38a576121",
+		"file": "ads.78cab7d8b0c38a576121.js",
+		"url": "/calypso/ads.78cab7d8b0c38a576121.js"
+	},
+	{
+		"name": "reader-search",
+		"hash": "76b788e96249e7da0b06",
+		"file": "reader-search.76b788e96249e7da0b06.js",
+		"url": "/calypso/reader-search.76b788e96249e7da0b06.js"
+	},
+	{
+		"name": "reader-activities",
+		"hash": "4c0459cafc8814e3899b",
+		"file": "reader-activities.4c0459cafc8814e3899b.js",
+		"url": "/calypso/reader-activities.4c0459cafc8814e3899b.js"
+	},
+	{
+		"name": "mailing-lists",
+		"hash": "e1eaecc68b9d1f537397",
+		"file": "mailing-lists.e1eaecc68b9d1f537397.js",
+		"url": "/calypso/mailing-lists.e1eaecc68b9d1f537397.js"
+	},
+	{
+		"name": "discover",
+		"hash": "a71abde31bcae6b0eb9c",
+		"file": "discover.a71abde31bcae6b0eb9c.js",
+		"url": "/calypso/discover.a71abde31bcae6b0eb9c.js"
+	},
+	{
+		"name": "vendor",
+		"hash": "b0e7624a2f229cd63dba",
+		"file": "vendor.dc511793f80b8ab1183e.js",
+		"url": "/calypso/vendor.dc511793f80b8ab1183e.js"
+	},
+	{
+		"name": "devmodules",
+		"hash": "0a419593c5e874b0752d",
+		"file": "devmodules.0a419593c5e874b0752d.js",
+		"url": "/calypso/devmodules.0a419593c5e874b0752d.js"
+	},
+	{
+		"name": "build-wpcalypso",
+		"hash": "2883406c6eb308fb74fe",
+		"file": "build-wpcalypso.dc511793f80b8ab1183e.js",
+		"url": "/calypso/build-wpcalypso.dc511793f80b8ab1183e.js"
+	}
+]
