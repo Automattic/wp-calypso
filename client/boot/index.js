@@ -410,7 +410,7 @@ function reduxStoreReady( reduxStore ) {
 
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
-
+			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
 			renderLayout( context.store );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
