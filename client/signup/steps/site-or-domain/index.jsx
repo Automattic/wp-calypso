@@ -9,6 +9,9 @@ import React, { Component } from 'react';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
+// TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
+import BlogImage from 'signup/steps/design-type-with-store/blog-image';
+import PageImage from 'signup/steps/design-type-with-store/page-image';
 
 export default class SiteOrDomain extends Component {
 	getChoices() {
@@ -16,29 +19,12 @@ export default class SiteOrDomain extends Component {
 			{
 				type: 'page',
 				label: 'Start a new site',
-				image: (
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230">
-						<rect x="15" y="15" fill="#E8F0F5" width="280" height="70" />
-						<rect x="15" y="98" fill="#C3EF96" width="194" height="85" />
-						<rect x="15" y="195" fill="#C3EF96" width="194" height="35" />
-					</svg>
-				)
+				image: <BlogImage />
 			},
 			{
 				type: 'domain',
 				label: 'Just buy a domain',
-				image: (
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230">
-						<rect fill="#E8F0F5" width="310" height="110" />
-						<rect x="114" y="205" fill="#E8F0F5" width="82" height="25" />
-						<rect x="15" y="205" fill="#E8F0F5" width="82" height="25" />
-						<rect x="213" y="205" fill="#E8F0F5" width="82" height="25" />
-						<rect x="15" y="36" fill="#D2DEE6" width="153" height="13" />
-						<rect x="15" y="59" fill="#D2DEE6" width="113" height="13" />
-						<rect x="15" y="82" fill="#C3EF96" width="30" height="13" />
-						<rect x="15" y="125" fill="#C3EF96" width="280" height="65" />
-					</svg>
-				)
+				image: <PageImage />
 			},
 		];
 	}
