@@ -1,38 +1,37 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-var SidebarNavigation = require( 'components/sidebar-navigation' ),
-	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
-	SiteIcon = require( 'components/site-icon' ),
-	sites = require( 'lib/sites-list' )();
+import SidebarNavigation from 'components/sidebar-navigation';
+import AllSitesIcon from 'my-sites/all-sites-icon';
+import SiteIcon from 'components/site-icon';
+import { getSelectedSite } from 'state/ui/selectors';
+import sitesFactory from 'lib/sites-list';
 
-module.exports = React.createClass( {
-	displayName: 'SidebarNavigation',
+function SidebarNav( { translate, selectedSite } ) {
+	const sites = sitesFactory();
+	const currentSiteTitle = selectedSite ? selectedSite.title : translate( 'All Sites' );
+	const allSitesClass = classNames( { 'all-sites': !! selectedSite } );
 
-	render: function() {
-		var site = sites.getSelectedSite(),
-			currentSiteTitle = site.title,
-			allSitesClass;
+	return (
+		<SidebarNavigation
+			linkClassName={ allSitesClass }
+			sectionName="site"
+			sectionTitle={ currentSiteTitle }>
+			{ selectedSite
+				? <SiteIcon site={ selectedSite } size={ 30 } />
+				: <AllSitesIcon sites={ sites.get() } /> }
+		</SidebarNavigation>
+	);
+}
 
-		if ( ! site ) {
-			currentSiteTitle = this.translate( 'All Sites' );
-			allSitesClass = 'all-sites';
-		}
-
-		return (
-			<SidebarNavigation
-				linkClassName={ allSitesClass }
-				sectionName="site"
-				sectionTitle={ currentSiteTitle }>
-				{ site ?
-					<SiteIcon site={ site } size={ 30 } /> :
-					<AllSitesIcon sites={ sites.get() } /> }
-			</SidebarNavigation>
-		);
-	}
-} );
+export default connect( ( state ) => {
+	return { selectedSite: getSelectedSite( state ) };
+} )( localize( SidebarNav ) );
