@@ -11,7 +11,7 @@ import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import FollowButton from 'reader/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
