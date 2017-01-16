@@ -23,16 +23,17 @@ const BillingReceipt = React.createClass( {
 
 	render() {
 		const { transaction, translate } = this.props;
+		if ( ! transaction ) {
+			return this.renderPlaceholder();
+		}
+
 		const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
 		const serviceLink = <a href={ transaction.url } title={ title } />;
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Billing History' ) } />
-				<QueryBillingTransactions />
-				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
-					{ translate( 'Billing History' ) }
-				</HeaderCake>
+				{ this.renderTitle() }
+
 				<Card compact className="billing-history__receipt-card">
 					<div className="billing-history__app-overview">
 						<img src={ transaction.icon } title={ transaction.service } />
@@ -128,6 +129,37 @@ const BillingReceipt = React.createClass( {
 				<strong>{ translate( 'Payment Method' ) }</strong>
 				<span>{ text }</span>
 			</li>
+		);
+	},
+
+	renderTitle() {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<DocumentHead title={ translate( 'Billing History' ) } />
+				<QueryBillingTransactions />
+				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
+					{ translate( 'Billing History' ) }
+				</HeaderCake>
+			</div>
+		);
+	},
+
+	renderPlaceholder() {
+		const { translate } = this.props;
+
+		return (
+			<Main>
+				{ this.renderTitle() }
+				<Card compact className="billing-history__receipt-card">
+					<div className="billing-history__receipt">
+						<div className="billing-history__receipt-loading">
+							{ translate( 'Loading…' ) }
+						</div>
+					</div>
+				</Card>
+			</Main>
 		);
 	},
 
