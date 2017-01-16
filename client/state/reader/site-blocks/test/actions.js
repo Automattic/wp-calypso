@@ -21,6 +21,8 @@ const sampleSuccessResponse = require( './sample-responses.json' );
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
+	const dispatchSpy = sinon.stub();
+	dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 
 	beforeEach( () => {
 		spy.reset();
@@ -35,8 +37,6 @@ describe( 'actions', () => {
 
 		it( 'should dispatch properly when receiving a valid response', () => {
 			const siteId = 123;
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			const request = requestSiteBlock( siteId )( dispatchSpy );
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
@@ -65,8 +65,6 @@ describe( 'actions', () => {
 
 		it( 'should dispatch properly when receiving a valid response', () => {
 			const siteId = 123;
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			const request = requestSiteUnblock( siteId )( dispatchSpy );
 
 			expect( dispatchSpy ).to.have.been.calledWith( {
