@@ -30,13 +30,13 @@ class ManageContact extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="security-checkup-contact__header">
-				<div className="security-checkup-contact__header-info">
-					<span className="security-checkup-contact__header-title">{ this.props.title }</span>
+			<div className="security-accountrecovery-contact__header">
+				<div className="security-accountrecovery-contact__header-info">
+					<span className="security-accountrecovery-contact__header-title">{ this.props.title }</span>
 					{
 						isEditing
 						? null
-						: <span className="security-checkup-contact__header-subtitle">{ this.props.subtitle }</span>
+						: <span className="security-accountrecovery-contact__header-subtitle">{ this.props.subtitle }</span>
 					}
 				</div>
 
@@ -44,7 +44,7 @@ class ManageContact extends Component {
 					isEditing
 					? null
 					: (
-						<div className="security-checkup-contact__header-action">
+						<div className="security-accountrecovery-contact__header-action">
 							<FormButton
 								disabled={ this.props.disabled }
 								isPrimary={ false }
@@ -63,7 +63,7 @@ class ManageContact extends Component {
 
 		if ( views.EDITING === this.state.currentView ) {
 			view = (
-				<div className="security-checkup-contact__detail">
+				<div className="security-accountrecovery-contact__detail">
 					{
 						React.cloneElement( this.props.children, {
 							onCancel: this.onCancel,
@@ -81,8 +81,8 @@ class ManageContact extends Component {
 	renderLoading() {
 		return (
 			<div>
-				<p className="security-checkup-contact__placeholder-heading"> &nbsp; </p>
-				<p className="security-checkup-contact__placeholder-text"> &nbsp; </p>
+				<p className="security-accountrecovery-contact__placeholder-heading"> &nbsp; </p>
+				<p className="security-accountrecovery-contact__placeholder-text"> &nbsp; </p>
 			</div>
 		);
 	}
@@ -93,7 +93,7 @@ class ManageContact extends Component {
 		}
 
 		return (
-			<div className="security-checkup-contact">
+			<div className="security-accountrecovery-contact">
 				{ this.renderHeader() }
 				{ this.renderEdit() }
 			</div>
@@ -127,7 +127,7 @@ class ManageContact extends Component {
 	}
 
 	recordEvent( action ) {
-		const event = `calypso_security_checkup_${ this.props.type }_${ action }_click`;
+		const event = `calypso_security_accountrecovery_${ this.props.type }_${ action }_click`;
 		analytics.tracks.recordEvent( event );
 	}
 }

@@ -89,16 +89,16 @@ export default {
 		);
 	},
 
-	securityCheckup( context ) {
-		const CheckupComponent = require( 'me/security-checkup' ),
+	accountRecovery( context ) {
+		const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
 			basePath = context.path;
 
-		context.store.dispatch( setTitle( i18n.translate( 'Security Checkup', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Account Recovery', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Security Checkup' );
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
 		renderWithReduxStore(
-			React.createElement( CheckupComponent,
+			React.createElement( AccountRecoveryComponent,
 				{
 					userSettings: userSettings,
 					path: context.path
