@@ -11,6 +11,8 @@ var debug = require( 'debug' )( 'calypso:analytics' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );
 
+import cookie from 'cookie';
+
 /**
  * Internal dependencies
  */
@@ -20,6 +22,7 @@ var config = require( 'config' ),
 	_user;
 
 import { retarget } from 'lib/analytics/ad-tracking';
+import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 import emitter from 'lib/mixins/emitter';
 
 // Load tracking scripts
@@ -189,8 +192,18 @@ var analytics = {
 			}
 
 			return btoa( String.fromCharCode.apply( String, randomBytes ) );
-		}
+		},
 
+		/**
+		 * Returns the anoymous id stored in the `tk_ai` cookie
+		 *
+		 * @returns {String} - The Tracks anonymous user id
+		 */
+		anonymousUserId: function() {
+			const cookies = cookie.parse( document.cookie );
+
+			return cookies.tk_ai;
+		}
 	},
 
 	statsd: {
@@ -307,8 +320,14 @@ var analytics = {
 	},
 
 	identifyUser: function() {
+		const anonymousUserId = this.tracks.anonymousUserId();
+
 		// Don't identify the user if we don't have one
 		if ( _user && _user.initialized ) {
+			if ( anonymousUserId ) {
+				recordAliasInFloodlight( anonymousUserId, _user.get().ID );
+			}
+
 			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
 		}
 	},
