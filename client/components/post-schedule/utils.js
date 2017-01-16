@@ -1,62 +1,108 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
+
+/**
+ * Check whether is a valid gmtOffset value.
+ * Basically it should be a number.
+ *
+ * @param  {*}  gmtOffset - gmt offset
+ * @return {Boolean} is it a valid gtm offset?
+ */
+const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
+
+/**
+ * Return localized date depending of given timezone or gmtOffset
+ * parameters.
+ *
+ * @param {Moment} date - date instance
+ * @param {String} tz - timezone
+ * @param {Number} gmt - gmt offset in minutes
+ * @return {Moment} localized date
+ */
+const getLocalizedDate = ( date, tz, gmt ) => {
+	date = moment( date );
+
+	if ( tz ) {
+		date.tz( tz );
+	} else if ( isValidGMTOffset( gmt ) ) {
+		date.utcOffset( gmt );
+	}
+
+	return date;
+};
+
+const getDateInLocalUTC = date => moment( date.format ? date.format() : date );
+
+const getTimeOffset = ( date, tz, gmt ) => {
+	const userLocalDate = getDateInLocalUTC( date );
+	const localizedDate = getLocalizedDate( date, tz, gmt );
+
+	return userLocalDate.utcOffset() - localizedDate.utcOffset();
+};
+
+const convertDateToUserLocation = ( date, tz, gmt ) => {
+	if ( ! ( tz || isValidGMTOffset( gmt ) ) ) {
+		return moment( date );
+	}
+
+	return getDateInLocalUTC( date )
+		.subtract( getTimeOffset( date, tz, gmt ), 'minute' );
+};
+
+const convertDateToGivenOffset = ( date, tz, gmt ) => {
+	date = getLocalizedDate( date, tz, gmt )
+		.add( getTimeOffset( date, tz, gmt ), 'minute' );
+
+	if ( ! tz && isValidGMTOffset( gmt ) ) {
+		date.utcOffset( gmt );
+	}
+
+	return date;
+};
+
+const convertMinutesToHHMM = minutes => {
+	const hours = Math.trunc( minutes / 60 );
+	if ( ! ( minutes / 60 % 1 ) ) {
+		return String( hours );
+	}
+
+	minutes = Math.abs( minutes % 60 );
+	return hours + ':' + ( minutes < 10 ? ( '0' + minutes ) : minutes );
+};
+
+const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
+
+/**
+ * Check if the given value is useful to be assigned like hours or minutes.
+ * This function has been thought to get the data entered
+ * by the used through of an input element.
+ *
+ * @param {String} value - time value to check
+ * @return {Number|Boolean} valid number or `false`
+ */
+const parseAndValidateNumber = value => {
+	value = String( value );
+	if ( value !== '0' && value !== '00' && ( value[ 0 ] === '0' || Number( value ) > 99 ) ) {
+		value = Number( value.substr( 1 ) );
+	}
+
+	if ( ! ( isNaN( Number( value ) ) || Number( value ) < 0 || value.length > 2 ) ) {
+		return Number( value );
+	}
+
+	return false;
+};
 
 export default {
-	isValidGMTOffset( gmtOffset ) {
-		return 'number' === typeof gmtOffset;
-	},
-
-	/**
-	 * Return localized date depending of given timezone and gmtOffset
-	 * parameters.
-	 *
-	 * @param {Moment} date - date instance
-	 * @param {String} tz - timezone
-	 * @param {Number} gmt - gmt offset
-	 * @return {Moment} localized date
-	 */
-	getLocalizedDate( date, tz, gmt ) {
-		date = i18n.moment( date );
-
-		if ( tz ) {
-			date.tz( tz );
-		} else if ( this.isValidGMTOffset( gmt ) ) {
-			date.utcOffset( gmt );
-		}
-
-		return date;
-	},
-
-	convertDateToUserLocation( date, tz, gmt ) {
-		if ( ! ( tz || this.isValidGMTOffset( gmt ) ) ) {
-			return i18n.moment( date );
-		}
-
-		return this.getDateInLocalUTC( date )
-			.subtract( this.getTimeOffset( date, tz, gmt ), 'minute' );
-	},
-
-	convertDateToGivenOffset( date, tz, gmt ) {
-		date = this.getLocalizedDate( date, tz, gmt )
-			.add( this.getTimeOffset( date, tz, gmt ), 'minute' );
-
-		if ( ! tz && this.isValidGMTOffset( gmt ) ) {
-			date.utcOffset( gmt );
-		};
-
-		return date;
-	},
-
-	getTimeOffset( date, tz, gmt ) {
-		const userLocalDate = this.getDateInLocalUTC( date ),
-			localizedDate = this.getLocalizedDate( date, tz, gmt );
-
-		return userLocalDate.utcOffset() - localizedDate.utcOffset();
-	},
-
-	getDateInLocalUTC( date ) {
-		return i18n.moment( date.format ? date.format() : date )
-	}
-}
+	convertDateToGivenOffset,
+	convertDateToUserLocation,
+	convertHoursToHHMM,
+	convertMinutesToHHMM,
+	getDateInLocalUTC,
+	getLocalizedDate,
+	getTimeOffset,
+	isValidGMTOffset,
+	parseAndValidateNumber
+};

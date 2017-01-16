@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import i18n from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,42 +13,34 @@ import viewport from 'lib/viewport';
 /**
  * Local dependencies
  */
-import utils from './utils';
+import {
+	isValidGMTOffset,
+	parseAndValidateNumber
+} from './utils';
 
 /**
  * Globals
  */
 const noop = () => {};
 
-/**
- * Check if the given value is useful to use in time format
- * @param {String} value - time value to check
- * @return {String} checked value
- */
-function checkTimeValue( value ) {
-	if ( value !== '0' && value !== '00' && ( value[0] === '0' || Number( value ) > 99 ) ) {
-		value = value.substr( 1 );
-	}
-
-	if ( ! ( isNaN( Number( value ) ) || Number( value ) < 0 || value.length > 2 ) ) {
-		return value;
-	}
-
-	return false;
-}
-
 class PostScheduleClock extends Component {
+	constructor() {
+		super( ...arguments );
 
-	handleKeyDown( field, event ) {
-		var operation = event.keyCode - 39,
-			value = Number( event.target.value ),
-			modifiers = this.getTimeValues();
+		// bounds
+		this.adjustHour = event => this.handleKeyDown( event, 'hour' );
+		this.adjustMinute = event => this.handleKeyDown( event, 'minute' );
+	}
+
+	handleKeyDown( event, field ) {
+		const operation = event.keyCode - 39;
+		const modifiers = this.getTimeValues();
 
 		if ( ! ( -1 === operation || 1 === operation ) ) {
 			return null;
 		}
 
-		value -= operation;
+		let value = Number( event.target.value ) - operation;
 
 		if ( 'hour' === field ) {
 			value = value > 23 ? 0 : value;
@@ -60,13 +52,18 @@ class PostScheduleClock extends Component {
 
 		modifiers[ field ] = value;
 
-		this.setTime( modifiers );
+		this.setTime( event, modifiers );
 	}
 
 	getTimeValues() {
-		var modifiers = {},
-			hour = checkTimeValue( this.refs.timeHourRef.value ),
-			minute = checkTimeValue( this.refs.timeMinuteRef.value );
+		const {
+			hourReference,
+			minuteRef
+		} = this.refs;
+
+		const hour = parseAndValidateNumber( hourReference.value );
+		const minute = parseAndValidateNumber( minuteRef.value );
+		const modifiers = {};
 
 		if ( false !== hour && hour < 24 ) {
 			modifiers.hour = Number( hour );
@@ -79,57 +76,32 @@ class PostScheduleClock extends Component {
 		return modifiers;
 	}
 
-	setTime( modifiers ) {
-		let date = i18n.moment( this.props.date ).set( modifiers );
+	setTime = ( event, modifiers = this.getTimeValues() ) => {
+		const date = moment( this.props.date ).set( modifiers );
 		this.props.onChange( date, modifiers );
 	}
 
-	render() {
-		return (
-			<div className="post-schedule__clock">
-				<input
-					className="post-schedule__clock_time"
-					name="post-schedule__clock_hour"
-					ref="timeHourRef"
-					value={ this.props.date.format( 'HH' ) }
-					onChange={ () => {
-						this.setTime( this.getTimeValues() );
-					} }
-					onKeyDown={ this.handleKeyDown.bind( this, 'hour' ) }
-					type="text" />
-
-				<span className="post-schedule__clock-divisor">:</span>
-
-				<input
-					className="post-schedule__clock_time"
-					name="post-schedule__clock_minute"
-					ref="timeMinuteRef"
-					value={ this.props.date.format( 'mm' ) }
-					onChange={ () => {
-						this.setTime( this.getTimeValues() );
-					} }
-					onKeyDown={ this.handleKeyDown.bind( this, 'minute' ) }
-					type="text" />
-
-				{ this.renderTimezoneBox() }
-			</div>
-		);
-	}
-
 	renderTimezoneBox() {
-		if ( ! ( this.props.timezone || utils.isValidGMTOffset( this.props.gmtOffset ) ) ) {
+		const {
+			date,
+			gmtOffset,
+			timezone,
+			translate
+		} = this.props;
+
+		if ( ! ( timezone || isValidGMTOffset( gmtOffset ) ) ) {
 			return;
 		}
 
 		let diffInHours, formatZ;
 
-		if ( this.props.timezone ) {
-			let tzDate = this.props.date.clone().tz( this.props.timezone );
-			diffInHours = tzDate.utcOffset() - i18n.moment().utcOffset();
+		if ( timezone ) {
+			const tzDate = date.clone().tz( timezone );
+			diffInHours = tzDate.utcOffset() - moment().utcOffset();
 			formatZ = tzDate.format( ' Z ' );
-		} else if ( utils.isValidGMTOffset( this.props.gmtOffset ) ) {
-			let utcDate = this.props.date.clone().utcOffset( this.props.gmtOffset );
-			diffInHours = utcDate.utcOffset() - i18n.moment().utcOffset();
+		} else if ( isValidGMTOffset( gmtOffset ) ) {
+			const utcDate = date.clone().utcOffset( gmtOffset );
+			diffInHours = utcDate.utcOffset() - moment().utcOffset();
 			formatZ = utcDate.format( ' Z ' );
 		}
 
@@ -147,7 +119,7 @@ class PostScheduleClock extends Component {
 			<span>
 				<div className="post-schedule__clock-timezone">
 					{
-						i18n.translate( 'Site %(diff)s from you', {
+						translate( 'Site %(diff)s from you', {
 							args: { diff: diffInHours }
 						} )
 					}
@@ -156,8 +128,8 @@ class PostScheduleClock extends Component {
 						className="post-schedule__timezone-info"
 						position={ popoverPosition }
 					>
-						{ this.props.timezone
-							? this.props.timezone.replace( /(\/)/ig, ' $1 ' )
+						{ timezone
+							? timezone.replace( /(\/)/ig, ' $1 ' )
 							: 'UTC'
 						}
 						{ formatZ }
@@ -166,7 +138,37 @@ class PostScheduleClock extends Component {
 			</span>
 		);
 	}
-};
+
+	render() {
+		const { date } = this.props;
+
+		return (
+			<div className="post-schedule__clock">
+				<input
+					className="post-schedule__clock-time"
+					name="post-schedule__clock_hour"
+					ref="hourReference"
+					value={ date.format( 'HH' ) }
+					onChange={ this.setTime }
+					onKeyDown={ this.adjustHour }
+					type="text" />
+
+				<span className="post-schedule__clock-divisor">:</span>
+
+				<input
+					className="post-schedule__clock-time"
+					name="post-schedule__clock_minute"
+					ref="minuteRef"
+					value={ date.format( 'mm' ) }
+					onChange={ this.setTime }
+					onKeyDown={ this.adjustMinute }
+					type="text" />
+
+				{ this.renderTimezoneBox() }
+			</div>
+		);
+	}
+}
 
 /**
  * Statics
@@ -182,4 +184,4 @@ PostScheduleClock.defaultProps = {
 	onChange: noop
 };
 
-export default PostScheduleClock;
+export default localize( PostScheduleClock );
