@@ -31,7 +31,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		componentWillMount() {
-			this.props.replaceFields( getFormSettings( this.props.settings ) );
+			this.props.replaceFields( getFormSettings( this.props.settings, this.props ) );
 		}
 
 		componentWillReceiveProps( nextProps ) {
@@ -40,7 +40,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( nextProps.settings !== this.props.settings ) {
-				let newState = getFormSettings( nextProps.settings );
+				let newState = getFormSettings( nextProps.settings, nextProps );
 				//If we have any fields that the user has updated,
 				//do not wipe out those fields from the poll update.
 				newState = omit( newState, nextProps.dirtyFields );
