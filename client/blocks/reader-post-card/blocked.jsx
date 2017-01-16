@@ -29,7 +29,7 @@ class PostBlocked extends React.PureComponent {
 	}
 
 	render() {
-		const post = this.props.post;
+		const { post } = this.props;
 
 		return (
 			<Card className="reader-post-card is-blocked">
