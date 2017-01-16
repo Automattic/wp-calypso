@@ -14,13 +14,6 @@ module.exports = function() {
 	page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
 	page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
 	page( '/post/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
-	page(
-		'/post/:site?/:post?',
-		sitesController.siteSelection,
-		sitesController.fetchJetpackSettings,
-		controller.copyPost,
-		controller.post
-	);
 	page.exit( '/post/:site?/:post?', controller.exitPost );
 
 	page( '/page', sitesController.siteSelection, sitesController.sites );
