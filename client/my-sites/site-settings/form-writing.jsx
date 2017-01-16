@@ -30,6 +30,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 import ThemeEnhancements from './theme-enhancements';
+import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormWriting extends Component {
@@ -210,11 +211,19 @@ class SiteSettingsFormWriting extends Component {
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
 								/>
+
+							{ config.isEnabled( 'press-this' ) &&
+								<PublishingTools
+									submittingForm={ this.state.submittingForm }
+									onSubmitForm={ this.handleSubmitForm }
+									fetchingSettings={ this.state.fetchingSettings }
+								/>
+							}
 						</div>
 					)
 				}
 
-				{ config.isEnabled( 'press-this' ) && (
+				{ config.isEnabled( 'press-this' ) && ! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
 					<div>
 						{
 							this.renderSectionHeader( translate( 'Press This', {
