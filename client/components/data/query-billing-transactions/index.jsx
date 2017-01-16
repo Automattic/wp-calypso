@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingBillingTransactions } from 'state/billing-transactions/selectors';
+import { isRequestingBillingTransactions } from 'state/selectors';
 import { requestBillingTransactions } from 'state/billing-transactions/actions';
 
 class QueryBillingTransactions extends Component {
