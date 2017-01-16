@@ -516,11 +516,12 @@ export function hasActivatedTheme( state, siteId ) {
  * Whether the theme is currently being installed on the (Jetpack) site.
  *
  * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID for which we check installing state
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme installation is ongoing
  */
-export function isInstallingTheme( state, siteId ) {
-	return get( state.themes.themeInstalls, siteId, false );
+export function isInstallingTheme( state, themeId, siteId ) {
+	return get( state.themes.themeInstalls, [ siteId, themeId ], false );
 }
 
 /**
