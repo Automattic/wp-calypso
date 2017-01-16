@@ -297,22 +297,28 @@ const Signup = React.createClass( {
 			return;
 		}
 
-		this.setState( { scrolling: true } );
+		// animate the scroll position to the top
+		const scrollPromise = new Promise( resolve => {
+			this.setState( { scrolling: true } );
 
-		this.windowScroller = setInterval( () => {
-			if ( window.pageYOffset > 0 ) {
-				window.scrollBy( 0, -10 );
-			} else {
-				this.setState( { scrolling: false } );
-				clearInterval( this.windowScroller );
-
-				if ( ! this.isEveryStepSubmitted() ) {
-					page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
-				} else if ( this.isEveryStepSubmitted() ) {
-					this.goToFirstInvalidStep();
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
+				} else {
+					this.setState( { scrolling: false } );
+					resolve( clearInterval( scrollIntervalId ) );
 				}
+			}, 1 );
+		} );
+
+		// redirect the user to the next step
+		scrollPromise.then( () => {
+			if ( ! this.isEveryStepSubmitted() ) {
+				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+			} else if ( this.isEveryStepSubmitted() ) {
+				this.goToFirstInvalidStep();
 			}
-		}, 1 );
+		} );
 	},
 
 	goToNextStep() {
