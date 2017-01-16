@@ -6,7 +6,6 @@
 	margin: 0 auto;
 	max-width: 700px;
 	width: 100%;
-	padding: 0 2px;
 	position: relative;
 
 	@media ( min-width: 930px ) {
@@ -15,8 +14,15 @@
 	}
 
 	.button {
-		margin: 4px 2px;
+		border-right: 1px solid lighten( $gray, 30% );
+		height: 38px;
+		padding: 4px 12px;
 		text-transform: lowercase;
+		min-width: 30px;
+
+		&:last-child {
+			border: none;
+		}
 	}
 }
 
