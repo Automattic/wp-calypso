@@ -66,7 +66,7 @@ export default React.createClass( {
 					href={ this.props.href }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
-					onTouchTap={ this.onSelect }>
+					onClick={ this.onSelect }>
 					{ this.props.showCount && this.renderSiteCount() }
 					<div className="site__info">
 						<span className="site__title">{ title }</span>

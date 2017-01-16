@@ -88,7 +88,7 @@ const LikeButton = React.createClass( {
 				containerTag,
 				{
 					className: classNames( containerClasses ),
-					onTouchTap: this.toggleLiked
+					onClick: this.toggleLiked
 				},
 				<LikeIcons size={ this.props.iconSize } />, labelElement
 			)

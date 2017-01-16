@@ -2,25 +2,16 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import ReactDom from 'react-dom';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
-import { shallow, mount } from 'enzyme';
-import createReactTapEventPlugin from 'react-tap-event-plugin';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
 import Gridicon from 'components/gridicon';
 import Accordion from '../';
 
 describe( 'Accordion', function() {
-	before( () => {
-		// Unfortunately, there is no corresponding teardown for this plugin
-		createReactTapEventPlugin();
-	} );
-
 	it( 'should render as expected with a title and content', function() {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
@@ -50,24 +41,22 @@ describe( 'Accordion', function() {
 	} );
 
 	context( 'events', () => {
-		useFakeDom();
-
-		function simulateTouchTap( wrapper ) {
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode( wrapper.find( '.accordion__toggle' ).node ) );
+		function simulateClick( wrapper ) {
+			wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 		}
 
 		it( 'should toggle when clicked', function() {
-			const wrapper = mount( <Accordion title="Section">Content</Accordion> );
+			const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
 		} );
 
 		it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-			const wrapper = mount( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+			const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			function finishTest( isExpanded ) {
 				expect( isExpanded ).to.be.true;
@@ -80,11 +69,11 @@ describe( 'Accordion', function() {
 		} );
 
 		it( 'should always use the initialExpanded prop, if specified', function( done ) {
-			const wrapper = mount(
+			const wrapper = shallow(
 				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
 			);
 
-			simulateTouchTap( wrapper );
+			simulateClick( wrapper );
 
 			function finishTest( isExpanded ) {
 				expect( isExpanded ).to.be.false;

@@ -35,7 +35,7 @@ const UpdateNotice = React.createClass( {
 		} );
 
 		return (
-			<div className={ counterClasses } onTouchTap={ this.handleClick } >
+			<div className={ counterClasses } onClick={ this.handleClick } >
 				<DocumentHead unreadCount={ this.props.count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.translate( '%s new post', '%s new posts', { args: [ this.props.cappedUnreadCount ], count: this.props.count } ) }
