@@ -4,6 +4,8 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	url = require( 'url' );
+import classNames from 'classnames';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,11 +56,12 @@ module.exports = React.createClass( {
 			controls;
 
 		controls = controlsArray.map( function( item, i ) {
-			var itemKey = 'controls-' + postId + '-' + i;
+			const itemKey = 'controls-' + postId + '-' + i;
+			const disabled = item.disabled || false;
 
 			return (
-				<li key={ itemKey }>
-					<a href={ item.href } className={ item.className } onClick={ item.onClick } target={ item.target ? item.target : null }>
+				<li className={ classNames( { 'post-controls__disabled': disabled } ) } key={ itemKey }>
+					<a href={ item.href } className={ item.className } onClick={ disabled ? noop : item.onClick } target={ item.target ? item.target : null }>
 						<Gridicon icon={ item.icon } size={ 18 } />
 						<span>{ item.text }</span>
 					</a>
@@ -112,6 +115,7 @@ module.exports = React.createClass( {
 
 			if ( config.isEnabled( 'republicize' ) ) {
 				availableControls.push( {
+					disabled: this.props.site && this.props.site.options.publicize_permanently_disabled,
 					text: this.translate( 'Share' ),
 					className: 'post-controls__share',
 					onClick: this.props.onToggleShare,
