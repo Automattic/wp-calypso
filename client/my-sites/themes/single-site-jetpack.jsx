@@ -21,7 +21,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { translate } from 'i18n-calypso';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
@@ -97,7 +96,6 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								filter={ filter }
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }
-								listLabel={ translate( 'WordPress.com themes' ) }
 								showUploadButton={ false }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {

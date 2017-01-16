@@ -20,10 +20,6 @@ class ThemeUploadCard extends React.Component {
 		count: PropTypes.number,
 	};
 
-	constructor( props ) {
-		super( props );
-	}
-
 	trackClick = () => trackClick( 'upload theme' );
 
 	render() {
@@ -32,7 +28,7 @@ class ThemeUploadCard extends React.Component {
 		return (
 			<div className="themes-upload-card">
 				<SectionHeader
-					label={ this.props.label }
+					label={ this.props.label || translate( 'WordPress.com themes' ) }
 					count={ this.props.count }
 				>
 					{ this.props.href &&
