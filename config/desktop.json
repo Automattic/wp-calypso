@@ -65,7 +65,7 @@
 		"me/next-steps": true,
 		"me/notifications": true,
 		"me/security": true,
-		"me/security/checkup": true,
+		"me/security/account-recovery": true,
 		"me/trophies": false,
 		"oauth": true,
 		"olark": true,
