@@ -80,6 +80,10 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'jetpack_testimonial',
 			'jetpack_portfolio',
 		],
+		comments: [
+			'highlander_comment_form_prompt',
+			'jetpack_comment_form_color_scheme',
+		]
 	};
 	let filteredSettings = { ...settings };
 

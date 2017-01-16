@@ -194,10 +194,6 @@
 }
 
 .site-settings__discussion-settings {
-	label:first-of-type {
-		font-weight: normal;
-	}
-
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -231,6 +227,12 @@
 
 		.form-select {
 			margin-top: 2px;
+		}
+	}
+
+	.site-settings__moderation-settings {
+		.form-label {
+			font-weight: normal;
 		}
 	}
 }
