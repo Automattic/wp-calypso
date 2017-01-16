@@ -39,6 +39,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
+	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -49,7 +50,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
 		yahooPixelId: '10014088',
-		twitterPixelId: 'nvzbs'
+		twitterPixelId: 'nvzbs',
+		dcmFloodlightAdvertiserId: '6355556'
 	},
 
 	// For converting other currencies into USD for tracking purposes
@@ -289,6 +291,7 @@ function recordOrder( cart, orderId ) {
 	// 1. Fire one tracking event that includes details about the entire order
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
+	recordOrderInFloodlight( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -470,6 +473,57 @@ function recordOrderInAtlas( cart, orderId ) {
 		';cache=' + Math.random() + '?' + urlParams;
 
 	loadScript.loadScript( urlWithParams );
+}
+
+/**
+ * Records an order in DCM Floodlight
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInFloodlight( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	const currentUser = user.get();
+
+	// Originally `u1` was going to be the cost, but because that is already passed as the `cost` parameter
+	// there's no need to include it separately. `u5` is the anonymous user id, but because all purchases
+	// are made by logged in users there's no need to include that either.
+	const params = {
+		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
+		type: 'wpsal0',
+		cat: 'wpsale',
+		qty: 1,
+		cost: cart.total_cost,
+		u2: cart.products.map( product => product.product_name ).join( ', ' ),
+		u3: cart.currency,
+		u4: currentUser ? currentUser.ID : 0,
+		dc_lat: '',
+		dc_rdid: '',
+		tag_for_child_directed_treatment: '',
+		ord: orderId
+	};
+
+	// Note that we're not generating traditional a URL with traditional query arguments
+	// Instead, each parameter is separated by a semicolon
+	const urlParams = Object.keys( params ).map( function( key ) {
+		return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
+	} ).join( ';' );
+
+	// The implementation guidance includes the question mark at the end of the URL
+	const urlWithParams = DCM_FLOODLIGHT_IFRAME_URL + ';' + urlParams + '?';
+
+	// Unlike other advertising networks, DCM Floodlight requires we load an iframe
+	const iframe = document.createElement( 'iframe' );
+	iframe.setAttribute( 'src', urlWithParams );
+	iframe.setAttribute( 'width', '1' );
+	iframe.setAttribute( 'height', '1' );
+	iframe.setAttribute( 'frameborder', '0' );
+	iframe.setAttribute( 'style', 'display: none' );
+	document.body.appendChild( iframe );
 }
 
 /**
