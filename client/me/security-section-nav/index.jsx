@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 
 		if ( config.isEnabled( 'me/security/checkup' ) ) {
 			tabs.push( {
-				title: i18n.translate( 'Checkup', { textOnly: true } ),
+				title: i18n.translate( 'Account Recovery', { textOnly: true } ),
 				path: '/me/security/checkup',
 			} );
 		}
