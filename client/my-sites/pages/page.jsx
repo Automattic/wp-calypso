@@ -265,6 +265,19 @@ const Page = React.createClass( {
 		}
 	},
 
+	getCopyItem: function() {
+		const { page: post, site } = this.props;
+		if ( ( 'publish' !== post.status && 'private' !== post.status ) || ! utils.userCan( 'edit_post', post ) ) {
+			return null;
+		}
+		return (
+			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ site.slug }?copy=${ post.ID }` }>
+				<Gridicon icon="clipboard" size={ 18 } />
+				{ this.translate( 'Copy' ) }
+			</PopoverMenuItem>
+		);
+	},
+
 	getRestoreItem: function() {
 		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
@@ -327,6 +340,7 @@ const Page = React.createClass( {
 		const editItem = this.getEditItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
+		const copyItem = this.getCopyItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasSeparatedItems = (
 			viewItem || publishItem || editItem ||
@@ -348,6 +362,7 @@ const Page = React.createClass( {
 				{ editItem }
 				{ restoreItem }
 				{ sendToTrashItem }
+				{ copyItem }
 				{ moreInfoItem }
 			</PopoverMenu>
 		) : null;
@@ -413,7 +428,11 @@ const Page = React.createClass( {
 		this.setState( { showPageActions: false } );
 		this.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Page' );
-	}
+	},
+
+	copyPage: function() {
+		recordEvent( 'Clicked Copy Page' );
+	},
 } );
 
 export default connect(

@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,30 +26,26 @@ class EditorMoreOptionsCopyPost extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
+		type: PropTypes.oneOf( [ 'page', 'post' ] ).isRequired,
 	};
 
-	constructor() {
-		super( ...arguments );
-		this.state = this.resetState();
-	}
-
-	resetState() {
-		return {
-			selectedPostId: null,
-			showDialog: false,
-		};
-	}
+	state = {
+		selectedPostId: null,
+		showDialog: false,
+	};
 
 	openDialog = event => {
 		event.preventDefault();
-
 		this.setState( {
 			showDialog: true,
 		} );
 	}
 
 	closeDialog = () => {
-		this.setState( this.resetState() );
+		this.setState( {
+			selectedPostId: null,
+			showDialog: false,
+		} );
 	}
 
 	setPostToCopy = post => {
@@ -58,15 +55,17 @@ class EditorMoreOptionsCopyPost extends Component {
 	}
 
 	goToNewDraft = () => {
-		if ( '' !== this.state.selectedPostId ) {
-			page.redirect( `/post/${ this.props.siteSlug }?copy=${ this.state.selectedPostId }` );
+		const { siteSlug, type } = this.props;
+		const { selectedPostId } = this.state;
+		if ( '' !== selectedPostId ) {
+			page.redirect( `/${ type }/${ siteSlug }?copy=${ selectedPostId }` );
 			this.closeDialog();
 		}
 	}
 
 	render() {
-		const { translate, siteId } = this.props;
-
+		const { siteId, translate, type } = this.props;
+		const { selectedPostId, showDialog } = this.state;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' ),
@@ -74,41 +73,49 @@ class EditorMoreOptionsCopyPost extends Component {
 			action: 'copy',
 			label: translate( 'Overwrite' ),
 			isPrimary: true,
-			disabled: ! this.state.selectedPostId,
+			disabled: ! selectedPostId,
 			onClick: this.goToNewDraft,
 		} ];
 
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
 				<EditorDrawerLabel
-					labelText={ translate( 'Copy Post' ) }
-					helpText={ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
+					labelText={ translate( 'Copy %s', { args: capitalize( type ), comment: '"Post" or "Page"' } ) }
+					helpText={ translate(
+						"Pick a %s and we'll copy the title, content, tags and categories.",
+						{ args: type, comment: '"post" or "page"' }
+					) }
 				>
 					<Button borderless compact onClick={ this.openDialog }>
-						<Gridicon icon="clipboard" /> { translate( 'Select a post to copy' ) }
+						<Gridicon icon="clipboard" />
+						{ translate( 'Select a %s to copy', { args: type, comment: '"post" or "page"' } ) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
 					autoFocus={ false }
-					isVisible={ this.state.showDialog }
+					isVisible={ showDialog }
 					buttons={ buttons }
 					onClose={ this.closeDialog }
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ translate( 'Select a post to copy' ) }
+						{ translate( 'Select a %s to copy', { args: type, comment: '"post" or "page"' } ) }
 					</FormSectionHeading>
 					<p>
-						{ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
+						{ translate(
+							"Pick a %s and we'll copy the title, content, tags and categories.",
+							{ args: type, comment: '"post" or "page"' }
+						) }
 					</p>
 					{ siteId &&
 						<PostSelector
-							siteId={ siteId }
-							emptyMessage={ translate( 'No posts found' ) }
-							orderBy="date"
-							order="DESC"
+							emptyMessage={ 'post' === type ? translate( 'No posts found' ) : translate( 'No pages found' ) }
 							onChange={ this.setPostToCopy }
-							selected={ this.state.selectedPostId }
+							order="DESC"
+							orderBy="date"
+							selected={ selectedPostId }
+							siteId={ siteId }
+							type={ type }
 						/>
 					}
 				</Dialog>

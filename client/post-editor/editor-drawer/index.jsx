@@ -265,11 +265,12 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderCopyPost: function() {
-		if ( 'post' !== this.props.type ) {
+		const { type } = this.props;
+		if ( 'post' !== type && 'page' !== type ) {
 			return;
 		}
 
-		return <EditorMoreOptionsCopyPost />;
+		return <EditorMoreOptionsCopyPost type={ type } />;
 	},
 
 	renderMoreOptions: function() {
