@@ -26,6 +26,13 @@
 			flex-direction: row;
 		}
 	}
+	.posts__post-share-form.is-placeholder, 
+	.posts__post-share-services.is-placeholder {
+		@include placeholder;
+		margin-top: 16px;
+		height: 48px;
+	}
+
 	.posts__post-share-head {
 		padding: 0 24px;
 	}
