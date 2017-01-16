@@ -18,6 +18,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
 	getThemeForumUrl,
+	getThemeSetupUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
 	isWpcomTheme
@@ -62,11 +63,32 @@ const ThanksModal = React.createClass( {
 		};
 	},
 
-	renderBody() {
+	renderWpcomInfo() {
+		const themeSetup = translate( 'Make your site look like the demo with {{a}}Theme Setup{{/a}}.', {
+			components: {
+				a: <a href={ this.props.themeSetupUrl }
+					onClick={ this.onLinkClick( 'setup' ) } />
+			}
+		} );
+		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+			components: {
+				a: <a href={ this.props.detailsUrl }
+					onClick={ this.onLinkClick( 'features' ) } />
+			}
+		} );
+		const customize = translate( '{{a}}Customize{{/a}} this design.', {
+			components: {
+				a: <a href={ this.props.customizeUrl }
+					onClick={ this.onLinkClick( 'customize' ) } />
+			}
+		} );
 		return (
 			<ul>
 				<li>
-					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
+					{ themeSetup }
+				</li>
+				<li>
+					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
 				{ this.renderSupportInfo() }
@@ -172,6 +194,7 @@ export default connect(
 
 		return {
 			currentTheme,
+			themeSetupUrl: site && getThemeSetupUrl( state, site.ID ),
 			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
 			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
 			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
