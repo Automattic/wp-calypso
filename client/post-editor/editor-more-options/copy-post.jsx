@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { capitalize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +32,8 @@ class EditorMoreOptionsCopyPost extends Component {
 		selectedPostId: null,
 		showDialog: false,
 	};
+
+	isPost = () => 'post' === this.props.type;
 
 	openDialog = event => {
 		event.preventDefault();
@@ -80,15 +81,15 @@ class EditorMoreOptionsCopyPost extends Component {
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
 				<EditorDrawerLabel
-					labelText={ translate( 'Copy %s', { args: capitalize( type ), comment: '"Post" or "Page"' } ) }
-					helpText={ translate(
-						"Pick a %s and we'll copy the title, content, tags and categories.",
-						{ args: type, comment: '"post" or "page"' }
-					) }
+					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
+					helpText={ this.isPost()
+						? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+						: translate( "Pick a page and we'll copy the title, content, tags and categories." )
+					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
 						<Gridicon icon="clipboard" />
-						{ translate( 'Select a %s to copy', { args: type, comment: '"post" or "page"' } ) }
+						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a post to copy' ) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
@@ -99,17 +100,15 @@ class EditorMoreOptionsCopyPost extends Component {
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ translate( 'Select a %s to copy', { args: type, comment: '"post" or "page"' } ) }
+						{ this.isPost() ? translate( 'Select a post to copy' ) : translate( 'Select a page to copy' )
+						}
 					</FormSectionHeading>
 					<p>
-						{ translate(
-							"Pick a %s and we'll copy the title, content, tags and categories.",
-							{ args: type, comment: '"post" or "page"' }
-						) }
+						{ '' }
 					</p>
 					{ siteId &&
 						<PostSelector
-							emptyMessage={ 'post' === type ? translate( 'No posts found' ) : translate( 'No pages found' ) }
+							emptyMessage={ this.isPost() ? translate( 'No posts found' ) : translate( 'No pages found' ) }
 							onChange={ this.setPostToCopy }
 							order="DESC"
 							orderBy="date"
