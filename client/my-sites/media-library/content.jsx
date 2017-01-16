@@ -17,8 +17,6 @@ import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -160,14 +158,20 @@ const MediaLibraryContent = React.createClass( {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	},
 
-	renderMediaList: function() {
-		if ( ! this.props.site ) {
-			return <MediaLibraryList key="list-loading" />;
-		}
-
+	render: function() {
 		return (
-			<MediaListData siteId={ this.props.site.ID } filter={ this.props.filter } search={ this.props.search }>
-				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
+			<div className="media-library__content">
+				{ ! this.props.filterRequiresUpgrade &&
+					<MediaLibraryHeader
+						site={ this.props.site }
+						filter={ this.props.filter }
+						onMediaScaleChange={ this.props.onMediaScaleChange }
+						onAddMedia={ this.props.onAddMedia }
+						onAddAndEditImage={ this.props.onAddAndEditImage } /> }
+				{ this.renderErrors() }
+				{ ! this.props.site &&
+					<MediaLibraryList key="list-loading" /> }
+				{ this.props.site &&
 					<MediaLibraryList
 						key={ 'list-' + ( [ this.props.site.ID, this.props.search, this.props.filter ].join() ) }
 						site={ this.props.site }
@@ -178,25 +182,7 @@ const MediaLibraryContent = React.createClass( {
 						photon={ ! this.props.site.is_private }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem } />
-				</MediaLibrarySelectedData>
-			</MediaListData>
-		);
-	},
-
-	render: function() {
-		return (
-			<div className="media-library__content">
-				{ ! this.props.filterRequiresUpgrade &&
-					<MediaLibraryHeader
-						site={ this.props.site }
-						filter={ this.props.filter }
-						onMediaScaleChange={ this.props.onMediaScaleChange }
-						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage } />
-				}
-				{ this.renderErrors() }
-				{ this.renderMediaList() }
+						onEditItem={ this.props.onEditItem } /> }
 			</div>
 		);
 	}

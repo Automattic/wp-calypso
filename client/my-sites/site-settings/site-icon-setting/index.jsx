@@ -11,7 +11,6 @@ import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
  */
 import SiteIcon from 'components/site-icon';
 import Button from 'components/button';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
 import accept from 'lib/accept';
@@ -213,27 +212,25 @@ class SiteIconSetting extends Component {
 					</Button>
 				) }
 				{ isIconManagementEnabled && hasToggledModal && (
-					<MediaLibrarySelectedData siteId={ siteId }>
-						<AsyncLoad
-							require="post-editor/media-modal"
-							placeholder={ (
-								<Dialog
-									additionalClassNames="editor-media-modal"
-									isVisible={ isModalVisible } />
-							) }
-							siteId={ siteId }
-							onClose={ this.editSelectedMedia }
-							enabledFilters={ [ 'images' ] }
-							imageEditorProps={ {
-								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-								onDone: this.setSiteIcon
-							} }
-							visible={ isModalVisible }
-							labels={ {
-								confirm: translate( 'Continue' )
-							} }
-							single />
-					</MediaLibrarySelectedData>
+					<AsyncLoad
+						require="post-editor/media-modal"
+						placeholder={ (
+							<Dialog
+								additionalClassNames="editor-media-modal"
+								isVisible={ isModalVisible } />
+						) }
+						siteId={ siteId }
+						onClose={ this.editSelectedMedia }
+						enabledFilters={ [ 'images' ] }
+						imageEditorProps={ {
+							allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+							onDone: this.setSiteIcon
+						} }
+						visible={ isModalVisible }
+						labels={ {
+							confirm: translate( 'Continue' )
+						} }
+						single />
 				) }
 			</FormFieldset>
 		);

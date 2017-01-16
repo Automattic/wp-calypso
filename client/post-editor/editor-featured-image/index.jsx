@@ -7,7 +7,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import PostActions from 'lib/posts/actions';
 import PostUtils from 'lib/posts/utils';
@@ -74,15 +73,13 @@ export default React.createClass( {
 		}
 
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-				<MediaModal
-					visible={ this.props.selecting || this.state.isSelecting }
-					onClose={ this.setImage }
-					site={ this.props.site }
-					labels={ { confirm: this.translate( 'Set Featured Image' ) } }
-					enabledFilters={ [ 'images' ] }
-					single />
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ this.props.selecting || this.state.isSelecting }
+				onClose={ this.setImage }
+				site={ this.props.site }
+				labels={ { confirm: this.translate( 'Set Featured Image' ) } }
+				enabledFilters={ [ 'images' ] }
+				single />
 		);
 	},
 

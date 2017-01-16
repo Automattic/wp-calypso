@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { noop, head, some, findIndex, partial, values, map } from 'lodash';
 
@@ -19,8 +20,10 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
 	accept = require( 'lib/accept' );
+import { getSelectedMediaItems } from 'state/media/selectors';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';
+import { selectMediaItems } from 'state/media/actions';
 import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
@@ -31,7 +34,7 @@ import MediaModalDetail from './detail';
 export const EditorMediaModal = React.createClass( {
 	propTypes: {
 		visible: React.PropTypes.bool,
-		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
+		selectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
 		onClose: React.PropTypes.func,
 		site: React.PropTypes.object,
 		siteId: React.PropTypes.number,
@@ -51,7 +54,7 @@ export const EditorMediaModal = React.createClass( {
 	getDefaultProps: function() {
 		return {
 			visible: false,
-			mediaLibrarySelectedItems: Object.freeze( [] ),
+			selectedItems: Object.freeze( {} ),
 			onClose: noop,
 			labels: Object.freeze( {} ),
 			setView: noop,
@@ -64,7 +67,7 @@ export const EditorMediaModal = React.createClass( {
 
 	componentWillReceiveProps: function( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
-			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
+			this.props.selectMediaItems( nextProps.site.ID, [] );
 		}
 
 		if ( this.props.visible === nextProps.visible ) {
@@ -86,7 +89,7 @@ export const EditorMediaModal = React.createClass( {
 
 	componentWillUnmount() {
 		this.props.resetView();
-		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( this.props.site.ID, [] );
 	},
 
 	getDefaultState: function( props ) {
@@ -98,20 +101,20 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	isDisabled: function() {
-		return some( this.props.mediaLibrarySelectedItems, function( item ) {
+		return some( this.props.selectedItems, function( item ) {
 			var mimePrefix = MediaUtils.getMimePrefix( item );
 			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.props.view );
 		}.bind( this ) );
 	},
 
 	confirmSelection: function() {
-		const { view, mediaLibrarySelectedItems } = this.props;
+		const { view, selectedItems } = this.props;
 
 		let value;
-		if ( mediaLibrarySelectedItems.length ) {
+		if ( selectedItems.length ) {
 			value = {
 				type: ModalViews.GALLERY === view ? 'gallery' : 'media',
-				items: mediaLibrarySelectedItems,
+				items: selectedItems,
 				settings: this.state.gallerySettings
 			};
 		}
@@ -126,23 +129,24 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	setNextAvailableDetailView: function() {
-		if ( 1 === this.props.mediaLibrarySelectedItems.length ) {
+		if ( 1 === this.props.selectedItems.length ) {
 			// If this is the only selected item, return user to the list
 			this.props.setView( ModalViews.LIST );
-		} else if ( this.getDetailSelectedIndex() === this.props.mediaLibrarySelectedItems.length - 1 ) {
+		} else if ( this.getDetailSelectedIndex() === this.props.selectedItems.length - 1 ) {
 			// If this is the last selected item, decrement to the previous
 			this.setDetailSelectedIndex( Math.max( this.getDetailSelectedIndex() - 1, 0 ) );
 		}
 	},
 
 	confirmDeleteMedia: function( accepted ) {
-		const { site, mediaLibrarySelectedItems } = this.props;
+		const { site, selectedItems } = this.props;
 
 		if ( ! site || ! accepted ) {
 			return;
 		}
 
-		let toDelete = mediaLibrarySelectedItems;
+		let toDelete = selectedItems;
+
 		if ( ModalViews.DETAIL === this.props.view ) {
 			toDelete = toDelete[ this.getDetailSelectedIndex() ];
 			this.setNextAvailableDetailView();
@@ -159,7 +163,7 @@ export const EditorMediaModal = React.createClass( {
 		if ( ModalViews.DETAIL === this.props.view ) {
 			selectedCount = 1;
 		} else {
-			selectedCount = this.props.mediaLibrarySelectedItems.length;
+			selectedCount = this.props.selectedItems.length;
 		}
 
 		const confirmMessage = this.translate(
@@ -177,8 +181,7 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	onAddAndEditImage: function() {
-		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
-
+		this.props.selectMediaItems( this.props.site.ID, [] );
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	},
 
@@ -187,7 +190,7 @@ export const EditorMediaModal = React.createClass( {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.updateMediaItem( siteId, { ID: item.ID, media_url: item.guid }, true );
 	},
 
 	onImageEditorDone( error, blob, imageEditorProps ) {
@@ -223,9 +226,9 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
-		const { mediaLibrarySelectedItems } = this.props;
+		const { selectedItems } = this.props;
 
-		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
+		const item = selectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
 			this.props.setView( ModalViews.LIST );
@@ -240,9 +243,9 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	getDetailSelectedIndex() {
-		const { mediaLibrarySelectedItems } = this.props;
+		const { selectedItems } = this.props;
 		const { detailSelectedIndex } = this.state;
-		if ( detailSelectedIndex >= mediaLibrarySelectedItems.length ) {
+		if ( detailSelectedIndex >= selectedItems.length ) {
 			return 0;
 		}
 		return detailSelectedIndex;
@@ -281,20 +284,20 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	editItem: function( item ) {
-		const { site, mediaLibrarySelectedItems, single } = this.props;
+		const { site, selectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
 		}
 
 		// Append item to set of selected items if not already selected.
-		let items = mediaLibrarySelectedItems;
+		let items = selectedItems;
 		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
 			if ( single ) {
 				items = [ item ];
 			} else {
 				items = items.concat( item );
 			}
-			MediaActions.setLibrarySelectedItems( site.ID, items );
+			this.props.selectMediaItems( site.ID, items );
 		}
 
 		// Find and set detail selected index for the edited item
@@ -314,7 +317,7 @@ export const EditorMediaModal = React.createClass( {
 
 	getModalButtons: function() {
 		var isDisabled = this.isDisabled(),
-			selectedItems = this.props.mediaLibrarySelectedItems,
+			selectedItems = this.props.selectedItems,
 			buttons;
 
 		if ( ModalViews.IMAGE_EDITOR === this.props.view ) {
@@ -370,7 +373,7 @@ export const EditorMediaModal = React.createClass( {
 				content = (
 					<MediaModalDetail
 						site={ this.props.site }
-						items={ this.props.mediaLibrarySelectedItems }
+						items={ this.props.selectedItems }
 						selectedIndex={ this.getDetailSelectedIndex() }
 						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex } />
@@ -381,7 +384,7 @@ export const EditorMediaModal = React.createClass( {
 				content = (
 					<MediaModalGallery
 						site={ this.props.site }
-						items={ this.props.mediaLibrarySelectedItems }
+						items={ this.props.selectedItems }
 						settings={ this.state.gallerySettings }
 						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) } />
 				);
@@ -391,11 +394,11 @@ export const EditorMediaModal = React.createClass( {
 				const {
 					site,
 					imageEditorProps,
-					mediaLibrarySelectedItems: items
+					selectedItems
 				} = this.props;
 
 				const selectedIndex = this.getDetailSelectedIndex();
-				const media = items ? items[ selectedIndex ] : null;
+				const media = selectedItems ? selectedItems[ selectedIndex ] : null;
 
 				content = (
 					<ImageEditor
@@ -450,11 +453,15 @@ export default connect(
 		view: getMediaModalView( state ),
 		// [TODO]: Migrate toward dropping incoming site prop, accepting only
 		// siteId and forcing descendant components to access via state
-		site: site || getSite( state, siteId )
+		site: site || getSite( state, siteId ),
+		selectedItems: getSelectedMediaItems( state, siteId || site.ID ),
 	} ),
-	{
-		setView: setEditorMediaModalView,
-		resetView: resetMediaModalView,
-		deleteMedia
+	( dispatch ) => {
+		return bindActionCreators( {
+			setView: setEditorMediaModalView,
+			resetView: resetMediaModalView,
+			deleteMedia,
+			selectMediaItems
+		}, dispatch );
 	}
 )( EditorMediaModal );

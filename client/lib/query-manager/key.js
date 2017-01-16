@@ -40,6 +40,10 @@ export default class QueryKey {
 		}
 
 		return omitBy( query, ( value, key ) => {
+			if ( undefined === value ) {
+				return true;
+			}
+
 			if ( OMIT_NULL_VALUES && null === value ) {
 				return true;
 			}
