@@ -45,8 +45,8 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 					<ActionPanelFigure>
 						<ActiveThemeScreenshot theme={ theme } />
 					</ActionPanelFigure>
-					<p>{ translate( 'Getting your site to look like your theme\'s demo can be confusing. The Theme Setup tool will copy the demo site\'s settings over to your site automatically.' ) }</p>
-					<p>{ translate( 'You can choose to start from scratch, in which Theme Setup {{strong}}deletes all of your existing content{{/strong}}, or you can save your current content. In either case, you will see some placeholder content which is needed by Theme Setup.', { components: { strong: <strong /> } } ) }</p>
+					<p>{ translate( 'Want your site to look like the demo? Use Theme Setup to automatically apply the demo site\'s settings to your site.' ) }</p>
+					<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button scary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
