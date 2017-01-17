@@ -46,10 +46,10 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 					<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button primary={ true } disabled={ site && theme ? false : true }>
+					<Button className="theme-setup__button" primary={ true } disabled={ site && theme ? false : true }>
 						{ translate( 'Set Up And Keep Content' ) }
 					</Button>
-					<Button scary={ true } disabled={ site && theme ? false : true }>
+					<Button className="theme-setup__button" scary={ true } disabled={ site && theme ? false : true }>
 						{ translate( 'Set Up And Delete Content' ) }
 					</Button>
 				</ActionPanelFooter>

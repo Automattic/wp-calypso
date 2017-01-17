@@ -1,11 +1,24 @@
-.theme-setup button {
+.theme-setup__button {
+	margin-bottom: 8px;
 	margin-right: 8px;
 }
 
-.theme-setup__active-theme-screenshot {
+.theme-setup .active-theme-screenshot {
 	min-height: 200px;
 
 	&.is-placeholder {
 		@include placeholder;
 	}
+}
+
+.theme-setup .active-theme-screenshot__image {
+	border: 1px solid lighten( $gray, 30% );
+	box-sizing: border-box;
+}
+
+.theme-setup .active-theme-screenshot__name {
+	font-size: 0.8em;
+	font-weight: 600;
+	color: $gray;
+	text-transform: uppercase;
 }
