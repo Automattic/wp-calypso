@@ -1,0 +1,25 @@
+.sidebar__sparkline {
+	width: 80px;
+	height: 24px;
+	position: absolute;
+	right: 16px;
+	top: 8px;
+
+	@include breakpoint( "<660px" ) {
+		top: 13px;
+		right: 20px;
+	}
+}
+
+.sidebar__menu li.stats.selected .sidebar__sparkline {
+	display: none;
+
+	@include breakpoint( "<660px" ) {
+		display: block;
+	}
+}
+
+.sidebar__menu li.stats a:after,
+.notouch .sidebar__menu li.stats:hover:not(.selected) a:first-child:after  {
+	background: none;
+}
