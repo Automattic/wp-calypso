@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,18 +13,18 @@ import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-class JetpackManageErrorPage extends Component {
+class JetpackManageErrorPage extends PureComponent {
 	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
 		optInManage: 'actionCallbackActivate'
 	}
 
 	actionCallbackActivate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
+		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
 	}
 
 	actionCallbackUpdate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.site ? this.props.site.ID : null );
+		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
 	}
 
 	getSettings() {
@@ -77,8 +77,8 @@ class JetpackManageErrorPage extends Component {
 }
 
 export default connect(
-	( state, { site } ) => ( {
-		siteSlug: getSiteSlug( state, site.ID ),
-		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, site.ID )
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
+		remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId )
 	} )
 )( localize( JetpackManageErrorPage ) );

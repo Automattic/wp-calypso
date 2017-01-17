@@ -322,7 +322,7 @@ module.exports = {
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
-						site={ sites.getSelectedSite() }
+						siteId={ sites.getSelectedSite().ID }
 					/>
 				</Main>
 			), document.getElementById( 'primary' ), context.store );

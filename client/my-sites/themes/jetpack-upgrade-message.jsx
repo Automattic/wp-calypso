@@ -24,7 +24,7 @@ const JetpackUpgradeMessage = React.createClass( {
 				<SidebarNavigation />
 				<JetpackManageErrorPage
 					template="updateJetpack"
-					site={ this.props.site }
+					siteId={ this.props.site.ID }
 					version="3.7"
 					secondaryAction={ this.props.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }

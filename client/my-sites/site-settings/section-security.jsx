@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 					template="optInManage"
 					title= { this.translate( 'Looking to manage this site\'s security settings?' ) }
 					section="security-settings"
-					site={ site }
+					siteId={ site.ID }
 				/>
 			);
 		}
@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 			return (
 				<JetpackManageErrorPage
 					template="updateJetpack"
-					site={ site }
+					siteId={ site.ID }
 					version="3.4"
 				/>
 			);
