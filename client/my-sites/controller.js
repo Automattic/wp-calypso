@@ -6,6 +6,8 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { uniq } from 'lodash';
+import startsWith from 'lodash/startsWith';
+import get from 'lodash/get';
 
 /**
  * Internal Dependencies
@@ -109,6 +111,50 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
+function isPathAllowedForDomainOnlySite( pathname, site ) {
+	if ( ! get( site, 'options.is_domain_only', false ) ) {
+		return true;
+	}
+
+	const urlPrefixesWhiteListForDomainOnlySite = [
+		'/domains/manage/',
+		'/checkout/',
+		'/customize/',
+		'/domains/landing-page',
+	];
+
+	const isPathWhiteListedForDomainOnlySite = urlPrefixesWhiteListForDomainOnlySite
+		.some( path => startsWith( pathname, path ) );
+
+	return isPathWhiteListedForDomainOnlySite;
+}
+
+function onSelectedSiteAvailable( context ) {
+	const selectedSite = sites.getSelectedSite();
+	siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
+	context.store.dispatch( receiveSite( selectedSite ) );
+	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
+
+	if ( ! isPathAllowedForDomainOnlySite( context.pathname, selectedSite ) ) {
+		page.redirect( '/domains/manage/' + selectedSite.slug );
+		return false;
+	}
+
+	// Update recent sites preference
+	const state = context.store.getState();
+	if ( hasReceivedRemotePreferences( state ) ) {
+		const recentSites = getPreference( state, 'recentSites' );
+		if ( selectedSite.ID !== recentSites[ 0 ] ) {
+			context.store.dispatch( savePreference( 'recentSites', uniq( [
+				selectedSite.ID,
+				...recentSites
+			] ).slice( 0, 3 ) ) );
+		}
+	}
+
+	return true;
+}
+
 module.exports = {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -166,29 +212,16 @@ module.exports = {
 			return next();
 		}
 
-		const onSelectedSiteAvailable = () => {
-			const selectedSite = sites.getSelectedSite();
-			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
-			context.store.dispatch( receiveSite( selectedSite ) );
-			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-
-			// Update recent sites preference
-			const state = context.store.getState();
-			if ( hasReceivedRemotePreferences( state ) ) {
-				const recentSites = getPreference( state, 'recentSites' );
-				if ( selectedSite.ID !== recentSites[ 0 ] ) {
-					context.store.dispatch( savePreference( 'recentSites', uniq( [
-						selectedSite.ID,
-						...recentSites
-					] ).slice( 0, 3 ) ) );
-				}
-			}
-		};
-
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
 		if ( sites.select( siteID ) ) {
-			onSelectedSiteAvailable();
+			const selectionComplete = onSelectedSiteAvailable( context );
+
+			// if there was a redirect, we should terminate processing of next routes
+			// and let the redirect proceed
+			if ( ! selectionComplete ) {
+				return;
+			}
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
@@ -201,7 +234,7 @@ module.exports = {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
 					sites.initialized = true;
-					onSelectedSiteAvailable();
+					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
