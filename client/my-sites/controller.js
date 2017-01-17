@@ -119,8 +119,6 @@ function isPathAllowedForDomainOnlySite( pathname, site ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
 		'/domains/manage/',
 		'/checkout/',
-		'/customize/',
-		'/domains/landing-page',
 	];
 
 	const isPathWhiteListedForDomainOnlySite = urlPrefixesWhiteListForDomainOnlySite
