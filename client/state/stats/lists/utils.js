@@ -207,7 +207,7 @@ export const normalizers = {
 	/**
 	 * Returns a normalized statsPublicize array, ready for use in stats-module
 	 *
-	 * @param  {Object} data Stats query
+	 * @param  {Object} data Stats data
 	 * @return {Array}       Parsed publicize data array
 	 */
 	statsPublicize( data = {} ) {
@@ -221,6 +221,12 @@ export const normalizers = {
 		} );
 	},
 
+	/**
+	 * Returns a normalized statsVideo array, ready for use in stats-module
+	 *
+	 * @param  {Object} payload Stats response payload
+	 * @return {Array}          Parsed publicize data array
+	 */
 	statsVideo( payload ) {
 		if ( ! payload || ! payload.data ) {
 			return [];
@@ -230,4 +236,51 @@ export const normalizers = {
 			return { period: item[ 0 ], value: item[ 1 ] };
 		} ).slice( Math.max( payload.data.length - 10, 1 ) );
 	},
+
+	/**
+	 * Returns a normalized statsTags array, ready for use in stats-module
+	 *
+	 * @param  {Object} data Stats data
+	 * @return {Array}       Parsed publicize data array
+	 */
+	statsTags( data ) {
+		if ( ! data || ! data.tags ) {
+			return [];
+		}
+
+		const getTagTypeIcon = ( type ) => {
+			return type === 'category' ? 'folder' : type;
+		};
+
+		return data.tags.map( ( item ) => {
+			let children;
+			const hasChildren = item.tags.length > 1;
+			const labels = item.tags.map( ( tagItem ) => {
+				return {
+					label: tagItem.name,
+					labelIcon: getTagTypeIcon( tagItem.type ),
+					link: hasChildren ? null : tagItem.link
+				};
+			} );
+
+			if ( hasChildren ) {
+				children = item.tags.map( ( tagItem ) => {
+					return {
+						label: tagItem.name,
+						labelIcon: getTagTypeIcon( tagItem.type ),
+						value: null,
+						children: null,
+						link: tagItem.link
+					};
+				} );
+			}
+
+			return {
+				label: labels,
+				link: labels.length > 1 ? null : labels[ 0 ].link,
+				value: item.views,
+				children: children
+			};
+		} );
+	}
 };
