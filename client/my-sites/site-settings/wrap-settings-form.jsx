@@ -90,18 +90,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				currentTargetValue = event.currentTarget.value;
 
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
+			this.props.markChanged();
 		};
 
 		handleToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+			this.props.markChanged();
 		};
 
 		onChangeField = field => event => {
-			const { updateFields } = this.props;
-			updateFields( {
+			this.props.updateFields( {
 				[ field ]: event.target.value
 			} );
+			this.props.markChanged();
 		};
 
 		uniqueEventTracker = message => () => {
