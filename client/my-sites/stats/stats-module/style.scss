@@ -518,3 +518,7 @@ ul.module-header-actions {
 		@include long-content-fade( $color: $white, $size: 15% );
 	}
 }
+
+.stats-module__download-footer {
+	margin-left: 16px;
+}

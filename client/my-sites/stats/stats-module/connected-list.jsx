@@ -136,6 +136,17 @@ class StatsConnectedModule extends Component {
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
+					{
+						summary &&
+						isAllTime &&
+						<DownloadCsv
+							statType={ statType }
+							query={ query }
+							path={ path }
+							period={ period }
+							borderless
+							className="stats-module__download-footer" />
+					}
 					{ this.props.showSummaryLink && displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 					{ summary && 'countryviews' === path &&
 						<UpgradeNudge
