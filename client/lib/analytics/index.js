@@ -125,6 +125,11 @@ var analytics = {
 		}
 	},
 
+	recordEvent: function( tracksEventName, tracksEventProperties, category, action, label, value ) {
+		analytics.tracks.recordEvent( tracksEventName, tracksEventProperties );
+		analytics.ga.recordEvent( category, action, label, value );
+	},
+
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
 			var superProperties;
