@@ -95,6 +95,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		handleToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+			this.props.markChanged();
 		};
 
 		onChangeField = field => event => {
