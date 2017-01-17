@@ -25,6 +25,7 @@ export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
+export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
