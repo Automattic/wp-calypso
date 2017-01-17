@@ -261,6 +261,17 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	return data;
 }
 
+// Political correction
+function injectHardCodedValues( libPhoneNumberData ) {
+	return Object.assign( {}, {
+		kv: {
+			isoCode: 'kv',
+			dialCode: '383',
+			nationalPrefix: '0'
+		}
+	}, libPhoneNumberData );
+}
+
 /**
  * Creates aliases. E.g. allows `uk` to be found by both `gb` and `uk`.
  * @param data
@@ -326,6 +337,7 @@ function generateFullDataset( metadata ) {
 
 getLibPhoneNumberData()
 	.then( processLibPhoneNumberMetadata )
+	.then( injectHardCodedValues )
 	.then( generateDeepRemoveEmptyArraysFromObject( [ 'patterns', 'internationalPatterns' ] ) )
 	.then( insertCountryAliases )
 	.then( removeAllNumberKeys )
