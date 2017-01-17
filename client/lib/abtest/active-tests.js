@@ -129,5 +129,13 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
+	jetpackPlansTabs: {
+		datestamp: '20170117',
+		variations: {
+			tabs: 10,
+			noTabs: 90
+		},
+		defaultVariation: 'noTabs'
+	},
 
 };
