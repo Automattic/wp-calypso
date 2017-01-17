@@ -112,7 +112,7 @@ const StatsSummary = React.createClass( {
 						key="countries-summary"
 						path="countryviews"
 						period={ this.props.period }
-						query={ merge( statsQueryOptions, query ) }
+						query={ merge( {}, statsQueryOptions, query ) }
 						summary={ true } />;
 				break;
 

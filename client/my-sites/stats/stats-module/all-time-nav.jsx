@@ -22,10 +22,10 @@ export const StatsModuleSummaryLinks = props => {
 	const quarter = moment().startOf( 'quarter' );
 	const daysSinceQuarterStart = now.diff( quarter, 'd' );
 	const options = [
-		{ value: '0', label: translate( 'Summary Views' ) },
-		{ value: '7', label: translate( 'Last 7 Days' ) },
-		{ value: '30', label: translate( 'Last 30 Days' ) },
-		{ value: `${ daysSinceQuarterStart }`, label: translate( 'This Quarter' ) },
+		{ value: '0', label: translate( 'Summary' ) },
+		{ value: '7', label: translate( 'Last 7 days' ) },
+		{ value: '30', label: translate( 'Last 30 days' ) },
+		{ value: `${ daysSinceQuarterStart }`, label: translate( 'the past quarter' ) },
 		{ value: '-1', label: translate( 'All Time' ) }
 	];
 
@@ -37,7 +37,7 @@ export const StatsModuleSummaryLinks = props => {
 
 	return (
 		<SelectDropdown
-			compact={ true }
+			compact
 			initialSelected={ query.num }
 			options={ options }
 			onSelect={ onSelect } />

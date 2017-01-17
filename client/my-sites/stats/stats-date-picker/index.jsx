@@ -19,15 +19,13 @@ class StatsDatePicker extends Component {
 	dateForSummarize() {
 		const { query, moment, translate } = this.props;
 		const localizedDate = moment();
-		let formattedDate;
 
 		switch ( query.num ) {
 			case '-1':
-				formattedDate = translate( 'All Time' );
-				break;
+				return translate( 'All Time' );
 
 			default:
-				formattedDate = translate(
+				return translate(
 					'%(number)s days ending %(endDate)s (Summarized)',
 					{
 						context: 'Date range for which stats are being displayed',
@@ -39,8 +37,6 @@ class StatsDatePicker extends Component {
 					}
 				);
 		}
-
-		return formattedDate;
 	}
 
 	dateForDisplay() {
