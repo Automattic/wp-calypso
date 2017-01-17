@@ -21,15 +21,12 @@ import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryTheme from 'components/data/query-theme';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import ActiveThemeScreenshot from './active-theme-screenshot';
 
-let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomain } ) => {
+let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
-
-	const noticeText = site && isJetpack ? translate( 'This feature is currently unavailable for Jetpack sites.' ) : translate( 'This action cannot be undone.' );
 
 	return (
 		<div className="main theme-setup" role="main">
@@ -39,8 +36,8 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 			<ActionPanel>
 				<ActionPanelBody>
 					<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>
-					<Notice status={ isJetpack ? 'is-error' : 'is-warning' } showDismiss={ false }>
-						{ noticeText }
+					<Notice status={ 'is-warning' } showDismiss={ false }>
+						{ translate( 'This action cannot be undone.' ) }
 					</Notice>
 					<ActionPanelFigure>
 						<ActiveThemeScreenshot theme={ theme } />
@@ -49,10 +46,10 @@ let ThemeSetup = ( { site, isJetpack, themeId, theme, translate, activeSiteDomai
 					<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button primary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
+					<Button primary={ true } disabled={ site && theme ? false : true }>
 						{ translate( 'Set Up And Keep Content' ) }
 					</Button>
-					<Button scary={ true } disabled={ site && theme && ! isJetpack ? false : true }>
+					<Button scary={ true } disabled={ site && theme ? false : true }>
 						{ translate( 'Set Up And Delete Content' ) }
 					</Button>
 				</ActionPanelFooter>
@@ -65,12 +62,10 @@ ThemeSetup = localize( ThemeSetup );
 
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
-	const isJetpack = site && isJetpackSite( state, site.ID );
 	const themeId = site && getActiveTheme( state, site.ID );
 	const theme = themeId && getTheme( state, 'wpcom', themeId );
 	return {
 		site,
-		isJetpack,
 		themeId,
 		theme,
 	};

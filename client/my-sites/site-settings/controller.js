@@ -181,6 +181,21 @@ module.exports = {
 	},
 
 	themeSetup( context ) {
+		let site = sites.getSelectedSite();
+
+		if ( sites.initialized ) {
+			if ( site.jetpack ) {
+				return page( '/settings/general/' + site.slug );
+			}
+		} else {
+			sites.once( 'change', function() {
+				site = sites.getSelectedSite();
+				if ( site.jetpack ) {
+					return page( '/settings/general/' + site.slug );
+				}
+			} );
+		}
+
 		renderPage(
 			context,
 			<ThemeSetup activeSiteDomain={ context.params.site_id } />
