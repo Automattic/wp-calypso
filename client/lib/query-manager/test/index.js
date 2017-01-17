@@ -82,17 +82,17 @@ describe( 'QueryManager', () => {
 		} );
 	} );
 
-	describe( '#sort()', () => {
+	describe( '#compare()', () => {
 		it( 'should return 0 for equal items', () => {
-			expect( manager.sort( {}, 40, 40 ) ).to.equal( 0 );
+			expect( manager.compare( {}, 40, 40 ) ).to.equal( 0 );
 		} );
 
 		it( 'should return a number less than zero if the first argument is larger', () => {
-			expect( manager.sort( {}, 50, 40 ) ).to.be.lt( 0 );
+			expect( manager.compare( {}, 50, 40 ) ).to.be.lt( 0 );
 		} );
 
 		it( 'should return a number greater than zero if the first argument is smaller', () => {
-			expect( manager.sort( {}, 30, 40 ) ).to.be.gt( 0 );
+			expect( manager.compare( {}, 30, 40 ) ).to.be.gt( 0 );
 		} );
 	} );
 
@@ -366,9 +366,9 @@ describe( 'QueryManager', () => {
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
 		} );
 
-		it( 'should sort items appended to query set', () => {
+		it( 'should compare items appended to query set', () => {
 			manager = manager.receive( [ { ID: 140 }, { ID: 160 } ], { query: {} } );
-			sandbox.stub( manager, 'sort', ( query, a, b ) => a.ID - b.ID );
+			sandbox.stub( manager, 'compare', ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
