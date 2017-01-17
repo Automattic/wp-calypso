@@ -575,11 +575,9 @@ __Rationale: contracts in code__
 
 It could be argued that these functional helpers are not so different from `for` and `while`; after all, they are implemented with the same base loops and can't _do_ anything that `for` and `while` can't.
 
-`map` and friends are more precise, sophisticated ways to talk about consistent patterns in data manipulation. Preferring them over `for` is analogous to using the word "cake" instead of saying "the kind of food that you make by whipping egg whites and maybe adding sugar", with the benefit that `map` and friends are easily and legibly composable — to stretch the analogy, butter cakes are to cakes what `pluck` is to `map`. `for` will still have its uses, but for _most_ scenarios we have well-known higher-level terms. With the caveat that there is such a thing as too "sophisticated" and opaque vocabulary, by continuously learning and choosing the right functional programming iterator we collectively develop the fineness of our expression as developers centered around a common project.
+`map` and friends are more precise ways to talk about consistent patterns in data manipulation. Preferring them over `for` is analogous to using the word "cake" instead of saying "the kind of food that you make by whipping egg whites and maybe adding sugar", with the benefit that `map` and friends are easily and legibly composable — to stretch the analogy, butter cakes are to cakes what `pluck` is to `map`.
 
-Now, as inspirational as that sounds, pragmatically speaking, how do `map` and `for` differ if used equivalently (_e.g._ both with an inlined callback)?
-
-With `map` or `filter` you are intentionally limiting your power. You _establish a [contract][contracts not apis]_, wherein you say:
+Even assuming a comparison where `map` and `for` are used as equivalently as possible (_e.g._ both with the same inlined callback), with `map` or `filter` you are intentionally limiting your power. You _establish a [contract][contracts not apis]_, wherein you say:
 
 - you're not going to mutate the collection;
 - (in the case of `map`) you're going to return a collection with the same size and with data derived from the original collection's individual items;
@@ -589,6 +587,8 @@ These important statements are part of the abstraction. As for the side effects:
 
 - `map` and `filter` prevent you from yielding side effects by default, whereas the default with `for` is to mutate, unless you have an additional statement to create a new empty collection beforehand;
 - `for` inherently requires more noise to be added, as you need to set up the conditions of the loop and handle the iterating variable. _Noise dilutes intent._ Noise also makes it easier for mistakes to slip through. Anything from a misspelled `array.lenght`, to a rogue comma or an illogical condition — ultimately, those are technicalities that you didn't actually need to care about in the first place, yet they lead to pesky bugs creeping in.
+
+`for` will still have its uses, but for _most_ scenarios we have well-known higher-level terms. With the caveat that there is such a thing as too "sophisticated" and opaque vocabulary, by continuously learning and choosing the right functional programming iterator we collectively develop the fineness of our expression as developers centered around a common project.
 
 [contracts not apis]: https://twitter.com/dan_abramov/status/618757668862357504
 
