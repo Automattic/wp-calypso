@@ -64,7 +64,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderWpcomInfo() {
-		const themeSetup = translate( 'Make your site look like the demo with {{a}}Theme Setup{{/a}}.', {
+		const themeSetup = this.props.site.jetpack ? null : translate( 'Make your site look like the demo with {{a}}Theme Setup{{/a}}.', {
 			components: {
 				a: <a href={ this.props.themeSetupUrl }
 					onClick={ this.onLinkClick( 'setup' ) } />
@@ -84,9 +84,7 @@ const ThanksModal = React.createClass( {
 		} );
 		return (
 			<ul>
-				<li>
-					{ themeSetup }
-				</li>
+				{ themeSetup }
 				<li>
 					{ this.props.source === 'list' ? features : customize }
 				</li>
