@@ -26,6 +26,8 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -107,11 +109,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	getSelectedSite() {
-		if ( this.props.sites.get().length === 1 ) {
-			return this.props.sites.getPrimary();
+		const { selectedSite, sites } = this.props;
+
+		if ( sites.get().length === 1 ) {
+			return sites.getPrimary();
 		}
 
-		return this.props.sites.getSelectedSite();
+		return selectedSite;
 	}
 
 	hasJetpackSites() {
@@ -179,8 +183,9 @@ export class MySitesSidebar extends Component {
 		var site = this.getSelectedSite(),
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			themesLink;
+		const { canUserCustomizeSite } = this.props;
 
-		if ( site && ! site.isCustomizable() ) {
+		if ( site && ! canUserCustomizeSite ) {
 			return null;
 		}
 
@@ -217,6 +222,7 @@ export class MySitesSidebar extends Component {
 		var site = this.getSelectedSite(),
 			menusLink = '/menus' + this.siteSuffix(),
 			showClassicLink = ! config.isEnabled( 'manage/menus' );
+		const { canUserCustomizeSite } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -226,7 +232,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.capabilities && ! site.capabilities.edit_theme_options ) {
+		if ( ! canUserCustomizeSite ) {
 			return null;
 		}
 
@@ -792,8 +798,10 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		currentUser: getCurrentUser( state ),
+		canUserCustomizeSite: canCurrentUser( state, selectedSiteId, 'edit_theme_options' ),
 		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
-		isJetpack: isJetpackSite( state, selectedSiteId )
+		isJetpack: isJetpackSite( state, selectedSiteId ),
+		selectedSite: getSelectedSite( state ),
 	};
 }
 
