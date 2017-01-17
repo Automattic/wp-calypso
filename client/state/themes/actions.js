@@ -19,7 +19,7 @@ import {
 	THEME_ACTIVATE_REQUEST_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
-	THEME_DELETE_REQUEST,
+	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
 	THEME_INSTALL,
@@ -646,7 +646,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 export function deleteTheme( themeId, siteId ) {
 	return dispatch => {
 		dispatch( {
-			type: THEME_DELETE_REQUEST,
+			type: THEME_DELETE,
 			themeId,
 			siteId,
 		} );

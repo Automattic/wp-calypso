@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	{ PropTypes } = React,
 	{ connect } = require( 'react-redux' ),
 	defer = require( 'lodash/defer' ),
 	page = require( 'page' ),
@@ -29,6 +30,21 @@ const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
 const DomainsStep = React.createClass( {
+	propTypes: {
+		domainsWithPlansOnly: PropTypes.bool,
+		flowName: PropTypes.string.isRequired,
+		goToNextStep: PropTypes.func.isRequired,
+		isDomainOnly: PropTypes.bool.isRequired,
+		locale: PropTypes.string,
+		path: PropTypes.string.isRequired,
+		positionInFlow: PropTypes.number.isRequired,
+		queryObject: PropTypes.object,
+		signupProgressStore: PropTypes.array.isRequired,
+		step: PropTypes.object,
+		stepName: PropTypes.string.isRequired,
+		stepSectionName: PropTypes.string,
+	},
+
 	contextTypes: {
 		store: React.PropTypes.object
 	},

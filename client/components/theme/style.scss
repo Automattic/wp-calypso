@@ -55,6 +55,8 @@ $theme-info-height: 54px;
 		}
 	}
 
+
+
 	&.is-placeholder {
 		background-color: lighten( $gray, 20% );
 		animation: loading-fade 1.6s ease-in-out infinite;
@@ -156,6 +158,19 @@ $theme-info-height: 54px;
 		left: 0;
 		right: 0;
 	height: $theme-info-height;
+}
+
+.theme__installing {
+	background: transparentize($gray-dark, 0.5);
+	width: 100%;
+	left: 0;
+	top: 0;
+	bottom: $theme-info-height;
+	position: absolute;
+	z-index: z-index( 'root', '.is-installing .theme' );
+	.pulsing-dot {
+		top: 50%;
+	}
 }
 
 .theme__more-button {

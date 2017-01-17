@@ -47,7 +47,8 @@ export function requestSiteStats( siteId, statType, query ) {
 			query
 		} );
 
-		return wpcom.site( siteId )[ statType ]( query ).then( data => {
+		const options = 'statsVideo' === statType ? query.postId : query;
+		return wpcom.site( siteId )[ statType ]( options ).then( data => {
 			dispatch( receiveSiteStats( siteId, statType, query, data ) );
 			dispatch( {
 				type: SITE_STATS_REQUEST_SUCCESS,

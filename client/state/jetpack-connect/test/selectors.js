@@ -129,12 +129,13 @@ describe( 'selectors', () => {
 			expect( isRemoteSiteOnSitesList( state ) ).to.be.false;
 		} );
 
-		it( 'should return true if there site is in the sites list', () => {
+		it( 'should return true if the site is in the sites list', () => {
 			const state = {
 				sites: {
 					items: {
 						12345678: {
 							ID: 12345678,
+							jetpack: true,
 							URL: 'https://wordpress.com/'
 						}
 					}

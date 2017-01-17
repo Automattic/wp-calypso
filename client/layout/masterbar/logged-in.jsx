@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Masterbar from './masterbar';
 import Item from './item';
-import Stats from './stats';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
@@ -17,13 +17,21 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug, getSiteBySlug } from 'state/sites/selectors';
+import { getStatsPathForTab } from 'lib/route/path';
+import { getCurrentUser } from 'state/current-user/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { domainManagementEdit } from 'my-sites/upgrades/paths';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
+		isDomainOnlySite: React.PropTypes.bool,
 		user: React.PropTypes.object,
 		sites: React.PropTypes.object,
 		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		setNextLayoutFocus: React.PropTypes.func.isRequired,
+		siteSlug: React.PropTypes.string,
 	},
 
 	getInitialState() {
@@ -61,21 +69,29 @@ const MasterbarLoggedIn = React.createClass( {
 	},
 
 	render() {
+		const { isDomainOnlySite, siteSlug } = this.props,
+			mySitesUrl = isDomainOnlySite
+				// The site slug for a domain-only site is equal to its only
+				// domain, so we can use it for the domain parameter here.
+				? domainManagementEdit( siteSlug, siteSlug )
+				: getStatsPathForTab( 'day', siteSlug );
+
 		return (
 			<Masterbar>
-				<Stats
+				<Item
+					url={ mySitesUrl }
 					tipTarget="my-sites"
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
 					tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
-					preloadSection={ () => preload( 'stats' ) }
+					preloadSection={ () => preload( isDomainOnlySite ? 'upgrades' : 'stats' ) }
 				>
 					{ this.props.user.get().visible_site_count > 1
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 						: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					}
-				</Stats>
+				</Item>
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
@@ -127,4 +143,25 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
+export default connect( ( state ) => {
+	let siteId = getSelectedSiteId( state );
+	let siteSlug = getSiteSlug( state, siteId );
+
+	// If siteId has not been set in redux, fall back to currentUser.primarySiteSlug
+	if ( ! siteId ) {
+		const currentUser = getCurrentUser( state );
+		siteSlug = get( currentUser, 'primarySiteSlug' );
+
+		// Now we can look up the site ID from its slug
+		const site = getSiteBySlug( state, siteSlug );
+
+		if ( site ) {
+			siteId = site.ID;
+		}
+	}
+
+	return {
+		siteSlug,
+		isDomainOnlySite: isDomainOnlySite( state, siteId ),
+	};
+}, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );

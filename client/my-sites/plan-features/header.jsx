@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
  **/
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import InfoPopover from 'components/info-popover';
+import { isMobile } from 'lib/viewport';
 import Ribbon from 'components/ribbon';
 import PlanPrice from 'my-sites/plan-price';
 import {
@@ -73,7 +75,8 @@ class PlanFeaturesHeader extends Component {
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
-			site
+			site,
+			translate,
 		} = this.props;
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
@@ -83,8 +86,15 @@ class PlanFeaturesHeader extends Component {
 
 		if ( ! site.jetpack || this.props.planType === PLAN_JETPACK_FREE ) {
 			return (
-				<p className={ timeframeClasses } >
+				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
+					{ isDiscounted && ! isPlaceholder &&
+						<InfoPopover
+							className="plan-features__header-tip-info"
+							position={ isMobile() ? 'top' : 'right' }>
+							{ translate( 'Discount for first year' ) }
+						</InfoPopover>
+					}
 				</p>
 			);
 		}

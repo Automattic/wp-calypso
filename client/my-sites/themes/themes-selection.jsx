@@ -18,6 +18,7 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
+	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isThemeActive,
@@ -44,6 +45,7 @@ const ThemesSelection = React.createClass( {
 		] ),
 		showUploadButton: PropTypes.bool,
 		themes: PropTypes.array,
+		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
@@ -109,7 +111,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { siteIdOrWpcom, query, listLabel, showUploadButton } = this.props;
+		const { siteIdOrWpcom, query, listLabel, showUploadButton, themesCount } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -119,6 +121,7 @@ const ThemesSelection = React.createClass( {
 				{ config.isEnabled( 'manage/themes/upload' ) &&
 					<ThemeUploadCard
 						label={ listLabel }
+						count={ themesCount }
 						href={ showUploadButton ? `/design/upload/${ this.props.siteSlug }` : null }
 					/>
 				}
@@ -162,6 +165,7 @@ const ConnectedThemesSelection = connect(
 			siteIdOrWpcom,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
+			themesCount: getThemesFoundForQuery( state, siteIdOrWpcom, query ),
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
 			isThemeActive: themeId => isThemeActive( state, suffixThemeId( themeId ), siteId ),

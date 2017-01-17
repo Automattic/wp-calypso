@@ -88,7 +88,11 @@ var OptionList = React.createClass( {
 	render: function() {
 		return (
 			<div className="menu-item-options" onScroll={ this.checkScrollPosition }>
-				<MenuPanelBackButton label={ this.props.itemType.label } onClick={ this.props.onBackClick } />
+				<MenuPanelBackButton
+					label={ this.props.itemType.label }
+					name={ this.props.itemType.name }
+					onClick={ this.props.onBackClick }
+				/>
 				{ ( ( ! this.props.isEmpty && ! this.props.isLoading ) || this.state.searchTerm !== null ) &&
 					<Search searchTerm={ this.state.searchTerm }
 						onSearch={ this.onSearch } />

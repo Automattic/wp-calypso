@@ -107,7 +107,6 @@
     "react-masonry-component": "4.2.2",
     "react-pure-render": "1.0.2",
     "react-redux": "4.4.5",
-    "react-tap-event-plugin": "2.0.1",
     "react-virtualized": "8.8.1",
     "redux": "3.0.4",
     "redux-thunk": "1.0.0",
@@ -139,8 +138,8 @@
     "wpcom-xhr-request": "1.0.0"
   },
   "engines": {
-    "node": "6.9.1",
-    "npm": "3.10.8"
+    "node": "6.9.4",
+    "npm": "3.10.10"
   },
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",
@@ -187,6 +186,7 @@
     "socket.io": "1.4.5",
     "stylelint": "^6.5.1",
     "supertest": "2.0.0",
+    "webpack-bundle-analyzer": "2.2.1",
     "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.11.0"
   }

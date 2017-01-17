@@ -11,6 +11,7 @@ import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
+import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
@@ -22,7 +23,7 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import jetpackSettings from './jetpack-settings/reducer';
+import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
@@ -63,6 +64,7 @@ export const reducer = combineReducers( {
 	application,
 	accountRecovery,
 	automatedTransfer,
+	billingTransactions,
 	comments,
 	componentsUsageStats,
 	countryStates,
@@ -75,7 +77,7 @@ export const reducer = combineReducers( {
 	happychat,
 	help,
 	jetpackConnect,
-	jetpackSettings,
+	jetpack,
 	jetpackSync,
 	media,
 	notices,

@@ -11,7 +11,7 @@ import { each, pick } from 'lodash';
 import formBase from './form-base';
 import { protectForm } from 'lib/protect-form';
 import config from 'config';
-import PressThisLink from './press-this-link';
+import PressThis from './press-this';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import FormSelect from 'components/forms/form-select';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -205,30 +205,13 @@ const SiteSettingsFormWriting = React.createClass( {
 				) }
 
 				{ config.isEnabled( 'press-this' ) && (
-					<div className="press-this">
+					<div>
 						{
 							this.renderSectionHeader( this.translate( 'Press This', {
 								context: 'name of browser bookmarklet tool'
 							} ), false )
 						}
-						<Card className="site-settings">
-							<FormFieldset>
-								<div>
-									<p>{ this.translate( 'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.' ) }</p>
-									<p>{ this.translate( 'Use Press This to clip text, images and videos from any web page. Then edit and add more straight from Press This before you save or publish it in a post on your site.' ) }</p>
-									<p>{ this.translate( 'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites for a posting shortcut.' ) }</p>
-									<p className="pressthis">
-										<PressThisLink
-											site={ this.props.site }
-											onClick={ this.recordEvent.bind( this, 'Clicked Press This Button' ) }
-											onDragStart={ this.recordEvent.bind( this, 'Dragged Press This Button' ) }>
-											<span className="noticon noticon-pinned"></span>
-											<span>{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</span>
-										</PressThisLink>
-									</p>
-								</div>
-							</FormFieldset>
-						</Card>
+						<PressThis />
 					</div>
 				) }
 			</form>

@@ -1,7 +1,5 @@
 # Guided Tours: Architecture
 
-_(Documentation in progress)_
-
 ## Data: essential and derived state
 
 ### Overview

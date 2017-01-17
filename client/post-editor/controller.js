@@ -127,6 +127,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'metadata',
 			'post_thumbnail',
 			'terms',
+			'title',
 			'type'
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );

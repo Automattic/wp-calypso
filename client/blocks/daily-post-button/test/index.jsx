@@ -85,13 +85,13 @@ describe( 'DailyPostButton', () => {
 
 		it( 'rediects to primary site if the user only has one site', () => {
 			sitesListMock.data = sitesListMock.data.slice( 0, 1 );
-			dailyPostButton.simulate( 'touchTap', { preventDefault: noop } );
+			dailyPostButton.simulate( 'click', { preventDefault: noop } );
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
 		it( 'shows the site selector if the user has more than one site', ( done ) => {
 			dailyPostButton.instance().renderSitesPopover = done;
-			dailyPostButton.simulate( 'touchTap', { preventDefault: noop } );
+			dailyPostButton.simulate( 'click', { preventDefault: noop } );
 		} );
 	} );
 

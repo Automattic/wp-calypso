@@ -1,0 +1,39 @@
+.press-this {
+	/* press this isn't functional on a touch device */
+	.touch & {
+		display: none;
+	}
+
+	p.pressthis {
+		margin: 20px 0;
+
+		a,
+		a:hover,
+		a:focus,
+		a:active {
+			display: inline-block;
+			position: relative;
+			cursor: move;
+			padding: 10px;
+			font-style: normal;
+			line-height: 16px;
+			font-size: 14px;
+			text-decoration: none;
+			color: #333;
+			background: lighten( $gray, 30% );
+			border-radius: 3px;
+			border: 1px solid lighten( $gray, 20% );
+		}
+
+		a span {
+			display: inline-block;
+			margin: 0 10px 0 0;
+			font-family: $sans;
+
+			&:before {
+				color: #777;
+				font-family: Noticons;
+			}
+		}
+	}
+}

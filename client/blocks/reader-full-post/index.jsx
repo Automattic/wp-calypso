@@ -308,7 +308,7 @@ export class FullPostView extends React.Component {
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
 								feedIcon={ get( feed, 'image' ) }
-								siteName={ post.site_name }
+								siteName={ siteName }
 								siteUrl={ post.site_URL }
 								feedUrl= { get( feed, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }

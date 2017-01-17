@@ -17,7 +17,6 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
 	includes = require( 'lodash/includes' );
 
@@ -79,9 +78,6 @@ function init() {
 	} else {
 		document.documentElement.classList.add( 'notouch' );
 	}
-
-	// Initialize touch
-	injectTapEventPlugin();
 
 	// Add accessible-focus listener
 	accessibleFocus();
@@ -414,7 +410,7 @@ function reduxStoreReady( reduxStore ) {
 
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
-
+			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
 			renderLayout( context.store );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );

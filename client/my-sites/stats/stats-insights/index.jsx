@@ -15,7 +15,6 @@ import Comments from '../stats-comments';
 import Followers from '../stats-followers';
 import PostingActivity from '../post-trends';
 import TodaysStats from '../stats-site-overview';
-import StatsModule from '../stats-module';
 import StatsConnectedModule from '../stats-module/connected-list';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
@@ -51,7 +50,6 @@ export default React.createClass( {
 
 		const moduleStrings = statsStrings();
 
-		let tagsList;
 
 		let momentSiteZone = i18n.moment();
 
@@ -62,13 +60,14 @@ export default React.createClass( {
 
 		const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 
+		let tagsList;
 		if ( ! site.jetpack ) {
-			tagsList = <StatsModule
-							path={ 'tags-categories' }
-							moduleStrings={ moduleStrings.tags }
-							site={ site }
-							dataList={ this.props.tagsList }
-							beforeNavigate={ this.updateScrollPosition } />;
+			tagsList = (
+				<StatsConnectedModule
+					path="tags-categories"
+					moduleStrings={ moduleStrings.tags }
+					statType="statsTags" />
+			);
 		}
 
 		// TODO: should be refactored into separate components
