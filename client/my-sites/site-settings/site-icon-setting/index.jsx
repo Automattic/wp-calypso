@@ -15,7 +15,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
 import accept from 'lib/accept';
-import { saveSiteSettings } from 'state/site-settings/actions';
+import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
@@ -90,17 +90,16 @@ class SiteIconSetting extends Component {
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'site-icon' );
-		MediaActions.add( siteId, {
-			ID: transientMediaId,
-			fileContents: blob,
-			fileName
-		} );
+
+		// Set into state without yet saving to show upload progress indicator
+		this.props.updateSiteIcon( siteId, transientMediaId );
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
 			// copy, so if our request is for a media which is not transient,
 			// we can assume the upload has finished.
 			const media = MediaStore.get( siteId, transientMediaId );
+			this.props.receiveMedia( siteId, media );
 			if ( isItemBeingUploaded( media ) ) {
 				return;
 			}
@@ -110,6 +109,12 @@ class SiteIconSetting extends Component {
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
+
+		MediaActions.add( siteId, {
+			ID: transientMediaId,
+			fileContents: blob,
+			fileName
+		} );
 	}
 
 	setSiteIcon = ( error, blob ) => {
@@ -276,6 +281,7 @@ export default connect(
 		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
 		saveSiteSettings,
+		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		receiveMedia
 	}
