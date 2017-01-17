@@ -221,13 +221,6 @@ const flows = {
 		description: 'Secondary flow for User First signup',
 		lastModified: '2016-12-23'
 	},
-
-	'domain-first': {
-		steps: [ 'domain-only', 'site-or-domain', 'themes', 'domain-first-plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2017-01-16'
-	},
 };
 
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
