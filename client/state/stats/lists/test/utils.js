@@ -638,7 +638,7 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [] );
 			} );
 
-			it( 'should return an empty array if not data has no services attribute', () => {
+			it( 'should return an empty array if not data has no data attribute', () => {
 				const parsedData = normalizers.statsVideo( { bad: [] } );
 
 				expect( parsedData ).to.eql( [] );
@@ -656,6 +656,86 @@ describe( 'utils', () => {
 					{
 						period: '2016-11-13',
 						value: 0,
+					}
+				] );
+			} );
+		} );
+
+		describe( 'statsTags()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsTags();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if not data has no tags attribute', () => {
+				const parsedData = normalizers.statsTags( { bad: [] } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsTags( {
+					date: '2014-10-01',
+					tags: [
+						{
+							tags: [
+								{ type: 'category', name: 'Uncategorized', link: 'http://example.wordpress.com/category/uncategorized/' }
+							],
+							views: 2381
+						},
+						{
+							tags: [
+								{ type: 'tag', name: 'supertag-chicken', link: 'http://example.wordpress.com/tag/supertag-chicken/' },
+								{ type: 'tag', name: 'supertag-ribs', link: 'http://example.wordpress.com/tag/supertag-ribs/' }
+							],
+							views: 740
+						},
+					]
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						children: undefined,
+						label: [ {
+							label: 'Uncategorized',
+							labelIcon: 'folder',
+							link: 'http://example.wordpress.com/category/uncategorized/'
+						} ],
+						link: 'http://example.wordpress.com/category/uncategorized/',
+						value: 2381
+					},
+					{
+						children: [
+							{
+								label: 'supertag-chicken',
+								labelIcon: 'tag',
+								link: 'http://example.wordpress.com/tag/supertag-chicken/',
+								children: null,
+								value: null
+							},
+							{
+								label: 'supertag-ribs',
+								labelIcon: 'tag',
+								link: 'http://example.wordpress.com/tag/supertag-ribs/',
+								children: null,
+								value: null
+							}
+						],
+						label: [
+							{
+								label: 'supertag-chicken',
+								labelIcon: 'tag',
+								link: null
+							},
+							{
+								label: 'supertag-ribs',
+								labelIcon: 'tag',
+								link: null
+							}
+						],
+						link: null,
+						value: 740
 					}
 				] );
 			} );
