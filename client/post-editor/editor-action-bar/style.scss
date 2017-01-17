@@ -13,6 +13,18 @@
 	}
 }
 
+.editor-action-bar__cell {
+	width: 33%;
+}
+
+.editor-action-bar__cell-center {
+	text-align: center;
+}
+
+.editor-action-bar__cell-right {
+	text-align: right;
+}
+
 .post-editor__content .editor-action-bar {
 	@include breakpoint( "<660px" ) {
 		display: none;
