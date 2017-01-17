@@ -42,10 +42,10 @@ Currently, the following implementations exist:
 
 ## Extending
 
-Depending on the level of customization you need, you'll likely only need to implement the `matches` and `sort` methods.
+Depending on the level of customization you need, you'll likely only need to implement the `matches` and `compare` methods.
 
 - `matches( query: object, item: object )` should return true if the passed item should be included in the query set
-- `sort( itemA: object, itemB: object )` is a sort comparator function, returning -1 to indicate "A before B", 1 to indicate "A after B", or 0 to indicate equality ([see `Array.prototype.sort`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort))
+- `compare( itemA: object, itemB: object )` is a sort comparator function, returning -1 to indicate "A before B", 1 to indicate "A after B", or 0 to indicate equality ([see `Array.prototype.sort`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort))
 
 Sometimes you may need to make further customizations. Some examples include:
 
