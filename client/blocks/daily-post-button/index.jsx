@@ -37,10 +37,6 @@ function getPingbackAttributes( post ) {
 	};
 }
 
-function preventDefault( event ) {
-	event.preventDefault();
-}
-
 function preloadEditor() {
 	preload( 'post-editor' );
 }
@@ -107,7 +103,7 @@ class DailyPostButton extends React.Component {
 	}
 
 	toggle = ( event ) => {
-		preventDefault( event );
+		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			recordAction( 'open_daily_post_challenge' );
 			recordGaEvent( 'Opened Daily Post Challenge' );
@@ -161,8 +157,7 @@ class DailyPostButton extends React.Component {
 
 		return React.createElement( this.props.tagName, {
 			className: 'daily-post-button',
-			onTouchTap: this.toggle,
-			onClick: preventDefault,
+			onClick: this.toggle,
 			onTouchStart: preloadEditor,
 			onMouseEnter: preloadEditor
 		}, [

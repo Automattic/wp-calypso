@@ -13,13 +13,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import {
 	activateModule,
 	deactivateModule
-} from 'state/jetpack-settings/modules/actions';
+} from 'state/jetpack/modules/actions';
 import {
 	isModuleActive,
 	isActivatingModule,
 	isDeactivatingModule,
 	getModule
-} from 'state/jetpack-settings/modules/selectors';
+} from 'state/jetpack/modules/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class JetpackModuleToggle extends Component {

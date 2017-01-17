@@ -2,22 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
 
-export default React.createClass( {
+export const Count = ( { count, numberFormat, ...inheritProps } ) => (
+	// Omit props passed from the `localize` higher-order component that we don't need.
+	<span className="count" { ...omit( inheritProps, [ 'translate', 'moment' ] ) }>
+		{ numberFormat( count ) }
+	</span>
+);
 
-	displayName: 'Count',
+Count.propTypes = {
+	count: React.PropTypes.number.isRequired,
+	numberFormat: React.PropTypes.func
+};
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		count: React.PropTypes.number.isRequired,
-	},
-
-	render() {
-		const { count, ...inheritProps } = this.props;
-		return (
-			<span className="count" { ...inheritProps }>{ this.numberFormat( count ) }</span>
-		);
-	}
-} );
+export default localize( Count );

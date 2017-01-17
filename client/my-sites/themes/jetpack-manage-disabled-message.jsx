@@ -19,7 +19,7 @@ const JetpackManageDisabledMessage = React.createClass( {
 
 	propTypes: {
 		site: PropTypes.shape( {
-			getRemoteManagementURL: PropTypes.func.isRequired,
+			ID: PropTypes.number.isRequired,
 			options: PropTypes.shape( { admin_url: PropTypes.string.isRequired } ).isRequired
 		} ).isRequired
 	},

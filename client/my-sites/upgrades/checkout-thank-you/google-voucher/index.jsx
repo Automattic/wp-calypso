@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
@@ -142,16 +143,20 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<div className="google-voucher-dialog__footer">
-					<PurchaseButton
+					<Button
 						className="google-vouchers-dialog__cancel-button"
-						primary={ false }
 						onClick={ this.onDialogCancel }
-						text={ this.props.translate( 'Cancel' ) } />
+					>
+						{ this.props.translate( 'Cancel' ) }
+					</Button>
 
-					<PurchaseButton
+					<Button
 						className="google-vouchers-dialog__agree-button"
 						onClick={ this.onAcceptTermsAndConditions }
-						text={ this.props.translate( 'Agree' ) } />
+						primary={ true }
+					>
+						{ this.props.translate( 'Agree' ) }
+					</Button>
 				</div>
 			</Dialog>
 		);

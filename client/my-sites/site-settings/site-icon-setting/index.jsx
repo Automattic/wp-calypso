@@ -9,7 +9,7 @@ import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import AsyncLoad from 'components/async-load';
@@ -33,7 +33,7 @@ import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
-import { getImageEditorCrop } from 'state/ui/editor/image-editor/selectors';
+import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
 import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 
 class SiteIconSetting extends Component {
@@ -45,19 +45,24 @@ class SiteIconSetting extends Component {
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
 		onEditSelectedMedia: PropTypes.func,
+		onCancelEditingIcon: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
 		crop: PropTypes.object
 	};
 
 	state = {
 		isModalVisible: false,
-		hasToggledModal: false
+		hasToggledModal: false,
+		isEditingSiteIcon: false
 	};
 
 	toggleModal = ( isModalVisible ) => {
+		const { isEditingSiteIcon } = this.state;
+
 		this.setState( {
 			isModalVisible,
-			hasToggledModal: true
+			hasToggledModal: true,
+			isEditingSiteIcon: isModalVisible ? isEditingSiteIcon : false
 		} );
 	};
 
@@ -67,6 +72,7 @@ class SiteIconSetting extends Component {
 
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
+			this.setState( { isEditingSiteIcon: true } );
 			this.props.onEditSelectedMedia();
 		} else {
 			this.hideModal();
@@ -117,15 +123,21 @@ class SiteIconSetting extends Component {
 			return;
 		}
 
-		const { crop } = this.props;
-		const isImageCropped = ! isEqual( crop, {
+		const { crop, transform } = this.props;
+		const isImageEdited = ! isEqual( {
+			...crop,
+			...transform
+		}, {
 			topRatio: 0,
 			leftRatio: 0,
 			widthRatio: 1,
-			heightRatio: 1
+			heightRatio: 1,
+			degrees: 0,
+			scaleX: 1,
+			scaleY: 1
 		} );
 
-		if ( isImageCropped ) {
+		if ( isImageEdited ) {
 			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
 		} else {
 			this.saveSiteIconSetting( siteId, selectedItem );
@@ -146,13 +158,19 @@ class SiteIconSetting extends Component {
 		} );
 	};
 
+	cancelEditingSiteIcon = () => {
+		this.props.onCancelEditingIcon();
+		this.props.resetAllImageEditorState();
+		this.setState( { isEditingSiteIcon: false } );
+	};
+
 	preloadModal() {
 		asyncRequire( 'post-editor/media-modal' );
 	}
 
 	render() {
 		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
-		const { isModalVisible, hasToggledModal } = this.state;
+		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
 		let buttonProps;
@@ -218,10 +236,13 @@ class SiteIconSetting extends Component {
 							siteId={ siteId }
 							onClose={ this.editSelectedMedia }
 							enabledFilters={ [ 'images' ] }
-							imageEditorProps={ {
-								allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-								onDone: this.setSiteIcon
-							} }
+							{ ...( isEditingSiteIcon ? {
+								imageEditorProps: {
+									allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+									onDone: this.setSiteIcon,
+									onCancel: this.cancelEditingSiteIcon
+								}
+							} : {} ) }
 							visible={ isModalVisible }
 							labels={ {
 								confirm: translate( 'Continue' )
@@ -246,11 +267,13 @@ export default connect(
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
 			customizerUrl: getCustomizerUrl( state, siteId ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
-			crop: getImageEditorCrop( state )
+			crop: getImageEditorCrop( state ),
+			transform: getImageEditorTransform( state )
 		};
 	},
 	{
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
+		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
 		saveSiteSettings,
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),

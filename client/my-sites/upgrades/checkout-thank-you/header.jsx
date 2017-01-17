@@ -25,6 +25,10 @@ class CheckoutThankYouHeader extends React.Component {
 			return this.props.translate( 'Loading…' );
 		}
 
+		if ( this.props.hasFailedPurchases ) {
+			return this.props.translate( 'Some items failed.' );
+		}
+
 		if ( this.props.primaryPurchase && isChargeback( this.props.primaryPurchase ) ) {
 			return this.props.translate( 'Thank you!' );
 		}
@@ -33,6 +37,10 @@ class CheckoutThankYouHeader extends React.Component {
 	}
 
 	getText() {
+		if ( this.props.hasFailedPurchases ) {
+			return this.props.translate( 'Some of the items in your cart could not be added.' );
+		}
+
 		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {
 			return this.props.translate( 'You will receive an email confirmation shortly.' );
 		}
@@ -121,16 +129,17 @@ class CheckoutThankYouHeader extends React.Component {
 	}
 
 	render() {
-		const classes = {
-			'checkout-thank-you__header': true,
-			'is-placeholder': ! this.props.isDataLoaded
-		};
+		const icon = this.props.hasFailedPurchases ? 'notice' : 'trophy',
+			classes = {
+				'checkout-thank-you__header': true,
+				'is-placeholder': ! this.props.isDataLoaded
+			};
 
 		return (
 			<div className={ classNames( classes ) }>
 				<div className="checkout-thank-you__header-content">
 					<span className="checkout-thank-you__header-icon">
-						<Gridicon icon="trophy" size={ 72 } />
+						<Gridicon icon={ icon } size={ 72 } />
 					</span>
 
 					<div className="checkout-thank-you__header-copy">
@@ -150,7 +159,8 @@ class CheckoutThankYouHeader extends React.Component {
 
 CheckoutThankYouHeader.propTypes = {
 	isDataLoaded: React.PropTypes.bool.isRequired,
-	primaryPurchase: React.PropTypes.object
+	primaryPurchase: React.PropTypes.object,
+	hasFailedPurchases: React.PropTypes.bool
 };
 
 export default localize( CheckoutThankYouHeader );

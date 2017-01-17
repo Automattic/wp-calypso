@@ -40,27 +40,28 @@ module.exports = React.createClass( {
 				}
 			);
 
-		results = groups.map( function( group, groupIndex ) {
-			var childResults,
-				active,
-				groupTree = parentKey ? [ parentKey ] : [],
-				groupKey,
-				clickHandler = this.props.clickHandler ? this.props.clickHandler : false;
+		if ( groups ) {
+			results = groups.map( function( group, groupIndex ) {
+				var childResults,
+					active,
+					groupTree = parentKey ? [ parentKey ] : [],
+					groupKey,
+					clickHandler = this.props.clickHandler ? this.props.clickHandler : false;
 
-			// Build a unique key for this group
-			groupTree.push( groupIndex );
-			groupKey = groupTree.join( ':' );
+				// Build a unique key for this group
+				groupTree.push( groupIndex );
+				groupKey = groupTree.join( ':' );
 
-			// Determine if child data exists and setup css classes accoridingly
-			active = this.isGroupActive( groupKey );
+				// Determine if child data exists and setup css classes accoridingly
+				active = this.isGroupActive( groupKey );
 
-			// If this group has results, build up the nested child ul/li elements
-			if ( group.children ) {
-				childResults = this.buildLists( group.children, groupKey );
-			}
-
-			return <StatsListItem moduleName={ this.props.moduleName } data={ group } active={ active } children={ childResults } key={ groupKey } itemClickHandler={ clickHandler } followList={ this.props.followList } />;
-		}, this );
+				// If this group has results, build up the nested child ul/li elements
+				if ( group.children ) {
+					childResults = this.buildLists( group.children, groupKey );
+				}
+				return <StatsListItem moduleName={ this.props.moduleName } data={ group } active={ active } children={ childResults } key={ groupKey } itemClickHandler={ clickHandler } followList={ this.props.followList } />;
+			}, this );
+		}
 
 		return ( <ul className={ listClass }>{ results }</ul> );
 	},

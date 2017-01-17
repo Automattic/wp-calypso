@@ -39,11 +39,7 @@ const MasterbarItemNew = React.createClass( {
 	},
 
 	toggleSitesPopover( isShowingPopover = ! this.state.isShowingPopover ) {
-		// Setting state in the context of a touchTap event (i.e. SitePicker
-		// Site onSelect) prevents link navigation from proceeding
-		setTimeout( this.setState.bind( this, {
-			isShowingPopover: isShowingPopover
-		} ), 0 );
+		this.setState( { isShowingPopover } );
 	},
 
 	onClick( event ) {

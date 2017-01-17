@@ -43,6 +43,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
+import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { isDomainRegistration } from 'lib/products-values';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -179,13 +181,18 @@ const Checkout = React.createClass( {
 			renewalItem,
 			receiptId = ':receiptId';
 
-		const { selectedSiteId, selectedSiteSlug } = this.props;
+		const {
+			cart,
+			selectedSite,
+			selectedSiteId,
+			selectedSiteSlug
+		} = this.props;
 		const receipt = this.props.transaction.step.data;
 
 		this.props.clearPurchases();
 
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
+		if ( cartItems.hasRenewalItem( cart ) ) {
+			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 			// group all purchases into an array
 			purchasedProducts = reduce( receipt && receipt.purchases || {}, function( result, value ) {
 				return result.concat( value );
@@ -226,12 +233,15 @@ const Checkout = React.createClass( {
 			}
 
 			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
-		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
+		} else if ( cartItems.hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
 
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
+		} else if ( selectedSite.options.is_domain_only && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
+			const domainItem = find( cartItems.getAll( cart ), isDomainRegistration );
+			return domainManagementEdit( selectedSite.slug, domainItem.meta );
 		}
 
 		if ( receipt && receipt.receipt_id ) {

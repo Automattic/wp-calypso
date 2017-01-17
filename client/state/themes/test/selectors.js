@@ -1594,10 +1594,13 @@ describe( 'themes selectors', () => {
 				{
 					themes: {
 						themeInstalls: {
-							2916284: true
+							2916284: {
+								karuna: true
+							}
 						}
 					}
 				},
+				'karuna',
 				2916284
 			);
 

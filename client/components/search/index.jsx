@@ -333,7 +333,7 @@ const Search = React.createClass( {
 				<div
 					className="search__icon-navigation"
 					ref="openIcon"
-					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
+					onClick={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon
 						? this.openListener
@@ -385,7 +385,7 @@ const Search = React.createClass( {
 			return (
 				<div
 					className="search__icon-navigation"
-					onTouchTap={ this.closeSearch }
+					onClick={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
