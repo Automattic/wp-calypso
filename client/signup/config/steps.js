@@ -63,15 +63,6 @@ module.exports = {
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
-	// The user can skip the plans step when creating a domain-only site
-	// through the `domain-first` flow. This is just a version of `plans` that
-	// does not necessarily provide any dependencies.
-	'domain-first-plans': {
-		stepName: 'domain-first-plans',
-		apiRequestFunction: stepActions.addPlanToCart,
-		dependencies: [ 'siteSlug', 'domainItem' ],
-	},
-
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,

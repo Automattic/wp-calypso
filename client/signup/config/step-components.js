@@ -18,7 +18,6 @@ module.exports = {
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	domains: DomainsStepComponent,
-	'domain-first-plans': PlansStepComponent,
 	'domains-with-plan': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
