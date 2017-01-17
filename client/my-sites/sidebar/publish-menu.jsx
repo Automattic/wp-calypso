@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import includes from 'lodash/includes';
-import omit from 'lodash/omit';
-import map from 'lodash/map';
-import get from 'lodash/get';
-import mapValues from 'lodash/mapValues';
+import { includes, omit, reduce, get, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -170,13 +166,19 @@ const PublishMenu = React.createClass( {
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
-		return map( customPostTypes, ( postType, postTypeSlug ) => {
+		return reduce( customPostTypes, ( memo, postType, postTypeSlug ) => {
+			// `show_ui` was added in Jetpack 4.5, so explicitly check false
+			// value in case site on earlier version where property is omitted
+			if ( false === postType.show_ui ) {
+				return memo;
+			}
+
 			let buttonLink;
 			if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
 				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
 			}
 
-			return {
+			return memo.concat( {
 				name: postType.name,
 				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
 				className: postType.name,
@@ -193,8 +195,8 @@ const PublishMenu = React.createClass( {
 				wpAdminLink: 'edit.php?post_type=' + postType.name,
 				showOnAllMySites: false,
 				buttonLink
-			};
-		} );
+			} );
+		}, [] );
 	},
 
 	render() {
