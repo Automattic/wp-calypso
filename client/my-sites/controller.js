@@ -7,7 +7,6 @@ import React from 'react';
 import i18n from 'i18n-calypso';
 import { uniq } from 'lodash';
 import startsWith from 'lodash/startsWith';
-import get from 'lodash/get';
 
 /**
  * Internal Dependencies
@@ -32,6 +31,7 @@ import utils from 'lib/site/utils';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 /**
  * Module vars
@@ -111,20 +111,13 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, site ) {
-	if ( ! get( site, 'options.is_domain_only', false ) ) {
-		return true;
-	}
-
+function isPathAllowedForDomainOnlySite( pathname ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
 		'/domains/manage/',
 		'/checkout/',
 	];
 
-	const isPathWhiteListedForDomainOnlySite = urlPrefixesWhiteListForDomainOnlySite
-		.some( path => startsWith( pathname, path ) );
-
-	return isPathWhiteListedForDomainOnlySite;
+	return urlPrefixesWhiteListForDomainOnlySite.some( path => startsWith( pathname, path ) );
 }
 
 function onSelectedSiteAvailable( context ) {
@@ -133,13 +126,15 @@ function onSelectedSiteAvailable( context ) {
 	context.store.dispatch( receiveSite( selectedSite ) );
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
-	if ( ! isPathAllowedForDomainOnlySite( context.pathname, selectedSite ) ) {
+	const state = context.store.getState();
+
+	if ( isDomainOnlySite( state, selectedSite.ID )
+		&& ! isPathAllowedForDomainOnlySite( context.pathname ) ) {
 		page.redirect( '/domains/manage/' + selectedSite.slug );
 		return false;
 	}
 
 	// Update recent sites preference
-	const state = context.store.getState();
 	if ( hasReceivedRemotePreferences( state ) ) {
 		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
