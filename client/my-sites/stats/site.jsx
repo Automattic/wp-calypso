@@ -179,7 +179,8 @@ module.exports = React.createClass( {
 								period={ this.props.period }
 								query={ query }
 								date={ queryDate }
-								statType="statsReferrers" />
+								statType="statsReferrers"
+								showSummaryLink />
 							<StatsModule
 								path={ 'clicks' }
 								moduleStrings={ moduleStrings.clicks }
