@@ -91,7 +91,7 @@ class PlanFeaturesHeader extends Component {
 					{ isDiscounted && ! isPlaceholder &&
 						<InfoPopover
 							className="plan-features__header-tip-info"
-							position={ isMobile() ? 'top' : 'right' }>
+							position={ isMobile() ? 'top' : 'left bottom' }>
 							{ translate( 'Discount for first year' ) }
 						</InfoPopover>
 					}
