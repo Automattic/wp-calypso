@@ -144,12 +144,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Libre',
-		slug: 'libre',
+		name: 'Libre 2',
+		slug: 'libre-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		demo_uri: 'https://libredemo.wordpress.com',
+		demo_uri: 'https://libre2demo.wordpress.com',
 		verticals: []
 	},
 	{
