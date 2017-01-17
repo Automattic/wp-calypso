@@ -121,16 +121,16 @@ describe( 'reducer', () => {
 			const state = items( null, {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
-				types: [
-					{ name: 'post', label: 'Posts' },
-					{ name: 'page', label: 'Pages' }
-				]
+				types: {
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
+				}
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' },
-					page: { name: 'page', label: 'Pages' }
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
 				}
 			} );
 		} );
@@ -138,24 +138,24 @@ describe( 'reducer', () => {
 		it( 'should accumulate sites', () => {
 			const state = items( deepFreeze( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' },
-					page: { name: 'page', label: 'Pages' }
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
 				}
 			} ), {
 				type: POST_TYPES_RECEIVE,
 				siteId: 77203074,
-				types: [
-					{ name: 'post', label: 'Posts' }
-				]
+				types: {
+					post: { slug: 'post', label: 'Posts' }
+				}
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' },
-					page: { name: 'page', label: 'Pages' }
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
 				},
 				77203074: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} );
 		} );
@@ -163,20 +163,20 @@ describe( 'reducer', () => {
 		it( 'should override previous post types of same site ID', () => {
 			const state = items( deepFreeze( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' },
-					page: { name: 'page', label: 'Pages' }
+					post: { slug: 'post', label: 'Posts' },
+					page: { slug: 'page', label: 'Pages' }
 				}
 			} ), {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
-				types: [
-					{ name: 'post', label: 'Posts' }
-				]
+				types: {
+					post: { slug: 'post', label: 'Posts' }
+				}
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} );
 		} );
@@ -184,13 +184,13 @@ describe( 'reducer', () => {
 		it( 'should persist state', () => {
 			const state = items( deepFreeze( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} ), { type: SERIALIZE } );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} );
 		} );
@@ -198,20 +198,20 @@ describe( 'reducer', () => {
 		it( 'should load valid persisted state', () => {
 			const state = items( deepFreeze( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} ), { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: { name: 'post', label: 'Posts' }
+					post: { slug: 'post', label: 'Posts' }
 				}
 			} );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
 			const state = items( deepFreeze( {
-				post: { name: 'post', label: 'Posts' }
+				post: { slug: 'post', label: 'Posts' }
 			} ), { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );

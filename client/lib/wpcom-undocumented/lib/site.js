@@ -186,6 +186,15 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/post-counts/' + type, query, callback );
 };
 
+UndocumentedSite.prototype.postTypes = function( options ) {
+	const query = Object.assign( {
+		apiNamespace: 'wp/v2',
+		context: 'edit'
+	}, options );
+
+	return this.wpcom.req.get( `/sites/${ this._id }/types`, query );
+};
+
 /**
  * Returns media storage limits and space used for a given site. If site has
  * unlimited storage or is a jetpack site, values returned will be -1.

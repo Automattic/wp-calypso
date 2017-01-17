@@ -87,8 +87,8 @@ describe( 'initial-state', () => {
 						postTypes: {
 							items: {
 								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
+									post: { slug: 'post', label: 'Posts' },
+									page: { slug: 'page', label: 'Pages' }
 								}
 							}
 						},
@@ -139,8 +139,8 @@ describe( 'initial-state', () => {
 						postTypes: {
 							items: {
 								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
+									post: { slug: 'post', label: 'Posts' },
+									page: { slug: 'page', label: 'Pages' }
 								}
 							}
 						},
@@ -150,7 +150,7 @@ describe( 'initial-state', () => {
 						postTypes: {
 							items: {
 								77203074: {
-									post: { name: 'post', label: 'Posts' }
+									post: { slug: 'post', label: 'Posts' }
 								}
 							}
 						}
@@ -196,7 +196,7 @@ describe( 'initial-state', () => {
 					postTypes: {
 						items: {
 							77203074: {
-								post: { name: 'post', label: 'Posts' }
+								post: { slug: 'post', label: 'Posts' }
 							}
 						}
 					}
@@ -213,8 +213,8 @@ describe( 'initial-state', () => {
 								postTypes: {
 									items: {
 										2916284: {
-											post: { name: 'post', label: 'Posts' },
-											page: { name: 'page', label: 'Pages' }
+											post: { slug: 'post', label: 'Posts' },
+											page: { slug: 'page', label: 'Pages' }
 										}
 									}
 								},
@@ -254,8 +254,8 @@ describe( 'initial-state', () => {
 						postTypes: {
 							items: {
 								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' }
+									post: { slug: 'post', label: 'Posts' },
+									page: { slug: 'page', label: 'Pages' }
 								}
 							}
 						},
