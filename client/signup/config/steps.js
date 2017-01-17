@@ -92,6 +92,7 @@ module.exports = {
 		props: {
 			isDomainOnly: true
 		},
+		dependencies: [ 'designType' ],
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},

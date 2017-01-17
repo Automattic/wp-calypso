@@ -133,7 +133,6 @@ const DomainsStep = React.createClass( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
-			isDomainOnly: this.props.isDomainOnly ? 1 : 0,
 			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
