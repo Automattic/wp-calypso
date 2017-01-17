@@ -434,6 +434,22 @@ export const getSeoTitle = ( state, type, data ) => {
 };
 
 /**
+ * Returns a site object by its slug.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  siteSlug  Site URL
+ * @return {?Object}           Site object
+ */
+export const getSiteBySlug = createSelector(
+	( state, siteSlug ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteSlug( state, siteId ) === siteSlug
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a site object by its URL.
  *
  * @param  {Object}  state Global state tree
@@ -442,15 +458,8 @@ export const getSeoTitle = ( state, type, data ) => {
  */
 export function getSiteByUrl( state, url ) {
 	const slug = urlToSlug( url );
-	const site = find( state.sites.items, ( item, siteId ) => {
-		return getSiteSlug( state, siteId ) === slug;
-	} );
 
-	if ( ! site ) {
-		return null;
-	}
-
-	return site;
+	return getSiteBySlug( state, slug );
 }
 
 /**
