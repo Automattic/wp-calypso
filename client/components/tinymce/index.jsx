@@ -83,19 +83,20 @@ const EVENTS = {
 	activate: 'onActivate',
 	blur: 'onBlur',
 	change: 'onChange',
-	input: 'onInput',
-	keyUp: 'onKeyUp',
 	deactivate: 'onDeactivate',
 	focus: 'onFocus',
 	hide: 'onHide',
 	init: 'onInit',
+	input: 'onInput',
+	keyUp: 'onKeyUp',
+	paste: 'onPaste',
 	redo: 'onRedo',
 	remove: 'onRemove',
 	reset: 'onReset',
+	setContent: 'onSetContent',
 	show: 'onShow',
 	submit: 'onSubmit',
-	undo: 'onUndo',
-	setContent: 'onSetContent'
+	undo: 'onUndo'
 };
 
 const PLUGINS = [
@@ -142,6 +143,7 @@ module.exports = React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {
+		isNew: React.PropTypes.bool,
 		mode: React.PropTypes.string,
 		onActivate: React.PropTypes.func,
 		onBlur: React.PropTypes.func,
@@ -150,17 +152,17 @@ module.exports = React.createClass( {
 		onFocus: React.PropTypes.func,
 		onHide: React.PropTypes.func,
 		onInit: React.PropTypes.func,
+		onKeyUp: React.PropTypes.func,
+		onPaste: React.PropTypes.func,
 		onRedo: React.PropTypes.func,
 		onRemove: React.PropTypes.func,
 		onReset: React.PropTypes.func,
+		onSetContent: React.PropTypes.func,
 		onShow: React.PropTypes.func,
 		onSubmit: React.PropTypes.func,
-		onUndo: React.PropTypes.func,
-		onSetContent: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		isNew: React.PropTypes.bool,
 		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func
+		onUndo: React.PropTypes.func,
+		tabIndex: React.PropTypes.number
 	},
 
 	contextTypes: {
