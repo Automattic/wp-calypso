@@ -18,6 +18,7 @@ import { getRawSite } from 'state/sites/selectors';
  */
 export default function isDomainOnlySite( state, siteId ) {
 	const site = getRawSite( state, siteId );
+
 	if ( ! site ) {
 		return null;
 	}
