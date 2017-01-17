@@ -21,7 +21,7 @@ export default function() {
 
 ## Route definitions
 
-So what we're doing here is export a default function that holds our route definitions, using the `page.js` client router.
+So what we're doing here is export a default function that holds our route definitions, using the [`page.js`](https://visionmedia.github.io/page.js/) client-side router.
 This pattern is the same for all Calypso sections. If you're unfamiliar with `page.js`, each of these `page` functions associate a given route (e.g. `/menus/:site_id`) with a number of functions that will be invoked when a user hits that route.
 
 Colon-prefixed route parts (such as `:site_id` here) are called route parameters. More on them in a bit.
