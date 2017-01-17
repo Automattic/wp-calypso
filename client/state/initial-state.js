@@ -67,7 +67,7 @@ function loadInitialStateFailed( createReduxStore, error ) {
 	return createReduxStore();
 }
 
-export function persistOnChange( reduxStore, serializeState = serialize ) {
+export function persistOnChange( reducer, reduxStore, serializeState = serialize ) {
 	let state;
 	reduxStore.subscribe( throttle( function() {
 		const nextState = reduxStore.getState();
@@ -77,7 +77,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 		state = nextState;
 
-		localforage.setItem( 'redux-state', serializeState( state ) )
+		localforage.setItem( 'redux-state', serializeState( reducer, state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
@@ -93,7 +93,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 			localforage.getItem( 'redux-state' )
 				.then( loadInitialState.bind( null, createReduxStore, reducer ) )
 				.catch( loadInitialStateFailed.bind( null, createReduxStore ) )
-				.then( persistOnChange )
+				.then( persistOnChange.bind( null, reducer ) )
 				.then( reduxStoreReady );
 		} else {
 			debug( 'persist-redux is not enabled, building state from scratch' );
