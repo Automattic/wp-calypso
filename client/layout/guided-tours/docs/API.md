@@ -224,7 +224,7 @@ One of the features of Guided Tours is the ability to target DOM elements in Cal
 - `data-tip-target` attribute on the target element (recommended)
 - using any CSS selector
 
-To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute. We run the query selector on every render so it possible to move elements around.
+To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` contains a `.`, `#`, or a space character, we assume it's a CSS selector and it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute. We run the query selector on every render so it possible to move elements around.
 
 ### [data-tip-target]
 
@@ -246,7 +246,7 @@ Example: you want to position a step of your tour to point to some input element
 
 There are cases when it might be a better idea to target an element by a CSS selector. You might use some classes to get elements in certain state or you might not be 100% in control of the markup (think controls of an external library).
 
-You declare that you are using a CSS selector by starting a value of the `target` prop with a dot or a space character. Only one element can be used as a target: the first one matching the selector will be used.
+We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space character.
 
 Some examples:
 
@@ -260,9 +260,11 @@ Some examples:
 // detect state (has-thumbnail) and select a child (featured image)
 <Step target=".reader-post-card.has-thumbnail .reader-post-card__featured-image">
 
-// target id (notice the required space before #)
-<Step target=" #header">
+// target id
+<Step target="#header">
 
-// target element (again, space at the beginning)
+// target element
 <Step target=" body">
 ```
+
+Notice the space before "body" in the last example. It is required there, otherwise the framework will be looking for `[data-tip-target="body"]` and not using the value as a CSS selector. The space will force the CSS selector mode.
