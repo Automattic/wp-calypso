@@ -114,7 +114,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * @return {Number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */
-	sort( query, postA, postB ) {
+	compare( query, postA, postB ) {
 		let order;
 
 		switch ( query.order_by ) {
