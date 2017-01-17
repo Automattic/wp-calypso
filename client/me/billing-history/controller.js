@@ -17,11 +17,10 @@ const sites = sitesFactory();
 export default {
 	billingHistory( context ) {
 		const BillingHistoryComponent = require( './main' );
-		const billingData = require( 'lib/billing-history-data' );
 		const basePath = route.sectionify( context.path );
 
 		renderWithReduxStore(
-			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
+			React.createElement( BillingHistoryComponent, { sites: sites } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -31,18 +30,14 @@ export default {
 
 	transaction( context ) {
 		const Receipt = require( './receipt' );
-		const billingData = require( 'lib/billing-history-data' );
 		const receiptId = context.params.receiptId;
 		const basePath = route.sectionify( context.path );
-
-		// Initialize billing data
-		billingData.get();
 
 		if ( receiptId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
 
 			renderWithReduxStore(
-				React.createElement( Receipt, { transaction: billingData.getTransaction( receiptId ) } ),
+				React.createElement( Receipt, { transactionId: receiptId } ),
 				document.getElementById( 'primary' ),
 				context.store
 			);

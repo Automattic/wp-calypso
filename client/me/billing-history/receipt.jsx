@@ -2,34 +2,38 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
-import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import { getPastBillingTransaction } from 'state/selectors';
 
 const BillingReceipt = React.createClass( {
-	mixins: [ observe( 'billingData' ), eventRecorder ],
+	mixins: [ eventRecorder ],
 
 	render() {
 		const { transaction, translate } = this.props;
+		if ( ! transaction ) {
+			return this.renderPlaceholder();
+		}
+
 		const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
 		const serviceLink = <a href={ transaction.url } title={ title } />;
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Billing History' ) } />
-				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
-					{ translate( 'Billing History' ) }
-				</HeaderCake>
+				{ this.renderTitle() }
+
 				<Card compact className="billing-history__receipt-card">
 					<div className="billing-history__app-overview">
 						<img src={ transaction.icon } title={ transaction.service } />
@@ -128,6 +132,37 @@ const BillingReceipt = React.createClass( {
 		);
 	},
 
+	renderTitle() {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<DocumentHead title={ translate( 'Billing History' ) } />
+				<QueryBillingTransactions />
+				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
+					{ translate( 'Billing History' ) }
+				</HeaderCake>
+			</div>
+		);
+	},
+
+	renderPlaceholder() {
+		const { translate } = this.props;
+
+		return (
+			<Main>
+				{ this.renderTitle() }
+				<Card compact className="billing-history__receipt-card">
+					<div className="billing-history__receipt">
+						<div className="billing-history__receipt-loading">
+							{ translate( 'Loading…' ) }
+						</div>
+					</div>
+				</Card>
+			</Main>
+		);
+	},
+
 	renderBillingDetails() {
 		const { transaction, translate } = this.props;
 		if ( ! transaction.cc_name && ! transaction.cc_email ) {
@@ -190,4 +225,8 @@ const BillingReceipt = React.createClass( {
 	}
 } );
 
-export default localize( BillingReceipt );
+export default connect(
+	( state, ownProps ) => ( {
+		transaction: getPastBillingTransaction( state, ownProps.transactionId )
+	} ),
+)( localize( BillingReceipt ) );
