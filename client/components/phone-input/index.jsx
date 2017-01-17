@@ -24,7 +24,6 @@ const PhoneInput = React.createClass( {
 	},
 
 	getCountry( countryCode = this.props.countryCode ) {
-		countryCode = countryCode.toUpperCase();
 		let selectedCountry = countries[ countryCode ];
 
 		if ( ! selectedCountry ) {
@@ -135,7 +134,7 @@ const PhoneInput = React.createClass( {
 
 	handleCountrySelection( event ) {
 		const newCountryCode = event.target.value;
-		if ( newCountryCode === this.props.countryCode.toUpperCase() ) {
+		if ( newCountryCode === this.props.countryCode ) {
 			return;
 		}
 		// if the country changes, we fix the dial code
@@ -164,7 +163,7 @@ const PhoneInput = React.createClass( {
 						<FormCountrySelect
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
-							value={ ( this.getCountry().isoCode ).toUpperCase() }
+							value={ ( this.getCountry().isoCode ) }
 							countriesList={ this.props.countriesList } />
 						<CountryFlag countryCode={ this.getCountry().isoCode } />
 					</div>

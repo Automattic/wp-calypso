@@ -28,8 +28,9 @@ export default React.createClass( {
 				<div>
 					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 					<PhoneInput
-						{ ...omit( this.props, 'className' ) }
+						{ ...omit( this.props, [ 'className', 'countryCode' ] ) }
 						ref="input"
+						countryCode={ this.props.countryCode.toUpperCase() }
 						className={ classes } />
 				</div>
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
