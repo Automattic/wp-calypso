@@ -36,7 +36,7 @@ as that has a lot of dependencies that aren't ready for server-side rendering.
 * Realistically, you will probably need to write separate `index.node.js` and
 `index.web.js` files for the server and client side inside your section, as many
 components needed on the client side aren't server-side ready yet. For more on
-that, see [Server-side Rendering docs](../docs/server-side-rendering.md).
-* Behind the scenes, we're using a [util](https://github.com/Automattic/wp-calypso/tree/master/server/isomorphic-routing) that adapts `page.js` style middleware to [Express](https://expressjs.com/en/guide/routing.html)',
+that, see [Server-side Rendering docs](server-side-rendering.md).
+* Behind the scenes, we're using a [util](server/isomorphic-routing/README.md) that adapts `page.js` style middleware to [Express](https://expressjs.com/en/guide/routing.html)',
 our server router's middleware signatures. We might want to switch to an isomorphic
 router in the future.
