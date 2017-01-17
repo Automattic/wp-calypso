@@ -26,41 +26,41 @@ var areaCodes = {
  */
 var priorityData = {
 	// dial code: +1
-	us: 10,
-	ca: 5,
-	'do': 3,
-	pr: 1,
+	US: 10,
+	CA: 5,
+	DO: 3,
+	PR: 1,
 	// dial code: +7
-	ru: 10,
-	kz: 1,
+	RU: 10,
+	KZ: 1,
 	// dial code: +39
-	it: 10,
-	va: 1,
+	IT: 10,
+	VA: 1,
 	// dial code: +44
-	gb: 10,
-	je: 5,
-	im: 3,
-	gg: 1,
+	GB: 10,
+	JE: 5,
+	IM: 3,
+	GG: 1,
 	// dial code: +47
-	no: 10,
-	sj: 1,
+	NO: 10,
+	SJ: 1,
 	// dial code: +61
-	au: 10,
-	cx: 5,
-	cc: 1,
+	AU: 10,
+	CX: 5,
+	CC: 1,
 	// dial code: +290
-	sh: 10,
-	ta: 1,
+	SH: 10,
+	TA: 1,
 	// dial code: +358
-	fi: 10,
-	ax: 1,
+	FI: 10,
+	AX: 1,
 	// dial code: +590
-	gp: 10,
-	mf: 5,
-	bl: 1,
+	GP: 10,
+	MF: 5,
+	BL: 1,
 	// dial code: +599
-	cw: 10,
-	bq: 1
+	CW: 10,
+	BQ: 1
 };
 
 var LIBPHONENUMBER_METADATA_URL = 'https://raw.githubusercontent.com/googlei18n/libphonenumber/master/javascript/i18n/phonenumbers/metadatalite.js';
@@ -84,7 +84,7 @@ var numberFormatIndexes = {
 };
 
 var aliases = {
-	uk: 'gb'
+	UK: 'GB'
 };
 
 function tabs( depth ) {
@@ -223,16 +223,16 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	var data = {};
 	for ( var countryCode in libPhoneNumberData ) {
 		if ( libPhoneNumberData.hasOwnProperty( countryCode ) ) {
-			var countryCodeLower = countryCode.toLowerCase();
+			var countryCodeUpper = countryCode.toUpperCase();
 			var country = libPhoneNumberData[ countryCode ];
-			data[ countryCodeLower ] = {
-				isoCode: countryCodeLower,
+			data[ countryCodeUpper ] = {
+				isoCode: countryCodeUpper,
 				dialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] + ( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' ) ),
 				areaCodes: areaCodes[ countryCode ],
 				nationalPrefix: country[ libPhoneNumberIndexes.NATIONAL_PREFIX ],
 				patterns: ( country[ libPhoneNumberIndexes.NUMBER_FORMAT ] || [] ).map( processNumberFormat ),
 				internationalPatterns: ( country[ libPhoneNumberIndexes.INTERNATIONAL_NUMBER_FORMAT ] || [] ).map( processNumberFormat ),
-				priority: priorityData[ countryCodeLower ]
+				priority: priorityData[ countryCodeUpper ]
 			};
 		}
 	}
