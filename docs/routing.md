@@ -52,3 +52,7 @@ How could multi-tree rendering -- i.e. rendering different components at differe
 That strategy at its center introduces a number of counterparts to the middlewares mentioned above. Instead of rendering to the  `#primary` and `#secondary` `<div />`s, they just create the respective component trees in `context.primary` and `context.secondary`. For more details, see the docs on [Isomorphic Routing](../isomorphic-routing.md).
 
 Transitioning between different single-tree rendered sections relies on React to reconcile and update component trees, which is fine. However, transitioning between single- and multi-tree sections is rather problematic, since React will get confused by different root components and the like. As a consequence, we have to do some manual unmounting of components in [`client/boot`](https://github.com/Automattic/wp-calypso/blob/master/client/boot/index.js). We hope to find the time at some point to migrate all of Calypso to single-tree rendering, which would alleviate a lot of pain.
+
+## Section Definitions
+
+More formally, sections are defined in [`client/sections.js`](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js) (or in the file imported from there -- `wordpress-com.js` for WordPress.com). While that file's format should be intuitive enough to understand, we use quite a bit of magic to turn it into actual routing and code-splitting code. Most of it is documented in [`server/bundler/README.md`](https://github.com/Automattic/wp-calypso/tree/master/server/bundler).
