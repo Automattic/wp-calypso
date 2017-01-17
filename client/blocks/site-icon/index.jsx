@@ -9,17 +9,19 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Spinner from 'components/spinner';
 import QuerySites from 'components/data/query-sites';
 import { getSite } from 'state/sites/selectors';
-import { getSiteIconUrl } from 'state/selectors';
+import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'state/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
 import Gridicon from 'components/gridicon';
 
-function SiteIcon( { siteId, site, iconUrl, size, imgSize } ) {
+function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );
 
 	const classes = classNames( 'site-icon', {
-		'is-blank': ! iconSrc
+		'is-blank': ! iconSrc,
+		'is-transient': isTransientIcon
 	} );
 
 	const style = {
@@ -36,6 +38,7 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize } ) {
 				? <img className="site-icon__img" src={ iconSrc } />
 				: <Gridicon icon="globe" size={ Math.round( size / 1.3 ) } />
 			}
+			{ isTransientIcon && <Spinner /> }
 		</div>
 	);
 }
@@ -45,7 +48,8 @@ SiteIcon.propTypes = {
 	site: PropTypes.object,
 	iconUrl: PropTypes.string,
 	size: PropTypes.number,
-	imgSize: PropTypes.number
+	imgSize: PropTypes.number,
+	isTransientIcon: PropTypes.bool
 };
 
 SiteIcon.defaultProps = {
@@ -69,8 +73,11 @@ export default connect( ( state, { site, siteId, imgSize } ) => {
 		};
 	}
 
+	const iconId = getSiteIconId( state, stateSite.ID );
+
 	return {
 		site: stateSite,
-		iconUrl: getSiteIconUrl( state, stateSite.ID, imgSize )
+		iconUrl: getSiteIconUrl( state, stateSite.ID, imgSize ),
+		isTransientIcon: isTransientMedia( state, stateSite.ID, iconId )
 	};
 } )( SiteIcon );
