@@ -4,6 +4,11 @@
 import React from 'react';
 import i18n from 'i18n-calypso';
 
+/*
+ * Constants
+ */
+const expirationDate = 'October 31, 2017';
+
 const googleTermsAndConditions = () => {
 	return(
 		<div>
@@ -12,7 +17,12 @@ const googleTermsAndConditions = () => {
 			<ol>
 				<li className="google-voucher__terms-and-conditions">{ i18n.translate( 'Offer available to customers with a billing address in the United States only. One promotional code per advertiser.' ) }</li>
 
-				<li className="google-voucher__terms-and-conditions">{ i18n.translate( 'To activate this offer: Enter the promotional code in your account before December 31 2016. In order to participate in this offer, you must enter the code within 14 days of your first ad impression being served from your first AdWords account.' ) }</li>
+				<li className="google-voucher__terms-and-conditions">{
+					i18n.translate(
+						'To activate this offer: Enter the promotional code in your account before %(expirationDate)s. In order to participate in this offer, you must enter the code within 14 days of your first ad impression being served from your first AdWords account.',
+						{ args: { expirationDate } }
+					) }
+				</li>
 
 				<li className="google-voucher__terms-and-conditions">{ i18n.translate( 'To earn the credit: After entering the code, your advertising campaigns must accrue costs of at least $25, excluding any taxes, within 30 days. Making a payment of $25 is not sufficient. The tracking of advertising costs towards $25 begins after you’ve entered the code.' ) }</li>
 
