@@ -84,7 +84,7 @@ class DomainToPlanNudge extends Component {
 					[
 						translate( 'No advertising' ),
 						translate( 'Live chat support' ),
-						translate( 'Bundled with your domain for best value!' )
+						translate( 'Bundled with your domain for the best value!' )
 					]
 				}
 				plan={ PLAN_PERSONAL }
