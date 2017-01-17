@@ -125,28 +125,19 @@ class StatsConnectedModule extends Component {
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
-					{ isAllTime && <AllTimeNav path={ path } query={ query } /> }
-					{ summary && ! isAllTime && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
-				</SectionHeader>
+				{ ! isAllTime &&
+					<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
+						{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+					</SectionHeader>
+				}
 				<Card compact className={ cardClasses }>
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
+					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
-					{
-						summary &&
-						isAllTime &&
-						<DownloadCsv
-							statType={ statType }
-							query={ query }
-							path={ path }
-							period={ period }
-							borderless
-							className="stats-module__download-footer" />
-					}
 					{ this.props.showSummaryLink && displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 					{ summary && 'countryviews' === path &&
 						<UpgradeNudge
@@ -157,6 +148,14 @@ class StatsConnectedModule extends Component {
 						/>
 					}
 				</Card>
+				{ isAllTime &&
+					<DownloadCsv
+						statType={ statType }
+						query={ query }
+						path={ path }
+						borderless
+						period={ period } />
+				}
 			</div>
 
 		);
