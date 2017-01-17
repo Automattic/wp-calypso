@@ -23,7 +23,8 @@ import {
 } from 'state/action-types';
 import {
 	items as itemsReducer,
-	requests as requestsReducer
+	requests as requestsReducer,
+	saveRequests as saveRequestsReducer,
 } from '../reducer';
 
 import {
@@ -295,6 +296,91 @@ describe( 'reducer', () => {
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'saveRequests()', () => {
+		it( 'should default to an empty object', () => {
+			const state = saveRequestsReducer( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set request status to pending if request in progress', () => {
+			const state = saveRequestsReducer( undefined, {
+				type: JETPACK_SETTINGS_UPDATE,
+				siteId: 12345678
+			} );
+
+			expect( state ).to.eql( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+		} );
+
+		it( 'should accumulate save requests statuses', () => {
+			const previousState = deepFreeze( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+			const state = saveRequestsReducer( previousState, {
+				type: JETPACK_SETTINGS_UPDATE,
+				siteId: 87654321
+			} );
+
+			expect( state ).to.eql( {
+				12345678: { saving: true, status: 'pending', error: false },
+				87654321: { saving: true, status: 'pending', error: false }
+			} );
+		} );
+
+		it( 'should set save request to success if request finishes successfully', () => {
+			const previousState = deepFreeze( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+			const state = saveRequestsReducer( previousState, {
+				type: JETPACK_SETTINGS_UPDATE_SUCCESS,
+				siteId: 12345678
+			} );
+
+			expect( state ).to.eql( {
+				12345678: { saving: false, status: 'success', error: false }
+			} );
+		} );
+
+		it( 'should set save request to error if request finishes with failure', () => {
+			const previousState = deepFreeze( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+			const state = saveRequestsReducer( previousState, {
+				type: JETPACK_SETTINGS_UPDATE_FAILURE,
+				siteId: 12345678,
+				error: 'my error'
+			} );
+
+			expect( state ).to.eql( {
+				12345678: { saving: false, status: 'error', error: 'my error' }
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const previousState = deepFreeze( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+			const state = saveRequestsReducer( previousState, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const previousState = deepFreeze( {
+				12345678: { saving: true, status: 'pending', error: false }
+			} );
+			const state = saveRequestsReducer( previousState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );
