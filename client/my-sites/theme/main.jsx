@@ -19,6 +19,7 @@ import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemesRelatedCard from './themes-related-card';
+import ThemeSheetContent from './theme-sheet-content'
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -505,18 +506,7 @@ const ThemeSheet = React.createClass( {
 					backText={ i18n.translate( 'All Themes' ) }>
 					{ this.renderButton() }
 				</HeaderCake>
-				<div className="theme__sheet-columns">
-					<div className="theme__sheet-column-left">
-						<div className="theme__sheet-content">
-							{ this.renderSectionNav( section ) }
-							{ this.renderSectionContent( section ) }
-							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
-						</div>
-					</div>
-					<div className="theme__sheet-column-right">
-						{ this.renderScreenshot() }
-					</div>
-				</div>
+				<ThemeSheetContent section={ section } />
 			</Main>
 		);
 	},
