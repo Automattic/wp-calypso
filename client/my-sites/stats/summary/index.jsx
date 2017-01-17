@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import observe from 'lib/mixins/data-observe';
 import HeaderCake from 'components/header-cake';
 import StatsModule from '../stats-module';
+import StatsConnectedModule from '../stats-module/connected-list';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import StatsConnectedModule from '../stats-module/connected-list';
@@ -147,15 +148,14 @@ const StatsSummary = React.createClass( {
 
 			case 'videoplays':
 				title = translate( 'Videos' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="videoplays-summary"
-					path={ 'videoplays' }
+					path="videoplays"
 					moduleStrings={ StatsStrings.videoplays }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					followList={ this.props.followList }
-					summary={ true } />;
+					query={ query }
+					statType="statsVideoPlays"
+					summary />;
 				break;
 
 			case 'podcastdownloads':
