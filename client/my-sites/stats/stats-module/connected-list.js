@@ -109,6 +109,7 @@ class StatsConnectedModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
+		const displaySummaryLink = data && data.length >= 10;
 
 		return (
 			<div>
@@ -123,7 +124,7 @@ class StatsConnectedModule extends Component {
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
-					{ this.props.showSummaryLink && <StatsModuleExpand href={ summaryLink } /> }
+					{ this.props.showSummaryLink && displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 					{ summary && 'countryviews' === path &&
 						<UpgradeNudge
 							title={ translate( 'Add Google Analytics' ) }
