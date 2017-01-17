@@ -72,6 +72,12 @@ const StatsSummary = React.createClass( {
 		let barChart;
 
 		debug( 'Rendering summary-top-posts.jsx', this.props );
+		const { period, endOf } = this.props.period;
+		const query = {
+			period: period,
+			date: endOf.format( 'YYYY-MM-DD' ),
+			max: 0
+		};
 
 		switch ( this.props.context.params.module ) {
 
@@ -102,12 +108,11 @@ const StatsSummary = React.createClass( {
 			case 'countryviews':
 				title = translate( 'Countries' );
 				summaryView = <Countries
-					key="countries-summary"
-					path="countryviews"
-					site={ site }
-					dataList={ this.props.summaryList }
-					period={ this.props.period }
-					summary={ true } />;
+						key="countries-summary"
+						path="countryviews"
+						period={ this.props.period }
+						query={ query }
+						summary={ true } />;
 				break;
 
 			case 'posts':

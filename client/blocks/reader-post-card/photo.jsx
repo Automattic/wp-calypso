@@ -9,6 +9,7 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import cssSafeUrl from 'lib/css-safe-url';
+import AutoDirection from 'components/auto-direction';
 
 class PostPhoto extends React.Component {
 
@@ -19,10 +20,10 @@ class PostPhoto extends React.Component {
 
 	handleClick = ( event ) => {
 		if ( this.state.isExpanded ) {
+			this.props.onClick( event );
 			return;
 		}
 
-		// If the photo's not expanded, don't open full post yet
 		event.preventDefault();
 		this.setState( { isExpanded: true } );
 		this.props.onExpanded();
@@ -30,6 +31,15 @@ class PostPhoto extends React.Component {
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+
+	/* We want photos to be able to expand to be essentially full-screen
+	 * We settled on viewport height - 176px because the
+	 *  - masterbar is 47px tall
+	 *  - card header is 74px tall
+	 *  - card footer is 55px tall
+	 * 47 + 74 + 55 = 176
+	 */
+	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
 		if ( this.widthDivRef ) {
@@ -62,22 +72,22 @@ class PostPhoto extends React.Component {
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
-			backgroundSize: 'cover',
+			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center'
 		};
-
+		let newWidth, newHeight;
 		if ( this.state.isExpanded ) {
-			const viewportHeight = this.getViewportHeight();
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
-			const newHeight = Math.min(
+			newHeight = Math.min(
 				( naturalHeight / naturalWidth ) * cardWidth,
-				viewportHeight - 176
+				this.getMaxPhotoHeight(),
 			);
-
+			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
 			featuredImageStyle.height = newHeight;
+			featuredImageStyle.width = newWidth;
 		}
 
 		const classes = classnames( {
@@ -85,11 +95,22 @@ class PostPhoto extends React.Component {
 			'is-expanded': this.state.isExpanded
 		} );
 
+		const divStyle = this.state.isExpanded
+			? { height: newHeight, width: newWidth, margin: '0 auto' }
+			: {};
+
 		return (
-			<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
-				<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
-				{ children }
-			</a>
+			<div style={ divStyle } >
+				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
+					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+					{ children }
+				</a>
+				<AutoDirection>
+					<h1 className="reader-post-card__title">
+						<a className="reader-post-card__title-link" href={ this.props.href }>{ this.props.title }</a>
+					</h1>
+				</AutoDirection>
+			</div>
 		);
 	}
 }

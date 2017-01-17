@@ -80,7 +80,7 @@ export class RecommendedPosts extends React.PureComponent {
 		return (
 			<div className="reader-stream__recommended-posts">
 				<h1 className="reader-stream__recommended-posts-header">
-					<Gridicon icon="thumbs-up" size={ 18 }/>&nbsp;{ this.props.translate( 'Recommended Posts' ) }
+					<Gridicon icon="thumbs-up" size={ 18 } />&nbsp;{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
 				<ul className="reader-stream__recommended-posts-list">
 					{
@@ -113,7 +113,7 @@ export class RecommendedPosts extends React.PureComponent {
 
 RecommendedPosts.propTypes = {
 	index: PropTypes.number,
-	translate: PropTypes.function,
+	translate: PropTypes.func,
 	recommendations: PropTypes.object,
 };
 

@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal Dependencies
  */
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import Gravatar from 'components/gravatar';
 import SiteStore from 'lib/reader-site-store';
 import SiteStoreActions from 'lib/reader-site-store/actions';

@@ -14,7 +14,7 @@ import Title from 'reader/list-item/title';
 import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 import FollowButton from 'blocks/follow-button/button';
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 
 const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, translate } ) => {
 	const message = ! isValid

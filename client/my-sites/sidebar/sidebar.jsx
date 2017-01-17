@@ -24,14 +24,15 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import SiteStatsStickyLink from 'components/site-stats-sticky-link';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
+import { isDomainOnlySite } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getStatsPathForTab } from 'lib/route/path';
 
 /**
  * Module variables
@@ -46,6 +47,7 @@ export class MySitesSidebar extends Component {
 		path: PropTypes.string,
 		sites: PropTypes.object,
 		currentUser: PropTypes.object,
+		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 	};
 
@@ -136,7 +138,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	stats() {
-		var site = this.getSelectedSite();
+		const site = this.getSelectedSite();
 
 		if ( site && ! site.capabilities ) {
 			return null;
@@ -146,13 +148,16 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const siteId = this.isSingle() ? site.slug : null;
+
 		return (
-			<li className={ this.itemLinkClass( '/stats', 'stats' ) }>
-				<SiteStatsStickyLink onClick={ this.onNavigate }>
-					<Gridicon icon="stats-alt" size={ 24 } />
-					<span className="menu-link-text">{ this.props.translate( 'Stats' ) }</span>
-				</SiteStatsStickyLink>
-			</li>
+			<SidebarItem
+				tipTarget="menus"
+				label={ this.props.translate( 'Stats' ) }
+				className={ this.itemLinkClass( '/stats', 'stats' ) }
+				link={ getStatsPathForTab( 'day', siteId ) }
+				onNavigate={ this.onNavigate }
+				icon="stats-alt" />
 		);
 	}
 
@@ -706,20 +711,18 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	render() {
-		var publish = !! this.publish(),
+	renderSidebarMenus() {
+		if ( this.props.isDomainOnly ) {
+			return null;
+		}
+
+		const publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
 			vip = !! this.vip();
 
 		return (
-			<Sidebar>
-				<SidebarRegion>
-				<CurrentSite
-					sites={ this.props.sites }
-					siteCount={ this.props.currentUser.visible_site_count }
-					onClick={ this.onPreviewSite }
-				/>
+			<div>
 				<SidebarMenu>
 					<ul>
 						{ this.stats() }
@@ -776,6 +779,20 @@ export class MySitesSidebar extends Component {
 					</SidebarMenu>
 					: null
 				}
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<Sidebar>
+				<SidebarRegion>
+					<CurrentSite
+						sites={ this.props.sites }
+						siteCount={ this.props.currentUser.visible_site_count }
+						onClick={ this.onPreviewSite }
+					/>
+					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>
 					{ this.addNewSite() }
@@ -790,6 +807,7 @@ function mapStateToProps( state ) {
 	return {
 		currentUser: getCurrentUser( state ),
 		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
+		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId )
 	};
 }

@@ -121,6 +121,53 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/top-posts`
+	 *
+	 * @param  {Object} data    Stats data
+	 * @param  {Object} query   Stats query
+	 * @return {Object?}        Normalized stats data
+	 */
+	statsTopPosts: ( data, query ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf, endOf } = rangeOfPeriod( query.period, query.date );
+		const dataPath = query.summarize ? [ 'summary', 'postviews' ] : [ 'days', startOf, 'postviews' ];
+		const viewData = get( data, dataPath, [] );
+
+		return map( viewData, ( item ) => {
+			const detailPage = `/stats/post/${ item.id }/${ query.domain }`;
+			let inPeriod = false;
+
+			// Archive and home pages do not have dates
+			if ( item.date ) {
+				const postDate = moment( item.date );
+				// TODO: might be nice to update moment and use isSameOrAfter and isSameOrBefore
+				if (
+					( postDate.isAfter( startOf, 'day' ) || postDate.isSame( startOf, 'day' ) ) &&
+					( postDate.isBefore( endOf, 'day' ) || postDate.isSame( endOf, 'day' ) )
+				) {
+					inPeriod = true;
+				}
+			}
+
+			return {
+				label: item.title,
+				value: item.views,
+				page: detailPage,
+				actions: [ {
+					type: 'link',
+					data: item.href
+				} ],
+				labelIcon: null,
+				children: null,
+				className: inPeriod ? 'published' : null
+			};
+		} );
+	},
+
+	/**
 	 * Returns a normalized payload from `/sites/{ site }/stats/country-views`
 	 *
 	 * @param  {Object} data    Stats data
@@ -130,7 +177,7 @@ export const normalizers = {
 	statsCountryViews: ( data, query = {} ) => {
 		// parsing a country-views response requires a period and date
 		if ( ! data || ! query.period || ! query.date ) {
-			return [];
+			return null;
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const countryInfo = get( data, [ 'country-info' ], {} );
@@ -160,7 +207,7 @@ export const normalizers = {
 	/**
 	 * Returns a normalized statsPublicize array, ready for use in stats-module
 	 *
-	 * @param  {Object} data Stats query
+	 * @param  {Object} data Stats data
 	 * @return {Array}       Parsed publicize data array
 	 */
 	statsPublicize( data = {} ) {
@@ -174,6 +221,12 @@ export const normalizers = {
 		} );
 	},
 
+	/**
+	 * Returns a normalized statsVideo array, ready for use in stats-module
+	 *
+	 * @param  {Object} payload Stats response payload
+	 * @return {Array}          Parsed publicize data array
+	 */
 	statsVideo( payload ) {
 		if ( ! payload || ! payload.data ) {
 			return [];
@@ -183,4 +236,51 @@ export const normalizers = {
 			return { period: item[ 0 ], value: item[ 1 ] };
 		} ).slice( Math.max( payload.data.length - 10, 1 ) );
 	},
+
+	/**
+	 * Returns a normalized statsTags array, ready for use in stats-module
+	 *
+	 * @param  {Object} data Stats data
+	 * @return {Array}       Parsed publicize data array
+	 */
+	statsTags( data ) {
+		if ( ! data || ! data.tags ) {
+			return [];
+		}
+
+		const getTagTypeIcon = ( type ) => {
+			return type === 'category' ? 'folder' : type;
+		};
+
+		return data.tags.map( ( item ) => {
+			let children;
+			const hasChildren = item.tags.length > 1;
+			const labels = item.tags.map( ( tagItem ) => {
+				return {
+					label: tagItem.name,
+					labelIcon: getTagTypeIcon( tagItem.type ),
+					link: hasChildren ? null : tagItem.link
+				};
+			} );
+
+			if ( hasChildren ) {
+				children = item.tags.map( ( tagItem ) => {
+					return {
+						label: tagItem.name,
+						labelIcon: getTagTypeIcon( tagItem.type ),
+						value: null,
+						children: null,
+						link: tagItem.link
+					};
+				} );
+			}
+
+			return {
+				label: labels,
+				link: labels.length > 1 ? null : labels[ 0 ].link,
+				value: item.views,
+				children: children
+			};
+		} );
+	}
 };

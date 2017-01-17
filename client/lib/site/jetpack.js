@@ -103,7 +103,7 @@ JetpackSite.prototype.verifyModulesActive = function( moduleIds, callback ) {
 };
 
 JetpackSite.prototype.getRemoteManagementURL = function() {
-	var configure = versionCompare( this.options.jetpack_version, 3.4 ) ? 'manage' : 'json-api';
+	var configure = versionCompare( this.options.jetpack_version, 3.4, '>=' ) ? 'manage' : 'json-api';
 	return this.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
 };
 

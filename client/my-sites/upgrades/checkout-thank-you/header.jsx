@@ -26,7 +26,7 @@ class CheckoutThankYouHeader extends React.Component {
 		}
 
 		if ( this.props.hasFailedPurchases ) {
-			return this.props.translate( 'Ooops…' );
+			return this.props.translate( 'Some items failed.' );
 		}
 
 		if ( this.props.primaryPurchase && isChargeback( this.props.primaryPurchase ) ) {
@@ -38,7 +38,7 @@ class CheckoutThankYouHeader extends React.Component {
 
 	getText() {
 		if ( this.props.hasFailedPurchases ) {
-			return this.props.translate( 'Seems we had problems obtaining some of your items.' );
+			return this.props.translate( 'Some of the items in your cart could not be added.' );
 		}
 
 		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {

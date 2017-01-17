@@ -30,7 +30,7 @@ var Gap = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes } onTouchTap={ this.handleClick } >
+			<div className={ classes } onClick={ this.handleClick } >
 				<button type="button" className="button reader-list-gap__button">{ this.translate( 'Load More Posts' ) }</button>
 			</div>
 		);
