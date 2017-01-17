@@ -90,7 +90,31 @@ export const requests = createReducer( {}, {
 	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createRequestsReducer( { updating: false } ),
 } );
 
+/**
+ * `Reducer` function which handles request/response actions
+ * concerning Jetpack settings save requests
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const saveRequests = createReducer( {}, {
+	[ JETPACK_SETTINGS_UPDATE ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: { saving: true, status: 'pending', error: false }
+	} ),
+	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: ( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: { saving: false, status: 'success', error: false }
+	} ),
+	[ JETPACK_SETTINGS_UPDATE_FAILURE ]: ( state, { siteId, error } ) => ( {
+		...state,
+		[ siteId ]: { saving: false, status: 'error', error }
+	} )
+} );
+
 export const reducer = combineReducers( {
 	items,
-	requests
+	requests,
+	saveRequests
 } );
