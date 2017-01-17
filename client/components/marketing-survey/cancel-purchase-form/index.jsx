@@ -25,14 +25,14 @@ const CancelPurchaseForm = React.createClass( {
 
 	getInitialState() {
 		// shuffle reason order, but keep anotherReasonOne last
-		var questionOneOrder = shuffle( [
+		let questionOneOrder = shuffle( [
 			'couldNotInstall',
 			'tooHard',
 			'didNotInclude',
 			'onlyNeedFree'
 		] );
 
-		var questionTwoOrder = shuffle( [
+		let questionTwoOrder = shuffle( [
 			'stayingHere',
 			'otherWordPress',
 			'differentService',
