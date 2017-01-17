@@ -192,16 +192,16 @@ module.exports = React.createClass( {
 								period={ this.props.period }
 								date={ queryDate }
 								beforeNavigate={ this.updateScrollPosition } />
-							<StatsModule
-								path={ 'authors' }
+							<StatsConnectedModule
+								path="authors"
 								moduleStrings={ moduleStrings.authors }
-								site={ site }
-								dataList={ this.props.authorsList }
 								period={ this.props.period }
 								date={ queryDate }
+								query={ query }
+								statType="statsTopAuthors"
 								followList={ this.props.followList }
 								className="stats__author-views"
-								beforeNavigate={ this.updateScrollPosition } />
+								showSummaryLink />
 						</div>
 						<div className="stats__module-column">
 							<Countries
