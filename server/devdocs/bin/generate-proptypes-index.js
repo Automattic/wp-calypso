@@ -4,6 +4,8 @@
  * This file generates an index of proptypes by component displayname, slug and folder name
  */
 
+const startTime = process.hrtime();
+
 /**
  * External Dependencies
  */
@@ -98,7 +100,7 @@ const writeFile = ( contents ) => {
 };
 
 const main = ( () => {
-	console.log( 'building: proptypes-index.json' );
+	console.log( 'Building: proptypes-index.json' );
 	const fileList = process
 		.argv
 		.splice( 2, process.argv.length )
@@ -117,4 +119,7 @@ const main = ( () => {
 			.map( parseDocument )
 	);
 	writeFile( documents );
+
+	const elapsed = process.hrtime( startTime )[ 1 ] / 1000000;
+	console.log( `Time: ${ process.hrtime( startTime )[0] }s ${ elapsed.toFixed( 3 ) }ms` );
 } )();
