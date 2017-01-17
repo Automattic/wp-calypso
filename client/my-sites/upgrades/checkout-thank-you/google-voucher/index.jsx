@@ -16,7 +16,7 @@ import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
-import termsAndConditions from './terms-and-conditions';
+import TermsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import {
 	assignSiteVoucher as assignVoucher
@@ -139,7 +139,7 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<div className="google-voucher-dialog__body">
-					{ termsAndConditions() }
+					<TermsAndConditions />
 				</div>
 
 				<div className="google-voucher-dialog__footer">
