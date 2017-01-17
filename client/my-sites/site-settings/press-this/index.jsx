@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import PressThisLink from './link';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 class PressThis extends Component {
 	static propTypes = {
@@ -63,7 +64,9 @@ class PressThis extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		site: getSelectedSite( state )
+	} ),
 	{
 		recordGoogleEvent
 	}
