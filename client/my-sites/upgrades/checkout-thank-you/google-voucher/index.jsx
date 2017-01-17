@@ -115,7 +115,7 @@ class GoogleVoucherDetails extends Component {
 					text={ this.props.translate( 'Generate code' ) } />
 
 				<TipInfo
-					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);
 	}
@@ -199,7 +199,7 @@ class GoogleVoucherDetails extends Component {
 
 				<TipInfo
 					className="google-voucher-advice"
-					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);
 	}
