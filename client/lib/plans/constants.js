@@ -54,6 +54,8 @@ export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
+export const FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM = 'video-upload-jetpack-premium';
+export const FEATURE_VIDEO_UPLOADS_JETPACK_PRO = 'video-upload-jetpack-pro';
 export const FEATURE_AUDIO_UPLOADS = 'audio-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
@@ -223,8 +225,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-			'Advanced security features to keep your site safe and sound.' +
-			' With daily backups, malware scanning, and spam defense.'
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -234,7 +236,9 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_MALWARE_SCANNING_DAILY
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+			FEATURE_MALWARE_SCANNING_DAILY,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -265,8 +269,9 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-			'Advanced security features to keep your site safe and sound.' +
-			' With daily backups, malware scanning, and spam defense.'		),
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
+		),
 		getFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -275,7 +280,9 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_MALWARE_SCANNING_DAILY
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+			FEATURE_MALWARE_SCANNING_DAILY,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -307,7 +314,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate(
-			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -317,9 +325,10 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
 		] ),
@@ -332,7 +341,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -342,9 +352,10 @@ export const PLANS_LIST = {
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
 		] ),
@@ -407,7 +418,7 @@ export const FEATURES_LIST = {
 		),
 		getStoreSlug: () => 'unlimited_themes'
 	},
-  
+
 	[ FEATURE_ALL_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_ALL_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( '{{strong}}All{{/strong}} Premium Themes', {
@@ -438,6 +449,28 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'The easiest way to upload videos to your website and display them ' +
 			'using a fast, unbranded, customizable player with rich stats.'
+		),
+		getStoreSlug: () => 'videopress'
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats ' +
+			'(13GB storage space).'
+		),
+		getStoreSlug: () => 'videopress'
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload videos to your website and display them ' +
+			'using a fast, unbranded, customizable player with rich stats ' +
+			'(unlimited storage space).'
 		),
 		getStoreSlug: () => 'videopress'
 	},
