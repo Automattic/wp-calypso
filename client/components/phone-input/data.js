@@ -2,6 +2,11 @@
 /* eslint-disable */
 module.exports = {
 	countries: {
+		kv: {
+			isoCode: "kv",
+			dialCode: "383",
+			nationalPrefix: "0"
+		},
 		AC: {
 			isoCode: "AC",
 			dialCode: "247"
@@ -6381,6 +6386,9 @@ module.exports = {
 		],
 		382: [
 			"ME"
+		],
+		383: [
+			"kv"
 		],
 		385: [
 			"HR"
