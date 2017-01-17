@@ -32,7 +32,9 @@ const PlansLanding = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_view' );
+		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
+			jpc_from: this.props.landingType
+		} );
 	},
 
 	storeSelectedPlan( cartItem ) {
