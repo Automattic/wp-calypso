@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import route from 'lib/route';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import sitesFactory from 'lib/sites-list';
 
@@ -21,8 +19,6 @@ export default {
 		const BillingHistoryComponent = require( './main' );
 		const billingData = require( 'lib/billing-history-data' );
 		const basePath = route.sectionify( context.path );
-
-		context.store.dispatch( setTitle( i18n.translate( 'Billing History', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( BillingHistoryComponent, { billingData: billingData, sites: sites } ),
@@ -41,8 +37,6 @@ export default {
 
 		// Initialize billing data
 		billingData.get();
-
-		context.store.dispatch( setTitle( i18n.translate( 'Billing History', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( receiptId ) {
 			analytics.pageView.record( basePath + '/receipt', ANALYTICS_PAGE_TITLE + ' > Billing History > Receipt' );
