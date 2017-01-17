@@ -24,6 +24,7 @@ import {
 	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
+	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
 	isCurrentSitePlan,
@@ -748,6 +749,50 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getSiteBySlug()', () => {
+		it( 'should return null if a site cannot be found', () => {
+			const site = getSiteBySlug( {
+				sites: {
+					items: {}
+				}
+			}, 'testtwosites2014.wordpress.com' );
+
+			expect( site ).to.be.null;
+		} );
+
+		it( 'should return a matched site', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com'
+						}
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+		} );
+
+		it( 'should return a matched site with nested path', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com/path/to/site'
+						}
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com::path::to::site' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 	} );
 
