@@ -32,6 +32,7 @@ import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 
 /**
  * Module vars
@@ -128,9 +129,9 @@ function onSelectedSiteAvailable( context ) {
 
 	const state = context.store.getState();
 
-	if ( isDomainOnlySite( state, selectedSite.ID )
-		&& ! isPathAllowedForDomainOnlySite( context.pathname ) ) {
-		page.redirect( '/domains/manage/' + selectedSite.slug );
+	if ( isDomainOnlySite( state, selectedSite.ID ) &&
+		! isPathAllowedForDomainOnlySite( context.pathname ) ) {
+		page.redirect( domainManagementList( selectedSite.slug ) );
 		return false;
 	}
 
