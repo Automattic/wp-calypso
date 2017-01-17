@@ -21,7 +21,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						'WordAds lets you earn money by displaying promotional content.'
 					)
 				}
-				buttonText={ translate( 'Start Earning' ) }
+				buttonText={ translate( 'Start earning' ) }
 				href={ '/ads/settings/' + selectedSite.slug }
 			/>
 		</div>

@@ -60,7 +60,7 @@ export const FEATURE_AUDIO_UPLOADS = 'audio-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
-export const FEATURE_LIVE_COURSES = 'live-courses';
+export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 
 // jetpack features constants
@@ -186,7 +186,7 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			FEATURE_LIVE_COURSES,
+			FEATURE_BUSINESS_ONBOARDING,
 			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -199,7 +199,7 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_VIDEO_UPLOADS,
-			FEATURE_LIVE_COURSES
+			FEATURE_BUSINESS_ONBOARDING
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -527,11 +527,11 @@ export const FEATURES_LIST = {
 		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
 
-	[ FEATURE_LIVE_COURSES ]: {
-		getSlug: () => FEATURE_LIVE_COURSES,
-		getTitle: () => i18n.translate( 'Attend live courses' ),
+	[ FEATURE_BUSINESS_ONBOARDING ]: {
+		getSlug: () => FEATURE_BUSINESS_ONBOARDING,
+		getTitle: () => i18n.translate( 'Get Personalized Help' ),
 		getDescription: () => i18n.translate(
-			'Attend live courses led by Happiness Engineers to get the most out of your site.'
+			'Schedule a one-on-one orientation with a Happiness Engineer to set up your site and learn more about WordPress.com.'
 		)
 	},
 
@@ -545,7 +545,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
-		getTitle: () => i18n.translate( 'Install plugins' ),
+		getTitle: () => i18n.translate( 'Install Plugins' ),
 		getDescription: () => i18n.translate( 'Install custom plugins on your site.' )
 	},
 
