@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, omit } from 'lodash';
+import { flowRight, omit, keys, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,11 +18,20 @@ import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettings
 } from 'state/site-settings/selectors';
+import {
+	isRequestingJetpackSettings,
+	isUpdatingJetpackSettings,
+	isJetpackSettingsSaveSuccessful,
+	getJetpackSettings
+} from 'state/jetpack/settings/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
+import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
@@ -80,9 +89,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const { fields, site } = this.props;
+			const { fields, settingsFields, site, isJetpack } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
-			this.props.saveSiteSettings( site.ID, fields );
+
+			this.props.saveSiteSettings( site.ID, pick( fields, settingsFields.site ) );
+			if ( isJetpack ) {
+				this.props.updateSettings( site.ID, pick( fields, settingsFields.jetpack ) );
+			}
 		};
 
 		handleRadio = event => {
@@ -131,6 +144,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			return (
 				<div>
 					<QuerySiteSettings siteId={ this.props.siteId } />
+					{
+						this.props.isJetpack &&
+						<QueryJetpackSettings siteId={ this.props.siteId } />
+					}
 					<SettingsForm { ...this.props } { ...utils } />
 				</div>
 			);
@@ -140,16 +157,32 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 	const connectComponent = connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
-			const isRequestingSettings = isRequestingSiteSettings( state, siteId );
-			const isSavingSettings = isSavingSiteSettings( state, siteId );
-			const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
-			const settings = getSiteSettings( state, siteId );
+			let isRequestingSettings = isRequestingSiteSettings( state, siteId );
+			let isSavingSettings = isSavingSiteSettings( state, siteId );
+			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+			let settings = getSiteSettings( state, siteId );
+			const settingsFields = {
+				site: keys( settings ),
+			};
+
+			const isJetpack = isJetpackSite( state, siteId );
+			if ( isJetpack ) {
+				const jetpackSettings = getJetpackSettings( state, siteId );
+				isRequestingSettings = isRequestingSettings || isRequestingJetpackSettings( state, siteId );
+				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
+				isSaveRequestSuccessful = isSaveRequestSuccessful && isJetpackSettingsSaveSuccessful( state, siteId );
+				settings = { ...settings, ...jetpackSettings };
+				settingsFields.jetpack = keys( jetpackSettings );
+			}
+
 			return {
-				isRequestingSettings: isRequestingSettings && ! settings,
+				isRequestingSettings,
 				isSavingSettings,
 				isSaveRequestSuccessful,
 				settings,
-				siteId
+				settingsFields,
+				siteId,
+				isJetpack
 			};
 		},
 		dispatch => {
@@ -159,6 +192,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				removeNotice,
 				saveSiteSettings,
 				successNotice,
+				updateSettings,
 			}, dispatch );
 			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 			return {
