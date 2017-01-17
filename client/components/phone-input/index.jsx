@@ -38,7 +38,7 @@ const PhoneInput = React.createClass( {
 
 			selectedCountry = {
 				isoCode: countryCode,
-				dialCode: data && data.numeric_code.replace( '+', '' ) || '',
+				dialCode: ( data && data.numeric_code || '' ).replace( '+', '' ),
 				nationalPrefix: ''
 			};
 		}
