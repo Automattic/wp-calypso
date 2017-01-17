@@ -1,5 +1,7 @@
 # Guided Tours: Architecture considerations for the future
 
+As Guided Tours as a framework is made available to parties interested in [writing their own tours](TUTORIAL.md), it seemed pertinent to gather some thoughts and make them available in this document in the hope of reducing any sort of [bus factor](https://en.wikipedia.org/wiki/Bus_factor).
+
 ## On the nature of `actionLog`
 
 `actionLog`<sup>[1](#note-1)</sup> is a collection of actions — another name for events — that grows: 1) over time, and 2) in only one direction. It is thus, by nature, equivalent to a **stream**, even though that concept is AFAIK never used in Calypso.
@@ -30,7 +32,7 @@ Every time `actionLog` changes, Guided Tours's main selectors get called with th
 
 Nevertheless, whenever the selectors have to be fully reevaluated, all of `actionLog` has to be considered anew: all those sub-selectors will perform multiple `map`s, `reduce`s, etc. on the latest `actionLog`, even though most of its items have already been mapped, reduced, etc. in previous versions of `actionLog`.
 
-Now, you know what they say about premature optimization. Which is why we haven't optimized yet. But this document seeks to gather thoughts for the day when, through meticulous profiling (best-case scenario) or out of desperate hunches (worst-), we decide optimization is needed. Next comes a collection of ideas on how to address the issue, some of them composable, some mutually incompatible.
+Premature optimization is generally considered harmful, and for this we haven't optimized yet. But this document seeks to gather thoughts for the day when, through meticulous profiling (best-case scenario) or out of desperate hunches (worst-), we decide optimization is needed. Next comes a collection of ideas on how to address the issue, some of them composable, some mutually incompatible.
 
 ### Streams!
 
@@ -38,7 +40,7 @@ You probably saw this one coming. Calypso does not use [streams][rxjs], but, sho
 
 ### (Persistent?) Data Structures
 
-This approach is a poor man's substitute for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer]. Notably,
+The following approach, leveraging persistent or linked data structures, could be a simple replacement for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer]. Notably,
 
 ```js
 f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) )
