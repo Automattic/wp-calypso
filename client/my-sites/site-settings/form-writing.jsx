@@ -211,7 +211,7 @@ const SiteSettingsFormWriting = React.createClass( {
 								context: 'name of browser bookmarklet tool'
 							} ), false )
 						}
-						<PressThis site={ this.props.site } />
+						<PressThis />
 					</div>
 				) }
 			</form>
