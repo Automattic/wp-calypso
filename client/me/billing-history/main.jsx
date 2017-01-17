@@ -23,13 +23,13 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
-import { getBillingTransactions } from 'state/selectors';
+import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
 
 const BillingHistory = React.createClass( {
 	mixins: [ observe( 'sites' ), eventRecorder ],
 
 	render() {
-		const { transactions, sites, translate } = this.props;
+		const { pastTransactions, upcomingTransactions, sites, translate } = this.props;
 
 		return (
 			<Main className="billing-history">
@@ -39,16 +39,16 @@ const BillingHistory = React.createClass( {
 				<QueryBillingTransactions />
 				<PurchasesHeader section={ 'billing' } />
 				<Card className="billing-history__receipts">
-					<BillingHistoryTable transactions={ transactions.past } />
+					<BillingHistoryTable transactions={ pastTransactions } />
 				</Card>
 				<Card href={ purchasesPaths.purchasesRoot() }>
 					{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
 				</Card>
-				{ transactions.past &&
+				{ pastTransactions &&
 					<div>
 						<SectionHeader label={ translate( 'Upcoming Charges' ) } />
 						<Card className="billing-history__upcoming-charges">
-							<UpcomingChargesTable sites={ sites } transactions={ transactions.upcoming } />
+							<UpcomingChargesTable sites={ sites } transactions={ upcomingTransactions } />
 						</Card>
 					</div>
 				}
@@ -62,6 +62,7 @@ const BillingHistory = React.createClass( {
 
 export default connect(
 	( state ) => ( {
-		transactions: getBillingTransactions( state )
+		pastTransactions: getPastBillingTransactions( state ),
+		upcomingTransactions: getUpcomingBillingTransactions( state ),
 	} ),
 )( localize( BillingHistory ) );
