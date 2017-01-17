@@ -15,7 +15,7 @@ import Button from 'components/button';
 import { postTypeSupports } from 'state/post-types/selectors';
 import { isJetpackModuleActive, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
@@ -33,6 +33,7 @@ const PostSharing = React.createClass( {
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
+		hasFetchedConnections: PropTypes.bool,
 		requestConnections: PropTypes.func
 	},
 
@@ -126,11 +127,9 @@ const PostSharing = React.createClass( {
 		}
 
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
-				</div>
-			);
+			return ( <div className="posts__post-share-wrapper">
+				<Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing is permanently disabled on this site.' ) }</Notice>
+			</div> );
 		}
 
 		const classes = classNames( 'posts__post-share', {
@@ -156,7 +155,13 @@ const PostSharing = React.createClass( {
 							} ) }
 						</div>
 					</div>
-					{ this.hasConnections() && <div>
+					{ ! this.props.hasFetchedConnections && <div className="posts__post-share-main">
+						<div className="posts__post-share-form is-placeholder">
+						</div>
+						<div className="posts__post-share-services is-placeholder">
+						</div>
+					</div> }
+					{ this.props.hasFetchedConnections && this.hasConnections() && <div>
 						<div>
 							{ this.props.connections
 								.filter( connection => connection.status === 'broken' )
@@ -195,7 +200,7 @@ const PostSharing = React.createClass( {
 							</div>
 						</div>
 					</div> }
-					{ ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'Connect an account to get started.' ) }>
+					{ this.props.hasFetchedConnections && ! this.hasConnections() && <Notice status="is-warning" showDismiss={ false } text={ this.translate( 'Connect an account to get started.' ) }>
 						<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
 							{ this.translate( 'Settings' ) }
 						</NoticeAction>
@@ -222,6 +227,7 @@ export default connect(
 			siteId,
 			isPublicizeEnabled,
 			connections: getSiteUserConnections( state, siteId, userId ),
+			hasFetchedConnections: hasFetchedConnections( state, siteId ),
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
 			failed: sharePostFailure( state, siteId, props.post.ID ),
 			success: sharePostSuccessMessage( state, siteId, props.post.ID )

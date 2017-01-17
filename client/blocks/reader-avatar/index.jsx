@@ -8,7 +8,7 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 

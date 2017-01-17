@@ -13,11 +13,10 @@ import support from 'lib/url/support';
 const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 	const successfulPurchases = purchases.length > 0 && (
 			<div>
-				<hr />
 				<p>
 					{
 						translate(
-							'On the bright side, we managed to obtain these for you:'
+							'These items were added successfully:'
 						)
 					}
 				</p>
@@ -34,10 +33,12 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 		),
 		description = (
 		<div>
+			{ successfulPurchases }
+			<hr />
 			<p>
 				{
 					translate(
-						'Here\'s the list of products we failed to obtain:'
+						'These items could not be added:'
 					)
 				}
 			</p>
@@ -52,8 +53,8 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 			</ul>
 			<p>
 				{
-					translate( 'We have filled your account with credits so you can retry the failed purchases. ' +
-						'If the problem persists, please don\'t hesitate to {{a}}contact support{{/a}}!',
+					translate( 'We added credits to your account, so you can try adding these items again. ' +
+						'If the problem persists, please don\'t hesitate to {{a}}contact support{{/a}}.',
 						{
 							components: {
 								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
@@ -62,7 +63,6 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 					)
 				}
 			</p>
-			{ successfulPurchases }
 		</div>
 	);
 

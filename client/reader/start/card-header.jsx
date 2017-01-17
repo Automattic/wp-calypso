@@ -3,7 +3,7 @@ import React from 'react';
 import { numberFormat } from 'i18n-calypso';
 
 // Internal dependencies
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import FollowButton from 'reader/follow-button';
 
 const StartCardHeader = ( { site, railcar } ) => {

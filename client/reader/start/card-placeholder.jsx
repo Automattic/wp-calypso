@@ -3,7 +3,7 @@ import React from 'react';
 
 // Internal dependencies
 import Card from 'components/card';
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 
 const StartCardPlaceholder = ( {} ) => {
 	return (

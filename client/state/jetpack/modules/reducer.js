@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { forEach, merge, pickBy } from 'lodash';
+import { forEach, get, merge, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -67,7 +67,7 @@ const createSettingsItemsReducer = () => {
 	return ( state, { siteId, settings } ) => {
 		let updatedState = state;
 		const moduleActivationState = pickBy( settings, ( settingValue, settingName ) => {
-			return state[ siteId ].hasOwnProperty( settingName );
+			return get( state, [ siteId, settingName ] ) !== undefined;
 		} );
 
 		forEach( moduleActivationState, ( active, moduleSlug ) => {

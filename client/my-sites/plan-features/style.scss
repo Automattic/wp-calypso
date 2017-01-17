@@ -277,6 +277,12 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__header-tip-info svg {
+	padding: 0 3px;
+	position: absolute;
+	transform: translateY( -33% );
+}
+
 .plan-features__price {
 	&.is-placeholder {
 		@include placeholder( 23% );

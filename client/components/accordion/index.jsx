@@ -44,7 +44,7 @@ export default class Accordion extends Component {
 		return (
 			<div className={ classes }>
 				<header className="accordion__header">
-					<button type="button" onTouchTap={ this.toggleExpanded } className="accordion__toggle">
+					<button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
 						{ icon && <span className="accordion__icon">{ icon }</span> }
 						<span className="accordion__title">{ title }</span>
 						{ subtitle && <span className="accordion__subtitle">{ subtitle }</span> }

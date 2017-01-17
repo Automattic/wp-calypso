@@ -34,6 +34,7 @@ import { successNotice } from 'state/notices/actions';
 import support from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
+import Dialog from 'components/dialog';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -55,7 +56,8 @@ class EditContactInfoFormCard extends React.Component {
 			notice: null,
 			formSubmitting: false,
 			hasUnmounted: false,
-			transferLock: true
+			transferLock: true,
+			showNonDaConfirmationDialog: false
 		};
 	}
 
@@ -122,6 +124,10 @@ class EditContactInfoFormCard extends React.Component {
 		}
 	}
 
+	handleDialogClose = () => {
+		this.setState( { showNonDaConfirmationDialog: false } );
+	}
+
 	renderTransferLockOptOut() {
 		return (
 			<div>
@@ -146,10 +152,54 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
+	renderDialog() {
+		const { translate } = this.props,
+			strong = <strong />,
+			buttons = [
+				{
+					action: 'cancel',
+					label: this.props.translate( 'Cancel' )
+				},
+				{
+					action: 'confirm',
+					label: this.props.translate( 'Confirm' ),
+					onClick: this.saveContactInfo,
+					isPrimary: true
+				}
+			],
+			oldEmail = this.props.contactInformation.email,
+			newEmail = formState.getFieldValue( this.state.form, 'email' );
+
+		let text;
+		if ( oldEmail === newEmail ) {
+			text = translate( 'To finish this process, this change will need to be confirmed by an email ' +
+				'sent to {{strong}}%(email)s{{/strong}}. Please make sure you have access to it.', {
+					args: { email: newEmail }, components: { strong }
+				}
+			);
+		} else {
+			text = translate( 'To finish this process, this change will need to be confirmed by emails ' +
+				'sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
+				'you\'ll be able to do so.', {
+					args: { oldEmail, newEmail }, components: { strong }
+				}
+			);
+		}
+		return (
+			<Dialog isVisible={ this.state.showNonDaConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
+				<h1>{ translate( 'Confirm Update' ) }</h1>
+				<p>{ text }</p>
+				<p>{ translate( 'If that is not the case, please {{supportLink}}contact support{{/supportLink}} instead.', {
+					components: { supportLink: <a href={ support.CALYPSO_CONTACT } /> }
+				} ) }</p>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const { translate } = this.props,
 			{ OPENHRS, OPENSRS } = registrarNames,
-			isTucowsDomain = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
+			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
 			saveButtonLabel = translate( 'Save Contact Info' );
 
 		return (
@@ -245,13 +295,13 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</div>
 
-					{ isTucowsDomain && this.renderTransferLockOptOut() }
-					{ isTucowsDomain && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
+					{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+					{ canUseDesignatedAgent && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
 
 					<FormFooter>
 						<FormButton
 							disabled={ this.state.formSubmitting }
-							onClick={ this.saveContactInfo }>
+							onClick={ canUseDesignatedAgent ? this.saveContactInfo : this.showNonDaConfirmationDialog }>
 							{ saveButtonLabel }
 						</FormButton>
 
@@ -264,6 +314,7 @@ class EditContactInfoFormCard extends React.Component {
 						</FormButton>
 					</FormFooter>
 				</form>
+				{ this.renderDialog() }
 			</Card>
 		);
 	}
@@ -322,13 +373,16 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	saveContactInfo = ( event ) => {
-		event.preventDefault();
+		event.preventDefault && event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
 			return;
 		}
 
-		this.setState( { formSubmitting: true } );
+		this.setState( {
+			formSubmitting: true,
+			showNonDaConfirmationDialog: false
+		} );
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -342,6 +396,11 @@ class EditContactInfoFormCard extends React.Component {
 				this.onWhoisUpdate
 			);
 		} );
+	}
+
+	showNonDaConfirmationDialog = ( event ) => {
+		event.preventDefault();
+		this.setState( { showNonDaConfirmationDialog: true } );
 	}
 
 	onWhoisUpdate = ( error, data ) => {
@@ -361,15 +420,29 @@ class EditContactInfoFormCard extends React.Component {
 
 				case WWD:
 				default:
-					message = this.props.translate(
-						'Request confirmed - per ICANN regulations, before the changes are final, ' +
-						'they must be accepted by the new registrant, and then the old one. ' +
-						'To start this process, an email has been sent to {{strong}}%(email)s{{/strong}}.',
-						{
-							args: { email: formState.getFieldValue( this.state.form, 'email' ) },
-							components: { strong: <strong /> }
-						}
-					);
+					const oldEmail = this.props.contactInformation.email,
+						newEmail = formState.getFieldValue( this.state.form, 'email' ),
+						strong = <strong />;
+
+					if ( oldEmail === newEmail ) {
+						message = this.props.translate(
+							'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
+							'Please confirm it to finish this process.',
+							{
+								args: { email: oldEmail },
+								components: { strong }
+							}
+						);
+					} else {
+						message = this.props.translate(
+							'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+							'Please ensure they\'re both confirmed to finish this process.',
+							{
+								args: { oldEmail, newEmail },
+								components: { strong }
+							}
+						);
+					}
 					break;
 			}
 

@@ -71,7 +71,6 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			source="showcase"
-			listLabel={ translate( 'WordPress.com themes' ) }
 		/>
 	);
 };

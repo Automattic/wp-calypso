@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var CompactCard = require( 'components/card/compact' ),
-	SiteIcon = require( 'components/site-icon' );
+	SiteIcon = require( 'blocks/site-icon' );
 
 module.exports = {
 	Page: React.createClass( {
