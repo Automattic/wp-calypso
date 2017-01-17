@@ -79,7 +79,7 @@ Returns an array of sites that have a particular plugin.
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -88,8 +88,8 @@ import PluginsStore from 'lib/plugins/store';
 
 class YourComponent extends Component {
 
-	constructor( props ) {
-		super( props );
+	constructor() {
+		super( ...arguements );
 
 		this.state = this.getPlugins();
 	}
@@ -179,7 +179,7 @@ Toggle AutoUpdates for a plugin on a site.
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -194,7 +194,7 @@ class YourComponent extends Component {
 
 	render() {
 		return (
-			<button onClick={ this.updatePlugin } >
+			<button onClick={ this.updatePlugin }>
 				Update { this.props.plugin.name }
 			</button>
 		);

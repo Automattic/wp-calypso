@@ -42,7 +42,7 @@ Actions get triggered by views and stores.
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -51,8 +51,8 @@ import UsersStore from 'lib/users/store';
 
 class YourComponent extends Component {
 
-	constructor( props ) {
-		super( props );
+	constructor() {
+		super( ...arguements );
 
 		this.state = this.getUsers();
 	}

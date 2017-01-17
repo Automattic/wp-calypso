@@ -30,7 +30,7 @@ Fetches followers in batches of 100 starting from the given page, which defaults
 /**
  * External dependencies
  */
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -40,8 +40,8 @@ import FollowersActions from 'lib/followers/actions';
 
 class YourComponent extends Component {
 
-	constructor( props ) {
-		super( props );
+	constructor() {
+		super( ...arguments );
 
 		this.state = this.getFollowers();
 	}
@@ -49,10 +49,10 @@ class YourComponent extends Component {
 	getFetchOptions() {
 		return {
 			siteId: this.props.siteId,
-		type: 'email',
+			type: 'email',
 		};
 	}
-	
+
 	componentDidMount() {
 		FollowersActions.fetchFollowers( this.getFetchOptions() );
 		FollowersStore.on( 'change', this.refreshFollowers );

@@ -8,7 +8,7 @@ Pass to Children is a utility method to assist in creating a React pass-through 
 The exposed method expects to receive the current react element instance, and an object of props to pass to the child in addition to the props of the instance itself.
 
 ```es6
-import { Component } from 'react';
+import React, { Component } from 'react';
 import passToChildren from 'lib/react-pass-to-children';
 
 class YourComponent extends Component {
