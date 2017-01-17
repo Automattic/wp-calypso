@@ -274,7 +274,8 @@ export const PostEditor = React.createClass( {
 								onChange={ this.onEditorContentChange }
 								onKeyUp={ this.debouncedSaveRawContent }
 								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange } />
+								onTextEditorChange={ this.onEditorContentChange }
+								onPaste={ this.onPasteEvent } />
 						</div>
 						<EditorWordCount />
 					</div>
@@ -406,6 +407,42 @@ export const PostEditor = React.createClass( {
 
 	isSaveBlocked() {
 		return this.state.isSaveBlocked || ! this.state.isEditorInitialized;
+	},
+
+
+	isGoogleDocType: function( type ) {
+		// types identified for gdocs:
+		// "application/x-vnd.google-docs-image-clip+wrapped"
+		// "application/x-vnd.google-docs-document-slice-clip+wrapped"
+		return /google-docs/.test( type );
+	},
+
+	hasTextBeenCopiedFromGoogleDocs: function( e ) {
+		// As per https://html.spec.whatwg.org/multipage/interaction.html#datatransfer
+		// types should be an array containing the available formats that were set on copy.
+		// Some browsers, as Firefox, return a DOMStringList instead, see
+		// https://developer.mozilla.org/en-US/docs/Web/API/DOMStringList
+		const orgTypes = e.clipboardData.types;
+		let types = [];
+		if ( orgTypes.contains ) {
+			types = Array.from( orgTypes );
+		} else {
+			types = orgTypes;
+		}
+		return ( Array.isArray( types ) && types.some( this.isGoogleDocType ) );
+	},
+
+	onPasteEvent: function( e ) {
+		if ( this.hasTextBeenCopiedFromGoogleDocs( e ) ) {
+			this.setState( {
+				notice: {
+					status: 'is-info',
+					message: 'copy-from-gdocs',
+					action: 'copy-from-gdocs-action',
+					link: 'https://apps.wordpress.com/'
+				}
+			} );
+		}
 	},
 
 	onEditorInitialized() {
