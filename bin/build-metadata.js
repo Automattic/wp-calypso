@@ -30,6 +30,7 @@ var priorityData = {
 	CA: 5,
 	DO: 3,
 	PR: 1,
+	um: -99,
 	// dial code: +7
 	RU: 10,
 	KZ: 1,
@@ -44,16 +45,24 @@ var priorityData = {
 	// dial code: +47
 	NO: 10,
 	SJ: 1,
+	bv: -99,
 	// dial code: +61
 	AU: 10,
 	CX: 5,
 	CC: 1,
+	hm: -99,
+	// dial code: +64
+	nz: 10,
+	pn: -99,
 	// dial code: +290
 	SH: 10,
 	TA: 1,
 	// dial code: +358
 	FI: 10,
 	AX: 1,
+	// dial code: +500
+	fk: 10,
+	gs: -99,
 	// dial code: +590
 	GP: 10,
 	MF: 5,
@@ -267,7 +276,45 @@ function injectHardCodedValues( libPhoneNumberData ) {
 		kv: {
 			isoCode: 'kv',
 			dialCode: '383',
-			nationalPrefix: '0'
+			nationalPrefix: '0',
+			priority: priorityData.kv
+		},
+		um: {
+			isoCode: 'um',
+			dialCode: '1',
+			nationalPrefix: '',
+			patternRegion: 'us',
+			priority: priorityData.um
+		},
+		bv: {
+			isoCode: 'bv',
+			dialCode: '47',
+			nationalPrefix: '',
+			priority: priorityData.bv
+		},
+		tf: {
+			isoCode: 'tf',
+			dialCode: '262',
+			nationalPrefix: '0',
+			priority: priorityData.tf
+		},
+		hm: {
+			isoCode: 'hm',
+			dialCode: '61',
+			nationalPrefix: '0',
+			priority: priorityData.hm
+		},
+		pn: {
+			isoCode: 'pn',
+			dialCode: '64',
+			nationalPrefix: '0',
+			priority: priorityData.pn
+		},
+		gs: {
+			isoCode: 'gs',
+			nationalPrefix: '',
+			dialCode: '500',
+			priority: priorityData.gs
 		}
 	}, libPhoneNumberData );
 }
