@@ -273,6 +273,14 @@ const SinglePlugin = React.createClass( {
 			name: 'Not a real site',
 			options: {
 				software_version: '1'
+			},
+			plan: {
+				expired: false,
+				free_trial: false,
+				product_id: 2002,
+				product_name_short: 'Free',
+				product_slug: 'jetpack_free',
+				user_is_owner: false,
 			}
 		};
 
