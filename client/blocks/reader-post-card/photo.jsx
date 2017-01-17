@@ -113,7 +113,7 @@ class PostPhoto extends React.Component {
 						</h1>
 					</AutoDirection>
 					{ children }
-				</div> );
+				</div>
 			</div>
 		);
 	}
