@@ -13,6 +13,7 @@ import eventRecorder from 'me/event-recorder';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import DocumentHead from 'components/data/document-head';
 import purchasesPaths from 'me/purchases/paths';
 
 const BillingReceipt = React.createClass( {
@@ -25,6 +26,7 @@ const BillingReceipt = React.createClass( {
 
 		return (
 			<Main>
+				<DocumentHead title={ translate( 'Billing History' ) } />
 				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ translate( 'Billing History' ) }
 				</HeaderCake>
