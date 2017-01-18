@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { cloneDeep, get, isEqual, keyBy, range } from 'lodash';
+import { cloneDeep, get, isEqual, keyBy, range, omit, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -122,6 +122,25 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 			},
 			this.options
 		);
+	}
+
+	/**
+	 * Removes multiple items given an array of item keys, returning a new
+	 * instance of QueryManager if the tracked items have changed, or the
+	 * current instance otherwise.
+	 *
+	 * @param  {String[]}     itemKeys Keys of items to remove
+	 * @return {QueryManager}          New instance if changed, or same
+	 *                                 instance otherwise
+	 */
+	removeItems( itemKeys = [] ) {
+		if ( some( itemKeys, ( key ) => this.getItem( key ) ) ) {
+			return new ThemeQueryManager( {
+				items: omit( this.data.items, itemKeys ),
+				queries: this.data.queries,
+			}, this.options );
+		}
+		return this;
 	}
 }
 
