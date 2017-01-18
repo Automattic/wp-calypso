@@ -519,7 +519,7 @@ function recordAliasInFloodlight() {
 
 	const params = {
 		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
-		type: 'wpsal0',
+		type: 'wordp0',
 		cat: 'alias0',
 		ord: floodlightCacheBuster()
 	};
