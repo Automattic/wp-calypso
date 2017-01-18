@@ -125,9 +125,11 @@ export const normalizers = {
 	 *
 	 * @param  {Object} data    Stats data
 	 * @param  {Object} query   Stats query
+	 * @param  {Int}    siteId  Site ID
+	 * @param  {Obejct} site    Site object
 	 * @return {Object?}        Normalized stats data
 	 */
-	statsTopPosts: ( data, query ) => {
+	statsTopPosts: ( data, query, siteId, site ) => {
 		if ( ! data || ! query.period || ! query.date ) {
 			return [];
 		}
@@ -137,7 +139,7 @@ export const normalizers = {
 		const viewData = get( data, dataPath, [] );
 
 		return map( viewData, ( item ) => {
-			const detailPage = `/stats/post/${ item.id }/${ query.domain }`;
+			const detailPage = site ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
 
 			// Archive and home pages do not have dates
