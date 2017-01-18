@@ -69,13 +69,13 @@ describe( 'TermQueryManager', () => {
 		} );
 	} );
 
-	describe( '#sort()', () => {
+	describe( '#compare()', () => {
 		context( 'query.order', () => {
 			it( 'should sort ascending by default', () => {
 				const sorted = [
 					{ name: 'Food' },
 					{ name: 'Cars' }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'name'
 				} ) );
 
@@ -89,7 +89,7 @@ describe( 'TermQueryManager', () => {
 				const sorted = [
 					{ name: 'Food' },
 					{ name: 'Cars' }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'name',
 					order: 'DESC'
 				} ) );
@@ -107,7 +107,7 @@ describe( 'TermQueryManager', () => {
 					const sorted = [
 						{ name: 'Food' },
 						{ name: 'Cars' }
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'name'
 					} ) );
 
@@ -128,7 +128,7 @@ describe( 'TermQueryManager', () => {
 					const sorted = [
 						DEFAULT_TERM,
 						unusedTerm
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'count'
 					} ) );
 
