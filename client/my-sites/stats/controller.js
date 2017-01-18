@@ -344,8 +344,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const authorsList = new StatsList( {
 				siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const videoPlaysList = new StatsList( {
-				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
 				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
 
@@ -362,7 +360,6 @@ module.exports = {
 				postsPagesList,
 				clicksList,
 				authorsList,
-				videoPlaysList,
 				siteId,
 				period,
 				chartPeriod,
@@ -494,8 +491,7 @@ module.exports = {
 					break;
 
 				case 'videoplays':
-					summaryList = new StatsList( { statType: 'statsVideoPlays', siteID: siteId,
-						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 
 				case 'videodetails':

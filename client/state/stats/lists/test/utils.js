@@ -631,6 +631,61 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsVideoPlays()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsVideoPlays();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsVideoPlays( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsVideoPlays( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should properly parse day period response', () => {
+				const parsedData = normalizers.statsVideoPlays( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							plays: [
+								{
+									plays: 32,
+									post_id: 111111111,
+									title: 'Press This!',
+									url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111'
+								}
+							]
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						actions: [ {
+							data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+							type: 'link'
+						} ],
+						label: 'Press This!',
+						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						value: 32
+					}
+				] );
+			} );
+		} );
+
 		describe( 'statsVideo()', () => {
 			it( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsVideo();
