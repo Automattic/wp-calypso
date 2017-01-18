@@ -35,7 +35,7 @@ export default class Sound extends Component {
 			return;
 		}
 
-		this.sound.play();
+		this.sound && this.sound.play();
 	}
 
 	render() {
