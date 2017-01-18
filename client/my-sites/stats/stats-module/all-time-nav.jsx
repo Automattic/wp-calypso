@@ -20,10 +20,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 export const StatsModuleSummaryLinks = props => {
 	const { translate, path, siteSlug, query, period, children } = props;
 
-	const now = moment();
-	const quarter = moment().startOf( 'quarter' );
-	const daysSinceQuarterStart = now.diff( quarter, 'd' );
-
 	const getSummaryPeriodLabel = () => {
 		switch ( period.period ) {
 			case 'day':
@@ -37,14 +33,19 @@ export const StatsModuleSummaryLinks = props => {
 		}
 	};
 
+	const recordStats = ( item ) => {
+		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
+	};
+
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format( 'YYYY-MM-DD' ) }&summarize=1&num=`;
 	const summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 	const options = [
-		{ value: '0', label: getSummaryPeriodLabel(), path: summaryPeriodPath },
-		{ value: '7', label: translate( 'Last 7 days' ), path: `${ summaryPath }7` },
-		{ value: '30', label: translate( 'Last 30 days' ), path: `${ summaryPath }30` },
-		{ value: `${ daysSinceQuarterStart }`, label: translate( 'Past quarter' ), path: `${ summaryPath }${ daysSinceQuarterStart }` },
-		{ value: '-1', label: translate( 'All Time' ), path: `${ summaryPath }-1` }
+		{ value: '0', label: getSummaryPeriodLabel(), path: summaryPeriodPath, stat: 'Period Summary' },
+		{ value: '7', label: translate( '7 days' ), path: `${ summaryPath }7`, stat: '7 Days' },
+		{ value: '30', label: translate( '30 days' ), path: `${ summaryPath }30`, stat: '30 Days' },
+		{ value: '90', label: translate( 'Quarter' ), path: `${ summaryPath }90`, stat: 'Quarter' },
+		{ value: '365', label: translate( 'Year' ), path: `${ summaryPath }365`, stat: 'Year' },
+		{ value: '-1', label: translate( 'All Time' ), path: `${ summaryPath }-1`, stat: 'All Time' }
 	];
 
 	const numberDays = get( query, 'num', '0' );
@@ -55,8 +56,16 @@ export const StatsModuleSummaryLinks = props => {
 			<SectionNav selectedText={ selected.label }>
 				<NavTabs label={ translate( 'Summary' ) }>
 					{ options.map( ( item ) => {
+						const onClick = () => {
+							recordStats.apply( this, [ item ] );
+						};
 						return (
-							<NavItem path={ item.path } selected={ item.value === selected.value } key={ item.value }>
+							<NavItem
+								path={ item.path }
+								selected={ item.value === selected.value }
+								key={ item.value }
+								onClick={ onClick }
+							>
 								{ item.label }
 							</NavItem>
 						);
