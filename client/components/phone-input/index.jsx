@@ -203,7 +203,7 @@ const PhoneInput = React.createClass( {
 							onChange={ this.handleCountrySelection }
 							value={ ( this.getCountry().isoCode ) }
 							countriesList={ this.props.countriesList } />
-						<CountryFlag countryCode={ this.getCountry().isoCode } />
+						<CountryFlag countryCode={ this.getCountry().isoCode.toLowerCase() } />
 					</div>
 				</div>
 			</div>
