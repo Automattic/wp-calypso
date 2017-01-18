@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -21,7 +22,6 @@ import notices from 'notices';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
-import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
 
 const countriesList = CountriesList.forPayments();

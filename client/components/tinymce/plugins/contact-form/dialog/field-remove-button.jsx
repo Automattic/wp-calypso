@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
 
 export default React.createClass( {

@@ -32,7 +32,7 @@ describe( 'section-nav', function() {
 
 		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
-		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
+		mockery.registerMock( 'gridicons', EMPTY_COMPONENT );
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 
 		SectionNav = require( '../' );

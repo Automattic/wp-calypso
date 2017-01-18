@@ -7,11 +7,11 @@ import {
 	overEvery as and,
 	negate as not,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import {
 	makeTour,
 	Tour,

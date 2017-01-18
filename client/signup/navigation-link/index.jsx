@@ -5,13 +5,13 @@ import React from 'react';
 import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
 import { get } from 'lodash';

@@ -3,13 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 
 import { isOutsideCalypso } from 'lib/url';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'CurrentThemeButton',

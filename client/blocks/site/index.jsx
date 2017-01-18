@@ -4,12 +4,12 @@
 import React from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
-import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
 
 export default React.createClass( {

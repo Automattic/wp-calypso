@@ -6,11 +6,11 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { getNormalizedPost } from 'state/posts/selectors';
 
 export function PostRelativeTime( { moment, post } ) {

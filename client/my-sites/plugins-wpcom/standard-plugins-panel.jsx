@@ -8,6 +8,7 @@ import {
 	flowRight as compose,
 	identity,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import {
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Plugin from './plugin';
 import Notice from 'components/notice';

@@ -8,12 +8,12 @@ import {
 	overSome,
 	partial
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Gridicon from 'components/gridicon';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';

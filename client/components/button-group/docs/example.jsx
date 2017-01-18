@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var ButtonGroup = require( 'components/button-group' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 var Buttons = React.createClass( {
 	displayName: 'ButtonGroup',

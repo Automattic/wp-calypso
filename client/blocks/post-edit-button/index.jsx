@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { getEditURL } from 'lib/posts/utils';
 

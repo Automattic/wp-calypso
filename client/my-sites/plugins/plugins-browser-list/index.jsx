@@ -8,7 +8,7 @@ import React from 'react'
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
 import Card from 'components/card'
-import Gridicon from 'components/gridicon'
+import Gridicon from 'gridicons'
 import SectionHeader from 'components/section-header'
 
 export default React.createClass( {

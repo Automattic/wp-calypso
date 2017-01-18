@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconn
 import SectionHeader from 'components/section-header';
 import config from 'config';
 import notices from 'notices';
-import Gridicon from 'components/gridicon';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';

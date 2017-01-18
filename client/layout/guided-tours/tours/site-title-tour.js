@@ -4,6 +4,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import {
 	canUserEditSettingsOfSelectedSite,
 	isAbTestInVariant,
 } from 'state/ui/guided-tours/contexts';
-import Gridicon from 'components/gridicon';
 import { isDesktop } from 'lib/viewport';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;

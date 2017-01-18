@@ -5,11 +5,11 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import Gridicon from 'components/gridicon';
 import ReaderSidebarHelper from '../helper';
 
 export class ReaderSidebarTagsListItem extends Component {

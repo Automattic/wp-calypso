@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Count from 'components/count';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 

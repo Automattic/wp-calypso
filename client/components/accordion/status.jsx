@@ -3,11 +3,11 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 
 /**

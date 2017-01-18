@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import flowRight from 'lodash/flowRight';
 import noop from 'lodash/noop';
 import includes from 'lodash/includes';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import Gridicon from 'components/gridicon';
 import { connectDispatcher } from './dispatcher-converter';
 
 export const UploadingPane = React.createClass( {

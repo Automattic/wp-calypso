@@ -5,12 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, flow } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';

@@ -5,12 +5,12 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import QueryPlans from 'components/data/query-plans';
-import Gridicon from 'components/gridicon';
 import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';

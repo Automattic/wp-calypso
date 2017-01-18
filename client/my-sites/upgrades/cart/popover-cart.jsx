@@ -5,6 +5,7 @@ import React from 'react';
 import reject from 'lodash/reject';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import CartEmpty from './cart-empty';
 import CartPlanAd from './cart-plan-ad';
 import CartTrialAd from './cart-trial-ad';
 import { isCredits } from 'lib/products-values';
-import Gridicon from 'components/gridicon';
 
 const PopoverCart = React.createClass( {
 	propTypes: {

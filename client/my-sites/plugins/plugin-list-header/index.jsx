@@ -7,6 +7,7 @@ import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'lib/analytics';
 import isEqual from 'lodash/isEqual';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import isEqual from 'lodash/isEqual';
 import SectionHeader from 'components/section-header';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';

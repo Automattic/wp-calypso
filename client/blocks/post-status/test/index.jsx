@@ -5,7 +5,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import identity from 'lodash/identity';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 describe( 'PostStatus', ( ) => {
 	let PostStatus;

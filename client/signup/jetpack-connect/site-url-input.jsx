@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import Card from 'components/card';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 

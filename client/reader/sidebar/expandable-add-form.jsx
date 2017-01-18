@@ -5,11 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { noop, identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 
 export class ExpandableSidebarAddForm extends Component {

@@ -5,13 +5,13 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import Gridicon from 'components/gridicon';
 
 function PostTypePostAuthor( { translate, singleUserSite, name } ) {
 	if ( ! name || singleUserSite ) {

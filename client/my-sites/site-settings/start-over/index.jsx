@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 

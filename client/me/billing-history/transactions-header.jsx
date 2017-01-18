@@ -8,14 +8,13 @@ var React = require( 'react' ),
 	closest = require( 'component-closest' ),
 	last = require( 'lodash/last' ),
 	classNames = require( 'classnames' );
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 var tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
-
-import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',

@@ -5,12 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
 import { invoke } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 
-import Gridicon from 'components/gridicon';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';

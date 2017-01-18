@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
 module.exports = React.createClass( {

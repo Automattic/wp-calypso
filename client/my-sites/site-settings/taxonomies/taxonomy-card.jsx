@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { get, isUndefined } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
 import CompactCard from 'components/card/compact';
 import QueryTerms from 'components/data/query-terms';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import Gridicon from 'components/gridicon';
 
 const TaxonomyCard = ( {
 		count,

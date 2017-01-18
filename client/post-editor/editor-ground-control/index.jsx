@@ -11,7 +11,7 @@ const noop = require( 'lodash/noop' ),
  */
 const Card = require( 'components/card' ),
 	EditPostStatus = require( 'post-editor/edit-post-status' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	Popover = require( 'components/popover' ),
 	Site = require( 'blocks/site' ),
 	StatusLabel = require( 'post-editor/editor-status-label' ),

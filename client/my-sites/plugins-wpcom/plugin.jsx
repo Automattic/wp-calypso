@@ -3,11 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 const hasHttpProtocol = url => ( /^https?:\/\//.test( url ) );
 

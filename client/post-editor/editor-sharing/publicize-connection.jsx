@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import includes from 'lodash/includes';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',

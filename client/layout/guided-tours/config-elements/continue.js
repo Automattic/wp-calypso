@@ -3,11 +3,11 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import {
 	targetForSlug,
 } from '../positioning';

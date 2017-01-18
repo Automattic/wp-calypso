@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import accept from 'lib/accept';
-import Gridicon from 'components/gridicon';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'lib/plugins/actions';

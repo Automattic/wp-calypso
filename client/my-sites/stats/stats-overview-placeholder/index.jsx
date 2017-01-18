@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 

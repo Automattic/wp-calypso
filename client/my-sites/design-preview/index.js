@@ -6,12 +6,12 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
 import includes from 'lodash/includes';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';

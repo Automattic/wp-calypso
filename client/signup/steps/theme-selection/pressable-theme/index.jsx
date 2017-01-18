@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import EmailValidator from 'email-validator';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 
-import Gridicon from 'components/gridicon';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';

@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	classNames = require( 'classnames' ),
 	omit = require( 'lodash/omit' );
 

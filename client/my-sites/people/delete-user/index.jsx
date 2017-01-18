@@ -9,7 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 const Card = require( 'components/card' ),
 	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),

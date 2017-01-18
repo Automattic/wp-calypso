@@ -26,7 +26,7 @@ import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
 import Buttons from 'components/button/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
-import Gridicons from 'components/gridicon/docs/example';
+import Gridicons from 'gridicons/build/example';
 import Accordions from 'components/accordion/docs/example';
 import SocialLogos from 'social-logos/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
