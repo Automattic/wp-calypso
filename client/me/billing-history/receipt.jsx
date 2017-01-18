@@ -139,7 +139,7 @@ const BillingReceipt = React.createClass( {
 		return (
 			<div>
 				<DocumentHead title={ translate( 'Billing History' ) } />
-				<PageViewTracker path="/me/purchases/billing/:receiptId" title="Me > Billing History > Receipt" />
+				<PageViewTracker path="/me/purchases/billing/receipt" title="Me > Billing History > Receipt" />
 				<QueryBillingTransactions />
 				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ translate( 'Billing History' ) }
