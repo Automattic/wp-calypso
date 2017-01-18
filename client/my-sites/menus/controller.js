@@ -20,7 +20,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
-export function menus( context ) {
+export default function menus( context ) {
 	const analyticsPageTitle = 'Menus',
 		basePath = route.sectionify( context.path ),
 		site = sites.getSelectedSite();
