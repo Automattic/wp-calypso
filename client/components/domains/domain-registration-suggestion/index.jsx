@@ -14,7 +14,11 @@ var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
 const DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object,
-		suggestion: React.PropTypes.object.isRequired,
+		suggestion: React.PropTypes.shape( {
+			domain_name: React.PropTypes.string.isRequired,
+			product_slug: React.PropTypes.string,
+			cost: React.PropTypes.string
+		} ).isRequired,
 		onButtonClick: React.PropTypes.func.isRequired,
 		domainsWithPlansOnly: React.PropTypes.bool.isRequired,
 		selectedSite: React.PropTypes.object
