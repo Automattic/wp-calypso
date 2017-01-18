@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -18,7 +14,7 @@ import {
 /**
  * Triggers a network request to block a site.
  *
- * @param  {Integer} siteId Site ID
+ * @param  {Number} siteId Site ID
  * @return {Function} Action thunk
  */
 export function requestSiteBlock( siteId ) {
@@ -50,7 +46,7 @@ export function requestSiteBlock( siteId ) {
 /**
  * Triggers a network request to unblock a site.
  *
- * @param  {Integer} siteId Site ID
+ * @param  {Number} siteId Site ID
  * @return {Function} Action thunk
  */
 export function requestSiteUnblock( siteId ) {

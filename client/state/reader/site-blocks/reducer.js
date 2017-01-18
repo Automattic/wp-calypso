@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import {
@@ -15,9 +11,9 @@ import {
 /**
  * Tracks all known block statuses, indexed by site ID.
  *
- * @param  {Array} state  Current state
+ * @param  {Object} state  Current state
  * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @return {Object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
