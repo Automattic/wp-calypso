@@ -95,7 +95,7 @@ export default class QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	sort( query, itemA, itemB ) {
+	compare( query, itemA, itemB ) {
 		if ( itemA === itemB ) {
 			return 0;
 		}
@@ -352,7 +352,7 @@ export default class QueryManager {
 							return 0;
 						}
 
-						return this.sort( query, nextItems[ keyA ], nextItems[ keyB ] );
+						return this.compare( query, nextItems[ keyA ], nextItems[ keyB ] );
 					} );
 				}
 			} );
