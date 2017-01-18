@@ -43,7 +43,7 @@ var FormFields = React.createClass( {
 			checkedRadio: 'first',
 			toggled: false,
 			compactToggled: false,
-			phoneInput: { countryCode: 'us', value: '' }
+			phoneInput: { countryCode: 'US', value: '' }
 		};
 	},
 
