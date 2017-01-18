@@ -44,9 +44,13 @@ function updateStep( newStep ) {
 	signupProgress = map( signupProgress, function( step ) {
 		if ( step.stepName === newStep.stepName ) {
 			const { status } = newStep;
-			if ( ! newStep.processingMessage && ( status === 'pending' || status === 'completed' ) ) {
-				// pending or completed steps can omit the processing message if they are skipped
-				return assign( {}, omit( step, 'processingMessage' ), newStep );
+			if ( status === 'pending' || status === 'completed' ) {
+				// Steps that are resubmitted may decide to omit the
+				// `processingMessage` or `wasSkipped` status of a step if e.g.
+				// the user goes back and chooses to not skip a step. If a step
+				// is submitted without these, we explicitly remove them from
+				// the step data.
+				return assign( {}, omit( step, [ 'processingMessage', 'wasSkipped' ] ), newStep );
 			}
 
 			return assign( {}, step, newStep );

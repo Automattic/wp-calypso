@@ -24,7 +24,7 @@ module.exports = React.createClass( {
 					positionInFlow={ this.props.positionInFlow }
 					headerText="This is a test step"
 					subHeaderText="Go ahead and click the button to continue. It'll blow your mind!"
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					goToNextStep={ this.props.goToNextStep } />
 				<SubmitStepButton
 						buttonText="Click to continue"

@@ -92,6 +92,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": false,
+		"signup/domain-first-flow": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,

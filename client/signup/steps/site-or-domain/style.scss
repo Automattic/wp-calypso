@@ -1,0 +1,18 @@
+.site-or-domain__choices {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+}
+
+.site-or-domain__choice {
+	flex-grow: 1;
+	margin: 10px;
+	max-width: 330px;
+	min-width: 230px;
+	padding: 0;
+}
+
+.site-or-domain__label {
+	border-top: solid 1px $gray-light;
+	padding: 10px 15px;
+}

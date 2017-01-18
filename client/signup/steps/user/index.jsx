@@ -140,7 +140,7 @@ export default React.createClass( {
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your account.' ) }
-				signupProgressStore={ this.props.signupProgressStore }
+				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);
