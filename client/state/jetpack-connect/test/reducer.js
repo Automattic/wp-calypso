@@ -28,7 +28,6 @@ import {
 	JETPACK_CONNECT_ACTIVATE_MANAGE,
 	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
@@ -608,25 +607,6 @@ describe( 'reducer', () => {
 				.to.be.false;
 			expect( state ).to.have.property( 'authorizeError' )
 				.to.be.false;
-		} );
-
-		it( 'should update only the specified query object property when updating a connect query', () => {
-			const state = jetpackConnectAuthorize( {
-				queryObject: {
-					client_id: 'example.com',
-					redirect_uri: 'https://example.com/',
-				}
-			}, {
-				type: JETPACK_CONNECT_QUERY_UPDATE,
-				property: 'redirect_uri',
-				value: 'https://automattic.com/'
-			} );
-
-			expect( state ).to.have.property( 'queryObject' )
-				.to.eql( {
-					client_id: 'example.com',
-					redirect_uri: 'https://automattic.com/'
-				} );
 		} );
 
 		it( 'should set isAuthorizing and autoAuthorize to true when initiating an account creation', () => {
