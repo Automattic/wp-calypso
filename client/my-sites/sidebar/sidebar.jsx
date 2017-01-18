@@ -375,7 +375,7 @@ export class MySitesSidebar extends Component {
 			linkClass += ' is-paid-plan';
 		}
 
-		let planName = site.plan.product_name_short;
+		let planName = this.props.translate( site.plan.product_name_short );
 
 		if ( productsValues.isFreeTrial( site.plan ) ) {
 			planName = this.props.translate( 'Trial', {
