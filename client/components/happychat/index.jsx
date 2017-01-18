@@ -16,7 +16,7 @@ import {
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus,
+	getHappychatConnectionStatus
 } from 'state/happychat/selectors';
 import {
 	openChat,
