@@ -26,7 +26,6 @@ import route from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
-import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import utils from 'lib/site/utils';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -123,7 +122,6 @@ function isPathAllowedForDomainOnlySite( pathname ) {
 
 function onSelectedSiteAvailable( context ) {
 	const selectedSite = sites.getSelectedSite();
-	siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
 	context.store.dispatch( receiveSite( selectedSite ) );
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
@@ -202,7 +200,6 @@ module.exports = {
 		if ( ! siteID ) {
 			sites.selectAll();
 			context.store.dispatch( setAllSitesSelected() );
-			siteStatsStickyTabActions.saveFilterAndSlug( false, '' );
 			return next();
 		}
 
