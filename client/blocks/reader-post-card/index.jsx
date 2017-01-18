@@ -19,7 +19,6 @@ import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
 import FollowButton from 'reader/follow-button';
-import PostStoreActions from 'lib/feed-post-store/actions';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import { getDiscoverBlogName,
@@ -95,14 +94,6 @@ export default class ReaderPostCard extends React.Component {
 		}
 	}
 
-	handlePhotoCardExpanded = () => {
-		stats.recordTrackForPost( 'calypso_reader_photo_expanded', this.props.post );
-
-		// Record page view
-		PostStoreActions.markSeen( this.props.post );
-		stats.recordTrackForPost( 'calypso_reader_article_opened', this.props.post );
-	}
-
 	render() {
 		const {
 			post,
@@ -133,7 +124,7 @@ export default class ReaderPostCard extends React.Component {
 		if ( isDiscover ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
 			discoverFollowButton = discoverBlogName &&
-					<DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />;
+				<DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />;
 		}
 
 		const readerPostActions = <ReaderPostActions
@@ -149,12 +140,7 @@ export default class ReaderPostCard extends React.Component {
 
 		let readerPostCard;
 		if ( isPhotoPost ) {
-			const { height, width } = post.canonical_media;
-			readerPostCard = <PhotoPost imageUri={ post.canonical_media.src }
-				href={ post.URL }
-				imageSize={ { height, width } }
-				onExpanded={ this.handlePhotoCardExpanded }
-				title={ title } >
+			readerPostCard = <PhotoPost post= { post }title={ title } onClick={ this.handleCardClick } >
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>;

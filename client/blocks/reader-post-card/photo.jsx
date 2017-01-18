@@ -9,6 +9,8 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import * as stats from 'reader/stats';
+import PostStoreActions from 'lib/feed-post-store/actions';
 import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
@@ -26,7 +28,16 @@ class PostPhoto extends React.Component {
 
 		event.preventDefault();
 		this.setState( { isExpanded: true } );
-		this.props.onExpanded();
+		this.onExpanded();
+	}
+
+	onExpanded = () => {
+		const { post } = this.props.post;
+		stats.recordTrackForPost( 'calypso_reader_photo_expanded', post );
+
+		// Record page view
+		PostStoreActions.markSeen( post );
+		stats.recordTrackForPost( 'calypso_reader_article_opened', post );
 	}
 
 	getViewportHeight = () =>
@@ -63,12 +74,13 @@ class PostPhoto extends React.Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
-	render() {
-		const { title, imageUri, href, children, imageSize } = this.props;
-
-		if ( imageUri === undefined ) {
-			return null;
-		}
+	renderFeaturedImage() {
+		const { post, title } = this.props;
+		const imageUri = post.canonical_media.src;
+		const imageSize = {
+			height: post.canonical_media.height,
+			width: post.canonical_media.width
+		};
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
@@ -76,6 +88,7 @@ class PostPhoto extends React.Component {
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center'
 		};
+
 		let newWidth, newHeight;
 		if ( this.state.isExpanded ) {
 			const cardWidth = this.state.cardWidth;
@@ -102,17 +115,26 @@ class PostPhoto extends React.Component {
 			: {};
 
 		return (
+			<div style={ divStyle } >
+				<a className={ classes } href={ post.URL } style={ featuredImageStyle } onClick={ this.handleClick }>
+					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+				</a>
+				<AutoDirection>
+					<h1 className="reader-post-card__title">
+						<a className="reader-post-card__title-link" href={ post.URL }>{ linkTitle }</a>
+					</h1>
+				</AutoDirection>
+			</div>
+		);
+	}
+
+	render() {
+		const { post, children } = this.props;
+		const featuredImage = !! post.canonical_media.src ? this.renderFeaturedImage() : null;
+
+		return (
 			<div className="reader-post-card__post" >
-				<div style={ divStyle } >
-					<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
-						<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
-					</a>
-					<AutoDirection>
-						<h1 className="reader-post-card__title">
-							<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
-						</h1>
-					</AutoDirection>
-				</div>
+				{ featuredImage }
 				<div className="reader-post-card__post-details" >
 					{ children }
 				</div>
@@ -122,17 +144,13 @@ class PostPhoto extends React.Component {
 }
 
 PostPhoto.propTypes = {
-	imageUri: React.PropTypes.string,
-	imageHeight: React.PropTypes.number,
-	href: React.PropTypes.string,
+	post: React.PropTypes.object,
 	title: React.PropTypes.string,
 	onClick: React.PropTypes.func,
-	onExpanded: React.PropTypes.func
 };
 
 PostPhoto.defaultProps = {
 	onClick: noop,
-	onExpanded: noop
 };
 
 export default PostPhoto;
