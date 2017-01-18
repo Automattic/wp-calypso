@@ -185,6 +185,7 @@ export default React.createClass( {
 				gmtOffset={ gmtOffset }
 				onDateChange={ this.setPostDate }
 				onMonthChange={ this.setCurrentMonth }
+				site={ this.props.site }
 			/>
 		);
 	},

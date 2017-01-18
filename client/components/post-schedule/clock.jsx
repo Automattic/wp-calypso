@@ -15,7 +15,9 @@ import viewport from 'lib/viewport';
  */
 import {
 	isValidGMTOffset,
-	parseAndValidateNumber
+	parseAndValidateNumber,
+	convertHoursToHHMM,
+	convertMinutesToHHMM,
 } from './utils';
 
 /**
@@ -81,10 +83,12 @@ class PostScheduleClock extends Component {
 		this.props.onChange( date, modifiers );
 	}
 
-	renderTimezoneBox() {
+	renderTimezoneSection() {
 		const {
 			date,
 			gmtOffset,
+			siteId,
+			siteSlug,
 			timezone,
 			translate
 		} = this.props;
@@ -93,34 +97,42 @@ class PostScheduleClock extends Component {
 			return;
 		}
 
-		let diffInHours, formatZ;
+		let diffInMinutes, tzDateOffset;
 
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );
-			diffInHours = tzDate.utcOffset() - moment().utcOffset();
-			formatZ = tzDate.format( ' Z ' );
+			tzDateOffset = tzDate.format( 'Z' );
+			diffInMinutes = tzDate.utcOffset() - moment().utcOffset();
 		} else if ( isValidGMTOffset( gmtOffset ) ) {
 			const utcDate = date.clone().utcOffset( gmtOffset );
-			diffInHours = utcDate.utcOffset() - moment().utcOffset();
-			formatZ = utcDate.format( ' Z ' );
+			diffInMinutes = utcDate.utcOffset() - moment().utcOffset();
 		}
 
-		if ( ! diffInHours ) {
+		if ( ! diffInMinutes ) {
 			return;
 		}
 
-		diffInHours = diffInHours / 60;
-		diffInHours = Math.round( diffInHours * 100 ) / 100;
-		diffInHours = ( diffInHours > 0 ? '+' : '' ) + diffInHours + 'h';
-
 		const popoverPosition = viewport.isMobile() ? 'top' : 'right';
+		const timezoneText = timezone
+			? `${ timezone.replace( /\_/ig, ' ' ) } ${ tzDateOffset }`
+			: `UTC${ convertHoursToHHMM( gmtOffset ) }`;
+
+		const timezoneInfo = translate(
+			'This site timezone (%(timezoneText)s) will be used for publishing. ' +
+			'You can change it in {{a}}General Settings{{/a}}.', {
+				args: { timezoneText },
+				components: {
+					a: <a href={ `/settings/general/${ siteSlug || siteId }` } />
+				}
+			}
+		);
 
 		return (
 			<span>
 				<div className="post-schedule__clock-timezone">
 					{
-						translate( 'Site %(diff)s from you', {
-							args: { diff: diffInHours }
+						translate( 'This site timezone is %(diff)sh from your local timezone.', {
+							args: { diff: convertMinutesToHHMM( diffInMinutes ) }
 						} )
 					}
 
@@ -128,11 +140,7 @@ class PostScheduleClock extends Component {
 						className="post-schedule__timezone-info"
 						position={ popoverPosition }
 					>
-						{ timezone
-							? timezone.replace( /(\/)/ig, ' $1 ' )
-							: 'UTC'
-						}
-						{ formatZ }
+						{ timezoneInfo }
 					</InfoPopover>
 				</div>
 			</span>
@@ -164,19 +172,18 @@ class PostScheduleClock extends Component {
 					onKeyDown={ this.adjustMinute }
 					type="text" />
 
-				{ this.renderTimezoneBox() }
+				{ this.renderTimezoneSection() }
 			</div>
 		);
 	}
 }
 
-/**
- * Statics
- */
 PostScheduleClock.propTypes = {
 	date: PropTypes.object.isRequired,
 	timezone: PropTypes.string,
 	gmtOffset: PropTypes.number,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
 	onChange: PropTypes.func
 };
 

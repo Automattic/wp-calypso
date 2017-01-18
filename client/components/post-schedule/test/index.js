@@ -43,11 +43,11 @@ describe( 'getLocalizedDate', () => {
 
 describe( 'convertHoursToHHMM', () => {
 	it( 'Should convert 3.1 hours to `3:06`', () => {
-		expect( convertHoursToHHMM( 3.1 ) ).to.equal( '3:06' );
+		expect( convertHoursToHHMM( 3.1 ) ).to.equal( '+3:06' );
 	} );
 
 	it( 'Should convert 3 hours to `3`', () => {
-		expect( convertHoursToHHMM( 3 ) ).to.equal( '3' );
+		expect( convertHoursToHHMM( 3 ) ).to.equal( '+3' );
 	} );
 
 	it( 'Should convert -3.1 hours to `-3:06`', () => {
@@ -61,11 +61,11 @@ describe( 'convertHoursToHHMM', () => {
 
 describe( 'convertMinutesToHHMM', () => {
 	it( 'Should convert 186 minutes to `3:06`', () => {
-		expect( convertMinutesToHHMM( 186 ) ).to.equal( '3:06' );
+		expect( convertMinutesToHHMM( 186 ) ).to.equal( '+3:06' );
 	} );
 
 	it( 'Should convert 180 minutes to `3`', () => {
-		expect( convertMinutesToHHMM( 180 ) ).to.equal( '3' );
+		expect( convertMinutesToHHMM( 180 ) ).to.equal( '+3' );
 	} );
 
 	it( 'Should convert -186 minutes to `-3:06`', () => {
