@@ -16,7 +16,7 @@ import {
 	recordGoogleEvent,
 } from 'state/analytics/actions';
 
-class PostBlocked extends React.PureComponent {
+class PostBlocked extends React.Component {
 
 	static propTypes = {
 		post: React.PropTypes.object,
