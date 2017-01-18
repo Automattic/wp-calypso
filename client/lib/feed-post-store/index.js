@@ -15,7 +15,7 @@ const assign = require( 'lodash/assign' ),
  */
 const Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
+	{ runFastRules, runSlowRules, asyncRunRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
@@ -276,12 +276,7 @@ function normalizePost( feedId, postId, post ) {
 		return;
 	}
 
-	const normalizedPost = runFastRules( post );
-	setPost( postId, normalizedPost );
-
-	defer( function() {
-		runSlowRules( normalizedPost ).then( setPost.bind( null, postId ) );
-	} );
+	asyncRunRules( post ).then( normalizedPost => setPost( postId, normalizedPost ) );
 }
 
 function markPostSeen( post ) {

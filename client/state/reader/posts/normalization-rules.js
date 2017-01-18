@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, flow } from 'lodash';
+import { filter, flow, map, defer } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -25,7 +25,7 @@ import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
 import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
+import withContentDom, { asyncWithContentDom, serialReduce } from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
@@ -147,6 +147,42 @@ const slowSyncRules = flow( [
 	pickCanonicalMedia,
 	classifyPost
 ] );
+
+const allRules = [
+	waitForImagesToLoad,
+	decodeEntities,
+	stripHtml,
+	preventWidows,
+	makeSiteIdSafeForApi,
+	pickPrimaryTag,
+	safeImageProperties( READER_CONTENT_WIDTH ),
+	asyncWithContentDom( [
+		removeStyles,
+		removeElementsBySelector,
+		makeImagesSafe(),
+		makeEmbedsSafe,
+		disableAutoPlayOnEmbeds,
+		disableAutoPlayOnMedia,
+		detectMedia,
+		detectPolls,
+	] ),
+	createBetterExcerpt,
+	keepValidImages( 144, 72 ),
+	pickCanonicalImage,
+	pickCanonicalMedia,
+	waitForImagesToLoad,
+	classifyPost,
+];
+
+export const promisifyAndDeferTransform = ( transform ) => ( post ) =>
+	new Promise( ( resolve ) => defer( () => resolve( transform( post ) ) ) );
+
+export function asyncRunRules( post ) {
+	if ( ! post ) {
+		return post;
+	}
+	return serialReduce( map( allRules, promisifyAndDeferTransform ), { ...post } );
+}
 
 export function runSlowRules( post ) {
 	post = Object.assign( {}, post );
