@@ -24,8 +24,7 @@ export function requestSiteBlock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().blockSite( siteId )
-		.then( ( data ) => {
+		return wpcom.undocumented().me().blockSite( siteId ).then( ( data ) => {
 			dispatch( {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
 				siteId,
@@ -56,8 +55,7 @@ export function requestSiteUnblock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().unblockSite( siteId )
-		.then( ( data ) => {
+		return wpcom.undocumented().me().unblockSite( siteId ).then( ( data ) => {
 			dispatch( {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 				siteId,
