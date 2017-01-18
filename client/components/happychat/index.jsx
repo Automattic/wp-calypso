@@ -19,7 +19,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { connectChat } from 'state/happychat/actions';
 import {
 	getHappychatConnectionStatus,
-	lastMessageExcludingUser,
+	getLastMessageExcludingUser,
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -133,7 +133,7 @@ const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		isMinimizing: isHappychatMinimizing( state ),
-		lastOperatorMessage: lastMessageExcludingUser( state, getCurrentUserId( state ) ),
+		lastOperatorMessage: getLastMessageExcludingUser( state, getCurrentUserId( state ) ),
 	};
 };
 

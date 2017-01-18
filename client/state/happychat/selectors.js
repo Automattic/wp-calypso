@@ -63,7 +63,7 @@ export const getHappychatTimeline = createSelector(
  * @param {integer} excludeUserId - The user ID to exclude
  * @return {Object} event - The timeline event
  */
-export const lastMessageExcludingUser = createSelector(
+export const getLastMessageExcludingUser = createSelector(
 	( state, excludeUserId ) => findLast(
 		getHappychatTimeline( state ),
 		m => m.user_id !== excludeUserId
