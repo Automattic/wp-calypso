@@ -9,14 +9,17 @@ import GridIcon from 'gridicons';
 /**
  * Internal dependencies
  */
+import Sound from 'components/sound';
 import {
 	first,
 	any,
 	when
 } from './functional';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus
+	getHappychatConnectionStatus,
+	lastMessageExcludingUser,
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -95,6 +98,7 @@ const Happychat = React.createClass( {
 		const {
 			connectionStatus,
 			isMinimizing,
+			lastOperatorMessage,
 			user,
 			onCloseChat,
 			onOpenChat
@@ -102,6 +106,7 @@ const Happychat = React.createClass( {
 
 		return (
 			<div className="happychat">
+				<Sound src="/calypso/audio/chat-pling.wav" trigger={ lastOperatorMessage } />
 				<div
 					className={ classnames( 'happychat__container', {
 						'is-open': isChatOpen( { connectionStatus } ),
@@ -127,7 +132,8 @@ const Happychat = React.createClass( {
 const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
-		isMinimizing: isHappychatMinimizing( state )
+		isMinimizing: isHappychatMinimizing( state ),
+		lastOperatorMessage: lastMessageExcludingUser( state, getCurrentUserId( state ) ),
 	};
 };
 
