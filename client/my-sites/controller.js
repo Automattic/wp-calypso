@@ -111,9 +111,9 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname ) {
+function isPathAllowedForDomainOnlySite( pathname, domainName ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
-		'/domains/manage/',
+		`/domains/manage/${ domainName }`,
 		'/checkout/',
 	];
 
@@ -128,7 +128,7 @@ function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 
 	if ( isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname ) ) {
+		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
 		page.redirect( domainManagementList( selectedSite.slug ) );
 		return false;
 	}
