@@ -3,14 +3,18 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import * as stats from 'reader/stats';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import Card from 'components/card';
+import { recordTrack as recordReaderTrack } from 'reader/stats';
+import {
+	bumpStat,
+	recordGoogleEvent,
+} from 'state/analytics/actions';
 
 class PostBlocked extends React.PureComponent {
 
@@ -19,9 +23,9 @@ class PostBlocked extends React.PureComponent {
 	};
 
 	unblock = () => {
-		analytics.mc.bumpStat( 'reader_actions', 'unblocked_blog' );
-		analytics.ga.recordEvent( 'reader_actions', 'Clicked Unblock Site' );
-		stats.recordTrack( 'calypso_reader_unblock_site', {
+		this.props.bumpStat( 'reader_actions', 'unblocked_blog' );
+		this.props.recordGoogleEvent( 'reader_actions', 'Clicked Unblock Site' );
+		recordReaderTrack( 'calypso_reader_unblock_site', {
 			blog_id: this.props.post.site_ID,
 		} );
 		SiteBlockActions.unblock( this.props.post.site_ID );
@@ -41,4 +45,10 @@ class PostBlocked extends React.PureComponent {
 	}
 }
 
-export default localize( PostBlocked );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		bumpStat,
+	}
+)( localize( PostBlocked ) );
