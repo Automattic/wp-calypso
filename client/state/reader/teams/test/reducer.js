@@ -44,38 +44,39 @@ describe( 'reducer', ( ) => {
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
 		} );
 
-		describe( 'isRequesting', () => {
-			it( 'requesting teams should set requesting to true', () => {
-				expect(
-					isRequesting( false,
-						{
-							type: READER_TEAMS_REQUEST,
-						}
-					)
-				).to.equal( true );
-			} );
+	} );
 
-			it( 'successful request should set requesting to false', () => {
-				expect(
-					isRequesting( true,
-						{
-							type: READER_TEAMS_REQUEST_SUCCESS,
-							teams: [ {}, {}, {} ],
-						}
-					)
-				).to.equal( false );
-			} );
+	describe( 'isRequesting', () => {
+		it( 'requesting teams should set requesting to true', () => {
+			expect(
+				isRequesting( false,
+					{
+						type: READER_TEAMS_REQUEST,
+					}
+				)
+			).to.equal( true );
+		} );
 
-			it( 'failed request should set requesting to false', () => {
-				expect(
-					isRequesting( true,
-						{
-							type: READER_TEAMS_REQUEST_FAILURE,
-							error: new Error( 'test error' ),
-						}
-					)
-				).to.equal( false );
-			} );
+		it( 'successful request should set requesting to false', () => {
+			expect(
+				isRequesting( true,
+					{
+						type: READER_TEAMS_REQUEST_SUCCESS,
+						teams: [ {}, {}, {} ],
+					}
+				)
+			).to.equal( false );
+		} );
+
+		it( 'failed request should set requesting to false', () => {
+			expect(
+				isRequesting( true,
+					{
+						type: READER_TEAMS_REQUEST_FAILURE,
+						error: new Error( 'test error' ),
+					}
+				)
+			).to.equal( false );
 		} );
 	} );
 } );
