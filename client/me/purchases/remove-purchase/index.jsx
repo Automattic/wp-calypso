@@ -16,7 +16,7 @@ import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
 import Gridicon from 'components/gridicon';
-import { isDomainRegistration, isPlan, isGoogleApps } from 'lib/products-values';
+import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
@@ -313,6 +313,7 @@ const RemovePurchase = React.createClass( {
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 						defaultContent={ this.renderPlanDialogsText() }
 						onInputChange={ this.onSurveyChange }
+						isJetpack={ isJetpackPlan( getPurchase( this.props ) ) }
 					/>
 				</Dialog>
 			</div>
