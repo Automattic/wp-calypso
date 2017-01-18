@@ -201,7 +201,7 @@ SitesList.prototype.update = function( sites ) {
 		if ( sitesMap[ site.ID ] ) {
 			// Since updates are applied as a patch, ensure key is present for
 			// properties which can be intentionally omitted from site payload.
-			if ( undefined === site.icon ) {
+			if ( ! site.hasOwnProperty( 'icon' ) ) {
 				site.icon = undefined;
 			}
 
