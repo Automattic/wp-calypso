@@ -62,14 +62,26 @@ const convertDateToGivenOffset = ( date, tz, gmt ) => {
 	return date;
 };
 
+/**
+ * Convert a number of minutes to the hh:mm format,
+ * adding a `+` when the number is greater than zero,
+ * not adding `:00` case (zero minutes).
+ *
+ * @param  {Number} minutes - a number of minutes
+ * @return {String} `hh:mm` format
+ */
 const convertMinutesToHHMM = minutes => {
 	const hours = Math.trunc( minutes / 60 );
+	const sign = minutes > 0 ? '+' : '';
+
 	if ( ! ( minutes / 60 % 1 ) ) {
-		return String( hours );
+		return sign + String( hours );
 	}
 
 	minutes = Math.abs( minutes % 60 );
-	return hours + ':' + ( minutes < 10 ? ( '0' + minutes ) : minutes );
+	const mm = ( minutes < 10 ? ( '0' + minutes ) : minutes );
+
+	return `${ sign }${ hours }:${ mm }`;
 };
 
 const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
@@ -104,5 +116,5 @@ export default {
 	getLocalizedDate,
 	getTimeOffset,
 	isValidGMTOffset,
-	parseAndValidateNumber
+	parseAndValidateNumber,
 };
