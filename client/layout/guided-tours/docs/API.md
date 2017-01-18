@@ -248,7 +248,7 @@ There are cases when it might be a better idea to target an element by a CSS sel
 
 We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space character.
 
-Some examples:
+#### Some examples
 
 ```jsx
 // select by class
@@ -262,9 +262,13 @@ Some examples:
 
 // target id
 <Step target="#header">
+```
 
+#### One special case
+
+```jsx
 // target element
 <Step target=" body">
 ```
 
-Notice the space before "body" in the last example. It is required there, otherwise the framework will be looking for `[data-tip-target="body"]` and not using the value as a CSS selector. The space will force the CSS selector mode.
+Notice the space before "body" in the last example. **This is a hack** that forces the framework to use the value directly as a CSS selector and not as `[data-tip-target="body"]`. Please consider using any other way (CSS class, ID, custom attribute…) before settling with this one.
