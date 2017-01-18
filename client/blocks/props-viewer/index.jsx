@@ -31,6 +31,18 @@ export function findRealComponent( slug ) {
 class PropsViewer extends PureComponent {
 	static displayName = 'PropsViewer';
 
+	static propTypes = {
+		/**
+		 * The slug of the component being displayed
+		 */
+		component: PropTypes.string.isRequired,
+
+		/**
+		 * The element to display as an example of this component
+		 */
+		example: PropTypes.element.isRequired
+	}
+
 	constructor( props ) {
 		super( props );
 	}
@@ -172,18 +184,6 @@ class PropsViewer extends PureComponent {
 				{ this.renderTable( component ) }
 			</div>
 		);
-	}
-
-	static propTypes = {
-		/**
-		 * The slug of the component being displayed
-		 */
-		component: PropTypes.string.isRequired,
-
-		/**
-		 * The element to display as an example of this component
-		 */
-		example: PropTypes.element.isRequired
 	}
 }
 
