@@ -11,7 +11,6 @@ import analytics from 'lib/analytics';
 import * as stats from 'reader/stats';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import Card from 'components/card';
-import Button from 'components/button';
 
 class PostBlocked extends React.PureComponent {
 
@@ -29,15 +28,13 @@ class PostBlocked extends React.PureComponent {
 	}
 
 	render() {
-		const { post } = this.props;
+		const { post, translate } = this.props;
 
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
-					{ this.props.translate( 'You have blocked all posts from %(site_name)s.', { args: { site_name: post.site_name } } ) }
-					<Button compact primary className="reader-post-card__blocked-button" onClick={ this.unblock }>
-						{ this.props.translate( 'Unblock' ) }
-					</Button>
+					{ translate( 'You have blocked all posts from %(site_name)s.', { args: { site_name: post.site_name } } ) }
+					<a onClick={ this.unblock } className="reader-post-card__blocked-undo">{ translate( 'Undo?' ) }</a>
 				</p>
 			</Card>
 		);
