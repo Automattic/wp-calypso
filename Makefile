@@ -112,9 +112,11 @@ node-version: node_modules/semver
 
 # ensures that the `node_modules` directory is installed and up-to-date with
 # the dependencies listed in the "package.json" file.
-node_modules: package.json | node-version
+node_modules/*: package.json
 	@$(NPM) prune
 	@$(NPM) install
+
+node_modules: node_modules/* | node-version
 	@touch node_modules
 
 test: build
