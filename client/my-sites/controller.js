@@ -113,7 +113,7 @@ function renderNoVisibleSites( context ) {
 
 function isPathAllowedForDomainOnlySite( pathname, domainName ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
-		`/domains/manage/${ domainName }`,
+		domainManagementList( domainName ),
 		'/checkout/',
 	];
 
