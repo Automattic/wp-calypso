@@ -271,7 +271,7 @@ export class EditorHtmlToolbar extends Component {
 			},
 			closeTags: {
 				disabled: ! this.state.openTags.length,
-				label: translate( 'Close Tags' ),
+				label: translate( 'close tags' ),
 				onClick: this.onClickCloseTags,
 			},
 		};
