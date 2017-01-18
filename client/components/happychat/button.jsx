@@ -43,10 +43,8 @@ class HappychatButton extends Component {
 	}
 }
 
-const mapState = state => {
-	return {
-		lastOperatorMessage: getLastMessageExcludingUser( state, getCurrentUserId( state ) ),
-	};
-};
+const mapState = state => ( {
+	lastOperatorMessage: getLastMessageExcludingUser( state, getCurrentUserId( state ) ),
+} );
 
 export default connect( mapState, { onOpenChat: openChat } )( localize( HappychatButton ) );
