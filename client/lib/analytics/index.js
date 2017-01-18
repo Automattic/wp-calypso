@@ -325,7 +325,7 @@ var analytics = {
 		// Don't identify the user if we don't have one
 		if ( _user && _user.initialized ) {
 			if ( anonymousUserId ) {
-				recordAliasInFloodlight( anonymousUserId, _user.get().ID );
+				recordAliasInFloodlight();
 			}
 
 			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
