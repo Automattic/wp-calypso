@@ -268,3 +268,55 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
 
 	return reducer( state, action );
 };
+
+/**
+ * A function that creates action thunks to for performing side-effects in a generic way.
+ *
+ * @example
+ * const requestTeams = ( siteId ) => createActionThunk( {
+ *	dataFetch: wpcom.undocumented().me().blockSite.bind( null, siteId ),
+ *	dispatchArgs: { siteId },
+ * 	requestAction: 'READER_SITE_BLOCK_REQUEST',
+ * 	successAction: 'READER_SITE_BLOCK_REQUEST_SUCCESS',
+ * 	failureAction: 'READER_SITE_BLOCK_REQUEST_FAILURE',
+ * } );
+ *
+ * @param {Function} - dataFetch a 0-argument function for fetching data
+ * @param {Object} dispatchArgs - extra data to include in the dispatch
+ * @param {Object} requestAction - the action to dispatch when the request has been initiated
+ * @param {Object} successAction - the action to dispatch if the request succeeds
+ * @param {Object} failureAction - the action to dispatch if the request fails
+ * @returns {Function} Action thunk for performing side-effects with redux
+ */
+export const createActionThunk = ( {
+	dataFetch,
+	dispatchArgs = {},
+	requestAction,
+	successAction,
+	failureAction
+} ) => dispatch => {
+
+	dispatch( {
+		type: requestAction,
+		...dispatchArgs,
+	} );
+
+	return dataFetch
+		.then(
+			data => {
+				dispatch( {
+					type: successAction,
+					data,
+					...dispatchArgs,
+				} );
+			} )
+		.catch(
+			error => {
+				dispatch( {
+					type: failureAction,
+					error,
+					...dispatchArgs,
+				} );
+			}
+		);
+};
