@@ -84,11 +84,10 @@ const getContent = ( reactElement ) => {
 			return '';
 		}
 
-		const examinedLength = Math.floor( MAX_LENGTH_OF_TEXT_TO_EXAMINE * 1.25 );
 		const taglessIndex = getTaglessIndex( html );
-		const startIndex = taglessIndex + examinedLength < html.length ? taglessIndex : 0;
+		const startIndex = taglessIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE < html.length ? taglessIndex : 0;
 
-		return stripHTML( html.substring( startIndex, startIndex + examinedLength ) );
+		return stripHTML( html.substring( startIndex, startIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE ) );
 	}
 
 	// This child is some kind of input
