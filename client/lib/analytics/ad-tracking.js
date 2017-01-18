@@ -542,7 +542,7 @@ function recordSignupStartInFloodlight() {
 	const params = {
 		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
 		type: 'wordp0',
-		cat: 'signu0',
+		cat: 'pre-p0',
 		ord: floodlightCacheBuster()
 	};
 
