@@ -340,8 +340,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const clicksList = new StatsList( {
 				siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const searchTermsList = new StatsList( {
-				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
 
 			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
@@ -358,7 +356,6 @@ module.exports = {
 				siteId,
 				period,
 				chartPeriod,
-				searchTermsList,
 				slug: siteDomain,
 				path: context.pathname,
 			};
@@ -499,8 +496,7 @@ module.exports = {
 					break;
 
 				case 'searchterms':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms',
-						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 
 				case 'podcastdownloads':
