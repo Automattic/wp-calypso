@@ -367,6 +367,9 @@ export default {
 				debug( 'Authorize error', error );
 				tracksEvent( dispatch, 'calypso_jpc_authorize_error', {
 					error_code: error.code,
+					error_name: error.name,
+					error_message: error.message,
+					status: error.status,
 					error: JSON.stringify( error ),
 					site: client_id
 				} );
