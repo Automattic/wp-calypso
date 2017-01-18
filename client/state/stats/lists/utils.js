@@ -38,7 +38,7 @@ export function rangeOfPeriod( period, date ) {
 
 /**
  * Parse the avatar URL
- * @param  {String} avatarUrl Raw avatanr URL
+ * @param  {String} avatarUrl Raw avatar URL
  * @return {String}           Parsed URL
  */
 function parseAvatar( avatarUrl ) {
