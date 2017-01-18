@@ -16,6 +16,7 @@ import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
+import StatsConnectedModule from './stats-module/connected-list';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
@@ -172,14 +173,14 @@ module.exports = React.createClass( {
 								period={ this.props.period }
 								date={ queryDate }
 								beforeNavigate={ this.updateScrollPosition } />
-							<StatsModule
-								path={ 'referrers' }
+							<StatsConnectedModule
+								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
-								site={ site }
-								dataList={ this.props.referrersList }
 								period={ this.props.period }
+								query={ query }
 								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+								statType="statsReferrers"
+								showSummaryLink />
 							<StatsModule
 								path={ 'clicks' }
 								moduleStrings={ moduleStrings.clicks }

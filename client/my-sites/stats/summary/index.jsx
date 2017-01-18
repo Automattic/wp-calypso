@@ -16,6 +16,7 @@ import HeaderCake from 'components/header-cake';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
+import StatsConnectedModule from '../stats-module/connected-list';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
@@ -83,14 +84,14 @@ const StatsSummary = React.createClass( {
 
 			case 'referrers':
 				title = translate( 'Referrers' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="referrers-summary"
-					path={ 'referrers' }
+					path="referrers"
 					moduleStrings={ StatsStrings.referrers }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					summary={ true } />;
+					query={ query }
+					statType="statsReferrers"
+					summary />;
 				break;
 
 			case 'clicks':
