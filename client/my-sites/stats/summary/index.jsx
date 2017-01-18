@@ -17,7 +17,6 @@ import StatsModule from '../stats-module';
 import StatsConnectedModule from '../stats-module/connected-list';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
-import StatsConnectedModule from '../stats-module/connected-list';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
