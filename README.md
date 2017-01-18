@@ -22,11 +22,20 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 
 ### Docker
 
-1. Download [Docker for Mac](https://docs.docker.com/docker-for-mac/), [Docker for Windows](https://docs.docker.com/docker-for-windows/) unless you are in linux, in which case, just install [Docker](https://docs.docker.com/engine/installation/linux/)
+1. Download and install [Docker](https://docs.docker.com/engine/installation/)
 2. Add `127.0.0.1 calypso.localhost` to your local hosts file.
-2. Run `docker-compose run --rm -p 3000:3000 calypso`
+2. Run `docker-compose up`
 
-*Note: The container uses it's own node_modules directory to ensure linux built binaries will work inside the container. If you need them outside the container (for editor auto-completion, etc), you'll need to run `npm install` outside the container.* 
+#### Some useful commands
+
+- `docker-compose up -d`: Run the container in the background, you can use `docker-compose logs -f` to follow them on-demand
+- `docker-compose down`: delete the container
+- `docker-compose down -v`: delete the container and node_modules
+- `docker-compose run --service-ports --rm calypso make dashboard`
+
+*Note: The container uses it's own node_modules, using [named volumes](https://docs.docker.com/engine/tutorials/dockervolumes/), to ensure linux built binaries will work inside the container. If you need them outside the container (for editor auto-completion, etc), you'll need to run `npm install` outside the container.* 
+
+### Alternative instructions
 
 Need more detailed installation instructions? [We have them](docs/install.md).
 
