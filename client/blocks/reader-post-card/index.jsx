@@ -140,7 +140,7 @@ export default class ReaderPostCard extends React.Component {
 
 		let readerPostCard;
 		if ( isPhotoPost ) {
-			readerPostCard = <PhotoPost post= { post }title={ title } onClick={ this.handleCardClick } >
+			readerPostCard = <PhotoPost post={ post } title={ title } onClick={ this.handleCardClick } >
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</PhotoPost>;
