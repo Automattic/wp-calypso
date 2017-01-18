@@ -202,7 +202,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
-					label={ translate( 'Optimize your site with a phone-friendly theme.' ) }
+					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones.' ) }
 					disabled={ formPending }
 					/>
 
@@ -211,7 +211,7 @@ class ThemeEnhancements extends Component {
 						<div className="theme-enhancements__module-settings is-indented">
 							{
 								this.renderToggle( 'wp_mobile_excerpt', translate(
-									'Use excerpts instead of full posts on front page and archive pages'
+									'Show excerpts on front page and on archive pages instead of full posts'
 								) )
 							}
 							{
