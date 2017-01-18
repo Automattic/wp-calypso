@@ -4,39 +4,16 @@
 import {
 	READER_SITE_BLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
+import { createReducer, keyedReducer } from 'state/utils';
 
 /**
- * Tracks all known block statuses, indexed by site ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * Tracks all known site block statuses, indexed by site ID.
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_SITE_BLOCK_REQUEST_SUCCESS:
-			return {
-				...state,
-				[ action.siteId ]: action.data.success
-			};
-
-		case READER_SITE_UNBLOCK_REQUEST_SUCCESS:
-			return {
-				...state,
-				[ action.siteId ]: ! action.data.success
-			};
-
-		// Always return default state - we don't want to serialize yet
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-
-	return state;
-}
+export const items = keyedReducer( 'siteId', createReducer( {}, {
+	[ READER_SITE_BLOCK_REQUEST_SUCCESS ]: ( state, action ) => action.data.success,
+	[ READER_SITE_UNBLOCK_REQUEST_SUCCESS ]: ( state, action ) => ! action.data.success,
+} ) );
 
 export default items;
 
