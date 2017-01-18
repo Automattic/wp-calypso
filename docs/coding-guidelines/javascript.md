@@ -546,7 +546,7 @@ While ES2015 and beyond include many more Array prototype methods, these cannot 
 
 Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
 
-__Examples:__
+__Examples__
 
 Creating an array of React elements from an array of post objects:
 
@@ -571,7 +571,28 @@ posts.reduce( ( memo, post ) => {
 }, {} );
 ```
 
-### React components
+__Rationale: contracts in code__
+
+It could be argued that these functional helpers are not so different from `for` and `while`; after all, they are implemented with the same base loops and can't _do_ anything that `for` and `while` can't.
+
+`map` and friends are more precise ways to talk about consistent patterns in data manipulation. Preferring them over `for` is analogous to using the word "cake" instead of saying "the kind of food that you make by whipping egg whites and maybe adding sugar", with the benefit that `map` and friends are easily and legibly composable — to stretch the analogy, butter cakes are to cakes what `pluck` is to `map`.
+
+Even assuming a comparison where `map` and `for` are used as equivalently as possible (_e.g._ both with the same inlined callback), with `map` or `filter` you are intentionally limiting your power. You _establish a [contract][contracts not apis]_, wherein you say:
+
+- you're not going to mutate the collection;
+- (in the case of `map`) you're going to return a collection with the same size and with data derived from the original collection's individual items;
+- (in the case of `filter`) you're going to return a subset of the original collection, preserving the items and the order.
+
+These important statements are part of the abstraction. As for the side effects:
+
+- `map` and `filter` prevent you from yielding side effects by default, whereas the default with `for` is to mutate, unless you have an additional statement to create a new empty collection beforehand;
+- `for` inherently requires more noise to be added, as you need to set up the conditions of the loop and handle the iterating variable. _Noise dilutes intent._ Noise also makes it easier for mistakes to slip through. Anything from a misspelled `array.lenght`, to a rogue comma or an illogical condition — ultimately, those are technicalities that you didn't actually need to care about in the first place, yet they lead to pesky bugs creeping in.
+
+`for` will still have its uses, but for _most_ scenarios we have well-known higher-level terms. With the caveat that there is such a thing as too "sophisticated" and opaque vocabulary, by continuously learning and choosing the right functional programming iterator we collectively develop the fineness of our expression as developers centered around a common project.
+
+[contracts not apis]: https://twitter.com/dan_abramov/status/618757668862357504
+
+## React components
 
 - Use [stateless function components or the `React.Component` class](https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components) instead of `React.createClass`
   - Unlike `React.createClass`, methods of components extending `React.Component` are not automatically bound to the instance. Instead, you will need to bind the functions in your component's constructor or use [class instance property initializers](https://github.com/tc39/proposal-class-public-fields)
