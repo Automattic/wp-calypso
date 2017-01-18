@@ -113,6 +113,12 @@ UndocumentedSite.prototype.embeds = function( attributes, callback ) {
 	return this.wpcom.req.get( url, attributes, callback );
 };
 
+UndocumentedSite.prototype.embedReversal = function( markup, callback ) {
+	return this.wpcom.req.post( `/sites/${ this._id }/embeds/reversal`, {
+		maybe_embed: markup
+	}, callback );
+};
+
 UndocumentedSite.prototype.shortcodes = function( attributes, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
 };
