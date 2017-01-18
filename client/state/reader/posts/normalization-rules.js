@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, flow, map, defer } from 'lodash';
+import { filter, map, defer } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -17,7 +17,10 @@ import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
-import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
+import {
+	disableAutoPlayOnMedia,
+	disableAutoPlayOnEmbeds,
+} from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for-api';
@@ -25,7 +28,7 @@ import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
 import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
-import withContentDom, { asyncWithContentDom, serialReduce } from 'lib/post-normalizer/rule-with-content-dom';
+import { asyncWithContentDom, serialReduce } from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
@@ -109,47 +112,7 @@ export function classifyPost( post ) {
 	return post;
 }
 
-const fastPostNormalizationRules = flow( [
-	decodeEntities,
-	stripHtml,
-	preventWidows,
-	makeSiteIdSafeForApi,
-	pickPrimaryTag,
-	safeImageProperties( READER_CONTENT_WIDTH ),
-	withContentDom( [
-		removeStyles,
-		removeElementsBySelector,
-		makeImagesSafe(),
-		makeEmbedsSafe,
-		disableAutoPlayOnEmbeds,
-		disableAutoPlayOnMedia,
-		detectMedia,
-		detectPolls,
-	] ),
-	createBetterExcerpt,
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost,
-] );
-
-export function runFastRules( post ) {
-	if ( ! post ) {
-		return post;
-	}
-	post = Object.assign( {}, post );
-	fastPostNormalizationRules( post );
-	return post;
-}
-
-const slowSyncRules = flow( [
-	keepValidImages( 144, 72 ),
-	pickCanonicalImage,
-	pickCanonicalMedia,
-	classifyPost
-] );
-
 const allRules = [
-	waitForImagesToLoad,
 	decodeEntities,
 	stripHtml,
 	preventWidows,
@@ -184,7 +147,3 @@ export function asyncRunRules( post ) {
 	return serialReduce( map( allRules, promisifyAndDeferTransform ), { ...post } );
 }
 
-export function runSlowRules( post ) {
-	post = Object.assign( {}, post );
-	return waitForImagesToLoad( post ).then( slowSyncRules );
-}

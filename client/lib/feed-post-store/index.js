@@ -7,15 +7,14 @@ const assign = require( 'lodash/assign' ),
 	forEach = require( 'lodash/forEach' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' ),
-	defer = require( 'lodash/defer' );
+	clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies
  */
 const Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	{ runFastRules, runSlowRules, asyncRunRules } = require( 'state/reader/posts/normalization-rules' ),
+	{ asyncRunRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
@@ -276,7 +275,8 @@ function normalizePost( feedId, postId, post ) {
 		return;
 	}
 
-	asyncRunRules( post ).then( normalizedPost => setPost( postId, normalizedPost ) );
+	asyncRunRules( post )
+		.then( normalizedPost => setPost( postId, normalizedPost ) );
 }
 
 function markPostSeen( post ) {

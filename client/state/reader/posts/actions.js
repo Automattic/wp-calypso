@@ -4,11 +4,8 @@
 import {
 	filter,
 	forEach,
-	has,
 	isUndefined,
 	map,
-	omit,
-	partition,
 	reject } from 'lodash';
 
 /**
@@ -18,7 +15,7 @@ import {
 	READER_POSTS_RECEIVE
 } from 'state/action-types';
 import analytics from 'lib/analytics';
-import { runFastRules, runSlowRules, asyncRunRules } from './normalization-rules';
+import { asyncRunRules } from './normalization-rules';
 import Dispatcher from 'dispatcher';
 import { action } from 'lib/feed-post-store/constants';
 import wpcom from 'lib/wp';
