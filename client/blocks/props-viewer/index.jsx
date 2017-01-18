@@ -129,6 +129,28 @@ class PropsViewer extends PureComponent {
 		);
 	}
 
+	rows( component ) {
+		if ( ! component.props ) {
+			return null;
+		}
+
+		return Object.keys( component.props )
+			.sort( this.sortProps )
+			.map( ( propName ) => this.renderRow( component, propName ) );
+	}
+
+	static componentDescription( component ) {
+		if ( component.description ) {
+			return component.description;
+		}
+
+		return 'Add jsdoc to the component see it here';
+	}
+
+	static componentIncludePath( component ) {
+		return `import ${ component.displayName } from '${ component.includePath }';`;
+	}
+
 	/**
 	 * Renders a table if it can
 	 * @param {object} component The component to render for
@@ -141,12 +163,12 @@ class PropsViewer extends PureComponent {
 
 		return (
 			<Card compact={ true } className="props-viewer__card" tagName="div">
-				<p className="props-viewer__description" >{ component.description || 'Add jsdoc to the component see it here' }</p>
+				<p className="props-viewer__description" >{ PropsViewer.componentDescription( component ) }</p>
 				<div className="props-viewer__usage">
 					<div className="props-viewer__example" >
 						<span className="props-viewer__heading">Use It</span>
 						<p><code>
-							import { component.displayName } from '{ component.includePath }';
+							{ PropsViewer.componentIncludePath( component ) }
 						</code></p>
 					</div>
 					<div className="props-viewer__table">
@@ -162,11 +184,7 @@ class PropsViewer extends PureComponent {
 							</tr>
 							</thead>
 							<tbody>
-							{ component.props
-								? Object.keys( component.props )
-									.sort( this.sortProps )
-									.map( ( propName ) => this.renderRow( component, propName ) )
-								: null }
+							{ this.rows( component ) }
 							</tbody>
 						</table>
 					</div>
