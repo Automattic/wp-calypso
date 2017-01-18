@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 	displayName: 'TermTreeSelectorSearch',

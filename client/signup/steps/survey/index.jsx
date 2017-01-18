@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import signupUtils from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 

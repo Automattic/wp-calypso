@@ -4,13 +4,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
 import support from 'lib/url/support';

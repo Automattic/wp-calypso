@@ -4,11 +4,11 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 
 export default React.createClass( {

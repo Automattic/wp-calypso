@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-import Button from 'components/button';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import Card from 'components/card';
 import analytics from 'lib/analytics';
+import Button from 'components/button';
 
 export default localize( ( props ) => {
 	const {

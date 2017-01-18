@@ -5,13 +5,13 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { includes, reduce } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';

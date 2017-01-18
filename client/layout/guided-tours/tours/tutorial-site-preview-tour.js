@@ -6,11 +6,11 @@ import { translate } from 'i18n-calypso';
 import {
 	overEvery as and,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import {
 	makeTour,
 	Tour,

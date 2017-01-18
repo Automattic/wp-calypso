@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import * as discoverStats from './stats';

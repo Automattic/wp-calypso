@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var Card = require( 'components/card' ),
 	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 var FoldableCard = React.createClass( {
 

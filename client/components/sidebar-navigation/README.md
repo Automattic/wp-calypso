@@ -9,7 +9,7 @@ Put the component in your `Main` component, and wrap it around any components yo
 
 ```js
 var SidebarNavigation = require( 'components/sidebar-navigation' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 render: function() {
     return (

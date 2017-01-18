@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import { get, has } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import ReaderAvatar from 'blocks/reader-avatar';
-import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import {

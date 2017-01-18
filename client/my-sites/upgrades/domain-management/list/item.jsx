@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import DomainPrimaryFlag from 'my-sites/upgrades/domain-management/components/do
 import Notice from 'components/notice';
 import { type as domainTypes } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
-import Gridicon from 'components/gridicon';
 
 const ListItem = React.createClass( {
 

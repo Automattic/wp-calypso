@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import { get, isUndefined } from 'lodash';
 import Count from 'components/count';
 import Dialog from 'components/dialog';
 import EllipsisMenu from 'components/ellipsis-menu';
-import Gridicon from 'components/gridicon';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import Tooltip from 'components/tooltip';

@@ -4,12 +4,12 @@
 import React from 'react';
 import config from 'config';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Animate from 'components/animate';
-import Gridicon from 'components/gridicon';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import analytics from 'lib/analytics';

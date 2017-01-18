@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { isExternal } from 'lib/url';
-import Gridicon from 'components/gridicon';
 import { preload } from 'sections-preload';
 
 export default React.createClass( {

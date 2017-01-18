@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import get from 'lodash/get';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import { getEditedPost } from 'state/posts/selectors';
 import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import AsyncLoad from 'components/async-load';
 
 function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl } ) {

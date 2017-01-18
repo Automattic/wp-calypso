@@ -8,6 +8,7 @@ import {
 	noop,
 	size,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,7 +24,6 @@ import { getValidFeatureKeys } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
-import Gridicon from 'components/gridicon';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';

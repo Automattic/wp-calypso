@@ -5,12 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import FormRange from 'components/forms/range';
-import Gridicon from 'components/gridicon';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import { setPreference, savePreference } from 'state/preferences/actions';

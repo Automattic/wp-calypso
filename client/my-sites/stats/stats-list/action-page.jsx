@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsActionPage',

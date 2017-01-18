@@ -2,12 +2,12 @@
 * External dependencies
 */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
 * Internal dependencies
 */
 import Popover from 'components/popover';
-import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import analytics from 'lib/analytics';
 

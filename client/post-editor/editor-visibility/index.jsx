@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import includes from 'lodash/includes';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
 import touchDetect from 'lib/touch-detect';
 import Tooltip from 'components/tooltip';

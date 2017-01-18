@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import i18n from 'i18n-calypso';
 
 const GridiconButton = ( { icon, label } ) => (

@@ -4,6 +4,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import {
 	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
-import Gridicon from 'components/gridicon';
 
 class RepositioningStep extends Step {
 

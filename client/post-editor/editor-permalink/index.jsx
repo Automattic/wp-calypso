@@ -5,11 +5,11 @@ import React, { PropTypes, Component } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Slug from 'post-editor/editor-slug';
 import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';

@@ -6,6 +6,7 @@ import times from 'lodash/times';
 import { localize } from 'i18n-calypso';
 import { identity, isEqual, noop } from 'lodash';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import Card from 'components/card';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**

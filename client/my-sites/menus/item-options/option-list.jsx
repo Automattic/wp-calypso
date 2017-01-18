@@ -13,7 +13,7 @@ var ReactDom = require( 'react-dom' ),
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
 		EmptyPlaceholder = require( './empty-placeholder' ),
 		LoadingPlaceholder = require( './loading-placeholder' ),
-		Gridicon = require( 'components/gridicon' );
+		Gridicon = require( 'gridicons' );
 /**
  * Constants
  */

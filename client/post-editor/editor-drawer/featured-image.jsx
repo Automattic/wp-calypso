@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import PostActions from 'lib/posts/actions';
 import * as stats from 'lib/posts/stats';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 

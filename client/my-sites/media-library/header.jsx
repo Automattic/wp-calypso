@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import MediaLibraryScale from './scale';

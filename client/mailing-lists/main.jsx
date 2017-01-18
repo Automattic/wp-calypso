@@ -3,12 +3,12 @@
  */
 import page from 'page';
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import notices from 'notices';
 import utils from './utils';
 import { preventWidows } from 'lib/formatting';

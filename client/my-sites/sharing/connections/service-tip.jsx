@@ -4,11 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 /**
  * Module constants

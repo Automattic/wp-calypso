@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import SiteCard from 'blocks/site';
 import Card from 'components/card';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 const DesignMenuHeader = ( { isUnsaved, onBack, onPreview, onSave, site, translate } ) => {
 	return (

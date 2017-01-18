@@ -6,6 +6,7 @@ import React from 'react';
 import times from 'lodash/times';
 import findIndex from 'lodash/findIndex';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -22,7 +23,6 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Gridicon from 'components/gridicon';
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
 import {

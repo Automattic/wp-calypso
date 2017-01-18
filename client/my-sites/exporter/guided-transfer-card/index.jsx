@@ -4,13 +4,13 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';

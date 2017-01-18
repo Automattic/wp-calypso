@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import FormRadio from 'components/forms/form-radio';
-import Gridicon from 'components/gridicon';
 import QueryPostFormats from 'components/data/query-post-formats';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';

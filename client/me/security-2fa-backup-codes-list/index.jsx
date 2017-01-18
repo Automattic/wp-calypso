@@ -5,6 +5,7 @@ const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	Clipboard = require( 'clipboard' ),
 	userFactory = require( 'lib/user' ),
+	Gridicon = require( 'gridicons' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
 
 import { saveAs } from 'browser-filesaver';
@@ -18,7 +19,6 @@ const FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	config = require( 'config' ),
 	Notice = require( 'components/notice' ),
-	Gridicon = require( 'components/gridicon' ),
 	ButtonGroup = require( 'components/button-group' ),
 	Button = require( 'components/button' ),
 	Tooltip = require( 'components/tooltip' );

@@ -12,7 +12,7 @@ var React = require( 'react' ),
  * External dependencies
  */
 var Spinner = require( 'components/spinner' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	Button = require( 'components/button' ),
 	ListItemImage = require( './list-item-image' ),
 	ListItemVideo = require( './list-item-video' ),

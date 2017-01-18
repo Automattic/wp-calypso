@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 

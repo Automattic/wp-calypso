@@ -4,6 +4,7 @@
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
-import Gridicon from 'components/gridicon';
 
 const sites = sitesList();
 

@@ -4,11 +4,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import identity from 'lodash/identity';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';

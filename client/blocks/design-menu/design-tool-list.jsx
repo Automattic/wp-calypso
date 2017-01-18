@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';

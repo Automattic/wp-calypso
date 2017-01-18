@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 // Internal dependencies
 import Button from 'components/button';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
-import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 
