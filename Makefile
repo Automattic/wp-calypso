@@ -223,7 +223,8 @@ analyze-bundles: node_modules
 	@$(NODE_BIN)/webpack-bundle-analyzer stats.json public -p 9898
 
 urn:
-	@printf "⚱\n--did you mean make run?\n";
+	@printf "⚱\n\n";
+	@$(MAKE) run;
 
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
