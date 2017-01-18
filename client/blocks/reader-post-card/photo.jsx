@@ -121,7 +121,7 @@ class PostPhoto extends React.Component {
 				</a>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL }>{ linkTitle }</a>
+						<a className="reader-post-card__title-link" href={ post.URL } onClick={ this.props.onClick }>{ linkTitle }</a>
 					</h1>
 				</AutoDirection>
 			</div>
