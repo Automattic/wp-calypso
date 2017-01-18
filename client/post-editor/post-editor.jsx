@@ -436,7 +436,6 @@ export const PostEditor = React.createClass( {
 		if ( this.hasTextBeenCopiedFromGoogleDocs( e ) ) {
 			this.setState( {
 				notice: {
-					status: 'is-info',
 					message: 'copy-from-gdocs',
 					action: 'copy-from-gdocs-action',
 					link: 'https://apps.wordpress.com/'
