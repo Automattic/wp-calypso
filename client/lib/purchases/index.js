@@ -41,6 +41,7 @@ function getPurchasesBySite( purchases, sites ) {
 				 * there will be no site with this ID in `sites`, so
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
+				isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
 				title: currentValue.siteName || currentValue.domain || '',
 				purchases: [ currentValue ],
 				domain: siteObject ? siteObject.domain : currentValue.domain
