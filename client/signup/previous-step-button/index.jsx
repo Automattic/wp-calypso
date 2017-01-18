@@ -19,7 +19,7 @@ export default React.createClass( {
 		stepName: React.PropTypes.string.isRequired,
 		previousPath: React.PropTypes.string,
 		positionInFlow: React.PropTypes.number.isRequired,
-		signupProgressStore: React.PropTypes.array.isRequired
+		signupProgress: React.PropTypes.array.isRequired
 	},
 
 	backUrl() {
@@ -28,7 +28,7 @@ export default React.createClass( {
 		}
 
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
-			{ stepSectionName } = find( this.props.signupProgressStore, { stepName: previousStepName } );
+			{ stepSectionName } = find( this.props.signupProgress, { stepName: previousStepName } );
 
 		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},

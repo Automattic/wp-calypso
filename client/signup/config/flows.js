@@ -221,14 +221,16 @@ const flows = {
 		description: 'Secondary flow for User First signup',
 		lastModified: '2016-12-23'
 	},
+};
 
-	'domain-first': {
-		steps: [ 'domain-only', 'user' ],
+if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
+	flows[ 'domain-first' ] = {
+		steps: [ 'domain-only', 'site-or-domain', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2017-01-03'
-	},
-};
+		lastModified: '2017-01-16'
+	};
+}
 
 if ( config( 'env' ) === 'development' ) {
 	flows[ 'test-plans' ] = {

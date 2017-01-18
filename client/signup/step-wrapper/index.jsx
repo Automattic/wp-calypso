@@ -23,7 +23,7 @@ export default React.createClass( {
 				stepName={ this.props.stepName }
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
-				signupProgressStore={ this.props.signupProgressStore } />
+				signupProgress={ this.props.signupProgress } />
 		);
 	},
 

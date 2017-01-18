@@ -100,6 +100,7 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/security/scan": true,
+		"signup/domain-first-flow": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,

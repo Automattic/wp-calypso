@@ -39,7 +39,7 @@ const DomainsStep = React.createClass( {
 		path: PropTypes.string.isRequired,
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
-		signupProgressStore: PropTypes.array.isRequired,
+		signupProgress: PropTypes.array.isRequired,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
@@ -133,7 +133,6 @@ const DomainsStep = React.createClass( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
-			isDomainOnly: this.props.isDomainOnly ? 1 : 0,
 			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
@@ -250,7 +249,7 @@ const DomainsStep = React.createClass( {
 				stepName={ this.props.stepName }
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
-				signupProgressStore={ this.props.signupProgressStore }
+				signupProgress={ this.props.signupProgress }
 				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
 				fallbackHeaderText={ this.translate( 'Let\'s find a domain.' ) }
 				fallbackSubHeaderText={ this.translate( 'Choose a custom domain, or a free .wordpress.com address.' ) }

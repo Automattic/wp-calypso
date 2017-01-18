@@ -41,7 +41,7 @@ const SurveyStep = React.createClass( {
 
 	getOtherWriteIn() {
 		return this.state.otherWriteIn ||
-			get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
+			get( find( this.props.signupProgress, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
 	},
 
 	renderVertical( vertical ) {
@@ -112,7 +112,7 @@ const SurveyStep = React.createClass( {
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
 		);
 	},

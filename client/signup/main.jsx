@@ -292,40 +292,43 @@ const Signup = React.createClass( {
 		) );
 	},
 
-	goToNextStep() {
+	goToStep( stepName, stepSectionName ) {
 		if ( this.state.scrolling ) {
 			return;
 		}
 
-		this.setState( { scrolling: true } );
+		// animate the scroll position to the top
+		const scrollPromise = new Promise( resolve => {
+			this.setState( { scrolling: true } );
 
-		this.windowScroller = setInterval( () => {
-			if ( window.pageYOffset > 0 ) {
-				window.scrollBy( 0, -10 );
-			} else {
-				this.setState( { scrolling: false } );
-				this.loadNextStep();
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
+				} else {
+					this.setState( { scrolling: false } );
+					resolve( clearInterval( scrollIntervalId ) );
+				}
+			}, 1 );
+		} );
+
+		// redirect the user to the next step
+		scrollPromise.then( () => {
+			if ( ! this.isEveryStepSubmitted() ) {
+				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+			} else if ( this.isEveryStepSubmitted() ) {
+				this.goToFirstInvalidStep();
 			}
-		}, 1 );
+		} );
 	},
 
-	loadNextStep() {
+	goToNextStep() {
 		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+
 		this.goToStep( nextStepName, nextStepSection );
-	},
-
-	goToStep( stepName, stepSection ) {
-		clearInterval( this.windowScroller );
-
-		if ( ! this.isEveryStepSubmitted() && stepName ) {
-			page( utils.getStepUrl( this.props.flowName, stepName, stepSection, this.props.locale ) );
-		} else if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
-		}
 	},
 
 	goToFirstInvalidStep() {
@@ -410,7 +413,7 @@ const Signup = React.createClass( {
 						goToNextStep={ this.goToNextStep }
 						goToStep={ this.goToStep }
 						flowName={ this.props.flowName }
-						signupProgressStore={ this.state.progress }
+						signupProgress={ this.state.progress }
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }
