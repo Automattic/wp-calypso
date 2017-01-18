@@ -222,9 +222,13 @@ analyze-bundles: node_modules
 	@WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production $(MAKE) build
 	@$(NODE_BIN)/webpack-bundle-analyzer stats.json public -p 9898
 
+urn:
+	@printf "⚱\n\n";
+	@$(MAKE) run;
+
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
 .PHONY: build build-development build-server build-dll build-desktop build-desktop-mac-app-store build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
-.PHONY: githooks githooks-commit githooks-push analyze-bundles
+.PHONY: githooks githooks-commit githooks-push analyze-bundles urn
