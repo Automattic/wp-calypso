@@ -59,7 +59,6 @@ class ReaderPostCardAdapter extends React.Component {
 			site_ID: siteId,
 			is_external: isExternal
 		} = this.props.post;
-		const _isDiscoverPost = isDiscoverPost( this.props.post );
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
@@ -73,8 +72,6 @@ class ReaderPostCardAdapter extends React.Component {
 				onCommentClick={ this.onCommentClick }
 				isSelected={ this.props.isSelected }
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-				showEntireExcerpt={ _isDiscoverPost }
-				useBetterExcerpt={ ! _isDiscoverPost }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }

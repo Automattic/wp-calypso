@@ -631,6 +631,61 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsVideoPlays()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsVideoPlays();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsVideoPlays( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsVideoPlays( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should properly parse day period response', () => {
+				const parsedData = normalizers.statsVideoPlays( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							plays: [
+								{
+									plays: 32,
+									post_id: 111111111,
+									title: 'Press This!',
+									url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111'
+								}
+							]
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						actions: [ {
+							data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+							type: 'link'
+						} ],
+						label: 'Press This!',
+						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						value: 32
+					}
+				] );
+			} );
+		} );
+
 		describe( 'statsVideo()', () => {
 			it( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsVideo();
@@ -664,7 +719,6 @@ describe( 'utils', () => {
 		describe( 'statsTags()', () => {
 			it( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsTags();
-
 				expect( parsedData ).to.eql( [] );
 			} );
 
@@ -738,6 +792,106 @@ describe( 'utils', () => {
 						value: 740
 					}
 				] );
+			} );
+
+			describe( 'statsReferrers()', () => {
+				it( 'should return an empty array if not data is passed', () => {
+					const parsedData = normalizers.statsReferrers();
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.period is null', () => {
+					const parsedData = normalizers.statsReferrers( {}, { date: '2016-12-25' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.date is null', () => {
+					const parsedData = normalizers.statsReferrers( {}, { period: 'day' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an a properly parsed data array', () => {
+					const parsedData = normalizers.statsReferrers( {
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								groups: [
+									{
+										group: 'WordPress.com Reader',
+										name: 'WordPress.com Reader',
+										url: 'https://wordpress.com',
+										icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+										results: {
+											views: 407
+										},
+										total: 407
+									},
+									{
+										group: 'en.support.wordpress.com',
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										name: 'en.support.wordpress.com',
+										results: [
+											{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
+											{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 10 }
+										],
+										total: 207
+									}
+								]
+							}
+						}
+					}, {
+						period: 'day',
+						date: '2017-01-12',
+						domain: 'en.blog.wordpress.com'
+					},
+					100 );
+
+					expect( parsedData ).to.eql( [
+						{
+							actionMenu: 0,
+							actions: [],
+							children: undefined,
+							icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+							label: 'WordPress.com Reader',
+							labelIcon: 'external',
+							link: 'https://wordpress.com',
+							value: 407
+						},
+						{
+							actionMenu: 1,
+							actions: [
+								{
+									data: {
+										domain: 'en.support.wordpress.com',
+										siteID: 100
+									},
+									type: 'spam'
+								}
+							],
+							children: [
+								{
+									children: undefined,
+									label: 'homepage',
+									labelIcon: 'external',
+									link: 'https://en.support.wordpress.com/',
+									value: 42
+								},
+								{
+									children: undefined,
+									label: 'start',
+									labelIcon: 'external',
+									link: 'https://en.support.wordpress.com/start/',
+									value: 10
+								}
+							],
+							icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+							label: 'en.support.wordpress.com',
+							labelIcon: null,
+							link: undefined,
+							value: 207
+						},
+					] );
+				} );
 			} );
 		} );
 	} );

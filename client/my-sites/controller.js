@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { uniq } from 'lodash';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies
@@ -25,11 +26,12 @@ import route from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
-import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import utils from 'lib/site/utils';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 
 /**
  * Module vars
@@ -109,6 +111,42 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
+function isPathAllowedForDomainOnlySite( pathname ) {
+	const urlPrefixesWhiteListForDomainOnlySite = [
+		'/domains/manage/',
+		'/checkout/',
+	];
+
+	return urlPrefixesWhiteListForDomainOnlySite.some( path => startsWith( pathname, path ) );
+}
+
+function onSelectedSiteAvailable( context ) {
+	const selectedSite = sites.getSelectedSite();
+	context.store.dispatch( receiveSite( selectedSite ) );
+	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
+
+	const state = context.store.getState();
+
+	if ( isDomainOnlySite( state, selectedSite.ID ) &&
+		! isPathAllowedForDomainOnlySite( context.pathname ) ) {
+		page.redirect( domainManagementList( selectedSite.slug ) );
+		return false;
+	}
+
+	// Update recent sites preference
+	if ( hasReceivedRemotePreferences( state ) ) {
+		const recentSites = getPreference( state, 'recentSites' );
+		if ( selectedSite.ID !== recentSites[ 0 ] ) {
+			context.store.dispatch( savePreference( 'recentSites', uniq( [
+				selectedSite.ID,
+				...recentSites
+			] ).slice( 0, 3 ) ) );
+		}
+	}
+
+	return true;
+}
+
 module.exports = {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -162,33 +200,19 @@ module.exports = {
 		if ( ! siteID ) {
 			sites.selectAll();
 			context.store.dispatch( setAllSitesSelected() );
-			siteStatsStickyTabActions.saveFilterAndSlug( false, '' );
 			return next();
 		}
-
-		const onSelectedSiteAvailable = () => {
-			const selectedSite = sites.getSelectedSite();
-			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
-			context.store.dispatch( receiveSite( selectedSite ) );
-			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-
-			// Update recent sites preference
-			const state = context.store.getState();
-			if ( hasReceivedRemotePreferences( state ) ) {
-				const recentSites = getPreference( state, 'recentSites' );
-				if ( selectedSite.ID !== recentSites[ 0 ] ) {
-					context.store.dispatch( savePreference( 'recentSites', uniq( [
-						selectedSite.ID,
-						...recentSites
-					] ).slice( 0, 3 ) ) );
-				}
-			}
-		};
 
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
 		if ( sites.select( siteID ) ) {
-			onSelectedSiteAvailable();
+			const selectionComplete = onSelectedSiteAvailable( context );
+
+			// if there was a redirect, we should terminate processing of next routes
+			// and let the redirect proceed
+			if ( ! selectionComplete ) {
+				return;
+			}
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
@@ -201,7 +225,7 @@ module.exports = {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
 					sites.initialized = true;
-					onSelectedSiteAvailable();
+					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
@@ -295,7 +319,7 @@ module.exports = {
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
-						site={ sites.getSelectedSite() }
+						siteId={ sites.getSelectedSite().ID }
 					/>
 				</Main>
 			), document.getElementById( 'primary' ), context.store );

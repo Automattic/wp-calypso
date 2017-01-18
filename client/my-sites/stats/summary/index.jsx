@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import observe from 'lib/mixins/data-observe';
 import HeaderCake from 'components/header-cake';
 import StatsModule from '../stats-module';
+import StatsConnectedModule from '../stats-module/connected-list';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import StatsVideoSummary from '../stats-video-summary';
@@ -83,14 +84,14 @@ const StatsSummary = React.createClass( {
 
 			case 'referrers':
 				title = translate( 'Referrers' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="referrers-summary"
-					path={ 'referrers' }
+					path="referrers"
 					moduleStrings={ StatsStrings.referrers }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					summary={ true } />;
+					query={ query }
+					statType="statsReferrers"
+					summary />;
 				break;
 
 			case 'clicks':
@@ -146,15 +147,14 @@ const StatsSummary = React.createClass( {
 
 			case 'videoplays':
 				title = translate( 'Videos' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="videoplays-summary"
-					path={ 'videoplays' }
+					path="videoplays"
 					moduleStrings={ StatsStrings.videoplays }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					followList={ this.props.followList }
-					summary={ true } />;
+					query={ query }
+					statType="statsVideoPlays"
+					summary />;
 				break;
 
 			case 'podcastdownloads':

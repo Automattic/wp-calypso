@@ -501,13 +501,62 @@ function recordOrderInFloodlight( cart, orderId ) {
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: cart.currency,
 		u4: currentUser ? currentUser.ID : 0,
-		dc_lat: '',
-		dc_rdid: '',
-		tag_for_child_directed_treatment: '',
 		ord: orderId
 	};
 
-	// Note that we're not generating traditional a URL with traditional query arguments
+	recordParamsInFloodlight( params );
+}
+
+/**
+ * Records the anonymous user id and wpcom user id in DCM Floodlight
+ *
+ * @param {String} anonymousUserId - The anonymous user id
+ * @param {Number} wpcomUserId - The WordPress.com user id
+ * @returns {void}
+ */
+function recordAliasInFloodlight( anonymousUserId, wpcomUserId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	if ( ! anonymousUserId ) {
+		debug( 'recordAliasInFloodlight:, Missing anonymousUserId' );
+		return;
+	}
+
+	if ( ! wpcomUserId ) {
+		debug( 'recordAliasInFloodlight:, Missing wpcomUserId' );
+		return;
+	}
+
+	debug( `recordAliasInFloodlight: Aliasing anonymous user id '${ anonymousUserId }' with WordPress.com user id '${ wpcomUserId }'` );
+
+	const params = {
+		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
+		type: 'wpsal0',
+		cat: 'alias0',
+		u4: wpcomUserId,
+		u5: anonymousUserId,
+		ord: floodlightCacheBuster()
+	};
+
+	recordParamsInFloodlight( params );
+}
+
+/**
+ * Given an object of Floodlight params, this dynamically loads an iframe with the appropraite URL
+ *
+ * @param {Object} params - An object of Floodlight params
+ * @returns {void}
+ */
+function recordParamsInFloodlight( params ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	debug( 'recordParamsInFloodlight:', params );
+
+	// Note that we're not generating a URL with traditional query arguments
 	// Instead, each parameter is separated by a semicolon
 	const urlParams = Object.keys( params ).map( function( key ) {
 		return encodeURIComponent( key ) + '=' + encodeURIComponent( params[ key ] );
@@ -524,6 +573,15 @@ function recordOrderInFloodlight( cart, orderId ) {
 	iframe.setAttribute( 'frameborder', '0' );
 	iframe.setAttribute( 'style', 'display: none' );
 	document.body.appendChild( iframe );
+}
+
+/**
+ * Returns a random value to pass with as Flodlight's `ord` parameter
+ *
+ * @returns {Number} A large random number
+ */
+function floodlightCacheBuster() {
+	return Math.random() * 10000000000000;
 }
 
 /**
@@ -720,6 +778,7 @@ module.exports = {
 		nextFunction();
 	},
 
+	recordAliasInFloodlight,
 	retargetViewPlans,
 	recordAddToCart,
 	recordViewCheckout,

@@ -213,7 +213,7 @@ function configure( site, plugin, dispatch ) {
 
 	const saveOption = () => {
 		return site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
-			if ( ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
+			if ( ( ! error ) && ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
 				const response = JSON.parse( data.option_value );
 				if ( 'response' === response.action && 'broken' === response.status ) {
 					error = new Error( response.error );

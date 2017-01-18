@@ -22,29 +22,17 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 function getCourses() {
 	return [
 		{
-			title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
+			title: i18n.translate( 'Everything You Need to Know About SEO and Marketing for Your Website' ),
 			description: i18n.translate(
-				'A 60-minute overview course with two of our Happiness Engineers. In this live group session, ' +
-				'we will provide an overview of WordPress.com, discuss features of the WordPress.com Business ' +
-				'plan, provide a basic setup overview to help you get started with your site, and show you ' +
-				'where to find additional resources and help in the future.'
+				'You will leave this 60-minute session with a plan for optimizing your site for search engines ' +
+				'and an overview of basic tactics for increasing your traffic. Our Happiness Engineers will provide a ' +
+				'foundation for making sure that your site meets current SEO standards. We\'ll also discuss how to ' +
+				'maximize tools like Google Analytics and Webmaster Tools.'
 			),
 			schedule: [
 				{
-					date: i18n.moment( new Date( 'Tues, 3 Jan 2017 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/98bfc0551c58cf6c7510d14dfea9e911'
-				},
-				{
-					date: i18n.moment( new Date( 'Thur, 5 Jan 2017 21:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/ea2de9284e4d3e8a8c34be5db4a05ad8'
-				},
-				{
-					date: i18n.moment( new Date( 'Tues, 10 Jan 2017 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/884569b846d17e4b66858a512be5123a'
-				},
-				{
-					date: i18n.moment( new Date( 'Thur, 12 Jan 2017 21:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/38423895b79000597c24e00bf0acd2b8'
+					date: i18n.moment( new Date( 'Thur, 2 Feb 2017 17:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/f358613ccf2137f934538d7d4481ef37'
 				},
 			],
 			videos: [

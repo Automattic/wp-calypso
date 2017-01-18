@@ -12,6 +12,7 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -139,13 +140,12 @@ const LoggedOutForm = React.createClass( {
 
 	loginUser() {
 		const { queryObject, userData, bearerToken } = this.props.jetpackConnectAuthorize;
-		const extraFields = { jetpack_calypso_login: '1', _wp_nonce: queryObject._wp_nonce };
+		const redirectTo = addQueryArgs( queryObject, window.location.href );
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				extraFields={ extraFields }
-				redirectTo={ window.location.href } />
+				redirectTo={ redirectTo } />
 		);
 	},
 
@@ -160,7 +160,9 @@ const LoggedOutForm = React.createClass( {
 	},
 
 	renderFooterLink() {
-		const loginUrl = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const redirectTo = addQueryArgs( queryObject, window.location.href );
+		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ loginUrl }>
@@ -341,10 +343,7 @@ const LoggedInForm = React.createClass( {
 
 	handleSignOut() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
-		let redirect = window.location.href + '?';
-		for ( const prop in queryObject ) {
-			redirect += prop + '=' + encodeURIComponent( queryObject[ prop ] ) + '&';
-		}
+		const redirect = addQueryArgs( queryObject, window.location.href );
 		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
 		userUtilities.logout( redirect );
 	},
@@ -561,10 +560,9 @@ const LoggedInForm = React.createClass( {
 			isAuthorizing,
 			isRedirectingToWpAdmin
 		} = this.props.jetpackConnectAuthorize;
-		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
-		const loginUrl = config( 'login_url' ) +
-			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
-			'&_wp_nonce=' + encodeURIComponent( _wp_nonce );
+		const { blogname, redirect_after_auth } = queryObject;
+		const redirectTo = addQueryArgs( queryObject, window.location.href );
+		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
 				<Gridicon size={ 18 } icon="arrow-left" />
@@ -707,6 +705,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
+
 	render() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 

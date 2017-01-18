@@ -396,6 +396,9 @@ describe( 'selectors', () => {
 					lists: {
 						items: {}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'stats', {} );
 
@@ -416,6 +419,9 @@ describe( 'selectors', () => {
 							}
 						}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'notReallyStats', {} );
 
@@ -444,6 +450,9 @@ describe( 'selectors', () => {
 							}
 						}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'stats', {} );
 
@@ -464,6 +473,9 @@ describe( 'selectors', () => {
 					lists: {
 						items: {}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'stats', {} );
 
@@ -502,6 +514,9 @@ describe( 'selectors', () => {
 							}
 						}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'statsCountryViews', {
 				date: '2015-12-25',

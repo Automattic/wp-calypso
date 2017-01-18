@@ -182,7 +182,7 @@ const PlansSetup = React.createClass( {
 		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom' );
 		return (
 			<JetpackManageErrorPage
-				site={ this.props.selectedSite }
+				siteId={ this.props.siteId }
 				title={ this.props.translate( 'Oh no! You need to select a jetpack site to be able to setup your plan' ) }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' } />
 		);
@@ -210,7 +210,7 @@ const PlansSetup = React.createClass( {
 
 		return (
 			<JetpackManageErrorPage
-				site={ this.props.selectedSite }
+				siteId={ this.props.siteId }
 				action={ translate( 'Contact Support' ) }
 				actionURL={ support.JETPACK_CONTACT_SUPPORT }
 				title={ translate( 'Oh no! We can\'t install plugins on this site.' ) }

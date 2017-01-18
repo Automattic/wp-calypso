@@ -420,8 +420,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-// If we're not showing the entire excerpt, clamp lines
-.reader-post-card.card:not(.is-showing-entire-excerpt) {
+// If it's not a discover card, clamp lines
+.reader-post-card.card:not(.is-discover) {
 
 	.reader-post-card__excerpt {
 		overflow: hidden;
@@ -458,7 +458,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-showing-entire-excerpt) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
 
 	.reader-post-card__excerpt {
 		max-height: 15px * 1.6 * 3;

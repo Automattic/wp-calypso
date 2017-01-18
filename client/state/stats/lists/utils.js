@@ -222,6 +222,36 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized statsVideoPlays array, ready for use in stats-module
+	 *
+	 * @param  {Object} data    Stats data
+	 * @param  {Object} query   Stats query
+	 * @param  {Int}    siteId  Site ID
+	 * @param  {Obejct} site    Site object
+	 * @return {Array}          Normalized stats data
+	 */
+	statsVideoPlays( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
+
+		return videoPlaysData.map( ( item ) => {
+			const detailPage = site ? `/stats/${ query.period }/videodetails/${ site.slug }?post=${ item.post_id }` : null;
+			return {
+				label: item.title,
+				page: detailPage,
+				value: item.plays,
+				actions: [ {
+					type: 'link',
+					data: item.url
+				} ]
+			};
+		} );
+	},
+
+	/**
 	 * Returns a normalized statsVideo array, ready for use in stats-module
 	 *
 	 * @param  {Object} payload Stats response payload
@@ -280,6 +310,66 @@ export const normalizers = {
 				link: labels.length > 1 ? null : labels[ 0 ].link,
 				value: item.views,
 				children: children
+			};
+		} );
+	},
+
+	/*
+	 * Returns a normalized statsReferrers array, ready for use in stats-module
+	 *
+	 * @param  {Object} data   Stats data
+	 * @param  {Object} query  Stats query
+	 * @param  {Int}    siteId Site ID
+	 * @return {Array}        Parsed publicize data array
+	 */
+	statsReferrers( data, query, siteId ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const statsData = get( data, [ 'days', startOf, 'groups' ], [] );
+
+		const parseItem = ( item ) => {
+			let children;
+			if ( item.children && item.children.length > 0 ) {
+				children = item.children.map( parseItem );
+			}
+
+			const record = {
+				label: item.name,
+				value: item.views,
+				link: item.url,
+				labelIcon: children ? null : 'external',
+				children
+			};
+
+			if ( item.icon ) {
+				record.icon = item.icon;
+			}
+
+			return record;
+		};
+
+		return statsData.map( ( item ) => {
+			let actions = [];
+			if (
+				( item.url && -1 !== item.url.indexOf( item.name ) ) ||
+				( ! item.url && item.name === item.group && -1 !== item.name.indexOf( '.' ) )
+			) {
+				actions = [ {
+					type: 'spam',
+					data: {
+						siteID: siteId,
+						domain: item.name
+					}
+				} ];
+			}
+
+			return {
+				...parseItem( { ...item, children: item.results, views: item.total } ),
+				actions,
+				actionMenu: actions.length
 			};
 		} );
 	}

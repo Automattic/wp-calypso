@@ -52,6 +52,7 @@ const PurchasesList = React.createClass( {
 						name={ site.title }
 						domain={ site.domain }
 						slug={ site.slug }
+						isDomainOnly={ site.isDomainOnly }
 						purchases={ site.purchases } />
 				)
 			);

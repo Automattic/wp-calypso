@@ -15,10 +15,7 @@ import JetpackConnect from './index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import {
-	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_QUERY_UPDATE
-} from 'state/action-types';
+import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
 import i18nUtils from 'lib/i18n-utils';
@@ -104,16 +101,6 @@ export default {
 			context.store.dispatch( {
 				type: JETPACK_CONNECT_QUERY_SET,
 				queryObject: context.query
-			} );
-			page.redirect( context.pathname );
-		}
-
-		if ( ! isEmpty( context.query ) && context.query.update_nonce ) {
-			debug( 'updating nonce', context.query );
-			context.store.dispatch( {
-				type: JETPACK_CONNECT_QUERY_UPDATE,
-				property: '_wp_nonce',
-				value: context.query.update_nonce
 			} );
 			page.redirect( context.pathname );
 		}

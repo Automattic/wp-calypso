@@ -284,7 +284,7 @@
 		.author-compact-profile__follow .follow-button {
 			position: fixed;
 				top: 10px;
-				right: 175px;
+				right: 48px;
 			z-index: z-index( '.masterbar', '.reader-profile' );
 		}
 
@@ -323,7 +323,7 @@
 
 	@include breakpoint( "<660px" ) {
 		position: fixed;
-			right: 50px;
+			right: 138px;
 			top: 10px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 	}
@@ -344,7 +344,7 @@
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 10px;
-			right: 108px;
+			right: 208px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 		margin-right: 0;
 	}

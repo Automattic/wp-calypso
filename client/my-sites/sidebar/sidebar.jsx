@@ -6,6 +6,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import StatsSparkline from 'blocks/stats-sparkline';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -157,7 +159,9 @@ export class MySitesSidebar extends Component {
 				className={ this.itemLinkClass( '/stats', 'stats' ) }
 				link={ getStatsPathForTab( 'day', siteId ) }
 				onNavigate={ this.onNavigate }
-				icon="stats-alt" />
+				icon="stats-alt">
+				<StatsSparkline className="sidebar__sparkline" siteId={ get( site, 'ID' ) } />
+			</SidebarItem>
 		);
 	}
 

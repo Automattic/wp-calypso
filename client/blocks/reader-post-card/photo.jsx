@@ -8,8 +8,8 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import cssSafeUrl from 'lib/css-safe-url';
 import AutoDirection from 'components/auto-direction';
+import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhoto extends React.Component {
 
@@ -64,7 +64,7 @@ class PostPhoto extends React.Component {
 	}
 
 	render() {
-		const { imageUri, href, children, imageSize } = this.props;
+		const { title, imageUri, href, children, imageSize } = this.props;
 
 		if ( imageUri === undefined ) {
 			return null;
@@ -95,21 +95,27 @@ class PostPhoto extends React.Component {
 			'is-expanded': this.state.isExpanded
 		} );
 
+		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
+		const linkTitle = title || '\xa0';
 		const divStyle = this.state.isExpanded
 			? { height: newHeight, width: newWidth, margin: '0 auto' }
 			: {};
 
 		return (
-			<div style={ divStyle } >
-				<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+			<div className="reader-post-card__post" >
+				<div style={ divStyle } >
+					<a className={ classes } href={ href } style={ featuredImageStyle } onClick={ this.handleClick }>
+						<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } }></div>
+					</a>
+					<AutoDirection>
+						<h1 className="reader-post-card__title">
+							<a className="reader-post-card__title-link" href={ href }>{ linkTitle }</a>
+						</h1>
+					</AutoDirection>
+				</div>
+				<div className="reader-post-card__post-details" >
 					{ children }
-				</a>
-				<AutoDirection>
-					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ this.props.href }>{ this.props.title }</a>
-					</h1>
-				</AutoDirection>
+				</div>
 			</div>
 		);
 	}
@@ -119,13 +125,14 @@ PostPhoto.propTypes = {
 	imageUri: React.PropTypes.string,
 	imageHeight: React.PropTypes.number,
 	href: React.PropTypes.string,
+	title: React.PropTypes.string,
 	onClick: React.PropTypes.func,
-	onExpanded: React.PropTypes.func,
+	onExpanded: React.PropTypes.func
 };
 
 PostPhoto.defaultProps = {
 	onClick: noop,
-	onExpanded: noop,
+	onExpanded: noop
 };
 
 export default PostPhoto;
