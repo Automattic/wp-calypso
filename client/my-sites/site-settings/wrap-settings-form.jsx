@@ -156,10 +156,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 	const connectComponent = connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
-			let isRequestingSettings = isRequestingSiteSettings( state, siteId );
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
 			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
+			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
 				site: keys( settings ),
@@ -168,11 +168,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const isJetpack = isJetpackSite( state, siteId );
 			if ( isJetpack ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
-				isRequestingSettings = isRequestingSettings || isRequestingJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
 				isSaveRequestSuccessful = isSaveRequestSuccessful && isJetpackSettingsSaveSuccessful( state, siteId );
 				settings = { ...settings, ...jetpackSettings };
 				settingsFields.jetpack = keys( jetpackSettings );
+				isRequestingSettings = isRequestingSettings || ( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
 			}
 
 			return {
