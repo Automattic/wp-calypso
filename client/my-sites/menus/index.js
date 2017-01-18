@@ -13,6 +13,6 @@ import { menus } from './controller';
 export default function() {
 	if ( config.isEnabled( 'manage/menus' ) ) {
 		page( '/menus/:site_id', siteSelection, navigation, menus );
-		page( '/menus', siteSelection, sites );
+		page( '/menus', sites );
 	}
 }
