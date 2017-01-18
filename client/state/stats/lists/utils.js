@@ -303,11 +303,7 @@ export const normalizers = {
 				icon: parseAvatar( item.avatar ),
 				children: null,
 				value: item.views,
-				className: 'module-content-list-item-large',
-				actions: [ {
-					type: 'follow',
-					data: item.follow_data ? item.follow_data.params : false
-				} ]
+				className: 'module-content-list-item-large'
 			};
 
 			if ( item.posts && item.posts.length > 0 ) {

@@ -140,7 +140,6 @@ const StatsSummary = React.createClass( {
 						period={ this.props.period }
 						query={ query }
 						statType="statsTopAuthors"
-						followList={ this.props.followList }
 						className="stats__author-views"
 						summary={ true }
 					/>

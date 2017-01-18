@@ -41,8 +41,6 @@ class StatsConnectedModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
-		// This should be removed when we reduxify the followed sites list
-		followList: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -86,7 +84,6 @@ class StatsConnectedModule extends Component {
 			query,
 			period,
 			translate,
-			followList,
 		} = this.props;
 
 		const noData = (
@@ -126,7 +123,7 @@ class StatsConnectedModule extends Component {
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } followList={ followList } />
+					<StatsList moduleName={ path } data={ data } />
 					{ this.props.showSummaryLink && displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 					{ summary && 'countryviews' === path &&
 						<UpgradeNudge

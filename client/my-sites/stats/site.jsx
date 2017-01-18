@@ -199,7 +199,6 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								query={ query }
 								statType="statsTopAuthors"
-								followList={ this.props.followList }
 								className="stats__author-views"
 								showSummaryLink />
 						</div>

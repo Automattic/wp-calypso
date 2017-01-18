@@ -744,7 +744,6 @@ describe( 'utils', () => {
 								{
 									name: 'Timmy Crawford',
 									avatar: 'https://0.gravatar.com/avatar/9929daa7594d5afa910a777ccb9e88e4?s=64&size=G',
-									follow_data: { params: {} },
 									posts: [
 										{ id: 30, title: 'Chicken', url: 'http://en.blog.wordpress.com/chicken', views: 6 },
 										{ id: 32, title: 'Ribs', url: 'http://en.blog.wordpress.com/ribs', views: 10 }
@@ -763,10 +762,6 @@ describe( 'utils', () => {
 
 				expect( parsedData ).to.eql( [
 					{
-						actions: [ {
-							data: {},
-							type: 'follow'
-						} ],
 						children: [
 							{
 								actions: [ {
