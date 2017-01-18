@@ -44,6 +44,7 @@ import * as oauthToken from 'lib/oauth-token';
 import DocumentHead from 'components/data/document-head';
 import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
+import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 
 /**
  * Constants
@@ -119,6 +120,7 @@ const Signup = React.createClass( {
 			flow: this.props.flowName,
 			ref: this.props.refParameter
 		} );
+		recordSignupStart();
 
 		this.submitQueryDependencies();
 
@@ -201,6 +203,7 @@ const Signup = React.createClass( {
 		debug( 'The flow is completed. Logging you in...' );
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
+		recordSignupCompletion();
 
 		this.signupFlowController.reset();
 		if ( dependencies.cartItem || dependencies.domainItem || this.signupFlowController.shouldAutoContinue() ) {
