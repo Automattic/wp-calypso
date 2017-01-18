@@ -5,6 +5,8 @@ Let’s start with an informal definition of a section: A _section_ is usually a
 
 Now if you’ve worked in a given Calypso section before, you’ve probably encountered a piece of code inside your section’s `index.js[x]` that reads like this:
 
+**When writing the route definitions for a new section, don't copy this. Scroll down to the [new, recommended way](#routing-done-right).**
+
 ```js
 import page from 'page';
 
@@ -56,3 +58,22 @@ Transitioning between different single-tree rendered sections relies on React to
 ## Section Definitions
 
 More formally, sections are defined in [`client/sections.js`](../client/sections.js) (or in the file imported from there -- `wordpress-com.js` for WordPress.com). While that file's format should be intuitive enough to understand, we use quite a bit of magic to turn it into actual routing and code-splitting code. Most of it is documented in [`server/bundler/README.md`](../server/bundler/README.md).
+
+## Routing Done Right
+
+For reasons outlined in the previous sections, we ask authors of new sections to write their route definitions like so:
+
+```js
+import { siteSelection, navigation, sites } from 'my-sites/controller';
+import menus from './controller';
+
+export default function( router ) {
+	router( '/menus/:site_id', siteSelection, navigation, menus );
+	router( '/menus', sites );
+}
+```
+
+This means that instead of `import`ing `page`, you just add a `router` argument to your default-exported function which you then call like you normally would call `page`, with one difference: **Instead of `render`ing to `#primary`, make sure that your last middleware only creates its component tree in `context.primary`.** The `router` middleware arg is passed will magically render it for you. Note that this is still multi-tree rendering, but it is a bit more future-proof than otherwise.
+(In case you were wondering, the `router` argument is passed to your default-exported function by the magic code found in [`server/bundler/`](../server/bundler/).)
+
+If you're interested in single-tree rendering your section, please proceed to the [Isomorphic Routing docs](isomorphic-routing.md).
