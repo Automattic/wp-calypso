@@ -26,6 +26,7 @@ import DismissibleCard from 'blocks/dismissible-card';
 import Gridicon from 'components/gridicon';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class Banner extends Component {
 
@@ -117,6 +118,8 @@ class Banner extends Component {
 		const {
 			callToAction,
 			description,
+			event,
+			feature,
 			list,
 			price,
 			title,
@@ -126,6 +129,18 @@ class Banner extends Component {
 
 		return (
 			<div className="banner__content">
+				{
+					event && <TrackComponentView
+						eventName={ 'calypso_banner_cta_impression' }
+						eventProperties={
+							{
+								cta_name: event,
+								cta_feature: feature,
+								cta_size: 'regular'
+							}
+						}
+					/>
+				}
 				<div className="banner__info">
 					<div className="banner__title">
 						{ title }
