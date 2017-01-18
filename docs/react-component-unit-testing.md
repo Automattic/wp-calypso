@@ -54,19 +54,20 @@ Example test from `client/components/Accordion`
 ```javascript
 import { shallow } from 'enzyme';
 
-const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+it( 'should toggled', function( done ) {
+  const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-wrapper.find( '.accordion__toggle' ).simulate( 'click' );
-);
+  wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 
-function finishTest( isExpanded ) {
-	expect( isExpanded ).to.be.ok;
+  function finishTest( isExpanded ) {
+    expect( isExpanded ).to.be.true;
 
-	process.nextTick( function() {
-		expect( tree.isExpanded() ).to.be.ok;
-		done();
-	} );
-}
+    process.nextTick( function() {
+      expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
+      done();
+    } );
+  }
+} );
 ```
 
 ## [Techniques for avoiding calling other than the targeted code](#techniques-for-avoiding-calling-other-code)
