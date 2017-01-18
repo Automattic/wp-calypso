@@ -166,19 +166,22 @@ const PhoneInput = React.createClass( {
 			return;
 		}
 		let inputValue = this.props.value;
+		/*
+		 If using national format we need to extract the national number and format it instead of the direct value
+		 This is because not all countries have the same national prefix
+		 E.g. UK's national prefix is 0 and Turkmenistan's national prefix is 8.
+		 Given number 0555 666 77 88 for UK should match to 8555 666 77 88 for Turkmenistan. However, if we change
+		 the country from UK to Turkmenistan with 05556667788, it will not recognize UK's national prefix of 0 and add
+		 its own prefix 8, resulting in 805556667788, and if you switch back, UK will not recognize Turkmenistan's
+		 national prefix 8 and add its own prefix 0, resulting in 0805556667788. However, when we process it here and
+		 format the national number, UK -> Turkmenistan will be like 05556667788 -> 85556667788, which is the expected
+		 result.
+		 */
+		const { nationalNumber } = processNumber( this.props.value, this.getCountry( this.props.countryCode ) );
 		if ( this.props.value[ 0 ] !== '+' ) {
-			/*
-			 If using national format we need to extract the national number and format it instead of the direct value
-			 This is because not all countries have the same national prefix
-			 E.g. UK's national prefix is 0 and Turkmenistan's national prefix is 8.
-			 Given number 0555 666 77 88 for UK should match to 8555 666 77 88 for Turkmenistan. However, if we change
-			 the country from UK to Turkmenistan with 05556667788, it will not recognize UK's national prefix of 0 and add
-			 its own prefix 8, resulting in 805556667788, and if you switch back, UK will not recognize Turkmenistan's
-			 national prefix 8 and add its own prefix 0, resulting in 0805556667788. However, when we process it here and
-			 format the national number, UK -> Turkmenistan will be like 05556667788 -> 85556667788, which is the expected
-			 result.
-			 */
-			inputValue = processNumber( this.props.value, this.getCountry( this.props.countryCode ) ).nationalNumber;
+			inputValue = nationalNumber;
+		} else {
+			inputValue = '+' + this.getCountry( newCountryCode ).dialCode + nationalNumber;
 		}
 		this.props.onChange( {
 			countryCode: newCountryCode,
