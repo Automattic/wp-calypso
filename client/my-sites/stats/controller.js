@@ -4,7 +4,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, pick } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -460,6 +460,14 @@ module.exports = {
 			// TODO when all lists are moved to redux, remove this logic
 			const fakeStatsList = Emitter( {} );
 
+			let statsQueryOptions = {};
+
+			// All Time Summary Support
+			if ( queryOptions.summarize && queryOptions.num ) {
+				statsQueryOptions = pick( queryOptions, [ 'num', 'summarize' ] );
+				statsQueryOptions.period = 'day';
+			}
+
 			switch ( context.params.module ) {
 
 				case 'posts':
@@ -528,6 +536,7 @@ module.exports = {
 					followList: followList,
 					siteId: siteId,
 					period: period,
+					statsQueryOptions,
 					...extraProps
 				} ),
 				document.getElementById( 'primary' ),
