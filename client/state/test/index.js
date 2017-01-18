@@ -21,6 +21,18 @@ describe( 'index', () => {
 			expect( reduxStoreWithEmptyState ).to.eql( reduxStoreNoArgs );
 		} );
 
+		it( 'should return same state on unhandled action', () => {
+			// If you're here investigating why tests are failing, you should
+			// ensure that your reducer is not returning a new state object if
+			// it's not handling the action (i.e. that nothing has changed)
+			const store = createReduxStore();
+			const originalState = store.getState();
+
+			store.dispatch( { type: '__GARBAGE' } );
+
+			expect( store.getState() ).to.equal( originalState );
+		} );
+
 		it( 'is instantiated with initialState', () => {
 			const user = { ID: 1234, display_name: 'test user', username: 'testuser' };
 			const initialState = {
