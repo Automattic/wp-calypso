@@ -116,14 +116,17 @@ module.exports = React.createClass( {
 		if ( site ) {
 			// Video plays, and tags and categories are not supported in JetPack Stats
 			if ( ! site.jetpack ) {
-				videoList = <StatsModule
-					path={ 'videoplays' }
-					moduleStrings={ moduleStrings.videoplays }
-					site={ site }
-					dataList={ this.props.videoPlaysList }
-					period={ this.props.period }
-					date={ queryDate }
-					beforeNavigate={ this.updateScrollPosition } />;
+				videoList = (
+					<StatsConnectedModule
+						path="videoplays"
+						moduleStrings={ moduleStrings.videoplays }
+						period={ this.props.period }
+						date={ queryDate }
+						query={ query }
+						statType="statsVideoPlays"
+						showSummaryLink
+					/>
+				);
 			}
 			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
 				podcastList = <StatsModule

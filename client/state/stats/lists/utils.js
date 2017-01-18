@@ -222,6 +222,36 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized statsVideoPlays array, ready for use in stats-module
+	 *
+	 * @param  {Object} data    Stats data
+	 * @param  {Object} query   Stats query
+	 * @param  {Int}    siteId  Site ID
+	 * @param  {Obejct} site    Site object
+	 * @return {Array}          Normalized stats data
+	 */
+	statsVideoPlays( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
+
+		return videoPlaysData.map( ( item ) => {
+			const detailPage = site ? `/stats/${ query.period }/videodetails/${ site.slug }?post=${ item.post_id }` : null;
+			return {
+				label: item.title,
+				page: detailPage,
+				value: item.plays,
+				actions: [ {
+					type: 'link',
+					data: item.url
+				} ]
+			};
+		} );
+	},
+
+	/**
 	 * Returns a normalized statsVideo array, ready for use in stats-module
 	 *
 	 * @param  {Object} payload Stats response payload
