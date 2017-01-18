@@ -3,7 +3,10 @@
  */
 import debugModule from 'debug';
 import store from 'store';
-import { assign, find, isEmpty, some, isEqual } from 'lodash';
+import assign from 'lodash/assign';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import some from 'lodash/some';
 
 /**
  * Internal dependencies
@@ -193,11 +196,24 @@ SitesList.prototype.update = function( sites ) {
 
 	this.markCollisions( sites );
 	this.data = sites.map( function( site ) {
-		let siteObj = sitesMap[ site.ID ];
-		if ( siteObj && isEqual( siteObj, site ) ) {
+		var siteObj, result;
+
+		if ( sitesMap[ site.ID ] ) {
+			// Since updates are applied as a patch, ensure key is present for
+			// properties which can be intentionally omitted from site payload.
+			if ( undefined === site.icon ) {
+				site.icon = undefined;
+			}
+
+			// Update existing Site object
+			siteObj = sitesMap[ site.ID ];
+			result = siteObj.set( site );
+			if ( result ) {
+				changed = true;
+			}
 			delete sitesMap[ site.ID ];
 		} else {
-			// Create or replace Site object
+			// Create new Site object
 			siteObj = this.createSiteObject( site );
 			siteObj.on( 'change', this.propagateChange );
 			changed = true;
