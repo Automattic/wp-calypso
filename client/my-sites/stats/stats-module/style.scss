@@ -518,3 +518,16 @@ ul.module-header-actions {
 		@include long-content-fade( $color: $white, $size: 15% );
 	}
 }
+
+.stats-module__all-time-nav{
+	.stats-section-title {
+		margin: 0 16px 16px 16px;
+	}
+}
+
+.stats-module__footer-actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
