@@ -115,7 +115,7 @@ class PostScheduleClock extends Component {
 		const popoverPosition = viewport.isMobile() ? 'top' : 'right';
 		const timezoneText = timezone
 			? `${ timezone.replace( /\_/ig, ' ' ) } ${ tzDateOffset }`
-			: 'UTC' + ( gmtOffset >= 0 ? '+' : '' ) + convertHoursToHHMM( gmtOffset );
+			: `UTC${ convertHoursToHHMM( gmtOffset ) }`;
 
 		const timezoneInfo = translate(
 			'This site timezone (%(timezoneText)s) will be used for publishing. ' +
@@ -178,9 +178,6 @@ class PostScheduleClock extends Component {
 	}
 }
 
-/**
- * Statics
- */
 PostScheduleClock.propTypes = {
 	date: PropTypes.object.isRequired,
 	timezone: PropTypes.string,
