@@ -434,10 +434,40 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-family: $serif;
 }
 
+.reader-related-card-v2__site-info {
+	position: relative;
+}
+
 .reader-related-card-v2__title {
 	font-size: 16px;
 	font-weight: 700;
 	line-height: 1.4;
+
+	// Clamp to 2 lines on narrow viewports
+	@include breakpoint( "<660px" ) {
+		overflow: hidden;
+		max-height: 16px * 1.4 * 2;
+		word-wrap: break-word;
+
+		&::after {
+			@include long-content-fade( $size: 20% );
+			top: 16px * 1.4;
+			height: 16px * 1.4;
+		}
+	}
+
+	// Clamp to 3 lines on larger viewports
+	@include breakpoint( ">660px" ) {
+		overflow: hidden;
+		max-height: 16px * 1.4 * 3;
+		word-wrap: break-word;
+
+		&::after {
+			@include long-content-fade( $size: 20% );
+			top: 16px * 1.4 * 2;
+			height: 16px * 1.4;
+		}
+	}
 }
 
 .reader-related-card-v2__excerpt {
