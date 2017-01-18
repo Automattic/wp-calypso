@@ -30,7 +30,7 @@ var priorityData = {
 	CA: 5,
 	DO: 3,
 	PR: 1,
-	um: -99,
+	UM: -99,
 	// dial code: +7
 	RU: 10,
 	KZ: 1,
@@ -45,15 +45,15 @@ var priorityData = {
 	// dial code: +47
 	NO: 10,
 	SJ: 1,
-	bv: -99,
+	BV: -99,
 	// dial code: +61
 	AU: 10,
 	CX: 5,
 	CC: 1,
-	hm: -99,
+	HM: -99,
 	// dial code: +64
-	nz: 10,
-	pn: -99,
+	NZ: 10,
+	PN: -99,
 	// dial code: +290
 	SH: 10,
 	TA: 1,
@@ -61,8 +61,8 @@ var priorityData = {
 	FI: 10,
 	AX: 1,
 	// dial code: +500
-	fk: 10,
-	gs: -99,
+	FK: 10,
+	GS: -99,
 	// dial code: +590
 	GP: 10,
 	MF: 5,
@@ -273,48 +273,48 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 // Political correction
 function injectHardCodedValues( libPhoneNumberData ) {
 	return Object.assign( {}, {
-		kv: {
-			isoCode: 'kv',
+		KV: {
+			isoCode: 'KV',
 			dialCode: '383',
 			nationalPrefix: '0',
-			priority: priorityData.kv
+			priority: priorityData.KV
 		},
-		um: {
-			isoCode: 'um',
+		UM: {
+			isoCode: 'UM',
 			dialCode: '1',
 			nationalPrefix: '',
 			patternRegion: 'us',
-			priority: priorityData.um
+			priority: priorityData.UM
 		},
-		bv: {
-			isoCode: 'bv',
+		BV: {
+			isoCode: 'BV',
 			dialCode: '47',
 			nationalPrefix: '',
-			priority: priorityData.bv
+			priority: priorityData.BV
 		},
-		tf: {
-			isoCode: 'tf',
+		TF: {
+			isoCode: 'TF',
 			dialCode: '262',
 			nationalPrefix: '0',
-			priority: priorityData.tf
+			priority: priorityData.TF
 		},
-		hm: {
-			isoCode: 'hm',
+		HM: {
+			isoCode: 'HM',
 			dialCode: '61',
 			nationalPrefix: '0',
-			priority: priorityData.hm
+			priority: priorityData.HM
 		},
-		pn: {
-			isoCode: 'pn',
+		PN: {
+			isoCode: 'PN',
 			dialCode: '64',
 			nationalPrefix: '0',
-			priority: priorityData.pn
+			priority: priorityData.PN
 		},
-		gs: {
-			isoCode: 'gs',
+		GS: {
+			isoCode: 'GS',
 			nationalPrefix: '',
 			dialCode: '500',
-			priority: priorityData.gs
+			priority: priorityData.GS
 		}
 	}, libPhoneNumberData );
 }

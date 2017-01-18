@@ -2,43 +2,43 @@
 /* eslint-disable */
 module.exports = {
 	countries: {
-		kv: {
-			isoCode: "kv",
+		KV: {
+			isoCode: "KV",
 			dialCode: "383",
 			nationalPrefix: "0"
 		},
-		um: {
-			isoCode: "um",
+		UM: {
+			isoCode: "UM",
 			dialCode: "1",
 			nationalPrefix: "",
 			patternRegion: "us",
 			priority: -99
 		},
-		bv: {
-			isoCode: "bv",
+		BV: {
+			isoCode: "BV",
 			dialCode: "47",
 			nationalPrefix: "",
 			priority: -99
 		},
-		tf: {
-			isoCode: "tf",
+		TF: {
+			isoCode: "TF",
 			dialCode: "262",
 			nationalPrefix: "0"
 		},
-		hm: {
-			isoCode: "hm",
+		HM: {
+			isoCode: "HM",
 			dialCode: "61",
 			nationalPrefix: "0",
 			priority: -99
 		},
-		pn: {
-			isoCode: "pn",
+		PN: {
+			isoCode: "PN",
 			dialCode: "64",
 			nationalPrefix: "0",
 			priority: -99
 		},
-		gs: {
-			isoCode: "gs",
+		GS: {
+			isoCode: "GS",
 			nationalPrefix: "",
 			dialCode: "500",
 			priority: -99
@@ -1851,7 +1851,9 @@ module.exports = {
 		},
 		FK: {
 			isoCode: "FK",
-			dialCode: "500"
+			dialCode: "500",
+			priority: 10,
+			patternRegion: "FK"
 		},
 		FM: {
 			isoCode: "FM",
@@ -4247,7 +4249,8 @@ module.exports = {
 					nationalFormat: "0$1",
 					leadingDigitPattern: "2(?:10|74)|5|[89]0"
 				}
-			]
+			],
+			priority: 10
 		},
 		OM: {
 			isoCode: "OM",
@@ -6037,7 +6040,7 @@ module.exports = {
 		1: [
 			"US",
 			"CA",
-			"um"
+			"UM"
 		],
 		7: [
 			"RU",
@@ -6095,7 +6098,7 @@ module.exports = {
 		47: [
 			"NO",
 			"SJ",
-			"bv"
+			"BV"
 		],
 		48: [
 			"PL"
@@ -6134,7 +6137,7 @@ module.exports = {
 			"AU",
 			"CX",
 			"CC",
-			"hm"
+			"HM"
 		],
 		62: [
 			"ID"
@@ -6144,7 +6147,7 @@ module.exports = {
 		],
 		64: [
 			"NZ",
-			"pn"
+			"PN"
 		],
 		65: [
 			"SG"
@@ -6324,7 +6327,7 @@ module.exports = {
 			"MG"
 		],
 		262: [
-			"tf"
+			"TF"
 		],
 		263: [
 			"ZW"
@@ -6431,7 +6434,7 @@ module.exports = {
 			"ME"
 		],
 		383: [
-			"kv"
+			"KV"
 		],
 		385: [
 			"HR"
@@ -6456,7 +6459,7 @@ module.exports = {
 		],
 		500: [
 			"FK",
-			"gs"
+			"GS"
 		],
 		501: [
 			"BZ"
