@@ -48,7 +48,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
-				listLabel={ translate( 'Custom themes' ) }
+				listLabel={ translate( 'Uploaded themes' ) }
 			/>
 		);
 	}
