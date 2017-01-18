@@ -149,12 +149,14 @@ class StatsConnectedModule extends Component {
 					}
 				</Card>
 				{ isAllTime &&
-					<DownloadCsv
-						statType={ statType }
-						query={ query }
-						path={ path }
-						borderless
-						period={ period } />
+					<div className="stats-module__footer-actions">
+						<DownloadCsv
+							statType={ statType }
+							query={ query }
+							path={ path }
+							borderless
+							period={ period } />
+					</div>
 				}
 			</div>
 

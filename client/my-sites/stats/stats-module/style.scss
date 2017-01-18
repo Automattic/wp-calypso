@@ -524,3 +524,10 @@ ul.module-header-actions {
 		margin: 0 16px 16px 16px;
 	}
 }
+
+.stats-module__footer-actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
