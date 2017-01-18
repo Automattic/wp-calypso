@@ -16,6 +16,7 @@ import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
+	getSiteSettingsSaveError,
 	getSiteSettings
 } from 'state/site-settings/selectors';
 import {
@@ -65,13 +66,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					nextProps.clearDirtyFields();
 					nextProps.markSaved();
 				} else {
-					let text;
-					switch ( nextProps.saveRequestError.error ) {
+					let text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
+					switch ( nextProps.siteSettingsSaveError ) {
 						case 'invalid_ip':
 							text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
 							break;
-						default:
-							text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
 					}
 					nextProps.errorNotice( text, { id: 'site-settings-save' } );
 				}
@@ -161,6 +160,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
 			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
+			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
 				site: keys( settings ),
 			};
@@ -179,6 +179,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isRequestingSettings,
 				isSavingSettings,
 				isSaveRequestSuccessful,
+				siteSettingsSaveError,
 				settings,
 				settingsFields,
 				siteId,
