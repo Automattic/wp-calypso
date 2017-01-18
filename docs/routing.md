@@ -9,11 +9,11 @@ Now if you’ve worked in a given Calypso section before, you’ve probably enco
 import page from 'page';
 
 import { siteSelection, navigation, sites } from 'my-sites/controller';
-import { menus } from './controller';
+import menus from './controller';
 
 export default function() {
 	page( '/menus/:site_id', siteSelection, navigation, menus );
-	page( '/menus', siteSelection, sites );
+	page( '/menus', sites );
 }
 ```
 
