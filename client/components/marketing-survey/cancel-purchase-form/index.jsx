@@ -19,25 +19,43 @@ const CancelPurchaseForm = React.createClass( {
 		surveyStep: React.PropTypes.number.isRequired,
 		showSurvey: React.PropTypes.bool.isRequired,
 		defaultContent: React.PropTypes.node.isRequired,
-		onInputChange: React.PropTypes.func.isRequired
+		onInputChange: React.PropTypes.func.isRequired,
+		isJetpack: React.PropTypes.bool.isRequired
 	},
 
 	getInitialState() {
 		// shuffle reason order, but keep anotherReasonOne last
-		const questionOneOrder = shuffle( [
+		let questionOneOrder = shuffle( [
 			'couldNotInstall',
 			'tooHard',
 			'didNotInclude',
 			'onlyNeedFree'
 		] );
-		questionOneOrder.push( 'anotherReasonOne' );
 
-		const questionTwoOrder = shuffle( [
+		let questionTwoOrder = shuffle( [
 			'stayingHere',
 			'otherWordPress',
 			'differentService',
 			'noNeed'
 		] );
+
+		// set different reason groupings for Jetpack subscribers
+		if ( this.props.isJetpack ) {
+			questionOneOrder = shuffle( [
+				'couldNotActivate',
+				'didNotInclude',
+				'onlyNeedFree'
+			] );
+
+			questionTwoOrder = shuffle( [
+				'stayingHere',
+				'otherPlugin',
+				'leavingWP',
+				'noNeed'
+			] );
+		}
+
+		questionOneOrder.push( 'anotherReasonOne' );
 		questionTwoOrder.push( 'anotherReasonTwo' );
 
 		return {
@@ -205,6 +223,28 @@ const CancelPurchaseForm = React.createClass( {
 			</FormLabel>
 		);
 
+		// Survey questions only for Jetpack subscriptions
+		const couldNotActivateInput = (
+			<FormTextInput
+				className="cancel-purchase-form__reason-input"
+				name="couldNotActivateInput"
+				id="couldNotActivateInput"
+				value={ this.state.questionOneText }
+				onChange={ this.onTextOneChange }
+				placeholder={ this.translate( 'Where did you run into problems?' ) } />
+		);
+		reasons.couldNotActivate = (
+			<FormLabel key="couldNotActivate">
+				<FormRadio
+					name="couldNotActivate"
+					value="couldNotActivate"
+					checked={ 'couldNotActivate' === this.state.questionOneRadio }
+					onChange={ this.onRadioOneChange } />
+				<span>{ this.translate( 'I was unable to activate or use the product.' ) }</span>
+				{ 'couldNotActivate' === this.state.questionOneRadio && couldNotActivateInput }
+			</FormLabel>
+		);
+
 		const { questionOneOrder } = this.state,
 			orderedReasons = questionOneOrder.map( question => reasons[ question ] );
 
@@ -310,6 +350,49 @@ const CancelPurchaseForm = React.createClass( {
 					onChange={ this.onRadioTwoChange } />
 				<span>{ this.translate( 'Another reason…' ) }</span>
 				{ 'anotherReasonTwo' === this.state.questionTwoRadio && anotherReasonTwoInput }
+			</FormLabel>
+		);
+
+		// Survey questions only for Jetpack subscriptions
+		const otherPluginInput = (
+			<FormTextInput
+				className="cancel-purchase-form__reason-input"
+				name="otherPluginInput"
+				id="otherPluginInput"
+				value={ this.state.questionTwoText }
+				onChange={ this.onTextTwoChange }
+				placeholder={ this.translate( 'Mind telling us which one(s)?' ) } />
+		);
+		reasons.otherPlugin = (
+			<FormLabel key="otherPlugin">
+				<FormRadio
+					name="otherPlugin"
+					value="otherPlugin"
+					checked={ 'otherPlugin' === this.state.questionTwoRadio }
+					onChange={ this.onRadioTwoChange } />
+				<span>{ this.translate( 'I found a better plugin or service.' ) }</span>
+				{ 'otherPlugin' === this.state.questionTwoRadio && otherPluginInput }
+			</FormLabel>
+		);
+
+		const leavingWPInput = (
+			<FormTextInput
+				className="cancel-purchase-form__reason-input"
+				name="leavingWPInput"
+				id="leavingWPInput"
+				value={ this.state.questionTwoText }
+				onChange={ this.onTextTwoChange }
+				placeholder={ this.translate( 'Any particular reason(s)?' ) } />
+		);
+		reasons.leavingWP = (
+			<FormLabel key="leavingWP">
+				<FormRadio
+					name="leavingWP"
+					value="leavingWP"
+					checked={ 'leavingWP' === this.state.questionTwoRadio }
+					onChange={ this.onRadioTwoChange } />
+				<span>{ this.translate( 'I\'m moving my site off of WordPress.' ) }</span>
+				{ 'leavingWP' === this.state.questionTwoRadio && leavingWPInput }
 			</FormLabel>
 		);
 
