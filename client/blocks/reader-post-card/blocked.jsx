@@ -37,7 +37,7 @@ class PostBlocked extends React.Component {
 		return (
 			<Card className="reader-post-card is-blocked">
 				<p className="reader-post-card__blocked-description">
-					{ translate( 'You have blocked all posts from %(site_name)s.', { args: { site_name: post.site_name } } ) }
+					{ translate( 'You have blocked %(site_name)s.', { args: { site_name: post.site_name } } ) }
 					<a onClick={ this.unblock } className="reader-post-card__blocked-undo">{ translate( 'Undo?' ) }</a>
 				</p>
 			</Card>
