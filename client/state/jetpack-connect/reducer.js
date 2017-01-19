@@ -14,7 +14,6 @@ import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -206,14 +205,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				{},
 				buildDefaultAuthorizeState(),
 				{ queryObject: queryObject }
-			);
-		case JETPACK_CONNECT_QUERY_UPDATE:
-			return Object.assign(
-				{},
-				state,
-				{
-					queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } )
-				}
 			);
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign(
