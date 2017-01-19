@@ -132,16 +132,18 @@ const StatsSummary = React.createClass( {
 				title = translate( 'Authors' );
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				summaryView = <StatsModule
-					key="authors-summary"
-					path={ 'authors' }
-					moduleStrings={ StatsStrings.authors }
-					site={ site }
-					dataList={ this.props.summaryList }
-					period={ this.props.period }
-					followList={ this.props.followList }
-					className="stats__author-views"
-					summary={ true } />;
+				summaryView = (
+					<StatsConnectedModule
+						key="authors-summary"
+						path="authors"
+						moduleStrings={ StatsStrings.authors }
+						period={ this.props.period }
+						query={ query }
+						statType="statsTopAuthors"
+						className="stats__author-views"
+						summary={ true }
+					/>
+				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
 
