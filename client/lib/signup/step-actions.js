@@ -90,9 +90,9 @@ function createSiteWithCart( callback, dependencies, {
 		};
 
 		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlug } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug, themeSlug } ) );
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
@@ -147,7 +147,7 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 	], onComplete );
 }
 
-function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
+function setThemeOnSite( callback, { siteSlug, themeSlug } ) {
 	if ( isEmpty( themeSlug ) ) {
 		defer( callback );
 
