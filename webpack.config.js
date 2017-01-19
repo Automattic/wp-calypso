@@ -181,7 +181,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	} else {
 		// Add react hot loader before babel-loader.
 		// It's loaded by default since `use-source-maps` is disabled by default.
-		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
+		//jsRule.use = [ 'react-hot-loader' ].concat( jsRule.use );
 	}
 } else {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
