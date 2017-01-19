@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import analytics from 'lib/analytics';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, omit, get } from 'lodash';
 
@@ -13,6 +13,9 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import signupUtils from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -23,6 +26,7 @@ export class UserStep extends Component {
 
 	static defaultProps = {
 		translate: identity,
+		suggestedUsername: identity
 	};
 
 	state = {
@@ -80,7 +84,7 @@ export class UserStep extends Component {
 			}
 		};
 
-		analytics.tracks.recordEvent( 'calypso_signup_user_step_submit', analyticsData );
+		this.props.recordTrackEvent( 'calypso_signup_user_step_submit', analyticsData );
 
 		SignupActions.submitSignupStep( {
 			processingMessage: this.props.translate( 'Creating your account' ),
@@ -143,6 +147,7 @@ export class UserStep extends Component {
 				save={ this.save }
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
+				suggestedUsername={ this.props.suggestedUsername }
 			/>
 		);
 	}
@@ -163,4 +168,13 @@ export class UserStep extends Component {
 	}
 }
 
-export default localize( UserStep );
+export default connect(
+	( state ) => ( {
+		suggestedUsername: getSuggestedUsername( state )
+	} ),
+	( dispatch ) => ( {
+		recordTrackEvent: ( event, data ) => {
+			dispatch( recordTracksEvent( event, data ) );
+		}
+	} )
+)( localize( UserStep ) );

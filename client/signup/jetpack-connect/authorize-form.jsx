@@ -186,7 +186,9 @@ const LoggedOutForm = React.createClass( {
 					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.translate( 'Sign Up and Connect Jetpack' ) }
-					footerLink={ this.renderFooterLink() } />
+					footerLink={ this.renderFooterLink() }
+					suggestedUsername={ userData && userData.username ? userData.username : '' }
+				/>
 				{ userData && this.loginUser() }
 			</div>
 		);
