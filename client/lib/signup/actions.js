@@ -57,6 +57,18 @@ const SignupActions = {
 			errors: undefined === errors ? [] : errors,
 			providedDependencies: providedDependencies
 		} );
+	},
+
+	/**
+	 * Action for providing dependencies not associated with a step.
+	 *
+	 * @param {object} providedDependencies - Object containing dependencies
+	 */
+	provideDependencies( providedDependencies ) {
+		Dispatcher.handleViewAction( {
+			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
+			providedDependencies
+		} );
 	}
 };
 
