@@ -25,9 +25,9 @@ class CartPlanAd extends Component {
 	}
 
 	shouldDisplayAd() {
-		const { cart, selectedSite } = this.props;
+		const { cart, isDomainOnlySite, selectedSite } = this.props;
 
-		return ! this.props.isDomainOnlySite &&
+		return ! isDomainOnlySite &&
 			cart.hasLoadedFromServer &&
 			! cartItems.hasDomainCredit( cart ) &&
 			cartItems.getDomainRegistrations( cart ).length === 1 &&
