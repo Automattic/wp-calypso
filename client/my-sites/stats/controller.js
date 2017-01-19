@@ -336,8 +336,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
 				quantity: chartQuantity, date: chartEndDate,
 				stat_fields: 'views,visitors,likes,comments,post_titles', domain: siteDomain } );
-			const postsPagesList = new StatsList( {
-				siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: siteDomain } );
 
 			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
@@ -349,7 +347,6 @@ module.exports = {
 				sites,
 				activeTabVisitsList,
 				visitsList,
-				postsPagesList,
 				siteId,
 				period,
 				chartPeriod,
@@ -460,8 +457,7 @@ module.exports = {
 					visitsList = new StatsList( {
 						statType: 'statsVisits', unit: activeFilter.period, siteID: siteId,
 						quantity: 10, date: endDate, domain: siteDomain } );
-					summaryList = new StatsList( { statType: 'statsTopPosts', siteID: siteId,
-						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 
 				case 'referrers':
