@@ -14,6 +14,7 @@ import Emojify from 'components/emojify';
 import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
+import StatsPlaceholder from '../stats-module/placeholder';
 import HeaderCake from 'components/header-cake';
 import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
@@ -21,7 +22,7 @@ import StatsFirstView from '../stats-first-view';
 import PostLikes from '../stats-post-likes';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostStats from 'components/data/query-post-stats';
-import NoViewsPlaceholder from './no-views-placeholder';
+import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
@@ -53,6 +54,7 @@ class StatsPostDetail extends Component {
 	render() {
 		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate } = this.props;
 		const postOnRecord = post && post.title !== null;
+		const isLoading = isRequestingStats && ! countViews;
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
@@ -69,35 +71,51 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				{ ! isRequestingStats && countViews === 0 && <NoViewsPlaceholder /> }
-
 				<StatsFirstView />
 
 				<HeaderCake onClick={ this.goBack }>
 					{ title }
 				</HeaderCake>
 
-				<PostSummary siteId={ siteId } postId={ postId } />
+				<StatsPlaceholder isLoading={ isLoading } />
 
-				{ !! postId && <PostLikes siteId={ siteId } postId={ postId } /> }
+				{ ! isLoading && countViews === 0 &&
+					<EmptyContent
+						title={ translate( 'Your post has not received any views yet!' ) }
+						line={ translate( 'Learn some tips to attract more visitors' ) }
+						action={ translate( 'Get more traffic!' ) }
+						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
+						actionTarget="blank"
+						illustration="/calypso/images/stats/illustration-stats.svg"
+						illustrationWidth={ 250 }
+					/>
+				}
 
-				<PostMonths
-					dataKey="years"
-					title={ translate( 'Months and Years' ) }
-					total={ translate( 'Total' ) }
-					siteId={ siteId }
-					postId={ postId }
-				/>
+				{ ! isLoading && countViews > 0 &&
+					<div>
+						<PostSummary siteId={ siteId } postId={ postId } />
 
-				<PostMonths
-					dataKey="averages"
-					title={ translate( 'Average per Day' ) }
-					total={ translate( 'Overall' ) }
-					siteId={ siteId }
-					postId={ postId }
-				/>
+						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } /> }
 
-				<PostWeeks siteId={ siteId } postId={ postId } />
+						<PostMonths
+							dataKey="years"
+							title={ translate( 'Months and Years' ) }
+							total={ translate( 'Total' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+
+						<PostMonths
+							dataKey="averages"
+							title={ translate( 'Average per Day' ) }
+							total={ translate( 'Overall' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+
+						<PostWeeks siteId={ siteId } postId={ postId } />
+					</div>
+				}
 			</Main>
 		);
 	}
