@@ -26,6 +26,7 @@ module.exports = React.createClass( {
 
 		return (
 			<SidebarNavigation
+				backToSites={ this.props.backToSites }
 				linkClassName={ allSitesClass }
 				sectionName="site"
 				sectionTitle={ currentSiteTitle }>
