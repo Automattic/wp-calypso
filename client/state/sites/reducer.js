@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { pick, omit, merge, get, includes } from 'lodash';
+import { pick, omit, merge, get, includes, reduce, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
+	SITES_UPDATE,
 	DESERIALIZE,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -98,18 +99,40 @@ export function items( state = {}, action ) {
 			return state;
 		}
 
-		case SITE_RECEIVE: {
-			const site = pick( action.site, VALID_SITE_KEYS );
-			return Object.assign( {}, state, {
-				[ site.ID ]: site
-			} );
-		}
-
+		case SITE_RECEIVE:
 		case SITES_RECEIVE:
-			return action.sites.reduce( ( memo, site ) => {
-				memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
+		case SITES_UPDATE:
+			// Normalize incoming site(s) to array
+			const sites = action.site ? [ action.site ] : action.sites;
+
+			// SITES_RECEIVE occurs when we receive the entire set of user
+			// sites (replace existing state). Otherwise merge into state.
+			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
+
+			return reduce( sites, ( memo, site ) => {
+				// If we're not already tracking the site upon an update, don't
+				// merge into state (we only currently maintain sites which
+				// have at one point been selected in state)
+				//
+				// TODO: Consider dropping condition once sites-list abolished
+				if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
+					return memo;
+				}
+
+				// Bypass if site object hasn't change
+				const transformedSite = pick( site, VALID_SITE_KEYS );
+				if ( isEqual( memo[ site.ID ], transformedSite ) ) {
+					return memo;
+				}
+
+				// Avoid mutating state
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ site.ID ] = transformedSite;
 				return memo;
-			}, {} );
+			}, initialNextState );
 
 		case THEME_ACTIVATE_REQUEST_SUCCESS: {
 			const { siteId, themeStylesheet } = action;

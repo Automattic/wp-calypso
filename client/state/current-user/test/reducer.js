@@ -15,7 +15,8 @@ import {
 	SERIALIZE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
-	SITES_RECEIVE
+	SITES_RECEIVE,
+	SITES_UPDATE
 } from 'state/action-types';
 import reducer, { id, capabilities, currencyCode } from '../reducer';
 
@@ -261,6 +262,63 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should return same state if received sites result in same capabilities', () => {
+			const original = deepFreeze( {
+				2916284: {
+					manage_options: false
+				}
+			} );
+			const state = capabilities( original, {
+				type: SITES_RECEIVE,
+				sites: [ {
+					ID: 2916284,
+					capabilities: {
+						manage_options: false
+					}
+				} ]
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should not return same state on sites updated if site not tracked', () => {
+			const original = deepFreeze( {} );
+			const state = capabilities( original, {
+				type: SITES_UPDATE,
+				sites: [ {
+					ID: 2916284,
+					capabilities: {
+						manage_options: true
+					}
+				} ]
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update capabilities when sites updated if site tracked', () => {
+			const original = deepFreeze( {
+				2916284: {
+					manage_options: false
+				}
+			} );
+			const state = capabilities( original, {
+				type: SITES_UPDATE,
+				sites: [ {
+					ID: 2916284,
+					capabilities: {
+						manage_options: true
+					}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					manage_options: true
+				}
+			} );
 		} );
 
 		it( 'should persist state', () => {
