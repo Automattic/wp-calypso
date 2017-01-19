@@ -184,14 +184,14 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								statType="statsReferrers"
 								showSummaryLink />
-							<StatsModule
-								path={ 'clicks' }
+							<StatsConnectedModule
+								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
-								site={ site }
-								dataList={ this.props.clicksList }
 								period={ this.props.period }
+								query={ query }
 								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+								statType="statsClicks"
+								showSummaryLink />
 							<StatsConnectedModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }

@@ -875,6 +875,85 @@ describe( 'utils', () => {
 				] );
 			} );
 
+			describe( 'statsClicks()', () => {
+				it( 'should return an empty array if not data is passed', () => {
+					const parsedData = normalizers.statsClicks();
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.period is null', () => {
+					const parsedData = normalizers.statsClicks( {}, { date: '2016-12-25' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.date is null', () => {
+					const parsedData = normalizers.statsClicks( {}, { period: 'day' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an a properly parsed data array', () => {
+					const parsedData = normalizers.statsClicks( {
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								clicks: [
+									{
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										name: 'en.support.wordpress.com',
+										url: null,
+										views: 45,
+										children: [
+											{
+												name: 'en.support.wordpress.com',
+												url: 'https://en.support.wordpress.com/',
+												views: 5
+											}
+										]
+									},
+									{
+										children: null,
+										icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+										name: 'en.forums.wordpress.com',
+										url: 'https://en.forums.wordpress.com/',
+										views: 6
+									}
+								]
+							}
+						}
+					}, {
+						period: 'day',
+						date: '2017-01-12'
+					} );
+
+					expect( parsedData ).to.eql( [
+						{
+							children: [
+								{
+									children: null,
+									label: 'en.support.wordpress.com',
+									labelIcon: 'external',
+									link: 'https://en.support.wordpress.com/',
+									value: 5
+								}
+							],
+							icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+							label: 'en.support.wordpress.com',
+							labelIcon: null,
+							link: null,
+							value: 45
+						},
+						{
+							children: null,
+							icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+							label: 'en.forums.wordpress.com',
+							labelIcon: 'external',
+							link: 'https://en.forums.wordpress.com/',
+							value: 6
+						}
+					] );
+				} );
+			} );
+
 			describe( 'statsReferrers()', () => {
 				it( 'should return an empty array if not data is passed', () => {
 					const parsedData = normalizers.statsReferrers();
