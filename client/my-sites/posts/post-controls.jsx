@@ -5,6 +5,7 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	url = require( 'url' );
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
 /**
@@ -14,15 +15,15 @@ var config = require( 'config' ),
 	utils = require( 'lib/posts/utils' ),
 	Gridicon = require( 'components/gridicon'),
 	recordEvent = require( 'lib/analytics' ).ga.recordEvent;
+import { isPublicizeEnabled } from 'state/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'PostControls',
-
+const PostControls = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,
 		editURL: React.PropTypes.string.isRequired,
+		isPublicizeEnabled: React.PropTypes.bool.isRequired,
 		onShowMore: React.PropTypes.func.isRequired,
 		onHideMore: React.PropTypes.func.isRequired,
 		onPublish: React.PropTypes.func,
@@ -115,7 +116,7 @@ module.exports = React.createClass( {
 
 			if ( config.isEnabled( 'republicize' ) ) {
 				availableControls.push( {
-					disabled: this.props.site && this.props.site.options.publicize_permanently_disabled,
+					disabled: ! this.props.isPublicizeEnabled,
 					text: this.translate( 'Share' ),
 					className: 'post-controls__share',
 					onClick: this.props.onToggleShare,
@@ -242,3 +243,9 @@ module.exports = React.createClass( {
 	},
 
 } );
+
+export default connect(
+	( state, props ) => ( {
+		isPublicizeEnabled: isPublicizeEnabled( state, props.site.ID, props.post.type ),
+	} )
+)( PostControls );

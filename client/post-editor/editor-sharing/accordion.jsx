@@ -22,10 +22,9 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { hasBrokenSiteUserConnection } from 'state/selectors';
-import { postTypeSupports } from 'state/post-types/selectors';
+import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const EditorSharingAccordion = React.createClass( {
@@ -144,11 +143,6 @@ export default connect(
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const isPublicizeEnabled = (
-			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
-			true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
-			postTypeSupports( state, siteId, postType, 'publicize' )
-		);
 		const isSharingActive = false !== isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
 
@@ -157,7 +151,7 @@ export default connect(
 			hasBrokenConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSharingActive,
 			isLikesActive,
-			isPublicizeEnabled
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 		};
 	},
 	{

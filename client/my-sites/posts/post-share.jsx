@@ -12,8 +12,8 @@ import SocialLogo from 'social-logos';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
-import { postTypeSupports } from 'state/post-types/selectors';
-import { isJetpackModuleActive, getSiteSlug } from 'state/sites/selectors';
+import { isPublicizeEnabled } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
@@ -126,12 +126,6 @@ const PostSharing = React.createClass( {
 			return null;
 		}
 
-		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
-			return ( <div className="posts__post-share-wrapper">
-				<Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing is permanently disabled on this site.' ) }</Notice>
-			</div> );
-		}
-
 		const classes = classNames( 'posts__post-share', {
 			'has-connections': this.hasConnections()
 		} );
@@ -216,16 +210,11 @@ export default connect(
 	( state, props ) => {
 		const siteId = props.site.ID;
 		const userId = getCurrentUserId( state );
-		const postType = props.post.type;
-		const isPublicizeEnabled = (
-			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
-			postTypeSupports( state, siteId, postType, 'publicize' )
-		);
 
 		return {
 			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
-			isPublicizeEnabled,
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
