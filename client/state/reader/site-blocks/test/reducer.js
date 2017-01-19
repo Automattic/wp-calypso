@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should reflect a successful block', () => {
-			const original = {};
+			const original = deepFreeze( {} );
 
 			const state = items( original, {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
@@ -34,7 +35,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not change for a failed block', () => {
-			const original = {};
+			const original = deepFreeze( {} );
 
 			const state = items( original, {
 				type: READER_SITE_BLOCK_REQUEST_FAILURE,
@@ -46,7 +47,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should reflect a successful unblock', () => {
-			const original = {};
+			const original = deepFreeze( {} );
 
 			const state = items( original, {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
@@ -58,9 +59,9 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not change for a failed unblock', () => {
-			const original = {
+			const original = deepFreeze( {
 				123: true
-			};
+			} );
 
 			const state = items( original, {
 				type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
