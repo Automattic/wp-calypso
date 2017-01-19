@@ -159,6 +159,7 @@ class DesignTypeWithStoreStep extends Component {
 						positionInFlow={ this.props.positionInFlow }
 						fallbackHeaderText={ this.props.translate( 'What would you like your homepage to look like?' ) }
 						fallbackSubHeaderText={ this.props.translate( 'This will help us figure out what kinds of designs to show you.' ) }
+						subHeaderText={ this.props.translate( 'First up, what would you like your homepage to look like?' ) }
 						signupProgress={ this.props.signupProgress }
 						stepContent={ this.renderChoices() } />
 				</div>
