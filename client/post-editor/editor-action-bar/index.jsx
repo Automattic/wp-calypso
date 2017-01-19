@@ -67,7 +67,7 @@ export default React.createClass( {
 
 		return (
 			<div className="editor-action-bar">
-				<div className="editor-action-bar__cell editor-action-bar__cell-left">
+				<div className="editor-action-bar__cell is-left">
 					{ multiUserSite &&
 						<AsyncLoad
 							require="post-editor/editor-author"
@@ -76,10 +76,10 @@ export default React.createClass( {
 						/>
 					}
 				</div>
-				<div className="editor-action-bar__cell editor-action-bar__cell-center">
+				<div className="editor-action-bar__cell is-center">
 					<EditorPostType />
 				</div>
-				<div className="editor-action-bar__cell editor-action-bar__cell-right">
+				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
