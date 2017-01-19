@@ -4,9 +4,11 @@
 import async from 'async';
 import noop from 'lodash/noop';
 import some from 'lodash/some';
+import assign from 'lodash/assign';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ad-tracking' );
 import { clone, cloneDeep } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -487,11 +489,8 @@ function recordOrderInFloodlight( cart, orderId ) {
 		return;
 	}
 
-	const currentUser = user.get();
+	debug( 'recordOrderInFloodlight: Record purchase' );
 
-	// Originally `u1` was going to be the cost, but because that is already passed as the `cost` parameter
-	// there's no need to include it separately. `u5` is the anonymous user id, but because all purchases
-	// are made by logged in users there's no need to include that either.
 	const params = {
 		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
 		type: 'wpsal0',
@@ -500,7 +499,6 @@ function recordOrderInFloodlight( cart, orderId ) {
 		cost: cart.total_cost,
 		u2: cart.products.map( product => product.product_name ).join( ', ' ),
 		u3: cart.currency,
-		u4: currentUser ? currentUser.ID : 0,
 		ord: orderId
 	};
 
@@ -510,37 +508,98 @@ function recordOrderInFloodlight( cart, orderId ) {
 /**
  * Records the anonymous user id and wpcom user id in DCM Floodlight
  *
- * @param {String} anonymousUserId - The anonymous user id
- * @param {Number} wpcomUserId - The WordPress.com user id
  * @returns {void}
  */
-function recordAliasInFloodlight( anonymousUserId, wpcomUserId ) {
+function recordAliasInFloodlight() {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
 
-	if ( ! anonymousUserId ) {
-		debug( 'recordAliasInFloodlight:, Missing anonymousUserId' );
-		return;
-	}
-
-	if ( ! wpcomUserId ) {
-		debug( 'recordAliasInFloodlight:, Missing wpcomUserId' );
-		return;
-	}
-
-	debug( `recordAliasInFloodlight: Aliasing anonymous user id '${ anonymousUserId }' with WordPress.com user id '${ wpcomUserId }'` );
+	debug( 'recordAliasInFloodlight: Aliasing anonymous user id with WordPress.com user id' );
 
 	const params = {
 		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
-		type: 'wpsal0',
+		type: 'wordp0',
 		cat: 'alias0',
-		u4: wpcomUserId,
-		u5: anonymousUserId,
 		ord: floodlightCacheBuster()
 	};
 
 	recordParamsInFloodlight( params );
+}
+
+/**
+ * Record that a user started sign up in DCM Floodlight
+ *
+ * @returns {void}
+ */
+function recordSignupStartInFloodlight() {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	debug( 'DCM Floodlight: Recording sign up start' );
+
+	const params = {
+		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
+		type: 'wordp0',
+		cat: 'pre-p0',
+		ord: floodlightCacheBuster()
+	};
+
+	recordParamsInFloodlight( params );
+}
+
+/**
+ * Record that a user signed up in DCM Floodlight
+ *
+ * @returns {void}
+ */
+function recordSignupCompletionInFloodlight() {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	debug( 'DCM Floodlight: Recording sign up completion' );
+
+	const params = {
+		src: TRACKING_IDS.dcmFloodlightAdvertiserId,
+		type: 'wordp0',
+		cat: 'signu0',
+		ord: floodlightCacheBuster()
+	};
+
+	recordParamsInFloodlight( params );
+}
+
+/**
+ * Returns an object with DCM Floodlight user params
+ *
+ * @returns {Object} With the WordPress.com user id and/or the logged out Tracks id
+ */
+function floodlightUserParams() {
+	const params = {};
+
+	const currentUser = user.get();
+	if ( currentUser ) {
+		params.u4 = currentUser.ID;
+	}
+
+	const anonymousUserId = tracksAnonymousUserId();
+	if ( anonymousUserId ) {
+		params.u5 = anonymousUserId;
+	}
+
+	return params;
+}
+
+/**
+ * Returns the anoymous id stored in the `tk_ai` cookie
+ *
+ * @returns {String} - The Tracks anonymous user id
+ */
+function tracksAnonymousUserId() {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.tk_ai;
 }
 
 /**
@@ -553,6 +612,9 @@ function recordParamsInFloodlight( params ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
+
+	// Add in the u4 and u5 params
+	params = assign( params, floodlightUserParams() );
 
 	debug( 'recordParamsInFloodlight:', params );
 
@@ -767,6 +829,24 @@ function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
 }
 
+/**
+ * Record that a user started sign up
+ *
+ * @returns {void}
+ */
+function recordSignupStart() {
+	recordSignupStartInFloodlight();
+}
+
+/**
+ * Record that a user completed sign up
+ *
+ * @returns {void}
+ */
+function recordSignupCompletion() {
+	recordSignupCompletionInFloodlight();
+}
+
 module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
@@ -782,5 +862,7 @@ module.exports = {
 	retargetViewPlans,
 	recordAddToCart,
 	recordViewCheckout,
-	recordOrder
+	recordOrder,
+	recordSignupStart,
+	recordSignupCompletion
 };
