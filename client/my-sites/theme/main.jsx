@@ -610,7 +610,8 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getTheme( state, siteIdOrWpcom, id );
+		// Fallback to 'wpcom' source here is for wpcom themes on Jetpack target sites
+		const theme = getTheme( state, siteIdOrWpcom, id ) || getTheme( state, 'wpcom', id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
 		return {

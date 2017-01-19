@@ -67,11 +67,7 @@ export const getTheme = createSelector(
 		}
 
 		if ( ! theme ) {
-			// We may be looking up a wpcom theme from a jetpack site
-			const wpcomManager = state.themes.queries.wpcom;
-			if ( wpcomManager ) {
-				return wpcomManager.getItem( themeId );
-			}
+			return null;
 		}
 
 		// We're dealing with a Jetpack site. If we have theme info obtained from the
