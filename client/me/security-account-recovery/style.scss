@@ -1,8 +1,8 @@
-.security-checkup__text {
+.security-account-recovery__text {
 	margin-bottom: 0;
 }
 
-.security-checkup-contact__detail .form-phone-input {
+.security-account-recovery-contact__detail .form-phone-input {
 	display: flex;
 	flex-direction: column;
 
@@ -11,7 +11,7 @@
 	}
 }
 
-.security-checkup-contact__detail .form-fieldset__country {
+.security-account-recovery-contact__detail .form-fieldset__country {
 	padding-right: 0;
 
 	@include breakpoint( ">480px" ) {
@@ -21,7 +21,7 @@
 	}
 }
 
-.security-checkup-contact__detail .form-country-select {
+.security-account-recovery-contact__detail .form-country-select {
 	width: 100%;
 
 	@include breakpoint( ">480px" ) {
@@ -31,7 +31,7 @@
 	}
 }
 
-.security-checkup-contact__detail .form-fieldset__phone-number {
+.security-account-recovery-contact__detail .form-fieldset__phone-number {
 	margin-bottom: 0;
 
 	@include breakpoint( ">480px" ) {
@@ -39,19 +39,19 @@
 	}
 }
 
-.security-checkup-contact .notice {
+.security-account-recovery-contact .notice {
 	margin-top: 8px;
 }
 
-.security-checkup-contact__placeholder-heading,
-.security-checkup-contact__placeholder-text {
+.security-account-recovery-contact__placeholder-heading,
+.security-account-recovery-contact__placeholder-text {
 	animation: loading-fade 1.6s ease-in-out infinite;
 	background-color: lighten( $gray, 30% );
 	line-height: 1;
 	margin-bottom: .5em;
 }
 
-.security-checkup-contact__placeholder-heading {
+.security-account-recovery-contact__placeholder-heading {
 	line-height: 2.4;
 	margin-bottom: 1em;
 	@include breakpoint( '>480px' ) {
@@ -59,32 +59,32 @@
 	}
 }
 
-.security-checkup-contact__header {
+.security-account-recovery-contact__header {
 	display: flex;
 	flex-direction: row;
 }
 
-.security-checkup-contact__header-info {
+.security-account-recovery-contact__header-info {
 	flex: 2;
 }
 
-.security-checkup-contact__header-title {
+.security-account-recovery-contact__header-title {
 	font-size: 1em;
 	line-height: 1em;
 }
 
-.security-checkup-contact__header-subtitle {
+.security-account-recovery-contact__header-subtitle {
 	display: block;
 	font-size: 1em;
 	font-style: italic;
 	color: $gray;
 }
 
-.security-checkup-contact__detail {
+.security-account-recovery-contact__detail {
 	margin-top: 8px;
 }
 
-.security-checkup-contact__remove {
+.security-account-recovery-contact__remove {
 	color: $gray;
 	float: left;
 	cursor: pointer;
@@ -113,15 +113,15 @@
 	}
 }
 
-.security-checkup__validation-notice {
+.security-account-recovery__validation-notice {
 	margin-top: 4px;
 	margin-bottom: 12px;
 }
 
-.security-checkup__recovery-phone-validation-buttons {
+.security-account-recovery__recovery-phone-validation-buttons {
 	margin-top: 12px;
 }
 
-.security-checkup__recovery-phone-validation-label {
+.security-account-recovery__recovery-phone-validation-label {
 	margin-top: 12px;
 }

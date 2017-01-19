@@ -11,7 +11,7 @@ var FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'SecurityCheckupManageContactButtons',
+	displayName: 'SecurityAccountRecoveryManageContactButtons',
 
 	propTypes: {
 		isSavable: React.PropTypes.bool,
@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 				{
 					this.props.isDeletable
 					? (
-						<button className={ 'security-checkup-contact__remove' } onClick={ this.props.onDelete }>
+						<button className={ 'security-account-recovery-contact__remove' } onClick={ this.props.onDelete }>
 							<Gridicon icon="trash" size={ 24 } />
 							<span>{ this.translate( 'Remove' ) }</span>
 						</button>
