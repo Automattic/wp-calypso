@@ -49,7 +49,7 @@ export default React.createClass( {
 			form: null,
 			isDialogVisible: false,
 			submissionCount: 0,
-			phoneCountryCode: 'us'
+			phoneCountryCode: 'US'
 		};
 	},
 
@@ -126,7 +126,7 @@ export default React.createClass( {
 			if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
 				if ( ! formState.getFieldValue( this.state.form, 'phone' ) ) {
 					this.setState( {
-						phoneCountryCode: event.target.value.toLowerCase()
+						phoneCountryCode: event.target.value
 					} );
 				}
 			}
@@ -145,7 +145,7 @@ export default React.createClass( {
 		} );
 
 		this.setState( {
-			phoneCountryCode: countryCode.toLowerCase()
+			phoneCountryCode: countryCode
 		} );
 	},
 
@@ -364,7 +364,7 @@ export default React.createClass( {
 
 		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
 		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
-			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode.toLowerCase() ] );
+			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		}
 		setDomainDetails( allFieldValues );
 	},
