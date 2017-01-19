@@ -21,7 +21,17 @@ module.exports = {
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ]
+	},
+
+	// `themes` does not update the theme for an existing site as we normally
+	// do this when the site is created. In flows where a site is merely being
+	// updated, we need to use a different API request function.
+	'themes-site-selected': {
+		stepName: 'themes-site-selected',
+		dependencies: [ 'siteSlug', 'themeSlug' ],
+		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ],
+		apiRequestFunction: stepActions.setThemeOnSite
 	},
 
 	'design-type': {
@@ -121,7 +131,7 @@ module.exports = {
 			designType: 'blog'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ]
 	},
 
 	// Currently, this step explicitly submits other steps to skip them, and

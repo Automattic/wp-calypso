@@ -232,7 +232,7 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	};
 
 	flows[ 'site-selected' ] = {
-		steps: [ 'themes' ],
+		steps: [ 'themes-site-selected' ],
 		destination: getSiteDestination,
 		providesDependenciesInQuery: [ 'siteSlug' ],
 		description: 'A flow to test updating an existing site with `Signup`',
