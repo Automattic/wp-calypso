@@ -34,7 +34,7 @@ export function requestCountries( listType ) {
 				promise = wpcom.getPaymentSupportedCountries();
 				break;
 			default:
-				throw new Error( 'Need a type' );
+				promise = Promise.reject( new Error( 'requestCountries is missing a required type field or has invalid value' ) );
 		}
 		return promise.then( countries => {
 			dispatch( { type: COUNTRIES_RECEIVE, listType, countries } );
