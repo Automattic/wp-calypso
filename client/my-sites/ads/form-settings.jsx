@@ -381,8 +381,8 @@ const AdsFormSettings = React.createClass( {
 						name="tos"
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.props.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
-						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" rel="noopener noreferrer" /> }
+					<span>{ this.props.translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+						components: { a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" /> }
 					} ) }</span>
 				</FormLabel>
 			</FormFieldset>
