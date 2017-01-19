@@ -61,6 +61,12 @@ function SignupFlowController( options ) {
 		this._resetStoresIfUserHasLoggedIn();
 	}
 
+	if ( this._flow.providesDependenciesInQuery ) {
+		this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
+
+		SignupActions.provideDependencies( options.providedDependencies );
+	}
+
 	store.set( STORAGE_KEY, options.flowName );
 }
 
@@ -76,6 +82,12 @@ assign( SignupFlowController.prototype, {
 		if ( user.get() && find( SignupProgressStore.get(), { stepName: 'user' } ) ) {
 			SignupProgressStore.reset();
 			SignupDependencyStore.reset();
+		}
+	},
+
+	_assertFlowProvidedDependenciesFromConfig: function( providedDependencies ) {
+		if ( difference( this._flow.providesDependenciesInQuery, keys( providedDependencies ) ).length > 0 ) {
+			throw new Error( this._flowName + ' did not provide the dependencies it is configured to.' );
 		}
 	},
 
@@ -121,10 +133,15 @@ assign( SignupFlowController.prototype, {
 		return wpcom.isTokenLoaded() || user.get();
 	},
 
+	/**
+	 * Returns a list of the dependencies provided in the flow configuration.
+	 *
+	 * @return {array} a list of dependency names
+	 */
 	_getFlowProvidesDependencies: function() {
 		return flatten( compact( map( this._flow.steps, function( step ) {
 			return steps[ step ].providesDependencies;
-		} ) ) );
+		} ) ) ).concat( this._flow.providesDependenciesInQuery );
 	},
 
 	_process: function() {
