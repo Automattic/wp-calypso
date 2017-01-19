@@ -44,7 +44,10 @@ function createSiteWithCart( callback, dependencies, {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
-			theme: dependencies.theme || themeSlugWithRepo,
+			// the theme can be provided in this step's dependencies or the
+			// step object itself depending on if the theme is provided in a
+			// query. See `getThemeSlug` in `DomainsStep`.
+			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: surveyVertical || undefined,
 			// the API wants the `is_domain_only` flag provided as a number
 			is_domain_only: dependencies.designType === 'domain' ? 1 : 0
@@ -271,11 +274,11 @@ module.exports = {
 		} );
 	},
 
-	createSite( callback, { theme }, { site } ) {
+	createSite( callback, { themeSlugWithRepo }, { site } ) {
 		var data = {
 			blog_name: site,
 			blog_title: '',
-			options: { theme },
+			options: { theme: themeSlugWithRepo },
 			validate: false
 		};
 
