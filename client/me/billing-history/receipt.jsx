@@ -14,6 +14,7 @@ import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
 import { getPastBillingTransaction } from 'state/selectors';
@@ -138,6 +139,7 @@ const BillingReceipt = React.createClass( {
 		return (
 			<div>
 				<DocumentHead title={ translate( 'Billing History' ) } />
+				<PageViewTracker path="/me/purchases/billing/receipt" title="Me > Billing History > Receipt" />
 				<QueryBillingTransactions />
 				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ translate( 'Billing History' ) }
