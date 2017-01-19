@@ -2,6 +2,24 @@
 
 As Guided Tours as a framework is made available to parties interested in [writing their own tours](TUTORIAL.md), it seemed pertinent to gather some thoughts and make them available in this document in the hope of reducing any sort of [bus factor](https://en.wikipedia.org/wiki/Bus_factor).
 
+## State-aware steps
+
+When the day comes that we decide we need proper dynamic, state-aware steps for Guided Tours, [PR #10436] will contain useful material to inform that enhancement; notably, the diff at hand and the last couple of comments before the closing of the pull request. In a nutshell:
+
+```js
+// default behavior would be unaffected
+<Step name="…" when={ isSomethingSomething } …>
+  <p>Welcome!</p>
+  …
+</Step>
+
+// new "realtime" state-based behavior
+<Step name="…" …>
+  { ( state ) => isSomethingSomething( state ) &&
+    <p>Welcome!</p> }
+</Step>
+```
+
 ## On the nature of `actionLog`
 
 `actionLog`<sup>[1](#note-1)</sup> is a collection of actions — another name for events — that grows: 1) over time, and 2) in only one direction. It is thus, by nature, equivalent to a **stream**, even though that concept is AFAIK never used in Calypso.
@@ -143,6 +161,7 @@ With this distinction, assuming we could keep `relevantTourEntryTypes` small, ma
 * * *
 
 <a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
+[PR #10436]: https://github.com/Automattic/wp-calypso/pull/10436#issuecomment-273854187
 [architecture]: ./ARCHITECTURE.md
 [relevant-types]: https://github.com/Automattic/wp-calypso/blob/25cdc9141129757530c66b3b2525c9fd3a0aebb8/client/state/ui/action-log/reducer.js#L19-L27
 [rxjs]: https://github.com/ReactiveX/rxjs
