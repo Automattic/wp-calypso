@@ -17,6 +17,8 @@ function recordEvents( previousCart, nextCart ) {
 
 function recordAddEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_add', cartItem );
+	analytics.ga.recordEvent( 'Checkout', 'calypso_cart_product_add',
+		`${ cartItem.product_id } ${ cartItem.product_slug }` );
 	recordAddToCart( cartItem );
 }
 

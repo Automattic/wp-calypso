@@ -165,6 +165,14 @@ const CancelPurchaseButton = React.createClass( {
 					}
 				), { persistent: true } );
 
+				const { productSlug } = purchase;
+
+				analytics.tracks.recordEvent(
+					'calypso_purchases_cancel',
+						{ product_slug: productSlug }
+				);
+				analytics.ga.recordEvent( 'Purchases', 'calypso_purchases_cancel', `${ productSlug }` );
+
 				page( paths.purchasesRoot() );
 			} else {
 				notices.error( this.translate(
@@ -208,10 +216,13 @@ const CancelPurchaseButton = React.createClass( {
 
 		this.props.clearPurchases();
 
+		const { productSlug } = this.props.purchase;
+
 		analytics.tracks.recordEvent(
-			'calypso_purchases_cancel_form_submit',
-			{ product_slug: this.props.purchase.productSlug }
+			'calypso_purchases_refund',
+			{ product_slug: productSlug }
 		);
+		analytics.ga.recordEvent( 'Purchases', 'calypso_purchases_refund', `${ productSlug }` );
 
 		page.redirect( paths.purchasesRoot() );
 	},

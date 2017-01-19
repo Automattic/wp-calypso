@@ -96,15 +96,29 @@ var TransactionStepsMixin = {
 						adTracking.recordOrder( cartValue, step.data.receipt_id );
 					}
 
+					const paymentMethod = this.props.transaction.payment.paymentMethod;
+
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
 						coupon_code: cartValue.coupon,
 						currency: cartValue.currency,
-						payment_method: this.props.transaction.payment.paymentMethod,
+						payment_method: paymentMethod,
 						total_cost: cartValue.total_cost
 					} );
+					analytics.ga.recordEvent(
+						'Checkout',
+						'calypso_checkout_payment_success',
+						`total_cost: ${ cartValue.total_cost } curr: ${ cartValue.currency }` +
+							` coupon_code: ${ cartValue.coupon } payment_method: ${ paymentMethod }`
+					);
 
 					cartValue.products.forEach( function( cartItem ) {
 						analytics.tracks.recordEvent( 'calypso_checkout_product_purchase', cartItem );
+						analytics.ga.recordEvent(
+							'Checkout',
+							'calypso_checkout_product_purchase',
+							`${ cartItem.product_slug } cost: ${ cartItem.cost } curr: ${ cartItem.currency }` +
+								` per: ${ cartItem.bill_period }`
+						);
 					} );
 
 					this._recordDomainRegistrationAnalytics( {

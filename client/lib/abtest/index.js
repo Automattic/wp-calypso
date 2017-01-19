@@ -215,6 +215,12 @@ ABTest.prototype.assignVariation = function() {
 
 ABTest.prototype.recordVariation = function( variation ) {
 	analytics.tracks.recordEvent( 'calypso_abtest_start', { abtest_name: this.experimentId, abtest_variation: variation } );
+	analytics.ga.recordEventObject( {
+		eventCategory: 'ABTest',
+		eventAction: 'calypso_abtest_start',
+		expId: this.experimentId,
+		expVar: variation,
+	} );
 };
 
 ABTest.prototype.saveVariation = function( variation ) {
