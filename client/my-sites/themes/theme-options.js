@@ -149,16 +149,12 @@ const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
 	getUrl: getSupportUrl,
-	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id )
 };
 
 const help = {
 	label: i18n.translate( 'Support' ),
 	getUrl: getHelpUrl,
-	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
 };
 
 const ALL_THEME_OPTIONS = {

@@ -372,7 +372,7 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
  * @return {?String}        Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, theme, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! theme || ! isThemePremium( state, theme.id ) ) {
+	if ( ! theme || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -394,7 +394,7 @@ export function getThemeSupportUrl( state, theme, siteId ) {
  * @return {?String}        Theme support page URL
  */
 export function getThemeHelpUrl( state, theme, siteId ) {
-	if ( ! theme || isJetpackSite( state, siteId ) ) {
+	if ( ! theme ) {
 		return null;
 	}
 
