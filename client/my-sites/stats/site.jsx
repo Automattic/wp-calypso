@@ -168,14 +168,14 @@ module.exports = React.createClass( {
 					</StatsPeriodNavigation>
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
-							<StatsModule
-								path={ 'posts' }
+							<StatsConnectedModule
+								path="posts"
 								moduleStrings={ moduleStrings.posts }
-								site={ site }
-								dataList={ this.props.postsPagesList }
 								period={ this.props.period }
+								query={ query }
 								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+								statType="statsTopPosts"
+								showSummaryLink />
 							<StatsConnectedModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
