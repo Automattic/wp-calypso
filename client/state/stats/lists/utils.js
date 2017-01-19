@@ -50,6 +50,19 @@ function parseAvatar( avatarUrl ) {
 }
 
 /**
+ * Parse the avatar URL
+ * @param  {String} avatarUrl Raw avatar URL
+ * @return {String}           Parsed URL
+ */
+function parseAvatar( avatarUrl ) {
+	if ( ! avatarUrl ) {
+		return null;
+	}
+	const [ avatarBaseUrl ] = avatarUrl.split( '?' );
+	return avatarBaseUrl + '?d=mm';
+}
+
+/**
  * Builds data into escaped array for CSV export
  *
  * @param  {Object} data   Normalized stats data object
@@ -264,6 +277,39 @@ export const normalizers = {
 				} ]
 			};
 		} );
+	},
+
+	/**
+	 * Returns a normalized statsFollowers object
+	 *
+	 * @param  {Object} data    Stats data
+	 * @return {?Object}         Normalized stats data
+	 */
+	statsFollowers( data ) {
+		if ( ! data ) {
+			return null;
+		}
+		const { total_wpcom, total_email } = data;
+		const subscriberData = get( data, [ 'subscribers' ], [] );
+
+		const subscribers = subscriberData.map( ( item ) => {
+			return {
+				label: item.label,
+				iconClassName: 'avatar-user',
+				icon: parseAvatar( item.avatar ),
+				link: item.url,
+				value: {
+					type: 'relative-date',
+					value: item.date_subscribed
+				},
+				actions: [ {
+					type: 'follow',
+					data: item.follow_data ? item.follow_data.params : false
+				} ]
+			};
+		} );
+
+		return { total_wpcom, total_email, subscribers };
 	},
 
 	/**
