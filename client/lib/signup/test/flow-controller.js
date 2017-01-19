@@ -34,10 +34,7 @@ describe( 'flow-controller', function() {
 	} );
 
 	afterEach( function() {
-		if ( signupFlowController ) {
-			signupFlowController.reset();
-		}
-
+		signupFlowController.reset();
 		SignupDependencyStore.reset();
 		SignupProgressStore.reset();
 	} );
