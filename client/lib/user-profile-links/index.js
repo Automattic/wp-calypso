@@ -63,7 +63,7 @@ UserProfileLinks.prototype.getProfileLinks = function() {
  * Fetch user profile links from WordPress.com API and store them in UserProfileLinks instance
  */
 UserProfileLinks.prototype.fetchProfileLinks = function() {
-	if ( this.fetchingProfileLinks ) {
+	if ( this.fetchingProfileLinks || this.reAuthRequired ) {
 		return;
 	}
 
