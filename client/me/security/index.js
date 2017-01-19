@@ -18,7 +18,7 @@ export default function() {
 		page( '/me/security/connected-applications/:application_id', meController.sidebar, controller.connectedApplication );
 	}
 
-	if ( config.isEnabled( 'me/security/checkup' ) ) {
-		page( '/me/security/checkup', meController.sidebar, controller.securityCheckup );
+	if ( config.isEnabled( 'me/security/account-recovery' ) ) {
+		page( '/me/security/account-recovery', meController.sidebar, controller.accountRecovery );
 	}
 };

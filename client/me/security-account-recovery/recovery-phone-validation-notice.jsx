@@ -57,7 +57,7 @@ class RecoveryPhoneValidationNotice extends Component {
 		return (
 			<form onSubmit={ this.onSubmit }>
 				<Notice
-					className="security-checkup__validation-notice"
+					className="security-account-recovery__validation-notice"
 					status="is-warning"
 					text={ translate( 'Please validate your recovery SMS number. Check your phone for a validation code.' ) }
 					showDismiss={ false }
@@ -68,7 +68,7 @@ class RecoveryPhoneValidationNotice extends Component {
 						</NoticeAction>
 					}
 				</Notice>
-				<FormLabel className="security-checkup__recovery-phone-validation-label">
+				<FormLabel className="security-account-recovery__recovery-phone-validation-label">
 					{ translate( 'Enter the code you receive via SMS:' ) }
 				</FormLabel>
 				<FormTelInput
@@ -78,7 +78,7 @@ class RecoveryPhoneValidationNotice extends Component {
 					onChange={ this.onChange }
 					value={ candidateCode }
 				/>
-				<FormButtonsBar className="security-checkup__recovery-phone-validation-buttons">
+				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">
 					<FormButton
 						isPrimary={ true }
 						disabled={ isValidating || isCodeLengthValid }

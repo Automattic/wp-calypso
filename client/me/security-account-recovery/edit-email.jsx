@@ -16,7 +16,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	Buttons = require( './buttons' );
 
 module.exports = React.createClass( {
-	displayName: 'SecurityCheckupRecoveryEmailEdit',
+	displayName: 'SecurityAccountRecoveryRecoveryEmailEdit',
 
 	mixins: [ LinkedStateMixin ],
 

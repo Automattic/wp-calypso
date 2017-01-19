@@ -46,8 +46,8 @@ import {
 
 import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-const SecurityCheckup = ( props ) => (
-	<Main className="security-checkup">
+const SecurityAccountRecovery = ( props ) => (
+	<Main className="security-account-recovery">
 		<QueryAccountRecoverySettings />
 
 		<MeSidebarNavigation />
@@ -57,7 +57,7 @@ const SecurityCheckup = ( props ) => (
 		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 		<CompactCard>
-			<p className="security-checkup__text">
+			<p className="security-account-recovery__text">
 				{ props.translate( 'Keep your account safe by adding a backup email address and phone number. ' +
 						'If you ever have problems accessing your account, WordPress.com will use what ' +
 						'you enter here to verify your identity.' ) }
@@ -123,4 +123,4 @@ export default connect(
 		resendAccountRecoveryPhoneValidation,
 		validateAccountRecoveryPhone,
 	}
-)( localize( SecurityCheckup ) );
+)( localize( SecurityAccountRecovery ) );

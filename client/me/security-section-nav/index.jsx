@@ -34,10 +34,10 @@ module.exports = React.createClass( {
 			}
 		];
 
-		if ( config.isEnabled( 'me/security/checkup' ) ) {
+		if ( config.isEnabled( 'me/security/account-recovery' ) ) {
 			tabs.push( {
-				title: i18n.translate( 'Checkup', { textOnly: true } ),
-				path: '/me/security/checkup',
+				title: i18n.translate( 'Account Recovery', { textOnly: true } ),
+				path: '/me/security/account-recovery',
 			} );
 		}
 
