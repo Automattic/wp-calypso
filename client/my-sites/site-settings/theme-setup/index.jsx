@@ -10,18 +10,12 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import Notice from 'components/notice';
-import Button from 'components/button';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryTheme from 'components/data/query-theme';
+import ThemeSetupCard from './theme-setup-card';
+import ThemeSetupPlaceholder from './theme-setup-placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
-import ActiveThemeScreenshot from './active-theme-screenshot';
 
 let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 	const onBack = () => {
@@ -33,27 +27,7 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 			{ site && <QueryActiveTheme siteId={ site.ID } /> }
 			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
-			<ActionPanel>
-				<ActionPanelBody>
-					<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>
-					<Notice status={ 'is-warning' } showDismiss={ false }>
-						{ translate( 'This action cannot be undone.' ) }
-					</Notice>
-					<ActionPanelFigure>
-						<ActiveThemeScreenshot theme={ theme } />
-					</ActionPanelFigure>
-					<p>{ translate( 'Want your site to look like the demo? Use Theme Setup to automatically apply the demo site\'s settings to your site.' ) }</p>
-					<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
-				</ActionPanelBody>
-				<ActionPanelFooter>
-					<Button className="theme-setup__button" primary={ true } disabled={ site && theme ? false : true }>
-						{ translate( 'Set Up And Keep Content' ) }
-					</Button>
-					<Button className="theme-setup__button" scary={ true } disabled={ site && theme ? false : true }>
-						{ translate( 'Set Up And Delete Content' ) }
-					</Button>
-				</ActionPanelFooter>
-			</ActionPanel>
+			{ site && theme ? <ThemeSetupCard theme={ theme } /> : <ThemeSetupPlaceholder /> }
 		</div>
 	);
 };

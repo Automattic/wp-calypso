@@ -1,14 +1,21 @@
 .theme-setup__button {
 	margin-bottom: 8px;
 	margin-right: 8px;
+
+	&.is-placeholder {
+		border: none;
+		border-radius: 0;
+	}
+}
+
+.theme-setup {
+	.is-placeholder {
+		@include placeholder;
+	}
 }
 
 .theme-setup .active-theme-screenshot {
 	min-height: 200px;
-
-	&.is-placeholder {
-		@include placeholder;
-	}
 }
 
 .theme-setup .active-theme-screenshot__image {
