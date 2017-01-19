@@ -19,6 +19,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
+	SITES_UPDATE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
@@ -115,6 +116,48 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				77203074: { ID: 77203074, name: 'A Bowl of Pho' }
 			} );
+		} );
+
+		it( 'should not affect state to receive updates for untracked sites', () => {
+			const original = deepFreeze( {} );
+			const state = items( original, {
+				type: SITES_UPDATE,
+				sites: [
+					{ ID: 2916284, name: 'WordPress.com Example Blog' }
+				]
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update sites which are already tracked', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+			const state = items( original, {
+				type: SITES_UPDATE,
+				sites: [
+					{ ID: 2916284, name: 'WordPress.com Example Blog!' }
+				]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog!' }
+			} );
+		} );
+
+		it( 'should return same state if received site matches existing', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+			const state = items( original, {
+				type: SITE_RECEIVE,
+				sites: [
+					{ ID: 2916284, name: 'WordPress.com Example Blog' }
+				]
+			} );
+
+			expect( state ).to.equal( original );
 		} );
 
 		it( 'should index sites by ID', () => {
