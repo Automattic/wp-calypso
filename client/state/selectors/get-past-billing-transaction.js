@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getBillingTransactions } from './';
+import { getPastBillingTransactions } from './';
 
 /**
  * Returns a past billing transaction.
@@ -19,14 +19,9 @@ import { getBillingTransactions } from './';
  */
 const getPastBillingTransaction = createSelector(
 	( state, id ) => {
-		const pastTransactions = get( getBillingTransactions( state ), [ 'past' ], null );
-		if ( ! pastTransactions ) {
-			return null;
-		}
-
-		return find( pastTransactions, { id } ) || null;
+		return find( getPastBillingTransactions( state ), { id } ) || null;
 	},
-	getBillingTransactions
+	getPastBillingTransactions
 );
 
 export default getPastBillingTransaction;
