@@ -149,7 +149,7 @@ export default class ReaderPostCard extends React.Component {
 					{ readerPostActions }
 				</GalleryPost>;
 		} else {
-			readerPostCard = <StandardPost post={ post } title={ title } >
+			readerPostCard = <StandardPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
