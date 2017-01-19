@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { sortBy, toPairs, camelCase, mapKeys, isNumber, get, filter, map, concat, flatten } from 'lodash';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -270,7 +270,7 @@ export const normalizers = {
 	 * Returns a normalized statsVideo array, ready for use in stats-module
 	 *
 	 * @param  {Object} payload Stats response payload
-	 * @return {Array}          Parsed publicize data array
+	 * @return {Array}          Parsed data array
 	 */
 	statsVideo( payload ) {
 		if ( ! payload || ! payload.data ) {
@@ -331,7 +331,7 @@ export const normalizers = {
 	 * Returns a normalized statsTags array, ready for use in stats-module
 	 *
 	 * @param  {Object} data Stats data
-	 * @return {Array}       Parsed publicize data array
+	 * @return {Array}       Parsed data array
 	 */
 	statsTags( data ) {
 		if ( ! data || ! data.tags ) {
@@ -380,7 +380,7 @@ export const normalizers = {
 	 * @param  {Object} data   Stats data
 	 * @param  {Object} query  Stats query
 	 * @param  {Int}    siteId Site ID
-	 * @return {Array}        Parsed publicize data array
+	 * @return {Array}         Parsed data array
 	 */
 	statsReferrers( data, query, siteId ) {
 		if ( ! data || ! query.period || ! query.date ) {
@@ -432,5 +432,41 @@ export const normalizers = {
 				actionMenu: actions.length
 			};
 		} );
+	},
+
+	/*
+	 * Returns a normalized statsSearchTerms array, ready for use in stats-module
+	 *
+	 * @param  {Object} data   Stats data
+	 * @param  {Object} query  Stats query
+	 * @return {Array}         Parsed data array
+	 */
+	statsSearchTerms( data, query ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const searchTerms = get( data, [ 'days', startOf, 'search_terms' ], [] );
+		const encryptedSearchTerms = get( data, [ 'days', startOf, 'encrypted_search_terms' ], false );
+
+		const result = searchTerms.map( ( day ) => {
+			return {
+				label: day.term,
+				className: 'user-selectable',
+				value: day.views
+			};
+		} );
+
+		if ( encryptedSearchTerms ) {
+			result.push( {
+				label: translate( 'Unknown Search Terms' ),
+				value: encryptedSearchTerms,
+				link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+				labelIcon: 'external'
+			} );
+		}
+
+		return result;
 	}
 };

@@ -208,14 +208,14 @@ module.exports = React.createClass( {
 								period={ this.props.period }
 								query={ query }
 								summary={ false } />
-							<StatsModule
-								path={ 'searchterms' }
+							<StatsConnectedModule
+								path="searchterms"
 								moduleStrings={ moduleStrings.search }
-								site={ site }
-								dataList={ this.props.searchTermsList }
 								period={ this.props.period }
 								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink />
 							{ videoList }
 							{ podcastList }
 						</div>
