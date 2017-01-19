@@ -65,7 +65,12 @@ Site.prototype.set = function( attributes ) {
 
 	for ( var prop in attributes ) {
 		if ( attributes.hasOwnProperty( prop ) && ! isEqual( attributes[ prop ], this[ prop ] ) ) {
-			this[ prop ] = attributes[ prop ];
+			if ( undefined === attributes[ prop ] ) {
+				delete this[ prop ];
+			} else {
+				this[ prop ] = attributes[ prop ];
+			}
+
 			changed = true;
 		}
 	}
