@@ -200,14 +200,14 @@ const StatsSummary = React.createClass( {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="search-terms-summary"
-					path={ 'searchterms' }
+					path="searchterms"
 					moduleStrings={ StatsStrings.search }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					summary={ true } />;
+					query={ query }
+					statType="statsSearchTerms"
+					summary />;
 				break;
 		}
 

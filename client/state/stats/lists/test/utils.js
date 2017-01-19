@@ -974,6 +974,66 @@ describe( 'utils', () => {
 					] );
 				} );
 			} );
+
+			describe( 'statsSearchTerms()', () => {
+				it( 'should return an empty array if not data is passed', () => {
+					const parsedData = normalizers.statsSearchTerms();
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.period is null', () => {
+					const parsedData = normalizers.statsSearchTerms( {}, { date: '2016-12-25' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an empty array if query.date is null', () => {
+					const parsedData = normalizers.statsSearchTerms( {}, { period: 'day' } );
+					expect( parsedData ).to.eql( [] );
+				} );
+
+				it( 'should return an a properly parsed data array', () => {
+					const parsedData = normalizers.statsSearchTerms( {
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								encrypted_search_terms: 221,
+								search_terms: [
+									{
+										term: 'chicken',
+										views: 3
+									},
+									{
+										term: 'ribs',
+										views: 10
+									}
+								]
+							}
+						}
+					}, {
+						period: 'day',
+						date: '2017-01-12'
+					} );
+
+					expect( parsedData ).to.eql( [
+						{
+							className: 'user-selectable',
+							label: 'chicken',
+							value: 3
+						},
+						{
+							className: 'user-selectable',
+							label: 'ribs',
+							value: 10
+						},
+						{
+							label: 'Unknown Search Terms',
+							labelIcon: 'external',
+							link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+							value: 221
+						}
+					] );
+				} );
+			} );
 		} );
 	} );
 } );
