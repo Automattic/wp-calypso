@@ -375,6 +375,48 @@ export const normalizers = {
 	},
 
 	/*
+	 * Returns a normalized statsClicks array, ready for use in stats-module
+	 *
+	 * @param  {Object} data   Stats data
+	 * @param  {Object} query  Stats query
+	 * @return {Array}        Parsed data array
+	 */
+	statsClicks( data, query ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const statsData = get( data, [ 'days', startOf, 'clicks' ], [] );
+
+		return statsData.map( ( item ) => {
+			const hasChildren = item.children && item.children.length > 0;
+			const newRecord = {
+				label: item.name,
+				value: item.views,
+				children: null,
+				link: item.url,
+				icon: item.icon,
+				labelIcon: hasChildren ? null : 'external'
+			};
+
+			if ( item.children ) {
+				newRecord.children = item.children.map( ( child ) => {
+					return {
+						label: child.name,
+						value: child.views,
+						children: null,
+						link: child.url,
+						labelIcon: 'external'
+					};
+				} );
+			}
+
+			return newRecord;
+		} );
+	},
+
+	/*
 	 * Returns a normalized statsReferrers array, ready for use in stats-module
 	 *
 	 * @param  {Object} data   Stats data
