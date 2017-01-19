@@ -74,11 +74,15 @@ module.exports = {
 		AG: {
 			isoCode: "AG",
 			dialCode: "1268",
+			countryDialCode: "1",
+			regionCode: "268",
 			nationalPrefix: "1"
 		},
 		AI: {
 			isoCode: "AI",
 			dialCode: "1264",
+			countryDialCode: "1",
+			regionCode: "264",
 			nationalPrefix: "1"
 		},
 		AL: {
@@ -270,6 +274,8 @@ module.exports = {
 		AS: {
 			isoCode: "AS",
 			dialCode: "1684",
+			countryDialCode: "1",
+			regionCode: "684",
 			nationalPrefix: "1"
 		},
 		AT: {
@@ -447,6 +453,8 @@ module.exports = {
 		BB: {
 			isoCode: "BB",
 			dialCode: "1246",
+			countryDialCode: "1",
+			regionCode: "246",
 			nationalPrefix: "1"
 		},
 		BD: {
@@ -616,6 +624,8 @@ module.exports = {
 		BM: {
 			isoCode: "BM",
 			dialCode: "1441",
+			countryDialCode: "1",
+			regionCode: "441",
 			nationalPrefix: "1"
 		},
 		BN: {
@@ -727,6 +737,8 @@ module.exports = {
 		BS: {
 			isoCode: "BS",
 			dialCode: "1242",
+			countryDialCode: "1",
+			regionCode: "242",
 			nationalPrefix: "1"
 		},
 		BT: {
@@ -1563,11 +1575,15 @@ module.exports = {
 		DM: {
 			isoCode: "DM",
 			dialCode: "1767",
+			countryDialCode: "1",
+			regionCode: "767",
 			nationalPrefix: "1"
 		},
 		DO: {
 			isoCode: "DO",
 			dialCode: "18[024]9",
+			countryDialCode: "1",
+			regionCode: "8[024]9",
 			areaCodes: [
 				"809",
 				"829",
@@ -1700,6 +1716,8 @@ module.exports = {
 		EH: {
 			isoCode: "EH",
 			dialCode: "212528[89]",
+			countryDialCode: "212",
+			regionCode: "528[89]",
 			nationalPrefix: "0"
 		},
 		ER: {
@@ -1941,6 +1959,8 @@ module.exports = {
 		GD: {
 			isoCode: "GD",
 			dialCode: "1473",
+			countryDialCode: "1",
+			regionCode: "473",
 			nationalPrefix: "1"
 		},
 		GE: {
@@ -2122,6 +2142,8 @@ module.exports = {
 		GU: {
 			isoCode: "GU",
 			dialCode: "1671",
+			countryDialCode: "1",
+			regionCode: "671",
 			nationalPrefix: "1"
 		},
 		GW: {
@@ -2700,6 +2722,8 @@ module.exports = {
 		JM: {
 			isoCode: "JM",
 			dialCode: "1876",
+			countryDialCode: "1",
+			regionCode: "876",
 			nationalPrefix: "1"
 		},
 		JO: {
@@ -2971,6 +2995,8 @@ module.exports = {
 		KN: {
 			isoCode: "KN",
 			dialCode: "1869",
+			countryDialCode: "1",
+			regionCode: "869",
 			nationalPrefix: "1"
 		},
 		KP: {
@@ -3158,6 +3184,8 @@ module.exports = {
 		KY: {
 			isoCode: "KY",
 			dialCode: "1345",
+			countryDialCode: "1",
+			regionCode: "345",
 			nationalPrefix: "1"
 		},
 		KZ: {
@@ -3213,6 +3241,8 @@ module.exports = {
 		LC: {
 			isoCode: "LC",
 			dialCode: "1758",
+			countryDialCode: "1",
+			regionCode: "758",
 			nationalPrefix: "1"
 		},
 		LI: {
@@ -3696,6 +3726,8 @@ module.exports = {
 		MP: {
 			isoCode: "MP",
 			dialCode: "1670",
+			countryDialCode: "1",
+			regionCode: "670",
 			nationalPrefix: "1"
 		},
 		MQ: {
@@ -3723,6 +3755,8 @@ module.exports = {
 		MS: {
 			isoCode: "MS",
 			dialCode: "1664",
+			countryDialCode: "1",
+			regionCode: "664",
 			nationalPrefix: "1"
 		},
 		MT: {
@@ -4428,6 +4462,8 @@ module.exports = {
 		PR: {
 			isoCode: "PR",
 			dialCode: "1787|939",
+			countryDialCode: "1",
+			regionCode: "787|939",
 			areaCodes: [
 				"787",
 				"939"
@@ -4554,6 +4590,8 @@ module.exports = {
 		RE: {
 			isoCode: "RE",
 			dialCode: "262262|6[49]|8",
+			countryDialCode: "262",
+			regionCode: "262|6[49]|8",
 			nationalPrefix: "0",
 			patterns: [
 				{
@@ -5190,6 +5228,8 @@ module.exports = {
 		SX: {
 			isoCode: "SX",
 			dialCode: "1721",
+			countryDialCode: "1",
+			regionCode: "721",
 			nationalPrefix: "1"
 		},
 		SY: {
@@ -5231,6 +5271,8 @@ module.exports = {
 		TC: {
 			isoCode: "TC",
 			dialCode: "1649",
+			countryDialCode: "1",
+			regionCode: "649",
 			nationalPrefix: "1"
 		},
 		TD: {
@@ -5418,6 +5460,8 @@ module.exports = {
 		TT: {
 			isoCode: "TT",
 			dialCode: "1868",
+			countryDialCode: "1",
+			regionCode: "868",
 			nationalPrefix: "1"
 		},
 		TV: {
@@ -5603,6 +5647,8 @@ module.exports = {
 		VC: {
 			isoCode: "VC",
 			dialCode: "1784",
+			countryDialCode: "1",
+			regionCode: "784",
 			nationalPrefix: "1"
 		},
 		VE: {
@@ -5620,11 +5666,15 @@ module.exports = {
 		VG: {
 			isoCode: "VG",
 			dialCode: "1284",
+			countryDialCode: "1",
+			regionCode: "284",
 			nationalPrefix: "1"
 		},
 		VI: {
 			isoCode: "VI",
 			dialCode: "1340",
+			countryDialCode: "1",
+			regionCode: "340",
 			nationalPrefix: "1"
 		},
 		VN: {
@@ -5752,6 +5802,8 @@ module.exports = {
 		YT: {
 			isoCode: "YT",
 			dialCode: "262269|63",
+			countryDialCode: "262",
+			regionCode: "269|63",
 			nationalPrefix: "0"
 		},
 		ZA: {

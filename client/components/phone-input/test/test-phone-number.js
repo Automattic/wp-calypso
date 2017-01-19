@@ -12,6 +12,7 @@ import {
 	formatNumber,
 	makeTemplate,
 	findPattern,
+	toIcannFormat,
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164
@@ -228,6 +229,22 @@ describe( 'metadata:', () => {
 				equal( toE164( '01234567890', countries.GB ), '+441234567890' );
 				equal( toE164( '012345678', countries.IT ), '+39012345678' );
 			} );
+		} );
+	} );
+
+
+	describe( 'toIcannFormat', () => {
+		it( 'should be able to handle NANPA', () => {
+			equal( toIcannFormat( '14256559999', countries.US ), '+1.4256559999' );
+			equal( toIcannFormat( '4256559999', countries.US ), '+1.4256559999' );
+		} );
+		it( 'should be able to handle Europe', () => {
+			equal( toIcannFormat( '05325556677', countries.TR ), '+90.5325556677' );
+			equal( toIcannFormat( '01234567890', countries.GB ), '+44.1234567890' );
+			equal( toIcannFormat( '012345678', countries.IT ), '+39.012345678' );
+		} );
+		it( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
+			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
 		} );
 	} );
 } );

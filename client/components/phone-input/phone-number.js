@@ -242,6 +242,8 @@ export function toE164( inputNumber, country ) {
 }
 
 export function toIcannFormat( inputNumber, country ) {
-	const { nationalNumber } = processNumber( inputNumber, country );
-	return '+' + country.dialCode + '.' + nationalNumber;
+	const { nationalNumber } = processNumber( inputNumber, country ),
+		countryCode = country.countryDialCode || country.dialCode,
+		dialCode = country.countryDialCode && country.regionCode ? country.regionCode : '';
+	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }
