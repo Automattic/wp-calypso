@@ -145,11 +145,11 @@ export default class ReaderPostCard extends React.Component {
 					{ readerPostActions }
 				</PhotoPost>;
 		} else if ( isGalleryPost ) {
-			readerPostCard = <GalleryPost post={ post } title={ title } >
+			readerPostCard = <GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ readerPostActions }
 				</GalleryPost>;
 		} else {
-			readerPostCard = <StandardPost post={ post } title={ title } >
+			readerPostCard = <StandardPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
