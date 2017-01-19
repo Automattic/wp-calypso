@@ -29,6 +29,8 @@ describe( 'actions', () => {
 	} );
 
 	const spy = sinon.spy();
+	const dispatchSpy = sinon.stub();
+	dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 
 	beforeEach( () => {
 		spy.reset();
@@ -36,8 +38,6 @@ describe( 'actions', () => {
 
 	describe( '#recordFollow', () => {
 		it( 'should dispatch an action when a URL is followed', () => {
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_FOLLOW,
@@ -48,8 +48,6 @@ describe( 'actions', () => {
 
 	describe( '#recordUnfollow', () => {
 		it( 'should dispatch an action when a URL is unfollowed', () => {
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_UNFOLLOW,
