@@ -23,6 +23,7 @@ export default localize( React.createClass( {
 				key: idx,
 				label: name,
 				code,
+				disabled: code ? '' : 'disabled'
 			}
 		) );
 	},
