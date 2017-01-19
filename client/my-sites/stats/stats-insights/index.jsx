@@ -13,6 +13,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Followers from '../stats-followers';
+import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import TodaysStats from '../stats-site-overview';
 import StatsConnectedModule from '../stats-module/connected-list';
@@ -88,6 +89,7 @@ export default React.createClass( {
 						title={ this.translate( 'Today\'s Stats' ) }
 					/>
 					<AllTime />
+					<Reach />
 					<MostPopular />
 					{ site && <DomainTip siteId={ site.ID } event="stats_insights_domain" /> }
 					<div className="stats-insights__nonperiodic has-recent">
