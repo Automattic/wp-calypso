@@ -118,14 +118,14 @@ const StatsSummary = React.createClass( {
 
 			case 'posts':
 				title = translate( 'Posts & Pages' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="posts-summary"
-					path={ 'posts' }
+					path="posts"
 					moduleStrings={ StatsStrings.posts }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					summary={ true } />;
+					query={ query }
+					statType="statsTopPosts"
+					summary />;
 				break;
 
 			case 'authors':
