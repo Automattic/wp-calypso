@@ -12,7 +12,7 @@ const webpack = require( 'webpack' ),
  */
 const config = require( './server/config' ),
 	sections = require( './client/sections' ),
-//	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
+	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
@@ -151,7 +151,7 @@ const jsRule = {
 	exclude: /node_modules/,
 	use: 'babel-loader?' + JSON.stringify( {
 		cacheDirectory: './.babel-cache',
-		//cacheIdentifier: cacheIdentifier,
+		cacheIdentifier: cacheIdentifier,
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 			{ async: config.isEnabled( 'code-splitting' ) }
