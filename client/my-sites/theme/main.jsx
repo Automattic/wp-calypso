@@ -545,13 +545,20 @@ const ConnectedThemeSheet = connectOptions(
 	}
 );
 
+const isWpcomThemeOnJetpackSite = ( props ) => {
+	// only wpcom themes have the screenshots field
+	return props.isJetpack && props.screenshots;
+};
+
 const ThemeSheetWithOptions = ( props ) => {
 	const { selectedSite: site, isActive, isLoggedIn, isPremium, isPurchased } = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
 
-	if ( ! isLoggedIn ) {
+	if ( isWpcomThemeOnJetpackSite( props ) ) {
+		defaultOption = 'activateOnJetpack';
+	} else if ( ! isLoggedIn ) {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
@@ -570,10 +577,12 @@ const ThemeSheetWithOptions = ( props ) => {
 				'customize',
 				'tryandcustomize',
 				'purchase',
-				'activate'
+				'activate',
+				'activateOnJetpack',
+				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption="tryandcustomize"
+			secondaryOption={ isWpcomThemeOnJetpackSite( props ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };
@@ -610,7 +619,7 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		// Fallback to 'wpcom' source here is for wpcom themes on Jetpack target sites
+		// Fallback to 'wpcom' source for wpcom themes on Jetpack target sites
 		const theme = getTheme( state, siteIdOrWpcom, id ) || getTheme( state, 'wpcom', id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
