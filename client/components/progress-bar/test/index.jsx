@@ -55,4 +55,9 @@ describe( 'ProgressBar', function() {
 
 		expect( progressBar.find( '.progress-bar__progress' ).props().style.backgroundColor ).to.be.equal( 'red' );
 	} );
+
+	it( 'should not be able to be more than 100% complete', () => {
+		const progressBar = shallow( <ProgressBar value={ 240 }/> );
+		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).to.be.equal( '100%' );
+	} );
 } );
