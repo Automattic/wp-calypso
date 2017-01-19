@@ -12,6 +12,11 @@ module.exports = {
 		stepName: 'stepB'
 	},
 
+	stepRequiringSiteSlug: {
+		stepName: 'stepRequiringSiteSlug',
+		dependencies: [ 'siteSlug' ]
+	},
+
 	asyncStep: {
 		stepName: 'asyncStep',
 		apiRequestFunction: function( callback, dependencies, stepData ) {
