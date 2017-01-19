@@ -22,8 +22,8 @@ import PostSelector from 'my-sites/post-selector';
 class EditorMoreOptionsCopyPost extends Component {
 
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
@@ -66,6 +66,11 @@ class EditorMoreOptionsCopyPost extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
+
+		if ( ! siteId ) {
+			return null;
+		}
+
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' ),
