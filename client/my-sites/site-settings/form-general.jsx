@@ -312,7 +312,7 @@ class SiteSettingsFormGeneral extends Component {
 							disabled={ isRequestingSettings }
 							onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }>
 							<span className="site-settings__toggle-label">
-								{ translate( 'Hide related content after posts' ) }
+								{ translate( 'Show related content after posts' ) }
 							</span>
 						</FormToggle>
 					</li>
