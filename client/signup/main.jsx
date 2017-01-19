@@ -18,6 +18,7 @@ import assign from 'lodash/assign';
 import matchesProperty from 'lodash/matchesProperty';
 import indexOf from 'lodash/indexOf';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -124,8 +125,17 @@ const Signup = React.createClass( {
 
 		this.submitQueryDependencies();
 
+		const flow = flows.getFlow( this.props.flowName );
+
+		let providedDependencies;
+
+		if ( flow.providesDependenciesInQuery ) {
+			providedDependencies = pick( this.props.queryObject, flow.providesDependenciesInQuery );
+		}
+
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
+			providedDependencies,
 			reduxStore: this.context.store,
 			onComplete: function( dependencies, destination ) {
 				const timeSinceLoading = this.state.loadingScreenStartTime
@@ -145,7 +155,7 @@ const Signup = React.createClass( {
 
 		this.loadProgressFromStore();
 
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowSteps = flow.steps;
 		const flowStepsInProgressStore = filter(
 			SignupProgressStore.get(),
 			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
