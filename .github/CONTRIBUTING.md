@@ -92,7 +92,7 @@ Consistent coding style makes the code so much easier to read. Here are ours:
 
 * [All Coding Guidelines](../docs/coding-guidelines.md)
 	- [JavaScript](../docs/coding-guidelines/javascript.md)
-	- [CSS/SASS](../docs/coding-guidelines/css.md)
+	- [CSS/Sass](../docs/coding-guidelines/css.md)
 	- [HTML](../docs/coding-guidelines/html.md)
 	- [React Components](../docs/components.md)
 * [I18n Guidelines »](https://github.com/Automattic/i18n-calypso/blob/master/README.md)
