@@ -436,10 +436,12 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 	}
 
 	if ( isJetpackSite( state, siteId ) ) {
+		// wpcom themes on jetpack sites use suffixed id
+		const themeIdSuffix = ( theme && theme.screenshots ) ? '-wpcom' : '';
 		return getSiteOption( state, siteId, 'admin_url' ) +
 			'customize.php?return=' +
 			encodeURIComponent( window.location ) +
-			( theme ? '&theme=' + theme.id : '' );
+			( theme ? '&theme=' + theme.id + themeIdSuffix : '' );
 	}
 
 	const customizeUrl = '/customize/' + getSiteSlug( state, siteId );
