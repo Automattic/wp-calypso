@@ -4,107 +4,40 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pick, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isModuleActive, isFetchingModules } from 'state/jetpack/modules/selectors';
-import {
-	getJetpackSettings,
-	isRequestingJetpackSettings,
-	isUpdatingJetpackSettings
-} from 'state/jetpack/settings/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
+import { isModuleActive } from 'state/jetpack/modules/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
 class ThemeEnhancements extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {};
-
-		this.onSubmitForm = this.onSubmitForm.bind( this );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		map( nextProps.moduleSettings, ( settingValue, settingName ) => {
-			if ( ! this.state.hasOwnProperty( settingName ) ) {
-				this.setState( { [ settingName ]: settingValue } );
-			}
-		} );
-	}
-
-	sanitizeFieldValue( fieldName, fieldValue ) {
-		switch ( fieldName ) {
-			case 'wp_mobile_excerpt':
-			case 'wp_mobile_featured_images':
-				return fieldValue ? 'enabled' : 'disabled';
-		}
-
-		return fieldValue;
-	}
-
-	isFieldTruthy( fieldName ) {
-		switch ( fieldName ) {
-			case 'wp_mobile_excerpt':
-			case 'wp_mobile_featured_images':
-				return this.state[ fieldName ] === 'enabled';
-		}
-
-		return !! this.state[ fieldName ];
-	}
-
-	handleToggle( name ) {
-		return () => {
-			this.setState( {
-				[ name ]: this.sanitizeFieldValue( name, ! this.isFieldTruthy( name ) )
-			} );
-			this.props.markChanged();
-		};
-	}
-
-	onSubmitForm( event ) {
-		const { onSubmitForm, selectedSiteId } = this.props;
-
-		Promise.all( [
-			this.props.updateSettings( selectedSiteId, this.state ),
-			onSubmitForm( event )
-		] ).then( () => {
-			this.props.markSaved();
-		} );
-	}
-
 	isFormPending() {
 		const {
-			fetchingSettings,
-			fetchingModuleData,
-			submittingForm,
-			updatingSettings
+			isRequestingSettings,
+			isSavingSettings,
 		} = this.props;
 
-		return fetchingSettings || fetchingModuleData || submittingForm || updatingSettings;
+		return isRequestingSettings || isSavingSettings;
 	}
 
 	renderToggle( name, label ) {
+		const { fields, handleToggle } = this.props;
 		return (
 			<FormToggle
 				className="theme-enhancements__module-settings-toggle is-compact"
-				checked={ this.isFieldTruthy( name ) }
+				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() }
-				onChange={ this.handleToggle( name ) }>
-				<span>
+				onChange={ handleToggle( name ) }>
+				<span className="site-settings__toggle-label">
 					{ label }
 				</span>
 			</FormToggle>
@@ -113,8 +46,8 @@ class ThemeEnhancements extends Component {
 
 	renderHeader() {
 		const {
-			submittingForm,
-			updatingSettings,
+			onSubmitForm,
+			isSavingSettings,
 			translate
 		} = this.props;
 		const formPending = this.isFormPending();
@@ -124,10 +57,10 @@ class ThemeEnhancements extends Component {
 				<Button
 					compact
 					primary
-					onClick={ this.onSubmitForm }
+					onClick={ onSubmitForm }
 					disabled={ formPending }
 				>
-					{ submittingForm || updatingSettings
+					{ isSavingSettings
 						? translate( 'Saving…' )
 						: translate( 'Save Settings' )
 					}
@@ -232,13 +165,8 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { selectedSiteId } = this.props;
-
 		return (
 			<div>
-				<QueryJetpackModules siteId={ selectedSiteId } />
-				<QueryJetpackSettings siteId={ selectedSiteId } />
-
 				{ this.renderHeader() }
 
 				<Card className="theme-enhancements__card site-settings">
@@ -251,38 +179,27 @@ class ThemeEnhancements extends Component {
 }
 
 ThemeEnhancements.defaultProps = {
-	submittingForm: false,
+	isSavingSettings: false,
+	isRequestingSettings: true,
+	fields: {}
 };
 
 ThemeEnhancements.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	fetchingSettings: PropTypes.bool.isRequired,
-	submittingForm: PropTypes.bool,
+	handleToggle: PropTypes.func.isRequired,
+	isSavingSettings: PropTypes.bool,
+	isRequestingSettings: PropTypes.bool,
+	fields: PropTypes.object,
 };
 
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const fetchingModules = isFetchingModules( state, selectedSiteId );
-		const fetchingSettings = isRequestingJetpackSettings( state, selectedSiteId );
-		const moduleSettings = pick( getJetpackSettings( state, selectedSiteId ), [
-			'infinite_scroll',
-			'infinite_scroll_google_analytics',
-			'wp_mobile_excerpt',
-			'wp_mobile_featured_images',
-			'wp_mobile_app_promos'
-		] );
 
 		return {
 			selectedSiteId,
 			infiniteScrollModuleActive: !! isModuleActive( state, selectedSiteId, 'infinite-scroll' ),
 			minilevenModuleActive: !! isModuleActive( state, selectedSiteId, 'minileven' ),
-			moduleSettings,
-			fetchingModuleData: !! ( fetchingModules || fetchingSettings ),
-			updatingSettings: isUpdatingJetpackSettings( state, selectedSiteId ),
 		};
-	},
-	{
-		updateSettings
 	}
-)( protectForm( localize( ThemeEnhancements ) ) );
+)( localize( ThemeEnhancements ) );

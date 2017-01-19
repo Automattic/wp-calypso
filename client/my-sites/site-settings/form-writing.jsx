@@ -30,6 +30,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 import ThemeEnhancements from './theme-enhancements';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 class SiteSettingsFormWriting extends Component {
 
@@ -101,6 +103,7 @@ class SiteSettingsFormWriting extends Component {
 			fields,
 			handleToggle,
 			isRequestingSettings,
+			isSavingSettings,
 			jetpackVersionSupportsCustomTypes,
 			onChangeField,
 			markChanged,
@@ -198,11 +201,17 @@ class SiteSettingsFormWriting extends Component {
 
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
-						<ThemeEnhancements
-							submittingForm={ this.state.submittingForm }
-							onSubmitForm={ this.handleSubmitForm }
-							fetchingSettings={ this.state.fetchingSettings }
-							/>
+						<div>
+							<QueryJetpackSettings siteId={ this.props.siteId } />
+							<QueryJetpackModules siteId={ this.props.siteId } />
+							<ThemeEnhancements
+								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+								handleToggle={ handleToggle }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+								/>
+						</div>
 					)
 				}
 
@@ -243,7 +252,12 @@ const getFormSettings = partialRight( pick, [
 	'wpcom_publish_posts_with_markdown',
 	'markdown_supported',
 	'jetpack_testimonial',
-	'jetpack_portfolio'
+	'jetpack_portfolio',
+	'infinite_scroll',
+	'infinite_scroll_google_analytics',
+	'wp_mobile_excerpt',
+	'wp_mobile_featured_images',
+	'wp_mobile_app_promos'
 ] );
 
 export default flowRight(
