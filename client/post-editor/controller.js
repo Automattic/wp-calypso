@@ -208,16 +208,24 @@ module.exports = {
 		//    have permission to view the site)
 		//  - Sites are initialized _and_ fetched, but the selected site has
 		//    not yet been selected, so is not available in global state yet
+		let unsubscribe;
 		function startEditingOnSiteSelected() {
 			const siteId = getSelectedSiteId( context.store.getState() );
-
-			if ( siteId ) {
-				startEditing( siteId );
-			} else {
-				sites.once( 'change', startEditingOnSiteSelected );
+			if ( ! siteId ) {
+				return false;
 			}
+
+			if ( unsubscribe ) {
+				unsubscribe();
+			}
+
+			startEditing( siteId );
+			return true;
 		}
-		startEditingOnSiteSelected();
+
+		if ( ! startEditingOnSiteSelected() ) {
+			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
+		}
 
 		renderEditor( context, postType );
 	},
