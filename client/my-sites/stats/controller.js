@@ -211,7 +211,6 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
-		const FollowList = require( 'lib/follow-list' );
 		const SiteStatsComponent = require( 'my-sites/stats/site' );
 		const StatsList = require( 'lib/stats/stats-list' );
 		const filters = getSiteFilters.bind( null, siteId );
@@ -330,7 +329,6 @@ module.exports = {
 			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
 					? currentSite.slug : siteFragment;
 
-			const followList = new FollowList();
 			const activeTabVisitsList = new StatsList( {
 				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
 				quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields, domain: siteDomain } );
@@ -342,8 +340,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const clicksList = new StatsList( {
 				siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const authorsList = new StatsList( {
-				siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
 				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
 
@@ -359,11 +355,9 @@ module.exports = {
 				visitsList,
 				postsPagesList,
 				clicksList,
-				authorsList,
 				siteId,
 				period,
 				chartPeriod,
-				followList,
 				searchTermsList,
 				slug: siteDomain,
 				path: context.pathname,
@@ -392,7 +386,6 @@ module.exports = {
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const StatsList = require( 'lib/stats/stats-list' );
-		const FollowList = require( 'lib/follow-list' );
 		const StatsSummaryComponent = require( 'my-sites/stats/summary' );
 		const filters = function( contextModule, _siteId ) {
 			return [
@@ -412,7 +405,6 @@ module.exports = {
 		let period;
 		let summaryList;
 		let visitsList;
-		const followList = new FollowList();
 
 		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms' ];
 		let momentSiteZone = i18n.moment();
@@ -493,9 +485,7 @@ module.exports = {
 					break;
 
 				case 'authors':
-					summaryList = new StatsList( {
-						statType: 'statsTopAuthors', siteID: siteId, period: activeFilter.period,
-						date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 
 				case 'videoplays':
@@ -533,7 +523,6 @@ module.exports = {
 					filters: filters,
 					summaryList: summaryList,
 					visitsList: visitsList,
-					followList: followList,
 					siteId: siteId,
 					period: period,
 					statsQueryOptions,

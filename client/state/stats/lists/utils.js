@@ -37,6 +37,19 @@ export function rangeOfPeriod( period, date ) {
 }
 
 /**
+ * Parse the avatar URL
+ * @param  {String} avatarUrl Raw avatar URL
+ * @return {String}           Parsed URL
+ */
+function parseAvatar( avatarUrl ) {
+	if ( ! avatarUrl ) {
+		return null;
+	}
+	const [ avatarBaseUrl ] = avatarUrl.split( '?' );
+	return avatarBaseUrl + '?d=mm';
+}
+
+/**
  * Builds data into escaped array for CSV export
  *
  * @param  {Object} data   Normalized stats data object
@@ -267,6 +280,51 @@ export const normalizers = {
 		return payload.data.map( item => {
 			return { period: item[ 0 ], value: item[ 1 ] };
 		} ).slice( Math.max( payload.data.length - 10, 1 ) );
+	},
+
+	/**
+	 * Returns a normalized statsTopAuthors array, ready for use in stats-module
+	 *
+	 * @param  {Object} data   Stats data
+	 * @param  {Object} query  Stats query
+	 * @param  {Int}    siteId Site ID
+	 * @param  {Object} site   Site Object
+	 * @return {Array}       Normalized stats data
+	 */
+	statsTopAuthors( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
+
+		return authorsData.map( ( item ) => {
+			const record = {
+				label: item.name,
+				iconClassName: 'avatar-user',
+				icon: parseAvatar( item.avatar ),
+				children: null,
+				value: item.views,
+				className: 'module-content-list-item-large'
+			};
+
+			if ( item.posts && item.posts.length > 0 ) {
+				record.children = item.posts.map( ( child ) => {
+					return {
+						label: child.title,
+						value: child.views,
+						page: site ? '/stats/post/' + child.id + '/' + site.slug : null,
+						actions: [ {
+							type: 'link',
+							data: child.url
+						} ],
+						children: null
+					};
+				} );
+			}
+
+			return record;
+		} );
 	},
 
 	/**

@@ -719,6 +719,84 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsTopAuthors()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsTopAuthors();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsTopAuthors( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsTopAuthors( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsTopAuthors( {
+					date: '2017-01-17',
+					days: {
+						'2017-01-17': {
+							authors: [
+								{
+									name: 'Timmy Crawford',
+									avatar: 'https://0.gravatar.com/avatar/9929daa7594d5afa910a777ccb9e88e4?s=64&size=G',
+									posts: [
+										{ id: 30, title: 'Chicken', url: 'http://en.blog.wordpress.com/chicken', views: 6 },
+										{ id: 32, title: 'Ribs', url: 'http://en.blog.wordpress.com/ribs', views: 10 }
+									]
+								}
+							]
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-17',
+					domain: 'en.blog.wordpress.com'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						children: [
+							{
+								actions: [ {
+									data: 'http://en.blog.wordpress.com/chicken',
+									type: 'link'
+								} ],
+								children: null,
+								label: 'Chicken',
+								page: '/stats/post/30/en.blog.wordpress.com',
+								value: 6
+							},
+							{
+								actions: [ {
+									data: 'http://en.blog.wordpress.com/ribs',
+									type: 'link'
+								} ],
+								children: null,
+								label: 'Ribs',
+								page: '/stats/post/32/en.blog.wordpress.com',
+								value: 10
+							},
+						],
+						className: 'module-content-list-item-large',
+						icon: 'https://0.gravatar.com/avatar/9929daa7594d5afa910a777ccb9e88e4?d=mm',
+						iconClassName: 'avatar-user',
+						label: 'Timmy Crawford',
+						value: undefined
+					}
+				] );
+			} );
+		} );
+
 		describe( 'statsTags()', () => {
 			it( 'should return an empty array if not data is passed', () => {
 				const parsedData = normalizers.statsTags();
