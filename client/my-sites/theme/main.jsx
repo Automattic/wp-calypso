@@ -546,17 +546,25 @@ const ConnectedThemeSheet = connectOptions(
 );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, isActive, isLoggedIn, isPremium, isPurchased } = props;
+	const {
+		selectedSite: site,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		isWpcomTheme,
+	} = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
 
-	if ( props.isJetpack && props.isWpcomTheme ) {
-		defaultOption = 'activateOnJetpack';
-	} else if ( ! isLoggedIn ) {
+	if ( ! isLoggedIn ) {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
+	} else if ( isJetpack && isWpcomTheme ) {
+		defaultOption = 'activateOnJetpack';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -577,7 +585,7 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption={ ( props.isJetpack && props.isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
+			secondaryOption={ ( isJetpack && isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };
@@ -617,6 +625,9 @@ export default connect(
 		// Fallback to 'wpcom' source for wpcom themes on Jetpack target sites
 		const theme = getTheme( state, siteIdOrWpcom, id ) || getTheme( state, 'wpcom', id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+		const isWpcomTheme = theme && theme.screenshots;
+		const themeIdAtTargetSite = ( isJetpack && isWpcomTheme ) ? `${ id }-wpcom` : id;
+		const isActive = selectedSite && isThemeActive( state, themeIdAtTargetSite, selectedSite.ID );
 
 		return {
 			...theme,
@@ -629,15 +640,15 @@ export default connect(
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
+			isWpcomTheme,
+			isActive,
 			isLoggedIn: !! currentUserId,
-			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && (
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
 			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
-			isWpcomTheme: theme && theme.screenshots,
 		};
 	}
 )( ThemeSheetWithOptions );
