@@ -202,6 +202,7 @@ const PhoneInput = React.createClass( {
 				<div className="phone-input__select-container">
 					<div className="phone-input__select-inner-container">
 						<FormCountrySelect
+							tabIndex={ -1 }
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
 							value={ ( this.getCountry().isoCode ) }
