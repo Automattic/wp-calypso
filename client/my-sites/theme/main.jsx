@@ -545,18 +545,13 @@ const ConnectedThemeSheet = connectOptions(
 	}
 );
 
-const isWpcomThemeOnJetpackSite = ( props ) => {
-	// only wpcom themes have the screenshots field
-	return props.isJetpack && props.screenshots;
-};
-
 const ThemeSheetWithOptions = ( props ) => {
 	const { selectedSite: site, isActive, isLoggedIn, isPremium, isPurchased } = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
 
-	if ( isWpcomThemeOnJetpackSite( props ) ) {
+	if ( props.isJetpack && props.isWpcomTheme ) {
 		defaultOption = 'activateOnJetpack';
 	} else if ( ! isLoggedIn ) {
 		defaultOption = 'signup';
@@ -582,7 +577,7 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption={ isWpcomThemeOnJetpackSite( props ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
+			secondaryOption={ ( props.isJetpack && props.isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };
@@ -641,7 +636,8 @@ export default connect(
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
-			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID )
+			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
+			isWpcomTheme: theme && theme.screenshots,
 		};
 	}
 )( ThemeSheetWithOptions );
