@@ -131,9 +131,9 @@ class StatsConnectedModule extends Component {
 					</SectionHeader>
 				}
 				<Card compact className={ cardClasses }>
+					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />

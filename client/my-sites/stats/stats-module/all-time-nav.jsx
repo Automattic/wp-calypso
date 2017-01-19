@@ -57,7 +57,7 @@ export const StatsModuleSummaryLinks = props => {
 				<NavTabs label={ translate( 'Summary' ) }>
 					{ options.map( ( item ) => {
 						const onClick = () => {
-							recordStats.apply( this, [ item ] );
+							recordStats( item );
 						};
 						return (
 							<NavItem
