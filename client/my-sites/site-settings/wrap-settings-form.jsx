@@ -88,11 +88,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const { fields, settingsFields, site, isJetpack } = this.props;
+			const { fields, settingsFields, site, jetpackSettingsUISupported } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
 			this.props.saveSiteSettings( site.ID, pick( fields, settingsFields.site ) );
-			if ( isJetpack ) {
+			if ( jetpackSettingsUISupported ) {
 				this.props.updateSettings( site.ID, pick( fields, settingsFields.jetpack ) );
 			}
 		};
@@ -144,7 +144,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				<div>
 					<QuerySiteSettings siteId={ this.props.siteId } />
 					{
-						this.props.isJetpack &&
+						this.props.jetpackSettingsUISupported &&
 						<QueryJetpackSettings siteId={ this.props.siteId } />
 					}
 					<SettingsForm { ...this.props } { ...utils } />
@@ -184,7 +184,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				settings,
 				settingsFields,
 				siteId,
-				isJetpack
+				jetpackSettingsUISupported
 			};
 		},
 		dispatch => {
