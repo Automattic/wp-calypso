@@ -9,8 +9,9 @@ import React from 'react';
 import AutoDirection from 'components/auto-direction';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
+import ReaderPostCardExcerpt from './excerpt';
 
-const StandardPost = ( { post, children } )=> {
+const StandardPost = ( { post, children, isDiscover } )=> {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -30,14 +31,15 @@ const StandardPost = ( { post, children } )=> {
 						<a className="reader-post-card__title-link" href={ post.URL }>{ post.title }</a>
 					</h1>
 				</AutoDirection>
-				<AutoDirection>
-					<div className="reader-post-card__excerpt"
-						dangerouslySetInnerHTML={ { __html: post.better_excerpt || post.excerpt } } // eslint-disable-line react/no-danger
-					/>
-				</AutoDirection>
+				<ReaderPostCardExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }
 			</div>
 		</div> );
+};
+
+StandardPost.propTypes = {
+	post: React.PropTypes.object.isRequired,
+	isDiscover: React.PropTypes.bool,
 };
 
 export default StandardPost;
