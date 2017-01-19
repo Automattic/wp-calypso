@@ -41,41 +41,37 @@ const webpackConfig = {
 		// avoids this warning:
 		// https://github.com/localForage/localForage/issues/577
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
-		loaders: [
+		rules: [
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
-				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
-			},
-			{
-				test: /\.json$/,
-				loader: 'json-loader'
+				use: path.join( __dirname, 'server', 'bundler', 'loader' )
 			},
 			{
 				test: /\.html$/,
-				loader: 'html-loader'
+				use: 'html-loader'
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				loader: 'exports?window.tinymce',
+				use: 'exports-loader?window.tinymce',
 			},
 			{
 				include: /node_modules\/tinymce/,
-				loader: 'imports?this=>window',
+				use: 'imports-loader?this=>window',
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
-		modulesDirectories: [ 'node_modules' ],
+		extensions: [ '.json', '.js', '.jsx' ],
+		modules: [
+			path.join( __dirname, 'client' ),
+			path.join( __dirname, 'client', 'extensions' ),
+			'node_modules',
+		],
 		alias: {
 			'react-virtualized': 'react-virtualized/dist/commonjs',
 			'social-logos/example': 'social-logos/build/example'
 		}
-	},
-	resolveLoader: {
-		root: [ __dirname ]
 	},
 	node: {
 		console: false,
@@ -92,7 +88,6 @@ const webpackConfig = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new webpack.optimize.OccurenceOrderPlugin( true ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
 	],
@@ -151,18 +146,18 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-const jsLoader = {
+const jsRule = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loader: 'babel',
-	query: {
+	use: 'babel-loader?' + JSON.stringify( {
 		cacheDirectory: './.babel-cache',
 		cacheIdentifier: cacheIdentifier,
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 			{ async: config.isEnabled( 'code-splitting' ) }
 		] ]
-	}
+	} )
+
 };
 
 if ( CALYPSO_ENV === 'development' ) {
@@ -178,10 +173,10 @@ if ( CALYPSO_ENV === 'development' ) {
 	if ( config.isEnabled( 'use-source-maps' ) ) {
 		webpackConfig.debug = true;
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
-		webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
-		webpackConfig.module.preLoaders.push( {
+		webpackConfig.module.rules.push( {
 			test: /\.jsx?$/,
-			loader: 'source-map-loader'
+			enforce: 'pre',
+			use: 'source-map-loader'
 		} );
 	} else {
 		// Add react hot loader before babel-loader.
@@ -206,7 +201,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
-webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
+webpackConfig.module.rules = [ jsRule ].concat( webpackConfig.module.rules );
 
 module.exports = webpackConfig;
 
