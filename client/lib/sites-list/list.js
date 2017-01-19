@@ -199,6 +199,12 @@ SitesList.prototype.update = function( sites ) {
 		var siteObj, result;
 
 		if ( sitesMap[ site.ID ] ) {
+			// Since updates are applied as a patch, ensure key is present for
+			// properties which can be intentionally omitted from site payload.
+			if ( ! site.hasOwnProperty( 'icon' ) ) {
+				site.icon = undefined;
+			}
+
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
 			result = siteObj.set( site );
