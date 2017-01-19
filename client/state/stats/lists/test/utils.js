@@ -198,8 +198,9 @@ describe( 'utils', () => {
 					}
 				}, {
 					period: 'day',
-					date: '2017-01-12',
-					domain: 'en.blog.wordpress.com'
+					date: '2017-01-12'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
 				} );
 
 				expect( parsedData ).to.eql( [ {
@@ -234,8 +235,9 @@ describe( 'utils', () => {
 					}
 				}, {
 					period: 'day',
-					date: '2017-01-12',
-					domain: 'en.blog.wordpress.com'
+					date: '2017-01-12'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
 				} );
 
 				expect( parsedData ).to.eql( [ {
@@ -270,8 +272,9 @@ describe( 'utils', () => {
 				}, {
 					period: 'day',
 					date: '2017-01-12',
-					domain: 'en.blog.wordpress.com',
 					summarize: 1
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
 				} );
 
 				expect( parsedData ).to.eql( [ {
