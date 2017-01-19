@@ -3,7 +3,6 @@
  */
 import find from 'lodash/find';
 import identity from 'lodash/identity';
-import includes from 'lodash/includes';
 import React from 'react';
 import classnames from 'classnames';
 
@@ -111,7 +110,8 @@ const PhoneInput = React.createClass( {
 		if ( ! value || value.length < MIN_LENGTH_TO_FORMAT || this.state.freezeSelection ) {
 			return false;
 		}
-		return includes( [ '+', '1' ], value[ 0 ] );
+		const dialCode = this.getCountry().countryDialCode || this.getCountry().dialCode;
+		return value[ 0 ] === '+' || ( value[ 0 ] === '1' && dialCode === '1' );
 	},
 
 	/**
