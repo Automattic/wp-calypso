@@ -214,6 +214,20 @@ function removeAllNumberKeys( obj ) {
 	return _.omitBy( obj, function( val, key ) { return /^\d+$/.test( key ); } );
 }
 
+function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
+	for ( var key in countryData ) {
+		if ( countryData.hasOwnProperty( key ) ) {
+			const country = countryData[ key ],
+				{ countryDialCode, dialCode } = country;
+			if ( countryDialCode === dialCode ) {
+				delete country.regionCode;
+				delete country.countryDialCode;
+			}
+		}
+	}
+	return countryData;
+}
+
 /**
  * Processes Google's libphonenumber data and generates a proper JS object
  * @param {{}} libPhoneNumberData
@@ -228,6 +242,8 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 			data[ countryCodeUpper ] = {
 				isoCode: countryCodeUpper,
 				dialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] + ( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' ) ),
+				countryDialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] ),
+				regionCode: country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '',
 				areaCodes: areaCodes[ countryCode ],
 				nationalPrefix: country[ libPhoneNumberIndexes.NATIONAL_PREFIX ],
 				patterns: ( country[ libPhoneNumberIndexes.NUMBER_FORMAT ] || [] ).map( processNumberFormat ),
@@ -313,6 +329,7 @@ getLibPhoneNumberData()
 	.then( generateDeepRemoveEmptyArraysFromObject( [ 'patterns', 'internationalPatterns' ] ) )
 	.then( insertCountryAliases )
 	.then( removeAllNumberKeys )
+	.then( removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode )
 	.then( generateFullDataset )
 	.then( deepRemoveUndefinedKeysFromObject )
 	.then( convertToJSStringAndVerify )
