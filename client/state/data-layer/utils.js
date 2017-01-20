@@ -7,6 +7,11 @@ import {
 } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { extendAction } from 'state/utils';
+
+/**
  * Merge handler for lodash.mergeWith
  *
  * Note that a return value of `undefined`
@@ -27,3 +32,13 @@ export const mergeHandlers = ( ...handlers ) =>
 	handlers.length > 1
 		? mergeWith( Object.create( null ), ...handlers, concatHandlers )
 		: handlers[ 0 ];
+
+const doBypassDataLayer = {
+	meta: {
+		dataLayer: {
+			doBypass: true,
+		},
+	},
+};
+
+export const local = action => extendAction( action, doBypassDataLayer );
