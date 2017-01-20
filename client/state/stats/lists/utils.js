@@ -510,5 +510,36 @@ export const normalizers = {
 		}
 
 		return result;
+	},
+
+	/*
+	 * Returns a normalized statsPodcastDownloads array, ready for use in stats-module
+	 *
+	 * @param  {Object} data   Stats data
+	 * @param  {Object} query  Stats query
+	 * @param  {Int}    siteId Site ID
+	 * @param  {Object} site   Site Object
+	 * @return {Array}         Parsed data array
+	 */
+	statsPodcastDownloads( data, query, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const statsData = get( data, [ 'days', startOf, 'downloads' ], [] );
+
+		return statsData.map( ( item ) => {
+			const detailPage = site ? '/stats/' + query.period + '/podcastdownloads/' + site.slug + '?post=' + item.post_id : null;
+			return {
+				label: item.title,
+				page: detailPage,
+				value: item.downloads,
+				actions: [ {
+					type: 'link',
+					data: item.url
+				} ]
+			};
+		} );
 	}
 };

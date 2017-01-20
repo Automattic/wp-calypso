@@ -9,7 +9,6 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
@@ -227,7 +226,6 @@ module.exports = {
 		let chartDate;
 		let chartTab;
 		let visitsListFields;
-		let endDate;
 		let chartEndDate;
 		let period;
 		let chartPeriod;
@@ -299,7 +297,6 @@ module.exports = {
 
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
-			endDate = period.endOf.format( 'YYYY-MM-DD' );
 			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
 			chartTab = queryOptions.tab || 'views';
@@ -353,16 +350,6 @@ module.exports = {
 				slug: siteDomain,
 				path: context.pathname,
 			};
-
-			if ( config.isEnabled( 'manage/stats/podcasts' ) ) {
-				siteComponentChildren.podcastDownloadsList = new StatsList( {
-					siteID: siteId,
-					statType: 'statsPodcastDownloads',
-					period: activeFilter.period,
-					date: endDate,
-					domain: siteDomain
-				} );
-			}
 
 			renderWithReduxStore(
 				React.createElement( siteComponent, siteComponentChildren ),
@@ -491,8 +478,7 @@ module.exports = {
 					break;
 
 				case 'podcastdownloads':
-					summaryList = new StatsList( { statType: 'statsPodcastDownloads', siteID: siteId,
-						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					summaryList = fakeStatsList;
 					break;
 			}
 

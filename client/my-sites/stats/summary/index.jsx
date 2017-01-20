@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import observe from 'lib/mixins/data-observe';
 import HeaderCake from 'components/header-cake';
-import StatsModule from '../stats-module';
 import StatsConnectedModule from '../stats-module/connected-list';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
@@ -65,7 +64,7 @@ const StatsSummary = React.createClass( {
 	},
 
 	render: function() {
-		const { site, translate, statsQueryOptions } = this.props;
+		const { translate, statsQueryOptions } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -161,15 +160,14 @@ const StatsSummary = React.createClass( {
 
 			case 'podcastdownloads':
 				title = translate( 'Podcasts' );
-				summaryView = <StatsModule
+				summaryView = <StatsConnectedModule
 					key="podcastdownloads-summary"
-					path={ 'podcastdownloads' }
+					path="podcastdownloads"
 					moduleStrings={ StatsStrings.podcastdownloads }
-					site={ site }
-					dataList={ this.props.summaryList }
 					period={ this.props.period }
-					followList={ this.props.followList }
-					summary={ true } />;
+					query={ query }
+					statType="statsPodcastDownloads"
+					summary />;
 				break;
 
 			case 'videodetails':

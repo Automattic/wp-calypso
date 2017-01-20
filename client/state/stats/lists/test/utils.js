@@ -1114,5 +1114,58 @@ describe( 'utils', () => {
 				} );
 			} );
 		} );
+
+		describe( 'statsPodcastDownloads()', () => {
+			it( 'should return an empty array if data is null', () => {
+				const parsedData = normalizers.statsPodcastDownloads();
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsPodcastDownloads( {}, { date: '2016-12-25' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsPodcastDownloads( {}, { period: 'day' } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should properly parse day period response', () => {
+				const parsedData = normalizers.statsPodcastDownloads( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							downloads: [ {
+								url: 'http://en.blog.wordpress.com/awesome',
+								post_id: 10,
+								title: 'My awesome podcast',
+								downloads: 3939
+							} ]
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12'
+				}, 10, {
+					slug: 'en.blog.wordpress.com'
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						actions: [ {
+							data: 'http://en.blog.wordpress.com/awesome',
+							type: 'link'
+						} ],
+						label: 'My awesome podcast',
+						page: '/stats/day/podcastdownloads/en.blog.wordpress.com?post=10',
+						value: 3939
+					}
+				] );
+			} );
+		} );
 	} );
 } );
