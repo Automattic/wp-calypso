@@ -76,16 +76,16 @@ class PlansFeaturesMain extends Component {
 			plans = this.state.currentTab === 'personal'
 				? jetpackMonthlyPlansPersonalTab
 				: jetpackMonthlyPlansPremiumTab;
+		} else {
+			plans = this.state.currentTab === 'personal'
+				? jetpackPlansPersonalTab
+				: jetpackPlansPremiumTab;
 		}
-		plans = this.state.currentTab === 'personal'
-			? jetpackPlansPersonalTab
-			: jetpackPlansPremiumTab;
 
 		if ( this.props.hideFreePlan && this.state.currentTab === 'personal' ) {
 			plans = Object.assign( [], plans );
 			plans.shift();
 		}
-
 		return plans;
 	}
 
