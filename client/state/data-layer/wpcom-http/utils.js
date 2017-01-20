@@ -15,7 +15,7 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
  * Returns error data from an HTTP request failure action if available
  *
  * @param {Object} action may contain HTTP response error data
- * @returns {any|null} error data if available
+ * @returns {?*} error data if available
  */
 export const getError = action => get( action, 'meta.dataLayer.error', null );
 
@@ -59,7 +59,7 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
- * @returns {any} please ignore return values, they are undefined
+ * @returns {?*} please ignore return values, they are undefined
  */
 export const dispatchRequest = ( initiator, onSuccess, onError ) => ( store, action, next ) => {
 	const error = getError( action );

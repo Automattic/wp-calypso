@@ -6,11 +6,10 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 /**
  * Returns a valid WordPress.com API HTTP Request action object
  *
- * @param {string} [apiVersion]  speciific API version for request
+ * @param {string} [apiVersion] specific API version for request
  * @param {Object} [body] JSON-serializable body for POST requests
  * @param {string} method name of HTTP method to use
  * @param {string} path WordPress.com API path with %s and %d placeholders, e.g. /sites/%s
- * @param {Array} [pathArgs] data to replace placeholders with, in order, e.g. [ 'blarg.wordpress.com' ]
  * @param {Object} [query] key/value pairs for query string
  * @param {FormData} [formData] key/value pairs for POST body, encoded as "multipart/form-data"
  * @param {Object} [onSuccess] Redux action to call when request succeeds
@@ -24,7 +23,6 @@ export const http = ( {
 	body,
 	method,
 	path,
-	pathArgs,
 	query,
 	formData,
 	onSuccess,
@@ -36,7 +34,6 @@ export const http = ( {
 	body,
 	method,
 	path,
-	pathArgs,
 	query: { ...query, apiVersion },
 	formData,
 	onSuccess,

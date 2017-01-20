@@ -18,10 +18,11 @@ Let's look at how this system works from a high-level perspective.
 ## Overview
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
-![](https://cldup.com/unQOzvDkjtq/vSrA37.svg)
+![](https://cldup.com/unQOzvDkjtq/BpewKu.svg)
 
-Wow, how confusing!
+Wow, that can look confusing!
 Well, this isn't promising to make everything easier, but it _is_ promising to make things worth while.
+And in fact, with a little bit of exposure it reveals a pattern that ends up considerably simpler and will probably seem easier than "the old way" of doing things.
 
 ### Step A: Component needs to update data
 
@@ -69,7 +70,7 @@ This will trigger a re-render on the post component which started the chain and 
 
 If you would like to take advantage of this system you will want to use the provided helper methods and structure your code into three pieces: a function which generates the descriptive HTTP requests; a function which handles successful responses; and a function which handles failing responses.
 
-Each of these functions will take the normal middleware arguments but the success and failure functions take an additional argument which is the response data or error respectively.
+Each of these functions will take the normal middleware arguments; additionally the success and failure functions take an additional argument which is the response data or error respectively.
 
 ```js
 // API Middleware, Post Like
@@ -84,8 +85,7 @@ const likePost = ( { dispatch }, action, next ) => {
 	// dispatch intent to issue HTTP request
 	dispatch( http( {
 		method: 'POST',
-		path: '/sites/%s/posts/%d/likes/new',
-		pathArgs: [ action.siteId, action.postId ],
+		path: `/sites/{ action.siteId }/posts/${ action.postId }/likes/new`,
 		
 		// we can reuse the original action because
 		// we will use meta to indicate which part
