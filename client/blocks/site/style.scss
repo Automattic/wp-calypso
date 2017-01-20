@@ -55,7 +55,6 @@
 // within a Site item
 .site .site-icon {
 	position: relative;
-	border: 1px solid $transparent;
 	height: 30px;
 	width: 30px;
 	overflow: hidden;
@@ -107,7 +106,7 @@
 	transition: opacity 0.2s;
 	transform: translate3d(0, 0, 0);
 	position: absolute;
-		left: 17px;
+		left: 16px;
 		top: 17px;
 
 	.gridicon {

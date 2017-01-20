@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 				sectionName="site"
 				sectionTitle={ currentSiteTitle }>
 				{ site ?
-					<SiteIcon site={ site } size={ 30 } /> :
+					<SiteIcon site={ site } /> :
 					<AllSitesIcon sites={ sites.get() } /> }
 			</SidebarNavigation>
 		);
