@@ -16,7 +16,7 @@
 	&.is-right {
 		display: flex;
 		flex-shrink: 1;
-		width: 50%;
+		flex-basis: 50%;
 	}
 
 	&.is-center {
