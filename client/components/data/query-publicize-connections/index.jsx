@@ -3,13 +3,13 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { isFetchingConnections as isRequestingConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryPublicizeConnections extends Component {
 	componentWillMount() {
@@ -44,14 +44,15 @@ QueryPublicizeConnections.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( state, { siteId } ) => {
+		siteId = siteId || getSelectedSiteId( state );
+
 		return {
-			requestingConnections: isRequestingConnections( state, ownProps.siteId )
+			requestingConnections: isRequestingConnections( state, siteId ),
+			siteId,
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestConnections
-		}, dispatch );
+	{
+		requestConnections,
 	}
 )( QueryPublicizeConnections );
