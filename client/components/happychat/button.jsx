@@ -26,9 +26,7 @@ class HappychatButton extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-		} = this.props;
+		const { translate } = this.props;
 		return (
 			<Button
 				className="sidebar__footer-chat"
