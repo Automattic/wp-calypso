@@ -41,7 +41,7 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  *
  * When the WPCOM HTTP data layer handles requests it will add
  * response data and errors to a meta property on the given success
- * and error handling actions.
+ * error, and progress handling actions.
  *
  * This function accepts three functions as the initiator, success,
  * and error handlers for actions and it will call the appropriate
@@ -53,9 +53,10 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * response data will also still be available through the action meta.
  *
  * The functions should conform to the following type signatures:
- *   initiator :: ReduxStore -> Action -> Dispatcher (middleware signature)
- *   onSuccess :: ReduxStore -> Action -> Dispatcher -> ResponseData
- *   onError   :: ReduxStore -> Action -> Dispatcher -> ErrorData
+ *   initiator  :: ReduxStore -> Action -> Dispatcher (middleware signature)
+ *   onSuccess  :: ReduxStore -> Action -> Dispatcher -> ResponseData
+ *   onError    :: ReduxStore -> Action -> Dispatcher -> ErrorData
+ *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
  *
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
