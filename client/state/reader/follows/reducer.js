@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { union, without } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -10,8 +10,10 @@ import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
 } from 'state/action-types';
+import { prepareComparableUrl } from './utils';
+import { createReducer } from 'state/utils';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -20,21 +22,24 @@ import {
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export function items( state = [], action ) {
-	switch ( action.type ) {
-		case READER_FOLLOW:
-			return union( state, [ action.url ] );
-
-		case READER_UNFOLLOW:
-			return without( state, action.url );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return [];
-	}
-
-	return state;
-}
+export const items = createReducer( {}, {
+	[ READER_FOLLOW ]: ( state, { url } ) => {
+		const urlKey = prepareComparableUrl( url );
+		return {
+			...state,
+			[ urlKey ]: { isFollowing: true },
+		};
+	},
+	[ READER_UNFOLLOW ]: ( state, { url } ) => {
+		const urlKey = prepareComparableUrl( url );
+		return {
+			...state,
+			[ urlKey ]: { isFollowing: false },
+		};
+	},
+	[ SERIALIZE ]: () => {},
+	[ DESERIALIZE ]: () => {},
+} );
 
 export default combineReducers( {
 	items
