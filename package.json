@@ -151,7 +151,8 @@
     "test-server:watch": "nodemon -e js,jsx --exec npm run test-server",
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
     "lint": "bin/run-lint",
-    "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
+    "css-lint": "stylelint 'client/**/*.scss' --syntax scss",
+    "generate-state-selectors": "node server/state-selectors-generator/script-generate.js"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
