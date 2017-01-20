@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, omit, keys, pick } from 'lodash';
+import { flowRight, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import shallowEqual from 'react-pure-render/shallowEqual';
@@ -78,20 +78,23 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		updateDirtyFields() {
 			const unpersistedFields = this.props.fields;
 			const persistedFields = getFormSettings( this.props.settings );
+
 			// Compute the dirty fields by comparing the persisted and not persisted fields
-			const dirtyFields = Object.keys( unpersistedFields )
-				.filter( field => unpersistedFields[ field ] !== persistedFields[ field ] );
-			// Set the new non dirty fields
-			this.props.replaceFields( omit( persistedFields, dirtyFields ) );
+			const previousDirtyFields = this.props.dirtyFields;
+			const nextDirtyFields = previousDirtyFields.filter( field => unpersistedFields[ field ] !== persistedFields[ field ] );
 
 			// Update the dirty fields state without updating their values
-			this.props.clearDirtyFields();
-			this.props.updateFields( pick( unpersistedFields, dirtyFields ) );
-			if ( dirtyFields.length === 0 ) {
+			if ( nextDirtyFields.length === 0 ) {
 				this.props.markSaved();
 			} else {
 				this.props.markChanged();
 			}
+			this.props.clearDirtyFields();
+			this.props.updateFields( pick( unpersistedFields, nextDirtyFields ) );
+
+			// Set the new non dirty fields
+			const nextNonDirtyFields = omit( persistedFields, nextDirtyFields );
+			this.props.replaceFields( nextNonDirtyFields );
 		}
 
 		// Some Utils
