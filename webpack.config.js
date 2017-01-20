@@ -171,7 +171,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	];
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
-		webpackConfig.debug = true;
+		webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: true } ) );
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
 		webpackConfig.module.rules.push( {
 			test: /\.jsx?$/,
@@ -184,8 +184,8 @@ if ( CALYPSO_ENV === 'development' ) {
 		//jsRule.use = [ 'react-hot-loader' ].concat( jsRule.use );
 	}
 } else {
+	webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: false } ) );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
-	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
 
