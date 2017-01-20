@@ -31,7 +31,6 @@ import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 import ThemeEnhancements from './theme-enhancements';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 class SiteSettingsFormWriting extends Component {
 
@@ -202,8 +201,8 @@ class SiteSettingsFormWriting extends Component {
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
-							<QueryJetpackSettings siteId={ this.props.siteId } />
 							<QueryJetpackModules siteId={ this.props.siteId } />
+
 							<ThemeEnhancements
 								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
 								handleToggle={ handleToggle }
