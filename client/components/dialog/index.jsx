@@ -7,7 +7,6 @@ import { defer, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CSSTransitionGroup from 'react-addons-css-transition-group';
 import RootChild from 'components/root-child';
 import DialogBase from './dialog-base';
 
