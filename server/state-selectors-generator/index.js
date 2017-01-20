@@ -29,33 +29,18 @@ let watcher;
 
 function addFileSelector( file ) {
 	log( `adding '${ file }' file selector` );
-	generateIndexFile( file );
+	exports.generateIndexFile( file );
 }
 
 function removeFileSelector( file ) {
 	log( `removing '${ file }' file selector` );
-	generateIndexFile( file );
+	exports.generateIndexFile( file );
 }
 
 const buildExportLine = file => {
 	const basename = path.basename( file, '.js' );
 	return `export ${ camelCase( basename ) } from '${ importBasePath }/${ basename }';`;
 };
-
-/*
- * Generate the content of the `index.js` file
- * according to the selectors files.
- */
-function generateIndexFile() {
-	fs.readdir( selectorsGlobalPath, ( err, files ) => {
-		const exportLines = files
-			.filter( file => ! blacklist.test( file ) )
-			.map( buildExportLine )
-			.join( '\n' );
-
-		saveIndexFile( exportLines );
-	} );
-}
 
 /*
  * Save the given content into the `/index.js` file.
@@ -72,7 +57,22 @@ function saveIndexFile( content ) {
 	} );
 }
 
-exports.init = function() {
+/*
+ * Generate the content of the `index.js` file
+ * according to the selectors files.
+ */
+exports.generateIndexFile = () => {
+	fs.readdir( selectorsGlobalPath, ( err, files ) => {
+		const exportLines = files
+			.filter( file => ! blacklist.test( file ) )
+			.map( buildExportLine )
+			.join( '\n' );
+
+		saveIndexFile( exportLines );
+	} );
+};
+
+exports.init = () => {
 	log( 'init' );
 	watcher = chokidar.watch( `${ selectorsGlobalPath }/*.js`, {
 		ignored: blacklist,
