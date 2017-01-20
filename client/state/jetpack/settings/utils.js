@@ -32,6 +32,8 @@ export const sanitizeSettings = ( settings ) => {
 			case 'wp_mobile_featured_images':
 				memo[ key ] = !! settings [ key ] ? 'enabled' : 'disabled';
 				break;
+			case 'post_by_email_address':
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}

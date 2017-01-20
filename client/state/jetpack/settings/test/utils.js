@@ -111,5 +111,16 @@ describe( 'utils', () => {
 				wp_mobile_featured_images: 'disabled'
 			} );
 		} );
+
+		it( 'should omit post_by_email_address from sanitized settings', () => {
+			const settings = {
+				some_other_setting: 123,
+				post_by_email_address: 'some-email@example.com'
+			};
+
+			expect( sanitizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+			} );
+		} );
 	} );
 } );
