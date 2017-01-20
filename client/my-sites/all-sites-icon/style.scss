@@ -21,8 +21,10 @@
 
 .all-sites-icon .site-icon {
 	align-self: auto;
-	background: $gray;
-	border: none;
 	margin-right: 1px;
 	display: inline-block;
+
+	&.is-blank {
+		background: $gray;
+	}
 }
