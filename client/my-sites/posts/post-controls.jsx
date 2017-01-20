@@ -195,7 +195,7 @@ export const PostControls = props => {
 
 	return (
 		<div className={ classes }>
-			{ more.length &&
+			{ more.length > 0 &&
 				<ul className="posts__post-controls post-controls__pane post-controls__more-options">
 					{ getControlElements( more ) }
 				</ul>
