@@ -231,6 +231,7 @@ class SiteSettingsFormWriting extends Component {
 								context: 'name of browser bookmarklet tool'
 							} ), false )
 						}
+
 						<PressThis />
 					</div>
 				) }
