@@ -22,8 +22,8 @@ import PostSelector from 'my-sites/post-selector';
 class EditorMoreOptionsCopyPost extends Component {
 
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
@@ -66,6 +66,7 @@ class EditorMoreOptionsCopyPost extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
+
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' ),
@@ -76,6 +77,7 @@ class EditorMoreOptionsCopyPost extends Component {
 			disabled: ! this.state.selectedPostId,
 			onClick: this.goToNewDraft,
 		} ];
+
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
 				<EditorDrawerLabel
@@ -99,14 +101,16 @@ class EditorMoreOptionsCopyPost extends Component {
 					<p>
 						{ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
 					</p>
-					<PostSelector
-						siteId={ siteId }
-						emptyMessage={ translate( 'No posts found' ) }
-						orderBy="date"
-						order="DESC"
-						onChange={ this.setPostToCopy }
-						selected={ this.state.selectedPostId }
-					/>
+					{ siteId &&
+						<PostSelector
+							siteId={ siteId }
+							emptyMessage={ translate( 'No posts found' ) }
+							orderBy="date"
+							order="DESC"
+							onChange={ this.setPostToCopy }
+							selected={ this.state.selectedPostId }
+						/>
+					}
 				</Dialog>
 			</AccordionSection>
 		);
