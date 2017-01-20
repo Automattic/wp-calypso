@@ -6,6 +6,7 @@ import { expect } from 'chai';
 import {
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
+	isRegeneratingPostByEmail,
 	getJetpackSettings,
 	getJetpackSetting,
 	getJetpackSettingsSaveRequestStatus,
@@ -97,6 +98,47 @@ describe( 'selectors', () => {
 				},
 				siteId = 88888888;
 			const output = isUpdatingJetpackSettings( stateIn, siteId );
+			expect( output ).to.be.null;
+		} );
+	} );
+
+	describe( '#isRegeneratingPostByEmail', () => {
+		it( 'should return true if post by email is currently being regenerated', () => {
+			const stateIn = {
+					jetpack: {
+						settings: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 12345678;
+			const output = isRegeneratingPostByEmail( stateIn, siteId );
+			expect( output ).to.be.true;
+		} );
+
+		it( 'should return false if post by email is currently not being regenerated', () => {
+			const stateIn = {
+					jetpack: {
+						settings: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 87654321;
+			const output = isRegeneratingPostByEmail( stateIn, siteId );
+			expect( output ).to.be.false;
+		} );
+
+		it( 'should return null if that site is not known', () => {
+			const stateIn = {
+					jetpack: {
+						settings: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 88888888;
+			const output = isRegeneratingPostByEmail( stateIn, siteId );
 			expect( output ).to.be.null;
 		} );
 	} );
