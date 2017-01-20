@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 
@@ -10,12 +11,13 @@ import { identity } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import analytics from 'lib/analytics';
 import Card from 'components/card';
 
 import BlogImage from '../design-type-with-store/blog-image';
 import PageImage from '../design-type-with-store/page-image';
 import GridImage from '../design-type-with-store/grid-image';
+
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class DesignTypeStep extends Component {
 	static propTypes = {
@@ -36,21 +38,21 @@ class DesignTypeStep extends Component {
 		];
 	}
 
-	renderChoice = ( choice ) => {
-		return (
-			<Card className="design-type__choice" key={ choice.type }>
-				<a className="design-type__choice-link" href="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }>
-					{ choice.image }
-					<h2>{ choice.label }</h2>
-				</a>
-			</Card>
-		);
-	};
-
 	renderChoices() {
 		return (
 			<div className="design-type__list">
-				{ this.getChoices().map( this.renderChoice ) }
+				{ this.getChoices().map( ( choice ) => (
+						<Card className="design-type__choice" key={ choice.type }>
+							<a
+								className="design-type__choice-link"
+								ref="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }
+							>
+								{ choice.image }
+								<h2>{ choice.label }</h2>
+							</a>
+						</Card>
+					)
+				) }
 				<div className="design-type__choice is-spacergif" />
 			</div>
 		);
@@ -80,11 +82,18 @@ class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
-		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+		this.props.recordChosenDesignType( designType );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
 	}
 }
 
-export default localize( DesignTypeStep );
+export default connect(
+	null,
+	( dispatch ) => ( {
+		recordChosenDesignType: ( designType ) => {
+			dispatch( recordTracksEvent( 'calypso_triforce_select_design', { category: designType } ) );
+		}
+	} )
+)( localize( DesignTypeStep ) );
