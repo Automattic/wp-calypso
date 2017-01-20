@@ -11,8 +11,8 @@ var config = require( 'config' ),
 	SiteOrDomainComponent = require( 'signup/steps/site-or-domain' ),
 	SiteTitleComponent = require( 'signup/steps/site-title' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
-	ThemeSelectionComponent = require( 'signup/steps/theme-selection' ),
-	UserSignupComponent = require( 'signup/steps/user' );
+	ThemeSelectionComponent = require( 'signup/steps/theme-selection' );
+import UserSignupComponent from 'signup/steps/user';
 
 module.exports = {
 	'design-type': DesignTypeComponent,

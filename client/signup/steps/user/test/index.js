@@ -46,8 +46,7 @@ describe( '#signupStep User', () => {
 	} );
 
 	before( () => {
-		User = require( '../' );
-		User.prototype.translate = ( string ) => string;
+		User = require( '../' ).UserStep;
 	} );
 
 	it( 'should show community subheader text if User step is first in the flow', () => {
