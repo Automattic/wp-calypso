@@ -11,6 +11,6 @@ const spriteMap = {
  * @param {string} sprite The sprite reference
  * @returns {string} The URI to the audio file
  */
-export function getAudioSourceForSprite( sprite ) {
+export function getAudioSourceForSprite( state, sprite ) {
 	return spriteMap[ sprite ];
 }
