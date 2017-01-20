@@ -16,7 +16,11 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 				" } else { ",
 				this.indent( [
 					"// start chunk loading",
-					"var promise = new Promise( function( resolve, reject ) { installedChunks[ chunkId ] = [ resolve, reject ]; } );",
+					"var promise = new Promise( function( resolve, reject ) {",
+					this.indent( [
+						"installedChunks[ chunkId ] = [ resolve, reject ];"
+					] ),
+					"} );",
 					"installedChunks[ chunkId ][2] = promise;",
 					"window.__chunkErrors = window.__chunkErrors || {};",
 					"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=null;",
@@ -31,12 +35,12 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 						"script.onerror = script.onload = script.onreadystatechange = null;",
 						"delete installedChunks[ chunkId ];",
 						"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=new Error();",
-						"return Promise().resolve();"
+						"return Promise.resolve();"
 					] ),
 					"};",
 					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.min' ) + '.js';",
 					"head.appendChild( script );",
-					"return promise"
+					"return promise;"
 				] ),
 				"}"
 			] );
