@@ -9,8 +9,6 @@ import { combineReducers } from 'redux';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
 import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
@@ -37,8 +35,6 @@ export const items = createReducer( {}, {
 			[ urlKey ]: { isFollowing: false },
 		};
 	},
-	[ SERIALIZE ]: () => {},
-	[ DESERIALIZE ]: () => {},
 } );
 
 export default combineReducers( {
