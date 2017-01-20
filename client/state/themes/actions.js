@@ -650,7 +650,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
  *
  * @return {Function} Action thunk
  */
-function deleteTheme( themeId, siteId ) {
+export function deleteTheme( themeId, siteId ) {
 	return dispatch => {
 		dispatch( {
 			type: THEME_DELETE,
