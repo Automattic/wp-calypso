@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	clickOutside = require( 'click-outside' ),
-	closest = require( 'component-closest' ),
-	noop = require( 'lodash/noop' ),
+var React = require( 'react' ),
 	classnames = require( 'classnames' );
 
 import Modal from 'react-modal';
@@ -14,7 +10,6 @@ import Modal from 'react-modal';
  * Internal dependencies
  */
 var closeOnEsc = require( 'lib/mixins/close-on-esc' ),
-	Card = require( 'components/card' ),
 	trapFocus = require( 'lib/mixins/trap-focus' );
 
 var DialogBase = React.createClass( {
@@ -26,42 +21,14 @@ var DialogBase = React.createClass( {
 		return {
 			baseClassName: 'dialog',
 			isFullScreen: true,
-			autoFocus: true,
-			onClickOutside: noop
+			autoFocus: true
 		};
 	},
-
-	// componentDidMount: function() {
-	// 	// set focus after a short timeout in order to avoid
-	// 	// interrupting any CSS transitions (Chrome issue)
-	// 	this._focusTimeout = setTimeout( function() {
-	// 		this._focusTimeout = false;
-	// 		if ( this.props.autoFocus ) {
-	// 			ReactDom.findDOMNode( this.refs.content ).focus();
-	// 		}
-	//
-	// 		this._unbindClickHandler = clickOutside( ReactDom.findDOMNode( this.refs.dialog ), this._onBackgroundClick );
-	// 	}.bind( this ), 10 );
-	// 	document.documentElement.classList.add( 'no-scroll' );
-	// },
-
-	// componentWillUnmount: function() {
-	// 	if ( this._focusTimeout ) {
-	// 		clearTimeout( this._focusTimeout );
-	// 		this._focusTimeout = false;
-	// 	}
-	//
-	// 	if ( this._unbindClickHandler ) {
-	// 		this._unbindClickHandler();
-	// 		this._unbindClickHandler = null;
-	// 	}
-	// 	document.documentElement.classList.remove( 'no-scroll' );
-	// },
 
 	render: function() {
 		var baseClassName = this.props.baseClassName,
 			backdropClassName = baseClassName + '__backdrop',
-			dialogClassName = baseClassName,
+			dialogClassName = classnames( baseClassName, 'card' ), // Previous implementation used a `<Card />`, styling relies on this
 			contentClassName = baseClassName + '__content';
 
 		if ( this.props.additionalClassNames ) {
@@ -131,27 +98,6 @@ var DialogBase = React.createClass( {
 
 		return classes;
 	},
-
-	// _onBackgroundClick: function( event ) {
-	// 	// In cases of Dialogception (Dialog inside a Dialog), we want to
-	// 	// prevent a click outside the currently visible Dialog from closing
-	// 	// any dialogs below.
-	// 	var isBackdropOrLowerStackingContext = (
-	// 		! this.refs ||
-	// 		ReactDom.findDOMNode( this.refs.backdrop ).contains( event.target ) || // Clicked on this dialog's backdrop
-	// 		! closest( event.target, '.dialog__backdrop', true ) // Clicked offscreen, but not from another dialog
-	// 	);
-	//
-	// 	if ( ! isBackdropOrLowerStackingContext ) {
-	// 		return;
-	// 	}
-	//
-	// 	const shouldStayOpen = this.props.onClickOutside( event );
-	//
-	// 	if ( ! shouldStayOpen ) {
-	// 		this._close();
-	// 	}
-	// },
 
 	_onButtonClick: function( button ) {
 		if ( button.onClick ) {
