@@ -27,37 +27,35 @@ const jetpackPlansPersonalTab = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL ];
 const jetpackPlansPremiumTab = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 const jetpackMonthlyPlansPersonalTab = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY ];
 const jetpackMonthlyPlansPremiumTab = [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+const TAB_PERSONAL = 'personal';
+const TAB_BUSINESS = 'business';
 
 class PlansFeaturesMain extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { currentTab: 'personal' };
-		this.changePlanGroup = this.changePlanGroup.bind( this );
-	}
 
-	changePlanGroup() {
-		this.state.currentTab =
-			this.setState( {
-				currentTab: this.state.currentTab === 'personal'
-					? 'premium'
-					: 'personal'
-			}
-		);
+	state = { currentTab: TAB_PERSONAL }
+
+	changePlanGroup = () => {
+		this.setState( {
+			currentTab: this.state.currentTab === TAB_PERSONAL
+				? TAB_BUSINESS
+				: TAB_PERSONAL
+		} );
 	}
 
 	renderPlanTypeSelector() {
 		const { translate } = this.props;
+		const { currentTab } = this.state;
 
 		return (
 			<div>
 				<SegmentedControl primary className="plan-features-tab__selector">
 					<SegmentedControlItem
-						selected={ this.state.currentTab === 'personal' }
+						selected={ currentTab === TAB_PERSONAL }
 						onClick={ this.changePlanGroup }>
 							{ translate( 'Personal' ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
-						selected={ this.state.currentTab === 'premium' }
+						selected={ currentTab === TAB_BUSINESS }
 						onClick={ this.changePlanGroup }>
 							{ translate( 'Business' ) }
 					</SegmentedControlItem>
@@ -66,23 +64,19 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
-	isJetpackSite( site ) {
-		return site.jetpack;
-	}
-
 	getCurrentViewablePlans() {
 		let plans;
 		if ( this.props.intervalType === 'monthly' ) {
-			plans = this.state.currentTab === 'personal'
+			plans = this.state.currentTab === TAB_PERSONAL
 				? jetpackMonthlyPlansPersonalTab
 				: jetpackMonthlyPlansPremiumTab;
 		} else {
-			plans = this.state.currentTab === 'personal'
+			plans = this.state.currentTab === TAB_BUSINESS
 				? jetpackPlansPersonalTab
 				: jetpackPlansPremiumTab;
 		}
 
-		if ( this.props.hideFreePlan && this.state.currentTab === 'personal' ) {
+		if ( this.props.hideFreePlan && this.state.currentTab === TAB_PERSONAL ) {
 			plans = Object.assign( [], plans );
 			plans.shift();
 		}
@@ -99,23 +93,6 @@ class PlansFeaturesMain extends Component {
 			basePlansPath,
 			selectedFeature
 		} = this.props;
-
-		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
-			return (
-				<div className="plans-features-main__group">
-					<PlanFeatures
-						plans={ this.getCurrentViewablePlans() }
-						selectedFeature={ selectedFeature }
-						onUpgradeClick={ onUpgradeClick }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						basePlansPath={ basePlansPath }
-						intervalType={ intervalType }
-						site={ site }
-					/>
-				</div>
-			);
-		}
 
 		return (
 			<div className="plans-features-main__group">
@@ -337,7 +314,7 @@ class PlansFeaturesMain extends Component {
 	render() {
 		const { site, showFAQ } = this.props;
 		const renderFAQ = () =>
-			this.isJetpackSite( site )
+			site.jetpack
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
 		return (
