@@ -44,7 +44,7 @@ export const middleware = handlers => store => next => {
 			// if the action indicates that we should
 			// bypass the data layer, then pass it
 			// along the chain untouched
-			if ( true === dataLayer.doBypass ) {
+			if ( dataLayer && true === dataLayer.doBypass ) {
 				return next( action );
 			}
 		}
