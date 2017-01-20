@@ -60,6 +60,12 @@ class StatsReach extends Component {
 				<Card className={ classNames( 'stats-module', 'stats__overview' ) }>
 					<StatsTabs borderless>
 						<StatsTab
+							gridicon="user"
+							label={ translate( 'Total' ) }
+							loading={ isLoading }
+							value={ totalFollowers }>
+						</StatsTab>
+						<StatsTab
 							gridicon="my-sites"
 							label={ translate( 'WordPress.com' ) }
 							loading={ isLoadingFollowData }
@@ -76,13 +82,6 @@ class StatsReach extends Component {
 							label={ translate( 'Publicize' ) }
 							loading={ isLoadingPublicize }
 							value={ publicizeFollowCount } />
-						<StatsTab
-							className="all-time__is-best"
-							gridicon="user"
-							label={ translate( 'Total' ) }
-							loading={ isLoading }
-							value={ totalFollowers }>
-						</StatsTab>
 					</StatsTabs>
 				</Card>
 			</div>
