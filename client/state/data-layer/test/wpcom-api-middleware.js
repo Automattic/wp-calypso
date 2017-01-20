@@ -50,6 +50,32 @@ describe( 'WordPress.com API Middleware', () => {
 		expect( adder ).to.not.have.beenCalled;
 	} );
 
+	it( 'should not pass along non-local actions with non data-layer meta', () => {
+		const adder = spy();
+		const handlers = mergeHandlers( {
+			[ 'ADD' ]: [ adder ],
+		} );
+		const action = { type: 'ADD', meta: { semigroup: true } };
+
+		middleware( handlers )( store )( next )( action );
+
+		expect( next ).to.not.have.beenCalled;
+		expect( adder ).to.have.been.calledWith( store, action );
+	} );
+
+	it( 'should not pass along non-local actions with data-layer meta but no bypass', () => {
+		const adder = spy();
+		const handlers = mergeHandlers( {
+			[ 'ADD' ]: [ adder ],
+		} );
+		const action = { type: 'ADD', meta: { dataLayer: { data: 42 } } };
+
+		middleware( handlers )( store )( next )( action );
+
+		expect( next ).to.not.have.beenCalled;
+		expect( adder ).to.have.been.calledWith( store, action );
+	} );
+
 	it( 'should intercept actions in appropriate handler', () => {
 		const adder = spy();
 		const handlers = mergeHandlers( {
