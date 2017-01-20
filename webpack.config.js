@@ -45,19 +45,19 @@ const webpackConfig = {
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
-				use: path.join( __dirname, 'server', 'bundler', 'loader' )
+				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
 			},
 			{
 				test: /\.html$/,
-				use: 'html-loader'
+				loader: 'html-loader'
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				use: 'exports-loader?window.tinymce',
+				loader: 'exports-loader?window.tinymce',
 			},
 			{
 				include: /node_modules\/tinymce/,
-				use: 'imports-loader?this=>window',
+				loader: 'imports-loader?this=>window',
 			}
 		]
 	},
@@ -149,15 +149,15 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 const jsRule = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	use: 'babel-loader?' + JSON.stringify( {
+	loader: 'babel-loader',
+	options: {
 		cacheDirectory: './.babel-cache',
 		cacheIdentifier: cacheIdentifier,
 		plugins: [ [
 			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 			{ async: config.isEnabled( 'code-splitting' ) }
 		] ]
-	} )
-
+	}
 };
 
 if ( CALYPSO_ENV === 'development' ) {
@@ -176,12 +176,12 @@ if ( CALYPSO_ENV === 'development' ) {
 		webpackConfig.module.rules.push( {
 			test: /\.jsx?$/,
 			enforce: 'pre',
-			use: 'source-map-loader'
+			loader: 'source-map-loader'
 		} );
 	} else {
 		// Add react hot loader before babel-loader.
 		// It's loaded by default since `use-source-maps` is disabled by default.
-		//jsRule.use = [ 'react-hot-loader' ].concat( jsRule.use );
+		//jsRule.loader = [ 'react-hot-loader' ].concat( jsRule.loader );
 	}
 } else {
 	webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: false } ) );

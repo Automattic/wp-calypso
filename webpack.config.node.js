@@ -67,17 +67,18 @@ var webpackConfig = {
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
-				use: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
+				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				use: 'babel-loader?' + JSON.stringify( {
+				loader: 'babel-loader',
+				options: {
 					plugins: [ [
 						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 						{ async: false }
 					] ]
-				} )
+				}
 			},
 			{
 				test: /\.json$/,
