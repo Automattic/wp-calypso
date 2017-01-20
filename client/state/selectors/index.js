@@ -32,6 +32,7 @@ export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDomainOnlySite from './is-domain-only-site';
 export isPrivateSite from './is-private-site';
+export isPublicizeEnabled from './is-publicize-enabled';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
 export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
