@@ -9,6 +9,7 @@ import { noop } from 'lodash';
 */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'utils', function() {
 	let postUtils;
@@ -21,6 +22,7 @@ describe( 'utils', function() {
 				get: noop
 			} )
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

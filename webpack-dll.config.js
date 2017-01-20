@@ -4,13 +4,6 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
-/**
- * Internal Dependencies
- */
-const config = require( './server/config' );
-
-const bundleEnv = config( 'env' );
-
 module.exports = {
 	entry: {
 		vendor: [
@@ -30,19 +23,19 @@ module.exports = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].' + bundleEnv + '.js',
+		filename: '[name].js',
 		library: '[name]',
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	plugins: [
 		new webpack.DllPlugin( {
-			path: path.join( __dirname, 'build', 'dll', '[name].' + bundleEnv + '-manifest.json' ),
+			path: path.join( __dirname, 'build', 'dll', '[name]-manifest.json' ),
 			name: '[name]',
 			context: path.resolve( __dirname, 'client' )
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env': {
-				NODE_ENV: JSON.stringify( bundleEnv )
+				NODE_ENV: JSON.stringify( process.env.NODE_ENV )
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin()

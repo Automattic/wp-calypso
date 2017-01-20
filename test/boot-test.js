@@ -5,6 +5,11 @@ const Chai = require( 'chai' ),
 	immutableChai = require( './test/helpers/immutable-chai' ),
 	nock = require( 'nock' );
 
+const serverConfig = require( '../server/config' );
+const config = require( 'config' );
+
+config.load( serverConfig.getClientConfig() );
+
 module.exports = {
 	before: function() {
 		Chai.use( immutableChai );

@@ -1,5 +1,5 @@
-var config = require( 'config' ),
-	utils = require( './utils' );
+const config = require( 'config' );
+const	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
 	var dependencies,
@@ -9,6 +9,7 @@ function getSectionsModule( sections ) {
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		dependencies = [
 			"var page = require( 'page' ),",
+			"\tconfig = require( 'config' ),",
 			"\tReact = require( 'react' ),",
 			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
 			"\tLoadingError = require( 'layout/error' ),",
@@ -18,8 +19,12 @@ function getSectionsModule( sections ) {
 			'var _loadedSections = {};\n'
 		].join( '\n' );
 
-		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+		sections.filter( section => config.isEnabled( section.feature ) ).forEach( function( section ) {
+			const caseStatement = singleEnsure( section.name, section.feature );
+			if ( caseStatement ) {
+				loadSection += caseStatement;
+			}
+
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
@@ -51,13 +56,13 @@ function getSectionsModule( sections ) {
 		"\tcontroller = require( 'controller' );\n"
 	].join( '\n' );
 
-	sectionLoaders = getRequires( sections );
+	sectionLoaders = getRequires( sections.filter( section => config.isEnabled( section.feature ) ) );
 
 	return [
 		dependencies,
 		'module.exports = {',
 		'	get: function() {',
-		'		return ' + JSON.stringify( sections ) + ';',
+		'		return ' + JSON.stringify( sections.filter( section => config.isEnabled( section.feature ) ) ) + ';',
 		'	},',
 		'	load: function() {',
 		'		' + sectionLoaders,
@@ -81,6 +86,7 @@ function splitTemplate( path, section ) {
 		result;
 
 	result = [
+		'if (  config.isEnabled( ' + JSON.stringify( section.feature ) + ' ) ) {',
 		'page( ' + pathRegex + ', function( context, next ) {',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
@@ -107,7 +113,8 @@ function splitTemplate( path, section ) {
 		'		context.store.dispatch( activateNextLayoutFocus() );',
 		'		next();',
 		'	}, ' + JSON.stringify( section.name ) + ' );',
-		'} );\n'
+		'} );',
+		'}\n'
 	];
 
 	return result.join( '\n' );
@@ -133,21 +140,26 @@ function requireTemplate( section ) {
 		pathRegex = getPathRegex( path );
 
 		return acc.concat( [
+			'if ( config.isEnabled( ' + JSON.stringify( section.feature ) + ' ) ) {',
 			'page( ' + pathRegex + ', function( context, next ) {',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
-			'} );\n'
+			'} );',
+			'}',
+
 		] );
 	}, [] );
 
 	return result.join( '\n' );
 }
 
-function singleEnsure( chunkName ) {
+function singleEnsure( chunkName, feature ) {
 	var result = [
 		'case ' + JSON.stringify( chunkName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
+		'	return config.isEnabled( ' + JSON.stringify( feature ) + ' ) ?',
+		'  require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' )',
+		'  : null;',
 		'	break;\n'
 	];
 

@@ -12,6 +12,7 @@ import mockery from 'mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 /**
  * Module variables
@@ -46,6 +47,7 @@ describe( 'MediaLibraryList item selection', function() {
 		mockery.registerMock( 'components/infinite-list', EmptyComponent );
 		mockery.registerMock( './list-item', EmptyComponent );
 		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
+		mockConfig( mockery );
 
 		mount = require( 'enzyme' ).mount;
 		MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );

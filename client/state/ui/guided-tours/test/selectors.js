@@ -11,6 +11,7 @@ import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'selectors', () => {
 	let clock;
@@ -25,9 +26,9 @@ describe( 'selectors', () => {
 	} );
 
 	useMockery( mockery => {
-		mockery.registerSubstitute(
-				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/fixtures/config' );
+		mockConfig( mockery );
+		const configFixture = require( 'state/ui/guided-tours/test/fixtures/config' );
+		mockery.registerMock( 'layout/guided-tours/config', configFixture );
 
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;

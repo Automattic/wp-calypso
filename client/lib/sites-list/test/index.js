@@ -10,6 +10,7 @@ import { cloneDeep, forEach, noop } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'SitesList', () => {
 	let SitesList, Site, data;
@@ -21,6 +22,7 @@ describe( 'SitesList', () => {
 				get: noop
 			} )
 		} );
+		mockConfig( mockery );
 	} );
 	useFakeDom();
 

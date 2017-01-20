@@ -10,6 +10,7 @@ import mockery from 'mockery';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 let Dispatcher;
 
@@ -103,7 +104,9 @@ describe( 'post-list-store', () => {
 	let defaultPostListStore, getRemovedPosts, postListStoreFactory;
 
 	useFakeDom();
-	useMockery();
+	useMockery( m => {
+		mockConfig( m );
+	} );
 
 	before( () => {
 		mockery.registerMock( 'lib/wp', {

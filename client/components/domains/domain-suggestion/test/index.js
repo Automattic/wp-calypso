@@ -11,6 +11,7 @@ import { identity, noop } from 'lodash';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'Domain Suggestion', function() {
@@ -19,6 +20,7 @@ describe( 'Domain Suggestion', function() {
 	useFakeDom();
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'components/plans/premium-popover', EmptyComponent );
+		mockConfig( mockery );
 	} );
 
 	before( () => {

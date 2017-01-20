@@ -33,7 +33,7 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
-	{ path: 'vendor.' + config( 'env' ) + '.js' }
+	{ path: 'vendor.js' }
 ];
 
 let sections = sectionsModule.get();
@@ -82,7 +82,7 @@ function generateStaticUrls( request ) {
 	} );
 
 	// vendor dll
-	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
+	urls.vendor = urls[ 'vendor.js' ];
 	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.min.js' );
 
 	const assets = request.app.get( 'assets' );
@@ -98,6 +98,7 @@ function generateStaticUrls( request ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
 		}
 	} );
+
 
 	return urls;
 }
@@ -142,7 +143,8 @@ function getDefaultContext( request ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
-		tinymceEditorCss: context.urls[ 'editor.css' ]
+		tinymceEditorCss: context.urls[ 'editor.css' ],
+		config: config.getClientConfig(),
 	};
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {

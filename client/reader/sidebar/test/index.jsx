@@ -12,6 +12,7 @@ import { stub } from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'ReaderSidebar', ( ) => {
 	let ReaderSidebar;
@@ -44,6 +45,7 @@ describe( 'ReaderSidebar', ( ) => {
 			} ),
 			undocumented: noop
 		} );
+		mockConfig( mockery );
 	} );
 
 	before( ( ) => {

@@ -9,6 +9,7 @@ import sinon from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'StatList', () => {
 	const statListOptions = { siteID: 1, statType: 'statsClicks', date: '2014-07-04', period: 'day' };
@@ -18,6 +19,7 @@ describe( 'StatList', () => {
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/wp', require( './mocks/lib/wp' ) );
 		mockery.registerMock( 'lib/user', require( './mocks/lib/user' ) );
+		mockConfig( mockery );
 	} );
 
 	useFakeDom();

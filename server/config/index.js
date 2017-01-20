@@ -32,6 +32,17 @@ function anyEnabled() {
 	} );
 }
 
+function getClientConfig() {
+	return require( './parser' )( configPath, {
+		env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
+		includeSecrets: false,
+		enabledFeatures: process.env.ENABLE_FEATURES,
+		disabledFeatures: process.env.DISABLE_FEATURES
+	} );
+}
+
+
 module.exports = config;
 module.exports.isEnabled = isEnabled;
 module.exports.anyEnabled = anyEnabled;
+module.exports.getClientConfig = getClientConfig;

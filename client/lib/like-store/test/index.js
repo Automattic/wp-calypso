@@ -4,10 +4,17 @@
 const expect = require( 'chai' ).expect,
 	useFilesystemMocks = require( 'test/helpers/use-filesystem-mocks' );
 
+import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
+
 describe( 'index', function() {
 	var Dispatcher, LikeStore, FeedPostStoreActionType;
 
+	useMockery( mockery => {
+		mockConfig( mockery );
+	} );
 	useFilesystemMocks( __dirname );
+
 
 	before( () => {
 		LikeStore = require( '../like-store' );

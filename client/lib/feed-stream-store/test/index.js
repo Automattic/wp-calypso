@@ -14,11 +14,12 @@ import useMockery from 'test/helpers/use-mockery';
 let PostListStore, FeedPostStore, FeedSubscriptionStore;
 
 describe( 'FeedPostList', function() {
-	useFilesystemMocks( __dirname );
 
 	useMockery( mockery => {
 		mockery.registerMock( 'reader/stats', { recordTrack: sinon.spy() } );
 	} );
+
+	useFilesystemMocks( __dirname );
 
 	before( function() {
 		PostListStore = require( '../feed-stream' );

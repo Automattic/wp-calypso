@@ -8,9 +8,15 @@ var expect = require( 'chai' ).expect,
 
 var	Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
 
+import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
+
 describe( 'feed-post-store', function() {
 	useFakeDom();
 	useFileSystemMocks( __dirname );
+	useMockery( mockery => {
+		mockConfig( mockery );
+	} );
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );

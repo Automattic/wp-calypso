@@ -9,6 +9,7 @@ import { map, noop } from 'lodash';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'StatsParser', () => {
 	let statsParser, data;
@@ -19,6 +20,7 @@ describe( 'StatsParser', () => {
 				get: noop
 			} )
 		} );
+		mockConfig( mockery );
 	} );
 	useFakeDom();
 

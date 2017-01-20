@@ -36,7 +36,6 @@ function getExternals() {
 	externals[ 'webpack.config' ] = 'commonjs webpack.config';
 	// Exclude hot-reloader, as webpack will try and resolve this in production builds,
 	// and error.
-	// TODO: use WebpackDefinePlugin for CALYPSO_ENV, so we can make conditional requires work
 	externals[ 'bundler/hot-reloader' ] = 'commonjs bundler/hot-reloader';
 	// Exclude the devdocs search-index, as it's huge.
 	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
@@ -60,7 +59,7 @@ var webpackConfig = {
 	target: 'node',
 	output: {
 		path: path.join( __dirname, 'build' ),
-		filename: 'bundle-' + ( process.env.CALYPSO_ENV || 'development' ) + '.js',
+		filename: 'bundle.js',
 	},
 	module: {
 		loaders: [

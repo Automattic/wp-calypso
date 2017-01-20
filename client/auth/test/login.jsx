@@ -10,6 +10,7 @@ import { stub } from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockConfig from 'test/helpers/mocks/config';
 
 describe( 'LoginTest', function() {
 	let Login, loginStub, page, React, ReactDom, ReactClass, TestUtils;
@@ -21,6 +22,7 @@ describe( 'LoginTest', function() {
 			login: loginStub
 		} );
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
+		mockConfig( mockery );
 	} );
 
 	before( () => {
