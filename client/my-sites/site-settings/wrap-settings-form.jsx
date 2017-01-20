@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { flowRight, omit, keys, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
@@ -44,36 +45,52 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
-		componentWillReceiveProps( nextProps ) {
-			if ( nextProps.siteId !== this.props.siteId ) {
-				nextProps.clearDirtyFields();
-			}
-
-			if ( nextProps.settings !== this.props.settings ) {
-				let newState = getFormSettings( nextProps.settings );
-				//If we have any fields that the user has updated,
-				//do not wipe out those fields from the poll update.
-				newState = omit( newState, nextProps.dirtyFields );
-				nextProps.replaceFields( newState );
+		componentDidUpdate( prevProps ) {
+			if ( prevProps.siteId !== this.props.siteId ) {
+				this.props.clearDirtyFields();
 			}
 
 			if (
-				this.props.isSavingSettings &&
-				! nextProps.isSavingSettings
+				! shallowEqual( prevProps.settings, this.props.settings ) ||
+				! shallowEqual( prevProps.fields, this.props.fields )
 			) {
-				if ( nextProps.isSaveRequestSuccessful ) {
-					nextProps.successNotice( nextProps.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
-					nextProps.clearDirtyFields();
-					nextProps.markSaved();
+				this.updateDirtyFields();
+			}
+
+			if (
+				! this.props.isSavingSettings &&
+				prevProps.isSavingSettings
+			) {
+				if ( this.props.isSaveRequestSuccessful ) {
+					this.props.successNotice( this.props.translate( 'Settings saved!' ), { id: 'site-settings-save' } );
 				} else {
-					let text = nextProps.translate( 'There was a problem saving your changes. Please try again.' );
-					switch ( nextProps.siteSettingsSaveError ) {
+					let text = this.props.translate( 'There was a problem saving your changes. Please try again.' );
+					switch ( this.props.siteSettingsSaveError ) {
 						case 'invalid_ip':
-							text = nextProps.translate( 'One of your IP Addresses was invalid. Please try again.' );
+							text = this.props.translate( 'One of your IP Addresses was invalid. Please try again.' );
 							break;
 					}
-					nextProps.errorNotice( text, { id: 'site-settings-save' } );
+					this.props.errorNotice( text, { id: 'site-settings-save' } );
 				}
+			}
+		}
+
+		updateDirtyFields() {
+			const unpersistedFields = this.props.fields;
+			const persistedFields = getFormSettings( this.props.settings );
+			// Compute the dirty fields by comparing the persisted and not persisted fields
+			const dirtyFields = Object.keys( unpersistedFields )
+				.filter( field => unpersistedFields[ field ] !== persistedFields[ field ] );
+			// Set the new non dirty fields
+			this.props.replaceFields( omit( persistedFields, dirtyFields ) );
+
+			// Update the dirty fields state without updating their values
+			this.props.clearDirtyFields();
+			this.props.updateFields( pick( unpersistedFields, dirtyFields ) );
+			if ( dirtyFields.length === 0 ) {
+				this.props.markSaved();
+			} else {
+				this.props.markChanged();
 			}
 		}
 
@@ -102,20 +119,17 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				currentTargetValue = event.currentTarget.value;
 
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
-			this.props.markChanged();
 		};
 
 		handleToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
-			this.props.markChanged();
 		};
 
 		onChangeField = field => event => {
 			this.props.updateFields( {
 				[ field ]: event.target.value
 			} );
-			this.props.markChanged();
 		};
 
 		uniqueEventTracker = message => () => {
