@@ -14,19 +14,15 @@ class Dialog extends Component {
 	static propTypes = {
 		isVisible: PropTypes.bool,
 		baseClassName: PropTypes.string,
-		enterTimeout: PropTypes.number,
 		leaveTimeout: PropTypes.number,
-		transitionLeave: PropTypes.bool,
 		onClose: PropTypes.func,
 		onClosed: PropTypes.func,
-		onClickOutside: PropTypes.func
 	}
 
 	static defaultProps = {
 		isVisible: false,
 		leaveTimeout: 200,
 		onClosed: noop,
-		onClickOutside: noop
 	}
 
 	checkOnClosed = ( ref ) => {
