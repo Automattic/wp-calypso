@@ -62,7 +62,7 @@ export default React.createClass( {
 				onChange={ this.setCaption }
 				onBlur={ this.saveCaption }
 				onMouseDown={ ( event ) => event.stopPropagation() }
-				className="editor-media-modal-gallery__caption" />
+				className="media-modal-gallery__caption" />
 		);
 	}
 } );

@@ -28,8 +28,8 @@ const EditorMediaModalGalleryPreviewIndividual = React.createClass( {
 		} );
 
 		return (
-			<div className="editor-media-modal-gallery__preview-individual">
-				<div className="editor-media-modal-gallery__preview-individual-content">
+			<div className="media-modal-gallery__preview-individual">
+				<div className="media-modal-gallery__preview-individual-content">
 					{ items }
 				</div>
 			</div>

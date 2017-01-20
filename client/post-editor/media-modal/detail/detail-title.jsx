@@ -89,7 +89,7 @@ export default React.createClass( {
 					value={ this.getTitleValue() }
 					placeholder={ this.translate( 'Untitled' ) }
 					readOnly={ ! userCan( 'upload_files', this.props.site ) }
-					className="editor-media-modal-detail__title-input" />
+					className="media-modal-detail__title-input" />
 			</TrackInputChanges>
 		);
 	}

@@ -43,7 +43,7 @@ export default React.createClass( {
 		const { site, item, showRemoveButton } = this.props;
 
 		return (
-			<div className="editor-media-modal-gallery__edit-item">
+			<div className="media-modal-gallery__edit-item">
 				<MediaLibraryListItem
 					media={ item }
 					scale={ 1 }

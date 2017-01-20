@@ -70,7 +70,7 @@ export const EditorMediaModalDetail = React.createClass( {
 		const item = items[ selectedIndex ];
 
 		return (
-			<div className="editor-media-modal-detail">
+			<div className="media-modal-detail">
 				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
 						site={ site }

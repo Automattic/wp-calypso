@@ -119,12 +119,12 @@ const EditorMediaModalGallery = React.createClass( {
 		const { site, items, settings } = this.props;
 
 		return (
-			<div className="editor-media-modal-gallery">
+			<div className="media-modal-gallery">
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) } />
 				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) } />
-				<div className="editor-media-modal-gallery__content editor-media-modal__content">
+				<div className="media-modal-gallery__content media-modal__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }
 						items={ items }
@@ -132,7 +132,7 @@ const EditorMediaModalGallery = React.createClass( {
 						onUpdateSetting={ this.updateSetting }
 						invalidItemDropped={ this.state.invalidItemDropped }
 						onDismissInvalidItemDropped={ () => this.setState( { invalidItemDropped: false } ) } />
-					<div className="editor-media-modal-gallery__sidebar">
+					<div className="media-modal-gallery__sidebar">
 						<EditorMediaModalGalleryFields
 							site={ site }
 							settings={ settings }

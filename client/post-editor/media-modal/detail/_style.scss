@@ -1,4 +1,4 @@
-.editor-media-modal-detail .header-cake.card {
+.media-modal-detail .header-cake.card {
 	padding-top: 0;
 	padding-bottom: 0;
 
@@ -7,11 +7,11 @@
 	}
 }
 
-.editor-media-modal-detail .header-cake__title {
+.media-modal-detail .header-cake__title {
 	padding: 6px;
 }
 
-.editor-media-modal-detail .editor-media-modal-detail__title-input {
+.media-modal-detail .media-modal-detail__title-input {
 	width: 100%;
 	color: inherit;
 	word-break: normal;
@@ -33,7 +33,7 @@
 	}
 }
 
-.editor-media-modal-detail__preview-wrapper {
+.media-modal-detail__preview-wrapper {
 	flex: 2 0 0%;
 	position: relative;
 	border-bottom: 1px solid lighten( $gray, 20% );
@@ -46,8 +46,8 @@
 	}
 }
 
-.editor-media-modal-detail__preview-wrapper .spinner,
-.editor-media-modal-detail__preview {
+.media-modal-detail__preview-wrapper .spinner,
+.media-modal-detail__preview {
 	position: absolute;
 		top: 50%;
 		left: 50%;
@@ -60,7 +60,7 @@
 	}
 }
 
-.editor-media-modal-detail__preview {
+.media-modal-detail__preview {
 	&.is-image {
 		width: auto;
 		height: auto;
@@ -73,8 +73,8 @@
 	}
 }
 
-.editor-media-modal-detail__previous,
-.editor-media-modal-detail__next {
+.media-modal-detail__previous,
+.media-modal-detail__next {
 	position: absolute;
 		top: 50%;
 	width: 46px;
@@ -94,7 +94,7 @@
 	}
 }
 
-.editor-media-modal-detail__previous {
+.media-modal-detail__previous {
 	left: 10px #{"/*rtl:ignore*/"};
 
 	&:before {
@@ -102,7 +102,7 @@
 	}
 }
 
-.editor-media-modal-detail__next {
+.media-modal-detail__next {
 	right: 10px #{"/*rtl:ignore*/"};
 
 	&:before {
@@ -110,7 +110,7 @@
 	}
 }
 
-.editor-media-modal-detail__edition-bar {
+.media-modal-detail__edition-bar {
 	display: none;
 
 	&.is-desktop {
@@ -149,7 +149,7 @@
 	}
 }
 
-.editor-media-modal-detail__sidebar {
+.media-modal-detail__sidebar {
 	flex: 2 0 0%;
 	padding: 16px;
 
@@ -161,34 +161,34 @@
 	}
 }
 
-.editor-media-modal-detail__sidebar textarea {
+.media-modal-detail__sidebar textarea {
 	resize: vertical;
 }
 
-.editor-media-modal-detail__file-info {
+.media-modal-detail__file-info {
 	display: block;
 	margin: 0;
 	padding: 8px 0;
 }
 
-.editor-media-modal-detail__file-info tbody {
+.media-modal-detail__file-info tbody {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.editor-media-modal-detail__file-info tr {
+.media-modal-detail__file-info tr {
 	display: block;
 	flex-basis: 50%;
 	width: 100%;
 }
 
-.editor-media-modal-detail__file-info th,
-.editor-media-modal-detail__file-info td {
+.media-modal-detail__file-info th,
+.media-modal-detail__file-info td {
 	width: 90%;
 	display: block;
 }
 
-.editor-media-modal-detail__file-info th {
+.media-modal-detail__file-info th {
 	color: $gray;
 	display: block;
 	font-size: 11px;
@@ -196,7 +196,7 @@
 	text-transform: uppercase;
 }
 
-.editor-media-modal-detail__file-info td {
+.media-modal-detail__file-info td {
 	position: relative;
 	overflow: hidden;
 	margin-bottom: 16px;
@@ -211,7 +211,7 @@
 	}
 }
 
-.editor-media-modal-detail__file-info.is-loading td {
+.media-modal-detail__file-info.is-loading td {
 	position: relative;
 	color: transparent;
 
@@ -226,11 +226,11 @@
 	}
 }
 
-.editor-media-modal-detail__file-info tr:last-child td,
-.editor-media-modal-detail__file-info tr:nth-last-child( 2 ):nth-child( odd ) td {
+.media-modal-detail__file-info tr:last-child td,
+.media-modal-detail__file-info tr:nth-last-child( 2 ):nth-child( odd ) td {
 	margin-bottom: 0;
 }
 
-.editor-media-modal-detail__file-info abbr {
+.media-modal-detail__file-info abbr {
 	border-bottom-width: 0;
 }

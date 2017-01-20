@@ -151,7 +151,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		const sizes = this.getSizeOptions();
 
 		return (
-			<div className="editor-media-modal-gallery__fields">
+			<div className="media-modal-gallery__fields">
 				{ this.renderDropdown( this.props.translate( 'Layout' ), types, 'type' ) }
 				{ this.renderColumnsOption() }
 				{ this.renderRandomOption() }

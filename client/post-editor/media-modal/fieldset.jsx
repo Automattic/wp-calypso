@@ -16,8 +16,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<fieldset className={ classNames( 'editor-media-modal__fieldset', this.props.className ) }>
-				<legend className="editor-media-modal__fieldset-legend">{ this.props.legend }</legend>
+			<fieldset className={ classNames( 'media-modal__fieldset', this.props.className ) }>
+				<legend className="media-modal__fieldset-legend">{ this.props.legend }</legend>
 				{ this.props.children }
 			</fieldset>
 		);

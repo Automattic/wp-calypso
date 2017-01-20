@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		let classes = classNames( 'editor-media-modal-detail__file-info', {
+		let classes = classNames( 'media-modal-detail__file-info', {
 			'is-loading': ! this.props.item
 		} );
 

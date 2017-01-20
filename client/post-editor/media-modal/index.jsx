@@ -437,7 +437,7 @@ export const EditorMediaModal = React.createClass( {
 				isVisible={ this.props.visible }
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
-				additionalClassNames="editor-media-modal"
+				additionalClassNames="media-modal"
 				onClickOutside={ this.preventClose }>
 				{ this.renderContent() }
 			</Dialog>

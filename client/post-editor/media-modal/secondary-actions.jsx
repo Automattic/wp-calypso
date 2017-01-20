@@ -95,7 +95,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			buttons.push( {
 				key: 'delete',
 				value: this.translate( 'Delete' ),
-				className: 'is-link editor-media-modal__delete',
+				className: 'is-link media-modal__delete',
 				disabled: disabled || some( selectedItems, 'transient' ),
 				onClick: onDelete
 			} );
@@ -117,7 +117,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			return;
 		}
 
-		const classes = classNames( 'editor-media-modal__secondary-action', 'button', 'is-mobile', 'is-link', {
+		const classes = classNames( 'media-modal__secondary-action', 'button', 'is-mobile', 'is-link', {
 			'is-active': this.state.isMobilePopoverVisible
 		} );
 
@@ -161,7 +161,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			return React.createElement( 'input', Object.assign( {
 				type: 'button'
 			}, button, {
-				className: classNames( 'editor-media-modal__secondary-action', 'button', 'is-desktop', button.className )
+				className: classNames( 'media-modal__secondary-action', 'button', 'is-desktop', button.className )
 			} ) );
 		} );
 	},
@@ -172,7 +172,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			const eventProperties = { cta_name: 'plan-media-storage' };
 			return (
 				<PlanStorage
-					className="editor-media-modal__plan-storage"
+					className="media-modal__plan-storage"
 					onClick={ this.navigateToPlans }
 					siteId={ this.props.site.ID } >
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
@@ -184,7 +184,7 @@ const MediaModalSecondaryActions = React.createClass( {
 
 	render() {
 		return (
-			<div className="editor-media-modal__secondary-actions">
+			<div className="media-modal__secondary-actions">
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
 				{ this.renderPlanStorage() }

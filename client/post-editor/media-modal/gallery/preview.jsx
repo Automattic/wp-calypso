@@ -41,7 +41,7 @@ export default React.createClass( {
 
 	renderPreviewModeToggle() {
 		return (
-			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
+			<SegmentedControl className="media-modal-gallery__preview-toggle" compact={ true }>
 				<SegmentedControlItem
 					selected={ ! this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: false } ) }>
@@ -88,13 +88,13 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="editor-media-modal-gallery__preview">
+			<div className="media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
 					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
 						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
 					</Notice>
 				) }
-				<div className="editor-media-modal-gallery__preview-wrapper">
+				<div className="media-modal-gallery__preview-wrapper">
 					{ this.renderPreview() }
 				</div>
 				{ this.renderPreviewModeToggle() }

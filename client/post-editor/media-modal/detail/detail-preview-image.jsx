@@ -60,7 +60,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		// - `is-blob` when the image is shown using local `blob` data.
 
 		const classes = classNames(
-			'editor-media-modal-detail__preview',
+			'media-modal-detail__preview',
 			'is-image',
 			{ 'is-uploading': uploading },
 			{ 'is-loading': loading },
@@ -71,7 +71,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		// in order to improve the UX between the states that an image could have,
 		// for instance when the image is restored.
 		const fakeClasses = classNames(
-			'editor-media-modal-detail__preview',
+			'media-modal-detail__preview',
 			'is-image',
 			'is-fake',
 			{ 'is-uploading': uploading },
