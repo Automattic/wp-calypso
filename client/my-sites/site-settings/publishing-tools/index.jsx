@@ -18,6 +18,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isModuleActive } from 'state/jetpack/modules/selectors';
+import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
+import { isRegeneratingPostByEmail } from 'state/jetpack/settings/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import ClipboardButtonInput from 'components/clipboard-button-input';
@@ -25,7 +27,7 @@ import PressThis from '../press-this';
 
 class PublishingTools extends Component {
 	onRegenerateButtonClick = () => {
-		// TODO: integrate regeneration
+		this.props.regeneratePostByEmail( this.props.selectedSiteId );
 	}
 
 	isFormPending() {
@@ -62,7 +64,7 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailSettings() {
-		const { fields, translate } = this.props;
+		const { fields, translate, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
 
 		return (
@@ -72,15 +74,15 @@ class PublishingTools extends Component {
 				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
-					disabled={ isFormPending }
+					disabled={ regeneratingPostByEmail }
 					value={ fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '' }
 				/>
 				<Button
 					compact
 					onClick={ this.onRegenerateButtonClick }
-					disabled={ isFormPending }
+					disabled={ isFormPending || regeneratingPostByEmail }
 				>
-					{ isFormPending
+					{ regeneratingPostByEmail
 						? translate( 'Regenerating…' )
 						: translate( 'Regenerate address' )
 					}
@@ -166,10 +168,15 @@ PublishingTools.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const regeneratingPostByEmail = isRegeneratingPostByEmail( state, selectedSiteId );
 
 		return {
 			selectedSiteId,
+			regeneratingPostByEmail,
 			postByEmailAddressModuleActive: !! isModuleActive( state, selectedSiteId, 'post-by-email' ),
 		};
+	},
+	{
+		regeneratePostByEmail
 	}
 )( localize( PublishingTools ) );
