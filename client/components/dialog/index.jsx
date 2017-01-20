@@ -36,19 +36,13 @@ class Dialog extends Component {
 	}
 
 	render() {
-		const {
-			isVisible
-		} = this.props;
-
 		return (
 			<RootChild>
-				{ isVisible && (
-					<DialogBase
-						{ ...this.props }
-						ref={ this.checkOnClosed }
-						key="dialog"
-						onDialogClose={ this.onDialogClose } />
-				) }
+				<DialogBase
+					{ ...this.props }
+					ref={ this.checkOnClosed }
+					key="dialog"
+					onDialogClose={ this.onDialogClose } />
 			</RootChild>
 		);
 	}

@@ -59,11 +59,7 @@ import {
 } from './utils';
 import i18n from 'i18n-calypso';
 import { getSiteSlug } from 'state/sites/selectors';
-
-let accept;
-if ( typeof window !== 'undefined' ) {
-	accept = require( 'lib/accept' ); // This would otherwise break tests (because of a DOM dependency)
-}
+import accept from 'lib/accept';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
