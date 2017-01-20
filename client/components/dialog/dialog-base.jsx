@@ -14,19 +14,14 @@ class DialogBase extends Component {
 	}
 
 	render() {
-		const baseClassName = this.props.baseClassName,
-			contentClassName = baseClassName + '__content';
-
-		let backdropClassName = baseClassName + '__backdrop',
-			dialogClassName = classnames( baseClassName, 'card' ); // Previous implementation used a `<Card />`, styling relies on this
-
-		if ( this.props.additionalClassNames ) {
-			dialogClassName = classnames( this.props.additionalClassNames, dialogClassName );
-		}
-
-		if ( this.props.isFullScreen ) {
-			backdropClassName = classnames( 'is-full-screen', backdropClassName );
-		}
+		const { additionalClassNames, baseClassName, isFullScreen } = this.props,
+			contentClassName = baseClassName + '__content',
+			// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
+			dialogClassName = classnames( baseClassName, 'card', additionalClassNames ),
+			backdropClassName = classnames(
+				baseClassName + '__backdrop',
+				{ 'is-full-screen': !! isFullScreen },
+			);
 
 		return (
 			<Modal isOpen={ this.props.isVisible }
