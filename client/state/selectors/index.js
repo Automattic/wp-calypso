@@ -38,5 +38,6 @@ export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
+export isSiteBlocked from './is-site-blocked';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
