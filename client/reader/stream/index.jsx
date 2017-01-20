@@ -24,7 +24,7 @@ import Post from './post';
 import PostPlaceholder from './post-placeholder';
 import PostStore from 'lib/feed-post-store';
 import UpdateNotice from 'reader/update-notice';
-import PostBlocked from './post-blocked';
+import PostBlocked from 'blocks/reader-post-card/blocked';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
 import XPostHelper from 'reader/xpost-helper';
