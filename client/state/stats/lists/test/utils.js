@@ -1114,5 +1114,59 @@ describe( 'utils', () => {
 				} );
 			} );
 		} );
+
+		describe( 'statsVisits()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsVisits();
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if the payload no data attribute', () => {
+				const parsedData = normalizers.statsVisits( { bad: [] } );
+
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsVisits( {
+					fields: [ 'period', 'views', 'visitors' ],
+					data: [
+						[ '2016-12-22', 0, 0 ],
+						[ '2016-12-23', 10, 6 ]
+					]
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						classNames: [],
+						comments: null,
+						labelDay: 'Dec 22',
+						labelMonth: 'Dec',
+						labelWeek: 'Dec 22',
+						labelYear: '2016',
+						likes: null,
+						period: '2016-12-22',
+						posts: null,
+						views: 0,
+						visitors: 0,
+						visits: null
+					},
+					{
+						classNames: [],
+						comments: null,
+						labelDay: 'Dec 23',
+						labelMonth: 'Dec',
+						labelWeek: 'Dec 23',
+						labelYear: '2016',
+						likes: null,
+						period: '2016-12-23',
+						posts: null,
+						views: 10,
+						visitors: 6,
+						visits: null
+					}
+				] );
+			} );
+		} );
 	} );
 } );
