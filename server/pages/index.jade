@@ -60,7 +60,12 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			#wpcom.wpcom-site!= renderedLayout
 		else
 			#wpcom.wpcom-site
-				.wpcom-site__logo.noticon.noticon-wordpress
+				.layout
+					.masterbar
+					.layout__content
+						.wpcom-site__logo.noticon.noticon-wordpress
+						.layout__secondary
+						ul.sidebar
 		if badge
 			div.environment-badge
 				if abTestHelper
