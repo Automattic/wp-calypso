@@ -101,8 +101,7 @@ class DisconnectJetpackDialog extends Component {
 			<Dialog
 				isVisible={ this.state.showJetpackDisconnectDialog }
 				buttons={ deactivationButtons }
-				onClose={ this.close }
-				transitionLeave={ false }>
+				onClose={ this.close }>
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
 				<p>{ this.renderInfo() }</p>
 			</Dialog>
