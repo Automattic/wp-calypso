@@ -29,13 +29,15 @@ let watcher;
 
 function addFileSelector( file ) {
 	log( `adding '${ file }' file selector` );
-	exports.generateIndexFile( file );
+	exports.generateSelectorFile( file, exports.generateIndexFile );
 }
 
 function removeFileSelector( file ) {
 	log( `removing '${ file }' file selector` );
 	exports.generateIndexFile( file );
 }
+
+const methodNameFromFilePath = filePath => camelCase( path.basename( filePath, '.js' ) );
 
 const buildExportLine = file => {
 	const basename = path.basename( file, '.js' );
@@ -56,6 +58,34 @@ function saveIndexFile( content ) {
 		log( `'${ indexFileJs }' has been updated.` );
 	} );
 }
+
+exports.generateSelectorFile = ( filePath, fn ) => {
+	log( `checking aytogeneration of ${ filePath } file` );
+
+	fs.readFile( filePath, encoding, ( error, fileContent ) => {
+		if ( error ) {
+			fn( filePath );
+			return log( `Error reading ${ filePath } file.` );
+		}
+
+		if ( fileContent.length ) {
+			fn( filePath );
+			return log( `File '${ filePath }'' is not empty. Ignoring autogeneration ...` );
+		}
+
+		const content = data.generateSelectorFileContent( methodNameFromFilePath( filePath ) );
+
+		fs.writeFile( filePath, content, encoding, ( writeError ) => {
+			if ( writeError ) {
+				fn( filePath );
+				return log( `Error trying to save ${ filePath } file.` );
+			}
+
+			fn( filePath );
+			log( `'${ filePath }' has been generated.` );
+		} );
+	} );
+};
 
 /*
  * Generate the content of the `index.js` file

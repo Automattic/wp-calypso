@@ -23,3 +23,14 @@ exports.readme =
 	' * but instead use a Babel plugin "transform-imports" to transform the import\n' +
 	' * to its individual file.\n' +
 	' */\n\n';
+
+exports.generateSelectorFileContent = selectorName =>
+	'/**\n' +
+	' * __DOCUMENT__\n' +
+	' *\n' +
+	' * @param  {Object} state - Global state tree\n' +
+	' * @return {Boolean} __DOCUMENT__\n' +
+	' */\n' +
+	`export const ${ selectorName } = ( state ) => {\n` +
+	'\treturn true;\n' +
+	'};\n';
