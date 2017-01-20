@@ -110,6 +110,10 @@ export default React.createClass( {
 		this.setState( { form } );
 	},
 
+	needsOnlyGoogleAppsDetails() {
+		return cartItems.hasGoogleApps( this.props.cart ) && ! cartItems.hasDomainRegistration( this.props.cart );
+	},
+
 	handleFormControllerError( error ) {
 		throw error;
 	},
@@ -203,6 +207,58 @@ export default React.createClass( {
 		);
 	},
 
+	renderNameFields() {
+		const textOnly = true;
+
+		return (
+			<div>
+				<Input
+					autoFocus
+					label={ this.translate( 'First Name', { textOnly } ) }
+					{ ...this.getFieldProps( 'first-name' ) } />
+
+				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...this.getFieldProps( 'last-name' ) } />
+			</div>
+		);
+	},
+
+	renderOrganizationField() {
+		return <HiddenInput
+			label={ this.translate( 'Organization' ) }
+			text={ this.translate(
+				'Registering this domain for a company? + Add Organization Name',
+				'Registering these domains for a company? + Add Organization Name',
+				{
+					context: 'Domain contact information page',
+					comment: 'Count specifies the number of domain registrations',
+					count: this.getNumberOfDomainRegistrations(),
+					textOnly: true
+				}
+			) }
+			{ ...this.getFieldProps( 'organization' ) } />;
+	},
+
+	renderEmailField() {
+		return (
+			<Input label={ this.translate( 'Email', { textOnly: true } ) } { ...this.getFieldProps( 'email' ) } />
+		);
+	},
+
+	renderCountryField() {
+		return (
+			<CountrySelect
+				label={ this.translate( 'Country', { textOnly: true } ) }
+				countriesList={ countriesList }
+				{ ...this.getFieldProps( 'country-code' ) } />
+		);
+	},
+
+	renderFaxField() {
+		return (
+			<Input label={ this.translate( 'Fax', { textOnly: true } ) } { ...this.getFieldProps( 'fax' ) } />
+		);
+	},
+
 	renderPhoneField() {
 		const label = this.translate( 'Phone', { textOnly: true } );
 
@@ -231,60 +287,57 @@ export default React.createClass( {
 		);
 	},
 
-	fields() {
-		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
-			fieldProps = ( name ) => this.getFieldProps( name ),
-			textOnly = true;
+	renderAddressFields() {
+		const textOnly = true;
 
 		return (
 			<div>
-				<Input
-					autoFocus
-					label={ this.translate( 'First Name', { textOnly } ) }
-					{ ...fieldProps( 'first-name' ) }/>
-
-				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
-
-				<HiddenInput
-					label={ this.translate( 'Organization' ) }
-					text={ this.translate(
-						'Registering this domain for a company? + Add Organization Name',
-						'Registering these domains for a company? + Add Organization Name',
-						{
-							context: 'Domain contact information page',
-							comment: 'Count specifies the number of domain registrations',
-							count: this.getNumberOfDomainRegistrations(),
-							textOnly: true
-						}
-					) }
-					{ ...fieldProps( 'organization' ) }/>
-
-				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
-
-				{ this.renderPhoneField() }
-
-				<CountrySelect
-					label={ this.translate( 'Country', { textOnly } ) }
-					countriesList={ countriesList }
-					{ ...fieldProps( 'country-code' ) }/>
-
-				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
-				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...fieldProps( 'address-1' ) }/>
+				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
 
 				<HiddenInput
 					label={ this.translate( 'Address Line 2', { textOnly } ) }
 					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
 					maxLength={ 40 }
-					{ ...fieldProps( 'address-2' ) }/>
+					{ ...this.getFieldProps( 'address-2' ) }/>
+			</div>
+		);
+	},
 
-				<Input label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
+	renderCityField() {
+		return (
+			<Input label={ this.translate( 'City', { textOnly: true } ) } { ...this.getFieldProps( 'city' ) } />
+		);
+	},
 
-				<StateSelect
-					label={ this.translate( 'State', { textOnly: true } ) }
-					countryCode={ countryCode }
-					{ ...fieldProps( 'state' ) }/>
+	renderStateField() {
+		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
 
-				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
+		return <StateSelect
+			label={ this.translate( 'State', { textOnly: true } ) }
+			countryCode={ countryCode }
+			{ ...this.getFieldProps( 'state' ) }/>;
+	},
+
+	renderPostalCodeField() {
+		return (
+			<Input label={ this.translate( 'Postal Code', { textOnly: true } ) } { ...this.getFieldProps( 'postal-code' ) } />
+		);
+	},
+
+	fields() {
+		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
+
+		return (
+			<div>
+				{ this.renderNameFields() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
+				{ this.renderCountryField() }
+				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
+				{ this.renderPostalCodeField() }
 
 				{ this.renderSubmitButton() }
 			</div>
@@ -378,22 +431,30 @@ export default React.createClass( {
 	},
 
 	render() {
-		const classSet = classNames( {
-			'domain-details': true,
-			selected: true
-		} );
+		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
+			classSet = classNames( {
+				'domain-details': true,
+				selected: true,
+				'only-google-apps-details': needsOnlyGoogleAppsDetails
+			} ),
+			titleOptions = {
+				context: 'Domain contact information page',
+				textOnly: true
+			};
+
+		let title;
+		if ( needsOnlyGoogleAppsDetails ) {
+			title = this.translate( 'G Suite Account Information', titleOptions );
+		} else {
+			title = this.translate( 'Domain Contact Information', titleOptions );
+		}
 
 		return (
 			<div>
 				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
 				<PaymentBox
 					classSet={ classSet }
-					title={ this.translate(
-						'Domain Contact Information',
-						{
-							context: 'Domain contact information page',
-							textOnly: true
-						} ) }>
+					title={ title }>
 					{ this.content() }
 				</PaymentBox>
 			</div>
