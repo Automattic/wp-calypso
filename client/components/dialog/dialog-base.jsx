@@ -1,19 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
-
+import React from 'react';
 import Modal from 'react-modal';
-
-/**
- * Internal dependencies
- */
-var closeOnEsc = require( 'lib/mixins/close-on-esc' ),
-	trapFocus = require( 'lib/mixins/trap-focus' );
+import classnames from 'classnames';
 
 var DialogBase = React.createClass( {
-	mixins: [ closeOnEsc( '_close' ), trapFocus ],
 
 	displayName: 'DialogBase',
 
