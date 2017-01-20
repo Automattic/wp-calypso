@@ -78,7 +78,7 @@ class StatsConnectedModule extends Component {
 
 	isAllTimeList() {
 		const { summary, statType } = this.props;
-		return summary && includes( [ 'statsCountryViews' ], statType );
+		return summary && includes( [ 'statsCountryViews', 'statsTopPosts' ], statType );
 	}
 
 	render() {

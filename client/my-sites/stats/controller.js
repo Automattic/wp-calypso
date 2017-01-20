@@ -454,9 +454,6 @@ module.exports = {
 			switch ( context.params.module ) {
 
 				case 'posts':
-					visitsList = new StatsList( {
-						statType: 'statsVisits', unit: activeFilter.period, siteID: siteId,
-						quantity: 10, date: endDate, domain: siteDomain } );
 					summaryList = fakeStatsList;
 					break;
 
