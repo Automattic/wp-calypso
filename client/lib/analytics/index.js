@@ -23,8 +23,7 @@ const config = require( 'config' ),
 let _superProps,
 	_user;
 
-import { retarget } from 'lib/analytics/ad-tracking';
-import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
+import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
 import emitter from 'lib/mixins/emitter';
 
 // Load tracking scripts
@@ -190,6 +189,9 @@ const analytics = {
 
 			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
 			retarget();
+
+			// Track the page view with DCM Floodlight as well
+			recordPageViewInFloodlight( urlPath );
 		},
 
 		createRandomId: function() {
