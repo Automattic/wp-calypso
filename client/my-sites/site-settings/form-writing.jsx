@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { each, pick } from 'lodash';
+import { flowRight, partialRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import formBase from './form-base';
-import { protectForm } from 'lib/protect-form';
+import wrapSettingsForm from './wrap-settings-form';
 import config from 'config';
 import PressThis from './press-this';
-import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
 import FormSelect from 'components/forms/form-select';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle';
 import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
@@ -27,68 +25,28 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
-const SiteSettingsFormWriting = React.createClass( {
-	mixins: [ dirtyLinkedState, formBase ],
-
-	getSettingsFromSite: function( site ) {
-		let writingAttributes = [
-			'default_post_format',
-			'wpcom_publish_posts_with_markdown',
-			'markdown_supported',
-		];
-		const settings = {};
-
-		site = site || this.props.site;
-
-		if ( this.isCustomPostTypesSettingsEnabled() ) {
-			writingAttributes = writingAttributes.concat( [
-				'jetpack_testimonial',
-				'jetpack_portfolio'
-			] );
-		}
-
-		if ( site.settings ) {
-			writingAttributes.map( function( attribute ) {
-				settings[ attribute ] = site.settings[ attribute ];
-			}, this );
-		}
-		settings.fetchingSettings = site.fetchingSettings;
-
-		return settings;
-	},
+class SiteSettingsFormWriting extends Component {
 
 	isCustomPostTypesSettingsEnabled() {
 		return (
 			config.isEnabled( 'manage/custom-post-types' ) &&
 			this.props.jetpackVersionSupportsCustomTypes
 		);
-	},
-
-	resetState: function() {
-		this.replaceState( {
-			fetchingSettings: true,
-			default_post_format: '',
-		} );
-	},
+	}
 
 	onSaveComplete() {
 		if ( this.isCustomPostTypesSettingsEnabled() ) {
 			this.props.requestPostTypes( this.props.site.ID );
 		}
-	},
+	}
 
-	setCustomPostTypeSetting( revision ) {
-		this.setState( revision );
-
-		each( revision, ( value, key ) => {
-			this.linkState( key ).requestChange( value );
-		} );
-
+	setCustomPostTypeSetting = ( revision ) => {
+		this.props.updateFields( revision );
 		this.props.markChanged();
-	},
+	}
 
-	submitFormAndActivateCustomContentModule( event ) {
-		this.handleSubmitForm( event );
+	submitFormAndActivateCustomContentModule = ( event ) => {
+		this.props.handleSubmitForm( event );
 
 		// Only need to activate module for Jetpack sites
 		if ( ! this.props.site || ! this.props.site.jetpack ) {
@@ -101,7 +59,7 @@ const SiteSettingsFormWriting = React.createClass( {
 		}
 
 		// No action necessary if neither content type is enabled in form
-		if ( ! this.state.jetpack_testimonial && ! this.state.jetpack_portfolio ) {
+		if ( ! this.props.fields.jetpack_testimonial && ! this.props.fields.jetpack_portfolio ) {
 			return;
 		}
 
@@ -112,9 +70,10 @@ const SiteSettingsFormWriting = React.createClass( {
 			// is complicated by requirements to sync back to legacy sites-list
 			this.props.site.activateModule( 'custom-content-types', this.onSaveComplete );
 		}
-	},
+	};
 
 	renderSectionHeader( title, showButton = true ) {
+		const { isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
 			<SectionHeader label={ title }>
 				{ showButton &&
@@ -122,83 +81,110 @@ const SiteSettingsFormWriting = React.createClass( {
 						compact
 						primary
 						onClick={ this.submitFormAndActivateCustomContentModule }
-						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+						disabled={ isRequestingSettings || isSavingSettings }>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				}
 			</SectionHeader>
 		);
-	},
+	}
 
-	render: function() {
-		const markdownSupported = this.state.markdown_supported;
+	render() {
+		const {
+			eventTracker,
+			fields,
+			handleToggle,
+			isRequestingSettings,
+			jetpackVersionSupportsCustomTypes,
+			onChangeField,
+			markChanged,
+			siteId,
+			trackEvent,
+			translate
+		} = this.props;
+		const markdownSupported = fields.markdown_supported;
 		return (
-			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.props.markChanged }>
+			<form
+				id="site-settings"
+				onSubmit={ this.submitFormAndActivateCustomContentModule }
+				onChange={ markChanged }
+				className="site-settings__general-settings"
+			>
 				{ config.isEnabled( 'manage/site-settings/categories' ) &&
 					<div className="site-settings__taxonomies">
-						<QueryTaxonomies siteId={ this.props.siteId } postType="post" />
+						<QueryTaxonomies siteId={ siteId } postType="post" />
 						<TaxonomyCard taxonomy="category" postType="post" />
 						<TaxonomyCard taxonomy="post_tag" postType="post" />
 					</div>
 				}
 
-				{ this.renderSectionHeader( this.translate( 'Composing' ) ) }
+				{ this.renderSectionHeader( translate( 'Composing' ) ) }
 				<Card className="site-settings">
 					<FormFieldset>
 						<FormLabel htmlFor="default_post_format">
-							{ this.translate( 'Default Post Format' ) }
+							{ translate( 'Default Post Format' ) }
 						</FormLabel>
 						<FormSelect
 							name="default_post_format"
 							id="default_post_format"
-							valueLink={ this.linkState( 'default_post_format' ) }
-							disabled={ this.state.fetchingSettings }
-							onClick={ this.recordEvent.bind( this, 'Selected Default Post Format' ) }>
-							<option value="0">{ this.translate( 'Standard', { context: 'Post format' } ) }</option>
-							<option value="aside">{ this.translate( 'Aside', { context: 'Post format' } ) }</option>
-							<option value="chat">{ this.translate( 'Chat', { context: 'Post format' } ) }</option>
-							<option value="gallery">{ this.translate( 'Gallery', { context: 'Post format' } ) }</option>
-							<option value="link">{ this.translate( 'Link', { context: 'Post format' } ) }</option>
-							<option value="image">{ this.translate( 'Image', { context: 'Post format' } ) }</option>
-							<option value="quote">{ this.translate( 'Quote', { context: 'Post format' } ) }</option>
-							<option value="status">{ this.translate( 'Status', { context: 'Post format' } ) }</option>
-							<option value="video">{ this.translate( 'Video', { context: 'Post format' } ) }</option>
-							<option value="audio">{ this.translate( 'Audio', { context: 'Post format' } ) }</option>
+							value={ fields.default_post_format }
+							onChange={ onChangeField( 'default_post_format' ) }
+							disabled={ isRequestingSettings }
+							onClick={ eventTracker( 'Selected Default Post Format' ) }>
+							<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
+							<option value="aside">{ translate( 'Aside', { context: 'Post format' } ) }</option>
+							<option value="chat">{ translate( 'Chat', { context: 'Post format' } ) }</option>
+							<option value="gallery">{ translate( 'Gallery', { context: 'Post format' } ) }</option>
+							<option value="link">{ translate( 'Link', { context: 'Post format' } ) }</option>
+							<option value="image">{ translate( 'Image', { context: 'Post format' } ) }</option>
+							<option value="quote">{ translate( 'Quote', { context: 'Post format' } ) }</option>
+							<option value="status">{ translate( 'Status', { context: 'Post format' } ) }</option>
+							<option value="video">{ translate( 'Video', { context: 'Post format' } ) }</option>
+							<option value="audio">{ translate( 'Audio', { context: 'Post format' } ) }</option>
 						</FormSelect>
 					</FormFieldset>
 
 					{ markdownSupported &&
 						<FormFieldset className="has-divider is-top-only">
 							<FormLabel>
-								{ this.translate( 'Markdown' ) }
+								{ translate( 'Markdown' ) }
 							</FormLabel>
 							<FormLabel>
-								<FormCheckbox
+								<FormToggle
+									className="is-compact"
 									name="wpcom_publish_posts_with_markdown"
-									checkedLink={ this.linkState( 'wpcom_publish_posts_with_markdown' ) }
-									disabled={ this.state.fetchingSettings }
-									onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Posts Checkbox' ) } />
-								<span>{
-									this.translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
-										components: {
-											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" rel="noopener noreferrer" />
-										}
-									} )
-								}</span>
+									checked={ !! fields.wpcom_publish_posts_with_markdown }
+									onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
+									disabled={ isRequestingSettings }
+								>
+									<span className="site-settings__toggle-label">{
+										translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
+											components: {
+												a: (
+													<a
+														href="http://en.support.wordpress.com/markdown-quick-reference/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												)
+											}
+										} )
+									}</span>
+								</FormToggle>
 							</FormLabel>
 						</FormFieldset>
 					}
 				</Card>
 
-				{ config.isEnabled( 'manage/custom-post-types' ) && this.props.jetpackVersionSupportsCustomTypes && (
+				{ config.isEnabled( 'manage/custom-post-types' ) && jetpackVersionSupportsCustomTypes && (
 					<div>
-						{ this.renderSectionHeader( this.translate( 'Custom Content Types' ) ) }
+						{ this.renderSectionHeader( translate( 'Custom Content Types' ) ) }
 						<Card className="site-settings">
 							<CustomPostTypeFieldset
-								requestingSettings={ this.state.fetchingSettings }
-								value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
+								requestingSettings={ isRequestingSettings }
+								value={ pick( fields, 'jetpack_testimonial', 'jetpack_portfolio' ) }
 								onChange={ this.setCustomPostTypeSetting }
-								recordEvent={ this.recordEvent }
+								recordEvent={ trackEvent }
 								className="site-settings__custom-post-type-fieldset" />
 						</Card>
 					</div>
@@ -207,7 +193,7 @@ const SiteSettingsFormWriting = React.createClass( {
 				{ config.isEnabled( 'press-this' ) && (
 					<div>
 						{
-							this.renderSectionHeader( this.translate( 'Press This', {
+							this.renderSectionHeader( translate( 'Press This', {
 								context: 'name of browser bookmarklet tool'
 							} ), false )
 						}
@@ -217,9 +203,9 @@ const SiteSettingsFormWriting = React.createClass( {
 			</form>
 		);
 	}
-} );
+}
 
-export default connect(
+const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
@@ -232,4 +218,17 @@ export default connect(
 	{ requestPostTypes },
 	null,
 	{ pure: false }
-)( protectForm( SiteSettingsFormWriting ) );
+);
+
+const getFormSettings = partialRight( pick, [
+	'default_post_format',
+	'wpcom_publish_posts_with_markdown',
+	'markdown_supported',
+	'jetpack_testimonial',
+	'jetpack_portfolio'
+] );
+
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormWriting );
