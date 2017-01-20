@@ -58,7 +58,7 @@ import {
 	normalizeWporgTheme
 } from './utils';
 import i18n from 'i18n-calypso';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
 
 let accept;
 if ( typeof window !== 'undefined' ) {
@@ -689,11 +689,11 @@ export function deleteTheme( themeId, siteId ) {
 export function confirmDelete( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const { name: themeName } = getTheme( getState(), siteId, themeId );
-		const siteSlug = getSiteSlug( getState(), siteId );
+		const siteTitle = getSiteTitle( getState(), siteId );
 		accept(
 			i18n.translate(
-				'Are you sure you want to delete %(themeName)s from %(siteSlug)s?',
-				{ args: { themeName, siteSlug }, context: 'Themes: theme delete confirmation dialog' }
+				'Are you sure you want to delete %(themeName)s from %(siteTitle)s?',
+				{ args: { themeName, siteTitle }, context: 'Themes: theme delete confirmation dialog' }
 			),
 			( accepted ) => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
