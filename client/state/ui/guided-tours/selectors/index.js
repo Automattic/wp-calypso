@@ -206,9 +206,11 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
 export const getGuidedTourState = createSelector(
 	state => {
+		const emptyState = { shouldShow: false };
+
 		if ( ! preferencesLastFetchedTimestamp( state ) ) {
 			debug( 'No fresh user preferences, bailing.' );
-			return {};
+			return emptyState;
 		}
 
 		const tourState = getRawGuidedTourState( state );
@@ -221,10 +223,7 @@ export const getGuidedTourState = createSelector(
 			'found', tour );
 
 		if ( ! tour ) {
-			return {
-				...tourState,
-				shouldShow: false,
-			};
+			return { ...tourState, ...emptyState };
 		}
 
 		return {
