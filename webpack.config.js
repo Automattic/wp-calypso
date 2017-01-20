@@ -149,15 +149,17 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 const jsRule = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loader: 'babel-loader',
-	options: {
-		cacheDirectory: './.babel-cache',
-		cacheIdentifier: cacheIdentifier,
-		plugins: [ [
-			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-			{ async: config.isEnabled( 'code-splitting' ) }
-		] ]
-	}
+	loader: [ {
+		loader: 'babel-loader',
+		options: {
+			cacheDirectory: './.babel-cache',
+			cacheIdentifier: cacheIdentifier,
+			plugins: [ [
+				path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+				{ async: config.isEnabled( 'code-splitting' ) }
+			] ]
+		}
+	} ]
 };
 
 if ( CALYPSO_ENV === 'development' ) {
@@ -165,8 +167,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
-		'webpack-dev-server/client?/',
-		'webpack/hot/only-dev-server',
+		'webpack-hot-middleware/client',
 		path.join( __dirname, 'client', 'boot' )
 	];
 
@@ -181,7 +182,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	} else {
 		// Add react hot loader before babel-loader.
 		// It's loaded by default since `use-source-maps` is disabled by default.
-		//jsRule.loader = [ 'react-hot-loader' ].concat( jsRule.loader );
+		jsRule.loader = [ 'react-hot-loader', ...jsRule.loader ];
 	}
 } else {
 	webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: false } ) );
