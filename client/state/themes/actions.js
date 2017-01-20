@@ -57,6 +57,13 @@ import {
 	normalizeWpcomTheme,
 	normalizeWporgTheme
 } from './utils';
+import i18n from 'i18n-calypso';
+import { getSiteSlug } from 'state/sites/selectors';
+
+let accept;
+if ( typeof window !== 'undefined' ) {
+	accept = require( 'lib/accept' ); // This would otherwise break tests (because of a DOM dependency)
+}
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -651,11 +658,12 @@ export function deleteTheme( themeId, siteId ) {
 			siteId,
 		} );
 		return wpcom.undocumented().deleteThemeFromJetpack( siteId, themeId )
-			.then( () => {
+			.then( ( theme ) => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,
 					themeId,
 					siteId,
+					themeName: theme.name,
 				} );
 			} )
 			.catch( error => {
@@ -666,5 +674,35 @@ export function deleteTheme( themeId, siteId ) {
 					error
 				} );
 			} );
+	};
+}
+
+/**
+ * Shows dialog asking user to confirm delete of theme
+ * from jetpack site. Deletes theme if user confirms.
+ *
+ * @param {String} themeId -- Theme to delete
+ * @param {Number} siteId -- Site to delete theme from
+ *
+ * @return {Function} Action thunk
+ */
+export function confirmDelete( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		const { name: themeName } = getTheme( getState(), siteId, themeId );
+		const siteSlug = getSiteSlug( getState(), siteId );
+		accept(
+			i18n.translate(
+				'Are you sure you want to delete %(themeName)s from %(siteSlug)s?',
+				{ args: { themeName, siteSlug }, context: 'Themes: theme delete confirmation dialog' }
+			),
+			( accepted ) => {
+				accepted && dispatch( deleteTheme( themeId, siteId ) );
+			},
+			i18n.translate(
+				'Delete %(themeName)s',
+				{ args: { themeName }, context: 'Themes: theme delete dialog confirm button' }
+			),
+			i18n.translate( 'Back', { context: 'Theme: theme delete dialog back button' } )
+		);
 	};
 }
