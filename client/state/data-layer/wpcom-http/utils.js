@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns response data from an HTTP request success action if available
  *
  * @param {Object} action may contain HTTP response data
- * @returns {any|null} response data if available
+ * @returns {?*} response data if available
  */
 export const getData = action => get( action, 'meta.dataLayer.data', null );
 
@@ -45,7 +45,8 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  *
  * This function accepts three functions as the initiator, success,
  * and error handlers for actions and it will call the appropriate
- * one based on the stored meta.
+ * one based on the stored meta. It accepts an optional fourth
+ * function which will be called for progress events on upload.
  *
  * If both error and response data is available this will call the
  * error handler in preference over the success handler, but the
@@ -59,9 +60,10 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
+ * @param {Function} [onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError ) => ( store, action, next ) => {
+export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = null ) => ( store, action, next ) => {
 	const error = getError( action );
 	if ( error ) {
 		return onError( store, action, next, error );
@@ -70,6 +72,11 @@ export const dispatchRequest = ( initiator, onSuccess, onError ) => ( store, act
 	const data = getData( action );
 	if ( data ) {
 		return onSuccess( store, action, next, data );
+	}
+
+	const progress = getProgress( action );
+	if ( progress ) {
+		return onProgress( store, action, next, progress );
 	}
 
 	return initiator( store, action, next );

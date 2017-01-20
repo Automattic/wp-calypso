@@ -54,13 +54,16 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const data = { count: 5 };
 			const error = { message: 'oh no!' };
 			const empty = { type: 'REFILL' };
+			const progressInfo = { loaded: 45, total: 80 };
 			const success = { type: 'REFILL', meta: { dataLayer: { data } } };
 			const failure = { type: 'REFILL', meta: { dataLayer: { error } } };
+			const progress = { type: 'REFILL', meta: { dataLayer: { progress: progressInfo } } };
 			const both = { type: 'REFILL', meta: { dataLayer: { data, error } } };
 
 			let initiator;
 			let onSuccess;
 			let onFailure;
+			let onProgress;
 			let dispatcher;
 			let store;
 			let next;
@@ -69,7 +72,8 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				initiator = spy();
 				onSuccess = spy();
 				onFailure = spy();
-				dispatcher = dispatchRequest( initiator, onSuccess, onFailure );
+				onProgress = spy();
+				dispatcher = dispatchRequest( initiator, onSuccess, onFailure, onProgress );
 				store = spy();
 				next = spy();
 			} );
@@ -80,6 +84,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( initiator ).to.have.been.calledWith( store, empty, next );
 				expect( onSuccess ).to.not.have.beenCalled;
 				expect( onFailure ).to.not.have.beenCalled;
+				expect( onProgress ).to.not.have.beenCalled;
 			} );
 
 			it( 'should call onSuccess if meta includes response data', () => {
@@ -88,6 +93,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( initiator ).to.not.have.beenCalled;
 				expect( onSuccess ).to.have.been.calledWith( store, success, next, data );
 				expect( onFailure ).to.not.have.beenCalled;
+				expect( onProgress ).to.not.have.beenCalled;
 			} );
 
 			it( 'should call onFailure if meta includes error data', () => {
@@ -96,6 +102,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( initiator ).to.not.have.beenCalled;
 				expect( onSuccess ).to.not.have.beenCalled;
 				expect( onFailure ).to.have.been.calledWith( store, failure, next, error );
+				expect( onProgress ).to.not.have.beenCalled;
 			} );
 
 			it( 'should call onFailure if meta includes both response data and error data', () => {
@@ -104,6 +111,16 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( initiator ).to.not.have.beenCalled;
 				expect( onSuccess ).to.not.have.beenCalled;
 				expect( onFailure ).to.have.been.calledWith( store, both, next, error );
+				expect( onProgress ).to.not.have.beenCalled;
+			} );
+
+			it( 'should call onProgress if meta includes progress data', () => {
+				dispatcher( store, progress, next );
+
+				expect( initiator ).to.not.have.beenCalled;
+				expect( onSuccess ).to.not.have.beenCalled;
+				expect( onFailure ).to.not.have.beenCalled;
+				expect( onProgress ).to.have.been.calledWith( store, progress, next, progressInfo );
 			} );
 		} );
 	} );

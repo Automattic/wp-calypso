@@ -16,6 +16,7 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  * @param {Object} [onFailure] Redux action to call when request fails
  * @param {Object} [onProgress] Redux action to call on progress events from an upload
  * @param {Object} [options] extra options to send to the middleware, e.g. retry policy or offline policy
+ * @param {Object} [action] default action to call on HTTP events
  * @returns {Object} Redux action describing WordPress.com API HTTP request
  */
 export const http = ( {
@@ -29,15 +30,15 @@ export const http = ( {
 	onFailure,
 	onProgress,
 	...options,
-} ) => ( {
+}, action = null ) => ( {
 	type: WPCOM_HTTP_REQUEST,
 	body,
 	method,
 	path,
 	query: { ...query, apiVersion },
 	formData,
-	onSuccess,
-	onFailure,
-	onProgress,
+	onSuccess: onSuccess || action,
+	onFailure: onFailure || action,
+	onProgress: onProgress || action,
 	options,
 } );

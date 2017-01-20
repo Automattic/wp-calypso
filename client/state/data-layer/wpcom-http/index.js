@@ -44,8 +44,8 @@ const queueRequest = ( { dispatch }, action, next ) => {
 		query,
 		body,
 		( error, data ) => !! error
-			? dispatch( extendAction( onFailure, failureMeta( error ) ) )
-			: dispatch( extendAction( onSuccess, successMeta( data ) ) )
+			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
+			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
 	);
 
 	if ( 'POST' === method && onProgress ) {
