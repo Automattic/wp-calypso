@@ -77,6 +77,9 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
 		dependencies: [ 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -86,6 +89,9 @@ module.exports = {
 		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		dependencies: [ 'themeSlugWithRepo' ],
+		props: {
+			isDomainOnly: false
+		},
 		delayApiRequestUntilComplete: true
 	},
 
@@ -93,6 +99,9 @@ module.exports = {
 		stepName: 'domains-theme-preselected',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false
+		},
 		delayApiRequestUntilComplete: true
 	},
 
