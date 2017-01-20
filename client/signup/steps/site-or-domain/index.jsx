@@ -54,7 +54,9 @@ export default class SiteOrDomain extends Component {
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
 			// user is only purchasing a domain
-			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], { themeSlugWithRepo: 'pub/twentysixteen' } );
+			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
+				themeSlugWithRepo: 'pub/twentysixteen'
+			} );
 			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
 			goToStep( 'user' );
 		} else {

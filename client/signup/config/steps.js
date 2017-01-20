@@ -21,7 +21,7 @@ module.exports = {
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
 	// `themes` does not update the theme for an existing site as we normally
@@ -29,8 +29,8 @@ module.exports = {
 	// updated, we need to use a different API request function.
 	'themes-site-selected': {
 		stepName: 'themes-site-selected',
-		dependencies: [ 'siteSlug', 'themeSlug' ],
-		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ],
+		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
+		providesDependencies: [ 'themeSlugWithRepo' ],
 		apiRequestFunction: stepActions.setThemeOnSite
 	},
 
@@ -131,7 +131,7 @@ module.exports = {
 			designType: 'blog'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
 	// Currently, this step explicitly submits other steps to skip them, and
