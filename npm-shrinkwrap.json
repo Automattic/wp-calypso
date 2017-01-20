@@ -864,7 +864,7 @@
     },
     "camelcase": {
       "version": "1.2.1",
-      "from": "camelcase@>=1.0.2 <2.0.0",
+      "from": "https://registry.npmjs.org/camelcase/-/camelcase-1.2.1.tgz",
       "resolved": "https://registry.npmjs.org/camelcase/-/camelcase-1.2.1.tgz"
     },
     "camelcase-keys": {

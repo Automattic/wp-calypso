@@ -32,6 +32,7 @@
     "body-parser": "^1.13.3",
     "bounding-client-rect": "1.0.5",
     "browser-filesaver": "1.1.0",
+    "camelcase": "https://registry.npmjs.org/camelcase/-/camelcase-1.2.1.tgz",
     "chalk": "1.0.0",
     "chokidar": "1.6.1",
     "chrono-node": "^1.0.6",
