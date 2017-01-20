@@ -54,15 +54,18 @@ Example test from `client/components/Accordion`
 ```javascript
 import { shallow } from 'enzyme';
 
-it( 'should toggled', function( done ) {
+it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
   const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
+  // Simulate a click event to toggle expanding state
   wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 
   function finishTest( isExpanded ) {
+    // Check that it received the toggled state (the component is initially collapsed/not expanded)
     expect( isExpanded ).to.be.true;
 
     process.nextTick( function() {
+      // Check that the component is expanded
       expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
       done();
     } );
