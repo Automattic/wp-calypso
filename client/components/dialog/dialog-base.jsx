@@ -9,7 +9,8 @@ class DialogBase extends Component {
 	static defaultProps = {
 		baseClassName: 'dialog',
 		isFullScreen: true,
-		autoFocus: true
+		autoFocus: true,
+		label: ''
 	}
 
 	render() {
@@ -31,7 +32,7 @@ class DialogBase extends Component {
 			<Modal isOpen={ this.props.isVisible }
 				onRequestClose={ this._close }
 				closeTimeoutMS= { this.props.leaveTimeout }
-				contentLabel={ 'Abc' }
+				contentLabel={ this.props.label }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
 				role="dialog">
