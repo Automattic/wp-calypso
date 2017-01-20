@@ -21,8 +21,7 @@ import paths from 'my-sites/upgrades/paths';
 import {
 	hasGoogleApps,
 	hasGoogleAppsSupportedDomain,
-	getSelectedDomain,
-	hasMappedDomain
+	getSelectedDomain
 } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 
@@ -92,7 +91,6 @@ const Email = React.createClass( {
 		const {
 			selectedSite,
 			selectedDomainName,
-			domains
 			} = this.props;
 		let emptyContentProps;
 
@@ -102,11 +100,6 @@ const Email = React.createClass( {
 				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: this.translate( 'Add Email Forwarding' ),
 				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
-			};
-		} else if ( hasMappedDomain( domains.list ) ) {
-			emptyContentProps = {
-				title: this.translate( 'G Suite is not supported on mapped domains' ),
-				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' )
 			};
 		} else {
 			emptyContentProps = {
