@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
 import { connect } from 'react-redux';
 import { noop, head, some, findIndex, partial, values, map } from 'lodash';
@@ -355,11 +354,8 @@ export const EditorMediaModal = React.createClass( {
 		return buttons;
 	},
 
-	preventClose: function( event ) {
-		if ( ModalViews.IMAGE_EDITOR === this.props.view ||
-			closest( event.target, '.popover.is-dialog-visible' ) ) {
-			return true;
-		}
+	shouldClose: function() {
+		return ( ModalViews.IMAGE_EDITOR !== this.props.view );
 	},
 
 	renderContent: function() {
@@ -438,7 +434,7 @@ export const EditorMediaModal = React.createClass( {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
-				onClickOutside={ this.preventClose }>
+				shouldCloseOnOverlayClick={ this.shouldClose() }>
 				{ this.renderContent() }
 			</Dialog>
 		);
