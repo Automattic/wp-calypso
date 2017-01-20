@@ -4,80 +4,43 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import JetpackModuleToggle from '../jetpack-module-toggle';
+import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isModuleActive, isFetchingModules } from 'state/jetpack/modules/selectors';
-import {
-	getJetpackSettings,
-	isRequestingJetpackSettings,
-	isUpdatingJetpackSettings
-} from 'state/jetpack/settings/selectors';
-import { fetchSettings, updateSettings } from 'state/jetpack/settings/actions';
+import { isModuleActive } from 'state/jetpack/modules/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import PressThis from '../press-this';
 
 class PublishingTools extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = this.buildRegeneratingState( false );
-
-		this.refreshSettings = this.refreshSettings.bind( this );
-		this.onRegenerateButtonClick = this.onRegenerateButtonClick.bind( this );
-	}
-
-	buildRegeneratingState( regenerating = false ) {
-		return {
-			regenerating
-		};
-	}
-
-	refreshSettings() {
-		const { selectedSiteId } = this.props;
-
-		this.props.fetchSettings( selectedSiteId ).then( () => {
-			this.setState( this.buildRegeneratingState( false ) );
-		} );
-	}
-
-	onRegenerateButtonClick() {
-		const { selectedSiteId } = this.props;
-
-		this.setState( this.buildRegeneratingState( true ) );
-
-		this.props.updateSettings( selectedSiteId, {
-			post_by_email_address: 'regenerate'
-		} ).then( this.refreshSettings );
+	onRegenerateButtonClick = () => {
+		// TODO: integrate regeneration
 	}
 
 	isFormPending() {
 		const {
-			fetchingSettings,
-			fetchingModuleData,
-			submittingForm,
-			updatingSettings
+			isRequestingSettings,
+			isSavingSettings,
 		} = this.props;
 
-		return fetchingSettings || fetchingModuleData || submittingForm || updatingSettings || this.state.regenerating;
+		return isRequestingSettings || isSavingSettings;
 	}
 
 	renderHeader() {
 		const {
 			onSubmitForm,
-			submittingForm,
+			isSavingSettings,
 			translate
 		} = this.props;
 
@@ -89,7 +52,7 @@ class PublishingTools extends Component {
 					onClick={ onSubmitForm }
 					disabled={ this.isFormPending() }
 				>
-					{ submittingForm
+					{ isSavingSettings
 						? translate( 'Saving…' )
 						: translate( 'Save Settings' )
 					}
@@ -99,9 +62,8 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailSettings() {
-		const { moduleSettings, translate } = this.props;
+		const { fields, translate } = this.props;
 		const isFormPending = this.isFormPending();
-		const email = moduleSettings && moduleSettings.post_by_email_address;
 
 		return (
 			<div className="publishing-tools__module-settings is-indented">
@@ -111,7 +73,7 @@ class PublishingTools extends Component {
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
 					disabled={ isFormPending }
-					value={ email !== 'regenerate' ? email : '' }
+					value={ fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '' }
 				/>
 				<Button
 					compact
@@ -139,7 +101,7 @@ class PublishingTools extends Component {
 			<FormFieldset>
 				<div className="publishing-tools__info-link-container">
 					<InfoPopover position={ 'left' }>
-						<ExternalLink icon={ true } href={ 'https://jetpack.com/support/post-by-email/' } target="_blank">
+						<ExternalLink href={ 'https://jetpack.com/support/post-by-email/' } target="_blank">
 							{ translate( 'Learn more about Post by Email' ) }
 						</ExternalLink>
 					</InfoPopover>
@@ -159,18 +121,29 @@ class PublishingTools extends Component {
 		);
 	}
 
-	render() {
-		const { selectedSiteId } = this.props;
+	renderPressThis() {
+		const { translate } = this.props;
+		if ( ! config.isEnabled( 'press-this' ) ) {
+			return null;
+		}
 
 		return (
 			<div>
-				<QueryJetpackModules siteId={ selectedSiteId } />
-				<QueryJetpackSettings siteId={ selectedSiteId } />
+				<FormLegend>{ translate( 'Press This' ) }</FormLegend>
+				<PressThis />
+			</div>
+		);
+	}
 
+	render() {
+		return (
+			<div>
 				{ this.renderHeader() }
 
 				<Card className="publishing-tools__card site-settings">
 					{ this.renderPostByEmailModule() }
+					<hr />
+					{ this.renderPressThis() }
 				</Card>
 			</div>
 		);
@@ -178,34 +151,25 @@ class PublishingTools extends Component {
 }
 
 PublishingTools.defaultProps = {
-	submittingForm: false,
+	isSavingSettings: false,
+	isRequestingSettings: true,
+	fields: {}
 };
 
 PublishingTools.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	fetchingSettings: PropTypes.bool.isRequired,
-	submittingForm: PropTypes.bool,
+	isSavingSettings: PropTypes.bool,
+	isRequestingSettings: PropTypes.bool,
+	fields: PropTypes.object,
 };
 
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const fetchingModules = isFetchingModules( state, selectedSiteId );
-		const fetchingSettings = isRequestingJetpackSettings( state, selectedSiteId );
-		const moduleSettings = pick( getJetpackSettings( state, selectedSiteId ), [
-			'post_by_email_address',
-		] );
 
 		return {
 			selectedSiteId,
 			postByEmailAddressModuleActive: !! isModuleActive( state, selectedSiteId, 'post-by-email' ),
-			moduleSettings,
-			fetchingModuleData: !! ( fetchingModules || fetchingSettings ),
-			updatingSettings: isUpdatingJetpackSettings( state, selectedSiteId ),
 		};
-	},
-	{
-		fetchSettings,
-		updateSettings
 	}
 )( localize( PublishingTools ) );

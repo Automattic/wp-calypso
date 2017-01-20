@@ -210,13 +210,14 @@ class SiteSettingsFormWriting extends Component {
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
-								/>
+							/>
 
 							{ config.isEnabled( 'press-this' ) &&
 								<PublishingTools
-									submittingForm={ this.state.submittingForm }
-									onSubmitForm={ this.handleSubmitForm }
-									fetchingSettings={ this.state.fetchingSettings }
+									onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+									isSavingSettings={ isSavingSettings }
+									isRequestingSettings={ isRequestingSettings }
+									fields={ fields }
 								/>
 							}
 						</div>
@@ -265,7 +266,8 @@ const getFormSettings = partialRight( pick, [
 	'infinite_scroll_google_analytics',
 	'wp_mobile_excerpt',
 	'wp_mobile_featured_images',
-	'wp_mobile_app_promos'
+	'wp_mobile_app_promos',
+	'post_by_email_address'
 ] );
 
 export default flowRight(
