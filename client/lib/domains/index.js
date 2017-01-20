@@ -2,9 +2,11 @@
  * External dependencies
  */
 import inherits from 'inherits';
-import some from 'lodash/some';
-import includes from 'lodash/includes';
-import find from 'lodash/find';
+import {
+	some,
+	includes,
+	find
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -145,7 +147,7 @@ function isMappedDomain( domain ) {
 
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.name ) );
+		return ( includes( [ domainTypes.REGISTERED, domainTypes.MAPPED ], domain.type ) && canAddGoogleApps( domain.name ) );
 	} );
 }
 
