@@ -81,6 +81,7 @@ export default React.createClass( {
 				<div id="my-stats-content">
 					<PostingActivity />
 					<LatestPostSummary site={ site } />
+					<Reach />
 					<TodaysStats
 						siteId={ site ? site.ID : null }
 						period="day"
@@ -89,7 +90,6 @@ export default React.createClass( {
 						title={ this.translate( 'Today\'s Stats' ) }
 					/>
 					<AllTime />
-					<Reach />
 					<MostPopular />
 					{ site && <DomainTip siteId={ site.ID } event="stats_insights_domain" /> }
 					<div className="stats-insights__nonperiodic has-recent">

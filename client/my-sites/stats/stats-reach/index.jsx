@@ -2,7 +2,6 @@
 * External dependencies
 */
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, reduce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -44,42 +43,37 @@ class StatsReach extends Component {
 		} = this.props;
 
 		const isLoadingFollowData = ! followData;
-		const isLoading = isLoadingFollowData || isLoadingPublicize;
 		const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
 		const emailFollowCount = get( followData, 'total_email', 0 );
 		const publicizeFollowCount = reduce( publicizeData, ( sum, item ) => {
 			return sum + item.value;
 		}, 0 );
-		const totalFollowers = wpcomFollowCount + emailFollowCount + publicizeFollowCount;
 
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
 				<SectionHeader label={ translate( 'Followers' ) } />
-				<Card className={ classNames( 'stats-module', 'stats__overview' ) }>
+				<Card className="stats-module stats-reach__card">
 					<StatsTabs borderless>
 						<StatsTab
-							gridicon="user"
-							label={ translate( 'Total' ) }
-							loading={ isLoading }
-							value={ totalFollowers }>
-						</StatsTab>
-						<StatsTab
+							className="stats-reach__tab"
 							gridicon="my-sites"
 							label={ translate( 'WordPress.com' ) }
 							loading={ isLoadingFollowData }
 							href={ `/people/followers/${ siteSlug }` }
 							value={ wpcomFollowCount } />
 						<StatsTab
+							className="stats-reach__tab"
 							gridicon="mail"
 							label={ translate( 'Email' ) }
 							loading={ isLoadingFollowData }
 							href={ `/people/email-followers/${ siteSlug }` }
 							value={ emailFollowCount } />
 						<StatsTab
+							className="stats-reach__tab"
 							gridicon="share"
-							label={ translate( 'Publicize' ) }
+							label={ translate( 'Social' ) }
 							loading={ isLoadingPublicize }
 							value={ publicizeFollowCount } />
 					</StatsTabs>
