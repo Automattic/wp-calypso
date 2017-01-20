@@ -123,7 +123,7 @@ const StatsSummary = React.createClass( {
 					path="posts"
 					moduleStrings={ StatsStrings.posts }
 					period={ this.props.period }
-					query={ query }
+					query={ merge( {}, statsQueryOptions, query ) }
 					statType="statsTopPosts"
 					summary />;
 				break;
