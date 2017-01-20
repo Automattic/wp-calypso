@@ -26,9 +26,7 @@ export default React.createClass( {
 	getDefaultProps: function() {
 		return {
 			isVisible: false,
-			enterTimeout: 200,
 			leaveTimeout: 200,
-			transitionLeave: true,
 			onClosed: noop,
 			onClickOutside: noop
 		};
