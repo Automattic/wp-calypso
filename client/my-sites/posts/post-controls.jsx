@@ -1,251 +1,228 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	url = require( 'url' );
-import classNames from 'classnames';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import url from 'url';
+import classNames from 'classnames';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	utils = require( 'lib/posts/utils' ),
-	Gridicon = require( 'components/gridicon'),
-	recordEvent = require( 'lib/analytics' ).ga.recordEvent;
+import { isEnabled } from 'config';
+import { ga } from 'lib/analytics';
+import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
+import Gridicon from 'components/gridicon';
 
-const PostControls = React.createClass( {
-	mixins: [ PureRenderMixin ],
+const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
+const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );
+const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
+const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
+const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 
-	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		editURL: React.PropTypes.string.isRequired,
-		isPublicizeEnabled: React.PropTypes.bool.isRequired,
-		onShowMore: React.PropTypes.func.isRequired,
-		onHideMore: React.PropTypes.func.isRequired,
-		onPublish: React.PropTypes.func,
-		onTrash: React.PropTypes.func,
-		onDelete: React.PropTypes.func,
-		onRestore: React.PropTypes.func,
-	},
+const getAvailableControls = props => {
+	const {
+		editURL,
+		fullWidth,
+		onDelete,
+		onHideMore,
+		onPublish,
+		onRestore,
+		onShowMore,
+		onToggleShare,
+		onTrash,
+		post,
+		site,
+		translate,
+	} = props;
+	const controls = { main: [], more: [] };
 
-	view: function() {
-		recordEvent( 'Posts', 'Clicked View Post' );
-	},
+	// NOTE: Currently Jetpack site posts are not returning `post.capabilities`
+	// and those posts will not have access to post management type controls
 
-	preview: function() {
-		recordEvent( 'Posts', 'Clicked Preview Post' );
-	},
+	// Main Controls (not behind ... more link)
+	if ( userCan( 'edit_post', post ) ) {
+		controls.main.push( {
+			className: 'edit',
+			href: editURL,
+			icon: 'pencil',
+			onClick: edit,
+			text: translate( 'Edit' ),
+		} );
+	}
 
-	edit: function() {
-		recordEvent( 'Posts', 'Clicked Edit Post' );
-	},
+	if ( 'publish' === post.status ) {
+		controls.main.push( {
+			className: 'view',
+			href: post.URL,
+			icon: 'external',
+			onClick: view,
+			target: '_blank',
+			text: translate( 'View' ),
+		} );
 
-	copy: function() {
-		recordEvent( 'Posts', 'Clicked Copy Post' );
-	},
+		controls.main.push( {
+			className: 'stats',
+			href: `/stats/post/${ post.ID }/${ site.slug }`,
+			icon: 'stats-alt',
+			onClick: viewStats,
+			text: translate( 'Stats' ),
+		} );
 
-	viewStats: function() {
-		recordEvent( 'Posts', 'Clicked View Post Stats' );
-	},
-
-	buildControls: function( controlsArray ) {
-		var postId = this.props.post.ID,
-			controls;
-
-		controls = controlsArray.map( function( item, i ) {
-			const itemKey = 'controls-' + postId + '-' + i;
-			const disabled = item.disabled || false;
-
-			return (
-				<li className={ classNames( { 'post-controls__disabled': disabled } ) } key={ itemKey }>
-					<a href={ item.href } className={ item.className } onClick={ disabled ? noop : item.onClick } target={ item.target ? item.target : null }>
-						<Gridicon icon={ item.icon } size={ 18 } />
-						<span>{ item.text }</span>
-					</a>
-				</li>
-			);
-		}, this );
-
-		return controls;
-	},
-
-	render: function() {
-		var post = this.props.post,
-			availableControls = [],
-			extraControls = [],
-			parsed, previewURL, statsURL, postControlsClass, mainControls, moreControls, i, moreControlsSpliceIndex;
-
-		// NOTE: Currently Jetpack site posts are not returning `post.capabilities`
-		// and those posts will not have access to post management type controls
-
-		// --- Main Controls (not behind ... more link) ---
-		if ( utils.userCan( 'edit_post', post ) ) {
-			availableControls.push( {
-				text: this.translate( 'Edit' ),
-				className: 'post-controls__edit',
-				href: this.props.editURL,
-				target: null,
-				onClick: this.edit,
-				icon: 'pencil'
+		if ( isEnabled( 'republicize' ) ) {
+			controls.main.push( {
+				className: 'share',
+				disabled: ! props.isPublicizeEnabled,
+				icon: 'share',
+				onClick: onToggleShare,
+				text: translate( 'Share' ),
 			} );
 		}
+	} else if ( 'trash' !== post.status ) {
+		const parsedUrl = url.parse( post.URL, true );
+		parsedUrl.query.preview = true;
+		// NOTE: search needs to be cleared in order to rebuild query
+		// http://nodejs.org/api/url.html#url_url_format_urlobj
+		parsedUrl.search = '';
 
-		if ( post.status === 'publish' ) {
-			availableControls.push( {
-				text: this.translate( 'View' ),
-				className: 'post-controls__view',
-				href: post.URL,
-				target: '_blank',
-				onClick: this.view,
-				icon: 'external'
-			} );
+		controls.main.push( {
+			className: 'view',
+			href: url.format( parsedUrl ),
+			icon: 'external',
+			onClick: preview,
+			text: translate( 'Preview' ),
+		} );
 
-			statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
-
-			availableControls.push( {
-				text: this.translate( 'Stats' ),
-				className: 'post-controls__stats',
-				href: statsURL,
-				onClick: this.viewStats,
-				icon: 'stats-alt'
-			} );
-
-			if ( config.isEnabled( 'republicize' ) ) {
-				availableControls.push( {
-					disabled: ! this.props.isPublicizeEnabled,
-					text: this.translate( 'Share' ),
-					className: 'post-controls__share',
-					onClick: this.props.onToggleShare,
-					icon: 'share'
-				} );
-			}
-
-		} else if ( post.status !== 'trash' ) {
-			parsed = url.parse( post.URL, true );
-			parsed.query.preview = 'true';
-			// NOTE: search needs to be cleared in order to rebuild query
-			// http://nodejs.org/api/url.html#url_url_format_urlobj
-			parsed.search = '';
-			previewURL = url.format( parsed );
-
-			availableControls.push( {
-				text: this.translate( 'Preview' ),
-				className: 'post-controls__view',
-				href: previewURL,
-				target: '_blank',
-				onClick: this.preview,
-				icon: 'external'
-			} );
-
-			if ( utils.userCan( 'publish_post', post ) ) {
-				availableControls.push( {
-					text: this.translate( 'Publish' ),
-					className: 'post-controls__publish',
-					onClick: this.props.onPublish,
-					icon: 'reader'
-				} );
-			}
-		} else if ( utils.userCan( 'delete_post', post ) ) {
-			availableControls.push( {
-				text: this.translate( 'Restore' ),
-				className: 'post-controls__restore',
-				onClick: this.props.onRestore,
-				icon: 'undo'
+		if ( userCan( 'publish_post', post ) ) {
+			controls.main.push( {
+				className: 'publish',
+				icon: 'reader',
+				onClick: onPublish,
+				text: translate( 'Publish' ),
 			} );
 		}
+	} else if ( userCan( 'delete_post', post ) ) {
+		controls.main.push( {
+			className: 'restore',
+			icon: 'undo',
+			onClick: onRestore,
+			text: translate( 'Restore' ),
+		} );
+	}
 
-		if ( utils.userCan( 'delete_post', post ) ) {
-			if ( post.status === 'trash') {
-				availableControls.push( {
-					text: this.translate( 'Delete Permanently' ),
-					className: 'post-controls__trash is-scary',
-					onClick: this.props.onDelete,
-					icon: 'trash'
-				} );
-			} else {
-				availableControls.push( {
-					text: this.translate( 'Trash' ),
-					className: 'post-controls__trash',
-					onClick: this.props.onTrash,
-					icon: 'trash'
-				} );
-			}
-		}
-
-		if ( ( post.status === 'publish' || post.status === 'private' ) && utils.userCan( 'edit_post', post ) ) {
-			availableControls.push( {
-				text: this.translate( 'Copy' ),
-				className: 'post-controls__copy',
-				href: `/post/${ this.props.site.slug }?copy=${ post.ID }`,
-				onClick: this.copy,
-				icon: 'clipboard'
+	if ( userCan( 'delete_post', post ) ) {
+		if ( 'trash' === post.status ) {
+			controls.main.push( {
+				className: 'trash is-scary',
+				icon: 'trash',
+				onClick: onDelete,
+				text: translate( 'Delete Permanently' ),
 			} );
-		}
-
-		// --- Extra Controls (behind ... more link) ---
-		if ( ( availableControls.length > 2 && ! this.props.fullWidth ) || ( availableControls.length > 4 && this.props.fullWidth ) ) {
-			moreControlsSpliceIndex = ( ! this.props.fullWidth ) ? 2 : 4;
-
-			for ( i = moreControlsSpliceIndex; i < availableControls.length; i++ ) {
-				extraControls.push( availableControls[i] );
-			}
-
-			availableControls.splice( moreControlsSpliceIndex );
-		}
-
-		// --- Return Controls ---
-		postControlsClass = 'post-controls';
-
-		if ( extraControls.length ) {
-			availableControls.push( {
-				text: this.translate( 'More' ),
-				className: 'post-controls__more',
-				onClick: this.props.onShowMore,
-				icon: 'ellipsis'
-			} );
-
-			extraControls.push( {
-				text: this.translate( 'Back' ),
-				className: 'post-controls__back',
-				onClick: this.props.onHideMore,
-				icon: 'chevron-left'
-			} );
-
-			mainControls = this.buildControls( availableControls );
-			moreControls = this.buildControls( extraControls );
-			postControlsClass += ( extraControls.length <= 2 ) ? ' post-controls--desk-nomore' : '';
-
-			return (
-				<div className={ postControlsClass }>
-					<ul className="post-controls__pane post-controls__more-options">
-						{ moreControls }
-					</ul>
-					<ul className="post-controls__pane post-controls__main-options">
-						{ mainControls }
-					</ul>
-				</div>
-			);
 		} else {
-			mainControls = this.buildControls( availableControls );
-
-			return (
-				<div className={ postControlsClass }>
-					<ul className="post-controls__pane post-controls__main-options">
-						{ mainControls }
-					</ul>
-				</div>
-			);
+			controls.main.push( {
+				className: 'trash',
+				icon: 'trash',
+				onClick: onTrash,
+				text: translate( 'Trash' ),
+			} );
 		}
-	},
+	}
 
-} );
+	if ( ( 'publish' === post.status || 'private' === post.status ) && userCan( 'edit_post', post ) ) {
+		controls.main.push( {
+			className: 'copy',
+			href: `/post/${ site.slug }?copy=${ post.ID }`,
+			icon: 'clipboard',
+			onClick: copy,
+			text: translate( 'Copy' ),
+		} );
+	}
 
-export default connect(
-	( state, props ) => ( {
-		isPublicizeEnabled: isPublicizeEnabled( state, props.site.ID, props.post.type ),
-	} )
-)( PostControls );
+	// More Controls (behind ... more link)
+	if ( controls.main.length > 4 && fullWidth ) {
+		controls.more = controls.main.splice( 4 );
+	} else if ( controls.main.length > 2 && ! fullWidth ) {
+		controls.more = controls.main.splice( 2 );
+	}
+
+	if ( controls.more.length ) {
+		controls.main.push( {
+			className: 'more',
+			icon: 'ellipsis',
+			onClick: onShowMore,
+			text: translate( 'More' ),
+		} );
+
+		controls.more.push( {
+			className: 'back',
+			icon: 'chevron-left',
+			onClick: onHideMore,
+			text: translate( 'Back' ),
+		} );
+	}
+
+	return controls;
+};
+
+const getControlElements = controls => controls.map( ( control, index ) =>
+	<li
+		className={ classNames( { 'post-controls__disabled': control.disabled } ) }
+		key={ index }
+	>
+		<a
+			className={ `post-controls__${ control.className }` }
+			href={ control.href }
+			onClick={ control.disabled ? noop : control.onClick }
+			target={ control.target ? control.target : null }
+		>
+			<Gridicon icon={ control.icon } size={ 18 } />
+			<span>
+				{ control.text }
+			</span>
+		</a>
+	</li>
+);
+
+export const PostControls = props => {
+	const { main, more } = getAvailableControls( props );
+	const classes = classNames(
+		'post-controls',
+		{ 'post-controls--desk-nomore': more <= 2 }
+	);
+
+	return (
+		<div className={ classes }>
+			{ more.length &&
+				<ul className="posts__post-controls post-controls__pane post-controls__more-options">
+					{ getControlElements( more ) }
+				</ul>
+			}
+			<ul className="posts__post-controls post-controls__pane post-controls__main-options">
+				{ getControlElements( main ) }
+			</ul>
+		</div>
+	);
+};
+
+PostControls.propTypes = {
+	editURL: PropTypes.string.isRequired,
+	fullWidth: PropTypes.bool,
+	isPublicizeEnabled: PropTypes.bool,
+	onDelete: PropTypes.func,
+	onHideMore: PropTypes.func.isRequired,
+	onPublish: PropTypes.func,
+	onRestore: PropTypes.func,
+	onShowMore: PropTypes.func.isRequired,
+	onToggleShare: PropTypes.func,
+	onTrash: PropTypes.func,
+	post: PropTypes.object.isRequired,
+	site: PropTypes.object,
+	translate: PropTypes.func,
+};
+
+export default connect( ( state, { site, post } ) => ( {
+	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
+} ) )( localize( PostControls ) );
