@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import Modal from 'react-modal';
 import classnames from 'classnames';
 
-var DialogBase = React.createClass( {
+class DialogBase extends Component {
+	static defaultProps = {
+		baseClassName: 'dialog',
+		isFullScreen: true,
+		autoFocus: true
+	}
 
-	displayName: 'DialogBase',
-
-	getDefaultProps: function() {
-		return {
-			baseClassName: 'dialog',
-			isFullScreen: true,
-			autoFocus: true
-		};
-	},
-
-	render: function() {
-		var baseClassName = this.props.baseClassName,
-			backdropClassName = baseClassName + '__backdrop',
-			dialogClassName = classnames( baseClassName, 'card' ), // Previous implementation used a `<Card />`, styling relies on this
+	render() {
+		const baseClassName = this.props.baseClassName,
 			contentClassName = baseClassName + '__content';
+
+		let backdropClassName = baseClassName + '__backdrop',
+			dialogClassName = classnames( baseClassName, 'card' ); // Previous implementation used a `<Card />`, styling relies on this
 
 		if ( this.props.additionalClassNames ) {
 			dialogClassName = classnames( this.props.additionalClassNames, dialogClassName );
@@ -45,10 +41,10 @@ var DialogBase = React.createClass( {
 				{ this._renderButtonsBar() }
 			</Modal>
 		);
-	},
+	}
 
-	_renderButtonsBar: function() {
-		var baseClassName = this.props.baseClassName,
+	_renderButtonsBar() {
+		const baseClassName = this.props.baseClassName,
 			buttonsClassName = baseClassName + '__action-buttons';
 
 		if ( ! this.props.buttons ) {
@@ -60,14 +56,14 @@ var DialogBase = React.createClass( {
 				{ this.props.buttons.map( this._renderButton, this ) }
 			</div>
 		);
-	},
+	}
 
-	_renderButton: function( button, index ) {
+	_renderButton( button, index ) {
 		if ( React.isValidElement( button ) ) {
 			return React.cloneElement( button, { key: 'dialog-button-' + index } );
 		}
 
-		let classes = this._getButtonClasses( button ),
+		const classes = this._getButtonClasses( button ),
 			clickHandler = this._onButtonClick.bind( this, button );
 
 		return (
@@ -75,10 +71,10 @@ var DialogBase = React.createClass( {
 				<span className={ this.props.baseClassName + '__button-label' }>{ button.label }</span>
 			</button>
 		);
-	},
+	}
 
-	_getButtonClasses: function( button ) {
-		var classes = button.className || 'button';
+	_getButtonClasses( button ) {
+		let classes = button.className || 'button';
 
 		if ( button.isPrimary || this.props.buttons.length === 1 ) {
 			classes += ' is-primary';
@@ -89,22 +85,22 @@ var DialogBase = React.createClass( {
 		}
 
 		return classes;
-	},
+	}
 
-	_onButtonClick: function( button ) {
+	_onButtonClick = ( button ) => {
 		if ( button.onClick ) {
 			button.onClick( this._close.bind( this, button.action ) );
 			return;
 		}
 
 		this._close( button.action );
-	},
+	}
 
-	_close: function( action ) {
+	_close = ( action ) => {
 		if ( this.props.onDialogClose ) {
 			this.props.onDialogClose( action );
 		}
 	}
-} );
+}
 
-module.exports = DialogBase;
+export default DialogBase;
