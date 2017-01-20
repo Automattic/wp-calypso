@@ -46,7 +46,7 @@ export default React.createClass( {
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
 		isHighlighted: React.PropTypes.bool,
-		site: React.PropTypes.object.isRequired,
+		site: React.PropTypes.object,
 		homeLink: React.PropTypes.bool,
 		showHomeIcon: React.PropTypes.bool
 	},
