@@ -289,7 +289,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 	height: 20px;
 	width: 100%;
-	
+
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
@@ -680,6 +680,16 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card.card .daily-post-button {
 	margin-bottom: 10px;
+}
+
+.reader-post-card__blocked-description {
+	margin-bottom: 0;
+	color: $gray-dark;
+}
+
+.reader-post-card__blocked-undo {
+	padding-left: 2px;
+	cursor: pointer;
 }
 
 // For these borderless cards to look more presentable on Devdocs
