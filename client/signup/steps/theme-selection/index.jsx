@@ -51,7 +51,6 @@ class ThemeSelectionStep extends Component {
 			processingMessage: this.props.translate( 'Adding your theme' ),
 			repoSlug
 		}, null, {
-			themeSlug: theme.slug,
 			themeSlugWithRepo: repoSlug
 		} );
 
