@@ -849,7 +849,7 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2211667/themes/karuna/delete' )
-				.reply( 200 )
+				.reply( 200, { id: 'karuna', name: 'Karuna' } )
 				.post( '/rest/v1.1/sites/2211667/themes/blahblah/delete' )
 				.reply( 404, { code: 'unknown_theme' } );
 		} );
@@ -860,6 +860,7 @@ describe( 'actions', () => {
 					type: THEME_DELETE_SUCCESS,
 					siteId: 2211667,
 					themeId: 'karuna',
+					themeName: 'Karuna',
 				} );
 			} );
 		} );
