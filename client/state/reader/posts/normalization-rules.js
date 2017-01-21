@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, flow } from 'lodash';
+import { filter, flow, get, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -107,6 +107,30 @@ export function classifyPost( post ) {
 	return post;
 }
 
+/**
+ * Add discover properties to a post
+ * @param  {Object} post - the post to extend
+ * @return {Object}      - the post with discover properties
+ */
+
+export function addDiscoverProperties( post ) {
+	const isDiscover = !! ( get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' ) );
+	let discoverFormat;
+
+	if ( isDiscover ) {
+		const formats = get( post, 'discover_metadata.discover_fp_post_formats' );
+		const pickFormat = find( formats, format => format.slug !== 'pick' );
+
+		// if there is no pick format the post is a discover feature
+		discoverFormat = pickFormat ? pickFormat.slug : 'feature';
+	}
+
+	post.is_discover = isDiscover;
+	post.discover_format = discoverFormat;
+
+	return post;
+}
+
 const fastPostNormalizationRules = flow( [
 	decodeEntities,
 	stripHtml,
@@ -128,6 +152,7 @@ const fastPostNormalizationRules = flow( [
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
+	addDiscoverProperties,
 ] );
 
 export function runFastRules( post ) {
