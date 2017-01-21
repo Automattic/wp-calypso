@@ -34,7 +34,8 @@ var MenuItemList = React.createClass( {
 		if ( 0 === this.props.depth ) {
 			return <EmptyMenu doAddItem={ this.props.doAddItem }
 						depth={ this.props.depth + 1 }
-						addState={ this.props.addState } />;
+						addState={ this.props.addState }
+						itemTypes={ this.props.itemTypes } />;
 		}
 		return null;
 	},
