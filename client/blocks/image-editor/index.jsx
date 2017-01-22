@@ -21,7 +21,8 @@ import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
 import MediaUtils from 'lib/media/utils';
-import closeOnEsc from 'lib/mixins/close-on-esc';
+// import closeOnEsc from 'lib/mixins/close-on-esc';
+import CloseOnEscape from 'components/close-on-escape';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
@@ -42,7 +43,7 @@ import {
 import { getDefaultAspectRatio } from './utils';
 
 const ImageEditor = React.createClass( {
-	mixins: [ closeOnEsc( 'onCancel' ) ],
+	// mixins: [ closeOnEsc( 'onCancel' ) ],
 
 	propTypes: {
 		// Component props
@@ -225,6 +226,7 @@ const ImageEditor = React.createClass( {
 			<div className={ classes }>
 				{ this.state.canvasError && this.renderError() }
 
+				<CloseOnEscape onEscape={ this.onCancel } />
 				<QuerySites siteId={ siteId } />
 
 				<figure>
