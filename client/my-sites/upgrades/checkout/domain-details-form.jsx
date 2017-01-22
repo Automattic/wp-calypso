@@ -85,17 +85,24 @@ export default React.createClass( {
 	},
 
 	validate( fieldValues, onComplete ) {
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
+		if ( this.needsOnlyGoogleAppsDetails() ) {
+			wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
+			return;
+		}
 
 		const allFieldValues = Object.assign( {}, fieldValues );
 		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
 			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		}
+		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
+		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
+	},
 
-		wpcom.validateDomainContactInformation( allFieldValues, domainNames, ( error, data ) => {
+	generateValidationHandler( onComplete ) {
+		return ( error, data ) => {
 			const messages = data && data.messages || {};
 			onComplete( error, messages );
-		} );
+		};
 	},
 
 	setFormState( form ) {
