@@ -32,6 +32,7 @@ import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderTeams from 'components/data/query-reader-teams';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -189,6 +190,8 @@ export const ReaderSidebar = React.createClass( {
 				</SidebarMenu>
 
 				<QueryReaderLists />
+				<QueryReaderTeams />
+
 				{ this.props.subscribedLists && this.props.subscribedLists.length
 				? <ReaderSidebarLists
 						lists={ this.props.subscribedLists }
