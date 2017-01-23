@@ -34,6 +34,7 @@ export getTimezonesByContinent from './get-timezones-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
+export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDomainOnlySite from './is-domain-only-site';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
