@@ -118,7 +118,7 @@ describe( 'actions', () => {
 				} )
 				.get( '/rest/v1/sites/77203074/themes' )
 				.reply( 200, {
-					found: 2,
+					// The endpoint doesn't return `found` for Jetpack sites
 					themes: [
 						{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
 						{ ID: 'twentysixteen', name: 'Twenty Sixteen' }
@@ -127,7 +127,7 @@ describe( 'actions', () => {
 				.get( '/rest/v1/sites/77203074/themes' )
 				.query( { search: 'Sixteen' } )
 				.reply( 200, {
-					found: 1,
+					// The endpoint doesn't return `found` for Jetpack sites
 					themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
 				} )
 				.get( '/rest/v1/sites/1916284/themes' )
