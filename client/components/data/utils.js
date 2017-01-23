@@ -31,8 +31,7 @@ class GenericQueryComponent extends Component {
 }
 
 GenericQueryComponent.propTypes = {
-	shouldRequest: PropTypes.func,
-	shouldRequestArg: PropTypes.string,
+	shouldRequest: PropTypes.bool,
 	request: PropTypes.func,
 	requestArg: PropTypes.string,
 };
