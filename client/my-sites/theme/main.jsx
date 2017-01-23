@@ -625,7 +625,6 @@ export default connect(
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const isActive = selectedSite && isThemeActive( state, id, selectedSite.ID );
 
 		return {
 			...theme,
@@ -639,8 +638,8 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
-			isActive,
 			isLoggedIn: !! currentUserId,
+			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && (
 				isThemePurchased( state, id, selectedSite.ID ) ||
