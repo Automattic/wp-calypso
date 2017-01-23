@@ -137,6 +137,8 @@ export function requestThemes( siteId, query = {} ) {
 				// A Jetpack site's themes endpoint ignores the query, returning an unfiltered list of all installed themes instead,
 				// So we have to filter on the client side instead.
 				filteredThemes = filterThemesForJetpack( themes, query );
+				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
+				found = filteredThemes.length;
 			} else {
 				themes = map( rawThemes, normalizeWpcomTheme );
 				filteredThemes = themes;
