@@ -27,6 +27,26 @@ import {
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
+ * When wpcom themes are installed on Jetpack sites, the
+ * theme id is suffixed with -wpcom. Some operations require
+ * the use of this suffixed ID. This util function add the
+ * suffix if the theme is a wpcom theme and the site is Jetpack.
+ * or not, given siteId and ThemeId.
+ *
+ * @param {Object} state	Global state tree
+ * @param {Number} siteId	Site ID
+ * @param {String} themeId	Theme ID
+ * @return {String} 		Potentially suffixed theme ID
+ */
+const getSuffixedThemeId = ( state, siteId, themeId ) => {
+	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
+	if ( siteIsJetpack && isWpcomTheme( state, themeId ) ) {
+		return `${ themeId }-wpcom`;
+	}
+	return themeId;
+};
+
+/**
  * Returns a theme object by site ID, theme ID pair.
  *
  * @param  {Object}  state   Global state tree
@@ -498,10 +518,7 @@ export function getActiveTheme( state, siteId ) {
  * @return {Boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
-	const isJetpack = siteId && isJetpackSite( state, siteId );
-	const isThemeWpcom = isWpcomTheme( state, themeId );
-	const themeIdAtTargetSite = ( isJetpack && isThemeWpcom ) ? `${ themeId }-wpcom` : themeId;
-	return getActiveTheme( state, siteId ) === themeIdAtTargetSite;
+	return getActiveTheme( state, siteId ) === getSuffixedThemeId( state, siteId, themeId );
 }
 
 /**
