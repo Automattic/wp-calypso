@@ -80,7 +80,11 @@ export const getDocumentHeadFormattedTitle = createSelector(
 
 		return title + 'WordPress.com';
 	},
-	( state ) => [ state.ui.selectedSiteId, state.documentHead ]
+	( state ) => [
+		state.documentHead,
+		state.ui.section,
+		state.ui.selectedSiteId,
+	]
 );
 
 /**
