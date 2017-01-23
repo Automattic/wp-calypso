@@ -16,7 +16,7 @@ import { isValidTerm } from 'my-sites/themes/theme-filters';
 import ThemesRelatedCard from '../../themes-related-card';
 import ThemeDownloadCard from '../../theme-download-card';
 
-const Description = ( descriptionLong, description ) => (
+const Description = ( { descriptionLong, description } ) => (
 	<Card className="theme__sheet-content">
 		{ descriptionLong
 			? <div dangerouslySetInnerHTML={ { __html: descriptionLong } } />
@@ -26,22 +26,24 @@ const Description = ( descriptionLong, description ) => (
 	</Card>
 );
 
-const ThemeFeatures = ( taxonomies, isJetpack, siteSlug ) => (
-	taxonomies.theme_feature.map( function( item ) {
-		const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
-		return (
-			<li key={ 'theme-features-item-' + item.slug }>
-				{ isJetpack
-					? <a>{ item.name }</a>
-					: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
-				}
-			</li>
-		);
-	} )
+const ThemeFeatures = ( { taxonomies, isJetpack, siteSlug } ) => (
+	<div>
+		{ taxonomies.theme_feature.map( function( item ) {
+			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
+			return (
+				<li key={ 'theme-features-item-' + item.slug }>
+					{ isJetpack
+						? <a>{ item.name }</a>
+						: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+					}
+				</li>
+			);
+		} ) }
+	</div>
 );
 
 const Features = localize(
-	( { translate }, isJetpack, siteSlug, taxonomies ) => {
+	( { translate, isJetpack, siteSlug, taxonomies } ) => {
 		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
 			return null;
 		}
@@ -63,7 +65,7 @@ const Features = localize(
 	}
 );
 
-const Download = ( isPremium, isJetpack, download, id ) => {
+const Download = ( { isPremium, isJetpack, download, id } ) => {
 	// Don't render download button:
 	// * If it's a premium theme
 	// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
