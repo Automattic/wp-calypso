@@ -1,7 +1,7 @@
 /**
 * External dependencies
 */
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { get, reduce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -21,67 +21,48 @@ import {
 	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
 
-class StatsReach extends Component {
+export const StatsReach = props => {
+	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;
 
-	static propTypes = {
-		translate: PropTypes.func,
-		siteId: PropTypes.number,
-		followData: PropTypes.object,
-		publicizeData: PropTypes.array,
-		isLoadingPublicize: PropTypes.bool,
-		siteSlug: PropTypes.string,
-	};
+	const isLoadingFollowData = ! followData;
+	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
+	const emailFollowCount = get( followData, 'total_email', 0 );
+	const publicizeFollowCount = reduce( publicizeData, ( sum, item ) => {
+		return sum + item.value;
+	}, 0 );
 
-	render() {
-		const {
-			translate,
-			siteId,
-			followData,
-			publicizeData,
-			isLoadingPublicize,
-			siteSlug,
-		} = this.props;
-
-		const isLoadingFollowData = ! followData;
-		const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
-		const emailFollowCount = get( followData, 'total_email', 0 );
-		const publicizeFollowCount = reduce( publicizeData, ( sum, item ) => {
-			return sum + item.value;
-		}, 0 );
-
-		return (
-			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-				<SectionHeader label={ translate( 'Followers' ) } />
-				<Card className="stats-module stats-reach__card">
-					<StatsTabs borderless>
-						<StatsTab
-							className="stats-reach__tab"
-							gridicon="my-sites"
-							label={ translate( 'WordPress.com' ) }
-							loading={ isLoadingFollowData }
-							href={ `/people/followers/${ siteSlug }` }
-							value={ wpcomFollowCount } />
-						<StatsTab
-							className="stats-reach__tab"
-							gridicon="mail"
-							label={ translate( 'Email' ) }
-							loading={ isLoadingFollowData }
-							href={ `/people/email-followers/${ siteSlug }` }
-							value={ emailFollowCount } />
-						<StatsTab
-							className="stats-reach__tab"
-							gridicon="share"
-							label={ translate( 'Social' ) }
-							loading={ isLoadingPublicize }
-							value={ publicizeFollowCount } />
-					</StatsTabs>
-				</Card>
-			</div>
-		);
-	}
-}
+	return (
+		<div>
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
+			<SectionHeader label={ translate( 'Followers' ) } />
+			<Card className="stats-module stats-reach__card">
+				<StatsTabs borderless>
+					<StatsTab
+						className="stats-reach__tab"
+						gridicon="my-sites"
+						label={ translate( 'WordPress.com' ) }
+						loading={ isLoadingFollowData }
+						href={ `/people/followers/${ siteSlug }` }
+						value={ wpcomFollowCount } />
+					<StatsTab
+						className="stats-reach__tab"
+						gridicon="mail"
+						label={ translate( 'Email' ) }
+						loading={ isLoadingFollowData }
+						href={ `/people/email-followers/${ siteSlug }` }
+						value={ emailFollowCount } />
+					<StatsTab
+						className="stats-reach__tab"
+						gridicon="share"
+						label={ translate( 'Social' ) }
+						loading={ isLoadingPublicize }
+						value={ publicizeFollowCount } />
+				</StatsTabs>
+			</Card>
+		</div>
+	);
+};
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
