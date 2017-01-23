@@ -168,7 +168,7 @@ const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, siteIdOrWpcom, query ),
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
-			isThemeActive: themeId => isThemeActive( state, suffixThemeId( themeId ), siteId ),
+			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isThemePurchased: themeId => (
 				// Note: This component assumes that purchase and data is already present in the state tree
 				// (used by the isThemePurchased selector). At the time of implementation there's no caching

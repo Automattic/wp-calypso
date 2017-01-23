@@ -498,7 +498,10 @@ export function getActiveTheme( state, siteId ) {
  * @return {Boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === themeId;
+	const isJetpack = siteId && isJetpackSite( state, siteId );
+	const isThemeWpcom = isWpcomTheme( state, themeId );
+	const themeIdAtTargetSite = ( isJetpack && isThemeWpcom ) ? `${ themeId }-wpcom` : themeId;
+	return getActiveTheme( state, siteId ) === themeIdAtTargetSite;
 }
 
 /**
