@@ -1432,7 +1432,10 @@ describe( 'themes selectors', () => {
 					themes: {
 						activeThemes: {
 							2916284: 'twentysixteen'
-						}
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
 					}
 				},
 			);
@@ -1446,7 +1449,10 @@ describe( 'themes selectors', () => {
 					themes: {
 						activeThemes: {
 							2916284: 'twentysixteen'
-						}
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
 					}
 				}, 'mood'
 			);
@@ -1460,6 +1466,14 @@ describe( 'themes selectors', () => {
 					themes: {
 						activeThemes: {
 							2916284: 'twentysixteen'
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
+					},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, jetpack: false }
 						}
 					}
 				},
@@ -1476,9 +1490,41 @@ describe( 'themes selectors', () => {
 					themes: {
 						activeThemes: {
 							2916284: 'mood'
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
+					},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, jetpack: false }
 						}
 					}
 				}, 'mood', 2916284
+			);
+
+			expect( isActive ).to.be.true;
+		} );
+
+		it( 'given a wpcom theme and a jetpack site on which it is active, should return true', () => {
+			const isActive = isThemeActive(
+				{
+					themes: {
+						activeThemes: {
+							77203074: 'karuna-wpcom'
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { karuna: { id: 'karuna' } }
+							} ),
+						}
+					},
+					sites: {
+						items: {
+							77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true }
+						}
+					}
+				}, 'karuna', 77203074
 			);
 
 			expect( isActive ).to.be.true;
@@ -1598,11 +1644,47 @@ describe( 'themes selectors', () => {
 							2916284: {
 								karuna: true
 							}
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {} ),
+						},
+					},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, jetpack: false }
 						}
 					}
 				},
 				'karuna',
 				2916284
+			);
+
+			expect( installing ).to.be.true;
+		} );
+
+		it( 'given a jetpack site and wpcom theme, should return true if theme is currently being installed', () => {
+			const installing = isInstallingTheme(
+				{
+					themes: {
+						themeInstalls: {
+							77203074: {
+								'karuna-wpcom': true
+							}
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { karuna: { id: 'karuna' } }
+							} ),
+						}
+					},
+					sites: {
+						items: {
+							77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true }
+						}
+					}
+				},
+				'karuna',
+				77203074
 			);
 
 			expect( installing ).to.be.true;
