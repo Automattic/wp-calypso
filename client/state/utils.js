@@ -312,8 +312,7 @@ export const createActionThunk = ( {
 					error: false,
 					meta,
 				} );
-			} )
-		.catch(
+			},
 			error => {
 				dispatch( {
 					type: failureAction,
