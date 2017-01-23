@@ -147,11 +147,6 @@ const ConnectedThemesSelection = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
 
-		let suffixThemeId = ( themeId ) => themeId;
-		if ( isJetpack && queryWpcom ) {
-			suffixThemeId = ( themeId ) => themeId + '-wpcom';
-		}
-
 		const query = {
 			search,
 			page,
@@ -174,12 +169,12 @@ const ConnectedThemesSelection = connect(
 				// (used by the isThemePurchased selector). At the time of implementation there's no caching
 				// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
 				// redundant AJAX requests, we're not rendering the query component locally.
-				isThemePurchased( state, suffixThemeId( themeId ), siteId ) ||
+				isThemePurchased( state, themeId, siteId ) ||
 				// The same is true for the `hasFeature` selector, which relies on the presence of
 				// a `<QuerySitePlans />` component in a parent component.
 				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
-			isInstallingTheme: themeId => isInstallingTheme( state, suffixThemeId( themeId ), siteId )
+			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId )
 		};
 	}
 )( ThemesSelection );
