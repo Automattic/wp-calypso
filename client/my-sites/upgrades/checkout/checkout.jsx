@@ -43,8 +43,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
-import { isDomainRegistration } from 'lib/products-values';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -240,8 +239,8 @@ const Checkout = React.createClass( {
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
 		} else if ( selectedSite.options.is_domain_only && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			const domainItem = find( cartItems.getAll( cart ), isDomainRegistration );
-			return domainManagementEdit( selectedSite.slug, domainItem.meta );
+			// TODO: Use purchased domain name once it is possible to set it as a primary domain when site is created.
+			return domainManagementList( selectedSite.slug );
 		}
 
 		if ( receipt && receipt.receipt_id ) {
