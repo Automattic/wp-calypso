@@ -625,8 +625,7 @@ export default connect(
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const themeIdAtTargetSite = ( isJetpack && isWpcomTheme ) ? `${ id }-wpcom` : id;
-		const isActive = selectedSite && isThemeActive( state, themeIdAtTargetSite, selectedSite.ID );
+		const isActive = selectedSite && isThemeActive( state, id, selectedSite.ID );
 
 		return {
 			...theme,
