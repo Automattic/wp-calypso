@@ -85,6 +85,7 @@ export const FEATURE_CORE_JETPACK = 'core-jetpack';
 export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
 export const FEATURE_BASIC_SECURITY_JETPACK = 'basic-security-jetpack';
 export const FEATURE_SITE_BACKUPS_JETPACK = 'site-backups-jetpack';
+export const FEATURE_REALTIME_BACKUPS_JETPACK = 'realtime-backups-jetpack';
 export const FEATURE_SECURITY_SCANNING_JETPACK = 'security-scanning-jetpack';
 export const FEATURE_REVENUE_GENERATION_JETPACK = 'revenue-generation-jetpack';
 export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
@@ -393,7 +394,7 @@ export const PLANS_LIST = {
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
 			? [
 				FEATURE_CORE_JETPACK,
-				FEATURE_SITE_BACKUPS_JETPACK,
+				FEATURE_REALTIME_BACKUPS_JETPACK,
 				FEATURE_SECURITY_SCANNING_JETPACK,
 				FEATURE_REVENUE_GENERATION_JETPACK,
 				FEATURE_VIDEO_HOSTING_JETPACK,
@@ -438,7 +439,7 @@ export const PLANS_LIST = {
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
 			? [
 				FEATURE_CORE_JETPACK,
-				FEATURE_SITE_BACKUPS_JETPACK,
+				FEATURE_REALTIME_BACKUPS_JETPACK,
 				FEATURE_SECURITY_SCANNING_JETPACK,
 				FEATURE_REVENUE_GENERATION_JETPACK,
 				FEATURE_VIDEO_HOSTING_JETPACK,
@@ -864,12 +865,19 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
-
 	[ FEATURE_SITE_BACKUPS_JETPACK ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_JETPACK,
 		getTitle: () => i18n.translate( 'Site Backups' ),
 		getDescription: () => i18n.translate(
 			'Automated daily backups (unlimited storage), one-click restores, and 30-day archive.'
+		),
+		hideInfoPopover: true
+	},
+	[ FEATURE_REALTIME_BACKUPS_JETPACK ]: {
+		getSlug: () => FEATURE_REALTIME_BACKUPS_JETPACK,
+		getTitle: () => i18n.translate( 'Site Backups' ),
+		getDescription: () => i18n.translate(
+			'Automated real-time backups (unlimited storage), one-click restores, and unlimited archive.'
 		),
 		hideInfoPopover: true
 	},
