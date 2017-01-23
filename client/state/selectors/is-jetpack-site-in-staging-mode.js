@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackConnectionStatus } from 'state/selectors';
+import { getJetpackConnectionStatus } from './';
 
 /**
  * Returns true if we the Jetpack site is in staging mode. False otherwise.
@@ -16,6 +16,6 @@ import { getJetpackConnectionStatus } from 'state/selectors';
  * @param  {Number}   siteId   The ID of the site we're querying
  * @return {?Boolean}          Whether the site is in staging mode.
  */
-export function isJetpackSiteInStagingMode( state, siteId ) {
+export default function isJetpackSiteInStagingMode( state, siteId ) {
 	return get( getJetpackConnectionStatus( state, siteId ), [ 'isStaging' ], null );
 }

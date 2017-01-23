@@ -36,6 +36,7 @@ export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDomainOnlySite from './is-domain-only-site';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
+export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
