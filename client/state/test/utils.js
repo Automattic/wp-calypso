@@ -2,7 +2,7 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import noop from 'lodash/noop';
 import { stub, spy } from 'sinon';
 
@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import { testSchema } from './mocks/schema';
 import useMockery from 'test/helpers/use-mockery';
+import { createActionThunk } from '../utils';
 
 describe( 'utils', () => {
 	const currentState = deepFreeze( {
@@ -355,6 +356,101 @@ describe( 'utils', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( 5, load ) ).to.equal( 5 );
+		} );
+	} );
+
+	describe( 'createActionThunk', () => {
+		const SAMPLE_ACTION_REQUEST = 'SAMPLE_ACTION_REQUEST';
+		const SAMPLE_ACTION_REQUEST_SUCCESS = 'SAMPLE_ACTION_REQUEST_SUCCESS';
+		const SAMPLE_ACTION_REQUEST_FAILURE = 'SAMPLE_ACTION_REQUEST_FAILURE';
+		const SUCCESSFUL_FETCH_VALUE = { bool: true, object: { a: '1' } };
+		const UNSUCCESSFUL_FETCH_VALUE = {};
+		const SAMPLE_DATA_FETCH_SUCCESS = () => Promise.resolve( SUCCESSFUL_FETCH_VALUE );
+		const SAMPLE_DATA_FETCH_FAILURE = () => Promise.reject( UNSUCCESSFUL_FETCH_VALUE );
+		const dispatchSpy = spy();
+
+		beforeEach( () => {
+			dispatchSpy.reset();
+		} );
+
+		it( 'request should dispatch success when the datafetch succeeds', () => {
+			const request = createActionThunk( {
+				requestAction: SAMPLE_ACTION_REQUEST,
+				dataFetch: SAMPLE_DATA_FETCH_SUCCESS,
+			} )( dispatchSpy );
+
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: SAMPLE_ACTION_REQUEST,
+				meta: {},
+			} );
+
+			return request.then( () => {
+				expect( dispatchSpy ).to.have.been.calledWith( {
+					type: SAMPLE_ACTION_REQUEST_SUCCESS,
+					payload: SUCCESSFUL_FETCH_VALUE,
+					meta: {},
+					error: false,
+				} );
+				expect( dispatchSpy.calledTwice );
+			} ).catch( ( err ) => {
+				assert.fail( err, undefined, 'errback should not have been called' );
+			} );
+		} );
+
+		it( 'request should dispatch failure when the datafetch fails', () => {
+			const request = createActionThunk( {
+				requestAction: SAMPLE_ACTION_REQUEST,
+				dataFetch: SAMPLE_DATA_FETCH_FAILURE,
+			} )( dispatchSpy );
+
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: SAMPLE_ACTION_REQUEST,
+				meta: {},
+			} );
+
+			return request.then(
+				() => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: SAMPLE_ACTION_REQUEST_FAILURE,
+						error: UNSUCCESSFUL_FETCH_VALUE,
+						meta: {},
+					} );
+
+					expect( dispatchSpy.calledTwice );
+				},
+				err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
+				}
+			);
+		} );
+
+		it( 'should include meta in all dispatched actions', () => {
+			const siteId = 'HelloWorld';
+			const request = createActionThunk( {
+				requestAction: SAMPLE_ACTION_REQUEST,
+				dataFetch: SAMPLE_DATA_FETCH_FAILURE,
+				meta: { siteId, },
+			} )( dispatchSpy );
+
+			expect( dispatchSpy ).to.have.been.calledWith( {
+				type: SAMPLE_ACTION_REQUEST,
+				meta: { siteId },
+			} );
+
+			return request.then(
+				() => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: SAMPLE_ACTION_REQUEST_FAILURE,
+						error: UNSUCCESSFUL_FETCH_VALUE,
+						meta: { siteId },
+					} );
+
+					expect( dispatchSpy.calledTwice );
+				},
+				err => {
+					assert.fail( err, undefined, 'errback should not have been called' );
+				}
+			);
 		} );
 	} );
 } );
