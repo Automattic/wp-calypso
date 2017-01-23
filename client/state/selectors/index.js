@@ -19,6 +19,7 @@ export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
 export getBillingTransactions from './get-billing-transactions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
+export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getManualUtcOffsets from './get-manual-utc-offsets';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
