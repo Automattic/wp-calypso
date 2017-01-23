@@ -25,32 +25,32 @@ describe( 'reducer', () => {
 
 		it( 'should insert a new URL when followed', () => {
 			const original = deepFreeze( {
-				'discover.wordpress.com': { isFollowing: true },
-				'dailypost.wordpress.com': { isFollowing: true },
+				'discover.wordpress.com': { is_following: true },
+				'dailypost.wordpress.com': { is_following: true },
 			} );
 			const state = items( original, {
 				type: READER_FOLLOW,
 				url: 'http://data.blog'
 			} );
-			expect( state[ 'data.blog' ] ).to.eql( { isFollowing: true } );
+			expect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
 		} );
 
 		it( 'should remove a URL when unfollowed', () => {
 			const original = deepFreeze( {
-				'discover.wordpress.com': { isFollowing: true },
-				'dailypost.wordpress.com': { isFollowing: true },
+				'discover.wordpress.com': { is_following: true },
+				'dailypost.wordpress.com': { is_following: true },
 			} );
 			const state = items( original, {
 				type: READER_UNFOLLOW,
 				url: 'http://discover.wordpress.com'
 			} );
-			expect( state[ 'discover.wordpress.com' ] ).to.eql( { isFollowing: false } );
+			expect( state[ 'discover.wordpress.com' ] ).to.eql( { is_following: false } );
 		} );
 
 		it( 'should accept a new set of follows', () => {
 			const original = deepFreeze( {
-				'discover.wordpress.com': { isFollowing: true, blog_ID: 123 },
-				'dailypost.wordpress.com': { isFollowing: true, blog_ID: 124 },
+				'discover.wordpress.com': { is_following: true, blog_ID: 123 },
+				'dailypost.wordpress.com': { is_following: true, blog_ID: 124 },
 			} );
 			const incomingFollows = [
 				{ URL: 'http://dailypost.wordpress.com', blog_ID: 125 },
@@ -63,12 +63,12 @@ describe( 'reducer', () => {
 
 			// Updated follow
 			expect( state[ 'dailypost.wordpress.com' ] ).to.eql(
-				{ isFollowing: true, blog_ID: 125, URL: 'http://dailypost.wordpress.com' }
+				{ is_following: true, blog_ID: 125, URL: 'http://dailypost.wordpress.com' }
 			);
 
 			// Brand new follow
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
-				{ isFollowing: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
+				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
 		} );
 	} );
