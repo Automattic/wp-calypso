@@ -198,7 +198,7 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * @param  {string}  themeId Theme id
  * @return {Boolean}         Wheter theme is a wpcom theme
  */
-export function isWpcomTheme( themeId ) {
+export function isThemeFromWpcom( themeId ) {
 	return endsWith( themeId, '-wpcom' );
 }
 
@@ -221,7 +221,7 @@ export function filterThemesForJetpack( themes, query ) {
 	if ( config.isEnabled( 'manage/themes/upload' ) ) {
 		return filter(
 			themes,
-			theme => ! isWpcomTheme( theme.id ) && isThemeMatchingQuery( query, theme )
+			theme => ! isThemeFromWpcom( theme.id ) && isThemeMatchingQuery( query, theme )
 		);
 	}
 
