@@ -138,4 +138,13 @@ module.exports = {
 		defaultVariation: 'noTabs'
 	},
 
+	domainContactNewPhoneInput: {
+		datestamp: '20170123',
+		variations: {
+			disabled: 50,
+			enabled: 50
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true
+	}
 };

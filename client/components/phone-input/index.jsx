@@ -3,7 +3,6 @@
  */
 import find from 'lodash/find';
 import identity from 'lodash/identity';
-import includes from 'lodash/includes';
 import React from 'react';
 import classnames from 'classnames';
 
@@ -111,7 +110,8 @@ const PhoneInput = React.createClass( {
 		if ( ! value || value.length < MIN_LENGTH_TO_FORMAT || this.state.freezeSelection ) {
 			return false;
 		}
-		return includes( [ '+', '1' ], value[ 0 ] );
+		const dialCode = this.getCountry().countryDialCode || this.getCountry().dialCode;
+		return value[ 0 ] === '+' || ( value[ 0 ] === '1' && dialCode === '1' );
 	},
 
 	/**
@@ -194,7 +194,7 @@ const PhoneInput = React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ this.format( '9876543210' ) }
+					placeholder={ this.translate( 'Phone' ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
 					ref={ c => this.numberInput = c }
@@ -202,6 +202,7 @@ const PhoneInput = React.createClass( {
 				<div className="phone-input__select-container">
 					<div className="phone-input__select-inner-container">
 						<FormCountrySelect
+							tabIndex={ -1 }
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
 							value={ ( this.getCountry().isoCode ) }

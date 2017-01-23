@@ -1,6 +1,7 @@
 .phone-input__flag-icon {
 	pointer-events: none;
-	width: 24px;
+	max-width: 24px;
+	max-height: 18px;
 	align-self: center;
 	box-shadow: 0 0 1px lighten( $gray, 20% );
 }
