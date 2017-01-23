@@ -116,7 +116,6 @@ export default React.createClass( {
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal"
-						onClickOutside={ this.closeDetailsModal }
 						onClose={ this.closeDetailsModal }
 					>
 					{ this.state.openedDetails &&
