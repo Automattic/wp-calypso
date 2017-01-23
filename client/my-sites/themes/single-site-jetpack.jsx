@@ -90,6 +90,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								options={ [
 									'activateOnJetpack',
 									'tryAndCustomizeOnJetpack',
+									'customize',
 									'separator',
 									'info',
 									'support',
