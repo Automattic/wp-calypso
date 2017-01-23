@@ -30,6 +30,7 @@ import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
+import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
 
 /**
  * Module vars
@@ -37,7 +38,6 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
 export const
 	READER_CONTENT_WIDTH = 720,
 	PHOTO_ONLY_MIN_WIDTH = 440,
-	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
 
@@ -128,6 +128,7 @@ const fastPostNormalizationRules = flow( [
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
+	addDiscoverProperties,
 ] );
 
 export function runFastRules( post ) {
