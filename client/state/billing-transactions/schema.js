@@ -45,7 +45,7 @@ export const billingTransactionsSchema = {
 					product: { type: 'string' },
 					interval: { type: 'string' },
 					icon: { type: 'string' },
-					domain: { type: 'string' },
+					domain: { type: [ 'string', 'null' ] },
 				},
 			},
 		},
