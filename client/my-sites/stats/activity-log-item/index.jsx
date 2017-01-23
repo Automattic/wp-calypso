@@ -107,13 +107,14 @@ class ActivityLogItem extends Component {
 	getSummary() {
 		const {
 			translate,
+			onClick,
 			actionText
 		} = this.props;
 
 		return ( actionText &&
 			<div className="activity-log-item__action">
 				<EllipsisMenu position="bottom right">
-					<PopoverMenuItem onClick={ noop } icon="undo">{ actionText }</PopoverMenuItem>
+					<PopoverMenuItem onClick={ onClick } icon="undo">{ actionText }</PopoverMenuItem>
 					<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
 					<PopoverMenuSeparator />
 					<PopoverMenuItem icon="help">{ translate( 'More Info' ) }</PopoverMenuItem>
