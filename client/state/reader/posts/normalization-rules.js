@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter, flow, get, find } from 'lodash';
+import { filter, flow } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -30,6 +30,7 @@ import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
+import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
 
 /**
  * Module vars
@@ -37,7 +38,6 @@ import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-el
 export const
 	READER_CONTENT_WIDTH = 720,
 	PHOTO_ONLY_MIN_WIDTH = 440,
-	DISCOVER_BLOG_ID = 53424024,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
 
@@ -103,30 +103,6 @@ export function classifyPost( post ) {
 	}
 
 	post.display_type = displayType;
-
-	return post;
-}
-
-/**
- * Add discover properties to a post
- * @param  {Object} post - the post to extend
- * @return {Object}      - the post with discover properties
- */
-
-export function addDiscoverProperties( post ) {
-	const isDiscover = !! ( get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' ) );
-	let discoverFormat;
-
-	if ( isDiscover ) {
-		const formats = get( post, 'discover_metadata.discover_fp_post_formats' );
-		const pickFormat = find( formats, format => format.slug !== 'pick' );
-
-		// if there is no pick format the post is a discover feature
-		discoverFormat = pickFormat ? pickFormat.slug : 'feature';
-	}
-
-	post.is_discover = isDiscover;
-	post.discover_format = discoverFormat;
 
 	return post;
 }
