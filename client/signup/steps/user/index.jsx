@@ -84,7 +84,7 @@ export class UserStep extends Component {
 			}
 		};
 
-		this.props.recordTrackEvent( 'calypso_signup_user_step_submit', analyticsData );
+		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
 		SignupActions.submitSignupStep( {
 			processingMessage: this.props.translate( 'Creating your account' ),
@@ -172,9 +172,7 @@ export default connect(
 	( state ) => ( {
 		suggestedUsername: getSuggestedUsername( state )
 	} ),
-	( dispatch ) => ( {
-		recordTrackEvent: ( event, data ) => {
-			dispatch( recordTracksEvent( event, data ) );
-		}
-	} )
+	{
+		recordTracksEvent
+	}
 )( localize( UserStep ) );
