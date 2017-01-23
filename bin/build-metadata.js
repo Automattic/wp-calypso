@@ -30,6 +30,7 @@ var priorityData = {
 	CA: 5,
 	DO: 3,
 	PR: 1,
+	UM: -99,
 	// dial code: +7
 	RU: 10,
 	KZ: 1,
@@ -44,16 +45,24 @@ var priorityData = {
 	// dial code: +47
 	NO: 10,
 	SJ: 1,
+	BV: -99,
 	// dial code: +61
 	AU: 10,
 	CX: 5,
 	CC: 1,
+	HM: -99,
+	// dial code: +64
+	NZ: 10,
+	PN: -99,
 	// dial code: +290
 	SH: 10,
 	TA: 1,
 	// dial code: +358
 	FI: 10,
 	AX: 1,
+	// dial code: +500
+	FK: 10,
+	GS: -99,
 	// dial code: +590
 	GP: 10,
 	MF: 5,
@@ -261,6 +270,55 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	return data;
 }
 
+// Political correction
+function injectHardCodedValues( libPhoneNumberData ) {
+	return Object.assign( {}, {
+		KV: {
+			isoCode: 'KV',
+			dialCode: '383',
+			nationalPrefix: '0',
+			priority: priorityData.KV
+		},
+		UM: {
+			isoCode: 'UM',
+			dialCode: '1',
+			nationalPrefix: '',
+			patternRegion: 'us',
+			priority: priorityData.UM
+		},
+		BV: {
+			isoCode: 'BV',
+			dialCode: '47',
+			nationalPrefix: '',
+			priority: priorityData.BV
+		},
+		TF: {
+			isoCode: 'TF',
+			dialCode: '262',
+			nationalPrefix: '0',
+			priority: priorityData.TF
+		},
+		HM: {
+			isoCode: 'HM',
+			dialCode: '61',
+			nationalPrefix: '0',
+			priority: priorityData.HM
+		},
+		PN: {
+			isoCode: 'PN',
+			dialCode: '64',
+			nationalPrefix: '0',
+			priority: priorityData.PN
+		},
+		GS: {
+			isoCode: 'GS',
+			nationalPrefix: '',
+			dialCode: '500',
+			priority: priorityData.GS
+		}
+	}, libPhoneNumberData );
+}
+
 /**
  * Creates aliases. E.g. allows `uk` to be found by both `gb` and `uk`.
  * @param data
@@ -326,6 +384,7 @@ function generateFullDataset( metadata ) {
 
 getLibPhoneNumberData()
 	.then( processLibPhoneNumberMetadata )
+	.then( injectHardCodedValues )
 	.then( generateDeepRemoveEmptyArraysFromObject( [ 'patterns', 'internationalPatterns' ] ) )
 	.then( insertCountryAliases )
 	.then( removeAllNumberKeys )

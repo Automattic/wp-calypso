@@ -2,6 +2,47 @@
 /* eslint-disable */
 module.exports = {
 	countries: {
+		KV: {
+			isoCode: "KV",
+			dialCode: "383",
+			nationalPrefix: "0"
+		},
+		UM: {
+			isoCode: "UM",
+			dialCode: "1",
+			nationalPrefix: "",
+			patternRegion: "us",
+			priority: -99
+		},
+		BV: {
+			isoCode: "BV",
+			dialCode: "47",
+			nationalPrefix: "",
+			priority: -99
+		},
+		TF: {
+			isoCode: "TF",
+			dialCode: "262",
+			nationalPrefix: "0"
+		},
+		HM: {
+			isoCode: "HM",
+			dialCode: "61",
+			nationalPrefix: "0",
+			priority: -99
+		},
+		PN: {
+			isoCode: "PN",
+			dialCode: "64",
+			nationalPrefix: "0",
+			priority: -99
+		},
+		GS: {
+			isoCode: "GS",
+			nationalPrefix: "",
+			dialCode: "500",
+			priority: -99
+		},
 		AC: {
 			isoCode: "AC",
 			dialCode: "247"
@@ -1810,7 +1851,9 @@ module.exports = {
 		},
 		FK: {
 			isoCode: "FK",
-			dialCode: "500"
+			dialCode: "500",
+			priority: 10,
+			patternRegion: "FK"
 		},
 		FM: {
 			isoCode: "FM",
@@ -4206,7 +4249,8 @@ module.exports = {
 					nationalFormat: "0$1",
 					leadingDigitPattern: "2(?:10|74)|5|[89]0"
 				}
-			]
+			],
+			priority: 10
 		},
 		OM: {
 			isoCode: "OM",
@@ -5995,7 +6039,8 @@ module.exports = {
 	dialCodeMap: {
 		1: [
 			"US",
-			"CA"
+			"CA",
+			"UM"
 		],
 		7: [
 			"RU",
@@ -6052,7 +6097,8 @@ module.exports = {
 		],
 		47: [
 			"NO",
-			"SJ"
+			"SJ",
+			"BV"
 		],
 		48: [
 			"PL"
@@ -6090,7 +6136,8 @@ module.exports = {
 		61: [
 			"AU",
 			"CX",
-			"CC"
+			"CC",
+			"HM"
 		],
 		62: [
 			"ID"
@@ -6099,7 +6146,8 @@ module.exports = {
 			"PH"
 		],
 		64: [
-			"NZ"
+			"NZ",
+			"PN"
 		],
 		65: [
 			"SG"
@@ -6278,6 +6326,9 @@ module.exports = {
 		261: [
 			"MG"
 		],
+		262: [
+			"TF"
+		],
 		263: [
 			"ZW"
 		],
@@ -6382,6 +6433,9 @@ module.exports = {
 		382: [
 			"ME"
 		],
+		383: [
+			"KV"
+		],
 		385: [
 			"HR"
 		],
@@ -6404,7 +6458,8 @@ module.exports = {
 			"LI"
 		],
 		500: [
-			"FK"
+			"FK",
+			"GS"
 		],
 		501: [
 			"BZ"
