@@ -6,6 +6,7 @@ import React from 'react';
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Main from 'components/main';
+import TestQuery from './test-query';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ const render = ( context ) => {
 	renderWithReduxStore( (
 		<Main className="calypsotron__main" wideLayout>
 			<ProductList { ...dummyProps } />
+			<TestQuery />
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };

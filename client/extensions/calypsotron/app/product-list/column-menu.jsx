@@ -13,7 +13,7 @@ import PopoverMenu from 'components/popover/menu';
 
 class ColumnMenu extends React.Component {
 	static propTypes = {
-		context: PropTypes.object.isRequired,
+		context: PropTypes.object,
 		isVisible: PropTypes.bool.isRequired,
 		columns: PropTypes.array.isRequired,
 		columnGroups: PropTypes.array.isRequired,
