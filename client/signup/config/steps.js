@@ -21,7 +21,17 @@ module.exports = {
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	// `themes` does not update the theme for an existing site as we normally
+	// do this when the site is created. In flows where a site is merely being
+	// updated, we need to use a different API request function.
+	'themes-site-selected': {
+		stepName: 'themes-site-selected',
+		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
+		providesDependencies: [ 'themeSlugWithRepo' ],
+		apiRequestFunction: stepActions.setThemeOnSite
 	},
 
 	'design-type': {
@@ -67,7 +77,7 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		dependencies: [ 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -75,7 +85,7 @@ module.exports = {
 		stepName: 'domains-with-plan',
 		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		dependencies: [ 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -92,7 +102,7 @@ module.exports = {
 		props: {
 			isDomainOnly: true
 		},
-		dependencies: [ 'theme', 'designType' ],
+		dependencies: [ 'themeSlugWithRepo', 'designType' ],
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -121,7 +131,7 @@ module.exports = {
 			designType: 'blog'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
 	// Currently, this step explicitly submits other steps to skip them, and

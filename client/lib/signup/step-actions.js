@@ -6,6 +6,7 @@ import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
 import async from 'async';
 import { parse as parseURL } from 'url';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +34,6 @@ function createSiteWithCart( callback, dependencies, {
 	googleAppsCartItem,
 	isPurchasingItem,
 	siteUrl,
-	themeSlug,
 	themeSlugWithRepo,
 	themeItem
 } ) {
@@ -44,7 +44,10 @@ function createSiteWithCart( callback, dependencies, {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
-			theme: dependencies.theme || themeSlugWithRepo,
+			// the theme can be provided in this step's dependencies or the
+			// step object itself depending on if the theme is provided in a
+			// query. See `getThemeSlug` in `DomainsStep`.
+			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: surveyVertical || undefined,
 			// the API wants the `is_domain_only` flag provided as a number
 			is_domain_only: dependencies.designType === 'domain' ? 1 : 0
@@ -62,7 +65,7 @@ function createSiteWithCart( callback, dependencies, {
 
 		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
-		const isFreeThemePreselected = themeSlug && ! themeItem;
+		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 		const providedDependencies = {
 			siteId,
 			siteSlug,
@@ -87,9 +90,9 @@ function createSiteWithCart( callback, dependencies, {
 		};
 
 		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
@@ -144,14 +147,14 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 	], onComplete );
 }
 
-function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
-	if ( isEmpty( themeSlug ) ) {
+function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlug }, function( errors ) {
+	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
 		callback( isEmpty( errors ) ? undefined : [ errors ] );
 	} );
 }
@@ -271,11 +274,11 @@ module.exports = {
 		} );
 	},
 
-	createSite( callback, { theme }, { site } ) {
+	createSite( callback, { themeSlugWithRepo }, { site } ) {
 		var data = {
 			blog_name: site,
 			blog_title: '',
-			options: { theme },
+			options: { theme: themeSlugWithRepo },
 			validate: false
 		};
 
