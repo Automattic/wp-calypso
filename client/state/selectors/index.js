@@ -43,6 +43,7 @@ export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
+export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingTimezones from './is-requesting-timezones';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
