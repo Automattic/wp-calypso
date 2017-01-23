@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +14,8 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { isValidTerm } from 'my-sites/themes/theme-filters';
-import SectionHeader from 'components/section-header';
-import ThemeDownloadCard from '../theme-download-card';
-import ThemesRelatedCard from '../themes-related-card';
 import Button from 'components/button';
+import Overview from './theme-content-sections/overview';
 
 class ThemeSheetContent extends React.Component {
 	static propTypes = {
@@ -118,56 +114,7 @@ class ThemeSheetContent extends React.Component {
 
 	renderOverviewTab() {
 		return (
-			<div>
-				<Card className="theme__sheet-content">
-					{ this.renderDescription() }
-				</Card>
-				{ this.renderFeaturesCard() }
-				{ this.renderDownload() }
-				{ ! this.props.isJetpack && <ThemesRelatedCard currentTheme={ this.props.id } /> }
-			</div>
-		);
-	}
-
-	renderDescription() {
-		if ( this.props.theme.descriptionLong ) {
-			return (
-				<div dangerouslySetInnerHTML={ { __html: this.props.theme.descriptionLong } } />
-			);
-		}
-		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
-		return <div>{ this.props.theme.description }</div>;
-	}
-
-	renderFeaturesCard() {
-		const { isJetpack, siteSlug, translate } = this.props;
-		const { taxonomies } = this.props.theme;
-
-		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
-			return null;
-		}
-
-		const themeFeatures = taxonomies.theme_feature.map( function( item ) {
-			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
-			return (
-				<li key={ 'theme-features-item-' + item.slug }>
-					{ isJetpack
-						? <a>{ item.name }</a>
-						: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
-					}
-				</li>
-			);
-		} );
-
-		return (
-			<div>
-				<SectionHeader label={ translate( 'Features' ) } />
-				<Card>
-					<ul className="theme__sheet-features-list">
-						{ themeFeatures }
-					</ul>
-				</Card>
-			</div>
+			<Overview { ...this.props } />
 		);
 	}
 
@@ -176,19 +123,6 @@ class ThemeSheetContent extends React.Component {
 			return this.props.theme.screenshots[ 0 ];
 		}
 		return null;
-	}
-
-	renderDownload() {
-		// Don't render download button:
-		// * If it's a premium theme
-		// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
-		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
-		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
-		//   The <ThemeDownloadCard /> component can handle that case.
-		if ( this.props.isPremium || ( this.props.isJetpack && ! this.props.theme.download ) ) {
-			return null;
-		}
-		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.theme.download } />;
 	}
 
 	renderSetupTab() {

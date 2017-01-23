@@ -13,15 +13,18 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
-import ThemesRelatedCard from '../themes-related-card';
-import ThemeDownloadCard from '../theme-download-card';
+import ThemesRelatedCard from '../../themes-related-card';
+import ThemeDownloadCard from '../../theme-download-card';
 
-const DescriptionLong = ( description ) =>
-	<div dangerouslySetInnerHTML={ { __html: description } } />;
-
-// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
-const Description = ( description ) =>
-	<div>{ description }</div>;
+const Description = ( descriptionLong, description ) => (
+	<Card className="theme__sheet-content">
+		{ descriptionLong
+			? <div dangerouslySetInnerHTML={ { __html: descriptionLong } } />
+			// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
+			: <div>{ description }</div>
+		}
+	</Card>
+);
 
 const ThemeFeatures = ( taxonomies, isJetpack, siteSlug ) => (
 	taxonomies.theme_feature.map( function( item ) {
@@ -38,8 +41,8 @@ const ThemeFeatures = ( taxonomies, isJetpack, siteSlug ) => (
 );
 
 const Features = localize(
-	( isJetpack, siteSlug, taxonomies, translate ) => {
-		if ( ! taxonomies && ! isArray( taxonomies.theme_feature ) ) {
+	( { translate }, isJetpack, siteSlug, taxonomies ) => {
+		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
 			return null;
 		}
 
@@ -60,38 +63,36 @@ const Features = localize(
 	}
 );
 
-const Download = ( props ) => {
-	const { isPremium, isJetpack, theme, id } = props;
+const Download = ( isPremium, isJetpack, download, id ) => {
 	// Don't render download button:
 	// * If it's a premium theme
 	// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
 	//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
 	//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
 	//   The <ThemeDownloadCard /> component can handle that case.
-	if ( isPremium || ( isJetpack && ! theme.download ) ) {
+	if ( isPremium || ( isJetpack && ! download ) ) {
 		return null;
 	}
-	return <ThemeDownloadCard theme={ id } href={ theme.download } />;
+	return <ThemeDownloadCard theme={ id } href={ download } />;
 };
 
-const Overview = ( { descriptionLong, description, isJetpack, isPremium, id, taxonomies, siteSlug, theme } ) => (
+
+const Overview = ( { isJetpack, isPremium, id, siteSlug, theme } ) => (
 	<div>
-		<Card className="theme__sheet-content">
-			{ descriptionLong
-				? <DescriptionLong description={ descriptionLong } />
-				: <Description description={ description } />
-			}
-		</Card>
+		<Description
+			descriptionLong={ theme.descriptionLong }
+			description={ theme.description }
+		/>
 		<Features
 			isJetpack={ isJetpack }
 			siteSlug={ siteSlug }
-			taxonomies={ taxonomies }
+			taxonomies={ theme.taxonomies }
 		/>
 		<Download
 			id={ id }
 			isPremium={ isPremium }
 			isJetpack={ isJetpack }
-			theme={ theme }
+			download={ theme.download }
 		/>
 		{ ! isJetpack && <ThemesRelatedCard currentTheme={ id } /> }
 	</div>

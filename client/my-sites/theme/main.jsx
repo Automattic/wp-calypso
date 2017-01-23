@@ -52,6 +52,8 @@ const ThemeSheet = React.createClass( {
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
 		isPurchased: React.PropTypes.bool,
+		isJetpack: React.PropTypes.bool,
+		isPremium: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -208,7 +210,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { currentUserId, isJetpack, siteIdOrWpcom, theme } = this.props;
+		const { currentUserId, isJetpack, isPremium, siteIdOrWpcom, theme } = this.props;
 		const title = theme.name && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName: theme.name }
 		} );
@@ -255,7 +257,8 @@ const ThemeSheet = React.createClass( {
 				</HeaderCake>
 				<ThemeSheetContent
 					section={ section }
-					jetpack={ isJetpack }
+					isJetpack={ isJetpack }
+					isPremium={ isPremium }
 					demo_uri={ theme.demo_uri }
 					togglePreview={ this.togglePreview }
 					siteSlug={ this.props.siteSlug }
