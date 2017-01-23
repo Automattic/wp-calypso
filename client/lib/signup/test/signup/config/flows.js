@@ -21,6 +21,11 @@ var flows = {
 
 	flowWithDelay: {
 		steps: [ 'delayedStep', 'stepA' ]
+	},
+
+	flowWithProvidedDependencies: {
+		steps: [ 'stepRequiringSiteSlug' ],
+		providesDependenciesInQuery: [ 'siteSlug' ]
 	}
 };
 

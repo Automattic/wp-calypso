@@ -230,6 +230,14 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 		description: 'An experimental approach for WordPress.com/domains',
 		lastModified: '2017-01-16'
 	};
+
+	flows[ 'site-selected' ] = {
+		steps: [ 'themes-site-selected' ],
+		destination: getSiteDestination,
+		providesDependenciesInQuery: [ 'siteSlug' ],
+		description: 'A flow to test updating an existing site with `Signup`',
+		lastModified: '2017-01-19'
+	};
 }
 
 if ( config( 'env' ) === 'development' ) {
