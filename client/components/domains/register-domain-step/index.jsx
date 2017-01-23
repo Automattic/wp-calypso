@@ -23,6 +23,7 @@ import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { getFixedDomainSearch, canRegister, getTld } from 'lib/domains';
 import SearchCard from 'components/search-card';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
@@ -36,6 +37,7 @@ import {
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
 import support from 'lib/url/support';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -219,22 +221,7 @@ const RegisterDomainStep = React.createClass( {
 		const queryObject = getQueryObject( this.props );
 		return (
 			<div className="register-domain-step">
-					<div className="register-domain-step__search">
-						<SearchCard
-							ref="searchCard"
-							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-							initialValue={ this.state.lastQuery }
-							onSearch={ this.onSearch }
-							onSearchChange={ this.onSearchChange }
-							onBlur={ this.save }
-							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
-							autoFocus={ true }
-							delaySearch={ true }
-							delayTimeout={ 1000 }
-							dir="ltr"
-							maxLength={ 60 }
-						/>
-					</div>
+				{ ( 'domainSearchWithoutSubmit' === abtest( 'domainSearchForm' ) ) ? this.searchForm() : this.searchFormWithSubmit() }
 				{
 					this.state.notice &&
 					<Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />
@@ -268,6 +255,41 @@ const RegisterDomainStep = React.createClass( {
 		}
 
 		return this.initialSuggestions();
+	},
+
+	searchForm: function() {
+		return (
+			<div className="register-domain-step__search">
+				<SearchCard
+					ref="searchCard"
+					additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
+					initialValue={ this.state.lastQuery }
+					onSearch={ this.onSearch }
+					onSearchChange={ this.onSearchChange }
+					onBlur={ this.save }
+					placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+					autoFocus={ true }
+					delaySearch={ true }
+					delayTimeout={ 1000 }
+					dir="ltr"
+					maxLength={ 60 }
+				/>
+			</div>
+		);
+	},
+
+	searchFormWithSubmit: function() {
+		return (
+			<div className="register-domain-step__search">
+				<FormTextInputWithAction
+					action={ this.props.translate( 'Search' ) }
+					defaultValue={ this.state.lastQuery }
+					placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+					onAction={ this.onSearch }
+					onChange={ this.onSearchChange }
+				/>
+			</div>
+		);
 	},
 
 	save: function() {

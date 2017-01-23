@@ -138,4 +138,13 @@ module.exports = {
 		defaultVariation: 'noTabs'
 	},
 
+	domainSearchForm: {
+		datestamp: '20170110',
+		variations: {
+			domainSearchWithoutSubmit: 100,
+			domainSearchWithSubmit: 0,
+		},
+		defaultVariation: 'domainSearchWithoutSubmit',
+		allowExistingUsers: true,
+	},
 };
