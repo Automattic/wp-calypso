@@ -15,7 +15,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
-import StatsModule from './stats-module';
 import StatsConnectedModule from './stats-module/connected-list';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
@@ -129,14 +128,17 @@ module.exports = React.createClass( {
 				);
 			}
 			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
-				podcastList = <StatsModule
-					path={ 'podcastdownloads' }
-					moduleStrings={ moduleStrings.podcastdownloads }
-					site={ site }
-					dataList={ this.props.podcastDownloadsList }
-					period={ this.props.period }
-					date={ queryDate }
-					beforeNavigate={ this.updateScrollPosition } />;
+				podcastList = (
+					<StatsConnectedModule
+						path="podcastdownloads"
+						moduleStrings={ moduleStrings.podcastdownloads }
+						period={ this.props.period }
+						date={ queryDate }
+						query={ query }
+						statType="statsPodcastDownloads"
+						showSummaryLink
+					/>
+				);
 			}
 		}
 

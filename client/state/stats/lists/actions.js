@@ -47,8 +47,13 @@ export function requestSiteStats( siteId, statType, query ) {
 			query
 		} );
 
+		const isUndocumented = 'statsPodcastDownloads' === statType;
 		const options = 'statsVideo' === statType ? query.postId : query;
-		return wpcom.site( siteId )[ statType ]( options ).then( data => {
+		const site = isUndocumented
+			? wpcom.undocumented().site( siteId )
+			: wpcom.site( siteId );
+
+		return site[ statType ]( options ).then( data => {
 			dispatch( receiveSiteStats( siteId, statType, query, data ) );
 			dispatch( {
 				type: SITE_STATS_REQUEST_SUCCESS,
