@@ -41,15 +41,11 @@ const webpackConfig = {
 		// avoids this warning:
 		// https://github.com/localForage/localForage/issues/577
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
-		loaders: [
+		rules: [
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
-			},
-			{
-				test: /\.json$/,
-				loader: 'json-loader'
 			},
 			{
 				test: /\.html$/,
@@ -57,25 +53,25 @@ const webpackConfig = {
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				loader: 'exports?window.tinymce',
+				loader: 'exports-loader?window.tinymce',
 			},
 			{
 				include: /node_modules\/tinymce/,
-				loader: 'imports?this=>window',
+				loader: 'imports-loader?this=>window',
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
-		modulesDirectories: [ 'node_modules' ],
+		extensions: [ '.json', '.js', '.jsx' ],
+		modules: [
+			path.join( __dirname, 'client' ),
+			path.join( __dirname, 'client', 'extensions' ),
+			'node_modules',
+		],
 		alias: {
 			'react-virtualized': 'react-virtualized/dist/commonjs',
 			'social-logos/example': 'social-logos/build/example'
 		}
-	},
-	resolveLoader: {
-		root: [ __dirname ]
 	},
 	node: {
 		console: false,
@@ -92,7 +88,6 @@ const webpackConfig = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new webpack.optimize.OccurenceOrderPlugin( true ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
 	],
@@ -151,18 +146,20 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-const jsLoader = {
+const jsRule = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loader: 'babel',
-	query: {
-		cacheDirectory: './.babel-cache',
-		cacheIdentifier: cacheIdentifier,
-		plugins: [ [
-			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-			{ async: config.isEnabled( 'code-splitting' ) }
-		] ]
-	}
+	loader: [ {
+		loader: 'babel-loader',
+		options: {
+			cacheDirectory: './.babel-cache',
+			cacheIdentifier: cacheIdentifier,
+			plugins: [ [
+				path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+				{ async: config.isEnabled( 'code-splitting' ) }
+			] ]
+		}
+	} ]
 };
 
 if ( CALYPSO_ENV === 'development' ) {
@@ -170,27 +167,26 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
-		'webpack-dev-server/client?/',
-		'webpack/hot/only-dev-server',
+		'webpack-hot-middleware/client',
 		path.join( __dirname, 'client', 'boot' )
 	];
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
-		webpackConfig.debug = true;
+		webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: true } ) );
 		webpackConfig.devtool = '#eval-cheap-module-source-map';
-		webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
-		webpackConfig.module.preLoaders.push( {
+		webpackConfig.module.rules.push( {
 			test: /\.jsx?$/,
+			enforce: 'pre',
 			loader: 'source-map-loader'
 		} );
 	} else {
 		// Add react hot loader before babel-loader.
 		// It's loaded by default since `use-source-maps` is disabled by default.
-		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
+		jsRule.loader = [ 'react-hot-loader', ...jsRule.loader ];
 	}
 } else {
+	webpackConfig.plugins.push( new webpack.LoaderOptionsPlugin( { debug: false } ) );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
-	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
 
@@ -206,7 +202,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
-webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
+webpackConfig.module.rules = [ jsRule ].concat( webpackConfig.module.rules );
 
 module.exports = webpackConfig;
 

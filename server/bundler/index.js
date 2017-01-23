@@ -70,6 +70,8 @@ function middleware( app ) {
 
 	app.use( waitForCompiler );
 
+	app.use( require( 'webpack-hot-middleware' )( compiler, { log: false } ) );
+
 	app.use( webpackMiddleware( compiler, {
 		publicPath: '/calypso/',
 		stats: {
@@ -87,6 +89,7 @@ function middleware( app ) {
 			errorDetails: true
 		}
 	} ) );
+
 }
 
 module.exports = middleware;

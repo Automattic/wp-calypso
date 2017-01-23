@@ -45,14 +45,9 @@ module.exports = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new webpack.optimize.OccurenceOrderPlugin()
 	],
 	module: {
-		loaders: [
-			{
-				test: /\.json$/,
-				loader: 'json-loader'
-			},
+		rules: [
 			{
 				test: /\.html$/,
 				loader: 'html-loader'
@@ -69,6 +64,9 @@ module.exports = {
 		fs: 'empty'
 	},
 	resolve: {
-		root: path.resolve( __dirname, 'client' )
+		modules: [
+			path.resolve( __dirname, 'client' ),
+			'node_modules',
+		]
 	}
 };

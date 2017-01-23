@@ -63,7 +63,7 @@ var webpackConfig = {
 		filename: 'bundle-' + ( process.env.CALYPSO_ENV || 'development' ) + '.js',
 	},
 	module: {
-		loaders: [
+		rules: [
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
@@ -72,8 +72,8 @@ var webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel',
-				query: {
+				loader: 'babel-loader',
+				options: {
 					plugins: [ [
 						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
 						{ async: false }
@@ -88,9 +88,13 @@ var webpackConfig = {
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
-		modulesDirectories: [ 'node_modules' ]
+		extensions: [ '.json', '.js', '.jsx' ],
+		modules: [
+			path.join( __dirname, 'server' ),
+			path.join( __dirname, 'client' ),
+			__dirname,
+			'node_modules',
+		],
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
@@ -100,7 +104,7 @@ var webpackConfig = {
 	},
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
+		new webpack.BannerPlugin( { banner: 'require( "source-map-support" ).install();', raw: true, entryOnly: false } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Too many dependencies, e.g. sites-list
 		new webpack.NormalModuleReplacementPlugin( /^lib\/post-normalizer\/rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
