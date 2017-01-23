@@ -78,7 +78,6 @@ const Download = ( { isPremium, isJetpack, download, id } ) => {
 	return <ThemeDownloadCard theme={ id } href={ download } />;
 };
 
-
 const Overview = ( { isJetpack, isPremium, id, siteSlug, theme } ) => (
 	<div>
 		<Description

@@ -13,10 +13,9 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import Card from 'components/card';
-import Button from 'components/button';
 import Overview from './theme-content-sections/overview';
 import Setup from './theme-content-sections/setup';
+import Support from './theme-content-sections/support';
 
 class ThemeSheetContent extends React.Component {
 	static propTypes = {
@@ -107,16 +106,10 @@ class ThemeSheetContent extends React.Component {
 
 	renderSectionContent( section ) {
 		return {
-			'': this.renderOverviewTab(),
+			'': <Overview { ...this.props } />,
 			setup: <Setup documentation={ this.props.theme.supportDocumentation } />,
-			support: this.renderSupportTab(),
+			support: <Support { ...this.props } />,
 		}[ section ];
-	}
-
-	renderOverviewTab() {
-		return (
-			<Overview { ...this.props } />
-		);
 	}
 
 	getFullLengthScreenshot() {
@@ -124,78 +117,6 @@ class ThemeSheetContent extends React.Component {
 			return this.props.theme.screenshots[ 0 ];
 		}
 		return null;
-	}
-
-	renderContactUsCard( isPrimary = false ) {
-		const { translate } = this.props;
-
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="help-outline" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ translate( 'Need extra help?' ) }
-					<small>{ translate( 'Get in touch with our support team' ) }</small>
-				</div>
-				<Button primary={ isPrimary } href={ '/help/contact/' }>Contact us</Button>
-			</Card>
-		);
-	}
-
-	renderThemeForumCard( isPrimary = false ) {
-		const { translate } = this.props;
-
-		if ( ! this.props.theme.forumUrl ) {
-			return null;
-		}
-
-		const description = this.props.isPremium
-			? translate( 'Get in touch with the theme author' )
-			: translate( 'Get help from volunteers and staff' );
-
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="comment" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ translate( 'Have a question about this theme?' ) }
-					<small>{ description }</small>
-				</div>
-				<Button primary={ isPrimary } href={ this.props.theme.forumUrl }>Visit forum</Button>
-			</Card>
-		);
-	}
-
-	renderCssSupportCard() {
-		const { translate } = this.props;
-
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="briefcase" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ translate( 'Need CSS help? ' ) }
-					<small>{ translate( 'Get help from the experts in our CSS forum' ) }</small>
-				</div>
-				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
-			</Card>
-		);
-	}
-
-	renderSupportTab() {
-		if ( this.props.isCurrentUserPaid ) {
-			return (
-				<div>
-					{ this.renderContactUsCard( true ) }
-					{ this.renderThemeForumCard() }
-					{ this.renderCssSupportCard() }
-				</div>
-			);
-		}
-
-		return (
-			<div>
-				{ this.renderThemeForumCard( true ) }
-				{ this.renderCssSupportCard() }
-			</div>
-		);
 	}
 
 	render() {
