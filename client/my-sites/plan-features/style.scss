@@ -439,3 +439,17 @@ $plan-features-sidebar-width: 272px;
 		margin-top: 20px;
 	}
 }
+
+.plan_features__item-info {
+	flex: 1 0 0;
+	width: 100%;
+}
+
+.plan-features__item-title-tabs {
+	font-weight: bold;
+	display: block;
+}
+
+.plan-features__item-description {
+	margin-left: 10px;
+}
