@@ -39,3 +39,4 @@ export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
+export isRequestingReaderTeams from './is-requesting-reader-teams';
