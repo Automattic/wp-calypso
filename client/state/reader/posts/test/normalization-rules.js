@@ -7,7 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal Dependencies
  */
-import { classifyPost, addDiscoverProperties } from '../normalization-rules';
+import { classifyPost } from '../normalization-rules';
+import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
 import * as DISPLAY_TYPES from '../display-types';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 
