@@ -20,6 +20,7 @@ export editedPostHasContent from './edited-post-has-content';
 export getBillingTransactions from './get-billing-transactions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
+export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getManualUtcOffsets from './get-manual-utc-offsets';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
