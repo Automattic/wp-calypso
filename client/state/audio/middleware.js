@@ -25,9 +25,8 @@ export const dispatchHappychatSound = ( dispatch, { event } ) => {
 };
 
 export const playSprite = ( dispatch, { sprite }, getState ) => {
-	audioRepo
-		.get( sprite, getAudioSourceForSprite( getState(), sprite ) )
-		.play();
+	const audio = audioRepo.get( sprite, getAudioSourceForSprite( getState(), sprite ) );
+	audio && audio.play();
 };
 
 /**

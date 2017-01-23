@@ -1,4 +1,6 @@
 
+const browserSupportsAudio = () => typeof Audio === 'function';
+
 class AudioRepo {
 	constructor() {
 		this.audio = {};
@@ -12,6 +14,10 @@ class AudioRepo {
 	 * @returns {HTMLAudioElement} An instance of an audio element
 	 */
 	get( spriteName, src ) {
+		if ( ! browserSupportsAudio() ) {
+			return null;
+		}
+
 		if ( ! this.audio.hasOwnProperty( spriteName ) ) {
 			this.audio[ spriteName ] = new Audio( src );
 		}
