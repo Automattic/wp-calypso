@@ -486,7 +486,6 @@ const ThemeSheet = React.createClass( {
 		return (
 			<Main className="theme__sheet">
 				<QueryTheme themeId={ this.props.id } siteId={ siteIdOrWpcom } />
-				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wpcom" /> }
 				{ isJetpack && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
@@ -619,14 +618,13 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
-		const siteIdOrWpcom = isJetpack ? selectedSite.ID : 'wpcom';
+		const isWpcomTheme = isThemeWpcom( state, id );
+		const siteIdOrWpcom = ( isJetpack && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		// Fallback to 'wpcom' source for wpcom themes on Jetpack target sites
-		const theme = getTheme( state, siteIdOrWpcom, id ) || getTheme( state, 'wpcom', id );
+		const theme = getTheme( state, siteIdOrWpcom, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const isWpcomTheme = isThemeWpcom( state, id );
 		const themeIdAtTargetSite = ( isJetpack && isWpcomTheme ) ? `${ id }-wpcom` : id;
 		const isActive = selectedSite && isThemeActive( state, themeIdAtTargetSite, selectedSite.ID );
 
