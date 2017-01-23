@@ -13,6 +13,7 @@ import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import SegmentedControl from 'components/segmented-control';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
 
 const StatsNavigation = ( props ) => {

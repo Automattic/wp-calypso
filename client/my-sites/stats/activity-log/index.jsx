@@ -314,13 +314,11 @@ class ActivityLog extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		return {
-			isJetpack,
-			slug: getSiteSlug( state, siteId )
-		};
-	}
-)( localize( ActivityLog ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	return {
+		isJetpack,
+		slug: getSiteSlug( state, siteId )
+	};
+} )( localize( ActivityLog ) );
