@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -45,8 +45,8 @@ export default React.createClass( {
 
 	displayName: 'SignupForm',
 
-	contextTypes: {
-		store: React.PropTypes.object
+	propTypes: {
+		suggestedUsername: PropTypes.string.isRequired
 	},
 
 	getInitialState() {
@@ -68,13 +68,10 @@ export default React.createClass( {
 	},
 
 	autoFillUsername( form ) {
-		// Fetch the suggested username from local storage
-		const suggestedUsername = this.context.store.getState().signup.optionalDependencies.suggestedUsername;
-
 		return mergeFormWithValue( {
 			form,
 			fieldName: 'username',
-			fieldValue: suggestedUsername || undefined
+			fieldValue: this.props.suggestedUsername || ''
 		} );
 	},
 
@@ -90,11 +87,11 @@ export default React.createClass( {
 			hideFieldErrorsOnChange: true,
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
-		let initialState = this.formStateController.getInitialState();
-		if ( this.props.signupProgress ) {
-			initialState = this.autoFillUsername( initialState );
-		}
-		this.setState( { form: initialState } );
+
+		const initialState = this.formStateController.getInitialState();
+		const stateWithFilledUsername = this.autoFillUsername( initialState );
+
+		this.setState( { form: stateWithFilledUsername } );
 	},
 
 	componentDidMount() {
