@@ -1167,6 +1167,47 @@ describe( 'utils', () => {
 					}
 				] );
 			} );
+
+			it( 'should parse the weekends properly', () => {
+				const parsedData = normalizers.statsVisits( {
+					fields: [ 'period', 'views', 'visitors' ],
+					data: [
+						[ '2016W11W07', 0, 0 ],
+						[ '2016W10W31', 10, 6 ]
+					]
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						classNames: [],
+						comments: null,
+						labelDay: 'Nov 7',
+						labelMonth: 'Nov',
+						labelWeek: 'Nov 7',
+						labelYear: '2016',
+						likes: null,
+						period: '2016-11-07',
+						posts: null,
+						views: 0,
+						visitors: 0,
+						visits: null
+					},
+					{
+						classNames: [],
+						comments: null,
+						labelDay: 'Oct 31',
+						labelMonth: 'Oct',
+						labelWeek: 'Oct 31',
+						labelYear: '2016',
+						likes: null,
+						period: '2016-10-31',
+						posts: null,
+						views: 10,
+						visitors: 6,
+						visits: null
+					}
+				] );
+			} );
 		} );
 	} );
 } );
