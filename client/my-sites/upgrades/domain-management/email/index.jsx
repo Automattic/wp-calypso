@@ -71,7 +71,7 @@ const Email = React.createClass( {
 	},
 
 	content() {
-		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
+		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded && this.props.products.gapps ) ) {
 			return <Placeholder />;
 		}
 
