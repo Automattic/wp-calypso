@@ -105,6 +105,7 @@
     "react-docgen": "2.13.0",
     "react-dom": "15.4.0",
     "react-masonry-component": "4.2.2",
+    "react-modal": "1.6.5",
     "react-pure-render": "1.0.2",
     "react-redux": "4.4.5",
     "react-virtualized": "8.8.1",
