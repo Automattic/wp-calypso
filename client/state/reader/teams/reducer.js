@@ -14,7 +14,7 @@ import {
 import { createReducer } from 'state/utils';
 
 export const items = createReducer( [], {
-	[ READER_TEAMS_REQUEST_SUCCESS ]: ( state, action ) => [ ...state, ...action.teams ],
+	[ READER_TEAMS_REQUEST_SUCCESS ]: ( state, action ) => [ ...action.payload.teams ],
 } );
 
 export const isRequesting = createReducer( false, {

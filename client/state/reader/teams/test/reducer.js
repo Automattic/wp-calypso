@@ -27,7 +27,9 @@ describe( 'reducer', ( ) => {
 				items( {},
 					{
 						type: READER_TEAMS_REQUEST_SUCCESS,
-						teams: [ TEAM1 ]
+						payload: {
+							teams: [ TEAM1 ]
+						},
 					}
 				)
 			).to.deep.equal( [ TEAM1 ] );
@@ -38,7 +40,9 @@ describe( 'reducer', ( ) => {
 				items( {},
 					{
 						type: READER_TEAMS_REQUEST_SUCCESS,
-						teams: [ TEAM1, TEAM2 ],
+						payload: {
+							teams: [ TEAM1, TEAM2 ]
+						},
 					}
 				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
@@ -61,7 +65,9 @@ describe( 'reducer', ( ) => {
 				isRequesting( true,
 					{
 						type: READER_TEAMS_REQUEST_SUCCESS,
-						teams: [ {}, {}, {} ],
+						payload: {
+							teams: [ {}, {}, {} ]
+						},
 					}
 				)
 			).to.equal( false );
