@@ -1,9 +1,11 @@
-import curry from 'lodash/curry';
-import get from 'lodash/get';
-import isFunction from 'lodash/isFunction';
-import merge from 'lodash/merge';
-import property from 'lodash/property';
+/**
+ * External dependencies
+ */
+import { curry, get, isFunction, memoize, merge, property } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_MULTI_TRACK,
@@ -50,11 +52,25 @@ export const recordEvent = ( service, args ) => ( {
 	}
 } );
 
+const triggerRecordEventOnce = memoize(
+	( dispatch, eventId, service, args ) => dispatch( recordEvent( service, args ) ),
+	( dispatch, eventId, service ) => `${ service } - ${ eventId }`
+);
+
+export const recordEventOnce = ( eventId, service, args ) => dispatch =>
+	triggerRecordEventOnce( dispatch, eventId, service, args );
+
 export const recordGoogleEvent = ( category, action, label, value ) =>
 	recordEvent( 'ga', { category, action, label, value } );
 
 export const recordTracksEvent = ( name, properties ) =>
 	recordEvent( 'tracks', { name, properties } );
+
+export const recordGoogleEventOnce = ( eventId, category, action, label, value ) =>
+	recordEventOnce( eventId, 'ga', { category, action, label, value } );
+
+export const recordTracksEventOnce = ( eventId, name, properties ) =>
+	recordEventOnce( eventId, 'tracks', { name, properties } );
 
 export const recordPageView = ( url, title, service ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
