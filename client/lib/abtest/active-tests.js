@@ -132,8 +132,8 @@ module.exports = {
 	jetpackPlansTabs: {
 		datestamp: '20170117',
 		variations: {
-			tabs: 10,
-			noTabs: 90
+			tabs: 50,
+			noTabs: 50
 		},
 		defaultVariation: 'noTabs'
 	},
