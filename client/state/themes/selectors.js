@@ -34,11 +34,11 @@ import { DEFAULT_THEME_QUERY } from './constants';
  * or not, given siteId and ThemeId.
  *
  * @param {Object} state	Global state tree
- * @param {Number} siteId	Site ID
  * @param {String} themeId	Theme ID
+ * @param {Number} siteId	Site ID
  * @return {String} 		Potentially suffixed theme ID
  */
-const getSuffixedThemeId = ( state, siteId, themeId ) => {
+const getSuffixedThemeId = ( state, themeId, siteId ) => {
 	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
 	if ( siteIsJetpack && isWpcomTheme( state, themeId ) ) {
 		return `${ themeId }-wpcom`;
@@ -518,7 +518,7 @@ export function getActiveTheme( state, siteId ) {
  * @return {Boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === getSuffixedThemeId( state, siteId, themeId );
+	return getActiveTheme( state, siteId ) === getSuffixedThemeId( state, themeId, siteId );
 }
 
 /**
@@ -552,7 +552,7 @@ export function hasActivatedTheme( state, siteId ) {
  * @return {Boolean}         True if theme installation is ongoing
  */
 export function isInstallingTheme( state, themeId, siteId ) {
-	const suffixedThemeId = getSuffixedThemeId( state, siteId, themeId );
+	const suffixedThemeId = getSuffixedThemeId( state, themeId, siteId );
 	return get( state.themes.themeInstalls, [ siteId, suffixedThemeId ], false );
 }
 
