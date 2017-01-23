@@ -17,13 +17,13 @@ import ReaderPostActions from 'blocks/reader-post-actions';
 import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
+import QuotePost from './quote';
 import StandardPost from './standard';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import { getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
-	isDiscoverPost
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
@@ -109,12 +109,14 @@ export default class ReaderPostCard extends React.Component {
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isDiscover = isDiscoverPost( post );
+		const isQuotePost = post.is_discover && 'quote-pick' === post.discover_format;
+		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
+			'is-quote': isQuotePost,
 			'is-selected': isSelected,
 			'is-discover': isDiscover
 		} );
@@ -148,6 +150,11 @@ export default class ReaderPostCard extends React.Component {
 			readerPostCard = <GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ readerPostActions }
 				</GalleryPost>;
+		} else if ( isQuotePost ) {
+			readerPostCard = <QuotePost post={ post } >
+					{ discoverFollowButton }
+					{ readerPostActions }
+				</QuotePost>;
 		} else {
 			readerPostCard = <StandardPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } tagName="span" /> }
