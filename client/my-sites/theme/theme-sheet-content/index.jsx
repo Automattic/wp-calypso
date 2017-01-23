@@ -16,6 +16,7 @@ import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import Button from 'components/button';
 import Overview from './theme-content-sections/overview';
+import Setup from './theme-content-sections/setup';
 
 class ThemeSheetContent extends React.Component {
 	static propTypes = {
@@ -107,7 +108,7 @@ class ThemeSheetContent extends React.Component {
 	renderSectionContent( section ) {
 		return {
 			'': this.renderOverviewTab(),
-			setup: this.renderSetupTab(),
+			setup: <Setup documentation={ this.props.theme.supportDocumentation } />,
 			support: this.renderSupportTab(),
 		}[ section ];
 	}
@@ -123,16 +124,6 @@ class ThemeSheetContent extends React.Component {
 			return this.props.theme.screenshots[ 0 ];
 		}
 		return null;
-	}
-
-	renderSetupTab() {
-		return (
-			<div>
-				<Card className="theme__sheet-content">
-					<div dangerouslySetInnerHTML={ { __html: this.props.theme.supportDocumentation } } />
-				</Card>
-			</div>
-		);
 	}
 
 	renderContactUsCard( isPrimary = false ) {
