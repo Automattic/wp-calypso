@@ -22,6 +22,9 @@ import accept from 'lib/accept';
 import designTool from './design-tool-data';
 import DesignToolList from './design-tool-list';
 import SiteTitleControl from 'components/site-title';
+import HeaderImageControl from 'components/header-image';
+import HomepageSettings from 'components/homepage-settings';
+import SiteLogoControl from 'components/site-logo';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -29,6 +32,9 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSiteFragment } from 'lib/route/path';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
+const WrappedSiteLogoControl = designTool( SiteLogoControl );
+const WrappedHeaderImageControl = designTool( HeaderImageControl );
+const WrappedHomepageSettings = designTool( HomepageSettings );
 
 const DesignMenu = React.createClass( {
 
@@ -111,6 +117,24 @@ const DesignMenu = React.createClass( {
 				return (
 					<DesignMenuPanel label={ this.props.translate( 'Title and Tagline' ) }>
 						<WrappedSiteTitleControl previewDataKey="siteTitle" />
+					</DesignMenuPanel>
+				);
+			case 'siteLogo':
+				return (
+					<DesignMenuPanel label={ this.translate( 'Logo' ) }>
+						<WrappedSiteLogoControl previewDataKey="siteLogo" />
+					</DesignMenuPanel>
+				);
+			case 'headerImage':
+				return (
+					<DesignMenuPanel label={ this.translate( 'Header Image' ) }>
+						<WrappedHeaderImageControl previewDataKey="headerImage" />
+					</DesignMenuPanel>
+				);
+			case 'homepage':
+				return (
+					<DesignMenuPanel label={ this.translate( 'Homepage Settings' ) }>
+						<WrappedHomepageSettings previewDataKey="homepage" />
 					</DesignMenuPanel>
 				);
 			default:

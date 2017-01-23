@@ -4,13 +4,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewCustomizations } from 'state/preview/selectors';
-import { updateCustomizations } from 'state/preview/actions';
+import { updateCustomizations, createHomepage } from 'state/preview/actions';
 import { requestSitePosts } from 'state/posts/actions';
 
 const debug = debugFactory( 'calypso:design-tool-data' );
@@ -26,6 +27,7 @@ export default function designTool( Component ) {
 			selectedSiteId: React.PropTypes.number,
 			selectedSite: React.PropTypes.object,
 			allPages: React.PropTypes.array,
+			createHomepage: React.PropTypes.func.isRequired,
 			requestSitePosts: React.PropTypes.func.isRequired,
 		},
 
@@ -53,6 +55,26 @@ export default function designTool( Component ) {
 			switch ( id ) {
 				case 'siteTitle':
 					return { blogname: site.name, blogdescription: site.description };
+				case 'siteLogo':
+					return { site, logoPostId: get( site, 'logo.id' ), logoUrl: get( site, 'logo.url' ) };
+				case 'headerImage':
+					return {
+						site,
+						headerImagePostId: get( site, 'options.header_image.attachment_id' ),
+						headerImageUrl: get( site, 'options.header_image.url' ),
+						headerImageWidth: get( site, 'options.header_image.width' ),
+						headerImageHeight: get( site, 'options.header_image.height' ),
+					};
+				case 'homepage':
+					return {
+						site,
+						createHomepage: this.props.createHomepage,
+						requestSitePosts: this.props.requestSitePosts,
+						pages: this.props.allPages,
+						isPageOnFront: site.options.show_on_front === 'page',
+						pageOnFrontId: site.options.page_on_front,
+						pageForPostsId: site.options.page_for_posts,
+					};
 			}
 		},
 
@@ -93,5 +115,5 @@ export default function designTool( Component ) {
 		};
 	}
 
-	return connect( mapStateToProps, { updateCustomizations, requestSitePosts } )( DesignToolData );
+	return connect( mapStateToProps, { updateCustomizations, createHomepage, requestSitePosts } )( DesignToolData );
 }
