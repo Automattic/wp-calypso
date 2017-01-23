@@ -334,17 +334,6 @@ export function isWpcomTheme( state, themeId ) {
 }
 
 /**
- * Whether a theme is present on WordPress.com.
- *
- * @param  {Object}  state   Global state tree
- * @param  {Number}  themeId Theme ID
- * @return {Boolean}         Whether theme available on WordPress.com
- */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
-}
-
-/**
  * Returns the URL for a given theme's details sheet.
  *
  * @param  {Object}  state  Global state tree
