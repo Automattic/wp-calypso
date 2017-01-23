@@ -41,7 +41,8 @@ import {
 	isThemePremium,
 	isThemePurchased,
 	getThemeRequestErrors,
-	getThemeForumUrl
+	getThemeForumUrl,
+	isWpcomTheme as isThemeWpcom,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
@@ -625,7 +626,7 @@ export default connect(
 		// Fallback to 'wpcom' source for wpcom themes on Jetpack target sites
 		const theme = getTheme( state, siteIdOrWpcom, id ) || getTheme( state, 'wpcom', id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
-		const isWpcomTheme = theme && theme.screenshots;
+		const isWpcomTheme = isThemeWpcom( state, id );
 		const themeIdAtTargetSite = ( isJetpack && isWpcomTheme ) ? `${ id }-wpcom` : id;
 		const isActive = selectedSite && isThemeActive( state, themeIdAtTargetSite, selectedSite.ID );
 
