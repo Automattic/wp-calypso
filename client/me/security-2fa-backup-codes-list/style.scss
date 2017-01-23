@@ -20,6 +20,16 @@
 	}
 }
 
+@media (max-width: 480px) {
+	.security-2fa-backup-codes-list__btn-group .button {
+		display: inline-block;
+	}
+}
+
+.security-2fa-backup-codes-list__btn-group {
+	float: right;
+}
+
 .security-2fa-backup-codes-list__generate {
 	margin-top: 20px;
 }
