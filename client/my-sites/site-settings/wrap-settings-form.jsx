@@ -30,7 +30,7 @@ import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUI } from 'state/sites/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -166,7 +166,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			};
 
 			const isJetpack = isJetpackSite( state, siteId );
-			const jetpackSettingsUISupported = isJetpack && siteSupportsJetpackSettingsUI( state, siteId );
+			const jetpackSettingsUISupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
