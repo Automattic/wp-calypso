@@ -23,6 +23,7 @@ import InvitePeople from './invite-people';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import config from 'config';
 
 /**
  * Module variables
@@ -88,7 +89,7 @@ function renderInvitePeople( context ) {
 		sites.once( 'change', () => page( context.path ) );
 	}
 
-	if ( isJetpack ) {
+	if ( isJetpack && ! config.isEnabled( 'jetpack/invites' ) ) {
 		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
 		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
 		page.redirect( '/people/team/' + site.slug );
