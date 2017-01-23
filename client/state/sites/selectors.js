@@ -1039,5 +1039,5 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
  * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
  */
 export const siteSupportsJetpackSettingsUI = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
+	return isJetpackMinimumVersion( state, siteId, '4.5-beta1' );
 };

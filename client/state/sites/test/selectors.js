@@ -2407,5 +2407,24 @@ describe( 'selectors', () => {
 
 			expect( supportsJetpackSettingsUI ).to.be.true;
 		} );
+
+		it( 'should return true if the Jetpack version is 4.5-rc1', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUI( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.5-rc1'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
 	} );
 } );
