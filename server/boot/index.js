@@ -6,6 +6,7 @@ var path = require( 'path' ),
 	config = require( 'config' ),
 	express = require( 'express' ),
 	morgan = require( 'morgan' ),
+	stateSelectorsGenerator = require( 'state-selectors-generator' ),
 	pages = require( 'pages' );
 
 /**
@@ -45,6 +46,13 @@ function setup() {
 
 		// setup logger
 		app.use( morgan( 'combined' ) );
+	}
+
+	// state-selectors-generator
+	if ( config.isEnabled( 'state-selectors-generator' ) && 'development' === config( 'env' ) ) {
+		stateSelectorsGenerator
+			.init()
+			.watch();
 	}
 
 	// attach the static file server to serve the `public` dir
