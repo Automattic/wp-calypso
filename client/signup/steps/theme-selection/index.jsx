@@ -100,7 +100,7 @@ class ThemeSelectionStep extends Component {
 	};
 
 	render = () => {
-		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentysixteen' } : undefined;
+		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 
 		const pressableWrapperClassName = classNames( {
 			'theme-selection__pressable-wrapper': true,
