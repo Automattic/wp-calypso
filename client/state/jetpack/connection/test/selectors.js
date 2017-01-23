@@ -7,58 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	isRequestingJetpackConnectionStatus,
 	getJetpackConnectionStatus,
 	isJetpackSiteInDevelopmentMode,
 	isJetpackSiteInStagingMode
 } from '../selectors';
-import {
-	items as ITEMS_FIXTURE,
-	requests as REQUESTS_FIXTURE
-} from './fixture';
+import { items as ITEMS_FIXTURE } from './fixture';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingJetpackConnectionStatus', () => {
-		it( 'should return true if the connection status is being fetched', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackConnection: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 87654321;
-			const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
-			expect( output ).to.be.true;
-		} );
-
-		it( 'should return false if the connection status is not being fetched', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackConnection: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 12345678;
-			const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
-			expect( output ).to.be.false;
-		} );
-
-		it( 'should return null if the site is not known yet', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackConnection: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 88888888;
-			const output = isRequestingJetpackConnectionStatus( stateIn, siteId );
-			expect( output ).to.be.null;
-		} );
-	} );
-
 	describe( '#getJetpackConnectionStatus', () => {
 		it( 'should return connection status for a known site', () => {
 			const stateIn = {
