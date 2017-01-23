@@ -211,7 +211,6 @@ module.exports = {
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const SiteStatsComponent = require( 'my-sites/stats/site' );
-		const StatsList = require( 'lib/stats/stats-list' );
 		const filters = getSiteFilters.bind( null, siteId );
 		let date;
 		const charts = function() {
@@ -225,8 +224,6 @@ module.exports = {
 		};
 		let chartDate;
 		let chartTab;
-		let visitsListFields;
-		let chartEndDate;
 		let period;
 		let chartPeriod;
 		let siteOffset = 0;
@@ -234,7 +231,6 @@ module.exports = {
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
-		let chartQuantity = 10;
 		let siteComponent;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -297,42 +293,11 @@ module.exports = {
 
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
-			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
 			chartTab = queryOptions.tab || 'views';
-			visitsListFields = chartTab;
-			// If we are on the default Tab, grab visitors too
-			if ( 'views' === visitsListFields ) {
-				visitsListFields = 'views,visitors';
-			}
-
-			switch ( activeFilter.period ) {
-				case 'day':
-					chartQuantity = 30;
-					break;
-				case 'month':
-					chartQuantity = 12;
-					break;
-				case 'week':
-					chartQuantity = 13;
-					break;
-				case 'year':
-					break;
-				default:
-					chartQuantity = 10;
-					break;
-			}
 
 			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
 					? currentSite.slug : siteFragment;
-
-			const activeTabVisitsList = new StatsList( {
-				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
-				quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields, domain: siteDomain } );
-			const visitsList = new StatsList( {
-				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
-				quantity: chartQuantity, date: chartEndDate,
-				stat_fields: 'views,visitors,likes,comments,post_titles', domain: siteDomain } );
 
 			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
@@ -342,8 +307,6 @@ module.exports = {
 				chartTab,
 				context,
 				sites,
-				activeTabVisitsList,
-				visitsList,
 				siteId,
 				period,
 				chartPeriod,
