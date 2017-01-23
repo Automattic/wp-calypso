@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
-import analytics from 'lib/analytics';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -22,6 +21,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {
@@ -153,7 +153,7 @@ class StatModuleChartTabs extends Component {
 			activeLegendCharts.splice( chartIndex );
 			gaEventAction = ' off';
 		}
-		analytics.ga.recordEvent( 'Stats', `Toggled Nested Chart ${ chartItem } ${ gaEventAction }` );
+		this.props.recordGoogleEvent( 'Stats', `Toggled Nested Chart ${ chartItem } ${ gaEventAction }` );
 		this.setState( {
 			activeLegendCharts
 		} );
@@ -300,7 +300,8 @@ const connectComponent = connect(
 			fullQuery,
 			siteId
 		};
-	}
+	},
+	{ recordGoogleEvent }
 );
 
 export default flowRight(
