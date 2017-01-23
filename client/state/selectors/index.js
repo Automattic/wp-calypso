@@ -24,6 +24,7 @@ export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getJetpackModule from './get-jetpack-module';
 export getJetpackModules from './get-jetpack-modules';
 export getManualUtcOffsets from './get-manual-utc-offsets';
+export getFollowCount from './get-follow-count';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
 export getMenuItemTypes from './get-menu-item-types';
