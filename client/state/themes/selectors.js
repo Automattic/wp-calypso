@@ -552,7 +552,8 @@ export function hasActivatedTheme( state, siteId ) {
  * @return {Boolean}         True if theme installation is ongoing
  */
 export function isInstallingTheme( state, themeId, siteId ) {
-	return get( state.themes.themeInstalls, [ siteId, themeId ], false );
+	const suffixedThemeId = getSuffixedThemeId( state, siteId, themeId );
+	return get( state.themes.themeInstalls, [ siteId, suffixedThemeId ], false );
 }
 
 /**
