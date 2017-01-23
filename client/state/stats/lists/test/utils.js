@@ -874,244 +874,244 @@ describe( 'utils', () => {
 					}
 				] );
 			} );
+		} );
 
-			describe( 'statsClicks()', () => {
-				it( 'should return an empty array if not data is passed', () => {
-					const parsedData = normalizers.statsClicks();
-					expect( parsedData ).to.eql( [] );
-				} );
-
-				it( 'should return an empty array if query.period is null', () => {
-					const parsedData = normalizers.statsClicks( {}, { date: '2016-12-25' } );
-					expect( parsedData ).to.eql( [] );
-				} );
-
-				it( 'should return an empty array if query.date is null', () => {
-					const parsedData = normalizers.statsClicks( {}, { period: 'day' } );
-					expect( parsedData ).to.eql( [] );
-				} );
-
-				it( 'should return an a properly parsed data array', () => {
-					const parsedData = normalizers.statsClicks( {
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								clicks: [
-									{
-										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
-										url: null,
-										views: 45,
-										children: [
-											{
-												name: 'en.support.wordpress.com',
-												url: 'https://en.support.wordpress.com/',
-												views: 5
-											}
-										]
-									},
-									{
-										children: null,
-										icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-										name: 'en.forums.wordpress.com',
-										url: 'https://en.forums.wordpress.com/',
-										views: 6
-									}
-								]
-							}
-						}
-					}, {
-						period: 'day',
-						date: '2017-01-12'
-					} );
-
-					expect( parsedData ).to.eql( [
-						{
-							children: [
-								{
-									children: null,
-									label: 'en.support.wordpress.com',
-									labelIcon: 'external',
-									link: 'https://en.support.wordpress.com/',
-									value: 5
-								}
-							],
-							icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-							label: 'en.support.wordpress.com',
-							labelIcon: null,
-							link: null,
-							value: 45
-						},
-						{
-							children: null,
-							icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-							label: 'en.forums.wordpress.com',
-							labelIcon: 'external',
-							link: 'https://en.forums.wordpress.com/',
-							value: 6
-						}
-					] );
-				} );
+		describe( 'statsClicks()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsClicks();
+				expect( parsedData ).to.eql( [] );
 			} );
 
-			describe( 'statsReferrers()', () => {
-				it( 'should return an empty array if not data is passed', () => {
-					const parsedData = normalizers.statsReferrers();
-					expect( parsedData ).to.eql( [] );
-				} );
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsClicks( {}, { date: '2016-12-25' } );
+				expect( parsedData ).to.eql( [] );
+			} );
 
-				it( 'should return an empty array if query.period is null', () => {
-					const parsedData = normalizers.statsReferrers( {}, { date: '2016-12-25' } );
-					expect( parsedData ).to.eql( [] );
-				} );
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsClicks( {}, { period: 'day' } );
+				expect( parsedData ).to.eql( [] );
+			} );
 
-				it( 'should return an empty array if query.date is null', () => {
-					const parsedData = normalizers.statsReferrers( {}, { period: 'day' } );
-					expect( parsedData ).to.eql( [] );
-				} );
-
-				it( 'should return an a properly parsed data array', () => {
-					const parsedData = normalizers.statsReferrers( {
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								groups: [
-									{
-										group: 'WordPress.com Reader',
-										name: 'WordPress.com Reader',
-										url: 'https://wordpress.com',
-										icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
-										results: {
-											views: 407
-										},
-										total: 407
-									},
-									{
-										group: 'en.support.wordpress.com',
-										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
-										results: [
-											{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
-											{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 10 }
-										],
-										total: 207
-									}
-								]
-							}
-						}
-					}, {
-						period: 'day',
-						date: '2017-01-12',
-						domain: 'en.blog.wordpress.com'
-					},
-					100 );
-
-					expect( parsedData ).to.eql( [
-						{
-							actionMenu: 0,
-							actions: [],
-							children: undefined,
-							icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
-							label: 'WordPress.com Reader',
-							labelIcon: 'external',
-							link: 'https://wordpress.com',
-							value: 407
-						},
-						{
-							actionMenu: 1,
-							actions: [
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsClicks( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							clicks: [
 								{
-									data: {
-										domain: 'en.support.wordpress.com',
-										siteID: 100
-									},
-									type: 'spam'
-								}
-							],
-							children: [
-								{
-									children: undefined,
-									label: 'homepage',
-									labelIcon: 'external',
-									link: 'https://en.support.wordpress.com/',
-									value: 42
+									icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+									name: 'en.support.wordpress.com',
+									url: null,
+									views: 45,
+									children: [
+										{
+											name: 'en.support.wordpress.com',
+											url: 'https://en.support.wordpress.com/',
+											views: 5
+										}
+									]
 								},
 								{
-									children: undefined,
-									label: 'start',
-									labelIcon: 'external',
-									link: 'https://en.support.wordpress.com/start/',
-									value: 10
+									children: null,
+									icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+									name: 'en.forums.wordpress.com',
+									url: 'https://en.forums.wordpress.com/',
+									views: 6
 								}
-							],
-							icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-							label: 'en.support.wordpress.com',
-							labelIcon: null,
-							link: undefined,
-							value: 207
-						},
-					] );
+							]
+						}
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12'
 				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						children: [
+							{
+								children: null,
+								label: 'en.support.wordpress.com',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/',
+								value: 5
+							}
+						],
+						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+						label: 'en.support.wordpress.com',
+						labelIcon: null,
+						link: null,
+						value: 45
+					},
+					{
+						children: null,
+						icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+						label: 'en.forums.wordpress.com',
+						labelIcon: 'external',
+						link: 'https://en.forums.wordpress.com/',
+						value: 6
+					}
+				] );
+			} );
+		} );
+
+		describe( 'statsReferrers()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsReferrers();
+				expect( parsedData ).to.eql( [] );
 			} );
 
-			describe( 'statsSearchTerms()', () => {
-				it( 'should return an empty array if not data is passed', () => {
-					const parsedData = normalizers.statsSearchTerms();
-					expect( parsedData ).to.eql( [] );
-				} );
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsReferrers( {}, { date: '2016-12-25' } );
+				expect( parsedData ).to.eql( [] );
+			} );
 
-				it( 'should return an empty array if query.period is null', () => {
-					const parsedData = normalizers.statsSearchTerms( {}, { date: '2016-12-25' } );
-					expect( parsedData ).to.eql( [] );
-				} );
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsReferrers( {}, { period: 'day' } );
+				expect( parsedData ).to.eql( [] );
+			} );
 
-				it( 'should return an empty array if query.date is null', () => {
-					const parsedData = normalizers.statsSearchTerms( {}, { period: 'day' } );
-					expect( parsedData ).to.eql( [] );
-				} );
-
-				it( 'should return an a properly parsed data array', () => {
-					const parsedData = normalizers.statsSearchTerms( {
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								encrypted_search_terms: 221,
-								search_terms: [
-									{
-										term: 'chicken',
-										views: 3
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsReferrers( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							groups: [
+								{
+									group: 'WordPress.com Reader',
+									name: 'WordPress.com Reader',
+									url: 'https://wordpress.com',
+									icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+									results: {
+										views: 407
 									},
-									{
-										term: 'ribs',
-										views: 10
-									}
-								]
-							}
+									total: 407
+								},
+								{
+									group: 'en.support.wordpress.com',
+									icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+									name: 'en.support.wordpress.com',
+									results: [
+										{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
+										{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 10 }
+									],
+									total: 207
+								}
+							]
 						}
-					}, {
-						period: 'day',
-						date: '2017-01-12'
-					} );
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					domain: 'en.blog.wordpress.com'
+				},
+				100 );
 
-					expect( parsedData ).to.eql( [
-						{
-							className: 'user-selectable',
-							label: 'chicken',
-							value: 3
-						},
-						{
-							className: 'user-selectable',
-							label: 'ribs',
-							value: 10
-						},
-						{
-							label: 'Unknown Search Terms',
-							labelIcon: 'external',
-							link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
-							value: 221
+				expect( parsedData ).to.eql( [
+					{
+						actionMenu: 0,
+						actions: [],
+						children: undefined,
+						icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+						label: 'WordPress.com Reader',
+						labelIcon: 'external',
+						link: 'https://wordpress.com',
+						value: 407
+					},
+					{
+						actionMenu: 1,
+						actions: [
+							{
+								data: {
+									domain: 'en.support.wordpress.com',
+									siteID: 100
+								},
+								type: 'spam'
+							}
+						],
+						children: [
+							{
+								children: undefined,
+								label: 'homepage',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/',
+								value: 42
+							},
+							{
+								children: undefined,
+								label: 'start',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/start/',
+								value: 10
+							}
+						],
+						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+						label: 'en.support.wordpress.com',
+						labelIcon: null,
+						link: undefined,
+						value: 207
+					},
+				] );
+			} );
+		} );
+
+		describe( 'statsSearchTerms()', () => {
+			it( 'should return an empty array if not data is passed', () => {
+				const parsedData = normalizers.statsSearchTerms();
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.period is null', () => {
+				const parsedData = normalizers.statsSearchTerms( {}, { date: '2016-12-25' } );
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an empty array if query.date is null', () => {
+				const parsedData = normalizers.statsSearchTerms( {}, { period: 'day' } );
+				expect( parsedData ).to.eql( [] );
+			} );
+
+			it( 'should return an a properly parsed data array', () => {
+				const parsedData = normalizers.statsSearchTerms( {
+					date: '2017-01-12',
+					days: {
+						'2017-01-12': {
+							encrypted_search_terms: 221,
+							search_terms: [
+								{
+									term: 'chicken',
+									views: 3
+								},
+								{
+									term: 'ribs',
+									views: 10
+								}
+							]
 						}
-					] );
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12'
 				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						className: 'user-selectable',
+						label: 'chicken',
+						value: 3
+					},
+					{
+						className: 'user-selectable',
+						label: 'ribs',
+						value: 10
+					},
+					{
+						label: 'Unknown Search Terms',
+						labelIcon: 'external',
+						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						value: 221
+					}
+				] );
 			} );
 		} );
 	} );
