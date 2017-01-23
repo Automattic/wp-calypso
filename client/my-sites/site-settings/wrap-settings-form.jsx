@@ -3,10 +3,9 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, keys, omit, pick } from 'lodash';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Internal dependencies
@@ -51,8 +50,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if (
-				! shallowEqual( prevProps.settings, this.props.settings ) ||
-				! shallowEqual( prevProps.fields, this.props.fields )
+				! isEqual( prevProps.settings, this.props.settings ) ||
+				! isEqual( prevProps.fields, this.props.fields )
 			) {
 				this.updateDirtyFields();
 			}
