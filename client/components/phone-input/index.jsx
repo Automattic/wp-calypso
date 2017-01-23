@@ -194,7 +194,7 @@ const PhoneInput = React.createClass( {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ this.format( '9876543210' ) }
+					placeholder={ this.translate( 'Phone' ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
 					ref={ c => this.numberInput = c }
