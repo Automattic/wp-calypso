@@ -4,11 +4,8 @@
 import {
 	filter,
 	forEach,
-	has,
 	isUndefined,
 	map,
-	omit,
-	partition,
 	reject } from 'lodash';
 
 /**
@@ -18,7 +15,7 @@ import {
 	READER_POSTS_RECEIVE
 } from 'state/action-types';
 import analytics from 'lib/analytics';
-import { runFastRules, runSlowRules } from './normalization-rules';
+import { asyncRunRules } from './normalization-rules';
 import Dispatcher from 'dispatcher';
 import { action } from 'lib/feed-post-store/constants';
 import wpcom from 'lib/wp';
@@ -100,16 +97,9 @@ export function receivePosts( posts ) {
 		}
 
 		const withoutUndefined = reject( posts, isUndefined );
-		const normalizedPosts = map( withoutUndefined, runFastRules );
 
-		const [ postsToReload, postsToProcess ] = partition( normalizedPosts, '_should_reload' );
-		forEach( postsToReload, post => {
-			delete post._should_reload;
-			dispatch( reloadPost( post ) );
-		} );
-
-		forEach( map( postsToProcess, runSlowRules ), slowPromise => {
-			slowPromise.then( post => {
+		forEach( map( withoutUndefined, asyncRunRules ), promise => {
+			promise.then( post => {
 				dispatch( {
 					type: READER_POSTS_RECEIVE,
 					posts: [ post ]
@@ -120,25 +110,16 @@ export function receivePosts( posts ) {
 					data: post,
 					type: action.RECEIVE_NORMALIZED_FEED_POST
 				} );
+				if ( post._should_reload ) {
+					delete post._should_reload;
+					dispatch( reloadPost( post ) );
+				}
 			} );
 		} );
 
-		dispatch( {
-			type: READER_POSTS_RECEIVE,
-			posts: normalizedPosts
-		} );
 
-		// keep the old feed post store in sync
-		forEach( normalizedPosts, post => {
-			const postForFlux = has( post, '_should_reload' ) ? omit( post, '_should_reload' ) : post;
-			Dispatcher.handleServerAction( {
-				data: postForFlux,
-				type: action.RECEIVE_NORMALIZED_FEED_POST
-			} );
-		} );
+		forEach( filter( withoutUndefined, 'railcar' ), trackRailcarRender );
 
-		forEach( filter( postsToProcess, 'railcar' ), trackRailcarRender );
-
-		return Promise.resolve( normalizedPosts );
+		return Promise.resolve( withoutUndefined );
 	};
 }

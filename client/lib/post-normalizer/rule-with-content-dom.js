@@ -1,28 +1,40 @@
 /**
  * External Dependencies
  */
-import reduce from 'lodash/reduce';
+import { defer, map } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import { domForHtml } from './utils';
 
-export default function createDomTransformRunner( transforms ) {
-	return function withContentDOM( post ) {
-		if ( ! post || ! post.content || ! transforms ) {
-			return post;
-		}
+const promisifyAndDeferTransformWithDom = ( transform, dom ) => ( post ) =>
+	new Promise( ( resolve ) => defer( () => resolve( transform( post, dom ) ) ) );
 
-		const dom = domForHtml( post.content );
+export const serialReduce = ( transforms, startingValue ) =>
+	transforms.reduce(
+		( promise, fn ) => promise.then( result => fn( result ) ),
+		Promise.resolve( startingValue
+		)
+	);
 
-		post = reduce( transforms, ( memo, transform ) => {
-			return transform( memo, dom );
-		}, post );
+/**
+ * Returns a promise with the eventual normalized post object
+ * @param transforms
+ */
+export const asyncWithContentDom = transforms => post => {
+	if ( ! post || ! post.content || ! transforms ) {
+		return post;
+	}
 
-		post.content = dom.innerHTML;
+	const dom = domForHtml( post.content );
+	const postPromise = serialReduce( map( transforms, transform => promisifyAndDeferTransformWithDom( transform, dom ) ), post );
+
+	return postPromise.then( p => {
+		p.content = dom.innerHTML;
 		dom.innerHTML = '';
 
-		return post;
-	};
+		return p;
+	} );
 }
+
