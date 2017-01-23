@@ -163,7 +163,7 @@ class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 					<p className="plan-features__description">
-						{ planConstantObj.getDescription() }
+						{ planConstantObj.getDescription( abtest ) }
 					</p>
 					<PlanFeaturesActions
 						canPurchase={ canPurchase }
@@ -257,7 +257,7 @@ class PlanFeatures extends Component {
 					}
 
 					<p className="plan-features__description">
-						{ planConstantObj.getDescription() }
+						{ planConstantObj.getDescription( abtest ) }
 					</p>
 				</td>
 			);
@@ -330,11 +330,25 @@ class PlanFeatures extends Component {
 			<PlanFeaturesItem
 				key={ index }
 				description={ feature.getDescription
-					? feature.getDescription()
+					? feature.getDescription( abtest )
 					: null
 				}
+				hideInfoPopover={ feature.hideInfoPopover }
 			>
-				<span className="plan-features__item-title">{ feature.getTitle() }</span>
+				<span className="plan_features__item-info">
+					<span className={ classNames(
+						'plan-features__item-title',
+						feature.hideInfoPopover && feature.getDescription
+							? 'plan-features__item-title-tabs'
+							: null
+						) } >
+						{ feature.getTitle() }
+					</span>
+				{ feature.hideInfoPopover && feature.getDescription
+					? <span className="plan-features__item-description">{ feature.getDescription( abtest ) }</span>
+					: null
+				}
+				</span>
 			</PlanFeaturesItem>
 		);
 	}
@@ -473,7 +487,7 @@ export default connect(
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthly } ),
-					features: getPlanFeaturesObject( planConstantObj.getFeatures() ),
+					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
 						? () => {
 							const planSlug = getPlanSlug( state, planProductId );
