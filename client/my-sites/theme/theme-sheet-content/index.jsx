@@ -17,6 +17,40 @@ import Overview from './theme-content-sections/overview';
 import Setup from './theme-content-sections/setup';
 import Support from './theme-content-sections/support';
 
+const PreviewButton = localize(
+	( { theme, togglePreview, translate } ) => {
+		if ( ! theme.demo_uri ) {
+			return null;
+		}
+
+		return (
+			<a className="theme__sheet-preview-link" onClick={ togglePreview } data-tip-target="theme-sheet-preview">
+				<Gridicon icon="themes" size={ 18 } />
+				<span className="theme__sheet-preview-link-text">
+					{ translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
+				</span>
+			</a>
+		);
+	}
+);
+
+const Screenshot = ( { isLoaded, isJetpack, theme, togglePreview } ) => {
+	const fullLengthScreenshot = () =>
+		isLoaded ? theme.screenshots[ 0 ] : null;
+	const screenshot = isJetpack ? theme.screenshot : fullLengthScreenshot();
+	const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
+
+	return (
+		<div className="theme__sheet-screenshot">
+			<PreviewButton
+				togglePreview={ togglePreview }
+				theme={ theme }
+			/>
+			{ img }
+		</div>
+	);
+};
+
 class ThemeSheetContent extends React.Component {
 	static propTypes = {
 		section: React.PropTypes.string,
@@ -43,35 +77,6 @@ class ThemeSheetContent extends React.Component {
 			return this.getValidSections()[ 0 ];
 		}
 		return section;
-	}
-
-	renderScreenshot() {
-		let screenshot;
-		if ( this.props.isJetpack ) {
-			screenshot = this.props.theme.screenshot;
-		} else {
-			screenshot = this.getFullLengthScreenshot();
-		}
-		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
-		return (
-			<div className="theme__sheet-screenshot">
-				{ this.props.theme.demo_uri && this.renderPreviewButton() }
-				{ img }
-			</div>
-		);
-	}
-
-	renderPreviewButton() {
-		const { togglePreview, translate } = this.props;
-
-		return (
-			<a className="theme__sheet-preview-link" onClick={ togglePreview } data-tip-target="theme-sheet-preview">
-				<Gridicon icon="themes" size={ 18 } />
-				<span className="theme__sheet-preview-link-text">
-					{ translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
-				</span>
-			</a>
-		);
 	}
 
 	renderSectionNav( currentSection ) {
@@ -112,15 +117,9 @@ class ThemeSheetContent extends React.Component {
 		}[ section ];
 	}
 
-	getFullLengthScreenshot() {
-		if ( this.props.isLoaded ) {
-			return this.props.theme.screenshots[ 0 ];
-		}
-		return null;
-	}
-
 	render() {
 		const section = this.validateSection( this.props.section );
+		const { isJetpack, isLoaded, theme, togglePreview } = this.props;
 
 		return (
 			<div className="theme__sheet-columns">
@@ -132,7 +131,12 @@ class ThemeSheetContent extends React.Component {
 					</div>
 				</div>
 				<div className="theme__sheet-column-right">
-					{ this.renderScreenshot() }
+					<Screenshot
+						isJetpack={ isJetpack }
+						isLoaded={ isLoaded }
+						theme={ theme }
+						togglePreview={ togglePreview }
+					/>
 				</div>
 			</div>
 		);
