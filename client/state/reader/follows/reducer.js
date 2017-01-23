@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { merge, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +10,7 @@ import { combineReducers } from 'redux';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
+	READER_FOLLOWS_RECEIVE,
 } from 'state/action-types';
 import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
@@ -34,6 +36,18 @@ export const items = createReducer( {}, {
 			...state,
 			[ urlKey ]: { isFollowing: false },
 		};
+	},
+	[ READER_FOLLOWS_RECEIVE ]: ( state, { follows } ) => {
+		const keyedNewFollows = reduce( follows, ( hash, follow ) => {
+			const urlKey = prepareComparableUrl( follow.URL );
+			const newFollow = {
+				...follow,
+				isFollowing: true
+			};
+			hash[ urlKey ] = newFollow;
+			return hash;
+		}, {} );
+		return merge( {}, state, keyedNewFollows );
 	},
 } );
 
