@@ -293,13 +293,11 @@ module.exports = React.createClass( {
 			if ( showLikes ) {
 				likeMeta = (
 					<a
-						href={ post.URL }
+						href={ `/stats/post/${ postId }/${ site.slug }` }
 						className={ classNames( {
 							post__likes: true,
 							'is-empty': ! likeCountDisplay
 						} ) }
-						target="_blank"
-						rel="noopener noreferrer"
 						title={ likeTitle }
 						onClick={ this.analyticsEvents.likeIconClick }
 					>
