@@ -24,7 +24,6 @@
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
 		"jetpack/api-cache": false,
-		"mailing-lists/unsubscribe": true,
 		"manage/advanced-seo": true,
 		"manage/advanced-seo/custom-title": true,
 		"manage/advanced-seo/preview-nudge": true,
