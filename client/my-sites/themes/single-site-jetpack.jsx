@@ -89,7 +89,12 @@ const ConnectedSingleSiteJetpack = connectOptions(
 							<ConnectedThemesSelection
 								options={ [
 									'activateOnJetpack',
-									'tryAndCustomizeOnJetpack'
+									'tryAndCustomizeOnJetpack',
+									'customize',
+									'separator',
+									'info',
+									'support',
+									'help',
 								] }
 								search={ search }
 								tier={ wpcomTier }

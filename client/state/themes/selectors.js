@@ -65,6 +65,11 @@ export const getTheme = createSelector(
 		if ( siteId === 'wpcom' || siteId === 'wporg' ) {
 			return theme;
 		}
+
+		if ( ! theme ) {
+			return null;
+		}
+
 		// We're dealing with a Jetpack site. If we have theme info obtained from the
 		// WordPress.org API, merge it.
 		const wporgTheme = getTheme( state, 'wporg', themeId );
@@ -367,7 +372,7 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
  * @return {?String}        Theme setup instructions URL
  */
 export function getThemeSupportUrl( state, theme, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! theme || ! isThemePremium( state, theme.id ) ) {
+	if ( ! theme || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
@@ -389,7 +394,7 @@ export function getThemeSupportUrl( state, theme, siteId ) {
  * @return {?String}        Theme support page URL
  */
 export function getThemeHelpUrl( state, theme, siteId ) {
-	if ( ! theme || isJetpackSite( state, siteId ) ) {
+	if ( ! theme ) {
 		return null;
 	}
 
@@ -434,7 +439,7 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 		return getSiteOption( state, siteId, 'admin_url' ) +
 			'customize.php?return=' +
 			encodeURIComponent( window.location ) +
-			( theme ? '&theme=' + theme.id : '' );
+			( theme ? '&theme=' + getSuffixedThemeId( state, theme.id, siteId ) : '' );
 	}
 
 	const customizeUrl = '/customize/' + getSiteSlug( state, siteId );
