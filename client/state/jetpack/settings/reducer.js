@@ -12,6 +12,9 @@ import {
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -70,7 +73,15 @@ export const items = createReducer( {}, {
 				...modulesActivationState
 			}
 		} );
-	}
+	},
+	[ JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS ]: ( state, { siteId, email } ) => {
+		return Object.assign( {}, state, {
+			[ siteId ]: {
+				...state[ siteId ],
+				post_by_email_address: email
+			}
+		} );
+	},
 } );
 
 /**
@@ -88,6 +99,9 @@ export const requests = createReducer( {}, {
 	[ JETPACK_SETTINGS_UPDATE ]: createRequestsReducer( { updating: true } ),
 	[ JETPACK_SETTINGS_UPDATE_FAILURE ]: createRequestsReducer( { updating: false } ),
 	[ JETPACK_SETTINGS_UPDATE_SUCCESS ]: createRequestsReducer( { updating: false } ),
+	[ JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL ]: createRequestsReducer( { regeneratingPostByEmail: true } ),
+	[ JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS ]: createRequestsReducer( { regeneratingPostByEmail: false } ),
+	[ JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE ]: createRequestsReducer( { regeneratingPostByEmail: false } ),
 } );
 
 /**

@@ -12,6 +12,9 @@ import {
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -189,6 +192,28 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should update the post_by_email_address setting after a successful post by email update', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: {
+						setting_123: 'test',
+						post_by_email_address: 'example1234@automattic.com',
+					}
+				},
+				action = {
+					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+					siteId,
+					email: 'example5678@automattic.com'
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: {
+					setting_123: 'test',
+					post_by_email_address: 'example5678@automattic.com',
+				}
+			} );
+		} );
+
 		it( 'should not persist state', () => {
 			const stateIn = SETTINGS_FIXTURE,
 				action = {
@@ -278,6 +303,40 @@ describe( 'reducer', () => {
 				};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ].updating ).to.be.false;
+		} );
+
+		it( 'should set [ siteId ].regeneratingPostByEmail to true when initiating post by email regeneration', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 12345678,
+				action = {
+					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
+					siteId,
+				};
+			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.true;
+		} );
+
+		it( 'should set [ siteId ].regeneratingPostByEmail to false when successfully regenerated post by email', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 12345678,
+				action = {
+					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+					email: 'example1234@automattic.com',
+					siteId,
+				};
+			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.false;
+		} );
+
+		it( 'should set [ siteId ].regeneratingPostByEmail to false when unable to complete regenerate post by email', () => {
+			const stateIn = REQUESTS_FIXTURE,
+				siteId = 12345678,
+				action = {
+					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
+					siteId,
+				};
+			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut[ siteId ].regeneratingPostByEmail ).to.be.false;
 		} );
 
 		it( 'should not persist state', () => {

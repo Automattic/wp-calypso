@@ -8,6 +8,9 @@ import { expect } from 'chai';
  */
 import {
 	JETPACK_SETTINGS_RECEIVE,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -15,7 +18,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
-import { fetchSettings, updateSettings } from '../actions';
+import { fetchSettings, updateSettings, regeneratePostByEmail } from '../actions';
 import {
 	settings as SETTINGS_FIXTURE,
 	normalizedSettings as NORMALIZED_SETTINGS_FIXTURE
@@ -155,6 +158,71 @@ describe( 'actions', () => {
 						siteId,
 						settings: NORMALIZED_SETTINGS_FIXTURE[ siteId ],
 						error: 'Invalid option: setting_1'
+					} );
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#regeneratePostByEmail()', () => {
+		describe( 'success', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/jetpack/v4/settings/',
+						body: JSON.stringify( { post_by_email_address: 'regenerate' } )
+					} )
+					.reply( 200, {
+						data: {
+							post_by_email_address: 'example123456@automattic.com',
+						}
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			it( 'should return a regenerate action object when called', () => {
+				regeneratePostByEmail( siteId )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
+					siteId,
+				} );
+			} );
+
+			it( 'should return a receive action when request successfully completes', () => {
+				return regeneratePostByEmail( siteId )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
+						siteId,
+						email: 'example123456@automattic.com',
+					} );
+				} );
+			} );
+		} );
+
+		describe( 'failure', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
+						path: '/jetpack/v4/settings/',
+						body: JSON.stringify( { post_by_email_address: 'regenerate' } )
+					} )
+					.reply( 400, {
+						message: 'Invalid request.'
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			it( 'should return a receive action when an error occurs', () => {
+				return regeneratePostByEmail( siteId )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
+						siteId,
+						error: 'Invalid request.'
 					} );
 				} );
 			} );
