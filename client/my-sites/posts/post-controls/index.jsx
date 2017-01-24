@@ -12,8 +12,10 @@ import classNames from 'classnames';
  */
 import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
-import { userCan } from 'lib/posts/utils';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	canCurrentUser,
+	isPublicizeEnabled,
+} from 'state/selectors';
 import PostControl from './post-control';
 
 const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
@@ -24,6 +26,9 @@ const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 
 const getAvailableControls = props => {
 	const {
+		canUserDeletePost,
+		canUserEditPost,
+		canUserPublishPost,
 		editURL,
 		fullWidth,
 		onDelete,
@@ -43,7 +48,7 @@ const getAvailableControls = props => {
 	// and those posts will not have access to post management type controls
 
 	// Main Controls (not behind ... more link)
-	if ( userCan( 'edit_post', post ) ) {
+	if ( canUserEditPost ) {
 		controls.main.push( {
 			className: 'edit',
 			href: editURL,
@@ -95,7 +100,7 @@ const getAvailableControls = props => {
 			text: translate( 'Preview' ),
 		} );
 
-		if ( userCan( 'publish_post', post ) ) {
+		if ( canUserPublishPost ) {
 			controls.main.push( {
 				className: 'publish',
 				icon: 'reader',
@@ -103,7 +108,7 @@ const getAvailableControls = props => {
 				text: translate( 'Publish' ),
 			} );
 		}
-	} else if ( userCan( 'delete_post', post ) ) {
+	} else if ( canUserDeletePost ) {
 		controls.main.push( {
 			className: 'restore',
 			icon: 'undo',
@@ -112,7 +117,7 @@ const getAvailableControls = props => {
 		} );
 	}
 
-	if ( userCan( 'delete_post', post ) ) {
+	if ( canUserDeletePost ) {
 		if ( 'trash' === post.status ) {
 			controls.main.push( {
 				className: 'trash is-scary',
@@ -130,7 +135,7 @@ const getAvailableControls = props => {
 		}
 	}
 
-	if ( ( 'publish' === post.status || 'private' === post.status ) && userCan( 'edit_post', post ) ) {
+	if ( ( 'publish' === post.status || 'private' === post.status ) && canUserEditPost ) {
 		controls.main.push( {
 			className: 'copy',
 			href: `/post/${ site.slug }?copy=${ post.ID }`,
@@ -192,6 +197,9 @@ export const PostControls = props => {
 };
 
 PostControls.propTypes = {
+	canUserDeletePost: PropTypes.bool,
+	canUserEditPost: PropTypes.bool,
+	canUserPublishPost: PropTypes.bool,
 	editURL: PropTypes.string.isRequired,
 	fullWidth: PropTypes.bool,
 	isPublicizeEnabled: PropTypes.bool,
@@ -208,5 +216,8 @@ PostControls.propTypes = {
 };
 
 export default connect( ( state, { site, post } ) => ( {
+	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_post' ),
+	canUserEditPost: canCurrentUser( state, site.ID, 'edit_post' ),
+	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_post' ),
 	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
 } ) )( localize( PostControls ) );
