@@ -50,19 +50,6 @@ function parseAvatar( avatarUrl ) {
 }
 
 /**
- * Parse the avatar URL
- * @param  {String} avatarUrl Raw avatar URL
- * @return {String}           Parsed URL
- */
-function parseAvatar( avatarUrl ) {
-	if ( ! avatarUrl ) {
-		return null;
-	}
-	const [ avatarBaseUrl ] = avatarUrl.split( '?' );
-	return avatarBaseUrl + '?d=mm';
-}
-
-/**
  * Builds data into escaped array for CSV export
  *
  * @param  {Object} data   Normalized stats data object
