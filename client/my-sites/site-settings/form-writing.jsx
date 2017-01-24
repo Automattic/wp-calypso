@@ -20,10 +20,17 @@ import Card from 'components/card';
 import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	siteSupportsJetpackSettingsUi
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
+import ThemeEnhancements from './theme-enhancements';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormWriting extends Component {
 
@@ -95,6 +102,7 @@ class SiteSettingsFormWriting extends Component {
 			fields,
 			handleToggle,
 			isRequestingSettings,
+			isSavingSettings,
 			jetpackVersionSupportsCustomTypes,
 			onChangeField,
 			markChanged,
@@ -190,6 +198,22 @@ class SiteSettingsFormWriting extends Component {
 					</div>
 				) }
 
+				{
+					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
+						<div>
+							<QueryJetpackModules siteId={ this.props.siteId } />
+
+							<ThemeEnhancements
+								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+								handleToggle={ handleToggle }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+								/>
+						</div>
+					)
+				}
+
 				{ config.isEnabled( 'press-this' ) && (
 					<div>
 						{
@@ -212,6 +236,8 @@ const connectComponent = connect(
 		return {
 			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 			siteId
 		};
 	},
@@ -225,7 +251,12 @@ const getFormSettings = partialRight( pick, [
 	'wpcom_publish_posts_with_markdown',
 	'markdown_supported',
 	'jetpack_testimonial',
-	'jetpack_portfolio'
+	'jetpack_portfolio',
+	'infinite_scroll',
+	'infinite_scroll_google_analytics',
+	'wp_mobile_excerpt',
+	'wp_mobile_featured_images',
+	'wp_mobile_app_promos'
 ] );
 
 export default flowRight(
