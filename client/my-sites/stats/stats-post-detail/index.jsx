@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import Emojify from 'components/emojify';
 import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
@@ -20,46 +19,46 @@ import { decodeEntities } from 'lib/formatting';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
 import PostLikes from '../stats-post-likes';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'components/data/query-posts';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
 
-const StatsPostDetail = React.createClass( {
-	mixins: [ observe( 'postViewsList' ) ],
-
-	propTypes: {
+class StatsPostDetail extends Component {
+	static propTypes = {
 		path: PropTypes.string,
-		postViewsList: PropTypes.object
-	},
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		translate: PropTypes.func,
+		context: PropTypes.object
+	};
 
-	goBack() {
+	goBack = () => {
 		const pathParts = this.props.path.split( '/' );
 		const defaultBack = '/stats/' + pathParts[ pathParts.length - 1 ];
 
 		page( this.props.context.prevPath || defaultBack );
-	},
+	}
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
 	render() {
+		const { isRequesting, post, postId, siteId } = this.props;
+		const postOnRecord = post && post.title !== null;
 		let title;
-
-		const post = this.props.postViewsList.response.post;
-		const isLoading = this.props.postViewsList.isLoading();
-		const postOnRecord = post && post.post_title !== null;
-
 		if ( postOnRecord ) {
-			if ( typeof post.post_title === 'string' && post.post_title.length ) {
-				title = <Emojify>{ decodeEntities( post.post_title ) }</Emojify>;
+			if ( typeof post.title === 'string' && post.title.length ) {
+				title = <Emojify>{ decodeEntities( post.title ) }</Emojify>;
 			}
 		}
-
-		if ( ! postOnRecord && ! isLoading ) {
+		if ( ! postOnRecord && ! isRequesting ) {
 			title = this.props.translate( 'We don\'t have that post on record yet.' );
 		}
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
+				<QueryPosts siteId={ siteId } postId={ postId } />
 				<StatsFirstView />
 
 				<HeaderCake onClick={ this.goBack }>
@@ -74,24 +73,32 @@ const StatsPostDetail = React.createClass( {
 					dataKey="years"
 					title={ this.props.translate( 'Months and Years' ) }
 					total={ this.props.translate( 'Total' ) }
-					postViewsList={ this.props.postViewsList } />
+					siteId={ this.props.siteId }
+					postId={ this.props.postId }
+				/>
 
 				<PostMonths
 					dataKey="averages"
 					title={ this.props.translate( 'Average per Day' ) }
 					total={ this.props.translate( 'Overall' ) }
-					postViewsList={ this.props.postViewsList } />
+					siteId={ this.props.siteId }
+					postId={ this.props.postId }
+				/>
 
 				<PostWeeks siteId={ this.props.siteId } postId={ this.props.postId } />
 			</Main>
 		);
 	}
-} );
+}
 
 const connectComponent = connect(
-	state => {
+	( state, { postId } ) => {
+		const siteId = getSelectedSiteId( state );
+
 		return {
-			siteId: getSelectedSiteId( state ),
+			post: getSitePost( state, siteId, postId ),
+			isRequesting: isRequestingSitePost( state, siteId, postId ),
+			siteId,
 		};
 	}
 );

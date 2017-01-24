@@ -508,10 +508,8 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const postId = parseInt( context.params.post_id, 10 );
 		const StatsPostComponent = require( 'my-sites/stats/stats-post-detail' );
-		const StatsList = require( 'lib/stats/stats-list' );
 		const pathParts = context.path.split( '/' );
 		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
-		let postViewsList;
 
 		let site = sites.getSite( siteId );
 		if ( ! site ) {
@@ -529,22 +527,14 @@ module.exports = {
 				window.location = '/stats';
 			}
 		} else {
-			const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
-				? site.slug : route.getSiteFragment( context.path );
-
-			postViewsList = new StatsList( { statType: 'statsPostViews', siteID: siteId, post: postId, domain: siteDomain } );
-
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
 				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
 
 			renderWithReduxStore(
 				React.createElement( StatsPostComponent, {
-					siteId: siteId,
 					postId: postId,
-					sites: sites,
 					context: context,
 					path: context.path,
-					postViewsList: postViewsList
 				} ),
 				document.getElementById( 'primary' ),
 				context.store
