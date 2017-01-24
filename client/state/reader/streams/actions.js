@@ -2,10 +2,7 @@
  * Internal Dependencies
  */
 import {
-	READER_STREAM_PAGE_REQUEST,
-	READER_STREAM_PAGE_REQUEST_SUCCESS,
-	READER_STREAM_PAGE_REQUEST_ERROR,
-	READER_STREAM_PAGE_RECEIVE
+	READER_STREAMS_PAGE_REQUEST
 } from 'state/action-types';
 
 /**
@@ -20,36 +17,12 @@ import {
  */
 export function fetchPosts( streamId, range ) {
 	return ( dispatch ) => {
-		const fetcher = fetcherForStream( streamId );
-
 		dispatch( {
-			type: READER_STREAM_PAGE_REQUEST,
-			streamId
+			type: READER_STREAMS_PAGE_REQUEST,
+			streamId,
+			range
 		} );
-
-		return fetcher( { range } ).then(
-			( response ) => {
-				dispatch( {
-					type: READER_STREAM_PAGE_REQUEST_SUCCESS,
-					streamId
-				} );
-
-				dispatch( {
-					type: READER_STREAM_PAGE_RECEIVE,
-					payload: response
-				} );
-				return response;
-			},
-			( error ) => {
-				dispatch( {
-					type: READER_STREAM_PAGE_REQUEST_ERROR,
-					streamId,
-					error
-				} );
-
-			}
-		)
-	}
+	};
 }
 
 export function showUpdates() {
