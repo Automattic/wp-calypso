@@ -6,7 +6,7 @@ Select timezone react component.
 ---
 
 ```jsx
-var Timezone = require( 'components/timezone' );
+var Timezone = require( 'blocks/timezone' );
 
 module.exports = React.createClass( {
 
