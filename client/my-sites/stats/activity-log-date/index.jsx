@@ -28,7 +28,7 @@ const ActivityLogDate = React.createClass( {
 				icon: 'plugins',
 				user: { ID: 123, name: 'Jane A', role: 'Admin' },
 				time: '4:32pm',
-				actionText: 'Undo',
+				actionText: 'Undo'
 			},
 			{
 				title: 'Post Title',
@@ -36,19 +36,19 @@ const ActivityLogDate = React.createClass( {
 				icon: 'posts',
 				user: { ID: 333, name: 'Jane A', role: 'Admin' },
 				time: '10:55am',
-				actionText: 'Undo',
+				actionText: 'Undo'
 			}
 		];
+
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
-					header={ <div><div>Jan, 01, 1999</div><div><small> 17 Events</small></div></div> }
-					headerExpanded={ <div><div>Jan, 01, 1999</div><div><small> {Logs.length } Events</small></div></div> }
+					header={ <div><div>Jan, 01, 1999</div><div><small> { Logs.length } Events</small></div></div> }
 					summary={ <Button className="button">Rewind</Button> }
 					expandedSummary={ <Button className="button">Rewind</Button> }
 					clickableHeader={ true }
 				>
-					{ Logs.map( ( log, index)  => {
+					{ Logs.map( ( log, index )  => {
 						return <ActivityLogItem
 							title={ log.title }
 							subTitle={ log.subTitle }
