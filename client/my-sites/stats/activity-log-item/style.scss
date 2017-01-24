@@ -127,22 +127,18 @@
 	color: $gray;
 }
 
-.activity-log-item__actor-icon {
+.activity-log-item__actor .gravatar {
 	float: left;
 	margin-right: 16px;
 }
 
-.activity-log-item__actor-icon {
-	float: left;
-}
-
-.activity-item__actor-name {
+.activity-log-item__actor-name {
 	font-weight: bold;
 }
 
 .activity-item__actor-role {
 	text-transform: uppercase;
-	font-size: 80%;
+	font-size: 12px;
 	color: $gray;
 }
 
@@ -159,7 +155,8 @@
 	text-transform: uppercase;
 	color: $gray;
 }
-.activity-item__content-title {
+
+.activity-log-item__content-title {
 	font-size: 14px;
 }
 .activity-item__content-sub-title {
