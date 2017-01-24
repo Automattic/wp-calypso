@@ -30,11 +30,12 @@ describe( 'getFollowCount()', () => {
 					items: {
 						'http://discover.wordpress.com': { is_following: true },
 						'http://dailypost.wordpress.com': { is_following: false },
+						'http://postcardsfromthereader.wordpress.com': { is_following: true },
 					},
 				}
 			}
 		} );
 
-		expect( count ).to.eq( 1 );
+		expect( count ).to.eq( 2 );
 	} );
 } );

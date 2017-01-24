@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { size, find, matchesProperty } from 'lodash';
+import { size, filter } from 'lodash';
 
 /*
  * How many sites has the user followed?
@@ -10,5 +10,5 @@ import { size, find, matchesProperty } from 'lodash';
  * @return {Integer} Follow count
  */
 export default function getFollowCount( state ) {
-	return size( find( state.reader.follows.items, matchesProperty( 'is_following', true ) ) );
+	return size( filter( state.reader.follows.items, [ 'is_following', true ] ) );
 }
