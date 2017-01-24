@@ -36,7 +36,7 @@ class ActivityLogItem extends Component {
 	static defaultProps = {
 		onClick: noop,
 		status: 'is-info',
-		icon: 'info-outline'
+		icon: 'info-outline',
 	};
 
 	getTime() {
