@@ -3,7 +3,8 @@
  */
 import {
 	HAPPYCHAT_OPEN,
-	HAPPYCHAT_MINIMIZING
+	HAPPYCHAT_MINIMIZING,
+	HAPPYCHAT_BADGE_SET_VISIBLE
 } from 'state/action-types';
 
 const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
@@ -32,3 +33,7 @@ export const minimizedChat = () => setChatMinimizing( false );
  * @returns {Object} Action
  */
 export const closeChat = () => setChatOpen( false );
+
+export const setHappychatBadgeVisible = ( isBadgeVisible = true ) => ( {
+	type: HAPPYCHAT_BADGE_SET_VISIBLE, isBadgeVisible
+} );
