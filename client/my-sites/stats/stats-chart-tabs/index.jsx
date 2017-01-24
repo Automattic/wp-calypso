@@ -22,6 +22,8 @@ import {
 	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { rangeOfPeriod } from 'state/stats/lists/utils';
+import { getSiteOption } from 'state/sites/selectors';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {
@@ -252,8 +254,13 @@ class StatModuleChartTabs extends Component {
 }
 
 const connectComponent = connect(
-	( state, { period: periodObject, chartTab } ) => {
-		const { period, endOf } = periodObject;
+	( state, { moment, period: periodObject, chartTab } ) => {
+		const siteId = getSelectedSiteId( state );
+		const { period } = periodObject;
+		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
+		const momentSiteZone = moment().utcOffset( timezoneOffset );
+		const queryDate = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
+
 		let quantity;
 		switch ( period ) {
 			case 'day':
@@ -278,7 +285,7 @@ const connectComponent = connect(
 		}
 		const query = {
 			unit: period,
-			date: endOf.format( 'YYYY-MM-DD' ),
+			date: queryDate,
 			quantity
 		};
 		const quickQuery = {
@@ -290,7 +297,6 @@ const connectComponent = connect(
 			stat_fields: 'views,visitors,likes,comments,post_titles'
 		};
 
-		const siteId = getSelectedSiteId( state );
 		return {
 			quickQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', quickQuery ),
 			quickQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery ),
@@ -305,6 +311,6 @@ const connectComponent = connect(
 );
 
 export default flowRight(
+	localize,
 	connectComponent,
-	localize
 )( StatModuleChartTabs );

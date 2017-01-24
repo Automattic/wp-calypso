@@ -222,10 +222,8 @@ module.exports = {
 				{ attr: 'comments', gridicon: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
 			];
 		};
-		let chartDate;
 		let chartTab;
 		let period;
-		let chartPeriod;
 		let siteOffset = 0;
 		let momentSiteZone = i18n.moment();
 		let numPeriodAgo = 0;
@@ -268,7 +266,6 @@ module.exports = {
 				siteOffset = currentSite.options.gmt_offset;
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
@@ -292,7 +289,6 @@ module.exports = {
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
 			period = rangeOfPeriod( activeFilter.period, date );
-			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
 
 			chartTab = queryOptions.tab || 'views';
 
@@ -303,13 +299,11 @@ module.exports = {
 			const siteComponentChildren = {
 				date,
 				charts,
-				chartDate,
 				chartTab,
 				context,
 				sites,
 				siteId,
 				period,
-				chartPeriod,
 				slug: siteDomain,
 				path: context.pathname,
 			};
