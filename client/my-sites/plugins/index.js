@@ -77,7 +77,7 @@ module.exports = function() {
 		);
 
 		if ( config.isEnabled( 'automated-transfer' ) ) {
-			page( '/plugins/:plugin/:site_id/eligibility',
+			page( '/plugins/:plugin/eligibility/:site_id',
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.eligibility
