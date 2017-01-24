@@ -43,7 +43,7 @@ const ActivityLogDate = React.createClass( {
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
-					header={ <div><div>Jan, 01, 1999</div><div><small> { Logs.length } Events</small></div></div> }
+					header={ <div><div className="activity-log-date__day">Jan, 01, 1999</div><div className="activity-log-date__events"> { Logs.length } Events</div></div> }
 					summary={ <Button className="button">Rewind</Button> }
 					expandedSummary={ <Button className="button">Rewind</Button> }
 					clickableHeader={ true }
