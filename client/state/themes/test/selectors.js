@@ -1096,7 +1096,7 @@ describe( 'themes selectors', () => {
 			expect( helpUrl ).to.equal( '/theme/mood/support/example.wordpress.com' );
 		} );
 
-		it( 'given a theme and Jetpack site ID, should return null', () => {
+		it( 'given a theme and Jetpack site ID, should return the help url', () => {
 			const helpUrl = getThemeHelpUrl(
 				{
 					sites: {
@@ -1118,7 +1118,7 @@ describe( 'themes selectors', () => {
 				},
 				77203074
 			);
-			expect( helpUrl ).to.be.null;
+			expect( helpUrl ).to.be.equal( '/theme/twentysixteen/support/example.net' );
 		} );
 	} );
 

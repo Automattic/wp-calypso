@@ -26,6 +26,7 @@ import {
 	isThemeActive as isActive,
 	isThemePurchased as isPurchased,
 	isThemePremium as isPremium,
+	isWpcomTheme,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
@@ -149,16 +150,13 @@ const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
 	getUrl: getSupportUrl,
-	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id )
+	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id ) || ! isWpcomTheme( state, theme.id )
 };
 
 const help = {
 	label: i18n.translate( 'Support' ),
 	getUrl: getHelpUrl,
-	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
+	hideForTheme: ( state, theme ) => ! isWpcomTheme( state, theme.id )
 };
 
 const ALL_THEME_OPTIONS = {

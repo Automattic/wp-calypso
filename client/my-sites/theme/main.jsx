@@ -41,7 +41,8 @@ import {
 	isThemePremium,
 	isThemePurchased,
 	getThemeRequestErrors,
-	getThemeForumUrl
+	getThemeForumUrl,
+	isWpcomTheme as isThemeWpcom,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
@@ -77,6 +78,7 @@ const ThemeSheet = React.createClass( {
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
+		isWpcomTheme: React.PropTypes.bool,
 		defaultOption: React.PropTypes.shape( {
 			label: React.PropTypes.string,
 			action: React.PropTypes.func,
@@ -545,7 +547,15 @@ const ConnectedThemeSheet = connectOptions(
 );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, isActive, isLoggedIn, isPremium, isPurchased } = props;
+	const {
+		selectedSite: site,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		isWpcomTheme,
+	} = props;
 	const siteId = site ? site.ID : null;
 
 	let defaultOption;
@@ -554,6 +564,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
+	} else if ( isJetpack && isWpcomTheme ) {
+		defaultOption = 'activateOnJetpack';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -569,10 +581,12 @@ const ThemeSheetWithOptions = ( props ) => {
 				'customize',
 				'tryandcustomize',
 				'purchase',
-				'activate'
+				'activate',
+				'activateOnJetpack',
+				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption="tryandcustomize"
+			secondaryOption={ ( isJetpack && isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };
@@ -605,7 +619,8 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
-		const siteIdOrWpcom = isJetpack ? selectedSite.ID : 'wpcom';
+		const isWpcomTheme = isThemeWpcom( state, id );
+		const siteIdOrWpcom = ( isJetpack && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
@@ -623,6 +638,7 @@ export default connect(
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
+			isWpcomTheme,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
@@ -630,7 +646,7 @@ export default connect(
 				isThemePurchased( state, id, selectedSite.ID ) ||
 				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
 			),
-			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID )
+			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
 		};
 	}
 )( ThemeSheetWithOptions );
