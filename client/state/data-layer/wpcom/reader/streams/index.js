@@ -34,7 +34,7 @@ export function interceptStreamPageRequest( store, action, next ) {
 		store.dispatch( {
 			...action,
 			type: READER_STREAMS_PAGE_RECEIVE,
-			page: response.data
+			payload: response
 		} );
 	} );
 
