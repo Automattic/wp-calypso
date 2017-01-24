@@ -27,7 +27,6 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
-		"accept-invite": true,
 		"ad-tracking": false,
 		"apple-pay": true,
 		"catch-js-errors": false,
