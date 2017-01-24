@@ -37,7 +37,6 @@
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
 		"jetpack/sso": true,
-		"jetpack/sync-panel": true,
 		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
 		"jetpack/google-analytics": true,
