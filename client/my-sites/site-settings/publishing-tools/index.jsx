@@ -66,6 +66,7 @@ class PublishingTools extends Component {
 	renderPostByEmailSettings() {
 		const { fields, translate, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
+		const email = fields.post_by_email_address && fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '';
 
 		return (
 			<div className="publishing-tools__module-settings is-indented">
@@ -75,7 +76,7 @@ class PublishingTools extends Component {
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
 					disabled={ regeneratingPostByEmail }
-					value={ fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '' }
+					value={ email }
 				/>
 				<Button
 					compact
