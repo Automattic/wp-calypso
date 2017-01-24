@@ -133,9 +133,9 @@ function renderSelectedSiteIsDomainOnly( { reactContext, selectedSite } ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
+function isPathAllowedForDomainOnlySite( { reactContext: { pathname }, selectedSite } ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
+		domainManagementList( selectedSite.slug ),
 		'/checkout/',
 	];
 
@@ -167,21 +167,8 @@ function setRecentSitesPreferenceInReduxStore( { reactContext: { store: reduxSto
 	}
 }
 
-function onSelectedSiteAvailable( reactContext ) {
-	const selectedSite = sites.getSelectedSite();
-
-	feedReduxStoreWithSelectedSite( { reactContext, selectedSite } );
-
-
-	if ( isDomainOnlySite( reactContext.store.getState(), selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( reactContext.pathname, selectedSite.slug ) ) {
-		renderSelectedSiteIsDomainOnly( { reactContext, selectedSite } );
-		return false;
-	}
-
-	setRecentSitesPreferenceInReduxStore( { reactContext, selectedSite } );
-
-	return true;
+function isSelectedSiteDomainOnlySite( { reactContext: { store: reduxStore }, selectedSite } ) {
+	return isDomainOnlySite( reduxStore.getState(), selectedSite.ID );
 }
 
 /**
@@ -264,45 +251,59 @@ module.exports = {
 			return next();
 		}
 
-		// If there's a valid site from the url path
-		// set site visibility to just that site on the picker
-		if ( sites.select( siteID ) ) {
-			const selectionComplete = onSelectedSiteAvailable( context );
+		// ensure we have fetched sites
+		const sitesFetchedPromise = new Promise( ( resolve, reject ) => {
+			if ( ! sites.fetched && sites.fetching ) {
+				sites.once( 'change', () => sites.fetched ? resolve() : reject() );
+			} else if ( currentUser.visible_site_count !== sites.getVisible().length ) {
+				sites.initialized = false;
 
-			// if there was a redirect, we should terminate processing of next routes
-			// and let the redirect proceed
-			if ( ! selectionComplete ) {
-				return;
-			}
-		} else {
-			// if sites has fresh data and siteID is invalid
-			// redirect to allSitesPath
-			if ( sites.fetched || ! sites.fetching ) {
-				return page.redirect( allSitesPath );
-			}
-
-			let waitingNotice;
-			const selectOnSitesChange = () => {
-				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				if ( sites.select( siteID ) ) {
-					sites.initialized = true;
-					onSelectedSiteAvailable( context );
-					if ( waitingNotice ) {
-						notices.removeNotice( waitingNotice );
+				const waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
+				sites.once( 'change', () => {
+					notices.removeNotice( waitingNotice );
+					if ( sites.fetched ) {
+						sites.initialized = true;
+						return resolve();
 					}
-				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
-					sites.initialized = false;
-					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
-					sites.once( 'change', selectOnSitesChange );
-					sites.fetch();
-				} else {
-					page.redirect( allSitesPath );
+
+					reject();
+				} );
+
+				sites.fetch();
+			} else {
+				return resolve();
+			}
+		} );
+
+		// Select a site
+		sitesFetchedPromise
+			.catch( error => {
+				page.redirect( allSitesPath );
+				return Promise.reject( error );
+			} )
+			.then( () => {
+				const siteSelectionPipeline = [
+					feedReduxStoreWithSelectedSite,
+					selectionContext =>
+						isSelectedSiteDomainOnlySite( selectionContext ) && ! isPathAllowedForDomainOnlySite( selectionContext )
+							? !! renderSelectedSiteIsDomainOnly( selectionContext ) // return false so we'll stop at this step
+							: true,
+					setRecentSitesPreferenceInReduxStore,
+					next,
+				];
+
+				if ( ! sites.select( siteID ) ) {
+					return page.redirect( allSitesPath );
 				}
-			};
-			// Otherwise, check when sites has loaded
-			sites.once( 'change', selectOnSitesChange );
-		}
-		next();
+
+				const selectionContext = {
+					selectedSite: sites.getSelectedSite(),
+					reactContext: context,
+				};
+
+				// Process the pipeline to completion or stop when step returns false
+				siteSelectionPipeline.every( stepFunction => stepFunction( selectionContext ) !== false );
+			} );
 	},
 
 	awaitSiteLoaded( context, next ) {
