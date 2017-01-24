@@ -27,14 +27,14 @@ export const items = createReducer( {}, {
 		const urlKey = prepareComparableUrl( url );
 		return {
 			...state,
-			[ urlKey ]: { is_following: true },
+			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
 		};
 	},
 	[ READER_UNFOLLOW ]: ( state, { url } ) => {
 		const urlKey = prepareComparableUrl( url );
 		return {
 			...state,
-			[ urlKey ]: { is_following: false },
+			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
 		};
 	},
 	[ READER_FOLLOWS_RECEIVE ]: ( state, { follows } ) => {

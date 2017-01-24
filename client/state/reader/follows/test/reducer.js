@@ -37,14 +37,14 @@ describe( 'reducer', () => {
 
 		it( 'should remove a URL when unfollowed', () => {
 			const original = deepFreeze( {
-				'discover.wordpress.com': { is_following: true },
-				'dailypost.wordpress.com': { is_following: true },
+				'discover.wordpress.com': { blog_ID: 123, is_following: true },
+				'dailypost.wordpress.com': { blog_ID: 124, is_following: true },
 			} );
 			const state = items( original, {
 				type: READER_UNFOLLOW,
 				url: 'http://discover.wordpress.com'
 			} );
-			expect( state[ 'discover.wordpress.com' ] ).to.eql( { is_following: false } );
+			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );
 		} );
 
 		it( 'should accept a new set of follows', () => {
