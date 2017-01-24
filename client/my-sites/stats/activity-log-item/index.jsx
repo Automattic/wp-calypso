@@ -30,7 +30,7 @@ class ActivityLogItem extends Component {
 		user: PropTypes.object,
 		onClick: PropTypes.func,
 		actionText: PropTypes.string,
-		description: PropTypes.string
+		description: PropTypes.string,
 	};
 
 	static defaultProps = {

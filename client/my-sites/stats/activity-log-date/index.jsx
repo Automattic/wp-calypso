@@ -14,14 +14,15 @@ const ActivityLogDate = React.createClass( {
 
 	render() {
 		const {
-			logs
+			logs,
+			moment
 		} = this.props;
 
 
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
-					header={ <div><div>Jan, 01, 1999</div><div><small> { logs.length } Events</small></div></div> }
+					header={ <div><div className="activity-log-date__day">{ moment ( logs[0].timestamp ).format( 'LL' )}</div><div className="activity-log-date__events"> { logs.length } Events</div></div> }
 					summary={ <Button className="button">Rewind</Button> }
 					expandedSummary={ <Button className="button">Rewind</Button> }
 					clickableHeader={ true }
@@ -31,7 +32,7 @@ const ActivityLogDate = React.createClass( {
 							title={ log.title }
 							subTitle={ log.subTitle }
 							icon={ log.icon }
-							time={ log.time }
+							timestamp={ log.timestamp }
 							user={ log.user }
 							actionText={ log.actionText }
 							key={ 'activity-log' + index } />
