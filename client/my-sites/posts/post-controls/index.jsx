@@ -11,18 +11,16 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { ga } from 'lib/analytics';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 import {
 	canCurrentUser,
 	isPublicizeEnabled,
 } from 'state/selectors';
 import PostControl from './post-control';
-
-const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
-const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );
-const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
-const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
-const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 
 const getAvailableControls = props => {
 	const {
@@ -39,6 +37,11 @@ const getAvailableControls = props => {
 		onToggleShare,
 		onTrash,
 		post,
+		recordCopyPost,
+		recordEditPost,
+		recordPreviewPost,
+		recordViewPost,
+		recordViewPostStats,
 		site,
 		translate,
 	} = props;
@@ -53,7 +56,7 @@ const getAvailableControls = props => {
 			className: 'edit',
 			href: editURL,
 			icon: 'pencil',
-			onClick: edit,
+			onClick: recordEditPost,
 			text: translate( 'Edit' ),
 		} );
 	}
@@ -63,7 +66,7 @@ const getAvailableControls = props => {
 			className: 'view',
 			href: post.URL,
 			icon: 'external',
-			onClick: view,
+			onClick: recordViewPost,
 			target: '_blank',
 			text: translate( 'View' ),
 		} );
@@ -72,7 +75,7 @@ const getAvailableControls = props => {
 			className: 'stats',
 			href: `/stats/post/${ post.ID }/${ site.slug }`,
 			icon: 'stats-alt',
-			onClick: viewStats,
+			onClick: recordViewPostStats,
 			text: translate( 'Stats' ),
 		} );
 
@@ -96,7 +99,7 @@ const getAvailableControls = props => {
 			className: 'view',
 			href: url.format( parsedUrl ),
 			icon: 'external',
-			onClick: preview,
+			onClick: recordPreviewPost,
 			text: translate( 'Preview' ),
 		} );
 
@@ -140,7 +143,7 @@ const getAvailableControls = props => {
 			className: 'copy',
 			href: `/post/${ site.slug }?copy=${ post.ID }`,
 			icon: 'clipboard',
-			onClick: copy,
+			onClick: recordCopyPost,
 			text: translate( 'Copy' ),
 		} );
 	}
@@ -211,13 +214,43 @@ PostControls.propTypes = {
 	onToggleShare: PropTypes.func,
 	onTrash: PropTypes.func,
 	post: PropTypes.object.isRequired,
+	recordCopyPost: PropTypes.func,
+	recordEditPost: PropTypes.func,
+	recordPreviewPost: PropTypes.func,
+	recordViewPost: PropTypes.func,
+	recordViewPostStats: PropTypes.func,
 	site: PropTypes.object,
 	translate: PropTypes.func,
 };
 
-export default connect( ( state, { site, post } ) => ( {
+const mapStateToProps = ( state, { site, post } ) => ( {
 	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_post' ),
 	canUserEditPost: canCurrentUser( state, site.ID, 'edit_post' ),
 	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_post' ),
 	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
-} ) )( localize( PostControls ) );
+} );
+
+const mapDispatchToProps = dispatch => ( {
+	recordCopyPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Copy Post' ),
+		recordTracksEvent( 'calypso_post_controls_copy_post_click' ),
+	) ),
+	recordEditPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Edit Post' ),
+		recordTracksEvent( 'calypso_post_controls_edit_post_click' ),
+	) ),
+	recordPreviewPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Preview Post' ),
+		recordTracksEvent( 'calypso_post_controls_preview_post_click' ),
+	) ),
+	recordViewPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked View Post' ),
+		recordTracksEvent( 'calypso_post_controls_view_post_click' ),
+	) ),
+	recordViewPostStats: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked View Post Stats' ),
+		recordTracksEvent( 'calypso_post_controls_view_post_stats_click' ),
+	) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostControls ) );
