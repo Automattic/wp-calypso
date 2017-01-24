@@ -482,10 +482,6 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderJetpackSyncPanel() {
-		if ( ! config.isEnabled( 'jetpack/sync-panel' ) ) {
-			return null;
-		}
-
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
 			return null;
