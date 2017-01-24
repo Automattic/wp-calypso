@@ -27,6 +27,8 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
+require('./style.scss');
+
 const EditorSharingAccordion = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,

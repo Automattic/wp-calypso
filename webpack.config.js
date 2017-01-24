@@ -62,7 +62,12 @@ const webpackConfig = {
 			{
 				include: /node_modules\/tinymce/,
 				loader: 'imports?this=>window',
-			}
+			},
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css', 'sass'],
+        // include: paths
+      }
 		]
 	},
 	resolve: {

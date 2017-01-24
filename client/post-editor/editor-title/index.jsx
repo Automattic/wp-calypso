@@ -22,6 +22,8 @@ import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
+require('./style.scss');
+
 /**
  * Constants
  */
