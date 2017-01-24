@@ -13,42 +13,20 @@ import ActivityLogItem from '../activity-log-item';
 const ActivityLogDate = React.createClass( {
 
 	render() {
-		const Logs = [
-			{
-				title: 'This is some really cool post',
-				subTitle: 'Deleted Post',
-				icon: 'trash',
-				user: { ID: 123, name: 'Jane A', role: 'Admin' },
-				time: '4:32pm',
-				actionText: 'Undo',
-			},
-			{
-				title: 'Jetpack updated to 4.5.1',
-				subTitle: 'Plugin Update',
-				icon: 'plugins',
-				user: { ID: 123, name: 'Jane A', role: 'Admin' },
-				time: '4:32pm',
-				actionText: 'Undo'
-			},
-			{
-				title: 'Post Title',
-				subTitle: 'Post Updated',
-				icon: 'posts',
-				user: { ID: 333, name: 'Jane A', role: 'Admin' },
-				time: '10:55am',
-				actionText: 'Undo'
-			}
-		];
+		const {
+			logs
+		} = this.props;
+
 
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
-					header={ <div><div className="activity-log-date__day">Jan, 01, 1999</div><div className="activity-log-date__events"> { Logs.length } Events</div></div> }
+					header={ <div><div>Jan, 01, 1999</div><div><small> { logs.length } Events</small></div></div> }
 					summary={ <Button className="button">Rewind</Button> }
 					expandedSummary={ <Button className="button">Rewind</Button> }
 					clickableHeader={ true }
 				>
-					{ Logs.map( ( log, index )  => {
+					{ logs.map( ( log, index )  => {
 						return <ActivityLogItem
 							title={ log.title }
 							subTitle={ log.subTitle }
