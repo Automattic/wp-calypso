@@ -140,7 +140,7 @@ const analytics = {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
-						console.error( `Nested properties are not supported by Tracks. Check '${key}' on`, eventProperties );
+						console.error( `Nested properties are not supported by Tracks. Check '${ key }' on`, eventProperties ); //eslint-disable-line no-console
 						return;
 					}
 				}
