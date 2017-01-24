@@ -51,6 +51,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect": true,
+		"jetpack/invites": true,
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
 		"jetpack/sso": true,
