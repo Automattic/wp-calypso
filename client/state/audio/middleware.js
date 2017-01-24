@@ -2,13 +2,18 @@
 /**
  * Internal dependencies
  */
-import audioRepo from './audio-repo';
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	AUDIO_PLAY,
 } from 'state/action-types';
 import { audioPlay } from './actions';
-import { getAudioSourceForSprite } from './selectors';
+
+// Maps the audio reference to the audio file source.
+// In future we might want to store this in Redux if
+// we want the sounds to be configurable.
+const REFERENCE_MAP = {
+	'happychat-message-received': '/calypso/audio/chat-pling.wav',
+};
 
 /**
  * Plays a sound when a message is received on Happychat
@@ -24,9 +29,14 @@ export const dispatchHappychatSound = ( dispatch, { event } ) => {
 	dispatch( audioPlay( 'happychat-message-received' ) );
 };
 
-export const playSprite = ( dispatch, { sprite }, getState ) => {
-	const audio = audioRepo.get( sprite, getAudioSourceForSprite( getState(), sprite ) );
-	audio && audio.play();
+export const playSound = ( dispatch, { reference } ) => {
+	if ( typeof Audio !== 'function' ) {
+		// No Audio support in this browser
+		return;
+	}
+
+	const audio = new Audio( REFERENCE_MAP[ reference ] );
+	audio.play();
 };
 
 /**
@@ -38,7 +48,7 @@ export const handlers = {
 	[ HAPPYCHAT_RECEIVE_EVENT ]: dispatchHappychatSound,
 
 	// Actually plays the sound
-	[ AUDIO_PLAY ]: playSprite,
+	[ AUDIO_PLAY ]: playSound,
 };
 
 /**
