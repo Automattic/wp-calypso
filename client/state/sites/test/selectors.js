@@ -2360,7 +2360,7 @@ describe( 'selectors', () => {
 							URL: 'https://example.com',
 							jetpack: true,
 							options: {
-								jetpack_version: '4.4.0'
+								jetpack_version: '4.5.0'
 							}
 						}
 					}
@@ -2379,7 +2379,7 @@ describe( 'selectors', () => {
 							URL: 'https://example.com',
 							jetpack: true,
 							options: {
-								jetpack_version: '4.5.0'
+								jetpack_version: '4.6.0'
 							}
 						}
 					}
@@ -2398,7 +2398,7 @@ describe( 'selectors', () => {
 							URL: 'https://example.com',
 							jetpack: true,
 							options: {
-								jetpack_version: '4.6.0'
+								jetpack_version: '4.7.0'
 							}
 						}
 					}
