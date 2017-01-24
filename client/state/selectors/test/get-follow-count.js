@@ -15,7 +15,7 @@ describe( 'getFollowCount()', () => {
 		const count = getFollowCount( {
 			reader: {
 				follows: {
-					items: []
+					items: {},
 				}
 			}
 		} );
@@ -27,7 +27,10 @@ describe( 'getFollowCount()', () => {
 		const count = getFollowCount( {
 			reader: {
 				follows: {
-					items: [ 'http://discover.wordpress.com' ]
+					items: {
+						'http://discover.wordpress.com': { is_following: true },
+						'http://dailypost.wordpress.com': { is_following: false },
+					},
 				}
 			}
 		} );
