@@ -22,7 +22,6 @@
 		"happychat": false,
 		"help": true,
 		"help/courses": true,
-		"jetpack/connect": true,
 		"jetpack/api-cache": true,
 		"jetpack/google-analytics": true,
 		"jetpack_core_inline_update": true,

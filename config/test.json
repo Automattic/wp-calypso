@@ -37,8 +37,6 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
 		"help": true,
-		"jetpack/connect": true,
-		"jetpack/personalPlan": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
