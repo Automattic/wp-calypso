@@ -224,9 +224,9 @@ PostControls.propTypes = {
 };
 
 const mapStateToProps = ( state, { site, post } ) => ( {
-	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_post' ),
-	canUserEditPost: canCurrentUser( state, site.ID, 'edit_post' ),
-	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_post' ),
+	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_posts' ),
+	canUserEditPost: canCurrentUser( state, site.ID, 'edit_posts' ),
+	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_posts' ),
 	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
 } );
 
