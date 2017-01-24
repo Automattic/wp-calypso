@@ -54,7 +54,7 @@ const Subscriptions = ( {
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ handleToggle( 'stb_enabled' ) }>
 								<span className="site-settings__toggle-label">
-									{ translate( 'Show a "follow blog" options in the comment form' ) }
+									{ translate( 'Show a "follow blog" option in the comment form' ) }
 								</span>
 							</FormToggle>
 
