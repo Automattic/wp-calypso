@@ -24,7 +24,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackMinimumVersion,
 	isJetpackSite,
-	siteSupportsJetpackSettingsUI
+	siteSupportsJetpackSettingsUi
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
@@ -236,7 +236,7 @@ const connectComponent = connect(
 		return {
 			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
 			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUI( state, siteId ),
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			isJetpackSite: isJetpackSite( state, siteId ),
 			siteId
 		};
