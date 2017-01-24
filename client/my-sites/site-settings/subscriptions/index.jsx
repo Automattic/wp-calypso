@@ -48,12 +48,6 @@ const Subscriptions = ( {
 				{
 					subscriptionsModuleActive && (
 						<div className="subscriptions__module-settings is-indented">
-							<p>
-								<a href={ '/people/email-followers/' + selectedSiteSlug }>
-									{ translate( 'View your Email Followers' ) }
-								</a>
-							</p>
-
 							<FormToggle
 								className="subscriptions__module-settings-toggle is-compact"
 								checked={ !! fields.stb_enabled }
@@ -73,6 +67,12 @@ const Subscriptions = ( {
 									{ translate( 'Show a "follow comments" option in the comment form.' ) }
 								</span>
 							</FormToggle>
+
+							<p className="subscriptions__email-followers">
+								<a href={ '/people/email-followers/' + selectedSiteSlug }>
+									{ translate( 'View your Email Followers' ) }
+								</a>
+							</p>
 						</div>
 					)
 				}
