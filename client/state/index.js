@@ -128,7 +128,8 @@ export function createReduxStore( initialState = {} ) {
 		enhancers.push( sitesSync );
 
 		if ( window.app && window.app.isDebug ) {
-			enhancers.push( consoleDispatcher );
+			// this has to be the first enhancer in the chain for the other enhancers to see it
+			enhancers.unshift( consoleDispatcher );
 		}
 
 		if ( window.devToolsExtension ) {
