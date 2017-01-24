@@ -28,7 +28,6 @@
 		"jetpack/connect": true,
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
-		"jetpack/sso": true,
 		"jetpack/api-cache": false,
 		"jetpack_core_inline_update": true,
 		"mailing-lists/unsubscribe": true,
