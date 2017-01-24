@@ -82,7 +82,7 @@ const StatsPostDetail = React.createClass( {
 					total={ this.props.translate( 'Overall' ) }
 					postViewsList={ this.props.postViewsList } />
 
-				<PostWeeks postViewsList={ this.props.postViewsList } />
+				<PostWeeks siteId={ this.props.siteId } postId={ this.props.postId } />
 			</Main>
 		);
 	}
