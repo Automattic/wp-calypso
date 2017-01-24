@@ -5,8 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq } from 'lodash';
-import startsWith from 'lodash/startsWith';
+import { uniq, startsWith, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -196,6 +195,41 @@ function createSitesComponent( context ) {
 	);
 }
 
+/***
+ * Execute a steps pipeline
+ *
+ * @param {Array} pipeline an array of steps each step may return:
+ * 					- object: will be set as the next context and will be passed to next steps
+ * 					- boolean: stop pipeline execution, `false` - stop right here, `true` skip to
+ * 								last step.
+ * @param {Object?} initialContext initial context to pass to first step
+ */
+function executePipeline( pipeline, initialContext ) {
+	let context = initialContext,
+		result = undefined,
+		executedSteps = 0;
+
+	forEach( pipeline, func => {
+		result = func( context );
+		executedSteps++;
+
+		if ( typeof result === 'object' ) {
+			context = result;
+		}
+
+		if ( typeof result === 'boolean' ) {
+			return false; // terminate foreach
+		}
+	} );
+
+	// if some step requested termination,
+	// we check what kind of termination was requested
+	// if result were `true`, the request was to skip to last step
+	if ( result && executedSteps < pipeline.length ) {
+		pipeline[ pipeline.length - 1 ]( context );
+	}
+}
+
 module.exports = {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -281,29 +315,30 @@ module.exports = {
 				page.redirect( allSitesPath );
 				return Promise.reject( error );
 			} )
-			.then( () => {
-				const siteSelectionPipeline = [
-					feedReduxStoreWithSelectedSite,
-					selectionContext =>
-						isSelectedSiteDomainOnlySite( selectionContext ) && ! isPathAllowedForDomainOnlySite( selectionContext )
-							? !! renderSelectedSiteIsDomainOnly( selectionContext ) // return false so we'll stop at this step
-							: true,
-					setRecentSitesPreferenceInReduxStore,
-					next,
-				];
+			.then( () => executePipeline( [
+				// select the site
+				() => sites.select( siteID )
+					? {
+						selectedSite: sites.getSelectedSite(),
+						reactContext: context
+					}
+					: !! page.redirect( allSitesPath ), // return false to stop in this step
 
-				if ( ! sites.select( siteID ) ) {
-					return page.redirect( allSitesPath );
-				}
+				// insert selected site to redux store
+				feedReduxStoreWithSelectedSite,
 
-				const selectionContext = {
-					selectedSite: sites.getSelectedSite(),
-					reactContext: context,
-				};
+				// if it's a domain only site we should render feature gate
+				selectionContext =>
+					isSelectedSiteDomainOnlySite( selectionContext ) && ! isPathAllowedForDomainOnlySite( selectionContext )
+						? !! renderSelectedSiteIsDomainOnly( selectionContext ) // return false so we'll stop at this step
+						: undefined,
 
-				// Process the pipeline to completion or stop when step returns false
-				siteSelectionPipeline.every( stepFunction => stepFunction( selectionContext ) !== false );
-			} );
+				// update recent sites in redux store
+				setRecentSitesPreferenceInReduxStore,
+
+				// continue to next controller
+				next,
+			] ) );
 	},
 
 	awaitSiteLoaded( context, next ) {
