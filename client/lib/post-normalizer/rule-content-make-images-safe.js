@@ -70,7 +70,7 @@ function makeImageSafe( post, image, maxWidth ) {
 	// trickery to remove it from the dom / not load the image
 	// TODO: test if this is necessary
 	if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
-		image.remove();
+		image.parentNode.removeChild( image );
 		// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 		// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
 		image.setAttribute( 'src', TRANSPARENT_GIF );
