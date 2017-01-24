@@ -78,6 +78,7 @@ const ThemeSheet = React.createClass( {
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
+		isWpcomTheme: React.PropTypes.bool,
 		defaultOption: React.PropTypes.shape( {
 			label: React.PropTypes.string,
 			action: React.PropTypes.func,
