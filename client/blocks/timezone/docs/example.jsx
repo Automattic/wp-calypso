@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import Timezone from 'components/timezone';
+import Timezone from 'blocks/timezone';
 import Card from 'components/card';
 
 export default React.createClass( {

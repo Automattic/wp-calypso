@@ -51,7 +51,6 @@ import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
 import Ribbon from 'components/ribbon/docs/example';
-import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
@@ -158,7 +157,6 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
-					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
