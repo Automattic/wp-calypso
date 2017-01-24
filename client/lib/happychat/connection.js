@@ -13,7 +13,7 @@ const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 class Connection extends EventEmitter {
 
-	open( user_id, token ) {
+	open( user_id, token, locale ) {
 		if ( ! this.openSocket ) {
 			this.openSocket = new Promise( resolve => {
 				const url = config( 'happychat_url' );
@@ -22,7 +22,7 @@ class Connection extends EventEmitter {
 					.once( 'connect', () => debug( 'connected' ) )
 					.on( 'init', () => resolve( socket ) )
 					.on( 'token', handler => {
-						handler( { signer_user_id: user_id, jwt: token } );
+						handler( { signer_user_id: user_id, jwt: token, locale } );
 					} )
 					.on( 'unauthorized', () => {
 						socket.close();
@@ -33,7 +33,9 @@ class Connection extends EventEmitter {
 					// Received chat status new/assigning/assigned/missed/pending/abandoned
 					.on( 'status', status => this.emit( 'status', status ) )
 					// If happychat is currently accepting chats
-					.on( 'accept', accept => this.emit( 'accept', accept ) );
+					.on( 'accept.locale', locales => {
+						this.emit( 'accept.locale', locales );
+					} );
 			} );
 		} else {
 			debug( 'socket already initiaized' );

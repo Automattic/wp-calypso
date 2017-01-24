@@ -3,6 +3,7 @@
  */
 import isEmpty from 'lodash/isEmpty';
 import throttle from 'lodash/throttle';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import {
 } from 'state/action-types';
 import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import olarkStore from 'lib/olark-store';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -85,7 +87,9 @@ export const requestTranscript = () => ( dispatch, getState ) => {
  */
 export const connectChat = () => ( dispatch, getState ) => {
 	const state = getState();
+	const olarkState = olarkStore.get();
 	const user = getCurrentUser( state );
+	const locale = olarkState.locale;
 
 	// if chat is already connected then do nothing
 	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
@@ -93,9 +97,10 @@ export const connectChat = () => ( dispatch, getState ) => {
 	}
 	dispatch( setChatConnecting() );
 	// create new session id and get signed identity data for authenticating
+	debug( 'connecting to chat session with locale', locale );
 	startSession()
 	.then( ( { session_id } ) => sign( { user, session_id } ) )
-	.then( ( { jwt } ) => connection.open( user.ID, jwt ) )
+	.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
 	.then(
 		() => {
 			dispatch( setChatConnected() );
@@ -103,7 +108,9 @@ export const connectChat = () => ( dispatch, getState ) => {
 			connection
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept', isAvailable => dispatch( setHappychatAvailable( isAvailable ) ) );
+			.on( 'accept.locale', ( locales ) => {
+				dispatch( setHappychatAvailable( includes( locales, locale ) ) );
+			} );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
