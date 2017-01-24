@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
-import Gridicon from 'components/gridicon';
+import PostControl from './post-control';
 
 const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
 const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );
@@ -167,25 +166,6 @@ const getAvailableControls = props => {
 	return controls;
 };
 
-const getControlElements = controls => controls.map( ( control, index ) =>
-	<li
-		className={ classNames( { 'post-controls__disabled': control.disabled } ) }
-		key={ index }
-	>
-		<a
-			className={ `post-controls__${ control.className }` }
-			href={ control.href }
-			onClick={ control.disabled ? noop : control.onClick }
-			target={ control.target ? control.target : null }
-		>
-			<Gridicon icon={ control.icon } size={ 18 } />
-			<span>
-				{ control.text }
-			</span>
-		</a>
-	</li>
-);
-
 export const PostControls = props => {
 	const { main, more } = getAvailableControls( props );
 	const classes = classNames(
@@ -197,11 +177,15 @@ export const PostControls = props => {
 		<div className={ classes }>
 			{ more.length > 0 &&
 				<ul className="posts__post-controls post-controls__pane post-controls__more-options">
-					{ getControlElements( more ) }
+					{ more.map( ( control, index ) =>
+						<PostControl control={ control } key={ index } />
+					) }
 				</ul>
 			}
 			<ul className="posts__post-controls post-controls__pane post-controls__main-options">
-				{ getControlElements( main ) }
+				{ main.map( ( control, index ) =>
+					<PostControl control={ control } key={ index } />
+				) }
 			</ul>
 		</div>
 	);
