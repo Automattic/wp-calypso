@@ -23,7 +23,7 @@ import SectionHeader from 'components/section-header';
 import {
 	isJetpackModuleActive,
 	isJetpackSite,
-	siteSupportsJetpackSettingsUI
+	siteSupportsJetpackSettingsUi
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Subscriptions from './subscriptions';
@@ -507,7 +507,7 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUI( state, siteId );
+		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
 
 		return {
