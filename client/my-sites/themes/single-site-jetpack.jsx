@@ -22,6 +22,7 @@ import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
@@ -84,7 +85,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					{ config.isEnabled( 'manage/themes/upload' ) &&
+					{ config.isEnabled( 'manage/themes/upload' ) && props.showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
 								options={ [
@@ -131,7 +132,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 export default connect(
 	( state, { siteId, tier } ) => {
 		return {
-			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free'
+			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
+			showWpcomThemesList: hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
 		};
 	}
 )( ConnectedSingleSiteJetpack );
