@@ -113,6 +113,10 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
+function renderSelectedSiteIsDomainOnly( { selectedSite } ) {
+	page.redirect( domainManagementList( selectedSite.slug ) );
+}
+
 function isPathAllowedForDomainOnlySite( pathname, domainName ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
 		domainManagementList( domainName ),
@@ -122,35 +126,44 @@ function isPathAllowedForDomainOnlySite( pathname, domainName ) {
 	return urlPrefixesWhiteListForDomainOnlySite.some( path => startsWith( pathname, path ) );
 }
 
-function onSelectedSiteAvailable( context ) {
-	const selectedSite = sites.getSelectedSite();
-	const state = context.store.getState();
-
+function feedReduxStoreWithSelectedSite( { reactContext: { store: reduxStore }, selectedSite } ) {
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( state, selectedSite.ID ) ) {
-		context.store.dispatch( receiveSite( selectedSite ) );
+	if ( ! getSite( reduxStore.getState(), selectedSite.ID ) ) {
+		reduxStore.dispatch( receiveSite( selectedSite ) );
 	}
+	reduxStore.dispatch( setSelectedSiteId( selectedSite.ID ) );
+}
 
-	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-
-	if ( isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
-		page.redirect( domainManagementList( selectedSite.slug ) );
-		return false;
-	}
-
+const RECENT_SITES_TO_KEEP = 3;
+function setRecentSitesPreferenceInReduxStore( { reactContext: { store: reduxStore }, selectedSite } ) {
 	// Update recent sites preference
+	const state = reduxStore.getState();
 	if ( hasReceivedRemotePreferences( state ) ) {
 		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			context.store.dispatch( savePreference( 'recentSites', uniq( [
+			reduxStore.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
 				...recentSites
-			] ).slice( 0, 3 ) ) );
+			] ).slice( 0, RECENT_SITES_TO_KEEP ) ) );
 		}
 	}
+}
+
+function onSelectedSiteAvailable( reactContext ) {
+	const selectedSite = sites.getSelectedSite();
+
+	feedReduxStoreWithSelectedSite( { reactContext, selectedSite } );
+
+
+	if ( isDomainOnlySite( reactContext.store.getState(), selectedSite.ID ) &&
+		! isPathAllowedForDomainOnlySite( reactContext.pathname, selectedSite.slug ) ) {
+		renderSelectedSiteIsDomainOnly( { reactContext, selectedSite } );
+		return false;
+	}
+
+	setRecentSitesPreferenceInReduxStore( { reactContext, selectedSite } );
 
 	return true;
 }
