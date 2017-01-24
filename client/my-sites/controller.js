@@ -113,8 +113,24 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
-function renderSelectedSiteIsDomainOnly( { selectedSite } ) {
-	page.redirect( domainManagementList( selectedSite.slug ) );
+function renderSelectedSiteIsDomainOnly( { reactContext, selectedSite } ) {
+	const EmptyContentComponent = require( 'components/empty-content' );
+	const { store: reduxStore } = reactContext;
+
+	removeSidebar( reactContext );
+
+	renderWithReduxStore(
+		React.createElement( EmptyContentComponent, {
+			title: i18n.translate( 'This feature is not available for domains' ),
+			line: i18n.translate( 'To use this feature you need to create a site' ),
+			action: i18n.translate( 'Create New Site' ),
+			actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
+			secondaryAction: i18n.translate( 'Domain Management' ),
+			secondaryActionURL: domainManagementList( selectedSite.slug )
+		} ),
+		document.getElementById( 'primary' ),
+		reduxStore
+	);
 }
 
 function isPathAllowedForDomainOnlySite( pathname, domainName ) {
