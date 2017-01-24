@@ -30,7 +30,6 @@
 		"jetpack/api-cache": false,
 		"jetpack_core_inline_update": true,
 		"mailing-lists/unsubscribe": true,
-		"manage/add-people": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/advanced-seo": true,

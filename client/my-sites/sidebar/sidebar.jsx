@@ -461,7 +461,7 @@ export class MySitesSidebar extends Component {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
-		if ( site.options && ( ! config.isEnabled( 'manage/add-people' ) || site.jetpack ) ) {
+		if ( site.options && site.jetpack ) {
 			addPeopleLink = ( site.jetpack )
 				? site.options.admin_url + 'user-new.php'
 				: site.options.admin_url + 'users.php?page=wpcom-invite-users';
