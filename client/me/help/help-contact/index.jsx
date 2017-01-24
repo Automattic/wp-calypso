@@ -126,13 +126,16 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, siteSlug } = contactForm;
-		const site = sites.getSite( siteSlug );
+		const { message, siteId } = contactForm;
+		const site = sites.getSite( siteId );
 
-		const messages = [
-			`Site I need help with: ${ site ? site.URL : 'N/A' }`,
+		let messages = [
 			message
 		];
+
+		if ( site ) {
+			messages = [ `Site I need help with: ${ site.URL }` ].concat( messages );
+		}
 
 		messages.forEach( this.props.sendHappychatMessage );
 
