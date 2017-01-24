@@ -101,7 +101,7 @@ export const fetchModuleList = ( siteId ) => {
 					data,
 					( module ) => ( {
 						active: module.activated,
-						...omit( module, 'activated', 'options' )
+						...omit( module, 'activated' )
 					} )
 				);
 
