@@ -2351,7 +2351,7 @@ describe( 'selectors', () => {
 			expect( supportsJetpackSettingsUI ).to.be.null;
 		} );
 
-		it( 'should return false if the Jetpack version is older than 4.5', () => {
+		it( 'should return false if the Jetpack version is older than 4.6', () => {
 			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
 				sites: {
 					items: {
@@ -2370,7 +2370,7 @@ describe( 'selectors', () => {
 			expect( supportsJetpackSettingsUI ).to.be.false;
 		} );
 
-		it( 'should return true if the Jetpack version is 4.5', () => {
+		it( 'should return true if the Jetpack version is 4.6', () => {
 			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
 				sites: {
 					items: {
@@ -2389,7 +2389,7 @@ describe( 'selectors', () => {
 			expect( supportsJetpackSettingsUI ).to.be.true;
 		} );
 
-		it( 'should return true if the Jetpack version is newer than 4.5', () => {
+		it( 'should return true if the Jetpack version is newer than 4.6', () => {
 			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
 				sites: {
 					items: {
