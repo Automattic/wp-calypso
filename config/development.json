@@ -54,7 +54,6 @@
 		"jetpack/invites": true,
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
-		"jetpack/sso": true,
 		"jetpack_core_inline_update": true,
 		"jetpack/google-analytics": true,
 		"jetpack/api-cache": true,
