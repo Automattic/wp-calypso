@@ -407,7 +407,7 @@ const RegisterDomainStep = React.createClass( {
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
+						onButtonClick={ this.props.onAddDomain.bind( null, suggestion ) } />
 				);
 			}, this );
 
@@ -432,9 +432,7 @@ const RegisterDomainStep = React.createClass( {
 
 	allSearchResults: function() {
 		const lastDomainSearched = this.state.lastDomainSearched,
-			matchesSearchedDomain = function( suggestion ) {
-				return suggestion.domain_name === lastDomainSearched;
-			},
+			matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === lastDomainSearched ),
 			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, matchesSearchedDomain ),
 			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
@@ -464,7 +462,7 @@ const RegisterDomainStep = React.createClass( {
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainError = { this.state.lastDomainError }
 				onAddMapping={ onAddMapping }
-				onClickResult={ this.addRemoveDomainToCart }
+				onClickResult={ this.props.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
 				suggestions={ suggestions }
 				products={ this.props.products }
@@ -497,11 +495,6 @@ const RegisterDomainStep = React.createClass( {
 		this.recordEvent( 'mapDomainButtonClick', this.props.analyticsSection );
 
 		page( this.getMapDomainUrl() );
-	},
-
-	addRemoveDomainToCart: function( suggestion, event ) {
-		event.preventDefault();
-		return this.props.onAddDomain( suggestion );
 	},
 
 	showValidationErrorMessage: function( domain, error ) {
