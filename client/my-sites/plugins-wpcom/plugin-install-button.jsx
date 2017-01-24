@@ -38,7 +38,7 @@ export const WpcomPluginInstallButton = props => {
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
 			// Show eligibility warnings before proceeding
-			navigateTo( `/plugins/${ plugin.slug }/${ siteSlug }/eligibility` );
+			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
 		}
 	}
 
