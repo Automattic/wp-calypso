@@ -88,6 +88,7 @@ export class UserStep extends Component {
 
 		SignupActions.submitSignupStep( {
 			processingMessage: this.props.translate( 'Creating your account' ),
+			flowName: this.props.flowName,
 			userData,
 			stepName: this.props.stepName,
 			form: formWithoutPassword,
