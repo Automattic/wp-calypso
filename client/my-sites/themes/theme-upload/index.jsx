@@ -26,7 +26,7 @@ import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -41,6 +41,7 @@ import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -58,6 +59,7 @@ class Upload extends React.Component {
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
 		isJetpackSite: React.PropTypes.bool,
+		upgradeJetpack: React.PropTypes.bool,
 	};
 
 	state = {
@@ -251,6 +253,7 @@ class Upload extends React.Component {
 			siteId,
 			selectedSite,
 			themeId,
+			upgradeJetpack,
 		} = this.props;
 
 		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
@@ -264,10 +267,15 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
+				{ upgradeJetpack && <JetpackManageErrorPage
+					template="updateJetpack"
+					siteId={ siteId }
+					featureExample={ this.renderUploadCard() }
+					version="4.4.2" /> }
 				{ showEligibility && <EligibilityWarnings
 					backUrl="/design"
 					onProceed={ this.onProceedClick } /> }
-				{ ! showEligibility && this.renderUploadCard() }
+				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -289,10 +297,12 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpackSite: isJetpackSite( state, siteId ),
+			isJetpackSite: isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
@@ -302,6 +312,7 @@ export default connect(
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
+			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
