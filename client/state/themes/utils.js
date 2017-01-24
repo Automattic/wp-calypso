@@ -5,7 +5,6 @@ import startsWith from 'lodash/startsWith';
 import {
 	every,
 	endsWith,
-	filter,
 	get,
 	includes,
 	map,
@@ -19,7 +18,6 @@ import {
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -200,35 +198,6 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  */
 export function isThemeFromWpcom( themeId ) {
 	return endsWith( themeId, '-wpcom' );
-}
-
-/**
- * Returns a filtered themes array. Filtering is done based on particular themes
- * matching provided query and isWpocmTheme predicate.
- * Themes on Jetpack installed from WordPress.com have -wpcom suffix
- * We filter out all those themes because they will also be visible on
- * second list specific to WordPress.com. This may be too simple aproach
- * so it may revisit it again later.
- *
- * TODO Veriy that wpcom filtering is sufficien.
- *
- * @param  {Array}  themes Array of theme objects
- * @param  {Object} query  Themes query
- * @return {Array}         Filtered themes
- */
-export function filterThemesForJetpack( themes, query ) {
-	// we can filter wpcom only if we have two lists
-	if ( config.isEnabled( 'manage/themes/upload' ) ) {
-		return filter(
-			themes,
-			theme => ! isThemeFromWpcom( theme.id ) && isThemeMatchingQuery( query, theme )
-		);
-	}
-
-	return filter(
-		themes,
-		theme => isThemeMatchingQuery( query, theme )
-	);
 }
 
 /**

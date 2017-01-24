@@ -192,6 +192,17 @@ describe( 'actions', () => {
 		} );
 
 		context( 'with a Jetpack site', () => {
+			const fakeGetState = () => ( {
+				sites: {
+					items: {
+						77203074: {
+							jetpack: true,
+							options: { jetpack_version: '4.4.2' }
+						}
+					}
+				}
+			} );
+
 			it( 'should dispatch fetch action when thunk triggered', () => {
 				requestThemes( 77203074 )( spy );
 
@@ -203,7 +214,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes receive action when request completes', () => {
-				return requestThemes( 77203074 )( spy ).then( () => {
+				return requestThemes( 77203074 )( spy, fakeGetState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_RECEIVE,
 						themes: [
@@ -216,7 +227,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action when request completes', () => {
-				return requestThemes( 77203074 )( spy ).then( () => {
+				return requestThemes( 77203074 )( spy, fakeGetState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 77203074,
@@ -231,7 +242,7 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch themes request success action with query results', () => {
-				return requestThemes( 77203074, { search: 'Sixteen' } )( spy ).then( () => {
+				return requestThemes( 77203074, { search: 'Sixteen' } )( spy, fakeGetState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: THEMES_REQUEST_SUCCESS,
 						siteId: 77203074,
@@ -243,7 +254,6 @@ describe( 'actions', () => {
 					} );
 				} );
 			} );
-
 			it( 'should dispatch fail action when request fails', () => {
 				return requestThemes( 1916284 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
