@@ -13,7 +13,7 @@ import Navigation from './theme-content-sections/navigation';
 import Overview from './theme-content-sections/overview';
 import Setup from './theme-content-sections/setup';
 import Support from './theme-content-sections/support';
-import Screenshot from './theme-content-sections/screenshot'
+import Screenshot from './theme-content-sections/screenshot';
 
 class ThemeSheetContent extends React.Component {
 	static propTypes = {

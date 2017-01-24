@@ -74,7 +74,7 @@ const ThemeSheet = React.createClass( {
 		// comment near the connect() function at the bottom of this file.
 		return {
 			section: '',
-			defaultOption: {}
+			defaultOption: {},
 		};
 	},
 
