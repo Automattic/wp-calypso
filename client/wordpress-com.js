@@ -177,6 +177,12 @@ sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites'
+	},
+	{
+		name: 'accept-invite',
+		paths: [ '/accept-invite' ],
+		module: 'my-sites/invites',
+		enableLoggedOut: true
 	}
 ];
 
@@ -332,15 +338,6 @@ if ( config.isEnabled( 'help' ) ) {
 		module: 'me/help',
 		secondary: true,
 		group: 'me'
-	} );
-}
-
-if ( config.isEnabled( 'accept-invite' ) ) {
-	sections.push( {
-		name: 'accept-invite',
-		paths: [ '/accept-invite' ],
-		module: 'my-sites/invites',
-		enableLoggedOut: true
 	} );
 }
 
