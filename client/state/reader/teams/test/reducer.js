@@ -9,8 +9,7 @@ import { expect } from 'chai';
 import { items, isRequesting } from '../reducer';
 import {
 	READER_TEAMS_REQUEST,
-	READER_TEAMS_REQUEST_SUCCESS,
-	READER_TEAMS_REQUEST_FAILURE,
+	READER_TEAMS_RECEIVE,
 } from 'state/action-types';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
@@ -26,8 +25,8 @@ describe( 'reducer', ( ) => {
 			expect(
 				items( {},
 					{
-						type: READER_TEAMS_REQUEST_SUCCESS,
-						teams: [ TEAM1 ]
+						type: READER_TEAMS_RECEIVE,
+						payload: { teams: [ TEAM1 ] }
 					}
 				)
 			).to.deep.equal( [ TEAM1 ] );
@@ -37,8 +36,8 @@ describe( 'reducer', ( ) => {
 			expect(
 				items( {},
 					{
-						type: READER_TEAMS_REQUEST_SUCCESS,
-						teams: [ TEAM1, TEAM2 ],
+						type: READER_TEAMS_RECEIVE,
+						payload: { teams: [ TEAM1, TEAM2 ] },
 					}
 				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
@@ -61,7 +60,7 @@ describe( 'reducer', ( ) => {
 			expect(
 				isRequesting( true,
 					{
-						type: READER_TEAMS_REQUEST_SUCCESS,
+						type: READER_TEAMS_RECEIVE,
 						teams: [ {}, {}, {} ],
 					}
 				)
@@ -72,7 +71,7 @@ describe( 'reducer', ( ) => {
 			expect(
 				isRequesting( true,
 					{
-						type: READER_TEAMS_REQUEST_FAILURE,
+						type: READER_TEAMS_RECEIVE,
 						error: new Error( 'test error' ),
 					}
 				)

@@ -38,7 +38,7 @@ describe( 'wpcom-api', () => {
 		) );
 
 		it( 'should dispatch RECEIVE action when request completes', () => {
-			return handleTeamsRequest( { dispatchSpy }, requestTeams(), nextSpy, )
+			return handleTeamsRequest( { dispatch: dispatchSpy }, requestTeams(), nextSpy, )
 				.then( () => (
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_TEAMS_RECEIVE,
@@ -48,7 +48,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		it( 'should dispatch RECEIVE action with error when request errors', () => {
-			return handleTeamsRequest( { dispatchSpy }, requestTeams(), nextSpy, )
+			return handleTeamsRequest( { dispatch: dispatchSpy }, requestTeams(), nextSpy, )
 				.then( () => (
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_TEAMS_RECEIVE,
