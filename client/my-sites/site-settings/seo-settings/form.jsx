@@ -34,7 +34,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import config from 'config';
 import { getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
@@ -368,7 +367,6 @@ export const SeoForm = React.createClass( {
 	render() {
 		const { showAdvancedSeo,
 			showWebsiteMeta,
-			showUpgradeNudge,
 			jetpackVersionSupportsSeo,
 		} = this.props;
 		const {
@@ -483,15 +481,13 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ showUpgradeNudge &&
-					<UpgradeNudge
-						feature={ FEATURE_ADVANCED_SEO }
-						title={ nudgeTitle }
-						message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
-						event={ 'calypso_seo_settings_upgrade_nudge' }
-						jetpack={ jetpack }
-					/>
-				}
+				<UpgradeNudge
+					feature={ FEATURE_ADVANCED_SEO }
+					title={ nudgeTitle }
+					message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
+					event={ 'calypso_seo_settings_upgrade_nudge' }
+					jetpack={ jetpack }
+				/>
 
 				{ ! jetpack &&
 					<div>
@@ -514,7 +510,7 @@ export const SeoForm = React.createClass( {
 				}
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+					{ showAdvancedSeo &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
@@ -742,17 +738,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const siteId = get( site, 'ID', 0 );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
-
-	const seoFeatureEnabled = site &&
-		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
-			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo );
+	const isAdvancedSeoSupported = site && ( ! site.jetpack || ( site.jetpack && jetpackVersionSupportsSeo ) );
 
 	return {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: isAdvancedSeoEligible && seoFeatureEnabled,
+		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 	};
 };
