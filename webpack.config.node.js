@@ -106,7 +106,6 @@ var webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^lib\/post-normalizer\/rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/preview-upgrade-nudge$/, 'components/empty-component' ), // Depends on page.js and should never be required server side
 		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/empty-component' ), // Depends on BOM and interactions don't work without JS
-		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/thanks-modal$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/themes-site-selector-modal$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/theme-upload$/, 'components/empty-component' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/single-site$/, 'components/empty-component' ), // Depends on DOM
