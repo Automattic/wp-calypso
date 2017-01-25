@@ -28,6 +28,19 @@ import {
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
+function createCart( callback, dependencies, data ) {
+	const { designType } = dependencies;
+	const { domainItem, themeItem } = data;
+
+	if ( designType === 'domain' ) {
+		// TODO: Find a way to create cart without a site
+		// SignupCart.addToCart depends on the site's slug
+		callback( undefined, [ null, null, domainItem, themeItem ] );
+	} else {
+		createSiteWithCart( callback, dependencies, data );
+	}
+}
+
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
 	domainItem,
@@ -49,8 +62,6 @@ function createSiteWithCart( callback, dependencies, {
 			// query. See `getThemeSlug` in `DomainsStep`.
 			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: surveyVertical || undefined,
-			// the API wants the `is_domain_only` flag provided as a number
-			is_domain_only: dependencies.designType === 'domain' ? 1 : 0
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -222,7 +233,9 @@ function getUsernameSuggestion( username, reduxState ) {
 }
 
 module.exports = {
-	createSiteWithCart: createSiteWithCart,
+	createCart,
+
+	createSiteWithCart,
 
 	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
 		createSiteWithCart( ( error, providedDependencies ) => {
