@@ -75,7 +75,7 @@ const ThemesSelection = React.createClass( {
 			search_term: query.search,
 			theme: theme.id,
 			results_rank: resultsRank + 1,
-			results: themes.map( property( 'id' ) ).toString(),
+			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page
 		} );
 	},
