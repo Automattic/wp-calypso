@@ -139,6 +139,11 @@ const HelpContact = React.createClass( {
 
 		messages.forEach( this.props.sendHappychatMessage );
 
+		let i = 0;
+		setInterval( () => {
+			this.props.sendHappychatMessage( `Test message ${ i++ }` );
+		}, 2000 );
+
 		page( '/help' );
 	},
 
