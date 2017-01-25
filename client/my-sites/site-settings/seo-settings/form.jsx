@@ -514,7 +514,7 @@ export const SeoForm = React.createClass( {
 				}
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+					{ showAdvancedSeo &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
