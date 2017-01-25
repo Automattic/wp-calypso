@@ -27,8 +27,6 @@
 		"jetpack/seo-tools": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
-		"manage/ads": true,
-		"manage/ads/jetpack": true,
 		"manage/advanced-seo": true,
 		"manage/advanced-seo/custom-title": true,
 		"manage/advanced-seo/preview-nudge": true,

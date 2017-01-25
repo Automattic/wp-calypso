@@ -13,6 +13,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Followers from '../stats-followers';
+import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import TodaysStats from '../stats-site-overview';
 import StatsConnectedModule from '../stats-module/connected-list';
@@ -80,6 +81,7 @@ export default React.createClass( {
 				<div id="my-stats-content">
 					<PostingActivity />
 					<LatestPostSummary site={ site } />
+					<Reach />
 					<TodaysStats
 						siteId={ site ? site.ID : null }
 						period="day"
