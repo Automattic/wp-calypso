@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId Site ID
  * @return {String}         The request error
  */
-export function getJetpackSettingsSaveError( state, siteId ) {
+export default function getJetpackSettingsSaveError( state, siteId ) {
 	return get( state.jetpack.settings.saveRequests, [ siteId, 'error' ], false );
 }
