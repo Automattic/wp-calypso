@@ -102,7 +102,7 @@ export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) 
 export function setImageEditorImageHasLoaded( width, height ) {
 	return {
 		type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
-		width: width,
-		height: height
+		width,
+		height
 	};
 }
