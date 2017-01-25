@@ -53,7 +53,7 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailSettings() {
-		const { fields, translate, regeneratingPostByEmail } = this.props;
+		const { fields, translate, postByEmailAddressModuleActive, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
 		const email = fields.post_by_email_address && fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '';
 
@@ -64,13 +64,13 @@ class PublishingTools extends Component {
 				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
-					disabled={ regeneratingPostByEmail }
+					disabled={ regeneratingPostByEmail || ! postByEmailAddressModuleActive }
 					value={ email }
 				/>
 				<Button
 					compact
 					onClick={ this.onRegenerateButtonClick }
-					disabled={ isFormPending || regeneratingPostByEmail }
+					disabled={ isFormPending || regeneratingPostByEmail || ! postByEmailAddressModuleActive }
 				>
 					{ regeneratingPostByEmail
 						? translate( 'Regenerating…' )
@@ -84,7 +84,6 @@ class PublishingTools extends Component {
 	renderPostByEmailModule() {
 		const {
 			selectedSiteId,
-			postByEmailAddressModuleActive,
 			translate
 		} = this.props;
 		const formPending = this.isFormPending();
@@ -106,9 +105,7 @@ class PublishingTools extends Component {
 					disabled={ formPending }
 					/>
 
-				{
-					postByEmailAddressModuleActive && this.renderPostByEmailSettings()
-				}
+				{ this.renderPostByEmailSettings() }
 			</FormFieldset>
 		);
 	}
