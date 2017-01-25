@@ -27,7 +27,6 @@
 		"jetpack/api-cache": false,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
-		"manage/ads/jetpack": true,
 		"manage/advanced-seo": true,
 		"manage/advanced-seo/custom-title": true,
 		"manage/advanced-seo/preview-nudge": true,

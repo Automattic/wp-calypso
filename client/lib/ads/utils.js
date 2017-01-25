@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { userCan } from 'lib/site/utils';
 import { isBusiness, isPremium } from 'lib/products-values';
 
@@ -19,8 +18,7 @@ export function canAccessWordads( site ) {
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
 		return site.options &&
 			( site.options.wordads || jetpackPremium ) &&
-			userCan( 'manage_options', site ) &&
-			( ! site.jetpack || config.isEnabled( 'manage/ads/jetpack' ) );
+			userCan( 'manage_options', site );
 	}
 
 	return false;
