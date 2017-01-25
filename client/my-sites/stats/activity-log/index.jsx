@@ -21,6 +21,7 @@ import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import { getActivityLog, isFetchingActivityLog } from 'state/activity-log/selectors';
+import ActivityLogBanner from '../activity-log-banner';
 
 class ActivityLog extends Component {
 	componentDidMount() {
@@ -281,7 +282,7 @@ class ActivityLog extends Component {
 			isJetpack,
 			slug
 		} = this.props;
-		const logs = this.props.activityLog.data;
+		const logs = ( activityLog && activityLog.data ? activityLog.data : [] );
 		const logsGroupedByDate = map(
 			groupBy(
 				logs.map( this.update_logs, this ),
