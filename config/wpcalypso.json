@@ -40,7 +40,6 @@
 		"jetpack/google-analytics": true,
 		"keyboard-shortcuts": true,
 		"mailing-lists/unsubscribe": true,
-		"manage/add-people": true,
 		"manage/advanced-seo": true,
 		"manage/advanced-seo/custom-title": true,
 		"manage/advanced-seo/preview-nudge": true,
