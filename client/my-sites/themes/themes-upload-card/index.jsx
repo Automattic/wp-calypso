@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,8 +26,12 @@ class ThemeUploadCard extends React.Component {
 	render() {
 		const { translate } = this.props;
 
+		const uploadClassName = classNames( 'themes-upload-card', {
+			'is-placeholder': this.props.count === null,
+		} );
+
 		return (
-			<div className="themes-upload-card">
+			<div className={ uploadClassName }>
 				<SectionHeader
 					label={ this.props.label || translate( 'WordPress.com themes' ) }
 					count={ this.props.count }
