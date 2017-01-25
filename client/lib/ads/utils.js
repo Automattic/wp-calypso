@@ -11,7 +11,7 @@ import { isBusiness, isPremium } from 'lib/products-values';
  * @return {boolean}      true if site has WordAds access
  */
 export function canAccessWordads( site ) {
-	if ( site && config.isEnabled( 'manage/ads' ) ) {
+	if ( site ) {
 		if ( isWordadsInstantActivationEligible( site ) ) {
 			return true;
 		}
