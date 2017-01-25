@@ -25,6 +25,7 @@ export getJetpackModule from './get-jetpack-module';
 export getJetpackModules from './get-jetpack-modules';
 export getJetpackSetting from './get-jetpack-setting';
 export getJetpackSettings from './get-jetpack-settings';
+export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
 export getManualUtcOffsets from './get-manual-utc-offsets';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
