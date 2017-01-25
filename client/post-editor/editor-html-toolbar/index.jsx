@@ -123,10 +123,8 @@ export class EditorHtmlToolbar extends Component {
 			selectionEnd,
 			selectionStart,
 		} } = this.props;
-		const { openTags } = this.state;
 		if ( selectionEnd === selectionStart ) {
-			const isTagOpen = -1 !== openTags.indexOf( tag.name );
-			isTagOpen ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
+			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
 		} else {
 			this.insertHtmlTagOpenClose( tag );
 		}
@@ -223,58 +221,52 @@ export class EditorHtmlToolbar extends Component {
 		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
 	}
 
+	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+
 	render() {
 		if ( ! config.isEnabled( 'post-editor/html-toolbar' ) ) {
 			return null;
 		}
 		const { translate } = this.props;
 		const buttons = {
-			bold: {
-				label: this.tagLabel( 'strong', 'b' ),
+			strong: {
+				label: 'b',
 				onClick: this.onClickBold,
 			},
-			italic: {
-				label: this.tagLabel( 'em', 'i' ),
+			em: {
+				label: 'i',
 				onClick: this.onClickItalic,
 			},
-			link: {
+			a: {
 				label: 'link',
 				onClick: this.openLinkDialog,
 			},
-			quote: {
-				label: this.tagLabel( 'blockquote', 'b-quote' ),
+			blockquote: {
+				label: 'b-quote',
 				onClick: this.onClickQuote,
 			},
 			del: {
-				label: this.tagLabel( 'del', 'del' ),
 				onClick: this.onClickDelete,
 			},
 			ins: {
-				label: this.tagLabel( 'ins', 'ins' ),
 				onClick: this.onClickInsert,
 			},
-			image: {
-				label: 'img',
+			img: {
 				onClick: this.openImageDialog,
 			},
-			unorderedList: {
-				label: this.tagLabel( 'ul', 'ul' ),
+			ul: {
 				onClick: this.onClickUnorderedList,
 			},
-			orderedList: {
-				label: this.tagLabel( 'ol', 'ol' ),
+			ol: {
 				onClick: this.onClickOrderedList,
 			},
-			listItem: {
-				label: this.tagLabel( 'li', 'li' ),
+			li: {
 				onClick: this.onClickListItem,
 			},
 			code: {
-				label: this.tagLabel( 'code', 'code' ),
 				onClick: this.onClickCode,
 			},
 			more: {
-				label: 'more',
 				onClick: this.onClickMore,
 			},
 			closeTags: {
@@ -289,13 +281,13 @@ export class EditorHtmlToolbar extends Component {
 				{ map( buttons, ( { disabled, label, onClick }, tag ) =>
 					<Button
 						borderless
-						className={ `editor-html-toolbar__button-${ tag }` }
+						className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
 						compact
 						disabled={ disabled }
 						key={ tag }
 						onClick={ onClick }
 					>
-						{ label }
+						{ label || tag }
 					</Button>
 				) }
 				<AddImageDialog

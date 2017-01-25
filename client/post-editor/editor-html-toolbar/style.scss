@@ -19,8 +19,19 @@
 		height: 26px;
 		margin: 6px 0;
 		padding: 4px 12px;
+		position: relative;
 		text-transform: lowercase;
 		min-width: 30px;
+
+		&.is-tag-open {
+			padding-left: 16px;
+			padding-right: 8px;
+			&::before {
+				content: '/';
+				left: 12px;
+				position: absolute;
+			}
+		}
 
 		&:hover {
 			color: $gray-dark;
@@ -32,13 +43,13 @@
 	}
 }
 
-.editor-html-toolbar__button-bold {
+.editor-html-toolbar__button-strong {
 	font-weight: bold;
 }
-.editor-html-toolbar__button-italic {
+.editor-html-toolbar__button-em {
 	font-style: italic;
 }
-.editor-html-toolbar__button-link.button {
+.editor-html-toolbar__button-a.button {
 	color: $blue-wordpress;
 	text-decoration: underline;
 }
