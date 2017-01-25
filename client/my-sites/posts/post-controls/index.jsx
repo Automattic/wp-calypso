@@ -6,25 +6,27 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { ga } from 'lib/analytics';
-import { userCan } from 'lib/posts/utils';
-import { isPublicizeEnabled } from 'state/selectors';
-import Gridicon from 'components/gridicon';
-
-const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
-const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );
-const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
-const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
-const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'state/analytics/actions';
+import {
+	canCurrentUser,
+	isPublicizeEnabled,
+} from 'state/selectors';
+import PostControl from './post-control';
 
 const getAvailableControls = props => {
 	const {
+		canUserDeletePost,
+		canUserEditPost,
+		canUserPublishPost,
 		editURL,
 		fullWidth,
 		onDelete,
@@ -35,6 +37,11 @@ const getAvailableControls = props => {
 		onToggleShare,
 		onTrash,
 		post,
+		recordCopyPost,
+		recordEditPost,
+		recordPreviewPost,
+		recordViewPost,
+		recordViewPostStats,
 		site,
 		translate,
 	} = props;
@@ -44,12 +51,12 @@ const getAvailableControls = props => {
 	// and those posts will not have access to post management type controls
 
 	// Main Controls (not behind ... more link)
-	if ( userCan( 'edit_post', post ) ) {
+	if ( canUserEditPost ) {
 		controls.main.push( {
 			className: 'edit',
 			href: editURL,
 			icon: 'pencil',
-			onClick: edit,
+			onClick: recordEditPost,
 			text: translate( 'Edit' ),
 		} );
 	}
@@ -59,7 +66,7 @@ const getAvailableControls = props => {
 			className: 'view',
 			href: post.URL,
 			icon: 'external',
-			onClick: view,
+			onClick: recordViewPost,
 			target: '_blank',
 			text: translate( 'View' ),
 		} );
@@ -68,7 +75,7 @@ const getAvailableControls = props => {
 			className: 'stats',
 			href: `/stats/post/${ post.ID }/${ site.slug }`,
 			icon: 'stats-alt',
-			onClick: viewStats,
+			onClick: recordViewPostStats,
 			text: translate( 'Stats' ),
 		} );
 
@@ -92,11 +99,11 @@ const getAvailableControls = props => {
 			className: 'view',
 			href: url.format( parsedUrl ),
 			icon: 'external',
-			onClick: preview,
+			onClick: recordPreviewPost,
 			text: translate( 'Preview' ),
 		} );
 
-		if ( userCan( 'publish_post', post ) ) {
+		if ( canUserPublishPost ) {
 			controls.main.push( {
 				className: 'publish',
 				icon: 'reader',
@@ -104,7 +111,7 @@ const getAvailableControls = props => {
 				text: translate( 'Publish' ),
 			} );
 		}
-	} else if ( userCan( 'delete_post', post ) ) {
+	} else if ( canUserDeletePost ) {
 		controls.main.push( {
 			className: 'restore',
 			icon: 'undo',
@@ -113,7 +120,7 @@ const getAvailableControls = props => {
 		} );
 	}
 
-	if ( userCan( 'delete_post', post ) ) {
+	if ( canUserDeletePost ) {
 		if ( 'trash' === post.status ) {
 			controls.main.push( {
 				className: 'trash is-scary',
@@ -131,12 +138,12 @@ const getAvailableControls = props => {
 		}
 	}
 
-	if ( ( 'publish' === post.status || 'private' === post.status ) && userCan( 'edit_post', post ) ) {
+	if ( ( 'publish' === post.status || 'private' === post.status ) && canUserEditPost ) {
 		controls.main.push( {
 			className: 'copy',
 			href: `/post/${ site.slug }?copy=${ post.ID }`,
 			icon: 'clipboard',
-			onClick: copy,
+			onClick: recordCopyPost,
 			text: translate( 'Copy' ),
 		} );
 	}
@@ -167,25 +174,6 @@ const getAvailableControls = props => {
 	return controls;
 };
 
-const getControlElements = controls => controls.map( ( control, index ) =>
-	<li
-		className={ classNames( { 'post-controls__disabled': control.disabled } ) }
-		key={ index }
-	>
-		<a
-			className={ `post-controls__${ control.className }` }
-			href={ control.href }
-			onClick={ control.disabled ? noop : control.onClick }
-			target={ control.target ? control.target : null }
-		>
-			<Gridicon icon={ control.icon } size={ 18 } />
-			<span>
-				{ control.text }
-			</span>
-		</a>
-	</li>
-);
-
 export const PostControls = props => {
 	const { main, more } = getAvailableControls( props );
 	const classes = classNames(
@@ -197,17 +185,24 @@ export const PostControls = props => {
 		<div className={ classes }>
 			{ more.length > 0 &&
 				<ul className="posts__post-controls post-controls__pane post-controls__more-options">
-					{ getControlElements( more ) }
+					{ more.map( ( control, index ) =>
+						<PostControl control={ control } key={ index } />
+					) }
 				</ul>
 			}
 			<ul className="posts__post-controls post-controls__pane post-controls__main-options">
-				{ getControlElements( main ) }
+				{ main.map( ( control, index ) =>
+					<PostControl control={ control } key={ index } />
+				) }
 			</ul>
 		</div>
 	);
 };
 
 PostControls.propTypes = {
+	canUserDeletePost: PropTypes.bool,
+	canUserEditPost: PropTypes.bool,
+	canUserPublishPost: PropTypes.bool,
 	editURL: PropTypes.string.isRequired,
 	fullWidth: PropTypes.bool,
 	isPublicizeEnabled: PropTypes.bool,
@@ -219,10 +214,43 @@ PostControls.propTypes = {
 	onToggleShare: PropTypes.func,
 	onTrash: PropTypes.func,
 	post: PropTypes.object.isRequired,
+	recordCopyPost: PropTypes.func,
+	recordEditPost: PropTypes.func,
+	recordPreviewPost: PropTypes.func,
+	recordViewPost: PropTypes.func,
+	recordViewPostStats: PropTypes.func,
 	site: PropTypes.object,
 	translate: PropTypes.func,
 };
 
-export default connect( ( state, { site, post } ) => ( {
+const mapStateToProps = ( state, { site, post } ) => ( {
+	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_posts' ),
+	canUserEditPost: canCurrentUser( state, site.ID, 'edit_posts' ),
+	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_posts' ),
 	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
-} ) )( localize( PostControls ) );
+} );
+
+const mapDispatchToProps = dispatch => ( {
+	recordCopyPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Copy Post' ),
+		recordTracksEvent( 'calypso_post_controls_copy_post_click' ),
+	) ),
+	recordEditPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Edit Post' ),
+		recordTracksEvent( 'calypso_post_controls_edit_post_click' ),
+	) ),
+	recordPreviewPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked Preview Post' ),
+		recordTracksEvent( 'calypso_post_controls_preview_post_click' ),
+	) ),
+	recordViewPost: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked View Post' ),
+		recordTracksEvent( 'calypso_post_controls_view_post_click' ),
+	) ),
+	recordViewPostStats: () => dispatch( composeAnalytics(
+		recordGoogleEvent( 'Posts', 'Clicked View Post Stats' ),
+		recordTracksEvent( 'calypso_post_controls_view_post_stats_click' ),
+	) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostControls ) );
