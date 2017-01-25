@@ -34,18 +34,22 @@ class QueryPublicizeConnections extends Component {
 }
 
 QueryPublicizeConnections.propTypes = {
-	siteId: PropTypes.number,
+	requestConnections: PropTypes.func,
 	requestingConnections: PropTypes.bool,
-	requestConnections: PropTypes.func
+	selectedSite: PropTypes.bool,
+	siteId: PropTypes.number,
 };
 
 QueryPublicizeConnections.defaultProps = {
-	requestConnections: () => {}
+	requestConnections: () => {},
+	requestingConnections: false,
+	selectedSite: false,
+	siteId: 0,
 };
 
 export default connect(
-	( state, { siteId } ) => {
-		siteId = siteId || getSelectedSiteId( state );
+	( state, { siteId, selectedSite } ) => {
+		siteId = siteId || ( selectedSite && getSelectedSiteId( state ) );
 
 		return {
 			requestingConnections: isRequestingConnections( state, siteId ),

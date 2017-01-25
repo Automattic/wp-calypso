@@ -5,7 +5,7 @@ Query Publicize Connections
 
 ## Usage
 
-Render the component, optionally passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing `siteId` or `selectedSite`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
 import React from 'react';
@@ -35,4 +35,13 @@ export default function MyConnectionsList( { connections } ) {
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-The site ID for which Publicize connections should be requested. Default: ID of selected site.
+The site ID for which Publicize connections should be requested.
+
+### `selectedSite`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+Whether Publicize connections should be requested for the selected site.
