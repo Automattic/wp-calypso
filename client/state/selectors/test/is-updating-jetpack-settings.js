@@ -6,24 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackSettings } from '../';
+import { isUpdatingJetpackSettings } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-settings';
 
-describe( 'isRequestingJetpackSettings()', () => {
-	it( 'should return true if settings are currently being requested', () => {
-		const stateIn = {
-				jetpack: {
-					settings: {
-						requests: REQUESTS_FIXTURE
-					}
-				}
-			},
-			siteId = 87654321;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
-		expect( output ).to.be.true;
-	} );
-
-	it( 'should return false if settings are currently not being requested', () => {
+describe( 'isUpdatingJetpackSettings()', () => {
+	it( 'should return true if settings are currently being updated', () => {
 		const stateIn = {
 				jetpack: {
 					settings: {
@@ -32,7 +19,20 @@ describe( 'isRequestingJetpackSettings()', () => {
 				}
 			},
 			siteId = 12345678;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
+		const output = isUpdatingJetpackSettings( stateIn, siteId );
+		expect( output ).to.be.true;
+	} );
+
+	it( 'should return false if settings are currently not being updated', () => {
+		const stateIn = {
+				jetpack: {
+					settings: {
+						requests: REQUESTS_FIXTURE
+					}
+				}
+			},
+			siteId = 87654321;
+		const output = isUpdatingJetpackSettings( stateIn, siteId );
 		expect( output ).to.be.false;
 	} );
 
@@ -45,7 +45,7 @@ describe( 'isRequestingJetpackSettings()', () => {
 				}
 			},
 			siteId = 88888888;
-		const output = isRequestingJetpackSettings( stateIn, siteId );
+		const output = isUpdatingJetpackSettings( stateIn, siteId );
 		expect( output ).to.be.null;
 	} );
 } );

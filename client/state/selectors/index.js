@@ -61,4 +61,5 @@ export isSiteBlocked from './is-site-blocked';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
 export isRequestingReaderTeams from './is-requesting-reader-teams';
+export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
 export getReaderTeams from './get-reader-teams';
