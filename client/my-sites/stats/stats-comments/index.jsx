@@ -3,12 +3,14 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import observe from 'lib/mixins/data-observe';
-import analytics from 'lib/analytics';
 import Card from 'components/card';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
@@ -16,23 +18,25 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 import SectionHeader from 'components/section-header';
+import QuerySiteStats from 'components/data/query-site-stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
-	displayName: 'StatsComments',
-
+const StatsComments = React.createClass( {
 	propTypes: {
-		site: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] ),
+		commentFollowersData: PropTypes.object,
 		commentsList: PropTypes.object,
-		commentFollowersList: PropTypes.object
+		recordGoogleEvent: PropTypes.func,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string
 	},
 
-	mixins: [ observe( 'commentsList', 'commentFollowersList' ) ],
+	mixins: [ observe( 'commentsList' ) ],
 
 	data( nextProps ) {
-		var props = nextProps || this.props;
+		const props = nextProps || this.props;
 		return props.commentsList.response.data.authors;
 	},
 
@@ -52,27 +56,27 @@ export default React.createClass( {
 	},
 
 	changeFilter( selection ) {
-		let gaEvent;
 		const filter = selection.value;
-
-		if ( filter !== this.state.activeFilter ) {
-			switch ( filter ) {
-				case 'top-authors':
-					gaEvent = 'Clicked By Authors Comments Toggle';
-					break;
-				case 'top-content':
-					gaEvent = 'Clicked By Posts & Pages Comments Toggle';
-					break;
-			}
-
-			if ( gaEvent ) {
-				analytics.ga.recordEvent( 'Stats', gaEvent );
-			}
-
-			this.setState( {
-				activeFilter: filter
-			} );
+		if ( filter === this.state.activeFilter ) {
+			return;
 		}
+		let gaEvent;
+		switch ( filter ) {
+			case 'top-authors':
+				gaEvent = 'Clicked By Authors Comments Toggle';
+				break;
+			case 'top-content':
+				gaEvent = 'Clicked By Posts & Pages Comments Toggle';
+				break;
+		}
+
+		if ( gaEvent ) {
+			this.props.recordGoogleEvent( 'Stats', gaEvent );
+		}
+
+		this.setState( {
+			activeFilter: filter
+		} );
 	},
 
 	updateHeaderState( options ) {
@@ -80,44 +84,48 @@ export default React.createClass( {
 	},
 
 	renderCommentFollowers() {
-		const { commentFollowersList, site } = this.props;
+		const { commentFollowersData, siteSlug, translate, numberFormat } = this.props;
 
-		if ( ! site || ! commentFollowersList.response.data || ! commentFollowersList.response.data.total ) {
+		if ( ! siteSlug || ! commentFollowersData || ! commentFollowersData.total ) {
 			return null;
 		}
 
-		const commentFollowURL = '/stats/follows/comment/' + site.slug;
+		const commentFollowURL = '/stats/follows/comment/' + siteSlug;
 
 		return (
 			<StatsModuleContent className="module-content-text-stat">
-				<p>{ this.translate( 'Total posts with comment followers:' ) } <a href={ commentFollowURL }>{ this.numberFormat( commentFollowersList.response.data.total ) }</a></p>
+				<p>
+					{ translate( 'Total posts with comment followers:' ) }
+					<a href={ commentFollowURL }>
+						{ numberFormat( commentFollowersData.total ) }
+					</a>
+				</p>
 			</StatsModuleContent>
 		);
 	},
 
 	renderSummary() {
 		const data = this.data();
-
 		if ( ! data || ! data.monthly_comments ) {
-			return null
+			return null;
 		}
 
 		return (
 			<StatsModuleContent>
-				<p>{ this.translate( 'Average comments per month:' ) } { this.numberFormat( data.monthly_comments ) }</p>
+				<p>{ this.props.translate( 'Average comments per month:' ) } { this.props.numberFormat( data.monthly_comments ) }</p>
 			</StatsModuleContent>
 		);
 	},
 
 	render() {
 		const { activeFilter } = this.state;
-		const { commentsList, followList } = this.props;
+		const { commentsList, followList, siteId, translate } = this.props;
 		const hasError = commentsList.isError();
 		const noData = commentsList.isEmpty( 'authors' );
 		const data = this.data();
 		const selectOptions = [
-			{ value: 'top-authors', label: this.translate( 'Comments By Authors' ) },
-			{ value: 'top-content', label: this.translate( 'Comments By Posts & Pages' ) }
+			{ value: 'top-authors', label: translate( 'Comments By Authors' ) },
+			{ value: 'top-content', label: translate( 'Comments By Posts & Pages' ) }
 		];
 
 		const classes = classNames(
@@ -131,11 +139,14 @@ export default React.createClass( {
 
 		return (
 			<div>
-				<SectionHeader label={ this.translate( 'Comments' ) }></SectionHeader>
+				<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
+				<SectionHeader label={ translate( 'Comments' ) }></SectionHeader>
 				<Card className={ classes }>
 					<div className="module-content">
 
-						{ ( noData && ! hasError ) ? <StatsErrorPanel className="is-empty-message" message={ this.translate( 'No comments posted' ) } /> : null }
+						{ noData && ! hasError &&
+							<StatsErrorPanel className="is-empty-message" message={ translate( 'No comments posted' ) } />
+						}
 
 						<StatsModuleSelectDropdown
 							options={ selectOptions }
@@ -147,8 +158,8 @@ export default React.createClass( {
 
 						<CommentTab
 							name="Top Commenters"
-							value={ this.translate( 'Comments' ) }
-							label={ this.translate( 'Author' ) }
+							value={ translate( 'Comments' ) }
+							label={ translate( 'Author' ) }
 							dataList={ commentsList }
 							dataKey="authors"
 							followList={ followList }
@@ -156,8 +167,8 @@ export default React.createClass( {
 
 						<CommentTab
 							name="Most Commented"
-							value={ this.translate( 'Comments' ) }
-							label={ this.translate( 'Title' ) }
+							value={ translate( 'Comments' ) }
+							label={ translate( 'Title' ) }
 							dataList={ commentsList }
 							dataKey="posts"
 							followList={ followList }
@@ -171,3 +182,22 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
+
+		return {
+			commentFollowersData: getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ),
+			siteId,
+			siteSlug
+		};
+	},
+	{ recordGoogleEvent }
+);
+
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsComments );
