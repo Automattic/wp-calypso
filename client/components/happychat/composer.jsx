@@ -56,7 +56,7 @@ export const Composer = React.createClass( {
 				</div>
 				<button className="happychat__submit"
 						onClick={ sendMessage }>
-						<svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+						<svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z" /></svg>
 				</button>
 			</div>
 		);
