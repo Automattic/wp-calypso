@@ -6,14 +6,12 @@ import { expect } from 'chai';
 import {
 	isActivatingModule,
 	isDeactivatingModule,
-	isModuleActive,
 	isFetchingModules,
 	getModules,
 	getModule
 } from '../selectors';
 
 import {
-	modules as MODULES_FIXTURE,
 	requests as REQUESTS_FIXTURE,
 	moduleData as MODULE_DATA_FIXTURE
 } from './fixture';
@@ -97,47 +95,6 @@ describe( 'selectors', () => {
 				},
 				siteId = 123456;
 			const output = isDeactivatingModule( stateIn, siteId, 'module-z' );
-			expect( output ).to.be.null;
-		} );
-	} );
-
-	describe( '#isModuleActive', () => {
-		it( 'should return true if the module is currently active', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							items: MODULES_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isModuleActive( stateIn, siteId, 'module-b' );
-			expect( output ).to.be.true;
-		} );
-
-		it( 'should return false if the module is currently not active', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							items: MODULES_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isModuleActive( stateIn, siteId, 'module-a' );
-			expect( output ).to.be.false;
-		} );
-
-		it( 'should return null if that module is not known', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							items: MODULES_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isModuleActive( stateIn, siteId, 'module-z' );
 			expect( output ).to.be.null;
 		} );
 	} );

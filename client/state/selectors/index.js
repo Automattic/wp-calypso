@@ -38,6 +38,7 @@ export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDomainOnlySite from './is-domain-only-site';
+export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isPrivateSite from './is-private-site';
