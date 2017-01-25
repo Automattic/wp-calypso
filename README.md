@@ -24,6 +24,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 
 1. Download and install [Docker](https://docs.docker.com/engine/installation/)
 2. Add `127.0.0.1 calypso.localhost` to your local hosts file.
+2. Before running for the first time, you'll need to `npm install`: `docker-compose run --rm calypso npm install`
 2. Run `docker-compose up`
 
 #### Some useful commands
