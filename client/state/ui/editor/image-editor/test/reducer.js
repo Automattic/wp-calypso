@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -28,7 +29,8 @@ import reducer, {
 	cropBounds,
 	crop,
 	aspectRatio,
-	imageIsLoading
+	imageIsLoading,
+	originalAspectRatio
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -40,7 +42,8 @@ describe( 'reducer', () => {
 			'cropBounds',
 			'crop',
 			'aspectRatio',
-			'imageIsLoading'
+			'imageIsLoading',
+			'originalAspectRatio'
 		] );
 	} );
 
@@ -485,6 +488,33 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
+		} );
+	} );
+
+	describe( '#originalAspectRatio()', () => {
+		it( 'should default to null', () => {
+			const state = originalAspectRatio( undefined, {} );
+
+			expect( state ).to.equal( null );
+		} );
+
+		it( 'should update when an image is loaded', () => {
+			const state = originalAspectRatio( undefined, {
+				type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
+				width: 100,
+				height: 200
+			} );
+
+			expect( state ).to.eql( { width: 100, height: 200 } );
+		} );
+
+		it( 'should reset to null on reset all', () => {
+			const originalState = deepFreeze( { width: 100, height: 100 } );
+			const state = originalAspectRatio( originalState, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
+			} );
+
+			expect( state ).to.equal( null );
 		} );
 	} );
 } );

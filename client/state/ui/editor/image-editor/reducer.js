@@ -19,6 +19,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
 
 export const defaultTransform = {
@@ -67,6 +68,13 @@ export function hasChanges( state = false, action ) {
 
 	return state;
 }
+
+export const originalAspectRatio = createReducer( null, {
+	[ IMAGE_EDITOR_IMAGE_HAS_LOADED ]: ( state, { width, height } ) => {
+		return { width, height };
+	},
+	[ IMAGE_EDITOR_STATE_RESET_ALL ]: () => null
+} );
 
 export function imageIsLoading( state = true, action ) {
 	switch ( action.type ) {
@@ -180,5 +188,6 @@ export default combineReducers( {
 	cropBounds,
 	crop,
 	aspectRatio,
+	originalAspectRatio,
 	imageIsLoading
 } );
