@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { isFetchingJetpackModules } from '../';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
-describe( '#isFetchingJetpackModules', () => {
+describe( 'isFetchingJetpackModules()', () => {
 	it( 'should return true if the list of modules is being fetched', () => {
 		const stateIn = {
 				jetpack: {
