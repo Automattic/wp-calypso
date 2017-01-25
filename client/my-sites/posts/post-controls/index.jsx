@@ -227,12 +227,15 @@ export class PostControls extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { site, post } ) => ( {
-	canUserDeletePost: canCurrentUser( state, site.ID, 'delete_posts' ),
-	canUserEditPost: canCurrentUser( state, site.ID, 'edit_posts' ),
-	canUserPublishPost: canCurrentUser( state, site.ID, 'publish_posts' ),
-	isPublicizeEnabled: isPublicizeEnabled( state, site.ID, post.type ),
-} );
+const mapStateToProps = ( state, { site, post } ) => {
+	const siteId = site && site.ID ? site.ID : null;
+	return {
+		canUserDeletePost: canCurrentUser( state, siteId, 'delete_posts' ),
+		canUserEditPost: canCurrentUser( state, siteId, 'edit_posts' ),
+		canUserPublishPost: canCurrentUser( state, siteId, 'publish_posts' ),
+		isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
+	};
+};
 
 const mapDispatchToProps = {
 	recordCopyPost: () => composeAnalytics(
