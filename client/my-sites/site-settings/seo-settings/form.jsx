@@ -744,7 +744,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
 
 	const seoFeatureEnabled = site &&
-		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
+		( ! site.jetpack ||
 			site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) && jetpackVersionSupportsSeo );
 
 	return {
@@ -752,7 +752,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && seoFeatureEnabled,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
+		showUpgradeNudge: true,
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 	};
 };

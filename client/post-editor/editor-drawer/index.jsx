@@ -238,10 +238,6 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		if ( ! this.props.site.jetpack && ! config.isEnabled( 'manage/advanced-seo' ) ) {
-			return;
-		}
-
 		if ( this.props.site.jetpack ) {
 			if ( ! config.isEnabled( 'jetpack/seo-tools' ) ||
 				! this.props.site.isModuleActive( 'seo-tools' ) ||

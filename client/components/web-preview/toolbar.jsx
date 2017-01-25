@@ -143,8 +143,8 @@ PreviewToolbar.defaultProps = {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const showSEO = ownProps.showSEO && (
-		( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
-		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) )
+		( site && site.plan && hasBusinessPlan( site.plan ) ) ||
+		isEnabled( 'manage/advanced-seo/preview-nudge' )
 	);
 
 	return { showSEO };
