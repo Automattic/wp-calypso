@@ -54,6 +54,7 @@ import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -144,6 +145,25 @@ const ThemeSheet = React.createClass( {
 			return this.getValidSections()[ 0 ];
 		}
 		return section;
+	},
+
+	trackButtonClick( context ) {
+		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
+			theme_name: this.props.id,
+			button_context: context
+		} );
+	},
+
+	trackContactUsClick() {
+		this.trackButtonClick( 'help' );
+	},
+
+	trackThemeForumClick() {
+		this.trackButtonClick( 'theme_forum' );
+	},
+
+	trackCssClick() {
+		this.trackButtonClick( 'css_forum' );
 	},
 
 	togglePreview() {
@@ -275,7 +295,12 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Need extra help?' ) }
 					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
 				</div>
-				<Button primary={ isPrimary } href={ '/help/contact/' }>Contact us</Button>
+				<Button
+					primary={ isPrimary }
+					href={ '/help/contact/' }
+					onClick={ this.trackContactUsClick }>
+					{ i18n.translate( 'Contact us' ) }
+				</Button>
 			</Card>
 		);
 	},
@@ -296,7 +321,12 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Have a question about this theme?' ) }
 					<small>{ description }</small>
 				</div>
-				<Button primary={ isPrimary } href={ this.props.forumUrl }>Visit forum</Button>
+				<Button
+					primary={ isPrimary }
+					href={ this.props.forumUrl }
+					onClick={ this.trackThemeForumClick }>
+					{ i18n.translate( 'Visit forum' ) }
+				</Button>
 			</Card>
 		);
 	},
@@ -309,7 +339,11 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Need CSS help? ' ) }
 					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
-				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
+				<Button
+					href="//en.forums.wordpress.com/forum/css-customization"
+					onClick={ this.trackCssClick }>
+					{ i18n.translate( 'Visit forum' ) }
+				</Button>
 			</Card>
 		);
 	},
@@ -648,5 +682,8 @@ export default connect(
 			),
 			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
 		};
+	},
+	{
+		recordTracksEvent,
 	}
 )( ThemeSheetWithOptions );
