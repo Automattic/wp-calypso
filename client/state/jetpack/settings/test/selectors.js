@@ -4,7 +4,6 @@
 import { expect } from 'chai';
 
 import {
-	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
 	isRegeneratingPostByEmail,
 	getJetpackSettings,
@@ -20,47 +19,6 @@ import {
 } from './fixture';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingJetpackSettings', () => {
-		it( 'should return true if settings are currently being requested', () => {
-			const stateIn = {
-					jetpack: {
-						settings: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 87654321;
-			const output = isRequestingJetpackSettings( stateIn, siteId );
-			expect( output ).to.be.true;
-		} );
-
-		it( 'should return false if settings are currently not being requested', () => {
-			const stateIn = {
-					jetpack: {
-						settings: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 12345678;
-			const output = isRequestingJetpackSettings( stateIn, siteId );
-			expect( output ).to.be.false;
-		} );
-
-		it( 'should return null if that site is not known', () => {
-			const stateIn = {
-					jetpack: {
-						settings: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 88888888;
-			const output = isRequestingJetpackSettings( stateIn, siteId );
-			expect( output ).to.be.null;
-		} );
-	} );
-
 	describe( '#isUpdatingJetpackSettings', () => {
 		it( 'should return true if settings are currently being updated', () => {
 			const stateIn = {
