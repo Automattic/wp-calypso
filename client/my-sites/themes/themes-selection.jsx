@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, isEqual, omit } from 'lodash';
+import { compact, isEqual, omit, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,7 +75,7 @@ const ThemesSelection = React.createClass( {
 			search_term: query.search,
 			theme,
 			results_rank: resultsRank + 1,
-			results: themes,
+			results: themes.map( property( 'id' ) ).toString(),
 			page_number: query.page
 		} );
 	},
