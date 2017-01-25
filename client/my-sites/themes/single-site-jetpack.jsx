@@ -89,8 +89,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 						<div>
 							<ConnectedThemesSelection
 								options={ [
-									'activateOnJetpack',
-									'tryAndCustomizeOnJetpack',
+									'activate',
+									'tryandcustomize',
 									'customize',
 									'separator',
 									'info',
