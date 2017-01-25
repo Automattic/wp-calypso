@@ -599,7 +599,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	} else if ( isActive ) {
 		defaultOption = 'customize';
 	} else if ( isJetpack && isWpcomTheme ) {
-		defaultOption = 'activateOnJetpack';
+		defaultOption = 'activate';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -616,11 +616,9 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryandcustomize',
 				'purchase',
 				'activate',
-				'activateOnJetpack',
-				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption={ ( isJetpack && isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
+			secondaryOption={ 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };

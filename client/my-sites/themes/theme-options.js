@@ -33,6 +33,10 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
+// Append `-wpcom` suffix to the theme ID so we install the theme from WordPress.com, not WordPress.org
+const installFromWpcomAndActivate = ( themeId, siteId ) => installAndActivate( themeId + '-wpcom', siteId );
+const installFromWpcomAndTryAndCustomize = ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId );
+
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
 		label: i18n.translate( 'Purchase', {
@@ -52,25 +56,14 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	action: activateTheme,
+	action: ( state, siteId ) => ( isJetpackSite( state, siteId )
+		? installFromWpcomAndActivate
+		: activateTheme
+	),
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-		)
-	)
-};
-
-const activateOnJetpack = {
-	label: i18n.translate( 'Activate' ),
-	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	// Append `-wpcom` suffix to the theme ID so the installAndActivate() will install the theme from WordPress.com, not WordPress.org
-	action: ( themeId, siteId, ...args ) => installAndActivate( themeId + '-wpcom', siteId, ...args ),
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
@@ -97,20 +90,14 @@ const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: getCustomizeUrl,
+	action: ( state, siteId ) => ( isJetpackSite( state, siteId )
+		? installFromWpcomAndTryAndCustomize
+		: activateTheme
+	),
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
-};
-
-const tryAndCustomizeOnJetpack = {
-	label: i18n.translate( 'Try & Customize' ),
-	header: i18n.translate( 'Try & Customize on:', {
-		comment: 'label in the dialog for opening the Customizer with the theme in preview'
-	} ),
-	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
+			isJetpackSite( state, siteId ) &&
 			isPremium( state, theme.id ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
@@ -164,10 +151,8 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
-	activateOnJetpack,
 	deleteTheme,
 	tryandcustomize,
-	tryAndCustomizeOnJetpack,
 	signup,
 	separator,
 	info,
