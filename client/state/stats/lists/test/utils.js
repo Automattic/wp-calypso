@@ -161,6 +161,52 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsFollowers()', () => {
+			it( 'should return null if no data is provided', () => {
+				const parsedData = normalizers.statsFollowers();
+				expect( parsedData ).to.be.null;
+			} );
+
+			it( 'should properly parse followers response', () => {
+				const parsedData = normalizers.statsFollowers( {
+					page: 1,
+					pages: 1,
+					total: 1,
+					total_email: 5,
+					total_wpcom: 120,
+					subscribers: [
+						{
+							avatar: null,
+							label: 'wapuu@wordpress.org',
+							ID: 11111111,
+							url: null,
+							follow_data: null,
+							date_subscribed: '2015-04-07T18:53:05+00:00'
+						}
+					]
+				} );
+
+				expect( parsedData ).to.eql( {
+					total_email: 5,
+					total_wpcom: 120,
+					subscribers: [ {
+						label: 'wapuu@wordpress.org',
+						iconClassName: 'avatar-user',
+						icon: null,
+						link: null,
+						value: {
+							type: 'relative-date',
+							value: '2015-04-07T18:53:05+00:00'
+						},
+						actions: [ {
+							type: 'follow',
+							data: false
+						} ]
+					} ]
+				} );
+			} );
+		} );
+
 		describe( 'statsTopPosts()', () => {
 			it( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsTopPosts();

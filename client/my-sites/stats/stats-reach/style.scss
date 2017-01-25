@@ -1,0 +1,12 @@
+.stats-tabs .stats-tab {
+	&.stats-reach__tab {
+		@include breakpoint( ">480px" ) {
+			width: 33%;
+		}
+
+		.value {
+			font-size: 24px;
+			padding: 16px 0;
+		}
+	}
+}
