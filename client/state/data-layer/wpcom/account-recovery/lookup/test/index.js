@@ -11,6 +11,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
 	requestResetOptions,
+	fromApi,
 } from '../';
 
 import {
@@ -47,7 +48,7 @@ describe( '#requestResetOptions', () => {
 				.then( () =>
 					assert.isTrue( dispatch.calledWith( {
 						type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-						options: response,
+						options: fromApi( response ),
 					} ) )
 				);
 		} );

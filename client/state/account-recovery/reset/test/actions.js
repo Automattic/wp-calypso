@@ -56,12 +56,16 @@ describe( '#fetchResetOptionsByNameAndUrl', () => {
 
 describe( '#fetchResetOptionsSuccess', () => {
 	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action with options field.', () => {
-		const options = {
-			primary_email: 'primary@example.com',
-			secondary_email: 'secondary@example.com',
-			primary_sms: '12345678',
-			secondary_sms: '12345678',
-		};
+		const options = [
+			{
+				email: 'primary@example.com',
+				sms: '12345678',
+			},
+			{
+				email: 'secondary@example.com',
+				sms: '12345678',
+			},
+		];
 
 		const action = fetchResetOptionsSuccess( options );
 
