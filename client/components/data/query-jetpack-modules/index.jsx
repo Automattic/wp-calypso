@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingModules } from 'state/jetpack/modules/selectors';
+import { isFetchingJetpackModules } from 'state/selectors';
 import { fetchModuleList } from 'state/jetpack/modules/actions';
 
 class QueryJetpackModules extends Component {
@@ -43,7 +43,7 @@ class QueryJetpackModules extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingModules: isFetchingModules( state, ownProps.siteId )
+			requestingModules: isFetchingJetpackModules( state, ownProps.siteId )
 		};
 	},
 	{ fetchModuleList }
