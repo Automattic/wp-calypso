@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import Modal from 'react-modal';
 import classnames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import CloseOnEscape from 'components/close-on-escape';
+
 class DialogBase extends Component {
 	static defaultProps = {
 		baseClassName: 'dialog',
@@ -24,13 +29,16 @@ class DialogBase extends Component {
 			);
 
 		return (
-			<Modal isOpen={ this.props.isVisible }
+			<Modal
+				isOpen={ this.props.isVisible }
 				onRequestClose={ this._close }
 				closeTimeoutMS= { this.props.leaveTimeout }
 				contentLabel={ this.props.label }
 				overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
 				className={ dialogClassName }
-				role="dialog">
+				role="dialog"
+			>
+				<CloseOnEscape onEscape={ this._close } />
 				<div className={ classnames( this.props.className, contentClassName ) } ref="content" tabIndex="-1">
 					{ this.props.children }
 				</div>
