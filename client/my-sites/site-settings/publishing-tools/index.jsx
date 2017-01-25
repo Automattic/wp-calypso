@@ -26,6 +26,19 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import PressThis from '../press-this';
 
 class PublishingTools extends Component {
+	componentDidUpdate() {
+		const {
+			fields,
+			postByEmailAddressModuleActive,
+			regeneratingPostByEmail,
+			selectedSiteId
+		} = this.props;
+
+		if ( postByEmailAddressModuleActive && regeneratingPostByEmail === null && ! fields.post_by_email_address ) {
+			this.props.regeneratePostByEmail( selectedSiteId );
+		}
+	}
+
 	onRegenerateButtonClick = () => {
 		this.props.regeneratePostByEmail( this.props.selectedSiteId );
 	}
