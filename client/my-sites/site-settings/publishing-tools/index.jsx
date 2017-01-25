@@ -52,30 +52,6 @@ class PublishingTools extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderHeader() {
-		const {
-			onSubmitForm,
-			isSavingSettings,
-			translate
-		} = this.props;
-
-		return (
-			<SectionHeader label={ translate( 'Publishing Tools' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ this.isFormPending() }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
-				</Button>
-			</SectionHeader>
-		);
-	}
-
 	renderPostByEmailSettings() {
 		const { fields, translate, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
@@ -152,9 +128,11 @@ class PublishingTools extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Publishing Tools' ) } />
 
 				<Card className="publishing-tools__card site-settings">
 					{ this.renderPostByEmailModule() }
