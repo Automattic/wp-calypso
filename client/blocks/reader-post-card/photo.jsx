@@ -32,11 +32,11 @@ class PostPhoto extends React.Component {
 	}
 
 	onExpanded = () => {
-		const { post } = this.props.post;
+		const { post, site } = this.props;
 		stats.recordTrackForPost( 'calypso_reader_photo_expanded', post );
 
 		// Record page view
-		PostStoreActions.markSeen( post );
+		PostStoreActions.markSeen( post, site );
 		stats.recordTrackForPost( 'calypso_reader_article_opened', post );
 	}
 
@@ -145,6 +145,7 @@ class PostPhoto extends React.Component {
 
 PostPhoto.propTypes = {
 	post: React.PropTypes.object,
+	site: React.PropTypes.object,
 	title: React.PropTypes.string,
 	onClick: React.PropTypes.func,
 };

@@ -5,6 +5,7 @@ const assign = require( 'lodash/assign' ),
 	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:feed-post-store' ),
 	forEach = require( 'lodash/forEach' ),
+	get = require( 'lodash/get' ),
 	isEqual = require( 'lodash/isEqual' ),
 	forOwn = require( 'lodash/forOwn' ),
 	clone = require( 'lodash/clone' ),
@@ -19,8 +20,6 @@ const Dispatcher = require( 'dispatcher' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	stats = require( 'reader/stats' );
 
 let _posts = {},
@@ -104,7 +103,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
-			markPostSeen( action.data.post, action.data.source );
+			markPostSeen( action.data.post, action.data.site, action.data.source );
 			break;
 		case ReaderSiteBlockActionType.BLOCK_SITE:
 			markBlockedSitePosts( action.siteId, true );
@@ -284,7 +283,7 @@ function normalizePost( feedId, postId, post ) {
 	} );
 }
 
-function markPostSeen( post ) {
+function markPostSeen( post, site ) {
 	if ( ! post ) {
 		return;
 	}
@@ -296,11 +295,10 @@ function markPostSeen( post ) {
 
 	if ( post.site_ID ) {
 		// they have a site ID, let's try to push a page view
-		const site = SiteStore.get( post.site_ID );
-		const isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) );
-		if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
-			if ( site.get( 'is_private' ) || isNotAdmin ) {
-				stats.pageViewForPost( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
+		const isNotAdmin = ! get( site, 'capabilities.manage_options', false ) ;
+		if ( site && site.ID ) {
+			if ( site.is_private || isNotAdmin ) {
+				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
 			}
 		}
 	}
