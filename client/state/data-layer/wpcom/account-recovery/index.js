@@ -9,13 +9,16 @@ import {
 } from 'state/action-types';
 
 export const requestResetOptions = ( { dispatch }, { userData } ) => (
-	wpcom.undocumented().accountRecoveryReset( userData ).getResetOptions()
-		.then( options => dispatch( {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-			options,
-		} ) )
-		.catch( error => dispatch( {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-			error,
-		} ) )
+	wpcom.req.get( {
+		body: userData,
+		apiNamespace: 'wpcom/v2',
+		path: '/account-recovery/lookup',
+	} ).then( options => dispatch( {
+		type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+		options,
+	} ) )
+	.catch( error => dispatch( {
+		type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+		error,
+	} ) )
 );
