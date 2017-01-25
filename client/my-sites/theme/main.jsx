@@ -114,8 +114,8 @@ const ThemeSheet = React.createClass( {
 		// We need to make sure the theme object has been loaded including full details
 		// (and not just without, as would've been stored by the `<QueryThemes />` (plural!)
 		// component used by the theme showcase's list view). However, these extra details
-		// aren't present for a Jetpack site.
-		if ( this.props.isJetpack ) {
+		// aren't present for non-wpcom themes.
+		if ( ! this.props.isWpcomTheme ) {
 			return !! this.props.name;
 		}
 		return !! this.props.screenshots;
@@ -183,7 +183,7 @@ const ThemeSheet = React.createClass( {
 
 	renderScreenshot() {
 		let screenshot;
-		if ( this.props.isJetpack ) {
+		if ( ! this.props.isWpcomTheme ) {
 			screenshot = this.props.screenshot;
 		} else {
 			screenshot = this.getFullLengthScreenshot();
@@ -252,7 +252,7 @@ const ThemeSheet = React.createClass( {
 				</Card>
 				{ this.renderFeaturesCard() }
 				{ this.renderDownload() }
-				{ ! this.props.isJetpack && this.renderRelatedThemes() }
+				{ this.props.isWpcomTheme && this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -334,7 +334,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderFeaturesCard() {
-		const { isJetpack, siteSlug, taxonomies } = this.props;
+		const { isWpcomTheme, siteSlug, taxonomies } = this.props;
 		if ( ! taxonomies || ! isArray( taxonomies.theme_feature ) ) {
 			return null;
 		}
@@ -343,7 +343,7 @@ const ThemeSheet = React.createClass( {
 			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
 			return (
 				<li key={ 'theme-features-item-' + item.slug }>
-					{ isJetpack
+					{ ! isWpcomTheme
 						? <a>{ item.name }</a>
 						: <a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
 					}
@@ -366,11 +366,11 @@ const ThemeSheet = React.createClass( {
 	renderDownload() {
 		// Don't render download button:
 		// * If it's a premium theme
-		// * If it's on a Jetpack site, and the theme object doesn't have a 'download' attr
+		// * If it's a non-wpcom theme, and the theme object doesn't have a 'download' attr
 		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
 		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
 		//   The <ThemeDownloadCard /> component can handle that case.
-		if ( this.props.isPremium || ( this.props.isJetpack && ! this.props.download ) ) {
+		if ( this.props.isPremium || ( ! this.props.isWpcomTheme && ! this.props.download ) ) {
 			return null;
 		}
 		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
