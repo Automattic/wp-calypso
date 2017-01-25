@@ -37,7 +37,7 @@ const StatsPostDetailWeeks = ( props ) => {
 	};
 
 	if ( stats && stats.weeks ) {
-		const publishDate = post.post_date ? moment( post.post_date ) : null;
+		const publishDate = post && post.post_date ? moment( post.post_date ) : null;
 		highest = stats.highest_week_average;
 		tableHeader = (
 			<thead>
