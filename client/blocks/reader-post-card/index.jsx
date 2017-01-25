@@ -150,7 +150,7 @@ export default class ReaderPostCard extends React.Component {
 				</GalleryPost>;
 		} else {
 			readerPostCard = <StandardPost post={ post } title={ title } isDiscover={ isDiscover }>
-					{ isDailyPostChallengeOrPrompt( post ) && <DailyPostButton post={ post } site={ site } tagName="span" /> }
+					{ isDailyPostChallengeOrPrompt( post ) && site && <DailyPostButton post={ post } site={ site } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>;
@@ -168,4 +168,3 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 }
-

@@ -287,17 +287,18 @@ function markPostSeen( post, site ) {
 	if ( ! post ) {
 		return;
 	}
+
 	const originalPost = post;
 
 	if ( ! post._seen ) {
-		post = Object.assign( { _seen: true }, post );
+		post = Object.assign( {}, post, { _seen: true } );
 	}
 
 	if ( post.site_ID ) {
 		// they have a site ID, let's try to push a page view
-		const isNotAdmin = ! get( site, 'capabilities.manage_options', false ) ;
+		const isAdmin = ! get( site, 'capabilities.manage_options', false );
 		if ( site && site.ID ) {
-			if ( site.is_private || isNotAdmin ) {
+			if ( site.is_private || ! isAdmin ) {
 				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
 			}
 		}
