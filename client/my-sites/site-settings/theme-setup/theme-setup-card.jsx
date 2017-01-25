@@ -37,17 +37,10 @@ class ThemeSetupCard extends React.Component {
 	}
 
 	render() {
-		const onClose = ( action ) => {
-			switch ( action ) {
-				case 'setupDeleteContent':
-					break;
-				case 'setupKeepContent':
-					break;
-				default:
-					this.setState( {
-						dialogIsVisible: false,
-					} );
-			}
+		const onClose = () => {
+			this.setState( {
+				dialogIsVisible: false,
+			} );
 		};
 
 		return (
