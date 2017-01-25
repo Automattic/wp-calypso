@@ -73,7 +73,7 @@ const ThemesSelection = React.createClass( {
 		const { query, themes } = this.props;
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: query.search,
-			theme,
+			theme: theme.id,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).toString(),
 			page_number: query.page
