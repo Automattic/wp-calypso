@@ -14,12 +14,10 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
-import SiteBlockStore from 'lib/reader-site-blocks';
-import SiteBlockActions from 'lib/reader-site-blocks/actions';
+import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
-import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
@@ -41,41 +39,19 @@ const ReaderPostOptionsMenu = React.createClass( {
 		};
 	},
 
-	smartSetState: smartSetState,
-
-	getInitialState() {
-		const state = this.getStateFromStores();
-		state.popoverPosition = this.props.position;
-		return state;
-	},
-
 	componentDidMount() {
-		SiteBlockStore.on( 'change', this.updateState );
 		FeedSubscriptionStore.on( 'change', this.updateState );
 	},
 
 	componentWillUnmount() {
-		SiteBlockStore.off( 'change', this.updateState );
 		FeedSubscriptionStore.off( 'change', this.updateState );
-	},
-
-	getStateFromStores() {
-		const siteId = this.props.post.site_ID;
-
-		return {
-			isBlocked: SiteBlockStore.getIsBlocked( siteId )
-		};
-	},
-
-	updateState() {
-		this.smartSetState( this.getStateFromStores() );
 	},
 
 	blockSite() {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		SiteBlockActions.block( this.props.post.site_ID );
+		this.props.requestSiteBlock( this.props.post.site_ID );
 		this.props.onBlock();
 	},
 
@@ -170,5 +146,8 @@ export default connect(
 			props.feed = getFeed( state, feedId );
 		}
 		return props;
+	},
+	{
+		requestSiteBlock,
 	}
 )( ReaderPostOptionsMenu );
