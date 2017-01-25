@@ -23,6 +23,7 @@ export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getJetpackModule from './get-jetpack-module';
 export getJetpackModules from './get-jetpack-modules';
+export getJetpackSettings from './get-jetpack-settings';
 export getManualUtcOffsets from './get-manual-utc-offsets';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
