@@ -15,11 +15,16 @@
 
 	.button {
 		border-right: 1px solid lighten( $gray, 30% );
+		color: darken( $gray, 20% );
 		height: 26px;
 		margin: 6px 0;
 		padding: 4px 12px;
 		text-transform: lowercase;
 		min-width: 30px;
+
+		&:hover {
+			color: $gray-dark;
+		}
 
 		&:last-child {
 			border: none;
