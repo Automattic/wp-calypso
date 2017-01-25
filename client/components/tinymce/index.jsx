@@ -445,7 +445,7 @@ module.exports = React.createClass( {
 			this.props.onTextEditorChange( content );
 		}
 
-		this.setState( { content: content }, this.doAutosizeUpdate );
+		this.setState( { content }, this.doAutosizeUpdate );
 	},
 
 	localize: function() {
