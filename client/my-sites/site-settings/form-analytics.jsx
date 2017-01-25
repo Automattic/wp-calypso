@@ -79,11 +79,7 @@ class GoogleAnalyticsForm extends Component {
 			jetpack = false,
 		} = site;
 
-		let placeholderText = '';
-		if ( isRequestingSettings ) {
-			placeholderText = translate( 'Loading' );
-		}
-
+		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const isJetpackUnsupported = jetpack && ! jetpackVersionSupportsModule && isEnabled( 'jetpack/google-analytics' );
 
 		return (
