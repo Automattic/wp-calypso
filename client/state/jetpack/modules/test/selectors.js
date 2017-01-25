@@ -4,58 +4,13 @@
 import { expect } from 'chai';
 
 import {
-	isFetchingModules,
 	getModules,
 	getModule
 } from '../selectors';
 
-import {
-	requests as REQUESTS_FIXTURE,
-	moduleData as MODULE_DATA_FIXTURE
-} from './fixture';
+import { moduleData as MODULE_DATA_FIXTURE } from './fixture';
 
 describe( 'selectors', () => {
-	describe( '#isFetchingModules', () => {
-		it( 'should return true if the list of modules is being fetched', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isFetchingModules( stateIn, siteId );
-			expect( output ).to.be.true;
-		} );
-
-		it( 'should return false if the list of modules is currently not being fetched', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 654321;
-			const output = isFetchingModules( stateIn, siteId );
-			expect( output ).to.be.false;
-		} );
-
-		it( 'should return null if that site is not known', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 888888;
-			const output = isFetchingModules( stateIn, siteId );
-			expect( output ).to.be.null;
-		} );
-	} );
-
 	describe( '#getModules', () => {
 		it( 'should return data for all modules for a known site', () => {
 			const stateIn = {

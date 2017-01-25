@@ -40,6 +40,7 @@ export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDomainOnlySite from './is-domain-only-site';
+export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
