@@ -3,6 +3,7 @@
  */
 import {
 	curry,
+	flatMap,
 	get,
 	isFunction,
 	merge,
@@ -32,7 +33,7 @@ const joinAnalytics = ( analytics, action ) =>
 export const composeAnalytics = ( ...analytics ) => ( {
 	type: ANALYTICS_MULTI_TRACK,
 	meta: {
-		analytics: analytics.map( property( 'meta.analytics[0]' ) )
+		analytics: flatMap( analytics, property( 'meta.analytics' ) ),
 	}
 } );
 
