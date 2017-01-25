@@ -104,7 +104,10 @@ class EditorMoreOptionsCopyPost extends Component {
 						}
 					</FormSectionHeading>
 					<p>
-						{ '' }
+						{ this.isPost()
+							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title, content, tags and categories." )
+						}
 					</p>
 					{ siteId &&
 						<PostSelector
