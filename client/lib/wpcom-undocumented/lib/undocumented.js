@@ -2326,6 +2326,22 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
+ * Fetch the Activity Log data for a given site.
+ *
+ * @param {int} siteId -- the ID of the site being transferred
+ *
+ */
+Undocumented.prototype.getActivityLog = function( siteId ) {
+	// debug( '/sites/:site_id:/sync/status query' );
+
+	// @todo make this query an actual endpoint for activity log
+	// This is just here so we get a successful response from some endpoint called in the action
+	return this.wpcom.req.get({
+		path: '/sites/' + siteId
+	} );
+};
+
+/**
  * Submit a response to the NPS Survey.
  * @param {string}     surveyName     The name of the NPS survey being submitted
  * @param {int}        score          The value for the survey response
