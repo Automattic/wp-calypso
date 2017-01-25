@@ -69,14 +69,17 @@ describe.only( 'just run this suite', function() {
 
 ### How to run Mocha directly
 
-You can run Mocha directly by using `run-mocha.js` as the entry point for Mocha. Note that this only works for tests 
+You can run Mocha directly by using `runner.js` as the entry point. Note that this only works for tests 
 inside single test runner. This gives you more flexibility to integrate with different toolings.
 
 Example:
 ```shell
 # Run all client tests within the single test runner
-$ NODE_ENV=test NODE_PATH=client:test node_modules/.bin/mocha test/run-mocha.js 
+$ NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js
 
 # Run all server tests within the single test runner
-$ NODE_ENV=test NODE_PATH=server:client:test node_modules/.bin/mocha test/run-mocha.js
+$ NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js
+
+# Run all test tests within the single test runner
+$ NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js
 ```
