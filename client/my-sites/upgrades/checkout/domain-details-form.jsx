@@ -331,11 +331,11 @@ export default React.createClass( {
 		);
 	},
 
-	fields() {
+	renderDetailsForm() {
 		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
 
 		return (
-			<div>
+			<form>
 				{ this.renderNameFields() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
@@ -347,7 +347,7 @@ export default React.createClass( {
 				{ this.renderPostalCodeField() }
 
 				{ this.renderSubmitButton() }
-			</div>
+			</form>
 		);
 	},
 
@@ -361,14 +361,6 @@ export default React.createClass( {
 
 	openDialog() {
 		this.setState( { isDialogVisible: true } );
-	},
-
-	content() {
-		return (
-			<form>
-				{ this.fields() }
-			</form>
-		);
 	},
 
 	focusFirstError() {
@@ -462,7 +454,7 @@ export default React.createClass( {
 				<PaymentBox
 					classSet={ classSet }
 					title={ title }>
-					{ this.content() }
+					{ this.renderDetailsForm() }
 				</PaymentBox>
 			</div>
 		);
