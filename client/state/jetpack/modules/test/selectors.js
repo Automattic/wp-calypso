@@ -4,7 +4,6 @@
 import { expect } from 'chai';
 
 import {
-	isDeactivatingModule,
 	isFetchingModules,
 	getModules,
 	getModule
@@ -16,47 +15,6 @@ import {
 } from './fixture';
 
 describe( 'selectors', () => {
-	describe( '#isDeactivatingModule', () => {
-		it( 'should return true if module is currently being deactivated', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isDeactivatingModule( stateIn, siteId, 'module-a' );
-			expect( output ).to.be.true;
-		} );
-
-		it( 'should return false if module is currently not being deactivated', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isDeactivatingModule( stateIn, siteId, 'module-b' );
-			expect( output ).to.be.false;
-		} );
-
-		it( 'should return null if that module is not known', () => {
-			const stateIn = {
-					jetpack: {
-						jetpackModules: {
-							requests: REQUESTS_FIXTURE
-						}
-					}
-				},
-				siteId = 123456;
-			const output = isDeactivatingModule( stateIn, siteId, 'module-z' );
-			expect( output ).to.be.null;
-		} );
-	} );
-
 	describe( '#isFetchingModules', () => {
 		it( 'should return true if the list of modules is being fetched', () => {
 			const stateIn = {
