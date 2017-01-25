@@ -57,6 +57,7 @@ var MenuItemList = React.createClass( {
 							editedItem={ this.props.editedItem }
 							setEditItem={ this.props.setEditItem }
 							moveState={ this.props.moveState }
+							draggedItem={ this.props.draggedItem }
 							doMoveItem={ this.props.doMoveItem }
 							addState={ this.props.addState }
 							doAddItem={ this.props.doAddItem }
@@ -183,7 +184,8 @@ var MenuItem = React.createClass( {
 	},
 
 	isBeingDragged: function() {
-		var draggedItem = this.props.dragDrop( 'getDraggedItem' );
+		var draggedItem = this.props.draggedItem;
+
 		return draggedItem &&
 			( draggedItem.id === this.props.item.id ||
 				siteMenus.isAncestor( draggedItem, this.props.item ) );
@@ -394,6 +396,7 @@ var MenuItem = React.createClass( {
 					setEditItem={ this.props.setEditItem }
 					editedItem={ this.props.editedItem }
 					moveState={ this.props.moveState }
+					draggedItem={ this.props.draggedItem }
 					doMoveItem={ this.props.doMoveItem }
 					addState={ this.props.addState }
 					doAddItem={ this.props.doAddItem }
