@@ -65,14 +65,15 @@ export class EditorHtmlToolbar extends Component {
 	);
 
 	openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
-		( options.newLine ? '\n' : '' ) +
+		( options.paragraph ? '\n' : '' ) +
+		( options.indent ? '\t' : '' ) +
 		`<${ name }${ this.attributesToString( attributes ) }>` +
-		( options.newLine ? '\n\t' : '' );
+		( options.paragraph ? '\n' : '' );
 
 	closeHtmlTag = ( { name, options = {} } ) =>
-		( options.newLine ? '\n' : '' ) +
 		`</${ name }>` +
-		( options.newLine ? '\n\n' : '' );
+		( options.newLineAfter ? '\n' : '' ) +
+		( options.paragraph ? '\n\n' : '' );
 
 	insertHtmlTagOpen( tag ) {
 		const { openTags } = this.state;
@@ -96,7 +97,9 @@ export class EditorHtmlToolbar extends Component {
 	insertHtmlTagSelfClosed( tag ) {
 		const { before, inner, after } = this.splitEditorContent();
 		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
-		const content = tag.options && tag.options.newLine ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
+		const content = tag.options && tag.options.paragraph
+			? '\n' + selfClosedTag + '\n\n'
+			: selfClosedTag;
 		this.updateEditorContent( before + inner + content + after );
 	}
 
@@ -105,9 +108,14 @@ export class EditorHtmlToolbar extends Component {
 		this.updateEditorContent( before + this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ) + after );
 	}
 
-	insertCustomContent( content ) {
+	insertCustomContent( content, options = {} ) {
 		const { before, inner, after } = this.splitEditorContent();
-		this.updateEditorContent( before + inner + content + after );
+		this.updateEditorContent(
+			before + inner +
+			( options.paragraph ? '\n' : '' ) +
+			content +
+			( options.paragraph ? '\n\n' : '' ) +
+			after );
 	}
 
 	insertHtmlTag( tag ) {
@@ -143,7 +151,7 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	onClickQuote = () => {
-		this.insertHtmlTag( { name: 'blockquote' } );
+		this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
 	}
 
 	onClickDelete = () => {
@@ -161,15 +169,15 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onClickUnorderedList = () => {
-		this.insertHtmlTag( { name: 'ul', options: { newLine: true } } );
+		this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
 	}
 
 	onClickOrderedList = () => {
-		this.insertHtmlTag( { name: 'ol', options: { newLine: true } } );
+		this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
 	}
 
 	onClickListItem = () => {
-		this.insertHtmlTag( { name: 'li' } );
+		this.insertHtmlTag( { name: 'li', options: { indent: true, newLineAfter: true } } );
 	}
 
 	onClickCode = () => {
@@ -177,7 +185,7 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onClickMore = () => {
-		this.insertCustomContent( '<!--more-->' );
+		this.insertCustomContent( '<!--more-->', { paragraph: true } );
 	}
 
 	onClickCloseTags = () => {
