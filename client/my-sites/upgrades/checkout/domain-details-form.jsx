@@ -215,16 +215,14 @@ export default React.createClass( {
 	},
 
 	renderNameFields() {
-		const textOnly = true;
-
 		return (
 			<div>
 				<Input
 					autoFocus
-					label={ this.translate( 'First Name', { textOnly } ) }
+					label={ this.translate( 'First Name') }
 					{ ...this.getFieldProps( 'first-name' ) } />
 
-				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...this.getFieldProps( 'last-name' ) } />
+				<Input label={ this.translate( 'Last Name' ) } { ...this.getFieldProps( 'last-name' ) } />
 			</div>
 		);
 	},
@@ -238,8 +236,7 @@ export default React.createClass( {
 				{
 					context: 'Domain contact information page',
 					comment: 'Count specifies the number of domain registrations',
-					count: this.getNumberOfDomainRegistrations(),
-					textOnly: true
+					count: this.getNumberOfDomainRegistrations()
 				}
 			) }
 			{ ...this.getFieldProps( 'organization' ) } />;
@@ -247,14 +244,14 @@ export default React.createClass( {
 
 	renderEmailField() {
 		return (
-			<Input label={ this.translate( 'Email', { textOnly: true } ) } { ...this.getFieldProps( 'email' ) } />
+			<Input label={ this.translate( 'Email' ) } { ...this.getFieldProps( 'email' ) } />
 		);
 	},
 
 	renderCountryField() {
 		return (
 			<CountrySelect
-				label={ this.translate( 'Country', { textOnly: true } ) }
+				label={ this.translate( 'Country' ) }
 				countriesList={ countriesList }
 				{ ...this.getFieldProps( 'country-code' ) } />
 		);
@@ -262,12 +259,12 @@ export default React.createClass( {
 
 	renderFaxField() {
 		return (
-			<Input label={ this.translate( 'Fax', { textOnly: true } ) } { ...this.getFieldProps( 'fax' ) } />
+			<Input label={ this.translate( 'Fax' ) } { ...this.getFieldProps( 'fax' ) } />
 		);
 	},
 
 	renderPhoneField() {
-		const label = this.translate( 'Phone', { textOnly: true } );
+		const label = this.translate( 'Phone' );
 
 		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
 			return (
@@ -295,24 +292,22 @@ export default React.createClass( {
 	},
 
 	renderAddressFields() {
-		const textOnly = true;
-
 		return (
 			<div>
-				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
+				<Input label={ this.translate( 'Address' ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
 
 				<HiddenInput
-					label={ this.translate( 'Address Line 2', { textOnly } ) }
-					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
+					label={ this.translate( 'Address Line 2' ) }
+					text={ this.translate( '+ Add Address Line 2' ) }
 					maxLength={ 40 }
-					{ ...this.getFieldProps( 'address-2' ) }/>
+					{ ...this.getFieldProps( 'address-2' ) } />
 			</div>
 		);
 	},
 
 	renderCityField() {
 		return (
-			<Input label={ this.translate( 'City', { textOnly: true } ) } { ...this.getFieldProps( 'city' ) } />
+			<Input label={ this.translate( 'City' ) } { ...this.getFieldProps( 'city' ) } />
 		);
 	},
 
@@ -320,14 +315,14 @@ export default React.createClass( {
 		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
 
 		return <StateSelect
-			label={ this.translate( 'State', { textOnly: true } ) }
+			label={ this.translate( 'State' ) }
 			countryCode={ countryCode }
-			{ ...this.getFieldProps( 'state' ) }/>;
+			{ ...this.getFieldProps( 'state' ) } />;
 	},
 
 	renderPostalCodeField() {
 		return (
-			<Input label={ this.translate( 'Postal Code', { textOnly: true } ) } { ...this.getFieldProps( 'postal-code' ) } />
+			<Input label={ this.translate( 'Postal Code' ) } { ...this.getFieldProps( 'postal-code' ) } />
 		);
 	},
 
@@ -437,8 +432,7 @@ export default React.createClass( {
 				'only-google-apps-details': needsOnlyGoogleAppsDetails
 			} ),
 			titleOptions = {
-				context: 'Domain contact information page',
-				textOnly: true
+				context: 'Domain contact information page'
 			};
 
 		let title;
