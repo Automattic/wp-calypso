@@ -27,7 +27,7 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 			{ site && <QueryActiveTheme siteId={ site.ID } /> }
 			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
-			{ site && theme ? <ThemeSetupCard theme={ theme } /> : <ThemeSetupPlaceholder /> }
+			{ site && theme ? <ThemeSetupCard site={ site } theme={ theme } /> : <ThemeSetupPlaceholder /> }
 		</div>
 	);
 };
