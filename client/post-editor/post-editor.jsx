@@ -42,6 +42,8 @@ import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import EditorNotice from 'post-editor/editor-notice';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -52,6 +54,7 @@ import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
+import config from 'config';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -81,6 +84,7 @@ export const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
+			boostNotice: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -162,6 +166,17 @@ export const PostEditor = React.createClass( {
 		this.setState( { notice: null } );
 	},
 
+	hideBoostNotice: function() {
+		this.setState( { boostNotice: null } );
+	},
+
+	hideNotices: function() {
+		this.setState( {
+			notice: null,
+			boostNotice: null
+		} );
+	},
+
 	toggleSidebar: function() {
 		this.hideDrafts();
 		this.props.setLayoutFocus( 'content' );
@@ -178,6 +193,7 @@ export const PostEditor = React.createClass( {
 			mode = this.getEditorMode(),
 			isInvalidURL = this.state.loadingError,
 			siteURL = site ? site.URL + '/' : null,
+			boostURL = 'http://jonburke.polldaddy.com/s/boosted-post',
 			isPage,
 			isTrashed,
 			hasAutosave;
@@ -204,7 +220,7 @@ export const PostEditor = React.createClass( {
 						isSaveBlocked={ this.state.isSaveBlocked }
 						hasContent={ this.state.hasContent || this.props.hasContent }
 						onClose={ this.onClose }
-						onTabChange={ this.hideNotice } />
+						onTabChange={ this.hideNotices } />
 					<div className="post-editor__content">
 						<div className="editor">
 							<EditorActionBar
@@ -231,6 +247,20 @@ export const PostEditor = React.createClass( {
 							<EditorNotice
 								{ ...this.state.notice }
 								onDismissClick={ this.hideNotice } />
+
+							{ this.state.boostNotice
+								? <Notice
+									status="is-success"
+									compact={ false }
+									showDismiss={ false }
+									text={ "That's a good looking post! Interested in boosting it?" }>
+									<NoticeAction href={ boostURL } external={ true }>
+										{ "Learn More" }
+									</NoticeAction>
+								</Notice>
+								: null
+							}
+
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
@@ -713,6 +743,11 @@ export const PostEditor = React.createClass( {
 				action,
 				link
 			};
+
+
+			if ( config.isEnabled( 'boost-survey' ) ) {
+				nextState.boostNotice = true;
+			}
 
 			window.scrollTo( 0, 0 );
 		} else {

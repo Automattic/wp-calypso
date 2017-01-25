@@ -32,6 +32,7 @@
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
+		"boost-survey": true,
 		"code-splitting": true,
 		"community-translator": true,
 		"css-hot-reload": true,
