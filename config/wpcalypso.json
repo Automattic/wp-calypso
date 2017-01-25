@@ -41,8 +41,6 @@
 		"keyboard-shortcuts": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
-		"manage/ads": true,
-		"manage/ads/jetpack": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
 		"manage/drafts": true,

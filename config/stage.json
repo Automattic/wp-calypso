@@ -31,8 +31,6 @@
 		"jetpack_core_inline_update": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
-		"manage/ads": true,
-		"manage/ads/jetpack": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,

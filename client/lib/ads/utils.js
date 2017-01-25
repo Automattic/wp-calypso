@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { userCan } from 'lib/site/utils';
 import { isBusiness, isPremium } from 'lib/products-values';
 
@@ -11,7 +10,7 @@ import { isBusiness, isPremium } from 'lib/products-values';
  * @return {boolean}      true if site has WordAds access
  */
 export function canAccessWordads( site ) {
-	if ( site && config.isEnabled( 'manage/ads' ) ) {
+	if ( site ) {
 		if ( isWordadsInstantActivationEligible( site ) ) {
 			return true;
 		}
@@ -19,8 +18,7 @@ export function canAccessWordads( site ) {
 		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
 		return site.options &&
 			( site.options.wordads || jetpackPremium ) &&
-			userCan( 'manage_options', site ) &&
-			( ! site.jetpack || config.isEnabled( 'manage/ads/jetpack' ) );
+			userCan( 'manage_options', site );
 	}
 
 	return false;
