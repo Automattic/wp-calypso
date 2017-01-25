@@ -16,7 +16,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import oAuthToken from 'lib/oauth-token';
-import { get, identity, invoke } from 'lodash';
+import { compact, get, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,11 +25,10 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
 
-const user = userLib();
-
 /**
  * Module variables
  */
+const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
 
 /**
@@ -315,7 +314,7 @@ export class Notifications extends Component {
 		const now = new Date();
 
 		/** * @type {string} holds the URL for the notifications client for the iframe */
-		const widgetUrl = [
+		const widgetUrl = compact( [
 			widgetDomain,
 			'/notifications',
 			// we deploy to beta before pushing to production
@@ -329,7 +328,7 @@ export class Notifications extends Component {
 			// bust cache every hour
 			// @TODO replace this with a strong process that doesn't make users download so much data
 			`&cache_buster=${ now.getFullYear() }${ now.getMonth() + 1 }${ now.getDate() }${ now.getHours() }`,
-		].filter( identity ).join( '' );
+		] ).join( '' );
 
 		return (
 			<div
