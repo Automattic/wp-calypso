@@ -4,6 +4,7 @@
 import wpcom from 'lib/wp';
 
 import {
+	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
@@ -22,3 +23,7 @@ export const requestResetOptions = ( { dispatch }, { userData } ) => (
 		error,
 	} ) )
 );
+
+export default {
+	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ requestResetOptions ],
+};
