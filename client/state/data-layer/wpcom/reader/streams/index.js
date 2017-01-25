@@ -1,4 +1,8 @@
 /**
+ * External dependencies
+ */
+import { find } from 'lodash';
+/**
  * Internal dependencies
  */
 import wp from 'lib/wp';
@@ -8,29 +12,39 @@ import {
 	READER_STREAMS_PAGE_RECEIVE
 } from 'state/action-types';
 
+const streamToPathMatchers = [
+	// [ regex, version, path ]
+	// ordering here is by how often we expect each stream type to be used
+	// search is linear, so putting common things near the front can be helpful
+	[ /^following$/, '1.2', '/read/following' ],
+	[ /^search:/, '1.2', '/read/search' ],
+	[ /^feed:/, '1.2', '/read/feed/:feed/posts' ],
+	[ /^site:/, '1.2', '/read/sites/:site/posts' ],
+	[ /^featured:/, '1.2', '/read/sites/:site/featured' ],
+	[ /^a8c$/, '1.2', '/read/a8c' ],
+];
+
 function apiPathForStream( streamId ) {
-	if ( streamId === 'following' ) {
-		return '/read/following';
-	}
-	return null;
+	return find( streamToPathMatchers, ( matcher ) => matcher[ 0 ].test( streamId ) );
 }
 
 export function interceptStreamPageRequest( store, action, next ) {
 	const { streamId } = action;
+	const matcher = apiPathForStream( streamId );
 
-	const apiPath = apiPathForStream( streamId );
-
-	if ( apiPath === null ) {
+	if ( ! matcher ) {
 		warn( `Unable to determine api path for ${ streamId }` );
 		next( action );
 		return;
 	}
 
+	const [ _, apiVersion, path ] = matcher; //eslint-disable-line no-unused-vars
+
 	const request = wp.req.get(
-		apiPath,
-		{ apiVersion: '1.2' },
+		path,
+		{ apiVersion },
 		action.query
-	).then( response => {
+	).then( ( response ) => {
 		store.dispatch( {
 			...action,
 			type: READER_STREAMS_PAGE_RECEIVE,
@@ -39,7 +53,6 @@ export function interceptStreamPageRequest( store, action, next ) {
 	} );
 
 	next( action );
-
 	return request;
 }
 

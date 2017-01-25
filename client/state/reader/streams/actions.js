@@ -16,12 +16,10 @@ import {
  * @return {Promise}          A promise that fulfils when the page returns.
  */
 export function fetchPosts( streamId, range ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_STREAMS_PAGE_REQUEST,
-			streamId,
-			range
-		} );
+	return {
+		type: READER_STREAMS_PAGE_REQUEST,
+		streamId,
+		range
 	};
 }
 
