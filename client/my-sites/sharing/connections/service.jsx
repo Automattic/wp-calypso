@@ -35,7 +35,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-import services from './services';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -61,7 +60,6 @@ class SharingService extends Component {
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
 		translate: PropTypes.func,
 		updateSiteConnection: PropTypes.func,
-		userId: PropTypes.number,                   // ID of the current user
 	};
 
 	static defaultProps = {
@@ -81,7 +79,6 @@ class SharingService extends Component {
 		siteUserConnections: [],
 		translate: identity,
 		updateSiteConnection: () => {},
-		userId: 0,
 	};
 
 	/**
@@ -218,8 +215,6 @@ class SharingService extends Component {
 	 */
 	removeConnection = ( connections = this.props.removableConnections ) => {
 		this.setState( { isDisconnecting: true } );
-
-		connections = this.filterConnectionsToRemove( connections );
 		connections.map( this.props.deleteSiteConnection );
 	};
 
@@ -237,7 +232,7 @@ class SharingService extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.getConnections().length !== nextProps.siteUserConnections.length ) {
+		if ( this.props.siteUserConnections.length !== nextProps.siteUserConnections.length ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
@@ -252,19 +247,10 @@ class SharingService extends Component {
 		if ( this.state.isAwaitingConnections ) {
 			this.setState( { isAwaitingConnections: false } );
 
-			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) && 'publicize' === this.props.service.type ) {
+			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
 				this.setState( { isSelectingAccount: true } );
 			}
 		}
-	}
-
-	/**
-	 * Returns the available connections for the current user.
-	 *
-	 * @return {Array} Available connections.
-	 */
-	getConnections() {
-		return this.filter( 'getConnections', this.props.service.ID, this.props.siteUserConnections, arguments );
 	}
 
 	/**
@@ -280,10 +266,10 @@ class SharingService extends Component {
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
 			status = 'unknown';
-		} else if ( ! some( this.getConnections(), { service } ) ) {
+		} else if ( ! some( this.props.siteUserConnections, { service } ) ) {
 			// If no connections exist, the service isn't connected
 			status = 'not-connected';
-		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
+		} else if ( some( this.props.siteUserConnections, { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
 		} else {
@@ -291,23 +277,7 @@ class SharingService extends Component {
 			status = 'connected';
 		}
 
-		return this.filter( 'getConnectionStatus', service, status, arguments );
-	}
-
-	/**
-	 * Given an array of connection objects which are desired to be destroyed,
-	 * returns a filtered set of connection objects to be destroyed. This
-	 * enables service-specific handlers to react to destroy events.
-	 *
-	 * @param {Array|Object} connections A connection or array of connections
-	 * @return {Array} Filtered set of connection objects to be destroyed
-	 */
-	filterConnectionsToRemove( connections ) {
-		if ( ! Array.isArray( connections ) ) {
-			connections = [ connections ];
-		}
-
-		return connections.filter( ( connection ) => this.filter( 'filterConnectionToRemove', connection.service, true, arguments ), this );
+		return status;
 	}
 
 	/**
@@ -342,31 +312,7 @@ class SharingService extends Component {
 			this.setState( { isConnecting: false } );
 		}
 
-		return this.filter( 'didKeyringConnectionSucceed', this.props.service.ID, externalAccounts.length && hasAnyConnectionOptions, [
-			...arguments,
-			externalAccounts,
-			this.props.siteId,
-		] );
-	}
-
-	/**
-	 * Passes value through a service-specific handler if one exists, allowing
-	 * for service logic to be performed or the value to be modified.
-	 *
-	 * @param  {string} functionName      A function name to invoke
-	 * @param  {string} serviceName       The name of the service
-	 * @param  {*}      value             The value returned by original logic
-	 * @param  {object} functionArguments An Array-like arguments object
-	 * @return {*} The value returned by original logic.
-	 */
-	filter( functionName, serviceName, value, functionArguments ) {
-		if ( serviceName in services && services[ serviceName ][ functionName ] ) {
-			return services[ serviceName ][ functionName ].apply(
-				this, [ value ].concat( Array.prototype.slice.call( functionArguments ) )
-			);
-		}
-
-		return value;
+		return externalAccounts.length && hasAnyConnectionOptions;
 	}
 
 	render() {
@@ -388,7 +334,7 @@ class SharingService extends Component {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
-						numberOfConnections={ this.getConnections().length } />
+						numberOfConnections={ this.props.siteUserConnections.length } />
 				</div>
 			</div>
 		);
@@ -454,7 +400,6 @@ export default connect(
 			removableConnections: getRemovableConnections( state, service.ID ),
 			siteId,
 			siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
-			userId,
 		};
 	},
 	{

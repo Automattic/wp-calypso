@@ -12,6 +12,7 @@ import { getEligibleKeyringServices, isKeyringServicesFetching } from 'state/sha
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 import Service from './service';
+import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
 
 /**
@@ -29,9 +30,11 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ services.length
-					? services.map( ( service ) => (
-						<Service key={ service.ID } service={ service } />
-					) )
+					? services.map( ( service ) => {
+						const Component = Components.hasOwnProperty( service.ID ) ? Components[ service.ID ] : Service;
+
+						return <Component key={ service.ID } service={ service } />;
+					} )
 					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) )
