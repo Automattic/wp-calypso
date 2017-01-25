@@ -71,7 +71,7 @@ const activate = {
 
 const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
-	action: confirmDelete,
+	action: () => ( confirmDelete ),
 	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ) || ! config.isEnabled( 'manage/themes/upload' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId ),
 };
@@ -163,7 +163,7 @@ const ALL_THEME_OPTIONS = {
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl = identity, mapHideForSite = identity;
+		let mapGetUrl = identity, mapAction = identity, mapHideForSite = identity;
 
 		// We bind hideForTheme to siteId even if it is null since the selectors
 		// that are used by it are expected to recognize that case as "no site selected"
@@ -172,11 +172,13 @@ export const connectOptions = connect(
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
+			mapAction = action => action( state, siteId ); // Invoke!
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
 			);
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
+			mapAction = action => ( s ) => action( state, s );
 			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
 		}
 
@@ -185,6 +187,9 @@ export const connectOptions = connect(
 			option,
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
+				: {},
+			option.action
+				? { action: mapAction( option.action ) }
 				: {},
 			option.hideForSite
 				? { hideForSite: mapHideForSite( option.hideForSite ) }
