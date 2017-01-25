@@ -42,6 +42,7 @@ import { connectOptions } from 'my-sites/themes/theme-options';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import { getBackPath } from 'state/themes/themes-ui/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -60,6 +61,7 @@ class Upload extends React.Component {
 		installing: React.PropTypes.bool,
 		isJetpackSite: React.PropTypes.bool,
 		upgradeJetpack: React.PropTypes.bool,
+		backPath: React.PropTypes.string,
 	};
 
 	state = {
@@ -145,10 +147,6 @@ class Upload extends React.Component {
 			? this.props.uploadTheme : this.props.initiateThemeTransfer;
 		action( siteId, file );
 	}
-
-	onBackClick = () => {
-		window.history.back();
-	};
 
 	renderDropZone() {
 		const { translate } = this.props;
@@ -266,14 +264,14 @@ class Upload extends React.Component {
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
-				<HeaderCake onClick={ this.onBackClick }>{ translate( 'Upload theme' ) }</HeaderCake>
+				<HeaderCake backHref={ this.props.backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
 					version="4.4.2" /> }
 				{ showEligibility && <EligibilityWarnings
-					backUrl="/design"
+					backUrl={ this.props.backPath }
 					onProceed={ this.onProceedClick } /> }
 				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
 			</Main>
@@ -313,6 +311,7 @@ export default connect(
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
+			backPath: getBackPath( state ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
