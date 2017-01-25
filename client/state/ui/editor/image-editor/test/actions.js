@@ -178,10 +178,12 @@ describe( 'actions', () => {
 
 	describe( '#setImageEditorImageHasLoaded()', () => {
 		it( 'should return an action object', () => {
-			const action = setImageEditorImageHasLoaded();
+			const action = setImageEditorImageHasLoaded( 123, 456 );
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_IMAGE_HAS_LOADED
+				type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
+				width: 123,
+				height: 456
 			} );
 		} );
 	} );

@@ -23,6 +23,7 @@ import {
 	imageEditorComputedCrop
 } from 'state/ui/editor/image-editor/actions';
 import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
+import { getImageEditorOriginalAspectRatio } from 'state/selectors';
 
 class ImageEditorCrop extends Component {
 	static propTypes = {
@@ -152,7 +153,6 @@ class ImageEditorCrop extends Component {
 		}
 
 		const rotated = props.degrees % 180 !== 0,
-			bounds = props.bounds,
 			newState = Object.assign( {}, this.state, newValues ),
 			newWidth = newState.right - newState.left,
 			newHeight = newState.bottom - newState.top;
@@ -164,8 +164,15 @@ class ImageEditorCrop extends Component {
 
 		switch ( aspectRatio ) {
 			case AspectRatios.ORIGINAL:
-				imageWidth = bounds.rightBound - bounds.leftBound;
-				imageHeight = bounds.bottomBound - bounds.topBound;
+				//image not loaded yet
+				if ( ! this.props.originalAspectRatio ) {
+					this.setState( newValues, callback );
+					return;
+				}
+
+				const { width, height } = this.props.originalAspectRatio;
+				imageWidth = rotated ? height : width;
+				imageHeight = rotated ? width : height;
 
 				break;
 
@@ -499,6 +506,7 @@ export default connect(
 			crop,
 			aspectRatio,
 			degrees,
+			originalAspectRatio: getImageEditorOriginalAspectRatio( state ),
 			imageEditorHasChanges: imageEditorHasChanges( state )
 		};
 	},

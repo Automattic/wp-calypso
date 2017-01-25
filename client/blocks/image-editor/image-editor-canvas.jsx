@@ -131,7 +131,7 @@ class ImageEditorCanvas extends Component {
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
-		this.props.setImageEditorImageHasLoaded();
+		this.props.setImageEditorImageHasLoaded( this.image.width, this.image.height );
 	}
 
 	componentWillUnmount() {
