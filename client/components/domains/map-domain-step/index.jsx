@@ -255,6 +255,13 @@ const MapDomainStep = React.createClass( {
 				message = translate( 'Please enter a domain name or keyword.' );
 				break;
 
+			case 'recently_mapped':
+				message = translate(
+					'This domain was recently in use by someone else and is not available to map yet. ' +
+					'Please try again later or contact support.'
+				);
+				break;
+
 			default:
 				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 		}
