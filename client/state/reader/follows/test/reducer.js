@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: READER_FOLLOW,
-				url: 'http://data.blog'
+				payload: { url: 'http://data.blog' },
 			} );
 			expect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
 		} );
@@ -42,7 +42,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, {
 				type: READER_UNFOLLOW,
-				url: 'http://discover.wordpress.com'
+				payload: { url: 'http://discover.wordpress.com' }
 			} );
 			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );
 		} );
@@ -58,7 +58,7 @@ describe( 'reducer', () => {
 			];
 			const state = items( original, {
 				type: READER_FOLLOWS_RECEIVE,
-				follows: incomingFollows
+				payload: { follows: incomingFollows }
 			} );
 
 			// Updated follow

@@ -51,7 +51,7 @@ describe( 'actions', () => {
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_FOLLOW,
-				url: 'http://discover.wordpress.com'
+				payload: { url: 'http://discover.wordpress.com' },
 			} );
 		} );
 	} );
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_UNFOLLOW,
-				url: 'http://discover.wordpress.com'
+				payload: { url: 'http://discover.wordpress.com' }
 			} );
 		} );
 	} );
@@ -84,11 +84,11 @@ describe( 'actions', () => {
 				return request.then( () => {
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_FOLLOWS_REQUEST_SUCCESS,
-						data: sampleSuccessResponse,
+						payload: sampleSuccessResponse,
 					} );
 					expect( dispatchSpy ).to.have.been.calledWith( {
 						type: READER_FOLLOWS_RECEIVE,
-						follows: sampleSuccessResponse.subscriptions,
+						payload: { follows: sampleSuccessResponse.subscriptions },
 					} );
 				} ).catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );

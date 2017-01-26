@@ -32,7 +32,7 @@ export function recordFollow( url ) {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_FOLLOW,
-			url
+			payload: { url }
 		} );
 	};
 }
@@ -48,7 +48,7 @@ export function recordUnfollow( url ) {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_UNFOLLOW,
-			url
+			payload: { url }
 		} );
 	};
 }
@@ -62,7 +62,7 @@ export function recordUnfollow( url ) {
 export function receiveFollows( follows ) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,
-		follows
+		payload: { follows }
 	};
 }
 
@@ -84,17 +84,18 @@ export function requestFollows( page = 1, limit = 5 ) {
 			number: limit
 		};
 
-		return wpcom.undocumented().readFollowingMine( query ).then( ( data ) => {
-			dispatch( receiveFollows( data.subscriptions ) );
+		return wpcom.undocumented().readFollowingMine( query ).then( ( payload ) => {
+			dispatch( receiveFollows( payload.subscriptions ) );
 			dispatch( {
 				type: READER_FOLLOWS_REQUEST_SUCCESS,
-				data
+				payload
 			} );
 		},
 		( error ) => {
 			dispatch( {
 				type: READER_FOLLOWS_REQUEST_FAILURE,
-				error
+				payload: error,
+				error: true,
 			} );
 		}
 		);

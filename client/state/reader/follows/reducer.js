@@ -23,21 +23,22 @@ import { createReducer } from 'state/utils';
  * @return {Array}        Updated state
  */
 export const items = createReducer( {}, {
-	[ READER_FOLLOW ]: ( state, { url } ) => {
-		const urlKey = prepareComparableUrl( url );
+	[ READER_FOLLOW ]: ( state, action ) => {
+		const urlKey = prepareComparableUrl( action.payload.url );
 		return {
 			...state,
 			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
 		};
 	},
-	[ READER_UNFOLLOW ]: ( state, { url } ) => {
-		const urlKey = prepareComparableUrl( url );
+	[ READER_UNFOLLOW ]: ( state, action ) => {
+		const urlKey = prepareComparableUrl( action.payload.url );
 		return {
 			...state,
 			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
 		};
 	},
-	[ READER_FOLLOWS_RECEIVE ]: ( state, { follows } ) => {
+	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
+		const follows = action.payload.follows;
 		const keyedNewFollows = reduce( follows, ( hash, follow ) => {
 			const urlKey = prepareComparableUrl( follow.URL );
 			const newFollow = {
