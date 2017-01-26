@@ -53,6 +53,7 @@ import ImageEditor from 'blocks/image-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
+import AdminBar from 'blocks/adminbar/docs/example';
 
 export default React.createClass( {
 
@@ -90,6 +91,7 @@ export default React.createClass( {
 					filter={ this.state.filter }
 					section="blocks"
 				>
+					<AdminBar />
 					<AuthorSelector />
 					<CommentButtons />
 					<CreditCardForm />
