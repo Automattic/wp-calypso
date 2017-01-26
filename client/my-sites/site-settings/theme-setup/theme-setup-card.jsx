@@ -37,12 +37,6 @@ class ThemeSetupCard extends React.Component {
 	}
 
 	render() {
-		const onClose = () => {
-			this.setState( {
-				dialogIsVisible: false,
-			} );
-		};
-
 		return (
 			<ActionPanel>
 				<ActionPanelBody>
@@ -64,7 +58,7 @@ class ThemeSetupCard extends React.Component {
 						{ this.translate( 'Set Up And Delete Content' ) }
 					</Button>
 				</ActionPanelFooter>
-				<ThemeSetupDialog isVisible={ this.state.dialogIsVisible } keepContent={ this.state.keepContent } onClose={ onClose } site={ this.site } />
+				<ThemeSetupDialog isVisible={ this.state.dialogIsVisible } keepContent={ this.state.keepContent } site={ this.site } />
 			</ActionPanel>
 		);
 }

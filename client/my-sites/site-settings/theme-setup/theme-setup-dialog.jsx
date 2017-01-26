@@ -15,13 +15,13 @@ import FormTextInput from 'components/forms/form-text-input';
 import PulsingDot from 'components/pulsing-dot';
 
 class ThemeSetupDialog extends React.Component {
-	constructor( { isVisible, keepContent, onClose, site, translate } ) {
+	constructor( { isVisible, keepContent, site, translate } ) {
 		super();
-		this.onClose = onClose;
 		this.site = site;
 		this.translate = translate.bind( this );
 		this.onInputChange = this.onInputChange.bind( this );
 		this.onClick = this.onClick.bind( this );
+		this.onClose = this.onClose.bind( this );
 		this.state = {
 			isVisible,
 			keepContent,
@@ -167,6 +167,12 @@ class ThemeSetupDialog extends React.Component {
 				</div>
 			);
 		}
+	}
+
+	onClose() {
+		this.setState( {
+			isVisible: false,
+		} );
 	}
 
 	render() {
