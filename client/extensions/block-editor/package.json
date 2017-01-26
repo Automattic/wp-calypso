@@ -1,0 +1,15 @@
+{
+	"name": "block-editor",
+	"author": "Automattic",
+	"description": "Block-editing prototype",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "block-editor",
+		"paths": [ "/blocks" ],
+		"module": "block-editor",
+		"group": "sites",
+		"secondary": false,
+		"enableLoggedOut": true
+	}
+}
