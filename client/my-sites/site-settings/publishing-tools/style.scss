@@ -15,6 +15,12 @@
 .publishing-tools__module-settings.is-indented {
 	margin: 16px 32px;
 
+	.form-label {
+		&.is-disabled {
+			opacity: 0.3;
+		}
+	}
+
 	.form-toggle__switch {
 		margin-right: 8px;
 	}

@@ -17,7 +17,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isModuleActive } from 'state/jetpack/modules/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
 import { isRegeneratingPostByEmail } from 'state/jetpack/settings/selectors';
 import InfoPopover from 'components/info-popover';
@@ -56,10 +56,11 @@ class PublishingTools extends Component {
 		const { fields, translate, postByEmailAddressModuleActive, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
 		const email = fields.post_by_email_address && fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '';
+		const labelClassName = regeneratingPostByEmail || ! postByEmailAddressModuleActive ? 'is-disabled' : null;
 
 		return (
 			<div className="publishing-tools__module-settings is-indented">
-				<FormLabel>
+				<FormLabel className={ labelClassName }>
 					{ translate( 'Email Address' ) }
 				</FormLabel>
 				<ClipboardButtonInput
@@ -162,7 +163,7 @@ export default connect(
 		return {
 			selectedSiteId,
 			regeneratingPostByEmail,
-			postByEmailAddressModuleActive: !! isModuleActive( state, selectedSiteId, 'post-by-email' ),
+			postByEmailAddressModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'post-by-email' ),
 		};
 	},
 	{
