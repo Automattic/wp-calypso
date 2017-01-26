@@ -535,6 +535,7 @@ const getFormSettings = partialRight( pick, [
 	'comment_order',
 	'comments_notify',
 	'moderation_notify',
+	'likes',
 	'social_notifications_like',
 	'social_notifications_reblog',
 	'social_notifications_subscribe',
@@ -546,6 +547,7 @@ const getFormSettings = partialRight( pick, [
 	'admin_url',
 	'wpcom_publish_comments_with_markdown',
 	'markdown_supported',
+	'subscriptions',
 	'stb_enabled',
 	'stc_enabled',
 ] );
