@@ -23,8 +23,8 @@ const ActivityLogDate = React.createClass( {
 			<div className="activity-log-date">
 				<FoldableCard
 					header={ <div><div className="activity-log-date__day">{ moment ( logs[0].timestamp ).format( 'LL' )}</div><div className="activity-log-date__events"> { logs.length } Events</div></div> }
-					summary={ <Button primary compact className="button">Rewind</Button> }
-					expandedSummary={ <Button compact className="button">Rewind</Button> }
+					summary={ <Button primary compact className="button">Rewind to this day</Button> }
+					expandedSummary={ <Button compact className="button">Rewind to this day</Button> }
 					clickableHeader={ true }
 				>
 					{ logs.map( ( log, index )  => {
