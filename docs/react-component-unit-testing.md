@@ -53,6 +53,7 @@ Example test from `client/components/Accordion`
 
 ```javascript
 import { shallow } from 'enzyme';
+import { expect } from 'chai';
 
 it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
   const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
