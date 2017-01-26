@@ -28,6 +28,8 @@ import userLib from 'lib/user';
 /**
  * Module variables
  */
+const NOTIFICATIONS_CLIENT_VERSION = 'r149809-wpcom-3-g8e6976f';
+
 const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
 
@@ -311,7 +313,6 @@ export class Notifications extends Component {
 		}
 
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
-		const now = new Date();
 
 		/** * @type {string} holds the URL for the notifications client for the iframe */
 		const widgetUrl = compact( [
@@ -325,9 +326,7 @@ export class Notifications extends Component {
 			// the flipped copy
 			user.isRTL() && 'rtl.html',
 			`?locale=${ localeSlug }`,
-			// bust cache every hour
-			// @TODO replace this with a strong process that doesn't make users download so much data
-			`&cache_buster=${ now.getFullYear() }${ now.getMonth() + 1 }${ now.getDate() }${ now.getHours() }`,
+			`&cache_buster=${ NOTIFICATIONS_CLIENT_VERSION }`,
 		] ).join( '' );
 
 		return (
