@@ -44,6 +44,7 @@ export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
 export getTimezones from './get-timezones';
+export getSiteTimezoneName from './get-site-timezone-name';
 export getSiteTimezoneValue from './get-site-timezone-value';
 export getTimezonesByContinent from './get-timezones-by-continent';
 export getTimezonesLabel from './get-timezones-label';
