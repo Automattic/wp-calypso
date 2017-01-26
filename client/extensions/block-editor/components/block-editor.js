@@ -21,7 +21,6 @@ const debug = debugFactory( 'calypso:block-editor:block-editor' );
 export default class BlockEditor extends Component {
 	static blockStyle = {
 		background: 'white',
-		border: '1px dashed black',
 		margin: '0.2em',
 		padding: '0.3em',
 	};
@@ -65,11 +64,11 @@ export default class BlockEditor extends Component {
 		return (
 			<div>
 				<h1 className="devdocs__title">Input</h1>
-				<textarea onChange={ this.setContent }
+				<textarea className="block-editor__input" onChange={ this.setContent }
 					value={ postContent || rawBlocks.join( '\n' ) } />
 
 				<h1 className="devdocs__title">Output</h1>
-				<div style={ BlockEditor.blockStyle }>
+				<div className="block-editor__output" style={ BlockEditor.blockStyle }>
 					{ blocks
 						? blocks.map( this.handleBlock )
 						: <Notice status="is-error"
