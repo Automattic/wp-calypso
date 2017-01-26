@@ -84,6 +84,7 @@
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/tags-with-elasticsearch": false,
+		"reader/start": true,
 		"reader/search": true,
 		"resume-editing": true,
 		"republicize": false,

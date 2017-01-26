@@ -66,6 +66,9 @@ function getLocation() {
 	if ( path.indexOf( '/recommendations/mine' ) === 0 ) {
 		return 'recommended_foryou';
 	}
+	if ( path.indexOf( '/recommendations/start' ) === 0 ) {
+		return 'recommended_cold_start';
+	}
 	if ( path.indexOf( '/recommendations' ) === 0 ) {
 		return 'recommended_topics';
 	}
