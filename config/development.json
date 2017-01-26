@@ -41,7 +41,6 @@
 		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"guided-tours/main": true,
-		"guided-tours/tutorial-site-preview": false,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
