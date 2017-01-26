@@ -8,7 +8,6 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  * Internal dependencies
  */
 import sitesSync from './sites/enhancer';
-import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
@@ -112,17 +111,14 @@ export const reducer = combineReducers( {
 	wordads,
 } );
 
-const middleware = [
-	thunkMiddleware,
-	noticesMiddleware,
-	navigationMiddleware,
-];
+const middleware = [ thunkMiddleware, noticesMiddleware ];
 
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
 	middleware.push(
 		require( './analytics/middleware.js' ).analyticsMiddleware,
 		require( './data-layer/wpcom-api-middleware.js' ).default,
+		require( './navigation/middleware.js' ).default,
 	);
 }
 
