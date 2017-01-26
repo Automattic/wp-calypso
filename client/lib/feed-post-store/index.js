@@ -300,6 +300,7 @@ function markPostSeen( post, site ) {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
+				stats.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
 	}
