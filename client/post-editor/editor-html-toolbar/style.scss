@@ -62,6 +62,9 @@
 .editor-html-toolbar__button-code {
 	font-family: $code;
 }
+.editor-html-toolbar__button-close-tags.button[disabled]:hover {
+	color: lighten( $gray, 30% );
+}
 
 .editor-html-toolbar__dialog .dialog__content {
 	min-width: 40vw;
