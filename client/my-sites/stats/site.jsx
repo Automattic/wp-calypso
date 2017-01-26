@@ -151,8 +151,6 @@ module.exports = React.createClass( {
 					site={ site } />
 				<div id="my-stats-content">
 					<ChartTabs
-						visitsList={ this.props.visitsList }
-						activeTabVisitsList={ this.props.activeTabVisitsList }
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
 						charts={ charts }
