@@ -24,14 +24,14 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { children, dataList, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } = this.props;
+		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } = this.props;
 		let statsTabs;
 
-		if ( dataList ) {
-			const data = find( dataList.response.data, { [ activeKey ]: activeIndex } );
+		if ( data ) {
+			const activeData = find( data, { [ activeKey ]: activeIndex } );
 
-			statsTabs = tabs.map( function( tab ) {
-				const hasData = data && ( data[ tab.attr ] >= 0 ) && ( data[ tab.attr ] !== null );
+			statsTabs = tabs.map( ( tab ) => {
+				const hasData = activeData && ( activeData[ tab.attr ] >= 0 ) && ( activeData[ tab.attr ] !== null );
 
 				const tabOptions = {
 					attr: tab.attr,
@@ -41,7 +41,7 @@ export default React.createClass( {
 					loading: ! hasData,
 					selected: selectedTab === tab.attr,
 					tabClick: switchTab,
-					value: hasData ? data[ tab.attr ] : null
+					value: hasData ? activeData[ tab.attr ] : null
 				};
 
 				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
@@ -49,7 +49,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ul className={ classNames( 'stats-tabs', { 'is-enabled': !! dataList }, { 'is-borderless': borderless } ) }>
+			<ul className={ classNames( 'stats-tabs', { 'is-enabled': !! data }, { 'is-borderless': borderless } ) }>
 				{ statsTabs || children }
 			</ul>
 		);

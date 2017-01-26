@@ -211,7 +211,6 @@ module.exports = {
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const SiteStatsComponent = require( 'my-sites/stats/site' );
-		const StatsList = require( 'lib/stats/stats-list' );
 		const filters = getSiteFilters.bind( null, siteId );
 		let date;
 		const charts = function() {
@@ -223,18 +222,13 @@ module.exports = {
 				{ attr: 'comments', gridicon: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
 			];
 		};
-		let chartDate;
 		let chartTab;
-		let visitsListFields;
-		let chartEndDate;
 		let period;
-		let chartPeriod;
 		let siteOffset = 0;
 		let momentSiteZone = i18n.moment();
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
-		let chartQuantity = 10;
 		let siteComponent;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -272,7 +266,6 @@ module.exports = {
 				siteOffset = currentSite.options.gmt_offset;
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
@@ -296,57 +289,21 @@ module.exports = {
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
 			period = rangeOfPeriod( activeFilter.period, date );
-			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
-			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
 			chartTab = queryOptions.tab || 'views';
-			visitsListFields = chartTab;
-			// If we are on the default Tab, grab visitors too
-			if ( 'views' === visitsListFields ) {
-				visitsListFields = 'views,visitors';
-			}
-
-			switch ( activeFilter.period ) {
-				case 'day':
-					chartQuantity = 30;
-					break;
-				case 'month':
-					chartQuantity = 12;
-					break;
-				case 'week':
-					chartQuantity = 13;
-					break;
-				case 'year':
-					break;
-				default:
-					chartQuantity = 10;
-					break;
-			}
 
 			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
 					? currentSite.slug : siteFragment;
-
-			const activeTabVisitsList = new StatsList( {
-				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
-				quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields, domain: siteDomain } );
-			const visitsList = new StatsList( {
-				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
-				quantity: chartQuantity, date: chartEndDate,
-				stat_fields: 'views,visitors,likes,comments,post_titles', domain: siteDomain } );
 
 			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
 				date,
 				charts,
-				chartDate,
 				chartTab,
 				context,
 				sites,
-				activeTabVisitsList,
-				visitsList,
 				siteId,
 				period,
-				chartPeriod,
 				slug: siteDomain,
 				path: context.pathname,
 			};
