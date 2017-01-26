@@ -171,9 +171,7 @@ export default React.createClass( {
 	},
 
 	renderPostScheduler: function() {
-		const tz = siteUtils.timezone( this.props.site ),
-			gmtOffset = siteUtils.gmtOffset( this.props.site ),
-			postDate = this.props.post && this.props.post.date
+		const postDate = this.props.post && this.props.post.date
 				? this.props.post.date
 				: null;
 
@@ -181,8 +179,6 @@ export default React.createClass( {
 			<AsyncLoad
 				require="components/post-schedule"
 				selectedDay={ postDate }
-				timezone={ tz }
-				gmtOffset={ gmtOffset }
 				onDateChange={ this.setPostDate }
 				onMonthChange={ this.setCurrentMonth }
 				site={ this.props.site }

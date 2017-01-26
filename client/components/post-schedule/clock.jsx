@@ -89,18 +89,18 @@ class PostScheduleClock extends Component {
 			gmtOffset,
 			siteId,
 			siteSlug,
-			timezone,
+			timezone_string,
 			translate
 		} = this.props;
 
-		if ( ! ( timezone || isValidGMTOffset( gmtOffset ) ) ) {
+		if ( ! ( timezone_string || isValidGMTOffset( gmtOffset ) ) ) {
 			return;
 		}
 
 		let diffInMinutes, tzDateOffset;
 
-		if ( timezone ) {
-			const tzDate = date.clone().tz( timezone );
+		if ( timezone_string ) {
+			const tzDate = date.clone().tz( timezone_string );
 			tzDateOffset = tzDate.format( 'Z' );
 			diffInMinutes = tzDate.utcOffset() - moment().utcOffset();
 		} else if ( isValidGMTOffset( gmtOffset ) ) {
@@ -113,8 +113,8 @@ class PostScheduleClock extends Component {
 		}
 
 		const popoverPosition = viewport.isMobile() ? 'top' : 'right';
-		const timezoneText = timezone
-			? `${ timezone.replace( /\_/ig, ' ' ) } ${ tzDateOffset }`
+		const timezoneText = timezone_string
+			? `${ timezone_string.replace( /\_/ig, ' ' ) } ${ tzDateOffset }`
 			: `UTC${ convertHoursToHHMM( gmtOffset ) }`;
 
 		const timezoneInfo = translate(
@@ -180,7 +180,7 @@ class PostScheduleClock extends Component {
 
 PostScheduleClock.propTypes = {
 	date: PropTypes.object.isRequired,
-	timezone: PropTypes.string,
+	timezone_string: PropTypes.string,
 	gmtOffset: PropTypes.number,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
