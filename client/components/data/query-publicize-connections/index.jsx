@@ -12,20 +12,16 @@ import { fetchConnections as requestConnections } from 'state/sharing/publicize/
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryPublicizeConnections extends Component {
-	componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.requestingConnections && this.props.siteId ) {
 			this.props.requestConnections( this.props.siteId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingConnections ||
-				! nextProps.siteId ||
-				( this.props.siteId === nextProps.siteId ) ) {
-			return;
+	componentDidUpdate( { siteId } ) {
+		if ( siteId !== this.props.siteId && ! this.props.requestingConnections ) {
+			this.props.requestConnections( this.props.siteId );
 		}
-
-		nextProps.requestConnections( nextProps.siteId );
 	}
 
 	render() {
