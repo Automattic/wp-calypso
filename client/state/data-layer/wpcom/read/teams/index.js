@@ -5,15 +5,13 @@ import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
 import wpcom from 'lib/wp';
 
 export function handleTeamsRequest( store, action, next ) {
-	return wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
+	wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
 		.then(
 			payload => {
 				store.dispatch( {
 					type: READER_TEAMS_RECEIVE,
 					payload,
 				} );
-				next( action );
-
 			},
 			error => {
 				store.dispatch( {
@@ -21,9 +19,9 @@ export function handleTeamsRequest( store, action, next ) {
 					payload: error,
 					error: true,
 				} );
-				next( action );
 			}
 		);
+	next( action );
 }
 
 export default {
