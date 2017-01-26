@@ -4,7 +4,8 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp, includes } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
+import { getBlockedSites } from 'state/selectors/get-blocked-sites';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -40,10 +42,6 @@ const HEADER_OFFSET_TOP = 46;
 function cardFactory( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
 		return CrossPost;
-	}
-
-	if ( post.is_site_blocked ) {
-		return PostBlocked;
 	}
 
 	return Post;
@@ -103,7 +101,7 @@ function injectRecommendations( posts, recs = [] ) {
 	} );
 }
 
-export default class ReaderStream extends React.Component {
+export class ReaderStream extends React.Component {
 
 	static propTypes = {
 		postsStore: PropTypes.object.isRequired,
@@ -186,6 +184,10 @@ export default class ReaderStream extends React.Component {
 	}
 
 	cardClassForPost = ( post ) => {
+		if ( includes( this.props.blockedSites, +post.site_ID ) ) {
+			return PostBlocked;
+		}
+
 		if ( this.props.cardFactory ) {
 			const externalPostClass = this.props.cardFactory( post );
 			if ( externalPostClass ) {
@@ -502,3 +504,9 @@ export default class ReaderStream extends React.Component {
 		);
 	}
 }
+
+export default connect(
+	( state ) => ( {
+		blockedSites: getBlockedSites( state )
+	} )
+)( ReaderStream );
