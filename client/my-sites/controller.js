@@ -28,17 +28,18 @@ import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
-import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList } from 'my-sites/upgrades/paths';
+import SitesComponent from 'my-sites/sites';
 
 /**
  * Module vars
  */
 const user = userFactory();
 const sites = sitesFactory();
+const sitesPageTitleForAnalytics = 'Sites';
 
 /*
  * The main navigation of My Sites consists of a component with
@@ -154,13 +155,37 @@ function onSelectedSiteAvailable( context ) {
 	return true;
 }
 
+/**
+ * Returns the site-picker react element.
+ *
+ * @param {object} context -- Middleware context
+ * @returns {object} A site-picker React element
+ */
+function createSitesComponent( context ) {
+	const basePath = route.sectionify( context.path );
+	const path = context.prevPath ? route.sectionify( context.prevPath ) : '/stats';
+
+	// This path sets the URL to be visited once a site is selected
+	const sourcePath = ( basePath === '/sites' ) ? path : basePath;
+
+	analytics.pageView.record( basePath, sitesPageTitleForAnalytics );
+
+	return (
+		<SitesComponent
+			sites={ sites }
+			path={ context.path }
+			sourcePath={ sourcePath }
+			user={ user }
+			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText } />
+	);
+}
+
 module.exports = {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
 		const siteID = route.getSiteFragment( context.path );
-		const analyticsPageTitle = 'Sites';
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
@@ -178,14 +203,14 @@ module.exports = {
 
 		if ( currentUser && currentUser.site_count === 0 ) {
 			renderEmptySites( context );
-			return analytics.pageView.record( basePath, analyticsPageTitle + ' > No Sites' );
+			return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
 		}
 
 		if ( currentUser && currentUser.visible_site_count === 0 ) {
 			renderNoVisibleSites( context );
 			return analytics
 				.pageView
-				.record( basePath, `${ analyticsPageTitle } > All Sites Hidden` );
+				.record( basePath, `${ sitesPageTitleForAnalytics } > All Sites Hidden` );
 		}
 
 		// Ignore the user account settings page
@@ -280,7 +305,7 @@ module.exports = {
 	},
 
 	fetchJetpackSettings( context, next ) {
-		var siteFragment = route.getSiteFragment( context.path );
+		const siteFragment = route.getSiteFragment( context.path );
 
 		next();
 
@@ -338,13 +363,12 @@ module.exports = {
 	},
 
 	sites( context ) {
-		const SitesComponent = require( 'my-sites/sites' );
-		const analyticsPageTitle = 'Sites';
-		const basePath = route.sectionify( context.path );
-		const path = context.prevPath ? route.sectionify( context.prevPath ) : '/stats';
-
 		if ( context.query.verified === '1' ) {
-			notices.success( i18n.translate( "Email verified! Now that you've confirmed your email address you can publish posts on your blog." ) );
+			notices.success(
+				i18n.translate(
+					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+				)
+			);
 		}
 		/**
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
@@ -352,27 +376,32 @@ module.exports = {
 		removeSidebar( context );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		// This path sets the URL to be visited once a site is selected
-		const sourcePath = ( basePath === '/sites' ) ? path : basePath;
-
-		analytics.pageView.record( basePath, analyticsPageTitle );
-
 		renderWithReduxStore(
-			React.createElement( SitesComponent, {
-				sites,
-				path: context.path,
-				sourcePath,
-				user,
-				getSiteSelectionHeaderText: context.getSiteSelectionHeaderText,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					analyticsPageTitle,
-					'Sites'
-				)
-			} ),
+			createSitesComponent( context ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
+
+	/**
+	 * Middleware that adds the site selector screen to the layout
+	 * without rendering the layout. For use with isomorphic routing
+	 * @see {@link https://github.com/Automattic/wp-calypso/blob/master/docs/isomorphic-routing.md }
+	 *
+	 * To show the site selector screen using traditional multi-tree
+	 * layout, use the sites() middleware above.
+	 *
+	 * @param {object} context -- Middleware context
+	 * @param {function} next -- Call next middleware in chain
+	 */
+	makeSites( context, next ) {
+		context.store.dispatch( setLayoutFocus( 'content' ) );
+		context.store.dispatch( setSection( {
+			group: 'sites',
+			secondary: false
+		} ) );
+
+		context.primary = createSitesComponent( context );
+		next();
+	},
 };
