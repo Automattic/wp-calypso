@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const debug = require( 'debug' )( 'calypso:analytics' ),
+const debug = require( 'debug' ),
 	assign = require( 'lodash/assign' ),
 	isObjectLike = require( 'lodash/isObjectLike' ),
 	times = require( 'lodash/times' ),
@@ -24,6 +24,10 @@ let _superProps,
 	_user;
 
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+const mcDebug = debug( 'calypso:analytics:mc' );
+const gaDebug = debug( 'calypso:analytics:ga' );
+const tracksDebug = debug( 'calypso:analytics:tracks' );
+
 import emitter from 'lib/mixins/emitter';
 
 // Load tracking scripts
@@ -43,10 +47,8 @@ function buildQuerystring( group, name ) {
 		for ( const key in group ) {
 			uriComponent += '&x_' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
 		}
-		debug( 'Bumping stats %o', group );
 	} else {
 		uriComponent = '&x_' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-		debug( 'Bumping stat "%s" in group "%s"', name, group );
 	}
 
 	return uriComponent;
@@ -59,10 +61,8 @@ function buildQuerystringNoPrefix( group, name ) {
 		for ( const key in group ) {
 			uriComponent += '&' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
 		}
-		debug( 'Built stats %o', group );
 	} else {
 		uriComponent = '&' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-		debug( 'Built stat "%s" in group "%s"', name, group );
 	}
 
 	return uriComponent;
@@ -97,16 +97,28 @@ const analytics = {
 
 	mc: {
 		bumpStat: function( group, name ) {
-			const uriComponent = buildQuerystring( group, name ); // prints debug info
+			if ( 'object' === typeof group ) {
+				mcDebug( 'Bumping stats %o', group );
+			} else {
+				mcDebug( 'Bumping stat %s:%s', group, name );
+			}
+
 			if ( config( 'mc_analytics_enabled' ) ) {
+				const uriComponent = buildQuerystring( group, name );
 				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + uriComponent + '&t=' + Math.random();
 			}
 		},
 
 		bumpStatWithPageView: function( group, name ) {
 			// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
-			const uriComponent = buildQuerystringNoPrefix( group, name ); // prints debug info
+			if ( 'object' === typeof group ) {
+				mcDebug( 'Bumping page view with props %o', group );
+			} else {
+				mcDebug( 'Bumping page view %s:%s', group, name );
+			}
+
 			if ( config( 'mc_analytics_enabled' ) ) {
+				const uriComponent = buildQuerystringNoPrefix( group, name );
 				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom' + uriComponent + '&t=' + Math.random();
 			}
 		}
@@ -145,16 +157,15 @@ const analytics = {
 				}
 			}
 
-			debug( 'Record event "%s" called with props %o', eventName, eventProperties );
+			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				debug( '- Event name must be prefixed by "calypso_"' );
+				tracksDebug( '- Event name must be prefixed by "calypso_"' );
 				return;
 			}
 
 			if ( _superProps ) {
 				superProperties = _superProps.getAll();
-				debug( '- Super Props: %o', superProperties );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
@@ -162,7 +173,7 @@ const analytics = {
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
 			eventProperties = omit( eventProperties, isUndefined );
 
-			debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 			analytics.emit( 'record-event', eventName, eventProperties );
@@ -287,7 +298,7 @@ const analytics = {
 		recordPageView: function( urlPath, pageTitle ) {
 			analytics.ga.initialize();
 
-			debug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
+			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				// Set the current page so all GA events are attached to it.
@@ -314,7 +325,7 @@ const analytics = {
 				debugText += ' [Option Value: ' + value + ']';
 			}
 
-			debug( debugText );
+			gaDebug( debugText );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'event', category, action, label, value );
@@ -324,7 +335,7 @@ const analytics = {
 		recordTiming: function( urlPath, eventType, duration, triggerName ) {
 			analytics.ga.initialize();
 
-			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
+			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
