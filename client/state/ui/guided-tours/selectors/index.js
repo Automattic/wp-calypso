@@ -130,6 +130,12 @@ const findRequestedTour = state => {
  * "when" isn't right).
  */
 const findTriggeredTour = state => {
+	if ( ! preferencesLastFetchedTimestamp( state ) ) {
+		debug( 'No fresh user preferences, bailing.' );
+		return undefined;
+	}
+	debug( 'Apparently we have fresh user preferences, so NOT bailing.' );
+
 	const toursFromTriggers = uniq( [
 		...getToursFromFeaturesReached( state ),
 		// Right now, only one source from which to derive tours, but we may
@@ -207,11 +213,6 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const emptyState = { shouldShow: false };
-
-		if ( ! preferencesLastFetchedTimestamp( state ) ) {
-			debug( 'No fresh user preferences, bailing.' );
-			return emptyState;
-		}
 
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
