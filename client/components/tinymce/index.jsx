@@ -41,6 +41,7 @@ import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
+import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 
 [
 	wpcomPlugin,
@@ -439,6 +440,14 @@ module.exports = React.createClass( {
 		this.setState( { content: content }, this.doAutosizeUpdate );
 	},
 
+	onToolbarChangeContent: function( content ) {
+		if ( this.props.onTextEditorChange ) {
+			this.props.onTextEditorChange( content );
+		}
+
+		this.setState( { content }, this.doAutosizeUpdate );
+	},
+
 	localize: function() {
 		const userData = user.get();
 		let i18nStrings = i18n;
@@ -458,20 +467,29 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
-			'is-visible': this.props.mode === 'html'
+			'is-visible': mode === 'html'
 		} );
 
 		return (
-			<textarea
-				ref="text"
-				className={ className }
-				id={ this._id }
-				onChange={ this.onTextAreaChange }
-				tabIndex={ this.props.tabIndex }
-				value={ this.state.content }
-			/>
+			<div>
+				{ mode === 'html' &&
+					<EditorHtmlToolbar
+						content={ this.refs.text }
+						onToolbarChangeContent={ this.onToolbarChangeContent }
+					/>
+				}
+				<textarea
+					ref="text"
+					className={ className }
+					id={ this._id }
+					onChange={ this.onTextAreaChange }
+					tabIndex={ this.props.tabIndex }
+					value={ this.state.content }
+				/>
+			</div>
 		);
 	}
 } );
