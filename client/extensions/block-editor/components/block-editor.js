@@ -12,8 +12,9 @@ import { map } from 'lodash';
  */
 import Notice from 'components/notice';
 import { dummyPost } from '../fixtures';
-import { findText, tryOr } from '../lib/util';
+import { tryOr } from '../lib/util';
 import { parse } from '../lib/post-parser';
+import { renderBlock } from '../blocks';
 
 const debug = debugFactory( 'calypso:block-editor:block-editor' );
 
@@ -53,7 +54,7 @@ export default class BlockEditor extends Component {
 			this.setContent( fakeEvent );
 		};
 
-		return handleBlock( { ...block, update } );
+		return renderBlock( { ...block, update } );
 	}
 
 	render() {
@@ -71,95 +72,11 @@ export default class BlockEditor extends Component {
 				<div style={ BlockEditor.blockStyle }>
 					{ blocks
 						? blocks.map( this.handleBlock )
-						: <Notice status="is-error" showDismiss={ false }
+						: <Notice status="is-error"
+							showDismiss={ false }
 							text="Parsing error" /> }
 				</div>
 			</div>
 		);
 	}
 }
-
-function handleBlock( block ) {
-	if ( block.type === 'Text' ) {
-		return <p>{ block.value }</p>;
-	}
-
-	if ( block.blockType === 'code' ) {
-		return <CodeBlock { ...block } />;
-	}
-
-	if ( block.type === 'WP_Block' ) {
-		return <Block { ...block } />;
-	}
-
-	return null;
-}
-
-class Block extends Component {
-	static blockStyle = {
-		margin: '0.2em',
-		padding: '0.3em',
-		border: '1px dashed black',
-	};
-
-	// fake impl
-	innerText() {
-		if ( this.props.type === 'Text' ) {
-			return this.props.children
-				.filter( c => c && c.type === 'Text' )
-				.map( c => c.value )
-				.join( '\n' );
-		}
-
-		return <div dangerouslySetInnerHTML={ {
-			__html: this.props.rawContent
-		} } />;
-	}
-
-	render() {
-		debug( 'block', this.props );
-		return <div style={ Block.blockStyle }>{ this.innerText() }</div>;
-	}
-}
-
-class CodeBlock extends Component {
-	static blockStyle = {
-		background: '#f3f6f8',
-		border: '1px dashed black',
-		fontFamily: 'monospace',
-		margin: '0.2em',
-		padding: '0.3em',
-	};
-
-	state = { content: findText( this.props ) };
-
-	setContent = ( e ) => {
-		this.setState( { content: e.target.value }, () => {
-			this.props.update( this.serialize() );
-		} );
-	}
-
-	componentDidUpdate() {
-		debug( 'CodeBlock', this.serialize() );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( { content: findText( nextProps ) } );
-	}
-
-	serialize() {
-		return `
-<!-- wp:code -->
-<pre><code>${ this.state.content }</code></pre>
-<!-- /wp -->`;
-	}
-
-	render() {
-		return (
-			<textarea style={ CodeBlock.blockStyle }
-				onChange={ this.setContent }
-				value={ this.state.content } />
-		);
-	}
-}
-
