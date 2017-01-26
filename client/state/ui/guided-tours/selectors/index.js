@@ -132,9 +132,8 @@ const findRequestedTour = state => {
 const findTriggeredTour = state => {
 	if ( ! preferencesLastFetchedTimestamp( state ) ) {
 		debug( 'No fresh user preferences, bailing.' );
-		return undefined;
+		return;
 	}
-	debug( 'Apparently we have fresh user preferences, so NOT bailing.' );
 
 	const toursFromTriggers = uniq( [
 		...getToursFromFeaturesReached( state ),
