@@ -177,6 +177,7 @@ module.exports = React.createClass( {
 								query={ query }
 								date={ queryDate }
 								statType="statsTopPosts"
+								showPriorPeriodToggle={ period === 'day' }
 								showSummaryLink />
 							<StatsConnectedModule
 								path="referrers"
