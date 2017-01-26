@@ -23,7 +23,6 @@ export const successfulResponse = {
 	number: 1
 };
 
-// TODO what should these be named ?
 describe( 'wpcom-api', () => {
 	const nextSpy = sinon.spy();
 

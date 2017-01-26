@@ -12,12 +12,10 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 
-// TODO add in error handling
 export const items = createReducer( [], {
 	[ READER_TEAMS_RECEIVE ]: ( state, action ) => action.payload.teams,
 } );
 
-// TODO were we carrying any errors + doing anything with them before?
 export const isRequesting = createReducer( false, {
 	[ READER_TEAMS_REQUEST ]: () => true,
 	[ READER_TEAMS_RECEIVE ]: () => false,
