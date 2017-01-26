@@ -38,7 +38,6 @@ import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
-import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
@@ -227,9 +226,9 @@ export class FullPostView extends React.Component {
 		const { post, site } = this.props;
 
 		if ( post && post._state !== 'pending' &&
-			site && site.state === SiteState.COMPLETE &&
+			site && site.ID &&
 			! this.hasSentPageView ) {
-			PostStoreActions.markSeen( post );
+			PostStoreActions.markSeen( post, site );
 			this.hasSentPageView = true;
 		}
 
@@ -358,10 +357,10 @@ export class FullPostView extends React.Component {
 									followUrl={ getSourceFollowUrl( post ) } />
 						}
 						{ isDailyPostChallengeOrPrompt( post ) &&
-							<DailyPostButton post={ post } tagName="span" />
+							<DailyPostButton post={ post } site={ site } tagName="span" />
 						}
 
-						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
+						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } fullPost={ true } />
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ +post.site_ID } postId={ +post.ID }

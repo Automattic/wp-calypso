@@ -80,12 +80,14 @@ FeedPostActions = {
 		}, postKey ) );
 	},
 
-	markSeen: function( post, source ) {
+	markSeen: function( post, site, source ) {
 		defer( function() {
 			Dispatcher.handleViewAction( {
 				type: ACTION.MARK_FEED_POST_SEEN,
 				data: {
-					post, source
+					post,
+					site,
+					source
 				}
 			} );
 		} );

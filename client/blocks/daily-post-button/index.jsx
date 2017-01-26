@@ -58,6 +58,7 @@ class DailyPostButton extends React.Component {
 
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
+		site: React.PropTypes.object.isRequired,
 		position: React.PropTypes.string,
 		tagName: React.PropTypes.string,
 	}
@@ -96,7 +97,7 @@ class DailyPostButton extends React.Component {
 		recordGaEvent( 'Clicked on Daily Post challenge' );
 		recordTrackForPost( 'calypso_reader_daily_post_challenge_site_picked', this.props.post );
 
-		markPostSeen( this.props.post );
+		markPostSeen( this.props.post, this.props.site );
 
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
