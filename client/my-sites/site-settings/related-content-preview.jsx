@@ -45,7 +45,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 
 	return (
 		<div id="settings-reading-relatedposts-preview">
-			<FormLabel>{ translate( 'Preview:' ) }</FormLabel>
+			<FormLabel>{ translate( 'Example:' ) }</FormLabel>
 
 			<div className="site-settings__related-posts">
 				{
