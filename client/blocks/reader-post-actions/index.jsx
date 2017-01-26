@@ -32,7 +32,8 @@ const ReaderPostActions = ( props ) => {
 		showMenuFollow,
 		iconSize,
 		className,
-		visitUrl
+		visitUrl,
+		fullPost,
 	} = props;
 
 	const onEditClick = () => {
@@ -88,7 +89,9 @@ const ReaderPostActions = ( props ) => {
 						key="like-button"
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
-						fullPost={ true }
+						post={ post }
+						site={ site }
+						fullPost={ fullPost }
 						tagName="div"
 						forceCounter={ true }
 						iconSize={ iconSize }
@@ -113,7 +116,8 @@ ReaderPostActions.propTypes = {
 	iconSize: React.PropTypes.number,
 	showMenu: React.PropTypes.bool,
 	showMenuFollow: React.PropTypes.bool,
-	visitUrl: React.PropTypes.string
+	visitUrl: React.PropTypes.string,
+	fullPost: React.PropTypes.bool,
 };
 
 ReaderPostActions.defaultProps = {
