@@ -69,7 +69,6 @@
 		"me/my-profile": true,
 		"me/next-steps": true,
 		"me/notifications": true,
-		"me/security": true,
 		"me/trophies": false,
 		"network-connection": true,
 		"notifications2beta": true,

@@ -65,8 +65,6 @@
 		"me/my-profile": true,
 		"me/next-steps": true,
 		"me/notifications": true,
-		"me/security": true,
-		"me/security/account-recovery": true,
 		"me/trophies": false,
 		"olark": true,
 		"perfmon": true,

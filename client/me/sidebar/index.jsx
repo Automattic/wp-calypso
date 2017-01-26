@@ -127,7 +127,7 @@ const MeSidebar = React.createClass( {
 
 						<SidebarItem
 							selected={ selected === 'security' }
-							link={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
+							link={ '/me/security' }
 							label={ this.translate( 'Security' ) }
 							icon="lock"
 							onNavigate={ this.onNavigate }
