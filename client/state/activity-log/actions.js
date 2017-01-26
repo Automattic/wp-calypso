@@ -159,10 +159,11 @@ export function getActivityLogData( siteId ) {
 		},
 		{
 			title: 'Suspicious code detected in 2 plugin files.',
-			description: 'We found potential warmful code in two of your Plugins: Yoast SEO and Advanced Custom Fields.',
+			description: 'Rewound in 17 January 2017 at 3:30 PM - We found potential warmful code in two of your Plugins: Yoast SEO and Advanced Custom Fields.',
 			user: null,
 			type: 'suspicious_code',
-			timestamp: 1485220539222
+			timestamp: 1485220539222,
+			className: 'is-disabled',
 		},
 		{
 			title: 'Akismet activated',
