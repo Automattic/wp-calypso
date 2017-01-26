@@ -19,7 +19,6 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"devdocs": false,
-		"guided-tours": true,
 		"happychat": false,
 		"help": true,
 		"help/courses": true,

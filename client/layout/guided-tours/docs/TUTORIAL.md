@@ -101,7 +101,9 @@ Now add that tour to the [tour list](../config.js):
 +    tutorialSitePreview: TutorialSitePreviewTour,
 ```
 
-And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/1cdd7380bb457dd4653fad1f27a6a53065d64c24/config/development.json#L46-L49) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
+And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/master/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
+
+**Important:** use the feature flag to ensure that the tour is only triggered in environments where all the required features are available. E.g. especially the `desktop` environment may differ from general Calypso because of the different context that it runs in and the different release cycles. 
 
 ### The Tour element
 
