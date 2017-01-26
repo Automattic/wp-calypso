@@ -35,6 +35,7 @@ export getSiteGmtOffset from './get-site-gmt-offset';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getSiteTimezoneString from './get-site-timezone-string';
+export getSiteTimezone from './get-site-timezone';
 export getTimezonesByContinent from './get-timezones-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
