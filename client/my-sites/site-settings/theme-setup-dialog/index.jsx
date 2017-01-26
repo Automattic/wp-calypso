@@ -93,7 +93,7 @@ class ThemeSetupDialog extends React.Component {
 					onClose={ this.onClose }>
 					<h1>{ this.translate( 'Confirm Theme Setup' ) }</h1>
 					<p>
-						{ this.translate( 'Please type {{warn}}delete{{/warn}} into the field below to confirm. {{strong}}All content on %(site)s will be deleted{{/strong}}, and then your site will be set up. These changes will be live immediately.', {
+						{ this.translate( 'Please type in {{warn}}delete{{/warn}} in the field below to confirm. {{strong}}All content on %(site)s will be deleted{{/strong}}, and then your site will be set up. These changes will be live immediately.', {
 							components: {
 								warn: <span className="theme-setup-dialog__confirm-text"/>,
 								strong: <strong />,
