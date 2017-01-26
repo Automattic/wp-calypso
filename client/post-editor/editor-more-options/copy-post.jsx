@@ -84,7 +84,7 @@ class EditorMoreOptionsCopyPost extends Component {
 					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
 					helpText={ this.isPost()
 						? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						: translate( "Pick a page and we'll copy the title, content, tags and categories." )
+						: translate( "Pick a page and we'll copy the title and content." )
 					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
@@ -106,7 +106,7 @@ class EditorMoreOptionsCopyPost extends Component {
 					<p>
 						{ this.isPost()
 							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
-							: translate( "Pick a page and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title and content." )
 						}
 					</p>
 					{ siteId &&
