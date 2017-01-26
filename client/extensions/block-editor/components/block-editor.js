@@ -36,12 +36,11 @@ export default class BlockEditor extends Component {
 		const value = e.target.value;
 		const blocks = tryOr( () => parse( value ), false );
 		const rawBlocks = map( blocks, 'rawContent' );
-		this.setState( { blocks, rawBlocks } );
-	}
-
-	serialize() {
-		return this.state.blocks.map( ( block ) => {
-
+		this.setState( {
+			blocks,
+			rawBlocks,
+			// failsafe for rendering in case parsing fails
+			postContent: ! blocks && value,
 		} );
 	}
 
@@ -58,14 +57,16 @@ export default class BlockEditor extends Component {
 	}
 
 	render() {
-		const { blocks, rawBlocks } = this.state;
+		const { blocks, postContent, rawBlocks } = this.state;
 
 		debug( 'blocks', blocks );
 
 		return (
 			<div>
 				<h1 className="devdocs__title">Input</h1>
-				<textarea onChange={ this.setContent } value={ rawBlocks.join( '\n' ) } />
+				<textarea onChange={ this.setContent }
+					value={ postContent || rawBlocks.join( '\n' ) } />
+
 				<h1 className="devdocs__title">Output</h1>
 				<div style={ BlockEditor.blockStyle }>
 					{ blocks
