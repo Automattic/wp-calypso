@@ -111,11 +111,15 @@ describe( 'actions', () => {
 					type: READER_FOLLOWS_REQUEST,
 				} );
 
-				return request.then( () => {} ).catch( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
-						type: READER_FOLLOWS_REQUEST_FAILURE,
+				return request
+					.then( () => {
+						assert.fail( 'request should not have succeeded' );
+					} )
+					.catch( () => {
+						expect( dispatchSpy ).to.have.been.calledWith( {
+							type: READER_FOLLOWS_REQUEST_FAILURE,
+						} );
 					} );
-				} );
 			} );
 		} );
 	} );
