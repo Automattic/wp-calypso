@@ -65,10 +65,6 @@ const ThemesSelection = React.createClass( {
 		}
 	},
 
-	onMoreButtonClick( theme, resultsRank ) {
-		this.recordSearchResultsClick( theme, resultsRank );
-	},
-
 	recordSearchResultsClick( theme, resultsRank ) {
 		const { query, themes } = this.props;
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
@@ -128,7 +124,6 @@ const ThemesSelection = React.createClass( {
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
-					onMoreButtonClick={ this.onMoreButtonClick }
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
