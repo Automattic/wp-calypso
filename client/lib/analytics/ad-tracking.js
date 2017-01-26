@@ -43,6 +43,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
+	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -54,7 +55,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		yahooProjectId: '10000',
 		yahooPixelId: '10014088',
 		twitterPixelId: 'nvzbs',
-		dcmFloodlightAdvertiserId: '6355556'
+		dcmFloodlightAdvertiserId: '6355556',
+		linkedInPartnerId: '36622'
 	},
 
 	// This name is something we created to store a session id for DCM Floodlight session tracking
@@ -94,6 +96,10 @@ if ( ! window._qevents ) {
 
 if ( ! window.twq ) {
 	setUpTwitterGlobal();
+}
+
+if ( ! window._linkedin_data_partner_id ) {
+	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
 }
 
 /**
@@ -155,6 +161,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
