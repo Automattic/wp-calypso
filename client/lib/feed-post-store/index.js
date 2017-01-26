@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import config from 'config';
-import { assign, forEach, isEqual, defer } from 'lodash';
+import { get, assign, forEach, isEqual, defer } from 'lodash';
 const debug = require( 'debug' )( 'calypso:feed-post-store' );
 
 /**
