@@ -148,7 +148,12 @@ class ThemeEnhancements extends Component {
 					}
 					{
 						this.renderToggle( 'wp_mobile_app_promos', ! minilevenModuleActive, translate(
-							'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
+							'Show an ad for the {{link}}WordPress mobile apps{{/link}} in the footer of the mobile theme',
+							{
+								components: {
+									link: <a href="https://apps.wordpress.com/" />
+								}
+							}
 						) )
 					}
 				</div>
