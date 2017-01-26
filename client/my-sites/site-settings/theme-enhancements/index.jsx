@@ -15,7 +15,7 @@ import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isModuleActive } from 'state/jetpack/modules/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
@@ -198,8 +198,8 @@ export default connect(
 
 		return {
 			selectedSiteId,
-			infiniteScrollModuleActive: !! isModuleActive( state, selectedSiteId, 'infinite-scroll' ),
-			minilevenModuleActive: !! isModuleActive( state, selectedSiteId, 'minileven' ),
+			infiniteScrollModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'infinite-scroll' ),
+			minilevenModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'minileven' ),
 		};
 	}
 )( localize( ThemeEnhancements ) );
