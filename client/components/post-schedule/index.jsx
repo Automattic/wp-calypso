@@ -2,11 +2,18 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import {
+	getSiteGmtOffset,
+	getSiteTimezone,
+	getSiteTimezoneString,
+} from 'state/selectors';
+
 import InputChrono from 'components/input-chrono';
 import DatePicker from 'components/date-picker';
 import User from 'lib/user';
@@ -87,7 +94,7 @@ class PostSchedule extends Component {
 	getDateToUserLocation( date ) {
 		return utils.convertDateToUserLocation(
 			date || new Date(),
-			this.props.timezone,
+			this.props.timezone_string,
 			this.props.gmtOffset
 		);
 	}
@@ -111,7 +118,7 @@ class PostSchedule extends Component {
 
 		this.props.onDateChange( utils.convertDateToGivenOffset(
 			date,
-			this.props.timezone,
+			this.props.timezone_string,
 			this.props.gmtOffset
 		) );
 	}
@@ -157,7 +164,7 @@ class PostSchedule extends Component {
 		return (
 			<Clock
 				date={ date }
-				timezone={ this.props.timezone }
+				timezone_string={ this.props.timezone_string }
 				gmtOffset={ this.props.gmtOffset }
 				siteId={ this.props.site ? this.props.site.ID : null }
 				siteSlug={ this.props.site ? this.props.site.slug : null }
@@ -206,6 +213,7 @@ PostSchedule.propTypes = {
 	events: PropTypes.array,
 	posts: PropTypes.array,
 	timezone: PropTypes.string,
+	timezone_string: PropTypes.string,
 	gmtOffset: PropTypes.number,
 	site: PropTypes.object,
 
@@ -220,4 +228,10 @@ PostSchedule.defaultProps = {
 	onMonthChange: noop
 };
 
-export default PostSchedule;
+export default connect(
+	( state, { site } ) => ( {
+		gmtOffset: getSiteGmtOffset( state, site.ID ),
+		timezone_string: getSiteTimezoneString( state, site.ID ),
+		timezone: getSiteTimezone( state, site.ID ),
+	} )
+)( PostSchedule );
