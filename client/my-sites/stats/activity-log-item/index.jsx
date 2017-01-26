@@ -104,6 +104,11 @@ class ActivityLogItem extends Component {
 		);
 	}
 
+
+	toggleEllipsis = ( toggleVisibility, event ) => {
+		event.stopPropagation();
+	};
+
 	getSummary() {
 		const {
 			translate,
@@ -113,7 +118,7 @@ class ActivityLogItem extends Component {
 
 		return ( actionText &&
 			<div className="activity-log-item__action">
-				<EllipsisMenu position="bottom right">
+				<EllipsisMenu position="bottom right" onToggle={ this.toggleEllipsis }>
 					<PopoverMenuItem onClick={ onClick } icon="undo">{ actionText }</PopoverMenuItem>
 					<PopoverMenuItem icon="pencil">Option B</PopoverMenuItem>
 					<PopoverMenuSeparator />
