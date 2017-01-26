@@ -33,6 +33,7 @@ export getPostLikes from './get-post-likes';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
+export getSiteTimezoneString from './get-site-timezone-string';
 export getTimezonesByContinent from './get-timezones-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
