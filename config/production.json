@@ -76,6 +76,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/start": true,
 		"reader/tags-with-elasticsearch": false,
 		"reader/related-posts": true,
 		"reader/search": true,
