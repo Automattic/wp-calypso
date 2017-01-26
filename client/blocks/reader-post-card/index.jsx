@@ -129,9 +129,11 @@ export default class ReaderPostCard extends React.Component {
 
 		const readerPostActions = <ReaderPostActions
 			post={ originalPost ? originalPost : post }
+			site={ site }
 			visitUrl = { post.URL }
 			showVisit={ true }
 			showMenu={ true }
+			fullPost= { false }
 			showMenuFollow={ ! isDiscover }
 			onCommentClick={ onCommentClick }
 			showEdit={ false }

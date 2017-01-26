@@ -296,7 +296,7 @@ function markPostSeen( post, site ) {
 
 	if ( post.site_ID ) {
 		// they have a site ID, let's try to push a page view
-		const isAdmin = ! get( site, 'capabilities.manage_options', false );
+		const isAdmin = !! get( site, 'capabilities.manage_options', false );
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );

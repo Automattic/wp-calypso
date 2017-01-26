@@ -360,7 +360,7 @@ export class FullPostView extends React.Component {
 							<DailyPostButton post={ post } site={ site } tagName="span" />
 						}
 
-						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
+						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } fullPost={ true } />
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ +post.site_ID } postId={ +post.ID }
