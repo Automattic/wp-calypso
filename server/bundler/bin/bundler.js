@@ -40,7 +40,7 @@ function minify( files ) {
 			return;
 		}
 
-		child = cp.spawn( path.join( 'node_modules', '.bin', 'uglifyjs' ), [ '--output', file.replace( '.js', '.min.js' ), file ] );
+		child = cp.spawn( path.join( 'node_modules', '.bin', 'uglifyjs' ), [ '--mangle', '--compress', '--output', file.replace( '.js', '.min.js' ), file ] );
 
 		_children.push( child );
 
