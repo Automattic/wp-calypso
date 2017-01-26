@@ -22,7 +22,6 @@
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,
-		"guided-tours": true,
 		"jetpack/connect": true,
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
