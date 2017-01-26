@@ -360,9 +360,9 @@ const Page = React.createClass( {
 				{ viewItem }
 				{ publishItem }
 				{ editItem }
+				{ copyItem }
 				{ restoreItem }
 				{ sendToTrashItem }
-				{ copyItem }
 				{ moreInfoItem }
 			</PopoverMenu>
 		) : null;
