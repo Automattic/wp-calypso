@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJumpstartStatus } from 'state/jetpack/jumpstart/selectors';
+import { isRequestingJetpackJumpstartStatus } from 'state/selectors';
 import { requestJumpstartStatus } from 'state/jetpack/jumpstart/actions';
 
 class QueryJetpackJumpstart extends Component {
@@ -43,7 +43,7 @@ class QueryJetpackJumpstart extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingJumpstartStatus: isRequestingJumpstartStatus( state, ownProps.siteId )
+			requestingJumpstartStatus: isRequestingJetpackJumpstartStatus( state, ownProps.siteId )
 		};
 	},
 	{ requestJumpstartStatus }
