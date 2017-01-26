@@ -193,7 +193,7 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<QueryPreferences />
-				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
+				{ <GuidedTours /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
