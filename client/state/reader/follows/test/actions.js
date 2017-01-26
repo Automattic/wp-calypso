@@ -118,6 +118,8 @@ describe( 'actions', () => {
 					.catch( () => {
 						expect( dispatchSpy ).to.have.been.calledWith( {
 							type: READER_FOLLOWS_REQUEST_FAILURE,
+							payload: sinon.match.any,
+							error: true,
 						} );
 					} );
 			} );
