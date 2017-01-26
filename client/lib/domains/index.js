@@ -70,28 +70,6 @@ function canRegister( domainName, onComplete ) {
 	} );
 }
 
-function canMap( domainName, onComplete ) {
-	if ( ! domainName ) {
-		onComplete( new ValidationError( 'empty_query' ) );
-		return;
-	}
-
-	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
-		let errorCode;
-		if ( serverError ) {
-			errorCode = serverError.error;
-		} else if ( ! data.is_mappable ) {
-			errorCode = 'not_mappable';
-		}
-
-		if ( errorCode ) {
-			onComplete( new ValidationError( errorCode ) );
-		} else {
-			onComplete( null );
-		}
-	} );
-}
-
 function canRedirect( siteId, domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
@@ -187,7 +165,6 @@ function getTld( domainName ) {
 
 export {
 	canAddGoogleApps,
-	canMap,
 	canRedirect,
 	canRegister,
 	getFixedDomainSearch,
