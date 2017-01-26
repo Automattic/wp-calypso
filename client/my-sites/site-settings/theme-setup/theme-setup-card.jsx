@@ -15,7 +15,7 @@ import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';
-import ThemeSetupDialog from './theme-setup-dialog';
+import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
 
 class ThemeSetupCard extends React.Component {
 	constructor( { site, theme, translate } ) {
