@@ -31,6 +31,7 @@ export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPostLikes from './get-post-likes';
 export getSharingButtons from './get-sharing-buttons';
+export getSiteGmtOffset from './get-site-gmt-offset';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getSiteTimezoneString from './get-site-timezone-string';
