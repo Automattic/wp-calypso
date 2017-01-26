@@ -16,6 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
 import { getResetOptions } from 'state/account-recovery/reset/selectors';
+import { navigateToRoute } from 'state/navigation/actions';
 
 export class LostPasswordFormComponent extends Component {
 	constructor() {
@@ -32,6 +33,8 @@ export class LostPasswordFormComponent extends Component {
 
 		//This is only here to test the redux action and will be replaced in a future PR
 		this.props.fetchResetOptionsByLogin( this.state.userLogin );
+
+		this.props.navigateToRoute( '/account-recovery/reset-password' );
 	};
 
 	onUserLoginChanged = ( event ) => {
@@ -114,5 +117,8 @@ export default connect(
 	( state ) => ( {
 		resetOptions: getResetOptions( state ),
 	} ),
-	{ fetchResetOptionsByLogin }
+	{
+		fetchResetOptionsByLogin,
+		navigateToRoute,
+	}
 )( localize( LostPasswordFormComponent ) );
