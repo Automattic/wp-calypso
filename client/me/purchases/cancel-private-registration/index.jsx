@@ -199,7 +199,7 @@ const CancelPrivateRegistration = React.createClass( {
 			<Main>
 				<QueryUserPurchases userId={ user.get().ID } />
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ titles.cancelPrivateRegistration }
+					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }
 				<Card className={ classes }>
