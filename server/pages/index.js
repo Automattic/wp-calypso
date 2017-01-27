@@ -3,7 +3,7 @@
  */
 import express from 'express';
 import fs from 'fs';
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
@@ -52,7 +52,7 @@ function getInitialServerState( serializedServerState ) {
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
 function hashFile( path ) {
-	const md5 = crypto.createHash( 'md5' );
+	const md5 = createHash( 'md5' );
 	let data, hash;
 
 	try {
