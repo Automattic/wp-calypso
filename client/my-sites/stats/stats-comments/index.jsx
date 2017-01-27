@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { get, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const StatsComments = React.createClass( {
 	propTypes: {
-		commentFollowersData: PropTypes.object,
+		commentFollowersTotal: PropTypes.number,
 		commentsList: PropTypes.object,
 		recordGoogleEvent: PropTypes.func,
 		siteId: PropTypes.number,
@@ -84,9 +84,9 @@ const StatsComments = React.createClass( {
 	},
 
 	renderCommentFollowers() {
-		const { commentFollowersData, siteSlug, translate, numberFormat } = this.props;
+		const { commentFollowersTotal, siteSlug, translate, numberFormat } = this.props;
 
-		if ( ! siteSlug || ! commentFollowersData || ! commentFollowersData.total ) {
+		if ( ! siteSlug || ! commentFollowersTotal ) {
 			return null;
 		}
 
@@ -95,9 +95,8 @@ const StatsComments = React.createClass( {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }
-					<a href={ commentFollowURL }>
-						{ numberFormat( commentFollowersData.total ) }
+					{ translate( 'Total posts with comment followers:' ) } <a href={ commentFollowURL }>
+						{ numberFormat( commentFollowersTotal ) }
 					</a>
 				</p>
 			</StatsModuleContent>
@@ -189,7 +188,7 @@ const connectComponent = connect(
 		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
-			commentFollowersData: getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ),
+			commentFollowersTotal: get( getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ), 'total' ),
 			siteId,
 			siteSlug
 		};
