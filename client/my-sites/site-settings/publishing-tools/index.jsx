@@ -19,7 +19,7 @@ import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
-import { isRegeneratingPostByEmail } from 'state/jetpack/settings/selectors';
+import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import ClipboardButtonInput from 'components/clipboard-button-input';
@@ -158,7 +158,7 @@ PublishingTools.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const regeneratingPostByEmail = isRegeneratingPostByEmail( state, selectedSiteId );
+		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
 
 		return {
 			selectedSiteId,
