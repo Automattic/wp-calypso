@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, canRegister as checkDomainAvailability } from 'lib/domains';
+import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
