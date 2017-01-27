@@ -64,7 +64,7 @@ export default function() {
 		paths.cancelPrivacyProtection(),
 		meController.sidebar,
 		controller.noSitesMessage,
-		controller.cancelPrivateRegistration
+		controller.cancelPrivacyProtection
 	);
 
 	page(
