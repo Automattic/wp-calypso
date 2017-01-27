@@ -1,4 +1,4 @@
-.cancel-private-registration {
+.cancel-privacy-protection {
 	.notice {
 		margin-bottom: 10px;
 
@@ -8,11 +8,11 @@
 	}
 }
 
-.cancel-private-registration__card {
+.cancel-privacy-protection__card {
 	color: $gray-dark;
 
 	&.is-placeholder {
-		.cancel-private-registration__text span {
+		.cancel-privacy-protection__text span {
 			@include placeholder();
 
 			display: block;
@@ -21,7 +21,7 @@
 	}
 }
 
-.cancel-private-registration__cancel-button {
+.cancel-privacy-protection__cancel-button {
 	margin-top: 10px;
 
 	&[disabled] {
