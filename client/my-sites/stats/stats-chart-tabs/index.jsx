@@ -254,14 +254,14 @@ class StatModuleChartTabs extends Component {
 }
 
 const connectComponent = connect(
-	( state, { moment, period: periodObject, chartTab } ) => {
+	( state, { moment, period: periodObject, chartTab, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
 		const { period } = periodObject;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const momentSiteZone = moment().utcOffset( timezoneOffset );
-		const queryDate = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
+		let date = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
 
-		let quantity;
+		let quantity = 10;
 		switch ( period ) {
 			case 'day':
 				quantity = 30;
@@ -272,20 +272,21 @@ const connectComponent = connect(
 			case 'week':
 				quantity = 13;
 				break;
-			case 'year':
-				break;
-			default:
-				quantity = 10;
-				break;
 		}
+		const periodDifference = moment( date ).diff( moment( queryDate ), period );
+		if ( periodDifference >= quantity ) {
+			date = moment( date ).subtract( Math.floor( periodDifference / quantity ) * quantity, period ).format( 'YYYY-MM-DD' );
+		}
+
 		let quickQueryFields = chartTab;
 		// If we are on the default Tab, grab visitors too
 		if ( 'views' === quickQueryFields ) {
 			quickQueryFields = 'views,visitors';
 		}
+
 		const query = {
 			unit: period,
-			date: queryDate,
+			date,
 			quantity
 		};
 		const quickQuery = {
