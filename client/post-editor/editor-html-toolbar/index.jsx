@@ -2,16 +2,28 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { map, reduce } from 'lodash';
+import {
+	get,
+	map,
+	reduce,
+	throttle,
+} from 'lodash';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { isWithinBreakpoint } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
+
+/**
+ * Module constants
+ */
+const TOOLBAR_HEIGHT = 39;
 
 export class EditorHtmlToolbar extends Component {
 
@@ -23,11 +35,50 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	state = {
+		isPinned: false,
 		openTags: [],
 		selectedText: '',
 		showImageDialog: false,
 		showLinkDialog: false,
 	};
+
+	componentDidMount() {
+		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
+		this.disablePinOnSmallScreens = throttle( this.disablePinOnSmallScreens, 400 );
+
+		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
+		window.addEventListener( 'resize', this.disablePinOnSmallScreens );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
+		window.removeEventListener( 'resize', this.disablePinOnSmallScreens );
+	}
+
+	pinToolbarOnScroll = () => {
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			return;
+		}
+
+		const { offsetTop } = this.props.content;
+		const { isPinned } = this.state;
+
+		if ( isPinned && window.pageYOffset < offsetTop - TOOLBAR_HEIGHT ) {
+			this.setState( { isPinned: false } );
+		} else if ( ! isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT ) {
+			this.setState( { isPinned: true } );
+		}
+	};
+
+	disablePinOnSmallScreens = () => {
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			this.setState( { isPinned: false } );
+		}
+	}
+
+	getEditorContent() {
+		return get( this.props, 'editor.text', {} );
+	}
 
 	splitEditorContent() {
 		const { content: {
@@ -228,6 +279,10 @@ export class EditorHtmlToolbar extends Component {
 			return null;
 		}
 		const { translate } = this.props;
+		const classes = classNames(
+			'editor-html-toolbar',
+			{ 'is-pinned': this.state.isPinned },
+		);
 		const buttons = {
 			strong: {
 				label: 'b',
@@ -277,19 +332,23 @@ export class EditorHtmlToolbar extends Component {
 		};
 
 		return (
-			<div className="editor-html-toolbar">
-				{ map( buttons, ( { disabled, label, onClick }, tag ) =>
-					<Button
-						borderless
-						className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
-						compact
-						disabled={ disabled }
-						key={ tag }
-						onClick={ onClick }
-					>
-						{ label || tag }
-					</Button>
-				) }
+			<div className={ classes }>
+				<div className="editor-html-toolbar__wrapper">
+					<div className="editor-html-toolbar__buttons">
+						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
+							<Button
+								borderless
+								className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
+								compact
+								disabled={ disabled }
+								key={ tag }
+								onClick={ onClick }
+							>
+								{ label || tag }
+							</Button>
+						) }
+					</div>
+				</div>
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }

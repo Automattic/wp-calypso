@@ -1,16 +1,44 @@
 .editor-html-toolbar {
-	border-color: lighten( $gray, 20% );
-	border-style: solid;
-	border-bottom-width: 1px;
-	box-sizing: border-box;
-	margin: 0 auto;
-	max-width: 700px;
-	width: 100%;
+	min-height: 39px;
 	position: relative;
 
-	@media ( min-width: 930px ) {
-		border-left-width: 1px;
-		border-right-width: 1px;
+	.editor-html-toolbar__wrapper {
+		background-color: rgba( $white, 0.92 );
+		border-color: lighten( $gray, 20% );
+		border-style: solid;
+		border-bottom-width: 1px;
+		box-sizing: border-box;
+		margin: 0 auto;
+		max-width: 700px;
+		position: relative;
+		width: 100%;
+
+		@media ( min-width: 930px ) {
+			border-left-width: 1px;
+			border-right-width: 1px;
+		}
+	}
+
+	&.is-pinned .editor-html-toolbar__wrapper {
+		border-left-width: 0;
+		border-right-width: 0;
+		border-top-width: 0;
+		left: ( $sidebar-width-min + 1 );
+		max-width: none;
+		position: fixed;
+		top: 47px;
+		width: calc( 100% - ( #{ $sidebar-width-min + 1 } ) );
+
+		@include breakpoint( ">960px" ) {
+			left: ( $sidebar-width-max + 1 );
+			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+		}
+	}
+
+	.editor-html-toolbar__buttons {
+		margin: 0 auto;
+		max-width: 700px;
+		width: 100%;
 	}
 
 	.button {
