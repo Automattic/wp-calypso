@@ -11,11 +11,14 @@ import { get } from 'lodash';
  */
 import Button from 'components/button';
 import Count from 'components/count';
-import { getSelectedSite } from 'state/ui/selectors';
+import QuerySiteStats from 'components/data/query-site-stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
 class FollowersCount extends Component {
 	render() {
-		const { slug, followers, translate } = this.props;
+		const { slug, followers, translate, siteId } = this.props;
 
 		if ( ! followers ) {
 			return null;
@@ -23,7 +26,12 @@ class FollowersCount extends Component {
 
 		return (
 			<div className="followers-count">
-				<Button borderless href={ '/people/followers/' + slug }>
+				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
+				<Button
+					borderless
+					href={ '/people/followers/' + slug }
+					title={ translate( 'Total of WordPress and Email Followers' ) }
+					>
 					{ translate( 'Followers' ) } <Count count={ followers } />
 				</Button>
 			</div>
@@ -32,10 +40,11 @@ class FollowersCount extends Component {
 }
 
 export default connect( ( state ) => {
-	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
 
 	return {
-		slug: get( site, 'slug' ),
-		followers: get( site, 'subscribers_count' ),
+		slug: getSiteSlug( state, siteId ),
+		followers: get( data, 'followersBlog' ),
 	};
 } )( localize( FollowersCount ) );
