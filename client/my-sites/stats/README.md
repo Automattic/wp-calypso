@@ -31,12 +31,6 @@ Within this directory we have also prefixed 'sub' components (aka metaboxes) use
 - `module-tags-categories.jsx`
 - `module-top-posts.jsx`
 
-Stats Mixins
-============
-Since there is a bit of repititive code going on across metaboxes, we have begun to abstract out shared elements to mixins:
-
-- `mixin-toggle.js` provides local storage backed toggling of metaboxes
-
 Stats Data Components
 =====================
 Logic that interfaces with the API, or acts as a collection and / or interface into localStorage can be found within the `/client/stats` directory.
@@ -86,7 +80,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 			</ul>
 			<span className="module-content-list-item-value">9,999,999,999,999</span>
 		</span>
-		<span className="module-content-list-item-label">Links somewhere: Lorem ipsum dolor sit amet lorem ipsum dolor sit amet Lorem ipsum dolor sit amet lorem ipsum dolor sit amet</span>	
+		<span className="module-content-list-item-label">Links somewhere: Lorem ipsum dolor sit amet lorem ipsum dolor sit amet Lorem ipsum dolor sit amet lorem ipsum dolor sit amet</span>
 	</span>
 </li>
 ```
