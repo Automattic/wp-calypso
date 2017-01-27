@@ -20,6 +20,27 @@ React components used on the server will be rendered to HTML by being passed to 
 * Libraries that are used on the server should be mindful of the DOM not being available on the server, and should either: be modified to work without the DOM; have non-DOM specific fallbacks; or fail in an obvious manner.
 * Singletons should be avoided, as once instantiated they will persist for the entire duration of the `node` process.
 
+### Caching
+
+Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server—one to store raw query data, from which we can generate and serve redux state, and one to store rendered layouts.
+
+##### Data Cache
+
+Caching data is currently left to the controller for a [given](https://github.com/Automattic/wp-calypso/blob/master/client/my-sites/themes/controller.jsx) [section](https://github.com/Automattic/wp-calypso/blob/master/client/my-sites/theme/controller.jsx). Request timestamps are used to force expiration.
+
+##### Render Cache
+
+There is a [shared cache](https://github.com/Automattic/wp-calypso/blob/master/server/render/index.js) for rendered layouts. There are some requirements for using this cache:
+
+1. Cache entries need a way to expire
+2. Multiple paths resulting in the same rendered content should ideally map to one cache entry
+
+These requirements are met by allowing controllers to set a key for a request in `context.renderCacheKey`. For item (1) the timestamp from the data cache is added to the request path, so a path such as `/theme/mood/overview` results in a key of `/theme/mood/overview1485514728996`. When the associated data cache entry gets a new timestamp, the server cache entry will no longer get any hits and drop out of the cache.
+
+Item (2) is solved by using an error string for the render cache key. For example, any invalid path such as `/theme/invalid` or `/theme/invalid/support` results in setting `context.renderCacheKey` to `theme not found`, meaning that the 404 page is always ready to serve and takes up only one cache slot.
+
+If `context.renderCacheKey` is not set, stringified `context.layout` is used as the key.
+
 ### Tests
 
 In order to ensure that no module down the dependency chain breaks server-side rendering of your Calypso section or page, you should add a test to `renderToString` it. This way, when another developer modifies a dependency of your section in a way that would break server-side rendering, they'll be notified by a failed test.
