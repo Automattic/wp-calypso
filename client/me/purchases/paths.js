@@ -27,7 +27,7 @@ function confirmCancelDomain( siteName, purchaseId ) {
 }
 
 function cancelPrivacyProtection( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
+	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 
 function addCardDetails( siteName, purchaseId ) {
