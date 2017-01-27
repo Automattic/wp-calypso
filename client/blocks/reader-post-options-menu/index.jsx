@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
@@ -37,14 +36,6 @@ const ReaderPostOptionsMenu = React.createClass( {
 			position: 'top left',
 			showFollow: true
 		};
-	},
-
-	componentDidMount() {
-		FeedSubscriptionStore.on( 'change', this.updateState );
-	},
-
-	componentWillUnmount() {
-		FeedSubscriptionStore.off( 'change', this.updateState );
 	},
 
 	blockSite() {

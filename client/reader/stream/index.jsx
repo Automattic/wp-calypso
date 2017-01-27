@@ -101,7 +101,7 @@ function injectRecommendations( posts, recs = [] ) {
 	} );
 }
 
-export class ReaderStream extends React.Component {
+class ReaderStream extends React.Component {
 
 	static propTypes = {
 		postsStore: PropTypes.object.isRequired,

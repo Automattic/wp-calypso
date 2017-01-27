@@ -271,7 +271,7 @@ module.exports = {
 	},
 
 	readA8C( context ) {
-		const StreamComponent = require( 'reader/stream' ),
+		const StreamComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
