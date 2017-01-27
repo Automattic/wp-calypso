@@ -97,7 +97,7 @@ export default {
 		);
 	},
 
-	cancelPrivateRegistration( context ) {
+	cancelPrivacyProtection( context ) {
 		setTitle(
 			context,
 			titles.cancelPrivacyProtection
