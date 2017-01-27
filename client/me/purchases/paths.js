@@ -26,7 +26,7 @@ function confirmCancelDomain( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
-function cancelPrivateRegistration( siteName, purchaseId ) {
+function cancelPrivacyProtection( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
 }
 
@@ -43,7 +43,7 @@ export default {
 	addCreditCard,
 	billingHistory,
 	billingHistoryReceipt,
-	cancelPrivateRegistration,
+	cancelPrivacyProtection,
 	cancelPurchase,
 	confirmCancelDomain,
 	editCardDetails,

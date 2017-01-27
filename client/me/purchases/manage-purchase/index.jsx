@@ -595,7 +595,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
 				{ this.translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
