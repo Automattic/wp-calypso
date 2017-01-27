@@ -1,0 +1,15 @@
+{
+	"name": "talk-to-plugin",
+	"author": "Automattic",
+	"description": "Talk to a WordPress Plugin via Jetpack",
+	"version": "1.0.0",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "talk-to-plugin",
+		"paths": [ "/talktoplugin" ],
+		"module": "talk-to-plugin",
+		"group": "sites",
+		"secondary": true,
+		"enableLoggedOut": true
+	}
+}
