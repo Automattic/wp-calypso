@@ -21,7 +21,7 @@ import { localize } from 'i18n-calypso';
  */
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { getFixedDomainSearch, canRegister } from 'lib/domains';
+import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
@@ -313,7 +313,7 @@ const RegisterDomainStep = React.createClass( {
 						return callback();
 					}
 
-					canRegister( domain, ( error, result ) => {
+					checkDomainAvailability( domain, ( error, result ) => {
 						const timeDiff = Date.now() - timestamp;
 						if ( error ) {
 							this.showValidationErrorMessage( domain, error );
