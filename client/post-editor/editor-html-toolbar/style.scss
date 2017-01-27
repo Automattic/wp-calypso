@@ -1,5 +1,5 @@
 .editor-html-toolbar {
-	min-height: 39px;
+	height: 39px;
 	position: relative;
 
 	.editor-html-toolbar__wrapper {
@@ -38,7 +38,13 @@
 	.editor-html-toolbar__buttons {
 		margin: 0 auto;
 		max-width: 700px;
+		overflow-x: auto;
+		white-space: nowrap;
 		width: 100%;
+	}
+
+	&.is-scrollable:not( .is-scrolled-full ) .editor-html-toolbar__buttons::after {
+		@include long-content-fade();
 	}
 
 	.button {

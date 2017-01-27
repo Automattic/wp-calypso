@@ -36,6 +36,8 @@ export class EditorHtmlToolbar extends Component {
 
 	state = {
 		isPinned: false,
+		isScrollable: false,
+		isScrolledFull: false,
 		openTags: [],
 		selectedText: '',
 		showImageDialog: false,
@@ -45,14 +47,26 @@ export class EditorHtmlToolbar extends Component {
 	componentDidMount() {
 		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
 		this.disablePinOnSmallScreens = throttle( this.disablePinOnSmallScreens, 400 );
+		this.toggleToolbarScrollableOnResize = throttle( this.toggleToolbarScrollableOnResize, 200 );
+		this.hideToolbarFadeOnFullScroll = throttle( this.hideToolbarFadeOnFullScroll, 200 );
 
 		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.addEventListener( 'resize', this.disablePinOnSmallScreens );
+		window.addEventListener( 'resize', this.toggleToolbarScrollableOnResize );
+		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+
+		this.toggleToolbarScrollableOnResize();
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.removeEventListener( 'resize', this.disablePinOnSmallScreens );
+		window.removeEventListener( 'resize', this.toggleToolbarScrollableOnResize );
+		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+	}
+
+	bindButtonsRef = div => {
+		this.buttons = div;
 	}
 
 	pinToolbarOnScroll = () => {
@@ -68,12 +82,27 @@ export class EditorHtmlToolbar extends Component {
 		} else if ( ! isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT ) {
 			this.setState( { isPinned: true } );
 		}
-	};
+	}
 
 	disablePinOnSmallScreens = () => {
 		if ( isWithinBreakpoint( '<660px' ) ) {
 			this.setState( { isPinned: false } );
 		}
+	}
+
+	toggleToolbarScrollableOnResize = () => {
+		this.setState( {
+			isScrollable: this.buttons.scrollWidth > this.buttons.clientWidth,
+		} );
+	}
+
+	hideToolbarFadeOnFullScroll = event => {
+		const { scrollLeft, scrollWidth, clientWidth } = event.target;
+
+		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
+		this.setState( {
+			isScrolledFull: scrollLeft >= scrollWidth - clientWidth - 10,
+		} );
 	}
 
 	getEditorContent() {
@@ -278,11 +307,14 @@ export class EditorHtmlToolbar extends Component {
 		if ( ! config.isEnabled( 'post-editor/html-toolbar' ) ) {
 			return null;
 		}
+
 		const { translate } = this.props;
-		const classes = classNames(
-			'editor-html-toolbar',
-			{ 'is-pinned': this.state.isPinned },
-		);
+		const classes = classNames( 'editor-html-toolbar', {
+			'is-pinned': this.state.isPinned,
+			'is-scrollable': this.state.isScrollable,
+			'is-scrolled-full': this.state.isScrolledFull,
+		} );
+
 		const buttons = {
 			strong: {
 				label: 'b',
@@ -334,7 +366,10 @@ export class EditorHtmlToolbar extends Component {
 		return (
 			<div className={ classes }>
 				<div className="editor-html-toolbar__wrapper">
-					<div className="editor-html-toolbar__buttons">
+					<div
+						className="editor-html-toolbar__buttons"
+						ref={ this.bindButtonsRef }
+					>
 						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
 							<Button
 								borderless
