@@ -34,7 +34,7 @@ import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
-import { getBlockedSites } from 'state/selectors/get-blocked-sites';
+import getBlockedSites from 'state/selectors/get-blocked-sites';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
