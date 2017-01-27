@@ -24,7 +24,10 @@ import {
 } from 'state/action-types';
 import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference } from 'state/preferences/selectors';
+import {
+	getPreference,
+	preferencesLastFetchedTimestamp
+} from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
@@ -127,6 +130,11 @@ const findRequestedTour = state => {
  * "when" isn't right).
  */
 const findTriggeredTour = state => {
+	if ( ! preferencesLastFetchedTimestamp( state ) ) {
+		debug( 'No fresh user preferences, bailing.' );
+		return;
+	}
+
 	const toursFromTriggers = uniq( [
 		...getToursFromFeaturesReached( state ),
 		// Right now, only one source from which to derive tours, but we may
@@ -203,6 +211,8 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
 export const getGuidedTourState = createSelector(
 	state => {
+		const emptyState = { shouldShow: false };
+
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
 		const shouldShow = !! tour;
@@ -213,10 +223,7 @@ export const getGuidedTourState = createSelector(
 			'found', tour );
 
 		if ( ! tour ) {
-			return {
-				...tourState,
-				shouldShow: false,
-			};
+			return { ...tourState, ...emptyState };
 		}
 
 		return {
@@ -225,5 +232,9 @@ export const getGuidedTourState = createSelector(
 			shouldShow,
 		};
 	},
-	[ getRawGuidedTourState, getActionLog ]
+	[
+		getRawGuidedTourState,
+		getActionLog,
+		preferencesLastFetchedTimestamp,
+	]
 );

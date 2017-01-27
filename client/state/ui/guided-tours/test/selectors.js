@@ -201,6 +201,7 @@ describe( 'selectors', () => {
 					},
 				},
 				preferences: {
+					lastFetchedTimestamp: 1,
 					remoteValues: {
 						'guided-tours-history': [],
 					},
@@ -224,6 +225,7 @@ describe( 'selectors', () => {
 				},
 			},
 			preferences: {
+				lastFetchedTimestamp: 1,
 				remoteValues: {
 					'guided-tours-history': toursHistory,
 				},
@@ -363,6 +365,16 @@ describe( 'selectors', () => {
 				toursHistory: [ testTourSeen, themesTourSeen ],
 				queryArguments: { tour: 'themes', _timestamp: 0 }
 			} );
+			const tour = findEligibleTour( state );
+
+			expect( tour ).to.equal( undefined );
+		} );
+		it( 'should bail if user preferences are stale', () => {
+			const state = makeState( {
+				actionLog: [ navigateToThemes ],
+				userData: { date: ( new Date() ).toJSON() }, // user was created just now
+			} );
+			delete state.preferences.lastFetchedTimestamp;
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
