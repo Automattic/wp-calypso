@@ -163,7 +163,7 @@ export function requestThemes( siteId, query = {} ) {
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
-						results_first_page: filteredThemes.map( property( 'id' ) )
+						results_first_page: filteredThemes.map( property( 'id' ) ).join()
 					}
 				);
 				dispatch( trackShowcaseSearch );
