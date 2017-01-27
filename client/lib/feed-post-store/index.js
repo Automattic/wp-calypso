@@ -20,7 +20,8 @@ const Dispatcher = require( 'dispatcher' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
 	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	mc = require( 'lib/analytics' ).mc;
 
 let _posts = {},
 	_postsForBlogs = {};
@@ -300,7 +301,7 @@ function markPostSeen( post, site ) {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				stats.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
+				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
 	}
