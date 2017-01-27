@@ -104,7 +104,7 @@ export default {
 		);
 
 		recordPurchasesPageView(
-			paths.cancelPrivateRegistration(),
+			paths.cancelPrivacyProtection(),
 			'Cancel Privacy Protection'
 		);
 
