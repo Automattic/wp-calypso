@@ -7,29 +7,10 @@
 		box-sizing: border-box;
 		padding: 8px 24px 16px;
 		color: $gray-dark;
-		font-size: 13px;
 	}
 
-	.stats-post-likes__like {
-		display: inline-block;
-		margin: 2px 8px 2px 0;
-		vertical-align: top;
-		.gravatar {
-			display: block;
-		}
-	}
-
-	.stats-post-likes__placeholder {
-		vertical-align: top;
-		margin-top: 6px;
-		line-height: 14px;
-		border-radius: 12px;
-		display: inline-block;
-		border: solid 1px #87a6bc;
-		color: #87a6bc;
-		padding: 1px 6px;
-		font-weight: 600;
-		font-size: 11px;
+	&.is-loading .stats-post-likes__content {
+		display: none;
 	}
 
 	.module-content-text-info {
