@@ -185,7 +185,7 @@ function isDotComPlan( product ) {
 	);
 }
 
-function isPrivateRegistration( product ) {
+function isPrivacyProtection( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -199,7 +199,7 @@ function isDomainProduct( product ) {
 	return (
 		isDomainMapping( product ) ||
 		isDomainRegistration( product ) ||
-		isPrivateRegistration( product )
+		isPrivacyProtection( product )
 	);
 }
 
@@ -246,7 +246,7 @@ function getDomainProductRanking( product ) {
 		return 0;
 	} else if ( isDomainMapping( product ) ) {
 		return 1;
-	} else if ( isPrivateRegistration( product ) ) {
+	} else if ( isPrivacyProtection( product ) ) {
 		return 2;
 	}
 }
@@ -377,7 +377,7 @@ module.exports = {
 	isNoAds,
 	isPlan,
 	isPremium,
-	isPrivateRegistration,
+	isPrivacyProtection,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isTheme,

@@ -19,7 +19,7 @@ var productsValues = require( 'lib/products-values' ),
 	isNoAds = productsValues.isNoAds,
 	isPlan = productsValues.isPlan,
 	isPremium = productsValues.isPremium,
-	isPrivateRegistration = productsValues.isPrivateRegistration,
+	isPrivacyProtection = productsValues.isPrivacyProtection,
 	isSiteRedirect = productsValues.isSiteRedirect,
 	isSpaceUpgrade = productsValues.isSpaceUpgrade,
 	isUnlimitedSpace = productsValues.isUnlimitedSpace,
@@ -79,7 +79,7 @@ function add( newCartItem ) {
  * @returns {Boolean} whether or not the item should replace the cart
  */
 function cartItemShouldReplaceCart( cartItem, cart ) {
-	if ( isRenewal( cartItem ) && ! isPrivateRegistration( cartItem ) && ! isDomainRedemption( cartItem ) ) {
+	if ( isRenewal( cartItem ) && ! isPrivacyProtection( cartItem ) && ! isDomainRedemption( cartItem ) ) {
 		// adding a renewal replaces the cart unless it is a privacy protection
 		return true;
 	}
