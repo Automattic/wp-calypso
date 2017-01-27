@@ -15,9 +15,10 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_SET_CHAT_STATUS
+	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_RECEIVE_TRANSCRIPT
 } from 'state/action-types';
-import { getHappychatConnectionStatus } from './selectors';
+import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
@@ -62,10 +63,21 @@ const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, 
 const clearChatMessage = () => setChatMessage( '' );
 
 const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
-
+const receiveChatTranscript = ( messages, timestamp ) => ( {
+	type: HAPPYCHAT_RECEIVE_TRANSCRIPT, messages, timestamp
+} );
 const sendTyping = throttle( message => {
 	connection.typing( message );
 }, 1000, { leading: true, trailing: false } );
+
+export const requestTranscript = () => ( dispatch, getState ) => {
+	const timestamp = getHappychatTranscriptTimestamp( getState() );
+	debug( 'time to get the transcript', timestamp );
+	connection.transcript( timestamp ).then(
+		result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
+		e => debug( 'failed to get transcript', e )
+	);
+};
 
 /**
  * Opens Happychat Socket.IO client connection.
@@ -87,6 +99,7 @@ export const connectChat = () => ( dispatch, getState ) => {
 	.then(
 		() => {
 			dispatch( setChatConnected() );
+			dispatch( requestTranscript() );
 			connection
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )

@@ -19,10 +19,14 @@ class Connection extends EventEmitter {
 				const url = config( 'happychat_url' );
 				const socket = new IO( url );
 				socket
-					.once( 'connect', () => resolve( socket ) )
-					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
+					.once( 'connect', () => debug( 'connected' ) )
+					.on( 'init', () => resolve( socket ) )
 					.on( 'token', handler => {
 						handler( { signer_user_id: user_id, jwt: token } );
+					} )
+					.on( 'unauthorized', () => {
+						socket.close();
+						debug( 'not authorized' );
 					} )
 					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
@@ -58,6 +62,22 @@ class Connection extends EventEmitter {
 			socket => socket.emit( 'message', { text: message, id: uuid() } ),
 			e => debug( 'failed to send message', e )
 		);
+	}
+
+	transcript( timestamp ) {
+		return this.openSocket.then( socket => Promise.race( [
+			new Promise( ( resolve, reject ) => {
+				socket.emit( 'transcript', timestamp || null, ( e, result ) => {
+					if ( e ) {
+						return reject( new Error( e ) );
+					}
+					resolve( result );
+				} );
+			} ),
+			new Promise( ( resolve, reject ) => setTimeout( () => {
+				reject( Error( 'timeout' ) );
+			}, 10000 ) )
+		] ) );
 	}
 
 }

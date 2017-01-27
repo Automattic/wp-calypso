@@ -5,6 +5,8 @@ import { combineReducers } from 'redux';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import concat from 'lodash/concat';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -17,7 +19,8 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_SET_CHAT_STATUS
+	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_RECEIVE_TRANSCRIPT
 } from 'state/action-types';
 
 /**
@@ -34,9 +37,11 @@ const timeline_event = ( state = {}, action ) => {
 			const event = action.event;
 			return Object.assign( {}, {
 				id: event.id,
+				source: event.source,
 				message: event.text,
 				name: event.user.name,
 				image: event.user.avatarURL,
+				timestamp: event.timestamp,
 				user_id: event.user.id,
 				type: get( event, 'type', 'message' ),
 				links: get( event, 'meta.links' )
@@ -63,6 +68,26 @@ const timeline = ( state = [], action ) => {
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
+		case HAPPYCHAT_RECEIVE_TRANSCRIPT:
+			const messages = filter( action.messages, message => {
+				if ( ! message.id ) {
+					return false;
+				}
+				return ! find( state, { id: message.id } );
+			} );
+			return state.concat( map( messages, message => {
+				return Object.assign( {
+					id: message.id,
+					source: message.source,
+					message: message.text,
+					name: message.user.name,
+					image: message.user.picture,
+					timestamp: message.timestamp,
+					user_id: message.user.id,
+					type: get( message, 'type', 'message' ),
+					links: get( message, 'meta.links' )
+				} );
+			} ) );
 	}
 	return state;
 };
