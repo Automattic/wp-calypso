@@ -31,7 +31,7 @@ export const cancelPrivateRegistration = purchaseId => dispatch => {
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wpcom.cancelPrivateRegistration( purchaseId, ( error, data ) => {
+		wpcom.cancelPrivacyProtection( purchaseId, ( error, data ) => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} ).then( data => {
