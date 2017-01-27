@@ -100,7 +100,7 @@ export default {
 	cancelPrivateRegistration( context ) {
 		setTitle(
 			context,
-			titles.cancelPrivateRegistration
+			titles.cancelPrivacyProtection
 		);
 
 		recordPurchasesPageView(
