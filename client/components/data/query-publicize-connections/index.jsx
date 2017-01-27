@@ -19,7 +19,7 @@ class QueryPublicizeConnections extends Component {
 	}
 
 	componentDidUpdate( { siteId } ) {
-		if ( siteId !== this.props.siteId && ! this.props.requestingConnections ) {
+		if ( this.props.siteId && siteId !== this.props.siteId && ! this.props.requestingConnections ) {
 			this.props.requestConnections( this.props.siteId );
 		}
 	}
