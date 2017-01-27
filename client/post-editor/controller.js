@@ -136,7 +136,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		actions.startEditingNew( siteId, {
 			content: postToCopy.content,
 			title: postToCopy.title,
-			type: 'post',
+			type: postToCopy.type,
 		} );
 		context.store.dispatch( editPost( siteId, null, postAttributes ) );
 		actions.edit( postAttributes );
