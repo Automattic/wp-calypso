@@ -142,7 +142,7 @@ const CancelPrivacyProtection = React.createClass( {
 		return (
 			<Button
 				onClick={ this.cancel }
-				className="cancel-private-registration__cancel-button"
+				className="cancel-privacy-protection__cancel-button"
 				disabled={ this.state.disabled }>
 				{
 					this.state.cancelling
@@ -169,7 +169,7 @@ const CancelPrivacyProtection = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'cancel-private-registration__card', {
+		const classes = classNames( 'cancel-privacy-protection__card', {
 			'is-placeholder': isDataLoading( this.props )
 		} );
 
@@ -203,10 +203,10 @@ const CancelPrivacyProtection = React.createClass( {
 				</HeaderCake>
 				{ notice }
 				<Card className={ classes }>
-					<div className="cancel-private-registration__text">
+					<div className="cancel-privacy-protection__text">
 						<span>{ descriptionText }</span>
 					</div>
-					<div className="cancel-private-registration__text">
+					<div className="cancel-privacy-protection__text">
 						<span>{ warningText }</span>
 					</div>
 
