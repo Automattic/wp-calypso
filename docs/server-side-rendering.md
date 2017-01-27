@@ -40,6 +40,26 @@ Here's how your module's `package.json` should look, if you really want to do th
 
 If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
 
+### Debugging
+
+To view hits and misses on the server render cache, use the following command (or platform equivalent) in the build console:
+
+`export DEBUG="calypso:server-render"`
+
+Sample debug output:
+```
+  calypso:server-render cache access for key +0ms /theme/mood1485514728996
+  calypso:server-render cache miss for key +1ms /theme/mood1485514728996
+  calypso:server-render Server render time (ms) +109ms 110
+GET /theme/mood 200 1054.730 ms - 142380
+GET /calypso/style-debug.css?v=4743a0b522 200 18.408 ms - 1290419
+GET /calypso/vendor.development.js?v=147ad937b5 200 78.293 ms - 1778120
+HEAD /version?1485514730526 200 1.057 ms - 20
+  calypso:server-render cache access for key +5s /theme/mood1485514728996
+  calypso:server-render Server render time (ms) +1ms 1
+GET /theme/mood 200 198.760 ms - 140909
+```
+
 ### I want to server-side render my components!
 
 Awesome! Have a look at the [Isomorphic Routing](isomorphic-routing.md) docs to see how to achieve this. In addition, there are a couple of things you'll need to keep in mind: if your components need dynamic data, we'll need to cache; `renderToString` is synchronous, and will affect server response time; you should add a test to your section that ensures that it can really be rendered with `renderToString`; if you want to SSR something logged in, dependency nightmares will ensue.
