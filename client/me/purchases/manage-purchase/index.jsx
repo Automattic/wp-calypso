@@ -586,7 +586,7 @@ const ManagePurchase = React.createClass( {
 		);
 	},
 
-	renderCancelPrivateRegistration() {
+	renderCancelPrivacyProtection() {
 		const purchase = getPurchase( this.props ),
 			{ id } = purchase;
 
@@ -617,7 +617,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
 			cancelPurchaseNavItem,
-			cancelPrivateRegistrationNavItem,
+			cancelPrivacyProtectionNavItem,
 			contactSupportToRenewMessage;
 
 		if ( isDataLoading( this.props ) ) {
@@ -645,7 +645,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
-			cancelPrivateRegistrationNavItem = this.renderCancelPrivateRegistration();
+			cancelPrivacyProtectionNavItem = this.renderCancelPrivacyProtection();
 		}
 
 		return (
@@ -684,7 +684,7 @@ const ManagePurchase = React.createClass( {
 				{ expiredRenewNotice }
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
-				{ cancelPrivateRegistrationNavItem }
+				{ cancelPrivacyProtectionNavItem }
 
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
