@@ -299,6 +299,35 @@ export const normalizers = {
 		return { total_wpcom, total_email, subscribers };
 	},
 
+	statsCommentFollowers( data ) {
+		if ( ! data ) {
+			return null;
+		}
+
+		const page = data.page || 0;
+		const pages = data.pages || 0;
+		const total = data.total || 0;
+		let posts = [];
+		if ( data.posts ) {
+			posts = data.posts.map( ( item ) => {
+				if ( 0 === item.id ) {
+					return {
+						label: 'All Posts',
+						value: item.followers
+					};
+				}
+				return {
+					label: item.title,
+					link: item.url,
+					labelIcon: 'external',
+					value: item.followers
+				};
+			} );
+		}
+
+		return { page, pages, total, posts };
+	},
+
 	/**
 	 * Returns a normalized statsVideo array, ready for use in stats-module
 	 *

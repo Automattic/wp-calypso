@@ -141,8 +141,6 @@ module.exports = {
 			? site.slug : route.getSiteFragment( context.path );
 
 		const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
-		const commentFollowersList = new StatsList( {
-			siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
@@ -151,7 +149,6 @@ module.exports = {
 				site: site,
 				followList: followList,
 				commentsList: commentsList,
-				commentFollowersList: commentFollowersList,
 				summaryDate: summaryDate
 			} ),
 			document.getElementById( 'primary' ),
