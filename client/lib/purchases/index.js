@@ -72,8 +72,8 @@ function hasPaymentMethod( purchase ) {
 	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase ) || isPaidWithPayPalDirect( purchase );
 }
 
-function hasPrivateRegistration( purchase ) {
-	return purchase.hasPrivateRegistration;
+function hasPrivacyProtection( purchase ) {
+	return purchase.hasPrivacyProtection;
 }
 
 /**
@@ -258,7 +258,7 @@ export {
 	getSubscriptionEndDate,
 	hasIncludedDomain,
 	hasPaymentMethod,
-	hasPrivateRegistration,
+	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

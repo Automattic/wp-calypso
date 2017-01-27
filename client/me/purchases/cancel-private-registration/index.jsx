@@ -16,7 +16,7 @@ import HeaderCake from 'components/header-cake';
 import { getByPurchaseId, getPurchasesError, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { hasPrivateRegistration, isRefundable } from 'lib/purchases';
+import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
@@ -73,7 +73,7 @@ const CancelPrivateRegistration = React.createClass( {
 		const { selectedSite } = props,
 			purchase = getPurchase( props );
 
-		return selectedSite && purchase && hasPrivateRegistration( purchase );
+		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	},
 
 	cancel( event ) {
