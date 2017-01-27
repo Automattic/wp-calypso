@@ -180,7 +180,7 @@ build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-u
 build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
-build-desktop build-server $(CLIENT_CONFIG_FILE) build-css
+build-desktop: build-server $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
