@@ -42,7 +42,8 @@ export const ThemesList = React.createClass( {
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
 		themeUploadClickRecorder: React.PropTypes.func,
-		onThemeUpload: React.PropTypes.func
+		onThemeUpload: React.PropTypes.func,
+		placeholderCount: React.PropTypes.number
 	},
 
 	fetchNextPage( options ) {
@@ -57,6 +58,7 @@ export const ThemesList = React.createClass( {
 			themeUploadClickRecorder: identity,
 			onThemeUpload: identity,
 			fetchNextPage: noop,
+			placeholderCount: DEFAULT_THEME_QUERY.number,
 			optionsGenerator: () => [],
 			getActionLabel: () => '',
 			isActive: () => false,
@@ -90,7 +92,7 @@ export const ThemesList = React.createClass( {
 	},
 
 	renderLoadingPlaceholders() {
-		return times( DEFAULT_THEME_QUERY.number, function( i ) {
+		return times( this.props.placeholderCount, function( i ) {
 			return <Theme key={ 'placeholder-' + i } theme={ { id: 'placeholder-' + i, name: 'Loading…' } } isPlaceholder={ true } />;
 		} );
 	},

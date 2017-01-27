@@ -50,7 +50,8 @@ const ThemesSelection = React.createClass( {
 		isLastPage: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
-		isInstallingTheme: PropTypes.func
+		isInstallingTheme: PropTypes.func,
+		placeholderCount: PropTypes.number
 	},
 
 	getDefaultProps() {
@@ -135,7 +136,8 @@ const ThemesSelection = React.createClass( {
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting } />
+					loading={ this.props.isRequesting }
+					placeholderCount={ this.props.placeholderCount } />
 			</div>
 		);
 	},
