@@ -34,7 +34,7 @@ export default {
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( ListStream, {
 					key: 'tag-' + context.params.user + '-' + context.params.list,
-					postStore: listStore,
+					postsStore: listStore,
 					owner: encodeURIComponent( context.params.user ),
 					slug: encodeURIComponent( context.params.list ),
 					showPrimaryFollowButtonOnCards: false,
