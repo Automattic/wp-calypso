@@ -37,7 +37,7 @@ class Notices extends Component {
 					text={ translate( 'Your export was successful! ' +
 						'A download link has also been sent to your email.' ) }
 				>
-					<NoticeAction href={ exportDownloadURL }>
+					<NoticeAction href={ exportDownloadURL } download={ true }>
 						{ translate( 'Download' ) }
 					</NoticeAction>
 				</Notice>

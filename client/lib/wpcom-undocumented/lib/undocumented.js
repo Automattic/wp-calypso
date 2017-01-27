@@ -2084,7 +2084,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
 	}, fn );
 };
 
-/*
+/**
  * Start an export
  *
  * @param {int}       siteId            The site ID

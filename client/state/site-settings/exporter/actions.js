@@ -93,10 +93,12 @@ export function advancedSettingsFail( siteId, error ) {
 
 /**
  * Sends a request to the server to start an export.
- * @param  {Number}   siteId  The ID of the site to export
- * @return {Function}         Action thunk
+ * @param  {Number}		siteId  		The ID of the site to export
+ * @param  {Boolean}   	exportAll 		The type of export - Complete or partial
+ * @param  {Boolean}   	isJetpackSite  	Is that a Jetpack site?
+ * @return {Function}         			Action thunk
  */
-export function startExport( siteId, { exportAll = true } = {} ) {
+export function startExport( siteId, { exportAll = true, isJetpackSite = false } = {} ) {
 	return ( dispatch, getState ) => {
 		if ( ! siteId ) {
 			return;
@@ -106,6 +108,7 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 			type: EXPORT_START_REQUEST,
 			siteId,
 			exportAll,
+			isJetpackSite,
 		} );
 
 		const advancedSettings = prepareExportRequest( getState(), siteId, { exportAll } );
@@ -113,13 +116,26 @@ export function startExport( siteId, { exportAll = true } = {} ) {
 		const success =
 			() => dispatch( exportStarted( siteId ) );
 
+		// Jetpack exports are sync. , When the API call returns it means the export is done.
+		const jetpackSuccess =
+			( response = {} ) => dispatch( exportComplete( siteId, response.download_url ) );
+
 		const failure =
 			error => dispatch( exportFailed( siteId, error ) );
 
-		return wpcom.undocumented()
-			.startExport( siteId, advancedSettings )
-			.then( success )
-			.catch( failure );
+		let result;
+		if ( isJetpackSite ) {
+			result = wpcom.undocumented()
+				.startExport( siteId, advancedSettings )
+				.then( jetpackSuccess )
+				.catch( failure );
+		} else {
+			result = wpcom.undocumented()
+				.startExport( siteId, advancedSettings )
+				.then( success )
+				.catch( failure );
+		}
+		return result;
 	};
 }
 

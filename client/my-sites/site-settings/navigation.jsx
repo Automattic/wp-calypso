@@ -44,13 +44,6 @@ export default React.createClass( {
 		return [ path, site.slug ].join( '/' );
 	},
 
-	getExportPath() {
-		const { site } = this.props;
-		return site.jetpack
-			? `${ site.options.admin_url }export.php`
-			: `/settings/export/${ site.slug }`;
-	},
-
 	render() {
 		const { section, site } = this.props;
 		const strings = this.getStrings();
@@ -124,9 +117,8 @@ export default React.createClass( {
 					{
 						config.isEnabled( 'manage/export' ) &&
 							<NavItem
-								path={ this.getExportPath() }
-								selected={ section === 'export' }
-								isExternalLink={ !! site.jetpack } >
+								path={ `/settings/export/${ site.slug }` }
+								selected={ section === 'export' } >
 									{ strings.export }
 							</NavItem>
 					}

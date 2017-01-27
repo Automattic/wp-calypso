@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import config from 'config';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
 
 import Notices from './notices';
@@ -32,7 +33,7 @@ class Exporter extends Component {
 				<Notices />
 				{ showGuidedTransferOptions && isTransferInProgress &&
 					<InProgressCard /> }
-				<ExportCard siteId={ siteId } />
+				<ExportCard siteId={ siteId } isJetpackSite={ this.props.isJetpackSite } />
 				{ showGuidedTransferOptions && ! isTransferInProgress &&
 					<GuidedTransferCard /> }
 			</div>
@@ -43,6 +44,7 @@ class Exporter extends Component {
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
 	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
+	isJetpackSite: isJetpackSite( state, getSelectedSiteId( state ) )
 } );
 
 export default connect( mapStateToProps )( Exporter );

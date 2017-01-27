@@ -20,7 +20,8 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			external: false
+			external: false,
+			download: false,
 		};
 	},
 
@@ -33,6 +34,10 @@ export default React.createClass( {
 
 		if ( this.props.external ) {
 			attributes.target = '_blank';
+		}
+
+		if ( this.props.download ) {
+			attributes.download = '';
 		}
 
 		return (

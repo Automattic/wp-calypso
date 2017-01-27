@@ -41,6 +41,7 @@ class ExportCard extends Component {
 		const {
 			translate,
 			fetchStatus,
+			isJetpackSite,
 		} = this.props;
 
 		const exportButton = (
@@ -53,6 +54,8 @@ class ExportCard extends Component {
 				loadingText={ translate( 'Exporting…' ) } />
 		);
 
+		// Last element is an Interval for checking export status.
+		// Don't fetch status for Jetpack exports, they are not async.
 		return (
 			<div className="export-card">
 				<FoldableCard
@@ -77,7 +80,8 @@ class ExportCard extends Component {
 						onClickExport={ this.props.exportSelectedItems }
 					/>
 				</FoldableCard>
-				{ this.props.isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
+				{ this.props.isExporting && ! isJetpackSite &&
+				<Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
 			</div>
 		);
 	}
@@ -91,15 +95,17 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 
 const trackExportClick = ( scope = 'all' ) => recordTracksEvent( 'calypso_export_start_button_click', { scope } );
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
 	setPostType: flowRight( dispatch, setPostType ),
-	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
-
-	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
+	fetchStatus: () => dispatch( exportStatusFetch( ownProps.siteId ) ),
+	exportAll: () => dispatch( withAnalytics(
+		trackExportClick(),
+		startExport( ownProps.siteId, { exportAll: true, isJetpackSite: ownProps.isJetpackSite } )
+	) ),
 	exportSelectedItems: () => dispatch( withAnalytics(
 		trackExportClick( 'selected' ),
-		startExport( siteId, { exportAll: false } )
+		startExport( ownProps.siteId, { exportAll: false, isJetpackSite: ownProps.isJetpackSite } )
 	) ),
 } );
 
