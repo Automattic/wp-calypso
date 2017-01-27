@@ -48,7 +48,7 @@ function minify( files ) {
 				file,
 				'-m',
 				'-c',
-				'-o', file.replace( '.js', '.min.js' )
+				'-o', file.replace( '.js', '.m.js' )
 			]
 		);
 
