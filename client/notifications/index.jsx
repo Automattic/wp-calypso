@@ -214,7 +214,7 @@ export class Notifications extends Component {
 				this.postAuth();
 
 				if ( this.queuedMessage ) {
-					this.postMesssage( this.queuedMessage );
+					this.postMessage( this.queuedMessage );
 					this.queuedMessage = null;
 				}
 
