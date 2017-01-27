@@ -15,6 +15,7 @@ import FeedPostStore from 'lib/feed-post-store';
 import { action as ActionTypes } from './constants';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as FeedStreamActions from './actions';
+import { isValidPostOrGap } from './utils';
 
 export default class PagedStream {
 	constructor( spec ) {
@@ -135,17 +136,11 @@ export default class PagedStream {
 		return this._isFetchingNextPage;
 	}
 
-	isValidPostOrGap( postKey ) {
-		const post = FeedPostStore.get( postKey );
-		return post && post._state !== 'error' && post._state !== 'pending' &&
-			post._state !== 'minimal';
-	}
-
 	selectNextItem() {
 		if ( this.selectedIndex === -1 ) {
 			return;
 		}
-		const nextIndex = findIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1 );
+		const nextIndex = findIndex( this.postKeys, isValidPostOrGap, this.selectedIndex + 1 );
 		if ( nextIndex !== -1 ) {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
@@ -164,7 +159,7 @@ export default class PagedStream {
 		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
 			return;
 		}
-		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
+		const prevIndex = findLastIndex( this.postKeys, isValidPostOrGap, this.selectedIndex - 1 );
 		if ( prevIndex !== -1 ) {
 			this.selectedIndex = prevIndex;
 			this.emitChange();

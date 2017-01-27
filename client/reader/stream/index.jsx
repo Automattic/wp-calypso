@@ -33,6 +33,7 @@ import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
+import { isValidPostOrGap } from 'lib/feed-stream-store/utils.js';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -336,7 +337,9 @@ export default class ReaderStream extends React.Component {
 			for ( let i = 0; i < visibleIndexes.length; i++ ) {
 				const visibleIndex = visibleIndexes[ i ];
 				// skip items whose top are off screen or are recommendation blocks
-				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
+				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock &&
+						isValidPostOrGap( items[ visibleIndex.index ] ) ) {
+					console.error( visibleIndex.index, items[ visibleIndex.index ] )
 					index = visibleIndex.index;
 					break;
 				}
