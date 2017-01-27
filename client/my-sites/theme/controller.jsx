@@ -13,7 +13,7 @@ import {
 	requestTheme,
 	setBackPath
 } from 'state/themes/actions';
-import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
+import { getTheme } from 'state/themes/selectors';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -27,26 +27,11 @@ export function fetchThemeDetailsData( context, next ) {
 	const theme = getTheme( context.store.getState(), themeSlug );
 
 	if ( theme ) {
-		debug( 'found theme!', theme.id );
-		context.renderCacheKey = context.path + theme.timestamp;
+		debug( 'found theme in cache!', theme.id );
 		return next();
 	}
 
-	context.store.dispatch( requestTheme( themeSlug, 'wpcom' ) )
-		.then( () => {
-			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
-			if ( ! themeDetails ) {
-				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
-				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-				context.renderCacheKey = 'theme not found';
-			} else {
-				debug( 'caching', themeSlug );
-				themeDetails.timestamp = Date.now();
-				context.renderCacheKey = context.path + themeDetails.timestamp;
-			}
-			next();
-		} )
-		.catch( next );
+	context.store.dispatch( requestTheme( themeSlug, 'wpcom' ) ).then( next );
 }
 
 export function details( context, next ) {
