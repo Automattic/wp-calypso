@@ -40,26 +40,18 @@ function minify( files ) {
 			return;
 		}
 
-		console.log( '  minifying ' + file );
+		child = cp.spawn( path.join( 'node_modules', '.bin', 'uglifyjs' ), [ '--output', file.replace( '.js', '.min.js' ), file ] );
 
-		child = cp.spawnSync(
-			path.join( 'node_modules', '.bin', 'uglifyjs' ),
-			[
-				file,
-				'-m',
-				'-c',
-				'-o', file.replace( '.js', '.min.js' )
-			]
-		);
+		_children.push( child );
 
-		if ( child.status != 0 ) {
-			console.error( '  error minifying ' + file );
-			console.dir( child );
-		}
+		child.once( 'exit', function() {
+			_children.splice( _children.indexOf( child ), 1 );
+			if ( _children.length === 0 ) {
+				console.log( 'Minification of all bundles completed.' );
+				console.log( 'Total build time: ' + ( new Date().getTime() - start ) + 'ms' );
+			}
+		} );
 	} );
-
-	console.log( 'Minification of all bundles completed.' );
-	console.log( 'Total build time: ' + ( new Date().getTime() - start ) + 'ms' );
 }
 
 Error.stackTrackLimit = 30;
