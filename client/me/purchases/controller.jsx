@@ -9,7 +9,7 @@ import React from 'react';
  */
 import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
-import CancelPrivateRegistration from './cancel-private-registration';
+import CancelPrivacyProtection from './cancel-privacy-protection';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
@@ -112,7 +112,7 @@ export default {
 
 		renderPage(
 			context,
-			<CancelPrivateRegistration
+			<CancelPrivacyProtection
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			/>
 		);

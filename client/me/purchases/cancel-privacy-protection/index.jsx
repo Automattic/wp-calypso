@@ -29,7 +29,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const user = userFactory();
 
-const CancelPrivateRegistration = React.createClass( {
+const CancelPrivacyProtection = React.createClass( {
 	propTypes: {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
@@ -226,4 +226,4 @@ export default connect(
 		selectedSite: getSelectedSiteSelector( state )
 	} ),
 	{ cancelPrivacyProtection }
-)( CancelPrivateRegistration );
+)( CancelPrivacyProtection );
