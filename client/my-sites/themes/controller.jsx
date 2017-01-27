@@ -15,7 +15,7 @@ import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
+import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -102,28 +102,16 @@ export function fetchThemeData( context, next ) {
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
-	// context.pathname includes tier, filter, and verticals, but not the query string, so it's a suitable cacheKey
-	// However, we can't guarantee it's normalized -- filters can be in any order, resulting in multiple possible cacheKeys for
-	// the same sets of results.
-	const cacheKey = context.pathname;
 
 	if ( shouldUseCache ) {
 		const themes = getThemesForQuery( context.store.getState(), siteId, query );
 		if ( themes ) {
-			debug( `found theme data in cache key=${ cacheKey }` );
-			context.renderCacheKey = context.path;
+			debug( 'found theme data in cache' );
 			return next();
 		}
 	}
 
-	context.store.dispatch( requestThemes( siteId, query ) )
-		.then( () => {
-			if ( shouldUseCache ) {
-				context.renderCacheKey = context.path; // + timestamp;
-			}
-			next();
-		} )
-		.catch( () => next() );
+	context.store.dispatch( requestThemes( siteId, query ) ).then( next );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
