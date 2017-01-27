@@ -1311,11 +1311,6 @@ Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
 	return this.wpcom.req.post( '/read/following/mine/delete', query, {}, fn );
 };
 
-Undocumented.prototype.readTeams = function( fn ) {
-	debug( '/read/teams' );
-	return this.wpcom.req.get( '/read/teams', { apiVersion: '1.2' }, fn );
-};
-
 Undocumented.prototype.readSite = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site' );
