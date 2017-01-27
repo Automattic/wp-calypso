@@ -110,19 +110,22 @@ const renderGroupedTimelineItem = first(
 );
 
 const groupMessages = messages => {
-	const grouped = messages.reduce( ( { user_id, type, group, groups }, message ) => {
+	const grouped = messages.reduce( ( { user_id, type, group, groups, source }, message ) => {
 		const message_user_id = message.user_id;
 		const message_type = message.type;
-		if ( user_id !== message_user_id || message_type !== type ) {
+		const message_source = message.source;
+		debug( 'compare source', message_source, message.source );
+		if ( user_id !== message_user_id || message_type !== type || message_source !== source ) {
 			return {
 				user_id: message_user_id,
 				type: message_type,
+				source: message_source,
 				group: [ message ],
 				groups: group ? groups.concat( [ group ] ) : groups
 			};
 		}
 		// it's the same user so group it together
-		return { user_id, group: group.concat( [ message ] ), groups, type };
+		return { user_id, group: group.concat( [ message ] ), groups, type, source };
 	}, { groups: [] } );
 
 	return grouped.groups.concat( [ grouped.group ] );
@@ -176,7 +179,9 @@ const mapProps = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
-		isCurrentUser: ( { user_id } ) => user_id === current_user.ID,
+		isCurrentUser: ( { user_id, source } ) => {
+			return user_id.toString() === current_user.ID.toString() && source === 'customer';
+		},
 		currentUserEmail: current_user.email
 	};
 };
