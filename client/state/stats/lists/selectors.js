@@ -27,7 +27,22 @@ import { getSite } from 'state/sites/selectors';
  */
 export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) {
 	const serializedQuery = getSerializedStatsQuery( query );
-	return !! get( state.stats.lists.requesting, [ siteId, statType, serializedQuery ] );
+	return !! get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'requesting' ] );
+}
+
+/**
+ * Returns true if the stats request for the statType and query combo has failed, or false
+ * otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  statType Type of stat
+ * @param  {Object}  query    Stats query object
+ * @return {Boolean}          Whether stats are being requested
+ */
+export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error';
 }
 
 /**

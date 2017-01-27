@@ -18,7 +18,7 @@ import {
 } from 'state/action-types';
 import reducer, {
 	items,
-	requesting
+	requests
 } from '../reducer';
 
 /**
@@ -48,20 +48,20 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
+			'requests',
 			'items'
 		] );
 	} );
 
-	describe( 'requesting()', () => {
+	describe( 'requests()', () => {
 		it( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
+			const state = requests( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should track stats list request fetching', () => {
-			const state = requesting( undefined, {
+			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST,
 				siteId: 2916284,
 				statType: 'statsStreak',
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': true
+						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: true, status: 'pending' }
 					}
 				}
 			} );
@@ -81,12 +81,12 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': true
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': { requesting: true, status: 'pending' }
 					}
 				}
 			} );
 
-			const state = requesting( original, {
+			const state = requests( original, {
 				type: SITE_STATS_REQUEST,
 				siteId: 2916284,
 				statType: 'statsStreak',
@@ -96,15 +96,15 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': true,
-						'[["endDate","2015-06-01"],["startDate","2014-06-01"]]': true
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': { requesting: true, status: 'pending' },
+						'[["endDate","2015-06-01"],["startDate","2014-06-01"]]': { requesting: true, status: 'pending' }
 					}
 				}
 			} );
 		} );
 
 		it( 'should track stats request success', () => {
-			const state = requesting( undefined, {
+			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST_SUCCESS,
 				siteId: 2916284,
 				statType: 'statsStreak',
@@ -114,14 +114,14 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': false
+						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'success' }
 					}
 				}
 			} );
 		} );
 
 		it( 'should track stats request failure', () => {
-			const state = requesting( undefined, {
+			const state = requests( undefined, {
 				type: SITE_STATS_REQUEST_FAILURE,
 				siteId: 2916284,
 				statType: 'statsStreak',
@@ -132,7 +132,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': false
+						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'error' }
 					}
 				}
 			} );
@@ -142,12 +142,12 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': true
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': { requesting: true, status: 'pending' }
 					}
 				}
 			} );
 
-			const state = requesting( original, { type: SERIALIZE } );
+			const state = requests( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -156,12 +156,12 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': true
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': { requesting: true, status: 'pending' }
 					}
 				}
 			} );
 
-			const state = requesting( original, { type: DESERIALIZE } );
+			const state = requests( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
