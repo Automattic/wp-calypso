@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { cancelPrivateRegistration } from 'state/purchases/actions';
+import { cancelPrivacyProtection } from 'state/purchases/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
 import { getByPurchaseId, getPurchasesError, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -87,7 +87,7 @@ const CancelPrivateRegistration = React.createClass( {
 			cancelling: true
 		} );
 
-		this.props.cancelPrivateRegistration( id ).then( () => {
+		this.props.cancelPrivacyProtection( id ).then( () => {
 			this.resetState();
 
 			notices.success( this.translate( 'You have successfully canceled privacy protection for %(domain)s.', {
@@ -225,5 +225,5 @@ export default connect(
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSiteSelector( state )
 	} ),
-	{ cancelPrivateRegistration }
+	{ cancelPrivacyProtection }
 )( CancelPrivateRegistration );

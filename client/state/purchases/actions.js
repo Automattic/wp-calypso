@@ -24,7 +24,7 @@ const wpcom = wp.undocumented();
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
 
-export const cancelPrivateRegistration = purchaseId => dispatch => {
+export const cancelPrivacyProtection = purchaseId => dispatch => {
 	dispatch( {
 		type: PRIVACY_PROTECTION_CANCEL,
 		purchaseId
