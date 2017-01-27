@@ -80,7 +80,7 @@ export function serverRender( req, res ) {
 	}
 
 	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
-		const key = context.renderCacheKey || JSON.stringify( context.layout );
+		const key = context.path || JSON.stringify( context.layout );
 		Object.assign( context, render( context.layout, key ) );
 	}
 
@@ -98,7 +98,8 @@ export function serverRender( req, res ) {
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
 		const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-		stateCache.set( context.path, serverState );
+		// context.pathname is the path void of the query string, which seems a good choice for a cache key
+		stateCache.set( context.pathname, serverState );
 	}
 
 	context.head = { title, metas, links };
