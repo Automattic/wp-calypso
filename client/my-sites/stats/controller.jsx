@@ -20,6 +20,7 @@ import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import Emitter from 'lib/mixins/emitter';
+import AsyncLoad from 'components/async-load';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
@@ -183,7 +184,6 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
-		const SiteStatsComponent = require( 'my-sites/stats/site' );
 		const filters = getSiteFilters.bind( null, siteId );
 		let date;
 		const charts = function() {
@@ -202,7 +202,6 @@ module.exports = {
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
-		let siteComponent;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
@@ -268,8 +267,9 @@ module.exports = {
 			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
 					? currentSite.slug : siteFragment;
 
-			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
+				slug: siteDomain,
+				path: context.pathname,
 				date,
 				charts,
 				chartTab,
@@ -277,12 +277,10 @@ module.exports = {
 				sites,
 				siteId,
 				period,
-				slug: siteDomain,
-				path: context.pathname,
 			};
 
 			renderWithReduxStore(
-				React.createElement( siteComponent, siteComponentChildren ),
+				<AsyncLoad require="my-sites/stats/site" { ...siteComponentChildren } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
