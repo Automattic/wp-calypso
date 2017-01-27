@@ -10,7 +10,6 @@ import { defer } from 'lodash';
 import PostStore from 'lib/feed-post-store';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import PostPlaceholder from './post-placeholder';
-import PostUnavailable from './post-unavailable';
 import CrossPost from './x-post';
 import XPostHelper from 'reader/xpost-helper';
 
@@ -62,7 +61,7 @@ export default class PostLifecycle extends React.PureComponent {
 			case 'pending':
 				return <PostPlaceholder />;
 			case 'error':
-				return <PostUnavailable post={ post } />;
+				return null;
 			default:
 				const PostClass = this.props.cardClassForPost( post );
 				if ( PostClass === CrossPost ) {
