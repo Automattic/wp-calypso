@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, isEqual, omit } from 'lodash';
+import { compact, isEqual, omit, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,17 +66,13 @@ const ThemesSelection = React.createClass( {
 		}
 	},
 
-	onMoreButtonClick( theme, resultsRank ) {
-		this.recordSearchResultsClick( theme, resultsRank );
-	},
-
 	recordSearchResultsClick( theme, resultsRank ) {
 		const { query, themes } = this.props;
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: query.search,
-			theme,
+			theme: theme.id,
 			results_rank: resultsRank + 1,
-			results: themes,
+			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page
 		} );
 	},
@@ -129,7 +125,6 @@ const ThemesSelection = React.createClass( {
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
-					onMoreButtonClick={ this.onMoreButtonClick }
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
