@@ -18,7 +18,6 @@ export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
 export getBillingTransactions from './get-billing-transactions';
-export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
