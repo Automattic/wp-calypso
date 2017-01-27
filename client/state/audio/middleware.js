@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,51 +10,34 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 } from 'state/action-types';
 
-// Maps the audio reference to the audio file source.
-// In future we might want to store this in Redux if
-// we want the sounds to be configurable.
-const REFERENCE_MAP = {
-	'happychat-message-received': '/calypso/audio/chat-pling.wav',
-};
-
-const getSourceForReference = reference => {
-	return get( REFERENCE_MAP, reference );
-};
-
-export const playSound = reference => {
+export const playSound = src => {
 	if ( typeof Audio !== 'function' ) {
 		// No Audio support in this browser
 		return;
 	}
 
-	const audioSource = getSourceForReference( reference );
-	if ( audioSource == null ) {
-		return;
-	}
-
-	const audioClip = new Audio( audioSource );
+	const audioClip = new Audio( src );
 	audioClip.play();
 };
 
 export const onHappyChatMessage = ( dispatch, { event } ) => {
-	event.source !== 'customer' && playSound( 'happychat-message-received' );
+	event.source !== 'customer' && playSound( '/calypso/audio/chat-pling.wav' );
 };
 
 /**
  * Action Handlers
  */
 
-export const handlers = {
-	// Actions which trigger a sound
-	[ HAPPYCHAT_RECEIVE_EVENT ]: onHappyChatMessage,
-};
+// Initialized this way for performance reasons
+export const handlers = Object.create( null );
+handlers[ HAPPYCHAT_RECEIVE_EVENT ] = onHappyChatMessage;
 
 /**
  * Middleware
  */
 
 export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
-	if ( handlers.hasOwnProperty( action.type ) ) {
+	if ( has( handlers, action.type ) ) {
 		handlers[ action.type ]( dispatch, action, getState );
 	}
 
