@@ -59,3 +59,5 @@ export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful
 export isSiteBlocked from './is-site-blocked';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
+export isRequestingReaderTeams from './is-requesting-reader-teams';
+export getReaderTeams from './get-reader-teams';
