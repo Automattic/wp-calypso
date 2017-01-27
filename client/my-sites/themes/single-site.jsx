@@ -50,6 +50,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				secondaryOption="tryandcustomize"
 				source="showcase"
 				listLabel={ translate( 'Uploaded themes' ) }
+				placeholderCount={ 5 }
 			/>
 		);
 	}

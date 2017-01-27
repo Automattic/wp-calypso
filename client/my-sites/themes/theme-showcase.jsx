@@ -198,6 +198,7 @@ const ThemeShowcase = React.createClass( {
 					siteId={ this.props.siteId }
 					listLabel={ this.props.listLabel }
 					showUploadButton={ this.props.showUploadButton }
+					placeholderCount={ this.props.placeholderCount }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
 							return null;
