@@ -32,7 +32,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + blogId,
-				store: feedStore,
+				postsStore: feedStore,
 				siteId: +blogId,
 				title: 'Discover',
 				trackScrollPage: trackScrollPage.bind(

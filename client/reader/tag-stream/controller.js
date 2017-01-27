@@ -37,7 +37,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( TagStream, {
 				key: 'tag-' + encodedTag,
-				store: tagStore,
+				postsStore: tagStore,
 				tag: encodedTag,
 				trackScrollPage: trackScrollPage.bind(
 					null,

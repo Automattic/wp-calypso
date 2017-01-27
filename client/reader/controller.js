@@ -165,7 +165,7 @@ module.exports = {
 				React.createElement( StreamComponent, {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
-					store: followingStore,
+					postsStore: followingStore,
 					recommendationsStore,
 					showPrimaryFollowButtonOnCards: false,
 					trackScrollPage: trackScrollPage.bind(
@@ -215,7 +215,7 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
-				store: feedStore,
+				postsStore: feedStore,
 				feedId: +context.params.feed_id,
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -251,7 +251,7 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
-				store: feedStore,
+				postsStore: feedStore,
 				siteId: +context.params.blog_id,
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -289,7 +289,7 @@ module.exports = {
 					key: 'read-a8c',
 					className: 'is-a8c',
 					listName: 'Automattic',
-					store: feedStore,
+					postsStore: feedStore,
 					trackScrollPage: trackScrollPage.bind(
 						null,
 						basePath,
