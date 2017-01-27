@@ -33,9 +33,7 @@ class Connection extends EventEmitter {
 					// Received chat status new/assigning/assigned/missed/pending/abandoned
 					.on( 'status', status => this.emit( 'status', status ) )
 					// If happychat is currently accepting chats
-					.on( 'accept.locale', locales => {
-						this.emit( 'accept.locale', locales );
-					} );
+					.on( 'accept', accept => this.emit( 'accept', accept ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );

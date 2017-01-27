@@ -3,7 +3,6 @@
  */
 import isEmpty from 'lodash/isEmpty';
 import throttle from 'lodash/throttle';
-import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -108,9 +107,7 @@ export const connectChat = () => ( dispatch, getState ) => {
 			connection
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept.locale', ( locales ) => {
-				dispatch( setHappychatAvailable( includes( locales, locale ) ) );
-			} );
+			.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
