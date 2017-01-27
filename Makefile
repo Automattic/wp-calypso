@@ -180,7 +180,7 @@ build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-u
 build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
-build-desktop build-desktop-mac-app-store: build-server $(CLIENT_CONFIG_FILE) build-css
+build-desktop build-server $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
@@ -229,6 +229,6 @@ urn:
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
-.PHONY: build build-development build-server build-dll build-desktop build-desktop-mac-app-store build-horizon build-stage build-production build-wpcalypso
+.PHONY: build build-development build-server build-dll build-desktop build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
