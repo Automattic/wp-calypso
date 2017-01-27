@@ -44,7 +44,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( SearchStream, {
 				key: 'search',
-				store: store,
+				postsStore: store,
 				query: searchSlug,
 				trackScrollPage: trackScrollPage.bind(
 					null,

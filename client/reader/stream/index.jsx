@@ -106,7 +106,7 @@ function injectRecommendations( posts, recs = [] ) {
 export default class ReaderStream extends React.Component {
 
 	static propTypes = {
-		store: PropTypes.object.isRequired,
+		postsStore: PropTypes.object.isRequired,
 		recommendationsStore: PropTypes.object,
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
@@ -134,7 +134,7 @@ export default class ReaderStream extends React.Component {
 		showMobileBackToSidebar: true
 	};
 
-	getStateFromStores( store = this.props.store, recommendationsStore = this.props.recommendationsStore ) {
+	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
 		const posts = store.get();
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
@@ -172,7 +172,7 @@ export default class ReaderStream extends React.Component {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				showSelectedPost( {
-					store: this.props.store,
+					store: this.props.postsStore,
 					replaceHistory: true,
 				} );
 			}
@@ -218,7 +218,7 @@ export default class ReaderStream extends React.Component {
 	}
 
 	componentDidMount() {
-		this.props.store.on( 'change', this.updateState );
+		this.props.postsStore.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
@@ -233,7 +233,7 @@ export default class ReaderStream extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.store.off( 'change', this.updateState );
+		this.props.postsStore.off( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
 
 		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
@@ -248,28 +248,28 @@ export default class ReaderStream extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.store !== this.props.store ) {
-			this.props.store.off( 'change', this.updateState );
+		if ( nextProps.postsStore !== this.props.postsStore ) {
+			this.props.postsStore.off( 'change', this.updateState );
 			this.props.recommendationsStore && this.props.recommendationsStore.off( 'change', this.updateState );
 
-			nextProps.store.on( 'change', this.updateState );
+			nextProps.postsStore.on( 'change', this.updateState );
 			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
 
-			this.updateState( nextProps.store, nextProps.recommendationsStore );
+			this.updateState( nextProps.postsStore, nextProps.recommendationsStore );
 			this._list && this._list.reset();
 		}
 	}
 
 	handleOpenSelection = () => {
 		showSelectedPost( {
-			store: this.props.store,
+			store: this.props.postsStore,
 			selectedGap: this._selectedGap,
-			postKey: this.props.store.getSelectedPost()
+			postKey: this.props.postsStore.getSelectedPost()
 		} );
 	}
 
 	toggleLikeOnSelectedPost = () => {
-		const postKey = this.props.store.getSelectedPost();
+		const postKey = this.props.postsStore.getSelectedPost();
 		let post;
 
 		if ( postKey && ! postKey.isGap ) {
@@ -308,7 +308,7 @@ export default class ReaderStream extends React.Component {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
-			FeedStreamStoreActions.selectItem( this.props.store.id, 0 );
+			FeedStreamStoreActions.selectItem( this.props.postsStore.id, 0 );
 		}
 	}
 
@@ -347,9 +347,9 @@ export default class ReaderStream extends React.Component {
 			// Use lastIndexOf to walk the array from right to left
 			const indexInPosts = lastIndexOf( posts, items[ index ], index );
 			if ( indexInPosts === this.state.selectedIndex ) {
-				FeedStreamStoreActions.selectNextItem( this.props.store.id );
+				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.store.id, indexInPosts );
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, indexInPosts );
 			}
 		}
 	}
@@ -359,23 +359,23 @@ export default class ReaderStream extends React.Component {
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
 		if ( this.state.selectedIndex > 0 ) {
-			FeedStreamStoreActions.selectPrevItem( this.props.store.id );
+			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
 		}
 	}
 
 	fetchNextPage = ( options ) => {
-		if ( this.props.store.isLastPage() || this.props.store.isFetchingNextPage() ) {
+		if ( this.props.postsStore.isLastPage() || this.props.postsStore.isFetchingNextPage() ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
-			this.props.trackScrollPage( this.props.store.getPage() + 1 );
+			this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
-		FeedStreamStoreActions.fetchNextPage( this.props.store.id );
+		FeedStreamStoreActions.fetchNextPage( this.props.postsStore.id );
 	}
 
 	showUpdates = () => {
 		this.props.onUpdatesShown();
-		FeedStreamStoreActions.showUpdates( this.props.store.id );
+		FeedStreamStoreActions.showUpdates( this.props.postsStore.id );
 		if ( this.props.recommendationsStore ) {
 			FeedStreamStoreActions.shufflePosts( this.props.recommendationsStore.id );
 		}
@@ -385,7 +385,7 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderLoadingPlaceholders = () => {
-		const count = this.state.posts.length ? 2 : this.props.store.getPerPage();
+		const count = this.state.posts.length ? 2 : this.props.postsStore.getPerPage();
 
 		return times( count, ( i ) => {
 			if ( this.props.placeholderFactory ) {
@@ -400,7 +400,7 @@ export default class ReaderStream extends React.Component {
 	}
 
 	renderPost = ( postKey, index ) => {
-		const selectedPostKey = this.props.store.getSelectedPost();
+		const selectedPostKey = this.props.postsStore.getSelectedPost();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			(
@@ -420,7 +420,7 @@ export default class ReaderStream extends React.Component {
 				key={ 'gap-' + postKey.from + '-' + postKey.to }
 				gap={ postKey }
 				selected={ isSelected }
-				store={ this.props.store } />
+				store={ this.props.postsStore } />
 				);
 		}
 
@@ -438,7 +438,7 @@ export default class ReaderStream extends React.Component {
 		const showPost = ( args ) => showSelectedPost( {
 			...args,
 			postKey,
-			store: this.props.store,
+			store: this.props.postsStore,
 			index,
 		} );
 
@@ -448,7 +448,7 @@ export default class ReaderStream extends React.Component {
 			isSelected={ isSelected }
 			handleClick={ showPost }
 			postKey={ postKey }
-			store={ this.props.store }
+			store={ this.props.postsStore }
 			suppressSiteNameLink={ this.props.suppressSiteNameLink }
 			showPostHeader={ this.props.showPostHeader }
 			showFollowInHeader={ this.props.showFollowInHeader }
@@ -460,7 +460,7 @@ export default class ReaderStream extends React.Component {
 	}
 
 	render() {
-		const store = this.props.store,
+		const store = this.props.postsStore,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 );
 		let body, showingStream;
 
@@ -494,7 +494,7 @@ export default class ReaderStream extends React.Component {
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ body }
-				{ showingStream && this.props.store.isLastPage() && this.state.posts.length
+				{ showingStream && store.isLastPage() && this.state.posts.length
 					? <div className="infinite-scroll-end" />
 					: null
 				}

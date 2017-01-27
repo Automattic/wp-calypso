@@ -28,7 +28,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
-				store: likedPostsStore,
+				postsStore: likedPostsStore,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

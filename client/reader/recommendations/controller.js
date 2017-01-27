@@ -89,7 +89,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( RecommendedPostsStream, {
 				key: 'recommendations_posts',
-				store: RecommendedPostsStore,
+				postsStore: RecommendedPostsStore,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
