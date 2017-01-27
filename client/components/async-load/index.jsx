@@ -14,12 +14,19 @@ export default class AsyncLoad extends Component {
 		super( ...arguments );
 
 		this.state = {
+			dirty: false,
 			component: null
 		};
 	}
 
 	componentWillMount() {
 		this.require();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.require !== nextProps.require ) {
+			this.setState( { dirty: true } );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -32,12 +39,12 @@ export default class AsyncLoad extends Component {
 
 	require() {
 		this.props.require( ( component ) => {
-			this.setState( { component } );
+			this.setState( { component, dirty: false } );
 		} );
 	}
 
 	render() {
-		if ( this.state.component ) {
+		if ( this.state.component && ! this.state.dirty ) {
 			const props = omit( this.props, [ 'require', 'placeholder' ] );
 			return <this.state.component { ...props } />;
 		}
