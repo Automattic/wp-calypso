@@ -87,7 +87,9 @@ class StatModuleFollowers extends Component {
 			hasEmailQueryFailed,
 			hasWpcomQueryFailed,
 			translate,
-			numberFormat
+			numberFormat,
+			emailQuery,
+			wpcomQuery
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -114,13 +116,13 @@ class StatModuleFollowers extends Component {
 
 		return (
 			<div>
-				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ { type: 'wpcom', max: 7 } } />
-				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ { type: 'email', max: 7 } } />
+				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } />
+				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
 				<SectionHeader label={ translate( 'Followers' ) } href={ summaryPageLink } />
 				<Card className={ classNames( ...classes ) }>
 					<div className="followers">
 						<div className="module-content">
-							{ noData && ! hasError &&
+							{ noData && ! hasError && ! isLoading &&
 								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
 							}
 
@@ -157,8 +159,8 @@ class StatModuleFollowers extends Component {
 							<StatsModulePlaceholder isLoading={ isLoading } />
 						</div>
 						{ (
-								( wpcomData && wpcomData.subscribers.length !== wpcomData.total_subscribers ) ||
-								( emailData && emailData.subscribers.length !== emailData.total_subscribers )
+								( wpcomData && wpcomData.subscribers.length !== wpcomData.total_wpcom ) ||
+								( emailData && emailData.subscribers.length !== emailData.total_email )
 							) &&
 							<div key="view-all" className="module-expand">
 								<a href={ summaryPageLink }>
@@ -178,8 +180,8 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
-		const emailQuery = { type: 'email', max: 7 };
-		const wpcomQuery = { type: 'wpcom', max: 7 };
+		const emailQuery = { type: 'email', max: 10 };
+		const wpcomQuery = { type: 'wpcom', max: 10 };
 
 		return {
 			requestingEmailFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsFollowers', emailQuery ),
@@ -188,6 +190,8 @@ const connectComponent = connect(
 			requestingWpcomFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsFollowers', wpcomQuery ),
 			wpcomData: getSiteStatsNormalizedData( state, siteId, 'statsFollowers', wpcomQuery ),
 			hasWpcomQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsFollowers', wpcomQuery ),
+			emailQuery,
+			wpcomQuery,
 			siteId,
 			siteSlug
 		};

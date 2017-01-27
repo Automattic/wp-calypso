@@ -21,7 +21,7 @@ import {
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
- * state maps site ID, post ID and stat keys to whether a request status.
+ * state maps site ID, post ID and stat keys to the request stats.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
