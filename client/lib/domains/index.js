@@ -31,7 +31,7 @@ function canAddGoogleApps( domainName ) {
 	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
-function canRegister( domainName, onComplete ) {
+function checkDomainAvailability( domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
@@ -166,7 +166,7 @@ function getTld( domainName ) {
 export {
 	canAddGoogleApps,
 	canRedirect,
-	canRegister,
+	checkDomainAvailability,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,
