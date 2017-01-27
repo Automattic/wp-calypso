@@ -44,7 +44,7 @@ export const cancelPrivateRegistration = purchaseId => dispatch => {
 			type: PRIVACY_PROTECTION_CANCEL_FAILED,
 			purchaseId,
 			error: error.message || i18n.translate(
-				'There was a problem canceling this private registration. ' +
+				'There was a problem canceling this privacy protection. ' +
 				'Please try again later or contact support.'
 			)
 		} );
