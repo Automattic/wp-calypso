@@ -15,6 +15,7 @@ import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 	getSiteStatsCSVData,
+	hasSiteStatsQueryFailed,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -30,7 +31,7 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {}
+						requests: {}
 					}
 				}
 			}, 2916284, 'statsStreak', {} );
@@ -42,10 +43,10 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {
+						requests: {
 							2916284: {
 								statsStreak: {
-									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': false
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false }
 								}
 							}
 						}
@@ -60,10 +61,10 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {
+						requests: {
 							2916284: {
 								statsStreak: {
-									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': true
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: true }
 								}
 							}
 						}
@@ -72,6 +73,56 @@ describe( 'selectors', () => {
 			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
 
 			expect( requesting ).to.be.true;
+		} );
+	} );
+
+	describe( 'hasSiteStatsQueryFailed()', () => {
+		it( 'should return false if no request exists', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {}
+					}
+				}
+			}, 2916284, 'statsStreak', {} );
+
+			expect( hasFailed ).to.be.false;
+		} );
+
+		it( 'should return false if the request status is success', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'success' }
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( hasFailed ).to.be.false;
+		} );
+
+		it( 'should return true if the request status is error', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'error' }
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( hasFailed ).to.be.true;
 		} );
 	} );
 

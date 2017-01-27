@@ -30,27 +30,23 @@ export default React.createClass( {
 	propTypes: {
 		commentFollowersList: PropTypes.object.isRequired,
 		commentsList: PropTypes.object.isRequired,
-		emailFollowersList: PropTypes.object.isRequired,
 		followList: PropTypes.object.isRequired,
 		site: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
 		] ),
 		summaryDate: PropTypes.string,
-		wpcomFollowersList: PropTypes.object
 	},
 
 	render() {
 		const {
 			commentFollowersList,
 			commentsList,
-			emailFollowersList,
 			followList,
 			site,
-			wpcomFollowersList } = this.props;
+		} = this.props;
 
 		const moduleStrings = statsStrings();
-
 
 		let momentSiteZone = i18n.moment();
 
@@ -107,8 +103,6 @@ export default React.createClass( {
 								<Followers
 									path={ 'followers' }
 									site={ site }
-									wpcomFollowersList={ wpcomFollowersList }
-									emailFollowersList={ emailFollowersList }
 									followList={ followList } />
 								<StatsConnectedModule
 									path="publicize"
