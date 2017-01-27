@@ -207,6 +207,51 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsCommentFollowers()', () => {
+			it( 'should return null if no data is provided', () => {
+				const parsedData = normalizers.statsCommentFollowers();
+				expect( parsedData ).to.be.null;
+			} );
+
+			it( 'should properly parse followers response', () => {
+				const parsedData = normalizers.statsCommentFollowers( {
+					page: 1,
+					pages: 1,
+					total: 1,
+					posts: [
+						{
+							id: 0,
+							followers: 20
+						},
+						{
+							id: 1111,
+							title: 'My title',
+							followers: 10,
+							url: 'https://en.blog.wordpress.com/chicken'
+						}
+					]
+				} );
+
+				expect( parsedData ).to.eql( {
+					page: 1,
+					pages: 1,
+					total: 1,
+					posts: [
+						{
+							label: 'All Posts',
+							value: 20
+						},
+						{
+							label: 'My title',
+							labelIcon: 'external',
+							link: 'https://en.blog.wordpress.com/chicken',
+							value: 10
+						}
+					]
+				} );
+			} );
+		} );
+
 		describe( 'statsTopPosts()', () => {
 			it( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsTopPosts();
