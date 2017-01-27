@@ -10,6 +10,52 @@ const SearchCard = require( 'components/search-card' ),
 
 const minSearchLength = 8; // includes protocol
 
+import { connect } from 'react-redux';
+import QueryFeedSearch from 'components/data/query-reader-feeds-search';
+import { getFeedsForQuery } from 'state/reader/feed-search/selectors';
+
+import Title from 'reader/list-item/title';
+import ListItem from 'reader/list-item';
+import Actions from 'reader/list-item/actions';
+import FollowButton from 'blocks/follow-button/button';
+import Description from 'reader/list-item/description';
+import Icon from 'reader/list-item/icon';
+import SiteIcon from 'components/site-icon';
+
+function FeedSearchResults( { feeds, } ) {
+	if ( ! feeds ) {
+		return null;
+	}
+
+	const handleFollow = feed => () => FeedSubscriptionActions.follow( feed.URL, true );
+
+	const feedItems = feeds.map(
+		feed => (
+			<ListItem className={ 'is-search-result' } key={ feed.URL + feed.score }>
+				<Icon><SiteIcon size={ 48 } /></Icon>
+				<Title>{ feed.URL }</Title>
+				<Description>{ feed.title }</Description>
+				<Actions>
+					<FollowButton disabled={ false } following={ false } onFollowToggle={ handleFollow( feed ) } />
+				</Actions>
+			</ListItem>
+		)
+	);
+
+	return ( <ul>
+		{ feedItems }
+	</ul> );
+}
+
+const ConnectedFeedSearchResults = connect(
+	( state, ownProps ) => (
+		{
+			feeds: getFeedsForQuery( state, ownProps.query )
+		}
+	),
+	null,
+)( FeedSearchResults );
+
 var FollowingEditSubscribeForm = React.createClass( {
 
 	propTypes: {
@@ -123,6 +169,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 			isWellFormedFeedUrl = this.state.isWellFormedFeedUrl,
 			showSearchResult = ( searchString && searchString.length > minSearchLength );
 
+		const feedQuery = searchString.substring( 6 );
 		// Activate the follow button if the URL looks reasonable
 		if ( isWellFormedFeedUrl ) {
 			handleFollowToggle = this.handleFollowToggle;
@@ -138,13 +185,14 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		return (
 			<div className="following-edit__subscribe-form">
+				<QueryFeedSearch query={ feedQuery } />
 				<SearchCard
 					isOpen={ this.props.isSearchOpen }
 					autoFocus={ true }
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
-					placeholder={ this.translate( 'Enter a site URL to follow', { context: 'field placeholder' } ) }
+					placeholder={ this.translate( 'Enter a search or site URL to follow', { context: 'field placeholder' } ) }
 					delaySearch={ false }
 					ref="followingEditSubscriptionSearch"
 					onKeyDown={ this.handleKeyDown }
@@ -152,6 +200,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 					initialValue={ this.props.initialSearchString }
 				/>
 				{ searchResult }
+				<ConnectedFeedSearchResults query={ feedQuery } />
 			</div>
 		);
 	}

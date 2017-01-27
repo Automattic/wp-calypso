@@ -16,6 +16,7 @@ import relatedPosts from './related-posts/reducer';
 import siteBlocks from './site-blocks/reducer';
 import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
+import feedSearch from './feed-search/reducer';
 
 export default combineReducers( {
 	feeds,
@@ -28,4 +29,5 @@ export default combineReducers( {
 	siteBlocks,
 	tags,
 	thumbnails,
+	feedSearch,
 } );

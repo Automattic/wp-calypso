@@ -34,7 +34,7 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-const stats = require( 'reader/stats' );
+import * as stats from 'reader/stats';
 
 const initialLoadFeedCount = 20;
 
@@ -569,7 +569,7 @@ const FollowingEdit = React.createClass( {
 					ref="url-search" /> : null }
 
 				{ this.state.isAttemptingFollow && ! this.state.lastError ? <SubscriptionPlaceholder key={ 'placeholder-add-feed' } /> : null }
-				{ subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
+				{ false && subscriptionsToDisplay.length === 0 && this.props.search && ! this.state.isLoading
 					? <NoResults text={ this.translate( 'No subscriptions match that search.' ) } />
 					: <InfiniteList className="following-edit__sites"
 						items={ subscriptionsToDisplay }
