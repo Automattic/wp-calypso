@@ -157,10 +157,45 @@ const ManagePurchase = React.createClass( {
 		);
 	},
 
+	getExpiringText( purchase ) {
+		if ( purchase.expiryStatus === 'manualRenew' ) {
+			return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+				'Please, add a credit card if you want it to autorenew. ',
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: this.moment( purchase.expiryMoment ).fromNow()
+					}
+				}
+			);
+		}
+		if ( isMonthly( purchase.productSlug ) ) {
+			const expiryMoment = this.moment( purchase.expiryMoment );
+			const daysToExpiry = this.moment( expiryMoment.diff( this.moment() ) ).format( 'D' );
+
+			return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: daysToExpiry
+					}
+				}
+			);
+		}
+
+		return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
+			{
+				args: {
+					purchaseName: getName( purchase ),
+					expiry: this.moment( purchase.expiryMoment ).fromNow()
+				}
+			}
+		);
+	},
+
 	renderPurchaseExpiringNotice() {
 		const purchase = getPurchase( this.props );
 		let noticeStatus = 'is-info';
-
 		if ( ! isExpiring( purchase ) ) {
 			return null;
 		}
@@ -174,14 +209,7 @@ const ManagePurchase = React.createClass( {
 				className="manage-purchase__purchase-expiring-notice"
 				showDismiss={ false }
 				status={ noticeStatus }
-				text={ this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
-					{
-						args: {
-							purchaseName: getName( purchase ),
-							expiry: this.moment( purchase.expiryMoment ).fromNow()
-						}
-					}
-				) }>
+				text={ this.getExpiringText( purchase ) }>
 				{ this.renderRenewNoticeAction() }
 			</Notice>
 		);
