@@ -75,12 +75,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 
 		updateDirtyFields() {
-			const unpersistedFields = this.props.fields;
+			const currentFields = this.props.fields;
 			const persistedFields = getFormSettings( this.props.settings );
 
-			// Compute the dirty fields by comparing the persisted and not persisted fields
+			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
-			const nextDirtyFields = previousDirtyFields.filter( field => unpersistedFields[ field ] !== persistedFields[ field ] );
+			const nextDirtyFields = previousDirtyFields.filter( field => ! isEqual( currentFields[ field ], persistedFields[ field ] ) );
 
 			// Update the dirty fields state without updating their values
 			if ( nextDirtyFields.length === 0 ) {
@@ -89,7 +89,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				this.props.markChanged();
 			}
 			this.props.clearDirtyFields();
-			this.props.updateFields( pick( unpersistedFields, nextDirtyFields ) );
+			this.props.updateFields( pick( currentFields, nextDirtyFields ) );
 
 			// Set the new non dirty fields
 			const nextNonDirtyFields = omit( persistedFields, nextDirtyFields );
