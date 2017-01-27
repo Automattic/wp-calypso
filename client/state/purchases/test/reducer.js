@@ -140,7 +140,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with original purchase and error message when cancelation of private registration failed', () => {
+	it( 'should return an object with original purchase and error message when cancelation of privacy protection failed', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
@@ -181,7 +181,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	it( 'should return an object with updated purchase when cancelation of private registration completed', () => {
+	it( 'should return an object with updated purchase when cancelation of privacy protection completed', () => {
 		let state = {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },

@@ -90,7 +90,7 @@ const CancelPrivateRegistration = React.createClass( {
 		this.props.cancelPrivateRegistration( id ).then( () => {
 			this.resetState();
 
-			notices.success( this.translate( 'You have successfully canceled private registration for %(domain)s.', {
+			notices.success( this.translate( 'You have successfully canceled privacy protection for %(domain)s.', {
 				args: { domain }
 			} ), { persistent: true } );
 
@@ -111,7 +111,7 @@ const CancelPrivateRegistration = React.createClass( {
 			<p>
 				{
 					this.translate(
-						'You are about to cancel the privacy upgrade for {{strong}}%(domain)s{{/strong}}. ' +
+						'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
 						'{{br/}}' +
 						'This will make your personal details public.',
 						{
@@ -147,7 +147,7 @@ const CancelPrivateRegistration = React.createClass( {
 				{
 					this.state.cancelling
 						? this.translate( 'Processing…' )
-						: this.translate( 'Cancel Private Registration' ) }
+						: this.translate( 'Cancel Privacy Protection' ) }
 			</Button>
 		);
 	},

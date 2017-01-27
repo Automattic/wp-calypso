@@ -105,7 +105,7 @@ export default {
 
 		recordPurchasesPageView(
 			paths.cancelPrivateRegistration(),
-			'Cancel Private Registration'
+			'Cancel Privacy Protection'
 		);
 
 		setSelectedSite( context.params.site, context.store.dispatch );
