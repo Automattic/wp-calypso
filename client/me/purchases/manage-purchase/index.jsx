@@ -19,7 +19,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	getName,
 	hasPaymentMethod,
-	hasPrivateRegistration,
+	hasPrivacyProtection,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -275,7 +275,7 @@ const ManagePurchase = React.createClass( {
 			{ product_slug: purchase.productSlug }
 		);
 
-		if ( hasPrivateRegistration( purchase ) ) {
+		if ( hasPrivacyProtection( purchase ) ) {
 			const privacyItem = cartItems.getRenewalItemFromCartItem( cartItems.domainPrivacyProtection( {
 				domain: purchase.meta
 			} ), {
@@ -590,7 +590,7 @@ const ManagePurchase = React.createClass( {
 		const purchase = getPurchase( this.props ),
 			{ id } = purchase;
 
-		if ( isExpired( purchase ) || ! hasPrivateRegistration( purchase ) || ! getSelectedSite( this.props ) ) {
+		if ( isExpired( purchase ) || ! hasPrivacyProtection( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;
 		}
 
