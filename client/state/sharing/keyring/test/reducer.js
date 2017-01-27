@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -136,6 +137,23 @@ describe( 'reducers', () => {
 
 			expect( state ).to.eql( {
 				1: { ID: 1, sites: [ '2916284' ] },
+			} );
+		} );
+
+		it( 'should remove deleted connection', () => {
+			const state = items( deepFreeze( {
+				1: { ID: 1, site_ID: 2916284 },
+				2: { ID: 2, site_ID: 2916284 },
+			} ), {
+				type: KEYRING_CONNECTION_DELETE,
+				connection: {
+					ID: 2,
+					site_ID: 2916284,
+				},
+			} );
+
+			expect( state ).to.eql( {
+				1: { ID: 1, site_ID: 2916284 },
 			} );
 		} );
 

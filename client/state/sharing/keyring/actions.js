@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -36,3 +37,14 @@ export function requestKeyringConnections() {
 			} ) );
 	};
 }
+
+/**
+ * Triggers an action to delete a Keyring connection.
+ *
+ * @param  {Object}   connection Keyring connection to be removed.
+ * @return {Function}            Action thunk
+ */
+export const deleteKeyringConnection = ( connection ) => ( dispatch ) => dispatch( {
+	type: KEYRING_CONNECTION_DELETE,
+	connection,
+} );
