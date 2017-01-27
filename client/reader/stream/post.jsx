@@ -27,7 +27,7 @@ class ReaderPostCardAdapter extends React.Component {
 
 	onClick = ( postToOpen ) => {
 		let referredPost;
-		if ( this.props.originalPost && isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
+		if ( this.props.discoverPick && isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
 			referredPost = { ...postToOpen,
 				referral: {
 					blogId: discoverBlogId,
@@ -65,7 +65,7 @@ class ReaderPostCardAdapter extends React.Component {
 		return (
 			<ReaderPostCard
 				post={ this.props.post }
-				originalPost={ this.props.originalPost }
+				discoverPick={ this.props.discoverPick }
 				site={ this.props.site }
 				feed={ this.props.feed }
 				onClick={ this.onClick }
@@ -89,7 +89,7 @@ const ConnectedReaderPostCardAdapter = connect(
 		return {
 			site: isExternal ? null : getSite( state, siteId ),
 			feed: getFeed( state, feedId ),
-			originalPost: ownProps.originalPost
+			discoverPick: ownProps.discoverPick
 		};
 	}
 )( ReaderPostCardAdapter );
@@ -109,10 +109,10 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 		const nonSiteDiscoverPick = isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 
 		// If it's a discover post (but not a site pick), we want the original post too
-		const originalPost = nonSiteDiscoverPick ? FeedPostStore.get( getDiscoverSourceData( post ) ) : null;
+		const discoverPick = nonSiteDiscoverPick ? FeedPostStore.get( getDiscoverSourceData( post ) ) : null;
 
 		return {
-			originalPost
+			discoverPick
 		};
 	}
 
@@ -135,6 +135,6 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 	render() {
 		return ( <ConnectedReaderPostCardAdapter
 					{ ...this.props }
-					originalPost={ this.state.originalPost } /> );
+					discoverPick={ this.state.discoverPick } /> );
 	}
 }

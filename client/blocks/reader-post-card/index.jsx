@@ -36,7 +36,7 @@ export default class ReaderPostCard extends React.Component {
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
-		originalPost: PropTypes.object, // used for Discover only
+		discoverPick: PropTypes.object,
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
 	};
@@ -50,7 +50,7 @@ export default class ReaderPostCard extends React.Component {
 	propagateCardClick = () => {
 		// If we have an original post available (e.g. for a Discover pick), send the original post
 		// to the full post view
-		const postToOpen = this.props.originalPost ? this.props.originalPost : this.props.post;
+		const postToOpen = this.props.discoverPick ? this.props.discoverPick : this.props.post;
 		this.props.onClick( postToOpen );
 	}
 
@@ -97,7 +97,7 @@ export default class ReaderPostCard extends React.Component {
 	render() {
 		const {
 			post,
-			originalPost,
+			discoverPick,
 			site,
 			feed,
 			onCommentClick,
@@ -128,7 +128,7 @@ export default class ReaderPostCard extends React.Component {
 		}
 
 		const readerPostActions = <ReaderPostActions
-			post={ originalPost ? originalPost : post }
+			post={ discoverPick ? discoverPick : post }
 			site={ site }
 			visitUrl = { post.URL }
 			showVisit={ true }
