@@ -12,9 +12,10 @@ const uid = ( function() {
 
 export function parse( postContent ) {
 	try {
-		return pegParser( postContent ).map( ( block ) => ( {
-			...block, id: uid()
-		} ) );
+		return pegParser( postContent ).map( ( block ) => {
+			const id = uid();
+			return { ...block, id, key: `block-${ id }` };
+		} );
 	} catch ( e ) {
 		return false;
 	}
