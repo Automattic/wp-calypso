@@ -2,26 +2,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import debugFactory from 'debug';
-import classNames from 'classnames';
-import enhanceWithClickOutside from 'react-click-outside';
 
-import Gridicon from 'components/gridicon';
-import Animate from 'components/animate';
-
-const debug = debugFactory( 'calypso:block-editor:generic' );
+/**
+ * Internal dependencies
+ */
+import enhanceWithArrowControls from '../../lib/hoc-arrow-controls';
 
 class GenericBlock extends Component {
 	static blockStyle = {
 		margin: '8px 0',
 		padding: '12px',
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = { selected: false };
-		this.onBlockSelect = this.onBlockSelect.bind( this );
-	}
 
 	// fake impl
 	innerText() {
@@ -37,49 +28,9 @@ class GenericBlock extends Component {
 		} } />;
 	}
 
-	onBlockSelect() {
-		this.setState( {
-			selected: ! this.state.selected
-		} );
-	}
-
-	handleClickOutside() {
-		this.setState( { selected: false } );
-	}
-
-	moveUp = () => {
-		this.props.dispatch( {
-			type: 'moveUp',
-			id: this.props.id,
-		} );
-	}
-
-	moveDown = () => {
-		this.props.dispatch( {
-			type: 'moveDown',
-			id: this.props.id,
-		} );
-	}
-
 	render() {
-		const classes = classNames( 'block', {
-			'is-selected': this.state.selected
-		} );
-		debug( 'block', this.props );
-		return (
-			<div className={ classes } style={ GenericBlock.blockStyle } onClick={ this.onBlockSelect }>
-				{ this.innerText() }
-				{ this.state.selected &&
-					<div className="block__controls">
-						<Animate type="appear">
-							<Gridicon icon="chevron-up" onClick={ this.moveUp } />
-							<Gridicon icon="chevron-down" onClick={ this.moveDown } />
-						</Animate>
-					</div>
-				}
-			</div>
-		);
+		return this.innerText();
 	}
 }
 
-export default enhanceWithClickOutside( GenericBlock );
+export default enhanceWithArrowControls( GenericBlock );

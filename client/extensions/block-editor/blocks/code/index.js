@@ -6,15 +6,20 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import enhanceWithArrowControls from '../../lib/hoc-arrow-controls';
 import { findText } from '../../lib/util';
 
-export default class CodeBlock extends Component {
+class CodeBlock extends Component {
 	static blockStyle = {
+		margin: '8px 0',
+		padding: '12px',
+	};
+
+	static innerStyle = {
 		background: '#f3f6f8',
-		border: '1px dashed black',
+		border: 'none',
+		boxShadow: 'none',
 		fontFamily: 'monospace',
-		margin: '0.2em',
-		padding: '0.3em',
 	};
 
 	state = { content: findText( this.props ) };
@@ -42,9 +47,11 @@ export default class CodeBlock extends Component {
 
 	render() {
 		return (
-			<textarea style={ CodeBlock.blockStyle }
+			<textarea style={ CodeBlock.innerStyle }
 				onChange={ this.setContent }
 				value={ this.state.content } />
 		);
 	}
 }
+
+export default enhanceWithArrowControls( CodeBlock );
