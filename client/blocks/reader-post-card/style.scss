@@ -61,10 +61,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			flex-grow: 1;
 			margin-right: 20px;
 			max-width: 190px;
+			min-height: 85px;
 			cursor: pointer;
 
 			@include breakpoint( ">960px" ) {
 				max-width: 250px;
+				min-height: 120px;
 			}
 
 			@media #{$reader-post-card-breakpoint-medium} {
