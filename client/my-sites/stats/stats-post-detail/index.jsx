@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +25,10 @@ import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Button from 'components/button';
+import WebPreview from 'components/web-preview';
+import Gridicon from 'components/gridicon';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
 
 class StatsPostDetail extends Component {
@@ -37,7 +41,12 @@ class StatsPostDetail extends Component {
 		isRequestingPost: PropTypes.bool,
 		isRequestingStats: PropTypes.bool,
 		countViews: PropTypes.number,
-		port: PropTypes.object,
+		post: PropTypes.object,
+		siteSlug: PropTypes.string,
+	};
+
+	state = {
+		showPreview: false
 	};
 
 	goBack = () => {
@@ -51,10 +60,24 @@ class StatsPostDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	openPreview = () => {
+		this.setState( {
+			showPreview: true
+		} );
+	}
+
+	closePreview = () => {
+		this.setState( {
+			showPreview: false
+		} );
+	}
+
 	render() {
-		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate } = this.props;
+		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate, siteSlug } = this.props;
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
+		const postUrl = get( post, 'URL' );
+
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
@@ -116,6 +139,44 @@ class StatsPostDetail extends Component {
 						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				}
+
+				<PostSummary siteId={ this.props.siteId } postId={ this.props.postId } />
+
+				{ !! this.props.postId && <PostLikes siteId={ this.props.siteId } postId={ this.props.postId } /> }
+
+				<PostMonths
+					dataKey="years"
+					title={ this.props.translate( 'Months and Years' ) }
+					total={ this.props.translate( 'Total' ) }
+					siteId={ this.props.siteId }
+					postId={ this.props.postId }
+				/>
+
+				<PostMonths
+					dataKey="averages"
+					title={ this.props.translate( 'Average per Day' ) }
+					total={ this.props.translate( 'Overall' ) }
+					siteId={ this.props.siteId }
+					postId={ this.props.postId }
+				/>
+
+				<PostWeeks siteId={ this.props.siteId } postId={ this.props.postId } />
+				<div className="stats-post-detail__footer">
+					<Button borderless compact onClick={ this.openPreview }>
+						<Gridicon icon="external" /> { translate( 'View Post' ) }
+					</Button>
+					<Button borderless compact href={ `/post/${ siteSlug }/${ postId }` }>
+						<Gridicon icon="pencil" /> { translate( 'Edit Post' ) }
+					</Button>
+				</div>
+				<WebPreview
+					showPreview={ this.state.showPreview }
+					defaultViewportDevice="tablet"
+					previewUrl={ postUrl }
+					externalUrl={ postUrl }
+					onClose={ this.closePreview }
+					loadingMessage="Beep beep boop…"
+				/>
 			</Main>
 		);
 	}
@@ -130,6 +191,7 @@ const connectComponent = connect(
 			isRequestingPost: isRequestingSitePost( state, siteId, postId ),
 			countViews: getPostStat( state, siteId, postId, 'views' ),
 			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
+			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
 		};
 	}
