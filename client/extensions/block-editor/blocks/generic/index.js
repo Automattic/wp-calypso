@@ -47,6 +47,20 @@ class GenericBlock extends Component {
 		this.setState( { selected: false } );
 	}
 
+	moveUp = () => {
+		this.props.dispatch( {
+			type: 'moveUp',
+			id: this.props.id,
+		} );
+	}
+
+	moveDown = () => {
+		this.props.dispatch( {
+			type: 'moveDown',
+			id: this.props.id,
+		} );
+	}
+
 	render() {
 		const classes = classNames( 'block', {
 			'is-selected': this.state.selected
@@ -58,8 +72,8 @@ class GenericBlock extends Component {
 				{ this.state.selected &&
 					<div className="block__controls">
 						<Animate type="appear">
-							<Gridicon icon="chevron-up" />
-							<Gridicon icon="chevron-down" />
+							<Gridicon icon="chevron-up" onClick={ this.moveUp } />
+							<Gridicon icon="chevron-down" onClick={ this.moveDown } />
 						</Animate>
 					</div>
 				}

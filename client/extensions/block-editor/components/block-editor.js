@@ -12,8 +12,8 @@ import { map } from 'lodash';
  */
 import Notice from 'components/notice';
 import { dummyPost } from '../fixtures';
-import { tryOr } from '../lib/util';
-import { parse } from '../lib/post-parser';
+import { parse, parseOne } from '../lib/post-parser';
+import { reducer } from '../lib/editor-state';
 import { renderBlock } from '../blocks';
 
 const debug = debugFactory( 'calypso:block-editor:block-editor' );
@@ -27,14 +27,19 @@ export default class BlockEditor extends Component {
 
 	constructor() {
 		super();
-		const blocks = tryOr( () => parse( dummyPost ), false );
+		const blocks = parse( dummyPost );
 		const rawBlocks = map( blocks, 'rawContent' );
 		this.state = { blocks, rawBlocks };
 	}
 
+	/*
+	 * Manually set `post_content`. This triggers a full new parse to rewrite
+	 * blocks state. To be used when interacting directly with the raw
+	 * `post_content`, similarly to TinyMCE's HTML mode.
+	 */
 	setContent = ( e ) => {
 		const value = e.target.value;
-		const blocks = tryOr( () => parse( value ), false );
+		const blocks = parse( value );
 		const rawBlocks = map( blocks, 'rawContent' );
 		this.setState( {
 			blocks,
@@ -44,22 +49,37 @@ export default class BlockEditor extends Component {
 		} );
 	}
 
-	handleBlock = ( block, i ) => {
-		const update = ( serialized ) => {
-			debug( 'update', serialized );
-			const newRawBlocks = [ ...this.state.rawBlocks ];
-			newRawBlocks[ i ] = serialized;
-			const fakeEvent = { target: { value: newRawBlocks.join( '\n' ) } };
-			this.setContent( fakeEvent );
-		};
+	/*
+	 * Commit changes to the blocks array. This triggers partial parses of
+	 * blocks marked as dirty. This is the preferred method to update data.
+	 */
+	commit( blocks ) {
+		const newBlocks = blocks.map( ( block ) => (
+			block.isDirty
+				? parseOne( block.rawContent )
+				: block
+		) );
 
-		return renderBlock( { ...block, update } );
+		this.setState( {
+			blocks: newBlocks,
+			rawBlocks: map( newBlocks, 'rawContent' ),
+			// failsafe for rendering in case parsing fails
+			postContent: ! newBlocks && map( blocks, 'rawContent' ).join( '\n' ),
+		} );
+	}
+
+	dispatch = ( action ) => {
+		debug( 'dispatch', action );
+		const blocks = reducer( this.state.blocks, action );
+		this.commit( blocks );
+	}
+
+	handleBlock = ( block ) => {
+		return renderBlock( { ...block, dispatch: this.dispatch } );
 	}
 
 	render() {
 		const { blocks, postContent, rawBlocks } = this.state;
-
-		debug( 'blocks', blocks );
 
 		return (
 			<div>

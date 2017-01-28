@@ -2,14 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { findText } from '../../lib/util';
-
-const debug = debugFactory( 'calypso:block-editor:code' );
 
 export default class CodeBlock extends Component {
 	static blockStyle = {
@@ -24,12 +21,12 @@ export default class CodeBlock extends Component {
 
 	setContent = ( e ) => {
 		this.setState( { content: e.target.value }, () => {
-			this.props.update( this.serialize() );
+			this.props.dispatch( {
+				type: 'update',
+				id: this.props.id,
+				serialized: this.serialize()
+			} );
 		} );
-	}
-
-	componentDidUpdate() {
-		debug( 'CodeBlock', this.serialize() );
 	}
 
 	componentWillReceiveProps( nextProps ) {
