@@ -18,15 +18,15 @@ function enhanceWithArrowControls( WrappedComponent ) {
 	return class extends Component {
 		static displayName = `Wrapped${ componentName }`;
 
-		state = { selected: false };
+		state = { isSelected: false };
 
 		handleClickOutside() {
-			this.setState( { selected: false } );
+			this.setState( { isSelected: false } );
 		}
 
 		onBlockSelect = () => {
 			this.setState( {
-				selected: ! this.state.selected
+				isSelected: ! this.state.isSelected
 			} );
 		}
 
@@ -45,8 +45,10 @@ function enhanceWithArrowControls( WrappedComponent ) {
 		}
 
 		render() {
+			const { isSelected } = this.state;
+
 			const classes = classNames( 'block', {
-				'is-selected': this.state.selected
+				'is-selected': isSelected
 			} );
 
 			return (
@@ -54,8 +56,8 @@ function enhanceWithArrowControls( WrappedComponent ) {
 					style={ WrappedComponent.blockStyle }
 					onClick={ this.onBlockSelect }
 				>
-					<WrappedComponent { ...this.props } />
-					{ this.state.selected &&
+					<WrappedComponent { ...{ ...this.props, isSelected } } />
+					{ isSelected &&
 						<div className="block__controls">
 							<Animate type="appear">
 								<Gridicon icon="chevron-up" onClick={ this.moveUp } />

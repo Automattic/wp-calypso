@@ -29,7 +29,7 @@ class CodeBlock extends Component {
 			this.props.dispatch( {
 				type: 'update',
 				id: this.props.id,
-				serialized: this.serialize()
+				serialized: this.serialize(),
 			} );
 		} );
 	}

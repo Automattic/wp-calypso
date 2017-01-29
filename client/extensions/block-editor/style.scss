@@ -42,3 +42,20 @@ body {
 		flex-direction: column;
 	}
 }
+
+.mce-container.mce-tinymce.is-pinned > .mce-container-body > .mce-toolbar-grp,
+.mce-container.mce-tinymce.is-pinned > .mce-container-body:after {
+	position: static;
+}
+
+.mce-container.mce-tinymce {
+	padding: 0;
+}
+
+.mce-container.mce-tinymce.is-pinned > .mce-container-body > .mce-toolbar-grp, .mce-container.mce-tinymce.is-pinned > .mce-container-body:after {
+	display: none;
+}
+
+.mce-tinymce.mce-container.mce-panel.is-pinned {
+	padding: 0;
+}
