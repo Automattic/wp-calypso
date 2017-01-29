@@ -56,7 +56,7 @@ export default class BlockEditor extends Component {
 	commit( blocks ) {
 		const newBlocks = blocks.map( ( block ) => (
 			block.isDirty
-				? parseOne( block.rawContent )
+				? parseOne( block.rawContent, block.id )
 				: block
 		) );
 
