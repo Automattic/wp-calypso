@@ -2,9 +2,8 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
-import ReactDom, { unmountComponentAtNode } from 'react-dom';
 import { spy } from 'sinon';
 
 /**
@@ -26,42 +25,27 @@ describe( 'CloseOnEscape', () => {
 	} );
 
 	describe( 'escape keydown event', () => {
-		let onEscapeSpy;
-		let nodes;
-
 		useFakeDom();
 
-		before( () => {
-			onEscapeSpy = spy();
-			nodes = {
-				first: document.createElement( 'div' ),
-				second: document.createElement( 'div' ),
-			};
-		} );
-
-		afterEach( () => {
-			ReactDom.unmountComponentAtNode( nodes.first );
-			ReactDom.unmountComponentAtNode( nodes.second );
-		} );
-
 		it( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
-			ReactDom.render(
+			const onEscapeSpy = spy();
+
+			const wrapper1 = mount(
 				<CloseOnEscape
 					onEscape={ function() {
 						onEscapeSpy( 1 );
-						unmountComponentAtNode( nodes.first );
+						wrapper1.unmount();
 					} }
-				/>,
-				nodes.first
+				/>
 			);
-			ReactDom.render(
+
+			const wrapper2 = mount(
 				<CloseOnEscape
 					onEscape={ function() {
 						onEscapeSpy( 2 );
-						unmountComponentAtNode( nodes.second );
+						wrapper2.unmount();
 					} }
-				/>,
-				nodes.second
+				/>
 			);
 
 			simulateEscapeKeydown();
