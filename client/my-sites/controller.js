@@ -29,7 +29,7 @@ import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSelectedSiteDomainOnlySite from 'state/selectors/is-selected-site-domain-only-site';
 import { domainManagementList } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
 
@@ -166,10 +166,6 @@ function setRecentSitesPreferenceInReduxStore( { reactContext: { store: reduxSto
 	}
 }
 
-function isSelectedSiteDomainOnlySite( { reactContext: { store: reduxStore }, selectedSite } ) {
-	return isDomainOnlySite( reduxStore.getState(), selectedSite.ID );
-}
-
 /**
  * Returns the site-picker react element.
  *
@@ -292,8 +288,8 @@ module.exports = {
 
 				feedReduxStoreWithSelectedSite( selectionContext );
 
-				if ( isSelectedSiteDomainOnlySite( selectionContext ) && ! isPathAllowedForDomainOnlySite( selectionContext ) ) {
-					return renderSelectedSiteIsDomainOnly( selectionContext );
+				if ( isSelectedSiteDomainOnlySite( context.store.getState() ) && ! isPathAllowedForDomainOnlySite( selectionContext ) ) {
+					return renderSelectedSiteIsDomainOnly( selectionContext )
 				}
 
 				setRecentSitesPreferenceInReduxStore( selectionContext );
