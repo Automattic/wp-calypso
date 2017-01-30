@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
+import moment from 'moment';
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -74,20 +75,30 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					),
 					i18n.translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-						'minus %(domainCost)s for the domain. To cancel the domain with the plan and ask for a full ' +
-						'refund, please {{contactLink}}contact support{{/contactLink}}.',
+						'minus %(domainCost)s for the domain.',
 						{
 							args: {
 								domainCost: includedDomainPurchase.priceText,
 								planCost: purchase.priceText,
 								refundAmount: purchase.refundText
-							},
-							components: {
-								contactLink: <a href={ support.CALYPSO_CONTACT } />
 							}
 						}
 					)
 				];
+
+				if ( moment().isBefore( moment( includedDomainPurchase.subscribedDate ).add( 2, 'days' ) ) ) {
+					text.push(
+						i18n.translate(
+							'To cancel the domain with the plan and ask for a full refund, ' +
+							'please {{contactLink}}contact support{{/contactLink}}.',
+							{
+								components: {
+									contactLink: <a href={ support.CALYPSO_CONTACT } />
+								}
+							}
+						)
+					);
+				}
 
 				showSupportLink = false;
 			} else {
@@ -164,7 +175,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 				<strong className="cancel-purchase__support-information">
 				{ i18n.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
 					components: {
-						contactLink: <a href={ support.CALYPSO_CONTACT }/>
+						contactLink: <a href={ support.CALYPSO_CONTACT } />
 					}
 				} ) }
 				</strong> )
