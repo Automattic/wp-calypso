@@ -66,7 +66,6 @@ class GoogleAnalyticsForm extends Component {
 			isSavingSettings,
 			jetpackModuleActive,
 			jetpackVersionSupportsModule,
-			markChanged,
 			showUpgradeNudge,
 			site,
 			translate,
@@ -83,7 +82,7 @@ class GoogleAnalyticsForm extends Component {
 		const isJetpackUnsupported = jetpack && ! jetpackVersionSupportsModule && isEnabled( 'jetpack/google-analytics' );
 
 		return (
-			<form id="site-settings" onSubmit={ handleSubmitForm } onChange={ markChanged }>
+			<form id="site-settings" onSubmit={ handleSubmitForm }>
 
 				{ showUpgradeNudge &&
 					<UpgradeNudge

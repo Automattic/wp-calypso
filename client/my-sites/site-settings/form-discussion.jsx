@@ -462,7 +462,7 @@ class SiteSettingsFormDiscussion extends Component {
 			translate
 		} = this.props;
 		return (
-			<form id="site-settings" onSubmit={ handleSubmitForm } onChange={ this.props.markChanged }>
+			<form id="site-settings" onSubmit={ handleSubmitForm }>
 				{ this.renderSectionHeader( translate( 'Default Article Settings' ) ) }
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }

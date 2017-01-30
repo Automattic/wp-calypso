@@ -377,7 +377,7 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<CompactCard>
-				<form onChange={ this.props.markChanged }>
+				<form>
 					<ul id="settings-jetpack">
 						<li>
 							<FormToggle
@@ -557,7 +557,7 @@ class SiteSettingsFormGeneral extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.props.markChanged }>
+					<form>
 						{ this.siteOptions() }
 						{ this.blogAddress() }
 						{ this.languageOptions() }
@@ -581,7 +581,7 @@ class SiteSettingsFormGeneral extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.props.markChanged }>
+					<form>
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
@@ -625,7 +625,7 @@ class SiteSettingsFormGeneral extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.props.markChanged }>
+					<form>
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
