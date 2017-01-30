@@ -675,14 +675,16 @@ describe( 'utils', () => {
 					highest_hour: 11,
 					highest_day_percent: 10,
 					highest_day_of_week: 6,
-					highest_hour_percent: 5
+					highest_hour_percent: 5,
+					hourly_views: []
 				} );
 
 				expect( stats ).to.eql( {
 					day: 'Sunday',
 					hour: '11:00 AM',
 					hourPercent: 5,
-					percent: 10
+					percent: 10,
+					hourlyViews: []
 				} );
 			} );
 		} );
