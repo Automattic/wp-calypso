@@ -111,30 +111,22 @@ export const reducer = combineReducers( {
 	wordads,
 } );
 
-const middleware = [ thunkMiddleware, noticesMiddleware ];
-
-if ( typeof window === 'object' ) {
-	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware,
-		require( './data-layer/wpcom-api-middleware.js' ).default,
-	);
-}
-
 export function createReduxStore( initialState = {} ) {
-	const enhancers = [ applyMiddleware( ...middleware ) ];
+	const isBrowser = typeof window === 'object';
 
-	if ( 'object' === typeof window ) {
-		enhancers.push( sitesSync );
+	const middlewares = [
+		thunkMiddleware,
+		noticesMiddleware,
+		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+	].filter( Boolean );
 
-		if ( window.app && window.app.isDebug ) {
-			enhancers.push( consoleDispatcher );
-		}
-
-		if ( window.devToolsExtension ) {
-			enhancers.push( window.devToolsExtension() );
-		}
-	}
+	const enhancers = [
+		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		applyMiddleware( ...middlewares ),
+		isBrowser && sitesSync,
+		isBrowser && window.devToolsExtension && window.devToolsExtension()
+	].filter( Boolean );
 
 	return compose( ...enhancers )( createStore )( reducer, initialState );
 }
