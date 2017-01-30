@@ -33,7 +33,7 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 						"callback.call( null, " + this.requireFn + ")"
 					] ),
 					"};",
-					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.min' ) + '.js';",
+					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.m' ) + '.js';",
 					"head.appendChild( script );"
 				] ),
 				"}"
