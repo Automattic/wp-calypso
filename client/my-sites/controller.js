@@ -246,29 +246,52 @@ module.exports = {
 			return next();
 		}
 
-		// ensure we have fetched sites
-		const sitesFetchedPromise = new Promise( ( resolve, reject ) => {
-			if ( ! sites.fetched && sites.fetching ) {
-				sites.once( 'change', () => sites.fetched ? resolve() : reject() );
-			} else if ( currentUser.visible_site_count !== sites.getVisible().length ) {
-				sites.initialized = false;
+		const waitForInProgressSitesFetch = () => {
+			return new Promise( ( resolve, reject ) => {
+				if ( ! sites.fetched && sites.fetching ) {
+					sites.once( 'change', () => sites.fetched ? resolve() : reject() );
+				} else {
+					resolve();
+				}
+			} );
+		};
 
-				const waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
-				sites.once( 'change', () => {
-					notices.removeNotice( waitingNotice );
-					if ( sites.fetched ) {
-						sites.initialized = true;
-						return resolve();
-					}
+		const hardFetchSites = () => new Promise( ( resolve, reject ) => {
+			sites.initialized = false;
+			sites.once( 'change', () => {
+				if ( sites.fetched ) {
+					sites.initialized = true;
+					return resolve();
+				}
 
-					reject();
-				} );
+				reject();
+			} );
 
-				sites.fetch();
-			} else {
-				return resolve();
-			}
+			sites.fetch();
 		} );
+
+		let waitingNotice;
+		const validateAllVisibileSitesAreFetched = () => new Promise( resolve => {
+			if ( currentUser.visible_site_count !== sites.getVisible().length ) {
+				if ( ! waitingNotice ) {
+					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
+				}
+
+				return hardFetchSites().then(
+					validateAllVisibileSitesAreFetched,
+					validateAllVisibileSitesAreFetched
+				);
+			}
+
+			if ( waitingNotice ) {
+				notices.removeNotice( waitingNotice );
+			}
+
+			resolve();
+		} );
+
+		// ensure we have fetched sites
+		const sitesFetchedPromise = waitForInProgressSitesFetch().then( validateAllVisibileSitesAreFetched );
 
 		// Select a site
 		sitesFetchedPromise
