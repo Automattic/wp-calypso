@@ -61,12 +61,12 @@ export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connect
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
 export isRequestingPostLikes from './is-requesting-post-likes';
-export isRequestingTimezones from './is-requesting-timezones';
+export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
+export isRequestingTimezones from './is-requesting-timezones';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
 export isSiteBlocked from './is-site-blocked';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
-export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
