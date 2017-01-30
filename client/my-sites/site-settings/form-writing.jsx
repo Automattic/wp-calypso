@@ -50,7 +50,6 @@ class SiteSettingsFormWriting extends Component {
 
 	setCustomPostTypeSetting = ( revision ) => {
 		this.props.updateFields( revision );
-		this.props.markChanged();
 	}
 
 	submitFormAndActivateCustomContentModule = ( event ) => {
@@ -106,7 +105,6 @@ class SiteSettingsFormWriting extends Component {
 			isSavingSettings,
 			jetpackVersionSupportsCustomTypes,
 			onChangeField,
-			markChanged,
 			siteId,
 			trackEvent,
 			translate
@@ -116,7 +114,6 @@ class SiteSettingsFormWriting extends Component {
 			<form
 				id="site-settings"
 				onSubmit={ this.submitFormAndActivateCustomContentModule }
-				onChange={ markChanged }
 				className="site-settings__general-settings"
 			>
 				{ config.isEnabled( 'manage/site-settings/categories' ) &&
