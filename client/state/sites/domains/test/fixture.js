@@ -30,7 +30,7 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription'
 	},
-	hasPrivateRegistration: false,
+	hasPrivacyProtection: false,
 	hasRegistration: false,
 	hasZone: true,
 	isPendingIcannVerification: false,
@@ -64,7 +64,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription'
 	},
-	hasPrivateRegistration: false,
+	hasPrivacyProtection: false,
 	hasRegistration: false,
 	hasZone: false,
 	isPendingIcannVerification: false,

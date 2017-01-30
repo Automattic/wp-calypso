@@ -10,13 +10,13 @@ import React from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { cancelPrivateRegistration } from 'state/purchases/actions';
+import { cancelPrivacyProtection } from 'state/purchases/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
 import { getByPurchaseId, getPurchasesError, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { hasPrivateRegistration, isRefundable } from 'lib/purchases';
+import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
@@ -29,7 +29,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const user = userFactory();
 
-const CancelPrivateRegistration = React.createClass( {
+const CancelPrivacyProtection = React.createClass( {
 	propTypes: {
 		hasLoadedSites: React.PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
@@ -73,7 +73,7 @@ const CancelPrivateRegistration = React.createClass( {
 		const { selectedSite } = props,
 			purchase = getPurchase( props );
 
-		return selectedSite && purchase && hasPrivateRegistration( purchase );
+		return selectedSite && purchase && hasPrivacyProtection( purchase );
 	},
 
 	cancel( event ) {
@@ -87,10 +87,10 @@ const CancelPrivateRegistration = React.createClass( {
 			cancelling: true
 		} );
 
-		this.props.cancelPrivateRegistration( id ).then( () => {
+		this.props.cancelPrivacyProtection( id ).then( () => {
 			this.resetState();
 
-			notices.success( this.translate( 'You have successfully canceled private registration for %(domain)s.', {
+			notices.success( this.translate( 'You have successfully canceled privacy protection for %(domain)s.', {
 				args: { domain }
 			} ), { persistent: true } );
 
@@ -111,7 +111,7 @@ const CancelPrivateRegistration = React.createClass( {
 			<p>
 				{
 					this.translate(
-						'You are about to cancel the privacy upgrade for {{strong}}%(domain)s{{/strong}}. ' +
+						'You are about to cancel the privacy protection upgrade for {{strong}}%(domain)s{{/strong}}. ' +
 						'{{br/}}' +
 						'This will make your personal details public.',
 						{
@@ -142,12 +142,12 @@ const CancelPrivateRegistration = React.createClass( {
 		return (
 			<Button
 				onClick={ this.cancel }
-				className="cancel-private-registration__cancel-button"
+				className="cancel-privacy-protection__cancel-button"
 				disabled={ this.state.disabled }>
 				{
 					this.state.cancelling
 						? this.translate( 'Processing…' )
-						: this.translate( 'Cancel Private Registration' ) }
+						: this.translate( 'Cancel Privacy Protection' ) }
 			</Button>
 		);
 	},
@@ -169,7 +169,7 @@ const CancelPrivateRegistration = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'cancel-private-registration__card', {
+		const classes = classNames( 'cancel-privacy-protection__card', {
 			'is-placeholder': isDataLoading( this.props )
 		} );
 
@@ -199,14 +199,14 @@ const CancelPrivateRegistration = React.createClass( {
 			<Main>
 				<QueryUserPurchases userId={ user.get().ID } />
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ titles.cancelPrivateRegistration }
+					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }
 				<Card className={ classes }>
-					<div className="cancel-private-registration__text">
+					<div className="cancel-privacy-protection__text">
 						<span>{ descriptionText }</span>
 					</div>
-					<div className="cancel-private-registration__text">
+					<div className="cancel-privacy-protection__text">
 						<span>{ warningText }</span>
 					</div>
 
@@ -225,5 +225,5 @@ export default connect(
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 		selectedSite: getSelectedSiteSelector( state )
 	} ),
-	{ cancelPrivateRegistration }
-)( CancelPrivateRegistration );
+	{ cancelPrivacyProtection }
+)( CancelPrivacyProtection );
