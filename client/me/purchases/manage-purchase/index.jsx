@@ -19,7 +19,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	getName,
 	hasPaymentMethod,
-	hasPrivateRegistration,
+	hasPrivacyProtection,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -275,7 +275,7 @@ const ManagePurchase = React.createClass( {
 			{ product_slug: purchase.productSlug }
 		);
 
-		if ( hasPrivateRegistration( purchase ) ) {
+		if ( hasPrivacyProtection( purchase ) ) {
 			const privacyItem = cartItems.getRenewalItemFromCartItem( cartItems.domainPrivacyProtection( {
 				domain: purchase.meta
 			} ), {
@@ -586,17 +586,17 @@ const ManagePurchase = React.createClass( {
 		);
 	},
 
-	renderCancelPrivateRegistration() {
+	renderCancelPrivacyProtection() {
 		const purchase = getPurchase( this.props ),
 			{ id } = purchase;
 
-		if ( isExpired( purchase ) || ! hasPrivateRegistration( purchase ) || ! getSelectedSite( this.props ) ) {
+		if ( isExpired( purchase ) || ! hasPrivacyProtection( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPrivateRegistration( this.props.selectedSite.slug, id ) }>
-				{ this.translate( 'Cancel Private Registration' ) }
+			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+				{ this.translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
 	},
@@ -617,7 +617,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice,
 			editPaymentMethodNavItem,
 			cancelPurchaseNavItem,
-			cancelPrivateRegistrationNavItem,
+			cancelPrivacyProtectionNavItem,
 			contactSupportToRenewMessage;
 
 		if ( isDataLoading( this.props ) ) {
@@ -645,7 +645,7 @@ const ManagePurchase = React.createClass( {
 			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
-			cancelPrivateRegistrationNavItem = this.renderCancelPrivateRegistration();
+			cancelPrivacyProtectionNavItem = this.renderCancelPrivacyProtection();
 		}
 
 		return (
@@ -684,7 +684,7 @@ const ManagePurchase = React.createClass( {
 				{ expiredRenewNotice }
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
-				{ cancelPrivateRegistrationNavItem }
+				{ cancelPrivacyProtectionNavItem }
 
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }

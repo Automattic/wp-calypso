@@ -15,7 +15,7 @@ export const createSiteDomainObject = domain => {
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
 		googleAppsSubscription: Object( domain.google_apps_subscription ),
-		hasPrivateRegistration: Boolean( domain.has_private_registration ),
+		hasPrivacyProtection: Boolean( domain.has_private_registration ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasZone: Boolean( domain.has_zone ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),

@@ -2010,7 +2010,7 @@ Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn 
 	}, fn );
 };
 
-Undocumented.prototype.cancelPrivateRegistration = function( purchaseId, fn ) {
+Undocumented.prototype.cancelPrivacyProtection = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
 
 	return this.wpcom.req.post( {

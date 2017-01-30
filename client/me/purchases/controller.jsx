@@ -9,7 +9,7 @@ import React from 'react';
  */
 import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
-import CancelPrivateRegistration from './cancel-private-registration';
+import CancelPrivacyProtection from './cancel-privacy-protection';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
@@ -97,22 +97,22 @@ export default {
 		);
 	},
 
-	cancelPrivateRegistration( context ) {
+	cancelPrivacyProtection( context ) {
 		setTitle(
 			context,
-			titles.cancelPrivateRegistration
+			titles.cancelPrivacyProtection
 		);
 
 		recordPurchasesPageView(
-			paths.cancelPrivateRegistration(),
-			'Cancel Private Registration'
+			paths.cancelPrivacyProtection(),
+			'Cancel Privacy Protection'
 		);
 
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
-			<CancelPrivateRegistration
+			<CancelPrivacyProtection
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			/>
 		);

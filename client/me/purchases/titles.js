@@ -5,7 +5,7 @@ import i18n from 'i18n-calypso';
 
 export default {
 	addCreditCard: i18n.translate( 'Add Credit Card' ),
-	cancelPrivateRegistration: i18n.translate( 'Cancel Private Registration' ),
+	cancelPrivacyProtection: i18n.translate( 'Cancel Privacy Protection' ),
 	cancelPurchase: i18n.translate( 'Cancel Purchase' ),
 	confirmCancelDomain: i18n.translate( 'Cancel Domain' ),
 	editCardDetails: i18n.translate( 'Edit Card Details', { comment: 'Credit card' } ),
