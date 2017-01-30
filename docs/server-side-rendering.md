@@ -22,15 +22,15 @@ React components used on the server will be rendered to HTML by being passed to 
 
 ### Caching
 
-Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server—one to store raw query data, from which we can generate and serve redux state, and one to store rendered layouts.
+Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to store raw query data, from which we can generate and serve redux state, and one to store rendered layouts.
 
 ##### Data Cache
 
-Caching data is currently left to the controller for a [given](https://github.com/Automattic/wp-calypso/blob/master/client/my-sites/themes/controller.jsx) [section](https://github.com/Automattic/wp-calypso/blob/master/client/my-sites/theme/controller.jsx). Request timestamps are used to force expiration.
+Caching data is currently left to the controller for a [given](../client/my-sites/themes/controller.jsx) [section](../client/my-sites/theme/controller.jsx). Request timestamps are used to force expiration.
 
 ##### Render Cache
 
-There is a [shared cache](https://github.com/Automattic/wp-calypso/blob/master/server/render/index.js) for rendered layouts. There are some requirements for using this cache:
+There is a [shared cache](../server/render/index.js) for rendered layouts. There are some requirements for using this cache:
 
 1. Cache entries need a way to expire
 2. Multiple paths resulting in the same rendered content should ideally map to one cache entry
