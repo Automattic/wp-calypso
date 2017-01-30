@@ -15,7 +15,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
-import StatsConnectedModule from './stats-module/connected-list';
+import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
@@ -116,7 +116,7 @@ module.exports = React.createClass( {
 			// Video plays, and tags and categories are not supported in JetPack Stats
 			if ( ! site.jetpack ) {
 				videoList = (
-					<StatsConnectedModule
+					<StatsModule
 						path="videoplays"
 						moduleStrings={ moduleStrings.videoplays }
 						period={ this.props.period }
@@ -129,7 +129,7 @@ module.exports = React.createClass( {
 			}
 			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
 				podcastList = (
-					<StatsConnectedModule
+					<StatsModule
 						path="podcastdownloads"
 						moduleStrings={ moduleStrings.podcastdownloads }
 						period={ this.props.period }
@@ -168,7 +168,7 @@ module.exports = React.createClass( {
 					</StatsPeriodNavigation>
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
-							<StatsConnectedModule
+							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
 								period={ this.props.period }
@@ -176,7 +176,7 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								statType="statsTopPosts"
 								showSummaryLink />
-							<StatsConnectedModule
+							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
 								period={ this.props.period }
@@ -184,7 +184,7 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								statType="statsReferrers"
 								showSummaryLink />
-							<StatsConnectedModule
+							<StatsModule
 								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
@@ -192,7 +192,7 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								statType="statsClicks"
 								showSummaryLink />
-							<StatsConnectedModule
+							<StatsModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
@@ -208,7 +208,7 @@ module.exports = React.createClass( {
 								period={ this.props.period }
 								query={ query }
 								summary={ false } />
-							<StatsConnectedModule
+							<StatsModule
 								path="searchterms"
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }

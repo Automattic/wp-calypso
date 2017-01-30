@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import observe from 'lib/mixins/data-observe';
 import HeaderCake from 'components/header-cake';
-import StatsConnectedModule from '../stats-module/connected-list';
+import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import StatsVideoSummary from '../stats-video-summary';
@@ -83,7 +83,7 @@ const StatsSummary = React.createClass( {
 
 			case 'referrers':
 				title = translate( 'Referrers' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="referrers-summary"
 					path="referrers"
 					moduleStrings={ StatsStrings.referrers }
@@ -95,7 +95,7 @@ const StatsSummary = React.createClass( {
 
 			case 'clicks':
 				title = translate( 'Clicks' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="clicks-summary"
 					path="clicks"
 					moduleStrings={ StatsStrings.clicks }
@@ -117,7 +117,7 @@ const StatsSummary = React.createClass( {
 
 			case 'posts':
 				title = translate( 'Posts & Pages' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="posts-summary"
 					path="posts"
 					moduleStrings={ StatsStrings.posts }
@@ -132,7 +132,7 @@ const StatsSummary = React.createClass( {
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
-					<StatsConnectedModule
+					<StatsModule
 						key="authors-summary"
 						path="authors"
 						moduleStrings={ StatsStrings.authors }
@@ -148,7 +148,7 @@ const StatsSummary = React.createClass( {
 
 			case 'videoplays':
 				title = translate( 'Videos' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="videoplays-summary"
 					path="videoplays"
 					moduleStrings={ StatsStrings.videoplays }
@@ -160,7 +160,7 @@ const StatsSummary = React.createClass( {
 
 			case 'podcastdownloads':
 				title = translate( 'Podcasts' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="podcastdownloads-summary"
 					path="podcastdownloads"
 					moduleStrings={ StatsStrings.podcastdownloads }
@@ -198,7 +198,7 @@ const StatsSummary = React.createClass( {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
-				summaryView = <StatsConnectedModule
+				summaryView = <StatsModule
 					key="search-terms-summary"
 					path="searchterms"
 					moduleStrings={ StatsStrings.search }

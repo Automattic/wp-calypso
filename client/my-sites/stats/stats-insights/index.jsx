@@ -16,7 +16,7 @@ import Followers from '../stats-followers';
 import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import TodaysStats from '../stats-site-overview';
-import StatsConnectedModule from '../stats-module/connected-list';
+import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
@@ -58,7 +58,7 @@ export default React.createClass( {
 		let tagsList;
 		if ( ! site.jetpack ) {
 			tagsList = (
-				<StatsConnectedModule
+				<StatsModule
 					path="tags-categories"
 					moduleStrings={ moduleStrings.tags }
 					statType="statsTags" />
@@ -101,7 +101,7 @@ export default React.createClass( {
 									path={ 'followers' }
 									site={ site }
 									followList={ followList } />
-								<StatsConnectedModule
+								<StatsModule
 									path="publicize"
 									moduleStrings={ moduleStrings.publicize }
 									statType="statsPublicize" />
