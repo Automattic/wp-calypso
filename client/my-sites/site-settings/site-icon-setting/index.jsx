@@ -35,6 +35,7 @@ import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
 import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -85,7 +86,7 @@ class SiteIconSetting extends Component {
 	}
 
 	uploadSiteIcon( blob, fileName ) {
-		const { siteId } = this.props;
+		const { siteId, translate } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
@@ -105,7 +106,13 @@ class SiteIconSetting extends Component {
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			this.saveSiteIconSetting( siteId, media );
+
+			// Check whether upload was successful
+			if ( media ) {
+				this.saveSiteIconSetting( siteId, media );
+			} else {
+				this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
+			}
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
@@ -284,6 +291,7 @@ export default connect(
 		saveSiteSettings,
 		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
-		receiveMedia
+		receiveMedia,
+		errorNotice
 	}
 )( localize( SiteIconSetting ) );
