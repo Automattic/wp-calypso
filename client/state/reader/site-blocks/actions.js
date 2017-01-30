@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -10,6 +15,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 } from 'state/action-types';
+import { createNotice } from 'state/notices/actions';
 
 /**
  * Triggers a network request to block a site.
@@ -37,6 +43,8 @@ export function requestSiteBlock( siteId ) {
 				siteId,
 				error
 			} );
+
+			dispatch( createNotice( 'is-error', translate( 'Sorry - there was a problem blocking that site.' ) ) );
 		}
 		);
 	};
@@ -68,6 +76,8 @@ export function requestSiteUnblock( siteId ) {
 				siteId,
 				error
 			} );
+
+			dispatch( createNotice( 'is-error', translate( 'Sorry - there was a problem unblocking that site.' ) ) );
 		}
 		);
 	};

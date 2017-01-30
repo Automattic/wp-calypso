@@ -25,6 +25,6 @@ export const items = keyedReducer( 'siteId', createReducer( {}, {
 } ) );
 
 export default combineReducers( {
-	items
+	items,
 } );
 

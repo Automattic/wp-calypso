@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import { get, assign, forEach, isEqual, defer } from 'lodash';
-const debug = require( 'debug' )( 'calypso:feed-post-store' );
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -18,6 +18,11 @@ const Dispatcher = require( 'dispatcher' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state,
 	stats = require( 'reader/stats' );
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:feed-post-store' );
 
 let _posts = {},
 	_postsForBlogs = {};
