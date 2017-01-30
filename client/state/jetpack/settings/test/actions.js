@@ -19,6 +19,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
 import { fetchSettings, updateSettings, regeneratePostByEmail } from '../actions';
+import { filterSettingsByActiveModules } from '../utils';
 import {
 	settings as SETTINGS_FIXTURE,
 	normalizedSettings as NORMALIZED_SETTINGS_FIXTURE
@@ -106,7 +107,7 @@ describe( 'actions', () => {
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
 						path: '/jetpack/v4/settings/',
-						body: JSON.stringify( settings[ siteId ] )
+						body: JSON.stringify( filterSettingsByActiveModules( settings[ siteId ] ) )
 					} )
 					.reply( 200, {
 						code: 'success'
@@ -142,7 +143,7 @@ describe( 'actions', () => {
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/', {
 						path: '/jetpack/v4/settings/',
-						body: JSON.stringify( settings[ siteId ] )
+						body: JSON.stringify( filterSettingsByActiveModules( settings[ siteId ] ) )
 					} )
 					.reply( 400, {
 						message: 'Invalid option: setting_1'

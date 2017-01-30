@@ -14,7 +14,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { normalizeSettings, sanitizeSettings } from './utils';
+import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from './utils';
 
 /**
  * Fetch the Jetpack settings for a certain site.
@@ -66,7 +66,7 @@ export const updateSettings = ( siteId, settings ) => {
 			settings
 		} );
 
-		return wp.undocumented().updateJetpackSettings( siteId, sanitizeSettings( settings ) )
+		return wp.undocumented().updateJetpackSettings( siteId, filterSettingsByActiveModules( sanitizeSettings( settings ) ) )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_SETTINGS_UPDATE_SUCCESS,

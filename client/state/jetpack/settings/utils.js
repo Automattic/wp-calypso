@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { forEach, omit } from 'lodash';
+
+/**
  * Normalize settings for use in Redux.
  *
  * @param  {Object}   settings   Raw settings.
@@ -40,4 +45,43 @@ export const sanitizeSettings = ( settings ) => {
 
 		return memo;
 	}, {} );
+};
+
+/**
+ * Filter out all settings that belong to inactive modules.
+ *
+ * @param  {Object}   settings   Settings.
+ * @return {Object}              Normalized settings.
+ */
+export const filterSettingsByActiveModules = ( settings ) => {
+	const moduleSettingsList = {
+		'infinite-scroll': [
+			'infinite_scroll',
+			'infinite_scroll_google_analytics',
+		],
+		minileven: [
+			'wp_mobile_excerpt',
+			'wp_mobile_featured_images',
+			'wp_mobile_app_promos',
+		],
+		subscriptions: [
+			'stb_enabled',
+			'stc_enabled',
+		],
+		likes: [
+			'social_notifications_like',
+			'social_notifications_reblog',
+			'social_notifications_subscribe',
+		]
+	};
+	let filteredSettings = { ...settings };
+
+	forEach( moduleSettingsList, ( moduleSettings, moduleSlug ) => {
+		if ( ! settings[ moduleSlug ] ) {
+			filteredSettings = omit( filteredSettings, moduleSettings );
+		}
+		filteredSettings = omit( filteredSettings, moduleSlug );
+	} );
+
+	return filteredSettings;
 };

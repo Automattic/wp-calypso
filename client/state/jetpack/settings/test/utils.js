@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { normalizeSettings, sanitizeSettings } from '../utils';
+import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from '../utils';
 
 describe( 'utils', () => {
 	describe( 'normalizeSettings()', () => {
@@ -120,6 +120,53 @@ describe( 'utils', () => {
 
 			expect( sanitizeSettings( settings ) ).to.eql( {
 				some_other_setting: 123,
+			} );
+		} );
+	} );
+
+	describe( 'filterSettingsByActiveModules()', () => {
+		it( 'should remove module activation state and retain all module settings for enabled modules', () => {
+			const settings = {
+				'infinite-scroll': true,
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
+			};
+
+			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
+			} );
+		} );
+
+		it( 'should omit all module settings for disabled modules', () => {
+			const settings = {
+				'infinite-scroll': true,
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
+				minileven: false,
+				wp_mobile_excerpt: true,
+				wp_mobile_featured_images: true,
+				wp_mobile_app_promos: false,
+			};
+
+			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
+			} );
+		} );
+
+		it( 'should omit all module settings for modules with unknown activation state', () => {
+			const settings = {
+				'infinite-scroll': true,
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
+				stb_enabled: true,
+				stc_enabled: false,
+			};
+
+			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+				infinite_scroll: false,
+				infinite_scroll_google_analytics: true,
 			} );
 		} );
 	} );
