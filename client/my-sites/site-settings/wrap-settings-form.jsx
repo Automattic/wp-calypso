@@ -24,7 +24,7 @@ import {
 	isUpdatingJetpackSettings,
 	isJetpackSettingsSaveSuccessful,
 	getJetpackSettings
-} from 'state/jetpack/settings/selectors';
+} from 'state/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { updateSettings } from 'state/jetpack/settings/actions';
