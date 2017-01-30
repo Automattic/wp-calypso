@@ -83,7 +83,7 @@ function generateStaticUrls( request ) {
 
 	// vendor dll
 	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
-	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.min.js' );
+	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.m.js' );
 
 	const assets = request.app.get( 'assets' );
 
@@ -95,7 +95,7 @@ function generateStaticUrls( request ) {
 		}
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
 		}
 	} );
 
