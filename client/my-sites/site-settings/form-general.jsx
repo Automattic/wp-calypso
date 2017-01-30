@@ -316,41 +316,40 @@ class SiteSettingsFormGeneral extends Component {
 							</span>
 						</FormToggle>
 					</li>
-					{ !! fields.jetpack_relatedposts_enabled && (
-						<li>
-							<ul id="settings-reading-relatedposts-customize" className="site-settings__child-settings">
-								<li>
-									<FormToggle
-										className="is-compact"
-										checked={ !! fields.jetpack_relatedposts_show_headline }
-										disabled={ isRequestingSettings }
-										onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }>
-										<span className="site-settings__toggle-label">
-											{ translate(
-												'Show a "Related" header to more clearly separate the related section from posts'
-											) }
-										</span>
-									</FormToggle>
-								</li>
-								<li>
-									<FormToggle
-										className="is-compact"
-										checked={ !! fields.jetpack_relatedposts_show_thumbnails }
-										disabled={ isRequestingSettings }
-										onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
-										<span className="site-settings__toggle-label">
-											{ translate(
-												'Use a large and visually striking layout'
-											) }
-										</span>
-									</FormToggle>
-								</li>
-							</ul>
-							<RelatedContentPreview
-								showHeadline={ fields.jetpack_relatedposts_show_headline }
-								showThumbnails={ fields.jetpack_relatedposts_show_thumbnails } />
-						</li>
-					) }
+					<li>
+						<ul id="settings-reading-relatedposts-customize" className="site-settings__child-settings">
+							<li>
+								<FormToggle
+									className="is-compact"
+									checked={ !! fields.jetpack_relatedposts_show_headline }
+									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
+									onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }>
+									<span className="site-settings__toggle-label">
+										{ translate(
+											'Show a "Related" header to more clearly separate the related section from posts'
+										) }
+									</span>
+								</FormToggle>
+							</li>
+							<li>
+								<FormToggle
+									className="is-compact"
+									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
+									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
+									onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
+									<span className="site-settings__toggle-label">
+										{ translate(
+											'Use a large and visually striking layout'
+										) }
+									</span>
+								</FormToggle>
+							</li>
+						</ul>
+						<RelatedContentPreview
+							showHeadline={ fields.jetpack_relatedposts_show_headline }
+							showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
+						/>
+					</li>
 				</ul>
 			</FormFieldset>
 		);
