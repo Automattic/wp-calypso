@@ -8,12 +8,12 @@ import { combineReducers } from 'redux';
  */
 import { reducer as connection } from './connection/reducer';
 import { reducer as jumpstart } from './jumpstart/reducer';
-import { reducer as jetpackModules } from './modules/reducer';
+import { reducer as modules } from './modules/reducer';
 import { reducer as settings } from './settings/reducer';
 
 export default combineReducers( {
 	connection,
 	jumpstart,
-	jetpackModules,
+	modules,
 	settings
 } );

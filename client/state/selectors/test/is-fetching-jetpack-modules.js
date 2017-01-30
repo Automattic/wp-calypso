@@ -13,7 +13,7 @@ describe( 'isFetchingJetpackModules()', () => {
 	it( 'should return true if the list of modules is being fetched', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isFetchingJetpackModules()', () => {
 	it( 'should return false if the list of modules is currently not being fetched', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isFetchingJetpackModules()', () => {
 	it( 'should return null if that site is not known', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
