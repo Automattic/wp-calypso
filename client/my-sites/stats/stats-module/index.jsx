@@ -22,12 +22,14 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import AllTimeNav from './all-time-nav';
+import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
+import { getSiteStatsQueryDate } from 'state/selectors';
 
 class StatsModule extends Component {
 	static propTypes = {
@@ -37,12 +39,13 @@ class StatsModule extends Component {
 		path: PropTypes.string,
 		siteSlug: PropTypes.string,
 		siteId: PropTypes.number,
-		date: PropTypes.string,
+		date: PropTypes.object,
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -88,11 +91,13 @@ class StatsModule extends Component {
 			siteId,
 			path,
 			data,
+			date,
 			moduleStrings,
 			requesting,
 			statType,
 			query,
 			period,
+			moment,
 			translate,
 		} = this.props;
 
@@ -121,13 +126,17 @@ class StatsModule extends Component {
 		const summaryLink = this.getHref();
 		const displaySummaryLink = data && data.length >= 10;
 		const isAllTime = this.isAllTimeList();
+		const headerClass = classNames( 'stats-module__header', { 'is-refreshing': requesting && ! isLoading } );
 
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ ! isAllTime &&
-					<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
+					<SectionHeader className={ headerClass } label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
 						{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
+						<span className="stats-module__date" title={ moment( date ).fromNow() }>
+							<Gridicon icon="time" size={ 18 } />
+						</span>
 					</SectionHeader>
 				}
 				<Card compact className={ cardClasses }>
@@ -172,6 +181,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+		date: getSiteStatsQueryDate( state, siteId, statType, query ),
 		siteId,
 		siteSlug
 	};

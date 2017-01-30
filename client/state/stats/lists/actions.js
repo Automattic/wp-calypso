@@ -59,7 +59,8 @@ export function requestSiteStats( siteId, statType, query ) {
 				type: SITE_STATS_REQUEST_SUCCESS,
 				statType,
 				siteId,
-				query
+				query,
+				date: new Date()
 			} );
 		} ).catch( error => {
 			dispatch( {

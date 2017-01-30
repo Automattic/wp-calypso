@@ -38,12 +38,12 @@ export const requests = createReducer( {}, {
 			}
 		} );
 	},
-	[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query } ) => {
+	[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query, date } ) => {
 		const queryKey = getSerializedStatsQuery( query );
 		return merge( {}, state, {
 			[ siteId ]: {
 				[ statType ]: {
-					[ queryKey ]: { requesting: false, status: 'success' }
+					[ queryKey ]: { requesting: false, status: 'success', date }
 				}
 			}
 		} );

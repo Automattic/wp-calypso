@@ -531,3 +531,15 @@ ul.module-header-actions {
 	justify-content: center;
 	align-items: center;
 }
+
+.stats-module__header {
+	&.is-refreshing {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.stats-module__date {
+		color: #c8d7e1;
+    display: inline-block;
+		padding: 4px 0 0 4px;
+	}
+}
