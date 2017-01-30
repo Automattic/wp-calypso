@@ -265,6 +265,18 @@ UndocumentedSite.prototype.runThemeSetup = function() {
 };
 
 /**
+ * Runs Theme Setup (Headstart).
+ *
+ * @param  {Number}  connectionId The connection ID to get.
+ * @return {Promise}              A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.runThemeSetup = function( saveExisting, callback ) {
+	return this.wpcom.req.post( `/sites/${ this._id }/theme-setup`, {
+		save_existing: saveExisting
+	}, callback );
+};
+
+/**
  * Expose `UndocumentedSite` module
  */
 module.exports = UndocumentedSite;
