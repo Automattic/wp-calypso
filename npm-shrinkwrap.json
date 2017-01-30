@@ -29,11 +29,11 @@
       "version": "0.8.2"
     },
     "ajv": {
-      "version": "4.10.4",
+      "version": "4.11.2",
       "dev": true
     },
     "ajv-keywords": {
-      "version": "1.5.0",
+      "version": "1.5.1",
       "dev": true
     },
     "align-text": {
@@ -847,7 +847,7 @@
       "dev": true
     },
     "cssom": {
-      "version": "0.3.1",
+      "version": "0.3.2",
       "dev": true
     },
     "cssstyle": {
@@ -940,9 +940,6 @@
     },
     "depd": {
       "version": "1.1.0"
-    },
-    "desandro-matches-selector": {
-      "version": "2.0.1"
     },
     "destroy": {
       "version": "1.0.3"
@@ -1149,7 +1146,7 @@
       "version": "1.3.0"
     },
     "es-abstract": {
-      "version": "1.6.1",
+      "version": "1.7.0",
       "dev": true
     },
     "es-to-primitive": {
@@ -1383,9 +1380,6 @@
     "etag": {
       "version": "1.7.0"
     },
-    "ev-emitter": {
-      "version": "1.0.3"
-    },
     "event-emitter": {
       "version": "0.3.4",
       "dev": true
@@ -1544,9 +1538,6 @@
         }
       }
     },
-    "fizzy-ui-utils": {
-      "version": "2.0.3"
-    },
     "flag-icon-css": {
       "version": "2.3.0"
     },
@@ -1644,9 +1635,6 @@
     },
     "get-document": {
       "version": "1.0.0"
-    },
-    "get-size": {
-      "version": "2.0.2"
     },
     "get-stdin": {
       "version": "4.0.1"
@@ -1901,9 +1889,6 @@
     "ignore": {
       "version": "3.2.0",
       "dev": true
-    },
-    "imagesloaded": {
-      "version": "4.1.1"
     },
     "immediate": {
       "version": "3.0.6"
@@ -2406,9 +2391,6 @@
       "version": "3.1.1",
       "dev": true
     },
-    "lodash.debounce": {
-      "version": "4.0.8"
-    },
     "lodash.flatten": {
       "version": "4.4.0"
     },
@@ -2426,9 +2408,6 @@
     "lodash.keys": {
       "version": "3.1.2",
       "dev": true
-    },
-    "lodash.omit": {
-      "version": "4.5.0"
     },
     "lodash.pad": {
       "version": "4.5.1"
@@ -2484,9 +2463,6 @@
     },
     "marked": {
       "version": "0.3.5"
-    },
-    "masonry-layout": {
-      "version": "4.1.1"
     },
     "md5": {
       "version": "2.2.1",
@@ -2851,9 +2827,6 @@
     "osenv": {
       "version": "0.1.4"
     },
-    "outlayer": {
-      "version": "2.1.0"
-    },
     "package-json": {
       "version": "1.2.0",
       "dev": true
@@ -3179,9 +3152,6 @@
     },
     "react-is-deprecated": {
       "version": "0.1.2"
-    },
-    "react-masonry-component": {
-      "version": "4.2.2"
     },
     "react-modal": {
       "version": "1.6.5"
@@ -4201,7 +4171,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.4.1",
+          "version": "3.4.3",
           "dev": true
         },
         "finalhandler": {
@@ -4241,8 +4211,18 @@
           "dev": true
         },
         "serve-static": {
-          "version": "1.11.1",
-          "dev": true
+          "version": "1.11.2",
+          "dev": true,
+          "dependencies": {
+            "ms": {
+              "version": "0.7.2",
+              "dev": true
+            },
+            "send": {
+              "version": "0.14.2",
+              "dev": true
+            }
+          }
         },
         "supports-color": {
           "version": "2.0.0",
@@ -4313,7 +4293,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.4.1",
+          "version": "3.4.3",
           "dev": true
         },
         "isarray": {
