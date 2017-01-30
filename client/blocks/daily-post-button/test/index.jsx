@@ -31,6 +31,7 @@ describe( 'DailyPostButton', () => {
 			recordTrackForPost: noop,
 		};
 		mockery.registerMock( 'reader/stats', statsMocks );
+		mockery.registerMock( 'lib/analytics', stub() );
 		mockery.registerMock( 'lib/sites-list', () => sitesListMock );
 		mockery.registerMock( 'page', pageSpy );
 		mockery.registerMock( 'components/sites-popover', SitesPopover );
