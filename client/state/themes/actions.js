@@ -292,9 +292,7 @@ export function requestActiveTheme( siteId ) {
 				dispatch( {
 					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId,
-					themeId: theme.id,
-					themeName: theme.name,
-					themeCost: theme.cost
+					theme
 				} );
 			} ).catch( error => {
 				dispatch( {
