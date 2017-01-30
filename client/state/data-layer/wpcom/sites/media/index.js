@@ -20,17 +20,19 @@ const log = debug( 'calypso:middleware-media' );
  * @return {Promise}        Promise
  */
 export function requestMedia( { dispatch, getState }, { siteId, query } ) {
-	if ( ! isRequestingMedia( getState(), siteId, query ) ) {
-		dispatch( requestingMedia( siteId, query ) );
-
-		log( 'Request media for site %d using query %o', siteId, query );
-
-		return wpcom.site( siteId ).mediaList( query ).then( ( { media, found } ) => {
-			dispatch( receiveMedia( siteId, media, found, query ) );
-		} ).catch( () => {
-			dispatch( failMediaRequest( siteId, query ) );
-		} );
+	if ( isRequestingMedia( getState(), siteId, query ) ) {
+		return;
 	}
+
+	dispatch( requestingMedia( siteId, query ) );
+
+	log( 'Request media for site %d using query %o', siteId, query );
+
+	return wpcom
+		.site( siteId )
+		.mediaList( query )
+		.then( ( { media, found } ) => dispatch( receiveMedia( siteId, media, found, query ) ) )
+		.catch( () => dispatch( failMediaRequest( siteId, query ) ) );
 }
 
 export default {
