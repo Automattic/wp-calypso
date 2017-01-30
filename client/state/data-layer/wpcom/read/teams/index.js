@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { READER_TEAMS_REQUEST, } from 'state/action-types';
-import { receiveTeams } from 'client/state/reader/teams/actions';
+import { receiveTeams } from 'state/reader/teams/actions';
 import wpcom from 'lib/wp';
 
 export function handleTeamsRequest( store, action, next ) {
