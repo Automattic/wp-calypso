@@ -24,7 +24,7 @@ import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import {
 	isUploadInProgress,
@@ -295,9 +295,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
-		const siteSlug = getSelectedSiteSlug( state );
-		const backPath = getBackPath( state );
-
 		return {
 			siteId,
 			selectedSite: getSelectedSite( state ),
@@ -312,7 +309,7 @@ export default connect(
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
-			backPath: includes( backPath, siteSlug ) ? backPath : `/design/${ siteSlug }`,
+			backPath: getBackPath( state ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
