@@ -43,8 +43,15 @@
 		width: 100%;
 	}
 
-	&.is-scrollable:not( .is-scrolled-full ) .editor-html-toolbar__buttons::after {
+	&.is-scrollable .editor-html-toolbar__buttons::after {
 		@include long-content-fade();
+
+		height: 36px;
+		margin-top: 1px;
+		transition: width 0.2s;
+	}
+	&.is-scrollable.is-scrolled-full .editor-html-toolbar__buttons::after {
+		width: 0;
 	}
 
 	.button {
