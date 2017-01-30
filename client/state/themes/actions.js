@@ -705,16 +705,16 @@ export function confirmDelete( themeId, siteId ) {
 		accept(
 			i18n.translate(
 				'Are you sure you want to delete %(themeName)s from %(siteTitle)s?',
-				{ args: { themeName, siteTitle }, context: 'Themes: theme delete confirmation dialog' }
+				{ args: { themeName, siteTitle }, comment: 'Themes: theme delete confirmation dialog' }
 			),
 			( accepted ) => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
 			},
 			i18n.translate(
 				'Delete %(themeName)s',
-				{ args: { themeName }, context: 'Themes: theme delete dialog confirm button' }
+				{ args: { themeName }, comment: 'Themes: theme delete dialog confirm button' }
 			),
-			i18n.translate( 'Back', { context: 'Theme: theme delete dialog back button' } )
+			i18n.translate( 'Back', { comment: 'Theme: theme delete dialog back button' } )
 		);
 	};
 }
