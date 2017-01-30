@@ -66,14 +66,16 @@ const ThemesSelection = React.createClass( {
 		}
 	},
 
-	recordSearchResultsClick( theme, resultsRank ) {
+	recordSearchResultsClick( theme, resultsRank, action ) {
 		const { query, themes } = this.props;
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: query.search,
 			theme: theme.id,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
-			page_number: query.page
+			page_number: query.page,
+			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+			action
 		} );
 	},
 
@@ -89,8 +91,8 @@ const ThemesSelection = React.createClass( {
 
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! this.props.isThemeActive( theme.id ) ) {
-			this.recordSearchResultsClick( theme, resultsRank );
+		if ( ! this.props.isThemeActive( theme ) ) {
+			this.recordSearchResultsClick( theme, resultsRank, 'screenshot_info' );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
 	},
@@ -125,6 +127,7 @@ const ThemesSelection = React.createClass( {
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					getButtonOptions={ this.props.getOptions }
+					onMoreButtonClick={ this.recordSearchResultsClick }
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
