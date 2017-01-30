@@ -86,7 +86,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					)
 				];
 
-				if ( moment().isBefore( moment( includedDomainPurchase.subscribedDate ).add( 2, 'days' ) ) ) {
+				if ( moment().isBefore( moment( includedDomainPurchase.subscribedDate ).add( refundPeriodInDays, 'days' ) ) ) {
 					text.push(
 						i18n.translate(
 							'To cancel the domain with the plan and ask for a full refund, ' +
