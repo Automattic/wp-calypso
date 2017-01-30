@@ -63,7 +63,7 @@ Here's how your module's `package.json` should look, if you really want to do th
 
 If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
 
-### <a name="debugging"></a> Debugging
+### Debugging
 
 To view hits and misses on the server render cache, use the following command (or platform equivalent) in the build console:
 
