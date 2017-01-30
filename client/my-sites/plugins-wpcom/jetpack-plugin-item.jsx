@@ -3,7 +3,10 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import {
+	identity,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +36,7 @@ export const JetpackPluginItem = ( {
 			<a href={ plugin.link } className="plugins-wpcom__plugin-link">
 				<div className="plugins-wpcom__plugin-name">
 					{ plugin.name }
-					{ [ 'premium', 'business' ].includes( plugin.plan ) &&
+					{ includes( [ 'premium', 'business' ], plugin.plan ) &&
 						<span className={ planClasses }>
 							{ translatePlan[ plugin.plan ] }
 						</span>
