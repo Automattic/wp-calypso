@@ -35,7 +35,6 @@
     "chalk": "1.0.0",
     "chrono-node": "^1.0.6",
     "classnames": "1.1.1",
-    "click-outside": "2.0.1",
     "clipboard": "1.5.3",
     "commander": "2.3.0",
     "component-closest": "0.1.4",
