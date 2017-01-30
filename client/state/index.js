@@ -3,6 +3,7 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { mapValues, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,10 +59,23 @@ import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
+
+function timedCombineReducers( reducersObject ) {
+	const timedReducers = mapValues( reducersObject, ( reducer, reducerKey ) => ( state, action ) => {
+		const helpfulTimerName = `reducer: ${ reducerKey }, action: ${ action.type }`;
+		console.time( helpfulTimerName );
+		const returnValue = reducer( state, action );
+		console.timeEnd( helpfulTimerName );
+		return returnValue;
+	} );
+
+	return combineReducers( timedReducers );
+}
+
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
+export const reducer = timedCombineReducers( {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -111,7 +125,17 @@ export const reducer = combineReducers( {
 	wordads,
 } );
 
-const middleware = [ thunkMiddleware, noticesMiddleware ];
+const timerMiddleware = store => next => action => {
+	console.time( `whole reducer: ${ action.type }` );
+	next( action );
+
+	if ( isUndefined( action.type ) ) {
+		debugger;
+	}
+
+	console.timeEnd( `whole reducer: ${ action.type }` );
+}
+const middleware = [ thunkMiddleware, timerMiddleware, noticesMiddleware ];
 
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
