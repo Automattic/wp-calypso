@@ -25,15 +25,12 @@ import {
 } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class StatsPostPerformance extends Component {
 	static propTypes = {
 		viewCount: PropTypes.number,
-		site: PropTypes.oneOfType( [
-			PropTypes.bool,
-			PropTypes.object
-		] ),
-		siteID: PropTypes.number,
+		siteId: PropTypes.number,
 		query: PropTypes.object,
 		post: PropTypes.object,
 		isRequesting: PropTypes.bool,
@@ -79,13 +76,13 @@ class StatsPostPerformance extends Component {
 	};
 
 	render() {
-		const { site, query, post, isRequesting, translate, moment } = this.props;
-		const loading = ! site || isRequesting;
+		const { query, post, isRequesting, translate, moment, slug, siteId } = this.props;
+		const loading = ! siteId || isRequesting;
 		const postTime = post ? moment( post.date ) : moment();
 		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
 
-		const newPostUrl = site ? '/post/' + site.slug : '/post';
-		const summaryUrl = post ? '/stats/post/' + post.ID + '/' + this.props.site.slug : undefined;
+		const newPostUrl = slug ? '/post/' + slug : '/post';
+		const summaryUrl = slug && post ? '/stats/post/' + post.ID + '/' + slug : undefined;
 		let postTitle;
 
 		if ( post ) {
@@ -98,8 +95,8 @@ class StatsPostPerformance extends Component {
 
 		return (
 			<div>
-				{ site ? <QueryPosts siteId={ site.ID } query={ query } /> : null }
-				{ site && post ? <QueryPostStats siteId= { site.ID } postId={ post.ID } fields={ [ 'views' ] } /> : null }
+				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
+				{ siteId && post && <QueryPostStats siteId= { siteId } postId={ post.ID } fields={ [ 'views' ] } /> }
 				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />
@@ -152,19 +149,21 @@ class StatsPostPerformance extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, ownProps ) => {
-	const { site } = ownProps;
+const connectComponent = connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
 	const query = { status: 'publish', number: 1 };
-	const posts = site ? getSitePostsForQuery( state, site.ID, query ) : null;
+	const posts = siteId ? getSitePostsForQuery( state, siteId, query ) : null;
 	const post = posts && posts.length ? posts[ 0 ] : null;
-	const viewCount = post && site ? getPostStat( state, site.ID, post.ID, 'views' ) : null;
-	const isRequesting = isRequestingSitePostsForQuery( state, site.ID, query );
+	const viewCount = post && siteId ? getPostStat( state, siteId, post.ID, 'views' ) : null;
+	const isRequesting = isRequestingSitePostsForQuery( state, siteId, query );
 
 	return {
-		viewCount,
-		query,
+		slug: getSelectedSiteSlug( state ),
+		isRequesting,
 		post,
-		isRequesting
+		query,
+		siteId,
+		viewCount,
 	};
 }, { recordTracksEvent } );
 
