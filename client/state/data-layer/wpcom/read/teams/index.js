@@ -12,7 +12,7 @@ export function handleTeamsRequest( store, action, next ) {
 				store.dispatch( receiveTeams( { payload } ) );
 			},
 			error => {
-				store.dispatch( receiveTeams( { payload: error, isError: true } ) );
+				store.dispatch( receiveTeams( { payload: error, error: true } ) );
 			}
 		);
 	next( action );
