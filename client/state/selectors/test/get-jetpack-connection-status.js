@@ -13,7 +13,7 @@ describe( 'getJetpackConnectionStatus()', () => {
 	it( 'should return connection status for a known site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'getJetpackConnectionStatus()', () => {
 	it( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}

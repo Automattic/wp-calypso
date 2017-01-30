@@ -13,7 +13,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 	it( 'should return true if the connection status is being fetched', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 	it( 'should return false if the connection status is not being fetched', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isRequestingJetpackConnectionStatus()', () => {
 	it( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
