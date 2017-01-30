@@ -14,19 +14,18 @@ export function requestTeams() {
 	return {
 		type: READER_TEAMS_REQUEST,
 		meta: {
-			requestKey: READER_TEAMS_REQUEST
+			requestStart: READER_TEAMS_REQUEST
 		}
 	};
 }
 
-export function receiveTeams( payload, isError ) {
+export function receiveTeams( { payload, error } ) {
 	return {
 		type: READER_TEAMS_RECEIVE,
 		payload,
-		error: !! isError,
+		error: !! error,
 		meta: {
-			requestKey: READER_TEAMS_REQUEST,
-			requestEnded: true,
+			requestEnd: READER_TEAMS_REQUEST,
 		}
 	};
 }

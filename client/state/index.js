@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
+import dedupeMiddleware from './middlewares/dedupe-requests';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -110,6 +111,16 @@ export const reducer = combineReducers( {
 	users,
 	wordads,
 } );
+
+const middleware = [ thunkMiddleware, noticesMiddleware, dedupeMiddleware ];
+
+if ( typeof window === 'object' ) {
+	// Browser-specific middlewares
+	middleware.push(
+		require( './analytics/middleware.js' ).analyticsMiddleware,
+		require( './data-layer/wpcom-api-middleware.js' ).default,
+	);
+}
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
