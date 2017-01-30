@@ -53,9 +53,9 @@ export const activeThemes = createReducer( {}, {
 		...state,
 		[ siteId ]: getThemeIdFromStylesheet( themeStylesheet )
 	} ),
-	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, themeId } ) => ( {
+	[ ACTIVE_THEME_REQUEST_SUCCESS ]: ( state, { siteId, theme } ) => ( {
 		...state,
-		[ siteId ]: themeId
+		[ siteId ]: theme.id
 	} ) },
 	activeThemesSchema
  );

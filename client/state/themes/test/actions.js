@@ -626,13 +626,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId: 2211667,
-					themeId: 'rebalance',
-					themeName: 'Rebalance',
-					themeCost: {
-						currency: 'USD',
-						number: 0,
-						display: ''
-					}
+					theme: successResponse
 				} );
 			} );
 		} );
