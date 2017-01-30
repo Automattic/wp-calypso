@@ -15,9 +15,9 @@ import {
 
 export const MODULE_NOTICES = {
 	'infinite-scroll': {
-		[ ACTIVATE_SUCCESS ]: translate( 'Infinite scroll has been enabled for your theme.' ),
-		[ DEACTIVATE_SUCCESS ]: translate( 'Infinite scroll has been disabled for your theme.' ),
-		[ ACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be enabled for your theme.' ),
-		[ DEACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be disabled for your theme.' ),
+		[ ACTIVATE_SUCCESS ]: translate( 'Infinite scroll is now on.' ),
+		[ DEACTIVATE_SUCCESS ]: translate( 'Infinite scroll is now off.' ),
+		[ ACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be switched on.' ),
+		[ DEACTIVATE_FAILURE ]: translate( 'Infinite scroll could not be switched off.' ),
 	},
 };
