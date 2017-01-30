@@ -71,6 +71,7 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 function getSiteFilters( siteId ) {
 	const filters = [
 		{ title: i18n.translate( 'Insights' ), path: '/stats/insights/' + siteId, id: 'stats-insights' },
+		{ title: i18n.translate( 'Settings' ), path: '/stats/settings/' + siteId, id: 'stats-settings' },
 		{ title: i18n.translate( 'Days' ), path: '/stats/day/' + siteId, id: 'stats-day', period: 'day' },
 		{ title: i18n.translate( 'Weeks' ), path: '/stats/week/' + siteId, id: 'stats-week', period: 'week' },
 		{ title: i18n.translate( 'Months' ), path: '/stats/month/' + siteId, id: 'stats-month', period: 'month' },
@@ -96,6 +97,15 @@ module.exports = {
 		} else {
 			next();
 		}
+	},
+
+	settings: function( context ) {
+		const Settings = require( './stats-settings' );
+		renderWithReduxStore(
+			React.createElement( Settings ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	insights: function( context, next ) {
