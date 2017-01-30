@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { combineReducers } from 'redux';
+
+/**
  * Internal dependencies
  */
 import {
@@ -19,5 +24,7 @@ export const items = keyedReducer( 'siteId', createReducer( {}, {
 	[ READER_SITE_UNBLOCK_REQUEST_SUCCESS ]: ( state, action ) => ! action.data.success,
 } ) );
 
-export default items;
+export default combineReducers( {
+	items
+} );
 
