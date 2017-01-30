@@ -57,6 +57,7 @@ describe( 'wpcom-api', () => {
 						payload: sinon.match.any,
 						error: true,
 					} );
+					expect( nextSpy ).to.have.been.calledWith( action );
 					done();
 				}
 			} );
