@@ -62,7 +62,8 @@ const connectingTitle = ( { onCloseChat } ) => {
  */
 const connectedTitle = ( { onCloseChat } ) => (
 	<div className="happychat__active-toolbar">
-	<h4>{ translate( 'WP.com' ) }</h4>
+		<h4>{ translate( 'Create an outstanding website!' ) }</h4>
+		<h4>{ translate( 'WP.com' ) }</h4>
 		<div onClick={ onCloseChat }>
 			<GridIcon icon="chevron-down" />
 		</div>
