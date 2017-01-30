@@ -112,22 +112,13 @@ export const reducer = combineReducers( {
 	wordads,
 } );
 
-const middleware = [ thunkMiddleware, noticesMiddleware, dedupeMiddleware ];
-
-if ( typeof window === 'object' ) {
-	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware,
-		require( './data-layer/wpcom-api-middleware.js' ).default,
-	);
-}
-
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
 
 	const middlewares = [
 		thunkMiddleware,
 		noticesMiddleware,
+		dedupeMiddleware,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 	].filter( Boolean );
