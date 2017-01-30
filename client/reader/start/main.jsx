@@ -12,7 +12,7 @@ import Masonry from 'react-masonry-component';
  */
 import Main from 'components/main';
 import { getRecommendationIds } from 'state/reader/start/selectors';
-import { getFollowCount } from 'state/reader/follows/selectors';
+import { getFollowCount } from 'state/selectors/get-follow-count';
 import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
 import StartCard from './card';
 import CardPlaceholder from './card-placeholder';
