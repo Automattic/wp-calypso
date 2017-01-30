@@ -26,7 +26,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Timezone from 'components/timezone';
+import Timezone from 'blocks/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
