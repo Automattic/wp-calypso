@@ -13,7 +13,7 @@ export function getBackPath( state ) {
 	const backPath = state.themes.themesUI.backPath;
 	const siteSlug = getSelectedSiteSlug( state );
 
-	if ( includes( backPath, siteSlug ) ) {
+	if ( ! siteSlug || includes( backPath, siteSlug ) ) {
 		return backPath;
 	}
 	return `/design/${ siteSlug }`;
