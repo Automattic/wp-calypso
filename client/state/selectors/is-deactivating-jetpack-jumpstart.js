@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether Jumpstart is currently being deactivated
  */
 export default function isDeactivatingJetpackJumpstart( state, siteId ) {
-	return get( state.jetpack.jetpackJumpstart.requests, [ siteId, 'deactivating' ], null );
+	return get( state.jetpack.jumpstart.requests, [ siteId, 'deactivating' ], null );
 }
