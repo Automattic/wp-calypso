@@ -118,6 +118,7 @@ if ( typeof window === 'object' ) {
 	middleware.push(
 		require( './analytics/middleware.js' ).analyticsMiddleware,
 		require( './data-layer/wpcom-api-middleware.js' ).default,
+		require( './navigation/middleware.js' ).default,
 	);
 }
 
