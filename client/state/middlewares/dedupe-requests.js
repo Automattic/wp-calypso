@@ -31,4 +31,4 @@ const dedupeRequests = () => next => action => {
 	next( action );
 };
 
-export default dedupeRequests();
+export default dedupeRequests;

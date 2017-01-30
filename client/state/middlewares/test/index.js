@@ -31,7 +31,7 @@ describe( 'middleware', ( ) => {
 	describe( 'dedupeRequests', () => {
 		it( 'should allow through actions that do not have request meta', ( done ) => {
 			const nextSpy = sinon.spy();
-			dedupeRequests( nextSpy )( NO_META_ACTION );
+			dedupeRequests()( nextSpy )( NO_META_ACTION );
 
 			expect( nextSpy ).to.have.been.calledWith( NO_META_ACTION );
 			done();
@@ -41,7 +41,7 @@ describe( 'middleware', ( ) => {
 			const nextSpy = sinon.spy();
 			const action = requestStart( `${ Math.random() }` );
 
-			dedupeRequests( nextSpy )( action );
+			dedupeRequests()( nextSpy )( action );
 
 			expect( nextSpy ).to.have.been.calledWith( action );
 			done();
@@ -51,8 +51,8 @@ describe( 'middleware', ( ) => {
 			const nextSpy = sinon.spy();
 			const action = requestStart( `${ Math.random() }` );
 
-			dedupeRequests( nextSpy )( action );
-			dedupeRequests( nextSpy )( action );
+			dedupeRequests()( nextSpy )( action );
+			dedupeRequests()( nextSpy )( action );
 
 			expect( nextSpy ).to.have.been.calledWith( action );
 			expect( nextSpy ).to.have.been.calledOnce;
@@ -65,9 +65,9 @@ describe( 'middleware', ( ) => {
 			const requestStartAction = requestStart( requestKey );
 			const requestEndAction = requestEnd( requestKey );
 
-			dedupeRequests( nextSpy )( requestStartAction );
-			dedupeRequests( nextSpy )( requestEndAction );
-			dedupeRequests( nextSpy )( requestStartAction );
+			dedupeRequests()( nextSpy )( requestStartAction );
+			dedupeRequests()( nextSpy )( requestEndAction );
+			dedupeRequests()( nextSpy )( requestStartAction );
 
 			expect( nextSpy ).to.have.been.calledWith( requestStartAction );
 			expect( nextSpy ).to.have.been.calledWith( requestEndAction );
