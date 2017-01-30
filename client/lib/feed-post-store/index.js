@@ -13,10 +13,7 @@ const Dispatcher = require( 'dispatcher' ),
 	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
-	mc = require( 'lib/analytics' ).mc;
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
+	mc = require( 'lib/analytics' ).mc,
 	stats = require( 'reader/stats' );
 
 /**
