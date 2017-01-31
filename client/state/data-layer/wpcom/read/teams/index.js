@@ -11,7 +11,12 @@ export function handleTeamsRequest( store, action, next ) {
 		return;
 	}
 
-	inflight.promiseTracker( wpcom.req.get( '/read/teams', { apiVersion: '1.2' } ) )
+	const request = inflight.promiseTracker(
+		dedupeKey,
+		wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
+	);
+
+	request
 		.then(
 			payload => {
 				store.dispatch( {
