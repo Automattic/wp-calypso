@@ -6,23 +6,19 @@ import wpcom from 'lib/wp';
 import inflight from 'lib/inflight';
 
 export function handleTeamsRequest( store, action, next ) {
-	const dedupeKey = action.type;
-	if ( inflight.requestInflight( dedupeKey ) ) {
-		return;
-	}
-	inflight.startRequest( dedupeKey );
+	const dedupedRequest = inflight.dedupedRequest(
+		action.type,
+		wpcom.req.get( '/read/teams', { apiVersion: '1.2' } ),
+	);
 
-	wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
-		.then(
+	dedupedRequest.then(
 			payload => {
-				inflight.endRequest( dedupeKey );
 				store.dispatch( {
 					type: READER_TEAMS_RECEIVE,
 					payload,
 				} );
 			},
 			error => {
-				inflight.endRequest( dedupeKey );
 				store.dispatch( {
 					type: READER_TEAMS_RECEIVE,
 					payload: error,
