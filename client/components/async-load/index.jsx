@@ -14,18 +14,19 @@ export default class AsyncLoad extends Component {
 		super( ...arguments );
 
 		this.state = {
-			dirty: false,
+			require: null,
 			component: null
 		};
 	}
 
 	componentWillMount() {
+		this.setState( { require: this.props.require } );
 		this.require();
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.require !== nextProps.require ) {
-			this.setState( { dirty: true } );
+			this.setState( { require: nextProps.require, component: null } );
 		}
 	}
 
@@ -38,13 +39,16 @@ export default class AsyncLoad extends Component {
 	}
 
 	require() {
-		this.props.require( ( component ) => {
-			this.setState( { component, dirty: false } );
+		const requireFunction = this.props.require;
+		requireFunction( ( component ) => {
+			if ( this.state.require === requireFunction ) {
+				this.setState( { component } );
+			}
 		} );
 	}
 
 	render() {
-		if ( this.state.component && ! this.state.dirty ) {
+		if ( this.state.component ) {
 			const props = omit( this.props, [ 'require', 'placeholder' ] );
 			return <this.state.component { ...props } />;
 		}
