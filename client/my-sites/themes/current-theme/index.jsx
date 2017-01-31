@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { map, pickBy } from 'lodash';
@@ -22,9 +22,9 @@ import QueryActiveTheme from 'components/data/query-active-theme';
  * Show current active theme for a site, with
  * related actions.
  */
-const CurrentTheme = React.createClass( {
+class CurrentTheme extends Component {
 
-	propTypes: {
+	static propTypes = {
 		options: PropTypes.objectOf( PropTypes.shape( {
 			label: PropTypes.string.isRequired,
 			icon: PropTypes.string.isRequired,
@@ -33,9 +33,9 @@ const CurrentTheme = React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		// connected props
 		currentTheme: PropTypes.object
-	},
+	}
 
-	trackClick: trackClick.bind( null, 'current theme' ),
+	trackClick = ( event ) => trackClick( 'current theme', event )
 
 	render() {
 		const { currentTheme, siteId, translate } = this.props,
@@ -73,7 +73,7 @@ const CurrentTheme = React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
