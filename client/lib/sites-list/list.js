@@ -70,7 +70,7 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	if ( ! userUtils.isLoggedIn() || this.fetching ) {
+	if ( ! userUtils.isLoggedIn() || this.fetching || this.ignoreUpdates ) {
 		return;
 	}
 
@@ -86,9 +86,20 @@ SitesList.prototype.fetch = function() {
 			return;
 		}
 
+		if ( this.ignoreUpdates ) {
+			this.fetching = false;
+			return;
+		}
+
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );
+};
+
+// FOR NUCLEAR AUTOMATED TRANSFER OPTION
+// See: https://github.com/Automattic/wp-calypso/pull/10986
+SitesList.prototype.pauseFetching = function() {
+	this.ignoreUpdates = true;
 };
 
 SitesList.prototype.sync = function( data ) {

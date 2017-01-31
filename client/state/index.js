@@ -57,6 +57,8 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import automatedTransferEnhancer from './automated-transfer/enhancer';
+import config from 'config';
 
 /**
  * Module variables
@@ -111,6 +113,10 @@ export const reducer = combineReducers( {
 	wordads,
 } );
 
+// TEMPORARY AT FLOW FIX, NOT INTENDED FOR PROD
+const isDevOrWPCalypso = [ 'development', 'wpcalypso' ].indexOf( config( 'env' ) ) > -1;
+const atEnabled = isDevOrWPCalypso && config.isEnabled( 'automated-transfer' );
+
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
 
@@ -119,12 +125,14 @@ export function createReduxStore( initialState = {} ) {
 		noticesMiddleware,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+		isBrowser && atEnabled && require( './automated-transfer/middleware.js' ).default
 	].filter( Boolean );
 
 	const enhancers = [
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		applyMiddleware( ...middlewares ),
 		isBrowser && sitesSync,
+		isBrowser && atEnabled && automatedTransferEnhancer,
 		isBrowser && window.devToolsExtension && window.devToolsExtension()
 	].filter( Boolean );
 
