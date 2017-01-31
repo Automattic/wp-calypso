@@ -85,6 +85,10 @@ export function failMediaRequest( siteId, query ) {
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
+ * TODO: When network layer behavior is attached to this action type, remember
+ * to ignore media IDs for "transient" items (upload in progress) by validating
+ * numeric ID.
+ *
  * @param  {Number}         siteId   Site ID
  * @param  {(Array|Number)} mediaIds ID(s) of media to be deleted
  * @return {Object}                  Action object
