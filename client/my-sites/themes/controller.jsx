@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import compact from 'lodash/compact';
+import { compact, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import React from 'react';
@@ -15,7 +15,7 @@ import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, receiveThemes } from 'state/themes/actions';
+import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
@@ -55,6 +55,12 @@ function getProps( context ) {
 }
 
 export function upload( context, next ) {
+	// Store previous path to return to only if it was main showcase page
+	if ( startsWith( context.prevPath, '/design' ) &&
+		! startsWith( context.prevPath, '/design/upload' ) ) {
+		context.store.dispatch( setBackPath( context.prevPath ) );
+	}
+
 	context.primary = <Upload />;
 	next();
 }
