@@ -44,7 +44,6 @@ describe( 'reducer', ( ) => {
 				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
 		} );
-<<<<<<< HEAD
 
 		it( 'deserialize: should succeed with good data', () => {
 			assert.deepEqual( validState, items( validState, { type: DESERIALIZE } ) );
@@ -58,40 +57,6 @@ describe( 'reducer', ( ) => {
 			} catch ( err ) {
 				assert.deepEqual( [], state );
 			}
-		} );
-	} );
-
-	describe( 'isRequesting', () => {
-		it( 'requesting teams should set requesting to true', () => {
-			expect(
-				isRequesting( false,
-					{
-						type: READER_TEAMS_REQUEST,
-					}
-				)
-			).to.equal( true );
-		} );
-
-		it( 'successful request should set requesting to false', () => {
-			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						teams: [ {}, {}, {} ],
-					}
-				)
-			).to.equal( false );
-		} );
-
-		it( 'failed request should set requesting to false', () => {
-			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						error: new Error( 'test error' ),
-					}
-				)
-			).to.equal( false );
 		} );
 	} );
 } );
