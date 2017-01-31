@@ -603,10 +603,22 @@ describe( 'actions', () => {
 			message: 'Unknown blog'
 		};
 
+		const fakeGetState = () => ( {
+			sites: {
+				items: {
+					77203074: {
+						jetpack: true
+					}
+				}
+			}
+		} );
+
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2211667/themes/mine' )
+				.reply( 200, successResponse )
+				.get( '/rest/v1.1/sites/77203074/themes/mine' )
 				.reply( 200, successResponse )
 				.get( '/rest/v1.1/sites/666/themes/mine' )
 				.reply( 404, failureResponse );
@@ -621,18 +633,35 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch active theme request success action when request completes', () => {
-			return requestActiveTheme( 2211667 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: ACTIVE_THEME_REQUEST_SUCCESS,
-					siteId: 2211667,
-					theme: successResponse
+		context( 'when request completes successfully', () => {
+			context( 'for a WP.com site', () => {
+				it( 'should dispatch receiveTheme action', () => {
+					return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
+						expect( spy ).to.have.been.calledWith( receiveTheme( successResponse, 'wpcom' ) );
+					} );
+				} );
+			} );
+			context( 'for a Jetpack site', () => {
+				it( 'should dispatch receiveTheme action', () => {
+					return requestActiveTheme( 77203074 )( spy, fakeGetState ).then( () => {
+						expect( spy ).to.have.been.calledWith( receiveTheme( successResponse, 77203074 ) );
+					} );
+				} );
+			} );
+
+			it( 'should dispatch active theme request success action', () => {
+				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: ACTIVE_THEME_REQUEST_SUCCESS,
+						siteId: 2211667,
+						theme: successResponse
+					} );
 				} );
 			} );
 		} );
 
 		it( 'should dispatch active theme request failure action when request completes', () => {
-			return requestActiveTheme( 666 )( spy ).then( () => {
+			return requestActiveTheme( 666 )( spy, fakeGetState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,
