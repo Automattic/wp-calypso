@@ -494,12 +494,10 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const FollowList = require( 'lib/follow-list' );
 		const FollowsComponent = require( 'my-sites/stats/follows' );
-		const StatsList = require( 'lib/stats/stats-list' );
 		const validFollowTypes = [ 'wpcom', 'email', 'comment' ];
 		const followType = context.params.follow_type;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
-		let followersList;
 		const basePath = route.sectionify( context.path );
 
 		let site = sites.getSite( siteId );
@@ -529,19 +527,6 @@ module.exports = {
 				pageNum = 1;
 			}
 
-			switch ( followType ) {
-				case 'comment':
-					followersList = new StatsList( {
-						siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 20, page: pageNum } );
-					break;
-
-				case 'email':
-				case 'wpcom':
-					followersList = new StatsList( {
-						siteID: siteId, statType: 'statsFollowers', domain: siteDomain, max: 20, page: pageNum, type: followType } );
-					break;
-			}
-
 			analytics.pageView.record(
 				basePath.replace( '/' + pageNum, '' ),
 				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
@@ -555,7 +540,6 @@ module.exports = {
 					page: pageNum,
 					perPage: 20,
 					total: 10,
-					followersList: followersList,
 					followType: followType,
 					followList: followList,
 					domain: siteDomain
