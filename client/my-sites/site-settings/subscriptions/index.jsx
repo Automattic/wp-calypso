@@ -45,37 +45,33 @@ const Subscriptions = ( {
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 
-				{
-					subscriptionsModuleActive && (
-						<div className="subscriptions__module-settings is-indented">
-							<FormToggle
-								className="subscriptions__module-settings-toggle is-compact"
-								checked={ !! fields.stb_enabled }
-								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ handleToggle( 'stb_enabled' ) }>
-								<span className="site-settings__toggle-label">
-									{ translate( 'Show a "follow blog" option in the comment form' ) }
-								</span>
-							</FormToggle>
+				<div className="subscriptions__module-settings is-indented">
+					<FormToggle
+						className="subscriptions__module-settings-toggle is-compact"
+						checked={ !! fields.stb_enabled }
+						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+						onChange={ handleToggle( 'stb_enabled' ) }>
+						<span className="site-settings__toggle-label">
+							{ translate( 'Show a "follow blog" option in the comment form' ) }
+						</span>
+					</FormToggle>
 
-							<FormToggle
-								className="subscriptions__module-settings-toggle is-compact"
-								checked={ !! fields.stc_enabled }
-								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ handleToggle( 'stc_enabled' ) }>
-								<span className="site-settings__toggle-label">
-									{ translate( 'Show a "follow comments" option in the comment form.' ) }
-								</span>
-							</FormToggle>
+					<FormToggle
+						className="subscriptions__module-settings-toggle is-compact"
+						checked={ !! fields.stc_enabled }
+						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+						onChange={ handleToggle( 'stc_enabled' ) }>
+						<span className="site-settings__toggle-label">
+							{ translate( 'Show a "follow comments" option in the comment form.' ) }
+						</span>
+					</FormToggle>
 
-							<p className="subscriptions__email-followers">
-								<a href={ '/people/email-followers/' + selectedSiteSlug }>
-									{ translate( 'View your Email Followers' ) }
-								</a>
-							</p>
-						</div>
-					)
-				}
+					<p className="subscriptions__email-followers">
+						<a href={ '/people/email-followers/' + selectedSiteSlug }>
+							{ translate( 'View your Email Followers' ) }
+						</a>
+					</p>
+				</div>
 			</FormFieldset>
 		</Card>
 	);
