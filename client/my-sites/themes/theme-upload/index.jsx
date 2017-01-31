@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find } from 'lodash';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -38,9 +39,12 @@ import {
 } from 'state/themes/upload-theme/selectors';
 import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -57,13 +61,13 @@ class Upload extends React.Component {
 		progressTotal: React.PropTypes.number,
 		progressLoaded: React.PropTypes.number,
 		installing: React.PropTypes.bool,
-		isJetpackSite: React.PropTypes.bool,
+		isJetpack: React.PropTypes.bool,
 		upgradeJetpack: React.PropTypes.bool,
 		backPath: React.PropTypes.string,
 	};
 
 	state = {
-		showEligibility: ! this.props.isJetpackSite,
+		showEligibility: ! this.props.isJetpack,
 	}
 
 	componentDidMount() {
@@ -76,7 +80,7 @@ class Upload extends React.Component {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
 
-			this.setState( { showEligibility: ! nextProps.isJetpackSite } );
+			this.setState( { showEligibility: ! nextProps.isJetpack } );
 		}
 	}
 
@@ -141,13 +145,13 @@ class Upload extends React.Component {
 		}
 		debug( 'zip file:', file );
 
-		const action = this.props.isJetpackSite
+		const action = this.props.isJetpack
 			? this.props.uploadTheme : this.props.initiateThemeTransfer;
 		action( siteId, file );
 	}
 
 	renderDropZone() {
-		const { translate } = this.props;
+		const { translate, isBusiness, isJetpack } = this.props;
 		const uploadPromptText = translate(
 			'Do you have a custom theme to upload to your site?'
 		);
@@ -158,8 +162,12 @@ class Upload extends React.Component {
 			'Drop files or click here to upload'
 		);
 
+		const themeUploadClass = classNames( 'theme-upload', {
+			'is-disabled': ! isBusiness && ! isJetpack
+		} );
+
 		return (
-			<div>
+			<div className={ themeUploadClass }>
 				<span className="theme-upload__title">{ uploadPromptText }</span>
 				<span className="theme-upload__instructions">{ uploadInstructionsText }</span>
 				<div className="theme-upload__dropzone">
@@ -185,7 +193,7 @@ class Upload extends React.Component {
 		} = this.props;
 
 		const uploadingMessage = translate( 'Uploading your theme…' );
-		const installingMessage = this.props.isJetpackSite
+		const installingMessage = this.props.isJetpack
 			? translate( 'Installing your theme…' ) : translate( 'Configuring your site…' );
 
 		return (
@@ -251,9 +259,11 @@ class Upload extends React.Component {
 			themeId,
 			upgradeJetpack,
 			backPath,
+			isBusiness,
+			isJetpack
 		} = this.props;
 
-		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
+		const showEligibility = ! isJetpack && this.state.showEligibility;
 
 		return (
 			<Main>
@@ -263,6 +273,11 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
+				{ ! isBusiness && ! isJetpack && <UpgradeNudge
+					feature={ FEATURE_UNLIMITED_PREMIUM_THEMES }
+					title={ translate( 'Upgrade to the Business plan to upload themes.' ) }
+					message={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
+					icon="customize" /> }
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
@@ -296,8 +311,9 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			siteId,
+			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			selectedSite: getSelectedSite( state ),
-			isJetpackSite: isJetpack,
+			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
