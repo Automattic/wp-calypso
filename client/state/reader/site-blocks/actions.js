@@ -15,7 +15,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 } from 'state/action-types';
-import { createNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 
 /**
  * Triggers a network request to block a site.
@@ -30,15 +30,16 @@ export function requestSiteBlock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().blockSite( siteId ).then( ( data ) => {
-			if ( data && data.success === false ) {
-				throw new Error( 'Block was unsuccessful' );
+		return wpcom.undocumented().me().blockSite( siteId ).then( ( response ) => {
+			if ( response && response.success === false ) {
+				return new Promise.reject( 'Block was unsuccessful' );
 			}
-
+			return response;
+		} ).then( ( response ) => {
 			dispatch( {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
 				siteId,
-				data
+				data: response
 			} );
 		},
 		( error ) => {
@@ -48,9 +49,8 @@ export function requestSiteBlock( siteId ) {
 				error
 			} );
 
-			dispatch( createNotice( 'is-error', translate( 'Sorry - there was a problem blocking that site.' ) ) );
-		}
-		);
+			dispatch( errorNotice( translate( 'Sorry - there was a problem blocking that site.' ) ) );
+		} );
 	};
 }
 
@@ -67,15 +67,16 @@ export function requestSiteUnblock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().unblockSite( siteId ).then( ( data ) => {
-			if ( data && data.success === false ) {
-				throw new Error( 'Unblock was unsuccessful' );
+		return wpcom.undocumented().me().unblockSite( siteId ).then( ( response ) => {
+			if ( response && response.success === false ) {
+				return new Promise.reject( 'Unblock was unsuccessful' );
 			}
-
+			return response;
+		} ).then( ( response ) => {
 			dispatch( {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 				siteId,
-				data
+				data: response
 			} );
 		},
 		( error ) => {
@@ -85,8 +86,7 @@ export function requestSiteUnblock( siteId ) {
 				error
 			} );
 
-			dispatch( createNotice( 'is-error', translate( 'Sorry - there was a problem unblocking that site.' ) ) );
-		}
-		);
+			dispatch( errorNotice( translate( 'Sorry - there was a problem unblocking that site.' ) ) );
+		} );
 	};
 }
