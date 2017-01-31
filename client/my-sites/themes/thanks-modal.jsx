@@ -87,17 +87,14 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderThemeInfo() {
-		const { detailsUrl } = this.props;
-		if ( detailsUrl ) {
-			return (
-				translate( '{{a}}Learn more about{{/a}} this theme.', {
-					components: {
-						a: <a href={ detailsUrl }
-							onClick={ this.onLinkClick( 'theme info' ) } />
-					}
-				} )
-			);
-		}
+		return (
+			translate( '{{a}}Learn more about{{/a}} this theme.', {
+				components: {
+					a: <a href={ this.props.detailsUrl }
+						onClick={ this.onLinkClick( 'theme info' ) } />
+				}
+			} )
+		);
 	},
 
 	renderWporgAuthorInfo( authorUri ) {
