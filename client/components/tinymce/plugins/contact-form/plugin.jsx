@@ -58,6 +58,7 @@ const wpcomContactForm = editor => {
 						onInsert() {
 							const state = store.getState();
 							editor.execCommand( 'mceInsertContent', false, serialize( state.ui.editor.contactForm ) );
+							renderModal( 'hide' );
 						},
 						onChangeTabs( tab ) {
 							renderModal( 'show', tab );
@@ -68,7 +69,7 @@ const wpcomContactForm = editor => {
 							renderModal( 'hide' );
 						},
 						onFieldAdd() {
-							store.dispatch( fieldAdd() )
+							store.dispatch( fieldAdd() );
 						},
 						onFieldRemove( index ) {
 							store.dispatch( fieldRemove( index ) );
@@ -83,7 +84,7 @@ const wpcomContactForm = editor => {
 				),
 				node
 			);
-		};
+		}
 
 		renderModal();
 	} );
@@ -104,4 +105,4 @@ const wpcomContactForm = editor => {
 
 export default () => {
 	tinymce.PluginManager.add( 'wpcom/contactform', wpcomContactForm );
-}
+};
