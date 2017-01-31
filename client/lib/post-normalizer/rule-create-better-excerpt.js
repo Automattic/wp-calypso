@@ -44,11 +44,7 @@ function firstElementIsBreakline( dom ) {
 	return firstElementIsBreakline( dom.firstChild );
 }
 
-export function formatExcerpt( content ) {
-	if ( ! content ) {
-		return '';
-	}
-
+function buildStrippedDom( content ) {
 	// Spin up a new DOM for the linebreak markup
 	const dom = domForHtml( content );
 	dom.id = '__better_excerpt__';
@@ -57,9 +53,16 @@ export function formatExcerpt( content ) {
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors = '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
 	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	return dom.innerHTML;
+}
 
-	// limit to paras and brs
-	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
+export function formatExcerpt( content ) {
+	if ( ! content ) {
+		return '';
+	}
+
+	const dom = domForHtml( striptags( content, [ 'p', 'br', 'sup', 'sub' ] ) );
+	dom.id = '__better_excerpt__';
 
 	// strip any p's that are empty
 	toArray( dom.querySelectorAll( 'p' ) )
@@ -90,8 +93,11 @@ export default function createBetterExcerpt( post ) {
 		return post;
 	}
 
-	post.better_excerpt = formatExcerpt( post.content );
-	post.better_excerpt_no_html = stripHTML( post.better_excerpt );
+	const strippedDom = buildStrippedDom( post.content );
+	post.content_no_html = striptags( strippedDom );
+
+	post.better_excerpt = formatExcerpt( strippedDom );
+	post.better_excerpt_no_html = trim( stripHTML( post.better_excerpt ) );
 
 	// also make a shorter excerpt...
 	if ( post.better_excerpt_no_html ) {

@@ -987,5 +987,13 @@ describe( 'index', function() {
 				done
 			);
 		} );
+
+		it( 'builds the content without html', done => {
+			const source = '<style>#foo{ color: blue; }</style><p>hi there</p>';
+			normalizer( { content: source }, [ normalizer.createBetterExcerpt ], function( err, normalized ) {
+				assert.strictEqual( normalized.content_no_html, 'hi there' );
+				done( err );
+			} );
+		} );
 	} );
 } );
