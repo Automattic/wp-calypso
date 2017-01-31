@@ -1,7 +1,6 @@
 
 var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	RECEIVE_TEAMS = require( 'lib/reader-teams/constants' ).action.RECEIVE_TEAMS;
+	wpcom = require( 'lib/wp' );
 
 var isFetching = false;
 
@@ -34,12 +33,6 @@ module.exports = {
 					error: error
 				} );
 
-				Dispatcher.handleServerAction( {
-					type: RECEIVE_TEAMS,
-					data: null,
-					error: error
-				} );
-
 				return;
 			}
 
@@ -61,8 +54,6 @@ module.exports = {
 
 			checkForBatchErrorAndDispatch( 'RECEIVE_READER_TAG_SUBSCRIPTIONS', '/read/tags' );
 			checkForBatchErrorAndDispatch( 'RECEIVE_READER_LISTS', '/read/lists' );
-			checkForBatchErrorAndDispatch( 'RECEIVE_TEAMS', '/read/teams' );
-
 			// have to set this after we dispatch, otherwise we may try to fetch again as a result of the dispatch.
 			isFetching = false;
 		} );
