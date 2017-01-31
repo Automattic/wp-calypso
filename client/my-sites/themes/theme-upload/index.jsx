@@ -39,12 +39,12 @@ import {
 } from 'state/themes/upload-theme/selectors';
 import { getTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import Banner from 'components/banner';
+import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -273,11 +273,10 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
-				{ ! isBusiness && ! isJetpack && <UpgradeNudge
-					feature={ FEATURE_UNLIMITED_PREMIUM_THEMES }
-					title={ translate( 'Upgrade to the Business plan to upload themes.' ) }
-					message={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
-					icon="customize" /> }
+				{ ! isBusiness && ! isJetpack && <Banner
+					feature={ FEATURE_UPLOAD_THEMES }
+					plan={ PLAN_BUSINESS }
+					title={ translate( 'Upgrade to the Business plan to upload themes.' ) } /> }
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
