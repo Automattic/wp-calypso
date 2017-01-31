@@ -34,7 +34,7 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
-import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
+import { getSiteIconId, getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
 import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {
@@ -86,7 +86,7 @@ class SiteIconSetting extends Component {
 	}
 
 	uploadSiteIcon( blob, fileName ) {
-		const { siteId, translate } = this.props;
+		const { siteId, translate, siteIconId } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
@@ -117,6 +117,21 @@ class SiteIconSetting extends Component {
 
 			if ( isFailedUpload ) {
 				this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
+
+				// Revert back to previously assigned site icon
+				if ( siteIconId ) {
+					this.props.updateSiteIcon( siteId, siteIconId );
+
+					// If previous icon object is already available in legacy
+					// store, receive into state. Otherwise assume SiteIcon
+					// component will trigger request.
+					//
+					// TODO: Remove when media listing Redux-ified
+					const previousIcon = MediaStore.get( siteId, siteIconId );
+					if ( previousIcon ) {
+						this.props.receiveMedia( siteId, previousIcon );
+					}
+				}
 			} else {
 				this.saveSiteIconSetting( siteId, media );
 			}
@@ -282,6 +297,7 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			siteIconId: getSiteIconId( state, siteId ),
 			hasIcon: !! getSiteIconUrl( state, siteId ),
 			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
