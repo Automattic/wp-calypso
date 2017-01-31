@@ -670,12 +670,14 @@ describe( 'reducer', () => {
 			const state = activeThemes( deepFreeze( {} ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
-				themeId: 'rebalance',
-				themeName: 'Rebalance',
-				themeCost: {
-					currency: 'USD',
-					number: 0,
-					display: ''
+				theme: {
+					id: 'rebalance',
+					name: 'Rebalance',
+					cost: {
+						currency: 'USD',
+						number: 0,
+						display: ''
+					}
 				}
 			} );
 
@@ -687,12 +689,14 @@ describe( 'reducer', () => {
 			const state = activeThemes( deepFreeze( { 2211667: 'rebalance' } ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
-				themeId: 'twentysixteen',
-				themeName: 'Twentysixteen',
-				themeCost: {
-					currency: 'USD',
-					number: 0,
-					display: ''
+				theme: {
+					id: 'twentysixteen',
+					name: 'Twenty Sixteen',
+					cost: {
+						currency: 'USD',
+						number: 0,
+						display: ''
+					}
 				}
 			} );
 
