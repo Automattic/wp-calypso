@@ -43,6 +43,8 @@ export const automatedTransferEnhancer = createStore => ( reducer, initialState,
 		return store;
 	}
 
+	const sites = require( 'lib/sites-list' )();
+
 	return {
 		...store,
 		dispatch( action ) {
@@ -55,6 +57,7 @@ export const automatedTransferEnhancer = createStore => ( reducer, initialState,
 				store.dispatch( action );
 				return action;
 			}
+			sites.pauseFetching();
 			const noopAction = {
 				type: '@@calypso/noop-transfer-in-progress',
 				originalAction: action
