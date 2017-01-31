@@ -17,7 +17,7 @@ import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError }
 import { getSelectedSiteId } from 'state/ui/selectors';
 import GeneralSettings from './section-general';
 import WritingSettings from './form-writing';
-import DiscussionSettings from './section-discussion';
+import DiscussionSettings from './form-discussion';
 import AnalyticsSettings from './section-analytics';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
@@ -83,7 +83,7 @@ export class SiteSettingsComponent extends Component {
 			case 'writing':
 				return <WritingSettings site={ site } />;
 			case 'discussion':
-				return <DiscussionSettings site={ site } />;
+				return <DiscussionSettings />;
 			case 'security':
 				return <SiteSecurity site={ site } />;
 			case 'analytics':
