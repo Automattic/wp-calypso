@@ -10,9 +10,10 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 } from 'state/action-types';
 
+const isAudioSupported = typeof Audio === 'function';
+
 export const playSound = src => {
-	if ( typeof Audio !== 'function' ) {
-		// No Audio support in this browser
+	if ( ! isAudioSupported ) {
 		return;
 	}
 
@@ -37,6 +38,10 @@ handlers[ HAPPYCHAT_RECEIVE_EVENT ] = onHappyChatMessage;
  */
 
 export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
+	if ( ! isAudioSupported ) {
+		return;
+	}
+
 	if ( has( handlers, action.type ) ) {
 		handlers[ action.type ]( dispatch, action, getState );
 	}
