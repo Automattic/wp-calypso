@@ -99,7 +99,7 @@ const webpackConfig = {
 	externals: [ 'electron' ]
 };
 
-if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
+if ( CALYPSO_ENV === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
