@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import statsStrings from '../stats-strings';
 import Geochart from '../geochart';
-import StatsConnectedModule from '../stats-module/connected-list';
+import StatsModule from '../stats-module';
 
 class StatCountries extends Component {
 	static propTypes = {
@@ -24,7 +24,7 @@ class StatCountries extends Component {
 		const moduleStrings = statsStrings();
 
 		return (
-			<StatsConnectedModule
+			<StatsModule
 				query={ query }
 				path="countryviews"
 				period={ period }
@@ -34,7 +34,7 @@ class StatCountries extends Component {
 				statType="statsCountryViews"
 			>
 				<Geochart query={ query } />
-			</StatsConnectedModule>
+			</StatsModule>
 		);
 	}
 }
