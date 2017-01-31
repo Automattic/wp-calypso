@@ -114,7 +114,7 @@ export const reducer = combineReducers( {
 } );
 
 // TEMPORARY AT FLOW FIX, NOT INTENDED FOR PROD
-const isDevOrWPCalypso = [ 'development', 'wpcalypso' ].indexOf( config( 'env' ) ) > -1;
+const isDevOrWPCalypso = [ 'development', 'wpcalypso' ].indexOf( config( 'env_id' ) ) > -1;
 const atEnabled = isDevOrWPCalypso && config.isEnabled( 'automated-transfer' );
 
 export function createReduxStore( initialState = {} ) {
