@@ -62,12 +62,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderWpcomInfo() {
-		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
-			components: {
-				a: <a href={ this.props.detailsUrl }
-					onClick={ this.onLinkClick( 'features' ) } />
-			}
-		} );
+		const features = this.renderThemeInfo();
 		const customize = translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ this.props.customizeUrl }
@@ -91,17 +86,16 @@ const ThanksModal = React.createClass( {
 		);
 	},
 
-	renderWporgThemeInfo( themeUri ) {
-		if ( themeUri ) {
+	renderThemeInfo() {
+		const { detailsUrl } = this.props;
+		if ( detailsUrl ) {
 			return (
-				<li>
-					{ translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
-						components: {
-							a: <a href={ themeUri }
-								onClick={ this.onLinkClick( 'org theme' ) } />
-						}
-					} ) }
-				</li>
+				translate( '{{a}}Learn more about{{/a}} this theme.', {
+					components: {
+						a: <a href={ detailsUrl }
+							onClick={ this.onLinkClick( 'theme info' ) } />
+					}
+				} )
 			);
 		}
 	},
@@ -121,30 +115,15 @@ const ThanksModal = React.createClass( {
 		}
 	},
 
-	renderWporgForumInfo() {
-		return (
-			<li>
-				{ translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
-					components: {
-						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							onClick={ this.onLinkClick( 'org forum' ) } />
-					}
-				} ) }
-			</li>
-		);
-	},
-
 	renderJetpackInfo() {
 		const {
-			theme_uri: themeUri,
 			author_uri: authorUri
 		} = this.props.currentTheme;
 
 		return (
 			<ul>
-				{ themeUri ? this.renderWporgThemeInfo( themeUri ) : null }
+				<li>{ this.renderThemeInfo() }</li>
 				{ authorUri ? this.renderWporgAuthorInfo( authorUri ) : null }
-				{ ! themeUri || ! authorUri ? this.renderWporgForumInfo() : null }
 			</ul>
 		);
 	},
