@@ -46,20 +46,15 @@ module.exports = React.createClass( {
 
 	getInitialState() {
 		return {
-			showMoreOptions: false,
 			showComments: false,
 			showShare: false
 		};
 	},
 
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate( nextProps ) {
 		const propsToCheck = [ 'post', 'postImages', 'fullWidthPost', 'path' ];
 
 		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( nextState.showMoreOptions !== this.props.showMoreOptions ) {
 			return true;
 		}
 
@@ -148,7 +143,6 @@ module.exports = React.createClass( {
 		return classNames( {
 			post: true,
 			'is-protected': ( this.props.post.password ) ? true : false,
-			'show-more-options': this.state.showMoreOptions
 		} );
 	},
 
@@ -345,12 +339,6 @@ module.exports = React.createClass( {
 		return '_blank';
 	},
 
-	toggleMoreControls( visibility ) {
-		this.setState( {
-			showMoreOptions: ( visibility === 'show' )
-		} );
-	},
-
 	getSite() {
 		return this.props.sites.getSite( this.props.post.site_ID );
 	},
@@ -387,8 +375,6 @@ module.exports = React.createClass( {
 					post={ this.props.post }
 					editURL={ utils.getEditURL( this.props.post, site ) }
 					fullWidth={ this.props.fullWidthPost }
-					onShowMore={ this.toggleMoreControls.bind( this, 'show' ) }
-					onHideMore={ this.toggleMoreControls.bind( this, 'hide' ) }
 					onPublish={ this.publishPost }
 					onTrash={ this.trashPost }
 					onDelete={ this.deletePost }
