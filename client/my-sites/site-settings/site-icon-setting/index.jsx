@@ -19,7 +19,7 @@ import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/action
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { receiveMedia } from 'state/media/actions';
+import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -100,18 +100,25 @@ class SiteIconSetting extends Component {
 			// copy, so if our request is for a media which is not transient,
 			// we can assume the upload has finished.
 			const media = MediaStore.get( siteId, transientMediaId );
-			this.props.receiveMedia( siteId, media );
-			if ( isItemBeingUploaded( media ) ) {
+			const isUploadInProgress = media && isItemBeingUploaded( media );
+			const isFailedUpload = ! media;
+
+			if ( isFailedUpload ) {
+				this.props.deleteMedia( siteId, transientMediaId );
+			} else {
+				this.props.receiveMedia( siteId, media );
+			}
+
+			if ( isUploadInProgress ) {
 				return;
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
 
-			// Check whether upload was successful
-			if ( media ) {
-				this.saveSiteIconSetting( siteId, media );
-			} else {
+			if ( isFailedUpload ) {
 				this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
+			} else {
+				this.saveSiteIconSetting( siteId, media );
 			}
 		};
 
@@ -292,6 +299,7 @@ export default connect(
 		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		receiveMedia,
+		deleteMedia,
 		errorNotice
 	}
 )( localize( SiteIconSetting ) );
