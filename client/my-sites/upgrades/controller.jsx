@@ -214,6 +214,40 @@ module.exports = {
 		);
 	},
 
+	sitelessCheckout: function( context ) {
+		const Checkout = require( './checkout' ),
+			CheckoutData = require( 'components/data/checkout' ),
+			CartData = require( 'components/data/cart' ),
+			SecondaryCart = require( './cart/secondary-cart' );
+
+		analytics.pageView.record( '/checkout/no-site', 'Checkout' );
+
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+		renderWithReduxStore(
+			(
+				<CheckoutData>
+					<Checkout
+						productsList={ productsList }
+					/>
+				</CheckoutData>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+
+		renderWithReduxStore(
+			(
+				<CartData>
+					<SecondaryCart />
+				</CartData>
+			),
+			document.getElementById( 'secondary' ),
+			context.store
+		);
+	},
+
 	checkoutThankYou: function( context ) {
 		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
 			basePath = route.sectionify( context.path ),
