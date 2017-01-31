@@ -32,7 +32,7 @@ export function requestSiteBlock( siteId ) {
 
 		return wpcom.undocumented().me().blockSite( siteId ).then( ( response ) => {
 			if ( response && response.success === false ) {
-				return new Promise.reject( 'Block was unsuccessful' );
+				return Promise.reject( 'Block was unsuccessful' );
 			}
 			return response;
 		} ).then( ( response ) => {
@@ -50,6 +50,8 @@ export function requestSiteBlock( siteId ) {
 			} );
 
 			dispatch( errorNotice( translate( 'Sorry - there was a problem blocking that site.' ) ) );
+
+			return Promise.reject( error );
 		} );
 	};
 }
@@ -69,7 +71,7 @@ export function requestSiteUnblock( siteId ) {
 
 		return wpcom.undocumented().me().unblockSite( siteId ).then( ( response ) => {
 			if ( response && response.success === false ) {
-				return new Promise.reject( 'Unblock was unsuccessful' );
+				return Promise.reject( 'Unblock was unsuccessful' );
 			}
 			return response;
 		} ).then( ( response ) => {
@@ -87,6 +89,8 @@ export function requestSiteUnblock( siteId ) {
 			} );
 
 			dispatch( errorNotice( translate( 'Sorry - there was a problem unblocking that site.' ) ) );
+
+			return Promise.reject( error );
 		} );
 	};
 }
