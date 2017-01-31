@@ -44,7 +44,7 @@ export const themeSetup = ( state = initialState, action ) => {
 			return {
 				isDialogVisible: false,
 				active: false,
-				saveExisting: true,
+				saveExisting: state.saveExisting,
 			};
 	}
 
