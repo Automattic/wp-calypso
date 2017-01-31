@@ -6,9 +6,8 @@ import { assert, expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { items, isRequesting } from '../reducer';
+import { items } from '../reducer';
 import {
-	READER_TEAMS_REQUEST,
 	READER_TEAMS_RECEIVE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -45,6 +44,7 @@ describe( 'reducer', ( ) => {
 				)
 			).to.deep.equal( [ TEAM1, TEAM2 ] );
 		} );
+<<<<<<< HEAD
 
 		it( 'deserialize: should succeed with good data', () => {
 			assert.deepEqual( validState, items( validState, { type: DESERIALIZE } ) );
