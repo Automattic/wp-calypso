@@ -17,7 +17,6 @@ import { trackClick } from '../helpers';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryTheme from 'components/data/query-theme';
 
 /**
  * Show current active theme for a site, with
@@ -39,7 +38,7 @@ const CurrentTheme = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, siteIdOrWpcom, translate } = this.props,
+		const { currentTheme, siteId, translate } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
@@ -50,7 +49,6 @@ const CurrentTheme = React.createClass( {
 		return (
 			<Card className="current-theme">
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
-				{ currentThemeId && <QueryTheme siteId={ siteIdOrWpcom } themeId={ currentThemeId } /> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
@@ -79,10 +77,8 @@ const CurrentTheme = React.createClass( {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId, siteIdOrWpcom } ) => (
+const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
-		currentThemeId={ currentThemeId }
-		siteIdOrWpcom={ siteIdOrWpcom }
 		siteId={ siteId }
 		options={ [
 			'customize',
@@ -97,9 +93,7 @@ export default connect(
 		const currentThemeId = getActiveTheme( state, siteId );
 		const siteIdOrWpcom = isJetpackSite( state, siteId ) ? siteId : 'wpcom';
 		return {
-			currentThemeId,
 			currentTheme: getTheme( state, siteIdOrWpcom, currentThemeId ),
-			siteIdOrWpcom
 		};
 	}
 )( CurrentThemeWithOptions );
