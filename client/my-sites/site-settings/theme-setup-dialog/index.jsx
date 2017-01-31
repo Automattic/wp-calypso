@@ -24,7 +24,7 @@ class ThemeSetupDialog extends React.Component {
 		this.saveExisting = saveExisting;
 		this.site = site;
 		this.translate = translate.bind( this );
-		// this.onInputChange = this.onInputChange.bind( this );
+		this.onInputChange = this.onInputChange.bind( this );
 		// this.onClickDeleteContent = this.onClickDeleteContent.bind( this );
 		// this.onClickKeepContent = this.onClickKeepContent.bind( this );
 		this.onClose = onClose.bind( this );
@@ -37,6 +37,10 @@ class ThemeSetupDialog extends React.Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDialogVisible !== nextProps.isDialogVisible ) {
 			this.isDialogVisible = nextProps.isDialogVisible;
+			this.setState( {
+				confirmInput: '',
+				confirmInputError: true,
+			} );
 		}
 		if ( this.saveExisting !== nextProps.saveExisting ) {
 			this.saveExisting = nextProps.saveExisting;
