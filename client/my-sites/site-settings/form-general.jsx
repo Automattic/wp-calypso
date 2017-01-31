@@ -41,6 +41,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	onTimezoneSelect = timezone => {
 		this.props.updateFields( {
+			timezone: timezone,
 			timezone_string: timezone
 		} );
 	};
@@ -468,7 +469,7 @@ class SiteSettingsFormGeneral extends Component {
 				</FormLabel>
 
 				<Timezone
-					selectedZone={ fields.timezone_string }
+					selectedZone={ fields.timezone }
 					disabled={ isRequestingSettings }
 					onSelect={ this.onTimezoneSelect }
 				/>
@@ -555,6 +556,7 @@ class SiteSettingsFormGeneral extends Component {
 							}
 					</Button>
 				</SectionHeader>
+
 				<Card>
 					<form>
 						{ this.siteOptions() }
@@ -689,6 +691,7 @@ export default wrapSettingsForm( settings => {
 		blogname: '',
 		blogdescription: '',
 		lang_id: '',
+		timezone: '',
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
@@ -713,6 +716,7 @@ export default wrapSettingsForm( settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
+		timezone: settings.timezone,
 		timezone_string: settings.timezone_string,
 		jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
@@ -731,19 +735,6 @@ export default wrapSettingsForm( settings => {
 			jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
 			jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
 		} );
-	}
-
-	// handling `gmt_offset` and `timezone_string` values
-	const gmt_offset = settings.gmt_offset;
-
-	if (
-		! settings.timezone_string &&
-		typeof gmt_offset === 'string' &&
-		gmt_offset.length
-	) {
-		formSettings.timezone_string = 'UTC' +
-			( /\-/.test( gmt_offset ) ? '' : '+' ) +
-			gmt_offset;
 	}
 
 	return formSettings;
