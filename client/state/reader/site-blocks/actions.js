@@ -31,6 +31,10 @@ export function requestSiteBlock( siteId ) {
 		} );
 
 		return wpcom.undocumented().me().blockSite( siteId ).then( ( data ) => {
+			if ( data && data.success === false ) {
+				throw new Error( 'Block was unsuccessful' );
+			}
+
 			dispatch( {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
 				siteId,
@@ -64,6 +68,10 @@ export function requestSiteUnblock( siteId ) {
 		} );
 
 		return wpcom.undocumented().me().unblockSite( siteId ).then( ( data ) => {
+			if ( data && data.success === false ) {
+				throw new Error( 'Unblock was unsuccessful' );
+			}
+
 			dispatch( {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 				siteId,

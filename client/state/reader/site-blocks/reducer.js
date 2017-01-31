@@ -8,8 +8,10 @@ import { combineReducers } from 'redux';
  */
 import {
 	READER_SITE_BLOCK_REQUEST,
-	READER_SITE_UNBLOCK_REQUEST,
+	READER_SITE_BLOCK_REQUEST_FAILURE,
 	READER_SITE_BLOCK_REQUEST_SUCCESS,
+	READER_SITE_UNBLOCK_REQUEST,
+	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { createReducer, keyedReducer } from 'state/utils';
@@ -19,9 +21,11 @@ import { createReducer, keyedReducer } from 'state/utils';
  */
 export const items = keyedReducer( 'siteId', createReducer( {}, {
 	[ READER_SITE_BLOCK_REQUEST ]: () => true, // optimistic update
-	[ READER_SITE_BLOCK_REQUEST_SUCCESS ]: ( state, action ) => action.data.success,
+	[ READER_SITE_BLOCK_REQUEST_SUCCESS ]: () => true,
+	[ READER_SITE_BLOCK_REQUEST_FAILURE ]: () => false,
 	[ READER_SITE_UNBLOCK_REQUEST ]: () => false, // optimistic update
-	[ READER_SITE_UNBLOCK_REQUEST_SUCCESS ]: ( state, action ) => ! action.data.success,
+	[ READER_SITE_UNBLOCK_REQUEST_SUCCESS ]: () => false,
+	[ READER_SITE_UNBLOCK_REQUEST_FAILURE ]: () => true,
 } ) );
 
 export default combineReducers( {
