@@ -41,7 +41,6 @@
 		"jetpack/personalPlan": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
-		"mailing-lists/unsubscribe": true,
 		"manage/customize": true,
 		"manage/drafts": true,
 		"manage/edit-user": true,

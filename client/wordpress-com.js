@@ -190,6 +190,12 @@ sections = [
 		module: 'my-sites/ads',
 		secondary: true,
 		group: 'sites'
+	},
+	{
+		name: 'mailing-lists',
+		paths: [ '/mailing-lists' ],
+		module: 'mailing-lists',
+		enableLoggedOut: true
 	}
 ];
 
@@ -344,15 +350,6 @@ if ( config.isEnabled( 'oauth' ) ) {
 		paths: [ '/login', '/authorize', '/api/oauth/token' ],
 		module: 'auth',
 		secondary: false,
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-	sections.push( {
-		name: 'mailing-lists',
-		paths: [ '/mailing-lists' ],
-		module: 'mailing-lists',
 		enableLoggedOut: true
 	} );
 }
