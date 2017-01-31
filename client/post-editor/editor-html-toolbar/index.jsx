@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-	get,
 	map,
 	reduce,
 	throttle,
@@ -103,10 +102,6 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( {
 			isScrolledFull: scrollLeft >= scrollWidth - clientWidth - 10,
 		} );
-	}
-
-	getEditorContent() {
-		return get( this.props, 'editor.text', {} );
 	}
 
 	splitEditorContent() {
@@ -294,11 +289,6 @@ export class EditorHtmlToolbar extends Component {
 
 	closeLinkDialog = () => {
 		this.setState( { showLinkDialog: false } );
-	}
-
-	tagLabel( tag, label ) {
-		const { openTags } = this.state;
-		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
 	}
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
