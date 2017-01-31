@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,30 +14,32 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import PulsingDot from 'components/pulsing-dot';
+import { getSelectedSite } from 'state/ui/selectors';
+import { closeDialog } from 'state/ui/theme-setup/actions';
 
 class ThemeSetupDialog extends React.Component {
-	constructor( { isVisible, keepContent, site, translate } ) {
+	constructor( { isDialogVisible, saveExisting, site, onClose, translate } ) {
 		super();
+		this.isDialogVisible = isDialogVisible;
+		this.saveExisting = saveExisting;
 		this.site = site;
 		this.translate = translate.bind( this );
-		this.onInputChange = this.onInputChange.bind( this );
-		this.onClick = this.onClick.bind( this );
-		this.onClose = this.onClose.bind( this );
+		// this.onInputChange = this.onInputChange.bind( this );
+		// this.onClickDeleteContent = this.onClickDeleteContent.bind( this );
+		// this.onClickKeepContent = this.onClickKeepContent.bind( this );
+		this.onClose = onClose.bind( this );
 		this.state = {
-			isVisible,
-			keepContent,
 			confirmInput: '',
 			confirmInputError: true,
-			isSettingUpTheme: false,
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.state.isVisible !== nextProps.isVisible ) {
-			this.setState( {
-				isVisible: nextProps.isVisible,
-				keepContent: nextProps.keepContent,
-			} );
+		if ( this.isDialogVisible !== nextProps.isDialogVisible ) {
+			this.isDialogVisible = nextProps.isDialogVisible;
+		}
+		if ( this.saveExisting !== nextProps.saveExisting ) {
+			this.saveExisting = nextProps.saveExisting;
 		}
 	}
 
@@ -52,12 +55,6 @@ class ThemeSetupDialog extends React.Component {
 		}
 	}
 
-	onClick() {
-		this.setState( {
-			isSettingUpTheme: true,
-		} );
-	}
-
 	renderButtons() {
 		const cancel = { action: 'cancel', label: this.translate( 'Cancel' ) };
 		const deleteContent = (
@@ -65,14 +62,14 @@ class ThemeSetupDialog extends React.Component {
 				primary
 				scary
 				disabled={ this.state.confirmInputError }
-				onClick={ this.onClick }>
+				onClick={ this.onClickDeleteContent }>
 				{ this.translate( 'Set Up And Delete Content' ) }
 			</Button>
 		);
 		const keepContent = (
 			<Button
 				primary
-				onClick={ this.onClick }>
+				onClick={ this.onClickKeepContent }>
 				{ this.translate( 'Set Up And Keep Content' ) }
 			</Button>
 		);
@@ -98,7 +95,7 @@ class ThemeSetupDialog extends React.Component {
 				viewSite
 			];
 		}
-		if ( this.state.keepContent ) {
+		if ( this.saveExisting ) {
 			return [
 				cancel,
 				keepContent,
@@ -120,7 +117,7 @@ class ThemeSetupDialog extends React.Component {
 	}
 
 	renderContent() {
-		if ( this.state.keepContent ) {
+		if ( this.saveExisting ) {
 			return (
 				<div>
 					<h1>{ this.translate( 'Confirm Theme Setup' ) }</h1>
@@ -169,16 +166,10 @@ class ThemeSetupDialog extends React.Component {
 		}
 	}
 
-	onClose() {
-		this.setState( {
-			isVisible: false,
-		} );
-	}
-
 	render() {
 		return (
 			<Dialog className="theme-setup-dialog"
-				isVisible={ this.state.isVisible }
+				isVisible={ this.isDialogVisible }
 				buttons={ this.renderButtons() }
 				onClose={ this.onClose }>
 				{ this.state.isSettingUpTheme
@@ -189,4 +180,27 @@ class ThemeSetupDialog extends React.Component {
 	}
 }
 
-export default localize( ThemeSetupDialog );
+ThemeSetupDialog = localize( ThemeSetupDialog );
+
+const mapStateToProps = ( state ) => {
+	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
+	const saveExisting = state.ui.themeSetup.saveExisting;
+	const site = getSelectedSite( state );
+	return {
+		isDialogVisible,
+		saveExisting,
+		site,
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => {
+	const onClose = () => {
+		dispatch( closeDialog() );
+	};
+	return {
+		onClose,
+	};
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( ThemeSetupDialog );
+

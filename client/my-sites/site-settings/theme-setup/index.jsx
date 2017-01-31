@@ -16,8 +16,9 @@ import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import { openDialog } from 'state/ui/theme-setup/actions';
 
-let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
+let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, onClickKeepContent, onClickDeleteContent } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
@@ -27,7 +28,12 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 			{ site && <QueryActiveTheme siteId={ site.ID } /> }
 			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
-			{ site && theme ? <ThemeSetupCard site={ site } theme={ theme } /> : <ThemeSetupPlaceholder /> }
+			{ site && theme
+				? <ThemeSetupCard
+					onClickKeepContent={ onClickKeepContent }
+					onClickDeleteContent={ onClickDeleteContent }
+					theme={ theme } />
+				: <ThemeSetupPlaceholder /> }
 		</div>
 	);
 };
@@ -45,5 +51,16 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( ThemeSetup );
+const mapDispatchToProps = ( dispatch ) => {
+	return {
+		onClickKeepContent() {
+			dispatch( openDialog( true ) );
+		},
+		onClickDeleteContent() {
+			dispatch( openDialog( false ) );
+		}
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( ThemeSetup );
 

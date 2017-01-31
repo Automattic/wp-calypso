@@ -6,6 +6,7 @@
  * Internal dependencies
  */
 import {
+	THEME_SETUP_CLOSE_DIALOG,
 	THEME_SETUP_FAILURE,
 	THEME_SETUP_OPEN_DIALOG,
 	THEME_SETUP_REQUEST,
@@ -38,6 +39,12 @@ export const themeSetup = ( state = initialState, action ) => {
 				isDialogVisible: true,
 				active: false,
 				saveExisting: action.saveExisting,
+			};
+		case THEME_SETUP_CLOSE_DIALOG:
+			return {
+				isDialogVisible: false,
+				active: false,
+				saveExisting: true,
 			};
 	}
 
