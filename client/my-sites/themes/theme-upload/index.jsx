@@ -251,6 +251,7 @@ class Upload extends React.Component {
 			selectedSite,
 			themeId,
 			upgradeJetpack,
+			backPath,
 		} = this.props;
 
 		const showEligibility = ! this.props.isJetpackSite && this.state.showEligibility;
@@ -263,14 +264,14 @@ class Upload extends React.Component {
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
-				<HeaderCake backHref={ this.props.backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
+				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
 					version="4.4.2" /> }
 				{ showEligibility && <EligibilityWarnings
-					backUrl={ this.props.backPath }
+					backUrl={ backPath }
 					onProceed={ this.onProceedClick } /> }
 				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
 			</Main>
