@@ -72,7 +72,10 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'social_notifications_like',
 			'social_notifications_reblog',
 			'social_notifications_subscribe',
-		]
+		],
+		markdown: [
+			'wpcom_publish_comments_with_markdown',
+		],
 	};
 	let filteredSettings = { ...settings };
 
