@@ -14,6 +14,7 @@ import HeaderCake from 'components/header-cake';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { pauseAll, resumePaused } from 'lib/data-poller';
 
 class PluginEligibility extends Component {
 	static propTypes = {
@@ -34,6 +35,9 @@ class PluginEligibility extends Component {
 	goBack = () => this.props.navigateTo( this.getBackUrl() );
 
 	pluginTransferInitiate = () => {
+		//I have attempted to Pause sitesList poller, but didnt help.
+		window.resumePaused = resumePaused;
+		pauseAll();
 		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
 		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
 		this.goBack();
