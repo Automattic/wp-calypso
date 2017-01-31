@@ -299,15 +299,26 @@ const MediaUtils = {
 
 	/**
 	 * Returns true if the specified item exceeds the maximum upload size for
-	 * the given site. Returns null if the bytes are invalid or the max upload
-	 * size for the site is unknown. Otherwise, returns true.
+	 * the given site. Returns null if the bytes are invalid, the max upload
+	 * size for the site is unknown or a video is being uploaded for a Jetpack
+	 * site with VideoPress enabled. Otherwise, returns true.
 	 *
-	 * @param  {Number}   bytes A file size to check, as bytes
+	 * @param  {Object}   item  Media object
 	 * @param  {Object}   site  Site object
 	 * @return {?Boolean}       Whether the size exceeds the site maximum
 	 */
-	isExceedingSiteMaxUploadSize: function( bytes, site ) {
-		if ( ! isFinite( bytes ) || ! site || ! site.options || ! site.options.max_upload_size ) {
+	isExceedingSiteMaxUploadSize: function( item, site ) {
+		const bytes = item.size;
+
+		if ( ! site || ! site.options ) {
+			return null;
+		}
+
+		if ( ! isFinite( bytes ) || ! site.options.max_upload_size ) {
+			return null;
+		}
+
+		if ( site.jetpack && site.isModuleActive( 'videopress' ) && MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
 			return null;
 		}
 
