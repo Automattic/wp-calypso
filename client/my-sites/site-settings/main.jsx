@@ -91,7 +91,7 @@ export class SiteSettingsComponent extends Component {
 			case 'import':
 				return <ImportSettings site={ site } />;
 			case 'export':
-				return <ExportSettings site={ site } />;
+				return <ExportSettings />;
 			case 'guidedTransfer':
 				return <GuidedTransfer hostSlug={ hostSlug } />;
 		}
