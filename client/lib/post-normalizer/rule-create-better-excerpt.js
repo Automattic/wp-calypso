@@ -8,7 +8,6 @@ import { trim, toArray, forEach } from 'lodash';
  * Internal Dependencies
  */
 import { domForHtml } from './utils';
-import { stripHTML } from 'lib/formatting';
 
 /**
  *  removes an html element from the dom
@@ -47,8 +46,6 @@ function firstElementIsBreakline( dom ) {
 function buildStrippedDom( content ) {
 	// Spin up a new DOM for the linebreak markup
 	const dom = domForHtml( content );
-	dom.id = '__better_excerpt__';
-	dom.innerHTML = content;
 
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors = '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
@@ -94,10 +91,11 @@ export default function createBetterExcerpt( post ) {
 	}
 
 	const strippedDom = buildStrippedDom( post.content );
-	post.content_no_html = striptags( strippedDom );
+
+	post.content_no_html = trim( striptags( strippedDom ) );
 
 	post.better_excerpt = formatExcerpt( strippedDom );
-	post.better_excerpt_no_html = trim( stripHTML( post.better_excerpt ) );
+	post.better_excerpt_no_html = trim( striptags( post.better_excerpt ) );
 
 	// also make a shorter excerpt...
 	if ( post.better_excerpt_no_html ) {
