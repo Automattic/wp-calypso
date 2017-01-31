@@ -465,11 +465,13 @@
 		}
 
 		.billing-history__placeholder-image {
+			flex-shrink: 0;
 			width: 65px;
 			margin-right: 26px;
 		}
 
 		.billing-history__placeholder-title {
+			flex-shrink: 1;
 			width: 100%;
 		}
 	}
