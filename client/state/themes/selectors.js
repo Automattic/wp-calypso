@@ -40,7 +40,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
  */
 const getSuffixedThemeId = ( state, themeId, siteId ) => {
 	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
-	if ( siteIsJetpack && isWpcomTheme( state, themeId ) ) {
+	if ( siteIsJetpack && isWpcomTheme( state, themeId, siteId ) ) {
 		return `${ themeId }-wpcom`;
 	}
 	return themeId;
@@ -329,8 +329,9 @@ export function isWporgTheme( state, themeId ) {
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}         Whether theme available on WordPress.com
  */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
+export function isWpcomTheme( state, themeId, siteId ) {
+	return getTheme( state, 'wpcom', themeId ) &&
+		! getTheme( state, siteId, themeId );
 }
 
 /**
