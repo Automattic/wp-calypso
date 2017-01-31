@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
-import moment from 'moment';
 import React from 'react';
 import i18n from 'i18n-calypso';
 
@@ -86,7 +85,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 					)
 				];
 
-				if ( moment().isBefore( moment( includedDomainPurchase.subscribedDate ).add( refundPeriodInDays, 'days' ) ) ) {
+				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
 							'To cancel the domain with the plan and ask for a full refund, ' +
@@ -173,11 +172,16 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 
 			{ showSupportLink && (
 				<strong className="cancel-purchase__support-information">
-				{ i18n.translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
-					components: {
-						contactLink: <a href={ support.CALYPSO_CONTACT } />
-					}
-				} ) }
+				{
+					i18n.translate(
+						'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+						{
+							components: {
+								contactLink: <a href={ support.CALYPSO_CONTACT } />
+							}
+						}
+					)
+				}
 				</strong> )
 			}
 		</div>
