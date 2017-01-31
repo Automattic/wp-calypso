@@ -68,7 +68,7 @@ MediaValidationStore.validateItem = function( siteId, item ) {
 		}
 	}
 
-	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item.size, site ) ) {
+	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item, site ) ) {
 		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
 	}
 
