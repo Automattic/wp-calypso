@@ -6,7 +6,6 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { uniq } from 'lodash';
-import startsWith from 'lodash/startsWith';
 
 /**
  * Internal Dependencies
@@ -31,7 +30,7 @@ import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList } from 'my-sites/upgrades/paths';
+import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
 
 /**
@@ -134,12 +133,14 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 }
 
 function isPathAllowedForDomainOnlySite( pathname, domainName ) {
-	const urlPrefixesWhiteListForDomainOnlySite = [
+	const urlWhiteListForDomainOnlySite = [
 		domainManagementList( domainName ),
-		'/checkout/',
+		domainManagementEdit( domainName ),
+		domainManagementDns( domainName ),
+		`/checkout/${ domainName }`,
 	];
 
-	return urlPrefixesWhiteListForDomainOnlySite.some( path => startsWith( pathname, path ) );
+	return urlWhiteListForDomainOnlySite.indexOf( pathname ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
