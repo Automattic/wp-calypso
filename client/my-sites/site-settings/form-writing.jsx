@@ -29,6 +29,7 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
+import CustomContentTypes from './custom-content-types';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -201,6 +202,14 @@ class SiteSettingsFormWriting extends Component {
 						<div>
 							<QueryJetpackModules siteId={ this.props.siteId } />
 
+							<CustomContentTypes
+								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+								handleToggle={ handleToggle }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+
 							<ThemeEnhancements
 								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
 								handleToggle={ handleToggle }
@@ -258,6 +267,7 @@ const getFormSettings = partialRight( pick, [
 	'default_post_format',
 	'wpcom_publish_posts_with_markdown',
 	'markdown_supported',
+	'custom-content-types',
 	'jetpack_testimonial',
 	'jetpack_portfolio',
 	'infinite-scroll',
