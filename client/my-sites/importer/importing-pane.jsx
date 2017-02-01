@@ -115,15 +115,8 @@ export const ImportingPane = React.createClass( {
 
 	getHeadingText: function() {
 		return this.translate(
-			'Importing may take a while, but you can ' +
-			'safely navigate away from this page if you need ' +
-			'to. If you {{b}}stop the import{{/b}}, your site ' +
-			'will be {{b2}}partially imported{{/b2}}.', {
-				components: {
-					b: <strong />,
-					b2: <strong />
-				}
-			}
+			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
+			'You can safely navigate away from this page if you need to: we\'ll send you a notification when it\'s done.'
 		);
 	},
 

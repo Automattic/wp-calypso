@@ -79,7 +79,7 @@ export const UploadingPane = React.createClass( {
 							className="importer__start"
 							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
 						>
-							{ this.translate( 'Start Import' ) }
+							{ this.translate( 'Continue' ) }
 						</Button>
 					</div>
 				);
