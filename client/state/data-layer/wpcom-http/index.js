@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { compact, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,24 +29,26 @@ export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer
 
 const queueRequest = ( { dispatch }, action, next ) => {
 	const {
-		body,
+		body = {},
 		formData,
-		method,
+		method: rawMethod,
 		onSuccess,
 		onFailure,
 		onProgress,
 		path,
-		query,
+		query = {},
 	} = action;
 
-	const request = fetcherMap( method.toUpperCase() )(
+	const method = rawMethod.toUpperCase();
+
+	const request = fetcherMap( method )( ...compact( [
 		{ path, formData },
 		query,
-		body,
+		method === 'POST' && body,
 		( error, data ) => !! error
 			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
 			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
-	);
+	] ) );
 
 	if ( 'POST' === method && onProgress ) {
 		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );

@@ -31,10 +31,20 @@ const mergedHandlers = mergeHandlers(
  *
  * The optimizations reduce function-calling and object
  * property lookup where possible.
+ *
+ * @param {Object<String,Function[]>} handlers map of action types to handlers
+ * @returns {Function} middleware handler
  */
 export const middleware = handlers => store => next => {
 	const localNext = action => next( local( action ) );
 
+	/**
+	 * Middleware handler
+	 *
+	 * @function
+	 * @param {Object} action Redux action
+	 * @returns {undefined} please do not use
+	 */
 	return action => {
 		const handlerChain = handlers[ action.type ];
 
@@ -57,7 +67,7 @@ export const middleware = handlers => store => next => {
 		}
 
 		return handlerChain.forEach( handler => handler( store, action, localNext ) );
-	}
+	};
 };
 
-export default middleware( handlerMap );
+export default middleware( mergedHandlers );

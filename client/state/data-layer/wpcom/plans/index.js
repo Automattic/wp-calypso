@@ -11,13 +11,18 @@ import {
 } from 'state/plans/actions';
 
 /**
+ * @module state/data-layer/wpcom/plans
+ */
+
+/**
  * Dispatches a request to fetch all available WordPress.com plans
  *
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
- * @returns {Object} HTTP request action
+ * @param {Function} next data-layer-bypassing dispatcher
+ * @returns {Object} original action
  */
-export const requestPlans = ( { dispatch }, action ) =>
+export const requestPlans = ( { dispatch }, action, next ) => {
 	dispatch( http( {
 		apiVersion: '1.4',
 		method: 'GET',
@@ -25,6 +30,9 @@ export const requestPlans = ( { dispatch }, action ) =>
 		onSuccess: action,
 		onFailure: action,
 	} ) );
+
+	return next( action );
+};
 
 /**
  * Dispatches returned WordPress.com plan data

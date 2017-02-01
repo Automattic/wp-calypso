@@ -20,11 +20,11 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  * @returns {Object} Redux action describing WordPress.com API HTTP request
  */
 export const http = ( {
-	apiVersion,
-	body,
+	apiVersion = 'v1',
+	body = {},
 	method,
 	path,
-	query,
+	query = {},
 	formData,
 	onSuccess,
 	onFailure,
