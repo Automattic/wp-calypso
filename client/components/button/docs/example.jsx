@@ -1,8 +1,9 @@
 /**
 * External dependencies
 */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
-import Gridicon from 'components/gridicon';
 
 var Buttons = React.createClass( {
 	displayName: 'Buttons',

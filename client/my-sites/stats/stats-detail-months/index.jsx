@@ -6,12 +6,12 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import QueryPostStats from 'components/data/query-post-stats';

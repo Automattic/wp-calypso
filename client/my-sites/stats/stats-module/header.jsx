@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 

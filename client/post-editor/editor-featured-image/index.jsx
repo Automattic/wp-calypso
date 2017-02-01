@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import PostUtils from 'lib/posts/utils';
 import * as stats from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'EditorFeaturedImage',

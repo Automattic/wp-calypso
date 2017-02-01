@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
-import Gridicon from 'components/gridicon';
 
 const DomainSuggestion = React.createClass( {
 

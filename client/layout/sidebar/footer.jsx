@@ -4,11 +4,11 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import config from 'config';
 import HappychatButton from 'components/happychat/button';

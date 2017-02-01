@@ -125,7 +125,7 @@ eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules
 
 # Skip files that are auto-generated
 mixedindentlint: node_modules/mixedindentlint
-	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js" --exclude="client/components/gridicon/index.jsx"
+	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js"
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules

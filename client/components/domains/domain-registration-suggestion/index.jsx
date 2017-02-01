@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' ),
 	{ shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } = require( 'lib/cart-values/cart-items' );
 

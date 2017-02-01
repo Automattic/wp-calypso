@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 
 const ThemeDownloadCard = React.createClass( {
 

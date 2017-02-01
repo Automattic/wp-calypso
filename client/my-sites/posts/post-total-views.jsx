@@ -5,12 +5,12 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import StatUpdateIndicator from 'components/stat-update-indicator';
-import Gridicon from 'components/gridicon';
 import QueryPostStats from 'components/data/query-post-stats';
 import QuerySites from 'components/data/query-sites';
 import { getPostStat } from 'state/stats/posts/selectors';

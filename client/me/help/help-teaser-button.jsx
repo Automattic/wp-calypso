@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Card from 'components/card';
 
 export default localize( ( { title, description, href, onClick } ) => {

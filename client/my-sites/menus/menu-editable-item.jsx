@@ -16,7 +16,7 @@ var siteMenus = require( 'lib/menu-data' ),
 	PostList = require( './item-options/post-list' ),
 	MenuPanelBackButton = require( './menu-panel-back-button' ),
 	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 import MenuItemTypeLabel from './menu-item-type-label';
 import { isInjectedNewPageItem } from 'lib/menu-data/menu-data';

@@ -5,12 +5,12 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 import QueryPostFormats from 'components/data/query-post-formats';
 import siteUtils from 'lib/site/utils';
 import PostFormats from './';

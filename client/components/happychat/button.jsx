@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import viewport from 'lib/viewport';
 import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 class HappychatButton extends Component {
 	onOpenChat = () => {

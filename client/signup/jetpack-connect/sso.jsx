@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import get from 'lodash/get';
 import map from 'lodash/map';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
-import Gridicon from 'components/gridicon';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';

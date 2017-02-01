@@ -8,11 +8,11 @@ import {
 	values as objectValues
 } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';

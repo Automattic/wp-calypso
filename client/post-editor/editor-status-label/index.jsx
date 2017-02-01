@@ -4,11 +4,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 

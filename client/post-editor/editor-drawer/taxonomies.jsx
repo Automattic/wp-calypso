@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { reduce, size, map, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
 import TermSelector from 'post-editor/editor-term-selector';
 

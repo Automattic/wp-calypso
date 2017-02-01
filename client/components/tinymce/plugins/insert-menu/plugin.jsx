@@ -4,7 +4,7 @@ import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
 import i18n from 'i18n-calypso';
 
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import config from 'config';
 
 import menuItems from './menu-items';

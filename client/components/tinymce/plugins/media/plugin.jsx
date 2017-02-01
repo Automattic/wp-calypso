@@ -10,6 +10,7 @@ import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import Shortcode from 'lib/shortcode';
 import closest from 'component-closest';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import advanced from './advanced';
-import Gridicon from 'components/gridicon';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';

@@ -5,11 +5,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
 import store from 'store';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 

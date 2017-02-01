@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormButton = require( 'components/forms/form-button' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',

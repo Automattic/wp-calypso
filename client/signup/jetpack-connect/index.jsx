@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
 import StepHeader from '../step-header';
 import HelpButton from './help-button';

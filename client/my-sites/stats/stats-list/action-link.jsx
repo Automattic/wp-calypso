@@ -3,12 +3,12 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'components/gridicon';
 
 class StatsActionLink extends PureComponent {
 	static propTypes = {

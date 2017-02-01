@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import get from 'lodash/get';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 
 export default React.createClass( {

@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
-import Gridicon from 'components/gridicon';
 import productsValues from 'lib/products-values';
 import PublishMenu from './publish-menu';
 import Sidebar from 'layout/sidebar';

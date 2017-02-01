@@ -4,13 +4,13 @@
 import React, { PropTypes } from 'react';
 import { map, partial, some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import PostStore from 'lib/feed-post-store';
-import Gridicon from 'components/gridicon';
 import * as stats from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';

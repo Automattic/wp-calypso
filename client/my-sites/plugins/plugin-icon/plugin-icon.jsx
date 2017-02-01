@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	const classes = classNames( {

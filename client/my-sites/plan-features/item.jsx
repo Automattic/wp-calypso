@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import viewport from 'lib/viewport';
 

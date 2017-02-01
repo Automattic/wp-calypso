@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import {
 	isPlan,
 	isSiteRedirect
 } from 'lib/products-values';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 class CheckoutThankYouHeader extends React.Component {

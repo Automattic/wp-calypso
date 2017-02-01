@@ -16,7 +16,7 @@ var Follow = require( './action-follow' ),
 	Emojify = require( 'components/emojify' ),
 	titlecase = require( 'to-title-case' ),
 	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsListItem',

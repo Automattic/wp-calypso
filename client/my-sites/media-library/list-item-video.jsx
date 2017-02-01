@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var ListItemFileDetails = require( './list-item-file-details' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',

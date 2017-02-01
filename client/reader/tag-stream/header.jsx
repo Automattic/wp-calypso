@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { sample } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { getTagImages } from 'state/reader/tags/images/selectors';
 import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { decodeEntities } from 'lib/formatting';
-import Gridicon from 'components/gridicon';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;

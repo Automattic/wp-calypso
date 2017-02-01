@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, { PropTypes, PureComponent } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import EditorSlug from 'post-editor/editor-slug';
-import Gridicon from 'components/gridicon';
 
 export default class PostEditorPageSlug extends PureComponent {
 	static propTypes = {

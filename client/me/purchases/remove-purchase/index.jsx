@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import Gridicon from 'components/gridicon';
 import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';

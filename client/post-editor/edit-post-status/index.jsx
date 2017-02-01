@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Revisions from 'post-editor/editor-revisions';
-import Gridicon from 'components/gridicon';
 import postUtils from 'lib/posts/utils';
 import Popover from 'components/popover';
 import InfoPopover from 'components/info-popover';

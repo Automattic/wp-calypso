@@ -4,13 +4,13 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 

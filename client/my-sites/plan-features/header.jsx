@@ -5,12 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import { isMobile } from 'lib/viewport';
 import Ribbon from 'components/ribbon';

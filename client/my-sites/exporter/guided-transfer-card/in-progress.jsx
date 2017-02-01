@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import supportUrls from 'lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) =>

@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import { taxonomyToGridicon } from './taxonomy-styling.js';
 
 class MagicSearchWelcome extends React.Component {
