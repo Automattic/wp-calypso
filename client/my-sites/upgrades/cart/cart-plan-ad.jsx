@@ -31,6 +31,7 @@ class CartPlanAd extends Component {
 			cart.hasLoadedFromServer &&
 			! cartItems.hasDomainCredit( cart ) &&
 			cartItems.getDomainRegistrations( cart ).length === 1 &&
+			selectedSite &&
 			selectedSite.plan &&
 			! isPlan( selectedSite.plan );
 	}
