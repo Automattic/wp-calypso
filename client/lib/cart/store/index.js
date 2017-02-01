@@ -22,7 +22,7 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	applyCoupon = cartValues.applyCoupon,
 	cartItems = cartValues.cartItems;
 
-var _cartItem = null,
+var _cartKey = null,
 	_synchronizer = null,
 	_poller = null;
 
@@ -50,13 +50,14 @@ function hasPendingServerUpdates() {
 function setSelectedSite() {
 	var selectedSite = sites.getSelectedSite();
 
-	if ( ! selectedSite ) {
-		_cartItem = null;
+	if ( _cartKey === selectedSite.ID ) {
 		return;
 	}
 
-	if ( _cartItem === selectedSite.ID ) {
-		return;
+	if ( ! selectedSite ) {
+		_cartKey = 'no-site';
+	} else {
+		_cartKey = selectedSite.ID;
 	}
 
 	if ( _synchronizer && _poller ) {
@@ -64,9 +65,7 @@ function setSelectedSite() {
 		_synchronizer.off( 'change', emitChange );
 	}
 
-	_cartItem = selectedSite.ID;
-
-	_synchronizer = cartSynchronizer( _cartItem, wpcom );
+	_synchronizer = cartSynchronizer( _cartKey, wpcom );
 	_synchronizer.on( 'change', emitChange );
 
 	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
