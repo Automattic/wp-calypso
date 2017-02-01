@@ -63,7 +63,6 @@ export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstar
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
 export isRequestingMedia from './is-requesting-media';
 export isRequestingPostLikes from './is-requesting-post-likes';
-export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingTimezones from './is-requesting-timezones';
 export isSavingSharingButtons from './is-saving-sharing-buttons';

@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
+import dedupeMiddleware from './middlewares/dedupe-requests';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -123,6 +124,7 @@ export function createReduxStore( initialState = {} ) {
 	const middlewares = [
 		thunkMiddleware,
 		noticesMiddleware,
+		dedupeMiddleware,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && atEnabled && require( './automated-transfer/middleware.js' ).default
