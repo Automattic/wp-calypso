@@ -66,6 +66,7 @@ const webpackConfig = {
 			{
 				test: /\.scss$/,
 				loaders: [
+					'isomorphic-style-loader',
 					'style-loader',
 					'css-loader?modules&camelCase&importLoaders=1&localIdentName=[path][local]',
 					'sass-loader'

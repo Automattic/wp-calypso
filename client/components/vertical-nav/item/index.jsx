@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 /**
  * Internal dependencies
@@ -62,4 +63,4 @@ const VerticalNavItem = React.createClass( {
 	}
 } );
 
-export default VerticalNavItem;
+export default withStyles( style )( VerticalNavItem );

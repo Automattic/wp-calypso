@@ -72,6 +72,7 @@
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
     "is-my-json-valid": "2.13.1",
+    "isomorphic-style-loader": "1.1.0",
     "jade": "pugjs/jade#29784fd",
     "jquery": "1.11.3",
     "jshashes": "1.0.5",
