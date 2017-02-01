@@ -178,23 +178,65 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
-		let product,
-			purchasedProducts,
-			renewalItem,
-			receiptId = ':receiptId';
-
+		let renewalItem;
 		const {
 			cart,
 			isDomainOnly,
 			selectedSite,
-			selectedSiteId,
-			selectedSiteSlug
+			selectedSiteSlug,
+			transaction: {
+				step: {
+					data: receipt
+				}
+			}
 		} = this.props;
-		const receipt = this.props.transaction.step.data;
+
+		if ( cartItems.hasRenewalItem( cart ) ) {
+			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+
+			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
+		} else if ( cartItems.hasFreeTrial( cart ) ) {
+			return selectedSiteSlug
+				? `/plans/${ selectedSiteSlug }/thank-you`
+				: '/checkout/thank-you/plans';
+		} else if ( isDomainOnly && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
+			// TODO: Use purchased domain name once it is possible to set it as a primary domain when site is created.
+			return domainManagementList( selectedSite.slug );
+		}
+
+		if ( ! selectedSiteSlug ) {
+			return '/checkout/thank-you/features';
+		}
+
+		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
+		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+
+		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+	},
+
+	handleCheckoutCompleteRedirect: function() {
+		let product,
+			purchasedProducts,
+			renewalItem;
+
+		const {
+			cart,
+			selectedSiteId,
+			transaction: {
+				step: {
+					data: receipt
+				}
+			}
+		} = this.props;
+		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
 		this.props.clearPurchases();
 
 		if ( cartItems.hasRenewalItem( cart ) ) {
+			// checkouts for renewals redirect back to `/purchases` with a notice
+
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 			// group all purchases into an array
 			purchasedProducts = reduce( receipt && receipt.purchases || {}, function( result, value ) {
@@ -234,21 +276,12 @@ const Checkout = React.createClass( {
 					{ persistent: true }
 				);
 			}
-
-			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
-
-			return selectedSiteSlug
-				? `/plans/${ selectedSiteSlug }/thank-you`
-				: '/checkout/thank-you/plans';
-		} else if ( isDomainOnly && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			// TODO: Use purchased domain name once it is possible to set it as a primary domain when site is created.
-			return domainManagementList( selectedSite.slug );
 		}
 
 		if ( receipt && receipt.receipt_id ) {
-			receiptId = receipt.receipt_id;
+			const receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId: receiptId,
@@ -257,13 +290,7 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		if ( ! selectedSiteSlug ) {
-			return '/checkout/thank-you/features';
-		}
-
-		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+		page( redirectPath );
 	},
 
 	content: function() {
@@ -290,7 +317,9 @@ const Checkout = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath } />
+				redirectTo={ this.getCheckoutCompleteRedirectPath }
+				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
+			/>
 		);
 	},
 
