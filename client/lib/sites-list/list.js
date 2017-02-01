@@ -221,9 +221,6 @@ SitesList.prototype.update = function( sites ) {
 			if ( ! siteObj.jetpack && site.jetpack ) {
 				//We have a site that was not jetpack and now is.
 				//That is probably an Automated Transfer site.
-				if ( siteObj.URL !== site.url ) {
-					site.URL = siteObj.URL;
-				}
 				siteObj.off( 'change', this.propagateChange );
 				siteObj = this.createSiteObject( site );
 				siteObj.on( 'change', this.propagateChange );
