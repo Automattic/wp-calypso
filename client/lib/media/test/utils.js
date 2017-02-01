@@ -376,7 +376,7 @@ describe( 'MediaUtils', function() {
 			jetpack: true,
 			modules: [ 'videopress' ],
 			options: {
-				jetpack_version: '3.8.1',
+				jetpack_version: '4.5',
 				max_upload_size: 1024,
 			}
 		} );
@@ -403,6 +403,19 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, jetpackSite ) ).to.be.null;
 		} );
 
+		it( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', function() {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, new JetpackSite( {
+				jetpack: true,
+				modules: [ 'videopress' ],
+				options: {
+					jetpack_version: '3.8.1',
+					max_upload_size: 1024,
+				}
+			} ) );
+
+			expect( isAcceptableSize ).to.not.be.null;
+		} );
+
 		it( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', function() {
 			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'jpg' }, jetpackSite ) ).to.not.be.null;
 		} );
@@ -411,7 +424,7 @@ describe( 'MediaUtils', function() {
 			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, new JetpackSite( {
 				jetpack: true,
 				options: {
-					jetpack_version: '3.8.1',
+					jetpack_version: '4.5',
 					max_upload_size: 1024,
 				}
 			} ) );
