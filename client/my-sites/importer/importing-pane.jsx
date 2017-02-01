@@ -115,7 +115,7 @@ export const ImportingPane = React.createClass( {
 
 	getHeadingText: function() {
 		return this.translate(
-			'Importing should take 15 minutes, sometimes more if your site has a lot of media. ' +
+			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
 			'You can safely navigate away from this page if you need to: we\'ll send you a notification when it\'s done.'
 		);
 	},
