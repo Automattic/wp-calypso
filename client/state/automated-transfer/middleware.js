@@ -11,8 +11,12 @@ import {
 const clearBrowserStorageAndRefresh = ( dispatch, { status } ) => {
 	if ( typeof window !== 'undefined' && status === 'complete' ) {
 		localStorage.clear();
-		const reloadPage = window.location.reload.bind( window.location );
-		localforage.clear().then( reloadPage, reloadPage );
+		const isThemeUpload = window.location.pathname.indexOf( '/design/upload' ) === 0;
+		const destination = isThemeUpload
+			? window.location.pathname.split( '/upload' ).join( '' )
+			: window.location.pathname;
+		const goToDestination = () => window.location.href = destination;
+		localforage.clear().then( goToDestination, goToDestination );
 	}
 };
 
