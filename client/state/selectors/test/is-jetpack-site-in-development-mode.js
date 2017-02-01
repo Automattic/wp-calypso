@@ -13,7 +13,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 	it( 'should return true if the site is in development mode', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 	it( 'should return false if the site is not in development mode', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 	it( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}

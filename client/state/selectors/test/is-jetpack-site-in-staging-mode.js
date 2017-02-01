@@ -13,7 +13,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 	it( 'should return true if the site is in staging mode', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 	it( 'should return false if the site is not in staging mode', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isJetpackSiteInStagingMode()', () => {
 	it( 'should return null if the site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackConnection: {
+					connection: {
 						items: ITEMS_FIXTURE
 					}
 				}

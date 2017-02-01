@@ -13,5 +13,5 @@ import { get } from 'lodash';
  * @return {?Object}             Module data
  */
 export default function getJetpackModule( state, siteId, moduleSlug ) {
-	return get( state.jetpack.jetpackModules.items, [ siteId, moduleSlug ], null );
+	return get( state.jetpack.modules.items, [ siteId, moduleSlug ], null );
 }

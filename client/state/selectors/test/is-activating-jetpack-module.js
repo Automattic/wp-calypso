@@ -13,7 +13,7 @@ describe( 'isActivatingJetpackModule()', () => {
 	it( 'should return true if module is currently being activated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isActivatingJetpackModule()', () => {
 	it( 'should return false if module is currently not being activated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isActivatingJetpackModule()', () => {
 	it( 'should return null if that module is not known', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}

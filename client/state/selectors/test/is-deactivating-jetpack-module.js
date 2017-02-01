@@ -13,7 +13,7 @@ describe( 'isDeactivatingJetpackModule()', () => {
 	it( 'should return true if module is currently being deactivated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isDeactivatingJetpackModule()', () => {
 	it( 'should return false if module is currently not being deactivated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isDeactivatingJetpackModule()', () => {
 	it( 'should return null if that module is not known', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						requests: REQUESTS_FIXTURE
 					}
 				}

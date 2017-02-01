@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Boolean}          Whether the Jumpstart status is being requested
  */
 export default function isRequestingJetpackJumpstartStatus( state, siteId ) {
-	return get( state.jetpack.jetpackJumpstart.requests, [ siteId, 'requesting' ], null );
+	return get( state.jetpack.jumpstart.requests, [ siteId, 'requesting' ], null );
 }
