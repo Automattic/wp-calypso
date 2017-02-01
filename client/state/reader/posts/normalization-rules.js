@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { filter, flow } from 'lodash';
+import stripTags from 'striptags';
 
 /**
  * Internal Dependencies
@@ -42,11 +43,11 @@ export const
 	GALLERY_MIN_IMAGE_WIDTH = 350;
 
 function getCharacterCount( post ) {
-	if ( ! post || ! post.better_excerpt_no_html ) {
+	if ( ! post ) {
 		return 0;
 	}
 
-	return post.better_excerpt_no_html.length;
+	return stripTags( post.content ).length;
 }
 
 export function imageIsBigEnoughForGallery( image ) {
