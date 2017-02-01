@@ -84,6 +84,14 @@ var webpackConfig = {
 				test: /\.json$/,
 				exclude: /(devdocs\/components-usage-stats.json)/,
 				loader: 'json-loader'
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'isomorphic-style-loader',
+					'css-loader?modules&camelCase=dashes&importLoaders=1&localIdentName=[path][local]',
+					'sass-loader'
+				]
 			}
 		]
 	},
