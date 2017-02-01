@@ -127,46 +127,85 @@ describe( 'utils', () => {
 	describe( 'filterSettingsByActiveModules()', () => {
 		it( 'should remove module activation state and retain all module settings for enabled modules', () => {
 			const settings = {
+				example_setting: true,
 				'infinite-scroll': true,
 				infinite_scroll: false,
 				infinite_scroll_google_analytics: true,
+				minileven: true,
+				wp_mobile_excerpt: true,
+				wp_mobile_featured_images: true,
+				wp_mobile_app_promos: false,
+				subscriptions: true,
+				stb_enabled: true,
+				stc_enabled: false,
+				likes: true,
+				social_notifications_like: false,
+				social_notifications_reblog: true,
+				social_notifications_subscribe: false,
+				markdown: true,
+				wpcom_publish_comments_with_markdown: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
+				example_setting: true,
 				infinite_scroll: false,
 				infinite_scroll_google_analytics: true,
+				wp_mobile_excerpt: true,
+				wp_mobile_featured_images: true,
+				wp_mobile_app_promos: false,
+				stb_enabled: true,
+				stc_enabled: false,
+				social_notifications_like: false,
+				social_notifications_reblog: true,
+				social_notifications_subscribe: false,
+				wpcom_publish_comments_with_markdown: true,
 			} );
 		} );
 
 		it( 'should omit all module settings for disabled modules', () => {
 			const settings = {
-				'infinite-scroll': true,
+				example_setting: true,
+				'infinite-scroll': false,
 				infinite_scroll: false,
 				infinite_scroll_google_analytics: true,
 				minileven: false,
 				wp_mobile_excerpt: true,
 				wp_mobile_featured_images: true,
 				wp_mobile_app_promos: false,
+				subscriptions: false,
+				stb_enabled: true,
+				stc_enabled: false,
+				likes: false,
+				social_notifications_like: false,
+				social_notifications_reblog: true,
+				social_notifications_subscribe: false,
+				markdown: false,
+				wpcom_publish_comments_with_markdown: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
-				infinite_scroll: false,
-				infinite_scroll_google_analytics: true,
+				example_setting: true,
 			} );
 		} );
 
 		it( 'should omit all module settings for modules with unknown activation state', () => {
 			const settings = {
-				'infinite-scroll': true,
+				example_setting: true,
 				infinite_scroll: false,
 				infinite_scroll_google_analytics: true,
+				wp_mobile_excerpt: true,
+				wp_mobile_featured_images: true,
+				wp_mobile_app_promos: false,
 				stb_enabled: true,
 				stc_enabled: false,
+				social_notifications_like: false,
+				social_notifications_reblog: true,
+				social_notifications_subscribe: false,
+				wpcom_publish_comments_with_markdown: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
-				infinite_scroll: false,
-				infinite_scroll_google_analytics: true,
+				example_setting: true,
 			} );
 		} );
 	} );
