@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial, partialRight, isEqual, flow, compact } from 'lodash';
+import { uniqueId, head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,9 +33,13 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
-import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
-import { getSiteIconId, getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
+import {
+	getSiteIconId,
+	getSiteIconUrl,
+	isPrivateSite,
+	isSiteSupportingImageEditor
+} from 'state/selectors';
 import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {
@@ -43,6 +47,10 @@ class SiteIconSetting extends Component {
 		translate: PropTypes.func,
 		siteId: PropTypes.number,
 		isJetpack: PropTypes.bool,
+		isPrivate: PropTypes.bool,
+		hasIcon: PropTypes.bool,
+		iconUrl: PropTypes.string,
+		isSaving: PropTypes.bool,
 		siteSupportsImageEditor: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
@@ -209,7 +217,7 @@ class SiteIconSetting extends Component {
 	}
 
 	render() {
-		const { isJetpack, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
+		const { isJetpack, isPrivate, iconUrl, customizerUrl, generalOptionsUrl, siteSupportsImageEditor } = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 		const isIconManagementEnabled = isEnabled( 'manage/site-settings/site-icon' );
 
@@ -223,10 +231,12 @@ class SiteIconSetting extends Component {
 		} else {
 			buttonProps = { rel: 'external' };
 
-			if ( isJetpack ) {
-				buttonProps.href = addQueryArgs( {
-					'autofocus[section]': 'title_tagline'
-				}, customizerUrl );
+			// In case where site is private but still has Blavatar assigned,
+			// send to wp-admin instead (Customizer field unsupported)
+			const hasBlavatar = includes( iconUrl, '.gravatar.com/blavatar/' );
+
+			if ( isJetpack || ( isIconManagementEnabled && isPrivate && ! hasBlavatar ) ) {
+				buttonProps.href = customizerUrl;
 			} else {
 				buttonProps.href = generalOptionsUrl;
 				buttonProps.target = '_blank';
@@ -309,11 +319,13 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			isPrivate: isPrivateSite( state, siteId ),
 			siteIconId: getSiteIconId( state, siteId ),
 			hasIcon: !! getSiteIconUrl( state, siteId ),
+			iconUrl: getSiteIconUrl( state, siteId ),
 			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
-			customizerUrl: getCustomizerUrl( state, siteId ),
+			customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state )
