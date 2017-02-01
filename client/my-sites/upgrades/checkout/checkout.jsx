@@ -43,10 +43,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
-import {
-	getSiteOption
-} from 'state/sites/selectors';
 import { domainManagementList } from 'my-sites/upgrades/paths';
+import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -181,8 +179,6 @@ const Checkout = React.createClass( {
 		let renewalItem;
 		const {
 			cart,
-			isDomainOnly,
-			selectedSite,
 			selectedSiteSlug,
 			transaction: {
 				step: {
@@ -199,9 +195,9 @@ const Checkout = React.createClass( {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
-		} else if ( isDomainOnly && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			// TODO: Use purchased domain name once it is possible to set it as a primary domain when site is created.
-			return domainManagementList( selectedSite.slug );
+		} else if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
+			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+			return domainManagementList( domainName );
 		}
 
 		if ( ! selectedSiteSlug ) {
@@ -278,6 +274,14 @@ const Checkout = React.createClass( {
 			}
 		} else if ( cartItems.hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
+		}
+
+		if ( cart.create_new_blog ) {
+			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+			fetchSitesAndUser( domainName, () => {
+				page( redirectPath );
+			} );
+			return;
 		}
 
 		if ( receipt && receipt.receipt_id ) {
@@ -360,7 +364,6 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
-			isDomainOnly: getSiteOption( state, selectedSiteId, 'is_domain_only' ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

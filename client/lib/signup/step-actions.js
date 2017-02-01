@@ -321,6 +321,8 @@ module.exports = {
 		} );
 	},
 
+	fetchSitesAndUser: fetchSitesAndUser,
+
 	setThemeOnSite: setThemeOnSite,
 
 	getUsernameSuggestion: getUsernameSuggestion
