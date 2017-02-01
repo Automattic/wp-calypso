@@ -318,7 +318,8 @@ const MediaUtils = {
 			return null;
 		}
 
-		if ( site.jetpack && site.isModuleActive( 'videopress' ) && MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+		if ( site.jetpack && site.isModuleActive( 'videopress' ) && versionCompare( site.options.jetpack_version, '4.5', '>=' ) &&
+			MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
 			return null;
 		}
 
