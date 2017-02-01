@@ -4,11 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export const PostControl = ( {
 	className,
