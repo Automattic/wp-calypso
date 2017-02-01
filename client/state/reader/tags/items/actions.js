@@ -40,7 +40,8 @@ export const receiveTags = () => ( { type: READER_FETCH_TAGS_RECEIVE } );
 export const requestTag = ( tag ) => ( {
 	type: READER_FETCH_TAG_REQUEST,
 	payload: {
-		tag
+		tag,
+		slug: slugify( tag ),
 	},
 } );
 
@@ -54,7 +55,8 @@ export const receiveTag = ( { payload, error } ) => ( {
 export const requestUnfollowTag = ( tag ) => ( {
 	type: READER_UNFOLLOW_TAG_REQUEST,
 	payload: {
-		tag
+		tag,
+		slug: slugify( tag ),
 	},
 } );
 
@@ -69,6 +71,7 @@ export const requestFollowTag = ( tag ) => ( {
 	type: READER_FOLLOW_TAG_REQUEST,
 	payload: {
 		tag,
+		slug: slugify( tag ),
 	}
 } );
 
