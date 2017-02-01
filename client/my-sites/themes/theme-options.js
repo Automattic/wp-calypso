@@ -26,12 +26,13 @@ import {
 	isThemeActive as isActive,
 	isThemePurchased as isPurchased,
 	isThemePremium as isPremium,
+	isPremiumSquaredTheme,
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -45,7 +46,8 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		getUrl: getPurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		hideForTheme: ( state, theme, siteId ) =>
-			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
+			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId ) ||
+			( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
 	}
 	: {};
 
@@ -57,7 +59,8 @@ const activate = {
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) &&
+			! ( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
 		)
 	)
 };
@@ -71,7 +74,8 @@ const activateOnJetpack = {
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) && // Pressable sites included -- they're always on a Business plan
+			! ( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
 		)
 	)
 };

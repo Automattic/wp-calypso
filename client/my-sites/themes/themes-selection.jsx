@@ -23,10 +23,11 @@ import {
 	isThemesLastPageForQuery,
 	isThemeActive,
 	isThemePurchased,
-	isInstallingTheme
+	isInstallingTheme,
+	isPremiumSquaredTheme
 } from 'state/themes/selectors';
 import config from 'config';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
@@ -169,7 +170,9 @@ const ConnectedThemesSelection = connect(
 				isThemePurchased( state, themeId, siteId ) ||
 				// The same is true for the `hasFeature` selector, which relies on the presence of
 				// a `<QuerySitePlans />` component in a parent component.
-				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
+				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+				// Register theme as purchased if theme in Premium Squared bundle and the site has the premium upgrade
+				( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
 			),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId )
 		};

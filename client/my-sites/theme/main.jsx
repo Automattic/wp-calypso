@@ -40,6 +40,7 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isThemePurchased,
+	isPremiumSquaredTheme,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	isWpcomTheme as isThemeWpcom,
@@ -53,7 +54,7 @@ import { decodeEntities } from 'lib/formatting';
 import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const ThemeSheet = React.createClass( {
@@ -678,7 +679,8 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && (
 				isThemePurchased( state, id, selectedSite.ID ) ||
-				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
+				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+				( isPremiumSquaredTheme( state, id ) && hasFeature( state, selectedSite.ID, FEATURE_PREMIUM_SQUARED ) )
 			),
 			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
 		};

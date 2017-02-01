@@ -24,7 +24,7 @@ import {
 	isPremium,
 	oldShowcaseUrl
 } from './utils';
-import { DEFAULT_THEME_QUERY } from './constants';
+import { DEFAULT_THEME_QUERY, PREMIUM_SQUARED_THEMES } from './constants';
 
 /**
  * When wpcom themes are installed on Jetpack sites, the
@@ -571,6 +571,18 @@ export function isInstallingTheme( state, themeId, siteId ) {
 export function isThemePremium( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
 	return isPremium( theme );
+}
+
+/**
+ * Whether a WPCOM theme given by its ID belongs to the Premium Squared bundle.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {Object} themeId Theme ID
+ * @return {Boolean}        True if the theme is in the Premium Squared bundle
+ */
+export function isPremiumSquaredTheme( state, themeId ) {
+	const theme = getTheme( state, 'wpcom', themeId );
+	return theme && includes( PREMIUM_SQUARED_THEMES, theme.stylesheet );
 }
 
 /**
