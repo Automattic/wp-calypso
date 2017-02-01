@@ -599,12 +599,9 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const dataPath = query.summarize ? [ 'summary', 'search_terms' ] : [ 'days', startOf, 'search_terms' ];
-
-		const searchTerms = get( data, dataPath, [] );
-		dataPath.pop();
-		dataPath.push( 'encrypted_search_terms' );
-		const encryptedSearchTerms = get( data, dataPath, false );
+		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
+		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
+		const encryptedSearchTerms = get( data, dataPath.concat( [ 'encrypted_search_terms' ] ), false );
 
 		const result = searchTerms.map( ( day ) => {
 			return {
