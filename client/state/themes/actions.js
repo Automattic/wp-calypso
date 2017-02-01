@@ -714,7 +714,7 @@ export function confirmDelete( themeId, siteId ) {
 				'Delete %(themeName)s',
 				{ args: { themeName }, comment: 'Themes: theme delete dialog confirm button' }
 			),
-			i18n.translate( 'Back', { comment: 'Theme: theme delete dialog back button' } )
+			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
 		);
 	};
 }
