@@ -35,10 +35,9 @@ module.exports = React.createClass( {
 			name: 'Not a real site'
 		};
 
-		let n = 0;
 		return plugins.map( plugin => {
 			return <PluginItem
-				key={ 'plugin-item-mock-' + n++ }
+				key={ `plugin-item-mock-${ plugin.slug }` }
 				plugin={ plugin }
 				sites={ [] }
 				selectedSite={ selectedSite }
