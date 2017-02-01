@@ -335,8 +335,8 @@ export function isWporgTheme( state, themeId ) {
  * @return {Boolean}         Whether theme available on WordPress.com
  */
 export function isWpcomTheme( state, themeId, siteId ) {
-	return getTheme( state, 'wpcom', themeId ) &&
-		! getTheme( state, siteId, themeId );
+	return !! ( getTheme( state, 'wpcom', themeId ) &&
+		! getTheme( state, siteId, themeId ) );
 }
 
 /**
