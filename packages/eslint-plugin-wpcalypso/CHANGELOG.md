@@ -1,3 +1,7 @@
+#### v3.1.0 (2017-01-26)
+
+ - New rule: [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md)
+
 #### v3.0.2 (2016-10-24)
 
 - Fix: `import-docblock` less strict with matched docblocks (case insensitive, trailing spaces)
