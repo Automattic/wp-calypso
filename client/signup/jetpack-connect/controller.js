@@ -14,7 +14,7 @@ import i18n from 'i18n-calypso';
 import JetpackConnect from './index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
@@ -45,7 +45,7 @@ const jetpackConnectFirstStep = ( context, type ) => {
 
 	userModule.fetch();
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( JetpackConnect, {
 			path: context.path,
 			context: context,
@@ -53,8 +53,7 @@ const jetpackConnectFirstStep = ( context, type ) => {
 			userModule: userModule,
 			locale: context.params.locale
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 };
 
@@ -71,7 +70,7 @@ const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-	renderWithReduxStore(
+	renderPage(
 		<PlansLanding
 			context={ context }
 			destinationType={ context.params.destinationType }
@@ -80,8 +79,7 @@ const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 			landingType={ landingType }
 			basePlansPath={ path }
 			hideFreePlan={ hideFreePlan } />,
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 };
 
@@ -172,14 +170,13 @@ export default {
 		}
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-		renderWithReduxStore(
+		renderPage(
 			<JetpackConnectAuthorizeForm
 				path={ context.path }
 				intervalType={ intervalType }
 				locale={ locale }
 				userModule={ userModule } />,
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -193,7 +190,7 @@ export default {
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( jetpackSSOForm, {
 				path: context.path,
 				locale: context.params.locale,
@@ -201,8 +198,7 @@ export default {
 				siteId: context.params.siteId,
 				ssoNonce: context.params.ssoNonce
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -240,7 +236,7 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
+		renderPage(
 			<CheckoutData>
 				<Plans
 					context={ context }
@@ -248,8 +244,7 @@ export default {
 					basePlansPath={ '/jetpack/connect/plans' }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -262,13 +257,12 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
+		renderPage(
 			<Plans
 				context={ context }
 				showFirst={ true }
 				destinationType={ context.params.destinationType } />,
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 };

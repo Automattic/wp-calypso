@@ -79,9 +79,9 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<AddCardDetails
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			context
 		);
 	},
 
@@ -92,8 +92,8 @@ export default {
 		);
 
 		renderPage(
-			context,
-			<AddCreditCard />
+			<AddCreditCard />,
+			context
 		);
 	},
 
@@ -111,10 +111,10 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<CancelPrivacyProtection
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			/>,
+			context
 		);
 	},
 
@@ -132,10 +132,10 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<CancelPurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			/>,
+			context
 		);
 	},
 
@@ -153,10 +153,10 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<ConfirmCancelDomain
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			/>,
+			context
 		);
 	},
 
@@ -174,10 +174,10 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<EditCardDetails
 				cardId={ context.params.cardId }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			context
 		);
 	},
 
@@ -189,11 +189,11 @@ export default {
 		);
 
 		renderPage(
-			context,
 			<PurchasesList
 				sites={ sites }
 				noticeType={ context.params.noticeType }
-			/>
+			/>,
+			context
 		);
 	},
 
@@ -211,11 +211,11 @@ export default {
 		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
-			context,
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				destinationType={ context.params.destinationType }
-			/>
+			/>,
+			context
 		);
 	},
 
@@ -232,11 +232,11 @@ export default {
 		);
 
 		renderPage(
-			context,
 			<Main>
 				<PurchasesHeader section={ 'purchases' } />
 				<NoSitesMessage />
-			</Main>
+			</Main>,
+			context
 		);
 	}
 };

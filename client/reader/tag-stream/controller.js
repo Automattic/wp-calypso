@@ -10,7 +10,7 @@ import trim from 'lodash/trim';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -34,7 +34,7 @@ export default {
 			tag: tagSlug
 		} );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( TagStream, {
 				key: 'tag-' + encodedTag,
 				postsStore: tagStore,
@@ -50,8 +50,7 @@ export default {
 				showBack: !! context.lastRoute,
 				showPrimaryFollowButtonOnCards: true
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	}
 };
