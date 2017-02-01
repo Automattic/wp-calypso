@@ -147,5 +147,15 @@ module.exports = {
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true
+	},
+
+	boostedPostSurvey: {
+		datestamp: '20170127',
+		variations: {
+			disabled: 90,
+			enabled: 10
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true
 	}
 };
