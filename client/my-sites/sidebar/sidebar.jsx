@@ -717,7 +717,18 @@ export class MySitesSidebar extends Component {
 
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
-			return null;
+			return (
+				<SidebarMenu>
+					<ul>
+						<SidebarItem
+							className={ this.itemLinkClass( '/domains', 'settings' ) }
+							icon="cog"
+							label={ this.props.translate( 'Settings' ) }
+							link={ '/domains/manage' + this.siteSuffix() }
+							onNavigate={ this.onNavigate } />
+					</ul>
+				</SidebarMenu>
+			);
 		}
 
 		const publish = !! this.publish(),
