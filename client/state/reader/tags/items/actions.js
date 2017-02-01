@@ -32,11 +32,9 @@ const unmemoizedSlugify = ( tag ) => encodeURIComponent(
 
 export const slugify = memoize( unmemoizedSlugify, x => x );
 
-//dataFetch: () => wpcom.undocumented().readTags(),
 export const requestTags = () => ( { type: READER_FETCH_TAGS_REQUEST } );
 export const receiveTags = () => ( { type: READER_FETCH_TAGS_RECEIVE } );
 
-// dataFetch: () => wpcom.undocumented().readTag( slug ),
 export const requestTag = ( tag ) => ( {
 	type: READER_FETCH_TAG_REQUEST,
 	payload: {
@@ -51,7 +49,6 @@ export const receiveTag = ( { payload, error } ) => ( {
 	error,
 } );
 
-// dataFetch: () => wpcom.undocumented().unfollowReaderTag( slug ),
 export const requestUnfollowTag = ( tag ) => ( {
 	type: READER_UNFOLLOW_TAG_REQUEST,
 	payload: {
@@ -66,7 +63,6 @@ export const receiveUnfollowTag = ( { payload, error } ) => ( {
 	error,
 } );
 
-// dataFetch: () => wpcom.undocumented().followReaderTag( slug ),
 export const requestFollowTag = ( tag ) => ( {
 	type: READER_FOLLOW_TAG_REQUEST,
 	payload: {
