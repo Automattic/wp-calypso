@@ -4,6 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,18 +16,18 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
-import { closeDialog } from 'state/ui/theme-setup/actions';
+import { closeDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 
 class ThemeSetupDialog extends React.Component {
-	constructor( { isDialogVisible, saveExisting, site, onClose, translate } ) {
+	constructor( { isDialogVisible, isActive, saveExisting, site, onClose, onThemeSetupClick, translate } ) {
 		super();
 		this.isDialogVisible = isDialogVisible;
+		this.isActive = isActive;
 		this.saveExisting = saveExisting;
 		this.site = site;
 		this.translate = translate.bind( this );
 		this.onInputChange = this.onInputChange.bind( this );
-		// this.onClickDeleteContent = this.onClickDeleteContent.bind( this );
-		// this.onClickKeepContent = this.onClickKeepContent.bind( this );
+		this.onThemeSetupClick = onThemeSetupClick.bind( this );
 		this.onClose = onClose.bind( this );
 		this.state = {
 			confirmInput: '',
@@ -45,6 +46,9 @@ class ThemeSetupDialog extends React.Component {
 		if ( this.saveExisting !== nextProps.saveExisting ) {
 			this.saveExisting = nextProps.saveExisting;
 		}
+		if ( this.isActive !== nextProps.isActive ) {
+			this.isActive = nextProps.isActive;
+		}
 	}
 
 	onInputChange( event ) {
@@ -60,26 +64,35 @@ class ThemeSetupDialog extends React.Component {
 	}
 
 	renderButtons() {
+		const onClickKeepContent = () => {
+			this.onThemeSetupClick( true, this.site.ID );
+		};
+		const onClickDeleteContent = () => {
+			this.onThemeSetupClick( false, this.site.ID );
+		};
+		const onClickViewSite = () => {
+			page( this.site.URL );
+		};
 		const cancel = { action: 'cancel', label: this.translate( 'Cancel' ) };
 		const deleteContent = (
 			<Button
 				primary
 				scary
 				disabled={ this.state.confirmInputError }
-				onClick={ this.onClickDeleteContent }>
+				onClick={ onClickDeleteContent }>
 				{ this.translate( 'Set Up And Delete Content' ) }
 			</Button>
 		);
 		const keepContent = (
 			<Button
 				primary
-				onClick={ this.onClickKeepContent }>
+				onClick={ onClickKeepContent }>
 				{ this.translate( 'Set Up And Keep Content' ) }
 			</Button>
 		);
 		const backToSetup = (
 			<Button
-				disabled={ this.state.isSettingUpTheme }
+				disabled={ this.isActive }
 				onClick={ this.onClick }>
 				{ this.translate( 'Back To Setup' ) }
 			</Button>
@@ -87,13 +100,13 @@ class ThemeSetupDialog extends React.Component {
 		const viewSite = (
 			<Button
 				primary
-				disabled={ this.state.isSettingUpTheme }
-				onClick={ this.onClick }>
+				disabled={ this.isActive }
+				onClick={ onClickViewSite }>
 				{ this.translate( 'View Site' ) }
 			</Button>
 		);
 
-		if ( this.state.isSettingUpTheme ) {
+		if ( this.isActive ) {
 			return [
 				backToSetup,
 				viewSite
@@ -104,12 +117,11 @@ class ThemeSetupDialog extends React.Component {
 				cancel,
 				keepContent,
 			];
-		} else {
-			return [
-				cancel,
-				deleteContent,
-			];
 		}
+		return [
+			cancel,
+			deleteContent,
+		];
 	}
 
 	renderLoading() {
@@ -175,8 +187,8 @@ class ThemeSetupDialog extends React.Component {
 			<Dialog className="theme-setup-dialog"
 				isVisible={ this.isDialogVisible }
 				buttons={ this.renderButtons() }
-				onClose={ this.onClose }>
-				{ this.state.isSettingUpTheme
+				onClose={ this.isActive ? null : this.onClose }>
+				{ this.isActive
 					? this.renderLoading()
 					: this.renderContent() }
 			</Dialog>
@@ -188,10 +200,12 @@ ThemeSetupDialog = localize( ThemeSetupDialog );
 
 const mapStateToProps = ( state ) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
+	const isActive = state.ui.themeSetup.active;
 	const saveExisting = state.ui.themeSetup.saveExisting;
 	const site = getSelectedSite( state );
 	return {
 		isDialogVisible,
+		isActive,
 		saveExisting,
 		site,
 	};
@@ -201,10 +215,14 @@ const mapDispatchToProps = ( dispatch ) => {
 	const onClose = () => {
 		dispatch( closeDialog() );
 	};
+	const onThemeSetupClick = ( saveExisting, site ) => {
+		dispatch( runThemeSetup( saveExisting, site ) );
+	};
 	return {
 		onClose,
+		onThemeSetupClick,
 	};
-}
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( ThemeSetupDialog );
 
