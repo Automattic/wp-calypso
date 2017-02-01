@@ -76,6 +76,10 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		markdown: [
 			'wpcom_publish_comments_with_markdown',
 		],
+		'custom-content-types': [
+			'jetpack_testimonial',
+			'jetpack_portfolio',
+		],
 	};
 	let filteredSettings = { ...settings };
 
