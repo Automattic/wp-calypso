@@ -25,7 +25,7 @@
 		"jetpack/connect": true,
 		"jetpack/personalPlan": true,
 		"jetpack/seo-tools": true,
-		"jetpack/api-cache": false,
+		"jetpack/api-cache": true,
 		"jetpack_core_inline_update": true,
 		"manage/advanced-seo": true,
 		"manage/advanced-seo/custom-title": true,
