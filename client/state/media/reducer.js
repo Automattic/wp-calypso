@@ -9,9 +9,13 @@ import { omit } from 'lodash';
  */
 import {
 	MEDIA_DELETE,
+	MEDIA_ITEM_REQUEST_FAILURE,
+	MEDIA_ITEM_REQUEST_SUCCESS,
+	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUESTING } from 'state/action-types';
+	MEDIA_REQUESTING
+} from 'state/action-types';
 import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
@@ -74,7 +78,41 @@ export const queryRequests = createReducer( {}, {
 	}
 } );
 
+/**
+ * Returns the updated site post requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID, post ID pairing to a
+ * boolean reflecting whether a request for the post is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const mediaItemRequests = createReducer( {}, {
+	[ MEDIA_ITEM_REQUESTING ]: ( state, { siteId, mediaId } ) => {
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ mediaId ]: true
+			}
+		};
+	},
+	[ MEDIA_ITEM_REQUEST_SUCCESS ]: ( state, { siteId, mediaId } ) => {
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], mediaId )
+		};
+	},
+	[ MEDIA_ITEM_REQUEST_FAILURE ]: ( state, { siteId, mediaId } ) => {
+		return {
+			...state,
+			[ siteId ]: omit( state[ siteId ], mediaId )
+		};
+	}
+} );
+
 export default combineReducers( {
 	queries,
-	queryRequests
+	queryRequests,
+	mediaItemRequests
 } );

@@ -8,10 +8,15 @@ import { castArray } from 'lodash';
  */
 import {
 	MEDIA_DELETE,
+	MEDIA_ITEM_REQUEST,
+	MEDIA_ITEM_REQUEST_FAILURE,
+	MEDIA_ITEM_REQUEST_SUCCESS,
+	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUESTING } from 'state/action-types';
+	MEDIA_REQUESTING
+} from 'state/action-types';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -78,6 +83,70 @@ export function failMediaRequest( siteId, query ) {
 		type: MEDIA_REQUEST_FAILURE,
 		siteId,
 		query
+	};
+}
+
+/**
+ * Returns an action object used in signalling that a media item for the site
+ * have been requested.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} mediaId Media ID
+ * @return {Object}         Action object
+ */
+export function requestMediaItem( siteId, mediaId ) {
+	return {
+		type: MEDIA_ITEM_REQUEST,
+		siteId,
+		mediaId
+	};
+}
+
+/**
+ * Returns an action object used in signalling that a media item for the site
+ * are being requested.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} mediaId Media ID
+ * @return {Object}         Action object
+ */
+export function requestingMediaItem( siteId, mediaId ) {
+	return {
+		type: MEDIA_ITEM_REQUESTING,
+		siteId,
+		mediaId
+	};
+}
+
+/**
+ * Returns an action object used in signalling that a request for media item(s)
+ * has failed.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} mediaId Media ID
+ * @return {Object}         Action object
+ */
+export function failMediaItemRequest( siteId, mediaId ) {
+	return {
+		type: MEDIA_ITEM_REQUEST_FAILURE,
+		siteId,
+		mediaId
+	};
+}
+
+/**
+ * Returns an action object used in signalling that a request for media item(s)
+ * has failed.
+ *
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} mediaId Media ID
+ * @return {Object}         Action object
+ */
+export function successMediaItemRequest( siteId, mediaId ) {
+	return {
+		type: MEDIA_ITEM_REQUEST_SUCCESS,
+		siteId,
+		mediaId
 	};
 }
 
