@@ -2226,14 +2226,14 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCustomizerUrl()', () => {
-		it( 'should return null if slug for WordPress.com site is not known', () => {
+		it( 'should return root path if slug for WordPress.com site is not known', () => {
 			const customizerUrl = getCustomizerUrl( {
 				sites: {
 					items: {}
 				}
 			}, 77203199 );
 
-			expect( customizerUrl ).to.be.null;
+			expect( customizerUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'should return customizer URL for WordPress.com site', () => {
@@ -2266,6 +2266,60 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( customizerUrl ).to.be.null;
+		} );
+
+		it( 'should return customizer URL for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								admin_url: 'https://example.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
+		} );
+
+		it( 'should prepend panel path parameter for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: false
+						}
+					}
+				}
+			}, 77203199, 'identity' );
+
+			expect( customizerUrl ).to.equal( '/customize/identity/example.com' );
+		} );
+
+		it( 'should prepend panel path parameter for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								admin_url: 'https://example.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199, 'identity' );
+
+			expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline' );
 		} );
 
 		context( 'browser', () => {
