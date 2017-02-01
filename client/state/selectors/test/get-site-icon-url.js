@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getSiteIconUrl } from '../';
+import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getSiteIconUrl()', () => {
 	it( 'should return null if neither the site nor site settings are known', () => {
@@ -18,7 +19,7 @@ describe( 'getSiteIconUrl()', () => {
 				items: {}
 			},
 			media: {
-				items: {}
+				queries: {}
 			}
 		}, 2916284 );
 
@@ -40,7 +41,7 @@ describe( 'getSiteIconUrl()', () => {
 				}
 			},
 			media: {
-				items: {}
+				queries: {}
 			}
 		}, 2916284 );
 
@@ -61,14 +62,16 @@ describe( 'getSiteIconUrl()', () => {
 				}
 			},
 			media: {
-				items: {
-					2916284: {
-						42: {
-							ID: 42,
-							title: 'flowers',
-							URL: 'https://example.files.wordpress.com/2014/06/flower.gif'
+				queries: {
+					2916284: new MediaQueryManager( {
+						items: {
+							42: {
+								ID: 42,
+								title: 'flowers',
+								URL: 'https://example.files.wordpress.com/2014/06/flower.gif'
+							}
 						}
-					}
+					} )
 				}
 			}
 		}, 2916284 );

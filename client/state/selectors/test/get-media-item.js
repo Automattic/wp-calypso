@@ -7,41 +7,35 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getMediaItem } from '../';
+import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getMediaItem()', () => {
-	it( 'should return null if the site is not in state', () => {
-		const item = getMediaItem( {
-			media: {
-				items: {}
-			}
-		}, 2916284, 42 );
+	const item = {
+		ID: 42,
+		title: 'flowers'
+	};
 
-		expect( item ).to.be.null;
+	const state = {
+		media: {
+			queries: {
+				2916284: new MediaQueryManager( {
+					items: {
+						42: item
+					}
+				} )
+			}
+		}
+	};
+
+	it( 'should return null if the site is not in state', () => {
+		expect( getMediaItem( state, 2916285, 42 ) ).to.be.null;
 	} );
 
 	it( 'should return null if the media for the site is not in state', () => {
-		const item = getMediaItem( {
-			media: {
-				items: {
-					2916284: {}
-				}
-			}
-		}, 2916284, 42 );
-
-		expect( item ).to.be.null;
+		expect( getMediaItem( state, 2916284, 43 ) ).to.be.null;
 	} );
 
 	it( 'should return the media item', () => {
-		const item = getMediaItem( {
-			media: {
-				items: {
-					2916284: {
-						42: { ID: 42, title: 'flowers' }
-					}
-				}
-			}
-		}, 2916284, 42 );
-
-		expect( item ).to.eql( { ID: 42, title: 'flowers' } );
+		expect( getMediaItem( state, 2916284, 42 ) ).to.eql( item );
 	} );
 } );
