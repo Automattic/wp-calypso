@@ -2,116 +2,89 @@
  * External Dependencies
  */
 import { expect } from 'chai';
-import { spy, stub } from 'sinon';
+import { spy } from 'sinon';
+import deepfreeze from 'deep-freeze';
 
 /**
  * Internal Dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
+import { _clear as clearInflight } from 'lib/inflight';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { requestPage, handlePage, handleError, transformResponse } from '../';
+import { requestPage as requestPageAction, receivePage } from 'state/reader/streams/actions';
 
 describe( 'streams', () => {
-	let interceptStreamPageRequest;
-	const warnSpy = spy();
-	let getStub = stub();
-	const wpStub = {
-		req: {
-			get: getStub
-		}
-	};
-	const dispatchStub = stub();
-	const storeStub = {
-		dispatch: dispatchStub
-	};
+	const action = deepfreeze( requestPageAction( 'following', { page: 2 } ) );
 
-	useMockery( mockery => {
-		mockery.registerMock( 'lib/warn', warnSpy );
-		mockery.registerMock( 'lib/wp', wpStub );
+	describe( 'requestPage', () => {
+		let next, dispatch;
 
-		interceptStreamPageRequest = require( '../' ).interceptStreamPageRequest;
+		beforeEach( () => {
+			next = spy();
+			dispatch = spy();
+			requestPage( { dispatch }, action, next );
+		} );
+
+		afterEach( () => {
+			clearInflight();
+		} );
+
+		it( 'should dispatch an http request', () => {
+			expect( dispatch ).to.have.been.calledWith( http( {
+				method: 'GET',
+				path: '/read/following',
+				apiVersion: 'v1.2',
+				query: action.query
+			} ) );
+		} );
+
+		it( 'should have called next with the original action', () => {
+			expect( next ).to.have.been.calledWith( action );
+		} );
+
+		it( 'should ignore a second action with the same params', () => {
+			next.reset();
+			requestPage( { dispatch }, action, next );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( next ).to.have.been.calledWith( action );
+		} );
 	} );
 
-	afterEach( () => {
-		warnSpy.reset();
-		getStub.reset();
-		dispatchStub.reset();
-	} );
-
-	it( 'should call next on an unknown stream id', () => {
-		const fakeAction = {
-			streamId: null
-		};
-		const nextSpy = spy();
-		interceptStreamPageRequest( null, fakeAction, nextSpy );
-
-		expect( nextSpy ).to.have.been.calledOnce;
-		expect( nextSpy ).to.have.been.calledWith( fakeAction );
-		expect( getStub ).to.have.not.been.called;
-		expect( warnSpy ).to.have.been.calledOnce;
-	} );
-
-	it( 'should call the right api based on the stream id', () => {
-		const action = {
-			streamId: 'following',
-			query: {
-				one: 'time'
-			},
-		};
-		const nextSpy = spy();
-
-		const fakeResponse = {
+	describe( 'handlePage', () => {
+		const next = spy();
+		const dispatch = spy();
+		const data = deepfreeze( {
 			posts: []
-		};
+		} );
 
-		getStub
-			.withArgs( '/read/following', { apiVersion: '1.2' }, { one: 'time' } )
-			.returns( Promise.resolve( fakeResponse ) );
-		storeStub.dispatch = function( args ) {
-			expect( args ).to.eql( {
-				type: 'READER_STREAMS_PAGE_RECEIVE',
-				payload: fakeResponse,
-				query: {
-					one: 'time'
-				},
-				streamId: 'following'
-			} );
-		};
+		before( () => {
+			handlePage( { dispatch }, action, next, data );
+		} );
 
-		const promise = interceptStreamPageRequest( storeStub, action, nextSpy );
+		it( 'should dispatch receivePage', () => {
+			expect( dispatch ).to.have.been.calledWith( receivePage( action.streamId, action.query, data ) );
+		} );
 
-		expect( getStub ).to.have.been.calledOnce;
-		expect( warnSpy ).to.have.not.been.called;
-		expect( nextSpy ).to.have.been.calledOnce;
-
-		promise.then(
-			( r ) => {
-				storeStub.dispatch = dispatchStub;
-				return r;
-			},
-			( err ) => {
-				storeStub.dispatch = dispatchStub;
-				return Promise.reject( err );
-			}
-		);
-		return promise;
+		it( 'should swallow the original action', () => {
+			expect( next ).to.not.have.been.called;
+		} );
 	} );
 
-	it( 'should prevent duplicate requests inflight', () => {
-		const action = {
-			streamId: 'following',
-			query: { page: 1 }
-		};
-		getStub
-			.withArgs( '/read/following', { apiVersion: '1.2' }, { page: 1 } )
-			.returns( Promise.resolve( { posts: [] } ) );
+	describe( 'handleError', () => {
+		it( 'should have tests', () => {
+			handleError();
+			expect( true ).to.be.false;
+		} );
+	} );
 
-		const nextSpy = spy();
-		interceptStreamPageRequest( storeStub, action, nextSpy );
-		const abortedNextSpy = spy();
-		getStub.reset();
-		dispatchStub.reset();
-		interceptStreamPageRequest( storeStub, action, abortedNextSpy );
-		expect( getStub ).to.have.not.been.called;
-		expect( abortedNextSpy ).to.have.been.called;
-		expect( dispatchStub ).to.have.not.been.called;
+	describe( 'transformResponse', () => {
+		it( 'should return an empty array when data is falsey', () => {
+			expect( transformResponse( null ) ).to.eql( { posts: [] } );
+			expect( transformResponse( undefined ) ).to.eql( { posts: [] } );
+			expect( transformResponse( false ) ).to.eql( { posts: [] } );
+			expect( transformResponse( {} ) ).to.eql( { posts: [] } );
+			expect( transformResponse( { posts: null } ) ).to.eql( { posts: [] } );
+			expect( transformResponse( { posts: [] } ) ).to.eql( { posts: [] } );
+		} );
 	} );
 } );

@@ -2,27 +2,30 @@
  * External dependencies
  */
 import { find } from 'lodash';
+import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
-import { requestInflight, trackPromise } from 'lib/inflight';
+import { requestInflight, markRequestInflight } from 'lib/inflight';
 import {
-	READER_STREAMS_PAGE_REQUEST,
-	READER_STREAMS_PAGE_RECEIVE
+	READER_STREAMS_PAGE_REQUEST
 } from 'state/action-types';
+import { receivePage } from 'state/reader/streams/actions';
+import { errorNotice } from 'state/notices/actions';
 
 const streamToPathMatchers = [
 	// [ regex, version, path ]
 	// ordering here is by how often we expect each stream type to be used
 	// search is linear, so putting common things near the front can be helpful
-	[ /^following$/, '1.2', '/read/following' ],
-	[ /^search:/, '1.2', '/read/search' ],
-	[ /^feed:/, '1.2', '/read/feed/:feed/posts' ],
-	[ /^site:/, '1.2', '/read/sites/:site/posts' ],
-	[ /^featured:/, '1.2', '/read/sites/:site/featured' ],
-	[ /^a8c$/, '1.2', '/read/a8c' ],
+	[ /^following$/, 'v1.2', '/read/following' ],
+	[ /^search:/, 'v1.2', '/read/search' ],
+	[ /^feed:/, 'v1.2', '/read/feed/:feed/posts' ],
+	[ /^site:/, 'v1.2', '/read/sites/:site/posts' ],
+	[ /^featured:/, 'v1.2', '/read/sites/:site/featured' ],
+	[ /^a8c$/, 'v1.2', '/read/a8c' ],
 ];
 
 function apiForStream( streamId ) {
@@ -34,11 +37,17 @@ function keyForRequest( action ) {
 	const actionString = Object.keys( query )
 		.sort() // sort the keys to make the string deterministic. key ordering is not.
 		.reduce( ( memo, key ) => memo + `&${ key }=${ query[ key ] }`, '' );
-	return `reader-streams-${ streamId }-${ actionString }`;
+	return `${ action.type }-${ streamId }-${ actionString }`;
 }
 
-export function interceptStreamPageRequest( store, action, next ) {
-	const { streamId } = action;
+/**
+ * Request a page for the given stream
+ * @param  {function}   dispatch Redux Dispatcher
+ * @param  {object}   action   Action being handled
+ * @param  {Function} next     Continuation of handlers
+ */
+export function requestPage( { dispatch }, action, next ) {
+	const { streamId, query } = action;
 	const api = apiForStream( streamId );
 
 	if ( ! api ) {
@@ -47,7 +56,6 @@ export function interceptStreamPageRequest( store, action, next ) {
 		return;
 	}
 
-	// is this request already inflight?
 	const requestKey = keyForRequest( action );
 	if ( requestInflight( requestKey ) ) {
 		next( action );
@@ -56,43 +64,41 @@ export function interceptStreamPageRequest( store, action, next ) {
 
 	const [ _, apiVersion, path ] = api; //eslint-disable-line no-unused-vars
 
-	function transformResponse( response ) {
-		return response;
-	}
+	markRequestInflight( requestKey );
 
-	function dispatchReceive( response ) {
-		store.dispatch( {
-			...action,
-			type: READER_STREAMS_PAGE_RECEIVE,
-			payload: response,
-		} );
-	}
-
-	function dispatchError( err ) {
-		store.dispatch( {
-			...action,
-			type: READER_STREAMS_PAGE_RECEIVE,
-			payload: err,
-			error: true,
-		} );
-	}
-
-	const request = wp.req.get(
+	dispatch( http( {
+		method: 'GET',
 		path,
-		{ apiVersion },
-		action.query
-	);
-
-	const tracker = trackPromise( requestKey, request );
+		apiVersion,
+		query
+	} ) );
 
 	next( action );
+}
 
-	return tracker
-		.then( transformResponse )
-		.then( dispatchReceive )
-		.catch( dispatchError );
+export function transformResponse( data ) {
+	return {
+		posts: ( data && data.posts ) || []
+	};
+}
+
+/**
+ * Handle a page of posts
+ * @param  {function}   dispatch store dispatcher
+ * @param  {object}   action   action object that kicked off the request
+ * @param  {Function} next     next part in the middleware chain
+ * @param  {object}   data     response from API
+ * @param  {array}   data.posts Array of posts
+ */
+export function handlePage( { dispatch }, action, next, data ) {
+	dispatch( receivePage( action.streamId, action.query, transformResponse( data ) ) );
+}
+
+export function handleError( { dispatch }, action, next, error ) {
+	dispatch( errorNotice( translate( 'Could not fetch the next page of results' ) ) );
+	warn( error );
 }
 
 export default {
-	[ READER_STREAMS_PAGE_REQUEST ]: [ interceptStreamPageRequest ]
+	[ READER_STREAMS_PAGE_REQUEST ]: [ dispatchRequest( requestPage, handlePage, handleError ) ]
 };
