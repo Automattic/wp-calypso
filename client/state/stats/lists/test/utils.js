@@ -1204,6 +1204,49 @@ describe( 'utils', () => {
 					}
 				] );
 			} );
+
+			it( 'should return an a properly parsed summarized data array', () => {
+				const parsedData = normalizers.statsSearchTerms( {
+					date: '2017-01-12',
+					summary: {
+						encrypted_search_terms: 400,
+						search_terms: [
+							{
+								term: 'chicken',
+								views: 200
+							},
+							{
+								term: 'ribs',
+								views: 100
+							}
+						]
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					summarize: 1,
+					num: 90
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						className: 'user-selectable',
+						label: 'chicken',
+						value: 200
+					},
+					{
+						className: 'user-selectable',
+						label: 'ribs',
+						value: 100
+					},
+					{
+						label: 'Unknown Search Terms',
+						labelIcon: 'external',
+						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						value: 400
+					}
+				] );
+			} );
 		} );
 
 		describe( 'statsVisits()', () => {
