@@ -276,7 +276,8 @@ class Upload extends React.Component {
 				{ ! isBusiness && ! isJetpack && <Banner
 					feature={ FEATURE_UPLOAD_THEMES }
 					plan={ PLAN_BUSINESS }
-					title={ translate( 'Upgrade to the Business plan to upload themes.' ) } /> }
+					title={ translate( 'To upload themes, upgrade to Business Plan' ) }
+					description={ translate( 'Unlimited themes, advanced customization, no ads, live chat support, and more!' ) } /> }
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
