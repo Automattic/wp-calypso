@@ -45,13 +45,10 @@ export class EditorHtmlToolbar extends Component {
 
 	componentDidMount() {
 		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
-		this.disablePinOnSmallScreens = throttle( this.disablePinOnSmallScreens, 400 );
-		this.toggleToolbarScrollableOnResize = throttle( this.toggleToolbarScrollableOnResize, 200 );
 		this.hideToolbarFadeOnFullScroll = throttle( this.hideToolbarFadeOnFullScroll, 200 );
 
 		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
-		window.addEventListener( 'resize', this.disablePinOnSmallScreens );
-		window.addEventListener( 'resize', this.toggleToolbarScrollableOnResize );
+		window.addEventListener( 'resize', this.onWindowResize );
 		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
 
 		this.toggleToolbarScrollableOnResize();
@@ -59,13 +56,17 @@ export class EditorHtmlToolbar extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
-		window.removeEventListener( 'resize', this.disablePinOnSmallScreens );
-		window.removeEventListener( 'resize', this.toggleToolbarScrollableOnResize );
+		window.removeEventListener( 'resize', this.onWindowResize );
 		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
 	}
 
 	bindButtonsRef = div => {
 		this.buttons = div;
+	}
+
+	onWindowResize = () => {
+		throttle( this.disablePinOnSmallScreens, 400 );
+		throttle( this.toggleToolbarScrollableOnResize, 200 );
 	}
 
 	pinToolbarOnScroll = () => {
@@ -90,18 +91,20 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	toggleToolbarScrollableOnResize = () => {
-		this.setState( {
-			isScrollable: this.buttons.scrollWidth > this.buttons.clientWidth,
-		} );
+		const isScrollable = this.buttons.scrollWidth > this.buttons.clientWidth;
+		if ( isScrollable !== this.state.isScrollable ) {
+			this.setState( { isScrollable } );
+		}
 	}
 
 	hideToolbarFadeOnFullScroll = event => {
 		const { scrollLeft, scrollWidth, clientWidth } = event.target;
-
 		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
-		this.setState( {
-			isScrolledFull: scrollLeft >= scrollWidth - clientWidth - 10,
-		} );
+		const isScrolledFull = scrollLeft >= scrollWidth - clientWidth - 10;
+
+		if ( isScrolledFull !== this.state.isScrolledFull ) {
+			this.setState( { isScrolledFull } );
+		}
 	}
 
 	splitEditorContent() {
