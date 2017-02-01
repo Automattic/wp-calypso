@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate, isPressableSite } ) => {
-	if ( hasDomainCredit && selectedSite.plan.user_is_owner && ! isPressableSite ) {
+const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return ( <PurchaseDetail
 				icon="globe"
 				title={ translate( 'Select your custom domain' ) }
@@ -31,10 +31,8 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate,
 		);
 	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
 		const actionButton = {};
-		if ( ! isPressableSite ) {
-			actionButton.buttonText = translate( 'Manage my domains' );
-			actionButton.href = `/domains/manage/${ selectedSite.slug }`;
-		}
+		actionButton.buttonText = translate( 'Manage my domains' );
+		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
 		return ( <PurchaseDetail
 			icon="globe"
 			title={ translate( 'Custom Domain' ) }
@@ -56,8 +54,7 @@ CustomDomainPurchaseDetail.propTypes = {
 		React.PropTypes.bool,
 		React.PropTypes.object
 	] ).isRequired,
-	hasDomainCredit: React.PropTypes.bool,
-	isPressableSite: React.PropTypes.bool
+	hasDomainCredit: React.PropTypes.bool
 };
 
 export default localize( CustomDomainPurchaseDetail );

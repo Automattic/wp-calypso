@@ -32,12 +32,9 @@ import {
 	DESERIALIZE,
 	THEME_ACTIVATE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	PRESSABLE_TRANSFER_START,
-	PRESSABLE_TRANSFER_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
 import { isValidStateWithSchema, createReducer } from 'state/utils';
-import { PRESSABLE_STATE_TRANSFERED, PRESSABLE_STATE_IN_TRANSFER } from './constants';
 
 /**
  * Constants
@@ -78,26 +75,6 @@ export function items( state = {}, action ) {
 				} );
 			}
 			return state;
-
-		case PRESSABLE_TRANSFER_START: {
-			const originalSite = state[ action.siteId ];
-			if ( originalSite ) {
-				return Object.assign( {}, state, {
-					[ action.siteId ]: merge( {}, originalSite, { jetpack: true, options: { pressable: PRESSABLE_STATE_IN_TRANSFER } } )
-				} );
-			}
-			return state;
-		}
-
-		case PRESSABLE_TRANSFER_SUCCESS: {
-			const originalSite = state[ action.siteId ];
-			if ( originalSite ) {
-				return Object.assign( {}, state, {
-					[ action.siteId ]: merge( {}, originalSite, { jetpack: true, options: { pressable: PRESSABLE_STATE_TRANSFERED } } )
-				} );
-			}
-			return state;
-		}
 
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
