@@ -20,66 +20,15 @@ import Card from 'components/card';
 import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import {
-	isJetpackModuleActive,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	siteSupportsJetpackSettingsUi
-} from 'state/sites/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
-import CustomPostTypeFieldset from './custom-post-types-fieldset';
 import CustomContentTypes from './custom-content-types';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormWriting extends Component {
-
-	isCustomPostTypesSettingsEnabled() {
-		return (
-			config.isEnabled( 'manage/custom-post-types' ) &&
-			this.props.jetpackVersionSupportsCustomTypes
-		);
-	}
-
-	onSaveComplete() {
-		if ( this.isCustomPostTypesSettingsEnabled() ) {
-			this.props.requestPostTypes( this.props.site.ID );
-		}
-	}
-
-	setCustomPostTypeSetting = ( revision ) => {
-		this.props.updateFields( revision );
-	}
-
-	submitFormAndActivateCustomContentModule = ( event ) => {
-		this.props.handleSubmitForm( event );
-
-		// Only need to activate module for Jetpack sites
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		// Jetpack support applies only to more recent versions
-		if ( ! this.props.jetpackVersionSupportsCustomTypes ) {
-			return;
-		}
-
-		// No action necessary if neither content type is enabled in form
-		if ( ! this.props.fields.jetpack_testimonial && ! this.props.fields.jetpack_portfolio ) {
-			return;
-		}
-
-		// Only activate module if not already activated (saves an unnecessary
-		// request for post types after submission completes)
-		if ( ! this.props.jetpackCustomTypesModuleActive ) {
-			// [TODO]: This should be migrated to a Redux action creator, but
-			// is complicated by requirements to sync back to legacy sites-list
-			this.props.site.activateModule( 'custom-content-types', this.onSaveComplete );
-		}
-	};
-
 	renderSectionHeader( title, showButton = true ) {
 		const { isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
@@ -88,7 +37,7 @@ class SiteSettingsFormWriting extends Component {
 					<Button
 						compact
 						primary
-						onClick={ this.submitFormAndActivateCustomContentModule }
+						onClick={ this.props.handleSubmitForm }
 						disabled={ isRequestingSettings || isSavingSettings }>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
@@ -104,17 +53,15 @@ class SiteSettingsFormWriting extends Component {
 			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackVersionSupportsCustomTypes,
 			onChangeField,
 			siteId,
-			trackEvent,
 			translate
 		} = this.props;
 		const markdownSupported = fields.markdown_supported;
 		return (
 			<form
 				id="site-settings"
-				onSubmit={ this.submitFormAndActivateCustomContentModule }
+				onSubmit={ this.props.handleSubmitForm }
 				className="site-settings__general-settings"
 			>
 				{ config.isEnabled( 'manage/site-settings/categories' ) &&
@@ -183,27 +130,13 @@ class SiteSettingsFormWriting extends Component {
 					}
 				</Card>
 
-				{ config.isEnabled( 'manage/custom-post-types' ) && jetpackVersionSupportsCustomTypes && (
-					<div>
-						{ this.renderSectionHeader( translate( 'Custom Content Types' ) ) }
-						<Card className="site-settings">
-							<CustomPostTypeFieldset
-								requestingSettings={ isRequestingSettings }
-								value={ pick( fields, 'jetpack_testimonial', 'jetpack_portfolio' ) }
-								onChange={ this.setCustomPostTypeSetting }
-								recordEvent={ trackEvent }
-								className="site-settings__custom-post-type-fieldset" />
-						</Card>
-					</div>
-				) }
-
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
 							<QueryJetpackModules siteId={ this.props.siteId } />
 
 							<CustomContentTypes
-								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+								onSubmitForm={ this.props.handleSubmitForm }
 								handleToggle={ handleToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
@@ -211,7 +144,7 @@ class SiteSettingsFormWriting extends Component {
 							/>
 
 							<ThemeEnhancements
-								onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+								onSubmitForm={ this.props.handleSubmitForm }
 								handleToggle={ handleToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
@@ -220,7 +153,7 @@ class SiteSettingsFormWriting extends Component {
 
 							{ config.isEnabled( 'press-this' ) &&
 								<PublishingTools
-									onSubmitForm={ this.submitFormAndActivateCustomContentModule }
+									onSubmitForm={ this.props.handleSubmitForm }
 									isSavingSettings={ isSavingSettings }
 									isRequestingSettings={ isRequestingSettings }
 									fields={ fields }
@@ -251,8 +184,6 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
-			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			isJetpackSite: isJetpackSite( state, siteId ),
 			siteId
