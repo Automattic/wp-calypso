@@ -227,8 +227,8 @@ class StatModuleChartTabs extends Component {
 
 		return (
 			<div>
-				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } /> }
-				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } /> }
+				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } heartbeat={ 60000 } /> }
+				{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } heartbeat={ 60000 } /> }
 				<Card className={ classNames( ...classes ) }>
 					<Legend
 						tabs={ this.props.charts }

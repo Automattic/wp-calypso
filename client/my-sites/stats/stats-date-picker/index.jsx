@@ -3,7 +3,16 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { flowRight, get } from 'lodash';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'gridicons';
+import { getSiteStatsQueryDate } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 
 class StatsDatePicker extends Component {
 	static propTypes = {
@@ -14,6 +23,12 @@ class StatsDatePicker extends Component {
 		period: PropTypes.string.isRequired,
 		summary: PropTypes.bool,
 		query: PropTypes.object,
+		statType: PropTypes.string,
+		showQueryDate: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showQueryDate: false
 	};
 
 	dateForSummarize() {
@@ -76,7 +91,7 @@ class StatsDatePicker extends Component {
 	}
 
 	render() {
-		const { summary, translate, query } = this.props;
+		const { summary, translate, query, queryDate, requesting, moment, showQueryDate } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		const sectionTitle = translate( 'Stats for {{period/}}', {
@@ -95,11 +110,32 @@ class StatsDatePicker extends Component {
 			<div>
 				{ summary
 					? <span>{ sectionTitle }</span>
-					: <h3 className="stats-section-title">{ sectionTitle }</h3>
+					: <div className="stats-section-title">
+							<h3>{ sectionTitle }</h3>
+							{ showQueryDate && <span className="stats-date-picker__update-date">
+								{ queryDate && translate( 'Last update: %(time)s', {
+									args: { time: moment( queryDate ).format( 'HH:mm' ) }
+								} ) }
+								{ requesting && <Gridicon icon="sync" size={ 15 } /> }
+							</span> }
+						</div>
 				}
 			</div>
 		);
 	}
 }
 
-export default localize( StatsDatePicker );
+const connectComponent = connect(
+	( state, { query, statsType, showQueryDate } ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			queryDate: showQueryDate ? getSiteStatsQueryDate( state, siteId, statsType, query ) : null,
+			requesting: showQueryDate ? isRequestingSiteStatsForQuery( state, siteId, statsType, query ) : false,
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsDatePicker );

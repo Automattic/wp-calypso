@@ -86,7 +86,6 @@ class StatsSite extends Component {
 					path="videoplays"
 					moduleStrings={ moduleStrings.videoplays }
 					period={ this.props.period }
-					date={ queryDate }
 					query={ query }
 					statType="statsVideoPlays"
 					showSummaryLink
@@ -99,7 +98,6 @@ class StatsSite extends Component {
 					path="podcastdownloads"
 					moduleStrings={ moduleStrings.podcastdownloads }
 					period={ this.props.period }
-					date={ queryDate }
 					query={ query }
 					statType="statsPodcastDownloads"
 					showSummaryLink
@@ -128,7 +126,11 @@ class StatsSite extends Component {
 						>
 							<DatePicker
 								period={ period }
-								date={ date } />
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+							/>
 						</StatsPeriodNavigation>
 					</StickyPanel>
 					<div className="stats__module-list is-events">
@@ -138,7 +140,6 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.posts }
 								period={ this.props.period }
 								query={ query }
-								date={ queryDate }
 								statType="statsTopPosts"
 								showSummaryLink />
 							<StatsModule
@@ -146,7 +147,6 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.referrers }
 								period={ this.props.period }
 								query={ query }
-								date={ queryDate }
 								statType="statsReferrers"
 								showSummaryLink />
 							<StatsModule
@@ -154,14 +154,12 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
 								query={ query }
-								date={ queryDate }
 								statType="statsClicks"
 								showSummaryLink />
 							<StatsModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
-								date={ queryDate }
 								query={ query }
 								statType="statsTopAuthors"
 								className="stats__author-views"
@@ -177,7 +175,6 @@ class StatsSite extends Component {
 								path="searchterms"
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
-								date={ queryDate }
 								query={ query }
 								statType="statsSearchTerms"
 								showSummaryLink />

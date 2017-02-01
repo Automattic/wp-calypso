@@ -51,6 +51,11 @@
 }
 
 // Section title
+@keyframes stats-date-picker__spin {
+	100% {
+		transform: rotate( 360deg );
+	}
+}
 
 .stats-section-title {
 	@include heading;
@@ -62,6 +67,19 @@
 
 	@include breakpoint( "<480px" ) {
 		text-align: center;
+	}
+
+	.stats-date-picker__update-date {
+		color: $gray;
+		display: block;
+		padding: 2px;
+		font-size: 12px;
+
+		.gridicon {
+			animation: stats-date-picker__spin 3.4s ease-in-out infinite;
+			vertical-align: middle;
+			padding: 0 4px;
+		}
 	}
 }
 
@@ -532,14 +550,6 @@ ul.module-header-actions {
 	align-items: center;
 }
 
-.stats-module__header {
-	&.is-refreshing {
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.stats-module__date {
-		color: #c8d7e1;
-    display: inline-block;
-		padding: 4px 0 0 4px;
-	}
+.stats-module__header.is-refreshing {
+	animation: loading-fade 1.6s ease-in-out infinite;
 }
