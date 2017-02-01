@@ -52,13 +52,13 @@ export function hasSource( post ) {
 export function getSourceData( post ) {
 	const sourceData = get( post, 'discover_metadata.featured_post_wpcom_data' );
 
-	if ( sourceData && ! isDiscoverSitePick( post ) ) {
+	if ( sourceData ) {
 		return {
 			blogId: get( sourceData, 'blog_id' ),
 			postId: get( sourceData, 'post_id' )
 		};
 	}
-	return null;
+	return {};
 }
 
 export function getLinkProps( linkUrl ) {
