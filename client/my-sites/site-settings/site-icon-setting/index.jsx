@@ -19,7 +19,7 @@ import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/action
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { receiveMedia } from 'state/media/actions';
+import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
@@ -34,7 +34,8 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { isItemBeingUploaded } from 'lib/media/utils';
 import { addQueryArgs } from 'lib/url';
 import { getImageEditorCrop, getImageEditorTransform } from 'state/ui/editor/image-editor/selectors';
-import { getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
+import { getSiteIconId, getSiteIconUrl, isSiteSupportingImageEditor } from 'state/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {
 	static propTypes = {
@@ -85,7 +86,7 @@ class SiteIconSetting extends Component {
 	}
 
 	uploadSiteIcon( blob, fileName ) {
-		const { siteId } = this.props;
+		const { siteId, translate, siteIconId } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
@@ -99,13 +100,41 @@ class SiteIconSetting extends Component {
 			// copy, so if our request is for a media which is not transient,
 			// we can assume the upload has finished.
 			const media = MediaStore.get( siteId, transientMediaId );
-			this.props.receiveMedia( siteId, media );
-			if ( isItemBeingUploaded( media ) ) {
+			const isUploadInProgress = media && isItemBeingUploaded( media );
+			const isFailedUpload = ! media;
+
+			if ( isFailedUpload ) {
+				this.props.deleteMedia( siteId, transientMediaId );
+			} else {
+				this.props.receiveMedia( siteId, media );
+			}
+
+			if ( isUploadInProgress ) {
 				return;
 			}
 
 			MediaStore.off( 'change', checkUploadComplete );
-			this.saveSiteIconSetting( siteId, media );
+
+			if ( isFailedUpload ) {
+				this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
+
+				// Revert back to previously assigned site icon
+				if ( siteIconId ) {
+					this.props.updateSiteIcon( siteId, siteIconId );
+
+					// If previous icon object is already available in legacy
+					// store, receive into state. Otherwise assume SiteIcon
+					// component will trigger request.
+					//
+					// TODO: Remove when media listing Redux-ified
+					const previousIcon = MediaStore.get( siteId, siteIconId );
+					if ( previousIcon ) {
+						this.props.receiveMedia( siteId, previousIcon );
+					}
+				}
+			} else {
+				this.saveSiteIconSetting( siteId, media );
+			}
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
@@ -268,6 +297,7 @@ export default connect(
 		return {
 			siteId,
 			isJetpack: isJetpackSite( state, siteId ),
+			siteIconId: getSiteIconId( state, siteId ),
 			hasIcon: !! getSiteIconUrl( state, siteId ),
 			isSaving: isSavingSiteSettings( state, siteId ),
 			siteSupportsImageEditor: isSiteSupportingImageEditor( state, siteId ),
@@ -284,6 +314,8 @@ export default connect(
 		saveSiteSettings,
 		updateSiteIcon: ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } ),
 		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
-		receiveMedia
+		receiveMedia,
+		deleteMedia,
+		errorNotice
 	}
 )( localize( SiteIconSetting ) );
