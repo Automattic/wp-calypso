@@ -9,6 +9,7 @@ import urlModule from 'url';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -662,8 +663,15 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	},
 
 	isSSO() {
-		const site = urlToSlug( this.props.jetpackConnectAuthorize.queryObject.site );
-		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
+		const cookies = cookie.parse( document.cookie );
+		const query = this.props.jetpackConnectAuthorize.queryObject;
+		return (
+			query.from &&
+			'sso' === query.from &&
+			cookies.jetpack_sso_approved &&
+			query.client_id &&
+			query.client_id === cookies.jetpack_sso_approved
+		);
 	},
 
 	renderNoQueryArgsError() {
