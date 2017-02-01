@@ -13,7 +13,7 @@ describe( 'getJetpackJumpstartStatus()', () => {
 	it( 'should return jumpstart status for a known site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackJumpstart: {
+					jumpstart: {
 						items: ITEMS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'getJetpackJumpstartStatus()', () => {
 	it( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackJumpstart: {
+					jumpstart: {
 						items: ITEMS_FIXTURE
 					}
 				}

@@ -13,5 +13,5 @@ import { get } from 'lodash';
  * @return {?Boolean}         Whether the list is being requested
  */
 export default function isFetchingJetpackModules( state, siteId ) {
-	return get( state.jetpack.jetpackModules.requests, [ siteId, 'fetchingModules' ], null );
+	return get( state.jetpack.modules.requests, [ siteId, 'fetchingModules' ], null );
 }

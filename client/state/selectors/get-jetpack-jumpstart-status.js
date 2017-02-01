@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?String}             Whether Jumpstart is active
  */
 export default function getJetpackJumpstartStatus( state, siteId ) {
-	return get( state.jetpack.jetpackJumpstart.items, [ siteId ], null );
+	return get( state.jetpack.jumpstart.items, [ siteId ], null );
 }

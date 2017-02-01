@@ -13,7 +13,7 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 	it( 'should return true if jumpstart is currently being deactivated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackJumpstart: {
+					jumpstart: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -26,7 +26,7 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 	it( 'should return false if jumpstart is currently not being deactivated', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackJumpstart: {
+					jumpstart: {
 						requests: REQUESTS_FIXTURE
 					}
 				}
@@ -39,7 +39,7 @@ describe( 'isDeactivatingJetpackJumpstart()', () => {
 	it( 'should return null if that site is not known yet', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackJumpstart: {
+					jumpstart: {
 						requests: REQUESTS_FIXTURE
 					}
 				}

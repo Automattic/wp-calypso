@@ -13,7 +13,7 @@ describe( 'getJetpackModules()', () => {
 	it( 'should return data for all modules for a known site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						items: {
 							123456: MODULE_DATA_FIXTURE
 						}
@@ -28,7 +28,7 @@ describe( 'getJetpackModules()', () => {
 	it( 'should return null for an unknown site', () => {
 		const stateIn = {
 				jetpack: {
-					jetpackModules: {
+					modules: {
 						items: {
 							654321: MODULE_DATA_FIXTURE
 						}
