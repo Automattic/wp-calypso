@@ -31,6 +31,7 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
+import { getCustomizerFocus } from 'my-sites/customize/panels';
 
 /**
  * Returns a raw site object by its ID.
@@ -959,16 +960,13 @@ export function getSiteAdminUrl( state, siteId, path = '' ) {
  *
  * @param  {Object} state  Global state tree
  * @param  {Number} siteId Site ID
+ * @param  {String} panel  Optional panel to autofocus
  * @return {String}        Customizer URL
  */
-export function getCustomizerUrl( state, siteId ) {
+export function getCustomizerUrl( state, siteId, panel ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		if ( ! siteSlug ) {
-			return null;
-		}
-
-		return `/customize/${ siteSlug }`;
+		return [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
 	}
 
 	const adminUrl = getSiteAdminUrl( state, siteId, 'customize.php' );
@@ -982,7 +980,8 @@ export function getCustomizerUrl( state, siteId ) {
 	}
 
 	return addQueryArgs( {
-		'return': returnUrl
+		'return': returnUrl,
+		...getCustomizerFocus( panel )
 	}, adminUrl );
 }
 
