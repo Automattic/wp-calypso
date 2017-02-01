@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import identity from 'lodash/identity';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import Accordion from 'components/accordion';
 import Button from 'components/button';
 import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
-import Gridicon from 'components/gridicon';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import WebPreview from 'components/web-preview';

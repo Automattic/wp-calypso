@@ -5,11 +5,11 @@ import React from 'react';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const StatsPeriodNavigation = props => {

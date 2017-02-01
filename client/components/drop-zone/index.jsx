@@ -9,7 +9,7 @@ import includes from 'lodash/includes';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import identity from 'lodash/identity';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
 /**

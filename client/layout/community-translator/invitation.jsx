@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import invitationUtils from './invitation-utils';
 import { ga as googleAnalytics } from 'lib/analytics';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'CommunityTranslatorInvitation',

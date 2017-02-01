@@ -10,7 +10,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	WordadsActions = require( 'lib/ads/actions' ),
 	EarningsStore = require( 'lib/ads/earnings-store' );
 

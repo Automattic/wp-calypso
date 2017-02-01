@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import noop from 'lodash/noop';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import noop from 'lodash/noop';
 
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import Ribbon from 'components/ribbon';
 
 export default React.createClass( {

@@ -5,13 +5,13 @@ import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { isMobile } from 'lib/viewport';
 import Popover from 'components/popover';
-import Gridicon from 'components/gridicon';
 import FormCheckbox from 'components/forms/form-checkbox';
 import Button from 'components/button';
 

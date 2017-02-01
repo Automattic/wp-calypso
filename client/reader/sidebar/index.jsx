@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { defer, startsWith, identity, every } from 'lodash';
 import store from 'store';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -22,7 +23,6 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import Gridicon from 'components/gridicon';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarLists from './reader-sidebar-lists';

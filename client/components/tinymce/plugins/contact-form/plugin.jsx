@@ -7,11 +7,11 @@ import React, { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Provider } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import Gridicon from 'components/gridicon';
 import ContactFormDialog from './dialog';
 import {
 	formClear,

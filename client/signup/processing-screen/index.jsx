@@ -4,7 +4,7 @@
 import find from 'lodash/find';
 import React, { PropTypes } from 'react';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import Notice from 'components/notice';
 
 module.exports = React.createClass( {

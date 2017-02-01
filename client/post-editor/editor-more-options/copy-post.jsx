@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import Gridicon from 'components/gridicon';
 import PostSelector from 'my-sites/post-selector';
 
 class EditorMoreOptionsCopyPost extends Component {

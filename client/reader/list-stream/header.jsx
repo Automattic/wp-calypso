@@ -4,12 +4,12 @@
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import { isExternal } from 'lib/url';
 import FollowButton from 'blocks/follow-button/button';
 

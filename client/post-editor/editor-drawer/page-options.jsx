@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import PageParent from 'post-editor/editor-page-parent';
 import PageTemplates from 'post-editor/editor-page-templates';
 import PageOrder from 'post-editor/editor-page-order';
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 
 function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;

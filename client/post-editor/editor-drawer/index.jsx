@@ -4,13 +4,13 @@
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
-import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import FormTextarea from 'components/forms/form-textarea';

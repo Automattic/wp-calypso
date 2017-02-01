@@ -10,7 +10,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Accordion = require( 'components/accordion' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'AccordionExample',

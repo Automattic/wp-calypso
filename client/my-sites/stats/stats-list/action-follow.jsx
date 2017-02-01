@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsActionFollow',

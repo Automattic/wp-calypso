@@ -4,12 +4,12 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';

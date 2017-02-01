@@ -5,11 +5,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export const Notice = React.createClass( {
 	dismissTimeout: null,

@@ -4,13 +4,13 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import reject from 'lodash/reject';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryRemoveButton',

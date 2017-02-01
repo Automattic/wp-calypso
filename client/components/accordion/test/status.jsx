@@ -5,12 +5,12 @@ import { expect } from 'chai';
 import React from 'react';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import Gridicon from 'components/gridicon';
 
 describe( 'AccordionStatus', function() {
 	let AccordionStatus, Tooltip;

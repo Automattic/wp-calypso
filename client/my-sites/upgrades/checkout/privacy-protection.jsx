@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import classnames from 'classnames';
 import { cartItems } from 'lib/cart-values';
 import PrivacyProtectionDialog from './privacy-protection-dialog';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'PrivacyProtection',

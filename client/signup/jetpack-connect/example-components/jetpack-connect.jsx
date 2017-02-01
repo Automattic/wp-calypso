@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) => {

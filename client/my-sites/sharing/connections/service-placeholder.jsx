@@ -4,13 +4,13 @@
 import React, { Component, PropTypes } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import GridIcon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
-import GridIcon from 'components/gridicon';
 
 class SharingServicePlaceholder extends Component {
 	static propTypes = {

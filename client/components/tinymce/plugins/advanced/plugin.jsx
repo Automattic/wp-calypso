@@ -5,12 +5,12 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { isWithinBreakpoint } from 'lib/viewport';
-import Gridicon from 'components/gridicon';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 

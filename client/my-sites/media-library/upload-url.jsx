@@ -4,6 +4,7 @@
 import React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import classNames from 'classnames';
 import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
-import Gridicon from 'components/gridicon';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryUploadUrl',

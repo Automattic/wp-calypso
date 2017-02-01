@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import url from 'url';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
-import Gridicon from 'components/gridicon';
 
 const view = () => ga.recordEvent( 'Posts', 'Clicked View Post' );
 const preview = () => ga.recordEvent( 'Posts', 'Clicked Preiew Post' );

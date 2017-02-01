@@ -4,12 +4,12 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from '../';
-import Gridicon from 'components/gridicon';
 
 describe( 'Button', () => {
 	describe( 'renders', () => {

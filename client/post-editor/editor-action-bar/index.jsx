@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorPostType from 'post-editor/editor-post-type';
 import EditorSticky from 'post-editor/editor-sticky';
 import EditorVisibility from 'post-editor/editor-visibility';
-import Gridicon from 'components/gridicon';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';

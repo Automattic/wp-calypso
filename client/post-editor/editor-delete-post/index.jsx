@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 
 export default React.createClass( {

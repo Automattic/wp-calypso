@@ -6,13 +6,13 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
 import Dialog from 'components/dialog';
-import Gridicon from 'components/gridicon';
 import { warningNotice } from 'state/notices/actions';
 
 class AccountDialog extends Component {

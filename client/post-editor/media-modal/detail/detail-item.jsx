@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { userCan, isJetpack } from 'lib/site/utils';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';

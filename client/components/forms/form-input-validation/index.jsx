@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Interal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 

@@ -14,7 +14,7 @@ import { bindActionCreators } from 'redux';
  */
 var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	SiteIcon = require( 'blocks/site-icon' ),

@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBar',

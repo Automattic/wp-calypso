@@ -5,11 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { getRawSite } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';

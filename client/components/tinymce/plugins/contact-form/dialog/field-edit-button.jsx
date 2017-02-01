@@ -5,12 +5,12 @@ import React, { PropTypes, PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldEditButton extends PureComponent {

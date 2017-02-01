@@ -5,6 +5,7 @@ import React from 'react';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /***
  * Internal dependencies
@@ -12,7 +13,6 @@ import { translate } from 'i18n-calypso';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
-import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
 import Gravatar from 'components/gravatar';
 import {

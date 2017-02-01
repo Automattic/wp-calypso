@@ -9,7 +9,7 @@ import SocialLogo from 'social-logos';
 
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	sitesList = require( 'lib/sites-list' )(),
 	stats = require( 'reader/stats' ),
 	SitesPopover = require( 'components/sites-popover' ),

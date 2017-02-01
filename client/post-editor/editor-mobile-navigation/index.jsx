@@ -4,11 +4,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import EditorPublishButton from 'post-editor/editor-publish-button';

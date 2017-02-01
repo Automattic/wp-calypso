@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 

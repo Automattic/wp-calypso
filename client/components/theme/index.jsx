@@ -5,13 +5,13 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { isEmpty, isEqual } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
-import Gridicon from 'components/gridicon';
 import TrackInteractions from 'components/track-interactions';
 import PulsingDot from 'components/pulsing-dot';
 

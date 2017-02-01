@@ -4,6 +4,7 @@
 import React from 'react';
 import { keys, trim } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import ExternalLink from 'components/external-link';
 import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
 import ReaderFullPostHeaderTags from './header-tags';
-import Gridicon from 'components/gridicon';
 import { isDiscoverPost } from 'reader/discover/helper';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 

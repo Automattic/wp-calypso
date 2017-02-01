@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 const TipInfo = ( { info = '', className = '' } ) => {
 	className += ' purchase-detail__info form-setting-explanation';

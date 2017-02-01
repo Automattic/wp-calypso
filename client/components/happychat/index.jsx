@@ -4,10 +4,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import GridIcon from 'gridicons';
+
 /**
  * Internal dependencies
  */
-import GridIcon from 'components/gridicon';
 import {
 	first,
 	any,
