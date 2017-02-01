@@ -138,7 +138,7 @@ const StatsComments = React.createClass( {
 
 		return (
 			<div>
-				<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
+				{ siteId && <QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } /> }
 				<SectionHeader label={ translate( 'Comments' ) }></SectionHeader>
 				<Card className={ classes }>
 					<div className="module-content">

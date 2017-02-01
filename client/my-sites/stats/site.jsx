@@ -146,9 +146,7 @@ module.exports = React.createClass( {
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation
-					section={ period }
-					site={ site } />
+				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
 					<ChartTabs
 						barClick={ this.barClick }

@@ -116,8 +116,8 @@ class StatModuleFollowers extends Component {
 
 		return (
 			<div>
-				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } />
-				<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
+				{ siteId && <QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } /> }
+				{ siteId && <QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } /> }
 				<SectionHeader label={ translate( 'Followers' ) } href={ summaryPageLink } />
 				<Card className={ classNames( ...classes ) }>
 					<div className="followers">
