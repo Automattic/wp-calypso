@@ -10,3 +10,4 @@ export Next from './next';
 export Quit from './quit';
 export Step from './step';
 export Tour from './tour';
+export VisualEditorStep from './visual-editor-step';

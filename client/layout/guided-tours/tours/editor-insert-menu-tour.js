@@ -12,31 +12,15 @@ import Gridicon from 'gridicons';
 import {
 	ButtonRow,
 	makeTour,
-	Step,
-	Tour,
 	Quit,
+	Tour,
+	VisualEditorStep,
 } from 'layout/guided-tours/config-elements';
 import {
 	isEnabled,
 	hasUserRegisteredBefore,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
-
-class RepositioningStep extends Step {
-
-	componentDidMount() {
-		super.componentDidMount();
-		this.interval = setInterval( () => {
-			this.onScrollOrResize();
-		}, 2000 );
-	}
-
-	componentWillUnmount() {
-		super.componentWillUnmount();
-		clearInterval( this.interval );
-	}
-
-}
 
 export const EditorInsertMenuTour = makeTour(
 	<Tour
@@ -49,7 +33,7 @@ export const EditorInsertMenuTour = makeTour(
 			isDesktop,
 		) }
 	>
-		<RepositioningStep
+		<VisualEditorStep
 			arrow="left-top"
 			name="init"
 			placement="beside"
@@ -77,6 +61,6 @@ export const EditorInsertMenuTour = makeTour(
 			<ButtonRow>
 				<Quit primary>{ translate( 'Got it' ) }</Quit>
 			</ButtonRow>
-		</RepositioningStep>
+		</VisualEditorStep>
 	</Tour>
 );
