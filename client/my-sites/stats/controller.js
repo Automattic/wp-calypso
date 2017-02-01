@@ -105,9 +105,6 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
 		const followList = new FollowList();
-		let summaryDate;
-		const summarySites = [];
-		let momentSiteZone = i18n.moment();
 		const StatsComponent = Insights;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -131,12 +128,6 @@ module.exports = {
 			}
 		}
 
-		if ( site && site.options && typeof site.options.gmt_offset !== 'undefined' ) {
-			momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
-			summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
-			summarySites.push( { ID: siteId, date: summaryDate } );
-		}
-
 		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 			? site.slug : route.getSiteFragment( context.path );
 
@@ -146,10 +137,8 @@ module.exports = {
 
 		renderWithReduxStore(
 			React.createElement( StatsComponent, {
-				site: site,
 				followList: followList,
-				commentsList: commentsList,
-				summaryDate: summaryDate
+				commentsList: commentsList
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

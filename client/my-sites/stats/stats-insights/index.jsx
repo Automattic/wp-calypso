@@ -2,8 +2,9 @@
 * External dependencies
 */
 import React, { PropTypes } from 'react';
-import i18n from 'i18n-calypso';
-import get from 'lodash/get';
+import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,94 +24,96 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
 
-export default React.createClass( {
-	displayName: 'StatsInsights',
+const StatsInsights = ( props ) => {
+	const { commentsList, followList, gmtOffset, isJetpack, moment, siteId, translate } = props;
+	const moduleStrings = statsStrings();
 
-	propTypes: {
-		commentsList: PropTypes.object.isRequired,
-		followList: PropTypes.object.isRequired,
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] ),
-		summaryDate: PropTypes.string,
-	},
+	let momentSiteZone = moment();
+	if ( gmtOffset ) {
+		momentSiteZone = moment().utcOffset( gmtOffset );
+	}
+	const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 
-	render() {
-		const {
-			commentsList,
-			followList,
-			site,
-		} = this.props;
+	let tagsList;
+	if ( ! isJetpack ) {
+		tagsList = (
+			<StatsModule
+				path="tags-categories"
+				moduleStrings={ moduleStrings.tags }
+				statType="statsTags" />
+		);
+	}
 
-		const moduleStrings = statsStrings();
-
-		let momentSiteZone = i18n.moment();
-
-		const gmtOffset = get( site.options, 'gmt_offset', null );
-		if ( gmtOffset ) {
-			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
-		}
-
-		const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
-
-		let tagsList;
-		if ( ! site.jetpack ) {
-			tagsList = (
-				<StatsModule
-					path="tags-categories"
-					moduleStrings={ moduleStrings.tags }
-					statType="statsTags" />
-			);
-		}
-
-		// TODO: should be refactored into separate components
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<Main wideLayout={ true }>
-				<StatsFirstView />
-				<SidebarNavigation />
-				<StatsNavigation section="insights" site={ site } />
-				<div id="my-stats-content">
-					<PostingActivity />
-					<LatestPostSummary site={ site } />
-					<Reach />
-					<TodaysStats
-						siteId={ site ? site.ID : null }
-						period="day"
-						date={ summaryDate }
-						path={ '/stats/day' }
-						title={ this.translate( 'Today\'s Stats' ) }
-					/>
-					<AllTime />
-					<MostPopular />
-					{ site && <DomainTip siteId={ site.ID } event="stats_insights_domain" /> }
-					<div className="stats-insights__nonperiodic has-recent">
-						<div className="stats__module-list">
-							<div className="stats__module-column">
-								<Comments
-									path={ 'comments' }
-									commentsList={ commentsList }
-									followList={ followList }
-								/>
-								{ tagsList }
-							</div>
-							<div className="stats__module-column">
-								<Followers
-									path={ 'followers' }
-									site={ site }
-									followList={ followList } />
-								<StatsModule
-									path="publicize"
-									moduleStrings={ moduleStrings.publicize }
-									statType="statsPublicize" />
-							</div>
+	// TODO: should be refactored into separate components
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<Main wideLayout>
+			<StatsFirstView />
+			<SidebarNavigation />
+			<StatsNavigation section="insights" />
+			<div id="my-stats-content">
+				<PostingActivity />
+				<LatestPostSummary />
+				<Reach />
+				<TodaysStats
+					siteId={ siteId }
+					period="day"
+					date={ summaryDate }
+					path={ '/stats/day' }
+					title={ translate( 'Today\'s Stats' ) }
+				/>
+				<AllTime />
+				<MostPopular />
+				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
+				<div className="stats-insights__nonperiodic has-recent">
+					<div className="stats__module-list">
+						<div className="stats__module-column">
+							<Comments
+								path={ 'comments' }
+								commentsList={ commentsList }
+								followList={ followList }
+							/>
+							{ tagsList }
+						</div>
+						<div className="stats__module-column">
+							<Followers
+								path={ 'followers' }
+								followList={ followList } />
+							<StatsModule
+								path="publicize"
+								moduleStrings={ moduleStrings.publicize }
+								statType="statsPublicize" />
 						</div>
 					</div>
 				</div>
-			</Main>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+			</div>
+		</Main>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+};
+
+StatsInsights.propTypes = {
+	commentsList: PropTypes.object.isRequired,
+	followList: PropTypes.object.isRequired,
+	moment: PropTypes.func,
+	translate: PropTypes.func,
+};
+
+const connectComponent = connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
+			isJetpack: isJetpackSite( state, siteId ),
+			siteId
+		};
 	}
-} );
+);
+
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsInsights );
