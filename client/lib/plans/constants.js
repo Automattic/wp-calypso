@@ -62,6 +62,7 @@ export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
+export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -202,6 +203,7 @@ export const PLANS_LIST = {
 			FEATURE_BUSINESS_ONBOARDING,
 			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		] ),
@@ -649,6 +651,12 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
 		getTitle: () => i18n.translate( 'Install Plugins' ),
 		getDescription: () => i18n.translate( 'Install custom plugins on your site.' )
+	},
+
+	[ FEATURE_UPLOAD_THEMES ]: {
+		getSlug: () => FEATURE_UPLOAD_THEMES,
+		getTitle: () => i18n.translate( 'Upload themes' ),
+		getDescription: () => i18n.translate( 'Upload custom themes on your site.' )
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
