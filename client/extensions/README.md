@@ -47,11 +47,11 @@ At the moment we use a simple routing interface with `page.js`. There are a few 
 
 ```js
 const renderHelloWorld = ( context ) => {
-	renderWithReduxStore( (
+	renderPage( (
 		<Main>
 			<HelloWorld />
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context, document.getElementById( 'primary' ) );
 };
 ```
 

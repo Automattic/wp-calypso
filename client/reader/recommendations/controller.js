@@ -12,7 +12,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -23,7 +23,7 @@ export default {
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( RecommendedForYou, {
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -33,8 +33,7 @@ export default {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -86,7 +85,7 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( RecommendedPostsStream, {
 				key: 'recommendations_posts',
 				postsStore: RecommendedPostsStore,
@@ -100,8 +99,7 @@ export default {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	}
 };

@@ -14,7 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 var controller = {
 
@@ -44,7 +44,7 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( Pages, {
 				context: context,
 				siteID: siteID,
@@ -58,8 +58,7 @@ var controller = {
 					'Pages'
 				)
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	}
 };

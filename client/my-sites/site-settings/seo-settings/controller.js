@@ -9,7 +9,8 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
+
 import route from 'lib/route';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import sitesFactory from 'lib/sites-list';
@@ -33,7 +34,7 @@ export default {
 			page.redirect( '/stats' );
 			return;
 		}
-		
+
 		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
 			if ( sites.initialized ) {
 				site.fetchSettings();
@@ -47,12 +48,11 @@ export default {
 
 		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( SeoSettingsMain, {
 				...{ sites, upgradeToBusiness }
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 
 		// analytics tracking

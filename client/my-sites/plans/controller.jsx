@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import get from 'lodash/get';
 import { isValidFeatureKey } from 'lib/plans';
 
@@ -16,7 +16,7 @@ export default {
 		const Plans = require( 'my-sites/plans/main' ),
 			CheckoutData = require( 'components/data/checkout' );
 
-		renderWithReduxStore(
+		renderPage(
 			<CheckoutData>
 				<Plans
 					context={ context }
@@ -25,8 +25,7 @@ export default {
 					selectedFeature={ context.query.feature }
 				/>
 			</CheckoutData>,
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
