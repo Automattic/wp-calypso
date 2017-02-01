@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-var ExtractTextPlugin = require( 'extract-text-webpack-plugin' ),
-	webpack = require( 'webpack' ),
+var webpack = require( 'webpack' ),
 	path = require( 'path' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
 	fs = require( 'fs' );
@@ -56,7 +55,6 @@ function getExternals() {
 }
 
 var webpackConfig = {
-	debug: true,
 	devtool: 'source-map',
 	entry: 'index.js',
 	target: 'node',
@@ -86,13 +84,6 @@ var webpackConfig = {
 				test: /\.json$/,
 				exclude: /(devdocs\/components-usage-stats.json)/,
 				loader: 'json-loader'
-			},
-			{
-				test: /\.scss$/,
-				loader: ExtractTextPlugin.extract( [
-					'css-loader?modules&camelCase&importLoaders=1&localIdentName=[path][local]',
-					'sass-loader'
-				] )
 			}
 		]
 	},
@@ -121,8 +112,7 @@ var webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/multi-site$/, 'components/empty-component' ), // Depends on DOM
 		new webpack.NormalModuleReplacementPlugin( /^state\/ui\/editor\/selectors$/, 'lodash/noop' ), // will never be called server-side
 		new webpack.NormalModuleReplacementPlugin( /^state\/posts\/selectors$/, 'lodash/noop' ), // will never be called server-side
-		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ), // should never be required server side
-		new ExtractTextPlugin( 'modules.css', { allChunks: true } )
+		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ) // should never be required server side
 	],
 	externals: getExternals()
 };

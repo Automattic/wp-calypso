@@ -29,7 +29,6 @@ let HASH_LENGTH = 10,
 
 const staticFiles = [
 	{ path: 'style.css' },
-	{ path: 'modules.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
