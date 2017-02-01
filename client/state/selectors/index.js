@@ -29,6 +29,7 @@ export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
 export getManualUtcOffsets from './get-manual-utc-offsets';
+export getMedia from './get-media'
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
 export getMenuItemTypes from './get-menu-item-types';
@@ -60,6 +61,7 @@ export isRequestingBillingTransactions from './is-requesting-billing-transaction
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
+export isRequestingMedia from './is-requesting-media';
 export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
