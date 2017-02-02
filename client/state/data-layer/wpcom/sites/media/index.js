@@ -1,9 +1,17 @@
 /**
  * Internal dependencies
  */
-import { MEDIA_REQUEST } from 'state/action-types';
-import { isRequestingMedia } from 'state/selectors';
-import { failMediaRequest, receiveMedia, requestingMedia } from 'state/media/actions';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
+import { isRequestingMedia, isRequestingMediaItem } from 'state/selectors';
+import {
+	failMediaRequest,
+	failMediaItemRequest,
+	receiveMedia,
+	requestingMedia,
+	requestingMediaItem,
+	successMediaRequest,
+	successMediaItemRequest
+} from 'state/media/actions';
 import wpcom from 'lib/wp';
 import debug from 'debug';
 
@@ -31,10 +39,34 @@ export function requestMedia( { dispatch, getState }, { siteId, query } ) {
 	return wpcom
 		.site( siteId )
 		.mediaList( query )
-		.then( ( { media, found } ) => dispatch( receiveMedia( siteId, media, found, query ) ) )
+		.then( ( { media, found } ) => {
+			dispatch( receiveMedia( siteId, media, found, query ) );
+			dispatch( successMediaRequest( siteId, query ) );
+		}	)
 		.catch( () => dispatch( failMediaRequest( siteId, query ) ) );
 }
 
+export function requestMediaItem( { dispatch, getState }, { siteId, mediaId } ) {
+	if ( isRequestingMediaItem( getState(), siteId, mediaId ) ) {
+		return;
+	}
+
+	dispatch( requestingMediaItem( siteId, mediaId ) );
+
+	log( 'Request media item %d for site %d', mediaId, siteId );
+
+	return wpcom
+		.site( siteId )
+		.media( mediaId )
+		.get()
+		.then( ( media ) => {
+			dispatch( receiveMedia( siteId, media ) );
+			dispatch( successMediaItemRequest( siteId, mediaId ) );
+		} )
+		.catch( () => dispatch( failMediaItemRequest( siteId, mediaId ) ) );
+}
+
 export default {
-	[ MEDIA_REQUEST ]: [ requestMedia ]
+	[ MEDIA_REQUEST ]: [ requestMedia ],
+	[ MEDIA_ITEM_REQUEST ]: [ requestMediaItem ],
 };
