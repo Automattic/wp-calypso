@@ -99,10 +99,9 @@ export function handlePage( { dispatch }, action, next, data ) {
 	dispatch( receivePage( action.streamId, action.query, transformResponse( data ) ) );
 }
 
-export function handleError( { dispatch }, action, next, error ) {
+export function handleError( { dispatch }, action ) {
 	completeRequest( keyForRequest( action ) );
 	dispatch( errorNotice( translate( 'Could not fetch the next page of results' ) ) );
-	warn( error );
 }
 
 export default {

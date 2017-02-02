@@ -16,7 +16,13 @@ import {
 	handleError,
 	transformResponse,
 } from '../';
-import { requestPage as requestPageAction, receivePage } from 'state/reader/streams/actions';
+import {
+	requestPage as requestPageAction,
+	receivePage
+} from 'state/reader/streams/actions';
+import {
+	errorNotice
+} from 'state/notices/actions';
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( 'following', { page: 2 } ) );
@@ -76,9 +82,18 @@ describe( 'streams', () => {
 	} );
 
 	describe( 'handleError', () => {
-		it( 'should have tests', () => {
-			handleError();
-			expect( true ).to.be.false;
+		const next = spy();
+		const dispatch = spy();
+		const error = { error: true };
+
+		before( () => {
+			handleError( { dispatch }, action, next, error );
+		} );
+
+		it( 'should dispatch a notice about the error', () => {
+			const notice = errorNotice( 'Could not fetch the next page of results' );
+			delete notice.notice.noticeId;
+			expect( dispatch ).to.have.been.calledWithMatch( notice );
 		} );
 	} );
 
@@ -116,7 +131,7 @@ describe( 'streams', () => {
 			const dispatch = spy();
 			const next = spy();
 			requestPage( { dispatch }, action, next );
-			handleError( { dispatch }, action, next, new Error( 'oh no' ) );
+			handleError( { dispatch }, action, next, { error: true } );
 			dispatch.reset();
 			next.reset();
 			requestPage( { dispatch }, action, next );
