@@ -14,6 +14,7 @@ import {
 	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
+	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
@@ -64,7 +65,7 @@ export const queryRequests = createReducer( {}, {
 			}
 		};
 	},
-	[ MEDIA_RECEIVE ]: ( state, { siteId, query } ) => {
+	[ MEDIA_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
 		return {
 			...state,
 			[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) )

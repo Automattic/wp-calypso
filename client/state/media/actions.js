@@ -15,6 +15,7 @@ import {
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
+	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING
 } from 'state/action-types';
 
@@ -81,6 +82,22 @@ export function requestingMedia( siteId, query ) {
 export function failMediaRequest( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST_FAILURE,
+		siteId,
+		query
+	};
+}
+
+/**
+ * Returns an action object used in signalling that a request for media item(s)
+ * has failed.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Object} query  Query object
+ * @return {Object}        Action object
+ */
+export function successMediaRequest( siteId, query ) {
+	return {
+		type: MEDIA_REQUEST_SUCCESS,
 		siteId,
 		query
 	};

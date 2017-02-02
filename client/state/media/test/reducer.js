@@ -15,6 +15,7 @@ import {
 	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST_FAILURE,
+	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
 	SERIALIZE } from 'state/action-types';
 import reducer, { queries, queryRequests, mediaItemRequests } from '../reducer';
@@ -178,9 +179,9 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.eql( state2 );
 		} );
 
-		it( 'should track media receiving', () => {
+		it( 'should track media request success', () => {
 			const state = queryRequests( deepFreeze( state2 ), {
-				type: MEDIA_RECEIVE,
+				type: MEDIA_REQUEST_SUCCESS,
 				siteId: 2916284,
 				query: query2
 			} );

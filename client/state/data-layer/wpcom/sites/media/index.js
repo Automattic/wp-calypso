@@ -9,6 +9,7 @@ import {
 	receiveMedia,
 	requestingMedia,
 	requestingMediaItem,
+	successMediaRequest,
 	successMediaItemRequest
 } from 'state/media/actions';
 import wpcom from 'lib/wp';
@@ -38,7 +39,10 @@ export function requestMedia( { dispatch, getState }, { siteId, query } ) {
 	return wpcom
 		.site( siteId )
 		.mediaList( query )
-		.then( ( { media, found } ) => dispatch( receiveMedia( siteId, media, found, query ) ) )
+		.then( ( { media, found } ) => {
+			dispatch( receiveMedia( siteId, media, found, query ) );
+			dispatch( successMediaRequest( siteId, query ) );
+		}	)
 		.catch( () => dispatch( failMediaRequest( siteId, query ) ) );
 }
 
