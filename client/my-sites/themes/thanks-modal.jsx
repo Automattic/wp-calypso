@@ -19,7 +19,8 @@ import {
 	getThemeCustomizeUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
-	hasActivatedTheme
+	hasActivatedTheme,
+	isWpcomTheme
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 
@@ -75,52 +76,47 @@ const ThanksModal = React.createClass( {
 					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
-				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
-					components: {
-						a: <a href={ this.props.forumUrl }
-							onClick={ this.onLinkClick( 'support' ) } />
-					}
-				} ) }
+				{ this.renderSupportInfo() }
 			</li>
 			</ul>
 		);
 	},
 
 	renderThemeInfo() {
-		return (
-			translate( '{{a}}Learn more about{{/a}} this theme.', {
-				components: {
-					a: <a href={ this.props.detailsUrl }
-						onClick={ this.onLinkClick( 'theme info' ) } />
-				}
-			} )
-		);
+		return translate( '{{a}}Learn more about{{/a}} this theme.', {
+			components: {
+				a: <a href={ this.props.detailsUrl }
+					onClick={ this.onLinkClick( 'theme info' ) } />
+			}
+		} );
 	},
 
-	renderWporgAuthorInfo( authorUri ) {
-		if ( authorUri ) {
-			return (
-				<li>
-					{ translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
-						components: {
-							a: <a href={ authorUri }
-								onClick={ this.onLinkClick( 'org author' ) } />
-						}
-					} ) }
-				</li>
-			);
+	renderSupportInfo() {
+		const { author_uri: authorUri } = this.props.currentTheme;
+
+		// For WP.com theme, authorUri is wp.com/themes or automattic.com, which isn't too helpful
+		if ( authorUri && ! this.props.isThemeWpcom ) {
+			return translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
+				components: {
+					a: <a href={ authorUri }
+						onClick={ this.onLinkClick( 'org author' ) } />
+				}
+			} );
 		}
+
+		return translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
+			components: {
+				a: <a href={ this.props.forumUrl }
+					onClick={ this.onLinkClick( 'support' ) } />
+			}
+		} );
 	},
 
 	renderJetpackInfo() {
-		const {
-			author_uri: authorUri
-		} = this.props.currentTheme;
-
 		return (
 			<ul>
 				<li>{ this.renderThemeInfo() }</li>
-				{ authorUri ? this.renderWporgAuthorInfo( authorUri ) : null }
+				<li>{ this.renderSupportInfo() }</li>
 			</ul>
 		);
 	},
@@ -186,7 +182,8 @@ export default connect(
 			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
 			forumUrl: getThemeForumUrl( state, currentThemeId ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
-			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) )
+			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
+			isThemeWpcom: isWpcomTheme( state, currentThemeId )
 		};
 	},
 	{ clearActivated }
