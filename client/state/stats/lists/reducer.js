@@ -10,7 +10,7 @@ import { merge, unset } from 'lodash';
 import { createReducer } from 'state/utils';
 import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
-import { itemSchema } from './schema';
+import { itemSchema, requestsSchema } from './schema';
 import {
 	DESERIALIZE,
 	SITE_STATS_RECEIVE,
@@ -58,7 +58,7 @@ export const requests = createReducer( {}, {
 			}
 		} );
 	}
-} );
+}, requestsSchema );
 
 /**
  * Returns the updated items state after an action has been dispatched. The

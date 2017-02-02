@@ -68,19 +68,6 @@
 	@include breakpoint( "<480px" ) {
 		text-align: center;
 	}
-
-	.stats-date-picker__update-date {
-		color: $gray;
-		display: block;
-		padding: 2px;
-		font-size: 12px;
-
-		.gridicon {
-			animation: stats-date-picker__spin 3.4s ease-in-out infinite;
-			vertical-align: middle;
-			padding: 0 4px;
-		}
-	}
 }
 
 // Module Expand

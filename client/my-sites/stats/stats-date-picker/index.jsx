@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
 import { getSiteStatsQueryDate } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
@@ -90,8 +89,19 @@ class StatsDatePicker extends Component {
 		return formattedDate;
 	}
 
+	renderQueryDate() {
+		const { queryDate, moment, translate } = this.props;
+		const today = moment();
+		const date = moment( queryDate );
+		const isToday = today.isSame( date, 'day' );
+
+		return translate( 'Last update: %(time)s', {
+			args: { time: isToday ? date.format( 'HH:mm' ) : date.fromNow() }
+		} );
+	}
+
 	render() {
-		const { summary, translate, query, queryDate, requesting, moment, showQueryDate } = this.props;
+		const { summary, translate, query, queryDate, showQueryDate } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		const sectionTitle = translate( 'Stats for {{period/}}', {
@@ -112,12 +122,12 @@ class StatsDatePicker extends Component {
 					? <span>{ sectionTitle }</span>
 					: <div className="stats-section-title">
 							<h3>{ sectionTitle }</h3>
-							{ showQueryDate && <span className="stats-date-picker__update-date">
-								{ queryDate && translate( 'Last update: %(time)s', {
-									args: { time: moment( queryDate ).format( 'HH:mm' ) }
-								} ) }
-								{ requesting && <Gridicon icon="sync" size={ 15 } /> }
-							</span> }
+							{ showQueryDate &&
+								<span className="stats-date-picker__update-date">
+									{ queryDate && this.renderQueryDate() }
+								</span>
+							}
+							{ showQueryDate &&	<div className="stats-date-picker__pulsing-dot" /> }
 						</div>
 				}
 			</div>

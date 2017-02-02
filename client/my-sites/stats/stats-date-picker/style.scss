@@ -1,0 +1,26 @@
+.stats-date-picker__update-date {
+	color: $gray;
+	display: inline-block;
+	padding: 2px;
+	font-size: 13px;
+}
+
+.stats-date-picker__pulsing-dot {
+	background: $gray;
+	transform: translate3d( 0, 0, 0 );
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border: none;
+	box-shadow: 0 0 0 0 rgba( 168, 190, 206, 0.7 );
+	border-radius: 100%;
+	vertical-align: middle;
+	animation: stats-dot-pulse 1.25s infinite cubic-bezier( 0.66, 0, 0, 1 );
+	margin: 5px;
+}
+
+@keyframes stats-dot-pulse {
+	to {
+		box-shadow: 0 0 0 5px rgba( 90, 153, 220, 0 );
+	}
+}

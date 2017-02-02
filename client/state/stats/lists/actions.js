@@ -60,7 +60,7 @@ export function requestSiteStats( siteId, statType, query ) {
 				statType,
 				siteId,
 				query,
-				date: new Date()
+				date: Date.now()
 			} );
 		} ).catch( error => {
 			dispatch( {
