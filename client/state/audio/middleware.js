@@ -42,8 +42,9 @@ export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
 		return;
 	}
 
-	if ( has( handlers, action.type ) ) {
-		handlers[ action.type ]( dispatch, action, getState );
+	const handler = handlers[ action.type ];
+	if ( 'function' === typeof handler ) {
+		handler( dispatch, action, getState );
 	}
 
 	return next( action );
