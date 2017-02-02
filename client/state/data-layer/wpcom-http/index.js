@@ -19,17 +19,19 @@ import inflight from 'lib/inflight';
  * @param {string} method name of HTTP method for request
  * @returns {Function} the fetcher
  */
-const fetcherMap = method => get( {
-	GET: wpcom.req.get.bind( wpcom.req ),
-	POST: wpcom.req.post.bind( wpcom.req ),
-}, method, noop );
+const fetcherMap = method =>
+	get( {
+		GET: ( args ) => wpcom.req.get( ...args ),
+		POST: ( args ) => wpcom.req.post( ...args ),
+	}, method, noop );
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
-export const requestKey = ( { path, query } ) => JSON.stringify( { type: WPCOM_HTTP_REQUEST, path, query } );
+export const requestKey = ( { path, query } ) =>
+	`{ type: ${ WPCOM_HTTP_REQUEST }, path: ${ path }, query: ${ query } }`;
 
-const queueRequest = ( { dispatch }, action, next ) => {
+export const queueRequest = ( { dispatch }, action, next ) => {
 	const {
 		body = {},
 		formData,
