@@ -38,9 +38,11 @@ function apiForStream( streamId ) {
 
 export function keyForRequest( action ) {
 	const { streamId, query } = action;
-	const actionString = Object.keys( query )
-		.sort() // sort the keys to make the string deterministic. key ordering is not.
-		.reduce( ( memo, key ) => memo + `&${ key }=${ query[ key ] }`, '' );
+	const actionString = !! query
+		? Object.keys( query )
+			.sort() // sort the keys to make the string deterministic. key ordering is not.
+			.reduce( ( memo, key ) => memo + `&${ key }=${ query[ key ] }`, '' )
+		: '';
 	return `${ action.type }-${ streamId }-${ actionString }`;
 }
 
@@ -81,6 +83,8 @@ export function requestPage( { dispatch }, action, next ) {
 }
 
 export function transformResponse( data ) {
+	//TODO schema validation?
+
 	return {
 		posts: ( data && data.posts ) || []
 	};

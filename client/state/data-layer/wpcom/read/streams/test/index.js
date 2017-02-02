@@ -15,6 +15,7 @@ import {
 	handlePage,
 	handleError,
 	transformResponse,
+	keyForRequest
 } from '../';
 import {
 	requestPage as requestPageAction,
@@ -152,6 +153,18 @@ describe( 'streams', () => {
 			expect( transformResponse( {} ) ).to.eql( { posts: [] } );
 			expect( transformResponse( { posts: null } ) ).to.eql( { posts: [] } );
 			expect( transformResponse( { posts: [] } ) ).to.eql( { posts: [] } );
+		} );
+	} );
+
+	describe( 'keyForRequest', () => {
+		it( 'should generate a key for an action with no query', () => {
+			const key = keyForRequest( requestPageAction( 'following' ) );
+			expect( key ).to.equal( 'READER_STREAMS_PAGE_REQUEST-following-' );
+		} );
+
+		it( 'should generate a key for an action with a flat query', () => {
+			const key = keyForRequest( requestPageAction( 'following', { page: 1 } ) );
+			expect( key ).to.equal( 'READER_STREAMS_PAGE_REQUEST-following-&page=1' );
 		} );
 	} );
 } );
