@@ -510,7 +510,8 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'clicks' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
+		const statsData = get( data, dataPath, [] );
 
 		return statsData.map( ( item ) => {
 			const hasChildren = item.children && item.children.length > 0;

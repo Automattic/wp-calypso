@@ -1118,6 +1118,67 @@ describe( 'utils', () => {
 					}
 				] );
 			} );
+
+			it( 'should return an a properly parsed summary data array', () => {
+				const parsedData = normalizers.statsClicks( {
+					date: '2017-01-12',
+					summary: {
+						clicks: [
+							{
+								icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+								name: 'en.support.wordpress.com',
+								url: null,
+								views: 50,
+								children: [
+									{
+										name: 'en.support.wordpress.com',
+										url: 'https://en.support.wordpress.com/',
+										views: 50
+									}
+								]
+							},
+							{
+								children: null,
+								icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+								name: 'en.forums.wordpress.com',
+								url: 'https://en.forums.wordpress.com/',
+								views: 10
+							}
+						]
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					summarize: 1
+				} );
+
+				expect( parsedData ).to.eql( [
+					{
+						children: [
+							{
+								children: null,
+								label: 'en.support.wordpress.com',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/',
+								value: 50
+							}
+						],
+						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+						label: 'en.support.wordpress.com',
+						labelIcon: null,
+						link: null,
+						value: 50
+					},
+					{
+						children: null,
+						icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+						label: 'en.forums.wordpress.com',
+						labelIcon: 'external',
+						link: 'https://en.forums.wordpress.com/',
+						value: 10
+					}
+				] );
+			} );
 		} );
 
 		describe( 'statsReferrers()', () => {

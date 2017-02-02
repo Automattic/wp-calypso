@@ -78,7 +78,7 @@ class StatsSummary extends Component {
 					path="clicks"
 					moduleStrings={ StatsStrings.clicks }
 					period={ this.props.period }
-					query={ query }
+					query={ merge( {}, statsQueryOptions, query ) }
 					statType="statsClicks"
 					summary />;
 				break;
