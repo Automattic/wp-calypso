@@ -201,7 +201,7 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_BUSINESS_ONBOARDING,
-			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
+			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
