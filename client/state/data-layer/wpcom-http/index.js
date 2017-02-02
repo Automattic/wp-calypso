@@ -9,6 +9,7 @@ import { compact, get, noop } from 'lodash';
 import wpcom from 'lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { extendAction } from 'state/utils';
+import inflight from 'lib/inflight';
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method
@@ -26,6 +27,7 @@ const fetcherMap = method => get( {
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
+export const requestKey = ( { path, query } ) => JSON.stringify( { type: WPCOM_HTTP_REQUEST, path, query } );
 
 const queueRequest = ( { dispatch }, action, next ) => {
 	const {
@@ -37,18 +39,34 @@ const queueRequest = ( { dispatch }, action, next ) => {
 		onProgress,
 		path,
 		query = {},
+		dedupe,
 	} = action;
 
 	const method = rawMethod.toUpperCase();
 
-	const request = fetcherMap( method )( ...compact( [
+	/* Eat the request under the following conditions:
+	 * 1. Dedupe flag is set true
+	 * 2. It is a GET request
+	 * 3. There is a currently ongoing request for the same path with the same query
+	 */
+	if ( method === 'GET' && dedupe && inflight.requestInflight( requestKey( action ) ) ) {
+		return;
+	}
+
+	const baseRequest = fetcherMap( method )( ...compact( [
 		{ path, formData },
 		query,
 		method === 'POST' && body,
-		( error, data ) => !! error
-			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
-			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
 	] ) );
+
+	const request = method === 'GET' && dedupe
+		? inflight.promiseTracker( requestKey( action ), baseRequest )
+		: baseRequest;
+
+	request.then(
+		data => onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) ),
+		error => onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
+	);
 
 	if ( 'POST' === method && onProgress ) {
 		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );
