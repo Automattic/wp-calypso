@@ -1,14 +1,28 @@
 
 // Module container
-
 @include breakpoint( ">960px" ) {
 	.stats__module-column {
 		float: left;
-		width: 48.8%;
-		width: calc(50% - 0.5em);
+		width: calc(50% - 4px);
+
+		&:nth-child(2) {
+			float: right;
+		}
+	}
+}
+
+@include breakpoint( ">1040px" ) {
+	.stats__module-column {
+		float: right;
+		width: calc(33% - 3px);
+
+		&:first-child {
+			float: left;
+		}
 
 		&:last-child {
-			float: right;
+			left: -10px;
+			position: relative;
 		}
 	}
 }
