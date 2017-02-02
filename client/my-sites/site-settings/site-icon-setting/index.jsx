@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { uniqueId, head, partial, partialRight, isEqual } from 'lodash';
+import { uniqueId, head, partial, partialRight, isEqual, flow, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import AsyncLoad from 'components/async-load';
 import Dialog from 'components/dialog';
 import accept from 'lib/accept';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
@@ -157,7 +158,7 @@ class SiteIconSetting extends Component {
 			return;
 		}
 
-		const { crop, transform } = this.props;
+		const { crop, transform, recordEvent } = this.props;
 		const isImageEdited = ! isEqual( {
 			...crop,
 			...transform
@@ -171,6 +172,8 @@ class SiteIconSetting extends Component {
 			scaleY: 1
 		} );
 
+		recordEvent( 'Completed Site Icon Selection' );
+
 		if ( isImageEdited ) {
 			this.uploadSiteIcon( blob, `cropped-${ selectedItem.file }` );
 		} else {
@@ -182,12 +185,15 @@ class SiteIconSetting extends Component {
 	};
 
 	confirmRemoval = () => {
-		const { translate, siteId, removeSiteIcon } = this.props;
+		const { translate, siteId, removeSiteIcon, recordEvent } = this.props;
 		const message = translate( 'Are you sure you want to remove the site icon?' );
+
+		recordEvent( 'Clicked Remove Site Icon' );
 
 		accept( message, ( accepted ) => {
 			if ( accepted ) {
 				removeSiteIcon( siteId );
+				recordEvent( 'Confirmed Remove Site Icon' );
 			}
 		} );
 	};
@@ -226,6 +232,12 @@ class SiteIconSetting extends Component {
 				buttonProps.target = '_blank';
 			}
 		}
+
+		// Merge analytics click handler into existing button props
+		buttonProps.onClick = flow( compact( [
+			() => this.props.recordEvent( 'Clicked Change Site Icon' ),
+			buttonProps.onClick
+		] ) );
 
 		const { translate, siteId, isSaving, hasIcon } = this.props;
 
@@ -308,6 +320,7 @@ export default connect(
 		};
 	},
 	{
+		recordEvent: ( action ) => recordGoogleEvent( 'Site Settings', action ),
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
 		resetAllImageEditorState,
