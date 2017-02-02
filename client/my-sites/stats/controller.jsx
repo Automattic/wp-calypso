@@ -21,6 +21,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import Emitter from 'lib/mixins/emitter';
 import AsyncLoad from 'components/async-load';
+import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
@@ -130,7 +131,7 @@ module.exports = {
 
 		const props = { followList };
 		renderWithReduxStore(
-			<AsyncLoad require="my-sites/stats/stats-insights" { ...props } />,
+			<AsyncLoad require="my-sites/stats/stats-insights" placeholder={ <StatsPagePlaceholder /> } { ...props } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
@@ -170,7 +171,7 @@ module.exports = {
 				user
 			};
 			renderWithReduxStore(
-				<AsyncLoad require="my-sites/stats/overview" { ...props } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/overview" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -277,7 +278,7 @@ module.exports = {
 			};
 
 			renderWithReduxStore(
-				<AsyncLoad require="my-sites/stats/site" { ...siteComponentChildren } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/site" { ...siteComponentChildren } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -422,7 +423,7 @@ module.exports = {
 				...extraProps
 			};
 			renderWithReduxStore(
-				<AsyncLoad require="my-sites/stats/summary" { ...props } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/summary" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -460,7 +461,7 @@ module.exports = {
 				context,
 			};
 			renderWithReduxStore(
-				<AsyncLoad require="my-sites/stats/stats-post-detail" { ...props } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/stats-post-detail" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -520,7 +521,7 @@ module.exports = {
 				followList,
 			};
 			renderWithReduxStore(
-				<AsyncLoad require="my-sites/stats/follows" { ...props } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/follows" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
