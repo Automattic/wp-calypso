@@ -116,7 +116,8 @@ export const normalizers = {
 			highest_hour,
 			highest_day_percent,
 			highest_day_of_week,
-			highest_hour_percent
+			highest_hour_percent,
+			hourly_views,
 		} = data;
 
 		// Adjust Day of Week from 0 = Monday to 0 = Sunday (for Moment)
@@ -129,7 +130,8 @@ export const normalizers = {
 			day: moment().day( dayOfWeek ).format( 'dddd' ),
 			percent: Math.round( highest_day_percent ),
 			hour: moment().hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
-			hourPercent: Math.round( highest_hour_percent )
+			hourPercent: Math.round( highest_hour_percent ),
+			hourlyViews: hourly_views,
 		};
 	},
 
