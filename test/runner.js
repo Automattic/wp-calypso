@@ -89,7 +89,11 @@ files = files.reduce( ( memo, filePath ) => {
 					chalk.blue( filePath )
 				);
 
-				if ( true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' ) ) {
+				// if we are in an interactive shell
+				// then ask the developer if the guessed file
+				// was the intended file and allow that guess
+				// to replace the accidentally-requested file
+				if ( process.stdout.isTTY && true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' ) ) {
 					return memo.concat( pathGuess );
 				}
 
