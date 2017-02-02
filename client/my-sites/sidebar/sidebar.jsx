@@ -33,7 +33,8 @@ import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors'
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
 import { isDomainOnlySite } from 'state/selectors';
-import { isJetpackSite, isAutomatedTransferSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 
 /**
@@ -51,6 +52,7 @@ export class MySitesSidebar extends Component {
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isSiteAutomatedTransfer: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -521,11 +523,11 @@ export class MySitesSidebar extends Component {
 		}
 
 		// Ignore Jetpack sites as they've opted into this interface.
-		if ( this.props.isJetpack && ! this.props.isAutomatedTransferSite ) {
+		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() && ! this.props.isAutomatedTransferSite ) {
+		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
@@ -826,7 +828,7 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
-		isAutomatedTransferSite: isAutomatedTransferSite( state, selectedSiteId ),
+		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 	};
 }
 

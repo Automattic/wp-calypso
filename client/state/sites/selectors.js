@@ -147,25 +147,6 @@ export function isJetpackSite( state, siteId ) {
 }
 
 /**
- * Returns true if site is a Automated Transfer site, false if not and null if unknown
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is an Automated Transfer site
- */
-export function isAutomatedTransferSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-	if ( ! has( site, [ 'options', 'is_automated_transfer' ] ) ) {
-		return null;
-	}
-
-	return site.options.is_automated_transfer;
-}
-
-/**
  * Returns true if the site is a Jetpack site with the specified module active,
  * or false if the module is not active. Returns null if the site is not known
  * or is not a Jetpack site.
