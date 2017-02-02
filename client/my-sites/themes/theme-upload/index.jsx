@@ -139,7 +139,11 @@ class Upload extends React.Component {
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		const file = files[ 0 ] || files.item( 0 );
-		if ( file.type !== 'application/zip' ) {
+
+		const validFileTyle = file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
+		debug( 'file mime', file.type );
+
+		if ( ! validFileTyle ) {
 			notices.error( errorMessage );
 			return;
 		}
