@@ -151,16 +151,18 @@ export class MySitesSidebar extends Component {
 		}
 
 		const siteId = this.isSingle() ? site.slug : null;
-
+		const statsLink = getStatsPathForTab( 'day', siteId );
 		return (
 			<SidebarItem
 				tipTarget="menus"
 				label={ this.props.translate( 'Stats' ) }
 				className={ this.itemLinkClass( '/stats', 'stats' ) }
-				link={ getStatsPathForTab( 'day', siteId ) }
+				link={ statsLink }
 				onNavigate={ this.onNavigate }
 				icon="stats-alt">
-				<StatsSparkline className="sidebar__sparkline" siteId={ get( site, 'ID' ) } />
+				<a href={ statsLink }>
+					<StatsSparkline className="sidebar__sparkline" siteId={ get( site, 'ID' ) } />
+				</a>
 			</SidebarItem>
 		);
 	}
