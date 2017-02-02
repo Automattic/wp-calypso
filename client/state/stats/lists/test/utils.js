@@ -840,16 +840,10 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsVideo()', () => {
-			it( 'should return an empty array if not data is passed', () => {
+			it( 'should return null if not data is passed', () => {
 				const parsedData = normalizers.statsVideo();
 
-				expect( parsedData ).to.eql( [] );
-			} );
-
-			it( 'should return an empty array if not data has no data attribute', () => {
-				const parsedData = normalizers.statsVideo( { bad: [] } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( parsedData ).to.eql( null );
 			} );
 
 			it( 'should return an a properly parsed data array', () => {
@@ -857,15 +851,36 @@ describe( 'utils', () => {
 					data: [
 						[ '2016-11-12', 1 ],
 						[ '2016-11-13', 0 ]
+					],
+					pages: [
+						'https://vip.wordpress.com/category/themes/',
+						'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
+						'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/'
 					]
 				} );
 
-				expect( parsedData ).to.eql( [
-					{
-						period: '2016-11-13',
-						value: 0,
-					}
-				] );
+				expect( parsedData ).to.eql( {
+					data: [
+						{
+							period: '2016-11-13',
+							value: 0,
+						}
+					],
+					pages: [
+						{
+							label: 'https://vip.wordpress.com/category/themes/',
+							link: 'https://vip.wordpress.com/category/themes/',
+						},
+						{
+							label: 'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
+							link: 'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
+						},
+						{
+							label: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
+							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
+						}
+					]
+				} );
 			} );
 		} );
 

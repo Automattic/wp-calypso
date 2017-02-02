@@ -381,13 +381,28 @@ export const normalizers = {
 	 * @return {Array}          Parsed data array
 	 */
 	statsVideo( payload ) {
-		if ( ! payload || ! payload.data ) {
-			return [];
+		if ( ! payload ) {
+			return null;
 		}
 
-		return payload.data.map( item => {
-			return { period: item[ 0 ], value: item[ 1 ] };
-		} ).slice( Math.max( payload.data.length - 10, 1 ) );
+		let data = [];
+		if ( payload.data ) {
+			data = payload.data.map( ( item ) => {
+				return { period: item[ 0 ], value: item[ 1 ] };
+			} ).slice( Math.max( payload.data.length - 10, 1 ) );
+		}
+
+		let pages = [];
+		if ( payload.pages ) {
+			pages = payload.pages.map( ( item ) => {
+				return {
+					label: item,
+					link: item
+				};
+			} );
+		}
+
+		return { pages, data };
 	},
 
 	/**
