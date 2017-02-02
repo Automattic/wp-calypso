@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ class CartPlanAd extends Component {
 			cart.hasLoadedFromServer &&
 			! cartItems.hasDomainCredit( cart ) &&
 			cartItems.getDomainRegistrations( cart ).length === 1 &&
+			selectedSite &&
 			selectedSite.plan &&
 			! isPlan( selectedSite.plan );
 	}
@@ -53,6 +54,15 @@ class CartPlanAd extends Component {
 		);
 	}
 }
+
+CartPlanAd.propTypes = {
+	cart: PropTypes.object.isRequired,
+	isDomainOnlySite: PropTypes.bool,
+	selectedSite: PropTypes.oneOfType( [
+		PropTypes.bool,
+		PropTypes.object
+	] )
+};
 
 export default connect(
 	( state ) => {
