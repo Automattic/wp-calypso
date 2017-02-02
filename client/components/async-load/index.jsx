@@ -14,12 +14,19 @@ export default class AsyncLoad extends Component {
 		super( ...arguments );
 
 		this.state = {
+			require: null,
 			component: null
 		};
 	}
 
 	componentWillMount() {
 		this.require();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.require !== nextProps.require ) {
+			this.setState( { component: null } );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -31,8 +38,11 @@ export default class AsyncLoad extends Component {
 	}
 
 	require() {
-		this.props.require( ( component ) => {
-			this.setState( { component } );
+		const requireFunction = this.props.require;
+		requireFunction( ( component ) => {
+			if ( this.props.require === requireFunction ) {
+				this.setState( { component } );
+			}
 		} );
 	}
 
