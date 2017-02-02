@@ -39,7 +39,7 @@ import {
 	themeActivated,
 	clearActivated,
 	activateTheme,
-	installAndActivate,
+	installAndActivateTheme,
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
@@ -546,14 +546,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#installAndActivate', () => {
+	describe( '#installAndActivateTheme', () => {
 		const stub = sinon.stub();
 		stub.returns( new Promise( ( res ) => {
 			res();
 		} ) );
 
 		it( 'should dispatch THEME_ACTIVATE_REQUEST, installTheme(), and activateTheme()', ( done ) => {
-			installAndActivate( 'karuna-wpcom', 2211667 )( stub ).then( () => {
+			installAndActivateTheme( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
 				expect( stub ).to.have.been.calledWith( matchFunction( activateTheme( 'karuna-wpcom', 2211667 ) ) );
 				done();

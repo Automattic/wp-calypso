@@ -487,7 +487,7 @@ export function tryAndCustomize( themeId, siteId ) {
  * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
  * @return {Function}           Action thunk
  */
-export function installAndActivate( themeId, siteId, source = 'unknown', purchased = false ) {
+export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
