@@ -85,7 +85,17 @@ export default function themePreview( WebPreview ) {
 		( state ) => {
 			return {
 				previewUrl: getPreviewUrl( state ),
-				primaryButtonLabel: 'Hello There!'
+				primaryButtonLabel: 'Hello There!',
+				options: [
+					'activateOnJetpack',
+					'preview',
+					'tryAndCustomizeOnJetpack',
+					'customize',
+					'separator',
+					'info',
+					'support',
+					'help',
+				]
 			};
 		}
 	)( ConnectedThemePreview );
