@@ -5,8 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq } from 'lodash';
-import startsWith from 'lodash/startsWith';
+import { uniq, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -30,7 +29,7 @@ import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSelectedSiteDomainOnlySite from 'state/selectors/is-selected-site-domain-only-site';
 import { domainManagementList } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
 
@@ -113,46 +112,58 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
+function renderSelectedSiteIsDomainOnly( { reactContext, selectedSite } ) {
+	const EmptyContentComponent = require( 'components/empty-content' );
+	const { store: reduxStore } = reactContext;
+
+	removeSidebar( reactContext );
+
+	renderWithReduxStore(
+		React.createElement( EmptyContentComponent, {
+			title: i18n.translate( 'This feature is not available for domains' ),
+			line: i18n.translate( 'To use this feature you need to create a site' ),
+			action: i18n.translate( 'Create New Site' ),
+			actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
+			secondaryAction: i18n.translate( 'Manage Domain' ),
+			secondaryActionURL: domainManagementList( selectedSite.slug )
+		} ),
+		document.getElementById( 'primary' ),
+		reduxStore
+	);
+}
+
+function isPathAllowedForDomainOnlySite( { reactContext: { pathname }, selectedSite } ) {
 	const urlPrefixesWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
+		domainManagementList( selectedSite.slug ),
 		'/checkout/',
 	];
 
 	return urlPrefixesWhiteListForDomainOnlySite.some( path => startsWith( pathname, path ) );
 }
 
-function onSelectedSiteAvailable( context ) {
-	const selectedSite = sites.getSelectedSite();
-	const state = context.store.getState();
-
+function feedReduxStoreWithSelectedSite( { reactContext: { store: reduxStore }, selectedSite } ) {
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( state, selectedSite.ID ) ) {
-		context.store.dispatch( receiveSite( selectedSite ) );
+	if ( ! getSite( reduxStore.getState(), selectedSite.ID ) ) {
+		reduxStore.dispatch( receiveSite( selectedSite ) );
 	}
+	reduxStore.dispatch( setSelectedSiteId( selectedSite.ID ) );
+}
 
-	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-
-	if ( isDomainOnlySite( state, selectedSite.ID ) &&
-		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
-		page.redirect( domainManagementList( selectedSite.slug ) );
-		return false;
-	}
-
+const RECENT_SITES_TO_KEEP = 3;
+function setRecentSitesPreferenceInReduxStore( { reactContext: { store: reduxStore }, selectedSite } ) {
 	// Update recent sites preference
+	const state = reduxStore.getState();
 	if ( hasReceivedRemotePreferences( state ) ) {
 		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			context.store.dispatch( savePreference( 'recentSites', uniq( [
+			reduxStore.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
 				...recentSites
-			] ).slice( 0, 3 ) ) );
+			] ).slice( 0, RECENT_SITES_TO_KEEP ) ) );
 		}
 	}
-
-	return true;
 }
 
 /**
@@ -235,44 +246,78 @@ module.exports = {
 			return next();
 		}
 
-		// If there's a valid site from the url path
-		// set site visibility to just that site on the picker
-		if ( sites.select( siteID ) ) {
-			const selectionComplete = onSelectedSiteAvailable( context );
-
-			// if there was a redirect, we should terminate processing of next routes
-			// and let the redirect proceed
-			if ( ! selectionComplete ) {
-				return;
-			}
-		} else {
-			// if sites has fresh data and siteID is invalid
-			// redirect to allSitesPath
-			if ( sites.fetched || ! sites.fetching ) {
-				return page.redirect( allSitesPath );
-			}
-
-			let waitingNotice;
-			const selectOnSitesChange = () => {
-				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				if ( sites.select( siteID ) ) {
-					sites.initialized = true;
-					onSelectedSiteAvailable( context );
-					if ( waitingNotice ) {
-						notices.removeNotice( waitingNotice );
-					}
-				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
-					sites.initialized = false;
-					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
-					sites.once( 'change', selectOnSitesChange );
-					sites.fetch();
+		const waitForInProgressSitesFetch = () => {
+			return new Promise( ( resolve, reject ) => {
+				if ( ! sites.fetched && sites.fetching ) {
+					sites.once( 'change', () => sites.fetched ? resolve() : reject() );
 				} else {
-					page.redirect( allSitesPath );
+					resolve();
 				}
-			};
-			// Otherwise, check when sites has loaded
-			sites.once( 'change', selectOnSitesChange );
-		}
+			} );
+		};
+
+		const hardFetchSites = () => new Promise( ( resolve, reject ) => {
+			sites.initialized = false;
+			sites.once( 'change', () => {
+				if ( sites.fetched ) {
+					sites.initialized = true;
+					return resolve();
+				}
+
+				reject();
+			} );
+
+			sites.fetch();
+		} );
+
+		let waitingNotice;
+		const validateAllVisibileSitesAreFetched = () => new Promise( resolve => {
+			if ( currentUser.visible_site_count !== sites.getVisible().length ) {
+				if ( ! waitingNotice ) {
+					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
+				}
+
+				return hardFetchSites().then(
+					validateAllVisibileSitesAreFetched,
+					validateAllVisibileSitesAreFetched
+				);
+			}
+
+			if ( waitingNotice ) {
+				notices.removeNotice( waitingNotice );
+			}
+
+			resolve();
+		} );
+
+		// ensure we have fetched sites
+		const sitesFetchedPromise = waitForInProgressSitesFetch().then( validateAllVisibileSitesAreFetched );
+
+		// Select a site
+		sitesFetchedPromise
+			.catch( error => {
+				page.redirect( allSitesPath );
+				return Promise.reject( error );
+			} )
+			.then( () => {
+				if ( ! sites.select( siteID ) ) {
+					return page.redirect( allSitesPath );
+				}
+
+				const selectionContext = {
+					reactContext: context,
+					selectedSite: sites.getSelectedSite()
+				};
+
+				feedReduxStoreWithSelectedSite( selectionContext );
+
+				if ( isSelectedSiteDomainOnlySite( context.store.getState() ) && ! isPathAllowedForDomainOnlySite( selectionContext ) ) {
+					return renderSelectedSiteIsDomainOnly( selectionContext )
+				}
+
+				setRecentSitesPreferenceInReduxStore( selectionContext );
+			} );
+
 		next();
 	},
 
