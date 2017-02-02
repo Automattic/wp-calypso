@@ -98,7 +98,7 @@ function createSiteWithCart( callback, dependencies, {
 			].filter( item => item );
 
 			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
 					callback( cartError, providedDependencies );
 				} );
 			} else {
@@ -253,7 +253,7 @@ module.exports = {
 		}, dependencies, data );
 	},
 
-	addPlanToCart( callback, { siteSlug }, { cartItem, privacyItem } ) {
+	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
 			defer( callback );
@@ -263,7 +263,7 @@ module.exports = {
 
 		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-		SignupCart.addToCart( siteSlug, newCartItems, callback );
+		SignupCart.addToCart( siteId, newCartItems, callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
