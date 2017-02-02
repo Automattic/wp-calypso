@@ -140,7 +140,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should never persist state', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -151,10 +151,10 @@ describe( 'reducer', () => {
 
 			const state = requests( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( state );
 		} );
 
-		it( 'should never load persisted state', () => {
+		it( 'should load persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
@@ -165,7 +165,7 @@ describe( 'reducer', () => {
 
 			const state = requests( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( state );
 		} );
 	} );
 
