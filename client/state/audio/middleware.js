@@ -16,8 +16,14 @@ export const playSound = src => {
 	audioClip.play();
 };
 
-export const onHappyChatMessage = ( dispatch, { event } ) => {
-	event && event.source !== 'customer' && playSound( '/calypso/audio/chat-pling.wav' );
+export const playSoundForMessageToCustomer = ( dispatch, { event } ) => {
+	// If the customer sent the message, there's no
+	// need to play a sound to the customer.
+	if ( event && event.source === 'customer' ) {
+		return;
+	}
+
+	playSound( '/calypso/audio/chat-pling.wav' );
 };
 
 /**
@@ -26,21 +32,23 @@ export const onHappyChatMessage = ( dispatch, { event } ) => {
 
 // Initialized this way for performance reasons
 export const handlers = Object.create( null );
-handlers[ HAPPYCHAT_RECEIVE_EVENT ] = onHappyChatMessage;
+handlers[ HAPPYCHAT_RECEIVE_EVENT ] = playSoundForMessageToCustomer;
 
 /**
  * Middleware
  */
 
-export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
+export default ( { dispatch } ) => ( next ) => {
 	if ( ! isAudioSupported() ) {
+		return next;
+	}
+
+	return action => {
+		const handler = handlers[ action.type ];
+		if ( 'function' === typeof handler ) {
+			handler( dispatch, action );
+		}
+
 		return next( action );
-	}
-
-	const handler = handlers[ action.type ];
-	if ( 'function' === typeof handler ) {
-		handler( dispatch, action, getState );
-	}
-
-	return next( action );
+	};
 };

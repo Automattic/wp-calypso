@@ -115,7 +115,7 @@ export const reducer = combineReducers( {
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
-	const isAudioSupported = typeof Audio === 'function';
+	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
 		thunkMiddleware,

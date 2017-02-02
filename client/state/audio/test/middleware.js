@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy, stub } from 'sinon';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -14,21 +14,18 @@ describe( 'Audio Middleware', () => {
 	let next;
 	let store;
 	let play;
+	let _window; // Keep a copy of the original window if any
 
 	beforeEach( () => {
 		next = spy();
 
 		store = {
 			dispatch: spy(),
-			getState: stub(),
-			replaceReducers: spy(),
-			subscribe: spy(),
 		};
-
-		store.getState.returns( Object.create( null ) );
 
 		// Spy on (new Audio()).play()
 		play = spy();
+		_window = global.window;
 		global.window = {
 			Audio: spy( function() {
 				return { play };
@@ -37,7 +34,7 @@ describe( 'Audio Middleware', () => {
 	} );
 
 	afterEach( () => {
-		global.window = undefined;
+		global.window = _window;
 	} );
 
 	it( 'should pass along actions without corresponding handlers', () => {
@@ -49,7 +46,7 @@ describe( 'Audio Middleware', () => {
 		expect( next ).to.have.been.calledWith( action );
 	} );
 
-	it( 'should fail silently when no audio support', () => {
+	it( 'should not play any sound when no audio support', () => {
 		const action = {
 			type: HAPPYCHAT_RECEIVE_EVENT,
 			event: {
@@ -66,7 +63,7 @@ describe( 'Audio Middleware', () => {
 		expect( play ).to.not.have.beenCalled;
 	} );
 
-	it( 'should play sound on HAPPYCHAT_RECEIVE_EVENT action', () => {
+	it( 'should play sound when receiving a new message from the operator', () => {
 		const action = {
 			type: HAPPYCHAT_RECEIVE_EVENT,
 			event: {
