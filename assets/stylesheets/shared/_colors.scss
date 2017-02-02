@@ -9,6 +9,8 @@ $gray:                   #87a6bc;
 $gray-light:             lighten( $gray, 33% ); //#f3f6f8
 $gray-dark:              darken( $gray, 38% ); //#2e4453
 
+$gray-text:              darken( $gray, 18% ); //#537994
+
 // $gray color functions:
 // lighten( $gray, 10% )
 // lighten( $gray, 20% )
