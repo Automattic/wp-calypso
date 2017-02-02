@@ -2,25 +2,25 @@
 // Module container
 @include breakpoint( ">960px" ) {
 	.stats__module-column {
-		float: left;
-		width: calc(50% - 4px);
-
-		&:nth-child(2) {
-			float: right;
-		}
-	}
-}
-
-@include breakpoint( ">1040px" ) {
-	.stats__module-column {
 		float: right;
-		width: calc(33% - 3px);
+		width: calc(50% - 4px);
 
 		&:first-child {
 			float: left;
 		}
 
 		&:last-child {
+			clear: right;
+		}
+	}
+}
+
+@include breakpoint( ">1280px" ) {
+	.stats__module-column {
+		width: calc(33% - 3px);
+
+		&:last-child {
+			clear: none;
 			left: -10px;
 			position: relative;
 		}
