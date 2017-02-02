@@ -27,7 +27,7 @@ import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors'
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import WebPreview from 'components/web-preview';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSite } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
 
 class StatsPostDetail extends Component {
@@ -42,6 +42,7 @@ class StatsPostDetail extends Component {
 		countViews: PropTypes.number,
 		post: PropTypes.object,
 		siteSlug: PropTypes.string,
+		showViewLink: PropTypes.bool,
 	};
 
 	state = {
@@ -72,7 +73,7 @@ class StatsPostDetail extends Component {
 	}
 
 	render() {
-		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate, siteSlug } = this.props;
+		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate, siteSlug, showViewLink } = this.props;
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
 		const postUrl = get( post, 'URL' );
@@ -97,9 +98,9 @@ class StatsPostDetail extends Component {
 
 				<HeaderCake
 					onClick={ this.goBack }
-					actionIcon="visible"
-					actionText={ translate( 'View Post' ) }
-					actionOnClick={ this.openPreview }
+					actionIcon={ showViewLink ? 'visible' : null }
+					actionText={ showViewLink ? translate( 'View Post' ) : null }
+					actionOnClick={ showViewLink ? this.openPreview : null }
 					>
 					{ title }
 				</HeaderCake>
@@ -144,27 +145,6 @@ class StatsPostDetail extends Component {
 					</div>
 				}
 
-				<PostSummary siteId={ this.props.siteId } postId={ this.props.postId } />
-
-				{ !! this.props.postId && <PostLikes siteId={ this.props.siteId } postId={ this.props.postId } /> }
-
-				<PostMonths
-					dataKey="years"
-					title={ this.props.translate( 'Months and Years' ) }
-					total={ this.props.translate( 'Total' ) }
-					siteId={ this.props.siteId }
-					postId={ this.props.postId }
-				/>
-
-				<PostMonths
-					dataKey="averages"
-					title={ this.props.translate( 'Average per Day' ) }
-					total={ this.props.translate( 'Overall' ) }
-					siteId={ this.props.siteId }
-					postId={ this.props.postId }
-				/>
-
-				<PostWeeks siteId={ this.props.siteId } postId={ this.props.postId } />
 				<WebPreview
 					showPreview={ this.state.showPreview }
 					defaultViewportDevice="tablet"
@@ -185,6 +165,8 @@ class StatsPostDetail extends Component {
 const connectComponent = connect(
 	( state, { postId } ) => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const site = getSite( state, siteId );
 
 		return {
 			post: getSitePost( state, siteId, postId ),
@@ -192,6 +174,7 @@ const connectComponent = connect(
 			countViews: getPostStat( state, siteId, postId, 'views' ),
 			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 			siteSlug: getSiteSlug( state, siteId ),
+			showViewLink: ! isJetpack && site.is_previewable,
 			siteId,
 		};
 	}

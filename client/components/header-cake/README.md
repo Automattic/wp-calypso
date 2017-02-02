@@ -18,3 +18,7 @@ The "header cake" component should be used at the top of an item's detail page. 
 * `backText` - React Element or string to use in place of default "Back" text
 * `backHref` - URL to specify where the back button should redirect
 * `isCompact` - Optional variant of a more visually compact header cake
+* `actionText` - You can optionally add a button to the right side of the header, this is the text shown
+* `actionHref` - You can optionally add a button to the right side of the header, this the link on that button
+* `actionIcon` - You can optionally add a button to the right side of the header, this is the Gridicon used
+* `actionOnClick` - You can optionally add a button to the right side of the header, this is called onClick of that button
