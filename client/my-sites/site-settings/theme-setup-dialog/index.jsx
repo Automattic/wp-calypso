@@ -24,25 +24,26 @@ class ThemeSetupDialog extends React.Component {
 		this.onInputChange = this.onInputChange.bind( this );
 		this.renderContent = this.renderContent.bind( this );
 		this.state = {
-			confirmInput: '',
+			confirmDeleteInput: '',
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDialogVisible !== nextProps.isDialogVisible ) {
 			this.setState( {
-				confirmInput: '',
+				confirmDeleteInput: '',
 			} );
 		}
 	}
 
 	onInputChange( event ) {
 		this.setState( {
-			confirmInput: event.target.value,
+			confirmDeleteInput: event.target.value,
 		} );
 	}
 
 	renderButtons() {
+		const deleteConfirmed = 'delete' === this.state.confirmDeleteInput;
 		const onClickKeepContent = () => this.props.onThemeSetupClick( true, this.props.site.ID );
 		const onClickDeleteContent = () => this.props.onThemeSetupClick( false, this.props.site.ID );
 		const onClickViewSite = () => page( this.props.site.URL );
@@ -51,7 +52,7 @@ class ThemeSetupDialog extends React.Component {
 			<Button
 				primary
 				scary
-				disabled={ 'delete' !== this.state.confirmInput }
+				disabled={ ! deleteConfirmed }
 				onClick={ onClickDeleteContent }>
 				{ this.props.translate( 'Set Up And Delete Content' ) }
 			</Button>
@@ -106,6 +107,7 @@ class ThemeSetupDialog extends React.Component {
 	}
 
 	renderContent() {
+		const deleteConfirmed = 'delete' === this.state.confirmDeleteInput;
 		if ( this.props.saveExisting ) {
 			return (
 				<div>
@@ -143,12 +145,12 @@ class ThemeSetupDialog extends React.Component {
 							autoComplete={ false }
 							autoCorrect={ false }
 							onChange={ this.onInputChange }
-							value={ this.state.confirmInput } />
+							value={ this.state.confirmDeleteInput } />
 						<FormInputValidation
-							isError={ 'delete' !== this.state.confirmInput }
-							text={ 'delete' !== this.state.confirmInput
-								? this.props.translate( 'Text does not match.' )
-								: this.props.translate( 'Text matches.' ) } />
+							isError={ ! deleteConfirmed }
+							text={ deleteConfirmed
+								? this.props.translate( 'Text matches.' )
+								: this.props.translate( 'Text does not match.' ) } />
 					</FormFieldset>
 				</div>
 			);
