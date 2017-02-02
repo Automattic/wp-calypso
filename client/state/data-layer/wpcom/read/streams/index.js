@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { find, identity } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ import { receivePage } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 
 const streamToPathMatchers = [
-	// [ regex, version, path ]
+	// [ regex, version, path, advice ]
 	// ordering here is by how often we expect each stream type to be used
 	// search is linear, so putting common things near the front can be helpful
 	[ /^following$/, 'v1.2', '/read/following' ],
@@ -30,6 +30,12 @@ const streamToPathMatchers = [
 	[ /^site:/, 'v1.2', '/read/sites/:site/posts' ],
 	[ /^featured:/, 'v1.2', '/read/sites/:site/featured' ],
 	[ /^a8c$/, 'v1.2', '/read/a8c' ],
+	[ /^likes$/, 'v1.2', '/read/liked' ],
+	[ /^recommendations_posts$/, 'v1.2', '/read/recommendations/posts' ],
+	[ /^custom_recs:/, 'v1.2', '/read/recommendations/posts' ],
+	[ /^tag:/, 'v1.2', '/read/tags/:tag/posts' ],
+	[ /^list:/, 'v1.2', '/read/list/:owner/:slug/posts' ],
+	[ /^featured:/, 'v1.2', '' ]
 ];
 
 function apiForStream( streamId ) {
@@ -68,7 +74,12 @@ export function requestPage( { dispatch }, action, next ) {
 		return;
 	}
 
-	const [ _, apiVersion, path ] = api; //eslint-disable-line no-unused-vars
+	const [
+		_, //eslint-disable-line no-unused-vars
+		apiVersion,
+		path,
+		advice = identity
+	] = api;
 
 	markRequestInflight( requestKey );
 
@@ -76,7 +87,7 @@ export function requestPage( { dispatch }, action, next ) {
 		method: 'GET',
 		path,
 		apiVersion,
-		query
+		query: advice( query, action ),
 	} ) );
 
 	next( action );
@@ -84,7 +95,6 @@ export function requestPage( { dispatch }, action, next ) {
 
 export function transformResponse( data ) {
 	//TODO schema validation?
-
 	return {
 		posts: ( data && data.posts ) || []
 	};
