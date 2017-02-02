@@ -16,10 +16,12 @@ import {
 	READER_SITE_UNBLOCK_REQUEST,
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
+	NOTICE_CREATE,
 } from 'state/action-types';
 import { requestSiteBlock, requestSiteUnblock } from '../actions';
 
-const sampleSuccessResponse = require( './sample-responses.json' );
+const sampleSuccessResponse = require( './sample-success-response.json' );
+const sampleFailureResponse = require( './sample-failure-response.json' );
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -62,9 +64,8 @@ describe( 'actions', () => {
 		context( 'failure', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
 					.post( '/rest/v1.1/me/block/sites/124/new' )
-					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
+					.reply( 200, deepFreeze( sampleFailureResponse ) );
 			} );
 
 			it( 'should fail when receiving an error response', () => {
@@ -77,10 +78,40 @@ describe( 'actions', () => {
 				} );
 
 				return request.then( () => {} ).catch( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
+					expect( dispatchSpy ).to.have.been.calledWithMatch( {
 						type: READER_SITE_BLOCK_REQUEST_FAILURE,
 						siteId,
 					} );
+
+					expect( dispatchSpy ).to.have.been.calledWithMatch( { type: NOTICE_CREATE } );
+				} );
+			} );
+		} );
+
+		context( 'serverError', () => {
+			useNock( nock => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/me/block/sites/125/new' )
+					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
+			} );
+
+			it( 'should fail when receiving an error response', () => {
+				const siteId = 125;
+				const request = requestSiteBlock( siteId )( dispatchSpy );
+
+				expect( dispatchSpy ).to.have.been.calledWith( {
+					type: READER_SITE_BLOCK_REQUEST,
+					siteId
+				} );
+
+				return request.then( () => {} ).catch( () => {
+					expect( dispatchSpy ).to.have.been.calledWithMatch( {
+						type: READER_SITE_BLOCK_REQUEST_FAILURE,
+						siteId,
+					} );
+
+					expect( dispatchSpy ).to.have.been.calledWithMatch( { type: NOTICE_CREATE } );
 				} );
 			} );
 		} );
@@ -118,9 +149,8 @@ describe( 'actions', () => {
 		context( 'failure', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
 					.post( '/rest/v1.1/me/block/sites/124/new' )
-					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
+					.reply( 200, deepFreeze( sampleFailureResponse ) );
 			} );
 
 			it( 'should fail when receiving an error response', () => {
@@ -133,10 +163,40 @@ describe( 'actions', () => {
 				} );
 
 				return request.then( () => {} ).catch( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
+					expect( dispatchSpy ).to.have.been.calledWithMatch( {
 						type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
 						siteId,
 					} );
+
+					expect( dispatchSpy ).to.have.been.calledWithMatch( { type: NOTICE_CREATE } );
+				} );
+			} );
+		} );
+
+		context( 'serverError', () => {
+			useNock( nock => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/me/block/sites/125/new' )
+					.reply( 500, deepFreeze( { error: 'Server Error' } ) );
+			} );
+
+			it( 'should fail when receiving an error response', () => {
+				const siteId = 125;
+				const request = requestSiteUnblock( siteId )( dispatchSpy );
+
+				expect( dispatchSpy ).to.have.been.calledWith( {
+					type: READER_SITE_UNBLOCK_REQUEST,
+					siteId
+				} );
+
+				return request.then( () => {} ).catch( () => {
+					expect( dispatchSpy ).to.have.been.calledWithMatch( {
+						type: READER_SITE_UNBLOCK_REQUEST_FAILURE,
+						siteId,
+					} );
+
+					expect( dispatchSpy ).to.have.been.calledWithMatch( { type: NOTICE_CREATE } );
 				} );
 			} );
 		} );

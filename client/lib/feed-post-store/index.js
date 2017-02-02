@@ -1,15 +1,9 @@
 /**
  * External Dependencies
  */
-const assign = require( 'lodash/assign' ),
-	config = require( 'config' ),
-	debug = require( 'debug' )( 'calypso:feed-post-store' ),
-	forEach = require( 'lodash/forEach' ),
-	get = require( 'lodash/get' ),
-	isEqual = require( 'lodash/isEqual' ),
-	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' ),
-	defer = require( 'lodash/defer' );
+import config from 'config';
+import { get, assign, forEach, isEqual, defer } from 'lodash';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -19,9 +13,13 @@ const Dispatcher = require( 'dispatcher' ),
 	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
-	stats = require( 'reader/stats' ),
-	mc = require( 'lib/analytics' ).mc;
+	mc = require( 'lib/analytics' ).mc,
+	stats = require( 'reader/stats' );
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:feed-post-store' );
 
 let _posts = {},
 	_postsForBlogs = {};
@@ -105,18 +103,6 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
 			markPostSeen( action.data.post, action.data.site, action.data.source );
-			break;
-		case ReaderSiteBlockActionType.BLOCK_SITE:
-			markBlockedSitePosts( action.siteId, true );
-			break;
-		case ReaderSiteBlockActionType.RECEIVE_BLOCK_SITE:
-			markBlockedSitePosts( action.siteId, action.data && action.data.success );
-			break;
-		case ReaderSiteBlockActionType.UNBLOCK_SITE:
-			markBlockedSitePosts( action.siteId, false );
-			break;
-		case ReaderSiteBlockActionType.RECEIVE_UNBLOCK_SITE:
-			markBlockedSitePosts( action.siteId, ! ( action.data && action.data.success ) );
 			break;
 	}
 } );
@@ -309,16 +295,6 @@ function markPostSeen( post, site ) {
 	if ( originalPost !== post ) {
 		setPost( post.feed_item_ID, post );
 	}
-}
-
-function markBlockedSitePosts( siteId, isSiteBlocked ) {
-	forOwn( _postsForBlogs, function( post ) {
-		if ( post.site_ID === siteId && post.is_site_blocked !== isSiteBlocked ) {
-			const newPost = clone( post );
-			newPost.is_site_blocked = isSiteBlocked;
-			setPost( newPost.feed_item_ID, newPost );
-		}
-	} );
 }
 
 module.exports = FeedPostStore;

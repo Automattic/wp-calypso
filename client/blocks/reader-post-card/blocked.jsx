@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SiteBlockActions from 'lib/reader-site-blocks/actions';
+import { requestSiteUnblock } from 'state/reader/site-blocks/actions';
 import Card from 'components/card';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import {
@@ -28,7 +28,7 @@ class PostBlocked extends React.Component {
 		recordReaderTrack( 'calypso_reader_unblock_site', {
 			blog_id: this.props.post.site_ID,
 		} );
-		SiteBlockActions.unblock( this.props.post.site_ID );
+		this.props.requestSiteUnblock( this.props.post.site_ID );
 	}
 
 	render() {
@@ -50,5 +50,6 @@ export default connect(
 	{
 		recordGoogleEvent,
 		bumpStat,
+		requestSiteUnblock,
 	}
 )( localize( PostBlocked ) );

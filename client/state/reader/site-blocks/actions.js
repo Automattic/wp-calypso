@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -10,6 +15,7 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 } from 'state/action-types';
+import { errorNotice } from 'state/notices/actions';
 
 /**
  * Triggers a network request to block a site.
@@ -24,11 +30,16 @@ export function requestSiteBlock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().blockSite( siteId ).then( ( data ) => {
+		return wpcom.undocumented().me().blockSite( siteId ).then( ( response ) => {
+			if ( response && response.success === false ) {
+				return Promise.reject( 'Block was unsuccessful' );
+			}
+			return response;
+		} ).then( ( response ) => {
 			dispatch( {
 				type: READER_SITE_BLOCK_REQUEST_SUCCESS,
 				siteId,
-				data
+				data: response
 			} );
 		},
 		( error ) => {
@@ -37,8 +48,11 @@ export function requestSiteBlock( siteId ) {
 				siteId,
 				error
 			} );
-		}
-		);
+
+			dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
+
+			return Promise.reject( error );
+		} );
 	};
 }
 
@@ -55,11 +69,16 @@ export function requestSiteUnblock( siteId ) {
 			siteId
 		} );
 
-		return wpcom.undocumented().me().unblockSite( siteId ).then( ( data ) => {
+		return wpcom.undocumented().me().unblockSite( siteId ).then( ( response ) => {
+			if ( response && response.success === false ) {
+				return Promise.reject( 'Unblock was unsuccessful' );
+			}
+			return response;
+		} ).then( ( response ) => {
 			dispatch( {
 				type: READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 				siteId,
-				data
+				data: response
 			} );
 		},
 		( error ) => {
@@ -68,7 +87,10 @@ export function requestSiteUnblock( siteId ) {
 				siteId,
 				error
 			} );
-		}
-		);
+
+			dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
+
+			return Promise.reject( error );
+		} );
 	};
 }
