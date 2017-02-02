@@ -28,6 +28,7 @@ import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
+import { isValidPostOrGap } from './utils';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -173,20 +174,11 @@ export default class FeedStream {
 		return this._isFetchingNextPage;
 	}
 
-	isValidPostOrGap( postKey ) {
-		if ( postKey.isGap === true ) {
-			return true;
-		}
-		const post = FeedPostStore.get( postKey );
-		return post && post._state !== 'error' && post._state !== 'pending' &&
-			post._state !== 'minimal';
-	}
-
 	selectNextItem() {
 		if ( this.selectedIndex === -1 ) {
 			return;
 		}
-		const nextIndex = findIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1 );
+		const nextIndex = findIndex( this.postKeys, isValidPostOrGap, this.selectedIndex + 1 );
 		if ( nextIndex !== -1 ) {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
@@ -210,7 +202,7 @@ export default class FeedStream {
 		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
 			return;
 		}
-		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
+		const prevIndex = findLastIndex( this.postKeys, isValidPostOrGap, this.selectedIndex - 1 );
 		if ( prevIndex !== -1 ) {
 			this.selectedIndex = prevIndex;
 			this.emitChange();
@@ -220,7 +212,7 @@ export default class FeedStream {
 	selectItem( selectedIndex, id ) {
 		if ( selectedIndex >= 0 &&
 			selectedIndex < this.postKeys.length &&
-			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+			isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
 			this.selectedIndex = selectedIndex;
 			setLastStoreId( id );
 			this.emitChange();
