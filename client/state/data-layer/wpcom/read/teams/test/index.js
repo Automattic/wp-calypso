@@ -7,11 +7,13 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import {
+	requestTeams as requestTeamsAction,
+	receiveTeams as receiveTeamsAction,
+} from 'state/reader/teams/actions';
 
-import { handleTeamsRequest } from '../';
-import { requestTeams } from 'state/reader/teams/actions';
-import { READER_TEAMS_RECEIVE } from 'state/action-types';
+import { requestTeams, receiveTeams, receiveError } from '../';
 
 export const successfulResponse = {
 	teams: [
@@ -24,44 +26,68 @@ export const successfulResponse = {
 };
 
 describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
-
 	describe( 'teams request', () => {
-		useNock( nock => (
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 200, successfulResponse )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 500, new Error() )
-		) );
+		describe( '#requestTeams', () => {
+			it( 'should dispatch HTTP request to plans endpoint', () => {
+				const action = requestTeamsAction();
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-		it( 'should dispatch RECEIVE action when request completes', ( done ) => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: successfulResponse,
-					} );
-					done();
-				}
+				requestTeams( { dispatch }, action, next );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.2',
+					method: 'GET',
+					path: '/read/teams',
+					onSuccess: requestTeamsAction(),
+					onFailure: requestTeamsAction(),
+					dedupe: true,
+				} ) );
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = requestTeamsAction();
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				requestTeams( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledWith( action );
+			} );
 		} );
 
-		it( 'should dispatch RECEIVE action with error when request errors', ( done ) => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: sinon.match.any,
-						error: true,
-					} );
-					done();
-				}
-			} );
+		describe( '#receiveTeams', () => {
+			it( 'should dispatch plan updates', () => {
+				const apiResponse = successfulResponse;
+				const action = requestTeamsAction();
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+				receiveTeams( { dispatch }, action, next, apiResponse );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTeamsAction( { payload: apiResponse, error: false } )
+				);
+			} );
+		} );
+
+		describe( '#receiveError', () => {
+			it( 'should dispatch error', () => {
+				const error = 'could not find teams';
+				const action = requestTeamsAction();
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				receiveError( { dispatch }, action, next, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTeamsAction( { payload: error, error: true } )
+				);
+			} );
 		} );
 	} );
 } );
+

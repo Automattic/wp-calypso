@@ -1,30 +1,34 @@
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import wpcom from 'lib/wp';
+import { READER_TEAMS_REQUEST } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { receiveTeams as receiveTeamsAction, } from 'state/reader/teams/actions';
 
-export function handleTeamsRequest( store, action, next ) {
-	wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
-		.then(
-			payload => {
-				store.dispatch( {
-					type: READER_TEAMS_RECEIVE,
-					payload,
-				} );
-			},
-			error => {
-				store.dispatch( {
-					type: READER_TEAMS_RECEIVE,
-					payload: error,
-					error: true,
-				} );
-			}
-		);
+export function requestTeams( store, action, next ) {
+	store.dispatch( http( {
+		path: '/read/teams',
+		method: 'GET',
+		apiVersion: '1.2',
+		onSuccess: action,
+		onFailure: action,
+		dedupe: true,
+	} ) );
+
 	next( action );
 }
 
+// TODO add in schema validation for api response
+export function receiveTeams( store, action, next, teams ) {
+	store.dispatch( receiveTeamsAction( { payload: teams, error: false } ) );
+}
+
+export function receiveError( store, action, next, error ) {
+	store.dispatch( receiveTeamsAction( { payload: error, error: true } ) );
+}
+
 export default {
-	[ READER_TEAMS_REQUEST ]: [ handleTeamsRequest ]
+	[ READER_TEAMS_REQUEST ]: [ dispatchRequest( requestTeams, receiveTeams, receiveError ) ],
 };
 
