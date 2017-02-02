@@ -68,6 +68,7 @@ export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingTimezones from './is-requesting-timezones';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
+export isSiteAutomatedTransfer from './is-site-automated-transfer';
 export isSiteBlocked from './is-site-blocked';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
