@@ -31,7 +31,6 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
-import { PRESSABLE_STATE_TRANSFERED, PRESSABLE_STATE_IN_TRANSFER } from './constants';
 
 /**
  * Returns a raw site object by its ID.
@@ -145,32 +144,6 @@ export function isJetpackSite( state, siteId ) {
 	}
 
 	return site.jetpack;
-}
-
-/**
- * Returns true if site is a Pressable Jetpack site or site during a transfer, false if the site is hosted on
- * WordPress.com or is a regular Jetpack, or null if the site is unknown.
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is a Pressable site
- */
-export function isPressableSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	return site.options.pressable === PRESSABLE_STATE_TRANSFERED || isPressableSiteInTransfer( state, siteId );
-}
-
-export function isPressableSiteInTransfer( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	return site.options.pressable === PRESSABLE_STATE_IN_TRANSFER;
 }
 
 /**
