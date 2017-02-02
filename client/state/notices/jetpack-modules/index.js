@@ -22,11 +22,11 @@ export const onJetpackModuleActivationActionMessage = ( dispatch, { type, module
 
 	switch ( type ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
-			message = message || translate( 'Activated successfully.' );
+			message = message || translate( 'Turned on successfully.' );
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_DEACTIVATE_SUCCESS:
-			message = message || translate( 'Deactivated successfully.' );
+			message = message || translate( 'Turned off successfully.' );
 			messageType = 'success';
 			break;
 		case JETPACK_MODULE_ACTIVATE_FAILURE:
