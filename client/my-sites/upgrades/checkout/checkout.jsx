@@ -277,7 +277,12 @@ const Checkout = React.createClass( {
 		}
 
 		if ( cart.create_new_blog ) {
+			notices.info(
+				this.translate( 'Almost done…' )
+			);
+
 			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+
 			fetchSitesAndUser( domainName, () => {
 				page( redirectPath );
 			} );
