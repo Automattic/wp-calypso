@@ -10,7 +10,12 @@ import deepfreeze from 'deep-freeze';
  */
 import { _clear as clearInflight } from 'lib/inflight';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestPage, handlePage, handleError, transformResponse } from '../';
+import {
+	requestPage,
+	handlePage,
+	handleError,
+	transformResponse,
+} from '../';
 import { requestPage as requestPageAction, receivePage } from 'state/reader/streams/actions';
 
 describe( 'streams', () => {
@@ -74,6 +79,53 @@ describe( 'streams', () => {
 		it( 'should have tests', () => {
 			handleError();
 			expect( true ).to.be.false;
+		} );
+	} );
+
+	describe( 'duplicate requests', () => {
+		afterEach( () => {
+			clearInflight();
+		} );
+
+		it( 'should ignore duplicate requests for the same query', () => {
+			const dispatch = spy();
+			const next = spy();
+			requestPage( { dispatch }, action, next );
+			requestPage( { dispatch }, action, next );
+			expect( dispatch ).has.been.calledOnce;
+			expect( next ).has.been.calledTwice;
+		} );
+
+		it( 'should allow more requests once the current one happily completes', () => {
+			const dispatch = spy();
+			const next = spy();
+			requestPage( { dispatch }, action, next );
+			handlePage( { dispatch }, action, next, { posts: [] } );
+			dispatch.reset();
+			next.reset();
+			requestPage( { dispatch }, action, next );
+			expect( dispatch ).to.have.been.calledWith( http( {
+				method: 'GET',
+				path: '/read/following',
+				apiVersion: 'v1.2',
+				query: action.query
+			} ) );
+		} );
+
+		it( 'should allow more requests even if the current one completes in error', () => {
+			const dispatch = spy();
+			const next = spy();
+			requestPage( { dispatch }, action, next );
+			handleError( { dispatch }, action, next, new Error( 'oh no' ) );
+			dispatch.reset();
+			next.reset();
+			requestPage( { dispatch }, action, next );
+			expect( dispatch ).to.have.been.calledWith( http( {
+				method: 'GET',
+				path: '/read/following',
+				apiVersion: 'v1.2',
+				query: action.query
+			} ) );
 		} );
 	} );
 

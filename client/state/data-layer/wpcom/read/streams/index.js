@@ -9,7 +9,11 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
-import { requestInflight, markRequestInflight } from 'lib/inflight';
+import {
+	requestInflight,
+	markRequestInflight,
+	completeRequest
+} from 'lib/inflight';
 import {
 	READER_STREAMS_PAGE_REQUEST
 } from 'state/action-types';
@@ -32,7 +36,7 @@ function apiForStream( streamId ) {
 	return find( streamToPathMatchers, ( matcher ) => matcher[ 0 ].test( streamId ) );
 }
 
-function keyForRequest( action ) {
+export function keyForRequest( action ) {
 	const { streamId, query } = action;
 	const actionString = Object.keys( query )
 		.sort() // sort the keys to make the string deterministic. key ordering is not.
@@ -91,10 +95,12 @@ export function transformResponse( data ) {
  * @param  {array}   data.posts Array of posts
  */
 export function handlePage( { dispatch }, action, next, data ) {
+	completeRequest( keyForRequest( action ) );
 	dispatch( receivePage( action.streamId, action.query, transformResponse( data ) ) );
 }
 
 export function handleError( { dispatch }, action, next, error ) {
+	completeRequest( keyForRequest( action ) );
 	dispatch( errorNotice( translate( 'Could not fetch the next page of results' ) ) );
 	warn( error );
 }
