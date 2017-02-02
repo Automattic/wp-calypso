@@ -73,14 +73,16 @@ const BillingReceipt = React.createClass( {
 	},
 
 	renderPlaceholder() {
-		const { translate } = this.props;
-
 		return (
-			<Card compact className="billing-history__receipt-card">
-				<div className="billing-history__receipt">
-					<div className="billing-history__receipt-loading">
-						{ translate( 'Loading…' ) }
-					</div>
+			<Card compact className="billing-history__receipt-card is-placeholder">
+				<div className="billing-history__app-overview">
+					<div className="billing-history__placeholder-image" />
+					<div className="billing-history__placeholder-title" />
+				</div>
+
+				<div className="billing-history__receipt-links">
+					<div className="billing-history__placeholder-link" />
+					<div className="billing-history__placeholder-link" />
 				</div>
 			</Card>
 		);
