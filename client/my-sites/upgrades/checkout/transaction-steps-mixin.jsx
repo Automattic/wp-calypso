@@ -5,7 +5,8 @@ var React = require( 'react' ), // eslint-disable-line no-unused-vars
 	debug = require( 'debug' )( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' ),
 	pick = require( 'lodash/pick' ),
 	defer = require( 'lodash/defer' ),
-	isEqual = require( 'lodash/isEqual' );
+	isEqual = require( 'lodash/isEqual' ),
+	page = require( 'page' );
 
 /**
  * Internal dependencies
@@ -139,7 +140,7 @@ var TransactionStepsMixin = {
 
 		defer( () => {
 			// The Thank You page throws a rendering error if this is not in a defer.
-			this.props.handleCheckoutCompleteRedirect();
+			page( this.props.redirectTo() );
 		} );
 	}
 };

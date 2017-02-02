@@ -107,7 +107,7 @@ module.exports = {
 
 	'domain-only': {
 		stepName: 'domain-only',
-		apiRequestFunction: stepActions.createCart,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		props: {
 			isDomainOnly: true
 		},

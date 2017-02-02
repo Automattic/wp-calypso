@@ -43,8 +43,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
+import {
+	getSiteOption
+} from 'state/sites/selectors';
 import { domainManagementList } from 'my-sites/upgrades/paths';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -176,63 +178,23 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
-		let renewalItem;
-		const {
-			cart,
-			selectedSiteSlug,
-			transaction: {
-				step: {
-					data: receipt
-				}
-			}
-		} = this.props;
-
-		if ( cartItems.hasRenewalItem( cart ) ) {
-			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
-
-			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
-		} else if ( cartItems.hasFreeTrial( cart ) ) {
-			return selectedSiteSlug
-				? `/plans/${ selectedSiteSlug }/thank-you`
-				: '/checkout/thank-you/plans';
-		} else if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
-			return domainManagementList( domainName );
-		}
-
-		if ( ! selectedSiteSlug ) {
-			return '/checkout/thank-you/features';
-		}
-
-		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
-
-		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
-	},
-
-	handleCheckoutCompleteRedirect: function() {
 		let product,
 			purchasedProducts,
-			renewalItem;
+			renewalItem,
+			receiptId = ':receiptId';
 
 		const {
 			cart,
+			isDomainOnly,
+			selectedSite,
 			selectedSiteId,
-			transaction: {
-				step: {
-					data: receipt
-				}
-			}
+			selectedSiteSlug
 		} = this.props;
-		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const receipt = this.props.transaction.step.data;
 
 		this.props.clearPurchases();
 
 		if ( cartItems.hasRenewalItem( cart ) ) {
-			// checkouts for renewals redirect back to `/purchases` with a notice
-
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 			// group all purchases into an array
 			purchasedProducts = reduce( receipt && receipt.purchases || {}, function( result, value ) {
@@ -272,25 +234,21 @@ const Checkout = React.createClass( {
 					{ persistent: true }
 				);
 			}
+
+			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
-		}
 
-		if ( cart.create_new_blog ) {
-			notices.info(
-				this.translate( 'Almost done…' )
-			);
-
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
-
-			fetchSitesAndUser( domainName, () => {
-				page( redirectPath );
-			} );
-			return;
+			return selectedSiteSlug
+				? `/plans/${ selectedSiteSlug }/thank-you`
+				: '/checkout/thank-you/plans';
+		} else if ( isDomainOnly && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
+			// TODO: Use purchased domain name once it is possible to set it as a primary domain when site is created.
+			return domainManagementList( selectedSite.slug );
 		}
 
 		if ( receipt && receipt.receipt_id ) {
-			const receiptId = receipt.receipt_id;
+			receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId: receiptId,
@@ -299,7 +257,13 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		page( redirectPath );
+		if ( ! selectedSiteSlug ) {
+			return '/checkout/thank-you/features';
+		}
+
+		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 
 	content: function() {
@@ -326,9 +290,7 @@ const Checkout = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath }
-				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-			/>
+				redirectTo={ this.getCheckoutCompleteRedirectPath } />
 		);
 	},
 
@@ -369,6 +331,7 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			isDomainOnly: getSiteOption( state, selectedSiteId, 'is_domain_only' ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

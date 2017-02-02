@@ -12,8 +12,8 @@ var wpcom = require( 'lib/wp' ),
 	cartItems = cartValues.cartItems;
 
 module.exports = {
-	addToCart: function( cartKey, newCartItems, callback ) {
-		wpcom.undocumented().cart( cartKey, function( error, data ) {
+	addToCart: function( siteSlug, newCartItems, callback ) {
+		wpcom.undocumented().cart( siteSlug, function( error, data ) {
 			if ( error ) {
 				return callback( error );
 			}
@@ -33,7 +33,7 @@ module.exports = {
 				newCart = cartValues.fillInAllCartItemAttributes( addFunction( newCart ), productsList.get() );
 			} );
 
-			wpcom.undocumented().cart( cartKey, 'POST', newCart, function( postError ) {
+			wpcom.undocumented().cart( siteSlug, 'POST', newCart, function( postError ) {
 				callback( postError );
 			} );
 		} );

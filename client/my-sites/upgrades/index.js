@@ -252,11 +252,6 @@ module.exports = function() {
 		);
 
 		page(
-			'/checkout/no-site',
-			upgradesController.sitelessCheckout
-		);
-
-		page(
 			'/checkout/:domain/:product?',
 			controller.siteSelection,
 			upgradesController.checkout

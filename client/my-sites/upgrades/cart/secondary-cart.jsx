@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,14 +17,6 @@ import observe from 'lib/mixins/data-observe';
 import CartBodyLoadingPlaceholder from 'my-sites/upgrades/cart/cart-body/loading-placeholder';
 
 const SecondaryCart = React.createClass( {
-	propTypes: {
-		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.bool,
-			PropTypes.object
-		] )
-	},
-
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
 	render() {
