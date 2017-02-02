@@ -34,6 +34,7 @@ import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/action
 import { userCan } from 'lib/site/utils';
 import { isDomainOnlySite } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 
 /**
@@ -51,6 +52,7 @@ export class MySitesSidebar extends Component {
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isSiteAutomatedTransfer: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -521,11 +523,11 @@ export class MySitesSidebar extends Component {
 		}
 
 		// Ignore Jetpack sites as they've opted into this interface.
-		if ( this.props.isJetpack ) {
+		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() ) {
+		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
 		}
 
@@ -825,7 +827,8 @@ function mapStateToProps( state ) {
 		currentUser: getCurrentUser( state ),
 		customizeUrl: getCustomizeUrl( state, null, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
-		isJetpack: isJetpackSite( state, selectedSiteId )
+		isJetpack: isJetpackSite( state, selectedSiteId ),
+		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 	};
 }
 
