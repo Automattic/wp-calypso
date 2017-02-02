@@ -96,15 +96,12 @@ export default React.createClass( {
 							</NavItem>
 					}
 
-					{
-						( ! site.jetpack && config.isEnabled( 'manage/seo' ) ||
-							site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) ) &&
-						<NavItem
-							path={ `/settings/seo/${ site.slug }` }
-							selected={ section === 'seo' } >
-								{ strings.seo }
-						</NavItem>
-					}
+					<NavItem
+						path={ `/settings/seo/${ site.slug }` }
+						selected={ section === 'seo' }
+					>
+						{ strings.seo }
+					</NavItem>
 
 					{
 						config.isEnabled( 'manage/security' ) && site.jetpack &&
