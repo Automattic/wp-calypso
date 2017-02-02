@@ -1,28 +1,23 @@
 /**
- * External dependencies
- */
-import { has } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
 } from 'state/action-types';
 
-const isAudioSupported = typeof Audio === 'function';
+const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
 
 export const playSound = src => {
-	if ( ! isAudioSupported ) {
+	if ( ! isAudioSupported() ) {
 		return;
 	}
 
-	const audioClip = new Audio( src );
+	const audioClip = new window.Audio( src );
 	audioClip.play();
 };
 
 export const onHappyChatMessage = ( dispatch, { event } ) => {
-	event.source !== 'customer' && playSound( '/calypso/audio/chat-pling.wav' );
+	event && event.source !== 'customer' && playSound( '/calypso/audio/chat-pling.wav' );
 };
 
 /**
@@ -38,8 +33,8 @@ handlers[ HAPPYCHAT_RECEIVE_EVENT ] = onHappyChatMessage;
  */
 
 export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
-	if ( ! isAudioSupported ) {
-		return;
+	if ( ! isAudioSupported() ) {
+		return next( action );
 	}
 
 	const handler = handlers[ action.type ];
