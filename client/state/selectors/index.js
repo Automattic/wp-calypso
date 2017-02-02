@@ -41,6 +41,7 @@ export getReaderTeams from './get-reader-teams';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
+export getTimezones from './get-timezones';
 export getTimezonesByContinent from './get-timezones-by-continent';
 export getTimezonesLabel from './get-timezones-label';
 export getTimezonesLabels from './get-timezones-labels';
