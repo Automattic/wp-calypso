@@ -3256,6 +3256,10 @@
         }
       }
     },
+    "readline-sync": {
+      "version": "1.4.5",
+      "dev": true
+    },
     "readline2": {
       "version": "1.0.1",
       "dev": true
