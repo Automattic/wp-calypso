@@ -43,7 +43,7 @@ var PayButton = React.createClass( {
 				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
 					state = this.beforeSubmit();
 				} else {
-					state = this.completed();
+					state = this.completing();
 				}
 				break;
 
@@ -123,13 +123,6 @@ var PayButton = React.createClass( {
 		return {
 			disabled: true,
 			text: text
-		};
-	},
-
-	completed: function() {
-		return {
-			disabled: true,
-			text: this.translate( 'Purchase complete', { context: 'Loading state on /checkout' } )
 		};
 	},
 

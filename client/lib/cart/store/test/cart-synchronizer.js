@@ -10,7 +10,7 @@ import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
-var TEST_SITE_ID = 91234567890;
+var TEST_CART_KEY = 91234567890;
 
 var poller = {
 	add: function() {}
@@ -31,7 +31,7 @@ describe( 'cart-synchronizer', function() {
 	describe( '*before* the first fetch from the server', function() {
 		it( 'should *not* allow the value to be read', function() {
 			var wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller );
+				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
 
 			assert.throws( () => {
 				synchronizer.getLatestValue();
@@ -40,8 +40,8 @@ describe( 'cart-synchronizer', function() {
 
 		it( 'should enqueue local changes and POST them after fetching', function() {
 			var wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller ),
-				serverCart = emptyCart( TEST_SITE_ID );
+				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
+				serverCart = emptyCart( TEST_CART_KEY );
 
 			synchronizer.fetch();
 			synchronizer.update( applyCoupon( 'foo' ) );
@@ -63,8 +63,8 @@ describe( 'cart-synchronizer', function() {
 	describe( '*after* the first fetch from the server', function() {
 		it( 'should allow the value to be read', function() {
 			var wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller ),
-				serverCart = emptyCart( TEST_SITE_ID );
+				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
+				serverCart = emptyCart( TEST_CART_KEY );
 
 			synchronizer.fetch();
 			wpcom.resolveRequest( 0, serverCart );
@@ -75,8 +75,8 @@ describe( 'cart-synchronizer', function() {
 
 	it( 'should make local changes visible immediately', function() {
 		var wpcom = FakeWPCOM(),
-			synchronizer = CartSynchronizer( TEST_SITE_ID, wpcom, poller ),
-			serverCart = emptyCart( TEST_SITE_ID );
+			synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
+			serverCart = emptyCart( TEST_CART_KEY );
 
 		synchronizer.fetch();
 		wpcom.resolveRequest( 0, serverCart );
