@@ -24,15 +24,14 @@ import {
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
-	isThemePurchased as isPurchased,
 	isThemePremium as isPremium,
-	isPremiumSquaredTheme,
+	isPremiumThemeAvailable,
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -45,9 +44,9 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		getUrl: getPurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-		hideForTheme: ( state, theme, siteId ) =>
-			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId ) ||
-			( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
+		hideForTheme: ( state, theme, siteId ) => (
+			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPremiumThemeAvailable( state, theme.id, siteId )
+		)
 	}
 	: {};
 
@@ -56,12 +55,7 @@ const activate = {
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateTheme,
 	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
-			! isPurchased( state, theme.id, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) &&
-			! ( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
-		)
+		isActive( state, theme.id, siteId ) || ( isPremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
 	)
 };
 
@@ -74,8 +68,7 @@ const activateOnJetpack = {
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) && // Pressable sites included -- they're always on a Business plan
-			! ( isPremiumSquaredTheme( state, theme.id ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
+			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
 };

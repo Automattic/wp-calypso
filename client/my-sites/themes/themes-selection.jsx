@@ -14,20 +14,17 @@ import ThemesList from 'components/themes-list';
 import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
+	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemePurchased,
-	isInstallingTheme,
-	isPremiumSquaredTheme
+	isInstallingTheme
 } from 'state/themes/selectors';
 import config from 'config';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
@@ -162,18 +159,7 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
-			isThemePurchased: themeId => (
-				// Note: This component assumes that purchase and data is already present in the state tree
-				// (used by the isThemePurchased selector). At the time of implementation there's no caching
-				// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
-				// redundant AJAX requests, we're not rendering the query component locally.
-				isThemePurchased( state, themeId, siteId ) ||
-				// The same is true for the `hasFeature` selector, which relies on the presence of
-				// a `<QuerySitePlans />` component in a parent component.
-				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-				// Register theme as purchased if theme in Premium Squared bundle and the site has the premium upgrade
-				( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
-			),
+			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId )
 		};
 	}
