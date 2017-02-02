@@ -14,9 +14,9 @@ import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
+	requestPreview,
 } from 'state/themes/actions';
 import {
-	getTheme,
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
 	getThemeCustomizeUrl as	getCustomizeUrl,
@@ -31,8 +31,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -85,15 +83,6 @@ const tryandcustomize = {
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
-
-function requestPreview( themeId ) {
-	return ( dispatch, getState ) => {
-		const { demo_uri: uri } = getTheme( getState(), 'wpcom', themeId );
-		dispatch( setPreviewUrl( uri ) );
-		dispatch( setPreviewType( 'site-preview' ) );
-		dispatch( setLayoutFocus( 'preview' ) );
-	};
-}
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
 // respectively. TODO: Replace with a real action once we're able to use `SitePreview`.

@@ -11,17 +11,20 @@ import noop from 'lodash/noop';
 import WebPreview from 'components/web-preview';
 import designPreview from 'my-sites/design-preview';
 import urlPreview from 'blocks/url-preview';
+import themePreview from 'my-sites/themes/theme-preview'
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentPreviewType } from 'state/ui/preview/selectors';
 
 const DesignPreview = designPreview( WebPreview );
 const UrlPreview = urlPreview( WebPreview );
+const ThemePreview = themePreview( WebPreview );
 
 class SitePreview extends Component {
 	render() {
 		const components = {
 			'design-preview': DesignPreview,
 			'site-preview': UrlPreview,
+			'theme-preview': ThemePreview,
 		};
 		const Preview = components[ this.props.currentPreviewType ] || noop;
 		return <Preview showPreview={ this.props.showPreview } />;

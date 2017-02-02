@@ -44,6 +44,7 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEME_PREVIEW_PRIMARY_OPTION,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -66,6 +67,10 @@ import {
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 import config from 'config';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
+import { getPreviewUrl } from 'my-sites/themes/helpers';
+import { setUrlScheme } from 'lib/url';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -763,5 +768,24 @@ export function confirmDelete( themeId, siteId ) {
 			),
 			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
 		);
+	};
+}
+
+function setThemePreviewPrimaryOption( siteId, primaryButtonLabel ) {
+	return {
+		type: THEME_PREVIEW_PRIMARY_OPTION,
+		siteId,
+		primaryButtonLabel,
+	};
+}
+
+export function requestPreview( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		const theme = getTheme( getState(), 'wpcom', themeId );
+		const url = getPreviewUrl( theme );
+		dispatch( setThemePreviewPrimaryOption( siteId ) );
+		dispatch( setPreviewUrl( setUrlScheme( url, 'https' ) ) );
+		dispatch( setPreviewType( 'theme-preview' ) );
+		dispatch( setLayoutFocus( 'preview' ) );
 	};
 }
