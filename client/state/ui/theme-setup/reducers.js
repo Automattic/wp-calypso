@@ -23,29 +23,13 @@ export const themeSetup = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case THEME_SETUP_FAILURE:
 		case THEME_SETUP_SUCCESS:
-			return {
-				isDialogVisible: true,
-				active: false,
-				saveExisting: state.saveExisting,
-			};
+			return { ...state, isDialogVisible: true, active: false };
 		case THEME_SETUP_REQUEST:
-			return {
-				isDialogVisible: true,
-				active: true,
-				saveExisting: state.saveExisting,
-			};
+			return { ...state, active: true };
 		case THEME_SETUP_OPEN_DIALOG:
-			return {
-				isDialogVisible: true,
-				active: false,
-				saveExisting: action.saveExisting,
-			};
+			return { ...state, isDialogVisible: true, saveExisting: action.saveExisting };
 		case THEME_SETUP_CLOSE_DIALOG:
-			return {
-				isDialogVisible: false,
-				active: false,
-				saveExisting: state.saveExisting,
-			};
+			return { ...state, isDialogVisible: false };
 	}
 
 	return state;
