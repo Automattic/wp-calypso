@@ -28,7 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
 
 const StatsInsights = ( props ) => {
-	const { commentsList, followList, gmtOffset, isJetpack, moment, siteId, translate } = props;
+	const { followList, gmtOffset, isJetpack, moment, siteId, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let momentSiteZone = moment();
@@ -73,7 +73,6 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<Comments
 								path={ 'comments' }
-								commentsList={ commentsList }
 								followList={ followList }
 							/>
 							{ tagsList }
@@ -96,7 +95,6 @@ const StatsInsights = ( props ) => {
 };
 
 StatsInsights.propTypes = {
-	commentsList: PropTypes.object.isRequired,
 	followList: PropTypes.object.isRequired,
 	moment: PropTypes.func,
 	translate: PropTypes.func,

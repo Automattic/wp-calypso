@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import { get, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
@@ -21,41 +20,24 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData, hasSiteStatsQueryFailed, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const StatsComments = React.createClass( {
-	propTypes: {
+class StatsComments extends Component {
+	static propTypes = {
+		commentsStatsData: PropTypes.object,
 		commentFollowersTotal: PropTypes.number,
-		commentsList: PropTypes.object,
+		hasCommentsStatsQueryFailed: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string
-	},
+	};
 
-	mixins: [ observe( 'commentsList' ) ],
+	state = {
+		activeFilter: 'top-authors'
+	};
 
-	data( nextProps ) {
-		const props = nextProps || this.props;
-		return props.commentsList.response.data.authors;
-	},
-
-	getInitialState() {
-		return {
-			activeFilter: 'top-authors',
-			noData: this.props.commentsList.isEmpty( 'authors' ),
-			showInfo: false,
-			showModule: true
-		};
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			noData: nextProps.commentsList.isEmpty( 'authors' )
-		} );
-	},
-
-	changeFilter( selection ) {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		if ( filter === this.state.activeFilter ) {
 			return;
@@ -77,11 +59,7 @@ const StatsComments = React.createClass( {
 		this.setState( {
 			activeFilter: filter
 		} );
-	},
-
-	updateHeaderState( options ) {
-		this.setState( options );
-	},
+	};
 
 	renderCommentFollowers() {
 		const { commentFollowersTotal, siteSlug, translate, numberFormat } = this.props;
@@ -101,10 +79,10 @@ const StatsComments = React.createClass( {
 				</p>
 			</StatsModuleContent>
 		);
-	},
+	}
 
 	renderSummary() {
-		const data = this.data();
+		const data = get( this.props.commentsStatsData, 'authors' );
 		if ( ! data || ! data.monthly_comments ) {
 			return null;
 		}
@@ -114,14 +92,21 @@ const StatsComments = React.createClass( {
 				<p>{ this.props.translate( 'Average comments per month:' ) } { this.props.numberFormat( data.monthly_comments ) }</p>
 			</StatsModuleContent>
 		);
-	},
+	}
 
 	render() {
 		const { activeFilter } = this.state;
-		const { commentsList, followList, siteId, translate } = this.props;
-		const hasError = commentsList.isError();
-		const noData = commentsList.isEmpty( 'authors' );
-		const data = this.data();
+		const {
+			commentsStatsData,
+			followList,
+			hasCommentsStatsQueryFailed: hasError,
+			requestingCommentsStats,
+			siteId,
+			translate
+		} = this.props;
+		const commentsAuthors = get( commentsStatsData, 'authors' );
+		const commentsPosts = get( commentsStatsData, 'posts' );
+		const noData = ! commentsAuthors;
 		const selectOptions = [
 			{ value: 'top-authors', label: translate( 'Comments By Authors' ) },
 			{ value: 'top-content', label: translate( 'Comments By Posts & Pages' ) }
@@ -130,7 +115,7 @@ const StatsComments = React.createClass( {
 		const classes = classNames(
 			'stats-module',
 			{
-				'is-loading': ! data,
+				'is-loading': ! commentsAuthors,
 				'has-no-data': noData,
 				'is-showing-error': hasError || noData
 			}
@@ -138,12 +123,12 @@ const StatsComments = React.createClass( {
 
 		return (
 			<div>
+				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
 				{ siteId && <QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } /> }
 				<SectionHeader label={ translate( 'Comments' ) }></SectionHeader>
 				<Card className={ classes }>
 					<div className="module-content">
-
-						{ noData && ! hasError &&
+						{ noData && ! hasError && ! requestingCommentsStats &&
 							<StatsErrorPanel className="is-empty-message" message={ translate( 'No comments posted' ) } />
 						}
 
@@ -159,8 +144,7 @@ const StatsComments = React.createClass( {
 							name="Top Commenters"
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Author' ) }
-							dataList={ commentsList }
-							dataKey="authors"
+							data={ commentsAuthors }
 							followList={ followList }
 							isActive={ 'top-authors' === activeFilter } />
 
@@ -168,19 +152,18 @@ const StatsComments = React.createClass( {
 							name="Most Commented"
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Title' ) }
-							dataList={ commentsList }
-							dataKey="posts"
+							data={ commentsPosts }
 							followList={ followList }
 							isActive={ 'top-content' === activeFilter } />
 
-						{ this.renderSummary }
-						<StatsModulePlaceholder isLoading={ ! data } />
+						{ this.renderSummary() }
+						<StatsModulePlaceholder isLoading={ requestingCommentsStats && ! commentsAuthors } />
 					</div>
 				</Card>
 			</div>
 		);
 	}
-} );
+}
 
 const connectComponent = connect(
 	( state ) => {
@@ -189,6 +172,9 @@ const connectComponent = connect(
 
 		return {
 			commentFollowersTotal: get( getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ), 'total' ),
+			commentsStatsData: getSiteStatsNormalizedData( state, siteId, 'statsComments', {} ),
+			hasCommentsStatsQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsComments', {} ),
+			requestingCommentsStats: isRequestingSiteStatsForQuery( state, siteId, 'statsComments', {} ),
 			siteId,
 			siteSlug
 		};

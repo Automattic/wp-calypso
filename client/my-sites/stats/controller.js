@@ -100,7 +100,6 @@ module.exports = {
 
 	insights: function( context, next ) {
 		const Insights = require( 'my-sites/stats/stats-insights' );
-		const StatsList = require( 'lib/stats/stats-list' );
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
@@ -128,17 +127,11 @@ module.exports = {
 			}
 		}
 
-		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
-			? site.slug : route.getSiteFragment( context.path );
-
-		const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
-
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
 		renderWithReduxStore(
 			React.createElement( StatsComponent, {
 				followList: followList,
-				commentsList: commentsList
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

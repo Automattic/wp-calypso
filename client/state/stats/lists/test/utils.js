@@ -252,6 +252,63 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		describe( 'statsComments()', () => {
+			it( 'should return null if no data is provided', () => {
+				const parsedData = normalizers.statsComments();
+				expect( parsedData ).to.be.null;
+			} );
+
+			it( 'should properly parse comments stats response', () => {
+				const parsedData = normalizers.statsComments( {
+					authors: [
+						{
+							name: 'John',
+							comments: 12,
+							link: '?user_id=1662656',
+							gravatar: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							follow_data: null,
+						}
+					],
+					posts: [
+						{
+							id: 1111,
+							name: 'My title',
+							comments: 10,
+							link: 'https://en.blog.wordpress.com/chicken',
+						}
+					]
+				} );
+
+				expect( parsedData ).to.eql( {
+					posts: [ {
+						actions: [
+							{
+								data: 'https://en.blog.wordpress.com/chicken',
+								type: 'link'
+							}
+						],
+						label: 'My title',
+						page: null,
+						value: 10
+					} ],
+					authors: [ {
+						actions: [
+							{
+								data: false,
+								type: 'follow'
+							}
+						],
+						className: 'module-content-list-item-large',
+						icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?d=mm',
+						iconClassName: 'avatar-user',
+						label: 'John',
+						link: 'nulledit-comments.php?user_id=1662656',
+						value: 12
+					} ]
+				} );
+			} );
+		} );
+
 		describe( 'statsTopPosts()', () => {
 			it( 'should return an empty array if data is null', () => {
 				const parsedData = normalizers.statsTopPosts();

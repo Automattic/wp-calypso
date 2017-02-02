@@ -330,6 +330,50 @@ export const normalizers = {
 		return { page, pages, total, posts };
 	},
 
+	statsComments( data, query, siteId, site ) {
+		if ( ! data ) {
+			return null;
+		}
+		const adminUrl = site ? site.options.admin_url : null;
+
+		let authors = [];
+		if ( data.authors ) {
+			authors = data.authors.map( ( author ) => {
+				return {
+					label: author.name,
+					value: author.comments,
+					iconClassName: 'avatar-user',
+					icon: parseAvatar( author.gravatar ),
+					link: adminUrl + 'edit-comments.php' + author.link,
+					className: 'module-content-list-item-large',
+					actions: [
+						{
+							type: 'follow',
+							data: author.follow_data ? author.follow_data.params : false
+						}
+					]
+				};
+			} );
+		}
+
+		let posts = [];
+		if ( data.posts ) {
+			posts = data.posts.map( ( post ) => {
+				return {
+					label: post.name,
+					value: post.comments,
+					page: site ? '/stats/post/' + post.id + '/' + site.slug : null,
+					actions: [ {
+						type: 'link',
+						data: post.link
+					} ]
+				};
+			} );
+		}
+
+		return { authors, posts };
+	},
+
 	/**
 	 * Returns a normalized statsVideo array, ready for use in stats-module
 	 *
