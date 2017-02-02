@@ -20,6 +20,8 @@ import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import Emitter from 'lib/mixins/emitter';
+import AsyncLoad from 'components/async-load';
+import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
@@ -99,12 +101,10 @@ module.exports = {
 	},
 
 	insights: function( context, next ) {
-		const Insights = require( 'my-sites/stats/stats-insights' );
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
 		const followList = new FollowList();
-		const StatsComponent = Insights;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
@@ -129,17 +129,15 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
+		const props = { followList };
 		renderWithReduxStore(
-			React.createElement( StatsComponent, {
-				followList: followList,
-			} ),
+			<AsyncLoad require="my-sites/stats/stats-insights" placeholder={ <StatsPagePlaceholder /> } { ...props } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 	},
 
 	overview: function( context, next ) {
-		const StatsComponent = require( './overview' );
 		const filters = function() {
 			return [
 				{ title: i18n.translate( 'Days' ), path: '/stats/day', altPaths: [ '/stats' ], id: 'stats-day', period: 'day' },
@@ -166,13 +164,14 @@ module.exports = {
 			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 			analytics.pageView.record( basePath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
+			const props = {
+				period: activeFilter.period,
+				path: context.pathname,
+				sites,
+				user
+			};
 			renderWithReduxStore(
-				React.createElement( StatsComponent, {
-					period: activeFilter.period,
-					sites: sites,
-					path: context.pathname,
-					user: user
-				} ),
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/overview" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -183,7 +182,6 @@ module.exports = {
 		let siteId = context.params.site_id;
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
-		const SiteStatsComponent = require( 'my-sites/stats/site' );
 		const filters = getSiteFilters.bind( null, siteId );
 		let date;
 		const charts = function() {
@@ -202,7 +200,6 @@ module.exports = {
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
-		let siteComponent;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
@@ -268,8 +265,9 @@ module.exports = {
 			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
 					? currentSite.slug : siteFragment;
 
-			siteComponent = SiteStatsComponent;
 			const siteComponentChildren = {
+				slug: siteDomain,
+				path: context.pathname,
 				date,
 				charts,
 				chartTab,
@@ -277,12 +275,10 @@ module.exports = {
 				sites,
 				siteId,
 				period,
-				slug: siteDomain,
-				path: context.pathname,
 			};
 
 			renderWithReduxStore(
-				React.createElement( siteComponent, siteComponentChildren ),
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/site" { ...siteComponentChildren } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -294,7 +290,6 @@ module.exports = {
 		const siteFragment = route.getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const StatsList = require( 'lib/stats/stats-list' );
-		const StatsSummaryComponent = require( 'my-sites/stats/summary' );
 		const filters = function( contextModule, _siteId ) {
 			return [
 				{ title: i18n.translate( 'Days' ), path: '/stats/' + contextModule + '/' + _siteId,
@@ -414,20 +409,21 @@ module.exports = {
 				analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) + ' > ' + titlecase( context.params.module )
 			);
 
+			const props = {
+				path: context.pathname,
+				sites,
+				statsQueryOptions,
+				date,
+				context,
+				period,
+				siteId,
+				filters,
+				visitsList,
+				summaryList,
+				...extraProps
+			};
 			renderWithReduxStore(
-				React.createElement( StatsSummaryComponent, {
-					date: date,
-					context: context,
-					path: context.pathname,
-					sites: sites,
-					filters: filters,
-					summaryList: summaryList,
-					visitsList: visitsList,
-					siteId: siteId,
-					period: period,
-					statsQueryOptions,
-					...extraProps
-				} ),
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/summary" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -437,7 +433,6 @@ module.exports = {
 	post: function( context ) {
 		let siteId = context.params.site_id;
 		const postId = parseInt( context.params.post_id, 10 );
-		const StatsPostComponent = require( 'my-sites/stats/stats-post-detail' );
 		const pathParts = context.path.split( '/' );
 		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
 
@@ -460,12 +455,13 @@ module.exports = {
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
 				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
 
+			const props = {
+				path: context.path,
+				postId,
+				context,
+			};
 			renderWithReduxStore(
-				React.createElement( StatsPostComponent, {
-					postId: postId,
-					context: context,
-					path: context.path,
-				} ),
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/stats-post-detail" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -475,7 +471,6 @@ module.exports = {
 	follows: function( context, next ) {
 		let siteId = context.params.site_id;
 		const FollowList = require( 'lib/follow-list' );
-		const FollowsComponent = require( 'my-sites/stats/follows' );
 		const validFollowTypes = [ 'wpcom', 'email', 'comment' ];
 		const followType = context.params.follow_type;
 		let pageNum = context.params.page_num;
@@ -514,18 +509,19 @@ module.exports = {
 				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
 			);
 
+			const props = {
+				path: context.path,
+				page: pageNum,
+				perPage: 20,
+				total: 10,
+				domain: siteDomain,
+				sites,
+				siteId,
+				followType,
+				followList,
+			};
 			renderWithReduxStore(
-				React.createElement( FollowsComponent, {
-					path: context.path,
-					sites: sites,
-					siteId: siteId,
-					page: pageNum,
-					perPage: 20,
-					total: 10,
-					followType: followType,
-					followList: followList,
-					domain: siteDomain
-				} ),
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/follows" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
