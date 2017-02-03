@@ -33,6 +33,10 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
+// Append `-wpcom` suffix to the theme ID so we install the theme from WordPress.com, not WordPress.org
+const installFromWpcomAndActivate = ( themeId, siteId ) => installAndActivate( themeId + '-wpcom', siteId );
+const installFromWpcomAndTryAndCustomize = ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId );
+
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
 		label: i18n.translate( 'Purchase', {
@@ -52,25 +56,14 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	action: activateTheme,
+	action: ( state, siteId ) => ( isJetpackSite( state, siteId )
+		? installFromWpcomAndActivate
+		: activateTheme
+	),
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
 			isPremium( state, theme.id ) &&
 			! isPurchased( state, theme.id, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-		)
-	)
-};
-
-const activateOnJetpack = {
-	label: i18n.translate( 'Activate' ),
-	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	// Append `-wpcom` suffix to the theme ID so the installAndActivate() will install the theme from WordPress.com, not WordPress.org
-	action: ( themeId, siteId, ...args ) => installAndActivate( themeId + '-wpcom', siteId, ...args ),
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
 	)
@@ -78,7 +71,7 @@ const activateOnJetpack = {
 
 const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
-	action: confirmDelete,
+	action: () => ( confirmDelete ),
 	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ) || ! config.isEnabled( 'manage/themes/upload' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId ),
 };
@@ -97,20 +90,14 @@ const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: getCustomizeUrl,
+	action: ( state, siteId ) => ( isJetpackSite( state, siteId )
+		? installFromWpcomAndTryAndCustomize
+		: activateTheme
+	),
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
-};
-
-const tryAndCustomizeOnJetpack = {
-	label: i18n.translate( 'Try & Customize' ),
-	header: i18n.translate( 'Try & Customize on:', {
-		comment: 'label in the dialog for opening the Customizer with the theme in preview'
-	} ),
-	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || (
+			isJetpackSite( state, siteId ) &&
 			isPremium( state, theme.id ) &&
 			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
 		)
@@ -164,10 +151,8 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
-	activateOnJetpack,
 	deleteTheme,
 	tryandcustomize,
-	tryAndCustomizeOnJetpack,
 	signup,
 	separator,
 	info,
@@ -178,7 +163,7 @@ const ALL_THEME_OPTIONS = {
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl = identity, mapHideForSite = identity;
+		let mapGetUrl = identity, mapAction = identity, mapHideForSite = identity;
 
 		// We bind hideForTheme to siteId even if it is null since the selectors
 		// that are used by it are expected to recognize that case as "no site selected"
@@ -187,11 +172,13 @@ export const connectOptions = connect(
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
+			mapAction = action => action( state, siteId ); // Invoke!
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
 			);
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
+			mapAction = action => ( s ) => action( state, s );
 			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
 		}
 
@@ -200,6 +187,9 @@ export const connectOptions = connect(
 			option,
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
+				: {},
+			option.action
+				? { action: mapAction( option.action ) }
 				: {},
 			option.hideForSite
 				? { hideForSite: mapHideForSite( option.hideForSite ) }
