@@ -1,8 +1,14 @@
+/**
+ * External Dependencies
+ */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
-import { requestInflight, requestTracker } from 'lib/inflight';
+/**
+ * Internal Dependencies
+ */
+import { isRequestInflight, requestTracker } from 'lib/inflight';
 import store from './store';
 import { ACTION_RECEIVE_SITE_RECOMMENDATIONS, ACTION_RECEIVE_SITE_RECOMMENDATIONS_ERROR } from './constants';
 import siteStoreActions from 'lib/reader-site-store/actions';
@@ -12,12 +18,12 @@ function extractSiteId( siteRecommendation ) {
 }
 
 export function fetchMore() {
-	if ( requestInflight( ACTION_RECEIVE_SITE_RECOMMENDATIONS ) ) {
+	if ( isRequestInflight( ACTION_RECEIVE_SITE_RECOMMENDATIONS ) ) {
 		return;
 	}
 
 	// get the current recs that we want to exclude
-	let args = {
+	const args = {
 		number: 10,
 		source: 'reader_sidebar',
 		meta: 'site'
@@ -41,7 +47,7 @@ export function fetchMore() {
 			// look for sites in meta and dispatch those first
 			if ( data && data.blogs ) {
 				data.blogs.forEach( function( blog ) {
-					let site = get( blog, 'meta.data.site' );
+					const site = get( blog, 'meta.data.site' );
 					if ( site ) {
 						siteStoreActions.receiveFetch( site.ID, undefined, site );
 					}

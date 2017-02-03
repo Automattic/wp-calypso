@@ -1,21 +1,23 @@
-//var debug = require( 'debug' )( 'calypso:feed-subscription-actions' );
+/**
+ * External Dependencies
+ */
+import { get } from 'lodash';
+import Dispatcher from 'dispatcher';
 
-// External dependencies
-var get = require( 'lodash/get' );
+/**
+ * Internal Dependencies
+ */
+import wpcom from 'lib/wp';
+import { action as ActionTypes } from './constants';
+import FeedSubscriptionHelper from './helper';
+import { isRequestInflight, requestTracker } from 'lib/inflight';
+import FeedSubscriptionStore from './index';
+import { action as SiteStoreActionTypes } from 'lib/reader-site-store/constants';
+import { action as FeedStoreActionTypes } from 'lib/feed-store/constants';
 
-// Internal dependencies
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ),
-	ActionTypes = require( './constants' ).action,
-	FeedSubscriptionHelper = require( './helper' ),
-	inflight = require( 'lib/inflight' ),
-	FeedSubscriptionStore = require( './index' ),
-	SiteStoreActionTypes = require( 'lib/reader-site-store/constants' ).action,
-	FeedStoreActionTypes = require( 'lib/feed-store/constants' ).action;
-
-var FeedSubscriptionActions = {
+const FeedSubscriptionActions = {
 	follow: function( url, fetchMeta = true ) {
-		var meta;
+		let meta;
 
 		if ( ! url ) {
 			return;
@@ -87,8 +89,7 @@ var FeedSubscriptionActions = {
 	* @param { Function } cb - Callback to invoke when the API comes back and the action has been dispatched
 	*/
 	fetch: function( params, cb ) {
-		var requestKey = 'following_mine',
-			callback;
+		let requestKey = 'following_mine';
 
 		if ( ! params ) {
 			params = getNextPageParams();
@@ -98,11 +99,11 @@ var FeedSubscriptionActions = {
 		requestKey = requestKey + '_page' + params.page;
 
 		// Do we already have a request in motion?
-		if ( inflight.requestInflight( requestKey ) ) {
+		if ( isRequestInflight( requestKey ) ) {
 			return;
 		}
 
-		callback = inflight.requestTracker( requestKey, function( error, data ) {
+		const callback = requestTracker( requestKey, function( error, data ) {
 			FeedSubscriptionStore.setIsFetching( false );
 			FeedSubscriptionActions.receiveFollowingList( error, data );
 			if ( cb ) {
@@ -116,10 +117,10 @@ var FeedSubscriptionActions = {
 
 	fetchAll: function( ) {
 		const processKey = 'following_mine_all';
-		if ( inflight.requestInflight( processKey ) ) {
+		if ( isRequestInflight( processKey ) ) {
 			return;
 		}
-		const onDone = inflight.requestTracker( processKey, function() {} );
+		const onDone = requestTracker( processKey, function() {} );
 		function _loop( err ) {
 			if ( err || FeedSubscriptionStore.isLastPage() ) {
 				onDone();
@@ -134,18 +135,16 @@ var FeedSubscriptionActions = {
 	/**
 	* Fetch next page of followed feeds via the REST API
 	*
-	* @param cb callback to invoke when complete
+	* @param {Function} cb callback to invoke when complete
 	**/
 	fetchNextPage: function( cb ) {
-		var params;
-
 		if ( FeedSubscriptionStore.isLastPage() ) {
 			return;
 		}
 
 		Dispatcher.handleViewAction( { type: ActionTypes.FETCH_NEXT_FEED_SUBSCRIPTIONS_PAGE } );
 
-		params = getNextPageParams();
+		const params = getNextPageParams();
 
 		FeedSubscriptionActions.fetch( params, cb );
 	},
@@ -161,7 +160,7 @@ var FeedSubscriptionActions = {
 			return;
 		}
 
-		let sites = [], feeds = [];
+		const sites = [], feeds = [];
 		data.subscriptions.forEach( function( sub ) {
 			const site = get( sub, 'meta.data.site' ),
 				feed = get( sub, 'meta.data.feed' );
@@ -190,7 +189,7 @@ var FeedSubscriptionActions = {
 };
 
 function getNextPageParams() {
-	var params = {
+	const params = {
 			number: FeedSubscriptionStore.getPerPage(),
 			meta: 'feed,site'
 		},
