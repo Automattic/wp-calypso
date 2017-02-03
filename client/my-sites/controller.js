@@ -367,7 +367,7 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const selectedSite = sites.getSelectedSite();
 
-		if ( selectedSite && selectedSite.jetpack ) {
+		if ( '/domains/manage' !== basePath && selectedSite && selectedSite.jetpack ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage

@@ -234,7 +234,11 @@ export const List = React.createClass( {
 	},
 
 	changePrimaryButton() {
-		if ( ! this.props.domains.list || this.props.domains.list.length < 2 ) {
+		if (
+			! this.props.domains.list ||
+			this.props.domains.list.length < 2 ||
+			this.props.selectedSite.jetpack
+		) {
 			return null;
 		}
 
@@ -249,7 +253,10 @@ export const List = React.createClass( {
 	},
 
 	addDomainButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
+		if (
+			! config.isEnabled( 'upgrades/domain-search' ) ||
+			this.props.selectedSite.jetpack
+		) {
 			return null;
 		}
 
