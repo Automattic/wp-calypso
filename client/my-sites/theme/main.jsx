@@ -39,7 +39,7 @@ import { connectOptions } from 'my-sites/themes/theme-options';
 import {
 	isThemeActive,
 	isThemePremium,
-	isPremiumThemeAvailable,
+	isThemePurchased,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	isWpcomTheme as isThemeWpcom,
@@ -52,6 +52,8 @@ import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
 import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const ThemeSheet = React.createClass( {
@@ -674,7 +676,10 @@ export default connect(
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
-			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
+			isPurchased: selectedSite && (
+				isThemePurchased( state, id, selectedSite.ID ) ||
+				hasFeature( state, selectedSite.ID, FEATURE_UNLIMITED_PREMIUM_THEMES )
+			),
 			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
 		};
 	},
