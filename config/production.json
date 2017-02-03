@@ -21,6 +21,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect": true,
+		"jetpack/google-analytics": true,
 		"jetpack/personalPlan": true,
 		"jetpack/api-cache": false,
 		"manage/custom-post-types": true,
