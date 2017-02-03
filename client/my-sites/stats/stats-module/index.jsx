@@ -78,7 +78,8 @@ class StatsModule extends Component {
 
 	isAllTimeList() {
 		const { summary, statType } = this.props;
-		return summary && includes( [ 'statsCountryViews', 'statsTopPosts', 'statsSearchTerms', 'statsClicks' ], statType );
+		const summarizedTypes = [ 'statsCountryViews', 'statsTopPosts', 'statsSearchTerms', 'statsClicks', 'statsReferrers' ];
+		return summary && includes( summarizedTypes, statType );
 	}
 
 	render() {

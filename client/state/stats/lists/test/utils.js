@@ -1197,6 +1197,87 @@ describe( 'utils', () => {
 				expect( parsedData ).to.eql( [] );
 			} );
 
+			it( 'should return an a properly parsed summary data array', () => {
+				const parsedData = normalizers.statsReferrers( {
+					date: '2017-01-12',
+					summary: {
+						groups: [
+							{
+								group: 'WordPress.com Reader',
+								name: 'WordPress.com Reader',
+								url: 'https://wordpress.com',
+								icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+								results: {
+									views: 500
+								},
+								total: 500
+							},
+							{
+								group: 'en.support.wordpress.com',
+								icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+								name: 'en.support.wordpress.com',
+								results: [
+									{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 200 },
+									{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 100 }
+								],
+								total: 300
+							}
+						]
+					}
+				}, {
+					period: 'day',
+					date: '2017-01-12',
+					domain: 'en.blog.wordpress.com',
+					summarize: 1
+				}, 100 );
+
+				expect( parsedData ).to.eql( [
+					{
+						actionMenu: 0,
+						actions: [],
+						children: undefined,
+						icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+						label: 'WordPress.com Reader',
+						labelIcon: 'external',
+						link: 'https://wordpress.com',
+						value: 500
+					},
+					{
+						actionMenu: 1,
+						actions: [
+							{
+								data: {
+									domain: 'en.support.wordpress.com',
+									siteID: 100
+								},
+								type: 'spam'
+							}
+						],
+						children: [
+							{
+								children: undefined,
+								label: 'homepage',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/',
+								value: 200
+							},
+							{
+								children: undefined,
+								label: 'start',
+								labelIcon: 'external',
+								link: 'https://en.support.wordpress.com/start/',
+								value: 100
+							}
+						],
+						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+						label: 'en.support.wordpress.com',
+						labelIcon: null,
+						link: undefined,
+						value: 300
+					},
+				] );
+			} );
+
 			it( 'should return an a properly parsed data array', () => {
 				const parsedData = normalizers.statsReferrers( {
 					date: '2017-01-12',
