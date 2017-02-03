@@ -51,10 +51,14 @@ module.exports = React.createClass( {
 		};
 	},
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate( nextProps, nextState ) {
 		const propsToCheck = [ 'post', 'postImages', 'fullWidthPost', 'path' ];
 
 		if ( checkPropsChange( this.props, nextProps, propsToCheck ) ) {
+			return true;
+		}
+
+		if ( nextState.showShare !== this.state.showShare ) {
 			return true;
 		}
 
