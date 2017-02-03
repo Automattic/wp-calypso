@@ -18,11 +18,10 @@ import { extendAction } from 'state/utils';
  * @param {string} method name of HTTP method for request
  * @returns {Function} the fetcher
  */
-const fetcherMap = method =>
-	get( {
-		GET: wpcom.req.get.bind( wpcom.req ),
-		POST: wpcom.req.post.bind( wpcom.req ),
-	}, method, noop );
+const fetcherMap = method => get( {
+	GET: wpcom.req.get.bind( wpcom.req ),
+	POST: wpcom.req.post.bind( wpcom.req ),
+}, method, noop );
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
