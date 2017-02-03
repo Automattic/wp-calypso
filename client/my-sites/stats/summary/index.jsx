@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import page from 'page';
-import debugFactory from 'debug';
-import { find, merge } from 'lodash';
+import { merge } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import HeaderCake from 'components/header-cake';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
@@ -20,58 +18,38 @@ import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
-import { getSelectedSite } from 'state/ui/selectors';
+import QueryMedia from 'components/data/query-media';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getMediaItem } from 'state/selectors';
 
-const debug = debugFactory( 'calypso:stats:site' );
 const StatsStrings = statsStringsFactory();
 
-const StatsSummary = React.createClass( {
-	mixins: [ observe( 'summaryList' ) ],
-
-	getActiveFilter: function() {
-		return find( this.props.filters(), ( filter ) => {
-			return this.props.path === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( this.props.path ) );
-		} );
-	},
-
-	goBack: function() {
+class StatsSummary extends Component {
+	goBack = () => {
 		const pathParts = this.props.path.split( '/' );
 		const queryString = this.props.context.querystring ? '?' + this.props.context.querystring : null;
 
 		if ( history.length ) {
 			history.back();
 		} else {
-			setTimeout( function() {
+			setTimeout( () => {
 				page.show( '/stats/' + pathParts[ pathParts.length - 1 ] + queryString );
 			} );
 		}
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			filters: Object.freeze( [] )
-		};
-	},
-
-	getInitialState: function() {
-		return {
-			date: this.props.date
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
-	render: function() {
-		const { translate, statsQueryOptions } = this.props;
+	render() {
+		const { translate, statsQueryOptions, siteId } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
 		let chartTitle;
 		let barChart;
 
-		debug( 'Rendering summary-top-posts.jsx', this.props );
 		const { period, endOf } = this.props.period;
 		const query = {
 			period: period,
@@ -172,9 +150,8 @@ const StatsSummary = React.createClass( {
 
 			case 'videodetails':
 				title = translate( 'Video' );
-
-				if ( this.props.summaryList.response.post ) {
-					title = this.props.summaryList.response.post.post_title;
+				if ( this.props.media ) {
+					title = this.props.media.title;
 				}
 
 				// TODO: a separate StatsSectionTitle component should be created
@@ -186,14 +163,16 @@ const StatsSummary = React.createClass( {
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 
+				if ( siteId ) {
+					summaryViews.push(
+						<QueryMedia key="query-media" siteId={ siteId } mediaId={ this.props.postId } />
+					);
+				}
 				summaryViews.push( chartTitle );
 				barChart = <StatsVideoSummary key="video-chart" postId={ this.props.postId } />;
 
 				summaryViews.push( barChart );
-
-				summaryView = <VideoPlayDetails
-					summaryList={ this.props.summaryList }
-					key="page-embeds" />;
+				summaryView = <VideoPlayDetails key="page-embeds" postId={ this.props.postId } />;
 				break;
 
 			case 'searchterms':
@@ -223,10 +202,14 @@ const StatsSummary = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
-export default connect( ( state ) => {
+export default connect( ( state, { context, postId } ) => {
+	const siteId = getSelectedSiteId( state );
 	return {
-		site: getSelectedSite( state )
+		siteId: getSelectedSiteId( state ),
+		media: context.params.module === 'videodetails'
+			? getMediaItem( state, siteId, postId )
+			: false,
 	};
 } )( localize( StatsSummary ) );

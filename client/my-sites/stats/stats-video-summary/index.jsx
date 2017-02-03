@@ -19,7 +19,7 @@ class StatsVideoSummary extends Component {
 		query: PropTypes.object,
 		isRequesting: PropTypes.bool,
 		siteId: PropTypes.number,
-		summaryData: PropTypes.array,
+		summaryData: PropTypes.object,
 	}
 
 	state = {
@@ -34,12 +34,12 @@ class StatsVideoSummary extends Component {
 
 	render() {
 		const { query, isRequesting, moment, siteId, summaryData, translate } = this.props;
-		const data = summaryData.map( item => {
+		const data = summaryData && summaryData.data ? summaryData.data.map( item => {
 			return {
 				...item,
 				period: moment( item.period ).format( 'MMM D' ),
 			};
-		} );
+		} ) : [];
 		let selectedBar = this.state.selectedBar;
 		if ( ! selectedBar && !! data.length ) {
 			selectedBar = data[ data.length - 1 ];
@@ -49,7 +49,7 @@ class StatsVideoSummary extends Component {
 			<div>
 				<QuerySiteStats siteId={ siteId } statType="statsVideo" query={ query } />
 				<SummaryChart
-					isLoading={ isRequesting && ! summaryData.length }
+					isLoading={ isRequesting && ! data.length }
 					data={ data }
 					activeKey="period"
 					dataKey="value"
@@ -71,7 +71,7 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			summaryData: getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ) || [],
+			summaryData: getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ),
 			isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ),
 			query,
 			siteId,
