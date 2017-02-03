@@ -26,13 +26,11 @@ export function requestTag( store, action, next ) {
 }
 
 export function receiveTagSuccess( store, action, next, apiResponse ) {
-	store.dispatch( receiveTag( { payload: { tag: apiResponse.tag }, error: false } ) );
-	next( action );
+	store.dispatch( receiveTag( { payload: apiResponse, error: false } ) );
 }
 
 export function receiveTagError( store, action, next, error ) {
 	store.dispatch( receiveTag( { payload: error, error: true } ) );
-	next( action );
 }
 
 export function requestTags( store, action, next ) {
@@ -49,12 +47,10 @@ export function requestTags( store, action, next ) {
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	store.dispatch( receiveTags( { payload: apiResponse, error: false } ) );
-	next( action );
 }
 
 export function receiveTagsError( store, action, next, error ) {
 	store.dispatch( receiveTags( { payload: error, error: true } ) );
-	next( action );
 }
 
 export default {
