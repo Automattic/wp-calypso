@@ -1,57 +1,68 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	includes = require( 'lodash/includes' ),
-	without = require( 'lodash/without' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect;
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var TransactionsTable = require( './transactions-table' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	successNotice = require( 'state/notices/actions' ).successNotice,
-	errorNotice = require( 'state/notices/actions' ).errorNotice;
+import TransactionsTable from './transactions-table';
+import eventRecorder from 'me/event-recorder';
 import purchasesPaths from 'me/purchases/paths';
+import { isSendingBillingReceiptEmail } from 'state/selectors';
+import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
 
 const BillingHistoryTable = React.createClass( {
-	displayName: 'BillingHistoryTable',
-
 	mixins: [ eventRecorder ],
 
-	getInitialState: function() {
-		return {
-			receiptsEmailing: []
-		};
-	},
-
-	emailReceipt: function( receiptId, event ) {
+	emailReceipt( receiptId, event ) {
 		event.preventDefault();
-
-		this.setState( { receiptsEmailing: this.state.receiptsEmailing.concat( receiptId ) } );
-
-		wpcom.me().billingHistoryEmailReceipt( receiptId, function( error, data ) {
-			if ( data && data.success ) {
-				this.props.successNotice( this.translate( 'Your receipt was sent by email successfully.' ) );
-			} else {
-				this.props.errorNotice( this.translate( 'There was a problem sending your receipt. Please try again later or contact support.' ) );
-			}
-
-			this.setState( { receiptsEmailing: without( this.state.receiptsEmailing, receiptId ) } );
-		}.bind( this ) );
+		this.props.sendBillingReceiptEmail( receiptId );
 	},
 
-	render: function() {
-		const emptyTableText = this.translate(
+	renderEmailAction( receiptId ) {
+		const { translate } = this.props;
+
+		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
+			return translate( 'Emailing Receipt…' );
+		}
+
+		return (
+			<a href="#" onClick={ this.recordClickEvent( 'Email Receipt in Billing History', this.emailReceipt.bind( this, receiptId ) ) }>
+				{ translate( 'Email Receipt' ) }
+			</a>
+		);
+	},
+
+	renderTransaction( transaction ) {
+		const { translate } = this.props;
+
+		return (
+			<div className="billing-history__transaction-links">
+				<a
+					className="billing-history__view-receipt"
+					href={ purchasesPaths.billingHistoryReceipt( transaction.id ) }
+					onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) }
+				>
+					{ translate( 'View Receipt' ) }
+				</a>
+				{ this.renderEmailAction( transaction.id ) }
+			</div>
+		);
+	},
+
+	render() {
+		const { translate } = this.props;
+		const emptyTableText = translate(
 			'You do not currently have any upgrades. ' +
 			'To see what upgrades we offer visit our {{link}}Plans page{{/link}}.', {
 				components: { link: <a href="/plans" /> }
 			}
 		);
-		const noFilterResultsText = this.translate( 'No receipts found.' );
+		const noFilterResultsText = translate( 'No receipts found.' );
+
 		return (
 			<TransactionsTable
 				{ ...this.props }
@@ -62,35 +73,17 @@ const BillingHistoryTable = React.createClass( {
 				transactionRenderer={ this.renderTransaction } />
 		);
 	},
-
-	renderEmailAction: function( receiptId ) {
-		var action;
-		if ( includes( this.state.receiptsEmailing, receiptId ) ) {
-			action = this.translate( 'Emailing Receipt.…' );
-		} else {
-			action = (
-				<a href="#" onClick={ this.recordClickEvent( 'Email Receipt in Billing History', this.emailReceipt.bind( this, receiptId ) ) }>
-					{ this.translate( 'Email Receipt' ) }
-				</a>
-			);
-		}
-
-		return action;
-	},
-
-	renderTransaction: function( transaction ) {
-		return (
-			<div className="billing-history__transaction-links">
-				<a className="billing-history__view-receipt" href={ purchasesPaths.billingHistoryReceipt( transaction.id ) } onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) } >
-					{ this.translate( 'View Receipt' ) }
-				</a>
-				{ this.renderEmailAction( transaction.id ) }
-			</div>
-		);
-	}
 } );
 
 export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
-)( BillingHistoryTable );
+	( state ) => {
+		const sendingBillingReceiptEmail = ( receiptId ) => {
+			return isSendingBillingReceiptEmail( state, receiptId );
+		};
+
+		return {
+			sendingBillingReceiptEmail
+		};
+	},
+	{ sendBillingReceiptEmail }
+)( localize( BillingHistoryTable ) );
