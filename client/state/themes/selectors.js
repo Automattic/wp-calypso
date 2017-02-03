@@ -40,7 +40,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
  */
 const getSuffixedThemeId = ( state, themeId, siteId ) => {
 	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
-	if ( siteIsJetpack && isWpcomTheme( state, themeId ) ) {
+	if ( siteIsJetpack && isWpcomTheme( state, themeId, siteId ) ) {
 		return `${ themeId }-wpcom`;
 	}
 	return themeId;
@@ -325,12 +325,18 @@ export function isWporgTheme( state, themeId ) {
 /**
  * Whether a theme is present on WordPress.com.
  *
+ * Returns false if themeId is installed on (jetpack) siteId, since
+ * installed themes take priority. For example, this can be the case
+ * with themes available on both wpcom and .org such as 'twentysixteen'.
+ *
  * @param  {Object}  state   Global state tree
  * @param  {Number}  themeId Theme ID
+ * @param  {Number}  siteId  Site ID
  * @return {Boolean}         Whether theme available on WordPress.com
  */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
+export function isWpcomTheme( state, themeId, siteId ) {
+	return !! ( getTheme( state, 'wpcom', themeId ) &&
+		! getTheme( state, siteId, themeId ) );
 }
 
 /**
