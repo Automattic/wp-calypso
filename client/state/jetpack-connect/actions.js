@@ -49,7 +49,6 @@ import { JPC_PLANS_PAGE } from './constants';
  */
 const _fetching = {};
 const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
-const apiBaseUrl = 'https://jetpack.wordpress.com';
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
@@ -199,9 +198,8 @@ export default {
 			} );
 			externalRedirect(
 				addQueryArgs( {
-					jetpack_connect_url: url + remoteAuthPath,
 					calypso_env: calypsoEnv
-				}, apiBaseUrl )
+				}, url + remoteAuthPath )
 			);
 		};
 	},
@@ -219,9 +217,8 @@ export default {
 			} );
 			externalRedirect(
 				addQueryArgs( {
-					jetpack_connect_url: url + remoteAuthPath,
 					calypso_env: calypsoEnv
-				}, apiBaseUrl )
+				}, url + remoteAuthPath )
 			);
 		};
 	},
@@ -235,11 +232,11 @@ export default {
 				url: url,
 				type: 'plugin_install'
 			} );
+            // TODO: set 'calypso_env' cookie on jetpack.wordpress.com before redirecting
 			externalRedirect(
 				addQueryArgs( {
-					jetpack_connect_url: url + remoteInstallPath,
 					calypso_env: calypsoEnv
-				}, apiBaseUrl )
+				}, url + remoteInstallPath )
 			);
 		};
 	},
@@ -253,11 +250,11 @@ export default {
 				url: url,
 				type: 'plugin_activation'
 			} );
+			// TODO: set 'calypso_env' cookie on jetpack.wordpress.com before redirecting
 			externalRedirect(
 				addQueryArgs( {
-					jetpack_connect_url: url + remoteActivatePath,
 					calypso_env: calypsoEnv
-				}, apiBaseUrl )
+				}, url + remoteActivatePath )
 			);
 		};
 	},
