@@ -29,7 +29,7 @@ export const http = ( {
 	onSuccess,
 	onFailure,
 	onProgress,
-	dedupe = false,
+	dedupe = true,
 	...options,
 }, action = null ) => ( {
 	type: WPCOM_HTTP_REQUEST,

@@ -3,7 +3,6 @@
  */
 import { expect, assert } from 'chai';
 import sinon from 'sinon';
-import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,23 +20,20 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				path: '/read/chickens',
 				method: 'GET',
 				apiVersion: '1.2',
-				dedupe: true
 			} );
 
-			assert.equal(
-				requestKey( httpAction ),
-				`{ type: ${ httpAction.type }, path: ${ httpAction.path }, query: ${ httpAction.query } }`,
-			);
+			assert.equal( requestKey( httpAction ), 'path=/read/chickens&apiVersion=1.2' );
 		} );
 	} );
 
 	describe( '#queueRequest', () => {
-		const promiseResolvers = [];
+		const responseCallbacks = [];
 		const next = sinon.spy();
 
 		useMockery( mockery => {
-			const reqStub = sinon.stub();
-			reqStub.returns( new Promise( resolve => promiseResolvers.push( resolve ) ) );
+			const reqStub = ( arg1, arg2, fnOrBody, fn ) => fn
+				? responseCallbacks.push( fn )
+				: responseCallbacks.push( fnOrBody );
 
 			const wpStub = { req: { get: reqStub, post: reqStub } };
 			mockery.registerMock( 'lib/wp', wpStub );
@@ -45,15 +41,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		afterEach( () => {
-			promiseResolvers.forEach( resolve => resolve() );
+			responseCallbacks.forEach( callback => callback( null ) );
 			next.reset();
 		} );
 
-		it( 'should dedupe calls with the same key', ( done ) => {
+		it( 'should drop calls with the same key', ( done ) => {
 			const httpAction = http( {
 				path: '/read/chickens',
 				method: 'GET',
-				dedupe: true,
 				onSuccess: { type: 'test' },
 			} );
 
@@ -66,15 +61,19 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			queueRequest( { dispatch }, httpAction, next );
 			queueRequest( { dispatch }, httpAction, next );
-			promiseResolvers.forEach( resolve => resolve() );
-			defer( () => queueRequest( { dispatch }, httpAction, next ) );
+			responseCallbacks.forEach( callback => callback( null ) );
+			queueRequest( { dispatch }, httpAction, next );
+			responseCallbacks.forEach( callback => callback( null ) );
 		} );
 
-		it( 'should not dedupe calls without opting in via dedupe flag', ( done ) => {
+		it( 'should not drop calls that opt out inflight dedupe', ( done ) => {
 			const httpAction = http( {
 				path: '/read/chickens',
 				method: 'GET',
 				onSuccess: { type: 'test' },
+				options: {
+					allowDuplicateInflightRequests: true,
+				}
 			} );
 
 			const dispatch = sinon.spy( action => {
@@ -87,15 +86,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			queueRequest( { dispatch }, httpAction, next );
 			queueRequest( { dispatch }, httpAction, next );
 			queueRequest( { dispatch }, httpAction, next );
-			promiseResolvers.forEach( resolve => resolve() );
+			responseCallbacks.forEach( callback => callback( null ) );
 		} );
 
-		it( 'should not dedupe POST calls', ( done ) => {
+		it( 'should not drop identical POST calls', ( done ) => {
 			const httpAction = http( {
 				path: '/read/chickens',
 				method: 'POST',
 				onSuccess: { type: 'test' },
-				dedupe: true,
 			} );
 
 			const dispatch = sinon.spy( action => {
@@ -107,15 +105,14 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			queueRequest( { dispatch }, httpAction, next );
 			queueRequest( { dispatch }, httpAction, next );
-			promiseResolvers.forEach( resolve => resolve() );
+			responseCallbacks.forEach( callback => callback( null ) );
 		} );
 
-		it( 'should not dedupe calls with same path but different query', ( done ) => {
+		it( 'should not drop calls with same path but different query', ( done ) => {
 			const httpAction1 = http( {
 				path: '/read/chickens',
 				method: 'POST',
 				onSuccess: { type: 'test' },
-				dedupe: true,
 			} );
 
 			const httpAction2 = http( {
@@ -123,7 +120,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				method: 'POST',
 				apiVersion: '1.2',
 				onSuccess: { type: 'test' },
-				dedupe: true,
 			} );
 
 			const dispatch = sinon.spy( action => {
@@ -135,7 +131,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			queueRequest( { dispatch }, httpAction1, next );
 			queueRequest( { dispatch }, httpAction2, next );
-			promiseResolvers.forEach( resolve => resolve() );
+			responseCallbacks.forEach( callback => callback( null ) );
 		} );
 	} );
 } );
