@@ -28,24 +28,23 @@ export default function themePreview( WebPreview ) {
 			getPrimaryButtonHref: React.PropTypes.func,
 			secondaryButtonLabel: React.PropTypes.string,
 			onSecondaryButtonClick: React.PropTypes.func,
-			getSecondaryButtonHref: React.PropTypes.func,
 		},
 
 		getDefaultProps() {
 			return {
 				getPrimaryButtonHref: () => null,
 				onSecondaryButtonClick: noop,
-				getSecondaryButtonHref: () => null,
 			};
-		},
-
-		onSecondaryButtonClick() {
-			this.props.onSecondaryButtonClick( this.props.theme );
-			this.props.onClose();
 		},
 
 		onPrimaryButtonClick() {
 			const option = this.getPrimaryOption();
+			option.action && option.action( this.props.theme );
+			this.props.closePreview();
+		},
+
+		onSecondaryButtonClick() {
+			const option = this.props.options.tryAndCustomizeOnJetpack;
 			option.action && option.action( this.props.theme );
 			this.props.closePreview();
 		},
@@ -66,13 +65,14 @@ export default function themePreview( WebPreview ) {
 		},
 
 		renderSecondaryButton() {
-			if ( ! this.props.secondaryButtonLabel ) {
+			const { tryAndCustomizeOnJetpack: secondaryButton } = this.props.options;
+			if ( ! secondaryButton ) {
 				return;
 			}
-			const buttonHref = this.props.getSecondaryButtonHref ? this.props.getSecondaryButtonHref( this.props.theme ) : null;
+			const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.theme ) : null;
 			return (
 				<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref } >
-					{ this.props.secondaryButtonLabel }
+					{ secondaryButton.label }
 				</Button>
 			);
 		},
