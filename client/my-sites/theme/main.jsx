@@ -653,7 +653,7 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
-		const isWpcomTheme = isThemeWpcom( state, id );
+		const isWpcomTheme = selectedSite ? isThemeWpcom( state, id, selectedSite.ID ) : true;
 		const siteIdOrWpcom = ( isJetpack && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );

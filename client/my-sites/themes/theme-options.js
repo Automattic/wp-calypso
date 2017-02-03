@@ -150,13 +150,13 @@ const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
 	getUrl: getSupportUrl,
-	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id ) || ! isWpcomTheme( state, theme.id )
+	hideForTheme: ( state, theme, siteId ) => ! isPremium( state, theme.id ) || ! isWpcomTheme( state, theme.id, siteId )
 };
 
 const help = {
 	label: i18n.translate( 'Support' ),
 	getUrl: getHelpUrl,
-	hideForTheme: ( state, theme ) => ! isWpcomTheme( state, theme.id )
+	hideForTheme: ( state, theme, siteId ) => ! isWpcomTheme( state, theme.id, siteId )
 };
 
 const ALL_THEME_OPTIONS = {
