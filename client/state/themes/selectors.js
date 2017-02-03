@@ -588,7 +588,7 @@ export function isPremiumSquaredTheme( state, themeId ) {
 }
 
 /**
- * Whether a WPCOM theme can be activated on a site.
+ * Whether a WPCOM premium theme can be activated on a site.
  *
  * @param  {Object}  state   Global state tree
  * @param  {String}  themeId Theme ID for which we check availability
@@ -596,10 +596,9 @@ export function isPremiumSquaredTheme( state, themeId ) {
  * @return {Boolean}        True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return !! (
-		isThemePurchased( state, themeId, siteId ) ||
-			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-			( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
+	return isThemePurchased( state, themeId, siteId ) ||
+		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED )
 	);
 }
 

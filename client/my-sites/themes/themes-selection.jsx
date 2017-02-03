@@ -159,8 +159,13 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
-			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId ),
-			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId )
+			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
+			// Note: This component assumes that purchase and plans data is already present in the state tree
+			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
+			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
+			// provides caching, and both are already being rendered by a parent component. So to avoid
+			// redundant AJAX requests, we're not rendering these query components locally.
+			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
 	}
 )( ThemesSelection );
