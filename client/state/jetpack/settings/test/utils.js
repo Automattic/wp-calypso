@@ -144,6 +144,9 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: true,
 				wpcom_publish_comments_with_markdown: true,
+				'custom-content-types': true,
+				jetpack_testimonial: true,
+				jetpack_portfolio: false,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -159,6 +162,8 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_testimonial: true,
+				jetpack_portfolio: false,
 			} );
 		} );
 
@@ -181,6 +186,9 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: false,
 				wpcom_publish_comments_with_markdown: true,
+				'custom-content-types': false,
+				jetpack_testimonial: true,
+				jetpack_portfolio: false,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -202,6 +210,8 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_testimonial: true,
+				jetpack_portfolio: false,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
