@@ -28,9 +28,13 @@
 
 .video-editor__preview-wrapper .spinner,
 .video-editor__preview {
+	display: flex;
+	align-items: center;
 	position: absolute;
 		top: 50%;
 		left: 50%;
+	height: 100%;
+	width: 100%;
 	max-height: 100%;
 	max-width: 100%;
 	transform: translate( -50%, -50% );
