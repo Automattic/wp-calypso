@@ -29,13 +29,13 @@ class ThemeEnhancements extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label ) {
+	renderToggle( name, isDisabled, label ) {
 		const { fields, handleToggle } = this.props;
 		return (
 			<FormToggle
 				className="theme-enhancements__module-settings-toggle is-compact"
 				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() }
+				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleToggle( name ) }>
 				<span className="site-settings__toggle-label">
 					{ label }
@@ -94,22 +94,18 @@ class ThemeEnhancements extends Component {
 					disabled={ formPending }
 					/>
 
-				{
-					infiniteScrollModuleActive && (
-						<div className="theme-enhancements__module-settings is-indented">
-							{
-								this.renderToggle( 'infinite_scroll', translate(
-									'Scroll infinitely (Shows 7 posts on each load)'
-								) )
-							}
-							{
-								this.renderToggle( 'infinite_scroll_google_analytics', translate(
-									'Track each infinite Scroll post load as a page view in Google Analytics'
-								) )
-							}
-						</div>
-					)
-				}
+				<div className="theme-enhancements__module-settings is-indented">
+					{
+						this.renderToggle( 'infinite_scroll', ! infiniteScrollModuleActive, translate(
+							'Scroll infinitely (Shows 7 posts on each load)'
+						) )
+					}
+					{
+						this.renderToggle( 'infinite_scroll_google_analytics', ! infiniteScrollModuleActive, translate(
+							'Track each infinite Scroll post load as a page view in Google Analytics'
+						) )
+					}
+				</div>
 			</FormFieldset>
 		);
 	}
@@ -139,27 +135,28 @@ class ThemeEnhancements extends Component {
 					disabled={ formPending }
 					/>
 
-				{
-					minilevenModuleActive && (
-						<div className="theme-enhancements__module-settings is-indented">
+				<div className="theme-enhancements__module-settings is-indented">
+					{
+						this.renderToggle( 'wp_mobile_excerpt', ! minilevenModuleActive, translate(
+							'Show excerpts on front page and on archive pages instead of full posts'
+						) )
+					}
+					{
+						this.renderToggle( 'wp_mobile_featured_images', ! minilevenModuleActive, translate(
+							'Hide all featured images'
+						) )
+					}
+					{
+						this.renderToggle( 'wp_mobile_app_promos', ! minilevenModuleActive, translate(
+							'Show an ad for the {{link}}WordPress mobile apps{{/link}} in the footer of the mobile theme',
 							{
-								this.renderToggle( 'wp_mobile_excerpt', translate(
-									'Show excerpts on front page and on archive pages instead of full posts'
-								) )
+								components: {
+									link: <a href="https://apps.wordpress.com/" />
+								}
 							}
-							{
-								this.renderToggle( 'wp_mobile_featured_images', translate(
-									'Hide all featured images'
-								) )
-							}
-							{
-								this.renderToggle( 'wp_mobile_app_promos', translate(
-									'Show an ad for the WordPress mobile apps in the footer of the mobile theme'
-								) )
-							}
-						</div>
-					)
-				}
+						) )
+					}
+				</div>
 			</FormFieldset>
 		);
 	}
