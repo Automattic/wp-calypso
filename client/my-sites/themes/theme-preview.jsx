@@ -82,7 +82,7 @@ export default function themePreview( WebPreview ) {
 
 		render() {
 			const primaryOption = this.getPrimaryOption();
-			const buttonHref = this.props.getPrimaryButtonHref ? this.props.getPrimaryButtonHref( this.props.theme ) : null;
+			const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
 
 			return (
 				<WebPreview
