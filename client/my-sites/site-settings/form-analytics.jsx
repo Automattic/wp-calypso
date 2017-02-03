@@ -199,7 +199,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const isGoogleAnalyticsEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const jetpackModuleActive = isJetpackModuleActive( state, site.ID, 'google-analytics' );
-	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, site.ID, '4.5-beta1' );
+	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, site.ID, '4.6-alpha' );
 	const googleAnalyticsEnabled = site && (
 		! site.jetpack ||
 		( site.jetpack && jetpackModuleActive && jetpackVersionSupportsModule && isEnabled( 'jetpack/google-analytics' ) )

@@ -23,6 +23,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/connect": true,
+		"jetpack/google-analytics": true,
 		"jetpack/personalPlan": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
