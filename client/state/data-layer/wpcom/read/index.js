@@ -8,4 +8,5 @@ import tags from './tags';
 export default mergeHandlers(
 	teams,
 	tags,
+	follows,
 );
