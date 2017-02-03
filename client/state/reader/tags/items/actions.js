@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { memoize, trim } from 'lodash';
+import { kebabCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,14 +23,7 @@ import {
  * @param  {String} tag  Tag name to parse into a slug
  * @return {String}      Tag slug
  */
-const unmemoizedSlugify = ( tag ) => encodeURIComponent(
-	trim( tag )
-		.toLowerCase()
-		.replace( /\s+/g, '-' )
-		.replace( /-{2,}/g, '-' )
-);
-
-export const slugify = memoize( unmemoizedSlugify, x => x );
+const slugify = ( tag ) => encodeURIComponent( kebabCase( tag ) );
 
 export const requestTags = () => ( { type: READER_FETCH_TAGS_REQUEST } );
 export const receiveTags = () => ( { type: READER_FETCH_TAGS_RECEIVE } );
