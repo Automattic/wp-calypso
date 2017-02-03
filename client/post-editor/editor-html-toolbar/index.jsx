@@ -46,6 +46,7 @@ export class EditorHtmlToolbar extends Component {
 	componentDidMount() {
 		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
 		this.hideToolbarFadeOnFullScroll = throttle( this.hideToolbarFadeOnFullScroll, 200 );
+		this.onWindowResize = throttle( this.onWindowResize, 400 );
 
 		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.addEventListener( 'resize', this.onWindowResize );
@@ -65,8 +66,8 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	onWindowResize = () => {
-		throttle( this.disablePinOnSmallScreens, 400 );
-		throttle( this.toggleToolbarScrollableOnResize, 200 );
+		this.disablePinOnSmallScreens();
+		this.toggleToolbarScrollableOnResize();
 	}
 
 	pinToolbarOnScroll = () => {
@@ -85,7 +86,7 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	disablePinOnSmallScreens = () => {
-		if ( isWithinBreakpoint( '<660px' ) ) {
+		if ( this.state.isPinned && isWithinBreakpoint( '<660px' ) ) {
 			this.setState( { isPinned: false } );
 		}
 	}
