@@ -455,6 +455,26 @@ export function clearActivated( siteId ) {
 }
 
 /**
+ * Switches to the customizer to preview a given theme.
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @return {Function}           Action thunk
+ */
+export function tryAndCustomize( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
+			// installation will silently fail, and we just switch to the customizer.
+			return dispatch( installAndTryAndCustomizeTheme( themeId + '-wpcom', siteId ) );
+		}
+
+		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
+	};
+}
+
+/**
  * Triggers a network request to install theme on Jetpack site.
  * After installataion it switches page to the customizer
  * See installTheme doc for install options.
