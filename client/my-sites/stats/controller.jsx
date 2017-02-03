@@ -9,7 +9,6 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
@@ -21,7 +20,6 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
 
@@ -166,8 +164,6 @@ module.exports = {
 			const props = {
 				period: activeFilter.period,
 				path: context.pathname,
-				sites,
-				user
 			};
 			renderWithReduxStore(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/overview" { ...props } />,
