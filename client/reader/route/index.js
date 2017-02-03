@@ -1,20 +1,27 @@
+/**
+ * Internal dependencies
+ */
+
+import config from 'config';
+
 const FEED_URL_BASE = '/read/feeds/';
 const SITE_URL_BASE = '/read/blogs/';
 
-const PRETTY_FEED_URLS = {
-	12733228: '/discover'
-};
+const DISCOVER_SITE_ID = config( 'discover_blog_id' );
+const DISCOVER_FEED_ID = config( 'discover_feed_id' );
 
-const PRETTY_SITE_URLS = {
-	53424024: '/discover'
-};
+const prettyFeedUrls = {};
+prettyFeedUrls[ DISCOVER_FEED_ID ] = '/discover';
+
+const prettySiteUrls = {};
+prettySiteUrls[ DISCOVER_SITE_ID ] = '/discover';
 
 export function getPrettySiteUrl( siteID ) {
-	return PRETTY_SITE_URLS[ siteID ];
+	return prettySiteUrls[ siteID ];
 }
 
 export function getPrettyFeedUrl( feedID ) {
-	return PRETTY_FEED_URLS[ feedID ];
+	return prettyFeedUrls[ feedID ];
 }
 
 export function getSiteUrl( siteID ) {
