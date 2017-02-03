@@ -51,6 +51,7 @@ import {
 	installTheme,
 	installAndTryAndCustomizeTheme,
 	tryAndCustomizeTheme,
+	tryAndCustomize,
 	deleteTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -1039,6 +1040,88 @@ describe( 'actions', () => {
 				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
 				expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) ) );
 				done();
+			} );
+		} );
+	} );
+
+	describe( '#tryAndCustomize', () => {
+		const stub = sinon.stub();
+		stub.returns( new Promise( ( res ) => {
+			res();
+		} ) );
+
+		context( 'on a WordPress.com site', () => {
+			stub.reset();
+			const fakeGetState = () => ( {
+				sites: {
+					items: {
+						77203074: {
+							jetpack: false
+						}
+					}
+				}
+			} );
+			it( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', ( done ) => {
+				tryAndCustomize( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
+					expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomizeTheme( 'karuna', 77203074 ) ) );
+					expect( stub ).to.not.have.been.calledWith( matchFunction(
+						installAndTryAndCustomizeTheme( 'karuna-wpcom', 77203074 )
+					) );
+					done();
+				} );
+			} );
+		} );
+
+		context( 'on a Jetpack site', () => {
+			const sitesState = {
+				sites: {
+					items: {
+						2211667: {
+							jetpack: true
+						}
+					}
+				}
+			};
+			context( 'if the theme is already installed', () => {
+				stub.reset();
+				const fakeGetState = () => ( {
+					...sitesState,
+					themes: {
+						queries: {
+							2211667: new ThemeQueryManager( {
+								items: { karuna: {} }
+							} )
+						}
+					}
+				} );
+				it( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', ( done ) => {
+					tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
+						expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomizeTheme( 'karuna', 2211667 ) ) );
+						expect( stub ).to.not.have.been.calledWith( matchFunction(
+							installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 )
+						) );
+						done();
+					} );
+				} );
+			} );
+
+			context( 'if the theme isn\'t installed', () => {
+				stub.reset();
+				const fakeGetState = () => ( {
+					...sitesState,
+					themes: {
+						queries: {}
+					}
+				} );
+				it( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', ( done ) => {
+					tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
+						expect( stub ).to.not.have.been.calledWith( matchFunction( tryAndCustomize( 'karuna', 2211667 ) ) );
+						expect( stub ).to.have.been.calledWith( matchFunction(
+							installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 )
+						) );
+						done();
+					} );
+				} );
 			} );
 		} );
 	} );
