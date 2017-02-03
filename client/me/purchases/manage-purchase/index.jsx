@@ -171,14 +171,18 @@ const ManagePurchase = React.createClass( {
 		}
 		if ( isMonthly( purchase.productSlug ) ) {
 			const expiryMoment = this.moment( purchase.expiryMoment );
-			const daysToExpiry = this.moment( expiryMoment.diff( this.moment() ) ).format( 'D' );
+			const daysToExpiry = Number( this.moment( expiryMoment.diff( this.moment() ) ).format( 'D' ) );
 
-			return this.translate( '%(purchaseName)s will expire and be removed from your site in %(expiry)s days. ',
+			return this.translate(
+				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d day. ',
+				'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days. ',
 				{
+					count: daysToExpiry,
 					args: {
 						purchaseName: getName( purchase ),
-						expiry: daysToExpiry
-					}
+						daysToExpiry: daysToExpiry
+					},
+					comment: '%(daysToExpiry)d will be a plain number like "42"'
 				}
 			);
 		}
