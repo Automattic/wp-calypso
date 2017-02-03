@@ -86,8 +86,9 @@ assign( SignupFlowController.prototype, {
 	},
 
 	_assertFlowProvidedDependenciesFromConfig: function( providedDependencies ) {
-		if ( difference( this._flow.providesDependenciesInQuery, keys( providedDependencies ) ).length > 0 ) {
-			throw new Error( this._flowName + ' did not provide the dependencies it is configured to.' );
+		const dependencyDiff = difference( this._flow.providesDependenciesInQuery, keys( providedDependencies ) );
+		if ( dependencyDiff.length > 0 ) {
+			throw new Error( this._flowName + ' did not provide the query dependencies [' + dependencyDiff + '] it is configured to.' );
 		}
 	},
 
