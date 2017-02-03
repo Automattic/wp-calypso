@@ -82,7 +82,9 @@ export default class FormToggle extends PureComponent {
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
 						></span>
-					{ this.props.children }
+					<span className="form-toggle__label-content">
+						{ this.props.children }
+					</span>
 				</label>
 			</span>
 		);
