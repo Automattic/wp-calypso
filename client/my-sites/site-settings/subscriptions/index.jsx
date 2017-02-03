@@ -50,20 +50,18 @@ const Subscriptions = ( {
 						className="subscriptions__module-settings-toggle is-compact"
 						checked={ !! fields.stb_enabled }
 						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
-						onChange={ handleToggle( 'stb_enabled' ) }>
-						<span className="site-settings__toggle-label">
-							{ translate( 'Show a "follow blog" option in the comment form' ) }
-						</span>
+						onChange={ handleToggle( 'stb_enabled' ) }
+					>
+						{ translate( 'Show a "follow blog" option in the comment form' ) }
 					</FormToggle>
 
 					<FormToggle
 						className="subscriptions__module-settings-toggle is-compact"
 						checked={ !! fields.stc_enabled }
 						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
-						onChange={ handleToggle( 'stc_enabled' ) }>
-						<span className="site-settings__toggle-label">
-							{ translate( 'Show a "follow comments" option in the comment form.' ) }
-						</span>
+						onChange={ handleToggle( 'stc_enabled' ) }
+					>
+						{ translate( 'Show a "follow comments" option in the comment form.' ) }
 					</FormToggle>
 
 					<p className="subscriptions__email-followers">
