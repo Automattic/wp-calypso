@@ -30,26 +30,6 @@ import { DEFAULT_THEME_QUERY } from './constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
- * When wpcom themes are installed on Jetpack sites, the
- * theme id is suffixed with -wpcom. Some operations require
- * the use of this suffixed ID. This util function add the
- * suffix if the theme is a wpcom theme and the site is Jetpack.
- * or not, given siteId and ThemeId.
- *
- * @param {Object} state	Global state tree
- * @param {String} themeId	Theme ID
- * @param {Number} siteId	Site ID
- * @return {String} 		Potentially suffixed theme ID
- */
-const getSuffixedThemeId = ( state, themeId, siteId ) => {
-	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
-	if ( siteIsJetpack && isWpcomTheme( state, themeId, siteId ) ) {
-		return `${ themeId }-wpcom`;
-	}
-	return themeId;
-};
-
-/**
  * Returns a theme object by site ID, theme ID pair.
  *
  * @param  {Object}  state   Global state tree
@@ -86,6 +66,26 @@ export const getTheme = createSelector(
 	},
 	( state ) => state.themes.queries
 );
+
+/**
+ * When wpcom themes are installed on Jetpack sites, the
+ * theme id is suffixed with -wpcom. Some operations require
+ * the use of this suffixed ID. This util function add the
+ * suffix if the theme is a wpcom theme and the site is Jetpack.
+ * or not, given siteId and ThemeId.
+ *
+ * @param {Object} state	Global state tree
+ * @param {String} themeId	Theme ID
+ * @param {Number} siteId	Site ID
+ * @return {String} 		Potentially suffixed theme ID
+ */
+const getSuffixedThemeId = ( state, themeId, siteId ) => {
+	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
+	if ( siteIsJetpack && ! getTheme( state, siteId, themeId ) ) {
+		return `${ themeId }-wpcom`;
+	}
+	return themeId;
+};
 
 /**
  * Returns theme request error object
@@ -323,23 +323,6 @@ export function isRequestingActiveTheme( state, siteId ) {
  */
 export function isWporgTheme( state, themeId ) {
 	return !! getTheme( state, 'wporg', themeId );
-}
-
-/**
- * Whether a theme is present on WordPress.com.
- *
- * Returns false if themeId is installed on (jetpack) siteId, since
- * installed themes take priority. For example, this can be the case
- * with themes available on both wpcom and .org such as 'twentysixteen'.
- *
- * @param  {Object}  state   Global state tree
- * @param  {Number}  themeId Theme ID
- * @param  {Number}  siteId  Site ID
- * @return {Boolean}         Whether theme available on WordPress.com
- */
-export function isWpcomTheme( state, themeId, siteId ) {
-	return !! ( getTheme( state, 'wpcom', themeId ) &&
-		! getTheme( state, siteId, themeId ) );
 }
 
 /**
