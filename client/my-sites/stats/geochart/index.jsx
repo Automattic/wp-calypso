@@ -142,7 +142,7 @@ class StatsGeochart extends Component {
 		return (
 			<div>
 				<div ref="chart" className={ classes } />
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } heartbeat={ 60000 } /> }
+				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
 			</div>
 		);

@@ -10,6 +10,7 @@ import shallowEqual from 'react-pure-render/shallowEqual';
  */
 import { requestSiteStats } from 'state/stats/lists/actions';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
 	componentDidMount() {
@@ -37,7 +38,7 @@ class QuerySiteStats extends Component {
 
 		this.props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
-		if ( heartbeat ) {
+		if ( heartbeat, isAutoRefreshAllowedForQuery( query ) ) {
 			this.interval = setInterval( () => {
 				if ( ! this.props.requesting ) {
 					this.props.requestSiteStats( siteId, statType, query );
@@ -68,7 +69,7 @@ QuerySiteStats.propTypes = {
 
 QuerySiteStats.defaultProps = {
 	query: {},
-	heartbeat: 0
+	heartbeat: 3 * 60 * 1000 // 3 minutes
 };
 
 export default connect(

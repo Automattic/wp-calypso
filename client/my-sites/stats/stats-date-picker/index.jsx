@@ -9,9 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Tooltip from 'components/tooltip';
 import { getSiteStatsQueryDate } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class StatsDatePicker extends Component {
 	static propTypes = {
@@ -28,6 +30,18 @@ class StatsDatePicker extends Component {
 
 	static defaultProps = {
 		showQueryDate: false
+	};
+
+	state = {
+		isTooltipVisible: false
+	};
+
+	showTooltip = () => {
+		this.setState( { isTooltipVisible: true } );
+	};
+
+	hideTooltip = () => {
+		this.setState( { isTooltipVisible: false } );
 	};
 
 	dateForSummarize() {
@@ -91,17 +105,24 @@ class StatsDatePicker extends Component {
 
 	renderQueryDate() {
 		const { queryDate, moment, translate } = this.props;
+		if ( ! queryDate ) {
+			return null;
+		}
+
 		const today = moment();
 		const date = moment( queryDate );
 		const isToday = today.isSame( date, 'day' );
-
 		return translate( 'Last update: %(time)s', {
 			args: { time: isToday ? date.format( 'HH:mm' ) : date.fromNow() }
 		} );
 	}
 
+	bindPulsingDot = ( ref ) => {
+		this.pulsingDot = ref;
+	}
+
 	render() {
-		const { summary, translate, query, queryDate, showQueryDate } = this.props;
+		const { summary, translate, query, showQueryDate } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		const sectionTitle = translate( 'Stats for {{period/}}', {
@@ -123,11 +144,29 @@ class StatsDatePicker extends Component {
 					: <div className="stats-section-title">
 							<h3>{ sectionTitle }</h3>
 							{ showQueryDate &&
-								<span className="stats-date-picker__update-date">
-									{ queryDate && this.renderQueryDate() }
-								</span>
+								<div className="stats-date-picker__refresh-status">
+									<span className="stats-date-picker__update-date">
+										{ this.renderQueryDate() }
+									</span>
+									{ isAutoRefreshAllowedForQuery( query ) &&
+										<div className="stats-date-picker__pulsing-dot-wrapper"
+											ref={ this.bindPulsingDot }
+											onMouseEnter={ this.showTooltip }
+											onMouseLeave={ this.hideTooltip }
+										>
+											<div className="stats-date-picker__pulsing-dot" />
+											<Tooltip
+												isVisible={ this.state.isTooltipVisible }
+												onClose={ this.hideTooltip }
+												position="bottom"
+												context={ this.pulsingDot }
+											>
+												{ translate( 'Auto-refreshing every 3 minutes' )}
+											</Tooltip>
+										</div>
+									}
+								</div>
 							}
-							{ showQueryDate &&	<div className="stats-date-picker__pulsing-dot" /> }
 						</div>
 				}
 			</div>

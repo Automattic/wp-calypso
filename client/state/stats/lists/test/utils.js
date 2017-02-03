@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,6 +12,7 @@ import {
 	normalizers,
 	rangeOfPeriod,
 	buildExportArray,
+	isAutoRefreshAllowedForQuery,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -125,6 +127,38 @@ describe( 'utils', () => {
 			} );
 
 			expect( serializedQuery ).to.eql( serializedQueryTwo );
+		} );
+	} );
+
+	describe( 'isAutoRefreshAllowedForQuery()', () => {
+		it( 'should return true if not query specified', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery();
+			expect( isAllowed ).to.be.true;
+		} );
+
+		it( 'should return true for empty queries', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery( {} );
+			expect( isAllowed ).to.be.true;
+		} );
+
+		it( 'should return true for queries without date', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery( { quantity: 3 } );
+			expect( isAllowed ).to.be.true;
+		} );
+
+		it( 'should return true for queries without period', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery( { date: '2016-06-01' } );
+			expect( isAllowed ).to.be.true;
+		} );
+
+		it( 'should return false for a period that doesn\'t include today', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery( { period: 'week', date: '2016-06-01' } );
+			expect( isAllowed ).to.be.false;
+		} );
+
+		it( 'should return true for a period that includes today', () => {
+			const isAllowed = isAutoRefreshAllowedForQuery( { period: 'day', date: moment().format( 'YYYY-MM-DD' ) } );
+			expect( isAllowed ).to.be.true;
 		} );
 	} );
 

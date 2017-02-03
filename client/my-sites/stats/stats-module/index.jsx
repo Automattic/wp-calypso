@@ -50,6 +50,16 @@ class StatsModule extends Component {
 		query: {}
 	};
 
+	state = {
+		loaded: false
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.requesting && this.props.requesting ) {
+			this.setState( { loaded: true } );
+		}
+	}
+
 	getModuleLabel() {
 		if ( ! this.props.summary ) {
 			return this.props.moduleStrings.title;
@@ -98,12 +108,12 @@ class StatsModule extends Component {
 
 		const noData = (
 			data &&
-			! requesting &&
+			this.state.loaded &&
 			! data.length
 		);
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const isLoading = requesting && ! ( data && data.length );
+		const isLoading = ! this.state.loaded && ! ( data && data.length );
 
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -125,7 +135,7 @@ class StatsModule extends Component {
 
 		return (
 			<div>
-				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } heartbeat={ 60000 } /> }
+				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ ! isAllTime &&
 					<SectionHeader className={ headerClass } label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
 						{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
