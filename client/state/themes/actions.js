@@ -44,7 +44,7 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_PREVIEW_PRIMARY_OPTION,
+	PREVIEWING_THEME_DATA,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -68,9 +68,7 @@ import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 import config from 'config';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
-import { getPreviewUrl } from 'my-sites/themes/helpers';
-import { setUrlScheme } from 'lib/url';
+import { setPreviewType } from 'state/ui/preview/actions';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -771,20 +769,19 @@ export function confirmDelete( themeId, siteId ) {
 	};
 }
 
-function setThemePreviewPrimaryOption( siteId, primaryButtonLabel ) {
+function setPreviewingThemeData( themeId, siteId ) {
 	return {
-		type: THEME_PREVIEW_PRIMARY_OPTION,
-		siteId,
-		primaryButtonLabel,
+		type: PREVIEWING_THEME_DATA,
+		themeData: {
+			themeId,
+			siteId
+		}
 	};
 }
 
 export function requestPreview( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		const theme = getTheme( getState(), 'wpcom', themeId );
-		const url = getPreviewUrl( theme );
-		dispatch( setThemePreviewPrimaryOption( siteId ) );
-		dispatch( setPreviewUrl( setUrlScheme( url, 'https' ) ) );
+	return ( dispatch ) => {
+		dispatch( setPreviewingThemeData( themeId, siteId ) );
 		dispatch( setPreviewType( 'theme-preview' ) );
 		dispatch( setLayoutFocus( 'preview' ) );
 	};

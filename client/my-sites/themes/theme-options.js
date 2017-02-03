@@ -90,7 +90,7 @@ const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	action: ( themeId, siteId, theme ) => requestPreview( themeId, siteId, theme ),
+	action: ( themeId ) => requestPreview( themeId, 'wpcom' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 

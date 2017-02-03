@@ -603,3 +603,14 @@ export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
 	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
+
+/**
+ * Returns themeId to preview for site.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Object}         Last query
+ */
+export function getThemeForPreviewData( state ) {
+	return get( state.themes.previewingTheme, 'themeData', null );
+}

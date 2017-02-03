@@ -154,11 +154,6 @@ const ThemeShowcase = React.createClass( {
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 		const primaryOption = this.getPrimaryOption();
 
-		// If a preview action is passed, use that. Otherwise, use our own.
-		if ( options.preview && ! options.preview.action ) {
-			options.preview.action = theme => this.togglePreview( theme );
-		}
-
 		const metas = [
 			{ name: 'description', property: 'og:description', content: themesMeta[ tier ].description },
 			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },

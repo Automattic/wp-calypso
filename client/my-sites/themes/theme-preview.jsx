@@ -10,7 +10,9 @@ import noop from 'lodash/noop';
  */
 import Button from 'components/button';
 import { connectOptions } from './theme-options';
-import { getPreviewUrl } from 'state/ui/preview/selectors';
+import { getThemeForPreviewData, getTheme } from 'state/themes/selectors';
+import { getPreviewUrl } from 'my-sites/themes/helpers';
+import { localize } from 'i18n-calypso';
 
 export default function themePreview( WebPreview ) {
 	const ThemePreview = React.createClass( {
@@ -21,7 +23,6 @@ export default function themePreview( WebPreview ) {
 			showPreview: React.PropTypes.bool,
 			showExternal: React.PropTypes.bool,
 			onClose: React.PropTypes.func,
-			primaryButtonLabel: React.PropTypes.string.isRequired,
 			onPrimaryButtonClick: React.PropTypes.func,
 			getPrimaryButtonHref: React.PropTypes.func,
 			secondaryButtonLabel: React.PropTypes.string,
@@ -48,6 +49,21 @@ export default function themePreview( WebPreview ) {
 			this.props.onClose();
 		},
 
+		getPrimaryOption() {
+			const { translate } = this.props;
+			const { purchase, activate, activateOnJetpack } = this.props.options;
+			const { price } = this.props.theme;
+			let primaryOption = activate || activateOnJetpack;
+			if ( price && purchase ) {
+				primaryOption = purchase;
+				primaryOption.label = translate( 'Pick this design' );
+			} else if ( activate ) {
+				primaryOption = activate;
+				primaryOption.label = translate( 'Activate this design' );
+			}
+			return primaryOption;
+		},
+
 		renderSecondaryButton() {
 			if ( ! this.props.secondaryButtonLabel ) {
 				return;
@@ -61,6 +77,7 @@ export default function themePreview( WebPreview ) {
 		},
 
 		render() {
+			const primaryOption = this.getPrimaryOption();
 			const buttonHref = this.props.getPrimaryButtonHref ? this.props.getPrimaryButtonHref( this.props.theme ) : null;
 
 			return (
@@ -72,7 +89,7 @@ export default function themePreview( WebPreview ) {
 					previewUrl={ this.props.previewUrl } >
 					{ this.renderSecondaryButton() }
 					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
-						{ this.props.primaryButtonLabel }
+						{ primaryOption.label }
 					</Button>
 				</WebPreview>
 			);
@@ -83,9 +100,11 @@ export default function themePreview( WebPreview ) {
 
 	return connect(
 		( state ) => {
+			const themeData = getThemeForPreviewData( state );
+			const theme = getTheme( state, themeData.siteId, themeData.themeId );
 			return {
-				previewUrl: getPreviewUrl( state ),
-				primaryButtonLabel: 'Hello There!',
+				theme,
+				previewUrl: getPreviewUrl( theme ),
 				options: [
 					'activateOnJetpack',
 					'preview',
@@ -98,5 +117,5 @@ export default function themePreview( WebPreview ) {
 				]
 			};
 		}
-	)( ConnectedThemePreview );
+	)( localize( ConnectedThemePreview ) );
 }
