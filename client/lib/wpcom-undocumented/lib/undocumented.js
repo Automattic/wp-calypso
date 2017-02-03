@@ -606,33 +606,6 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
 };
 
 /**
- * Validates the specified Google Apps contact information
- *
- * @param {Object} contactInformation - user's contact information
- * @param {Function} callback The callback function
- * @returns {Promise} A promise that resolves when the request completes
- * @api public
- */
-Undocumented.prototype.validateGoogleAppsContactInformation = function( contactInformation, callback ) {
-	const data = mapKeysRecursively( { contactInformation }, snakeCase );
-
-	return this.wpcom.req.post(
-		{ path: '/me/google-apps/validate' },
-		data, ( error, successData ) => {
-			if ( error ) {
-				return callback( error );
-			}
-
-			const newData = mapKeysRecursively( successData, ( key ) => {
-				return ( key === '_headers' ) ? key : camelCase( key );
-			} );
-
-			callback( null, newData );
-		}
-	);
-};
-
-/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function

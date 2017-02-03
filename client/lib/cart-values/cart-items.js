@@ -458,11 +458,6 @@ function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
-function hasGoogleApps( cart ) {
-	return some( getAll( cart ), isGoogleApps );
-}
-
-
 function customDesignItem() {
 	return {
 		product_slug: 'custom-design'
@@ -793,7 +788,6 @@ module.exports = {
 	hasDomainMapping,
 	hasDomainRegistration,
 	hasFreeTrial,
-	hasGoogleApps,
 	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
