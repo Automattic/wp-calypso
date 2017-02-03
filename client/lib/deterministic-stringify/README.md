@@ -1,4 +1,4 @@
-deterministic-stringify
+dteterministic-stringify
 =======================
 
 This module takes a single parameter and converts it to a namespace representing that parameter. Generally this will be an options object passed into a function, and in particular this is useful for parameters that will be applied to a fetch request.
