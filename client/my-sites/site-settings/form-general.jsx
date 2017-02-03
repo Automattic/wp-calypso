@@ -310,10 +310,9 @@ class SiteSettingsFormGeneral extends Component {
 							className="is-compact"
 							checked={ !! fields.jetpack_relatedposts_enabled }
 							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }>
-							<span className="site-settings__toggle-label">
-								{ translate( 'Show related content after posts' ) }
-							</span>
+							onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }
+						>
+							{ translate( 'Show related content after posts' ) }
 						</FormToggle>
 					</li>
 					<li>
@@ -323,12 +322,11 @@ class SiteSettingsFormGeneral extends Component {
 									className="is-compact"
 									checked={ !! fields.jetpack_relatedposts_show_headline }
 									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
-									onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }>
-									<span className="site-settings__toggle-label">
-										{ translate(
-											'Show a "Related" header to more clearly separate the related section from posts'
-										) }
-									</span>
+									onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }
+								>
+									{ translate(
+										'Show a "Related" header to more clearly separate the related section from posts'
+									) }
 								</FormToggle>
 							</li>
 							<li>
@@ -336,12 +334,11 @@ class SiteSettingsFormGeneral extends Component {
 									className="is-compact"
 									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
 									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
-									onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }>
-									<span className="site-settings__toggle-label">
-										{ translate(
-											'Use a large and visually striking layout'
-										) }
-									</span>
+									onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }
+								>
+									{ translate(
+										'Use a large and visually striking layout'
+									) }
 								</FormToggle>
 							</li>
 						</ul>
@@ -383,12 +380,11 @@ class SiteSettingsFormGeneral extends Component {
 								className="is-compact"
 								checked={ !! fields.jetpack_sync_non_public_post_stati }
 								disabled={ isRequestingSettings }
-								onChange={ handleToggle( 'jetpack_sync_non_public_post_stati' ) }>
-								<span className="site-settings__toggle-label">
-									{ translate(
-										'Allow synchronization of Posts and Pages with non-public post statuses'
-									) }
-								</span>
+								onChange={ handleToggle( 'jetpack_sync_non_public_post_stati' ) }
+							>
+								{ translate(
+									'Allow synchronization of Posts and Pages with non-public post statuses'
+								) }
 							</FormToggle>
 							<FormSettingExplanation>
 								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
@@ -442,12 +438,11 @@ class SiteSettingsFormGeneral extends Component {
 							className="is-compact"
 							checked={ !! fields.holidaysnow }
 							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'holidaysnow' ) }>
-							<span className="site-settings__toggle-label">
-								{ translate(
-									'Show falling snow on my blog until January 4th.'
-								) }
-							</span>
+							onChange={ handleToggle( 'holidaysnow' ) }
+						>
+							{ translate(
+								'Show falling snow on my blog until January 4th.'
+							) }
 						</FormToggle>
 					</li>
 				</ul>
@@ -504,12 +499,11 @@ class SiteSettingsFormGeneral extends Component {
 					className="is-compact"
 					checked={ !! fields.api_cache }
 					disabled={ isRequestingSettings }
-					onChange={ handleToggle( 'api_cache' ) }>
-					<span className="site-settings__toggle-label">
-						{ translate(
-							'Use synchronized data to boost performance'
-						) }
-					</span>
+					onChange={ handleToggle( 'api_cache' ) }
+				>
+					{ translate(
+						'Use synchronized data to boost performance'
+					) }
 				</FormToggle>
 			</CompactCard>
 		);
