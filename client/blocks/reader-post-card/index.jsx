@@ -10,6 +10,8 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
@@ -26,7 +28,7 @@ import { getDiscoverBlogName,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
-export default class ReaderPostCard extends React.Component {
+class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
@@ -35,9 +37,13 @@ export default class ReaderPostCard extends React.Component {
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
-		discoverPick: PropTypes.object,
+		discoverPick: PropTypes.shape( {
+			post: PropTypes.object,
+			site: PropTypes.object,
+		} ),
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
+		showDiscoverFlag: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -103,6 +109,8 @@ export default class ReaderPostCard extends React.Component {
 			isSelected,
 			showSiteName,
 			followSource,
+			showDiscoverFlag,
+			translate
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
@@ -176,6 +184,11 @@ export default class ReaderPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
+				{ isDiscover && showDiscoverFlag &&
+					<div className="reader-post-card__discover-post-flag" >
+						<Gridicon icon="my-sites" size={ 16 } /> { translate( 'Featured on Discover' ) }
+					</div>
+				}
 				{ postByline }
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
@@ -184,3 +197,5 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 }
+
+export default localize( ReaderPostCard );
