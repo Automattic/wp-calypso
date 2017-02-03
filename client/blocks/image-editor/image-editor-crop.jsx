@@ -336,9 +336,22 @@ class ImageEditorCrop extends Component {
 		const currentTop = top - topBound,
 			currentLeft = left - leftBound,
 			currentWidth = right - left,
-			currentHeight = bottom - top,
-			imageWidth = rightBound - leftBound,
-			imageHeight = bottomBound - topBound;
+			currentHeight = bottom - top;
+
+		const imageWidth = rightBound - leftBound;
+		let imageHeight = bottomBound - topBound;
+
+		const rotated = this.props.degrees % 180 !== 0;
+
+		if ( this.props.originalAspectRatio ) {
+			const { width, height } = this.props.originalAspectRatio;
+			const originalImageWidth = rotated ? height : width;
+			const originalImageHeight = rotated ? width : height;
+
+			// avoid compounding rounding errors
+			const ratio = originalImageHeight / originalImageWidth;
+			imageHeight = imageWidth * ratio;
+		}
 
 		return [
 			currentTop / imageHeight,
