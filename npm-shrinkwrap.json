@@ -1518,14 +1518,6 @@
     "extglob": {
       "version": "0.3.2"
     },
-    "extract-text-webpack-plugin": {
-      "version": "1.0.1",
-      "dependencies": {
-        "async": {
-          "version": "1.5.2"
-        }
-      }
-    },
     "extsprintf": {
       "version": "1.0.2"
     },
@@ -2203,6 +2195,9 @@
     },
     "isomorphic-fetch": {
       "version": "2.2.1"
+    },
+    "isomorphic-style-loader": {
+      "version": "1.1.0"
     },
     "isstream": {
       "version": "0.1.2"
