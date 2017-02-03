@@ -65,6 +65,18 @@
 	&:last-child {
 		border-bottom: none;
 	}
+
+	&.is-placeholder {
+		height: auto;
+
+		td {
+			padding: 24px;
+		}
+
+		.billing-history__transaction-text {
+			@include placeholder();
+		}
+	}
 }
 
 .billing-history__header-row {

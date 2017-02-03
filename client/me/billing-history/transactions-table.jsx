@@ -133,13 +133,25 @@ var TransactionsTable = React.createClass( {
 		return description;
 	},
 
+	renderPlaceholder() {
+		return (
+			<tr className="billing-history__transaction is-placeholder">
+				<td className="date">
+					<div className="billing-history__transaction-text" />
+				</td>
+				<td className="billing-history__trans-app">
+					<div className="billing-history__transaction-text" />
+				</td>
+				<td className="billing-history__amount">
+					<div className="billing-history__transaction-text" />
+				</td>
+			</tr>
+		);
+	},
+
 	renderRows: function() {
 		if ( ! this.state.transactions ) {
-			return (
-				<tr className="billing-history__no-results">
-					<td className="billing-history__no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
-				</tr>
-			);
+			return this.renderPlaceholder();
 		}
 
 		if ( isEmpty( this.state.transactions ) ) {
