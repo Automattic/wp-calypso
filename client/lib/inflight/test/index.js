@@ -63,28 +63,28 @@ describe( 'inflight', () => {
 	} );
 	context( 'requestTracker', () => {
 		it( 'should track a good request', ( done ) => {
-			const cb = ( err ) => {
-				if ( err ) {
-					expect( true ).to.be.false;
-				}
+			const val = { one: 1 };
+			const cb = ( err, data ) => {
+				expect( err ).to.not.be.ok;
+				expect( data ).to.equal( val );
 				expect( isRequestInflight( key ) ).to.be.false;
 				done();
 			};
 			const tracked = requestTracker( key, cb );
 			expect( isRequestInflight( key ) ).to.be.true;
-			tracked( null, true );
+			tracked( null, val );
 		} );
 		it( 'should track a bad request', ( done ) => {
-			const cb = ( err ) => {
-				if ( ! err ) {
-					expect( true ).to.be.false;
-				}
+			const error = { one: 1 };
+			const cb = ( err, data ) => {
+				expect( err ).to.equal( error );
+				expect( data ).to.be.undefined;
 				expect( isRequestInflight( key ) ).to.be.false;
 				done();
 			};
 			const tracked = requestTracker( key, cb );
 			expect( isRequestInflight( key ) ).to.be.true;
-			tracked( true );
+			tracked( error );
 		} );
 	} );
 } );
