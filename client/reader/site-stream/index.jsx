@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import RefreshFeedHeader from 'blocks/reader-feed-header';
 import FeedFeatured from './featured';
@@ -40,11 +39,13 @@ class SiteStream extends React.Component {
 		siteId: React.PropTypes.number.isRequired,
 		className: React.PropTypes.string,
 		showBack: React.PropTypes.bool,
+		isDiscoverStream: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showBack: true,
 		className: 'is-site-stream',
+		isDiscoverStream: false,
 	};
 
 	constructor( props ) {
@@ -134,8 +135,7 @@ class SiteStream extends React.Component {
 
 	render() {
 		const site = this.state.site,
-			emptyContent = ( <EmptyContent /> ),
-			isDiscoverStream = this.props.siteId === config( 'discover_blog_id' );
+			emptyContent = ( <EmptyContent /> );
 		let title = this.state.title,
 			featuredStore = null,
 			featuredContent = null;
@@ -161,7 +161,7 @@ class SiteStream extends React.Component {
 				emptyContent={ emptyContent }
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }
-				isDiscoverStream={ isDiscoverStream }>
+				isDiscoverStream={ this.props.isDiscoverStream }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
 				{ featuredContent }
