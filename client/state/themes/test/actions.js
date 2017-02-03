@@ -48,8 +48,8 @@ import {
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
-	installAndTryAndCustomize,
-	tryAndCustomize,
+	installAndTryAndCustomizeTheme,
+	tryAndCustomizeTheme,
 	deleteTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -910,7 +910,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#tryAndCustomize', () => {
+	describe( '#tryAndCustomizeTheme', () => {
 		const pageSpy = sinon.spy();
 		const getThemeSpy = ( store, siteId, themeId ) => {
 			if ( themeId === 'karuna-wpcom' ) {
@@ -928,7 +928,7 @@ describe( 'actions', () => {
 				getThemeCustomizeUrl: () => 'customizer/url',
 				getTheme: getThemeSpy,
 			} );
-			_tryAndCustomize = require( '../actions' ).tryAndCustomize;
+			_tryAndCustomize = require( '../actions' ).tryAndCustomizeTheme;
 		} );
 
 		it( 'page should be called, when theme is available', () => {
@@ -950,16 +950,16 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#installAndTryAndCustomize', () => {
+	describe( '#installAndTryAndCustomizeTheme', () => {
 		const stub = sinon.stub();
 		stub.returns( new Promise( ( res ) => {
 			res();
 		} ) );
 
-		it( 'should dispatch installTheme(), and tryAndCustomize()', ( done ) => {
-			installAndTryAndCustomize( 'karuna-wpcom', 2211667 )( stub ).then( () => {
+		it( 'should dispatch installTheme(), and tryAndCustomizeTheme()', ( done ) => {
+			installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
-				expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomize( 'karuna-wpcom', 2211667 ) ) );
+				expect( stub ).to.have.been.calledWith( matchFunction( tryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) ) );
 				done();
 			} );
 		} );

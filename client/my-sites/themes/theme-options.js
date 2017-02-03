@@ -13,7 +13,7 @@ import config from 'config';
 import {
 	activateTheme,
 	installAndActivateTheme,
-	installAndTryAndCustomize,
+	installAndTryAndCustomizeTheme,
 	confirmDelete,
 } from 'state/themes/actions';
 import {
