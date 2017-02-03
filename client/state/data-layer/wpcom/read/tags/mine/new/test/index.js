@@ -7,12 +7,18 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import {
+	requestFollowTag as requestFollowAction,
+	receiveFollowTag as receiveFollowAction,
+} from 'state/reader/tags/items/actions';
+import {
+	requestFollow,
+	receiveFollowSuccess,
+	receiveFollowError,
+} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-import { handleFollowTagRequest } from '../';
-import { receiveFollowTag, requestFollowTag } from 'state/reader/tags/items/actions';
-
-export const successfulResponse = {
+export const successfulFollowResponse = {
 	subscribed: true,
 	added_tag: '307',
 	tags: [
@@ -32,58 +38,67 @@ export const successfulResponse = {
 		},
 	],
 };
-const tag = 'chickens';
+const slug = 'chicken';
 
-describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
+describe( 'follow tag request', () => {
+	describe( '#requestUnfollow', () => {
+		it( 'should dispatch HTTP request to tag endpoint', () => {
+			const action = requestFollowAction( slug );
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
 
-	beforeEach( () => {
-		nextSpy.reset();
-	} );
+			requestFollow( { dispatch }, action, next );
 
-	describe( 'tag request', () => {
-		context( 'successful requests', () => {
-			useNock( nock => (
-				nock( 'https://public-api.wordpress.com:443' )
-					.post( '/rest/v1.1/read/tags/chickens/mine/new' )
-					.reply( 200, successfulResponse )
-			) );
-
-			it( 'should dispatch RECEIVE action when request completes', ( done ) => {
-				const requestAction = requestFollowTag( tag );
-				const expectedAction = receiveFollowTag( { payload: successfulResponse, error: false } );
-				const dispatch = sinon.spy( action => {
-					if ( action.type === expectedAction.type ) {
-						expect( dispatch ).to.have.been.calledWith( expectedAction );
-						expect( nextSpy ).to.have.been.calledWith( requestAction );
-						done();
-					}
-				} );
-
-				handleFollowTagRequest( { dispatch }, requestAction, nextSpy, );
-			} );
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith( http( {
+				apiVersion: '1.2',
+				method: 'POST',
+				path: `/read/tags/${ slug }/mine/new`,
+				onSuccess: action,
+				onFailure: action,
+			} ) );
 		} );
 
-		describe( 'failure request', () => {
-			useNock( nock => (
-				nock( 'https://public-api.wordpress.com:443' )
-					.post( '/rest/v1.1/read/tags/chickens/mine/new' )
-					.reply( 500, new Error() )
-			) );
+		it( 'should pass the original action along the middleware chain', () => {
+			const action = requestFollowAction( slug );
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
 
-			it( 'should dispatch RECEIVE action with error when request errors', ( done ) => {
-				const requestAction = requestFollowTag( tag );
-				const dispatch = sinon.spy( action => {
-					const expectedAction = receiveFollowTag( { payload: sinon.match.any, error: true } );
-					if ( action.type === expectedAction.type ) {
-						expect( dispatch ).to.have.been.calledWith( expectedAction );
-						expect( nextSpy ).to.have.been.calledWith( requestAction );
-						done();
-					}
-				} );
+			requestFollow( { dispatch }, action, next );
 
-				handleFollowTagRequest( { dispatch }, requestAction, nextSpy, );
-			} );
+			expect( next ).to.have.been.calledWith( action );
+		} );
+	} );
+
+	describe( '#receiveUnfollowSuccess', () => {
+		it( 'should dispatch the tag', () => {
+			const action = requestFollowAction( slug );
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
+
+			receiveFollowSuccess( { dispatch }, action, next, successfulFollowResponse );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				receiveFollowAction( { payload: successfulFollowResponse, error: false } )
+			);
+		} );
+	} );
+
+	describe( '#receiveUnfollowError', () => {
+		it( 'should dispatch error', () => {
+			const action = requestFollowAction( slug );
+			const dispatch = sinon.spy();
+			const next = sinon.spy();
+			const error = 'could not find tag';
+
+			receiveFollowError( { dispatch }, action, next, error );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				receiveFollowAction( { payload: error, error: true } )
+			);
 		} );
 	} );
 } );
+
