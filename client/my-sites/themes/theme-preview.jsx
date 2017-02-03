@@ -15,6 +15,7 @@ import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { localize } from 'i18n-calypso';
 import { closePreview } from 'state/ui/preview/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 export default function themePreview( WebPreview ) {
 	const ThemePreview = React.createClass( {
@@ -44,7 +45,8 @@ export default function themePreview( WebPreview ) {
 		},
 
 		onSecondaryButtonClick() {
-			const option = this.props.options.tryAndCustomizeOnJetpack;
+			const { tryAndCustomizeOnJetpack, tryandcustomize } = this.props.options;
+			const option = tryAndCustomizeOnJetpack || tryandcustomize;
 			option.action && option.action( this.props.theme );
 			this.props.closePreview();
 		},
@@ -65,7 +67,8 @@ export default function themePreview( WebPreview ) {
 		},
 
 		renderSecondaryButton() {
-			const { tryAndCustomizeOnJetpack: secondaryButton } = this.props.options;
+			const { tryAndCustomizeOnJetpack, tryandcustomize } = this.props.options;
+			const secondaryButton = tryAndCustomizeOnJetpack || tryandcustomize;
 			if ( ! secondaryButton ) {
 				return;
 			}
@@ -108,10 +111,14 @@ export default function themePreview( WebPreview ) {
 				theme,
 				siteId,
 				previewUrl: getPreviewUrl( theme ),
+				secondaryOption: isJetpackSite( state, siteId ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize',
 				options: [
+					'activate',
 					'activateOnJetpack',
 					'preview',
+					'purchase',
 					'tryAndCustomizeOnJetpack',
+					'tryandcustomize',
 					'customize',
 					'separator',
 					'info',
