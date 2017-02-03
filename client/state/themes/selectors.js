@@ -15,7 +15,8 @@ import {
 	canJetpackSiteManage,
 	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { getSitePurchases } from 'state/purchases/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
@@ -25,6 +26,7 @@ import {
 	oldShowcaseUrl
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
 
 /**
  * When wpcom themes are installed on Jetpack sites, the
@@ -577,6 +579,33 @@ export function isInstallingTheme( state, themeId, siteId ) {
 export function isThemePremium( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
 	return isPremium( theme );
+}
+
+/**
+ * Whether a WPCOM theme given by its ID belongs to the Premium Squared bundle.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {Object} themeId Theme ID
+ * @return {Boolean}        True if the theme is in the Premium Squared bundle
+ */
+export function isPremiumSquaredTheme( state, themeId ) {
+	const theme = getTheme( state, 'wpcom', themeId );
+	return !! theme && includes( [ 'Automattic', 'WooThemes' ], theme.author );
+}
+
+/**
+ * Whether a WPCOM premium theme can be activated on a site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID for which we check availability
+ * @param  {Number}  siteId  Site ID
+ * @return {Boolean}        True if the premium theme is available for the given site
+ */
+export function isPremiumThemeAvailable( state, themeId, siteId ) {
+	return isThemePurchased( state, themeId, siteId ) ||
+		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED )
+	);
 }
 
 /**

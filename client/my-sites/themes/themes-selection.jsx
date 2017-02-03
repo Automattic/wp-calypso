@@ -14,19 +14,17 @@ import ThemesList from 'components/themes-list';
 import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
+	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemePurchased,
 	isInstallingTheme
 } from 'state/themes/selectors';
 import config from 'config';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
@@ -161,17 +159,13 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
-			isThemePurchased: themeId => (
-				// Note: This component assumes that purchase and data is already present in the state tree
-				// (used by the isThemePurchased selector). At the time of implementation there's no caching
-				// in <QuerySitePurchases /> and a parent component is already rendering it. So to avoid
-				// redundant AJAX requests, we're not rendering the query component locally.
-				isThemePurchased( state, themeId, siteId ) ||
-				// The same is true for the `hasFeature` selector, which relies on the presence of
-				// a `<QuerySitePlans />` component in a parent component.
-				hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-			),
-			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId )
+			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
+			// Note: This component assumes that purchase and plans data is already present in the state tree
+			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
+			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
+			// provides caching, and both are already being rendered by a parent component. So to avoid
+			// redundant AJAX requests, we're not rendering these query components locally.
+			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
 	}
 )( ThemesSelection );
