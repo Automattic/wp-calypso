@@ -70,9 +70,9 @@ export const getTheme = createSelector(
 /**
  * When wpcom themes are installed on Jetpack sites, the
  * theme id is suffixed with -wpcom. Some operations require
- * the use of this suffixed ID. This util function add the
- * suffix if the theme is a wpcom theme and the site is Jetpack.
- * or not, given siteId and ThemeId.
+ * the use of this suffixed ID. This util function adds the
+ * suffix if the site is jetpack and the theme is not yet
+ * installed on the site.
  *
  * @param {Object} state	Global state tree
  * @param {String} themeId	Theme ID
