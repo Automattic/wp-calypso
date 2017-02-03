@@ -173,7 +173,7 @@ const ManagePurchase = React.createClass( {
 			const expiryMoment = this.moment( purchase.expiryMoment );
 			const daysToExpiry = this.moment( expiryMoment.diff( this.moment() ) ).format( 'D' );
 
-			return this.translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+			return this.translate( '%(purchaseName)s will expire and be removed from your site in %(expiry)s days. ',
 				{
 					args: {
 						purchaseName: getName( purchase ),
