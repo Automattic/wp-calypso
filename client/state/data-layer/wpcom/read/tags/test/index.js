@@ -7,12 +7,23 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import {
+	requestTags as requestTagsAction,
+	receiveTags as receiveTagsAction,
+	requestTag as requestTagAction,
+	receiveTag as receiveTagAction,
+} from 'state/reader/tags/items/actions';
+import {
+	requestTags,
+	receiveTagsSuccess,
+	receiveTagError,
+	requestTag,
+	receiveTagSuccess,
+	receiveTagsError,
+} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-import { handleTagsRequest } from '../';
-import { receiveTags, requestTags } from 'state/reader/tags/items/actions';
-
-export const successfulResponse = {
+export const successfulTagsResponse = {
 	tags: [
 		{
 			ID: '307',
@@ -31,55 +42,138 @@ export const successfulResponse = {
 	]
 };
 
+export const successfulTagResponse = {
+	tag: {
+		ID: '307',
+		slug: 'chickens',
+		title: 'Chickens',
+		display_name: 'chickens',
+		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
+	},
+};
+const slug = 'chickens';
+
 describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
-
-	beforeEach( () => {
-		nextSpy.reset();
-	} );
-
 	describe( 'tag request', () => {
-		context( 'successful requests', () => {
-			useNock( nock => (
-				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.2/read/tags/chickens' )
-					.reply( 200, successfulResponse )
-			) );
+		describe( '#requestTag', () => {
+			it( 'should dispatch HTTP request to tag endpoint', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-			it( 'should dispatch RECEIVE action when request completes', ( done ) => {
-				const requestAction = requestTags();
-				const expectedAction = receiveTags( { payload: successfulResponse, error: false } );
-				const dispatch = sinon.spy( action => {
-					if ( action.type === expectedAction.type ) {
-						expect( dispatch ).to.have.been.calledWith( expectedAction );
-						expect( nextSpy ).to.have.been.calledWith( requestAction );
-						done();
-					}
-				} );
+				requestTag( { dispatch }, action, next );
 
-				handleTagsRequest( { dispatch }, requestAction, nextSpy, );
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.2',
+					method: 'GET',
+					path: `/read/tags/${ slug }`,
+					onSuccess: action,
+					onFailure: action,
+				} ) );
+			} );
+
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				requestTag( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledWith( action );
 			} );
 		} );
 
-		describe( 'failure request', () => {
-			useNock( nock => (
-				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.2/read/tags/chickens' )
-					.reply( 500, new Error() )
-			) );
+		describe( '#receiveTagResponse', () => {
+			it( 'should dispatch the tag', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-			it( 'should dispatch RECEIVE action with error when request errors', ( done ) => {
-				const requestAction = requestTags();
-				const dispatch = sinon.spy( action => {
-					const expectedAction = receiveTags( { payload: sinon.match.any, error: true } );
-					if ( action.type === expectedAction.type ) {
-						expect( dispatch ).to.have.been.calledWith( expectedAction );
-						expect( nextSpy ).to.have.been.calledWith( requestAction );
-						done();
-					}
-				} );
+				receiveTagSuccess( { dispatch }, action, next, successfulTagResponse );
 
-				handleTagsRequest( { dispatch }, requestAction, nextSpy, );
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTagAction( { payload: successfulTagResponse, error: false } )
+				);
+			} );
+		} );
+
+		describe( '#receiveTagError', () => {
+			it( 'should dispatch error', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+				const error = 'could not find tag';
+
+				receiveTagError( { dispatch }, action, next, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTagAction( { payload: error, error: true } )
+				);
+			} );
+		} );
+	} );
+
+	describe( 'tags request', () => {
+		describe( '#requestTags', () => {
+			it( 'should dispatch HTTP request to tags endpoint', () => {
+				const action = requestTagsAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				requestTags( { dispatch }, action, next );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					apiVersion: '1.2',
+					method: 'GET',
+					path: '/read/tags',
+					onSuccess: action,
+					onFailure: action,
+				} ) );
+			} );
+
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				requestTags( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledWith( action );
+			} );
+		} );
+
+		describe( '#receiveTagsResponse', () => {
+			it( 'should dispatch the tags', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				receiveTagsSuccess( { dispatch }, action, next, successfulTagsResponse );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTagsAction( { payload: successfulTagsResponse, error: false } )
+				);
+			} );
+		} );
+
+		describe( '#receiveTagsError', () => {
+			it( 'should dispatch error', () => {
+				const action = requestTagAction( slug );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+				const error = 'could not find tag';
+
+				receiveTagsError( { dispatch }, action, next, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveTagsAction( { payload: error, error: true } )
+				);
 			} );
 		} );
 	} );
