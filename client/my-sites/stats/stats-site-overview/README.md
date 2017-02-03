@@ -6,11 +6,11 @@ This component creates Stats Overview which is what renders each site section on
 #### How to use:
 
 ```js
-var StatsOverview = require( 'my-sites/stats/overview' );
+import StatsOverview from 'my-sites/stats/overview';
 
-render: function() {
+const MyComponent = () => {
     return (
-  		<StatsOverview site={ <Object> } summaryData={ <StatsList Object> path={ <String> } } />
+  		<StatsOverview site={ <Object> } path={ <String> } } />
     );
 }
 ```
@@ -18,5 +18,4 @@ render: function() {
 #### Required Props
 
 * `site`: A Site Object
-* `summaryData`: Is an instance of a StatsList that would hold a repsonse from the /site/<siteID>/stats/visits endpoint
 * `path`: String used to build out the various links to the site
