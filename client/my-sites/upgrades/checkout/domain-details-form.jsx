@@ -85,24 +85,17 @@ export default React.createClass( {
 	},
 
 	validate( fieldValues, onComplete ) {
-		if ( this.needsOnlyGoogleAppsDetails() ) {
-			wpcom.validateGoogleAppsContactInformation( fieldValues, this.generateValidationHandler( onComplete ) );
-			return;
-		}
+		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
 
 		const allFieldValues = Object.assign( {}, fieldValues );
 		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
 			allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		}
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
-		wpcom.validateDomainContactInformation( allFieldValues, domainNames, this.generateValidationHandler( onComplete ) );
-	},
 
-	generateValidationHandler( onComplete ) {
-		return ( error, data ) => {
+		wpcom.validateDomainContactInformation( allFieldValues, domainNames, ( error, data ) => {
 			const messages = data && data.messages || {};
 			onComplete( error, messages );
-		};
+		} );
 	},
 
 	setFormState( form ) {
@@ -115,10 +108,6 @@ export default React.createClass( {
 		}
 
 		this.setState( { form } );
-	},
-
-	needsOnlyGoogleAppsDetails() {
-		return cartItems.hasGoogleApps( this.props.cart ) && ! cartItems.hasDomainRegistration( this.props.cart );
 	},
 
 	handleFormControllerError( error ) {
@@ -214,57 +203,8 @@ export default React.createClass( {
 		);
 	},
 
-	renderNameFields() {
-		return (
-			<div>
-				<Input
-					autoFocus
-					label={ this.translate( 'First Name') }
-					{ ...this.getFieldProps( 'first-name' ) } />
-
-				<Input label={ this.translate( 'Last Name' ) } { ...this.getFieldProps( 'last-name' ) } />
-			</div>
-		);
-	},
-
-	renderOrganizationField() {
-		return <HiddenInput
-			label={ this.translate( 'Organization' ) }
-			text={ this.translate(
-				'Registering this domain for a company? + Add Organization Name',
-				'Registering these domains for a company? + Add Organization Name',
-				{
-					context: 'Domain contact information page',
-					comment: 'Count specifies the number of domain registrations',
-					count: this.getNumberOfDomainRegistrations()
-				}
-			) }
-			{ ...this.getFieldProps( 'organization' ) } />;
-	},
-
-	renderEmailField() {
-		return (
-			<Input label={ this.translate( 'Email' ) } { ...this.getFieldProps( 'email' ) } />
-		);
-	},
-
-	renderCountryField() {
-		return (
-			<CountrySelect
-				label={ this.translate( 'Country' ) }
-				countriesList={ countriesList }
-				{ ...this.getFieldProps( 'country-code' ) } />
-		);
-	},
-
-	renderFaxField() {
-		return (
-			<Input label={ this.translate( 'Fax' ) } { ...this.getFieldProps( 'fax' ) } />
-		);
-	},
-
 	renderPhoneField() {
-		const label = this.translate( 'Phone' );
+		const label = this.translate( 'Phone', { textOnly: true } );
 
 		if ( abtest( 'domainContactNewPhoneInput' ) === 'enabled' ) {
 			return (
@@ -291,58 +231,63 @@ export default React.createClass( {
 		);
 	},
 
-	renderAddressFields() {
+	fields() {
+		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
+			fieldProps = ( name ) => this.getFieldProps( name ),
+			textOnly = true;
+
 		return (
 			<div>
-				<Input label={ this.translate( 'Address' ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
+				<Input
+					autoFocus
+					label={ this.translate( 'First Name', { textOnly } ) }
+					{ ...fieldProps( 'first-name' ) }/>
+
+				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
 
 				<HiddenInput
-					label={ this.translate( 'Address Line 2' ) }
-					text={ this.translate( '+ Add Address Line 2' ) }
+					label={ this.translate( 'Organization' ) }
+					text={ this.translate(
+						'Registering this domain for a company? + Add Organization Name',
+						'Registering these domains for a company? + Add Organization Name',
+						{
+							context: 'Domain contact information page',
+							comment: 'Count specifies the number of domain registrations',
+							count: this.getNumberOfDomainRegistrations(),
+							textOnly: true
+						}
+					) }
+					{ ...fieldProps( 'organization' ) }/>
+
+				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
+
+				{ this.renderPhoneField() }
+
+				<CountrySelect
+					label={ this.translate( 'Country', { textOnly } ) }
+					countriesList={ countriesList }
+					{ ...fieldProps( 'country-code' ) }/>
+
+				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
+				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...fieldProps( 'address-1' ) }/>
+
+				<HiddenInput
+					label={ this.translate( 'Address Line 2', { textOnly } ) }
+					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
 					maxLength={ 40 }
-					{ ...this.getFieldProps( 'address-2' ) } />
-			</div>
-		);
-	},
+					{ ...fieldProps( 'address-2' ) }/>
 
-	renderCityField() {
-		return (
-			<Input label={ this.translate( 'City' ) } { ...this.getFieldProps( 'city' ) } />
-		);
-	},
+				<Input label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
 
-	renderStateField() {
-		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
+				<StateSelect
+					label={ this.translate( 'State', { textOnly: true } ) }
+					countryCode={ countryCode }
+					{ ...fieldProps( 'state' ) }/>
 
-		return <StateSelect
-			label={ this.translate( 'State' ) }
-			countryCode={ countryCode }
-			{ ...this.getFieldProps( 'state' ) } />;
-	},
-
-	renderPostalCodeField() {
-		return (
-			<Input label={ this.translate( 'Postal Code' ) } { ...this.getFieldProps( 'postal-code' ) } />
-		);
-	},
-
-	renderDetailsForm() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
-
-		return (
-			<form>
-				{ this.renderNameFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
-				{ this.renderCountryField() }
-				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
+				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
 
 				{ this.renderSubmitButton() }
-			</form>
+			</div>
 		);
 	},
 
@@ -356,6 +301,14 @@ export default React.createClass( {
 
 	openDialog() {
 		this.setState( { isDialogVisible: true } );
+	},
+
+	content() {
+		return (
+			<form>
+				{ this.fields() }
+			</form>
+		);
 	},
 
 	focusFirstError() {
@@ -425,30 +378,23 @@ export default React.createClass( {
 	},
 
 	render() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails(),
-			classSet = classNames( {
-				'domain-details': true,
-				selected: true,
-				'only-google-apps-details': needsOnlyGoogleAppsDetails
-			} ),
-			titleOptions = {
-				context: 'Domain contact information page'
-			};
-
-		let title;
-		if ( needsOnlyGoogleAppsDetails ) {
-			title = this.translate( 'G Suite Account Information', titleOptions );
-		} else {
-			title = this.translate( 'Domain Contact Information', titleOptions );
-		}
+		const classSet = classNames( {
+			'domain-details': true,
+			selected: true
+		} );
 
 		return (
 			<div>
-				{ cartItems.hasDomainRegistration( this.props.cart ) && this.renderPrivacySection() }
+				{ this.renderPrivacySection() }
 				<PaymentBox
 					classSet={ classSet }
-					title={ title }>
-					{ this.renderDetailsForm() }
+					title={ this.translate(
+						'Domain Contact Information',
+						{
+							context: 'Domain contact information page',
+							textOnly: true
+						} ) }>
+					{ this.content() }
 				</PaymentBox>
 			</div>
 		);
