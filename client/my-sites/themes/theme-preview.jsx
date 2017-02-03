@@ -13,6 +13,8 @@ import { connectOptions } from './theme-options';
 import { getThemeForPreviewData, getTheme } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { localize } from 'i18n-calypso';
+import { closePreview } from 'state/ui/preview/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export default function themePreview( WebPreview ) {
 	const ThemePreview = React.createClass( {
@@ -23,7 +25,6 @@ export default function themePreview( WebPreview ) {
 			showPreview: React.PropTypes.bool,
 			showExternal: React.PropTypes.bool,
 			onClose: React.PropTypes.func,
-			onPrimaryButtonClick: React.PropTypes.func,
 			getPrimaryButtonHref: React.PropTypes.func,
 			secondaryButtonLabel: React.PropTypes.string,
 			onSecondaryButtonClick: React.PropTypes.func,
@@ -32,21 +33,21 @@ export default function themePreview( WebPreview ) {
 
 		getDefaultProps() {
 			return {
-				onPrimaryButtonClick: noop,
 				getPrimaryButtonHref: () => null,
 				onSecondaryButtonClick: noop,
 				getSecondaryButtonHref: () => null,
 			};
 		},
 
-		onPrimaryButtonClick() {
-			this.props.onPrimaryButtonClick( this.props.theme );
-			this.props.onClose();
-		},
-
 		onSecondaryButtonClick() {
 			this.props.onSecondaryButtonClick( this.props.theme );
 			this.props.onClose();
+		},
+
+		onPrimaryButtonClick() {
+			const option = this.getPrimaryOption();
+			option.action && option.action( this.props.theme );
+			this.props.closePreview();
 		},
 
 		getPrimaryOption() {
@@ -85,7 +86,7 @@ export default function themePreview( WebPreview ) {
 					showPreview={ this.props.showPreview }
 					showExternal={ this.props.showExternal }
 					showSEO={ false }
-					onClose={ this.props.onClose }
+					onClose={ this.props.closePreview }
 					previewUrl={ this.props.previewUrl } >
 					{ this.renderSecondaryButton() }
 					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
@@ -102,8 +103,10 @@ export default function themePreview( WebPreview ) {
 		( state ) => {
 			const themeData = getThemeForPreviewData( state );
 			const theme = getTheme( state, themeData.siteId, themeData.themeId );
+			const siteId = getSelectedSiteId( state );
 			return {
 				theme,
+				siteId,
 				previewUrl: getPreviewUrl( theme ),
 				options: [
 					'activateOnJetpack',
@@ -116,6 +119,7 @@ export default function themePreview( WebPreview ) {
 					'help',
 				]
 			};
-		}
+		},
+		{ closePreview }
 	)( localize( ConnectedThemePreview ) );
 }
