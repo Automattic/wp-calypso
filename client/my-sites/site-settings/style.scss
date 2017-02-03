@@ -294,23 +294,6 @@
 	}
 }
 
-.site-settings__custom-post-type .form-toggle__label {
-	margin-bottom: 0;
-}
-
-.site-settings .site-settings__custom-post-type p.form-setting-explanation {
-	margin: 0 0 16px;
-}
-
-.site-settings__custom-post-type-fieldset .feature-example__content {
-	box-sizing: border-box;
-	padding: 1px; // Example overflow is hidden, obscuring border effect from box-shadow
-}
-
-.site-settings__custom-post-type-fieldset .feature-example__gradient {
-	background: linear-gradient( to bottom, rgba( $white, 0.4 ), rgba( $white, 1 ) );
-}
-
 #settings-reading-relatedposts-preview .form-label {
 	font-weight: 600;
 	margin-top: 16px;
