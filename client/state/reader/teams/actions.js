@@ -7,7 +7,6 @@
  */
 import {
 	READER_TEAMS_REQUEST,
-	READER_TEAMS_RECEIVE,
 } from 'state/action-types';
 
 export function requestTeams() {
@@ -16,10 +15,3 @@ export function requestTeams() {
 	};
 }
 
-export function receiveTeams( { payload, error } ) {
-	return {
-		type: READER_TEAMS_RECEIVE,
-		payload,
-		error,
-	};
-}
