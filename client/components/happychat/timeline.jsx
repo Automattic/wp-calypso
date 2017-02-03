@@ -42,6 +42,7 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		const text = url;
 		let href = url;
 		let rel = null;
 		let target = null;
@@ -60,7 +61,7 @@ const messageWithLinks = ( { message, key, links } ) => {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
 
-		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ href }</a> );
+		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ text }</a> );
 
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
