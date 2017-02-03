@@ -584,7 +584,7 @@ export function isThemePremium( state, themeId ) {
  */
 export function isPremiumSquaredTheme( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
-	return theme && includes( [ 'Automattic', 'WooThemes' ], theme.author );
+	return !! theme && includes( [ 'Automattic', 'WooThemes' ], theme.author );
 }
 
 /**
@@ -596,9 +596,11 @@ export function isPremiumSquaredTheme( state, themeId ) {
  * @return {Boolean}        True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-		( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) );
+	return !! (
+		isThemePurchased( state, themeId, siteId ) ||
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED ) )
+	);
 }
 
 /**

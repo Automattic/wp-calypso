@@ -35,8 +35,12 @@ import {
 	isInstallingTheme,
 	isThemePremium,
 	isThemePurchased,
+	isPremiumSquaredTheme,
+	isPremiumThemeAvailable,
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
+
+import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 
 const twentyfifteen = {
 	id: 'twentyfifteen',
@@ -66,6 +70,28 @@ const mood = {
 	price: '$20',
 	stylesheet: 'premium/mood',
 	demo_uri: 'https://mooddemo.wordpress.com/',
+	author_uri: 'https://wordpress.com/themes/'
+};
+
+const hustle = {
+	id: 'hustle-express',
+	name: 'Hustle Express',
+	author: 'WooThemes',
+	screenshot: 'hustle-express.jpg',
+	price: '$20',
+	stylesheet: 'premium/hustle-express',
+	demo_uri: 'https://hustleexpressdemo.wordpress.com/',
+	author_uri: 'https://wordpress.com/themes/'
+};
+
+const zuki = {
+	id: 'zuki',
+	name: 'Zuki',
+	author: 'Elmastudio',
+	screenshot: 'zuki.jpg',
+	price: '$20',
+	stylesheet: 'premium/zuki',
+	demo_uri: 'https:/zukidemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/'
 };
 
@@ -1824,7 +1850,7 @@ describe( 'themes selectors', () => {
 			expect( premium ).to.be.false;
 		} );
 
-		it( 'given the ID of a premium theme, should return false', () => {
+		it( 'given the ID of a premium theme, should return true', () => {
 			const premium = isThemePremium(
 				{
 					themes: {
@@ -1916,6 +1942,252 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isPurchased ).to.be.true;
+		} );
+	} );
+
+	describe( '#isPremiumSquaredTheme', () => {
+		it( 'given no theme object, should return false', () => {
+			const premiumSquared = isPremiumSquaredTheme(
+				{
+					themes: {
+						queries: {}
+					}
+				}
+			);
+			expect( premiumSquared ).to.be.false;
+		} );
+
+		it( 'given the ID of a premium theme that doesn\'t belong to the premium squared bundle, should return false', () => {
+			const premiumSquared = isPremiumSquaredTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { zuki }
+							} )
+						}
+					}
+				},
+				'zuki'
+			);
+			expect( premiumSquared ).to.be.false;
+		} );
+
+		it( 'given the ID of a premium theme by Automattic, should return true', () => {
+			const premiumSquared = isPremiumSquaredTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				},
+				'mood'
+			);
+			expect( premiumSquared ).to.be.true;
+		} );
+
+		it( 'given the ID of a premium theme by WooThemes, should return true', () => {
+			const premiumSquared = isPremiumSquaredTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { hustle }
+							} )
+						}
+					}
+				},
+				'hustle'
+			);
+			expect( premiumSquared ).to.be.true;
+		} );
+
+		it( 'given the ID of a free theme, should return false', () => {
+			const premiumSquared = isPremiumSquaredTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				},
+				'twentysixteen'
+			);
+			expect( premiumSquared ).to.be.false;
+		} );
+	} );
+
+	describe( '#isPremiumThemeAvailable', () => {
+		it( 'given no theme and no site, should return false', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					themes: {
+						queries: {}
+					},
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_slug: 'premium_theme'
+							}
+						]
+					}
+				}
+			);
+
+			expect( isAvailable ).to.be.false;
+		} );
+
+		it( 'given a theme but no site, should return false', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					themes: {
+						queries: {}
+					},
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_slug: 'premium_theme'
+							}
+						]
+					}
+				}, 'espresso'
+			);
+
+			expect( isAvailable ).to.be.false;
+		} );
+
+		it( 'given a theme that has not been purchased on a given site, should return false', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_FREE
+								} ]
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					},
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'espresso',
+								product_slug: 'premium_theme'
+							}
+						]
+					}
+				}, 'mood', 2916284
+			);
+
+			expect( isAvailable ).to.be.false;
+		} );
+
+		it( 'given a premium squared theme and a site without the premium upgrade, should return false', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_FREE
+								} ]
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					},
+					purchases: {
+						data: []
+					}
+				}, 'mood', 2916284
+			);
+
+			expect( isAvailable ).to.be.false;
+		} );
+
+		it( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_PREMIUM
+								} ]
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					},
+					purchases: {
+						data: []
+					}
+				}, 'mood', 2916284
+			);
+
+			expect( isAvailable ).to.be.true;
+		} );
+
+		it( 'given a site with the unlimited premium themes bundle, should return true', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [ {
+									currentPlan: true,
+									productSlug: PLAN_BUSINESS
+								} ]
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					},
+					purchases: {
+						data: []
+					}
+				}, 'mood', 2916284
+			);
+
+			expect( isAvailable ).to.be.true;
 		} );
 	} );
 } );
