@@ -12,15 +12,12 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var TransactionsHeader = require( './transactions-header' ),
-	tableRows = require( './table-rows' ),
-	eventRecorder = require( 'me/event-recorder' );
+	tableRows = require( './table-rows' );
 
 import SearchCard from 'components/search-card';
 
 var TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',
-
-	mixins: [ eventRecorder ],
 
 	getInitialState: function() {
 		var initialTransactions;
