@@ -313,6 +313,28 @@ export function requestActiveTheme( siteId ) {
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
+export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
+			// installation will silently fail, and it will just be activated.
+			return dispatch( installAndActivateTheme( themeId + '-wpcom', siteId, source, purchased ) );
+		}
+
+		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
+	};
+}
+
+/**
+ * Triggers a network request to activate a specific theme on a given site.
  *
  * @param  {String}   themeId   Theme ID
  * @param  {Number}   siteId    Site ID
