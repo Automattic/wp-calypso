@@ -555,7 +555,7 @@ describe( 'actions', () => {
 			res();
 		} ) );
 
-		it( 'should dispatch THEME_ACTIVATE_REQUEST, installTheme(), and activateTheme()', ( done ) => {
+		it( 'should dispatch installTheme() and activateTheme()', ( done ) => {
 			installAndActivateTheme( 'karuna-wpcom', 2211667 )( stub ).then( () => {
 				expect( stub ).to.have.been.calledWith( matchFunction( installTheme( 'karuna-wpcom', 2211667 ) ) );
 				expect( stub ).to.have.been.calledWith( matchFunction( activateTheme( 'karuna-wpcom', 2211667 ) ) );
