@@ -19,6 +19,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
+	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
+	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -190,6 +192,10 @@ export const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: onResentAccountRecoveryEmailValidationFailed,
 	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: onAccountRecoveryPhoneValidationSuccess,
 	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: onAccountRecoveryPhoneValidationFailed,
+	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: dispatchError( translate(
+		'There was a problem sending your receipt. Please try again later or contact support.'
+	) ),
+	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: dispatchSuccess( translate( 'Your receipt was sent by email successfully.' ) ),
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: ( dispatch, action ) => {
 		dispatch( errorNotice( action.errorMessage ) );
 	},
