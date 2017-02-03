@@ -442,11 +442,11 @@ export function clearActivated( siteId ) {
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function installAndTryAndCustomize( themeId, siteId ) {
+export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
-				dispatch( tryAndCustomize( themeId, siteId ) );
+				dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 			} );
 	};
 }
@@ -460,7 +460,7 @@ export function installAndTryAndCustomize( themeId, siteId ) {
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function tryAndCustomize( themeId, siteId ) {
+export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const theme = getTheme( getState(), siteId, themeId );
 		if ( ! theme ) {
