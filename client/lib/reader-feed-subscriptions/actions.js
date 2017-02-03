@@ -9,7 +9,7 @@ import Dispatcher from 'dispatcher';
  */
 import wpcom from 'lib/wp';
 import { action as ActionTypes } from './constants';
-import FeedSubscriptionHelper from './helper';
+import { prepareSiteUrl } from './helper';
 import { isRequestInflight, requestTracker } from 'lib/inflight';
 import FeedSubscriptionStore from './index';
 import { action as SiteStoreActionTypes } from 'lib/reader-site-store/constants';
@@ -23,7 +23,7 @@ const FeedSubscriptionActions = {
 			return;
 		}
 
-		const preparedUrl = FeedSubscriptionHelper.prepareSiteUrl( url );
+		const preparedUrl = prepareSiteUrl( url );
 
 		if ( fetchMeta ) {
 			meta = 'feed,site';
@@ -52,7 +52,7 @@ const FeedSubscriptionActions = {
 			return;
 		}
 
-		const preparedUrl = FeedSubscriptionHelper.prepareSiteUrl( url );
+		const preparedUrl = prepareSiteUrl( url );
 
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.UNFOLLOW_READER_FEED,
