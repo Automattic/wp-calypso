@@ -136,8 +136,7 @@ function getDefaultContext( request ) {
 		devDocsURL: '/devdocs',
 		store: createReduxStore(),
 		css: new Set(),
-		insertCss: function() {
-			const styles = Array.prototype.slice.call(arguments);
+		insertCss: ( ...styles ) => {
 			styles.forEach( function( style ) {
 				context.css.add( style._getCss() )
 			} );
