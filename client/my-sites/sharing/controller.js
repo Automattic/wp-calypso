@@ -16,7 +16,7 @@ var sites = require( 'lib/sites-list' )(),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	analyticsPageTitle = 'Sharing';
 
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 module.exports = {
 	layout: function( context ) {
@@ -29,13 +29,12 @@ module.exports = {
 			site.fetchSettings();
 		}
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( Sharing, {
 				path: context.path,
 				contentComponent: context.contentComponent
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 

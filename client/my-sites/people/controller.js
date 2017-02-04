@@ -20,7 +20,7 @@ import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import config from 'config';
@@ -68,15 +68,14 @@ function redirectToTeam( context ) {
 function renderPeopleList( filter, context ) {
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( PeopleList, {
 			sites: sites,
 			peopleLog: PeopleLogStore,
 			filter: filter,
 			search: context.query.s
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
 }
@@ -98,12 +97,11 @@ function renderInvitePeople( context ) {
 
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( InvitePeople, {
 			site: site
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -142,7 +140,7 @@ function renderSingleTeamMember( context ) {
 		}
 	}
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( EditTeamMember, {
 			siteSlug: site && site.slug ? site.slug : undefined,
 			siteId: site && site.ID ? site.ID : undefined,
@@ -151,7 +149,6 @@ function renderSingleTeamMember( context ) {
 			userLogin: userLogin,
 			prevPath: context.prevPath
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }

@@ -18,6 +18,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
+import { renderPage } from 'lib/react-helpers';
 
 /**
  * Re-export
@@ -85,32 +86,22 @@ function renderSeparateTrees( context ) {
 }
 
 function renderPrimary( context ) {
-	const { primary, store } = context;
+	const { primary } = context;
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ primary }
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
+		renderPage( primary, context, 'primary' );
 	}
 }
 
 function renderSecondary( context ) {
-	const { secondary, store } = context;
+	const { secondary } = context;
 
 	if ( secondary === null ) {
 		debug( 'Unmounting secondary' );
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	} else if ( secondary !== undefined ) {
 		debug( 'Rendering secondary' );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ secondary }
-			</ReduxProvider>,
-			document.getElementById( 'secondary' )
-		);
+		renderPage( secondary, context, 'secondary' );
 	}
 }

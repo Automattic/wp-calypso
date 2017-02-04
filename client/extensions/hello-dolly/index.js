@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { navigation, siteSelection } from 'my-sites/controller';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import Main from 'components/main';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
@@ -16,7 +16,7 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 
 const render = ( context ) => {
-	renderWithReduxStore( (
+	renderPage( (
 		<Main className="hello-dolly__main">
 			<SectionHeader label="Hello, Dolly!">🐑</SectionHeader>
 			<Card>
@@ -52,7 +52,7 @@ const render = ( context ) => {
 				/>
 			</FAQ>
 		</Main>
-	), document.getElementById( 'primary' ), context.store );
+	), context );
 };
 
 export default function() {

@@ -28,7 +28,7 @@ import config from 'config';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
@@ -76,10 +76,9 @@ function renderEmptySites( context ) {
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( NoSitesMessage ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -91,7 +90,7 @@ function renderNoVisibleSites( context ) {
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
 				count: hiddenSites,
@@ -107,8 +106,7 @@ function renderNoVisibleSites( context ) {
 			secondaryAction: i18n.translate( 'Create New Site' ),
 			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -118,7 +116,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 
 	removeSidebar( reactContext );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'This feature is not available for domains' ),
 			line: i18n.translate( 'To use this feature you need to create a site' ),
@@ -127,7 +125,6 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 			secondaryAction: i18n.translate( 'Manage Domain' ),
 			secondaryActionURL: domainManagementList( selectedSite.slug )
 		} ),
-		document.getElementById( 'primary' ),
 		reduxStore
 	);
 }
@@ -353,10 +350,10 @@ module.exports = {
 
 	navigation: function( context, next ) {
 		// Render the My Sites navigation in #secondary
-		renderWithReduxStore(
+		renderPage(
 			createNavigation( context ),
-			document.getElementById( 'secondary' ),
-			context.store
+			context,
+			'secondary'
 		);
 		next();
 	},
@@ -368,14 +365,14 @@ module.exports = {
 		const selectedSite = sites.getSelectedSite();
 
 		if ( selectedSite && selectedSite.jetpack ) {
-			renderWithReduxStore( (
+			renderPage( (
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
 						siteId={ sites.getSelectedSite().ID }
 					/>
 				</Main>
-			), document.getElementById( 'primary' ), context.store );
+			), context );
 
 			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
 		} else {
@@ -397,10 +394,9 @@ module.exports = {
 		removeSidebar( context );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		renderWithReduxStore(
+		renderPage(
 			createSitesComponent( context ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 

@@ -9,15 +9,18 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import Stylizer, { insertCss } from './stylizer';
 
 export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );
 }
 
-export function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
+export function renderPage( component, context, domContainer = 'primary' ) {
+	return renderWithReduxStore(
+		<Stylizer onInsertCss={ insertCss }>
+			{ component }
+		</Stylizer>,
+		domContainer,
 		context.store
 	);
 }
@@ -29,13 +32,15 @@ export function recordPageView( path, ...title ) {
 	);
 }
 
-export function renderWithReduxStore( reactElement, domContainer, reduxStore ) {
+export function renderWithReduxStore( component, domContainer, reduxStore ) {
 	const domContainerNode = ( 'string' === typeof domContainer )
-			? document.getElementById( domContainer )
-			: domContainer;
+		? document.getElementById( domContainer )
+		: domContainer;
 
 	return ReactDom.render(
-		React.createElement( ReduxProvider, { store: reduxStore }, reactElement ),
+		<ReduxProvider store={ reduxStore }>
+			{ component }
+		</ReduxProvider>,
 		domContainerNode
 	);
 }

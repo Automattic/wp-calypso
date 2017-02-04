@@ -32,6 +32,7 @@ describe( 'mapped-domain', () => {
 
 	useFakeDom.withContainer();
 	useMockery( mockery => {
+		mockery.registerMock( './style', {} );
 		mockery.registerMock( 'lib/analytics', {} );
 	} );
 

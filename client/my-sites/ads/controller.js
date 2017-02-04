@@ -15,7 +15,7 @@ var sites = require( 'lib/sites-list' )(),
 	AdsUtils = require( 'lib/ads/utils' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	utils = require( 'lib/site/utils' );
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );
@@ -68,14 +68,13 @@ module.exports = {
 			window.scrollTo( 0, 0 );
 		}
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( Ads, {
 				site: site,
 				section: context.params.section,
 				path: context.path,
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	}
 };
