@@ -20,7 +20,7 @@ import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
 
@@ -59,7 +59,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	// Render single plugin component
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( PluginComponent, {
 			path: context.path,
 			prevQuerystring: lastPluginsQuerystring,
@@ -69,7 +69,7 @@ function renderSinglePlugin( context, siteUrl ) {
 			siteUrl,
 		} ),
 		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -146,7 +146,7 @@ function renderPluginsBrowser( context ) {
 	.pageView
 	.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,
@@ -155,7 +155,7 @@ function renderPluginsBrowser( context ) {
 			search: searchTerm
 		} ),
 		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -164,13 +164,13 @@ function renderPluginWarnings( context ) {
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( PluginEligibility, {
 			siteSlug: site.slug,
 			pluginSlug
 		} ),
 		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 
@@ -187,12 +187,12 @@ function renderProvisionPlugins( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
 
-	renderWithReduxStore(
+	renderPage(
 		React.createElement( PlanSetup, {
 			whitelist: context.query.only || false
 		} ),
 		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 

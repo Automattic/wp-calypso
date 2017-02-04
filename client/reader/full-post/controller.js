@@ -17,7 +17,7 @@ import {
 	trackPageLoad
 } from 'reader/controller-helper';
 import ReaderFullPost from 'blocks/reader-full-post';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -26,10 +26,9 @@ function renderPostNotFound() {
 
 	setPageTitle( context, sidebarAndPageTitle );
 
-	renderWithReduxStore(
+	renderPage(
 		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
-		document.getElementById( 'primary' ),
-		context.store
+		context
 	);
 }
 

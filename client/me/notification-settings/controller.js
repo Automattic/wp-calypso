@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import devicesFactory from 'lib/devices';
 import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
@@ -29,7 +29,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( NotificationsComponent, {
 				user: user,
 				userSettings: userSettings,
@@ -37,8 +37,7 @@ export default {
 				devices: devices,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -50,7 +49,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( CommentSettingsComponent,
 				{
 					user: user,
@@ -58,8 +57,7 @@ export default {
 					path: context.path
 				}
 			),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -71,7 +69,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( WPcomSettingsComponent,
 				{
 					user: user,
@@ -79,8 +77,7 @@ export default {
 					path: context.path
 				}
 			),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -92,15 +89,14 @@ export default {
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		renderWithReduxStore(
+		renderPage(
 			React.createElement( NotificationSubscriptions,
 				{
 					userSettings: userSettings,
 					path: context.path
 				}
 			),
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	}
 };

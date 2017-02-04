@@ -84,11 +84,19 @@ var webpackConfig = {
 				test: /\.json$/,
 				exclude: /(devdocs\/components-usage-stats.json)/,
 				loader: 'json-loader'
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'isomorphic-style-loader',
+					'css-loader?modules&camelCase=dashes&importLoaders=1&localIdentName=[path][local]',
+					'sass-loader'
+				]
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.js', '.jsx', '.scss' ],
 		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
 		modulesDirectories: [ 'node_modules' ]
 	},
@@ -118,7 +126,7 @@ var webpackConfig = {
 };
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
 }
 

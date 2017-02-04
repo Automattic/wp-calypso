@@ -15,7 +15,7 @@ import route from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderPage } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -129,10 +129,9 @@ module.exports = {
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
 		const props = { followList };
-		renderWithReduxStore(
+		renderPage(
 			<AsyncLoad require="my-sites/stats/stats-insights" placeholder={ <StatsPagePlaceholder /> } { ...props } />,
-			document.getElementById( 'primary' ),
-			context.store
+			context
 		);
 	},
 
@@ -169,10 +168,9 @@ module.exports = {
 				sites,
 				user
 			};
-			renderWithReduxStore(
+			renderPage(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/overview" { ...props } />,
-				document.getElementById( 'primary' ),
-				context.store
+				context
 			);
 		}
 	},
@@ -276,10 +274,9 @@ module.exports = {
 				period,
 			};
 
-			renderWithReduxStore(
+			renderPage(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/site" { ...siteComponentChildren } />,
-				document.getElementById( 'primary' ),
-				context.store
+				context
 			);
 		}
 	},
@@ -362,10 +359,10 @@ module.exports = {
 				period,
 				...extraProps
 			};
-			renderWithReduxStore(
+
+			renderPage(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/summary" { ...props } />,
-				document.getElementById( 'primary' ),
-				context.store
+				context
 			);
 		}
 	},
@@ -400,10 +397,10 @@ module.exports = {
 				postId,
 				context,
 			};
-			renderWithReduxStore(
+
+			renderPage(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/stats-post-detail" { ...props } />,
-				document.getElementById( 'primary' ),
-				context.store
+				context
 			);
 		}
 	},
@@ -460,10 +457,10 @@ module.exports = {
 				followType,
 				followList,
 			};
-			renderWithReduxStore(
+
+			renderPage(
 				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/follows" { ...props } />,
-				document.getElementById( 'primary' ),
-				context.store
+				context
 			);
 		}
 	}

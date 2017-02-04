@@ -1,5 +1,8 @@
-.vertical-nav-item {
-	.noticon {
+@import 'assets/stylesheets/shared/_colors';
+@import 'assets/stylesheets/shared/mixins/_placeholder';
+
+.content {
+	:global( .noticon ) {
 		box-sizing: border-box;
 		color: $gray;
 		font-size: 20px;
@@ -12,12 +15,12 @@
 		width: 55px;
 	}
 
-	.noticon-collapse {
+	:global( .noticon-collapse ) {
 		transform: rotate( 90deg );
 	}
 }
 
-.vertical-nav-item.is-placeholder {
+.placeholder {
 	span {
 		@include placeholder( 23% );
 
