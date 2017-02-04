@@ -11,7 +11,10 @@ import {
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
-import { hasDefaultSiteTitle } from 'state/sites/selectors';
+import {
+	hasDefaultSiteTitle,
+	isCurrentPlanPaid,
+} from 'state/sites/selectors';
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
@@ -130,6 +133,17 @@ export const isAbTestInVariant = ( testName, variant ) => () =>
 export const hasSelectedSiteDefaultSiteTitle = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+};
+
+/**
+ * Returns true if the selected site has a paid plan
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if selected site is on a paid plan, false otherwise.
+ */
+export const isSelectedSitePlanPaid = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? isCurrentPlanPaid( state, siteId ) : false;
 };
 
 /**

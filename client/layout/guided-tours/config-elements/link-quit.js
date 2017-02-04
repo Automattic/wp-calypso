@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -33,7 +34,10 @@ export default class LinkQuit extends Component {
 
 	render() {
 		const { children, primary, subtle, href, target } = this.props;
-		const classes = subtle ? 'guided-tours__subtle-button' : '';
+		const classes = classNames( 'guided-tours__button-link', {
+			'guided-tours__subtle-button': subtle
+		} );
+
 		return (
 			<Button
 				className={ classes }

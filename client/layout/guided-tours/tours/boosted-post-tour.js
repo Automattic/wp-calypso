@@ -19,6 +19,7 @@ import {
 import {
 	isAbTestInVariant,
 	isEnabled,
+	isSelectedSitePlanPaid,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
@@ -30,11 +31,24 @@ export const BoostedPostTour = makeTour(
 		when={ and(
 			isEnabled( 'boosted-post-survey' ),
 			isDesktop,
-			isAbTestInVariant( 'boostedPostSurvey', 'enabled' )
+			isSelectedSitePlanPaid,
+			isAbTestInVariant( 'boostedPostSurvey', 'enabled' ),
 		) }
 	>
 		<Step name="init" placement="right">
-			<p>{ translate( 'Wouldn\'t it be nice if your posts reached a wider audience?' ) }</p>
+			<p>
+				{
+					translate(
+						'{{strong}}Want to reach a bigger audience?{{/strong}} ' +
+							'Take our survey and help shape a new feature.',
+						{
+							components: {
+								strong: <strong />,
+							}
+						}
+					)
+				}
+			</p>
 			<ButtonRow>
 				<LinkQuit
 					primary
