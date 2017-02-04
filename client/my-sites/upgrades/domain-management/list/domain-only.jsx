@@ -15,8 +15,10 @@ const DomainOnly = ( { domainName, translate } ) => (
 		title={ translate( '%(domainName)s is not set up yet.', {
 			args: { domainName }
 		} ) }
-		action={ translate( 'Advanced' ) }
-		actionURL={ domainManagementEdit( domainName, domainName ) }
+		action={ translate( 'Create New Site' ) }
+		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }` }
+		secondaryAction={ translate( 'Advanced' ) }
+		secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
 		illustration={ '/calypso/images/drake/drake-browser.svg' } />
 );
 
