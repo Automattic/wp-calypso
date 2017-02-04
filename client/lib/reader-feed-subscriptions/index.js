@@ -17,9 +17,10 @@ const Dispatcher = require( 'dispatcher' ),
 const Emitter = require( 'lib/mixins/emitter' ),
 	ActionTypes = require( './constants' ).action,
 	ErrorTypes = require( './constants' ).error,
-	FeedSubscriptionHelper = require( './helper' ),
 	States = require( './constants' ).state,
 	FeedActionTypes = require( 'lib/feed-store/constants' ).action;
+
+import { prepareComparableUrl, prepareSiteUrl } from './helper';
 
 const subscriptionsTemplate = {
 	list: Immutable.List(), // eslint-disable-line new-cap
@@ -52,7 +53,7 @@ const FeedSubscriptionStore = {
 	receiveUnfollow: function( action ) {
 		// Tentatively remove the subscription
 		// We haven't received confirmation from the API yet, but we want to update the UI
-		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( action.data.url );
+		const siteUrl = prepareSiteUrl( action.data.url );
 		debug( 'receiveUnfollow: ' + siteUrl );
 		if ( removeSubscription( { URL: siteUrl } ) ) {
 			FeedSubscriptionStore.emit( 'change' );
@@ -62,7 +63,7 @@ const FeedSubscriptionStore = {
 	receiveFollowResponse: function( action ) {
 		let updatedSubscriptionInfo;
 
-		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( action.url );
+		const siteUrl = prepareSiteUrl( action.url );
 		debug( 'receiveFollowResponse: ' + siteUrl );
 
 		if ( ! action.error && action.data && action.data.subscribed && ! action.data.info ) {
@@ -131,8 +132,8 @@ const FeedSubscriptionStore = {
 
 		// All subscriptions we receive this way will be 'subscribed', so set the state accordingly
 		const subscriptionsWithState = map( data.subscriptions, function( sub ) {
-			sub.URL = FeedSubscriptionHelper.prepareSiteUrl( sub.URL );
-			sub.comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( sub.URL );
+			sub.URL = prepareSiteUrl( sub.URL );
+			sub.comparableUrl = prepareComparableUrl( sub.URL );
 			return subscriptionTemplate.merge( sub );
 		} );
 
@@ -182,7 +183,7 @@ const FeedSubscriptionStore = {
 	},
 
 	getSubscription: function( siteUrl ) {
-		const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( siteUrl );
+		const comparableUrl = prepareComparableUrl( siteUrl );
 		return subscriptions.list.find( function( subscription ) {
 			return ( subscription.get( 'comparableUrl' ) === comparableUrl && subscription.get( 'state' ) === States.SUBSCRIBED );
 		} );
@@ -206,11 +207,11 @@ const FeedSubscriptionStore = {
 	},
 
 	getLastErrorBySiteUrl: function( siteUrl ) {
-		return findLast( errors, { URL: FeedSubscriptionHelper.prepareSiteUrl( siteUrl ) } );
+		return findLast( errors, { URL: prepareSiteUrl( siteUrl ) } );
 	},
 
 	removeErrorsForSiteUrl: function( siteUrl ) {
-		const newErrors = reject( errors, { URL: FeedSubscriptionHelper.prepareSiteUrl( siteUrl ) } );
+		const newErrors = reject( errors, { URL: prepareSiteUrl( siteUrl ) } );
 
 		if ( newErrors.length === errors.length ) {
 			return false;
@@ -276,8 +277,8 @@ function addSubscription( subscription, addToTop = true ) {
 	}
 
 	// Is this URL already in the subscription list (in any state, not just SUBSCRIBED)?
-	const preparedSiteUrl = FeedSubscriptionHelper.prepareSiteUrl( subscription.URL );
-	const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( subscription.URL );
+	const preparedSiteUrl = prepareSiteUrl( subscription.URL );
+	const comparableUrl = prepareComparableUrl( subscription.URL );
 	const existingSubscription = subscriptions.list.find( function( sub ) {
 		return sub.get( 'comparableUrl' ) === comparableUrl;
 	} );
@@ -303,7 +304,7 @@ function updateSubscription( url, newSubscriptionInfo ) {
 		return;
 	}
 
-	const comparableUrl = FeedSubscriptionHelper.prepareComparableUrl( url );
+	const comparableUrl = prepareComparableUrl( url );
 	const subscriptionIndex = subscriptions.list.findIndex( function( item ) {
 		return item.get( 'comparableUrl' ) === comparableUrl;
 	} );
@@ -327,8 +328,8 @@ function updateSubscription( url, newSubscriptionInfo ) {
 	if ( newSubscriptionInfoUrl ) {
 		debug( 'New subscription URL is ' + newSubscriptionInfoUrl );
 		newSubscriptionInfo = newSubscriptionInfo
-			.set( 'URL', FeedSubscriptionHelper.prepareSiteUrl( newSubscriptionInfoUrl ) )
-			.set( 'comparableUrl', FeedSubscriptionHelper.prepareComparableUrl( newSubscriptionInfoUrl ) );
+			.set( 'URL', prepareSiteUrl( newSubscriptionInfoUrl ) )
+			.set( 'comparableUrl', prepareComparableUrl( newSubscriptionInfoUrl ) );
 	}
 
 	const updatedSubscription = existingSubscription.merge( newSubscriptionInfo );

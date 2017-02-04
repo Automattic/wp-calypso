@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-
-
-/**
  * Internal Dependencies
  */
 import untrailingslashit from 'lib/route/untrailingslashit';
