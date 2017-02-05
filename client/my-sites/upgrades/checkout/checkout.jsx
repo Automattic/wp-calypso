@@ -197,6 +197,7 @@ const Checkout = React.createClass( {
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
 			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+
 			return domainManagementList( domainName );
 		}
 
@@ -276,7 +277,7 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( cart.create_new_blog ) {
+		if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
@@ -286,6 +287,7 @@ const Checkout = React.createClass( {
 			fetchSitesAndUser( domainName, () => {
 				page( redirectPath );
 			} );
+
 			return;
 		}
 
