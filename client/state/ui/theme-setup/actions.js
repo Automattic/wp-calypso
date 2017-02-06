@@ -4,10 +4,9 @@
 import wpcom from 'lib/wp';
 import {
 	THEME_SETUP_CLOSE_DIALOG,
-	THEME_SETUP_FAILURE,
 	THEME_SETUP_OPEN_DIALOG,
 	THEME_SETUP_REQUEST,
-	THEME_SETUP_SUCCESS,
+	THEME_SETUP_RESULT,
 } from 'state/action-types';
 
 export function openDialog( saveExisting = true ) {
@@ -32,13 +31,13 @@ export function runThemeSetup( saveExisting, siteId ) {
 		return wpcom.undocumented().site( siteId ).runThemeSetup( saveExisting )
 			.then( response => {
 				dispatch( {
-					type: THEME_SETUP_SUCCESS,
+					type: THEME_SETUP_RESULT,
 					data: response,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
-					type: THEME_SETUP_FAILURE,
+					type: THEME_SETUP_RESULT,
 					data: error,
 				} );
 			} );
