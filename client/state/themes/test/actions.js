@@ -997,7 +997,7 @@ describe( 'actions', () => {
 			}
 			return false;
 		};
-		const getThemeSpy = ( store, siteId, themeId ) => {
+		const getThemeSpy = ( state, siteId, themeId ) => {
 			if ( themeId === 'karuna-wpcom' ) {
 				return { theme: themeId };
 			}
