@@ -63,7 +63,7 @@ class SiteSettingsFormDiscussion extends Component {
 					<span>{ translate( 'Allow people to post comments on new articles' ) }</span>
 				</FormToggle>
 				<FormSettingExplanation>
-					{ translate( '(These settings may be overridden for individual articles.)' ) }
+					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
