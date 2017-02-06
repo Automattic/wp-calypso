@@ -3,7 +3,7 @@
  */
 import { DOMAIN, SMS, PAYMENT } from './constants';
 
-const items = {
+export const itemsSchema = {
 
 	type: 'array',
 	items: {
@@ -21,8 +21,8 @@ const items = {
 export const countriesSchema = {
 	type: 'object',
 	properties: {
-		[ DOMAIN ]: items,
-		[ SMS ]: items,
-		[ PAYMENT ]: items
+		[ DOMAIN ]: itemsSchema,
+		[ SMS ]: itemsSchema,
+		[ PAYMENT ]: itemsSchema
 	}
 };

@@ -9,13 +9,13 @@ Render the component, passing `listType`. It does not accept any children, nor d
 
 ```jsx
 import React from 'react';
-import { DOMAIN } from 'state/countries/constants'; 
+import { listTypes } from 'state/countries/constants'; 
 import QueryCountries from 'components/data/query-countries';
 
 export default function MyCountries( { countries } ) {
 	return (
 		<ul>
-			<QueryCountries countryCode={ DOMAIN } />
+			<QueryCountries listType={ listTypes.DOMAIN } />
 			{ countries.map( ( country ) => <li>{ country.name }</li> ) }
 		</ul>
 	);

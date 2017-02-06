@@ -17,15 +17,16 @@ import {
 } from 'state/action-types';
 import reducer, {
 	items,
-	isFetching,
+	isRequesting,
 } from '../reducer';
-import { DOMAIN, PAYMENT, SMS } from '../constants';
+import { listTypes } from '../constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalCountries = [
-	{ code: 'US', name: 'United States' },
-	{ code: 'IN', name: 'India' }
-];
+		{ code: 'US', name: 'United States' },
+		{ code: 'IN', name: 'India' }
+	],
+	{ DOMAIN, PAYMENT, SMS } = listTypes;
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
@@ -33,7 +34,7 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
-			'isFetching'
+			'isRequesting'
 		] );
 	} );
 
@@ -47,7 +48,7 @@ describe( 'reducer', () => {
 				} );
 
 				it( 'should store the countries received', () => {
-					const original = deepFreeze( items( undefined, {} )[ listType ] );
+					const original = deepFreeze( items( undefined, {} ) );
 					const state = items( original, {
 						type: COUNTRIES_RECEIVE,
 						listType,
@@ -61,13 +62,13 @@ describe( 'reducer', () => {
 
 		describe( 'persistence', () => {
 			it( 'should persist state', () => {
-				const original = deepFreeze( { [ DOMAIN ]: originalCountries } ),
+				const original = deepFreeze( { [ DOMAIN ]: originalCountries, [ SMS ]: [], [ PAYMENT ]: [] } ),
 					state = items( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
 			} );
 
 			it( 'should load valid persisted state', () => {
-				const original = deepFreeze( { [ DOMAIN ]: originalCountries } ),
+				const original = deepFreeze( { [ DOMAIN ]: originalCountries, [ SMS ]: [], [ PAYMENT ]: [] } ),
 					state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( original );
 			} );
@@ -84,15 +85,15 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '.isFetching', () => {
+	describe( '.isRequesting', () => {
 		[ DOMAIN, PAYMENT, SMS ].forEach( ( listType ) => {
 			describe( `.${ listType }`, () => {
 				it( 'should default to false', () => {
-					expect( isFetching( undefined, {} )[ listType ] ).to.eql( false );
+					expect( isRequesting( undefined, {} )[ listType ] ).to.eql( false );
 				} );
 				it( 'should be true after a request begins', () => {
-					const original = deepFreeze( isFetching( undefined, {} ) );
-					const state = isFetching( original, {
+					const original = deepFreeze( isRequesting( undefined, {} ) );
+					const state = isRequesting( original, {
 						type: COUNTRIES_REQUEST,
 						listType
 					} );
@@ -109,7 +110,7 @@ describe( 'reducer', () => {
 						const original = deepFreeze( {
 							[ DOMAIN ]: true, [ SMS ]: true, [ PAYMENT ]: true
 						} );
-						const state = isFetching( original, {
+						const state = isRequesting( original, {
 							type: actionType,
 							listType
 						} );

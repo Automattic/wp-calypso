@@ -1,11 +1,7 @@
 /**
- * External Dependencies
- */
-
-/**
  * Internal Dependencies
  */
-import { SMS, DOMAIN, PAYMENT } from './constants';
+import { listTypes } from './constants';
 import wp from 'lib/wp';
 import {
 	COUNTRIES_RECEIVE,
@@ -16,7 +12,7 @@ import {
 
 const wpcom = wp.undocumented();
 
-export function requestCountries( listType ) {
+function requestCountries( listType ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: COUNTRIES_REQUEST,
@@ -24,13 +20,13 @@ export function requestCountries( listType ) {
 		} );
 		let promise;
 		switch ( listType ) {
-			case SMS:
+			case listTypes.SMS:
 				promise = wpcom.getSmsSupportedCountries();
 				break;
-			case DOMAIN:
+			case listTypes.DOMAIN:
 				promise = wpcom.getDomainRegistrationSupportedCountries();
 				break;
-			case PAYMENT:
+			case listTypes.PAYMENT:
 				promise = wpcom.getPaymentSupportedCountries();
 				break;
 			default:
@@ -39,8 +35,22 @@ export function requestCountries( listType ) {
 		return promise.then( countries => {
 			dispatch( { type: COUNTRIES_RECEIVE, listType, countries } );
 			dispatch( { type: COUNTRIES_REQUEST_SUCCESS, listType } );
+			return countries;
 		} ).catch( error => {
 			dispatch( { type: COUNTRIES_REQUEST_FAILURE, listType, error } );
+			return Promise.reject( error );
 		} );
 	};
+}
+
+export function requestSMSSupportCountries() {
+	return requestCountries( listTypes.SMS );
+}
+
+export function requestDomainRegistrationSupportedCountries() {
+	return requestCountries( listTypes.DOMAIN );
+}
+
+export function requestPaymentSupportCountries() {
+	return requestCountries( listTypes.PAYMENT );
 }

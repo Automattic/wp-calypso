@@ -6,27 +6,54 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { SMS, DOMAIN, PAYMENT } from './constants';
+import { listTypes } from './constants';
 import {
 	COUNTRIES_RECEIVE,
 	COUNTRIES_REQUEST,
 	COUNTRIES_REQUEST_FAILURE,
 	COUNTRIES_REQUEST_SUCCESS
 } from 'state/action-types';
-import { countriesSchema } from './schema';
+import { itemsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
-export const items = createReducer( { [ SMS ]: [], [ DOMAIN ]: [], [ PAYMENT ]: [] }, {
-	[ COUNTRIES_RECEIVE ]: ( state, action ) => ( { ...state, [ action.listType ]: action.countries } )
-}, countriesSchema );
+const { DOMAIN, PAYMENT, SMS } = listTypes;
 
-export const isFetching = createReducer( { [ SMS ]: false, [ DOMAIN ]: false, [ PAYMENT ]: false }, {
-	[ COUNTRIES_REQUEST ]: ( state, { listType } ) => ( { ...state, [ listType ]: true } ),
-	[ COUNTRIES_REQUEST_SUCCESS ]: ( state, { listType } ) => ( { ...state, [ listType ]: false } ),
-	[ COUNTRIES_REQUEST_FAILURE ]: ( state, { listType } ) => ( { ...state, [ listType ]: false } )
+function createItemsReducer( type ) {
+	return createReducer( [], {
+		[ COUNTRIES_RECEIVE ]: ( state, { listType, countries } ) => {
+			if ( type !== listType ) {
+				return state;
+			}
+			return countries;
+		}
+	}, itemsSchema );
+}
+
+function createIsRequestingReducer( type ) {
+	function makeHandler( value ) {
+		return ( state, { listType } ) => listType === type ? value : state;
+	}
+
+	return createReducer( false, {
+		[ COUNTRIES_REQUEST ]: makeHandler( true ),
+		[ COUNTRIES_REQUEST_FAILURE ]: makeHandler( false ),
+		[ COUNTRIES_REQUEST_SUCCESS ]: makeHandler( false )
+	} );
+}
+
+export const items = combineReducers( {
+	[ SMS ]: createItemsReducer( SMS ),
+	[ DOMAIN ]: createItemsReducer( DOMAIN ),
+	[ PAYMENT ]: createItemsReducer( PAYMENT )
+} );
+
+export const isRequesting = combineReducers( {
+	[ SMS ]: createIsRequestingReducer( SMS ),
+	[ DOMAIN ]: createIsRequestingReducer( DOMAIN ),
+	[ PAYMENT ]: createIsRequestingReducer( PAYMENT )
 } );
 
 export default combineReducers( {
-	isFetching,
+	isRequesting,
 	items
 } );

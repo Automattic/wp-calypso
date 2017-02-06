@@ -44,4 +44,3 @@ export default connect(
 	} ),
 	{ requestCountries }
 )( QueryCountries );
-
