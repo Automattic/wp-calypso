@@ -504,7 +504,8 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const theme = getTheme( getState(), siteId, themeId );
+		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
+		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
 		if ( ! theme ) {
 			dispatch( {
 				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,

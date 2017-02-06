@@ -991,6 +991,12 @@ describe( 'actions', () => {
 
 	describe( '#tryAndCustomizeTheme', () => {
 		const pageSpy = sinon.spy();
+		const isJetpackSiteSpy = ( state, siteId ) => {
+			if ( siteId === 2211667 ) {
+				return true;
+			}
+			return false;
+		};
 		const getThemeSpy = ( store, siteId, themeId ) => {
 			if ( themeId === 'karuna-wpcom' ) {
 				return { theme: themeId };
@@ -1003,6 +1009,9 @@ describe( 'actions', () => {
 
 		useMockery( ( mockery ) => {
 			mockery.registerMock( 'page', pageSpy );
+			mockery.registerMock( 'state/sites/selectors', {
+				isJetpackSite: isJetpackSiteSpy
+			} );
 			mockery.registerMock( './selectors', {
 				getThemeCustomizeUrl: () => 'customizer/url',
 				getTheme: getThemeSpy,
