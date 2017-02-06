@@ -99,17 +99,24 @@ const ConnectedReaderPostCardAdapter = connect(
 		// set up the discover pick
 		let discoverPick = null;
 		if ( get( ownProps, 'post.is_discover' ) ) {
-			// copy over discoverPick from feed store
+			// copy discoverPick from feed store
 			const discoverPickPost = get( ownProps, 'discoverPick.post' );
 
-			// add discoverPick site from state
-			const { blogId } = getDiscoverSourceData( ownProps.post );
-			const discoverPickSite = blogId ? getSite( state, blogId ) : null;
+			// limit discover pick site to discover stream
+			if ( ownProps.isDiscoverStream ) {
+				// add discoverPick site from state
+				const { blogId } = getDiscoverSourceData( ownProps.post );
+				const discoverPickSite = blogId ? getSite( state, blogId ) : null;
 
-			if ( discoverPickPost || discoverPickSite ) {
+				if ( discoverPickPost || discoverPickSite ) {
+					discoverPick = {
+						post: discoverPickPost,
+						site: discoverPickSite,
+					};
+				}
+			} else if ( discoverPickPost ) {
 				discoverPick = {
-					post: discoverPickPost,
-					site: discoverPickSite,
+					post: discoverPickPost
 				};
 			}
 		}
