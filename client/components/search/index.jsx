@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import { isMobile } from 'lib/viewport';
+import addIsomorphicComponentId from 'components/isomorphic-id';
 
 /**
  * Internal variables
@@ -33,10 +34,6 @@ function keyListener( methodToCall, event ) {
 const Search = React.createClass( {
 
 	displayName: 'Search',
-
-	statics: {
-		instances: 0
-	},
 
 	propTypes: {
 		additionalClasses: PropTypes.string,
@@ -98,10 +95,6 @@ const Search = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.setState( {
-			instanceId: ++Search.instances
-		} );
-
 		this.closeListener = keyListener.bind( this, 'closeSearch' );
 		this.openListener = keyListener.bind( this, 'openSearch' );
 	},
@@ -339,14 +332,14 @@ const Search = React.createClass( {
 						? this.openListener
 						: null
 					}
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.props.componentId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
 					<input
 						type="search"
-						id={ 'search-component-' + this.state.instanceId }
+						id={ 'search-component-' + this.props.componentId }
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
@@ -388,7 +381,7 @@ const Search = React.createClass( {
 					onClick={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.props.componentId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
 					<Gridicon icon="cross" className="search__close-icon" />
 				</div>
@@ -399,4 +392,4 @@ const Search = React.createClass( {
 	}
 } );
 
-module.exports = Search;
+module.exports = addIsomorphicComponentId( Search );
