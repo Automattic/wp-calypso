@@ -20,7 +20,7 @@ import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
 
@@ -59,7 +59,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	// Render single plugin component
-	renderPage(
+	renderWithReduxStore(
 		React.createElement( PluginComponent, {
 			path: context.path,
 			prevQuerystring: lastPluginsQuerystring,
@@ -68,8 +68,8 @@ function renderSinglePlugin( context, siteUrl ) {
 			pluginSlug,
 			siteUrl,
 		} ),
-		context,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -146,7 +146,7 @@ function renderPluginsBrowser( context ) {
 	.pageView
 	.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderPage(
+	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,
@@ -154,8 +154,8 @@ function renderPluginsBrowser( context ) {
 			sites,
 			search: searchTerm
 		} ),
-		context,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -164,13 +164,13 @@ function renderPluginWarnings( context ) {
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	renderPage(
+	renderWithReduxStore(
 		React.createElement( PluginEligibility, {
 			siteSlug: site.slug,
 			pluginSlug
 		} ),
-		context,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -187,12 +187,12 @@ function renderProvisionPlugins( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
 
-	renderPage(
+	renderWithReduxStore(
 		React.createElement( PlanSetup, {
 			whitelist: context.query.only || false
 		} ),
-		context,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 

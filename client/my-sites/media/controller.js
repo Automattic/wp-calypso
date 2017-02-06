@@ -11,7 +11,7 @@ import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
@@ -34,13 +34,14 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
 		// Render
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( MediaComponent, {
 				sites: sites,
 				filter: filter,
 				search: search
 			} ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 

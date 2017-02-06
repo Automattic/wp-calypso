@@ -8,16 +8,17 @@ import { translate } from 'i18n-calypso';
 /*
 	Internal deps
 */
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import controller from 'me/controller';
 import Happychat from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 
 const renderChat = ( context ) => {
 	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );
-	renderPage(
+	renderWithReduxStore(
 		<Happychat />,
-		context
+		document.getElementById( 'primary' ),
+		context.store
 	);
 };
 
