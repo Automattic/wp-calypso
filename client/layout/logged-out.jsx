@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import { getSection } from 'state/ui/selectors';
+import SitePreview from 'blocks/site-preview';
+import config from 'config';
 
 const LayoutLoggedOut = ( {
 	primary,
@@ -25,6 +27,14 @@ const LayoutLoggedOut = ( {
 		'wp-singletree-layout': !! primary,
 	} );
 
+	const renderPreview = () => {
+		if ( config.isEnabled( 'preview-layout' ) && section.group === 'sites' ) {
+			return (
+				<SitePreview />
+			);
+		}
+	};
+
 	return (
 		<div className={ classes }>
 			<MasterbarLoggedOut title={ section.title } />
@@ -39,6 +49,7 @@ const LayoutLoggedOut = ( {
 			<div id="tertiary">
 				{ tertiary }
 			</div>
+			{ renderPreview() }
 		</div>
 	);
 };
