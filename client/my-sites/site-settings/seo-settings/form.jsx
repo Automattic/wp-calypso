@@ -34,7 +34,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteOption, getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -367,6 +367,7 @@ export const SeoForm = React.createClass( {
 	render() {
 		const { showAdvancedSeo,
 			showWebsiteMeta,
+			jetpackManagementUrl,
 			jetpackVersionSupportsSeo,
 		} = this.props;
 		const {
@@ -475,7 +476,7 @@ export const SeoForm = React.createClass( {
 							'SEO Tools module is disabled in Jetpack.'
 						) }
 					>
-						<NoticeAction href={ '//' + domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+						<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
 							{ this.translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -592,7 +593,7 @@ export const SeoForm = React.createClass( {
 								'Site Verification Services are disabled in Jetpack.'
 							) }
 						>
-							<NoticeAction href={ '//' + domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+							<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
 								{ this.translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
@@ -737,6 +738,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const siteId = get( site, 'ID', 0 );
+	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
 	const isAdvancedSeoSupported = site && ( ! site.jetpack || ( site.jetpack && jetpackVersionSupportsSeo ) );
 
@@ -745,6 +747,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
+		jetpackManagementUrl,
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 	};
 };
