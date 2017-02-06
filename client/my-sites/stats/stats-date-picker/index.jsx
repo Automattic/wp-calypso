@@ -113,7 +113,7 @@ class StatsDatePicker extends Component {
 		const date = moment( queryDate );
 		const isToday = today.isSame( date, 'day' );
 		return translate( 'Last update: %(time)s', {
-			args: { time: isToday ? date.format( 'HH:mm' ) : date.fromNow() }
+			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
 		} );
 	}
 
