@@ -13,7 +13,7 @@ Sections are usually bigger areas of the application that have their own chunk o
 Creating a new section is composed of five steps:
 
 1. Add your feature `config/development.json`.
-2. Setup your section folder.
+2. Setup your section folder `client/my-sites/my-section`.
 3. Create a controller `client/my-sites/my-section/controller.js`.
 4. Setup the entry routes in `client/my-sites/my-section/index.js`.
 5. Register section in `client/sections.js`.
@@ -93,7 +93,7 @@ export default () => {
 
 `page()` will set up the route `/hello-world` and run some functions when it's matched. The `:domain?` is because we want to support site specific pages for our hello-world route. We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process. The last function is our newly created controller handler.
 
-### 4. Register section
+### 5. Register section
 
 Now it's time to configure our section. Open `client/sections.js` and add the following code:
 
