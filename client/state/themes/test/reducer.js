@@ -565,6 +565,20 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#themeRequestErrors()', () => {
+		const themeError = deepFreeze( {
+			wpcom: {
+				blah: {
+					path: '\rest\v1.2\themes\blah',
+					method: 'GET',
+					name: 'ThemeNotFoundError',
+					statusCode: 404,
+					status: 404,
+					message: 'The specified theme was not found',
+					error: 'theme_not_found',
+				}
+			}
+		} );
+
 		it( 'should default to an empty object', () => {
 			const state = themeRequestErrors( undefined, {} );
 
@@ -634,28 +648,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state', () => {
-			const state = themeRequestErrors( deepFreeze( {
-				2916284: {
-					twentysixteen: null
-				}
-			} ), {
+		it( 'persists state', () => {
+			const state = themeRequestErrors( themeError, {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.deep.equal( themeError );
 		} );
 
-		it( 'never loads persisted state', () => {
-			const state = themeRequestErrors( deepFreeze( {
-				2916284: {
-					twentysixteen: null
-				}
-			} ), {
+		it( 'loads persisted state', () => {
+			const state = themeRequestErrors( themeError, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.deep.equal( themeError );
 		} );
 	} );
 
