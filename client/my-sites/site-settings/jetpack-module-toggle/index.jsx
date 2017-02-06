@@ -62,8 +62,9 @@ class JetpackModuleToggle extends Component {
 					checked={ this.props.checked || false }
 					toggling={ this.props.toggling }
 					onChange={ this.handleChange }
-					disabled={ this.props.disabled || this.props.toggleDisabled } >
-					<span className="site-settings__toggle-label">{ this.props.label }</span>
+					disabled={ this.props.disabled || this.props.toggleDisabled }
+				>
+					{ this.props.label }
 					{
 						this.props.description && (
 							<FormSettingExplanation isIndented>

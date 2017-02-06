@@ -111,7 +111,7 @@ class SiteSettingsFormWriting extends Component {
 									onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
 									disabled={ isRequestingSettings }
 								>
-									<span className="site-settings__toggle-label">{
+									{
 										translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
 											components: {
 												a: (
@@ -123,7 +123,7 @@ class SiteSettingsFormWriting extends Component {
 												)
 											}
 										} )
-									}</span>
+									}
 								</FormToggle>
 							</FormLabel>
 						</FormFieldset>
