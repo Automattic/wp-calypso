@@ -107,6 +107,7 @@ export default class ReaderPostCard extends React.Component {
 			isSelected,
 			showSiteName,
 			followSource,
+			isDiscoverStream,
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
@@ -163,7 +164,7 @@ export default class ReaderPostCard extends React.Component {
 		// set up post byline
 		let postByline;
 
-		if ( isDiscover && ! isEmpty( discoverPick ) ) {
+		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
 			// create a post like object with some props from the discover post
 			const postForByline = Object.assign( {},
 				discoverPick.post || {},
