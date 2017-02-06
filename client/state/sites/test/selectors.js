@@ -2324,7 +2324,11 @@ describe( 'selectors', () => {
 
 		context( 'browser', () => {
 			before( () => {
-				global.window = { location: 'https://wordpress.com' };
+				global.window = {
+					location: {
+						href: 'https://wordpress.com'
+					}
+				};
 			} );
 
 			after( () => {
