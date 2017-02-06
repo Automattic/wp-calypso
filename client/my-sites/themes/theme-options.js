@@ -24,8 +24,8 @@ import {
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl,
 	isThemeActive as isActive,
-	isThemePurchased as isPurchased,
 	isThemePremium as isPremium,
+	isPremiumThemeAvailable,
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -44,8 +44,9 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		getUrl: getPurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-		hideForTheme: ( state, theme, siteId ) =>
-			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPurchased( state, theme.id, siteId )
+		hideForTheme: ( state, theme, siteId ) => (
+			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPremiumThemeAvailable( state, theme.id, siteId )
+		)
 	}
 	: {};
 
@@ -54,11 +55,7 @@ const activate = {
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateTheme,
 	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
-			! isPurchased( state, theme.id, siteId ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-		)
+		isActive( state, theme.id, siteId ) || ( isPremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
 	)
 };
 
