@@ -45,13 +45,13 @@ import {
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
-import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
 import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setPreviewOptions } from 'state/themes/actions';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -95,12 +95,6 @@ const ThemeSheet = React.createClass( {
 		return {
 			section: '',
 			defaultOption: {}
-		};
-	},
-
-	getInitialState() {
-		return {
-			showPreview: false,
 		};
 	},
 
@@ -163,10 +157,6 @@ const ThemeSheet = React.createClass( {
 		this.trackButtonClick( 'css_forum' );
 	},
 
-	togglePreview() {
-		this.setState( { showPreview: ! this.state.showPreview } );
-	},
-
 	renderBar() {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
@@ -187,9 +177,17 @@ const ThemeSheet = React.createClass( {
 		return null;
 	},
 
+	getPreviewAction() {
+		const preview = this.props.options.preview || this.props.options.previewOnJetpack;
+		return () => {
+			this.props.setPreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+			return preview.action( this.props.theme );
+		};
+	},
+
 	renderPreviewButton() {
 		return (
-			<a className="theme__sheet-preview-link" onClick={ this.togglePreview } data-tip-target="theme-sheet-preview">
+			<a className="theme__sheet-preview-link" onClick={ this.getPreviewAction() } data-tip-target="theme-sheet-preview">
 				<Gridicon icon="themes" size={ 18 } />
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
@@ -453,24 +451,6 @@ const ThemeSheet = React.createClass( {
 		return defaultOption.label;
 	},
 
-	renderPreview() {
-		const { isActive, isLoggedIn, defaultOption, secondaryOption } = this.props;
-
-		const showSecondaryButton = secondaryOption && ! isActive && isLoggedIn;
-		return (
-			<ThemePreview showPreview={ this.state.showPreview }
-				theme={ this.props }
-				onClose={ this.togglePreview }
-				primaryButtonLabel={ this.getDefaultOptionLabel() }
-				getPrimaryButtonHref={ defaultOption.getUrl }
-				onPrimaryButtonClick={ this.onButtonClick }
-				secondaryButtonLabel={ showSecondaryButton ? secondaryOption.label : null }
-				onSecondaryButtonClick={ this.onSecondaryButtonClick }
-				getSecondaryButtonHref={ showSecondaryButton ? secondaryOption.getUrl : null }
-			/>
-		);
-	},
-
 	renderError() {
 		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
 			comment: 'Message displayed when requested theme was not found',
@@ -568,7 +548,6 @@ const ThemeSheet = React.createClass( {
 				<ThanksModal
 					site={ this.props.selectedSite }
 					source={ 'details' } />
-				{ this.state.showPreview && this.renderPreview() }
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
 					backText={ i18n.translate( 'All Themes' ) }>
@@ -620,6 +599,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
+		previewAction,
 	} = props;
 	const siteId = site ? site.ID : null;
 
@@ -645,6 +625,7 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryandcustomize',
 				'purchase',
 				'activate',
+				previewAction
 			] }
 			defaultOption={ defaultOption }
 			secondaryOption={ 'tryandcustomize' }
@@ -681,6 +662,7 @@ export default connect(
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
 		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
+		const previewAction = isWpcomTheme ? 'preview' : 'previewOnJetpack';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
@@ -697,6 +679,7 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
+			previewAction,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
@@ -706,6 +689,7 @@ export default connect(
 		};
 	},
 	{
+		setPreviewOptions,
 		recordTracksEvent,
 	}
 )( ThemeSheetWithOptions );
