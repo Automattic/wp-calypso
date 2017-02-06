@@ -507,12 +507,11 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
 		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
 		if ( ! theme ) {
-			dispatch( {
+			return dispatch( {
 				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
 				themeId,
 				siteId
 			} );
-			return;
 		}
 		const url = getThemeCustomizeUrl( getState(), theme, siteId );
 		page( url );
