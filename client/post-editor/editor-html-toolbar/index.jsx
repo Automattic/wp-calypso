@@ -2,16 +2,26 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { map, reduce } from 'lodash';
+import {
+	map,
+	reduce,
+	throttle,
+} from 'lodash';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isWithinBreakpoint } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
+
+/**
+ * Module constants
+ */
+const TOOLBAR_HEIGHT = 39;
 
 export class EditorHtmlToolbar extends Component {
 
@@ -23,11 +33,82 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	state = {
+		isPinned: false,
+		isScrollable: false,
+		isScrolledFull: false,
 		openTags: [],
 		selectedText: '',
 		showImageDialog: false,
 		showLinkDialog: false,
 	};
+
+	componentDidMount() {
+		this.pinToolbarOnScroll = throttle( this.pinToolbarOnScroll, 50 );
+		this.hideToolbarFadeOnFullScroll = throttle( this.hideToolbarFadeOnFullScroll, 200 );
+		this.onWindowResize = throttle( this.onWindowResize, 400 );
+
+		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
+		window.addEventListener( 'resize', this.onWindowResize );
+		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+
+		this.toggleToolbarScrollableOnResize();
+	}
+
+	componentWillUnmount() {
+		this.pinToolbarOnScroll.cancel();
+		this.onWindowResize.cancel();
+		this.hideToolbarFadeOnFullScroll.cancel();
+		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
+		window.removeEventListener( 'resize', this.onWindowResize );
+		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+	}
+
+	bindButtonsRef = div => {
+		this.buttons = div;
+	}
+
+	onWindowResize = () => {
+		this.disablePinOnSmallScreens();
+		this.toggleToolbarScrollableOnResize();
+	}
+
+	pinToolbarOnScroll = () => {
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			return;
+		}
+
+		const { offsetTop } = this.props.content;
+		const { isPinned } = this.state;
+
+		if ( isPinned && window.pageYOffset < offsetTop - TOOLBAR_HEIGHT ) {
+			this.setState( { isPinned: false } );
+		} else if ( ! isPinned && window.pageYOffset > offsetTop - TOOLBAR_HEIGHT ) {
+			this.setState( { isPinned: true } );
+		}
+	}
+
+	disablePinOnSmallScreens = () => {
+		if ( this.state.isPinned && isWithinBreakpoint( '<660px' ) ) {
+			this.setState( { isPinned: false } );
+		}
+	}
+
+	toggleToolbarScrollableOnResize = () => {
+		const isScrollable = this.buttons.scrollWidth > this.buttons.clientWidth;
+		if ( isScrollable !== this.state.isScrollable ) {
+			this.setState( { isScrollable } );
+		}
+	}
+
+	hideToolbarFadeOnFullScroll = event => {
+		const { scrollLeft, scrollWidth, clientWidth } = event.target;
+		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
+		const isScrolledFull = scrollLeft >= scrollWidth - clientWidth - 10;
+
+		if ( isScrolledFull !== this.state.isScrolledFull ) {
+			this.setState( { isScrolledFull } );
+		}
+	}
 
 	splitEditorContent() {
 		const { content: {
@@ -216,18 +297,16 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showLinkDialog: false } );
 	}
 
-	tagLabel( tag, label ) {
-		const { openTags } = this.state;
-		return -1 === openTags.indexOf( tag ) ? label : `/${ label }`;
-	}
-
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	render() {
-		if ( ! config.isEnabled( 'post-editor/html-toolbar' ) ) {
-			return null;
-		}
 		const { translate } = this.props;
+		const classes = classNames( 'editor-html-toolbar', {
+			'is-pinned': this.state.isPinned,
+			'is-scrollable': this.state.isScrollable,
+			'is-scrolled-full': this.state.isScrolledFull,
+		} );
+
 		const buttons = {
 			strong: {
 				label: 'b',
@@ -277,19 +356,26 @@ export class EditorHtmlToolbar extends Component {
 		};
 
 		return (
-			<div className="editor-html-toolbar">
-				{ map( buttons, ( { disabled, label, onClick }, tag ) =>
-					<Button
-						borderless
-						className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
-						compact
-						disabled={ disabled }
-						key={ tag }
-						onClick={ onClick }
+			<div className={ classes }>
+				<div className="editor-html-toolbar__wrapper">
+					<div
+						className="editor-html-toolbar__buttons"
+						ref={ this.bindButtonsRef }
 					>
-						{ label || tag }
-					</Button>
-				) }
+						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
+							<Button
+								borderless
+								className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
+								compact
+								disabled={ disabled }
+								key={ tag }
+								onClick={ onClick }
+							>
+								{ label || tag }
+							</Button>
+						) }
+					</div>
+				</div>
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
