@@ -17,8 +17,23 @@ import { renderPage } from 'lib/react-helpers';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
+import userUtils from 'lib/user/utils';
+import support from 'lib/url/support';
 
 export default {
+	loggedOut( context, next ) {
+		if ( userUtils.isLoggedIn() ) {
+			return next();
+		}
+
+		const url = ( context.path === '/help' )
+			? support.SUPPORT_ROOT
+			: userUtils.getLoginUrl( window.location.href );
+
+		// Not using the page library here since this is an external URL
+		window.location.href = url;
+	},
+
 	help( context ) {
 		const basePath = route.sectionify( context.path );
 
