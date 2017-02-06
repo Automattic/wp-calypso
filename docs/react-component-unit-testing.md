@@ -53,20 +53,25 @@ Example test from `client/components/Accordion`
 
 ```javascript
 import { shallow } from 'enzyme';
+import { expect } from 'chai';
 
-const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
+	const wrapper = shallow( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-wrapper.find( '.accordion__toggle' ).simulate( 'click' );
-);
+	// Simulate a click event to toggle expanding state
+	wrapper.find( '.accordion__toggle' ).simulate( 'click' );
 
-function finishTest( isExpanded ) {
-	expect( isExpanded ).to.be.ok;
+	function finishTest( isExpanded ) {
+		// Check that it received the toggled state (the component is initially collapsed/not expanded)
+		expect( isExpanded ).to.be.true;
 
-	process.nextTick( function() {
-		expect( tree.isExpanded() ).to.be.ok;
-		done();
-	} );
-}
+		process.nextTick( function() {
+			// Check that the component is expanded
+			expect( wrapper ).to.have.state( 'isExpanded' ).be.true;
+			done();
+		} );
+	}
+} );
 ```
 
 ## [Techniques for avoiding calling other than the targeted code](#techniques-for-avoiding-calling-other-code)
@@ -107,22 +112,22 @@ So we test it like this:
 ```javascript
 
 this.props = {
-    themes: [
-        {
-            name: 'kubrick',
-            screenshot: '/theme/kubrick/screenshot.png',
-        },
-        {
-            name: 'picard',
-            screenshot: '/theme/picard/screenshot.png',
-        }
-    ]
+	themes: [
+		{
+			name: 'kubrick',
+			screenshot: '/theme/kubrick/screenshot.png',
+		},
+		{
+			name: 'picard',
+			screenshot: '/theme/picard/screenshot.png',
+		}
+	]
 };
 
 var shallowRenderer = React.addons.TestUtils.createRenderer();
 
 shallowRenderer.render(
-    React.createElement( ThemesList, this.props )
+	React.createElement( ThemesList, this.props )
 );
 
 this.themesList = shallowRenderer.getRenderOutput();
