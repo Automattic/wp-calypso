@@ -13,7 +13,6 @@ import Card from 'components/card';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import config from 'config';
 import CreditCards from 'me/purchases/credit-cards';
-import eventRecorder from 'me/event-recorder';
 import PurchasesHeader from '../purchases/list/header';
 import BillingHistoryTable from './billing-history-table';
 import UpcomingChargesTable from './upcoming-charges-table';
@@ -26,7 +25,7 @@ import purchasesPaths from 'me/purchases/paths';
 import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
 
 const BillingHistory = React.createClass( {
-	mixins: [ observe( 'sites' ), eventRecorder ],
+	mixins: [ observe( 'sites' ) ],
 
 	render() {
 		const { pastTransactions, upcomingTransactions, sites, translate } = this.props;
