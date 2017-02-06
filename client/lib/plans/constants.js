@@ -41,7 +41,6 @@ export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_SELECT_PREMIUM_THEMES = 'select-premium-themes';
 export const FEATURE_ALL_PREMIUM_THEMES = 'all-premium-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
-export const FEATURE_PREMIUM_SQUARED = 'premium-squared';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
@@ -163,8 +162,7 @@ export const PLANS_LIST = {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			FEATURE_PREMIUM_SQUARED
+			FEATURE_VIDEO_UPLOADS
 		],
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,

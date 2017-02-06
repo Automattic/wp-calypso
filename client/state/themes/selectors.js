@@ -16,7 +16,7 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
@@ -26,7 +26,7 @@ import {
 	oldShowcaseUrl
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_PREMIUM_SQUARED } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * When wpcom themes are installed on Jetpack sites, the
@@ -598,8 +598,7 @@ export function isPremiumSquaredTheme( state, themeId ) {
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return isThemePurchased( state, themeId, siteId ) ||
 		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-			( isPremiumSquaredTheme( state, themeId ) && hasFeature( state, siteId, FEATURE_PREMIUM_SQUARED )
-	);
+			( isPremiumSquaredTheme( state, themeId ) && PLAN_PREMIUM === getSitePlanSlug( state, siteId ) );
 }
 
 /**
