@@ -10,8 +10,6 @@ import closest from 'component-closest';
 /**
  * Internal Dependencies
  */
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
@@ -28,7 +26,7 @@ import { getDiscoverBlogName,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
-class ReaderPostCard extends React.Component {
+export default class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
@@ -109,8 +107,7 @@ class ReaderPostCard extends React.Component {
 			isSelected,
 			showSiteName,
 			followSource,
-			showDiscoverFlag,
-			translate
+			isDiscoverStream,
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
@@ -184,11 +181,6 @@ class ReaderPostCard extends React.Component {
 
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
-				{ isDiscover && showDiscoverFlag &&
-					<div className="reader-post-card__discover-post-flag" >
-						<Gridicon icon="my-sites" size={ 16 } /> { translate( 'Featured on Discover' ) }
-					</div>
-				}
 				{ postByline }
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
@@ -198,4 +190,3 @@ class ReaderPostCard extends React.Component {
 	}
 }
 
-export default localize( ReaderPostCard );

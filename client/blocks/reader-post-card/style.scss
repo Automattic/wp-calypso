@@ -701,18 +701,3 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	bottom: 16px;
 }
 
-.reader-post-card__discover-post-flag {
-	display: inline-block;
-	color: lighten( $gray, 10% );
-	font-size: 14px;
-	font-weight: 600;
-	letter-spacing: 0.01em;
-	margin-bottom: 18px;
-	text-transform: uppercase;
-
-	.gridicon {
-		fill: lighten( $gray, 10% );
-		position: relative;
-		top: 3px;
-	}
-}
