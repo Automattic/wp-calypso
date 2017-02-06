@@ -5,7 +5,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import identity from 'lodash/identity';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies

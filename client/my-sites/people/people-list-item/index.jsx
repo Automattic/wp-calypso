@@ -4,8 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import omit from 'lodash/omit';
-import identity from 'lodash/identity';
+import { identity, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
