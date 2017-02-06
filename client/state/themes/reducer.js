@@ -35,7 +35,11 @@ import {
 	getThemeIdFromStylesheet
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
-import { queriesSchema, activeThemesSchema } from './schema';
+import {
+	queriesSchema,
+	activeThemesSchema,
+	themeRequestErrorsSchema,
+} from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
 
@@ -211,7 +215,7 @@ export const themeRequestErrors = createReducer( {}, {
 		...state,
 		[ siteId ]: omit( state[ siteId ], themeId ),
 	} )
-} );
+}, themeRequestErrorsSchema );
 
 /**
  * Returns the updated theme query requesting state after an action has been
