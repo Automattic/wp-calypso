@@ -337,6 +337,7 @@ export default React.createClass( {
 				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
 				{ this.renderCountryField() }
 				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
+				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
 				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
 				{ this.renderPostalCodeField() }
