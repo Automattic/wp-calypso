@@ -31,6 +31,7 @@ export default class FormToggle extends PureComponent {
 
 		this.onKeyDown = this.onKeyDown.bind( this );
 		this.onClick = this.onClick.bind( this );
+		this.onLabelClick = this.onLabelClick.bind( this );
 	}
 
 	componentWillMount() {
@@ -52,6 +53,18 @@ export default class FormToggle extends PureComponent {
 
 	onClick() {
 		if ( ! this.props.disabled ) {
+			this.props.onChange();
+		}
+	}
+
+	onLabelClick( event ) {
+		if ( this.props.disabled ) {
+			return;
+		}
+
+		const nodeName = event.target.nodeName.toLowerCase();
+		if ( nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select' ) {
+			event.preventDefault();
 			this.props.onChange();
 		}
 	}
@@ -82,7 +95,9 @@ export default class FormToggle extends PureComponent {
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
 						></span>
-					{ this.props.children }
+					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
+						{ this.props.children }
+					</span>
 				</label>
 			</span>
 		);

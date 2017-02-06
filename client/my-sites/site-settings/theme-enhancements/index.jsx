@@ -36,10 +36,9 @@ class ThemeEnhancements extends Component {
 				className="theme-enhancements__module-settings-toggle is-compact"
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleToggle( name ) }>
-				<span className="site-settings__toggle-label">
-					{ label }
-				</span>
+				onChange={ handleToggle( name ) }
+			>
+				{ label }
 			</FormToggle>
 		);
 	}
