@@ -456,7 +456,7 @@ class ReaderStream extends React.Component {
 			showPostHeader={ this.props.showPostHeader }
 			showFollowInHeader={ this.props.showFollowInHeader }
 			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
-			showDiscoverFlagOnCards={ ! this.props.isDiscoverStream }
+			isDiscoverStream={ this.props.isDiscoverStream }
 			showSiteName={ this.props.showSiteNameOnCards }
 			cardClassForPost={ this.cardClassForPost }
 			followSource={ this.props.followSource }

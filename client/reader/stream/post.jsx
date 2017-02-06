@@ -81,7 +81,7 @@ class ReaderPostCardAdapter extends React.Component {
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
-				showDiscoverFlag={ this.props.showDiscoverFlag }>
+				isDiscoverStream={ this.props.isDiscoverStream }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 				{ discoverPickSiteId && <QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
