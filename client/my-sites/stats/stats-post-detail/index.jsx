@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +25,9 @@ import QueryPostStats from 'components/data/query-post-stats';
 import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Button from 'components/button';
+import WebPreview from 'components/web-preview';
+import { getSiteSlug, isJetpackSite, getSite } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
 
 class StatsPostDetail extends Component {
@@ -37,7 +40,13 @@ class StatsPostDetail extends Component {
 		isRequestingPost: PropTypes.bool,
 		isRequestingStats: PropTypes.bool,
 		countViews: PropTypes.number,
-		port: PropTypes.object,
+		post: PropTypes.object,
+		siteSlug: PropTypes.string,
+		showViewLink: PropTypes.bool,
+	};
+
+	state = {
+		showPreview: false
 	};
 
 	goBack = () => {
@@ -51,10 +60,24 @@ class StatsPostDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	openPreview = () => {
+		this.setState( {
+			showPreview: true
+		} );
+	}
+
+	closePreview = () => {
+		this.setState( {
+			showPreview: false
+		} );
+	}
+
 	render() {
-		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate } = this.props;
+		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate, siteSlug, showViewLink } = this.props;
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
+		const postUrl = get( post, 'URL' );
+
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
@@ -73,7 +96,12 @@ class StatsPostDetail extends Component {
 
 				<StatsFirstView />
 
-				<HeaderCake onClick={ this.goBack }>
+				<HeaderCake
+					onClick={ this.goBack }
+					actionIcon={ showViewLink ? 'visible' : null }
+					actionText={ showViewLink ? translate( 'View Post' ) : null }
+					actionOnClick={ showViewLink ? this.openPreview : null }
+					>
 					{ title }
 				</HeaderCake>
 
@@ -116,6 +144,19 @@ class StatsPostDetail extends Component {
 						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				}
+
+				<WebPreview
+					showPreview={ this.state.showPreview }
+					defaultViewportDevice="tablet"
+					previewUrl={ `${ postUrl }?demo=true&iframe=true&theme_preview=true` }
+					externalUrl={ postUrl }
+					onClose={ this.closePreview }
+					loadingMessage="Beep beep boop…"
+				>
+					<Button href={ `/post/${ siteSlug }/${ postId }` }>
+						{ translate( 'Edit' ) }
+					</Button>
+				</WebPreview>
 			</Main>
 		);
 	}
@@ -124,12 +165,16 @@ class StatsPostDetail extends Component {
 const connectComponent = connect(
 	( state, { postId } ) => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const site = getSite( state, siteId );
 
 		return {
 			post: getSitePost( state, siteId, postId ),
 			isRequestingPost: isRequestingSitePost( state, siteId, postId ),
 			countViews: getPostStat( state, siteId, postId, 'views' ),
 			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			showViewLink: ! isJetpack && site.is_previewable,
 			siteId,
 		};
 	}
