@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether email is being sent for that receipt
  */
 export default function isSendingBillingReceiptEmail( state, receiptId ) {
-	return get( state.billingTransactions, [ 'sendingReceiptEmail', receiptId ], null );
+	return get( state, [ 'billingTransactions', 'sendingReceiptEmail', receiptId ], null );
 }
