@@ -69,10 +69,6 @@ export default React.createClass( {
 				title: this.state.title
 			} );
 		}
-
-		if ( this.isMounted() ) {
-			this.resetTitle();
-		}
 	}, 0 ),
 
 	resetTitle() {
