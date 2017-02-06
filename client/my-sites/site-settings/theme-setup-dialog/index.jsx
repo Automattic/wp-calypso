@@ -21,7 +21,6 @@ import { closeDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 class ThemeSetupDialog extends React.Component {
 	constructor( props ) {
 		super( props );
-		this.onInputChange = this.onInputChange.bind( this );
 		this.state = {
 			confirmDeleteInput: '',
 		};
@@ -35,7 +34,7 @@ class ThemeSetupDialog extends React.Component {
 		}
 	}
 
-	onInputChange( event ) {
+	onInputChange = ( event ) => {
 		this.setState( {
 			confirmDeleteInput: event.target.value,
 		} );
