@@ -16,7 +16,7 @@ import MenusComponent from 'my-sites/menus/main';
 import notices from 'notices';
 import siteMenus from 'lib/menu-data';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
@@ -35,7 +35,7 @@ export default function menus( context ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 	function renderJetpackUpgradeMessage() {
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( MainComponent, null,
 				React.createElement( JetpackManageErrorPage, {
 					template: 'updateJetpack',
@@ -47,7 +47,8 @@ export default function menus( context ) {
 					secondaryActionTarget: '_blank'
 				} )
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 
@@ -64,12 +65,13 @@ export default function menus( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderPage(
+	renderWithReduxStore(
 		React.createElement( MenusComponent, {
 			siteMenus: siteMenus,
 			key: siteMenus.siteID,
 			site: site
 		} ),
-		context
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }

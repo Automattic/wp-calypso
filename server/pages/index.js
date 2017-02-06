@@ -134,13 +134,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore(),
-		css: new Set(),
-		insertCss: ( ...styles ) => {
-			styles.forEach( function( style ) {
-				context.css.add( style._getCss() )
-			} );
-		}
+		store: createReduxStore()
 	} );
 
 	context.app = {

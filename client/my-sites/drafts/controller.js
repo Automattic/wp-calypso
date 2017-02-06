@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
@@ -23,13 +23,14 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Drafts', { textOnly: true } ) ) );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( Drafts, {
 				siteID: siteID,
 				sites: sites,
 				trackScrollPage: function() {}
 			} ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 

@@ -19,7 +19,7 @@ import upgradesActions from 'lib/upgrades/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -63,7 +63,7 @@ module.exports = {
 			window.scrollTo( 0, 0 );
 		}
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<DomainSearch
@@ -73,7 +73,8 @@ module.exports = {
 						productsList={ productsList } />
 				</CartData>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -87,7 +88,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SiteRedirect
@@ -95,7 +96,8 @@ module.exports = {
 						sites={ sites } />
 				</CartData>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -108,7 +110,7 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Map a Domain' ) ) );
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-		renderPage(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
@@ -120,7 +122,8 @@ module.exports = {
 					</CartData>
 				</Main>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -150,7 +153,7 @@ module.exports = {
 
 		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
@@ -163,7 +166,8 @@ module.exports = {
 					</CartData>
 				</Main>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -185,7 +189,7 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CheckoutData>
 					<Checkout
@@ -195,17 +199,18 @@ module.exports = {
 					/>
 				</CheckoutData>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
 				</CartData>
 			),
-			context,
-			'secondary'
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 	},
 
@@ -220,7 +225,7 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CheckoutData>
 					<Checkout
@@ -228,17 +233,18 @@ module.exports = {
 					/>
 				</CheckoutData>
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SecondaryCart />
 				</CartData>
 			),
-			context,
-			'secondary'
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 	},
 
@@ -253,7 +259,7 @@ module.exports = {
 
 		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		renderPage(
+		renderWithReduxStore(
 			(
 				<CheckoutThankYouComponent
 					productsList={ productsList }
@@ -261,7 +267,8 @@ module.exports = {
 					selectedFeature={ context.params.feature }
 					selectedSite={ sites.getSelectedSite() } />
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
