@@ -69,6 +69,7 @@ export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingTimezones from './is-requesting-timezones';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
+export isSendingBillingReceiptEmail from './is-sending-billing-receipt-email';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
 export isSiteAutomatedTransfer from './is-site-automated-transfer';
 export isSiteBlocked from './is-site-blocked';

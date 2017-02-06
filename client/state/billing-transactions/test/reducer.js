@@ -8,6 +8,9 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	BILLING_RECEIPT_EMAIL_SEND,
+	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
+	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -15,7 +18,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { requesting, items } from '../reducer';
+import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -26,7 +29,8 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
-			'items'
+			'items',
+			'sendingReceiptEmail',
 		] );
 	} );
 
@@ -153,6 +157,70 @@ describe( 'reducer', () => {
 			const state = items( deepFreeze( {
 				example: 'test'
 			} ), {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( '#sendingReceiptEmail()', () => {
+		const currentState = {
+			87654321: false,
+		};
+
+		it( 'should default to an empty object', () => {
+			const state = sendingReceiptEmail( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should set sendingReceiptEmail of that receipt to true value if a request is initiated', () => {
+			const state = sendingReceiptEmail( currentState, {
+				type: BILLING_RECEIPT_EMAIL_SEND,
+				receiptId: 12345678,
+			} );
+
+			expect( state ).to.eql( {
+				12345678: true,
+				...state
+			} );
+		} );
+
+		it( 'should set sendingReceiptEmail of that receipt to false if request finishes successfully', () => {
+			const state = sendingReceiptEmail( currentState, {
+				type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
+				receiptId: 12345678,
+			} );
+
+			expect( state ).to.eql( {
+				12345678: false,
+				...state
+			} );
+		} );
+
+		it( 'should set sendingReceiptEmail of that receipt to false if request finishes unsuccessfully', () => {
+			const state = sendingReceiptEmail( currentState, {
+				type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
+				receiptId: 12345678,
+			} );
+
+			expect( state ).to.eql( {
+				12345678: false,
+				...state
+			} );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = sendingReceiptEmail( currentState, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = sendingReceiptEmail( currentState, {
 				type: DESERIALIZE
 			} );
 

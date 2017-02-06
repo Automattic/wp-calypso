@@ -2,6 +2,9 @@
  * Internal dependencies
  */
 import {
+	BILLING_RECEIPT_EMAIL_SEND,
+	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
+	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -28,6 +31,29 @@ export const requestBillingTransactions = () => {
 			} ).catch( error => {
 				dispatch( {
 					type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
+					error,
+				} );
+			} );
+	};
+};
+
+export const sendBillingReceiptEmail = ( receiptId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: BILLING_RECEIPT_EMAIL_SEND,
+			receiptId,
+		} );
+
+		return wp.undocumented().me().billingHistoryEmailReceipt( receiptId )
+			.then( () => {
+				dispatch( {
+					type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
+					receiptId,
+				} );
+			} ).catch( ( error ) => {
+				dispatch( {
+					type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
+					receiptId,
 					error,
 				} );
 			} );
