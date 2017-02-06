@@ -41,10 +41,7 @@ class ThemeSetupDialog extends React.Component {
 	}
 
 	renderButtons( deleteConfirmed, { onThemeSetupClick, site, saveExisting, isActive, result, translate } ) {
-		const onClickKeepContent = () => onThemeSetupClick( true, site.ID );
 		const onClickDeleteContent = () => onThemeSetupClick( false, site.ID );
-		const onClickViewSite = () => page( site.URL );
-		const cancel = { action: 'cancel', label: translate( 'Cancel' ) };
 		const deleteContent = (
 			<Button
 				primary
@@ -54,28 +51,28 @@ class ThemeSetupDialog extends React.Component {
 				{ translate( 'Set Up And Delete Content' ) }
 			</Button>
 		);
-		const keepContent = (
-			<Button
-				primary
-				onClick={ onClickKeepContent }>
-				{ translate( 'Set Up And Keep Content' ) }
-			</Button>
-		);
-		const backToSetup = (
-			<Button
-				disabled={ isActive }
-				onClick={ this.props.onClick }>
-				{ translate( 'Back To Setup' ) }
-			</Button>
-		);
-		const viewSite = (
-			<Button
-				primary
-				disabled={ isActive }
-				onClick={ onClickViewSite }>
-				{ translate( 'View Site' ) }
-			</Button>
-		);
+		const keepContent = {
+			action: 'keep-content',
+			label: translate( 'Set Up And Keep Content' ),
+			isPrimary: true,
+			onClick: () => onThemeSetupClick( true, site.ID ),
+		};
+		const cancel = {
+			action: 'cancel',
+			label: translate( 'Cancel' ),
+		};
+		const backToSetup = {
+			action: 'back-to-setup',
+			label: translate( 'Back To Setup' ),
+			disabled: isActive,
+		};
+		const viewSite = {
+			action: 'view-site',
+			label: translate( 'View Site' ),
+			isPrimary: true,
+			disabled: isActive,
+			onClick: () => page( site.URL ),
+		};
 
 		if ( isActive || 'success' === result.result ) {
 			return [
