@@ -1,6 +1,6 @@
 {
 	"presets": [
-		"es2015",
+		"es2015-maybe-webpack",
 		"stage-2"
 	],
 	"plugins": [
@@ -11,7 +11,6 @@
 		"syntax-jsx",
 		"transform-react-jsx",
 		"transform-react-display-name",
-		"lodash",
 		[
 			"transform-imports",
 			{

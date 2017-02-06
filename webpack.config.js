@@ -1,6 +1,8 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
 /* eslint-disable no-var */
 
+process.env.WEBPACK_VERSION = require( 'webpack/package.json' ).version;
+
 /**
  * External dependencies
  */
