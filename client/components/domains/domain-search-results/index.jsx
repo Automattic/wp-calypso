@@ -46,7 +46,7 @@ var DomainSearchResults = React.createClass( {
 				'domain-search-results__domain-is-available': availableDomain,
 				'domain-search-results__domain-not-available': ! availableDomain
 			} ),
-			lastDomainSearched = this.props.lastDomainSearched,
+			domain = this.props.lastDomainSearched,
 			suggestions = this.props.suggestions || [],
 			availabilityElement,
 			domainSuggestionElement,
@@ -58,12 +58,7 @@ var DomainSearchResults = React.createClass( {
 				<Notice
 					status="is-success"
 					showDismiss={ false }>
-					{
-						this.translate(
-							'%(domain)s is available!',
-							{ args: { domain: lastDomainSearched } }
-						)
-					}
+					{ this.translate( '%(domain)s is available!', { args: { domain } } ) }
 				</Notice>
 			);
 
@@ -79,33 +74,20 @@ var DomainSearchResults = React.createClass( {
 				);
 		} else if ( suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
 			const components = { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> };
+
 			if ( this.props.domainsWithPlansOnly ) {
 				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
-					' with WordPress.com Premium.{{/small}}', {
-						args: { domain: lastDomainSearched },
-						components
-					}
+					' with WordPress.com Premium.{{/small}}', { args: { domain }, components }
 				);
 			} else if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
-					args: {
-						domain: lastDomainSearched
-					},
-					components
-				} );
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'free.{{/small}}', { args: { domain }, components } );
 			} else {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
-					args: {
-						domain: lastDomainSearched,
-						cost: this.props.products.domain_map.cost_display
-					},
-					components
-				} );
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
 			}
 
-			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', {
-				args: { domain: lastDomainSearched }
-			} );
+			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
