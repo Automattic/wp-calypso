@@ -1,15 +1,30 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:user:utilities' ),
-	config = require( 'config' );
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-var user = require( 'lib/user' )();
+import config from 'config';
+import userModule from 'lib/user';
+import { addQueryArgs } from 'lib/url';
+
+/**
+ * Module Variables
+ */
+const user = userModule();
+const debug = debugModule( 'calypso:user:utilities' );
 
 var userUtils = {
+	getLoginUrl: function( redirect ) {
+		const url = config( 'login_url' );
+
+		return redirect
+			? addQueryArgs( { redirect_to: redirect }, url )
+			: url;
+	},
+
 	getLogoutUrl: function( redirect ) {
 		var url = '/logout',
 			userData = user.get(),
