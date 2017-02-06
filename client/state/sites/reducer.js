@@ -144,7 +144,8 @@ export function items( state = {}, action ) {
 			// accounting for the fact that a non-existent icon property is
 			// equivalent to setting the media icon as null
 			const site = state[ siteId ];
-			if ( ! site || get( site.icon, 'media_id', null ) === mediaId ) {
+			if ( ! site || ( ! site.icon && null === mediaId ) ||
+					( site.icon && site.icon.media_id === mediaId ) ) {
 				return state;
 			}
 
