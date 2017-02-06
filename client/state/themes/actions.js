@@ -672,7 +672,7 @@ function transferStatusFailure( siteId, transferId, error ) {
  *
  * @return {Promise} for testing purposes only
  */
-export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 1800000 ) {
+export function pollThemeTransferStatus( siteId, transferId, interval = 3000, timeout = 180000 ) {
 	const endTime = Date.now() + timeout;
 	return dispatch => {
 		const pollStatus = ( resolve, reject ) => {
