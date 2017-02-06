@@ -40,7 +40,7 @@ class ThemeSetupDialog extends React.Component {
 		} );
 	}
 
-	renderButtons( deleteConfirmed, { onThemeSetupClick, site, saveExisting, isActive, translate } ) {
+	renderButtons( deleteConfirmed, { onThemeSetupClick, site, saveExisting, isActive, result, translate } ) {
 		const onClickKeepContent = () => onThemeSetupClick( true, site.ID );
 		const onClickDeleteContent = () => onThemeSetupClick( false, site.ID );
 		const onClickViewSite = () => page( site.URL );
@@ -77,12 +77,13 @@ class ThemeSetupDialog extends React.Component {
 			</Button>
 		);
 
-		if ( isActive ) {
+		if ( isActive || 'success' === result.result ) {
 			return [
 				backToSetup,
 				viewSite
 			];
 		}
+
 		if ( saveExisting ) {
 			return [
 				cancel,
@@ -95,62 +96,79 @@ class ThemeSetupDialog extends React.Component {
 		];
 	}
 
-	renderLoading() {
-		return (
+	renderContent( deleteConfirmed, { isActive, result, saveExisting, site, translate } ) {
+		const keepContent = (
+			<div>
+				<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
+				<p>
+					{ translate( 'Settings will be changed on {{strong}}%(site)s{{/strong}}, but no content will be deleted. These changes will be live immmediately. Do you want to proceed?', {
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							site: site.domain,
+						}
+					} ) }
+				</p>
+			</div>
+		);
+		const deleteContent = (
+			<div>
+				<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
+				<p>
+					{ translate( 'Please type {{warn}}delete{{/warn}} into the field below to confirm. {{strong}}All content on %(site)s will be deleted{{/strong}}, and then your site will be set up. These changes will be live immediately.', {
+						components: {
+							warn: <span className="theme-setup-dialog__confirm-text"/>,
+							strong: <strong />,
+						},
+						args: {
+							site: site.domain,
+						},
+					} ) }
+				</p>
+				<FormFieldset>
+					<FormTextInput
+						autoCapitalize={ false }
+						autoComplete={ false }
+						autoCorrect={ false }
+						onChange={ this.onInputChange }
+						value={ this.state.confirmDeleteInput } />
+					<FormInputValidation
+						isError={ ! deleteConfirmed }
+						text={ deleteConfirmed
+							? translate( 'Text matches.' )
+							: translate( 'Text does not match.' ) } />
+				</FormFieldset>
+			</div>
+		);
+		const loading = (
 			<div>
 				<PulsingDot active={ true } />
 			</div>
 		);
-	}
-
-	renderContent( deleteConfirmed, { saveExisting, site, translate } ) {
-		if ( saveExisting ) {
-			return (
-				<div>
-					<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
-					<p>
-						{ translate( 'Settings will be changed on {{strong}}%(site)s{{/strong}}, but no content will be deleted. These changes will be live immmediately. Do you want to proceed?', {
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								site: site.domain,
-							}
-						} ) }
-					</p>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
-					<p>
-						{ translate( 'Please type {{warn}}delete{{/warn}} into the field below to confirm. {{strong}}All content on %(site)s will be deleted{{/strong}}, and then your site will be set up. These changes will be live immediately.', {
-							components: {
-								warn: <span className="theme-setup-dialog__confirm-text"/>,
-								strong: <strong />,
-							},
-							args: {
-								site: site.domain,
-							},
-						} ) }
-					</p>
-					<FormFieldset>
-						<FormTextInput
-							autoCapitalize={ false }
-							autoComplete={ false }
-							autoCorrect={ false }
-							onChange={ this.onInputChange }
-							value={ this.state.confirmDeleteInput } />
-						<FormInputValidation
-							isError={ ! deleteConfirmed }
-							text={ deleteConfirmed
-								? translate( 'Text matches.' )
-								: translate( 'Text does not match.' ) } />
-					</FormFieldset>
-				</div>
-			);
+		const success = (
+			<div>
+				<h1>{ translate( 'Theme Setup Success' ) }</h1>
+				<p>
+					{ translate( 'Looks good.' ) }
+				</p>
+			</div>
+		);
+		const failure = (
+			<div>
+				<h1>{ translate( 'Theme Setup Failure' ) }</h1>
+				<p>
+					{ translate( 'Something went terribly wrong. Oops. Try again?' ) }
+				</p>
+			</div>
+		);
+		if ( isActive ) {
+			return loading;
 		}
+		if ( result ) {
+			return ( 'success' === result.result ) ? success : failure;
+		}
+		return ( saveExisting ) ? keepContent : deleteContent;
 	}
 
 	render() {
@@ -160,9 +178,7 @@ class ThemeSetupDialog extends React.Component {
 				isVisible={ this.props.isDialogVisible }
 				buttons={ this.renderButtons( deleteConfirmed, this.props ) }
 				onClose={ this.props.isActive ? null : this.props.closeDialog }>
-				{ this.props.isActive
-					? this.renderLoading()
-					: this.renderContent( deleteConfirmed, this.props ) }
+				{ this.renderContent( deleteConfirmed, this.props ) }
 			</Dialog>
 		);
 	}
@@ -173,11 +189,13 @@ ThemeSetupDialog = localize( ThemeSetupDialog );
 const mapStateToProps = ( state ) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
+	const result = state.ui.themeSetup.result;
 	const saveExisting = state.ui.themeSetup.saveExisting;
 	const site = getSelectedSite( state );
 	return {
 		isDialogVisible,
 		isActive,
+		result,
 		saveExisting,
 		site,
 	};

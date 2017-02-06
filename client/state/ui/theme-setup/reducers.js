@@ -28,7 +28,7 @@ export const themeSetup = ( state = initialState, action ) => {
 		case THEME_SETUP_OPEN_DIALOG:
 			return { ...state, isDialogVisible: true, saveExisting: action.saveExisting };
 		case THEME_SETUP_CLOSE_DIALOG:
-			return { ...state, isDialogVisible: false };
+			return { ...state, isDialogVisible: false, result: false };
 	}
 
 	return state;
