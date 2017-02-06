@@ -32,6 +32,7 @@ import wplinkPlugin from './plugins/wplink/plugin.js';
 import mediaPlugin from './plugins/media/plugin';
 import advancedPlugin from './plugins/advanced/plugin';
 import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
 import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
@@ -56,6 +57,7 @@ import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 	mediaPlugin,
 	advancedPlugin,
 	wpcomTabindexPlugin,
+	wpcomTrackPaste,
 	touchScrollToolbarPlugin,
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
@@ -63,7 +65,7 @@ import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 	afterTheDeadlinePlugin,
 	wptextpatternPlugin,
 	toolbarPinPlugin,
-	embedReversalPlugin
+	embedReversalPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -128,7 +130,8 @@ const PLUGINS = [
 	'wpcom/toolbarpin',
 	'wpcom/contactform',
 	'wpcom/sourcecode',
-	'wpcom/embedreversal'
+	'wpcom/embedreversal',
+	'wpcom/trackpaste',
 ];
 
 if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
