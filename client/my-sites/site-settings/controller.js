@@ -12,7 +12,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
 import purchasesPaths from 'me/purchases/paths';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
@@ -45,6 +45,14 @@ function canDeleteSite( site ) {
 	}
 
 	return true;
+}
+
+function renderPage( context, component ) {
+	renderWithReduxStore(
+		component,
+		document.getElementById( 'primary' ),
+		context.store
+	);
 }
 
 module.exports = {
@@ -88,8 +96,8 @@ module.exports = {
 		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
 
 		renderPage(
-			<SiteSettingsComponent { ...{ sites, section, upgradeToBusiness } } />,
-			context
+			context,
+			<SiteSettingsComponent { ...{ sites, section, upgradeToBusiness } } />
 		);
 
 		// analytics tracking
@@ -101,22 +109,22 @@ module.exports = {
 
 	importSite( context ) {
 		renderPage(
-			<SiteSettingsComponent sites={ sites } section="import" />,
-			context
+			context,
+			<SiteSettingsComponent sites={ sites } section="import" />
 		);
 	},
 
 	exportSite( context ) {
 		renderPage(
-			<SiteSettingsComponent sites={ sites } section="export" />,
-			context
+			context,
+			<SiteSettingsComponent sites={ sites } section="export" />
 		);
 	},
 
 	guidedTransfer( context ) {
 		renderPage(
-			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />,
-			context
+			context,
+			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />
 		);
 	},
 
@@ -137,8 +145,8 @@ module.exports = {
 		}
 
 		renderPage(
-			<DeleteSite sites={ sites } path={ context.path } />,
-			context
+			context,
+			<DeleteSite sites={ sites } path={ context.path } />
 		);
 	},
 
@@ -159,15 +167,15 @@ module.exports = {
 		}
 
 		renderPage(
-			<StartOver path={ context.path } />,
-			context
+			context,
+			<StartOver path={ context.path } />
 		);
 	},
 
 	taxonomies( context ) {
 		renderPage(
-			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />,
-			context
+			context,
+			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
 		);
 	},
 

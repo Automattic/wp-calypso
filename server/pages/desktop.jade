@@ -21,8 +21,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 				link(rel='stylesheet', href=urls['style-debug.css'])
 			else
 				link(rel='stylesheet', href=urls['style.css'])
-		style(type='text/css' id='critical-path-css')
-			!= Array.from( css ).join( '' )
 
 		link(rel='stylesheet', href='/desktop/wordpress-desktop.css')
 		script(src='/calypso/build.js')

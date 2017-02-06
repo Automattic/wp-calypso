@@ -54,8 +54,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style-debug.css'])
 			else
 				link(rel='stylesheet', href=urls['style.css'])
-		style(type='text/css' id='critical-path-css')
-			!= Array.from( css ).join( '' )
 
 	body(class=isRTL ? 'rtl' : '')
 		if renderedLayout

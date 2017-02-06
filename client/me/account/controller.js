@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
@@ -35,7 +35,7 @@ export default {
 			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Settings' );
 		}
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( AccountComponent,
 				{
 					userSettings: userSettings,
@@ -44,7 +44,8 @@ export default {
 					showNoticeInitially: showNoticeInitially
 				}
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

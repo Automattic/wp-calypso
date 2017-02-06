@@ -3,13 +3,11 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import style from './style';
 
 const VerticalNavItem = React.createClass( {
 	propTypes: {
@@ -29,7 +27,7 @@ const VerticalNavItem = React.createClass( {
 
 	placeholder() {
 		return (
-			<CompactCard className={ style.placeholder }>
+			<CompactCard className="vertical-nav-item is-placeholder">
 				<span></span>
 				<span></span>
 			</CompactCard>
@@ -46,7 +44,7 @@ const VerticalNavItem = React.createClass( {
 				href={ this.props.path }
 				onClick={ this.props.onClick }
 				target={ this.props.external ? '_blank' : null }>
-				<CompactCard className={ style.content }>
+				<CompactCard className="vertical-nav-item">
 					{ this.getIcon() }
 					<span>{ this.props.children }</span>
 				</CompactCard>
@@ -63,4 +61,4 @@ const VerticalNavItem = React.createClass( {
 	}
 } );
 
-export default withStyles( style )( VerticalNavItem );
+export default VerticalNavItem;

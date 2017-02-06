@@ -12,7 +12,7 @@ import analytics from 'lib/analytics';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
@@ -32,7 +32,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Password' );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( PasswordComponent,
 				{
 					userSettings: userSettings,
@@ -40,7 +40,8 @@ export default {
 					accountPasswordData: accountPasswordData
 				}
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -53,7 +54,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( TwoStepComponent,
 				{
 					userSettings: userSettings,
@@ -61,7 +62,8 @@ export default {
 					appPasswordsData: appPasswordsData
 				}
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -74,7 +76,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( ConnectedAppsComponent,
 				{
 					userSettings: userSettings,
@@ -82,7 +84,8 @@ export default {
 					connectedAppsData: connectedAppsData
 				}
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -94,14 +97,15 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( AccountRecoveryComponent,
 				{
 					userSettings: userSettings,
 					path: context.path
 				}
 			),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

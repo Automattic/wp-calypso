@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import sitesFactory from 'lib/sites-list';
 
 const sites = sitesFactory();
@@ -15,9 +15,10 @@ export default {
 	billingHistory( context ) {
 		const BillingHistoryComponent = require( './main' );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( BillingHistoryComponent, { sites: sites } ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -26,9 +27,10 @@ export default {
 		const receiptId = context.params.receiptId;
 
 		if ( receiptId ) {
-			renderPage(
+			renderWithReduxStore(
 				React.createElement( Receipt, { transactionId: receiptId } ),
-				context
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	}
