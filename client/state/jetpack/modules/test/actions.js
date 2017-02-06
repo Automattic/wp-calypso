@@ -205,7 +205,7 @@ describe( 'actions', () => {
 							API_MODULE_LIST_RESPONSE_FIXTURE.data,
 							( module ) => ( {
 								active: module.activated,
-								...omit( module, 'activated' )
+								...omit( module, 'activated', 'options' )
 							} )
 						)
 					} );
