@@ -218,15 +218,23 @@ SitesList.prototype.update = function( sites ) {
 
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
-			if ( ! siteObj.jetpack && site.jetpack ) {
-				//We have a site that was not jetpack and now is.
-				//That is probably an Automated Transfer site.
-				siteObj.off( 'change', this.propagateChange );
-				siteObj = this.createSiteObject( site );
-				siteObj.on( 'change', this.propagateChange );
-				changed = true;
-			} else {
-				result = siteObj.set( site );
+			//Automated transfer specific "Fixes"
+			if ( site.options.is_automated_transfer ) {
+				//Assign old URL because new url is broken because the site response caches domains
+				//and we have trouble getting over it.
+				if ( site.URL.match( '.wordpress.com' ) ) {
+					site.URL = siteObj.URL;
+				}
+
+				if ( ! siteObj.jetpack && site.jetpack ) {
+					//We have a site that was not jetpack and now is.
+					siteObj.off( 'change', this.propagateChange );
+					siteObj = this.createSiteObject( site );
+					siteObj.on( 'change', this.propagateChange );
+					changed = true;
+				} else {
+					result = siteObj.set( site );
+				}
 			}
 
 			if ( result ) {
