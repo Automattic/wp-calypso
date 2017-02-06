@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import Button from 'components/button';
+import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import { getThemeForPreviewData, getTheme } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
@@ -45,30 +46,31 @@ export default function themePreview( WebPreview ) {
 		},
 
 		onSecondaryButtonClick() {
-			const { tryAndCustomizeOnJetpack, tryandcustomize } = this.props.options;
-			const option = tryAndCustomizeOnJetpack || tryandcustomize;
-			option.action && option.action( this.props.theme );
+			const secondary = this.getSecondaryOption();
+			secondary.action && secondary.action( this.props.theme );
 			this.props.closePreview();
 		},
 
 		getPrimaryOption() {
 			const { translate } = this.props;
-			const { purchase, activate, activateOnJetpack } = this.props.options;
+			const { purchase } = this.props.options;
 			const { price } = this.props.theme;
-			let primaryOption = activate || activateOnJetpack;
+			let { primary } = this.props.previewData.themeOptions;
+			primary.label = translate( 'Activate this design' );
+
 			if ( price && purchase ) {
-				primaryOption = purchase;
-				primaryOption.label = translate( 'Pick this design' );
-			} else if ( activate ) {
-				primaryOption = activate;
-				primaryOption.label = translate( 'Activate this design' );
+				primary = purchase;
+				primary.label = translate( 'Purchase this design' );
 			}
-			return primaryOption;
+			return primary;
+		},
+
+		getSecondaryOption() {
+			return this.props.previewData.themeOptions.secondary;
 		},
 
 		renderSecondaryButton() {
-			const { tryAndCustomizeOnJetpack, tryandcustomize } = this.props.options;
-			const secondaryButton = tryAndCustomizeOnJetpack || tryandcustomize;
+			const secondaryButton = this.getSecondaryOption();
 			if ( ! secondaryButton ) {
 				return;
 			}
@@ -85,33 +87,39 @@ export default function themePreview( WebPreview ) {
 			const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
 
 			return (
-				<WebPreview
-					showPreview={ this.props.showPreview }
-					showExternal={ this.props.showExternal }
-					showSEO={ false }
-					onClose={ this.props.closePreview }
-					previewUrl={ this.props.previewUrl } >
-					{ this.renderSecondaryButton() }
-					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
-						{ primaryOption.label }
-					</Button>
-				</WebPreview>
+				<div>
+					{ this.props.isJetpack && <QueryTheme themeId={ this.props.theme.id } siteId="wporg" /> }
+					<WebPreview
+						showPreview={ this.props.showPreview }
+						showExternal={ this.props.showExternal }
+						showSEO={ false }
+						onClose={ this.props.closePreview }
+						previewUrl={ this.props.previewUrl } >
+						{ this.renderSecondaryButton() }
+						<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
+							{ primaryOption.label }
+						</Button>
+					</WebPreview>
+				</div>
 			);
 		}
 	} );
 
+	// make all actions available to preview.
 	const ConnectedThemePreview = connectOptions( ThemePreview );
 
 	return connect(
 		( state ) => {
-			const themeData = getThemeForPreviewData( state );
-			const theme = getTheme( state, themeData.siteId, themeData.themeId );
+			const previewData = getThemeForPreviewData( state );
+			const theme = getTheme( state, previewData.themeData.siteId, previewData.themeData.themeId );
 			const siteId = getSelectedSiteId( state );
+			const isJetpack = isJetpackSite( state, siteId );
 			return {
 				theme,
 				siteId,
+				isJetpack,
+				previewData,
 				previewUrl: getPreviewUrl( theme ),
-				secondaryOption: isJetpackSite( state, siteId ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize',
 				options: [
 					'activate',
 					'activateOnJetpack',

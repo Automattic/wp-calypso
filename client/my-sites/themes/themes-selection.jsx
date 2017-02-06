@@ -24,6 +24,7 @@ import {
 	isThemeActive,
 	isInstallingTheme
 } from 'state/themes/selectors';
+import { setPreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -107,6 +108,25 @@ const ThemesSelection = React.createClass( {
 		this.props.incrementPage();
 	},
 
+	//intercept preview and add primary and secondary
+	getOptions( theme ) {
+		const options = this.props.getOptions( theme );
+		const wrappedPreviewAction = ( action ) => {
+			return ( themeObj ) => {
+				this.props.setPreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+				return action( themeObj );
+			};
+		};
+
+		if ( options && options.preview ) {
+			options.preview.action = wrappedPreviewAction( options.preview.action );
+		}
+		if ( options && options.previewOnJetpack ) {
+			options.previewOnJetpack.action = wrappedPreviewAction( options.previewOnJetpack.action );
+		}
+		return options;
+	},
+
 	render() {
 		const { siteIdOrWpcom, query, listLabel, showUploadButton, themesCount } = this.props;
 
@@ -124,8 +144,8 @@ const ThemesSelection = React.createClass( {
 				}
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
-					getButtonOptions={ this.props.getOptions }
 					onMoreButtonClick={ this.recordSearchResultsClick }
+					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
@@ -172,7 +192,8 @@ const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
-	}
+	},
+	{ setPreviewOptions }
 )( ThemesSelection );
 
 /**

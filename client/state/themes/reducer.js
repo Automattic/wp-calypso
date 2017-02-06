@@ -30,6 +30,7 @@ import {
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
 	PREVIEWING_THEME_DATA,
+	PREVIEWING_THEME_OPTIONS,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -362,6 +363,21 @@ export const previewingTheme = createReducer( {}, {
 	} )
 } );
 
+/**
+ * Returns the updated previewing theme state
+ * The state reflects a mapping of themId that can be used to show its preview.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const previewingThemeOptions = createReducer( {}, {
+	[ PREVIEWING_THEME_OPTIONS ]: ( state, { themeOptions } ) => ( {
+		...state,
+		themeOptions
+	} )
+} );
+
 export default combineReducers( {
 	queries,
 	queryRequests,
@@ -376,5 +392,6 @@ export default combineReducers( {
 	completedActivationRequests,
 	themesUI,
 	uploadTheme,
-	previewingTheme
+	previewingTheme,
+	previewingThemeOptions
 } );

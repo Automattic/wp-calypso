@@ -45,6 +45,7 @@ import {
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
 	PREVIEWING_THEME_DATA,
+	PREVIEWING_THEME_OPTIONS
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -775,6 +776,16 @@ function setPreviewingThemeData( themeId, siteId ) {
 		themeData: {
 			themeId,
 			siteId
+		}
+	};
+}
+
+export function setPreviewOptions( primary, secondary ) {
+	return {
+		type: PREVIEWING_THEME_OPTIONS,
+		themeOptions: {
+			primary,
+			secondary
 		}
 	};
 }
