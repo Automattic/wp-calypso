@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import CurrentPlan from './';
 import { isFreePlan } from 'lib/products-values';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -24,9 +24,10 @@ export default {
 			return null;
 		}
 
-		renderPage(
+		renderWithReduxStore(
 			<CurrentPlan context={ context } />,
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

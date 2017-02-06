@@ -15,7 +15,7 @@ import i18n from 'i18n-calypso';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
@@ -80,7 +80,7 @@ export function acceptInvite( context ) {
 		return;
 	}
 
-	renderPage(
+	renderWithReduxStore(
 		React.createElement(
 			InviteAccept,
 			{
@@ -92,6 +92,7 @@ export function acceptInvite( context ) {
 				path: context.path
 			}
 		),
-		context
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -26,7 +26,7 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( FollowingEdit, {
 				key: 'following-edit',
 				initialFollowUrl: context.query.follow,
@@ -34,7 +34,8 @@ export default {
 				context: context,
 				userSettings: userSettings
 			} ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

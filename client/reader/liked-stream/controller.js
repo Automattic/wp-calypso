@@ -9,7 +9,7 @@ import React from 'react';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -25,7 +25,7 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
 				postsStore: likedPostsStore,
@@ -38,7 +38,8 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

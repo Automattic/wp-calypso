@@ -6,14 +6,15 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import PaladinComponent from './main';
 
 module.exports = {
 	activate: function( context ) {
-		renderPage(
+		renderWithReduxStore(
 			React.createElement( PaladinComponent ),
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

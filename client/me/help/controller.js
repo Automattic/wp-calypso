@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
-import { renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
@@ -42,9 +42,10 @@ export default {
 
 		analytics.pageView.record( basePath, 'Help' );
 
-		renderPage(
+		renderWithReduxStore(
 			<HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />,
-			context
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
