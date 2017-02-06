@@ -68,8 +68,8 @@ function renderSinglePlugin( context, siteUrl ) {
 			pluginSlug,
 			siteUrl,
 		} ),
-		document.getElementById( 'primary' ),
-		context
+		context,
+		document.getElementById( 'primary' )
 	);
 }
 
@@ -154,8 +154,8 @@ function renderPluginsBrowser( context ) {
 			sites,
 			search: searchTerm
 		} ),
-		document.getElementById( 'primary' ),
-		context
+		context,
+		document.getElementById( 'primary' )
 	);
 }
 
@@ -169,8 +169,8 @@ function renderPluginWarnings( context ) {
 			siteSlug: site.slug,
 			pluginSlug
 		} ),
-		document.getElementById( 'primary' ),
-		context
+		context,
+		document.getElementById( 'primary' )
 	);
 }
 
@@ -191,8 +191,8 @@ function renderProvisionPlugins( context ) {
 		React.createElement( PlanSetup, {
 			whitelist: context.query.only || false
 		} ),
-		document.getElementById( 'primary' ),
-		context
+		context,
+		document.getElementById( 'primary' )
 	);
 }
 
