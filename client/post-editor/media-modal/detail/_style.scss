@@ -118,35 +118,29 @@
 		@include breakpoint( ">480px" ) {
 			display: block;
 			position: absolute;
-			    top: 8px;
-			    right: 8px;
+				top: 8px;
+				right: 8px;
 
-		    button {
-		    	margin-left: 8px;
-		    }
+			button {
+				margin-left: 8px;
+			}
 		}
 	}
 
 	&.is-mobile {
 		@include breakpoint( "<480px" ) {
 			display: block;
+			text-align: right;
+
 			button {
-				width: 48%;
-	 			margin-bottom: 8px;
+				margin-bottom: 16px;
+				margin-left: 8px;
 
-	 			&:first-child {
-	 				margin-right: 2%;
-	 			}
-
-	 			&:last-child {
-	 				margin-left: 2%;
-	 			}
-	 		}
+				&:first-child {
+					margin-left: 0;
+				}
+			}
 		}
-	}
-
-	button {
-		font-weight: bold;
 	}
 }
 
