@@ -35,6 +35,12 @@
 		cursor: default;
 		z-index: -1;
 	}
+
+	&.is-action {
+		.gridicon {
+			margin-right: 4px;
+		}
+	}
 }
 
 .header-cake__title {
