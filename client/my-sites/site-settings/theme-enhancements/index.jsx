@@ -168,6 +168,9 @@ class ThemeEnhancements extends Component {
 
 				<Card className="theme-enhancements__card site-settings">
 					{ this.renderInfiniteScrollSettings() }
+
+					<hr />
+
 					{ this.renderMinilevenSettings() }
 				</Card>
 			</div>
