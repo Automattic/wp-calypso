@@ -83,3 +83,28 @@ export const activeThemesSchema = {
 		}
 	}
 };
+
+export const themeRequestErrorsSchema = {
+	type: 'object',
+	patternProperties: {
+		// Site ID
+		'^(wpcom|wporg|\\d+)$': {
+			type: 'object',
+			patternProperties: {
+				// Theme ID
+				'^\\w+$': {
+					type: 'object',
+					properties: {
+						path: { type: 'string' },
+						method: { type: 'string' },
+						name: { type: 'string' },
+						statusCode: { type: 'number' },
+						status: { type: 'number' },
+						message: { type: 'string' },
+						error: { type: 'string' },
+					}
+				}
+			}
+		}
+	}
+};
