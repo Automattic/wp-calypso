@@ -1,28 +1,43 @@
-.theme-upload__title {
-	display: block;
-	color: darken( $gray, 20 );
-}
-
-.theme-upload__instructions {
-	display: block;
-	font-style: italic;
-}
-
 .theme-upload__dropzone {
 	position: relative;
 	background-color: $gray-light;
 	border: 2px dashed $gray;
-	margin: 20px 0;
+	transition: all 200ms ease-out, color 100ms ease-out;
+	cursor: pointer;
+
+	svg * {
+		transition: color 100ms ease-out;
+	}
 
 	.file-picker {
-		color: darken( $gray, 20 );
+		color: $gray-dark;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: 180px;
 	}
+
+	&:hover {
+		border-color: $gray-dark;
+		transform: translate3d( 0, -1px, 0 );
+		box-shadow: 0 2px 4px lighten( $gray, 20% );
+
+		.theme-upload__dropzone-icon {
+			color: $gray-dark;
+		}
+	}
 }
+
+.theme-upload__dropzone-icon {
+	color: $gray;
+}
+
+.theme-upload__dropzone-instructions {
+	font-style: italic;
+	font-size: 12px;
+}
+
 
 .theme-upload__theme-sheet {
 	span {
@@ -43,10 +58,6 @@
 .theme-upload__theme-name {
 	font-size: 24px;
 	font-weight: 600;
-}
-
-.theme-upload__dropzone-icon {
-	color: $gray;
 }
 
 .theme-upload {
