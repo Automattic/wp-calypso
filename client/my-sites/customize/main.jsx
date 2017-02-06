@@ -19,6 +19,7 @@ var notices = require( 'notices' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	Actions = require( 'my-sites/customize/actions' ),
 	themeActivated = require( 'state/themes/actions' ).themeActivated;
+import { getCustomizerFocus } from './panels';
 
 var loadingTimer;
 
@@ -158,17 +159,9 @@ var Customize = React.createClass( {
 			query[ 'frame-nonce' ] = site.options.frame_nonce;
 		}
 
-		// autofocus panels
-		const panels = {
-			widgets: { panel: 'widgets' },
-			fonts: { section: 'jetpack_fonts' },
-			identity: { section: 'title_tagline' },
-			'custom-css': { section: 'jetpack_custom_css' },
-			amp: { section: 'amp_design' },
-		};
-
-		if ( panels.hasOwnProperty( panel ) ) {
-			query.autofocus = panels[ panel ];
+		const focus = getCustomizerFocus( panel );
+		if ( focus ) {
+			Object.assign( query, focus );
 		}
 
 		if ( panel === 'amp' ) {
