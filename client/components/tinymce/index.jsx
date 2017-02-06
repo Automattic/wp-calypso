@@ -475,7 +475,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				{ mode === 'html' &&
+				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) &&
 					<EditorHtmlToolbar
 						content={ this.refs.text }
 						onToolbarChangeContent={ this.onToolbarChangeContent }

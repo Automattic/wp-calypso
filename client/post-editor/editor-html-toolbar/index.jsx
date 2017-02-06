@@ -13,7 +13,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { isWithinBreakpoint } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
@@ -298,10 +297,6 @@ export class EditorHtmlToolbar extends Component {
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	render() {
-		if ( ! config.isEnabled( 'post-editor/html-toolbar' ) ) {
-			return null;
-		}
-
 		const { translate } = this.props;
 		const classes = classNames( 'editor-html-toolbar', {
 			'is-pinned': this.state.isPinned,
