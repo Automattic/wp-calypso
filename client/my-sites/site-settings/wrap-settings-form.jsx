@@ -22,7 +22,7 @@ import {
 import {
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
-	isJetpackSettingsSaveSuccessful,
+	isJetpackSettingsSaveFailure,
 	getJetpackSettings
 } from 'state/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -186,7 +186,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			if ( jetpackSettingsUISupported ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				isSavingSettings = isSavingSettings || isUpdatingJetpackSettings( state, siteId );
-				isSaveRequestSuccessful = isSaveRequestSuccessful && isJetpackSettingsSaveSuccessful( state, siteId );
+				isSaveRequestSuccessful = isSaveRequestSuccessful && ! isJetpackSettingsSaveFailure( state, siteId );
 				settings = { ...settings, ...jetpackSettings };
 				settingsFields.jetpack = keys( jetpackSettings );
 				isRequestingSettings = isRequestingSettings || ( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
