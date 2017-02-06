@@ -645,7 +645,7 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
-		const siteIdOrWpcom = ! isWpcomTheme ? selectedSite.ID : 'wpcom';
+		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
