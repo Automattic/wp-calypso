@@ -55,6 +55,9 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	componentWillUnmount() {
+		this.pinToolbarOnScroll.cancel();
+		this.onWindowResize.cancel();
+		this.hideToolbarFadeOnFullScroll.cancel();
 		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.removeEventListener( 'resize', this.onWindowResize );
 		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
