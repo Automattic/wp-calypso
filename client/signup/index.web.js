@@ -8,7 +8,6 @@ import page from 'page';
  */
 import controller from './controller';
 import jetpackConnectController from './jetpack-connect/controller';
-import config from 'config';
 import sitesController from 'my-sites/controller';
 
 module.exports = function() {
