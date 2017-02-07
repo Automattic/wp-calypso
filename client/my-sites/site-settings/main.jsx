@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import GeneralSettings from './section-general';
 import WritingSettings from './form-writing';
 import DiscussionSettings from './form-discussion';
-import AnalyticsSettings from './section-analytics';
+import AnalyticsSettings from './form-analytics';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
@@ -87,7 +87,7 @@ export class SiteSettingsComponent extends Component {
 			case 'security':
 				return <SiteSecurity site={ site } />;
 			case 'analytics':
-				return <AnalyticsSettings site={ site } />;
+				return <AnalyticsSettings />;
 			case 'import':
 				return <ImportSettings site={ site } />;
 			case 'export':
