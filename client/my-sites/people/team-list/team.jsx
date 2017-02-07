@@ -74,7 +74,7 @@ export class Team extends Component {
 				}
 			);
 		}
-		return translate( 'Team', { context: 'A navigation label.' } );
+		return translate( 'Team' );
 	};
 
 	cardContent = () => {
