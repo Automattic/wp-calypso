@@ -45,7 +45,7 @@ const Subscriptions = ( {
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 
-				<div className="subscriptions__module-settings is-indented">
+				<div className="site-settings__child-settings">
 					<FormToggle
 						className="subscriptions__module-settings-toggle is-compact"
 						checked={ !! fields.stb_enabled }

@@ -93,7 +93,7 @@ class ThemeEnhancements extends Component {
 					disabled={ formPending }
 					/>
 
-				<div className="theme-enhancements__module-settings is-indented">
+				<div className="site-settings__child-settings">
 					{
 						this.renderToggle( 'infinite_scroll', ! infiniteScrollModuleActive, translate(
 							'Scroll infinitely (Shows 7 posts on each load)'
@@ -134,7 +134,7 @@ class ThemeEnhancements extends Component {
 					disabled={ formPending }
 					/>
 
-				<div className="theme-enhancements__module-settings is-indented">
+				<div className="site-settings__child-settings">
 					{
 						this.renderToggle( 'wp_mobile_excerpt', ! minilevenModuleActive, translate(
 							'Show excerpts on front page and on archive pages instead of full posts'

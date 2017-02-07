@@ -172,10 +172,6 @@
 			margin-bottom: 8px;
 		}
 	}
-
-	.site-settings__child-settings {
-		margin-left: 36px;
-	}
 }
 
 .site-settings__general-settings, .site-settings__writing-settings {
@@ -395,4 +391,17 @@
 
 .site-settings__taxonomies {
 	margin-bottom: 17px;
+}
+
+// Site settings group styles
+.site-settings__module-settings {
+	.form-label {
+		&.is-disabled {
+			opacity: 0.3;
+		}
+	}
+}
+
+.site-settings__child-settings {
+	margin: 8px 36px 0;
 }
