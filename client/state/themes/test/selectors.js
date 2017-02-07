@@ -1206,13 +1206,21 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeCustomizeUrl', () => {
 		it( 'given no theme and no site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl( {} );
+			const customizeUrl = getThemeCustomizeUrl( {
+				sites: {
+					items: {}
+				}
+			} );
 			expect( customizeUrl ).to.equal( '/customize/' );
 		} );
 
 		it( 'given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
-				{},
+				{
+					sites: {
+						items: {}
+					}
+				},
 				{
 					id: 'twentysixteen',
 					stylesheet: 'pub/twentysixteen'
