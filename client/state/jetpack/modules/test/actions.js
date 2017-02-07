@@ -40,14 +40,16 @@ describe( 'actions', () => {
 
 	describe( '#activateJetpackModule', () => {
 		const siteId = 123456;
+		const silent = true;
 
 		it( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
-			activateModule( siteId, 'module-a' )( spy );
+			activateModule( siteId, 'module-a', silent )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_MODULE_ACTIVATE,
 				siteId,
-				moduleSlug: 'module-a'
+				moduleSlug: 'module-a',
+				silent
 			} );
 		} );
 
@@ -67,12 +69,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_ACTIVATE_SUCCESS when API activates a module', () => {
-				const result = activateModule( siteId, 'module-a' )( spy );
+				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 						siteId,
-						moduleSlug: 'module-a'
+						moduleSlug: 'module-a',
+						silent
 					} );
 				} );
 			} );
@@ -92,12 +95,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
-				const result = activateModule( siteId, 'module-a' )( spy );
+				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULE_ACTIVATE_FAILURE,
 						siteId,
 						moduleSlug: 'module-a',
+						silent,
 						error: 'The Jetpack Module is already activated.'
 					} );
 				} );
@@ -107,14 +111,16 @@ describe( 'actions', () => {
 
 	describe( '#deactivateJetpackModule', () => {
 		const siteId = 123456;
+		const silent = true;
 
 		it( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', () => {
-			deactivateModule( siteId, 'module-b' )( spy );
+			deactivateModule( siteId, 'module-b', silent )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_MODULE_DEACTIVATE,
 				siteId,
-				moduleSlug: 'module-b'
+				moduleSlug: 'module-b',
+				silent
 			} );
 		} );
 
@@ -134,12 +140,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_SUCCESS when API deactivates a module', () => {
-				const result = deactivateModule( siteId, 'module-b' )( spy );
+				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 						siteId,
-						moduleSlug: 'module-b'
+						moduleSlug: 'module-b',
+						silent
 					} );
 				} );
 			} );
@@ -159,12 +166,13 @@ describe( 'actions', () => {
 			} );
 
 			it( 'should dispatch JETPACK_MODULE_DEACTIVATE_FAILURE when deactivating a module fails', () => {
-				const result = deactivateModule( siteId, 'module-b' )( spy );
+				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 						siteId,
 						moduleSlug: 'module-b',
+						silent,
 						error: 'The Jetpack Module is already deactivated.'
 					} );
 				} );
