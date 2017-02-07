@@ -349,7 +349,9 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		return cart && cartItems.hasDomainRegistration( cart ) && ! hasDomainDetails( transaction );
+		return cart &&
+			! hasDomainDetails( transaction ) &&
+			( cartItems.hasDomainRegistration( cart ) || cartItems.hasGoogleApps( cart ) );
 	},
 
 	render: function() {
