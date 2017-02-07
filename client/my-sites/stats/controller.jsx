@@ -179,6 +179,7 @@ module.exports = {
 
 	site: function( context, next ) {
 		let siteId = context.params.site_id;
+		const filters = getSiteFilters( siteId );
 		const queryOptions = context.query;
 		let date;
 		let chartTab;
@@ -198,7 +199,6 @@ module.exports = {
 		}
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
-		const filters = getSiteFilters( siteId );
 		const activeFilter = find( filters, ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
 		} );
