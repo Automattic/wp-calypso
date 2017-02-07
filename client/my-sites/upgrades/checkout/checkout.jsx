@@ -155,6 +155,10 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
+		if ( this.state.previousCart.create_new_blog ) {
+			return false;
+		}
+
 		if ( this.state.previousCart ) {
 			redirectTo = getExitCheckoutUrl( this.state.previousCart, selectedSiteSlug );
 		}
