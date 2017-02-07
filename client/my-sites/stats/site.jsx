@@ -20,6 +20,7 @@ import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import StatsFirstView from './stats-first-view';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:stats:site' );
@@ -155,15 +156,17 @@ module.exports = React.createClass( {
 						queryDate={ queryDate }
 						period={ this.props.period }
 						chartTab={ this.state.chartTab } />
-					<StatsPeriodNavigation
-						date={ this.props.date }
-						period={ this.props.period.period }
-						url={ `/stats/${ this.props.period.period }/${ site.slug }` }
-					>
-						<DatePicker
+					<StickyPanel className="stats__sticky-navigation">
+						<StatsPeriodNavigation
+							date={ this.props.date }
 							period={ this.props.period.period }
-							date={ this.props.date } />
-					</StatsPeriodNavigation>
+							url={ `/stats/${ this.props.period.period }/${ site.slug }` }
+						>
+							<DatePicker
+								period={ this.props.period.period }
+								date={ this.props.date } />
+						</StatsPeriodNavigation>
+					</StickyPanel>
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
 							<StatsModule
