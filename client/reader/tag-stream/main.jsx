@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { has } from 'lodash';
+import { has, capitalize, toLower, words } from 'lodash';
 import twemoji from 'twemoji';
 import emojiText from 'emoji-text';
 
@@ -19,6 +19,18 @@ import TagStreamHeader from './header';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import HeaderBack from 'reader/header-back';
+
+
+const titleExceptions = {
+	wordpress: 'WordPress',
+	vaultpress: 'VaultPress',
+	videopress: 'VideoPress',
+	iphone: 'iPhone',
+	ipad: 'iPad',
+	ios: 'iOS',
+	macos: 'macOS',
+	tvOS: 'tvOS',
+}
 
 const TagStream = React.createClass( {
 
@@ -61,6 +73,12 @@ const TagStream = React.createClass( {
 		this.smartSetState( newState );
 	},
 
+	titleCase( str ) {
+		return words( str )
+			.map( capitalize )
+			.join( ' ' );
+	},
+
 	getTitle( props = this.props ) {
 		const tag = ReaderTags.get( props.tag );
 		if ( ! ( tag && tag.ID ) ) {
@@ -68,7 +86,10 @@ const TagStream = React.createClass( {
 			return props.tag;
 		}
 
-		return tag.display_name || tag.slug;
+		if ( titleExceptions[ toLower( tag.slug ) ] ) {
+			return titleExceptions[ toLower( tag.slug ) ];
+		}
+		return this.titleCase( tag.title ) || tag.slug;
 	},
 
 	isSubscribed( props = this.props ) {
