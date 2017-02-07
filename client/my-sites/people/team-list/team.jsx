@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 import debugModule from 'debug';
 import omit from 'lodash/omit';
 import identity from 'lodash/identity';
@@ -33,13 +32,6 @@ class Team extends Component {
 		translate: identity,
 	};
 
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			bulkEditing: false
-		};
-	}
-
 	isLastPage = () => this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	renderPerson = ( user ) => {
@@ -48,8 +40,7 @@ class Team extends Component {
 				key={ user.ID }
 				user={ user }
 				type="user"
-				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing } />
+				site={ this.props.site } />
 		);
 	};
 
@@ -112,11 +103,8 @@ class Team extends Component {
 	};
 
 	render() {
-		const { props, state } = this;
+		const { props } = this;
 		const { translate } = props;
-		const listClass = classNames( {
-			'bulk-editing': state.bulkEditing,
-		} );
 
 		if ( props.fetchInitialized && ! props.users.length && props.fetchOptions.search && ! props.fetchingUsers ) {
 			return (
@@ -139,7 +127,7 @@ class Team extends Component {
 					label={ this.headerText() }
 					site={ props.site }
 					count={ props.fetchingUsers || props.fetchOptions.search ? null : props.totalUsers } />
-				<Card className={ listClass }>
+				<Card>
 					{ this.cardContent() }
 				</Card>
 				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
