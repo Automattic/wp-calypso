@@ -1211,7 +1211,7 @@ describe( 'themes selectors', () => {
 					items: {}
 				}
 			} );
-			expect( customizeUrl ).to.equal( '/customize/' );
+			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'given a theme and no site ID, should return the correct customize URL', () => {
@@ -1226,7 +1226,7 @@ describe( 'themes selectors', () => {
 					stylesheet: 'pub/twentysixteen'
 				}
 			);
-			expect( customizeUrl ).to.equal( '/customize/' );
+			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
@@ -1250,8 +1250,7 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
-		// FIXME: In implementation, get rid of `window` dependency.
-		it.skip( 'given a theme and Jetpack site ID, should return the correct customize URL', () => {
+		it( 'given a theme and Jetpack site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{
 					sites: {
@@ -1259,7 +1258,10 @@ describe( 'themes selectors', () => {
 							77203074: {
 								ID: 77203074,
 								URL: 'https://example.net',
-								jetpack: true
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
 							}
 						}
 					}
@@ -1270,7 +1272,7 @@ describe( 'themes selectors', () => {
 				},
 				77203074
 			);
-			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
+			expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=pub/twentysixteen' );
 		} );
 	} );
 
