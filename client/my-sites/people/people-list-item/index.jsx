@@ -16,8 +16,8 @@ import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const browserWindow = 'undefined' === typeof window
-    ? window
-    : { scrollTo: identity };
+    ? { scrollTo: identity }
+    : window;
 
 export class PeopleListItem extends PureComponent {
 	static propTypes = {
