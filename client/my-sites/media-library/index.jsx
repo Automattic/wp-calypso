@@ -14,7 +14,7 @@ var Content = require( './content' ),
 	MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	filterToMimePrefix = require( './filter-to-mime-prefix' ),
-	FilterBar = require( './filter-bar' ),
+	FilterBar = require( './filter-bar' ).default,
 	MediaValidationData = require( 'components/data/media-validation-data' ),
 	urlSearch = require( 'lib/mixins/url-search' );
 import QueryPreferences from 'components/data/query-preferences';
