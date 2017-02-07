@@ -12,13 +12,21 @@ import {
 	READER_TEAMS_RECEIVE,
 	DESERIALIZE,
 } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
 const TEAM2 = { slug: 'team two slug', title: 'team two title' };
-const validState = { teams: [ TEAM1 ], };
-const invalidState = { teams: [ 1, 5 ], fish: 'tacos' };
+const validState = [ TEAM1, TEAM2 ];
+const invalidState = [ { slug: 1, title: 'foo bar' } ];
 
 describe( 'reducer', ( ) => {
+	let sandbox;
+
+	useSandbox( newSandbox => {
+		sandbox = newSandbox;
+		sandbox.stub( console, 'warn' );
+	} );
+
 	describe( 'items', () => {
 		it( 'should return an empty list by default', () => {
 			expect( items( undefined, {} ) ).to.deep.equal( [] );
