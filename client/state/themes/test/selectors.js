@@ -1277,6 +1277,13 @@ describe( 'themes selectors', () => {
 									}
 								}
 							}
+						},
+						themes: {
+							queries: {
+								77203074: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
+							}
 						}
 					},
 					{
@@ -1304,6 +1311,13 @@ describe( 'themes selectors', () => {
 										admin_url: 'https://example.net/wp-admin/'
 									}
 								}
+							}
+						},
+						themes: {
+							queries: {
+								77203074: new ThemeQueryManager( {
+									items: { twentysixteen }
+								} )
 							}
 						}
 					},
