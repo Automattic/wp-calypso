@@ -83,6 +83,11 @@ var DomainSearch = React.createClass( {
 		}
 	},
 
+	handleAddMapping( suggestion ) {
+		upgradesActions.addItem( cartItems.domainMapping( { domain: suggestion.domain_name } ) );
+		page( '/checkout/' + this.props.sites.getSelectedSite().slug );
+	},
+
 	addDomain( suggestion ) {
 		this.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
 		const items = [
@@ -138,6 +143,7 @@ var DomainSearch = React.createClass( {
 							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 							onAddDomain={ this.handleAddRemoveDomain }
+							onAddMapping={ this.handleAddMapping }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 							offerMappingOption

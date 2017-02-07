@@ -3,7 +3,6 @@
  */
 const React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	page = require( 'page' ),
 	times = require( 'lodash/times' );
 
 import Notice from 'components/notice';
@@ -14,8 +13,6 @@ import Notice from 'components/notice';
 const DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
 	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ isNextDomainFree } = require( 'lib/cart-values/cart-items' );
 
 var DomainSearchResults = React.createClass( {
@@ -73,7 +70,7 @@ var DomainSearchResults = React.createClass( {
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
 		} else if ( suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
-			const components = { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> };
+			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( this.props.domainsWithPlansOnly ) {
 				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
@@ -110,20 +107,9 @@ var DomainSearchResults = React.createClass( {
 		);
 	},
 
-	addMappingAndRedirect: function( event ) {
+	handleAddMapping: function( event ) {
 		event.preventDefault();
-
-		if ( this.props.onAddMapping ) {
-			return this.props.onAddMapping( this.props.lastDomainSearched );
-		}
-
-		upgradesActions.addItem( cartItems.domainMapping( { domain: this.props.lastDomainSearched } ) );
-
-		page( '/checkout/' + this.props.selectedSite.slug );
-	},
-
-	onClickResult: function( suggestion ) {
-		this.props.onClickResult( suggestion );
+		this.props.onAddMapping( { domain_name: this.props.lastDomainSearched } );
 	},
 
 	placeholders: function() {
