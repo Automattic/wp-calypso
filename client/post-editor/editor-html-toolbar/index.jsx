@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import {
+	get,
 	map,
 	reduce,
 	throttle,
@@ -13,10 +15,18 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 import { isWithinBreakpoint } from 'lib/viewport';
+import {
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate
+} from 'state/ui/editor/contact-form/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
+import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 
 /**
@@ -27,18 +37,25 @@ const TOOLBAR_HEIGHT = 39;
 export class EditorHtmlToolbar extends Component {
 
 	static propTypes = {
+		contactForm: PropTypes.object,
 		content: PropTypes.object,
+		fieldAdd: PropTypes.func,
+		fieldRemove: PropTypes.func,
+		fieldUpdate: PropTypes.func,
 		moment: PropTypes.func,
 		onToolbarChangeContent: PropTypes.func,
+		settingsUpdate: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
 	state = {
+		contactFormDialogTab: 'fields',
 		isPinned: false,
 		isScrollable: false,
 		isScrolledFull: false,
 		openTags: [],
 		selectedText: '',
+		showContactFormDialog: false,
 		showImageDialog: false,
 		showLinkDialog: false,
 		showMediaModal: false,
@@ -283,6 +300,11 @@ export class EditorHtmlToolbar extends Component {
 		this.insertCustomContent( media );
 	}
 
+	onInsertContactForm = () => {
+		this.insertCustomContent( serialize( this.props.contactForm ), { paragraph: true } );
+		this.closeContactFormDialog();
+	}
+
 	openImageDialog = () => {
 		this.setState( { showImageDialog: true } );
 	}
@@ -301,6 +323,25 @@ export class EditorHtmlToolbar extends Component {
 
 	closeLinkDialog = () => {
 		this.setState( { showLinkDialog: false } );
+	}
+
+	openContactFormDialog = () => {
+		this.setState( {
+			contactFormDialogTab: 'fields',
+			showContactFormDialog: true,
+		} );
+	}
+
+	toggleContactFormDialogTab = () => {
+		this.setState( {
+			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab
+				? 'settings'
+				: 'fields',
+		} );
+	}
+
+	closeContactFormDialog = () => {
+		this.setState( { showContactFormDialog: false } );
 	}
 
 	openMediaModal = () => {
@@ -325,6 +366,10 @@ export class EditorHtmlToolbar extends Component {
 			media: {
 				label: '+',
 				onClick: this.openMediaModal,
+			},
+			'contact-form': {
+				label: 'CF',
+				onClick: this.openContactFormDialog,
 			},
 			strong: {
 				label: 'b',
@@ -405,6 +450,18 @@ export class EditorHtmlToolbar extends Component {
 					selectedText={ this.state.selectedText }
 					shouldDisplay={ this.state.showLinkDialog }
 				/>
+				<ContactFormDialog
+					activeTab={ this.state.contactFormDialogTab }
+					isEdit={ false }
+					onChangeTabs={ this.toggleContactFormDialogTab }
+					onClose={ this.closeContactFormDialog }
+					onFieldAdd={ this.props.fieldAdd }
+					onFieldRemove={ this.props.fieldRemove }
+					onFieldUpdate={ this.props.fieldUpdate }
+					onInsert={ this.onInsertContactForm }
+					onSettingsUpdate={ this.props.settingsUpdate }
+					showDialog={ this.state.showContactFormDialog }
+				/>
 				<EditorMediaModal
 					onClose={ this.closeMediaModal }
 					onInsertMedia={ this.onInsertMedia }
@@ -415,4 +472,15 @@ export class EditorHtmlToolbar extends Component {
 	}
 }
 
-export default localize( EditorHtmlToolbar );
+const mapStateToProps = state => ( {
+	contactForm: get( state, 'ui.editor.contactForm', {} ),
+} );
+
+const mapDispatchToProps = {
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );
