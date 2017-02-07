@@ -643,14 +643,14 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 /**
  * GET/POST cart
  *
- * @param {string} [cartKey] The cart's key
+ * @param {string} [siteDomain] The site's slug
  * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
-	debug( '/me/shopping-cart/:cart-key query' );
+Undocumented.prototype.cart = function( siteDomain, method, data, fn ) {
+	debug( '/sites/:site_id:/shopping-cart query' );
 	if ( arguments.length === 2 ) {
 		fn = method;
 		method = 'GET';
@@ -661,7 +661,7 @@ Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
 		data = {};
 	}
 	return this._sendRequestWithLocale( {
-		path: '/me/shopping-cart/' + cartKey,
+		path: '/sites/' + siteDomain + '/shopping-cart',
 		method: method,
 		body: data
 	}, fn );

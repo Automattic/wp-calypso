@@ -56,12 +56,12 @@ function preprocessCartForServer( cart ) {
 	return newCart;
 }
 
-function CartSynchronizer( cartKey, wpcom ) {
+function CartSynchronizer( siteID, wpcom ) {
 	if ( ! ( this instanceof CartSynchronizer ) ) {
-		return new CartSynchronizer( cartKey, wpcom );
+		return new CartSynchronizer( siteID, wpcom );
 	}
 
-	this._cartKey = cartKey;
+	this._siteID = siteID;
 	this._wpcom = wpcom;
 	this._latestValue = null;
 	this._hasLoadedFromServer = false;
@@ -151,7 +151,7 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'POST', preprocessCartForServer( this._latestValue ), function( error, newValue ) {
+	this._wpcom.cart( this._siteID, 'POST', preprocessCartForServer( this._latestValue ), function( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;
@@ -170,7 +170,7 @@ CartSynchronizer.prototype.fetch = function() {
 };
 
 CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'GET', function( error, newValue ) {
+	this._wpcom.cart( this._siteID, 'GET', function( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;
