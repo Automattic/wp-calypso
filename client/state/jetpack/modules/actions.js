@@ -20,12 +20,13 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const activateModule = ( siteId, moduleSlug ) => {
+export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_ACTIVATE,
 			siteId,
-			moduleSlug
+			moduleSlug,
+			silent
 		} );
 
 		return wp.undocumented().jetpackModuleActivate( siteId, moduleSlug )
@@ -33,25 +34,28 @@ export const activateModule = ( siteId, moduleSlug ) => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug
+					moduleSlug,
+					silent
 				} );
 			} ).catch( error => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
+					silent,
 					error: error.message
 				} );
 			} );
 	};
 };
 
-export const deactivateModule = ( siteId, moduleSlug ) => {
+export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_DEACTIVATE,
 			siteId,
-			moduleSlug
+			moduleSlug,
+			silent
 		} );
 
 		return wp.undocumented().jetpackModuleDeactivate( siteId, moduleSlug )
@@ -59,13 +63,15 @@ export const deactivateModule = ( siteId, moduleSlug ) => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 					siteId,
-					moduleSlug
+					moduleSlug,
+					silent
 				} );
 			} ).catch( error => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
+					silent,
 					error: error.message
 				} );
 			} );
