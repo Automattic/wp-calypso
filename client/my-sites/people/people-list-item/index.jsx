@@ -4,7 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity, omit } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -49,9 +49,10 @@ export class PeopleListItem extends PureComponent {
 
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
+
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove', 'translate', 'moment', 'numberFormat', 'recordGoogleEvent' ) }
+				type={ this.props.type }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
