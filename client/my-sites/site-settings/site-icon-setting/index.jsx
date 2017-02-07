@@ -256,8 +256,11 @@ class SiteIconSetting extends Component {
 				<FormLabel className="site-icon-setting__heading">
 					{ translate( 'Site Icon' ) }
 					<InfoPopover position="bottom right">
-						{ translate( 'Your site icon will be shown across WordPress.com, in your' +
-							' visitors\' browser tabs, and as a home screen app icon.' ) }
+						{ translate(
+							'The Site Icon is used as a browser and app icon for your site.' +
+							' Icons must be square, and at least %s pixels wide and tall.',
+							{ args: [ 512 ] }
+						) }
 					</InfoPopover>
 				</FormLabel>
 				{ React.createElement( buttonProps.href ? 'a' : 'button', {
