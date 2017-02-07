@@ -9,6 +9,7 @@ import React, { PropTypes } from 'react';
 import Card from 'components/card';
 import DefaultPostFormat from './default-post-format';
 import MarkdownWpcom from './markdown-wpcom';
+import AfterTheDeadline from './after-the-deadline';
 
 const Composing = ( {
 	fields,
@@ -37,6 +38,16 @@ const Composing = ( {
 					fields={ fields }
 				/>
 			}
+
+			<hr />
+
+			<AfterTheDeadline
+				handleToggle={ handleToggle }
+				onChangeField={ onChangeField }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
 		</Card>
 	);
 };

@@ -157,7 +157,22 @@ const getFormSettings = partialRight( pick, [
 	'wp_mobile_excerpt',
 	'wp_mobile_featured_images',
 	'wp_mobile_app_promos',
-	'post_by_email_address'
+	'post_by_email_address',
+	'after-the-deadline',
+	'onpublish',
+	'onupdate',
+	'guess_lang',
+	'Bias Language',
+	'Cliches',
+	'Complex Expression',
+	'Diacritical Marks',
+	'Double Negative',
+	'Hidden Verbs',
+	'Jargon Language',
+	'Passive voice',
+	'Phrases to Avoid',
+	'Redundant Expression',
+	'ignored_phrases',
 ] );
 
 export default flowRight(
