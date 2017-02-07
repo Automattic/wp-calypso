@@ -1250,83 +1250,109 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
-		context( 'browser', () => {
-			before( () => {
-				global.window = {
-					location: {
-						href: 'https://wordpress.com'
+		context( 'on a Jetpack site', () => {
+			context( 'with a non-WP.com theme', () => {
+				const state = {
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
+							}
+						}
+					},
+					themes: {
+						queries: {
+							77203074: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
 					}
 				};
-			} );
 
-			after( () => {
-				delete global.window;
-			} );
-
-			it( 'should return customizer URL for Jetpack site', () => {
-				const customizeUrl = getThemeCustomizeUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-									options: {
-										admin_url: 'https://example.net/wp-admin/'
-									}
-								}
+				context( 'in the browser', () => {
+					before( () => {
+						global.window = {
+							location: {
+								href: 'https://wordpress.com'
 							}
-						},
-						themes: {
-							queries: {
-								77203074: new ThemeQueryManager( {
-									items: { twentysixteen }
-								} )
+						};
+					} );
+
+					after( () => {
+						delete global.window;
+					} );
+
+					it( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal(
+							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
+						);
+					} );
+				} );
+
+				context( 'on the server', () => {
+					it( 'should return customizer URL with un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
+					} );
+				} );
+			} );
+
+			context( 'with a WP.com theme', () => {
+				const state = {
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
 							}
 						}
 					},
-					{
-						id: 'twentysixteen',
-					},
-					77203074
-				);
-				expect( customizeUrl ).to.equal(
-					'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
-				);
-			} );
-		} );
-
-		context( 'node', () => {
-			it( 'should return customizer URL for Jetpack site', () => {
-				const customizeUrl = getThemeCustomizeUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-									options: {
-										admin_url: 'https://example.net/wp-admin/'
-									}
-								}
-							}
-						},
-						themes: {
-							queries: {
-								77203074: new ThemeQueryManager( {
-									items: { twentysixteen }
-								} )
-							}
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
 						}
-					},
-					{
-						id: 'twentysixteen',
-					},
-					77203074
-				);
-				expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
+					}
+				};
+
+				context( 'in the browser', () => {
+					before( () => {
+						global.window = {
+							location: {
+								href: 'https://wordpress.com'
+							}
+						};
+					} );
+
+					after( () => {
+						delete global.window;
+					} );
+
+					it( 'should return customizer URL with return arg and suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal(
+							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen-wpcom'
+						);
+					} );
+				} );
+
+				context( 'on the server', () => {
+					it( 'should return customizer URL with suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen-wpcom' );
+					} );
+				} );
 			} );
 		} );
 	} );
