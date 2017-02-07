@@ -44,12 +44,6 @@ class StatsSite extends Component {
 		}
 	}
 
-	componentDidMount() {
-		setTimeout( () => {
-			window.scrollTo( 0, 0 );
-		} );
-	}
-
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		page.redirect( this.props.path + '?startDate=' + bar.data.period );
