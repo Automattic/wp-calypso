@@ -199,8 +199,13 @@ const Checkout = React.createClass( {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
-		} else if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+		} else if ( cart.create_new_blog && ! cartItems.hasPlan( cart ) ) {
+			let domainName;
+			if ( cartItems.hasDomainRegistration( cart ) ) {
+				domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+			} else {
+				domainName = cartItems.getDomainRegistrations( this.state.previousCart )[ 0 ].meta;
+			}
 
 			return domainManagementList( domainName );
 		}
