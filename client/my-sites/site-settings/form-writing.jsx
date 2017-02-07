@@ -11,18 +11,14 @@ import { flowRight, partialRight, pick } from 'lodash';
 import wrapSettingsForm from './wrap-settings-form';
 import config from 'config';
 import PressThis from './press-this';
-import FormSelect from 'components/forms/form-select';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
-import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
-import Card from 'components/card';
 import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
+import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
@@ -57,7 +53,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			translate
 		} = this.props;
-		const markdownSupported = fields.markdown_supported;
+
 		return (
 			<form
 				id="site-settings"
@@ -73,62 +69,15 @@ class SiteSettingsFormWriting extends Component {
 				}
 
 				{ this.renderSectionHeader( translate( 'Composing' ) ) }
-				<Card className="site-settings">
-					<FormFieldset>
-						<FormLabel htmlFor="default_post_format">
-							{ translate( 'Default Post Format' ) }
-						</FormLabel>
-						<FormSelect
-							name="default_post_format"
-							id="default_post_format"
-							value={ fields.default_post_format }
-							onChange={ onChangeField( 'default_post_format' ) }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Selected Default Post Format' ) }>
-							<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
-							<option value="aside">{ translate( 'Aside', { context: 'Post format' } ) }</option>
-							<option value="chat">{ translate( 'Chat', { context: 'Post format' } ) }</option>
-							<option value="gallery">{ translate( 'Gallery', { context: 'Post format' } ) }</option>
-							<option value="link">{ translate( 'Link', { context: 'Post format' } ) }</option>
-							<option value="image">{ translate( 'Image', { context: 'Post format' } ) }</option>
-							<option value="quote">{ translate( 'Quote', { context: 'Post format' } ) }</option>
-							<option value="status">{ translate( 'Status', { context: 'Post format' } ) }</option>
-							<option value="video">{ translate( 'Video', { context: 'Post format' } ) }</option>
-							<option value="audio">{ translate( 'Audio', { context: 'Post format' } ) }</option>
-						</FormSelect>
-					</FormFieldset>
-
-					{ markdownSupported &&
-						<FormFieldset className="has-divider is-top-only">
-							<FormLabel>
-								{ translate( 'Markdown' ) }
-							</FormLabel>
-							<FormLabel>
-								<FormToggle
-									className="is-compact"
-									name="wpcom_publish_posts_with_markdown"
-									checked={ !! fields.wpcom_publish_posts_with_markdown }
-									onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
-									disabled={ isRequestingSettings }
-								>
-									{
-										translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
-											components: {
-												a: (
-													<a
-														href="http://en.support.wordpress.com/markdown-quick-reference/"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												)
-											}
-										} )
-									}
-								</FormToggle>
-							</FormLabel>
-						</FormFieldset>
-					}
-				</Card>
+				<Composing
+					onSubmitForm={ this.props.handleSubmitForm }
+					handleToggle={ handleToggle }
+					onChangeField={ onChangeField }
+					eventTracker={ eventTracker }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
