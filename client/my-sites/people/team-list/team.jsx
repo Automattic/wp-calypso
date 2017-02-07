@@ -77,33 +77,11 @@ export class Team extends Component {
 		return translate( 'Team' );
 	};
 
-	cardContent = () => {
-		const { props } = this;
-		const { users, fetchOptions, fetchingUsers } = props;
-		const key = deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) );
-
-		return (
-			<InfiniteList
-				key={ key }
-				items={ users }
-				className="people-selector__infinite-list"
-				ref="infiniteList"
-				fetchingNextPage={ fetchingUsers }
-				lastPage={ this.isLastPage() }
-				fetchNextPage={ this.fetchNextPage }
-				getItemRef={ this.getPersonRef }
-				renderLoadingPlaceholders={ () => <PeopleListItem key="people-list-item-placeholder" /> }
-				renderItem={ this.renderPerson }
-				guessedItemHeight={ 126 }>
-			</InfiniteList>
-		);
-	};
-
 	render() {
 		const { props } = this;
-		const { translate } = props;
+		const { translate, users, fetchInitialized, fetchOptions, fetchingUsers } = props;
 
-		if ( props.fetchInitialized && ! props.users.length && props.fetchOptions.search && ! props.fetchingUsers ) {
+		if ( fetchInitialized && ! users.length && fetchOptions.search && ! fetchingUsers ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
@@ -125,7 +103,19 @@ export class Team extends Component {
 					site={ props.site }
 					count={ props.fetchingUsers || props.fetchOptions.search ? null : props.totalUsers } />
 				<Card>
-					{ this.cardContent() }
+					<InfiniteList
+						key={ deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) ) }
+						items={ users }
+						className="people-selector__infinite-list"
+						ref="infiniteList"
+						fetchingNextPage={ fetchingUsers }
+						lastPage={ this.isLastPage() }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef={ this.getPersonRef }
+						renderLoadingPlaceholders={ () => <PeopleListItem key="people-list-item-placeholder" /> }
+						renderItem={ this.renderPerson }
+						guessedItemHeight={ 126 }>
+					</InfiniteList>
 				</Card>
 				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
 			</div>
