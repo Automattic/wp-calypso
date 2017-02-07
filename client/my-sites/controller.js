@@ -145,26 +145,26 @@ function isPathAllowedForDomainOnlySite( pathname, domainName ) {
 
 function onSelectedSiteAvailable( context ) {
 	const selectedSite = sites.getSelectedSite();
-	const state = context.store.getState();
+	const getState = () => context.store.getState();
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( state, selectedSite.ID ) ) {
+	if ( ! getSite( getState(), selectedSite.ID ) ) {
 		context.store.dispatch( receiveSite( selectedSite ) );
 	}
 
 	context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
 
-	if ( isDomainOnlySite( state, selectedSite.ID ) &&
+	if ( isDomainOnlySite( getState(), selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug ) ) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
 		return false;
 	}
 
 	// Update recent sites preference
-	if ( hasReceivedRemotePreferences( state ) ) {
-		const recentSites = getPreference( state, 'recentSites' );
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		const recentSites = getPreference( getState(), 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
 			context.store.dispatch( savePreference( 'recentSites', uniq( [
 				selectedSite.ID,
