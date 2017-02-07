@@ -1206,19 +1206,27 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeCustomizeUrl', () => {
 		it( 'given no theme and no site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl( {} );
-			expect( customizeUrl ).to.equal( '/customize/' );
+			const customizeUrl = getThemeCustomizeUrl( {
+				sites: {
+					items: {}
+				}
+			} );
+			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
-				{},
+				{
+					sites: {
+						items: {}
+					}
+				},
 				{
 					id: 'twentysixteen',
 					stylesheet: 'pub/twentysixteen'
 				}
 			);
-			expect( customizeUrl ).to.equal( '/customize/' );
+			expect( customizeUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
@@ -1242,27 +1250,110 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
-		// FIXME: In implementation, get rid of `window` dependency.
-		it.skip( 'given a theme and Jetpack site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl(
-				{
+		context( 'on a Jetpack site', () => {
+			context( 'with a non-WP.com theme', () => {
+				const state = {
 					sites: {
 						items: {
 							77203074: {
 								ID: 77203074,
 								URL: 'https://example.net',
-								jetpack: true
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
 							}
 						}
+					},
+					themes: {
+						queries: {
+							77203074: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
 					}
-				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
-				77203074
-			);
-			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
+				};
+
+				context( 'in the browser', () => {
+					before( () => {
+						global.window = {
+							location: {
+								href: 'https://wordpress.com'
+							}
+						};
+					} );
+
+					after( () => {
+						delete global.window;
+					} );
+
+					it( 'should return customizer URL with return arg and un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal(
+							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
+						);
+					} );
+				} );
+
+				context( 'on the server', () => {
+					it( 'should return customizer URL with un-suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
+					} );
+				} );
+			} );
+
+			context( 'with a WP.com theme', () => {
+				const state = {
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.net/wp-admin/'
+								}
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						}
+					}
+				};
+
+				context( 'in the browser', () => {
+					before( () => {
+						global.window = {
+							location: {
+								href: 'https://wordpress.com'
+							}
+						};
+					} );
+
+					after( () => {
+						delete global.window;
+					} );
+
+					it( 'should return customizer URL with return arg and suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal(
+							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen-wpcom'
+						);
+					} );
+				} );
+
+				context( 'on the server', () => {
+					it( 'should return customizer URL with suffixed theme ID', () => {
+						const customizeUrl = getThemeCustomizeUrl( state, { id: 'twentysixteen' }, 77203074 );
+						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen-wpcom' );
+					} );
+				} );
+			} );
 		} );
 	} );
 
@@ -1814,7 +1905,6 @@ describe( 'themes selectors', () => {
 
 			expect( isWpcom ).to.be.false;
 		} );
-
 	} );
 
 	describe( '#isPremium()', () => {

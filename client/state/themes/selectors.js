@@ -16,6 +16,7 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
+import { getCustomizerUrl } from 'state/sites/selectors';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import {
 	getDeserializedThemesQueryDetails,
@@ -439,24 +440,22 @@ export function getThemePurchaseUrl( state, theme, siteId ) {
  * @return {?String}         Customizer URL
  */
 export function getThemeCustomizeUrl( state, theme, siteId ) {
-	if ( ! siteId ) {
-		return '/customize/';
+	const customizerUrl = getCustomizerUrl( state, siteId );
+
+	if ( ! ( siteId && theme ) ) {
+		return customizerUrl;
 	}
+
+	const separator = includes( customizerUrl, '?' ) ? '&' : '?';
+	let identifier;
 
 	if ( isJetpackSite( state, siteId ) ) {
-		return getSiteOption( state, siteId, 'admin_url' ) +
-			'customize.php?return=' +
-			encodeURIComponent( window.location ) +
-			( theme ? '&theme=' + getSuffixedThemeId( state, theme.id, siteId ) : '' );
+		identifier = getSuffixedThemeId( state, theme.id, siteId );
+	} else {
+		identifier = theme.stylesheet;
 	}
 
-	const customizeUrl = '/customize/' + getSiteSlug( state, siteId );
-
-	if ( theme && theme.stylesheet ) {
-		return customizeUrl + '?theme=' + theme.stylesheet;
-	}
-
-	return customizeUrl;
+	return customizerUrl + separator + 'theme=' + identifier;
 }
 
 /**
