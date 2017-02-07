@@ -34,6 +34,13 @@ module.exports = {
 		apiRequestFunction: stepActions.setThemeOnSite
 	},
 
+	'plans-site-selected': {
+		stepName: 'plans-site-selected',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug', 'siteId' ],
+		providesDependencies: [ 'cartItem' ]
+	},
+
 	'design-type': {
 		stepName: 'design-type',
 		providesDependencies: [ 'designType' ]
