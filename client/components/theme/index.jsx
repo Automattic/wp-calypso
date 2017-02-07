@@ -176,7 +176,7 @@ const Theme = React.createClass( {
 									index={ this.props.index }
 									theme={ this.props.theme }
 									active={ this.props.active }
-									onClick={ this.props.onMoreButtonClick }
+									onMoreButtonClick={ this.props.onMoreButtonClick }
 									options={ this.props.buttonContents } />
 							</TrackInteractions> : null }
 					</div>

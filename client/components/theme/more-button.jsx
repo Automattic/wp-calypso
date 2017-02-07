@@ -24,24 +24,36 @@ class ThemeMoreButton extends React.Component {
 		this.togglePopover = this.togglePopover.bind( this );
 		this.closePopover = this.closePopover.bind( this );
 		this.onClick = this.onClick.bind( this );
+		this.onPopoverActionClick = this.onPopoverActionClick.bind( this );
 	}
 
 	togglePopover() {
 		this.setState( { showPopover: ! this.state.showPopover } );
-		! this.state.showPopover && this.props.onClick( this.props.theme.id, this.props.index );
+		! this.state.showPopover && this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_open' );
 	}
 
 	closePopover( action ) {
 		this.setState( { showPopover: false } );
-		isFunction( action ) && action( this.props.theme );
+		if ( isFunction( action ) ) {
+			action();
+		}
+	}
+
+	popoverAction( action, label ) {
+		action( this.props.theme );
+		this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_' + label );
+	}
+
+	onPopoverActionClick( action, label ) {
+		return () => this.popoverAction( action, label );
 	}
 
 	focus( event ) {
 		event.target.focus();
 	}
 
-	onClick( action ) {
-		return this.closePopover.bind( this, action );
+	onClick( action, label ) {
+		return this.closePopover.bind( this, this.onPopoverActionClick( action, label ) );
 	}
 
 	render() {
@@ -71,7 +83,7 @@ class ThemeMoreButton extends React.Component {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }
-									onClick={ this.onClick( option.action ) }
+									onClick={ this.onClick( option.action, option.label ) }
 									key={ option.label }
 									href={ url }
 									target={ isOutsideCalypso( url ) ? '_blank' : null }>
@@ -81,7 +93,9 @@ class ThemeMoreButton extends React.Component {
 						}
 						if ( option.action ) {
 							return (
-								<PopoverMenuItem key={ option.label } action={ option.action }>
+								<PopoverMenuItem
+									key={ option.label }
+									action={ this.onPopoverActionClick( option.action, option.label ) }>
 									{ option.label }
 								</PopoverMenuItem>
 							);
@@ -101,6 +115,9 @@ ThemeMoreButton.propTypes = {
 	theme: React.PropTypes.object,
 	// Index of theme in results list
 	index: React.PropTypes.number,
+	// More elaborate onClick action, used for tracking.
+	// Made to not interfere with DOM onClick
+	onMoreButtonClick: React.PropTypes.func,
 	// Options to populate the popover menu with
 	options: React.PropTypes.objectOf(
 		React.PropTypes.shape( {
