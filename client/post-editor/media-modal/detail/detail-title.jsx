@@ -69,11 +69,15 @@ export default React.createClass( {
 	saveTitle: debounce( function() {
 		// This function is debounced to prevent the case where two consecutive
 		// save attempts would be made as a consequence of the blur in `onKeyUp`
-		if ( this.props.site && this.props.item && this.state.title && this.state.title !== this.props.item.title ) {
-			MediaActions.update( this.props.site.ID, {
-				ID: this.props.item.ID,
-				title: this.state.title
-			} );
+		if ( this.props.site && this.props.item && 'title' in this.state && this.state.title !== this.props.item.title ) {
+			if ( this.state.title ) {
+				MediaActions.update( this.props.site.ID, {
+					ID: this.props.item.ID,
+					title: this.state.title
+				} );
+			} else {
+				this.resetTitle();
+			}
 		}
 	}, 0 ),
 
