@@ -13,6 +13,8 @@ var config = require( 'config' ),
 	SurveyStepComponent = require( 'signup/steps/survey' ),
 	ThemeSelectionComponent = require( 'signup/steps/theme-selection' );
 import UserSignupComponent from 'signup/steps/user';
+import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
+
 
 module.exports = {
 	'design-type': DesignTypeComponent,
@@ -25,7 +27,7 @@ module.exports = {
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
-	'plans-site-selected': PlansStepComponent,
+	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-title': SiteTitleComponent,
