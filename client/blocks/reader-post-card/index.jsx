@@ -18,6 +18,7 @@ import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
+import QuotePost from './quote';
 import FollowButton from 'reader/follow-button';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -113,12 +114,14 @@ export default class ReaderPostCard extends React.Component {
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
 		const isDiscover = post.is_discover;
+		const isQuotePost = isDiscoverStream && 'quote-pick' === post.discover_format && get( discoverPick, 'post' );
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
+			'is-quote': isQuotePost,
 			'is-discover': isDiscover
 		} );
 
@@ -153,6 +156,11 @@ export default class ReaderPostCard extends React.Component {
 			readerPostCard = <GalleryPost post={ post } title={ title } >
 					{ readerPostActions }
 				</GalleryPost>;
+		} else if ( isQuotePost ) {
+			readerPostCard = <QuotePost post={ post }>
+					{ discoverFollowButton }
+					{ readerPostActions }
+				</QuotePost>;
 		} else {
 			readerPostCard = <StandardPost post={ post } title={ title } >
 					{ isDailyPostChallengeOrPrompt( post ) && site && <DailyPostButton post={ post } site={ site } tagName="span" /> }

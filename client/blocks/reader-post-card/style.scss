@@ -177,6 +177,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		}
 	}
 
+	&.is-quote .reader-post-card__excerpt {
+		font-size: 22px;
+		font-style: italic;
+
+	}
 	.reader-post-actions {
 		margin: 4px 0 0;
 	}
@@ -700,4 +705,3 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .is-section-devdocs .reader-post-card__featured-image {
 	bottom: 16px;
 }
-
