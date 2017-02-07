@@ -209,7 +209,8 @@ export const normalizers = {
 
 		return map( countryData, ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
-			const icon = country.flat_flag_icon.match( /grey\.png/ ) ? null : country.flat_flag_icon;
+			// removing `s` querystring from gravatar as it is breaking images
+			const icon = country.flat_flag_icon.match( /grey\.png/ ) ? null : country.flat_flag_icon.replace( /\?s=48/, '' );
 
 			// ’ in country names causes google's geo viz to break
 			return {

@@ -490,7 +490,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 1,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c'
 					}
 				] );
 			} );
@@ -526,7 +526,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 10,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c'
 					}
 				] );
 			} );
@@ -561,7 +561,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c'
 					}
 				] );
 			} );
@@ -597,7 +597,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c'
 					}
 				] );
 			} );
@@ -653,7 +653,7 @@ describe( 'utils', () => {
 					},
 					'country-info': {
 						US: {
-							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c',
 							flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
 							country_full: 'US’A',
 							map_region: '021'
@@ -708,7 +708,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c'
 					}
 				] );
 			} );
