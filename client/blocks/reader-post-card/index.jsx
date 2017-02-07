@@ -124,7 +124,7 @@ export default class ReaderPostCard extends React.Component {
 
 		let discoverFollowButton;
 
-		if ( isDiscover ) {
+		if ( isDiscover && ! isDiscoverStream ) {
 			const discoverBlogName = getDiscoverBlogName( post ) || null;
 			discoverFollowButton = discoverBlogName &&
 				<DiscoverFollowButton siteName={ discoverBlogName } followUrl={ getDiscoverFollowUrl( post ) } />;
@@ -178,7 +178,13 @@ export default class ReaderPostCard extends React.Component {
 			postByline = <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName || isDiscover } />;
 		}
 
-		const followUrl = feed ? feed.feed_URL : post.site_URL;
+		let followUrl;
+
+		if ( isDiscoverStream && discoverPick && ( discoverPick.post || discoverPick.site ) ) {
+			followUrl = discoverPick.site ? discoverPick.site.URL : discoverPick.post.site_URL;
+		} else {
+			followUrl = feed ? feed.feed_URL : post.site_URL;
+		}
 
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
