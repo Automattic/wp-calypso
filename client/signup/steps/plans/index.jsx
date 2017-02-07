@@ -46,16 +46,24 @@ class PlansStep extends Component {
 			} );
 		}
 
-		SignupActions.submitSignupStep( {
+		const step = {
 			processingMessage: isEmpty( cartItem )
 				? translate( 'Free plan selected' )
 				: translate( 'Adding your plan' ),
 			stepName,
 			stepSectionName,
 			cartItem,
-			privacyItem,
 			...additionalStepData
-		}, [], { cartItem, privacyItem } );
+		};
+
+		const providedDependencies = { cartItem };
+
+		if ( privacyItem ) {
+			step.privacyItem = privacyItem;
+			providedDependencies.privacyItem = privacyItem;
+		}
+
+		SignupActions.submitSignupStep( step, [], providedDependencies );
 
 		goToNextStep();
 	}
