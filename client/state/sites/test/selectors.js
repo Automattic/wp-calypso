@@ -2324,7 +2324,11 @@ describe( 'selectors', () => {
 
 		context( 'browser', () => {
 			before( () => {
-				global.window = { location: 'https://wordpress.com' };
+				global.window = {
+					location: {
+						href: 'https://wordpress.com'
+					}
+				};
 			} );
 
 			after( () => {
@@ -2347,7 +2351,7 @@ describe( 'selectors', () => {
 					}
 				}, 77203199 );
 
-				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?return=https%253A%252F%252Fwordpress.com' );
+				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com' );
 			} );
 		} );
 

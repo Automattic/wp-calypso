@@ -976,7 +976,7 @@ export function getCustomizerUrl( state, siteId, panel ) {
 
 	let returnUrl;
 	if ( 'undefined' !== typeof window ) {
-		returnUrl = encodeURIComponent( window.location );
+		returnUrl = window.location.href;
 	}
 
 	return addQueryArgs( {
