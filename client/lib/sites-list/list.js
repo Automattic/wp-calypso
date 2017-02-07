@@ -218,7 +218,23 @@ SitesList.prototype.update = function( sites ) {
 
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
-			result = siteObj.set( site );
+
+			//Assign old URL because new url is broken because the site response caches domains
+			//and we have trouble getting over it.
+			if ( site.options.is_automated_transfer && site.URL.match( '.wordpress.com' ) ) {
+				site.URL = siteObj.URL;
+			}
+
+			if ( site.options.is_automated_transfer && ! siteObj.jetpack && site.jetpack ) {
+				//We have a site that was not jetpack and now is.
+				siteObj.off( 'change', this.propagateChange );
+				siteObj = this.createSiteObject( site );
+				siteObj.on( 'change', this.propagateChange );
+				changed = true;
+			} else {
+				result = siteObj.set( site );
+			}
+
 			if ( result ) {
 				changed = true;
 			}
