@@ -7,6 +7,7 @@ import {
 	includes,
 	noop,
 	map,
+	identity
 } from 'lodash';
 
 /**
@@ -17,7 +18,7 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
 import FilterItem from './filter-item';
 
-class MediaLibraryFilterBar extends Component {
+export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
 		basePath: React.PropTypes.string,
 		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
@@ -27,13 +28,15 @@ class MediaLibraryFilterBar extends Component {
 		site: React.PropTypes.object,
 		onFilterChange: React.PropTypes.func,
 		onSearch: React.PropTypes.func,
+		translate: React.PropTypes.func
 	};
 
 	static defaultProps ={
 		filter: '',
 		basePath: '/media',
 		onFilterChange: noop,
-		onSearch: noop
+		onSearch: noop,
+		translate: identity
 	};
 
 	getSearchPlaceholderText() {
