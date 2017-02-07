@@ -446,12 +446,8 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 		return customizerUrl;
 	}
 
-	let separator, identifier;
-	if ( includes( customizerUrl, '?' ) ) {
-		separator = '&';
-	} else {
-		separator = '?';
-	}
+	const separator = includes( customizerUrl, '?' ) ? '&' : '?';
+	let identifier;
 
 	if ( isJetpackSite( state, siteId ) ) {
 		identifier = getSuffixedThemeId( state, theme.id, siteId );
