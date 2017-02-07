@@ -109,6 +109,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	previewSite: function( event ) {
+		event.preventDefault();
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
 		this.props.onClick && this.props.onClick( event );
 	},
