@@ -45,7 +45,7 @@ class DesignTypeStep extends Component {
 						<Card className="design-type__choice" key={ choice.type }>
 							<a
 								className="design-type__choice-link"
-								ref="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }
+								onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }
 							>
 								{ choice.image }
 								<h2>{ choice.label }</h2>
