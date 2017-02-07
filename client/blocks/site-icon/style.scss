@@ -7,7 +7,6 @@
 
 	// Globe icon for sites without an icon
 	&.is-blank {
-		border: 1px solid $white;
 		background: lighten( $gray, 20% );
 		.gridicon {
 			color: $white;
