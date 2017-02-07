@@ -28,11 +28,6 @@ export class PeopleListItem extends PureComponent {
 		translate: identity,
 	};
 
-	navigateToUser = () => {
-		browserWindow.scrollTo( 0, 0 );
-		this.props.recordGoogleEvent( 'People', 'Clicked User Profile From Team List' );
-	};
-
 	userHasPromoteCapability = () => {
 		const site = this.props.site;
 		return site && site.capabilities && site.capabilities.promote_users;
@@ -60,7 +55,7 @@ export class PeopleListItem extends PureComponent {
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
-				onClick={ canLinkToProfile && this.navigateToUser }>
+				onClick={ canLinkToProfile && this.props.navigateToUser }>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
 				</div>
@@ -77,9 +72,13 @@ export class PeopleListItem extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	},
-)( localize( PeopleListItem ) );
+const navigateToUser = () => {
+	browserWindow.scrollTo( 0, 0 );
+	return recordGoogleEvent( 'People', 'Clicked User profile from team list' );
+};
+
+const mapDispatchToProps = {
+	navigateToUser,
+};
+
+export default connect( null, mapDispatchToProps )( localize( PeopleListItem ) );
