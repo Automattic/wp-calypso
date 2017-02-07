@@ -147,6 +147,9 @@ describe( 'utils', () => {
 				'custom-content-types': true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: true,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -164,6 +167,8 @@ describe( 'utils', () => {
 				wpcom_publish_comments_with_markdown: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
 			} );
 		} );
 
@@ -189,6 +194,9 @@ describe( 'utils', () => {
 				'custom-content-types': false,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -212,6 +220,8 @@ describe( 'utils', () => {
 				wpcom_publish_comments_with_markdown: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
