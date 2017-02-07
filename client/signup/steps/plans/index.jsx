@@ -21,6 +21,7 @@ class PlansStep extends Component {
 		super( props );
 
 		this.onSelectPlan = this.onSelectPlan.bind( this );
+		this.plansFeaturesSelection = this.plansFeaturesSelection.bind( this );
 	}
 
 	onSelectPlan( cartItem ) {
@@ -115,10 +116,8 @@ class PlansStep extends Component {
 			'is-wide-layout': true
 		} );
 
-		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
-
 		return <div className={ classes }>
-			{ renderPlansFeatures() }
+			{ this.plansFeaturesSelection() }
 		</div>;
 	}
 }
