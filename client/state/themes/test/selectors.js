@@ -1822,7 +1822,6 @@ describe( 'themes selectors', () => {
 
 			expect( isWpcom ).to.be.false;
 		} );
-
 	} );
 
 	describe( '#isPremium()', () => {
