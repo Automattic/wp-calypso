@@ -1281,12 +1281,11 @@ describe( 'themes selectors', () => {
 					},
 					{
 						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
 					},
 					77203074
 				);
 				expect( customizeUrl ).to.equal(
-					'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=pub/twentysixteen'
+					'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
 				);
 			} );
 		} );
@@ -1310,11 +1309,10 @@ describe( 'themes selectors', () => {
 					},
 					{
 						id: 'twentysixteen',
-						stylesheet: 'pub/twentysixteen'
 					},
 					77203074
 				);
-				expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=pub/twentysixteen' );
+				expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
 			} );
 		} );
 	} );

@@ -442,17 +442,24 @@ export function getThemePurchaseUrl( state, theme, siteId ) {
 export function getThemeCustomizeUrl( state, theme, siteId ) {
 	const customizerUrl = getCustomizerUrl( state, siteId );
 
-	if ( ! ( siteId && theme && theme.stylesheet ) ) {
+	if ( ! ( siteId && theme ) ) {
 		return customizerUrl;
 	}
 
-	let separator;
+	let separator, identifier;
 	if ( includes( customizerUrl, '?' ) ) {
 		separator = '&';
 	} else {
 		separator = '?';
 	}
-	return customizerUrl + separator + 'theme=' + theme.stylesheet;
+
+	if ( isJetpackSite( state, siteId ) ) {
+		identifier = getSuffixedThemeId( state, theme.id, siteId );
+	} else {
+		identifier = theme.stylesheet;
+	}
+
+	return customizerUrl + separator + 'theme=' + identifier;
 }
 
 /**
