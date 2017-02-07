@@ -1250,29 +1250,72 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
-		it( 'given a theme and Jetpack site ID, should return the correct customize URL', () => {
-			const customizeUrl = getThemeCustomizeUrl(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									admin_url: 'https://example.net/wp-admin/'
+		context( 'browser', () => {
+			before( () => {
+				global.window = {
+					location: {
+						href: 'https://wordpress.com'
+					}
+				};
+			} );
+
+			after( () => {
+				delete global.window;
+			} );
+
+			it( 'should return customizer URL for Jetpack site', () => {
+				const customizeUrl = getThemeCustomizeUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true,
+									options: {
+										admin_url: 'https://example.net/wp-admin/'
+									}
 								}
 							}
 						}
-					}
-				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
-				77203074
-			);
-			expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=pub/twentysixteen' );
+					},
+					{
+						id: 'twentysixteen',
+						stylesheet: 'pub/twentysixteen'
+					},
+					77203074
+				);
+				expect( customizeUrl ).to.equal(
+					'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=pub/twentysixteen'
+				);
+			} );
+		} );
+
+		context( 'node', () => {
+			it( 'should return customizer URL for Jetpack site', () => {
+				const customizeUrl = getThemeCustomizeUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true,
+									options: {
+										admin_url: 'https://example.net/wp-admin/'
+									}
+								}
+							}
+						}
+					},
+					{
+						id: 'twentysixteen',
+						stylesheet: 'pub/twentysixteen'
+					},
+					77203074
+				);
+				expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=pub/twentysixteen' );
+			} );
 		} );
 	} );
 
