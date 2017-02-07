@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
 import FormSelect from 'components/forms/form-select';
+import MarkdownWpcom from './markdown-wpcom';
 
 const Composing = ( {
 	fields,
@@ -49,35 +49,14 @@ const Composing = ( {
 				</FormSelect>
 			</FormFieldset>
 
-			{ fields.markdown_supported &&
-				<FormFieldset className="has-divider is-top-only">
-					<FormLabel>
-						{ translate( 'Markdown' ) }
-					</FormLabel>
-					<FormLabel>
-						<FormToggle
-							className="is-compact"
-							name="wpcom_publish_posts_with_markdown"
-							checked={ !! fields.wpcom_publish_posts_with_markdown }
-							onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
-							disabled={ isRequestingSettings || isSavingSettings }
-						>
-							{
-								translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
-									components: {
-										a: (
-											<a
-												href="http://en.support.wordpress.com/markdown-quick-reference/"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										)
-									}
-								} )
-							}
-						</FormToggle>
-					</FormLabel>
-				</FormFieldset>
+			{
+				fields.markdown_supported &&
+				<MarkdownWpcom
+					handleToggle={ handleToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 			}
 		</Card>
 	);
@@ -90,7 +69,6 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
