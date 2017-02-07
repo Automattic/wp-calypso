@@ -217,7 +217,9 @@ export default {
 			} );
 			externalRedirect(
 				addQueryArgs( {
-					calypso_env: calypsoEnv
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv,
+					auth_type: 'jetpack'
 				}, url + remoteAuthPath )
 			);
 		};
