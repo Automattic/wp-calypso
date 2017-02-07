@@ -25,6 +25,7 @@ module.exports = {
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
+	'plans-site-selected': PlansStepComponent,
 	site: SiteComponent,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-title': SiteTitleComponent,
