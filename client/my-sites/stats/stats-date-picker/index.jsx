@@ -143,28 +143,26 @@ class StatsDatePicker extends Component {
 					? <span>{ sectionTitle }</span>
 					: <div className="stats-section-title">
 							<h3>{ sectionTitle }</h3>
-							{ showQueryDate &&
+							{ showQueryDate && isAutoRefreshAllowedForQuery( query ) &&
 								<div className="stats-date-picker__refresh-status">
 									<span className="stats-date-picker__update-date">
 										{ this.renderQueryDate() }
 									</span>
-									{ isAutoRefreshAllowedForQuery( query ) &&
-										<div className="stats-date-picker__pulsing-dot-wrapper"
-											ref={ this.bindPulsingDot }
-											onMouseEnter={ this.showTooltip }
-											onMouseLeave={ this.hideTooltip }
+									<div className="stats-date-picker__pulsing-dot-wrapper"
+										ref={ this.bindPulsingDot }
+										onMouseEnter={ this.showTooltip }
+										onMouseLeave={ this.hideTooltip }
+									>
+										<div className="stats-date-picker__pulsing-dot" />
+										<Tooltip
+											isVisible={ this.state.isTooltipVisible }
+											onClose={ this.hideTooltip }
+											position="bottom"
+											context={ this.pulsingDot }
 										>
-											<div className="stats-date-picker__pulsing-dot" />
-											<Tooltip
-												isVisible={ this.state.isTooltipVisible }
-												onClose={ this.hideTooltip }
-												position="bottom"
-												context={ this.pulsingDot }
-											>
-												{ translate( 'Auto-refreshing every 3 minutes' )}
-											</Tooltip>
-										</div>
-									}
+											{ translate( 'Auto-refreshing every 3 minutes' )}
+										</Tooltip>
+									</div>
 								</div>
 							}
 						</div>
