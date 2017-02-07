@@ -13,6 +13,7 @@ import {
 	partial,
 	some,
 	values,
+	identity
 } from 'lodash';
 
 /**
@@ -40,7 +41,7 @@ import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
 
-class EditorMediaModal extends Component {
+export class EditorMediaModal extends Component {
 	static propTypes = {
 		visible: React.PropTypes.bool,
 		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
@@ -63,6 +64,7 @@ class EditorMediaModal extends Component {
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
+		translate: identity,
 		view: ModalViews.LIST,
 		imageEditorProps: {},
 		deleteMedia: () => {}
