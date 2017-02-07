@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import { spy, match } from 'sinon';
 import deepfreeze from 'deep-freeze';
 
 /**
@@ -74,7 +74,7 @@ describe( 'streams', () => {
 		} );
 
 		it( 'should dispatch receivePage', () => {
-			expect( dispatch ).to.have.been.calledWith( receivePage( action.streamId, action.query, data ) );
+			expect( dispatch ).to.have.been.calledWith( receivePage( action.streamId, action.query, data.posts ) );
 		} );
 
 		it( 'should swallow the original action', () => {
@@ -147,12 +147,12 @@ describe( 'streams', () => {
 
 	describe( 'transformResponse', () => {
 		it( 'should return an empty array when data is falsey', () => {
-			expect( transformResponse( null ) ).to.eql( { posts: [] } );
-			expect( transformResponse( undefined ) ).to.eql( { posts: [] } );
-			expect( transformResponse( false ) ).to.eql( { posts: [] } );
-			expect( transformResponse( {} ) ).to.eql( { posts: [] } );
-			expect( transformResponse( { posts: null } ) ).to.eql( { posts: [] } );
-			expect( transformResponse( { posts: [] } ) ).to.eql( { posts: [] } );
+			expect( transformResponse( null ) ).to.eql( [] );
+			expect( transformResponse( undefined ) ).to.eql( [] );
+			expect( transformResponse( false ) ).to.eql( [] );
+			expect( transformResponse( {} ) ).to.eql( [] );
+			expect( transformResponse( { posts: null } ) ).to.eql( [] );
+			expect( transformResponse( { posts: [] } ) ).to.eql( [] );
 		} );
 	} );
 
@@ -165,6 +165,129 @@ describe( 'streams', () => {
 		it( 'should generate a key for an action with a flat query', () => {
 			const key = keyForRequest( requestPageAction( 'following', { page: 1 } ) );
 			expect( key ).to.equal( 'READER_STREAMS_PAGE_REQUEST-following-&page=1' );
+		} );
+	} );
+
+	describe( 'stream types', () => {
+		afterEach( () => {
+			clearInflight();
+		} );
+		// a bunch of test cases
+		// each test is an assertion of the http call that should be made
+		// when the given stream id is handed to request page
+		[
+			{
+				stream: 'following',
+				expected: {
+					method: 'GET',
+					path: '/read/following',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'a8c',
+				expected: {
+					method: 'GET',
+					path: '/read/a8c',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'search:foo',
+				expected: {
+					method: 'GET',
+					path: '/read/search',
+					apiVersion: 'v1.2',
+					query: {
+						q: 'foo'
+					}
+				}
+			},
+			{
+				stream: 'search:foo:bar',
+				expected: {
+					method: 'GET',
+					path: '/read/search',
+					apiVersion: 'v1.2',
+					query: {
+						q: 'foo:bar'
+					}
+				}
+			},
+			{
+				stream: 'feed:1234',
+				expected: {
+					method: 'GET',
+					path: '/read/feed/1234/posts',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'site:1234',
+				expected: {
+					method: 'GET',
+					path: '/read/sites/1234/posts',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'featured:1234',
+				expected: {
+					method: 'GET',
+					path: '/read/sites/1234/featured',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'likes',
+				expected: {
+					method: 'GET',
+					path: '/read/liked',
+					apiVersion: 'v1.2',
+					query: {}
+				}
+			},
+			{
+				stream: 'recommendations_posts',
+				expected: {
+					method: 'GET',
+					path: '/read/recommendations/posts',
+					apiVersion: 'v1.2',
+					query: {
+						algorithm: 'read:recommendations:posts/es/1',
+						seed: match.number
+					}
+				}
+			},
+			{
+				stream: 'custom_recs_posts_with_images',
+				expected: {
+					method: 'GET',
+					path: '/read/recommendations/posts',
+					apiVersion: 'v1.2',
+					query: {
+						algorithm: 'read:recommendations:posts/es/7',
+						seed: match.number
+					}
+				}
+			},
+		].forEach( ( testCase ) => {
+			it( testCase.stream + ' should pass the expected params', () => {
+				const dispatch = spy();
+				const next = spy();
+				requestPage(
+					{ dispatch },
+					requestPageAction( testCase.stream, {} ),
+					next
+				);
+				expect( dispatch ).to.have.been.calledWithMatch( http( testCase.expected ) );
+				expect( next ).to.have.been.calledOnce;
+			} );
 		} );
 	} );
 } );
