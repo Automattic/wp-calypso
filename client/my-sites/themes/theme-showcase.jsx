@@ -19,6 +19,7 @@ import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
+import ThemePreview from './theme-preview';
 import config from 'config';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
@@ -166,6 +167,7 @@ const ThemeShowcase = React.createClass( {
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
 				/>
+				<ThemePreview />
 				{ this.props.children }
 			</Main>
 		);
