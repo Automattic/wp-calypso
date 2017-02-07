@@ -32,6 +32,7 @@
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/export": true,
+		"manage/import/medium": true,
 		"manage/jetpack": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
