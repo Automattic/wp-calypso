@@ -160,7 +160,7 @@ class Upload extends React.Component {
 			'Drop files or click here to upload'
 		);
 		const uploadInstructionsText = translate(
-			"Only single .zip files are accepted."
+			'Only single .zip files are accepted.'
 		);
 
 		const themeUploadClass = classNames( 'theme-upload', {
