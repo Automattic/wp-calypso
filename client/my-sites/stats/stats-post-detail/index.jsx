@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { flowRight, get } from 'lodash';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import WebPreview from 'components/web-preview';
 import { getSiteSlug, isJetpackSite, getSite } from 'state/sites/selectors';
-import { getSitePost, isRequestingSitePost } from 'state/posts/selectors';
+import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -43,6 +43,7 @@ class StatsPostDetail extends Component {
 		post: PropTypes.object,
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
+		previewUrl: PropTypes.string,
 	};
 
 	state = {
@@ -73,11 +74,20 @@ class StatsPostDetail extends Component {
 	}
 
 	render() {
-		const { isRequestingPost, isRequestingStats, countViews, post, postId, siteId, translate, siteSlug, showViewLink } = this.props;
+		const {
+			isRequestingPost,
+			isRequestingStats,
+			countViews,
+			post,
+			postId,
+			siteId,
+			translate,
+			siteSlug,
+			showViewLink,
+			previewUrl
+		} = this.props;
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
-		const postUrl = get( post, 'URL' );
-
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
@@ -148,8 +158,8 @@ class StatsPostDetail extends Component {
 				<WebPreview
 					showPreview={ this.state.showPreview }
 					defaultViewportDevice="tablet"
-					previewUrl={ `${ postUrl }?demo=true&iframe=true&theme_preview=true` }
-					externalUrl={ postUrl }
+					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
+					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
 					loadingMessage="Beep beep boop…"
 				>
@@ -175,6 +185,7 @@ const connectComponent = connect(
 			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			showViewLink: ! isJetpack && site.is_previewable,
+			previewUrl: getPostPreviewUrl( state, siteId, postId ),
 			siteId,
 		};
 	}
