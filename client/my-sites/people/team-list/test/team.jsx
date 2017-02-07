@@ -31,7 +31,6 @@ describe( 'Team', function() {
 		deterministicStringify = sinon.stub();
 		mockery.registerMock( 'lib/deterministic-stringify', deterministicStringify );
 
-		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/sites-list', () => null );
 	} );
 

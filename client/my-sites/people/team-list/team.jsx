@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import debugModule from 'debug';
 import omit from 'lodash/omit';
 import identity from 'lodash/identity';
@@ -17,13 +18,13 @@ import UsersActions from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
 import deterministicStringify from 'lib/deterministic-stringify';
 import NoResults from 'my-sites/no-results';
-import analytics from 'lib/analytics';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Module Variables
  */
-class Team extends Component {
+export class Team extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
@@ -46,8 +47,8 @@ class Team extends Component {
 
 	fetchNextPage = () => {
 		const offset = this.props.users.length;
-		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
-		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
+		const fetchOptions = { ...this.props.fetchOptions, offset };
+		this.props.recordFetchUsersForOffset( offset );
 		debug( 'fetching next batch of users' );
 		UsersActions.fetchUsers( fetchOptions );
 	};
@@ -136,5 +137,12 @@ class Team extends Component {
 	}
 }
 
-export { Team };
-export default localize( Team );
+const recordFetchUsersForOffset = ( offset ) => {
+	return recordGoogleEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
+};
+
+const mapDispatchToProps = {
+	recordFetchUsersForOffset
+};
+
+export default connect( null, mapDispatchToProps )( localize( Team ) );
