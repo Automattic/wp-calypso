@@ -11,6 +11,7 @@ import {
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -57,6 +58,7 @@ export class EditorHtmlToolbar extends Component {
 		selectedText: '',
 		showContactFormDialog: false,
 		showImageDialog: false,
+		showInsertContentMenu: false,
 		showLinkDialog: false,
 		showMediaModal: false,
 	};
@@ -69,6 +71,7 @@ export class EditorHtmlToolbar extends Component {
 		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.addEventListener( 'resize', this.onWindowResize );
 		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+		document.addEventListener( 'click', this.clickOutsideInsertContentMenu );
 
 		this.toggleToolbarScrollableOnResize();
 	}
@@ -80,10 +83,15 @@ export class EditorHtmlToolbar extends Component {
 		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.removeEventListener( 'resize', this.onWindowResize );
 		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+		document.removeEventListener( 'click', this.clickOutsideInsertContentMenu );
 	}
 
 	bindButtonsRef = div => {
 		this.buttons = div;
+	}
+
+	bindInsertContentButtonsRef = div => {
+		this.insertContentButtons = div;
 	}
 
 	onWindowResize = () => {
@@ -126,6 +134,12 @@ export class EditorHtmlToolbar extends Component {
 
 		if ( isScrolledFull !== this.state.isScrolledFull ) {
 			this.setState( { isScrolledFull } );
+		}
+	}
+
+	clickOutsideInsertContentMenu = event => {
+		if ( this.state.showInsertContentMenu && ! this.insertContentButtons.contains( event.target ) ) {
+			this.setState( { showInsertContentMenu: false } );
 		}
 	}
 
@@ -325,10 +339,15 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showLinkDialog: false } );
 	}
 
+	toggleInsertContentMenu = () => {
+		this.setState( { showInsertContentMenu: ! this.state.showInsertContentMenu } );
+	}
+
 	openContactFormDialog = () => {
 		this.setState( {
 			contactFormDialogTab: 'fields',
 			showContactFormDialog: true,
+			showInsertContentMenu: false,
 		} );
 	}
 
@@ -345,7 +364,10 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	openMediaModal = () => {
-		this.setState( { showMediaModal: true } );
+		this.setState( {
+			showInsertContentMenu: false,
+			showMediaModal: true,
+		} );
 	}
 
 	closeMediaModal = () => {
@@ -361,16 +383,11 @@ export class EditorHtmlToolbar extends Component {
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
 		} );
+		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown',
+			{ 'is-visible': this.state.showInsertContentMenu }
+		);
 
 		const buttons = {
-			media: {
-				label: '+',
-				onClick: this.openMediaModal,
-			},
-			'contact-form': {
-				label: 'CF',
-				onClick: this.openContactFormDialog,
-			},
 			strong: {
 				label: 'b',
 				onClick: this.onClickBold,
@@ -425,6 +442,24 @@ export class EditorHtmlToolbar extends Component {
 						className="editor-html-toolbar__buttons"
 						ref={ this.bindButtonsRef }
 					>
+						<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
+							<Button
+								borderless
+								className="editor-html-toolbar__button-insert-media"
+								compact
+								onClick={ this.openMediaModal }
+							>
+								<Gridicon icon="add-outline" />
+							</Button>
+							<Button
+								borderless
+								className="editor-html-toolbar__button-insert-content-dropdown"
+								compact
+								onClick={ this.toggleInsertContentMenu }
+							>
+								<Gridicon icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' } />
+							</Button>
+						</div>
 						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
 							<Button
 								borderless
@@ -438,18 +473,38 @@ export class EditorHtmlToolbar extends Component {
 							</Button>
 						) }
 					</div>
+
+					<div className={ insertContentClasses }>
+						<div
+							className="editor-html-toolbar__insert-content-dropdown-item"
+							onClick={ this.openMediaModal }
+						>
+							<Gridicon icon="add-image" />
+							<span>{ translate( 'Add Media' ) }</span>
+						</div>
+						<div
+							className="editor-html-toolbar__insert-content-dropdown-item"
+							onClick={ this.openContactFormDialog }
+						>
+							<Gridicon icon="mention" />
+							<span>{ translate( 'Add Contact Form' ) }</span>
+						</div>
+					</div>
 				</div>
+
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
 					shouldDisplay={ this.state.showImageDialog }
 				/>
+
 				<AddLinkDialog
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
 					shouldDisplay={ this.state.showLinkDialog }
 				/>
+
 				<ContactFormDialog
 					activeTab={ this.state.contactFormDialogTab }
 					isEdit={ false }
@@ -462,6 +517,7 @@ export class EditorHtmlToolbar extends Component {
 					onSettingsUpdate={ this.props.settingsUpdate }
 					showDialog={ this.state.showContactFormDialog }
 				/>
+
 				<EditorMediaModal
 					onClose={ this.closeMediaModal }
 					onInsertMedia={ this.onInsertMedia }
