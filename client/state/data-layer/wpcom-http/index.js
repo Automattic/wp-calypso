@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, get, noop } from 'lodash';
+import { compact, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,6 +9,11 @@ import { compact, get, noop } from 'lodash';
 import wpcom from 'lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { extendAction } from 'state/utils';
+
+import {
+	processEgress,
+	processIngress,
+} from './pipeline';
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method
@@ -21,13 +26,19 @@ import { extendAction } from 'state/utils';
 const fetcherMap = method => get( {
 	GET: wpcom.req.get.bind( wpcom.req ),
 	POST: wpcom.req.post.bind( wpcom.req ),
-}, method, noop );
+}, method, null );
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
-const queueRequest = ( { dispatch }, action, next ) => {
+const queueRequest = ( { dispatch }, rawAction, next ) => {
+	const { action } = processIngress( rawAction, dispatch );
+
+	if ( null === action ) {
+		return next( action );
+	}
+
 	const {
 		body,
 		formData,
@@ -45,16 +56,24 @@ const queueRequest = ( { dispatch }, action, next ) => {
 		{ path, formData },
 		query,
 		method === 'POST' && body,
-		( error, data ) => !! error
-			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
-			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
+		( rawError, rawData ) => {
+			const { error, data, shouldAbort } = processEgress( rawError, rawData, action, dispatch );
+
+			if ( true === shouldAbort ) {
+				return null;
+			}
+
+			return !! error
+				? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
+				: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) );
+		}
 	] ) );
 
 	if ( 'POST' === method && onProgress ) {
 		request.upload.onprogress = event => dispatch( extendAction( onProgress, progressMeta( event ) ) );
 	}
 
-	next( action );
+	return next( action );
 };
 
 export default {
