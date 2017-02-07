@@ -52,12 +52,7 @@ export default React.createClass( {
 	},
 
 	onSelect( event ) {
-		if ( this.props.homeLink ) {
-			return;
-		}
-
 		this.props.onSelect( event, this.props.site.slug );
-		event.preventDefault(); // this doesn't actually do anything...
 	},
 
 	onMouseEnter( event ) {
