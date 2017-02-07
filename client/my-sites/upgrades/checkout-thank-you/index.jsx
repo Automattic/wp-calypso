@@ -185,11 +185,11 @@ const CheckoutThankYou = React.createClass( {
 	render() {
 		let purchases = null,
 			wasJetpackPlanPurchased = false,
-			wasOnlyDotcomPlanPurchased = false;
+			wasDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
-			wasOnlyDotcomPlanPurchased = purchases.every( isDotComPlan );
+			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 		}
 
 		const userCreatedMoment = moment( this.props.userDate );
@@ -206,7 +206,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		// streamlined paid NUX thanks page
-		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
+		if ( isNewUser && wasDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
