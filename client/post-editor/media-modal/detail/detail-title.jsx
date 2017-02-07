@@ -25,6 +25,12 @@ export default React.createClass( {
 		return {};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.item.ID !== this.props.item.ID ) {
+			this.resetTitle();
+		}
+	},
+
 	getTitleValue() {
 		if ( 'title' in this.state ) {
 			return this.state.title;
