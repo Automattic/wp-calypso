@@ -11,7 +11,7 @@ import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 import ReaderPostCardExcerpt from './excerpt';
 
-const StandardPost = ( { post, children, isDiscover } )=> {
+const StandardPost = ( { post, children } )=> {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
@@ -31,15 +31,14 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 						<a className="reader-post-card__title-link" href={ post.URL }>{ post.title }</a>
 					</h1>
 				</AutoDirection>
-				<ReaderPostCardExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderPostCardExcerpt post={ post } />
 				{ children }
 			</div>
 		</div> );
 };
 
 StandardPost.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	isDiscover: React.PropTypes.bool,
+	post: React.PropTypes.object.isRequired
 };
 
 export default StandardPost;

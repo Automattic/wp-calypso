@@ -8,11 +8,11 @@ import React from 'react';
  */
 import AutoDirection from 'components/auto-direction';
 
-const ReaderPostCardExcerpt = ( { post, isDiscover } )=> {
+const ReaderPostCardExcerpt = ( { post } )=> {
 	let excerpt = post.better_excerpt || post.excerpt;
 
 	// Force post.excerpt for Discover only
-	if ( isDiscover ) {
+	if ( post.is_discover ) {
 		excerpt = post.excerpt;
 	}
 
@@ -26,8 +26,7 @@ const ReaderPostCardExcerpt = ( { post, isDiscover } )=> {
 };
 
 ReaderPostCardExcerpt.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	isDiscover: React.PropTypes.bool,
+	post: React.PropTypes.object.isRequired
 };
 
 export default ReaderPostCardExcerpt;
