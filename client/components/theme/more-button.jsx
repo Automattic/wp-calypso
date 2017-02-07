@@ -45,7 +45,7 @@ class ThemeMoreButton extends React.Component {
 	}
 
 	onPopoverActionClick( action, label ) {
-		return this.popoverAction.bind( this, action, label );
+		return () => this.popoverAction( action, label );
 	}
 
 	focus( event ) {
