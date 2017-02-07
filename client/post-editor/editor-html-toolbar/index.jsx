@@ -17,6 +17,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 
 /**
  * Module constants
@@ -40,6 +41,7 @@ export class EditorHtmlToolbar extends Component {
 		selectedText: '',
 		showImageDialog: false,
 		showLinkDialog: false,
+		showMediaModal: false,
 	};
 
 	componentDidMount() {
@@ -277,6 +279,10 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { openTags: [] } );
 	}
 
+	onInsertMedia = media => {
+		this.insertCustomContent( media );
+	}
+
 	openImageDialog = () => {
 		this.setState( { showImageDialog: true } );
 	}
@@ -297,6 +303,14 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showLinkDialog: false } );
 	}
 
+	openMediaModal = () => {
+		this.setState( { showMediaModal: true } );
+	}
+
+	closeMediaModal = () => {
+		this.setState( { showMediaModal: false } );
+	}
+
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	render() {
@@ -308,6 +322,10 @@ export class EditorHtmlToolbar extends Component {
 		} );
 
 		const buttons = {
+			media: {
+				label: '+',
+				onClick: this.openMediaModal,
+			},
 			strong: {
 				label: 'b',
 				onClick: this.onClickBold,
@@ -386,6 +404,11 @@ export class EditorHtmlToolbar extends Component {
 					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
 					shouldDisplay={ this.state.showLinkDialog }
+				/>
+				<EditorMediaModal
+					onClose={ this.closeMediaModal }
+					onInsertMedia={ this.onInsertMedia }
+					visible={ this.state.showMediaModal }
 				/>
 			</div>
 		);
