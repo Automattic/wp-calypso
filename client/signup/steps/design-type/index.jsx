@@ -82,7 +82,7 @@ class DesignTypeStep extends Component {
 	}
 
 	handleNextStep( designType ) {
-		this.props.recordChosenDesignType( designType );
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
@@ -91,9 +91,7 @@ class DesignTypeStep extends Component {
 
 export default connect(
 	null,
-	( dispatch ) => ( {
-		recordChosenDesignType: ( designType ) => {
-			dispatch( recordTracksEvent( 'calypso_triforce_select_design', { category: designType } ) );
-		}
-	} )
+	{
+		recordTracksEvent
+	}
 )( localize( DesignTypeStep ) );
