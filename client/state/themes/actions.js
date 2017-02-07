@@ -45,7 +45,8 @@ import {
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
 	PREVIEWING_THEME_DATA,
-	PREVIEWING_THEME_OPTIONS
+	PREVIEWING_THEME_OPTIONS,
+	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -68,8 +69,6 @@ import {
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 import config from 'config';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewType } from 'state/ui/preview/actions';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -790,10 +789,23 @@ export function setPreviewOptions( primary, secondary ) {
 	};
 }
 
+function openThemePreview() {
+	return {
+		type: THEME_PREVIEW_STATE,
+		isEnabled: 'enabled'
+	};
+}
+
+export function closeThemePreview() {
+	return {
+		type: THEME_PREVIEW_STATE,
+		isEnabled: 'disabled'
+	};
+}
+
 export function requestPreview( themeId, siteId ) {
 	return ( dispatch ) => {
 		dispatch( setPreviewingThemeData( themeId, siteId ) );
-		dispatch( setPreviewType( 'theme-preview' ) );
-		dispatch( setLayoutFocus( 'preview' ) );
+		dispatch( openThemePreview() );
 	};
 }

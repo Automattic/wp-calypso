@@ -616,3 +616,13 @@ export function getThemeForPreviewData( state ) {
 	const themeOptions = get( state.themes.previewingThemeOptions, 'themeOptions', null );
 	return { themeData, themeOptions };
 }
+
+/**
+ * Returns the ThemePreview state
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}  ThemePreview state
+ */
+export function getThemePreviewState( state ) {
+	return get( state.themes.previewingThemeState, 'isEnabled', 'disabled' );
+}
