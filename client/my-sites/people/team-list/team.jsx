@@ -79,28 +79,24 @@ export class Team extends Component {
 
 	cardContent = () => {
 		const { props } = this;
-		const { site, users, fetchOptions, fetchingUsers } = props;
+		const { users, fetchOptions, fetchingUsers } = props;
 		const key = deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) );
-		const renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 
-		if ( site && users.length ) {
-			return (
-				<InfiniteList
-					key={ key }
-					items={ users }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
-					fetchingNextPage={ fetchingUsers }
-					lastPage={ this.isLastPage() }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPersonRef }
-					renderLoadingPlaceholders={ renderLoadingPeople }
-					renderItem={ this.renderPerson }
-					guessedItemHeight={ 126 }>
-				</InfiniteList>
-			);
-		}
-		return renderLoadingPeople();
+		return (
+			<InfiniteList
+				key={ key }
+				items={ users }
+				className="people-selector__infinite-list"
+				ref="infiniteList"
+				fetchingNextPage={ fetchingUsers }
+				lastPage={ this.isLastPage() }
+				fetchNextPage={ this.fetchNextPage }
+				getItemRef={ this.getPersonRef }
+				renderLoadingPlaceholders={ () => <PeopleListItem key="people-list-item-placeholder" /> }
+				renderItem={ this.renderPerson }
+				guessedItemHeight={ 126 }>
+			</InfiniteList>
+		);
 	};
 
 	render() {
