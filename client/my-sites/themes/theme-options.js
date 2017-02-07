@@ -11,9 +11,8 @@ import { has, identity, mapValues, pick, pickBy } from 'lodash';
  */
 import config from 'config';
 import {
-	activateTheme,
-	installAndActivate,
-	installAndTryAndCustomize,
+	activate as activateAction,
+	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 } from 'state/themes/actions';
 import {
@@ -53,23 +52,9 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	action: activateTheme,
+	action: activateAction,
 	hideForTheme: ( state, theme, siteId ) => (
 		isActive( state, theme.id, siteId ) || ( isPremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
-	)
-};
-
-const activateOnJetpack = {
-	label: i18n.translate( 'Activate' ),
-	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
-	// Append `-wpcom` suffix to the theme ID so the installAndActivate() will install the theme from WordPress.com, not WordPress.org
-	action: ( themeId, siteId, ...args ) => installAndActivate( themeId + '-wpcom', siteId, ...args ),
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
-		)
 	)
 };
 
@@ -94,24 +79,9 @@ const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: getCustomizeUrl,
+	action: tryAndCustomizeAction,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
-};
-
-const tryAndCustomizeOnJetpack = {
-	label: i18n.translate( 'Try & Customize' ),
-	header: i18n.translate( 'Try & Customize on:', {
-		comment: 'label in the dialog for opening the Customizer with the theme in preview'
-	} ),
-	action: ( themeId, siteId ) => installAndTryAndCustomize( themeId + '-wpcom', siteId ),
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ) || ! isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || (
-			isPremium( state, theme.id ) &&
-			! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) // Pressable sites included -- they're always on a Business plan
-		)
-	)
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
@@ -161,10 +131,8 @@ const ALL_THEME_OPTIONS = {
 	preview,
 	purchase,
 	activate,
-	activateOnJetpack,
 	deleteTheme,
 	tryandcustomize,
-	tryAndCustomizeOnJetpack,
 	signup,
 	separator,
 	info,

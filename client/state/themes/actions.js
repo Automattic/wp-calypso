@@ -313,6 +313,28 @@ export function requestActiveTheme( siteId ) {
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
+ * @return {Function}           Action thunk
+ */
+export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
+			// installation will silently fail, and it will just be activated.
+			return dispatch( installAndActivateTheme( themeId + '-wpcom', siteId, source, purchased ) );
+		}
+
+		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
+	};
+}
+
+/**
+ * Triggers a network request to activate a specific theme on a given site.
  *
  * @param  {String}   themeId   Theme ID
  * @param  {Number}   siteId    Site ID
@@ -433,6 +455,26 @@ export function clearActivated( siteId ) {
 }
 
 /**
+ * Switches to the customizer to preview a given theme.
+ * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
+ *
+ * @param  {String}   themeId   Theme ID
+ * @param  {Number}   siteId    Site ID
+ * @return {Function}           Action thunk
+ */
+export function tryAndCustomize( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
+			// installation will silently fail, and we just switch to the customizer.
+			return dispatch( installAndTryAndCustomizeTheme( themeId + '-wpcom', siteId ) );
+		}
+
+		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
+	};
+}
+
+/**
  * Triggers a network request to install theme on Jetpack site.
  * After installataion it switches page to the customizer
  * See installTheme doc for install options.
@@ -442,11 +484,11 @@ export function clearActivated( siteId ) {
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function installAndTryAndCustomize( themeId, siteId ) {
+export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {
-				dispatch( tryAndCustomize( themeId, siteId ) );
+				dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 			} );
 	};
 }
@@ -460,16 +502,16 @@ export function installAndTryAndCustomize( themeId, siteId ) {
  * @param  {String}   siteId       Jetpack Site ID
  * @return {Function}              Action thunk
  */
-export function tryAndCustomize( themeId, siteId ) {
+export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const theme = getTheme( getState(), siteId, themeId );
+		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
+		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
 		if ( ! theme ) {
-			dispatch( {
+			return dispatch( {
 				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
 				themeId,
 				siteId
 			} );
-			return;
 		}
 		const url = getThemeCustomizeUrl( getState(), theme, siteId );
 		page( url );
@@ -487,7 +529,7 @@ export function tryAndCustomize( themeId, siteId ) {
  * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
  * @return {Function}           Action thunk
  */
-export function installAndActivate( themeId, siteId, source = 'unknown', purchased = false ) {
+export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
 			.then( () => {

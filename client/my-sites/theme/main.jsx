@@ -585,8 +585,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
-		isJetpack,
-		isWpcomTheme,
 	} = props;
 	const siteId = site ? site.ID : null;
 
@@ -596,8 +594,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'signup';
 	} else if ( isActive ) {
 		defaultOption = 'customize';
-	} else if ( isJetpack && isWpcomTheme ) {
-		defaultOption = 'activateOnJetpack';
 	} else if ( isPremium && ! isPurchased ) {
 		defaultOption = 'purchase';
 	} else {
@@ -614,11 +610,9 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryandcustomize',
 				'purchase',
 				'activate',
-				'activateOnJetpack',
-				'tryAndCustomizeOnJetpack',
 			] }
 			defaultOption={ defaultOption }
-			secondaryOption={ ( isJetpack && isWpcomTheme ) ? 'tryAndCustomizeOnJetpack' : 'tryandcustomize' }
+			secondaryOption={ 'tryandcustomize' }
 			source="showcase-sheet" />
 	);
 };
