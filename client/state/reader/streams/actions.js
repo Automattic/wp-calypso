@@ -18,8 +18,8 @@ import {
  * READER_STREAM_PAGE_RECEIVE when the page returns. This is usually used to
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
  * @param  {string} streamId The stream to fetch posts for
- * @param  {object} range    The range of posts. Parameters vary by stream type.
- * @return {Promise}          A promise that fulfils when the page returns.
+ * @param  {object} query    The query for posts. Parameters vary by stream type.
+ * @return {object}          The action object
  */
 export function requestPage( streamId, query ) {
 	return {
@@ -35,7 +35,7 @@ export function receivePage( streamId, query, page ) {
 		streamId,
 		query,
 		payload: page,
-	}
+	};
 }
 
 export function showUpdates( streamId ) {
