@@ -289,7 +289,7 @@ export class EditorMediaModal extends Component {
 		this.props.onClose();
 	};
 
-	editItem( item ) {
+	editItem = item => {
 		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
@@ -313,7 +313,7 @@ export class EditorMediaModal extends Component {
 		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
 
 		this.props.setView( ModalViews.DETAIL );
-	}
+	};
 
 	getFirstEnabledFilter() {
 		if ( this.props.enabledFilters ) {
