@@ -1,44 +1,87 @@
 /**
+ * External dependencies
+ */
+import {
+	compact,
+	pick,
+} from 'lodash';
+
+/**
  * Internal dependencies
  */
-import removeDuplicateGets from './remove-duplicate-gets';
+import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 
+/**
+ * @typedef {Object} EgressData
+ * @property {Object} originalRequest the Redux action describing the egressing request
+ * @property {ReduxStore} store Redux store
+ * @property {*} originalData response data from returned network request
+ * @property {*} originalError response error from returned network request
+ * @property {*} nextData transformed response data
+ * @property {*} nextError transformed response error
+ * @property {Object[]} failures list of `onFailure` actions to dispatch
+ * @property {Object[]} successes list of `onSuccess` actions to dispatch
+ * @property {Boolean} [shouldAbort] whether or not no further processing should occur for request
+ */
+
+/**
+ * @typedef {Function} EgressProcessor
+ * @param {EgressData} information about request response at this stage in the pipeline
+ * @returns {EgressData} contains transformed responder actions
+ */
+
+/**
+ * @typedef {Object} IngressData
+ * @property {Object} originalRequest the Redux action describing the ingressing request
+ * @property {ReduxStore} store Redux store
+ * @property {?Object} nextRequest the processed request to pass along the chain
+ */
+
+/**
+ * @typedef {Function} IngressProcessor
+ * @param {IngressData} information about request at this stage in the pipeline
+ * @returns {IngressData} contains transformed nextRequest
+ */
+
+/** @type {EgressProcessor[]} */
+const egressChain = [
+	applyDuplicatesHandlers,
+];
+
+/** @type {IngressProcessor[]} */
 const ingressChain = [
 	removeDuplicateGets,
 ];
 
-const egressChain = [
+const applyIngressChain = ( ingressData, nextLink ) =>
+	ingressData.nextAction !== null
+		? nextLink( ingressData )
+		: ingressData;
 
-];
+const applyEgressChain = ( egressData, nextLink ) =>
+	egressData.shouldAbort !== true
+		? nextLink( egressData )
+		: egressData;
 
-const applyIngressChain = ( { action, dispatch }, nextLink ) =>
-	action !== null
-		? nextLink( { action, dispatch } )
-		: { action, dispatch };
-
-const applyEgressChain = ( { error: rawError, data: rawData, action, dispatch, shouldAbort: shouldHaveAborted }, nextLink ) => {
-	if ( true === shouldHaveAborted ) {
-		return { error: rawError, data: rawData, action, dispatch, shouldHaveAborted };
-	}
-
-	const { error, data, shouldAbort } = nextLink( rawError, rawData, { action, dispatch } );
-
-	return { error, data, action, dispatch, shouldAbort };
-};
-
-export const processIngressChain = chain => ( action, dispatch ) =>
+export const processIngressChain = chain => ( originalRequest, store ) =>
 	chain
-		.reduce( applyIngressChain, { action, dispatch, shouldAbort: false } )
-		.action;
+		.reduce( applyIngressChain, { originalRequest, store, nextRequest: originalRequest } )
+		.nextAction;
 
-export const processEgressChain = chain => ( { rawError, rawData, action, dispatch } ) => {
-	const { error, data, shouldAbort } = chain.reduce(
-		applyEgressChain,
-		{ error: rawError, data: rawData, action, dispatch, shouldAbort: false },
+export const processEgressChain = chain => ( originalRequest, store, originalData, originalError ) =>
+	pick(
+		chain.reduce( applyEgressChain, {
+			originalRequest,
+			store,
+			originalData,
+			originalError,
+			nextData: originalData,
+			nextError: originalData,
+			failures: compact( [ originalRequest.onFailure ] ),
+			successes: compact( [ originalRequest.onSuccess ] ),
+		} ),
+		[ 'failures', 'successes', 'shouldAbort' ],
 	);
-
-	return { error, data, shouldAbort };
-};
 
 export const processIngress = processIngressChain( ingressChain );
 

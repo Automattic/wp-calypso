@@ -43,8 +43,6 @@ const queueRequest = ( { dispatch }, rawAction, next ) => {
 		body,
 		formData,
 		method: rawMethod,
-		onSuccess,
-		onFailure,
 		onProgress,
 		path,
 		query = {},
@@ -57,15 +55,15 @@ const queueRequest = ( { dispatch }, rawAction, next ) => {
 		query,
 		method === 'POST' && body,
 		( rawError, rawData ) => {
-			const { error, data, shouldAbort } = processEgress( rawError, rawData, action, dispatch );
+			const { error, data, onFailure, onSuccess, shouldAbort } = processEgress( rawError, rawData, action, dispatch );
 
 			if ( true === shouldAbort ) {
 				return null;
 			}
 
 			return !! error
-				? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
-				: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) );
+				? onFailure.forEach( handler => dispatch( extendAction( handler, failureMeta( error ) ) ) )
+				: onSuccess.forEach( handler => dispatch( extendAction( handler, successMeta( data ) ) ) );
 		}
 	] ) );
 
