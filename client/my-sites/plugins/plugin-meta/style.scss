@@ -121,16 +121,6 @@
 
 }
 
-.plugin-meta__actions .form-toggle__label {
-	display: flex;
-		justify-content: flex-end;
-
-	.form-toggle__switch {
-		float: none;
-		order: 2;
-	}
-}
-
 .plugin-meta__actions .plugin-action__label {
 	@include breakpoint( '<480px' ) {
 		flex-grow: 2;
