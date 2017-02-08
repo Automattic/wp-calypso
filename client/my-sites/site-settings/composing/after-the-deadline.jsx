@@ -67,13 +67,13 @@ class AfterTheDeadline extends Component {
 
 				{
 					this.renderToggle( 'onpublish', ! afterTheDeadlineModuleActive, translate(
-						'A post or page is first published'
+						'a post or page is first published'
 					) )
 				}
 
 				{
 					this.renderToggle( 'onupdate', ! afterTheDeadlineModuleActive, translate(
-						'A post or page is updated'
+						'a post or page is updated'
 					) )
 				}
 			</div>
@@ -110,7 +110,7 @@ class AfterTheDeadline extends Component {
 					{ translate( 'English Options' ) }
 				</FormLegend>
 				<FormSettingExplanation>
-					{ translate( 'Enable proofreading for the following grammar and style rules:' ) }
+					{ translate( 'Enable proofreading for the following grammar and style rules when writing posts and pages:' ) }
 				</FormSettingExplanation>
 
 				{ this.renderToggle( 'Bias Language', ! afterTheDeadlineModuleActive, translate( 'Bias Language' ) ) }
