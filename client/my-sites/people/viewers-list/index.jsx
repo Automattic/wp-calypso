@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var PeopleListItem = require( 'my-sites/people/people-list-item' ),
+var PeopleListItem = require( 'my-sites/people/people-list-item' ).default,
 	Card = require( 'components/card' ),
 	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ).default,
 	ViewersActions = require( 'lib/viewers/actions' ),
