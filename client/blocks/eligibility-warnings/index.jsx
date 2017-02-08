@@ -27,11 +27,6 @@ function getHoldMessages( translate ) {
 			description: '',
 			supportUrl: '',
 		},
-		MULTIPLE_USERS: {
-			title: translate( 'Multiple users' ),
-			description: translate( 'This feature is not supported on sites with multiple users.' ),
-			supportUrl: 'https://support.wordpress.com/'
-		},
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Business plan required' ),
 			description: translate( 'This feature is only allowed on sites with business plan.' ),
@@ -55,6 +50,11 @@ function getHoldMessages( translate ) {
 		NOT_USING_CUSTOM_DOMAIN: {
 			title: translate( 'No custom domain' ),
 			description: translate( 'Your site must use custom domain in order for this feature to work.' ),
+			supportUrl: 'https://support.wordpress.com/'
+		},
+		NOT_DOMAIN_OWNER: {
+			title: translate( 'Not a custom domain owner' ),
+			description: translate( 'You must be the owner of the primary domain subscription in order for this feature to work.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		SITE_GRAYLISTED: {
