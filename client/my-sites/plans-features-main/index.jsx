@@ -29,8 +29,8 @@ import purchasesPaths from 'me/purchases/paths';
 
 class PlansFeaturesMain extends Component {
 
-	isJetpackSite( site ) {
-		return site.jetpack;
+	isJetpackSite( site, isSiteAutomatedTransfer ) {
+		return ! isSiteAutomatedTransfer && site.jetpack;
 	}
 
 	getPlanFeatures() {
@@ -42,11 +42,12 @@ class PlansFeaturesMain extends Component {
 			isInSignup,
 			isLandingPage,
 			basePlansPath,
-			selectedFeature
+			selectedFeature,
+			isSiteAutomatedTransfer
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
+		if ( this.isJetpackSite( site, isSiteAutomatedTransfer ) && intervalType === 'monthly' ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -67,7 +68,7 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( this.isJetpackSite( site ) ) {
+		if ( this.isJetpackSite( site, isSiteAutomatedTransfer ) ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -316,9 +317,14 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site, showFAQ } = this.props;
+		const {
+			site,
+			showFAQ,
+			isSiteAutomatedTransfer
+		} = this.props;
+
 		const renderFAQ = () =>
-			this.isJetpackSite( site )
+			this.isJetpackSite( site, isSiteAutomatedTransfer )
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
 
@@ -345,7 +351,8 @@ PlansFeaturesMain.PropTypes = {
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
-	selectedFeature: PropTypes.string
+	selectedFeature: PropTypes.string,
+	isSiteAutomatedTransfer: PropTypes.bool
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -353,7 +360,8 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true
+	showFAQ: true,
+	isSiteAutomatedTransfer: false
 };
 
 export default localize( PlansFeaturesMain );

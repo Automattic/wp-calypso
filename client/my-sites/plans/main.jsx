@@ -19,6 +19,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
+import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 
 const Plans = React.createClass( {
 	propTypes: {
@@ -27,12 +28,14 @@ const Plans = React.createClass( {
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
-		selectedSiteId: React.PropTypes.number
+		selectedSiteId: React.PropTypes.number,
+		isSiteAutomatedTransfer: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
-			intervalType: 'yearly'
+			intervalType: 'yearly',
+			isSiteAutomatedTransfer: false
 		};
 	},
 
@@ -58,7 +61,12 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		const { selectedSite, selectedSiteId, translate } = this.props;
+		const {
+			selectedSite,
+			selectedSiteId,
+			translate,
+			isSiteAutomatedTransfer
+		} = this.props;
 
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
@@ -86,6 +94,7 @@ const Plans = React.createClass( {
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
+							isSiteAutomatedTransfer={ isSiteAutomatedTransfer }
 						/>
 					</div>
 				</Main>
@@ -98,11 +107,13 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const isPlaceholder = ! selectedSiteId;
+
 		return {
 			isPlaceholder,
 			plans: getPlans( state ),
 			selectedSite: getSelectedSite( state ),
-			selectedSiteId: selectedSiteId
+			selectedSiteId: selectedSiteId,
+			isSiteAutomatedTransfer: isSiteAutomatedTransferSelector( state, selectedSiteId )
 		};
 	}
 )( localize( Plans ) );
