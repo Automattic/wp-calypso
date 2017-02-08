@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "async": "0.9.0",
+    "async": "2.1.4",
     "atob": "1.1.2",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
