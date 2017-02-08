@@ -43,20 +43,6 @@ describe( 'Team', function() {
 		Team = require( '../team' ).Team;
 	} );
 
-	it( 'renders loading placeholder before fetch has started', function() {
-		const wrapper = shallow(
-			<Team
-				fetchInitialized={ true }
-				fetchingUsers={ false }
-				fetchOptions={ {} }
-				users={ [] }
-				excludedUsers={ [] }
-			/>
-		);
-
-		expect( wrapper.find( Card ).find( PeopleListItem ).key() ).to.equal( 'people-list-item-placeholder' );
-	} );
-
 	it( 'renders infinite list when site is specified and any users have been loaded', function() {
 		deterministicStringify
 			.withArgs( { option1: 'option1value', option2: 'option2value' } )
@@ -79,7 +65,7 @@ describe( 'Team', function() {
 	it( 'renders translated team header text by default', function() {
 		const translate = sinon.stub();
 		translate
-			.withArgs( 'Team', { context: 'A navigation label.' } )
+			.withArgs( 'Team' )
 			.returns( 'team label' );
 
 		const wrapper = shallow(
