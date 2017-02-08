@@ -19,6 +19,7 @@ import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import HeaderBack from 'reader/header-back';
 
+
 const TagStream = React.createClass( {
 
 	_isMounted: false,
@@ -39,8 +40,18 @@ const TagStream = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	componentWillMount() {
+		var self = this;
 		this._isMounted = true;
+		// can't use arrows with asyncRequire
+		asyncRequire( 'emoji-text', function( emojiText ) {
+			if ( self._isMounted ) {
+				self.setState( { emojiText } );
+			}
+		} );
+	},
+
+	componentDidMount() {
 		ReaderTags.on( 'change', this.updateState );
 		TagSubscriptions.on( 'change', this.updateState );
 	},
@@ -66,19 +77,6 @@ const TagStream = React.createClass( {
 			isEmojiTitle: title && twemoji.test( title )
 		};
 		this.smartSetState( newState );
-
-		if ( ! newState.isEmojiTitle ) {
-			return;
-		}
-
-		// If we have a tag title containing emoji, load the emoji-text library
-		// so we can convert the emoji to a search phrase
-		const self = this;
-		asyncRequire( 'emoji-text', ( emojiText ) => {
-			if ( self._isMounted ) {
-				self.setState( { emojiText } );
-			}
-		} );
 	},
 
 	getTitle( props = this.props ) {
