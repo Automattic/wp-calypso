@@ -20,6 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -79,7 +80,22 @@ class SiteSettingsFormWriting extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-
+				{
+					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
+						<div>
+							{
+								this.renderSectionHeader( translate( 'Media' ) )
+							}
+							<MediaSettings
+								siteId={ this.props.siteId }
+								handleToggle={ handleToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields } />
+						</div>
+					)
+				}
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
@@ -174,6 +190,8 @@ const getFormSettings = partialRight( pick, [
 	'Phrases to Avoid',
 	'Redundant Expression',
 	'ignored_phrases',
+	'carousel_display_exif',
+	'carousel_background_color'
 ] );
 
 export default flowRight(

@@ -1,0 +1,14 @@
+.media-settings__module-settings.is-indented {
+	margin-left: 32px;
+	margin-top: 16px;
+
+	.form-label {
+		&.is-disabled {
+			opacity: 0.3;
+		}
+	}
+}
+
+.media-settings__info-link-container {
+	float: right;
+}
