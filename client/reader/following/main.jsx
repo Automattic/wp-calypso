@@ -44,7 +44,7 @@ const FollowingStream = ( props ) => {
 						onSearch={ handleSearch }
 						autoFocus={ false }
 						delaySearch={ true }
-						delayTimeout={ 1000 }
+						delayTimeout={ 500 }
 						placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
 				</CompactCard>
 			}
