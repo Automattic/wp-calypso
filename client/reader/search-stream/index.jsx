@@ -203,7 +203,7 @@ class SearchStream extends Component {
 		}
 
 		const sugList = initial( flatMap( this.state.suggestions, query =>
-			[ <Suggestion suggestion={ query } />, ', ' ] ) );
+			[ <Suggestion suggestion={ query } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
@@ -225,7 +225,7 @@ class SearchStream extends Component {
 							initialValue={ this.props.query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
-							autoFocus={ ! this.props.query }
+							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText } />
