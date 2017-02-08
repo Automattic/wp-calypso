@@ -438,56 +438,58 @@ export class EditorHtmlToolbar extends Component {
 		return (
 			<div className={ classes }>
 				<div className="editor-html-toolbar__wrapper">
-					<div
-						className="editor-html-toolbar__buttons"
-						ref={ this.bindButtonsRef }
-					>
-						<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
-							<Button
-								borderless
-								className="editor-html-toolbar__button-insert-media"
-								compact
+					<div className="editor-html-toolbar__wrapper-buttons">
+						<div
+							className="editor-html-toolbar__buttons"
+							ref={ this.bindButtonsRef }
+						>
+							<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
+								<Button
+									borderless
+									className="editor-html-toolbar__button-insert-media"
+									compact
+									onClick={ this.openMediaModal }
+								>
+									<Gridicon icon="add-outline" />
+								</Button>
+								<Button
+									borderless
+									className="editor-html-toolbar__button-insert-content-dropdown"
+									compact
+									onClick={ this.toggleInsertContentMenu }
+								>
+									<Gridicon icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' } />
+								</Button>
+							</div>
+							{ map( buttons, ( { disabled, label, onClick }, tag ) =>
+								<Button
+									borderless
+									className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
+									compact
+									disabled={ disabled }
+									key={ tag }
+									onClick={ onClick }
+								>
+									{ label || tag }
+								</Button>
+							) }
+						</div>
+
+						<div className={ insertContentClasses }>
+							<div
+								className="editor-html-toolbar__insert-content-dropdown-item"
 								onClick={ this.openMediaModal }
 							>
-								<Gridicon icon="add-outline" />
-							</Button>
-							<Button
-								borderless
-								className="editor-html-toolbar__button-insert-content-dropdown"
-								compact
-								onClick={ this.toggleInsertContentMenu }
+								<Gridicon icon="add-image" />
+								<span>{ translate( 'Add Media' ) }</span>
+							</div>
+							<div
+								className="editor-html-toolbar__insert-content-dropdown-item"
+								onClick={ this.openContactFormDialog }
 							>
-								<Gridicon icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' } />
-							</Button>
-						</div>
-						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
-							<Button
-								borderless
-								className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
-								compact
-								disabled={ disabled }
-								key={ tag }
-								onClick={ onClick }
-							>
-								{ label || tag }
-							</Button>
-						) }
-					</div>
-
-					<div className={ insertContentClasses }>
-						<div
-							className="editor-html-toolbar__insert-content-dropdown-item"
-							onClick={ this.openMediaModal }
-						>
-							<Gridicon icon="add-image" />
-							<span>{ translate( 'Add Media' ) }</span>
-						</div>
-						<div
-							className="editor-html-toolbar__insert-content-dropdown-item"
-							onClick={ this.openContactFormDialog }
-						>
-							<Gridicon icon="mention" />
-							<span>{ translate( 'Add Contact Form' ) }</span>
+								<Gridicon icon="mention" />
+								<span>{ translate( 'Add Contact Form' ) }</span>
+							</div>
 						</div>
 					</div>
 				</div>

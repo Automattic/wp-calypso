@@ -35,9 +35,14 @@
 		}
 	}
 
-	.editor-html-toolbar__buttons {
+	.editor-html-toolbar__wrapper-buttons {
 		margin: 0 auto;
 		max-width: 700px;
+		position: relative;
+		width: 100%;
+	}
+
+	.editor-html-toolbar__buttons {
 		overflow-x: auto;
 		white-space: nowrap;
 		width: 100%;
