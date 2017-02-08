@@ -133,7 +133,7 @@ module.exports = React.createClass( {
 				{ this.renderImageAltText() }
 				<EditorMediaModalFieldset legend={ this.translate( 'Description' ) }>
 					<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'description' ) }>
-						<FormTextInput name="description" value={ this.getItemValue( 'description' ) } onChange={ this.onChange } />
+						<FormTextarea name="description" value={ this.getItemValue( 'description' ) } onChange={ this.onChange } />
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 				<EditorMediaModalFieldset legend={ this.translate( 'URL' ) }>
