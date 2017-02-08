@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -10,44 +9,29 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { recordGoogleEvent } from 'state/analytics/actions';
 
-const SharingServiceConnectedAccounts = ( { children, onAddConnection, recordEvent, service, translate } ) => {
-	const connectAnother = () => {
-		onAddConnection( service );
-		recordEvent( 'Sharing', 'Clicked Connect Another Account Button', service.ID );
-	};
-
-	return (
-		<div className="sharing-service-accounts-detail">
-			<ul className="sharing-service-connected-accounts">
-				{ children }
-			</ul>
-			{ 'publicize' === service.type && (
-				<Button onClick={ connectAnother }>
-					{ translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
-				</Button>
-			) }
-		</div>
-	);
-};
+const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
+	<div className="sharing-service-accounts-detail">
+		<ul className="sharing-service-connected-accounts">
+			{ children }
+		</ul>
+		{ 'publicize' === service.type && (
+			<Button onClick={ connect }>
+				{ translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
+			</Button>
+		) }
+	</div>
+);
 
 SharingServiceConnectedAccounts.propTypes = {
-	onAddConnection: PropTypes.func,      // Handler to invoke when adding a new connection
-	recordEvent: PropTypes.func,          // Redux action to track an event
+	connect: PropTypes.func,              // Handler to invoke when adding a new connection
 	service: PropTypes.object.isRequired, // The service object
 	translate: PropTypes.func,
 };
 
 SharingServiceConnectedAccounts.defaultProps = {
-	onAddConnection: () => {},
-	recordEvent: () => {},
+	connect: () => {},
 	translate: identity,
 };
 
-export default connect(
-	null,
-	{
-		recordEvent: recordGoogleEvent,
-	},
-)( localize( SharingServiceConnectedAccounts ) );
+export default localize( SharingServiceConnectedAccounts );

@@ -249,6 +249,11 @@ const SharingService = React.createClass( {
 		} ) );
 	},
 
+	connectAnother() {
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
+		this.connect();
+	},
+
 	connect: function() {
 		this.setState( { isConnecting: true } );
 		this.props.connections.once( 'create:success', this.onConnectionSuccess );
@@ -308,6 +313,7 @@ const SharingService = React.createClass( {
 				isDisconnecting={ this.state.isDisconnecting }
 				removableConnections={ serviceConnections.getRemovableConnections( this.props.service.ID ) } />
 		);
+
 		return (
 			<li>
 				<AccountDialog
@@ -324,7 +330,7 @@ const SharingService = React.createClass( {
 					expandedSummary={ action } >
 					<div className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
 						<ServiceExamples service={ this.props.service } />
-						<ServiceConnectedAccounts onAddConnection={ this.connect } service={ this.props.service }>
+						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
 							{ connections.map( ( connection ) =>
 								<Connection
 									key={ connection.keyring_connection_ID }
