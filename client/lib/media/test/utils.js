@@ -400,11 +400,11 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return null if a video is being uploaded for a Jetpack site with VideoPress enabled', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, jetpackSite ) ).to.be.null;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, jetpackSite ) ).to.be.null;
 		} );
 
 		it( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', function() {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, new JetpackSite( {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
 				jetpack: true,
 				modules: [ 'videopress' ],
 				options: {
@@ -417,11 +417,11 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'jpg' }, jetpackSite ) ).to.not.be.null;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'image/jpeg' }, jetpackSite ) ).to.not.be.null;
 		} );
 
 		it( 'should not return null if a video is being uploaded for a Jetpack site with VideoPress disabled', function() {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, extension: 'mp4' }, new JetpackSite( {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
 				jetpack: true,
 				options: {
 					jetpack_version: '4.5',

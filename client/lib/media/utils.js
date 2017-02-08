@@ -4,7 +4,7 @@
 import url from 'url';
 import path from 'path';
 import photon from 'photon';
-import { includes, omitBy, uniqueId } from 'lodash';
+import { includes, omitBy, startsWith, uniqueId } from 'lodash';
 import { isUri } from 'valid-url';
 
 /**
@@ -319,7 +319,7 @@ const MediaUtils = {
 		}
 
 		if ( site.jetpack && site.isModuleActive( 'videopress' ) && site.versionCompare( '4.5', '>=' ) &&
-				MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+				startsWith( MediaUtils.getMimeType( item ), 'video/' ) ) {
 			return null;
 		}
 
