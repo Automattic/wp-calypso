@@ -192,6 +192,41 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should update module settings with normalized ones when receiving new modules', () => {
+			const siteId = 12345678,
+				stateIn = {
+					12345678: {
+						setting_123: 'test',
+					}
+				},
+				action = {
+					type: JETPACK_MODULES_RECEIVE,
+					siteId,
+					modules: {
+						minileven: {
+							active: true,
+							options: {
+								wp_mobile_excerpt: {
+									current_value: 'enabled',
+								},
+								some_other_option: {
+									current_value: '123',
+								},
+							}
+						}
+					}
+				};
+			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
+			expect( stateOut ).to.eql( {
+				12345678: {
+					setting_123: 'test',
+					minileven: true,
+					wp_mobile_excerpt: true,
+					some_other_option: '123'
+				}
+			} );
+		} );
+
 		it( 'should update the post_by_email_address setting after a successful post by email update', () => {
 			const siteId = 12345678,
 				stateIn = {
