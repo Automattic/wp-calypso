@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Object} state - Global state tree
  * @return {?Array} An array of manual offset timezones
  */
-export default function getManualUtcOffsets( state ) {
-	return get( state, 'timezones.items.manual_utc_offsets', null );
+export default function getRawOffsets( state ) {
+	return get( state, 'timezones.rawOffsets', null );
 }
