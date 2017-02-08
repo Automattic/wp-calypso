@@ -613,6 +613,37 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	dateTimeFormat() {
+		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
+			return null;
+		}
+
+		const {
+			fields: {
+				date_format,
+				start_of_week,
+				time_format,
+			},
+			site,
+			translate,
+		} = this.props;
+
+		// Placeholder formats
+		return (
+			<Card
+				className="site-settings__date-time-format"
+				href={ `/settings/date-time-format/${ site.slug }` }
+			>
+				<h2 className="site-settings__date-time-format-title">
+					{ translate( 'Date and time format configuration' ) }
+				</h2>
+				<div className="site-settings__date-time-format-info">
+					{ date_format } &bull; { time_format } &bull; { start_of_week }
+				</div>
+			</Card>
+		);
+	}
+
 	renderJetpackSyncPanel() {
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
@@ -707,6 +738,8 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
+
+				{ this.dateTimeFormat() }
 
 				<SectionHeader label={ translate( 'Privacy' ) }>
 					<Button
