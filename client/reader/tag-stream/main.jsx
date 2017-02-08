@@ -67,7 +67,7 @@ const TagStream = React.createClass( {
 		};
 		this.smartSetState( newState );
 
-		if ( ! this.state.isEmojiTitle ) {
+		if ( ! newState.isEmojiTitle ) {
 			return;
 		}
 
