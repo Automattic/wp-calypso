@@ -78,8 +78,9 @@ const ThemesSearchCard = React.createClass( {
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
 				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
+					{ ! isJetpack &&
 					<NavTabs>
-						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
+						{ this.getTierNavItems( selectedTiers ) }
 
 						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
 
@@ -90,10 +91,13 @@ const ThemesSearchCard = React.createClass( {
 							{ this.props.translate( 'More' ) + ' ' }
 						</NavItem> }
 					</NavTabs>
+					}
 
 					<Search
 						pinned
 						fitsContainer
+						isOpen={ isJetpack }
+						hideClose={ isJetpack }
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						ref="url-search"
@@ -131,18 +135,20 @@ const ThemesSearchCard = React.createClass( {
 					delaySearch={ true }
 				/>
 
-				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
-										tier={ this.props.tier }
-										options={ tiers }
-										onSelect={ this.props.select } /> }
-				{ isPremiumThemesEnabled && <a className="button more"
-												href={ getExternalThemesUrl( this.props.site ) }
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ this.onMore }>
+				{ isPremiumThemesEnabled && ! isJetpack &&
+					<ThemesSelectDropdown
+						tier={ this.props.tier }
+						options={ tiers }
+						onSelect={ this.props.select } /> }
+				{ config.isEnabled( 'manage/themes/upload' ) && ! isJetpack &&
+					<a className="button more"
+						href={ getExternalThemesUrl( this.props.site ) }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.onMore }>
 
-												{ this.props.translate( 'More' ) }
-											</a> }
+						{ this.props.translate( 'More' ) }
+					</a> }
 			</div>
 		);
 	}
