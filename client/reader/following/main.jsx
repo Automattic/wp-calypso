@@ -13,7 +13,7 @@ import Stream from 'reader/stream';
 import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
-import { getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import Suggestion from 'reader/search-stream/suggestion';
@@ -25,7 +25,7 @@ function handleSearch( query ) {
 	page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
 }
 
-const shouldShowSearchOnFollowing = getABTestVariation( 'readerSearchOnFollowing' ) === 'show';
+const shouldShowSearchOnFollowing = abtest( 'readerSearchOnFollowing' ) === 'show';
 
 const FollowingStream = ( props ) => {
 	const lang = i18nUtils.getLocaleSlug();
