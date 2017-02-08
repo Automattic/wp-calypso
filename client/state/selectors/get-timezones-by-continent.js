@@ -7,9 +7,11 @@ import { get } from 'lodash';
  * Return the timezones by continent data
  * gotten from state.timezones subtree.
  *
- * @param  {Object}  state - Global state tree
- * @return {Array} An object with the timezones grouped by continents
+ * @param  {Object} state - Global state tree
+ * @param {String} continent - continent value
+ * @return {Array} Continent timezones array
  */
-export default function getTimezonesByContinent( state ) {
-	return get( state, 'timezones.items.timezones_by_continent', null );
+export default function getTimezonesByContinent( state, continent ) {
+	const byContinents = get( state, 'timezones.byContinents', {} );
+	return byContinents[ continent ] ? byContinents[ continent ] : null;
 }
