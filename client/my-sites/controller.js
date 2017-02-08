@@ -98,14 +98,10 @@ function renderNoVisibleSites( context ) {
 				args: { hidden: hiddenSites }
 			} ),
 
-			line: i18n.translate( 'To manage it here, set it to visible.', 'To manage them here, set them to visible.', {
-				count: hiddenSites
-			} ),
+			line: i18n.translate( 'Use search to access them.' ),
 
-			action: i18n.translate( 'Change Visibility' ),
-			actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
-			secondaryAction: i18n.translate( 'Create New Site' ),
-			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
+			action: i18n.translate( 'Create New Site' ),
+			actionURL: `${ signup_url }?ref=calypso-nosites`
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
