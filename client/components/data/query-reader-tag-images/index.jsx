@@ -21,7 +21,7 @@ class QueryReaderTagImages extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldRequestTagImages || this.props.tag === nextProps.tag ) {
+		if ( ! nextProps.shouldRequestTagImages ) {
 			return;
 		}
 
