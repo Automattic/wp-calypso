@@ -90,7 +90,7 @@ export const ThemesList = React.createClass( {
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
 		return times( NUM_SPACERS, function( i ) {
-			return <div className="themes-list--spacer" key={ 'themes-list--spacer-' + i } />;
+			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
 	},
 
