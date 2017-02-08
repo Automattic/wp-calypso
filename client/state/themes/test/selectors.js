@@ -28,7 +28,6 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
-	isWpcomTheme,
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -1844,66 +1843,6 @@ describe( 'themes selectors', () => {
 			}, 'twentyseventeen' );
 
 			expect( isWporg ).to.be.true;
-		} );
-	} );
-
-	describe( '#isWpcomTheme()', () => {
-		it( 'should return false if theme is not found on WordPress.com', () => {
-			const isWpcom = isWpcomTheme( {
-				themes: {
-					queries: {
-					}
-				}
-			}, 'twentyseventeen', 77203074 );
-
-			expect( isWpcom ).to.be.false;
-		} );
-
-		it( 'should return true if theme is found on WordPress.com', () => {
-			const wpcomTheme = {
-				id: 'twentyseventeen',
-				name: 'Twenty Seventeen',
-				author: 'wordpressdotorg',
-				demo_uri: 'https://wp-themes.com/twentyseventeen',
-				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
-				taxonomies: {
-					theme_feature: {
-						'custom-header': 'Custom Header'
-					}
-				}
-			};
-			const isWpcom = isWpcomTheme( {
-				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: { twentyseventeen: wpcomTheme }
-						} ),
-					}
-				}
-			}, 'twentyseventeen', 77203074 );
-
-			expect( isWpcom ).to.be.true;
-		} );
-
-		it( 'should return false if theme is found on WordPress.com and is also installed on site', () => {
-			const theme = {
-				id: 'twentysixteen',
-				name: 'Twenty Sixteen',
-			};
-			const isWpcom = isWpcomTheme( {
-				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: { twentysixteen: theme }
-						} ),
-						77203074: new ThemeQueryManager( {
-							items: { twentysixteen: theme }
-						} ),
-					}
-				}
-			}, 'twentysixteen', 77203074 );
-
-			expect( isWpcom ).to.be.false;
 		} );
 	} );
 
