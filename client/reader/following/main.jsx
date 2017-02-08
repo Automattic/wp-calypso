@@ -34,7 +34,7 @@ const FollowingStream = ( props ) => {
 	if ( suggestions[ lang ] ) {
 		const pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
 		suggestionList = initial( flatMap( pickedSuggestions, query =>
-			[ <Suggestion suggestion={ query } />, ', ' ] ) );
+			[ <Suggestion suggestion={ query } source="following" />, ', ' ] ) );
 	}
 	return (
 		<Stream { ...props }>

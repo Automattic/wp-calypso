@@ -8,9 +8,9 @@ import React, { PropTypes } from 'react';
  */
 import { recordTrack } from 'reader/stats';
 
-export function Suggestion( { suggestion } ) {
+export function Suggestion( { suggestion, source } ) {
 	const handleSuggestionClick = () => {
-		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion } );
+		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion, source } );
 	};
 
 	return (

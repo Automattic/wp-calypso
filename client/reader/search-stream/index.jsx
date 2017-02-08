@@ -203,7 +203,7 @@ class SearchStream extends Component {
 		}
 
 		const sugList = initial( flatMap( this.state.suggestions, query =>
-			[ <Suggestion suggestion={ query } />, ', ' ] ) );
+			[ <Suggestion suggestion={ query } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
