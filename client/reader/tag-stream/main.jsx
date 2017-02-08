@@ -4,7 +4,6 @@
 import React from 'react';
 import { has } from 'lodash';
 import twemoji from 'twemoji';
-import emojiText from 'emoji-text';
 
 /**
  * Internal Dependencies
@@ -39,6 +38,11 @@ const TagStream = React.createClass( {
 	componentDidMount() {
 		ReaderTags.on( 'change', this.updateState );
 		TagSubscriptions.on( 'change', this.updateState );
+
+		const self = this;
+		asyncRequire( 'emoji-text', ( emojiText ) => {
+			self.setState( { emojiText } );
+		} );
 	},
 
 	componentWillUnmount() {
@@ -96,8 +100,8 @@ const TagStream = React.createClass( {
 		let imageSearchString = this.props.tag;
 
 		// If the tag contains emoji, convert to text equivalent
-		if ( twemoji.test( title ) ) {
-			imageSearchString = emojiText.convert( title, {
+		if ( this.state.emojiText && twemoji.test( title ) ) {
+			imageSearchString = this.state.emojiText.convert( title, {
 				delimiter: ''
 			} );
 		}
