@@ -21,6 +21,8 @@ import HeaderBack from 'reader/header-back';
 
 const TagStream = React.createClass( {
 
+	_isMounted: false,
+
 	propTypes: {
 		tag: React.PropTypes.string
 	},
@@ -28,24 +30,23 @@ const TagStream = React.createClass( {
 	smartSetState: smartSetState,
 
 	getInitialState() {
+		const title = this.getTitle();
 		return {
-			title: this.getTitle(),
+			title,
 			subscribed: this.isSubscribed(),
-			canFollow: has( ReaderTags.get( this.props.tag ), 'ID' )
+			canFollow: has( ReaderTags.get( this.props.tag ), 'ID' ),
+			isEmojiTitle: title && twemoji.test( title )
 		};
 	},
 
 	componentDidMount() {
+		this._isMounted = true;
 		ReaderTags.on( 'change', this.updateState );
 		TagSubscriptions.on( 'change', this.updateState );
-
-		const self = this;
-		asyncRequire( 'emoji-text', ( emojiText ) => {
-			self.setState( { emojiText } );
-		} );
 	},
 
 	componentWillUnmount() {
+		this._isMounted = false;
 		ReaderTags.off( 'change', this.updateState );
 		TagSubscriptions.off( 'change', this.updateState );
 	},
@@ -57,12 +58,27 @@ const TagStream = React.createClass( {
 	},
 
 	updateState( props = this.props ) {
+		const title = this.getTitle( props );
 		const newState = {
-			title: this.getTitle( props ),
+			title,
 			subscribed: this.isSubscribed( props ),
-			canFollow: has( ReaderTags.get( props.tag ), 'ID' )
+			canFollow: has( ReaderTags.get( props.tag ), 'ID' ),
+			isEmojiTitle: title && twemoji.test( title )
 		};
 		this.smartSetState( newState );
+
+		if ( ! this.state.isEmojiTitle ) {
+			return;
+		}
+
+		// If we have a tag title containing emoji, load the emoji-text library
+		// so we can convert the emoji to a search phrase
+		const self = this;
+		asyncRequire( 'emoji-text', ( emojiText ) => {
+			if ( self._isMounted ) {
+				self.setState( { emojiText } );
+			}
+		} );
 	},
 
 	getTitle( props = this.props ) {
@@ -72,7 +88,7 @@ const TagStream = React.createClass( {
 			return props.tag;
 		}
 
-		return tag.display_name || tag.slug;
+		return decodeURIComponent( tag.display_name || tag.slug );
 	},
 
 	isSubscribed( props = this.props ) {
@@ -100,7 +116,7 @@ const TagStream = React.createClass( {
 		let imageSearchString = this.props.tag;
 
 		// If the tag contains emoji, convert to text equivalent
-		if ( this.state.emojiText && twemoji.test( title ) ) {
+		if ( this.state.emojiText && this.state.isEmojiTitle ) {
 			imageSearchString = this.state.emojiText.convert( title, {
 				delimiter: ''
 			} );
