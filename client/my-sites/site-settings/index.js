@@ -37,5 +37,9 @@ module.exports = function() {
 		page( '/settings/taxonomies/:taxonomy/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.taxonomies );
 	}
 
+	if ( config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
+		page( '/settings/date-time-format/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.dateTimeFormat );
+	}
+
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );
 };
