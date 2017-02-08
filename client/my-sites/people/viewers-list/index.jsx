@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	Card = require( 'components/card' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ).default,
 	ViewersActions = require( 'lib/viewers/actions' ),
 	ViewersStore = require( 'lib/viewers/store' ),
 	InfiniteList = require( 'components/infinite-list' ),
