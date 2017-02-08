@@ -4,14 +4,6 @@
 	}
 }
 
-// Overrides top margin, moves first card closer to top of stream
-.is-reader-page .following.main.search-stream .card.reader-post-card:nth-child(2) {
-
-	@include breakpoint( ">480px" ) {
-		margin-top: -4px;
-	}
-}
-
 .search-stream .search {
 	margin: 0;
 }
