@@ -15,10 +15,6 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const browserWindow = 'undefined' === typeof window
-    ? { scrollTo: identity }
-    : window;
-
 export class PeopleListItem extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
@@ -74,7 +70,6 @@ export class PeopleListItem extends PureComponent {
 }
 
 const navigateToUser = () => {
-	browserWindow.scrollTo( 0, 0 );
 	return recordGoogleEvent( 'People', 'Clicked User profile from team list' );
 };
 
