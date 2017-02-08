@@ -7,7 +7,6 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  * Returns a valid WordPress.com API HTTP Request action object
  *
  * @param {string} [apiVersion] specific API version for request
- * @param {string} [apiNamespace] specific API namespace for request
  * @param {Object} [body] JSON-serializable body for POST requests
  * @param {string} method name of HTTP method to use
  * @param {string} path WordPress.com API path with %s and %d placeholders, e.g. /sites/%s
@@ -22,7 +21,6 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  */
 export const http = ( {
 	apiVersion = 'v1',
-	apiNamespace = 'wpcom/v2',
 	body = {},
 	method,
 	path,
@@ -37,7 +35,7 @@ export const http = ( {
 	body,
 	method,
 	path,
-	query: { ...query, apiVersion, apiNamespace },
+	query: { ...query, apiVersion },
 	formData,
 	onSuccess: onSuccess || action,
 	onFailure: onFailure || action,

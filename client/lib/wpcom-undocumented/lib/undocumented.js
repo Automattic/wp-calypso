@@ -2146,6 +2146,16 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 	}, fn );
 };
 
+Undocumented.prototype.timezones = function( params, fn ) {
+	if ( typeof params === 'function' ) {
+		fn = params;
+		params = {};
+	}
+
+	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
+	return this.wpcom.req.get( '/timezones', query, fn );
+};
+
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
