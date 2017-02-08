@@ -166,6 +166,7 @@ module.exports = {
 			hide: 50
 		},
 		defaultVariation: 'hide',
-		allowExistingUsers: true
+		allowExistingUsers: true,
+		allowAnyLocale: true
 	}
 };
