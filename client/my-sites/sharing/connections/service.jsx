@@ -328,7 +328,7 @@ const SharingService = React.createClass( {
 					compact
 					summary={ action }
 					expandedSummary={ action } >
-					<div className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
+					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': serviceConnections.isFetchingAccounts() } ) }>
 						<ServiceExamples service={ this.props.service } />
 						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
 							{ connections.map( ( connection ) =>
