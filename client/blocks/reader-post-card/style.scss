@@ -182,6 +182,31 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		font-style: italic;
 
 	}
+
+	&.is-site {
+		.reader-post-card__byline {
+			display: none;
+		}
+
+		.reader-post-card__post {
+			margin-top: 0px;
+		//	height: 192px;
+		}
+
+		.reader-post-card__excerpt {
+			min-height: 72px;
+		}
+
+		.reader-post-card__featured-image {
+			&.no-image {
+				background-color: lighten( $gray, 20% );
+			}
+
+			.site-icon {
+				border: 4px solid lighten( $gray, 30% );
+			}
+		}
+	}
 	.reader-post-actions {
 		margin: 4px 0 0;
 	}
