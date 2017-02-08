@@ -15,7 +15,6 @@ import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Team', function() {
 	let Card,
-		PeopleListItem,
 		PeopleListSectionHeader,
 		InfiniteList,
 		Team,
@@ -36,7 +35,6 @@ describe( 'Team', function() {
 
 	before( function() {
 		Card = require( 'components/card' );
-		PeopleListItem = require( 'my-sites/people/people-list-item' ).default;
 		PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ).default;
 		InfiniteList = require( 'components/infinite-list' );
 
