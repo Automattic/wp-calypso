@@ -95,7 +95,7 @@ const preview = {
 };
 
 const previewOnJetpack = {
-	label: i18n.translate( 'Live demo on Jetpack', {
+	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
 	action: ( themeId, siteId ) => requestPreview( themeId, siteId ),

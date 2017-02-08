@@ -133,10 +133,8 @@ export default connect(
 			previewUrl: getPreviewUrl( theme ),
 			options: [
 				'activate',
-				'activateOnJetpack',
 				'preview',
 				'purchase',
-				'tryAndCustomizeOnJetpack',
 				'tryandcustomize',
 				'customize',
 				'separator',

@@ -98,8 +98,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 									'support',
 									'help',
 								] }
-								defaultOption={ 'activateOnJetpack' }
-								secondaryOption={ 'tryAndCustomizeOnJetpack' }
+								defaultOption={ 'activate' }
+								secondaryOption={ 'tryandcustomize' }
 								search={ search }
 								tier={ wpcomTier }
 								filter={ filter }
