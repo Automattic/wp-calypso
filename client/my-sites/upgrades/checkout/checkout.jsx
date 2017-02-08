@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, includes, isEmpty, isEqual, map, reduce, startsWith, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -30,7 +30,6 @@ const analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 import { getStoredCards } from 'state/stored-cards/selectors';
-
 import {
 	isValidFeatureKey,
 	getUpgradePlanSlugFromPath
@@ -151,11 +150,7 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST ) {
-			return false;
-		}
-
-		if ( this.state.previousCart.create_new_blog ) {
+		if ( includes( [ transactionStepTypes.SUBMITTING_WPCOM_REQUEST, transactionStepTypes.RECEIVED_WPCOM_RESPONSE ], this.props.transaction.step.name ) ) {
 			return false;
 		}
 
@@ -200,14 +195,7 @@ const Checkout = React.createClass( {
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog && ! cartItems.hasPlan( cart ) ) {
-			let domainName;
-			if ( cartItems.hasDomainRegistration( cart ) ) {
-				domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
-			} else {
-				domainName = cartItems.getDomainRegistrations( this.state.previousCart )[ 0 ].meta;
-			}
-
-			return domainManagementList( domainName );
+			return domainManagementList( map( values( receipt.purchases )[ 0 ], 'meta' )[ 0 ] );
 		}
 
 		if ( ! selectedSiteSlug ) {
