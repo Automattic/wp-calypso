@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const SharingServiceConnectedAccounts = ( { children, onAddConnection, recordEvent, service, translate } ) => {
@@ -23,9 +24,9 @@ const SharingServiceConnectedAccounts = ( { children, onAddConnection, recordEve
 				{ children }
 			</ul>
 			{ 'publicize' === service.type && (
-				<a onClick={ connectAnother } className="button new-account">
+				<Button onClick={ connectAnother }>
 					{ translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
-				</a>
+				</Button>
 			) }
 		</div>
 	);
