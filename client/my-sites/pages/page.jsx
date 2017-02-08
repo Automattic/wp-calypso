@@ -8,6 +8,7 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -267,7 +268,10 @@ const Page = React.createClass( {
 
 	getCopyItem: function() {
 		const { page: post, site } = this.props;
-		if ( ( 'publish' !== post.status && 'private' !== post.status ) || ! utils.userCan( 'edit_post', post ) ) {
+		if (
+			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
+			! utils.userCan( 'edit_post', post )
+		) {
 			return null;
 		}
 		return (

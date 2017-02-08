@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -131,7 +131,10 @@ const getAvailableControls = props => {
 		}
 	}
 
-	if ( ( 'publish' === post.status || 'private' === post.status ) && userCan( 'edit_post', post ) ) {
+	if (
+		includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) &&
+		userCan( 'edit_post', post )
+	) {
 		controls.main.push( {
 			className: 'copy',
 			href: `/post/${ site.slug }?copy=${ post.ID }`,
