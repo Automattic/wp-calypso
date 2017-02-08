@@ -370,6 +370,7 @@ export const SeoForm = React.createClass( {
 			jetpackVersionSupportsSeo,
 		} = this.props;
 		const {
+			URL: siteUrl = '',
 			domain = '',
 			slug = '',
 			settings: {
@@ -396,8 +397,7 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const siteUrl = `https://${ domain }/`;
-		const sitemapUrl = `${ siteUrl }sitemap.xml`;
+		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 		const placeholderTagContent = '1234';
