@@ -156,14 +156,11 @@ class Upload extends React.Component {
 
 	renderDropZone() {
 		const { translate, isBusiness, isJetpack } = this.props;
-		const uploadPromptText = translate(
-			'Do you have a custom theme to upload to your site?'
-		);
-		const uploadInstructionsText = translate(
-			"Make sure it's a single zip file, and upload it here."
-		);
 		const dropText = translate(
 			'Drop files or click here to upload'
+		);
+		const uploadInstructionsText = translate(
+			'Only single .zip files are accepted.'
 		);
 
 		const themeUploadClass = classNames( 'theme-upload', {
@@ -172,8 +169,6 @@ class Upload extends React.Component {
 
 		return (
 			<div className={ themeUploadClass }>
-				<span className="theme-upload__title">{ uploadPromptText }</span>
-				<span className="theme-upload__instructions">{ uploadInstructionsText }</span>
 				<div className="theme-upload__dropzone">
 					<DropZone onFilesDrop={ this.onFileSelect } />
 					<FilePicker accept="application/zip" onPick={ this.onFileSelect } >
@@ -182,6 +177,7 @@ class Upload extends React.Component {
 							icon="cloud-upload"
 							size={ 48 } />
 						{ dropText }
+						<span className="theme-upload__dropzone-instructions">{ uploadInstructionsText }</span>
 					</FilePicker>
 				</div>
 			</div>
