@@ -51,12 +51,16 @@ class CustomContentTypes extends Component {
 	}
 
 	renderToggle( name, label ) {
-		const { fields, handleToggle } = this.props;
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleToggle
+		} = this.props;
 		return (
 			<FormToggle
 				className="custom-content-types__module-settings-toggle is-compact"
 				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() }
+				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
