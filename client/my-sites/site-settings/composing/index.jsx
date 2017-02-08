@@ -18,6 +18,7 @@ const Composing = ( {
 	fields,
 	handleToggle,
 	onChangeField,
+	setFieldValue,
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
@@ -50,7 +51,7 @@ const Composing = ( {
 						<hr />
 						<AfterTheDeadline
 							handleToggle={ handleToggle }
-							onChangeField={ onChangeField }
+							setFieldValue={ setFieldValue }
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
@@ -71,6 +72,7 @@ Composing.defaultProps = {
 Composing.propTypes = {
 	handleToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
+	setFieldValue: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,

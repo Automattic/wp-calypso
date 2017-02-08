@@ -50,6 +50,7 @@ class SiteSettingsFormWriting extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
+			setFieldValue,
 			siteId,
 			translate
 		} = this.props;
@@ -73,6 +74,7 @@ class SiteSettingsFormWriting extends Component {
 					onSubmitForm={ this.props.handleSubmitForm }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }
+					setFieldValue={ setFieldValue }
 					eventTracker={ eventTracker }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }

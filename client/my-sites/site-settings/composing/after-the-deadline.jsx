@@ -12,7 +12,7 @@ import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import TokenField from 'components/token-field';
 import FormToggle from 'components/forms/form-toggle';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -28,10 +28,14 @@ class AfterTheDeadline extends Component {
 
 	static propTypes = {
 		handleToggle: PropTypes.func.isRequired,
-		onChangeField: PropTypes.func.isRequired,
+		setFieldValue: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+	};
+
+	onChangeIgnoredPhrases = ( phrases ) => {
+		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
 	};
 
 	renderToggle( name, isDisabled, label ) {
@@ -128,7 +132,10 @@ class AfterTheDeadline extends Component {
 	}
 
 	renderIgnoredPhrasesSection() {
-		const { afterTheDeadlineModuleActive, fields, onChangeField, translate } = this.props;
+		const { afterTheDeadlineModuleActive, fields, translate } = this.props;
+		const ignoredPhrases = fields.ignored_phrases
+			? fields.ignored_phrases.split( ',' )
+			: [];
 
 		return (
 			<div className="composing__module-settings is-indented">
@@ -136,9 +143,9 @@ class AfterTheDeadline extends Component {
 					{ translate( 'Ignored Phrases' ) }
 				</FormLegend>
 
-				<FormTextInput
-					onChange={ onChangeField( 'ignored_phrases' ) }
-					value={ fields.ignored_phrases || '' }
+				<TokenField
+					onChange={ this.onChangeIgnoredPhrases }
+					value={ ignoredPhrases }
 					disabled={ ! afterTheDeadlineModuleActive }
 				/>
 			</div>
