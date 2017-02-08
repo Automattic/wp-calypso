@@ -11,7 +11,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 
-const MarkdownWpcom = ( {
+const Markdown = ( {
 	fields,
 	handleToggle,
 	isRequestingSettings,
@@ -50,17 +50,17 @@ const MarkdownWpcom = ( {
 	);
 };
 
-MarkdownWpcom.defaultProps = {
+Markdown.defaultProps = {
 	isSavingSettings: false,
 	isRequestingSettings: true,
 	fields: {}
 };
 
-MarkdownWpcom.propTypes = {
+Markdown.propTypes = {
 	handleToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
 };
 
-export default localize( MarkdownWpcom );
+export default localize( Markdown );

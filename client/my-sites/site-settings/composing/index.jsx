@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import DefaultPostFormat from './default-post-format';
-import MarkdownWpcom from './markdown-wpcom';
+import Markdown from './markdown';
 import AfterTheDeadline from './after-the-deadline';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -37,7 +37,7 @@ const Composing = ( {
 
 			{
 				fields.markdown_supported &&
-				<MarkdownWpcom
+				<Markdown
 					handleToggle={ handleToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
