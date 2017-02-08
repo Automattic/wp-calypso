@@ -41,6 +41,8 @@ export default {
 			recordTrack( 'calypso_reader_search_loaded' );
 		}
 
+		const autoFocusInput = ( ! searchSlug ) || context.query.focus === '1';
+
 		renderWithReduxStore(
 			React.createElement( SearchStream, {
 				key: 'search',
@@ -56,6 +58,7 @@ export default {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: false,
 				showPrimaryFollowButtonOnCards: true,
+				autoFocusInput,
 				onQueryChange: function( newValue ) {
 					let searchUrl = '/read/search';
 					if ( newValue ) {

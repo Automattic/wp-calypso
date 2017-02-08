@@ -225,7 +225,7 @@ class SearchStream extends Component {
 							initialValue={ this.props.query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
-							autoFocus={ ! this.props.query }
+							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText } />
