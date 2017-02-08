@@ -23,6 +23,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
+import { normalizeSettings } from './utils';
 
 const createRequestsReducer = ( data ) => {
 	return ( state, { siteId } ) => {
@@ -76,7 +77,7 @@ export const items = createReducer( {}, {
 			[ siteId ]: {
 				...state[ siteId ],
 				...modulesActivationState,
-				...moduleSettings
+				...normalizeSettings( moduleSettings )
 			}
 		} );
 	},
