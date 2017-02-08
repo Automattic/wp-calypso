@@ -128,7 +128,7 @@ describe( 'Theme', function() {
 		} );
 
 		it( 'should show a price', function() {
-			assert( this.themeNode.getElementsByClassName( 'price' )[0].textContent === '$50' );
+			assert( this.themeNode.getElementsByClassName( 'theme-badge__price' )[0].textContent === '$50' );
 		} );
 	} );
 } );
