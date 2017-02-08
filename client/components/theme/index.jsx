@@ -147,7 +147,9 @@ const Theme = React.createClass( {
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
+
 					{ this.renderHover() }
+
 					<a href={ this.props.screenshotClickUrl }>
 						{ this.renderInstalling() }
 						{ screenshot
@@ -160,15 +162,16 @@ const Theme = React.createClass( {
 							</div>
 						}
 					</a>
+
 					<div className="theme__info" >
-						<h2>{ name }</h2>
+						<h2 className="theme__info-title">{ name }</h2>
 						{ active &&
-							<span className="theme__active-label">{ this.translate( 'Active', {
+							<span className="theme-badge__active">{ this.translate( 'Active', {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
 						{ price && ! purchased &&
-							<span className="price">{ price }</span>
+							<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )
 							? <TrackInteractions fields="theme.id" >
@@ -178,8 +181,11 @@ const Theme = React.createClass( {
 									active={ this.props.active }
 									onMoreButtonClick={ this.props.onMoreButtonClick }
 									options={ this.props.buttonContents } />
-							</TrackInteractions> : null }
+							</TrackInteractions>
+							: null
+						}
 					</div>
+
 				</div>
 			</Card>
 		);
