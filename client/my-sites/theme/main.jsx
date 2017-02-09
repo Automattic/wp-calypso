@@ -26,7 +26,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -284,7 +284,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderContactUsCard( isPrimary = false ) {
+	renderSupportContactUsCard( isPrimary = false ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -302,7 +302,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderThemeForumCard( isPrimary = false ) {
+	renderSupportThemeForumCard( isPrimary = false ) {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -328,7 +328,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderCssSupportCard() {
+	renderSupportCssCard( isPrimary = false ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -337,6 +337,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button
+					primary={ isPrimary }
 					href="//en.forums.wordpress.com/forum/css-customization"
 					onClick={ this.trackCssClick }>
 					{ i18n.translate( 'Visit forum' ) }
@@ -346,20 +347,20 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		if ( this.props.isCurrentUserPaid ) {
-			return (
-				<div>
-					{ this.renderContactUsCard( true ) }
-					{ this.renderThemeForumCard() }
-					{ this.renderCssSupportCard() }
-				</div>
-			);
+		function hasPrimaryButtonOnce() {
+			return hasPrimaryButtonOnce.isAlreadyDone ? false : hasPrimaryButtonOnce.isAlreadyDone = true;
 		}
 
 		return (
 			<div>
-				{ this.renderThemeForumCard( true ) }
-				{ this.renderCssSupportCard() }
+				{ this.props.isCurrentUserPaid && ! this.props.isJetpack &&
+					this.renderSupportContactUsCard( hasPrimaryButtonOnce() ) }
+				{ this.props.forumUrl && this.props.isPremium &&
+					this.renderSupportThemeForumCard( hasPrimaryButtonOnce() ) }
+				{ this.props.forumUrl && ( ! this.props.isPremium || ! this.props.isWpcomTheme ) &&
+					this.renderSupportThemeForumCard( hasPrimaryButtonOnce() ) }
+				{ this.props.isWpcomTheme &&
+					this.renderSupportCssCard( hasPrimaryButtonOnce() ) }
 			</div>
 		);
 	},
@@ -644,6 +645,7 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
 		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
 		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
@@ -658,6 +660,7 @@ export default connect(
 			error,
 			selectedSite,
 			siteSlug,
+			isJetpack,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
