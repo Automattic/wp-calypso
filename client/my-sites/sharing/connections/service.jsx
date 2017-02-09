@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { identity, replace } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -11,11 +12,30 @@ import SocialLogo from 'social-logos';
  * Internal dependencies
  */
 import AccountDialog from './account-dialog';
+import {
+	createSiteConnection,
+	deleteSiteConnection,
+	failCreateConnection,
+	fetchConnection,
+	updateSiteConnection,
+} from 'state/sharing/publicize/actions';
+import { errorNotice } from 'state/notices/actions';
+import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
+import { getAvailableExternalAccounts } from 'state/sharing/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import {
+	getBrokenSiteUserConnectionsForService,
+	getRemovableConnections,
+	getSiteUserConnectionsForService,
+	isFetchingConnections,
+} from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import serviceConnections from './service-connections';
@@ -27,9 +47,22 @@ const SharingService = React.createClass( {
 	displayName: 'SharingService',
 
 	propTypes: {
+		availableExternalAccounts: PropTypes.arrayOf( PropTypes.object ),
+		brokenConnections: PropTypes.arrayOf( PropTypes.object ),
 		connections: PropTypes.object.isRequired,   // A collections-list instance
+		createSiteConnection: PropTypes.func,
+		deleteSiteConnection: PropTypes.func,
+		errorNotice: PropTypes.func,
+		failCreateConnection: PropTypes.func,
+		fetchConnection: PropTypes.func,
+		isFetching: PropTypes.bool,
+		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
+		recordGoogleEvent: PropTypes.func,
+		removableConnections: PropTypes.arrayOf( PropTypes.object ),
+		requestKeyringConnections: PropTypes.func,
 		service: PropTypes.object.isRequired,       // The single service object
 		siteId: PropTypes.number,                   // The site ID for which connections are created
+		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
 		translate: PropTypes.func,
 	},
 
@@ -47,8 +80,23 @@ const SharingService = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			availableExternalAccounts: [],
+			brokenConnections: [],
+			createSiteConnection: () => {},
+			deleteSiteConnection: () => {},
+			errorNotice: () => {},
+			failCreateConnection: () => {},
+			fetchConnection: () => {},
+			isFetching: false,
+			keyringConnections: [],
+			recordGoogleEvent: () => {},
+			requestKeyringConnections: () => {},
+			removableConnections: [],
+			site: Object.freeze( {} ),
 			siteId: 0,
+			siteUserConnections: [],
 			translate: identity,
+			updateSiteConnection: () => {},
 		};
 	},
 
@@ -59,6 +107,23 @@ const SharingService = React.createClass( {
 		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
 		this.props.connections.off( 'refresh:success', this.onRefreshSuccess );
 		this.props.connections.off( 'refresh:error', this.onRefreshError );
+	},
+
+	performAction: function() {
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
+
+		// Depending on current status, perform an action when user clicks the
+		// service action button
+		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
+			this.disconnect();
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
+		} else if ( 'reconnect' === connectionStatus ) {
+			this.refresh();
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
+		} else {
+			this.connect();
+			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
+		}
 	},
 
 	addConnection: function( service, keyringConnectionId, externalUserId ) {
@@ -92,6 +157,19 @@ const SharingService = React.createClass( {
 
 	toggleSitewideConnection: function( connection, isSitewide ) {
 		this.props.connections.update( connection, { shared: isSitewide } );
+	},
+
+	refresh: function( connection ) {
+		this.setState( { isRefreshing: true } );
+		this.props.connections.once( 'refresh:success', this.onRefreshSuccess );
+		this.props.connections.once( 'refresh:error', this.onRefreshError );
+
+		if ( ! connection ) {
+			// When triggering a refresh from the primary action button, find
+			// the first broken connection owned by the current user.
+			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
+		}
+		this.props.connections.refresh( connection );
 	},
 
 	onConnectionSuccess: function() {
@@ -171,6 +249,11 @@ const SharingService = React.createClass( {
 		} ) );
 	},
 
+	connectAnother() {
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
+		this.connect();
+	},
+
 	connect: function() {
 		this.setState( { isConnecting: true } );
 		this.props.connections.once( 'create:success', this.onConnectionSuccess );
@@ -193,45 +276,12 @@ const SharingService = React.createClass( {
 		this.props.connections.destroy( connections );
 	},
 
-	refresh: function( connection ) {
-		this.setState( { isRefreshing: true } );
-		this.props.connections.once( 'refresh:success', this.onRefreshSuccess );
-		this.props.connections.once( 'refresh:error', this.onRefreshError );
-
-		if ( ! connection ) {
-			// When triggering a refresh from the primary action button, find
-			// the first broken connection owned by the current user.
-			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
-		}
-		this.props.connections.refresh( connection );
-	},
-
-	performAction: function() {
-		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
-
-		// Depending on current status, perform an action when user clicks the
-		// service action button
-		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
-			this.disconnect();
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
-		} else if ( 'reconnect' === connectionStatus ) {
-			this.refresh();
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
-		} else {
-			this.connect();
-			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
-		}
-	},
-
 	render: function() {
 		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
 			connections = serviceConnections.getConnections( this.props.service.ID );
-		const elementClass = [
-			'sharing-service',
-			this.props.service.ID,
-			connectionStatus,
-			this.state.isOpen ? 'is-open' : ''
-		].join( ' ' );
+		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
+			'is-open': this.state.isOpen,
+		} );
 		const accounts = this.state.isSelectingAccount
 			? serviceConnections.getAvailableExternalAccounts( this.props.service.ID, this.props.siteId )
 			: [];
@@ -253,22 +303,6 @@ const SharingService = React.createClass( {
 			</div>
 		);
 
-		const content = (
-			<div
-				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
-				<ServiceExamples service={ this.props.service } />
-				<ServiceConnectedAccounts
-					connections={ connections }
-					isDisconnecting={ this.state.isDisconnecting }
-					isRefreshing={ this.state.isRefreshing }
-					onAddConnection={ this.connect }
-					onRefreshConnection={ this.refresh }
-					onRemoveConnection={ this.disconnect }
-					onToggleSitewideConnection={ this.toggleSitewideConnection }
-					service={ this.props.service } />
-				<ServiceTip service={ this.props.service } />
-			</div> );
-
 		const action = (
 			<ServiceAction
 				status={ connectionStatus }
@@ -279,32 +313,68 @@ const SharingService = React.createClass( {
 				isDisconnecting={ this.state.isDisconnecting }
 				removableConnections={ serviceConnections.getRemovableConnections( this.props.service.ID ) } />
 		);
+
 		return (
-			<div>
+			<li>
 				<AccountDialog
 					isVisible={ this.state.isSelectingAccount }
 					service={ this.props.service }
 					accounts={ accounts }
 					onAccountSelected={ this.addConnection } />
 				<FoldableCard
-					className={ elementClass }
+					className={ classNames }
 					header={ header }
 					clickableHeader
 					compact
 					summary={ action }
 					expandedSummary={ action } >
-					{ content }
+					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': serviceConnections.isFetchingAccounts() } ) }>
+						<ServiceExamples service={ this.props.service } />
+						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
+							{ connections.map( ( connection ) =>
+								<Connection
+									key={ connection.keyring_connection_ID }
+									connection={ connection }
+									isDisconnecting={ this.state.isDisconnecting }
+									isRefreshing={ this.state.isRefreshing }
+									onDisconnect={ this.disconnect }
+									onRefresh={ this.refresh }
+									onToggleSitewideConnection={ this.toggleSitewideConnection }
+									service={ this.props.service }
+									showDisconnect={ connections.length > 1 || 'broken' === connection.status } />
+							) }
+						</ServiceConnectedAccounts>
+						<ServiceTip service={ this.props.service } />
+					</div>
 				</FoldableCard>
-			</div>
+			</li>
 		);
 	}
 } );
 
 export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
-	} ),
+	( state, { service } ) => {
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+
+		return {
+			availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
+			brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
+			isFetching: isFetchingConnections( state, siteId ),
+			keyringConnections: getKeyringConnectionsByName( state, service.ID ),
+			removableConnections: getRemovableConnections( state, service.ID ),
+			siteId,
+			siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
+		};
+	},
 	{
+		createSiteConnection,
+		deleteSiteConnection,
+		errorNotice,
+		failCreateConnection,
+		fetchConnection,
 		recordGoogleEvent,
+		requestKeyringConnections,
+		updateSiteConnection,
 	},
 )( localize( SharingService ) );
