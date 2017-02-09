@@ -4,8 +4,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import debugModule from 'debug';
-import omit from 'lodash/omit';
-import identity from 'lodash/identity';
+import {
+	identity,
+	omit,
+} from 'lodash';
 import { localize } from 'i18n-calypso';
 const debug = debugModule( 'calypso:my-sites:people:team-list' );
 
