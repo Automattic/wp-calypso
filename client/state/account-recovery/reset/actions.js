@@ -8,12 +8,16 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 } from 'state/action-types';
 
-const fromApi = ( data ) => ( {
-	primaryEmail: data.primary_email,
-	primarySms: data.primary_sms,
-	secondaryEmail: data.secondary_email,
-	secondarySms: data.secondary_sms,
-} );
+const fromApi = ( data ) => ( [
+	{
+		email: data.primary_email,
+		sms: data.primary_sms,
+	},
+	{
+		email: data.secondary_email,
+		sms: data.secondary_sms,
+	},
+] );
 
 export const fetchResetOptions = ( userData ) => ( dispatch ) => {
 	dispatch( {
