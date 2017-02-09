@@ -18,13 +18,11 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	translator = require( 'lib/translator-jumpstart' ),
 	TranslatorInvitation = require( './community-translator/invitation' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
-	PushNotificationPrompt = require( 'components/push-notification/prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
 	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
@@ -112,19 +110,6 @@ Layout = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
-	renderPushNotificationPrompt: function() {
-		const participantInAbTest = abtest( 'browserNotifications' ) === 'enabled';
-		if ( ! ( config.isEnabled( 'push-notifications' ) && participantInAbTest ) ) {
-			return null;
-		}
-
-		if ( ! this.props.user ) {
-			return null;
-		}
-
-		return <PushNotificationPrompt user={ this.props.user } section={ this.props.section } isLoading={ this.props.isLoading } />;
-	},
-
 	renderMasterbar: function() {
 		if ( 'login' === this.props.section.name ) {
 			return null;
@@ -201,7 +186,6 @@ Layout = React.createClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ this.renderWelcome() }
-					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="layout__primary">
 						{ this.props.primary }
