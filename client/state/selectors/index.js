@@ -70,6 +70,7 @@ export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-email';
+export isRequestingAccountRecoveryResetOptions from './is-requesting-account-recovery-reset-options';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
