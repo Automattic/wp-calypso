@@ -14,12 +14,12 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'Team', function() {
-	let Card,
-		PeopleListSectionHeader,
-		InfiniteList,
-		Team,
-		configMock,
-		deterministicStringify;
+	let Card;
+	let PeopleListSectionHeader;
+	let InfiniteList;
+	let Team;
+	let configMock;
+	let deterministicStringify;
 
 	useFakeDom();
 	useMockery( mockery => {
