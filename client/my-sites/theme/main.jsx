@@ -284,7 +284,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderSupportContactUsCard( isPrimary = false ) {
+	renderSupportContactUsCard( buttonCount ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -293,7 +293,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
 				</div>
 				<Button
-					primary={ isPrimary }
+					primary={ buttonCount === 1 }
 					href={ '/help/contact/' }
 					onClick={ this.trackContactUsClick }>
 					{ i18n.translate( 'Contact us' ) }
@@ -302,7 +302,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderSupportThemeForumCard( isPrimary = false ) {
+	renderSupportThemeForumCard( buttonCount ) {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -319,7 +319,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ description }</small>
 				</div>
 				<Button
-					primary={ isPrimary }
+					primary={ buttonCount === 1 }
 					href={ this.props.forumUrl }
 					onClick={ this.trackThemeForumClick }>
 					{ i18n.translate( 'Visit forum' ) }
@@ -328,7 +328,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderSupportCssCard( isPrimary = false ) {
+	renderSupportCssCard( buttonCount ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -337,7 +337,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button
-					primary={ isPrimary }
+					primary={ buttonCount === 1 }
 					href="//en.forums.wordpress.com/forum/css-customization"
 					onClick={ this.trackCssClick }>
 					{ i18n.translate( 'Visit forum' ) }
@@ -347,20 +347,18 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		function hasPrimaryButtonOnce() {
-			return hasPrimaryButtonOnce.isAlreadyDone ? false : hasPrimaryButtonOnce.isAlreadyDone = true;
-		}
+		let buttonCount = 1;
 
 		return (
 			<div>
 				{ this.props.isCurrentUserPaid && ! this.props.isJetpack &&
-					this.renderSupportContactUsCard( hasPrimaryButtonOnce() ) }
+					this.renderSupportContactUsCard( buttonCount++ ) }
 				{ this.props.forumUrl && this.props.isPremium &&
-					this.renderSupportThemeForumCard( hasPrimaryButtonOnce() ) }
+					this.renderSupportThemeForumCard( buttonCount++ ) }
 				{ this.props.forumUrl && ( ! this.props.isPremium || ! this.props.isWpcomTheme ) &&
-					this.renderSupportThemeForumCard( hasPrimaryButtonOnce() ) }
+					this.renderSupportThemeForumCard( buttonCount++ ) }
 				{ this.props.isWpcomTheme &&
-					this.renderSupportCssCard( hasPrimaryButtonOnce() ) }
+					this.renderSupportCssCard( buttonCount++ ) }
 			</div>
 		);
 	},
