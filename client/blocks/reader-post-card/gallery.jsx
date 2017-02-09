@@ -28,7 +28,7 @@ function getGalleryWorthyImages( post ) {
 	return take( worthyImages, numberOfImagesToDisplay );
 }
 
-const PostGallery = ( { post, children, isDiscover } ) => {
+const PostGallery = ( { post, children } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
@@ -56,7 +56,7 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 						<a className="reader-post-card__title-link" href={ post.URL }>{ post.title }</a>
 					</h1>
 				</AutoDirection>
-				<ReaderPostCardExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderPostCardExcerpt post={ post } />
 				{ children }
 				</div>
 		</div> );
