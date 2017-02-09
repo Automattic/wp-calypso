@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate } from 'lodash';
+import { noop, truncate, get, isEmpty } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -23,7 +23,6 @@ import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
 import { getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
-	isDiscoverPost
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
 
@@ -36,21 +35,25 @@ export default class ReaderPostCard extends React.Component {
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
-		originalPost: PropTypes.object, // used for Discover only
+		discoverPick: PropTypes.shape( {
+			post: PropTypes.object,
+			site: PropTypes.object,
+		} ),
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
+		isDiscoverStream: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClick: noop,
 		onCommentClick: noop,
 		isSelected: false,
+		showSiteName: true,
 	};
 
 	propagateCardClick = () => {
-		// If we have an original post available (e.g. for a Discover pick), send the original post
-		// to the full post view
-		const postToOpen = this.props.originalPost ? this.props.originalPost : this.props.post;
+		// If we have an discover pick post available, send the discover pick to the full post view
+		const postToOpen = get( this.props, 'discoverPick.post' ) || this.props.post;
 		this.props.onClick( postToOpen );
 	}
 
@@ -97,7 +100,7 @@ export default class ReaderPostCard extends React.Component {
 	render() {
 		const {
 			post,
-			originalPost,
+			discoverPick,
 			site,
 			feed,
 			onCommentClick,
@@ -105,11 +108,12 @@ export default class ReaderPostCard extends React.Component {
 			isSelected,
 			showSiteName,
 			followSource,
+			isDiscoverStream,
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isDiscover = isDiscoverPost( post );
+		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
@@ -128,7 +132,7 @@ export default class ReaderPostCard extends React.Component {
 		}
 
 		const readerPostActions = <ReaderPostActions
-			post={ originalPost ? originalPost : post }
+			post={ get( discoverPick, 'post' ) || post }
 			site={ site }
 			visitUrl = { post.URL }
 			showVisit={ true }
@@ -158,11 +162,28 @@ export default class ReaderPostCard extends React.Component {
 				</StandardPost>;
 		}
 
+		// set up post byline
+		let postByline;
+
+		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
+			// create a post like object with some props from the discover post
+			const postForByline = Object.assign( {},
+				discoverPick.post || {},
+				{
+					date: post.date,
+					URL: post.URL,
+					primary_tag: post.primary_tag,
+				} );
+			postByline = <PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />;
+		} else {
+			postByline = <PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName || isDiscover } />;
+		}
+
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
 			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
-				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
+				{ postByline }
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
 				{ this.props.children }
@@ -170,3 +191,4 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 }
+

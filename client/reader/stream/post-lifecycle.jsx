@@ -16,7 +16,8 @@ import XPostHelper from 'reader/xpost-helper';
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
-		postKey: PropTypes.object
+		postKey: PropTypes.object,
+		isDiscoverStream: PropTypes.bool
 	}
 
 	state = {
@@ -86,6 +87,7 @@ export default class PostLifecycle extends React.PureComponent {
 					handleClick={ this.props.handleClick }
 					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					showSiteName={ this.props.showSiteName }
+					isDiscoverStream={ this.props.isDiscoverStream }
 				/>;
 		}
 	}
