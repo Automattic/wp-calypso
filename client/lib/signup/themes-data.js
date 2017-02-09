@@ -234,12 +234,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Sela',
-		slug: 'sela',
+		name: 'Dara',
+		slug: 'dara',
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		demo_uri: 'https://selademo.wordpress.com',
+		demo_uri: 'https://darademo.wordpress.com',
 		verticals: []
 	},
 	{
