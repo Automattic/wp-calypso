@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, transform } from 'lodash';
+import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,13 +28,11 @@ class DesignTypeStep extends Component {
 		translate: identity
 	};
 
-	choiceHandlers = {};
-
-	componentWillMount() {
-		this.choiceHandlers = transform( this.getChoices(), ( handlers, choice ) => {
+	getChoiceHandlers = memoize( ( ) =>
+		transform( this.getChoices(), ( handlers, choice ) => {
 			handlers[ choice.type ] = ( event ) => this.handleChoiceClick( event, choice.type );
-		}, {} );
-	}
+		}, {} )
+	);
 
 	getChoices() {
 		const { translate } = this.props;
@@ -47,13 +45,15 @@ class DesignTypeStep extends Component {
 	}
 
 	renderChoices() {
+		const choiceHandlers = this.getChoiceHandlers();
+
 		return (
 			<div className="design-type__list">
 				{ this.getChoices().map( ( choice ) => (
 						<Card className="design-type__choice" key={ choice.type }>
 							<a
 								className="design-type__choice-link"
-								onClick={ this.choiceHandlers[ choice.type ] }
+								onClick={ choiceHandlers[ choice.type ] }
 							>
 								{ choice.image }
 								<h2>{ choice.label }</h2>
