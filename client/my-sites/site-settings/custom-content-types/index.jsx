@@ -95,7 +95,7 @@ class CustomContentTypes extends Component {
 
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
 		return (
-			<div className="site-settings__child-settings">
+			<div className="custom-content-types__module-settings site-settings__child-settings">
 				{ this.renderToggle( fieldName, fieldLabel ) }
 				<p className="form-setting-explanation">
 					{ fieldDescription }
