@@ -19,7 +19,6 @@ import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import HeaderBack from 'reader/header-back';
 
-
 const TagStream = React.createClass( {
 
 	_isMounted: false,
