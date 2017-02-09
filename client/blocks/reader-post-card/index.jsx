@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate } from 'lodash';
+import { noop, throttle, truncate } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -26,6 +26,79 @@ import { getDiscoverBlogName,
 	isDiscoverPost
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
+
+function trackable( TrackedComponent ) {
+	return class Trackable extends React.Component {
+		constructor( props ) {
+			super( props );
+			this.state = { isOnScreen: false };
+		}
+
+		defaultProps = {
+			onAppear: noop,
+			onLeave: noop
+		}
+
+		componentDidMount() {
+			window.addEventListener( 'scroll', this.checkOnScreen );
+			window.addEventListener( 'resize', this.checkOnScreen );
+			this.checkOnScreen();
+		}
+
+		componentWillUnmount() {
+			window.removeEventListener( 'scroll', this.checkOnScreen );
+			window.removeEventListener( 'resize', this.checkOnScreen );
+		}
+
+		checkOnScreen = throttle( () => {
+			if ( ! this.nodeRef ) {
+				return;
+			}
+			const rect = this.nodeRef.getBoundingClientRect();
+			const html = document.documentElement;
+			const windowHeight = window.innerHeight || html.clientHeight;
+
+			function entirelyOnScreen() {
+				return rect.top >= 0 &&
+					rect.bottom <= windowHeight;
+			}
+
+			function biggerThanScreen() {
+				return rect.top < 0 &&
+					rect.bottom >= windowHeight;
+			}
+
+			function partiallyOnScreen() {
+				return ( rect.top >= 0 && rect.top <= windowHeight * .75 ) ||
+					( rect.bottom <= windowHeight && rect.bottom >= windowHeight * .25 );
+			}
+
+			if ( entirelyOnScreen() || biggerThanScreen() || partiallyOnScreen() ) {
+				if ( ! this.state.isOnScreen ) {
+					this.setState( { isOnScreen: performance.now() } );
+					this.props.onAppear();
+				}
+			} else if ( this.state.isOnScreen ) {
+				const timeOnScreen = performance.now() - this.state.isOnScreen;
+				this.setState( { isOnScreen: false } );
+				this.props.onLeave( timeOnScreen );
+			}
+		}, 150 )
+
+		bindRef = ( ref ) => {
+			this.nodeRef = ReactDom.findDOMNode( ref );
+		}
+		render() {
+			let { className, onAppear, onLeave, ...props } = this.props;
+			className = classnames( className, {
+				'is-on-screen': !! this.state.isOnScreen
+			} );
+			return <TrackedComponent ref={ this.bindRef } className={ className } { ...props } />;
+		}
+	};
+}
+
+const TrackableCard = trackable( Card );
 
 export default class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -92,6 +165,14 @@ export default class ReaderPostCard extends React.Component {
 			event.preventDefault();
 			this.propagateCardClick();
 		}
+	}
+
+	onAppear = () => {
+		console.log( 'appearing: [%s:%s] %s', this.props.post.feed_ID, this.props.post.feed_item_ID, this.props.post.title );
+	}
+
+	onLeave = ( timeOnScreen ) => {
+		console.log( 'leaving after %dms: [%s:%s] %s', timeOnScreen, this.props.post.feed_ID, this.props.post.feed_item_ID, this.props.post.title );
 	}
 
 	render() {
@@ -161,12 +242,12 @@ export default class ReaderPostCard extends React.Component {
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
-			<Card className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
+			<TrackableCard onAppear={ this.onAppear } onLeave={ this.onLeave } className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
 				{ this.props.children }
-			</Card>
+			</TrackableCard>
 		);
 	}
 }

@@ -29,9 +29,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin: 0 15px;
 	padding: 18px 0 20px;
 	position: relative;
+	opacity: 0.5;
+	transition: opacity .250s;
 
 	@include breakpoint( ">660px" ) {
 		margin: 0;
+	}
+
+	&.is-on-screen {
+		opacity: 1;
 	}
 
 	&.is-selected {
