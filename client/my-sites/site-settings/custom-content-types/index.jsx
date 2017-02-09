@@ -11,15 +11,36 @@ import { connect } from 'react-redux';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
-import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
 
 class CustomContentTypes extends Component {
+	componentDidUpdate() {
+		const {
+			activatingCustomContentTypesModule,
+			customContentTypesModuleActive,
+			fields,
+			siteId
+		} = this.props;
+
+		if ( customContentTypesModuleActive !== false ) {
+			return;
+		}
+
+		if ( ! fields.jetpack_portfolio && ! fields.jetpack_testimonial ) {
+			return;
+		}
+
+		if ( activatingCustomContentTypesModule ) {
+			return;
+		}
+
+		this.props.activateModule( siteId, 'custom-content-types', true );
+	}
+
 	isFormPending() {
 		const {
 			isRequestingSettings,
@@ -29,13 +50,17 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, isDisabled, label ) {
-		const { fields, handleToggle } = this.props;
+	renderToggle( name, label ) {
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleToggle
+		} = this.props;
 		return (
 			<FormToggle
 				className="custom-content-types__module-settings-toggle is-compact"
 				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() || isDisabled }
+				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
@@ -68,39 +93,10 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderModuleToggle() {
-		const {
-			siteId,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
-
-		return (
-			<div>
-				<div className="custom-content-types__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/custom-content-types' } target="_blank">
-							{ translate( 'Learn more about Custom Content Types' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
-				<JetpackModuleToggle
-					siteId={ siteId }
-					moduleSlug="custom-content-types"
-					label={ translate( 'Display different types of content on your site with custom content types.' ) }
-					disabled={ formPending }
-					/>
-			</div>
-		);
-	}
-
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
-		const { customContentTypesModuleActive } = this.props;
-
 		return (
 			<div className="custom-content-types__module-settings is-indented">
-				{ this.renderToggle( fieldName, ! customContentTypesModuleActive, fieldLabel ) }
+				{ this.renderToggle( fieldName, fieldLabel ) }
 				<p className="form-setting-explanation">
 					{ fieldDescription }
 				</p>
@@ -173,7 +169,6 @@ class CustomContentTypes extends Component {
 
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
-						{ this.renderModuleToggle() }
 						{ this.renderTestimonialSettings() }
 						{ this.renderPortfolioSettings() }
 					</FormFieldset>
@@ -205,7 +200,11 @@ export default connect(
 		return {
 			siteId,
 			site,
-			customContentTypesModuleActive: !! isJetpackModuleActive( state, siteId, 'custom-content-types' ),
+			customContentTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
+			activatingCustomContentTypesModule: isActivatingJetpackModule( state, siteId, 'custom-content-types' ),
 		};
+	},
+	{
+		activateModule
 	}
 )( localize( CustomContentTypes ) );
