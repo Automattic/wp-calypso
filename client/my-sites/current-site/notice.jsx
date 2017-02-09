@@ -74,6 +74,23 @@ const SiteNotice = React.createClass( {
 		);
 	},
 
+	freeToPaidPlanNotice() {
+		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
+		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
+		return (
+			<Notice isCompact status="is-success" icon="info-outline">
+				{ this.translate( 'Attract more traffic' ) }
+				<NoticeAction
+					onClick={ this.props.clickFreeToPaidPlanNotice }
+					href={ `/plans/my-plan/${ this.props.site.slug }` }
+				>
+					{ this.translate( 'Upgrade' ) }
+					<TrackComponentView event Name={ eventName } eventProperties={ eventProperties } />
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
 	jetpackPluginsSetupNotice() {
 		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
 			return null;
@@ -103,6 +120,7 @@ const SiteNotice = React.createClass( {
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
+				{ this.freeToPaidPlanNotice() }
 			</div>
 		);
 	}
@@ -121,6 +139,11 @@ export default connect( ( state, ownProps ) => {
 			'calypso_domain_credit_reminder_click', {
 				cta_name: 'current_site_domain_notice'
 			}
-		) )
+		) ),
+		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
+			'calypso_free_to_paid_plan_nudge_click', {
+				cta_name: 'current_site_free_to_paid_plan_nudge_notice'
+			}
+		) ),
 	};
 } )( SiteNotice );
