@@ -14,7 +14,14 @@ import config from 'config';
 export default React.createClass( {
 	displayName: 'StepWrapper',
 
+	propTypes: {
+		hideNavButtons: React.PropTypes.bool
+	},
+
 	renderBack: function() {
+		if ( this.props.hideNavButtons ) {
+			return null;
+		}
 		return (
 			<NavigationLink
 				direction="back"
@@ -28,7 +35,7 @@ export default React.createClass( {
 	},
 
 	renderSkip: function() {
-		if ( this.props.goToNextStep ) {
+		if ( !this.props.hideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
 					direction="forward"
@@ -78,7 +85,7 @@ export default React.createClass( {
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
 					{ config.isEnabled( 'jetpack/connect' )
-						? ( headerButton )
+						? headerButton
 						: null }
 				</StepHeader>
 				<div className="step-wrapper__content is-animated-content">

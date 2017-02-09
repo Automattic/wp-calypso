@@ -18,7 +18,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import analytics from 'lib/analytics';
 
@@ -111,10 +110,6 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="pressable-theme">
-				<StepHeader
-					headerText={ this.translate( 'Upload your WordPress Theme' ) }
-					subHeaderText={ this.translate( 'Our partner Pressable is here to help you' ) }
-				/>
 				{ this.renderThemeForm() }
 				<div className="pressable-theme__back-button-wrapper">
 					<Button compact borderless onClick={ this.props.onBackClick }>

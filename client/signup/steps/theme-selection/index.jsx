@@ -66,13 +66,35 @@ class ThemeSelectionStep extends Component {
 	};
 
 	renderThemesList() {
+
+		const pressableWrapperClassName = classNames( {
+			'theme-selection__pressable-wrapper': true,
+			'is-hidden': ! this.state.showPressable,
+		} );
+
+		const themesWrapperClassName = classNames( {
+			'theme-selection__themes-wrapper': true,
+			'is-hidden': this.state.showPressable,
+		} );
+
 		return (
-			<SignupThemesList
-				surveyQuestion={ this.props.chosenSurveyVertical }
-				designType={ this.props.designType || this.props.signupDependencies.designType }
-				handleScreenshotClick={ this.pickTheme }
-				handleThemeUpload={ this.handleThemeUpload }
-			/>
+			<div className="theme-selection__pressable-substep-wrapper">
+				<div className={ pressableWrapperClassName }>
+					<PressableThemeStep
+						{ ... this.props }
+						onBackClick={ this.handleStoreBackClick }
+					/>
+				</div>
+				<div className={ themesWrapperClassName }>
+					<SignupThemesList
+						className={ themesWrapperClassName }
+						surveyQuestion={ this.props.chosenSurveyVertical }
+						designType={ this.props.designType || this.props.signupDependencies.designType }
+						handleScreenshotClick={ this.pickTheme }
+						handleThemeUpload={ this.handleThemeUpload }
+					/>
+				</div>
+			</div>
 		);
 	}
 
@@ -101,42 +123,27 @@ class ThemeSelectionStep extends Component {
 
 	render = () => {
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
-
-		const pressableWrapperClassName = classNames( {
-			'theme-selection__pressable-wrapper': true,
-			'is-hidden': ! this.state.showPressable,
-		} );
-
-		const themesWrapperClassName = classNames( {
-			'theme-selection__themes-wrapper': true,
-			'is-hidden': this.state.showPressable,
-		} );
-
 		const { translate } = this.props;
 
+		let headerText = translate( 'Choose a theme.' );
+		let subHeaderText = translate( 'No need to overthink it. You can always switch to a different theme later.' );
+
+		if ( this.state.showPressable ) {
+			headerText = translate( 'Upload your WordPress Theme' );
+			subHeaderText = translate( 'Our partner Pressable is here to help you' );
+		}
+
 		return (
-			<div>
-				<div className={ pressableWrapperClassName } >
-					<PressableThemeStep
-						{ ... this.props }
-						onBackClick={ this.handleStoreBackClick }
-					/>
-				</div>
-				<div className={ themesWrapperClassName } >
-					<StepWrapper
-						fallbackHeaderText={ translate( 'Choose a theme.' ) }
-						fallbackSubHeaderText={
-							translate( 'No need to overthink it. You can always switch to a different theme later.' )
-						}
-						subHeaderText={
-							translate( 'Choose a theme. You can always switch to a different theme later.' )
-						}
-						stepContent={ this.renderThemesList() }
-						defaultDependencies={ defaultDependencies }
-						headerButton={ this.renderJetpackButton() }
-						{ ...this.props } />
-					</div>
-			</div>
+			<StepWrapper
+				fallbackHeaderText={ headerText }
+				fallbackSubHeaderText={ subHeaderText }
+				subHeaderText={ subHeaderText }
+				stepContent={ this.renderThemesList() }
+				defaultDependencies={ defaultDependencies }
+				headerButton={ this.renderJetpackButton() }
+				hideNavButtons={ this.state.showPressable }
+				{ ...this.props }
+			/>
 		);
 	}
 }
