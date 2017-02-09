@@ -48,7 +48,7 @@ const messageWithLinks = ( { message, key, links } ) => {
 		let target = null;
 
 		href = addSchemeIfMissing( href, 'http' );
-		if ( isExternal( url ) ) {
+		if ( isExternal( href ) ) {
 			rel = 'noopener noreferrer';
 			target = '_blank';
 		} else if ( typeof window !== 'undefined' ) {
