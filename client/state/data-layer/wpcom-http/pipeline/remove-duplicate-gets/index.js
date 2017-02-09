@@ -28,21 +28,21 @@ export const buildKey = ( { path, apiVersion, query } ) => JSON.stringify( [
 	sortBy( toPairs( query ), head ),
 ] );
 
-export const mergeRequestHandlers = ( a, b ) => ( {
-	onFailure: unionBy( a.onFailure, b.onFailure, isEqual ),
-	onSuccess: unionBy( a.onSuccess, b.onSuccess, isEqual ),
+export const addResponder = ( list, item ) => ( {
+	failures: unionBy( list.failures, compact( [ item.onFailure ] ), isEqual ),
+	successes: unionBy( list.successes, compact( [ item.onSuccess ] ), isEqual ),
 } );
 
 /**
  * @type IngressProcessor
+ * @param {IngressData} ingressData
+ * @returns {IngressData}
  */
 export const removeDuplicateGets = ingressData => {
 	const { nextAction: action } = ingressData;
 	const key = buildKey( action );
-	const queued = requestQueue.get( key );
-	const request = queued
-		? mergeRequestHandlers( queued, action )
-		: { onSuccess: compact( [ action.onSuccess ] ), onFailure: compact( [ action.onFailure ] ) };
+	const queued = requestQueue.get( key ) || { failures: [], successes: [] };
+	const request = addResponder( queued, action );
 
 	requestQueue.set( key, request );
 
