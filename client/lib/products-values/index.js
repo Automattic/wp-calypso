@@ -155,7 +155,7 @@ function isMonthly( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.bill_period === PLAN_MONTHLY_PERIOD;
+	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
 }
 
 function isJpphpBundle( product ) {
