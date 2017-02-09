@@ -372,7 +372,6 @@ export const SeoForm = React.createClass( {
 		} = this.props;
 		const {
 			URL: siteUrl = '',
-			domain = '',
 			slug = '',
 			settings: {
 				blog_public = 1
