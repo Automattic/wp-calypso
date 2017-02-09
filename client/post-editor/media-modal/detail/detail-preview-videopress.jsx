@@ -1,47 +1,100 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import debug from 'debug';
 
 /**
  * Internal dependencies
  */
-const loadScript = require( 'lib/load-script' ).loadScript;
+import loadScript from 'lib/load-script';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewVideoPress',
+/**
+ * Module variables
+ */
+const log = debug( 'calypso:post-editor:videopress' );
 
-	propTypes: {
-		item: React.PropTypes.object.isRequired
-	},
+class EditorMediaModalDetailPreviewVideoPress extends Component {
+	static propTypes = {
+		isPlaying: PropTypes.bool,
+		item: PropTypes.object.isRequired,
+	};
+
+	static defaultProps = {
+		isPlaying: false,
+	};
+
+	constructor() {
+		super();
+
+		this.onScriptLoaded = this.onScriptLoaded.bind( this );
+	}
 
 	componentDidMount() {
 		this.loadInitializeScript();
-	},
+	}
+
+	componentWillUnmount() {
+		this.destroy();
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.item.videopress_guid !== prevProps.item.videopress_guid ) {
+			this.destroy();
 			this.loadInitializeScript();
 		}
-	},
+	}
+
+	shouldComponentUpdate( nextProps ) {
+		if ( this.props.item.videopress_guid !== nextProps.item.videopress_guid ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	setVideoInstance = ref => this.video = ref;
 
 	loadInitializeScript() {
-		loadScript( 'https://videopress.com/videopress-iframe.js' );
-	},
+		loadScript.loadScript( 'https://wordpress.com/wp-content/plugins/video/assets/js/next/videopress.js', this.onScriptLoaded );
+	}
 
-	getEmbedUrl() {
-		return `https://videopress.com/embed/${ this.props.item.videopress_guid }`;
-	},
+	onScriptLoaded( error ) {
+		if ( error ) {
+			log( `Script${ error.src } failed to load.` );
+			return;
+		}
+
+		/* eslint-disable no-undef */
+		this.player = videopress( this.props.item.videopress_guid, this.video, {
+		/* eslint-enable no-undef */
+			autoPlay: this.props.isPlaying,
+			height: this.props.item.height,
+			width: this.props.item.width,
+		} );
+	}
+
+	destroy() {
+		if ( ! this.player ) {
+			return;
+		}
+
+		this.player.destroy();
+
+		// Remove DOM created outside of React.
+		while ( this.video.firstChild ) {
+			this.video.removeChild( this.video.firstChild );
+		}
+	}
 
 	render() {
 		return (
-			<iframe
-				src={ this.getEmbedUrl() }
-				frameBorder="0"
-				width={ this.props.item.width }
-				height={ this.props.item.height }
-				allowFullScreen
-				className="editor-media-modal-detail__preview is-video" />
+			<div
+				className="editor-media-modal-detail__preview is-video"
+				ref={ this.setVideoInstance }>
+			</div>
 		);
 	}
-} );
+}
+
+export default EditorMediaModalDetailPreviewVideoPress;
