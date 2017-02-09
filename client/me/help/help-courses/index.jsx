@@ -41,7 +41,7 @@ function getCourses() {
 					title: i18n.translate( 'Everything You Need to Know About SEO and Marketing for Your Website' ),
 					description: i18n.translate(
 						'You will leave this 60-minute session with a plan for optimizing your site for search engines ' +
-						'and an overview of basic tactics for increasing your traffic. Our Happiness Engineers will provide a' +
+						'and an overview of basic tactics for increasing your traffic. Our Happiness Engineers will provide a ' +
 						'foundation for making sure that your site meets current SEO standards. We\'ll also discuss how to ' +
 						'maximize tools like Google Analytics and Webmaster Tools.'
 					),
