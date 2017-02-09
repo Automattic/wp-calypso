@@ -20,6 +20,7 @@ import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const Plans = React.createClass( {
 	propTypes: {
@@ -29,13 +30,13 @@ const Plans = React.createClass( {
 		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
 		selectedSiteId: React.PropTypes.number,
-		isSiteAutomatedTransfer: React.PropTypes.bool
+		displayJetpackPlans: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			intervalType: 'yearly',
-			isSiteAutomatedTransfer: false
+			displayJetpackPlans: false
 		};
 	},
 
@@ -65,7 +66,7 @@ const Plans = React.createClass( {
 			selectedSite,
 			selectedSiteId,
 			translate,
-			isSiteAutomatedTransfer
+			displayJetpackPlans
 		} = this.props;
 
 		if ( this.props.isPlaceholder ) {
@@ -94,7 +95,7 @@ const Plans = React.createClass( {
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
-							isSiteAutomatedTransfer={ isSiteAutomatedTransfer }
+							displayJetpackPlans={ displayJetpackPlans }
 						/>
 					</div>
 				</Main>
@@ -108,12 +109,15 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const isPlaceholder = ! selectedSiteId;
 
+		const jetpackSite = isJetpackSite( state, selectedSiteId );
+		const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
+
 		return {
 			isPlaceholder,
 			plans: getPlans( state ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId: selectedSiteId,
-			isSiteAutomatedTransfer: isSiteAutomatedTransferSelector( state, selectedSiteId )
+			displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite
 		};
 	}
 )( localize( Plans ) );

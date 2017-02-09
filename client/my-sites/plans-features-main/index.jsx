@@ -28,11 +28,6 @@ import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
 
 class PlansFeaturesMain extends Component {
-
-	isJetpackSite( site, isSiteAutomatedTransfer ) {
-		return ! isSiteAutomatedTransfer && site.jetpack;
-	}
-
 	getPlanFeatures() {
 		const {
 			site,
@@ -43,11 +38,11 @@ class PlansFeaturesMain extends Component {
 			isLandingPage,
 			basePlansPath,
 			selectedFeature,
-			isSiteAutomatedTransfer
+			displayJetpackPlans
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-		if ( this.isJetpackSite( site, isSiteAutomatedTransfer ) && intervalType === 'monthly' ) {
+		if ( displayJetpackPlans && intervalType === 'monthly' ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -68,7 +63,7 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( this.isJetpackSite( site, isSiteAutomatedTransfer ) ) {
+		if ( displayJetpackPlans ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -320,11 +315,11 @@ class PlansFeaturesMain extends Component {
 		const {
 			site,
 			showFAQ,
-			isSiteAutomatedTransfer
+			displayJetpackPlans
 		} = this.props;
 
 		const renderFAQ = () =>
-			this.isJetpackSite( site, isSiteAutomatedTransfer )
+			displayJetpackPlans
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
 
@@ -352,7 +347,7 @@ PlansFeaturesMain.PropTypes = {
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	isSiteAutomatedTransfer: PropTypes.bool
+	displayJetpackPlans: PropTypes.bool
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -361,7 +356,7 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	site: {},
 	showFAQ: true,
-	isSiteAutomatedTransfer: false
+	displayJetpackPlans: false
 };
 
 export default localize( PlansFeaturesMain );
