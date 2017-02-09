@@ -100,16 +100,20 @@ describe( 'helper', () => {
 	} );
 
 	describe( 'getSourceData', () => {
-		it( 'returns null if the post is not a discover post', () => {
-			assert.isNull( helper.getSourceData( fixtures.nonDiscoverPost ) );
+		it( 'returns empty object if the post is not a discover post', () => {
+			assert.deepEqual( {}, helper.getSourceData( fixtures.nonDiscoverPost ) );
 		} );
 
-		it( 'returns null if the post is external', () => {
-			assert.isNull( helper.getSourceData( fixtures.externalDiscoverPost ) );
+		it( 'returns empty object if the post is external', () => {
+			assert.deepEqual( {}, helper.getSourceData( fixtures.externalDiscoverPost ) );
 		} );
 
-		it( 'returns null if the post is a discover site pick', () => {
-			assert.isNull( helper.getSourceData( fixtures.discoverSiteFormat ) );
+		it( 'returns blog id if the post is a discover site pick', () => {
+			const fixtureData = {
+				blogId: get( fixtures.discoverSiteFormat, 'discover_metadata.featured_post_wpcom_data.blog_id' ),
+				postId: undefined,
+			};
+			assert.deepEqual( fixtureData, helper.getSourceData( fixtures.discoverSiteFormat ) );
 		} );
 
 		it( 'returns the post and blog id', () => {

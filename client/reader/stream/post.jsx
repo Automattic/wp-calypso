@@ -17,17 +17,16 @@ import FeedPostStore from 'lib/feed-post-store';
 import smartSetState from 'lib/react-smart-set-state';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import {
-	isDiscoverPost,
 	isDiscoverSitePick,
 	getSourceData as getDiscoverSourceData,
 	discoverBlogId
- } from 'reader/discover/helper';
+} from 'reader/discover/helper';
 
 class ReaderPostCardAdapter extends React.Component {
 
 	onClick = ( postToOpen ) => {
 		let referredPost;
-		if ( this.props.originalPost && isDiscoverPost( this.props.post ) && ! isDiscoverSitePick( this.props.post ) ) {
+		if ( get( this.props, 'discoverPick.post' ) ) {
 			referredPost = { ...postToOpen,
 				referral: {
 					blogId: discoverBlogId,
@@ -57,15 +56,23 @@ class ReaderPostCardAdapter extends React.Component {
 		const {
 			feed_ID: feedId,
 			site_ID: siteId,
-			is_external: isExternal
+			is_external: isExternal,
+			is_discover: isDiscover,
 		} = this.props.post;
+
+		// if this is a discover pick query for the discover pick site
+		let discoverPickSiteId;
+		if ( isDiscover ) {
+			const { blogId } = getDiscoverSourceData( this.props.post );
+			discoverPickSiteId = blogId;
+		}
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
 		return (
 			<ReaderPostCard
 				post={ this.props.post }
-				originalPost={ this.props.originalPost }
+				discoverPick={ this.props.discoverPick }
 				site={ this.props.site }
 				feed={ this.props.feed }
 				onClick={ this.onClick }
@@ -73,9 +80,11 @@ class ReaderPostCardAdapter extends React.Component {
 				isSelected={ this.props.isSelected }
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				followSource={ this.props.followSource }
-				showSiteName={ this.props.showSiteName }>
+				showSiteName={ this.props.showSiteName }
+				isDiscoverStream={ this.props.isDiscoverStream }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+				{ discoverPickSiteId && <QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
 			</ReaderPostCard>
 		);
 	}
@@ -86,10 +95,35 @@ const ConnectedReaderPostCardAdapter = connect(
 		const siteId = get( ownProps, 'post.site_ID' );
 		const isExternal = get( ownProps, 'post.is_external' );
 		const feedId = get( ownProps, 'post.feed_ID' );
+
+		// set up the discover pick
+		let discoverPick = null;
+		if ( get( ownProps, 'post.is_discover' ) ) {
+			// copy discoverPick from feed store
+			const discoverPickPost = get( ownProps, 'discoverPick.post' );
+
+			// limit discover pick site to discover stream
+			if ( ownProps.isDiscoverStream ) {
+				// add discoverPick site from state
+				const { blogId } = getDiscoverSourceData( ownProps.post );
+				const discoverPickSite = blogId ? getSite( state, blogId ) : null;
+
+				if ( discoverPickPost || discoverPickSite ) {
+					discoverPick = {
+						post: discoverPickPost,
+						site: discoverPickSite,
+					};
+				}
+			} else if ( discoverPickPost ) {
+				discoverPick = {
+					post: discoverPickPost
+				};
+			}
+		}
 		return {
 			site: isExternal ? null : getSite( state, siteId ),
 			feed: getFeed( state, feedId ),
-			originalPost: ownProps.originalPost
+			discoverPick,
 		};
 	}
 )( ReaderPostCardAdapter );
@@ -106,13 +140,18 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 
 	getStateFromStores( props = this.props ) {
 		const post = props.post;
-		const nonSiteDiscoverPick = isDiscoverPost( post ) && ! isDiscoverSitePick( post );
+		const nonSiteDiscoverPick = post.is_discover && ! isDiscoverSitePick( post );
 
 		// If it's a discover post (but not a site pick), we want the original post too
-		const originalPost = nonSiteDiscoverPick ? FeedPostStore.get( getDiscoverSourceData( post ) ) : null;
+		let discoverPick = null;
+		if ( nonSiteDiscoverPick ) {
+			discoverPick = {
+				post: FeedPostStore.get( getDiscoverSourceData( post ) )
+			};
+		}
 
 		return {
-			originalPost
+			discoverPick
 		};
 	}
 
@@ -135,6 +174,6 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 	render() {
 		return ( <ConnectedReaderPostCardAdapter
 					{ ...this.props }
-					originalPost={ this.state.originalPost } /> );
+					discoverPick={ this.state.discoverPick } /> );
 	}
 }

@@ -38,12 +38,14 @@ class SiteStream extends React.Component {
 	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
 		className: React.PropTypes.string,
-		showBack: React.PropTypes.bool
+		showBack: React.PropTypes.bool,
+		isDiscoverStream: React.PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showBack: true,
 		className: 'is-site-stream',
+		isDiscoverStream: false,
 	};
 
 	constructor( props ) {
@@ -158,7 +160,8 @@ class SiteStream extends React.Component {
 				listName={ title }
 				emptyContent={ emptyContent }
 				showPostHeader={ false }
-				showSiteNameOnCards={ false }>
+				showSiteNameOnCards={ false }
+				isDiscoverStream={ this.props.isDiscoverStream }>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
 				{ featuredContent }

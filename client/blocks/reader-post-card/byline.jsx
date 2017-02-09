@@ -34,7 +34,6 @@ class PostByline extends React.Component {
 
 	static defaultProps = {
 		isDiscoverPost: false,
-		showSiteName: true
 	}
 
 	recordTagClick = () => {
