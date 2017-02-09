@@ -5,10 +5,6 @@
 .is-reader-page .reader__content,
 .is-reader-page .reader-start {
 	margin-top: 0;
-
-	@include breakpoint( ">660px" ) {
-		margin-top: 30px;
-	}
 }
 
 .is-reader-page .recommended-for-you.main,
