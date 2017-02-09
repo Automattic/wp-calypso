@@ -71,7 +71,6 @@ class SiteSettingsFormWriting extends Component {
 
 				{ this.renderSectionHeader( translate( 'Composing' ) ) }
 				<Composing
-					onSubmitForm={ this.props.handleSubmitForm }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
