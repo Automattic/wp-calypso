@@ -34,8 +34,20 @@ class AfterTheDeadline extends Component {
 		fields: PropTypes.object,
 	};
 
+	state = {
+		advancedOptionsVisible: false,
+	};
+
 	onChangeIgnoredPhrases = ( phrases ) => {
 		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
+	};
+
+	onAdvancedOptionsClick = ( event ) => {
+		event.preventDefault();
+
+		this.setState( {
+			advancedOptionsVisible: ! this.state.advancedOptionsVisible,
+		} );
 	};
 
 	renderToggle( name, isDisabled, label ) {
@@ -177,10 +189,18 @@ class AfterTheDeadline extends Component {
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 
-				{ this.renderProofreadingSection() }
-				{ this.renderAutoLanguageDetectionSection() }
-				{ this.renderEnglishOptionsSection() }
-				{ this.renderIgnoredPhrasesSection() }
+				<a href="#" onClick={ this.onAdvancedOptionsClick }>
+					{ translate( 'Advanced Options' ) }
+				</a>
+
+				{ this.state.advancedOptionsVisible && (
+					<div>
+						{ this.renderProofreadingSection() }
+						{ this.renderAutoLanguageDetectionSection() }
+						{ this.renderEnglishOptionsSection() }
+						{ this.renderIgnoredPhrasesSection() }
+					</div>
+				) }
 			</FormFieldset>
 		);
 	}
