@@ -48,6 +48,7 @@ export default class ReaderPostCard extends React.Component {
 		onClick: noop,
 		onCommentClick: noop,
 		isSelected: false,
+		showSiteName: true,
 	};
 
 	propagateCardClick = () => {
