@@ -15,6 +15,7 @@ import {
 	split,
 	includes,
 	startsWith,
+	trim
 } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -30,8 +31,8 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
-import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 /**
  * Returns a raw site object by its ID.
@@ -63,7 +64,7 @@ export const getSite = createSelector(
 
 		return {
 			...site,
-			...getComputedAttributes( site ),
+			...getComputedAttributes( state, siteId ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			title: getSiteTitle( state, siteId ),
@@ -74,6 +75,33 @@ export const getSite = createSelector(
 	},
 	( state ) => state.sites.items
 );
+
+export function getComputedAttributes( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	const domain = site.URL && withoutHttp( site.URL );
+	const isRedirectOrConflicting = getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId );
+	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
+	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+	const slug = isRedirectOrConflicting ? wpcomUrl : ( domain && domain.replace( /\//g, '::' ) );
+
+	// The 'standard' post format is saved as an option of '0'
+	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
+	if ( defaultPostFormat === null || defaultPostFormat === '0' ) {
+		defaultPostFormat = 'standard';
+	}
+
+	return {
+		title: trim( site.name ) || domain,
+		slug,
+		domain: isRedirectOrConflicting ? slug : domain,
+		options: Object.assign( site.options, {
+			...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
+			default_post_format: defaultPostFormat
+		} ),
+		is_previewable: isSitePreviewable( state, siteId ),
+		is_customizable: canCurrentUser( state, siteId, 'edit_theme_options' )
+	};
+}
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
