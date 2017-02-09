@@ -666,7 +666,7 @@ export default connect(
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
-			forumUrl: selectedSite && getThemeForumUrl( state, id, selectedSite.ID ),
+			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
 		};
 	},
 	{
