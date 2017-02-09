@@ -33,7 +33,7 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 } );
 ```
 
-`<AsyncRequire />` will transform its `require` string prop to a function invoking `asyncRequire` when called.
+`<AsyncLoad />` will transform its `require` string prop to a function invoking `asyncRequire` when called.
 
 ```js
 // Before:
@@ -42,7 +42,7 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 
 // After:
 
-<AsyncLoad require={ function( callback ) { 
+<AsyncLoad require={ function( callback ) {
 	asyncRequire( 'components/accordion', callback );
 } } />
 ```
