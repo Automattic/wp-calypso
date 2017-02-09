@@ -17,8 +17,7 @@ var PageList = require( './page-list' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
 	config = require( 'config' ),
 	notices = require( 'notices' ),
-	Main = require( 'components/main' ),
-	PagesFirstView = require( './first-view' );
+	Main = require( 'components/main' );
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
@@ -68,7 +67,6 @@ module.exports = React.createClass( {
 		};
 		return (
 			<Main classname="pages">
-				<PagesFirstView />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ this.translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
