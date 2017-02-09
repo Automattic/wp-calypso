@@ -37,6 +37,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		label: i18n.translate( 'Purchase', {
 			context: 'verb'
 		} ),
+		extendedLabel: i18n.translate( 'Purchase this design' ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
@@ -51,6 +52,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 
 const activate = {
 	label: i18n.translate( 'Activate' ),
+	extendedLabel: i18n.translate( 'Activate this design' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
 	hideForTheme: ( state, theme, siteId ) => (
@@ -76,6 +78,7 @@ const customize = {
 
 const tryandcustomize = {
 	label: i18n.translate( 'Try & Customize' ),
+	extendedLabel: i18n.translate( 'Try & Customize' ),
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),

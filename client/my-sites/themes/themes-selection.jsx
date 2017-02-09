@@ -113,7 +113,8 @@ const ThemesSelection = React.createClass( {
 		const options = this.props.getOptions( theme );
 		const wrappedPreviewAction = ( action ) => {
 			return ( themeObj ) => {
-				this.props.setPreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+				const defaultAction = ( theme.price && options.purchase ) ? options.purchase : this.props.defaultOption;
+				this.props.setPreviewOptions( defaultAction, this.props.secondaryOption );
 				return action( themeObj );
 			};
 		};

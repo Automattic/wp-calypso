@@ -52,17 +52,7 @@ const ThemePreview = React.createClass( {
 	},
 
 	getPrimaryOption() {
-		const { translate } = this.props;
-		const { purchase } = this.props.options;
-		const { price } = this.props.theme;
-		let { primary } = this.props.previewData.themeOptions;
-		primary.label = translate( 'Activate this design' );
-
-		if ( price && purchase ) {
-			primary = purchase;
-			primary.label = translate( 'Purchase this design' );
-		}
-		return primary;
+		return this.props.previewData.themeOptions.primary;
 	},
 
 	getSecondaryOption() {
@@ -77,7 +67,7 @@ const ThemePreview = React.createClass( {
 		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.theme ) : null;
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref } >
-				{ secondaryButton.label }
+				{ secondaryButton.extendedLabel }
 			</Button>
 		);
 	},
@@ -101,7 +91,7 @@ const ThemePreview = React.createClass( {
 					previewUrl={ this.props.previewUrl } >
 					{ this.renderSecondaryButton() }
 					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
-						{ primaryOption.label }
+						{ primaryOption.extendedLabel }
 					</Button>
 				</WebPreview>
 			</div>
@@ -139,6 +129,7 @@ export default connect(
 				'customize',
 				'separator',
 				'info',
+				'signup',
 				'support',
 				'help',
 			]
