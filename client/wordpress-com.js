@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-var config = require( 'config' );
+const config = require( 'config' );
 
 /**
  * Module variables
  */
-var sections,
-	editorPaths;
+let editorPaths;
 
-sections = [
+const sections = [
 	{
 		name: 'sites',
 		paths: [ '/sites' ],
@@ -251,7 +250,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-post-recomendations',
+		name: 'reader',
 		paths: [ '/recommendations/posts' ],
 		module: 'reader/recommendations',
 		secondary: true,
@@ -259,7 +258,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-recomendations',
+		name: 'reader',
 		paths: [ '/recommendations' ],
 		module: 'reader/recommendations',
 		secondary: true,
@@ -267,7 +266,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'discover',
+		name: 'reader',
 		paths: [ '/discover' ],
 		module: 'reader/discover',
 		secondary: true,
@@ -275,7 +274,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-following',
+		name: 'reader',
 		paths: [ '/following' ],
 		module: 'reader/following',
 		secondary: true,
@@ -283,7 +282,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-tags',
+		name: 'reader',
 		paths: [ '/tags', '/tag' ],
 		module: 'reader/tag-stream',
 		secondary: true,
@@ -291,7 +290,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-activities',
+		name: 'reader',
 		paths: [ '/activities' ],
 		module: 'reader/liked-stream',
 		secondary: true,
@@ -299,7 +298,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-search',
+		name: 'reader',
 		paths: [ '/read/search' ],
 		module: 'reader/search',
 		secondary: true,
@@ -307,7 +306,7 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 
 	sections.push( {
-		name: 'reader-list',
+		name: 'reader',
 		paths: [ '/read/list' ],
 		module: 'reader/list',
 		secondary: true,
@@ -316,7 +315,7 @@ if ( config.isEnabled( 'reader' ) ) {
 
 	if ( config.isEnabled( 'reader/start' ) ) {
 		sections.push( {
-			name: 'reader-start',
+			name: 'reader',
 			paths: [ '/recommendations/start' ],
 			module: 'reader/start',
 			secondary: true,
