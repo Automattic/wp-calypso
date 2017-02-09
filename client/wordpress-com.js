@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-var config = require( 'config' );
+const config = require( 'config' );
 
 /**
  * Module variables
  */
-var sections,
-	editorPaths;
+let editorPaths;
 
-sections = [
+const sections = [
 	{
 		name: 'sites',
 		paths: [ '/sites' ],
@@ -232,98 +231,32 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 	} );
 }
 
-if ( config.isEnabled( 'reader' ) ) {
-	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
-	sections.push( {
-		name: 'reader',
-		paths: [ '/', '/read' ],
-		module: 'reader',
-		secondary: true,
-		group: 'reader',
-	} );
+sections.push( {
+	name: 'reader',
+	paths: [
+		'/',
+		'/read',
+		'/recommendations',
+		'/discover',
+		'/following',
+		'/tags', '/tag',
+		'/activities',
+	],
+	module: 'reader',
+	secondary: true,
+	group: 'reader',
+} );
 
-	sections.push( {
-		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
-		module: 'reader/full-post',
-		secondary: false,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-post-recomendations',
-		paths: [ '/recommendations/posts' ],
-		module: 'reader/recommendations',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-recomendations',
-		paths: [ '/recommendations' ],
-		module: 'reader/recommendations',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'discover',
-		paths: [ '/discover' ],
-		module: 'reader/discover',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-following',
-		paths: [ '/following' ],
-		module: 'reader/following',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-tags',
-		paths: [ '/tags', '/tag' ],
-		module: 'reader/tag-stream',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-activities',
-		paths: [ '/activities' ],
-		module: 'reader/liked-stream',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-search',
-		paths: [ '/read/search' ],
-		module: 'reader/search',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-list',
-		paths: [ '/read/list' ],
-		module: 'reader/list',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	if ( config.isEnabled( 'reader/start' ) ) {
-		sections.push( {
-			name: 'reader-start',
-			paths: [ '/recommendations/start' ],
-			module: 'reader/start',
-			secondary: true,
-			group: 'reader'
-		} );
-	}
-}
+sections.push( {
+	name: 'reader',
+	paths: [
+		'/read/feeds/[^\\/]+/posts/[^\\/]+',
+		'/read/blogs/[^\\/]+/posts/[^\\/]+',
+	],
+	module: 'reader',
+	secondary: false,
+	group: 'reader',
+} );
 
 if ( config.isEnabled( 'vip' ) ) {
 	sections.push( {
