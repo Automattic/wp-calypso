@@ -19,7 +19,6 @@ import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_AUTHORIZE,
 	PUSH_NOTIFICATIONS_BLOCK,
-	PUSH_NOTIFICATIONS_DISMISS_NOTICE,
 	PUSH_NOTIFICATIONS_MUST_PROMPT,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
@@ -150,13 +149,6 @@ function settings( state = {}, action ) {
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
 			return Object.assign( {}, state, {
 				enabled: ! state.enabled
-			} );
-		}
-
-		case PUSH_NOTIFICATIONS_DISMISS_NOTICE: {
-			return Object.assign( {}, state, {
-				dismissedNotice: true,
-				dismissedNoticeAt: ( new Date() ).getTime(),
 			} );
 		}
 
