@@ -11,13 +11,41 @@ import { connect } from 'react-redux';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
 import InfoPopover from 'components/info-popover';
-import { isJetpackModuleActive } from 'state/selectors';
+import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
 
 class CommentDisplaySettings extends Component {
-	shouldEnableSettings() {
-		const { isMarkdownModuleActive, submittingForm } = this.props;
-		return !! submittingForm || ! isMarkdownModuleActive;
+	componentDidUpdate() {
+		const {
+			isActivatingMarkdownModule,
+			isMarkdownModuleActive,
+			fields,
+			siteId
+		} = this.props;
+
+		if ( isMarkdownModuleActive !== false ) {
+			return;
+		}
+
+		if ( ! fields.wpcom_publish_comments_with_markdown ) {
+			return;
+		}
+
+		if ( isActivatingMarkdownModule ) {
+			return;
+		}
+
+		this.props.activateModule( siteId, 'markdown', true );
+	}
+
+	isFormPending() {
+		const {
+			isRequestingSettings,
+			isSavingSettings,
+		} = this.props;
+
+		return isRequestingSettings || isSavingSettings;
 	}
 
 	render() {
@@ -28,8 +56,8 @@ class CommentDisplaySettings extends Component {
 		} = this.props;
 
 		return (
-			<div className="markdown-toggle">
-				<div className="markdown-toggle__info-link-container">
+			<div className="comment-markdown-toggle">
+				<div className="comment-markdown-toggle__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank">
 							{ this.props.translate( 'Learn more about markdown' ) }
@@ -38,7 +66,7 @@ class CommentDisplaySettings extends Component {
 				</div>
 				<CompactFormToggle
 					checked={ !! fields.wpcom_publish_comments_with_markdown }
-					disabled={ this.shouldEnableSettings() }
+					disabled={ this.isFormPending() }
 					onChange={ handleToggle( 'wpcom_publish_comments_with_markdown' ) }>
 					<span>{ translate( 'Enable Markdown for comments.' ) }</span>
 				</CompactFormToggle>
@@ -49,11 +77,15 @@ class CommentDisplaySettings extends Component {
 
 export default connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+		const siteId = getSelectedSiteId( state );
 
 		return {
-			selectedSiteId,
-			isMarkdownModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'markdown' ),
+			siteId,
+			isMarkdownModuleActive: isJetpackModuleActive( state, siteId, 'markdown' ),
+			isActivatingMarkdownModule: isActivatingJetpackModule( state, siteId, 'markdown' ),
 		};
+	},
+	{
+		activateModule
 	}
 )( localize( CommentDisplaySettings ) );
