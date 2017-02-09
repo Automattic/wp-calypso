@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect;
-
+import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-var route = require( '../' );
+import * as route from '../';
+import config from 'config';
 
 describe( 'index', function() {
 	describe( 'getStreamUrlFromPost', function() {
@@ -25,7 +25,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should return pretty URL for discover', function() {
-			expect( route.getSiteUrl( 53424024 ) ).to.equal( '/discover' );
+			expect( route.getSiteUrl( config( 'discover_blog_id' ) ) ).to.equal( '/discover' );
 		} );
 	} );
 
@@ -35,7 +35,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should return pretty URL for discover', function() {
-			expect( route.getFeedUrl( 12733228 ) ).to.equal( '/discover' );
+			expect( route.getFeedUrl( config( 'discover_feed_id' ) ) ).to.equal( '/discover' );
 		} );
 	} );
 } );

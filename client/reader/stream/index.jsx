@@ -119,6 +119,7 @@ class ReaderStream extends React.Component {
 		cardFactory: PropTypes.func,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
+		isDiscoverStream: PropTypes.bool,
 	}
 
 	static defaultProps = {
@@ -129,7 +130,8 @@ class ReaderStream extends React.Component {
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
-		showMobileBackToSidebar: true
+		showMobileBackToSidebar: true,
+		isDiscoverStream: false,
 	};
 
 	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
@@ -443,7 +445,6 @@ class ReaderStream extends React.Component {
 			store: this.props.postsStore,
 			index,
 		} );
-
 		return <PostLifecycle
 			key={ itemKey }
 			ref={ itemKey }
@@ -455,6 +456,7 @@ class ReaderStream extends React.Component {
 			showPostHeader={ this.props.showPostHeader }
 			showFollowInHeader={ this.props.showFollowInHeader }
 			showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
+			isDiscoverStream={ this.props.isDiscoverStream }
 			showSiteName={ this.props.showSiteNameOnCards }
 			cardClassForPost={ this.cardClassForPost }
 			followSource={ this.props.followSource }
