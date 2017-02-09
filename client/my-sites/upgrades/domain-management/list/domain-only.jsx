@@ -25,6 +25,7 @@ const DomainOnly = ( { domainName, siteId, translate } ) => (
 DomainOnly.propTypes = {
 	domainName: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,
+	siteId: PropTypes.number.isRequired,
 };
 
 export default localize( DomainOnly );
