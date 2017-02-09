@@ -373,7 +373,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
+		require( 'lib/olark' ).initialize( reduxStore.dispatch );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
