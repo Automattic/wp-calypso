@@ -8,3 +8,100 @@
 	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
 	z-index: z-index( 'root', '.reader-following-search' );
 }
+
+.following__intro {
+	background: url( '/calypso/images/reader/reader-intro-background.jpg' );
+	background-position: 100% 0;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	+ .following__search {
+		margin-top: 30px;
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 8px;
+		}
+	}
+
+	@media ( max-width: 900px ) {
+		background-position: 75% 0;
+	}
+}
+
+.following__intro-header {
+	display: flex;
+	width: 100%;
+}
+
+.following__intro-close {
+	position: relative;
+	margin-left: auto;
+	margin-top: 8px;
+	margin-right: 8px;
+	height: 24px;
+	width: 24px;
+
+	.following__intro-close-icon {
+		position: absolute;
+		z-index: z-index( 'root', '.following__intro-close-icon' );
+		fill: $white;
+
+		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
+		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
+		transform: scale( 1 );
+
+		&:hover {
+			cursor: pointer;
+			fill: darken( #62a9a7, 15% );
+		}
+
+		&:hover + .following__intro-close-icon-bg {
+			background-color: lighten( #62a9a7, 50% );
+			box-shadow: 0 0 0 2px lighten( #62a9a7, 40% );
+		}
+	}
+
+	.following__intro-close-icon-bg {
+		display: block;
+		position: absolute;
+		height: 20px;
+		width: 20px;
+		top: 2px;
+		left: 2px;
+		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
+		background-color: #5ca8a6;
+		border-radius: 10px;
+	}
+}
+
+.following__intro-copy {
+	color: $white;
+	font-size: 16px;
+	margin-left: 24px;
+	margin-top: 23px;
+	margin-bottom: 24px;
+	max-width: 69%;
+	text-shadow: 1px 1px 1px rgba( 0, 0, 0, 0.1 );
+
+	a {
+		color: #f3db51;
+		border-bottom: 1px #f3db51 solid;
+
+		&:hover {
+			color: $white;
+			border-bottom: 1px $white solid;
+		}
+	}
+
+	@media ( max-width: 900px ) {
+		max-width: 64%;
+	}
+
+	@include breakpoint( "<660px" ) {
+
+		.following__intro-copy-hidden {
+			display: none;
+			visibility: hidden;
+		}
+	}
+}

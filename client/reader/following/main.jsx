@@ -15,6 +15,7 @@ import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
+import FollowingIntro from './intro';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -32,6 +33,7 @@ const FollowingStream = ( props ) => {
 
 	return (
 		<Stream { ...props }>
+			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
