@@ -179,19 +179,9 @@ module.exports = {
 
 	site: function( context, next ) {
 		let siteId = context.params.site_id;
-		const siteFragment = route.getSiteFragment( context.path );
+		const filters = getSiteFilters( siteId );
 		const queryOptions = context.query;
-		const filters = getSiteFilters.bind( null, siteId );
 		let date;
-		const charts = function() {
-			return [
-				{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible',
-					label: i18n.translate( 'Views', { context: 'noun' } ) },
-				{ attr: 'visitors', gridicon: 'user', label: i18n.translate( 'Visitors', { context: 'noun' } ) },
-				{ attr: 'likes', gridicon: 'star', label: i18n.translate( 'Likes', { context: 'noun' } ) },
-				{ attr: 'comments', gridicon: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
-			];
-		};
 		let chartTab;
 		let period;
 		let siteOffset = 0;
@@ -209,11 +199,11 @@ module.exports = {
 		}
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
-		const activeFilter = find( filters(), ( filter ) => {
+		const activeFilter = find( filters, ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
 		} );
 
-		if ( ! siteFragment || ! activeFilter ) {
+		if ( ! activeFilter ) {
 			next();
 		} else {
 			if ( 0 === siteId ) {
@@ -258,21 +248,13 @@ module.exports = {
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
 			period = rangeOfPeriod( activeFilter.period, date );
-
 			chartTab = queryOptions.tab || 'views';
 
-			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
-					? currentSite.slug : siteFragment;
-
 			const siteComponentChildren = {
-				slug: siteDomain,
 				path: context.pathname,
 				date,
-				charts,
 				chartTab,
 				context,
-				sites,
-				siteId,
 				period,
 			};
 
