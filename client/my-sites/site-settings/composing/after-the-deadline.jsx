@@ -71,13 +71,13 @@ class AfterTheDeadline extends Component {
 
 				{
 					this.renderToggle( 'onpublish', ! afterTheDeadlineModuleActive, translate(
-						'a post or page is first published'
+						'Posts or pages are first published'
 					) )
 				}
 
 				{
 					this.renderToggle( 'onupdate', ! afterTheDeadlineModuleActive, translate(
-						'a post or page is updated'
+						'Posts or pages are updated'
 					) )
 				}
 			</div>
