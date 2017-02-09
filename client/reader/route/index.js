@@ -10,11 +10,13 @@ const SITE_URL_BASE = '/read/blogs/';
 const DISCOVER_SITE_ID = config( 'discover_blog_id' );
 const DISCOVER_FEED_ID = config( 'discover_feed_id' );
 
-const prettyFeedUrls = {};
-prettyFeedUrls[ DISCOVER_FEED_ID ] = '/discover';
+const prettyFeedUrls = {
+	[ DISCOVER_FEED_ID ]: '/discover'
+};
 
-const prettySiteUrls = {};
-prettySiteUrls[ DISCOVER_SITE_ID ] = '/discover';
+const prettySiteUrls = {
+	[ DISCOVER_SITE_ID ]: '/discover'
+};
 
 export function getPrettySiteUrl( siteID ) {
 	return prettySiteUrls[ siteID ];
