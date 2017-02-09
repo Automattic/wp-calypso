@@ -9,6 +9,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import DateTimeFormatOptions from './date-time-format-options';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -26,6 +27,7 @@ export const DateTimeFormat = ( { translate, site } ) => {
 					{ translate( 'Date and Time Format' ) }
 				</h1>
 			</HeaderCake>
+			<DateTimeFormatOptions />
 		</div>
 	);
 };
