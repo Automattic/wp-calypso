@@ -30,8 +30,8 @@ export class PeopleListItem extends PureComponent {
 	};
 
 	canLinkToProfile = () => {
-		const site = this.props.site,
-			user = this.props.user;
+		const { props } = this;
+		const { site, user } = props;
 		return (
 			config.isEnabled( 'manage/edit-user' ) &&
 			user &&
