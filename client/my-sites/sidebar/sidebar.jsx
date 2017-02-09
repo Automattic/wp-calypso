@@ -190,7 +190,7 @@ export class MySitesSidebar extends Component {
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			themesLink;
 
-		if ( site && ! site.isCustomizable() ) {
+		if ( site && ! site.is_customizable ) {
 			return null;
 		}
 
