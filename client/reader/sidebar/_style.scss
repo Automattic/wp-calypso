@@ -3,6 +3,10 @@
 
 	overflow-x: hidden;
 
+	@include breakpoint( "<660px" ) {
+		z-index: z-index( 'root', '.reader-mobile-sidebar' );
+	}
+
 	.sidebar__menu {
 		margin-bottom: 8px;
 
