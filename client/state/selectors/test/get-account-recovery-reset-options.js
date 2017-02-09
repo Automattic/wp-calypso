@@ -6,9 +6,9 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryPasswordResetOptions } from '../';
+import { getAccountRecoveryResetOptions } from '../';
 
-describe( 'getAccountRecoveryPasswordResetOptions()', () => {
+describe( 'getAccountRecoveryResetOptions()', () => {
 	it( 'should return the items array under accountRecovery/reset substate tree.', () => {
 		const resetOptionItems = [
 			{
@@ -31,6 +31,6 @@ describe( 'getAccountRecoveryPasswordResetOptions()', () => {
 			},
 		};
 
-		assert.deepEqual( getAccountRecoveryPasswordResetOptions( state ), resetOptionItems );
+		assert.deepEqual( getAccountRecoveryResetOptions( state ), resetOptionItems );
 	} );
 } );
