@@ -70,7 +70,8 @@ function loadInitialStateFailed( error ) {
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
-	reduxStore.subscribe( throttle( function() {
+
+	const throttledSaveState = throttle( function() {
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -82,7 +83,13 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
-	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
+	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } );
+
+	if ( global.window ) {
+		global.window.addEventListener( 'beforeunload', throttledSaveState.flush );
+	}
+
+	reduxStore.subscribe( throttledSaveState );
 
 	return reduxStore;
 }
