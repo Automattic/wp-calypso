@@ -22,7 +22,7 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { removeNotice, errorNotice } from 'state/notices/actions';
-import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
@@ -66,6 +66,7 @@ class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			jetpackManagementUrl,
 			jetpackModuleActive,
 			jetpackVersionSupportsModule,
 			showUpgradeNudge,
@@ -112,7 +113,7 @@ class GoogleAnalyticsForm extends Component {
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) } >
-						<NoticeAction href={ '//' + site.domain + '/wp-admin/admin.php?page=jetpack#/engagement' }>
+						<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
 							{ translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -197,6 +198,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const isGoogleAnalyticsEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
@@ -211,6 +213,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
+		jetpackManagementUrl,
 		jetpackModuleActive,
 		jetpackVersionSupportsModule,
 	};
