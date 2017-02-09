@@ -105,10 +105,13 @@ const previewOnJetpack = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
+const signupLabel = i18n.translate( 'Pick this design', {
+	comment: 'when signing up for a WordPress.com account with a selected theme'
+} );
+
 const signup = {
-	label: i18n.translate( 'Pick this design', {
-		comment: 'when signing up for a WordPress.com account with a selected theme'
-	} ),
+	label: signupLabel,
+	extendedLabel: signupLabel,
 	getUrl: getSignupUrl
 };
 
