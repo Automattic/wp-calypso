@@ -24,7 +24,6 @@ describe( 'PeopleListSectionHeader', function() {
 		configMock = sinon.stub();
 		configMock.isEnabled = sinon.stub();
 		mockery.registerMock( 'config', configMock );
-		mockery.registerMock( 'lib/analytics', {} );
 	} );
 
 	before( function() {
