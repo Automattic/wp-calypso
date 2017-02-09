@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 						prices: { USD: 129, AUD: 169 },
 						is_domain_registration: false,
 						description: 'Guided Transfer',
-						cost: 129,
+						cost: '129',
 						cost_display: '$129',
 					}
 				} );
@@ -88,7 +88,7 @@ describe( 'reducer', () => {
 						prices: { USD: 129, AUD: 169 },
 						is_domain_registration: false,
 						description: 'Guided Transfer',
-						cost: 129,
+						cost: '129',
 						cost_display: '$129',
 					}
 				} );
