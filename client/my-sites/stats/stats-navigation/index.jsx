@@ -14,6 +14,8 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import Banner from 'components/banner';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
 
 const StatsNavigation = ( props ) => {
 	const { translate, section, slug } = props;
@@ -27,26 +29,33 @@ const StatsNavigation = ( props ) => {
 	};
 
 	return (
-		<SectionNav selectedText={ sectionTitles[ section ] }>
-			<NavTabs label={ translate( 'Stats' ) }>
-				<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
-					{ sectionTitles.insights }
-				</NavItem>
-				<NavItem path={ '/stats/day' + siteFragment } selected={ section === 'day' }>
-					{ sectionTitles.day }
-				</NavItem>
-				<NavItem path={ '/stats/week' + siteFragment } selected={ section === 'week' }>
-					{ sectionTitles.week }
-				</NavItem>
-				<NavItem path={ '/stats/month' + siteFragment } selected={ section === 'month' }>
-					{ sectionTitles.month }
-				</NavItem>
-				<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
-					{ sectionTitles.year }
-				</NavItem>
-			</NavTabs>
-			<FollowersCount />
-		</SectionNav>
+		<div>
+			<Banner
+				event="free-to-paid-stats-nudge"
+				plan={ PLAN_PERSONAL }
+				title="Upgrade to attract more traffic"
+			/>
+			<SectionNav selectedText={ sectionTitles[ section ] }>
+				<NavTabs label={ translate( 'Stats' ) }>
+					<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
+						{ sectionTitles.insights }
+					</NavItem>
+					<NavItem path={ '/stats/day' + siteFragment } selected={ section === 'day' }>
+						{ sectionTitles.day }
+					</NavItem>
+					<NavItem path={ '/stats/week' + siteFragment } selected={ section === 'week' }>
+						{ sectionTitles.week }
+					</NavItem>
+					<NavItem path={ '/stats/month' + siteFragment } selected={ section === 'month' }>
+						{ sectionTitles.month }
+					</NavItem>
+					<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
+						{ sectionTitles.year }
+					</NavItem>
+				</NavTabs>
+				<FollowersCount />
+			</SectionNav>
+		</div>
 	);
 };
 
