@@ -4,6 +4,7 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/omit' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,12 +12,12 @@ var React = require( 'react' ),
 var PostListFetcher = require( 'components/post-list-fetcher' ),
 	Page = require( './page' ),
 	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus;
+import { getSelectedSite } from 'state/ui/selectors';
 
 import BlogPostsPage from './blog-posts-page';
 
@@ -27,7 +28,6 @@ var PageList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
 		siteID: React.PropTypes.any
 	},
 
@@ -50,7 +50,7 @@ var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
-	mixins: [ infiniteScroll( 'fetchPages' ), observe( 'sites' ) ],
+	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
@@ -59,8 +59,9 @@ var Pages = React.createClass( {
 		page: React.PropTypes.number.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
+		site: React.PropTypes.object,
 		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
+		status: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired
 	},
@@ -73,6 +74,7 @@ var Pages = React.createClass( {
 			lastPage: false,
 			page: 0,
 			posts: [],
+			status: 'published',
 			trackScrollPage: function() {}
 		};
 	},
@@ -139,8 +141,7 @@ var Pages = React.createClass( {
 					line: this.translate( 'Please check your internet connection.' )
 				};
 			} else {
-				const status = this.props.status || 'published';
-				switch ( status ) {
+				switch ( this.props.status ) {
 					case 'drafts':
 						attributes = {
 							title: this.translate( 'You don\'t have any drafts.' ),
@@ -202,7 +203,7 @@ var Pages = React.createClass( {
 			rows = [];
 
 		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( pages.length && this.props.sites.initialized ) {
+		if ( pages.length ) {
 			if ( ! this.props.search ) {
 				// we're listing in reverse chrono. use the markers.
 				pages = this._insertTimeMarkers( pages );
@@ -211,12 +212,10 @@ var Pages = React.createClass( {
 				if ( ! ( 'site_ID' in page ) ) {
 					return page;
 				}
-					// Get the site the page belongs to
-				var site = this.props.sites.getSite( page.site_ID );
 
 					// Render each page
 				return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
+						<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteID === false } />
 					);
 			}, this );
 
@@ -224,18 +223,15 @@ var Pages = React.createClass( {
 				this.addLoadingRows( rows, 1 );
 			}
 
-			const site = this.props.sites.getSelectedSite();
-			const status = this.props.status || 'published';
-
-			if ( site && status === 'published' ) {
+			if ( this.props.site && 'published' === this.props.status ) {
 				rows.push(
 					<BlogPostsPage
 						key="blog-posts-page"
-						site={ site }
+						site={ this.props.site }
 					/>
 				);
 			}
-		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
+		} else if ( ( ! this.props.loading ) ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
 		} else {
 			this.addLoadingRows( rows, 1 );
@@ -250,4 +246,8 @@ var Pages = React.createClass( {
 	}
 } );
 
-module.exports = PageList;
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+	} ),
+)( PageList );

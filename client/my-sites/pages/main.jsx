@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:pages:pages' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,48 +13,51 @@ var PageList = require( './page-list' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
 	Search = require( 'components/search' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
 	config = require( 'config' ),
 	notices = require( 'notices' ),
 	Main = require( 'components/main' ),
 	PagesFirstView = require( './first-view' );
+import { getSelectedSite } from 'state/ui/selectors';
+import QuerySites from 'components/data/query-sites';
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
-module.exports = React.createClass( {
+const Pages = React.createClass( {
 
 	displayName: 'Pages',
 
-	mixins: [ observe( 'sites' ), URLSearch ],
+	mixins: [ URLSearch ],
 
 	propTypes: {
-		trackScrollPage: React.PropTypes.func.isRequired
+		perPage: React.PropTypes.number,
+		site: React.PropTypes.object,
+		status: React.PropTypes.string,
+		trackScrollPage: React.PropTypes.func.isRequired,
 	},
 
 	getDefaultProps: function() {
 		return {
-			perPage: 20
+			perPage: 20,
+			status: 'published',
 		};
 	},
 
 	componentWillMount: function() {
-		var selectedSite = this.props.sites.getSelectedSite();
-		this._setWarning( selectedSite );
+		this._setWarning( this.props.site );
 	},
 
 	componentDidMount: function() {
 		debug( 'Pages React component mounted.' );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		var selectedSite = nextProps.sites.getSelectedSite();
-		this._setWarning( selectedSite );
+	componentWillReceiveProps: function( { site } ) {
+		this._setWarning( site );
 	},
 
 	render: function() {
-		const status = this.props.status || 'published';
+		const { status } = this.props;
 		const filterStrings = {
 			published: this.translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
@@ -68,6 +72,7 @@ module.exports = React.createClass( {
 		};
 		return (
 			<Main classname="pages">
+				<QuerySites allSites={ true } />
 				<PagesFirstView />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
@@ -90,7 +95,8 @@ module.exports = React.createClass( {
 	},
 
 	getNavItems( filterStrings, currentStatus ) {
-		const siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '';
+		const siteFilter = this.props.site ? '/' + this.props.site.slug : '';
+
 		return statuses.map( function( status ) {
 			let path = `/pages${ siteFilter }`;
 			if ( status !== 'publish' ) {
@@ -116,3 +122,9 @@ module.exports = React.createClass( {
 		}
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+	} ),
+)( Pages );

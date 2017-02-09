@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
+var route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
@@ -27,19 +26,15 @@ var controller = {
 			analyticsPageTitle = 'Pages',
 			baseAnalyticsPath;
 
-		status = ( ! status || status === siteID ) ? '' : status;
 		context.store.dispatch( setTitle( i18n.translate( 'Pages', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+
+		status = ( ! status || status === siteID ) ? 'published' : status;
+		analyticsPageTitle += ' > ' + titlecase( status );
 
 		if ( siteID ) {
 			baseAnalyticsPath = basePath + '/:site';
 		} else {
 			baseAnalyticsPath = basePath;
-		}
-
-		if ( status.length ) {
-			analyticsPageTitle += ' > ' + titlecase( status );
-		} else {
-			analyticsPageTitle += ' > Published';
 		}
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
@@ -49,7 +44,6 @@ var controller = {
 				context: context,
 				siteID: siteID,
 				status: status,
-				sites: sites,
 				search: search,
 				trackScrollPage: trackScrollPage.bind(
 					null,

@@ -26,7 +26,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasStaticFrontPage } from 'state/sites/selectors';
+import { getSite, hasStaticFrontPage } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -442,6 +442,7 @@ export default connect(
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+			site: getSite( state, props.page.site_ID ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {
