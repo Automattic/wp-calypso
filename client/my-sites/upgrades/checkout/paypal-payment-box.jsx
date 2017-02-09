@@ -79,10 +79,18 @@ module.exports = React.createClass( {
 			disabled: true
 		} );
 
+		let cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			cancelUrl += this.props.selectedSite.slug;
+		} else {
+			cancelUrl += 'no-site';
+		}
+
 		dataForApi = assign( {}, this.state, {
 			successUrl: origin + this.props.redirectTo(),
-			cancelUrl: origin + '/checkout/' + this.props.selectedSite.slug,
-			cart: cart,
+			cancelUrl,
+			cart,
 			domainDetails: transaction.domainDetails
 		} );
 
