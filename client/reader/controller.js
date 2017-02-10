@@ -23,7 +23,7 @@ import {
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import ReaderSidebarComponent from 'reader/sidebar';
+import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
@@ -128,9 +128,9 @@ module.exports = {
 
 	sidebar( context, next ) {
 		renderWithReduxStore(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( ReaderSidebarComponent, { path: context.path } )
-			),
+			<ReduxProvider store={ context.store }>
+				<AsyncLoad require="reader/sidebar" path={ context.path } />
+			</ReduxProvider>,
 			document.getElementById( 'secondary' ),
 			context.store
 		);
