@@ -79,9 +79,32 @@ class SharingConnection extends Component {
 		};
 	}
 
+	componentWillMount() {
+		this.fetchKeyringUser();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId || nextProps.connection !== this.props.connection ) {
+			this.fetchKeyringUser();
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( this.state.isSavingSitewide && this.props.connection.shared !== prevProps.connection.shared ) {
 			this.setState( { isSavingSitewide: false } );
+		}
+	}
+
+	fetchKeyringUser() {
+		if ( ! this.props.siteId || ! this.props.connection.keyring_connection_user_ID ) {
+			return;
+		}
+
+		const keyringUser = UsersStore.getUser( this.props.siteId, this.props.connection.keyring_connection_user_ID );
+
+		if ( ! keyringUser ) {
+			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.connection.keyring_connection_user_ID );
+			UsersStore.once( 'change', () => this.forceUpdate() );
 		}
 	}
 
@@ -130,11 +153,6 @@ class SharingConnection extends Component {
 		const { connection, siteId, translate, userId } = this.props;
 
 		const keyringUser = UsersStore.getUser( siteId, connection.keyring_connection_user_ID );
-
-		if ( ! keyringUser ) {
-			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.connection.keyring_connection_user_ID );
-			UsersStore.once( 'change', () => this.forceUpdate() );
-		}
 
 		if ( keyringUser && userId !== keyringUser.ID ) {
 			return (
