@@ -106,7 +106,7 @@ if ( CALYPSO_ENV === 'desktop' ) {
 	webpackConfig.plugins.push(
 		new webpack.DllReferencePlugin( {
 			context: path.join( __dirname, 'client' ),
-			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
+			manifest: require( './build/dll/vendor-manifest.json' )
 		} )
 	);
 
@@ -169,7 +169,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
-	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
+	webpackConfig.entry.build = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
 		path.join( __dirname, 'client', 'boot' )
@@ -189,7 +189,7 @@ if ( CALYPSO_ENV === 'development' ) {
 		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 	}
 } else {
-	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot' );
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }

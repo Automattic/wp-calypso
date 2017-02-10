@@ -22,21 +22,20 @@ const extensionSections = extensions.map( extension => {
 	}
 } );
 
-if ( config.isEnabled( 'devdocs' ) ) {
-	sections.push( {
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'devdocs',
-		secondary: true,
-		enableLoggedOut: true
-	} );
+sections.push( {
+	name: 'devdocs',
+	paths: [ '/devdocs' ],
+	module: 'devdocs',
+	secondary: true,
+	enableLoggedOut: true
+} );
 
-	sections.push( {
-		name: 'devdocs',
-		paths: [ '/devdocs/start' ],
-		module: 'devdocs',
-		secondary: false,
-		enableLoggedOut: true
-	} );
-}
+sections.push( {
+	name: 'devdocs',
+	paths: [ '/devdocs/start' ],
+	module: 'devdocs',
+	secondary: false,
+	enableLoggedOut: true
+} );
+
 module.exports = sections.concat( extensionSections.filter( Boolean ) );

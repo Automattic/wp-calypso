@@ -60,7 +60,7 @@ var webpackConfig = {
 	target: 'node',
 	output: {
 		path: path.join( __dirname, 'build' ),
-		filename: 'bundle-' + ( process.env.CALYPSO_ENV || 'development' ) + '.js',
+		filename: 'bundle.js',
 	},
 	module: {
 		loaders: [

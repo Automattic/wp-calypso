@@ -95,6 +95,7 @@ export function serverRender( req, res ) {
 	}
 
 	context.head = { title, metas, links };
+	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop.jade', context );
