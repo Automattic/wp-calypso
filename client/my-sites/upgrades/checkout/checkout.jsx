@@ -190,6 +190,9 @@ const Checkout = React.createClass( {
 			}
 		} = this.props;
 
+		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
+		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+
 		if ( cartItems.hasRenewalItem( cart ) ) {
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 
@@ -199,15 +202,16 @@ const Checkout = React.createClass( {
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog && ! cartItems.hasPlan( cart ) ) {
-			return domainManagementList( map( values( receipt.purchases )[ 0 ], 'meta' )[ 0 ] );
+			if ( isEmpty( receipt.failed_purchases ) ) {
+				return domainManagementList( map( values( receipt.purchases )[ 0 ], 'meta' )[ 0 ] );
+			}
+
+			return '/start/domain-first';
 		}
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
 		}
-
-		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
@@ -278,7 +282,7 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) ) {
+		if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && isEmpty( receipt.failed_purchases ) ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
