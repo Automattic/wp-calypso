@@ -113,7 +113,14 @@ const ThemesSelection = React.createClass( {
 		const options = this.props.getOptions( theme );
 		const wrappedPreviewAction = ( action ) => {
 			return ( themeObj ) => {
-				const defaultAction = ( theme.price && options.purchase ) ? options.purchase : this.props.defaultOption;
+				let defaultAction;
+				if ( this.props.isThemeActive ) {
+					defaultAction = options.customize;
+				} else if ( theme.price && options.purchase ) {
+					defaultAction = options.purchase;
+				} else {
+					defaultAction = this.props.defaultAction;
+				}
 				this.props.setPreviewOptions( defaultAction, this.props.secondaryOption );
 				return action( themeObj );
 			};

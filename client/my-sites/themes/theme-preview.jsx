@@ -11,7 +11,12 @@ import noop from 'lodash/noop';
 import Button from 'components/button';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
-import { getThemeForPreviewData, getTheme, getThemePreviewState } from 'state/themes/selectors';
+import {
+	getThemeForPreviewData,
+	getTheme,
+	getThemePreviewState,
+	isThemeActive
+} from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -24,6 +29,7 @@ const ThemePreview = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.object,
+		isActive: React.PropTypes.bool,
 		showPreview: React.PropTypes.bool,
 		showExternal: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
@@ -56,7 +62,8 @@ const ThemePreview = React.createClass( {
 	},
 
 	getSecondaryOption() {
-		return this.props.previewData.themeOptions.secondary;
+		const { isActive } = this.props;
+		return isActive ? null : this.props.previewData.themeOptions.secondary;
 	},
 
 	renderSecondaryButton() {
@@ -120,6 +127,7 @@ export default connect(
 			isJetpack,
 			previewData,
 			showPreview,
+			isActive: isThemeActive( state, theme.id, siteId ),
 			previewUrl: getPreviewUrl( theme ),
 			options: [
 				'activate',

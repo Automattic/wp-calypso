@@ -69,6 +69,7 @@ const deleteTheme = {
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
+	extendedLabel: i18n.translate( 'Customize this design'),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
@@ -94,7 +95,6 @@ const preview = {
 		comment: 'label for previewing the theme demo website'
 	} ),
 	action: ( themeId ) => requestPreview( themeId, 'wpcom' ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
 const previewOnJetpack = {
@@ -102,7 +102,6 @@ const previewOnJetpack = {
 		comment: 'label for previewing the theme demo website'
 	} ),
 	action: ( themeId, siteId ) => requestPreview( themeId, siteId ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
 const signupLabel = i18n.translate( 'Pick this design', {
