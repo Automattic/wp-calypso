@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debug from 'debug';
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 
@@ -59,10 +60,13 @@ import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
+const log = debug( 'calypso:state:reducers' );
+
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
+
+let reducers = {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -111,7 +115,34 @@ export const reducer = combineReducers( {
 	ui,
 	users,
 	wordads,
-} );
+};
+
+export function addReducer( name, reducer ) {
+	if ( reducerExists( name ) ) {
+		throw new Error( 'addReducer(): name "' + name + '" already in use' );
+	}
+
+	reducers = { ...reducers, [ name ]: reducer };
+}
+
+export function removeReducer( name ) {
+	const { [ name ]: removedReducer, ...remainingReducers } = reducers;
+
+	if ( ! removedReducer ) {
+		log( 'removeReducer(): name not found' );
+		return;
+	}
+
+	reducers = remainingReducers;
+}
+
+export function reducerExists( name ) {
+	return ( reducers[ name ] !== undefined );
+}
+
+// TODO: See if this export can be eliminated.
+// We probably shouldn't be accessing the reducers directly like this.
+export const reducer = combineReducers( reducers );
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
@@ -134,3 +165,4 @@ export function createReduxStore( initialState = {} ) {
 
 	return compose( ...enhancers )( createStore )( reducer, initialState );
 }
+

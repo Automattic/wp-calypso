@@ -3,16 +3,44 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import { createReduxStore } from '../';
+import { createReduxStore, addReducer, removeReducer, reducerExists } from '../';
 import currentUser from 'state/current-user/reducer';
 
+const should = chai.should();
+
 describe( 'index', () => {
+	describe( 'addReducer', () => {
+		const name = 'myReducer';
+		const func = () => {};
+
+		it( 'should add and remove a reducer by name', () => {
+			should.equal( reducerExists( name ), false );
+
+			addReducer( name, func );
+			should.equal( reducerExists( name ), true );
+
+			removeReducer( name );
+			should.equal( reducerExists( name ), false );
+		} );
+
+		it( 'should throw when trying to add a reducer with an existing name', () => {
+			const addFunc = () => {
+				addReducer( name, func );
+			};
+
+			expect( addFunc ).to.not.throw( Error );
+			should.equal( reducerExists( name ), true );
+
+			expect( addFunc ).to.throw( Error );
+		} );
+	} );
+
 	describe( 'createReduxStore', () => {
 		it( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
