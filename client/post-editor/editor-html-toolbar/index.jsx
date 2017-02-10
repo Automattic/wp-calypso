@@ -2,21 +2,33 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import {
+	get,
 	map,
 	reduce,
 	throttle,
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
 import { isWithinBreakpoint } from 'lib/viewport';
+import {
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate
+} from 'state/ui/editor/contact-form/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
+import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
+import EditorMediaModal from 'post-editor/editor-media-modal';
 
 /**
  * Module constants
@@ -26,20 +38,29 @@ const TOOLBAR_HEIGHT = 39;
 export class EditorHtmlToolbar extends Component {
 
 	static propTypes = {
+		contactForm: PropTypes.object,
 		content: PropTypes.object,
+		fieldAdd: PropTypes.func,
+		fieldRemove: PropTypes.func,
+		fieldUpdate: PropTypes.func,
 		moment: PropTypes.func,
 		onToolbarChangeContent: PropTypes.func,
+		settingsUpdate: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
 	state = {
+		contactFormDialogTab: 'fields',
 		isPinned: false,
 		isScrollable: false,
 		isScrolledFull: false,
 		openTags: [],
 		selectedText: '',
+		showContactFormDialog: false,
 		showImageDialog: false,
+		showInsertContentMenu: false,
 		showLinkDialog: false,
+		showMediaModal: false,
 	};
 
 	componentDidMount() {
@@ -50,6 +71,7 @@ export class EditorHtmlToolbar extends Component {
 		window.addEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.addEventListener( 'resize', this.onWindowResize );
 		this.buttons.addEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+		document.addEventListener( 'click', this.clickOutsideInsertContentMenu );
 
 		this.toggleToolbarScrollableOnResize();
 	}
@@ -61,10 +83,15 @@ export class EditorHtmlToolbar extends Component {
 		window.removeEventListener( 'scroll', this.pinToolbarOnScroll );
 		window.removeEventListener( 'resize', this.onWindowResize );
 		this.buttons.removeEventListener( 'scroll', this.hideToolbarFadeOnFullScroll );
+		document.removeEventListener( 'click', this.clickOutsideInsertContentMenu );
 	}
 
 	bindButtonsRef = div => {
 		this.buttons = div;
+	}
+
+	bindInsertContentButtonsRef = div => {
+		this.insertContentButtons = div;
 	}
 
 	onWindowResize = () => {
@@ -107,6 +134,12 @@ export class EditorHtmlToolbar extends Component {
 
 		if ( isScrolledFull !== this.state.isScrolledFull ) {
 			this.setState( { isScrolledFull } );
+		}
+	}
+
+	clickOutsideInsertContentMenu = event => {
+		if ( this.state.showInsertContentMenu && ! this.insertContentButtons.contains( event.target ) ) {
+			this.setState( { showInsertContentMenu: false } );
 		}
 	}
 
@@ -277,6 +310,15 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { openTags: [] } );
 	}
 
+	onInsertMedia = media => {
+		this.insertCustomContent( media );
+	}
+
+	onInsertContactForm = () => {
+		this.insertCustomContent( serialize( this.props.contactForm ), { paragraph: true } );
+		this.closeContactFormDialog();
+	}
+
 	openImageDialog = () => {
 		this.setState( { showImageDialog: true } );
 	}
@@ -297,6 +339,41 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showLinkDialog: false } );
 	}
 
+	toggleInsertContentMenu = () => {
+		this.setState( { showInsertContentMenu: ! this.state.showInsertContentMenu } );
+	}
+
+	openContactFormDialog = () => {
+		this.setState( {
+			contactFormDialogTab: 'fields',
+			showContactFormDialog: true,
+			showInsertContentMenu: false,
+		} );
+	}
+
+	toggleContactFormDialogTab = () => {
+		this.setState( {
+			contactFormDialogTab: 'fields' === this.state.contactFormDialogTab
+				? 'settings'
+				: 'fields',
+		} );
+	}
+
+	closeContactFormDialog = () => {
+		this.setState( { showContactFormDialog: false } );
+	}
+
+	openMediaModal = () => {
+		this.setState( {
+			showInsertContentMenu: false,
+			showMediaModal: true,
+		} );
+	}
+
+	closeMediaModal = () => {
+		this.setState( { showMediaModal: false } );
+	}
+
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	render() {
@@ -306,6 +383,9 @@ export class EditorHtmlToolbar extends Component {
 			'is-scrollable': this.state.isScrollable,
 			'is-scrolled-full': this.state.isScrolledFull,
 		} );
+		const insertContentClasses = classNames( 'editor-html-toolbar__insert-content-dropdown',
+			{ 'is-visible': this.state.showInsertContentMenu }
+		);
 
 		const buttons = {
 			strong: {
@@ -358,38 +438,107 @@ export class EditorHtmlToolbar extends Component {
 		return (
 			<div className={ classes }>
 				<div className="editor-html-toolbar__wrapper">
-					<div
-						className="editor-html-toolbar__buttons"
-						ref={ this.bindButtonsRef }
-					>
-						{ map( buttons, ( { disabled, label, onClick }, tag ) =>
-							<Button
-								borderless
-								className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
-								compact
-								disabled={ disabled }
-								key={ tag }
-								onClick={ onClick }
+					<div className="editor-html-toolbar__wrapper-buttons">
+						<div
+							className="editor-html-toolbar__buttons"
+							ref={ this.bindButtonsRef }
+						>
+							<div className="editor-html-toolbar__button-insert-content" ref={ this.bindInsertContentButtonsRef }>
+								<Button
+									borderless
+									className="editor-html-toolbar__button-insert-media"
+									compact
+									onClick={ this.openMediaModal }
+								>
+									<Gridicon icon="add-outline" />
+								</Button>
+								<Button
+									borderless
+									className="editor-html-toolbar__button-insert-content-dropdown"
+									compact
+									onClick={ this.toggleInsertContentMenu }
+								>
+									<Gridicon icon={ this.state.showInsertContentMenu ? 'chevron-up' : 'chevron-down' } />
+								</Button>
+							</div>
+							{ map( buttons, ( { disabled, label, onClick }, tag ) =>
+								<Button
+									borderless
+									className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag ) ? 'is-tag-open' : '' }` }
+									compact
+									disabled={ disabled }
+									key={ tag }
+									onClick={ onClick }
+								>
+									{ label || tag }
+								</Button>
+							) }
+						</div>
+
+						<div className={ insertContentClasses }>
+							<div
+								className="editor-html-toolbar__insert-content-dropdown-item"
+								onClick={ this.openMediaModal }
 							>
-								{ label || tag }
-							</Button>
-						) }
+								<Gridicon icon="add-image" />
+								<span>{ translate( 'Add Media' ) }</span>
+							</div>
+							<div
+								className="editor-html-toolbar__insert-content-dropdown-item"
+								onClick={ this.openContactFormDialog }
+							>
+								<Gridicon icon="mention" />
+								<span>{ translate( 'Add Contact Form' ) }</span>
+							</div>
+						</div>
 					</div>
 				</div>
+
 				<AddImageDialog
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
 					shouldDisplay={ this.state.showImageDialog }
 				/>
+
 				<AddLinkDialog
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
 					shouldDisplay={ this.state.showLinkDialog }
 				/>
+
+				<ContactFormDialog
+					activeTab={ this.state.contactFormDialogTab }
+					isEdit={ false }
+					onChangeTabs={ this.toggleContactFormDialogTab }
+					onClose={ this.closeContactFormDialog }
+					onFieldAdd={ this.props.fieldAdd }
+					onFieldRemove={ this.props.fieldRemove }
+					onFieldUpdate={ this.props.fieldUpdate }
+					onInsert={ this.onInsertContactForm }
+					onSettingsUpdate={ this.props.settingsUpdate }
+					showDialog={ this.state.showContactFormDialog }
+				/>
+
+				<EditorMediaModal
+					onClose={ this.closeMediaModal }
+					onInsertMedia={ this.onInsertMedia }
+					visible={ this.state.showMediaModal }
+				/>
 			</div>
 		);
 	}
 }
 
-export default localize( EditorHtmlToolbar );
+const mapStateToProps = state => ( {
+	contactForm: get( state, 'ui.editor.contactForm', {} ),
+} );
+
+const mapDispatchToProps = {
+	fieldAdd,
+	fieldRemove,
+	fieldUpdate,
+	settingsUpdate,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );
