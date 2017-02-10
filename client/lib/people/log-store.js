@@ -110,7 +110,12 @@ PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 		case 'RECEIVE_USER_FAILED':
-			addLog( 'error', action.type, action.fetchOptions.siteId, action.login, action.error.error );
+			addLog( 'error',
+				action.type,
+				action.fetchOptions.siteId,
+				{ login: action.login, userId: action.userId },
+				action.error.error
+			);
 			PeopleLogStore.emitChange();
 			break;
 		case 'UPDATE_SITE_USER':

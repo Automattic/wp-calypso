@@ -113,22 +113,22 @@ const UsersActions = {
 		wpcom.undocumented().site( siteId ).updateUser( userId, attributes, ( error, data ) => {
 			if ( error ) {
 				debug( 'Update user error', error );
-				Dispatcher.handleServerAction( {
+				return Dispatcher.handleServerAction( {
 					type: 'RECEIVE_UPDATE_SITE_USER_FAILURE',
 					action: 'UPDATE_SITE_USER',
 					siteId: siteId,
 					user: user,
 					error: error
 				} );
-			} else {
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_UPDATE_SITE_USER_SUCCESS',
-					action: 'UPDATE_SITE_USER',
-					siteId: siteId,
-					user: user,
-					data: data
-				} );
 			}
+
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_UPDATE_SITE_USER_SUCCESS',
+				action: 'UPDATE_SITE_USER',
+				siteId: siteId,
+				user: user,
+				data: data
+			} );
 		} );
 	},
 
@@ -142,23 +142,49 @@ const UsersActions = {
 
 		wpcom.undocumented().site( fetchOptions.siteId ).getUser( userId, ( error, data ) => {
 			if ( error ) {
+				return Dispatcher.handleServerAction( {
+					type: 'RECEIVE_USER_FAILED',
+					siteId: fetchOptions.siteId,
+					fetchOptions,
+					userId,
+					error
+				} );
+			}
+
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_SINGLE_USER',
+				fetchOptions: fetchOptions,
+				user: data
+			} );
+		} );
+	},
+
+	fetchUserByLogin: ( fetchOptions, login ) => {
+		debug( 'fetchUserByLogin', fetchOptions );
+
+		Dispatcher.handleViewAction( {
+			type: 'FETCHING_USERS',
+			fetchOptions: fetchOptions
+		} );
+
+		wpcom.undocumented().site( fetchOptions.siteId ).getUserByLogin( login, ( error, data ) => {
+			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_USER_FAILED',
-					fetchOptions: fetchOptions,
 					siteId: fetchOptions.siteId,
-					userId: userId,
-					error: error
+					fetchOptions,
+					login,
+					error
 				} );
 			} else {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_SINGLE_USER',
-					fetchOptions: fetchOptions,
+					fetchOptions,
 					user: data
 				} );
 			}
 		} );
 	}
-
 };
 
 module.exports = UsersActions;

@@ -126,7 +126,7 @@ function renderSingleTeamMember( context ) {
 		user = UsersStore.getUserByLogin( siteId, userLogin );
 
 		if ( ! user ) {
-			UsersActions.fetchUser( { siteId: siteId }, userLogin );
+			UsersActions.fetchUserByLogin( { siteId }, userLogin );
 			PeopleLogStore.once( 'change', function() {
 				let fetchUserError = PeopleLogStore.getErrors(
 					log => siteId === log.siteId && 'RECEIVE_USER_FAILED' === log.action && userLogin === log.user
