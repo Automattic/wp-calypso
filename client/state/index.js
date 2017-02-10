@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import debug from 'debug';
+import debugFactory from 'debug';
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 
@@ -60,13 +60,12 @@ import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
-const log = debug( 'calypso:state:reducers' );
+const debug = debugFactory( 'calypso:state:reducers' );
 
 /**
  * Module variables
  */
-
-let reducers = {
+const initialReducers = {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -117,32 +116,35 @@ let reducers = {
 	wordads,
 };
 
-export function addReducer( name, reducer ) {
-	if ( reducerExists( name ) ) {
-		throw new Error( 'addReducer(): name "' + name + '" already in use' );
+// TODO: This is temporary just to make the tests run until I refactor this.
+export let reducers = { ...initialReducers };
+let onChange = null;
+
+// TODO: See if this export can be eliminated.
+export let reducer = combineReducers( reducers );
+
+export function addReducer( name, reducerFunc ) {
+	if ( reducers[ name ] !== undefined ) {
+		throw new Error( `addReducer(): name ${ name } already in use` );
 	}
 
-	reducers = { ...reducers, [ name ]: reducer };
+	reducers = { ...reducers, [ name ]: reducerFunc };
+
+	if ( onChange ) {
+		onChange();
+	}
 }
 
 export function removeReducer( name ) {
 	const { [ name ]: removedReducer, ...remainingReducers } = reducers;
 
 	if ( ! removedReducer ) {
-		log( 'removeReducer(): name not found' );
+		debug( 'removeReducer(): name not found' );
 		return;
 	}
 
 	reducers = remainingReducers;
 }
-
-export function reducerExists( name ) {
-	return ( reducers[ name ] !== undefined );
-}
-
-// TODO: See if this export can be eliminated.
-// We probably shouldn't be accessing the reducers directly like this.
-export const reducer = combineReducers( reducers );
 
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
@@ -163,6 +165,13 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && window.devToolsExtension && window.devToolsExtension()
 	].filter( Boolean );
 
-	return compose( ...enhancers )( createStore )( reducer, initialState );
+	const store = compose( ...enhancers )( createStore )( reducer, initialState );
+
+	onChange = () => {
+		reducer = combineReducers( reducers );
+		store.replaceReducer( reducer );
+	};
+
+	return store;
 }
 

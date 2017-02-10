@@ -9,7 +9,7 @@ import chai, { expect } from 'chai';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import { createReduxStore, addReducer, removeReducer, reducerExists } from '../';
+import { createReduxStore, addReducer, removeReducer, reducers } from '../';
 import currentUser from 'state/current-user/reducer';
 
 const should = chai.should();
@@ -20,13 +20,13 @@ describe( 'index', () => {
 		const func = () => {};
 
 		it( 'should add and remove a reducer by name', () => {
-			should.equal( reducerExists( name ), false );
+			should.not.exist( reducers[ name ] );
 
 			addReducer( name, func );
-			should.equal( reducerExists( name ), true );
+			should.exist( reducers[ name ] );
 
 			removeReducer( name );
-			should.equal( reducerExists( name ), false );
+			should.not.exist( reducers[ name ] );
 		} );
 
 		it( 'should throw when trying to add a reducer with an existing name', () => {
@@ -35,7 +35,7 @@ describe( 'index', () => {
 			};
 
 			expect( addFunc ).to.not.throw( Error );
-			should.equal( reducerExists( name ), true );
+			should.exist( reducers[ name ] );
 
 			expect( addFunc ).to.throw( Error );
 		} );

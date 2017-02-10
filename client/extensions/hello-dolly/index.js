@@ -14,16 +14,33 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
+import { addReducer } from 'state';
+import reducer from './state/reducer';
+
+/**
+ * Extension init
+ */
+// TODO: Maybe make this part of the extension load/unload code for all extensions?
+addReducer( 'helloDolly', reducer );
 
 const render = ( context ) => {
 	renderWithReduxStore( (
 		<Main className="hello-dolly__main">
 			<SectionHeader label="Hello, Dolly!">🐑</SectionHeader>
 			<Card>
-				<p style={ { fontSize: 18, fontWeight: 300 } }>This is not just an extension, it symbolizes the hope and enthusiasm of an entire generation summed up in two words sung most famously by Louis Armstrong.</p>
+				<p style={ { fontSize: 18, fontWeight: 300 } }>
+					This is not just an extension, it symbolizes the hope and enthusiasm of an entire generation
+					summed up in two words sung most famously by Louis Armstrong.
+				</p>
 				<hr />
 				<p>This section is the home for the <strong>Hello Dolly</strong> extension.</p>
-				<p>Extensions are set up to function in a semi-isolated environment, with their own URL path and code-chunk magic (using the power of webpack) to assure code is loaded only when needed. Think of extensions as individual "apps" you can access in Calypso to interact with your plugin functionality in a focused way.</p>
+				<p>
+					Extensions are set up to function in a semi-isolated environment,
+					with their own URL path and code-chunk magic (using the power of webpack)
+					to assure code is loaded only when needed. Think of extensions as
+					individual "apps" you can access in Calypso to interact with your
+					plugin functionality in a focused way.
+				</p>
 			</Card>
 			<FAQ>
 				<FAQItem
