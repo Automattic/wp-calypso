@@ -14,8 +14,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Banner from 'components/banner';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
+import FreeToPaidNudge from './free-to-paid-nudge';
 
 const StatsNavigation = ( props ) => {
 	const { translate, section, slug } = props;
@@ -30,11 +29,7 @@ const StatsNavigation = ( props ) => {
 
 	return (
 		<div>
-			<Banner
-				event="free-to-paid-stats-nudge"
-				plan={ PLAN_PERSONAL }
-				title="Upgrade to attract more traffic"
-			/>
+			<FreeToPaidNudge />
 			<SectionNav selectedText={ sectionTitles[ section ] }>
 				<NavTabs label={ translate( 'Stats' ) }>
 					<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>

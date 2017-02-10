@@ -132,5 +132,15 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 		allowAnyLocale: true
+	},
+
+	freeToPaidUpsell: {
+		datestamp: '20170210',
+		variations: {
+			sidebar: 33,
+			stats: 33,
+			disabled: 34
+		},
+		defaultVariation: 'disabled'
 	}
 };

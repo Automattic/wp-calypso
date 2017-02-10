@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { abtest } from 'lib/abtest';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -75,6 +76,9 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
+		if ( abtest( 'freeToPaidUpsell' ) !== 'stats' ) {
+			return null;
+		}
 		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
 		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
 		return (
