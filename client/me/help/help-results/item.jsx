@@ -41,6 +41,8 @@ module.exports = React.createClass( {
 		}
 	},
 
+	//create function here
+
 	render: function() {
 		return (
 			<a className="help-result" href={ this.props.helpLink.link } target="__blank" onClick={ this.onClick }>
