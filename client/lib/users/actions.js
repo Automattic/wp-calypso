@@ -132,7 +132,7 @@ const UsersActions = {
 		} );
 	},
 
-	fetchUser: ( fetchOptions, login ) => {
+	fetchUser: ( fetchOptions, userId ) => {
 		debug( 'fetchUser', fetchOptions );
 
 		Dispatcher.handleViewAction( {
@@ -140,13 +140,13 @@ const UsersActions = {
 			fetchOptions: fetchOptions
 		} );
 
-		wpcom.undocumented().site( fetchOptions.siteId ).getUser( login, ( error, data ) => {
+		wpcom.undocumented().site( fetchOptions.siteId ).getUser( userId, ( error, data ) => {
 			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_USER_FAILED',
 					fetchOptions: fetchOptions,
 					siteId: fetchOptions.siteId,
-					login: login,
+					userId: userId,
 					error: error
 				} );
 			} else {

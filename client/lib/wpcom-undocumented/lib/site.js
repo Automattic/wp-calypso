@@ -151,7 +151,11 @@ UndocumentedSite.prototype.updateUser = function( userId, attributes, callback )
 	}, callback );
 };
 
-UndocumentedSite.prototype.getUser = function( login, callback ) {
+UndocumentedSite.prototype.getUser = function( userId, callback ) {
+	return this.wpcom.req.get( '/sites/' + this._id + '/users/' + userId, callback );
+};
+
+UndocumentedSite.prototype.getUserByLogin = function( login, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/users/login:' + login, callback );
 };
 
