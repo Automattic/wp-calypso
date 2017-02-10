@@ -14,8 +14,7 @@ import {
 	some,
 	split,
 	includes,
-	startsWith,
-	trim
+	startsWith
 } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -64,41 +63,38 @@ export const getSite = createSelector(
 
 		return {
 			...site,
-			...getComputedAttributes( state, siteId ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId ),
-			is_customizable: isSiteCustomizable( state, siteId )
+			is_customizable: isSiteCustomizable( state, siteId ),
+			options: getSiteOptions( state, siteId ),
 		};
 	},
 	( state ) => state.sites.items
 );
 
-export function getComputedAttributes( state, siteId ) {
+export function getSiteOptions( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	const domain = site.URL && withoutHttp( site.URL );
-	const isRedirectOrConflicting = getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
 	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
 	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-	const slug = isRedirectOrConflicting ? wpcomUrl : ( domain && domain.replace( /\//g, '::' ) );
 
 	// The 'standard' post format is saved as an option of '0'
 	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
-	if ( defaultPostFormat == null || defaultPostFormat === '0' ) {
+	if ( ! defaultPostFormat || defaultPostFormat === '0' ) {
 		defaultPostFormat = 'standard';
 	}
 
 	return {
-		title: trim( site.name ) || domain,
-		slug,
-		domain: isRedirectOrConflicting ? slug : domain,
-		options: Object.assign( site.options || {}, {
-			...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
-			default_post_format: defaultPostFormat
-		} )
+		...site.options,
+		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
+		default_post_format: defaultPostFormat
 	};
 }
 
@@ -318,7 +314,12 @@ export function isSitePreviewable( state, siteId ) {
  * @return {?Boolean}        Whether site is customizable
  */
 export function isSiteCustomizable( state, siteId ) {
-	return state.currentUser ? canCurrentUser( state, siteId, 'edit_theme_options' ) : false;
+	// Cannot determine site customizing ability if there is no current user
+	if ( ! state.currentUser ) {
+		return null;
+	}
+
+	return canCurrentUser( state, siteId, 'edit_theme_options' );
 }
 
 /**
