@@ -347,17 +347,16 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
+		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme } = this.props;
 		let buttonCount = 1;
 
 		return (
 			<div>
-				{ this.props.isCurrentUserPaid && ! this.props.isJetpack &&
+				{ isCurrentUserPaid && ! isJetpack &&
 					this.renderSupportContactUsCard( buttonCount++ ) }
-				{ this.props.forumUrl && this.props.isPremium &&
+				{ forumUrl && isWpcomTheme &&
 					this.renderSupportThemeForumCard( buttonCount++ ) }
-				{ this.props.forumUrl && ( ! this.props.isPremium || ! this.props.isWpcomTheme ) &&
-					this.renderSupportThemeForumCard( buttonCount++ ) }
-				{ this.props.isWpcomTheme &&
+				{ isWpcomTheme &&
 					this.renderSupportCssCard( buttonCount++ ) }
 			</div>
 		);
@@ -643,7 +642,6 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const isJetpack = selectedSite && isJetpackSite( state, selectedSite.ID );
 		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
 		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
@@ -658,13 +656,13 @@ export default connect(
 			error,
 			selectedSite,
 			siteSlug,
-			isJetpack,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
