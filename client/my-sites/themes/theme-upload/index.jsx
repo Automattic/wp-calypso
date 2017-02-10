@@ -216,6 +216,11 @@ class Upload extends React.Component {
 		activate.action( this.props.uploadedTheme );
 	};
 
+	onTryAndCustomizeClick = () => {
+		const { tryandcustomize } = this.props.options;
+		tryandcustomize.action( this.props.uploadedTheme );
+	}
+
 	renderTheme() {
 		const { uploadedTheme: theme, translate, options } = this.props;
 		const { tryandcustomize, activate } = options;
@@ -229,7 +234,7 @@ class Upload extends React.Component {
 				</span>
 				<img src={ theme.screenshot } />
 				<span className="theme-upload__description">{ theme.description }</span>
-				<Button href={ tryandcustomize.getUrl( theme ) }>
+				<Button onClick={ this.onTryAndCustomizeClick } >
 					{ tryandcustomize.label }
 				</Button>
 				<Button primary onClick={ this.onActivateClick }>
