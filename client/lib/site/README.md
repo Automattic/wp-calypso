@@ -3,8 +3,6 @@ Site
 
 Instances of `site` are returned by [`sites-list`](/client/lib/sites-list) and represent a WordPress.com or Jetpack site. Properties on `site` mirror those of an individual site returned by the [`/me/sites`](https://developer.wordpress.com/docs/api/1.1/get/me/sites/) API endpoint.
 
-Also provides utility methods such as `isCustomizable()` and `isUpgradeable()`.
-
 #### jetpack.js
 Extends `site` for Jetpack sites.
 
