@@ -66,7 +66,6 @@ class ThemeSelectionStep extends Component {
 	};
 
 	renderThemesList() {
-
 		const pressableWrapperClassName = classNames( {
 			'theme-selection__pressable-wrapper': true,
 			'is-hidden': ! this.state.showPressable,
@@ -125,13 +124,13 @@ class ThemeSelectionStep extends Component {
 		const defaultDependencies = this.props.useHeadstart ? { themeSlugWithRepo: 'pub/twentysixteen' } : undefined;
 		const { translate } = this.props;
 
-		let headerText = translate( 'Choose a theme.' );
-		let subHeaderText = translate( 'No need to overthink it. You can always switch to a different theme later.' );
+		const headerText = this.state.showPressable
+			? translate( 'Upload your WordPress Theme' )
+			: translate( 'Choose a theme.' );
 
-		if ( this.state.showPressable ) {
-			headerText = translate( 'Upload your WordPress Theme' );
-			subHeaderText = translate( 'Our partner Pressable is here to help you' );
-		}
+		const subHeaderText = this.state.showPressable
+			? translate( 'Our partner Pressable is here to help you' )
+			: translate( 'No need to overthink it. You can always switch to a different theme later.' );
 
 		return (
 			<StepWrapper
