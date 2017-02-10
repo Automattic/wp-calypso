@@ -501,7 +501,11 @@ export function getThemeForumUrl( state, themeId, siteId ) {
  * @return {?String}         Theme ID
  */
 export function getActiveTheme( state, siteId ) {
-	return get( state.themes.activeThemes, siteId, null );
+	const activeTheme = get( state.themes.activeThemes, siteId, null );
+	// If the theme ID is suffixed with -wpcom, remove that string. This is because
+	// we want to treat WP.com themes identically, whether or not they're installed
+	// on a given Jetpack site (where the -wpcom suffix would be appended).
+	return activeTheme && activeTheme.replace( '-wpcom', '' );
 }
 
 /**
@@ -513,7 +517,7 @@ export function getActiveTheme( state, siteId ) {
  * @return {Boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === getSuffixedThemeId( state, themeId, siteId );
+	return getActiveTheme( state, siteId ) === themeId;
 }
 
 /**
