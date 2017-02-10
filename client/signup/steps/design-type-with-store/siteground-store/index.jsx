@@ -9,7 +9,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -18,11 +17,6 @@ import SitegroundLogo from './siteground-logo';
 
 export const SitegroundStoreStep = ( { onBackClick, translate, partnerClickRecorder, price } ) => (
 	<div className="design-type-with-store__partner-box">
-		<StepHeader
-			headerText={ translate( 'Create a WordPress Store' ) }
-			subHeaderText={ translate( 'Our partners at SiteGround and WooCommerce are here for you.' ) }
-		/>
-
 		<div className="design-type-with-store__flex-container">
 			<div className="design-type-with-store__copy">
 				<div className="design-type-with-store__vertical-center">
