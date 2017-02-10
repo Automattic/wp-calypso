@@ -117,6 +117,7 @@ class EditorMoreOptionsCopyPost extends Component {
 							orderBy="date"
 							selected={ selectedPostId }
 							siteId={ siteId }
+							status="draft,future,pending,private,publish"
 							type={ type }
 						/>
 					}
