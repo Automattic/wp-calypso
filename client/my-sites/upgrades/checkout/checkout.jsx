@@ -150,7 +150,11 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( includes( [ transactionStepTypes.SUBMITTING_WPCOM_REQUEST, transactionStepTypes.RECEIVED_WPCOM_RESPONSE ], this.props.transaction.step.name ) ) {
+		// Do not redirect if cart is empty, but we're submitting or received transaction response
+		if ( includes(
+			[ transactionStepTypes.SUBMITTING_WPCOM_REQUEST, transactionStepTypes.RECEIVED_WPCOM_RESPONSE ],
+			this.props.transaction.step.name )
+		) {
 			return false;
 		}
 
