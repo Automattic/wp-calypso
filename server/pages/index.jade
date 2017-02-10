@@ -115,19 +115,21 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
 		if initialReduxState
 			script(type='text/javascript')!='var initialReduxState = ' + sanitize.jsonStringifyForHtml( initialReduxState )
+		if config
+			script(type='text/javascript')!= config
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
 		if 'development' === env || isDebug
 			script(src=urls[ 'manifest' ])
 			script(src=urls[ 'vendor' ])
-			script(src=urls[ jsFile + '-' + env ])
+			script(src=urls[ jsFile ])
 			if chunk
 				script(src=urls[ '_commons' ])
 				script(src=urls[ chunk ])
 		else
 			script(src=urls[ 'manifest-min' ])
 			script(src=urls[ 'vendor-min' ])
-			script(src=urls[ jsFile + '-' + env + '-min' ])
+			script(src=urls[ jsFile + '-min' ])
 			if chunk
 				script(src=urls[ '_commons-min' ])
 				script(src=urls[ chunk + '-min' ])

@@ -3,8 +3,6 @@ machine:
     version: 6.10.0
 test:
   pre:
-    - NODE_ENV=test make client/config/index.js:
-        parallel: true
     - ? |
           # make the build-server and i18n string data in parallel
           if [[ "$CIRCLE_NODE_INDEX" == 0 ]]; then NODE_ENV=test make build-server; fi

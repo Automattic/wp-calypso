@@ -38,7 +38,7 @@ env-config.sh
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
-/server/bundler/assets-*.json
+/server/bundler/assets.json
 
 *.rdb
 *.db

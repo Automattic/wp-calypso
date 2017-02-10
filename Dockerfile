@@ -39,11 +39,7 @@ RUN     npm install --production || npm install --production
 COPY     . /calypso
 
 # Build javascript bundles for each environment and change ownership
-RUN     CALYPSO_ENV=wpcalypso make build-wpcalypso && \
-          CALYPSO_ENV=horizon make build-horizon && \
-          CALYPSO_ENV=stage make build-stage && \
-          CALYPSO_ENV=production make build-production && \
-          chown -R nobody /calypso
+RUN	CALYPSO_ENV=production make build && chown -R nobody /calypso
 
 USER    nobody
-CMD     NODE_ENV=production node build/bundle-$CALYPSO_ENV.js
+CMD     NODE_ENV=production node build/bundle.js
