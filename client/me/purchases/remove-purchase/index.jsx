@@ -43,6 +43,8 @@ const RemovePurchase = React.createClass( {
 	propTypes: {
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
 		isDomainOnlySite: React.PropTypes.bool,
+		receiveDeletedSite: React.PropTypes.func.isRequired,
+		removePurchase: React.PropTypes.func.isRequired,
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -130,7 +132,7 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props ),
-			{ isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
+			{ isDomainOnlySite, receiveDeletedSite, setAllSitesSelected, selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -404,6 +406,7 @@ export default connect(
 		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 	} ),
 	{
+		receiveDeletedSite,
 		removePurchase,
 		setAllSitesSelected,
 	}
