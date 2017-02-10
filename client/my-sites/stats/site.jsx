@@ -83,26 +83,30 @@ class StatsSite extends Component {
 		// Video plays, and tags and categories are not supported in JetPack Stats
 		if ( ! isJetpack ) {
 			videoList = (
-				<StatsModule
-					path="videoplays"
-					moduleStrings={ moduleStrings.videoplays }
-					period={ this.props.period }
-					query={ query }
-					statType="statsVideoPlays"
-					showSummaryLink
-				/>
+				<div className="stats__grid-item">
+					<StatsModule
+						path="videoplays"
+						moduleStrings={ moduleStrings.videoplays }
+						period={ this.props.period }
+						query={ query }
+						statType="statsVideoPlays"
+						showSummaryLink
+					/>
+				</div>
 			);
 		}
 		if ( config.isEnabled( 'manage/stats/podcasts' ) && hasPodcasts ) {
 			podcastList = (
-				<StatsModule
-					path="podcastdownloads"
-					moduleStrings={ moduleStrings.podcastdownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsPodcastDownloads"
-					showSummaryLink
-				/>
+				<div className="stats__grid-item">
+					<StatsModule
+						path="podcastdownloads"
+						moduleStrings={ moduleStrings.podcastdownloads }
+						period={ this.props.period }
+						query={ query }
+						statType="statsPodcastDownloads"
+						showSummaryLink
+					/>
+				</div>
 			);
 		}
 
@@ -130,9 +134,16 @@ class StatsSite extends Component {
 					<div className="stats__module-list is-events">
 						<MasonryLayout
 							className="stats__masonry-items"
-							options={ { columnWidth: 330, fitWidth: true, gutter: 20 } }
+							options={ {
+								columnWidth: '.stats__grid-sizer',
+								itemSelector: '.stats__grid-item',
+								gutter: '.stats__gutter-sizer',
+								percentPosition: true
+							} }
 						>
-							<div className="stats__masonry-two-columns">
+							<div className="stats__grid-sizer"></div>
+							<div className="stats__gutter-sizer"></div>
+							<div className="stats__grid-item stats__grid-large-item">
 								<ChartTabs
 									barClick={ this.barClick }
 									switchTab={ this.switchChart }
@@ -141,47 +152,59 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									chartTab={ this.state.chartTab } />
 							</div>
-							<StatsModule
-								path="posts"
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopPosts"
-								showSummaryLink />
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false } />
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink />
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink />
-							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className="stats__author-views"
-								showSummaryLink />
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink />
+							<div className="stats__grid-item">
+								<StatsModule
+									path="posts"
+									moduleStrings={ moduleStrings.posts }
+									period={ this.props.period }
+									query={ query }
+									statType="statsTopPosts"
+									showSummaryLink />
+							</div>
+							<div className="stats__grid-item">
+								<Countries
+									path="countries"
+									period={ this.props.period }
+									query={ query }
+									summary={ false } />
+							</div>
+							<div className="stats__grid-item">
+								<StatsModule
+									path="referrers"
+									moduleStrings={ moduleStrings.referrers }
+									period={ this.props.period }
+									query={ query }
+									statType="statsReferrers"
+									showSummaryLink />
+							</div>
+							<div className="stats__grid-item">
+								<StatsModule
+									path="clicks"
+									moduleStrings={ moduleStrings.clicks }
+									period={ this.props.period }
+									query={ query }
+									statType="statsClicks"
+									showSummaryLink />
+							</div>
+							<div className="stats__grid-item">
+								<StatsModule
+									path="authors"
+									moduleStrings={ moduleStrings.authors }
+									period={ this.props.period }
+									query={ query }
+									statType="statsTopAuthors"
+									className="stats__author-views"
+									showSummaryLink />
+							</div>
+							<div className="stats__grid-item">
+								<StatsModule
+									path="searchterms"
+									moduleStrings={ moduleStrings.search }
+									period={ this.props.period }
+									query={ query }
+									statType="statsSearchTerms"
+									showSummaryLink />
+							</div>
 							{ videoList }
 							{ podcastList }
 						</MasonryLayout>

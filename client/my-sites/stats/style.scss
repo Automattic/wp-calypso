@@ -56,22 +56,32 @@
 
 .stats__masonry-items {
 	margin: auto;
-	> div {
-		width: 330px;
-		box-sizing: border-box;
+
+	@include breakpoint( ">1380px" ) {
+		.stats__grid-sizer,
+		.stats__grid-item { width: 330px }
+		.stats__grid-large-item { width: 1030px; }
+		.stats__gutter-sizer { width: 20px; }
 	}
 
-	.stats__masonry-two-columns {
-		@include breakpoint( ">1380px" ) {
-			width: 1030px;
-		}
+	@include breakpoint( "<1380px" ) {
+		.stats__grid-sizer,
+		.stats__grid-item { width: 32%; }
+		.stats__grid-large-item { width: 100%; }
+		.stats__gutter-sizer { width: 1.5%; }
+	}
 
-		@include breakpoint( "<1380px" ) {
-			width: 680px;
-		}
+	@include breakpoint( "<1040px" ) {
+		.stats__grid-sizer,
+		.stats__grid-item { width: 49%; }
+		.stats__grid-large-item { width: 100%; }
+		.stats__gutter-sizer { width: 2%; }
+	}
 
-		@include breakpoint( "<1040px" ) {
-			width: 330px;
-		}
+	@include breakpoint( "<660px" ) {
+		.stats__grid-sizer,
+		.stats__grid-item,
+		.stats__grid-large-item { width: 100%; }
+		.stats__gutter-sizer { width: 0; }
 	}
 }
