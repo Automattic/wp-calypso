@@ -14,6 +14,7 @@ import ThemesList from 'components/themes-list';
 import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
@@ -112,16 +113,20 @@ const ThemesSelection = React.createClass( {
 	getOptions( theme ) {
 		const options = this.props.getOptions( theme );
 		const wrappedPreviewAction = ( action ) => {
+			let defaultOption;
+			let secondaryOption = this.props.secondaryOption;
 			return ( themeObj ) => {
-				let defaultAction;
-				if ( this.props.isThemeActive( theme.id ) ) {
-					defaultAction = options.customize;
+				if ( ! this.props.isLoggedIn ) {
+					defaultOption = options.signup;
+					secondaryOption = null;
+				} else if ( this.props.isThemeActive( theme.id ) ) {
+					defaultOption = options.customize;
 				} else if ( theme.price && options.purchase ) {
-					defaultAction = options.purchase;
+					defaultOption = options.purchase;
 				} else {
-					defaultAction = this.props.defaultAction;
+					defaultOption = options.activate;
 				}
-				this.props.setPreviewOptions( defaultAction, this.props.secondaryOption );
+				this.props.setPreviewOptions( defaultOption, secondaryOption );
 				return action( themeObj );
 			};
 		};
@@ -189,6 +194,7 @@ const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, siteIdOrWpcom, query ),
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
+			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
