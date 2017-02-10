@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { has } from 'lodash';
-import twemoji from 'twemoji';
 
 /**
  * Internal Dependencies
@@ -35,17 +34,26 @@ const TagStream = React.createClass( {
 			title,
 			subscribed: this.isSubscribed(),
 			canFollow: has( ReaderTags.get( this.props.tag ), 'ID' ),
-			isEmojiTitle: title && twemoji.test( title )
+			isEmojiTitle: false
 		};
 	},
 
 	componentWillMount() {
-		var self = this;
+		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
 		asyncRequire( 'emoji-text', function( emojiText ) {
 			if ( self._isMounted ) {
 				self.setState( { emojiText } );
+			}
+		} );
+		asyncRequire( 'twemoji', function( twemoji ) {
+			if ( self._isMounted ) {
+				const title = self.state && self.state.title;
+				self.setState( {
+					twemoji,
+					isEmojiTitle: title && twemoji.test( title )
+				} );
 			}
 		} );
 	},
@@ -73,7 +81,7 @@ const TagStream = React.createClass( {
 			title,
 			subscribed: this.isSubscribed( props ),
 			canFollow: has( ReaderTags.get( props.tag ), 'ID' ),
-			isEmojiTitle: title && twemoji.test( title )
+			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title )
 		};
 		this.smartSetState( newState );
 	},
