@@ -11,6 +11,7 @@ import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
+	getSiteOptions,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -110,6 +111,64 @@ describe( 'selectors', () => {
 					default_post_format: 'standard',
 					unmapped_url: 'https://example.wordpress.com'
 				}
+			} );
+		} );
+	} );
+
+	describe( '#getSiteOptions()', () => {
+		it( 'should return null if the site is not known', () => {
+			const siteOptions = getSiteOptions( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( siteOptions ).to.be.null;
+		} );
+
+		it( 'should return a the site options along with the computed option wpcom_url', () => {
+			const siteOptions = getSiteOptions( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								unmapped_url: 'https://example.wordpress.com',
+								is_mapped_domain: true
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( siteOptions ).to.eql( {
+				default_post_format: 'standard',
+				unmapped_url: 'https://example.wordpress.com',
+				is_mapped_domain: true,
+				wpcom_url: 'example.wordpress.com'
+			} );
+		} );
+
+		it( 'should fix `default_post_format` if it is equal to \'0\'', () => {
+			const siteOptions = getSiteOptions( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								default_post_format: '0',
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( siteOptions ).to.eql( {
+				default_post_format: 'standard',
+				unmapped_url: 'https://example.wordpress.com'
 			} );
 		} );
 	} );
