@@ -27,7 +27,7 @@ export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
-export const queueRequest = ( { dispatch }, action, next ) => {
+const queueRequest = ( { dispatch }, action, next ) => {
 	const {
 		body = {},
 		formData,
@@ -46,8 +46,8 @@ export const queueRequest = ( { dispatch }, action, next ) => {
 		query,
 		method === 'POST' && body,
 		( error, data ) => !! error
-				? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
-				: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
+			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
+			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
 	] ) );
 
 	if ( 'POST' === method && onProgress ) {
