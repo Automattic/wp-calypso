@@ -147,7 +147,7 @@ export default React.createClass( {
 		const ModifiedDate = this.moment( savedPost.date );
 		const diff = !! currentDate.diff( ModifiedDate );
 
-		if ( savedPost.type !== 'page' && postUtils.isPublished( savedPost ) && diff ) {
+		if ( savedPost.type === 'post' && postUtils.isPublished( savedPost ) && diff ) {
 			warnPublishDateChange();
 		} else {
 			warnPublishDateChange( { clearWarning: true } );
