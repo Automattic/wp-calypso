@@ -63,10 +63,35 @@ const directly = {
 	},
 
 	askQuestion: function( { questionText, name, email } ) {
+		if ( !initialized ) {
+			return;
+		}
+		
 		// We're using destructuring and shorthand properties just to explicitly document
 		// the options available from the Directly API.
 		window.DirectlyRTM( 'askQuestion', { questionText, name, email } );
-	}
+	},
+
+	maximize: function() {
+		if ( !initialized ) {
+			return;
+		}
+		window.DirectlyRTM( 'maximize' );
+	},
+
+	minimize: function() {
+		if ( !initialized ) {
+			return;
+		}
+		window.DirectlyRTM( 'minimize' );
+	},
+
+	openAskForm: function() {
+		if ( !initialized ) {
+			return;
+		}
+		window.DirectlyRTM( 'openAskForm' );
+	},
 };
 
 export default directly;
