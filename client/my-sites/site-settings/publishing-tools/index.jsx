@@ -59,7 +59,7 @@ class PublishingTools extends Component {
 		const labelClassName = regeneratingPostByEmail || ! postByEmailAddressModuleActive ? 'is-disabled' : null;
 
 		return (
-			<div className="publishing-tools__module-settings is-indented">
+			<div className="publishing-tools__module-settings site-settings__child-settings">
 				<FormLabel className={ labelClassName }>
 					{ translate( 'Email Address' ) }
 				</FormLabel>
