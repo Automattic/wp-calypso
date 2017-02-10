@@ -572,7 +572,8 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'groups' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
+		const statsData = get( data, dataPath, [] );
 
 		const parseItem = ( item ) => {
 			let children;
