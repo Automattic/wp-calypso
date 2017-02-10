@@ -5,6 +5,7 @@ import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import MasonryLayout from 'react-masonry-component';
 
 /**
  * Internal dependencies
@@ -106,35 +107,42 @@ class StatsSite extends Component {
 		}
 
 		return (
-			<Main wideLayout={ true }>
-				<StatsFirstView />
-				<SidebarNavigation />
-				<StatsNavigation section={ period } />
+			<Main maxWidthLayout>
+				<div className="stats__center">
+					<StatsFirstView />
+					<SidebarNavigation />
+					<StatsNavigation section={ period } />
+				</div>
 				<div id="my-stats-content">
-					<ChartTabs
-						barClick={ this.barClick }
-						switchTab={ this.switchChart }
-						charts={ charts }
-						queryDate={ queryDate }
-						period={ this.props.period }
-						chartTab={ this.state.chartTab } />
-					<StickyPanel className="stats__sticky-navigation">
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/stats/${ period }/${ slug }` }
-						>
-							<DatePicker
-								period={ period }
+					<div className="stats__center">
+						<ChartTabs
+							barClick={ this.barClick }
+							switchTab={ this.switchChart }
+							charts={ charts }
+							queryDate={ queryDate }
+							period={ this.props.period }
+							chartTab={ this.state.chartTab } />
+						<StickyPanel className="stats__sticky-navigation">
+							<StatsPeriodNavigation
 								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
-							/>
-						</StatsPeriodNavigation>
-					</StickyPanel>
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+							>
+								<DatePicker
+									period={ period }
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+								/>
+							</StatsPeriodNavigation>
+						</StickyPanel>
+					</div>
 					<div className="stats__module-list is-events">
-						<div className="stats__module-column">
+						<MasonryLayout
+							className="stats__masonry-items"
+							options={ { columnWidth: 330, fitWidth: true, gutter: 20 } }
+						>
 							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
@@ -142,6 +150,11 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsTopPosts"
 								showSummaryLink />
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false } />
 							<StatsModule
 								path="referrers"
 								moduleStrings={ moduleStrings.referrers }
@@ -164,13 +177,6 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className="stats__author-views"
 								showSummaryLink />
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false } />
 							<StatsModule
 								path="searchterms"
 								moduleStrings={ moduleStrings.search }
@@ -180,7 +186,7 @@ class StatsSite extends Component {
 								showSummaryLink />
 							{ videoList }
 							{ podcastList }
-						</div>
+						</MasonryLayout>
 					</div>
 				</div>
 			</Main>

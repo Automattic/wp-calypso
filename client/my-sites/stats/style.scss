@@ -53,3 +53,16 @@
 		display: none;
 	}
 }
+
+.stats__center {
+	max-width: 1040px;
+	margin: auto;
+}
+
+.stats__masonry-items {
+	margin: auto;
+	div {
+		width: 330px;
+		box-sizing: border-box;
+	}
+}
