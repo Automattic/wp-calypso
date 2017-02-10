@@ -22,7 +22,6 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
-		"help/directly": true,
 		"jetpack/connect": true,
 		"jetpack/google-analytics": true,
 		"jetpack/personalPlan": true,
