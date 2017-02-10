@@ -35,6 +35,7 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 class PlanFeaturesHeader extends Component {
 
@@ -77,14 +78,20 @@ class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			site,
 			translate,
+			isSiteAT
 		} = this.props;
+
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
 
-		if ( ! site.jetpack || this.props.planType === PLAN_JETPACK_FREE ) {
+		if (
+			isSiteAT ||
+			! site.jetpack ||
+			this.props.planType === PLAN_JETPACK_FREE
+		) {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
@@ -232,7 +239,8 @@ PlanFeaturesHeader.propTypes = {
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
 	currentSitePlan: PropTypes.object,
-	relatedMonthlyPlan: PropTypes.object
+	relatedMonthlyPlan: PropTypes.object,
+	isSiteAT: PropTypes.bool
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -244,7 +252,8 @@ PlanFeaturesHeader.defaultProps = {
 	intervalType: 'yearly',
 	site: {},
 	basePlansPath: null,
-	currentSitePlan: {}
+	currentSitePlan: {},
+	isSiteAT: false
 };
 
 export default connect( ( state, ownProps ) => {
@@ -254,6 +263,9 @@ export default connect( ( state, ownProps ) => {
 
 	return Object.assign( {},
 		ownProps,
-		{ currentSitePlan }
+		{
+			currentSitePlan,
+			isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId )
+		}
 	);
 } )( localize( PlanFeaturesHeader ) );
