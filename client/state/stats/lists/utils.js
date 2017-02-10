@@ -25,6 +25,7 @@ export function rangeOfPeriod( period, date ) {
 	if ( 'week' === period ) {
 		if ( '0' === momentDate.format( 'd' ) ) {
 			startOf.subtract( 6, 'd' );
+			endOf.subtract( 6, 'd' );
 		} else {
 			startOf.add( 1, 'd' );
 			endOf.add( 1, 'd' );
@@ -34,6 +35,23 @@ export function rangeOfPeriod( period, date ) {
 		startOf: startOf.format( 'YYYY-MM-DD' ),
 		endOf: endOf.format( 'YYYY-MM-DD' )
 	};
+}
+
+/**
+ * Returns true if is auto refreshing astats is allowed
+ * for the give stats query
+ * It's allowed for queries without dates and for periods including today
+ *
+ * @param  {String} query  Stats query
+ * @return {Boolean}       AutoRefresh allowed or not
+ */
+export function isAutoRefreshAllowedForQuery( query ) {
+	if ( ! query || ! query.date || ( ! query.unit && ! query.period ) ) {
+		return true;
+	}
+	const range = rangeOfPeriod( query.period || query.unit, query.date );
+	const today = moment();
+	return today >= moment( range.startOf ) && today < moment( range.endOf ).add( 1, 'day' );
 }
 
 /**

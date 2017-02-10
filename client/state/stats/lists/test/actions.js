@@ -103,11 +103,11 @@ describe( 'actions', () => {
 
 		it( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_REQUEST_SUCCESS,
 					siteId: SITE_ID,
 					statType: STAT_TYPE,
-					query: STREAK_QUERY
+					query: STREAK_QUERY,
 				} );
 			} );
 		} );

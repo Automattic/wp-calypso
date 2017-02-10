@@ -10,32 +10,47 @@ import shallowEqual from 'react-pure-render/shallowEqual';
  */
 import { requestSiteStats } from 'state/stats/lists/actions';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
-	componentWillMount() {
-		this.request( this.props );
+	componentDidMount() {
+		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.statType === nextProps.statType &&
-				shallowEqual( this.props.query, nextProps.query ) ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId === prevProps.siteId &&
+				this.props.statType === prevProps.statType &&
+				shallowEqual( this.props.query, prevProps.query ) ) {
+			return;
+		}
+		this.request();
+	}
+
+	componentWillUnmount() {
+		this.clearInterval();
+	}
+
+	request() {
+		const { requesting, siteId, statType, query, heartbeat } = this.props;
+		if ( requesting ) {
 			return;
 		}
 
-		this.request( nextProps );
-	}
-
-	request( props ) {
-		if ( props.requesting ) {
-			return;
+		this.props.requestSiteStats( siteId, statType, query );
+		this.clearInterval();
+		if ( heartbeat, isAutoRefreshAllowedForQuery( query ) ) {
+			this.interval = setInterval( () => {
+				if ( ! this.props.requesting ) {
+					this.props.requestSiteStats( siteId, statType, query );
+				}
+			}, heartbeat );
 		}
-
-		props.requestSiteStats( props.siteId, props.statType, props.query );
 	}
 
-	shouldComponentUpdate() {
-		return false;
+	clearInterval() {
+		if ( this.interval ) {
+			clearInterval( this.interval );
+		}
 	}
 
 	render() {
@@ -48,11 +63,13 @@ QuerySiteStats.propTypes = {
 	statType: PropTypes.string.isRequired,
 	query: PropTypes.object,
 	requesting: PropTypes.bool.isRequired,
-	requestSiteStats: PropTypes.func.isRequired
+	requestSiteStats: PropTypes.func.isRequired,
+	heartbeat: PropTypes.number
 };
 
 QuerySiteStats.defaultProps = {
-	query: {}
+	query: {},
+	heartbeat: 3 * 60 * 1000 // 3 minutes
 };
 
 export default connect(

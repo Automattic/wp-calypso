@@ -10,7 +10,7 @@ import { merge, unset } from 'lodash';
 import { createReducer } from 'state/utils';
 import { isValidStateWithSchema } from 'state/utils';
 import { getSerializedStatsQuery } from './utils';
-import { itemSchema } from './schema';
+import { itemSchema, requestsSchema } from './schema';
 import {
 	DESERIALIZE,
 	SITE_STATS_RECEIVE,
@@ -38,12 +38,12 @@ export const requests = createReducer( {}, {
 			}
 		} );
 	},
-	[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query } ) => {
+	[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query, date } ) => {
 		const queryKey = getSerializedStatsQuery( query );
 		return merge( {}, state, {
 			[ siteId ]: {
 				[ statType ]: {
-					[ queryKey ]: { requesting: false, status: 'success' }
+					[ queryKey ]: { requesting: false, status: 'success', date }
 				}
 			}
 		} );
@@ -58,7 +58,7 @@ export const requests = createReducer( {}, {
 			}
 		} );
 	}
-} );
+}, requestsSchema );
 
 /**
  * Returns the updated items state after an action has been dispatched. The
