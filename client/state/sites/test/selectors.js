@@ -23,6 +23,7 @@ import {
 	getSiteTitle,
 	getSiteThemeShowcasePath,
 	isSitePreviewable,
+	isSiteCustomizable,
 	isRequestingSites,
 	isRequestingSite,
 	getSiteBySlug,
@@ -750,6 +751,53 @@ describe( 'selectors', () => {
 
 				expect( isPreviewable ).to.be.true;
 			} );
+		} );
+	} );
+
+	describe( 'isSiteCustomizable()', () => {
+		it( 'should return null if the capability is not set for the current user', () => {
+			const isCustomizable = isSiteCustomizable( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com'
+						}
+					}
+				},
+				currentUser: {
+					capabilities: {
+						77203199: {}
+					}
+				}
+			}, 77203199 );
+
+			expect( isCustomizable ).to.be.null;
+		} );
+
+		it( 'should return true is the corresponding user capability is true for this site', () => {
+			const isCustomizable = isSiteCustomizable( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'http://example.com',
+							options: {
+								unmapped_url: 'http://example.com'
+							}
+						}
+					}
+				},
+				currentUser: {
+					capabilities: {
+						77203199: {
+							edit_theme_options: true
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( isCustomizable ).to.be.true;
 		} );
 	} );
 
