@@ -28,11 +28,6 @@ import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
 
 class PlansFeaturesMain extends Component {
-
-	isJetpackSite( site ) {
-		return site.jetpack;
-	}
-
 	getPlanFeatures() {
 		const {
 			site,
@@ -42,11 +37,12 @@ class PlansFeaturesMain extends Component {
 			isInSignup,
 			isLandingPage,
 			basePlansPath,
-			selectedFeature
+			selectedFeature,
+			displayJetpackPlans
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
-		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
+		if ( displayJetpackPlans && intervalType === 'monthly' ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -67,7 +63,7 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( this.isJetpackSite( site ) ) {
+		if ( displayJetpackPlans ) {
 			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
@@ -316,9 +312,14 @@ class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site, showFAQ } = this.props;
+		const {
+			site,
+			showFAQ,
+			displayJetpackPlans
+		} = this.props;
+
 		const renderFAQ = () =>
-			this.isJetpackSite( site )
+			displayJetpackPlans
 				? this.getJetpackFAQ()
 				: this.getFAQ( site );
 
@@ -345,7 +346,8 @@ PlansFeaturesMain.PropTypes = {
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
-	selectedFeature: PropTypes.string
+	selectedFeature: PropTypes.string,
+	displayJetpackPlans: PropTypes.bool
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -353,7 +355,8 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true
+	showFAQ: true,
+	displayJetpackPlans: false
 };
 
 export default localize( PlansFeaturesMain );

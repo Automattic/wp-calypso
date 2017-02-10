@@ -19,6 +19,8 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
+import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const Plans = React.createClass( {
 	propTypes: {
@@ -27,12 +29,14 @@ const Plans = React.createClass( {
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
-		selectedSiteId: React.PropTypes.number
+		selectedSiteId: React.PropTypes.number,
+		displayJetpackPlans: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
-			intervalType: 'yearly'
+			intervalType: 'yearly',
+			displayJetpackPlans: false
 		};
 	},
 
@@ -58,7 +62,12 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		const { selectedSite, selectedSiteId, translate } = this.props;
+		const {
+			selectedSite,
+			selectedSiteId,
+			translate,
+			displayJetpackPlans
+		} = this.props;
 
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
@@ -86,6 +95,7 @@ const Plans = React.createClass( {
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
+							displayJetpackPlans={ displayJetpackPlans }
 						/>
 					</div>
 				</Main>
@@ -98,11 +108,16 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const isPlaceholder = ! selectedSiteId;
+
+		const jetpackSite = isJetpackSite( state, selectedSiteId );
+		const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
+
 		return {
 			isPlaceholder,
 			plans: getPlans( state ),
 			selectedSite: getSelectedSite( state ),
-			selectedSiteId: selectedSiteId
+			selectedSiteId: selectedSiteId,
+			displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite
 		};
 	}
 )( localize( Plans ) );
