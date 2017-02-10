@@ -185,7 +185,6 @@ export default React.createClass( {
 				: null;
 
 			this.setPostDate( date );
-			// this.props.warnPublishDateChange( { clearWarning: true } ); -> not needed anymre
 		}
 
 		this.setState( { showSchedulePopover: false } );
