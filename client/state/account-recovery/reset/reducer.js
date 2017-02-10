@@ -27,7 +27,7 @@ const error = ( state = null, action ) => get( {
 
 const items = ( state = [], action ) => get( {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: action.options,
-	[ SERIALIZE ]: {},
+	[ SERIALIZE ]: [],
 }, action.type, state );
 
 const resetOptions = combineReducers( {
