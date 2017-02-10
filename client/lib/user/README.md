@@ -5,7 +5,8 @@ This component is a wrapper module for interacting with the wpcom.js `/me` endpo
 
 ## User
 ```es6
-var user = require( 'lib/user' )();
+import userModule from 'lib/user';
+const user = userModule();
 ```
 
 ### `User#get()`
@@ -22,7 +23,7 @@ Clears user stored data and handles relevant redirects based on type of authenti
 
 ## UserUtilities
 ```es6
-var user = require( 'lib/user/utilities' );
+import userUtilities from 'lib/user/utils';
 ```
 
 ### `UserUtilities#logout()`

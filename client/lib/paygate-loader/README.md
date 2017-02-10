@@ -4,7 +4,7 @@ Paygate Loader
 `Paygate` is a library we can use to send Credit card data to the Paygate server and recieve back a token which we then submit to MoneyPress. This class, `PaygateLoader`, takes care of the details of loading the remote `paygate.js` script asynchronously. You can access the `Paygate` class from within the callback of `PaygateLoader.ready` like so:
 
 ```es6
-var paygateLoader = require( 'lib/paygate-loader' );
+import paygateLoader from 'lib/paygate-loader';
 
 function onSuccess( token ) {
 	// Do something with the Paygate token
@@ -15,7 +15,7 @@ function onError( error ) {
 }
 
 paygateLoader.ready( function( Paygate ) {
-	var card = {
+	const card = {
 		'name': 'WordPress User',
 		'number': '4111111111111111',
 		'cvc': '111',

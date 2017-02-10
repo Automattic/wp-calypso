@@ -30,52 +30,53 @@ Fetches followers in batches of 100 starting from the given page, which defaults
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var FollowersStore = require( 'lib/followers/wpcom-followers-store' ),
-	FollowersActions = require( 'lib/followers/actions' );
+import FollowersStore from 'lib/followers/wpcom-followers-store';
+import FollowersActions from 'lib/followers/actions';
 
-module.exports = React.createClass( { 
+class YourComponent extends Component {
 
-	displayName: 'yourComponent',
-	
-	fetchOptions: {
-	    siteId: this.props.siteId,
-	    type: 'email'
-	},
-	
-	componentDidMount: function() {
-		FollowersActions.fetchFollowers( this.fetchOptions );
-		FollowersStore.on( 'change', this.refreshFollowers );
-	},
-	
-	componentWillUnmount: function() {
-		FollowersStore.removeListener( 'change', this.refreshFollowers );
-	},
+	constructor() {
+		super( ...arguments );
 
-	getInitialState: function() {
-		return this.getFollowers();
-	},
-	
-	getFollowers: function() {
-		return {
-			followers: FollowersStore.getFollowers( this.props.fetchOptions )
-		};
-	},
-
-	refreshFollowers: function() {
-		this.setState( this.getFollowers() );
-	},
-	
-	render: function() {
-		
+		this.state = this.getFollowers();
 	}
 	
-} );
+	getFetchOptions() {
+		return {
+			siteId: this.props.siteId,
+			type: 'email',
+		};
+	}
 
+	componentDidMount() {
+		FollowersActions.fetchFollowers( this.getFetchOptions() );
+		FollowersStore.on( 'change', this.refreshFollowers );
+	}
+	
+	componentWillUnmount() {
+		FollowersStore.removeListener( 'change', this.refreshFollowers );
+	}
+	
+	getFollowers() {
+		return {
+			followers: FollowersStore.getFollowers( this.getFetchOptions() )
+		};
+	}
+
+	refreshFollowers() {
+		this.setState( this.getFollowers() );
+	}
+	
+	render() {
+		...
+	}
+	
+}
 ```
 
 ###Testing

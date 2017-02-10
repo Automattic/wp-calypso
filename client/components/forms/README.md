@@ -26,8 +26,11 @@ The `FormSectionHeading` component allows you to add a section header to your se
 ### FormInputValidation
 The `FormInputValidation` component is used to display a validation notice to the user. You can use it like this:
 
+```jsx
 <FormInputValidation isError={ true } text="Usernames can only contain lowercase letters (a-z) and numbers." />
+
 <FormInputValidation text="That username is valid." />
+```
 
 ### MultiCheckbox
 
@@ -37,7 +40,7 @@ The `FormInputValidation` component is used to display a validation notice to th
 `SelectOptGroups` allows you to pass structured data to render a select element with `<option>` elements nested inside `<optgroup>` separators. You can use it like this:
 
 ```jsx
-var options = [
+const options = [
 	{
 		label: 'Group 1',
 		options: [
@@ -64,8 +67,8 @@ var options = [
 			}
 		]
 	}
-],
-initialSelected = 3;
+];
+const initialSelected = 3;
 
 <SelectOptGroups name="example" value={ initialSelected } options={ options } />
 ```
