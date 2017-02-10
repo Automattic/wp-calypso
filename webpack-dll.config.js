@@ -30,13 +30,13 @@ module.exports = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].' + bundleEnv + '.js',
+		filename: '[name].js',
 		library: '[name]',
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	plugins: [
 		new webpack.DllPlugin( {
-			path: path.join( __dirname, 'build', 'dll', '[name].' + bundleEnv + '-manifest.json' ),
+			path: path.join( __dirname, 'build', 'dll', '[name]-manifest.json' ),
 			name: '[name]',
 			context: path.resolve( __dirname, 'client' )
 		} ),
