@@ -56,38 +56,38 @@ const directly = {
 		};
 
 		// Before loading the script, we need to enqueue the config details
-		window.DirectlyRTM( 'config', Object.assign( {}, DEFAULT_RTM_WIDGET_OPTIONS, ...config ) );
+		window.DirectlyRTM( 'config', Object.assign( {}, DEFAULT_RTM_WIDGET_OPTIONS, config ) );
 
 		// With config set we can load the script
 		loadDirectlyScript( callback );
 	},
 
 	askQuestion: function( { questionText, name, email } ) {
-		if ( !initialized ) {
+		if ( ! initialized ) {
 			return;
 		}
-		
+
 		// We're using destructuring and shorthand properties just to explicitly document
 		// the options available from the Directly API.
 		window.DirectlyRTM( 'askQuestion', { questionText, name, email } );
 	},
 
 	maximize: function() {
-		if ( !initialized ) {
+		if ( ! initialized ) {
 			return;
 		}
 		window.DirectlyRTM( 'maximize' );
 	},
 
 	minimize: function() {
-		if ( !initialized ) {
+		if ( ! initialized ) {
 			return;
 		}
 		window.DirectlyRTM( 'minimize' );
 	},
 
 	openAskForm: function() {
-		if ( !initialized ) {
+		if ( ! initialized ) {
 			return;
 		}
 		window.DirectlyRTM( 'openAskForm' );
