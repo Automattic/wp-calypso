@@ -690,8 +690,11 @@ export const PostEditor = React.createClass( {
 	// when a post that is published, modifies its date, this updates the post url
 	// we should warn users of this case
 	warnPublishDateChange( { clearWarning = false } = {} )  {
-		if ( clearWarning && get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
-			return this.hideNotice();
+		if ( clearWarning ) {
+			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
+				this.hideNotice();
+			}
+			return;
 		}
 		this.setState( {
 			notice: {
