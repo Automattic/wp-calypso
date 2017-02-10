@@ -28,7 +28,7 @@ const Subscriptions = ( {
 	translate
 } ) => {
 	return (
-		<Card className="subscriptions__card site-settings">
+		<Card className="subscriptions site-settings">
 			<FormFieldset>
 				<div className="subscriptions__info-link-container">
 					<InfoPopover position={ 'left' }>
@@ -45,7 +45,7 @@ const Subscriptions = ( {
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 
-				<div className="subscriptions__module-settings is-indented">
+				<div className="subscriptions__module-settings site-settings__child-settings">
 					<FormToggle
 						className="subscriptions__module-settings-toggle is-compact"
 						checked={ !! fields.stb_enabled }
