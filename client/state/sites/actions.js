@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	SITE_DELETE_RECEIVE,
 	SITE_FRONT_PAGE_SET,
 	SITE_FRONT_PAGE_SET_FAILURE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
@@ -21,6 +22,20 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 import { omit } from 'lodash';
+
+/**
+ * Returns an action object to be used in signalling that a site has been
+ * deleted.
+ *
+ * @param  {Object} site Site received
+ * @return {Object}      Action object
+ */
+export function receiveDeletedSite( site ) {
+	return {
+		type: SITE_DELETE_RECEIVE,
+		site
+	};
+}
 
 /**
  * Returns an action object to be used in signalling that a site object has
