@@ -300,6 +300,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						showDrafts={ this.props.showDrafts }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+						warnPublishDateChange={ this.warnPublishDateChange }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
@@ -684,6 +685,17 @@ export const PostEditor = React.createClass( {
 		} );
 
 		window.scrollTo( 0, 0 );
+	},
+
+	// when a post that is published, modifies its date, this updates the post url
+	// we should warn users of this case
+	warnPublishDateChange() {
+		this.setState( {
+			notice: {
+				status: 'is-warning',
+				message: 'warnPublishDateChange'
+			}
+		} );
 	},
 
 	onSaveSuccess: function( message, action, link ) {
