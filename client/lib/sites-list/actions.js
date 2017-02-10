@@ -62,17 +62,14 @@ const SitesListActions = {
 					error
 				} );
 			} else {
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_DELETED_SITE',
-					site
-				} );
+				SitesListActions.receiveDeletedSite( site );
 			}
 
 			onComplete( error );
 		} );
 	},
 
-	receiveDeletedSite( error, site ) {
+	receiveDeletedSite( site ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_DELETED_SITE',
 			site
