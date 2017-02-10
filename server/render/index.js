@@ -17,6 +17,7 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink
 } from 'state/document-head/selectors';
+import clientConfig from 	'config/regenerate-client';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -95,6 +96,7 @@ export function serverRender( req, res ) {
 	}
 
 	context.head = { title, metas, links };
+	context.config = clientConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop.jade', context );
