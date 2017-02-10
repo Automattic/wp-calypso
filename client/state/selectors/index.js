@@ -49,6 +49,7 @@ export getTimezonesLabel from './get-timezones-label';
 export getTimezonesLabels from './get-timezones-labels';
 export getTimezonesLabelsByContinent from './get-timezones-labels-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
+export hasAutomatedTransferEligibilityMessages from './has-automated-transfer-eligibility-messages';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
