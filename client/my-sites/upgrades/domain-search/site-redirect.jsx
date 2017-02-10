@@ -1,63 +1,84 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' );
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var HeaderCake = require( 'components/header-cake' ),
-	Main = require( 'components/main' ),
-	SiteRedirectStep = require( './site-redirect-step' ),
-	observe = require( 'lib/mixins/data-observe' );
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import SiteRedirectStep from './site-redirect-step';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryProductsList from 'components/data/query-products-list';
 
-var SiteRedirect = React.createClass( {
-	mixins: [ observe( 'productsList', 'sites' ) ],
-
-	propTypes: {
+class SiteRedirect extends Component {
+	static propTypes = {
+		cart: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object,
+		selectedSiteSlug: React.PropTypes.string,
+		isSiteUpgradeable: React.PropTypes.bool,
 		productsList: React.PropTypes.object.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
+		translate: React.PropTypes.func.isRequired,
+	};
 
-	componentWillMount: function() {
+	constructor() {
+		super();
+		this.handleBackToDomainSearch = this.handleBackToDomainSearch.bind( this );
+	}
+
+	componentDidMount() {
 		this.checkSiteIsUpgradeable();
-	},
+	}
 
-	componentDidMount: function() {
-		this.props.sites.on( 'change', this.checkSiteIsUpgradeable );
-	},
+	componentWillReceiveProps() {
+		this.checkSiteIsUpgradeable();
+	}
 
-	componentWillUnmount: function() {
-		this.props.sites.off( 'change', this.checkSiteIsUpgradeable );
-	},
-
-	checkSiteIsUpgradeable: function( ) {
-		var selectedSite = this.props.sites.getSelectedSite();
-
-		if ( selectedSite && ! selectedSite.isUpgradeable() ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add' );
 		}
-	},
+	}
 
-	backToDomainSearch: function() {
-		page( '/domains/add/' + this.props.sites.getSelectedSite().slug );
-	},
+	handleBackToDomainSearch() {
+		page( '/domains/add/' + this.props.selectedSiteSlug );
+	}
 
-	render: function() {
+	render() {
+		const {
+			cart,
+			selectedSite,
+			productsList,
+			translate,
+		} = this.props;
+
 		return (
 			<Main>
-				<HeaderCake onClick={ this.backToDomainSearch }>
-					{ this.translate( 'Redirect a Site' ) }
+				<HeaderCake onClick={ this.handleBackToDomainSearch }>
+					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
 				<SiteRedirectStep
-					cart={ this.props.cart }
-					products={ this.props.productsList.get() }
-					selectedSite={ this.props.sites.getSelectedSite() } />
+					cart={ cart }
+					products={ productsList }
+					selectedSite={ selectedSite } />
+
+				<QueryProductsList />
 			</Main>
 		);
 	}
-} );
+}
 
-module.exports = SiteRedirect;
+export default connect(
+	( state ) => ( {
+		selectedSite: getSelectedSite( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
+		productsList: state.productsList.items,
+	} )
+)( localize( SiteRedirect ) );

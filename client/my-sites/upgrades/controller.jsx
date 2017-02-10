@@ -68,9 +68,7 @@ module.exports = {
 				<CartData>
 					<DomainSearch
 						basePath={ basePath }
-						context={ context }
-						sites={ sites }
-						productsList={ productsList } />
+						context={ context } />
 				</CartData>
 			),
 			document.getElementById( 'primary' ),
@@ -91,9 +89,7 @@ module.exports = {
 		renderWithReduxStore(
 			(
 				<CartData>
-					<SiteRedirect
-						productsList={ productsList }
-						sites={ sites } />
+					<SiteRedirect />
 				</CartData>
 			),
 			document.getElementById( 'primary' ),
@@ -115,10 +111,7 @@ module.exports = {
 				<Main>
 					<CartData>
 						<MapDomain
-							store={ context.store }
-							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
+							initialQuery={ context.query.initialQuery } />
 					</CartData>
 				</Main>
 			),
