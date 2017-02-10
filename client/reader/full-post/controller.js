@@ -16,7 +16,7 @@ import {
 	setPageTitle,
 	trackPageLoad
 } from 'reader/controller-helper';
-import ReaderFullPost from 'blocks/reader-full-post';
+import AsyncLoad from 'components/async-load';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
@@ -46,17 +46,18 @@ export function blogPost( context ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( ReaderFullPost, {
-				blogId: blogId,
-				postId: postId,
-				referral: referral,
-				onClose: function() {
+		<ReduxProvider store={ context.store }>
+			<AsyncLoad
+				require="blocks/reader-full-post"
+				blogId={ blogId }
+				postId={ postId }
+				referral={ referral }
+				onClose={ function() {
 					page.back( context.lastRoute || '/' );
-				},
-				onPostNotFound: renderPostNotFound
-			} )
-		),
+				} }
+				onPostNotFound={ renderPostNotFound }
+			/>
+		</ReduxProvider>,
 		document.getElementById( 'primary' )
 	);
 	defer( function() {
@@ -80,7 +81,8 @@ export function feedPost( context ) {
 
 	ReactDom.render( (
 		<ReduxProvider store={ context.store }>
-			<ReaderFullPost
+			<AsyncLoad
+				require="blocks/reader-full-post"
 				feedId={ feedId }
 				postId={ postId }
 				onClose={ closer }
