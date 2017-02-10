@@ -95,7 +95,8 @@ const ThemePreview = React.createClass( {
 					showExternal={ this.props.showExternal }
 					showSEO={ false }
 					onClose={ this.props.closeThemePreview }
-					previewUrl={ this.props.previewUrl } >
+					previewUrl={ this.props.previewUrl }
+					externalUrl={ this.props.theme.demo_uri } >
 					{ this.renderSecondaryButton() }
 					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
 						{ primaryOption.extendedLabel }
