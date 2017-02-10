@@ -127,7 +127,10 @@ export const ImportingPane = React.createClass( {
 			postLink = <a href={ '/posts/' + slug } />,
 			postText = this.translate( 'Posts', { context: 'noun' } );
 
-		if ( page && post ) {
+		const pageCount = page.total;
+		const postCount = post.total;
+
+		if ( pageCount && postCount ) {
 			return this.translate(
 				'All done! Check out {{a}}Posts{{/a}} or ' +
 				'{{b}}Pages{{/b}} to see your imported content.', {
@@ -139,12 +142,12 @@ export const ImportingPane = React.createClass( {
 			);
 		}
 
-		if ( page || post ) {
+		if ( pageCount || postCount ) {
 			return this.translate(
 				'All done! Check out {{a}}%(articles)s{{/a}} ' +
 				'to see your imported content.', {
-					components: { a: page ? pageLink : postLink },
-					args: { articles: page ? pageText : postText }
+					components: { a: pageCount ? pageLink : postLink },
+					args: { articles: pageCount ? pageText : postText }
 				}
 			);
 		}
