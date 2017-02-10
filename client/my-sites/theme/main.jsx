@@ -347,18 +347,35 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme } = this.props;
+		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
 		let buttonCount = 1;
 
+		if ( isLoggedIn ) {
+			return (
+				<div>
+					{ isCurrentUserPaid && ! isJetpack &&
+						this.renderSupportContactUsCard( buttonCount++ ) }
+					{ forumUrl && isWpcomTheme &&
+						this.renderSupportThemeForumCard( buttonCount++ ) }
+					{ isWpcomTheme &&
+						this.renderSupportCssCard( buttonCount++ ) }
+				</div>
+			);
+		}
+
+		// Logged out
 		return (
-			<div>
-				{ isCurrentUserPaid && ! isJetpack &&
-					this.renderSupportContactUsCard( buttonCount++ ) }
-				{ forumUrl && isWpcomTheme &&
-					this.renderSupportThemeForumCard( buttonCount++ ) }
-				{ isWpcomTheme &&
-					this.renderSupportCssCard( buttonCount++ ) }
-			</div>
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="help" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Have a question about this theme?' ) }
+					<small>
+						{ i18n.translate( 'Pick this design and start a site with us, we can help!',
+							{ context: 'Logged out theme support message' } )
+						}
+					</small>
+				</div>
+			</Card>
 		);
 	},
 
