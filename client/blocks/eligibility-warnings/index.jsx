@@ -29,32 +29,32 @@ function getHoldMessages( translate ) {
 		},
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Business plan required' ),
-			description: translate( 'This feature is only allowed on sites with business plan.' ),
+			description: translate( 'This feature is only allowed on sites with a business plan.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		NO_VIP_SITES: {
-			title: translate( 'VIP Site' ),
+			title: translate( 'VIP site' ),
 			description: translate( 'This feature is not supported on VIP sites.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		NO_WPCOM_NAMESERVERS: {
-			title: translate( 'No WordPress.com Name Servers' ),
+			title: translate( 'No WordPress.com name servers' ),
 			description: translate( 'Your custom domain must point to WordPress.com name servers.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Admin access required' ),
-			description: translate( 'Only site administrators are allowed to use this feature' ),
+			description: translate( 'Only site administrators are allowed to use this feature.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		NOT_USING_CUSTOM_DOMAIN: {
 			title: translate( 'No custom domain' ),
-			description: translate( 'Your site must use custom domain in order for this feature to work.' ),
+			description: translate( 'Your site must use a custom domain to use this feature.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		NOT_DOMAIN_OWNER: {
 			title: translate( 'Not a custom domain owner' ),
-			description: translate( 'You must be the owner of the primary domain subscription in order for this feature to work.' ),
+			description: translate( 'You must be the owner of the primary domain subscription to use this feature.' ),
 			supportUrl: 'https://support.wordpress.com/'
 		},
 		SITE_GRAYLISTED: {
