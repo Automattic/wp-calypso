@@ -190,8 +190,10 @@ const getFormSettings = partialRight( pick, [
 	'Phrases to Avoid',
 	'Redundant Expression',
 	'ignored_phrases',
-	'carousel_display_exif',
-	'carousel_background_color'
+	'photon',
+	'carousel',
+	'carousel_background_color',
+	'carousel_display_exif'
 ] );
 
 export default flowRight(

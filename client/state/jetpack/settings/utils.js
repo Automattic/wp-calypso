@@ -98,7 +98,11 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		],
 		comments: [
 			'highlander_comment_form_prompt',
-			'jetpack_comment_form_color_scheme',
+			'jetpack_comment_form_color_scheme'
+		],
+		carousel: [
+			'carousel_background_color',
+			'carousel_display_exif'
 		]
 	};
 	let filteredSettings = { ...settings };
