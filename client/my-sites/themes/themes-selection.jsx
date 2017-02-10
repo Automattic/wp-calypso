@@ -114,7 +114,7 @@ const ThemesSelection = React.createClass( {
 		const wrappedPreviewAction = ( action ) => {
 			return ( themeObj ) => {
 				let defaultAction;
-				if ( this.props.isThemeActive ) {
+				if ( this.props.isThemeActive( theme.id ) ) {
 					defaultAction = options.customize;
 				} else if ( theme.price && options.purchase ) {
 					defaultAction = options.purchase;
