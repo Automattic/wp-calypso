@@ -36,6 +36,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
+import ExternalLink from 'components/external-link';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -602,9 +603,9 @@ class SiteSettingsFormGeneral extends Component {
 						}
 					</span>
 					<FormSettingExplanation>
-						<a href="https://codex.wordpress.org/Formatting_Date_and_Time">
+						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
 							{ translate( 'Documentation on date and time formatting.' ) }
-						</a>
+						</ExternalLink>
 					</FormSettingExplanation>
 				</FormLabel>
 			</FormFieldset>
