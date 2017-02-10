@@ -1,0 +1,33 @@
+.stats-date-picker__refresh-status {
+	line-height: 16px;
+
+	.stats-date-picker__update-date {
+		color: $gray;
+		display: inline-block;
+		font-size: 13px;
+	}
+
+	.stats-date-picker__pulsing-dot-wrapper {
+		display: inline-block;
+		padding: 0 10px;
+
+		.stats-date-picker__pulsing-dot {
+			display: inline-block;
+			background: $gray;
+			transform: translate3d( 0, 0, 0 );
+			width: 6px;
+			height: 6px;
+			border: none;
+			box-shadow: 0 0 0 0 rgba( 168, 190, 206, 0.7 );
+			border-radius: 100%;
+			animation: stats-dot-pulse 1.25s infinite cubic-bezier( 0.66, 0, 0, 1 );
+			vertical-align: middle;
+		}
+	}
+
+	@keyframes stats-dot-pulse {
+		to {
+			box-shadow: 0 0 0 5px rgba( 90, 153, 220, 0 );
+		}
+	}
+}

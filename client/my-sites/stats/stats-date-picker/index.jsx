@@ -3,7 +3,17 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { flowRight, get } from 'lodash';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import Tooltip from 'components/tooltip';
+import { getSiteStatsQueryDate } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class StatsDatePicker extends Component {
 	static propTypes = {
@@ -14,6 +24,24 @@ class StatsDatePicker extends Component {
 		period: PropTypes.string.isRequired,
 		summary: PropTypes.bool,
 		query: PropTypes.object,
+		statType: PropTypes.string,
+		showQueryDate: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showQueryDate: false
+	};
+
+	state = {
+		isTooltipVisible: false
+	};
+
+	showTooltip = () => {
+		this.setState( { isTooltipVisible: true } );
+	};
+
+	hideTooltip = () => {
+		this.setState( { isTooltipVisible: false } );
 	};
 
 	dateForSummarize() {
@@ -75,8 +103,26 @@ class StatsDatePicker extends Component {
 		return formattedDate;
 	}
 
+	renderQueryDate() {
+		const { queryDate, moment, translate } = this.props;
+		if ( ! queryDate ) {
+			return null;
+		}
+
+		const today = moment();
+		const date = moment( queryDate );
+		const isToday = today.isSame( date, 'day' );
+		return translate( 'Last update: %(time)s', {
+			args: { time: isToday ? date.format( 'LT' ) : date.fromNow() }
+		} );
+	}
+
+	bindPulsingDot = ( ref ) => {
+		this.pulsingDot = ref;
+	}
+
 	render() {
-		const { summary, translate, query } = this.props;
+		const { summary, translate, query, showQueryDate } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		const sectionTitle = translate( 'Stats for {{period/}}', {
@@ -95,11 +141,48 @@ class StatsDatePicker extends Component {
 			<div>
 				{ summary
 					? <span>{ sectionTitle }</span>
-					: <h3 className="stats-section-title">{ sectionTitle }</h3>
+					: <div className="stats-section-title">
+							<h3>{ sectionTitle }</h3>
+							{ showQueryDate && isAutoRefreshAllowedForQuery( query ) &&
+								<div className="stats-date-picker__refresh-status">
+									<span className="stats-date-picker__update-date">
+										{ this.renderQueryDate() }
+									</span>
+									<div className="stats-date-picker__pulsing-dot-wrapper"
+										ref={ this.bindPulsingDot }
+										onMouseEnter={ this.showTooltip }
+										onMouseLeave={ this.hideTooltip }
+									>
+										<div className="stats-date-picker__pulsing-dot" />
+										<Tooltip
+											isVisible={ this.state.isTooltipVisible }
+											onClose={ this.hideTooltip }
+											position="bottom"
+											context={ this.pulsingDot }
+										>
+											{ translate( 'Auto-refreshing every 3 minutes' )}
+										</Tooltip>
+									</div>
+								</div>
+							}
+						</div>
 				}
 			</div>
 		);
 	}
 }
 
-export default localize( StatsDatePicker );
+const connectComponent = connect(
+	( state, { query, statsType, showQueryDate } ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			queryDate: showQueryDate ? getSiteStatsQueryDate( state, siteId, statsType, query ) : null,
+			requesting: showQueryDate ? isRequestingSiteStatsForQuery( state, siteId, statsType, query ) : false,
+		};
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsDatePicker );

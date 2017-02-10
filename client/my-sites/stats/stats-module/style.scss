@@ -51,6 +51,11 @@
 }
 
 // Section title
+@keyframes stats-date-picker__spin {
+	100% {
+		transform: rotate( 360deg );
+	}
+}
 
 .stats-section-title {
 	@include heading;
@@ -530,4 +535,8 @@ ul.module-header-actions {
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+}
+
+.stats-module__header.is-refreshing {
+	animation: loading-fade 1.6s ease-in-out infinite;
 }

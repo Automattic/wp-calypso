@@ -37,18 +37,28 @@ class StatsModule extends Component {
 		path: PropTypes.string,
 		siteSlug: PropTypes.string,
 		siteId: PropTypes.number,
-		date: PropTypes.string,
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
 		query: {}
 	};
+
+	state = {
+		loaded: false
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.requesting && this.props.requesting ) {
+			this.setState( { loaded: true } );
+		}
+	}
 
 	getModuleLabel() {
 		if ( ! this.props.summary ) {
@@ -98,12 +108,12 @@ class StatsModule extends Component {
 
 		const noData = (
 			data &&
-			! requesting &&
+			this.state.loaded &&
 			! data.length
 		);
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const isLoading = requesting && ! ( data && data.length );
+		const isLoading = ! this.state.loaded && ! ( data && data.length );
 
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -121,12 +131,13 @@ class StatsModule extends Component {
 		const summaryLink = this.getHref();
 		const displaySummaryLink = data && data.length >= 10;
 		const isAllTime = this.isAllTimeList();
+		const headerClass = classNames( 'stats-module__header', { 'is-refreshing': requesting && ! isLoading } );
 
 		return (
 			<div>
 				{ siteId && statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ ! isAllTime &&
-					<SectionHeader label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
+					<SectionHeader className={ headerClass } label={ this.getModuleLabel() } href={ ! summary ? summaryLink : null }>
 						{ summary && <DownloadCsv statType={ statType } query={ query } path={ path } period={ period } /> }
 					</SectionHeader>
 				}
