@@ -129,9 +129,7 @@ const ThemesSelection = React.createClass( {
 		if ( options && options.preview ) {
 			options.preview.action = wrappedPreviewAction( options.preview.action );
 		}
-		if ( options && options.previewOnJetpack ) {
-			options.previewOnJetpack.action = wrappedPreviewAction( options.previewOnJetpack.action );
-		}
+
 		return options;
 	},
 

@@ -804,8 +804,10 @@ export function closeThemePreview() {
 }
 
 export function requestPreview( themeId, siteId ) {
-	return ( dispatch ) => {
-		dispatch( setPreviewingThemeData( themeId, siteId ) );
+	return ( dispatch, getState ) => {
+		const isWpcomTheme = !! getTheme( getState(), 'wpcom', themeId );
+		const siteIdOrWpcom = isWpcomTheme ? 'wpcom' : siteId;
+		dispatch( setPreviewingThemeData( themeId, siteIdOrWpcom ) );
 		dispatch( openThemePreview() );
 	};
 }

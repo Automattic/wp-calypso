@@ -179,7 +179,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getPreviewAction() {
-		const preview = this.props.options.preview || this.props.options.previewOnJetpack;
+		const { preview } = this.props.options;
 		return () => {
 			this.props.setPreviewOptions( this.props.defaultOption, this.props.secondaryOption );
 			return preview.action( this.props.theme );
@@ -601,7 +601,6 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
-		previewAction,
 	} = props;
 	const siteId = site ? site.ID : null;
 
@@ -629,7 +628,7 @@ const ThemeSheetWithOptions = ( props ) => {
 				'tryandcustomize',
 				'purchase',
 				'activate',
-				previewAction
+				'preview'
 			] }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
@@ -666,7 +665,6 @@ export default connect(
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
 		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
-		const previewAction = isWpcomTheme ? 'preview' : 'previewOnJetpack';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
@@ -683,7 +681,6 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
-			previewAction,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),

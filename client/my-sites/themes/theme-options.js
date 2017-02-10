@@ -69,7 +69,7 @@ const deleteTheme = {
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
-	extendedLabel: i18n.translate( 'Customize this design'),
+	extendedLabel: i18n.translate( 'Customize this design' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
@@ -88,20 +88,11 @@ const tryandcustomize = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
-// This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
-// respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	action: ( themeId ) => requestPreview( themeId, 'wpcom' ),
-};
-
-const previewOnJetpack = {
-	label: i18n.translate( 'Live demo', {
-		comment: 'label for previewing the theme demo website'
-	} ),
-	action: ( themeId, siteId ) => requestPreview( themeId, siteId ),
+	action: requestPreview
 };
 
 const signupLabel = i18n.translate( 'Pick this design', {
@@ -141,7 +132,6 @@ const help = {
 const ALL_THEME_OPTIONS = {
 	customize,
 	preview,
-	previewOnJetpack,
 	purchase,
 	activate,
 	deleteTheme,

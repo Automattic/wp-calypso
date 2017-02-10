@@ -116,7 +116,7 @@ export default connect(
 
 		// data for preview not set.
 		if ( ! showPreview ) {
-			return { showPreview }
+			return { showPreview };
 		}
 		const previewData = getThemeForPreviewData( state );
 		const theme = getTheme( state, previewData.themeData.siteId, previewData.themeData.themeId );

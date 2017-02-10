@@ -36,8 +36,8 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				siteId={ site.ID }
 				options={ [
 					'customize',
-					'previewOnJetpack',
 					'purchase',
+					'preview',
 					'activate',
 					'tryandcustomize',
 					'deleteTheme',
