@@ -44,7 +44,7 @@ const camelCaseToSlug = name => {
 	}
 
 	return name
-		.replace( /\.?([A-Z])/g, ( x, y ) => '-' + y.toLowerCase() )
+		.replace( /\.?([A-Z]+)/g, ( x, y ) => '-' + y.toLowerCase() )
 		.replace( /^-/, '' );
 };
 

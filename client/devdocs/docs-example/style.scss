@@ -63,3 +63,67 @@
 		}
 	}
 }
+
+.docs-example__readme-spinner {
+  margin: auto;
+  width: 50px;
+}
+
+.docs-example__readme-loading-message {
+  text-align: center;
+  padding-bottom: 25px;
+}
+
+.docs-example__readme-content {
+  h1 {
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 32px;
+  }
+
+  li p {
+	margin-bottom: 0;
+  }
+
+  hr {
+	text-align: center;
+	margin-top: 1.5em;
+	border: 0;
+	height: 1px;
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  }
+
+  hr:after {
+	content: '\002665';
+	display: inline-block;
+	position: relative;
+	top: -15px;
+	padding: 0 10px;
+	background: $gray-light;
+	color: $blue-wordpress;
+	font-size: 18px;
+  }
+
+  .card hr:after {
+	content: '';
+  }
+
+  table {
+	border-collapse: collapse;
+	border-spacing: 0;
+
+	th {
+	  padding-top: 11px;
+	  padding-bottom: 11px;
+	  background-color: $blue-light;
+	  color: white;
+	}
+
+	td, th {
+	  border: 1px solid $gray;
+	  text-align: left;
+	  padding: 8px;
+	}
+  }
+
+}
