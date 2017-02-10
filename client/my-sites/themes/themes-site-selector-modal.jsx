@@ -101,8 +101,11 @@ const ThemesSiteSelectorModal = React.createClass( {
 				{ selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
 					isVisible={ true }
 					filter={ function( site ) {
-						return ! site.jetpack;
-					} /* No Jetpack sites for now. */ }
+						return ! (
+							( selectedOption.hideForSite && selectedOption.hideForSite( site.ID ) ) ||
+							( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedTheme, site.ID ) )
+						);
+					} }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
