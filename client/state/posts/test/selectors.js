@@ -1378,6 +1378,40 @@ describe( 'selectors', () => {
 			expect( previewUrl ).to.equal( 'https://example.com/post-url' );
 		} );
 
+		it( 'should change http to https if mapped domain', () => {
+			const previewUrl = getPostPreviewUrl( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'publish',
+									URL: 'http://example.com/post-url'
+								}
+							}
+						} )
+					}
+				},
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'http://example.com',
+							options: {
+								unmapped_url: 'https://example.wordpress.com',
+								is_mapped_domain: true
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( previewUrl ).to.equal( 'https://example.wordpress.com/post-url' );
+		} );
+
 		it( 'should append preview query argument to non-published posts', () => {
 			const previewUrl = getPostPreviewUrl( {
 				posts: {
