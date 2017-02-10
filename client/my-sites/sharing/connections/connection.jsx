@@ -14,7 +14,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import site from 'lib/site';
+import UsersStore from 'lib/users/store';
 
 class SharingConnection extends Component {
 	static propTypes = {
@@ -126,8 +126,7 @@ class SharingConnection extends Component {
 	}
 
 	getConnectionKeyringUserLabel() {
-		const { connection, siteId, translate, userId } = this.props;
-		const keyringUser = site( { ID: siteId } ).getUser( connection.keyring_connection_user_ID );
+		const keyringUser = this.props.getUser( this.props.connection.keyring_connection_user_ID );
 
 		if ( keyringUser && userId !== keyringUser.ID ) {
 			return (
@@ -204,6 +203,7 @@ export default connect(
 			siteId,
 			userHasCaps: canCurrentUser( state, siteId, 'edit_others_posts' ),
 			userId: getCurrentUserId( state ),
+			getUser: userId => UsersStore.getUser( getSelectedSiteId( state ), userId ),
 		};
 	},
 	{ recordGoogleEvent },
