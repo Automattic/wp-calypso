@@ -1,6 +1,6 @@
 $accordion-padding: 16px;
 $accordion-subtitle-height: 16px;
-$accordion-background-collapsed: $gray-light; // same as body
+$accordion-background-collapsed: $white;
 $accordion-background-hover: lighten( $gray, 30% );
 $accordion-background-expanded: $white;
 
@@ -91,7 +91,7 @@ $accordion-background-expanded: $white;
 .accordion__subtitle {
 	font-size: 0.8em;
 	font-style: italic;
-	color: $gray;
+	color: $gray-text;
 	white-space: nowrap;
 	overflow-x: hidden;
 	position: relative;
