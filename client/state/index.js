@@ -124,6 +124,7 @@ export function createReduxStore( initialState = {} ) {
 		thunkMiddleware,
 		noticesMiddleware,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+		isBrowser && require( './data-layer/wpcom-http/dedupe-http-inflight.js' ).default,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && atEnabled && require( './automated-transfer/middleware.js' ).default
 	].filter( Boolean );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -81,4 +82,19 @@ export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = nul
 	}
 
 	return initiator( store, action, next );
+};
+
+const isHttpIngress = action => action.type === WPCOM_HTTP_REQUEST;
+const isHttpEgress = action => getError( action ) || getData( action );
+
+export const processHttpRequest = ( handleIngress, handleEgress ) => store => next => action => {
+	// if is ingress/egress then leave it up to the handler to call next.
+	// otherwise this should ignore the http request
+	if ( isHttpIngress( action ) ) {
+		handleIngress( store, next, action );
+	} else if ( isHttpEgress( action ) ) {
+		handleEgress( store, next, action );
+	} else {
+		next( action );
+	}
 };
