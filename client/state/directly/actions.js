@@ -14,9 +14,10 @@ export const askQuestion = ( { questionText, name, email } ) => ( {
 	email
 } );
 
-export const initialize = ( options = {} ) => ( {
+// See README for list of options
+export const initialize = ( config = {} ) => ( {
 	type: DIRECTLY_INITIALIZE,
-	options: options
+	config: config
 } );
 
 export const scriptLoadFailure = ( error ) => ( {
