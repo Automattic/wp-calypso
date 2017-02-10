@@ -17,6 +17,8 @@ export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
+export getAutomatedTransferEligibilityHolds from './get-automated-transfer-eligibility-holds';
+export getAutomatedTransferEligibilityWarnings from './get-automated-transfer-eligibility-warnings';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getFollowCount from './get-follow-count';
