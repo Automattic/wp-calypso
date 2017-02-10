@@ -174,6 +174,7 @@ export default React.createClass( {
 				: null;
 
 			this.setPostDate( date );
+			this.props.warnPublishDateChange( { clearWarning: true } );
 		}
 
 		this.setState( { showSchedulePopover: false } );
