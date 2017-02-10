@@ -24,7 +24,6 @@ function getDataFromFile( file ) {
 module.exports = function( configPath, defaultOpts ) {
 	var opts = assign( {
 			env: 'development',
-			includeSecrets: false,
 		}, defaultOpts ),
 		data = {},
 		configFiles = [
@@ -32,19 +31,11 @@ module.exports = function( configPath, defaultOpts ) {
 			path.resolve( configPath, opts.env + '.json' ),
 			path.resolve( configPath, opts.env + '.local.json' )
 		],
-		realSecretsPath,
-		emptySecretsPath,
-		secretsPath,
+		realSecretsPath = path.resolve( configPath, 'secrets.json' ),
+		emptySecretsPath = path.resolve( configPath, 'empty-secrets.json' ),
+		secretsPath = fs.existsSync( realSecretsPath ) ? realSecretsPath : emptySecretsPath,
 		enabledFeatures = opts.enabledFeatures ? opts.enabledFeatures.split( ',' ) : [],
 		disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
-
-	if ( opts.includeSecrets ) {
-		realSecretsPath = path.resolve( configPath, 'secrets.json' );
-		emptySecretsPath = path.resolve( configPath, 'empty-secrets.json' );
-		secretsPath = fs.existsSync( realSecretsPath ) ? realSecretsPath : emptySecretsPath;
-
-		configFiles.push( secretsPath );
-	}
 
 	configFiles.forEach( function( file ) {
 		assign( data, getDataFromFile( file ) );
@@ -61,5 +52,8 @@ module.exports = function( configPath, defaultOpts ) {
 		} );
 	}
 
-	return data;
+	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
+	const clientData = assign( {}, data );
+	
+	return { serverData, clientData };
 }

@@ -34,7 +34,7 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
-	{ path: 'vendor.' + config( 'env' ) + '.js' }
+	{ path: 'vendor.js' }
 ];
 
 let sections = sectionsModule.get();
@@ -83,7 +83,7 @@ function generateStaticUrls( request ) {
 	} );
 
 	// vendor dll
-	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
+	urls.vendor = urls[ 'vendor.js' ];
 	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.m.js' );
 
 	const assets = request.app.get( 'assets' );
