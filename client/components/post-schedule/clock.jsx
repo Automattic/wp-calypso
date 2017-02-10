@@ -2,12 +2,17 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import { endsWith, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
+import { getSiteSetting } from 'state/selectors';
+import SegmentedControl from 'components/segmented-control';
 import viewport from 'lib/viewport';
 
 /**
@@ -20,11 +25,6 @@ import {
 	convertMinutesToHHMM,
 } from './utils';
 
-/**
- * Globals
- */
-const noop = () => {};
-
 class PostScheduleClock extends Component {
 	constructor() {
 		super( ...arguments );
@@ -32,6 +32,9 @@ class PostScheduleClock extends Component {
 		// bounds
 		this.adjustHour = event => this.handleKeyDown( event, 'hour' );
 		this.adjustMinute = event => this.handleKeyDown( event, 'minute' );
+
+		this.setAm = ( event ) => this.setAmPm( event, 'AM' );
+		this.setPm = ( event ) => this.setAmPm( event, 'PM' );
 	}
 
 	handleKeyDown( event, field ) {
@@ -42,11 +45,12 @@ class PostScheduleClock extends Component {
 			return null;
 		}
 
+		const hour = endsWith( this.props.timeFormat, 'A' ) || endsWith( this.props.timeFormat, 'a' ) ? 11 : 23;
 		let value = Number( event.target.value ) - operation;
 
 		if ( 'hour' === field ) {
-			value = value > 23 ? 0 : value;
-			value = value < 0 ? 23 : value;
+			value = value > hour ? 0 : value;
+			value = value < 0 ? hour : value;
 		} else {
 			value = value > 59 ? 0 : value;
 			value = value < 0 ? 59 : value;
@@ -59,6 +63,7 @@ class PostScheduleClock extends Component {
 
 	getTimeValues() {
 		const {
+			amPmReference,
 			hourReference,
 			minuteRef
 		} = this.refs;
@@ -71,6 +76,14 @@ class PostScheduleClock extends Component {
 			modifiers.hour = Number( hour );
 		}
 
+		if ( amPmReference ) {
+			if ( 'PM' === amPmReference.value && modifiers.hour < 12 ) {
+				modifiers.hour += 12;
+			} else if ( modifiers.hour > 12 || ( 'AM' === amPmReference.value && 12 === modifiers.hour ) ) {
+				modifiers.hour = 0;
+			}
+		}
+
 		if ( false !== minute && minute <= 59 ) {
 			modifiers.minute = Number( minute );
 		}
@@ -81,6 +94,11 @@ class PostScheduleClock extends Component {
 	setTime = ( event, modifiers = this.getTimeValues() ) => {
 		const date = moment( this.props.date ).set( modifiers );
 		this.props.onChange( date, modifiers );
+	};
+
+	setAmPm( event, amPm ) {
+		this.refs.amPmReference.value = amPm;
+		this.setTime( event );
 	}
 
 	renderTimezoneSection() {
@@ -148,7 +166,8 @@ class PostScheduleClock extends Component {
 	}
 
 	render() {
-		const { date } = this.props;
+		const { date, timeFormat, translate } = this.props;
+		const hasAmPm = endsWith( timeFormat, 'A' ) || endsWith( timeFormat, 'a' );
 
 		return (
 			<div className="post-schedule__clock">
@@ -156,7 +175,7 @@ class PostScheduleClock extends Component {
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
 					ref="hourReference"
-					value={ date.format( 'HH' ) }
+					value={ date.format( hasAmPm ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
 					type="text" />
@@ -171,6 +190,20 @@ class PostScheduleClock extends Component {
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
 					type="text" />
+
+				{ hasAmPm && (
+					<span>
+						<input type="hidden" ref="amPmReference" name="post-schedule__clock_am-pm" value={ date.format( 'A' ) } />
+						<SegmentedControl compact>
+							<ControlItem value="am" onClick={ this.setAm } selected={ 'AM' === date.format( 'A' ) }>
+								{ translate( 'AM' ) }
+							</ControlItem>
+							<ControlItem value="pm" onClick={ this.setPm } selected={ 'PM' === date.format( 'A' ) }>
+								{ translate( 'PM' ) }
+							</ControlItem>
+						</SegmentedControl>
+					</span>
+				) }
 
 				{ this.renderTimezoneSection() }
 			</div>
@@ -191,4 +224,8 @@ PostScheduleClock.defaultProps = {
 	onChange: noop
 };
 
-export default localize( PostScheduleClock );
+export default connect(
+	( state, { siteId } ) => ( {
+		timeFormat: getSiteSetting( state, siteId, 'time_format' ),
+	} ),
+)( localize( PostScheduleClock )) ;
