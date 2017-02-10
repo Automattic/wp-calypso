@@ -66,21 +66,21 @@ class ThemeSelectionStep extends Component {
 	};
 
 	renderThemesList() {
-		const pressableWrapperClassName = classNames( {
-			'theme-selection__pressable-wrapper': true,
-			'is-hidden': ! this.state.showPressable,
-		} );
+		const pressableWrapperClassName = classNames(
+			'theme-selection__pressable-wrapper',
+			{ 'is-hidden': ! this.state.showPressable }
+		);
 
-		const themesWrapperClassName = classNames( {
-			'theme-selection__themes-wrapper': true,
-			'is-hidden': this.state.showPressable,
-		} );
+		const themesWrapperClassName = classNames(
+			'theme-selection__themes-wrapper',
+			{ 'is-hidden': this.state.showPressable }
+		);
 
 		return (
 			<div className="theme-selection__pressable-substep-wrapper">
 				<div className={ pressableWrapperClassName }>
 					<PressableThemeStep
-						{ ... this.props }
+						{ ...this.props }
 						onBackClick={ this.handleStoreBackClick }
 					/>
 				</div>
@@ -129,8 +129,12 @@ class ThemeSelectionStep extends Component {
 			: translate( 'Choose a theme.' );
 
 		const subHeaderText = this.state.showPressable
-			? translate( 'Our partner Pressable is here to help you' )
-			: translate( 'No need to overthink it. You can always switch to a different theme later.' );
+			? translate( 'Our partner Pressable is here to help you', {
+				context: 'Subheader text in Signup, when a user chooses the Upload theme in the Themes step'
+			} )
+			: translate( 'No need to overthink it. You can always switch to a different theme later.', {
+				context: 'Themes step subheader in Signup'
+			} );
 
 		return (
 			<StepWrapper
@@ -140,7 +144,7 @@ class ThemeSelectionStep extends Component {
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
 				headerButton={ this.renderJetpackButton() }
-				hideNavButtons={ this.state.showPressable }
+				shouldHideNavButtons={ this.state.showPressable }
 				{ ...this.props }
 			/>
 		);

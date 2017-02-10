@@ -15,11 +15,11 @@ export default React.createClass( {
 	displayName: 'StepWrapper',
 
 	propTypes: {
-		hideNavButtons: React.PropTypes.bool
+		shouldHideNavButtons: React.PropTypes.bool
 	},
 
 	renderBack: function() {
-		if ( this.props.hideNavButtons ) {
+		if ( this.props.shouldHideNavButtons ) {
 			return null;
 		}
 		return (
@@ -35,7 +35,7 @@ export default React.createClass( {
 	},
 
 	renderSkip: function() {
-		if ( !this.props.hideNavButtons && this.props.goToNextStep ) {
+		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
 					direction="forward"
