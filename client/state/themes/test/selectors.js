@@ -1545,6 +1545,21 @@ describe( 'themes selectors', () => {
 
 			expect( activeTheme ).to.equal( 'twentysixteen' );
 		} );
+
+		it( 'given a site, should return its currently active theme without -wpcom suffix', () => {
+			const activeTheme = getActiveTheme(
+				{
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen-wpcom'
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( activeTheme ).to.equal( 'twentysixteen' );
+		} );
 	} );
 
 	describe( '#isThemeActive', () => {
