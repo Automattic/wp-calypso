@@ -29,6 +29,7 @@ import olarkEvents from 'lib/olark-events';
 import analytics from 'lib/analytics';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { receiveDeletedSite } from 'lib/sites-list/actions';
+import { setAllSitesSelected } from 'state/ui/actions';
 
 const user = userFactory();
 
@@ -47,7 +48,8 @@ const RemovePurchase = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
-		] )
+		] ),
+		setAllSitesSelected: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -128,7 +130,7 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props ),
-			{ isDomainOnlySite, selectedSite } = this.props;
+			{ isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -165,6 +167,7 @@ const RemovePurchase = React.createClass( {
 					if ( isDomainOnlySite ) {
 						// removing the domain from a domain-only site deletes the site entirely
 						receiveDeletedSite( selectedSite );
+						setAllSitesSelected();
 					}
 
 					notices.success(
@@ -400,5 +403,8 @@ export default connect(
 		showChatLink: isOperatorsAvailable( state ) && isChatAvailable( state, 'precancellation' ),
 		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 	} ),
-	{ removePurchase }
+	{
+		removePurchase,
+		setAllSitesSelected,
+	}
 )( RemovePurchase );
