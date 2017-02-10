@@ -1,35 +1,29 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-export default class SharingServiceExample extends Component {
-	static propTypes = {
-		image: PropTypes.shape( {
-			src: PropTypes.string,
-			alt: PropTypes.string
-		} ),
-		label: PropTypes.node,
-		single: PropTypes.bool,
-	};
+const SharingServiceExample = ( { image, label, single } ) => (
+	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>
+		<div className="sharing-service-example-screenshot">
+			<img src={ image.src } alt={ image.alt } />
+		</div>
+		<div className="sharing-service-example-screenshot-label">{ label }</div>
+	</div>
+);
 
-	static defaultProps = {
-		single: false,
-	};
+SharingServiceExample.propTypes = {
+	image: PropTypes.shape( {
+		src: PropTypes.string,
+		alt: PropTypes.string
+	} ),
+	label: PropTypes.node,
+	single: PropTypes.bool,
+};
 
-	render() {
-		const classes = classNames( 'sharing-service-example', {
-			'is-single': this.props.single
-		} );
+SharingServiceExample.defaultProps = {
+	single: false,
+};
 
-		return (
-			<div className={ classes }>
-				<div className="sharing-service-example-screenshot">
-					<img src={ this.props.image.src } alt={ this.props.image.alt } />
-				</div>
-				<div className="sharing-service-example-screenshot-label">{ this.props.label }</div>
-			</div>
-		);
-	}
-}
+export default SharingServiceExample;

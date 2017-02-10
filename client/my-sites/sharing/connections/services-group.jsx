@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -20,45 +19,33 @@ import ServicePlaceholder from './service-placeholder';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-class SharingServicesGroup extends Component {
-	static propTypes = {
-		connections: PropTypes.object,
-		description: PropTypes.string,
-		services: PropTypes.array,
-		title: PropTypes.string.isRequired,
-		type: PropTypes.string.isRequired,
-	};
+const SharingServicesGroup = ( { connections, services, title } ) => (
+	<div className="sharing-services-group">
+		<SectionHeader label={ title } />
+		<ul className="sharing-services-group__services">
+			{ services.length
+				? services.map( ( service ) => (
+					<Service key={ service.ID } connections={ connections } service={ service } />
+				) )
+				: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
+					<ServicePlaceholder key={ 'service-placeholder-' + index } />
+				) )
+			}
+		</ul>
+	</div>
+);
 
-	static defaultProps = {
-		connections: Object.freeze( {} ),
-		description: '',
-		services: Object.freeze( [] ),
-	};
+SharingServicesGroup.propTypes = {
+	connections: PropTypes.object,
+	services: PropTypes.array,
+	title: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired,
+};
 
-	render() {
-		const classes = classNames( 'sharing-services-group', {
-			'is-empty': ! this.props.services.length
-		} );
-
-		return (
-			<div className={ classes }>
-				<SectionHeader label={ this.props.title } />
-				<ul className="sharing-services-group__services">
-					{ this.props.services.length
-						? this.props.services.map( ( service ) =>
-							<Service
-								key={ service.ID }
-								connections={ this.props.connections }
-								service={ service } /> )
-						: times( NUMBER_OF_PLACEHOLDERS, ( index ) =>
-							<ServicePlaceholder
-								key={ 'service-placeholder-' + index } /> )
-					}
-				</ul>
-			</div>
-		);
-	}
-}
+SharingServicesGroup.defaultProps = {
+	connections: Object.freeze( {} ),
+	services: Object.freeze( [] ),
+};
 
 export default connect(
 	( state, { type } ) => ( {
