@@ -11,6 +11,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	MEDIA_DELETE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -184,6 +185,36 @@ describe( 'reducer', () => {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Just You Wait' }
 			} );
+		} );
+
+		it( 'should remove deleted sites', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+
+			const state = items( original, {
+				type: SITE_DELETE_RECEIVE,
+				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+
+			expect( state ).to.eql( {
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+		} );
+
+		it( 'should return the original state when deleting a site that is not present', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+
+			const state = items( original, {
+				type: SITE_DELETE_RECEIVE,
+				site: { ID: 1337, name: 'non-existent site' }
+			} );
+
+			expect( state ).to.eql( original );
 		} );
 
 		it( 'should override previous site of same ID', () => {
