@@ -70,7 +70,8 @@ export const getSite = createSelector(
 			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId )
+			is_previewable: isSitePreviewable( state, siteId ),
+			is_customizable: isSiteCustomizable( state, siteId )
 		};
 	},
 	( state ) => state.sites.items
@@ -86,7 +87,7 @@ export function getComputedAttributes( state, siteId ) {
 
 	// The 'standard' post format is saved as an option of '0'
 	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
-	if ( defaultPostFormat === null || defaultPostFormat === '0' ) {
+	if ( defaultPostFormat == null || defaultPostFormat === '0' ) {
 		defaultPostFormat = 'standard';
 	}
 
@@ -94,12 +95,10 @@ export function getComputedAttributes( state, siteId ) {
 		title: trim( site.name ) || domain,
 		slug,
 		domain: isRedirectOrConflicting ? slug : domain,
-		options: Object.assign( site.options, {
+		options: Object.assign( site.options || {}, {
 			...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
 			default_post_format: defaultPostFormat
-		} ),
-		is_previewable: isSitePreviewable( state, siteId ),
-		is_customizable: canCurrentUser( state, siteId, 'edit_theme_options' )
+		} )
 	};
 }
 
@@ -307,6 +306,19 @@ export function isSitePreviewable( state, siteId ) {
 
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 	return !! unmappedUrl && isHttps( unmappedUrl );
+}
+
+/**
+ * Returns true if the site can be customized by the user, false if the
+ * site cannot be customized, or null if customizing ability cannot be
+ * determined.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is customizable
+ */
+export function isSiteCustomizable( state, siteId ) {
+	return state.currentUser ? canCurrentUser( state, siteId, 'edit_theme_options' ) : false;
 }
 
 /**
