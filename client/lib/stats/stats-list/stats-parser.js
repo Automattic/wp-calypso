@@ -687,7 +687,7 @@ StatsParser.prototype.statsTopPosts = function( payload ) {
 					type: 'link',
 					data: item.href
 				} ],
-				labelIcon: null,
+				labelIcon: 'stats',
 				children: null,
 				className: inPeriod ? 'published' : null
 			};
