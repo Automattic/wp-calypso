@@ -324,6 +324,18 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
+/**
+ * Mapping object between PHP date() and Moment.js format() tokens.
+ * The commented tokens exist in PHP but have no direct Moment.js equivalent.
+ *
+ * The "S" case is an exception, since it's only used in conjunction with "j":
+ * PHP `date( 'jS' )` returns "1st", which is equivalent to `moment().format( 'Do' )`)
+ *
+ * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
+ * @see http://momentjs.com/docs/#/displaying/format/
+ *
+ * @type {Object}
+ */
 const phpToMomentMapping = {
 	// Days
 	d: 'DD',
@@ -332,6 +344,7 @@ const phpToMomentMapping = {
 	j: 'D',
 	l: 'dddd',
 	N: 'E',
+	// See "jS"
 	//S: '',
 	w: 'd',
 	z: 'DDD',
@@ -342,8 +355,10 @@ const phpToMomentMapping = {
 	m: 'MM',
 	M: 'MMM',
 	n: 'M',
+	// Moment.js has no "t" token equivalent, but a `moment().daysInMonth()` function
 	//t: '',
 	// Year
+	// Moment.js has no "L" token equivalent, but a `moment().isLeapYear()` function
 	//L: '',
 	o: 'Y',
 	Y: 'YYYY',
@@ -351,6 +366,7 @@ const phpToMomentMapping = {
 	// Time
 	a: 'a',
 	A: 'A',
+	// Moment.js has no "B" token equivalent
 	//B: '',
 	g: 'h',
 	G: 'H',
@@ -362,10 +378,13 @@ const phpToMomentMapping = {
 	v: 'SSS',
 	// Timezone
 	e: 'z',
+	// Moment.js has no "I" token, but a `moment().isDST()` function
 	//I: '',
 	O: 'ZZ',
 	P: 'Z',
+	// Moment.js has no "T" token equivalent
 	//T: '',
+	// Moment.js has no "Z" token equivalent
 	//Z: '',
 	// Full Date/Time
 	c: 'YYYY-MM-DDTHH:mm-ssZ',
