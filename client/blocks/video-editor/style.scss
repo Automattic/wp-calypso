@@ -56,6 +56,21 @@
 	text-align: right;
 }
 
+.video-editor__upload-button {
+	position: relative;
+	display: inline-block;
+}
+
+.video-editor__upload-button-input {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
 .video-editor__buttons-button.button {
 	margin-left: 10px;
 }

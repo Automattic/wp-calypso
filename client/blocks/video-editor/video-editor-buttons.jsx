@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import UploadButton from './video-editor-upload-button';
 
 const VideoEditorButtons = ( { onCancel, onSelectFrame, onUploadImage, translate } ) => {
 	return (
@@ -22,12 +23,11 @@ const VideoEditorButtons = ( { onCancel, onSelectFrame, onUploadImage, translate
 					{ translate( 'Cancel' ) }
 				</Button>
 			}
-			<Button
-				className="video-editor__buttons-button"
-				onClick={ onUploadImage }
-			>
+			<UploadButton
+				className="button video-editor__buttons-button"
+				onUploadImage={ onUploadImage }>
 				{ translate( 'Upload Image' ) }
-			</Button>
+			</UploadButton>
 			<Button
 				className="video-editor__buttons-button"
 				primary
