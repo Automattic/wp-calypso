@@ -499,6 +499,11 @@ class SiteSettingsFormGeneral extends Component {
 			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
 			: moment.tz( timezone_string );
 
+		const customFieldClasses = classNames(
+			'site-settings__date-time-format-custom',
+			{ 'is-custom': isCustomFormat }
+		);
+
 		return (
 			<FormFieldset>
 				<FormLabel>
@@ -516,7 +521,7 @@ class SiteSettingsFormGeneral extends Component {
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
-				<FormLabel className="site-settings__date-time-format-custom">
+				<FormLabel className={ customFieldClasses }>
 					<FormRadio
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
@@ -533,11 +538,13 @@ class SiteSettingsFormGeneral extends Component {
 							type="text"
 							value={ date_format || '' }
 						/>
-						{ isCustomFormat && date_format
-							? today.format( phpToMomentDatetimeFormat( date_format ) )
-							: ''
-						}
-					</span>
+						<span className="site-settings__date-time-format-custom-preview">
+							{ isCustomFormat && date_format
+								? today.format( phpToMomentDatetimeFormat( date_format ) )
+								: ''
+							}
+						</span>
+				</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -563,6 +570,11 @@ class SiteSettingsFormGeneral extends Component {
 			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
 			: moment.tz( timezone_string );
 
+		const customFieldClasses = classNames(
+			'site-settings__date-time-format-custom',
+			{ 'is-custom': isCustomFormat }
+		);
+
 		return (
 			<FormFieldset>
 				<FormLabel>
@@ -580,7 +592,7 @@ class SiteSettingsFormGeneral extends Component {
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
-				<FormLabel className="site-settings__date-time-format-custom">
+				<FormLabel className={ customFieldClasses }>
 					<FormRadio
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
@@ -597,10 +609,12 @@ class SiteSettingsFormGeneral extends Component {
 							type="text"
 							value={ time_format || '' }
 						/>
-						{ isCustomFormat && time_format
-							? today.format( phpToMomentDatetimeFormat( time_format ) )
-							: ''
-						}
+						<span className="site-settings__date-time-format-custom-preview">
+							{ isCustomFormat && time_format
+								? today.format( phpToMomentDatetimeFormat( time_format ) )
+								: ''
+							}
+						</span>
 					</span>
 					<FormSettingExplanation>
 						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
