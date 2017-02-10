@@ -82,7 +82,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
-	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
+	}, SERIALIZE_THROTTLE, { leading: true, trailing: true } ) );
 
 	return reduxStore;
 }
