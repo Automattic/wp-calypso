@@ -138,8 +138,19 @@ export default React.createClass( {
 
 	showDateWarning( date ) {
 		const { savedPost, warnPublishDateChange } = this.props;
-		if ( savedPost.type !== 'page' && postUtils.isPublished( savedPost ) && date !== savedPost.date ) {
+
+		if ( ! savedPost ) {
+			return;
+		}
+
+		const currentDate = this.moment( date );
+		const ModifiedDate = this.moment( savedPost.date );
+		const diff = !! currentDate.diff( ModifiedDate );
+
+		if ( savedPost.type !== 'page' && postUtils.isPublished( savedPost ) && diff ) {
 			warnPublishDateChange();
+		} else {
+			warnPublishDateChange( { clearWarning: true } );
 		}
 	},
 
@@ -174,7 +185,7 @@ export default React.createClass( {
 				: null;
 
 			this.setPostDate( date );
-			this.props.warnPublishDateChange( { clearWarning: true } );
+			// this.props.warnPublishDateChange( { clearWarning: true } ); -> not needed anymre
 		}
 
 		this.setState( { showSchedulePopover: false } );
