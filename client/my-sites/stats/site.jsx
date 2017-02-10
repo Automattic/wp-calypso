@@ -108,41 +108,39 @@ class StatsSite extends Component {
 
 		return (
 			<Main maxWidthLayout>
-				<div className="stats__center">
-					<StatsFirstView />
-					<SidebarNavigation />
-					<StatsNavigation section={ period } />
-				</div>
+				<StatsFirstView />
+				<SidebarNavigation />
+				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
-					<div className="stats__center">
-						<ChartTabs
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ charts }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.state.chartTab } />
-						<StickyPanel className="stats__sticky-navigation">
-							<StatsPeriodNavigation
-								date={ date }
+					<StickyPanel className="stats__sticky-navigation">
+						<StatsPeriodNavigation
+							date={ date }
+							period={ period }
+							url={ `/stats/${ period }/${ slug }` }
+						>
+							<DatePicker
 								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-							>
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-								/>
-							</StatsPeriodNavigation>
-						</StickyPanel>
-					</div>
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+							/>
+						</StatsPeriodNavigation>
+					</StickyPanel>
 					<div className="stats__module-list is-events">
 						<MasonryLayout
 							className="stats__masonry-items"
 							options={ { columnWidth: 330, fitWidth: true, gutter: 20 } }
 						>
+							<div className="stats__masonry-two-columns">
+								<ChartTabs
+									barClick={ this.barClick }
+									switchTab={ this.switchChart }
+									charts={ charts }
+									queryDate={ queryDate }
+									period={ this.props.period }
+									chartTab={ this.state.chartTab } />
+							</div>
 							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }

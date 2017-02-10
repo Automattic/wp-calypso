@@ -54,15 +54,24 @@
 	}
 }
 
-.stats__center {
-	max-width: 1040px;
-	margin: auto;
-}
-
 .stats__masonry-items {
 	margin: auto;
-	div {
+	> div {
 		width: 330px;
 		box-sizing: border-box;
+	}
+
+	.stats__masonry-two-columns {
+		@include breakpoint( ">1380px" ) {
+			width: 1030px;
+		}
+
+		@include breakpoint( "<1380px" ) {
+			width: 680px;
+		}
+
+		@include breakpoint( "<1040px" ) {
+			width: 330px;
+		}
 	}
 }
