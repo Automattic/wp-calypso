@@ -29,7 +29,6 @@ describe( 'Team', function() {
 
 		deterministicStringify = sinon.stub();
 		mockery.registerMock( 'lib/deterministic-stringify', deterministicStringify );
-
 		mockery.registerMock( 'lib/sites-list', () => null );
 	} );
 
@@ -61,8 +60,7 @@ describe( 'Team', function() {
 	} );
 
 	it( 'renders translated team header text by default', function() {
-		const translate = sinon.stub();
-		translate
+		const translate = sinon.stub()
 			.withArgs( 'Team' )
 			.returns( 'team label' );
 
@@ -77,15 +75,13 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( translate.callCount ).to.equal( 1 );
-
 		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
-		.to.equal( 'team label' );
+			.to.equal( 'team label' );
 	} );
 
 	it( 'renders translated header text for search when there are search results', function() {
-		const translate = sinon.stub();
-		translate.returns( 'translated search label' );
+		const translate = sinon.stub()
+			.returns( 'translated search label' );
 
 		const wrapper = shallow(
 			<Team
@@ -101,9 +97,7 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( translate.callCount ).to.equal( 1 );
-
 		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
-		.to.equal( 'translated search label' );
+			.to.equal( 'translated search label' );
 	} );
 } );
