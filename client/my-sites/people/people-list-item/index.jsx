@@ -4,7 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity } from 'lodash';
+import { get, identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,10 +24,7 @@ export class PeopleListItem extends PureComponent {
 		translate: identity,
 	};
 
-	userHasPromoteCapability = () => {
-		const site = this.props.site;
-		return site && site.capabilities && site.capabilities.promote_users;
-	};
+	userHasPromoteCapability = () => get( this.props.site, 'capabilities.promote_users', false );
 
 	canLinkToProfile = () => {
 		const { props } = this;
