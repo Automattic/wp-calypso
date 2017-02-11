@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -151,7 +151,7 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST ) {
+		if ( includes( [ transactionStepTypes.SUBMITTING_WPCOM_REQUEST, transactionStepTypes.RECEIVED_WPCOM_RESPONSE ], this.props.transaction.step.name ) ) {
 			return false;
 		}
 
