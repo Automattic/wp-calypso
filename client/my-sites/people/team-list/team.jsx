@@ -26,6 +26,9 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 /**
  * Module Variables
  */
+
+const renderLoadingPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
+
 export class Team extends Component {
 	static propTypes = {
 		excludedUsers: PropTypes.array,
@@ -154,7 +157,7 @@ export class Team extends Component {
 						lastPage={ this.isLastPage() }
 						fetchNextPage={ this.fetchNextPage }
 						getItemRef={ this.getPersonRef }
-						renderLoadingPlaceholders={ () => <PeopleListItem key="people-list-item-placeholder" /> }
+						renderLoadingPlaceholders={ renderLoadingPlaceholders }
 						renderItem={ this.renderPerson }
 						guessedItemHeight={ 126 }>
 					</InfiniteList>
