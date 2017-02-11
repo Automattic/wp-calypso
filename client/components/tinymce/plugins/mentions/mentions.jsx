@@ -19,6 +19,7 @@ import { getUserSuggestions } from 'state/users/suggestions/selectors';
 /**
  * Module variables
  */
+// TinyMCE mapping of common keycodes.
 const VK = tinymce.util.VK;
 
 export class Mentions extends Component {
@@ -29,10 +30,6 @@ export class Mentions extends Component {
 		query: '',
 		showPopover: false,
 	};
-
-	constructor( props ) {
-		super( props );
-	}
 
 	componentDidMount() {
 		const { editor } = this.props;
