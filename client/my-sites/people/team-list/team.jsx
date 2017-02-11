@@ -29,6 +29,10 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const renderLoadingPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
+// Best guess of the px height of each item that will be rendered in the infinite list
+// This helps determine scroll logic, and when to trigger fetches.
+const guessedItemHeight = 126;
+
 export class Team extends Component {
 	static propTypes = {
 		excludedUsers: PropTypes.array,
@@ -158,7 +162,7 @@ export class Team extends Component {
 						getItemRef={ this.getPersonRef }
 						renderLoadingPlaceholders={ renderLoadingPlaceholders }
 						renderItem={ this.renderPerson }
-						guessedItemHeight={ 126 }>
+						guessedItemHeight={ guessedItemHeight }>
 					</InfiniteList>
 				</Card>
 				{ this.isLastPage() && <div className="infinite-scroll-end" /> }
