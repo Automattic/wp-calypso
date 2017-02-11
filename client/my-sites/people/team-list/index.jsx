@@ -14,7 +14,7 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
  */
 class TeamList extends Component {
 	render() {
-		const { site, search } = this.props;
+		const { search, site } = this.props;
 
 		const fetchOptions = {
 			siteId: site.ID,
