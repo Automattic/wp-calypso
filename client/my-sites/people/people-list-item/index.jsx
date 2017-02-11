@@ -27,16 +27,18 @@ export class PeopleListItem extends PureComponent {
 	userHasPromoteCapability = () => get( this.props.site, 'capabilities.promote_users', false );
 
 	canLinkToProfile = () => {
-		const { props } = this;
-		const { site, user } = props;
+		const {
+			isSelectable,
+			site,
+			user,
+		} = this.props;
 		return (
 			config.isEnabled( 'manage/edit-user' ) &&
 			user &&
 			user.roles &&
 			site &&
 			site.slug &&
-			this.userHasPromoteCapability() &&
-			! this.props.isSelectable
+			this.userHasPromoteCapability() && ! isSelectable
 		);
 	};
 
