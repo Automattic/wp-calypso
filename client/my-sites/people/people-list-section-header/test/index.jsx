@@ -32,11 +32,7 @@ describe( 'PeopleListSectionHeader', function() {
 	} );
 
 	it( 'renders SectionHeader', function() {
-		const wrapper = shallow(
-			<PeopleListSectionHeader
-				label="label value"
-			/>
-		);
+		const wrapper = shallow( <PeopleListSectionHeader label="label value" /> );
 
 		expect( wrapper.find( SectionHeader ).length ).to.equal( 1 );
 		expect( wrapper.find( SectionHeader ).props().label ).to.equal( 'label value' );
