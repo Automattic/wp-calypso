@@ -29,7 +29,7 @@ const getWpcomFollowerRole = ( { site, translate } ) => {
 	};
 };
 
-const RoleSelect = ( props ) => {
+export const RoleSelect = ( props ) => {
 	let { siteRoles } = props;
 	const { site, includeFollower, siteId, id, explanation, translate } = props;
 	const omitProps = [
@@ -76,7 +76,6 @@ const RoleSelect = ( props ) => {
 	);
 };
 
-export { RoleSelect };
 export default connect(
 	( state, ownProps ) => ( {
 		site: getSite( state, ownProps.siteId ),
