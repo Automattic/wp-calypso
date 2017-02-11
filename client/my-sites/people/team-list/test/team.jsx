@@ -5,7 +5,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import sinon from 'sinon';
+import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -23,11 +23,11 @@ describe( 'Team', function() {
 
 	useFakeDom();
 	useMockery( mockery => {
-		configMock = sinon.stub();
-		configMock.isEnabled = sinon.stub();
+		configMock = stub();
+		configMock.isEnabled = stub();
 		mockery.registerMock( 'config', configMock );
 
-		deterministicStringify = sinon.stub();
+		deterministicStringify = stub();
 		mockery.registerMock( 'lib/deterministic-stringify', deterministicStringify );
 		mockery.registerMock( 'lib/sites-list', () => null );
 	} );
@@ -59,10 +59,8 @@ describe( 'Team', function() {
 		expect( wrapper.find( Card ).find( InfiniteList ).key() ).to.equal( 'list key' );
 	} );
 
-	it( 'renders translated team header text by default', function() {
-		const translate = sinon.stub()
-			.withArgs( 'Team' )
-			.returns( 'team label' );
+	it( 'renders translated team header text when there are no results', function() {
+		const translate = spy( () => 'translation' );
 
 		const wrapper = shallow(
 			<Team
@@ -75,13 +73,13 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
-			.to.equal( 'team label' );
+		expect( translate ).to.have.been.calledWith( 'Team' );
+
+		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) ).to.equal( 'translation' );
 	} );
 
 	it( 'renders translated header text for search when there are search results', function() {
-		const translate = sinon.stub()
-			.returns( 'translated search label' );
+		const translate = spy( () => 'translation' );
 
 		const wrapper = shallow(
 			<Team
@@ -97,7 +95,11 @@ describe( 'Team', function() {
 			/>
 		);
 
-		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) )
-			.to.equal( 'translated search label' );
+		expect( translate ).to.have.been.calledWith(
+			'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
+			'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
+		);
+
+		expect( wrapper.find( PeopleListSectionHeader ).prop( 'label' ) ).to.equal( 'translation' );
 	} );
 } );
