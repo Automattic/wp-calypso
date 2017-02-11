@@ -128,9 +128,7 @@ module.exports = {
 
 	sidebar( context, next ) {
 		renderWithReduxStore(
-			<ReduxProvider store={ context.store }>
-				<AsyncLoad require="reader/sidebar" path={ context.path } />
-			</ReduxProvider>,
+			<AsyncLoad require="reader/sidebar" path={ context.path } />,
 			document.getElementById( 'secondary' ),
 			context.store
 		);
