@@ -61,6 +61,7 @@ export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDomainOnlySite from './is-domain-only-site';
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isJetpackModuleActive from './is-jetpack-module-active';
+export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-unavailable-in-development-mode';
 export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
