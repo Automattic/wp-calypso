@@ -47,6 +47,7 @@ describe( 'EditorPublishButton', function() {
 					site={ MOCK_SITE }
 				/>
 			).instance();
+
 			expect( tree.getButtonLabel() ).to.equal( 'Update' );
 		} );
 
@@ -81,7 +82,7 @@ describe( 'EditorPublishButton', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
 					<EditorPublishButton translate={ identity }
-						savedPost={ { status: 'draft' } }
+						savedPost={ { status: 'publish' } }
 						post={ { date: nextMonth } }
 						site={ MOCK_SITE }
 					/>
