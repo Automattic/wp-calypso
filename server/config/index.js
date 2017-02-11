@@ -1,3 +1,4 @@
+const template = require( 'lodash/template' );
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
 const data = require( './parser' )( configPath, {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
@@ -32,6 +33,19 @@ function anyEnabled() {
 	} );
 }
 
+const ssrConfig = template(
+	'var data = <%= data %>;' +
+	'<%= config %>' +
+	'<%= isEnabled %>' +
+	'<%= anyEnabled %>'
+) ( {
+	data: JSON.stringify( data ),
+	config: config.toString(),
+	isEnabled: isEnabled.toString(),
+	anyEnabled: anyEnabled.toString(),
+} );
+
 module.exports = config;
 module.exports.isEnabled = isEnabled;
 module.exports.anyEnabled = anyEnabled;
+module.exports.srrConfig = ssrConfig;
