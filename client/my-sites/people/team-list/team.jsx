@@ -60,11 +60,16 @@ export class Team extends Component {
 	};
 
 	fetchNextPage = () => {
-		const offset = this.props.users.length;
-		const fetchOptions = { ...this.props.fetchOptions, offset };
-		this.props.recordFetchUsersForOffset( offset );
+		const {
+			fetchOptions,
+			recordFetchUsersForOffset,
+			users,
+		} = this.props;
+		const offset = users.length;
+		const newFetchOptions = { ...fetchOptions, offset };
+		recordFetchUsersForOffset( offset );
 		debug( 'fetching next batch of users' );
-		UsersActions.fetchUsers( fetchOptions );
+		UsersActions.fetchUsers( newFetchOptions );
 	};
 
 	getPersonRef = ( user ) => `user-${ user.ID }`;
