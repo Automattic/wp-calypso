@@ -5,7 +5,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import sinon from 'sinon';
+import { stub } from 'sinon';
 
 /**
  * Internal dependencies
@@ -21,8 +21,8 @@ describe( 'PeopleListSectionHeader', function() {
 	useFakeDom();
 
 	useMockery( mockery => {
-		configMock = sinon.stub();
-		configMock.isEnabled = sinon.stub();
+		configMock = stub();
+		configMock.isEnabled = stub();
 		mockery.registerMock( 'config', configMock );
 	} );
 
