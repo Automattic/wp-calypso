@@ -73,7 +73,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings is-indented">
+			<div className="composing__module-settings site-settings__child-settings">
 				<FormLegend>
 					{ translate( 'Proofreading' ) }
 				</FormLegend>
@@ -100,7 +100,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings is-indented">
+			<div className="composing__module-settings site-settings__child-settings">
 				<FormLegend>
 					{ translate( 'Automatic Language Detection' ) }
 				</FormLegend>
@@ -121,7 +121,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings is-indented">
+			<div className="composing__module-settings site-settings__child-settings">
 				<FormLegend>
 					{ translate( 'English Options' ) }
 				</FormLegend>
@@ -150,7 +150,7 @@ class AfterTheDeadline extends Component {
 			: [];
 
 		return (
-			<div className="composing__module-settings is-indented">
+			<div className="composing__module-settings site-settings__child-settings">
 				<FormLegend>
 					{ translate( 'Ignored Phrases' ) }
 				</FormLegend>
