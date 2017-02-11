@@ -59,7 +59,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding: 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: column;
+		display: block;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -67,7 +67,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: column;
+		display: block;
 	}
 }
 
