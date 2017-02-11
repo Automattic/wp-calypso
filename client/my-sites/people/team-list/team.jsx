@@ -75,21 +75,26 @@ export class Team extends Component {
 	getPersonRef = ( user ) => `user-${ user.ID }`;
 
 	headerText = () => {
-		const { props } = this;
-		const { translate } = props;
-		if ( props.search && props.totalUsers && props.site && props.users.length ) {
+		const {
+			search,
+			site,
+			totalUsers,
+			translate,
+			users,
+		} = this.props;
+		if ( search && totalUsers && site && users.length ) {
 			return translate(
 				'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
 				'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
 				{
-					count: props.users.length,
+					count: users.length,
 					args: {
-						numberPeople: props.totalUsers,
-						searchTerm: props.search
+						numberPeople: totalUsers,
+						searchTerm: search,
 					},
 					components: {
 						em: <em />
-					}
+					},
 				}
 			);
 		}
