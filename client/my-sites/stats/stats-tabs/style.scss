@@ -26,16 +26,52 @@
 			border-top: none;
 		}
 
+		&.is-compact {
+			border-top: 1px solid $gray-light;
+			border-left: none;
+			float: none;
+			width: 100%;
+			text-align: left;
+
+			a,
+			.no-link {
+				display: block;
+				min-height: 35px;
+				padding-top: 10px;
+				padding-bottom: 0px;
+			}
+
+			.label {
+				float: left;
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+				font-size: 16px;
+			}
+
+			.gridicon {
+				float: left;
+				margin: 3px 8px 0 20px;
+			}
+
+			.value {
+				color: $blue-wordpress;
+				display: block;
+				line-height: 24px;
+				text-align: center;
+				transition: font-size .3s 0 ease-out;
+
+				clear: none;
+				float: right;
+				padding: 0 20px 0 10px;
+			}
+		}
+
 		@include breakpoint( ">480px" ) {
 			border-top: none;
 			border-left: 1px solid $gray-light;
 			float: left;
 			width: 25%;
 			text-align: center;
-
-			&.is-post-summary {
-				width: 33%;
-			}
 
 			&:first-child {
 				border-left: none;
