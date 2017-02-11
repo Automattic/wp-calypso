@@ -14,8 +14,7 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
  */
 class TeamList extends Component {
 	render() {
-		const { props } = this;
-		const { site, search } = props;
+		const { site, search } = this.props;
 
 		const fetchOptions = {
 			siteId: site.ID,
@@ -29,7 +28,7 @@ class TeamList extends Component {
 
 		return (
 			<SiteUsersFetcher fetchOptions={ fetchOptions } >
-				<Team { ...props } />
+				<Team { ...this.props } />
 			</SiteUsersFetcher>
 		);
 	}
