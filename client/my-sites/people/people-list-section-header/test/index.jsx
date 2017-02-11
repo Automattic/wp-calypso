@@ -14,9 +14,9 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PeopleListSectionHeader', function() {
-	let configMock,
-		PeopleListSectionHeader,
-		SectionHeader;
+	let configMock;
+	let PeopleListSectionHeader;
+	let SectionHeader;
 
 	useFakeDom();
 
