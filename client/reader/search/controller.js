@@ -12,13 +12,21 @@ import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
+function replaceSearchUrl( newValue ) {
+	let searchUrl = '/read/search';
+	if ( newValue ) {
+		searchUrl += '?' + qs.stringify( { q: newValue } );
+	}
+	page.replace( searchUrl );
+}
+
 export default {
 	search: function( context ) {
-		var SearchStream = require( 'reader/search-stream' ),
-			basePath = '/read/search',
+		var basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			searchSlug = context.query.q,
 			mcKey = 'search';
@@ -44,29 +52,23 @@ export default {
 		const autoFocusInput = ( ! searchSlug ) || context.query.focus === '1';
 
 		renderWithReduxStore(
-			React.createElement( SearchStream, {
-				key: 'search',
-				postsStore: store,
-				query: searchSlug,
-				trackScrollPage: trackScrollPage.bind(
+			<AsyncLoad require="reader/search-stream"
+				key="search"
+				postsStore={ store }
+				query={ searchSlug }
+				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
 					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: false,
-				showPrimaryFollowButtonOnCards: true,
-				autoFocusInput,
-				onQueryChange: function( newValue ) {
-					let searchUrl = '/read/search';
-					if ( newValue ) {
-						searchUrl += '?' + qs.stringify( { q: newValue } );
-					}
-					page.replace( searchUrl );
-				}
-			} ),
+				) }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				showBack={ false }
+				showPrimaryFollowButtonOnCards={ true }
+				autoFocusInput={ autoFocusInput }
+				onQueryChange={ replaceSearchUrl }
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
