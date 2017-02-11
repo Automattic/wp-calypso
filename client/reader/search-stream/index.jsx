@@ -142,7 +142,7 @@ class SearchStream extends Component {
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
-		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
+		if ( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
 			this.props.onQueryChange( newValue );
 		}
 	}
