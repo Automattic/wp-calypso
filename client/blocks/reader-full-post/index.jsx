@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
-import twemoji from 'twemoji';
 import { get } from 'lodash';
 
 /**
@@ -66,6 +65,13 @@ export class FullPostView extends React.Component {
 	}
 
 	hasScrolledToCommentAnchor = false;
+
+	componentWillMount() {
+		const self = this;
+		asyncRequire( 'twemoji', ( twemoji ) => {
+			self.setState( { twemoji }, self.parseEmoji.bind( self ) );
+		} );
+	}
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -217,7 +223,7 @@ export class FullPostView extends React.Component {
 			return;
 		}
 
-		twemoji.parse( this.refs.article, {
+		this.state && this.state.twemoji && this.state.twemoji.parse( this.refs.article, {
 			base: config( 'twemoji_cdn_url' )
 		} );
 	}
