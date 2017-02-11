@@ -101,18 +101,36 @@ export class Team extends Component {
 		return translate( 'Team' );
 	};
 
-	render() {
-		const { props } = this;
-		const { translate, users, fetchInitialized, fetchOptions, fetchingUsers } = props;
+	searchCompletedWithZeroResults = () => {
+		const {
+			fetchInitialized,
+			fetchingUsers,
+			search,
+			users,
+		} = this.props;
 
-		if ( fetchInitialized && ! users.length && fetchOptions.search && ! fetchingUsers ) {
+		return search && fetchInitialized  && ! fetchingUsers && ! users.length;
+	};
+
+	render() {
+		const {
+			fetchOptions,
+			fetchingUsers,
+			search,
+			site,
+			totalUsers,
+			translate,
+			users,
+		} = this.props;
+
+		if ( this.searchCompletedWithZeroResults() ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
 					text={
 						translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
-								args: { searchTerm: props.search },
+								args: { searchTerm: search },
 								components: { em: <em /> }
 							}
 						)
@@ -124,8 +142,8 @@ export class Team extends Component {
 			<div>
 				<PeopleListSectionHeader
 					label={ this.headerText() }
-					site={ props.site }
-					count={ props.fetchingUsers || props.fetchOptions.search ? null : props.totalUsers } />
+					site={ site }
+					count={ ( fetchingUsers || search ) ? null : totalUsers } />
 				<Card>
 					<InfiniteList
 						key={ deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) ) }
