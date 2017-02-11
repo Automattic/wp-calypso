@@ -152,7 +152,6 @@ export class Team extends Component {
 						key={ deterministicStringify( omit( fetchOptions, [ 'number', 'offset' ] ) ) }
 						items={ users }
 						className="people-selector__infinite-list"
-						ref="infiniteList"
 						fetchingNextPage={ fetchingUsers }
 						lastPage={ this.isLastPage() }
 						fetchNextPage={ this.fetchNextPage }
