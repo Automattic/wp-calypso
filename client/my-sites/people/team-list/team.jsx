@@ -28,14 +28,26 @@ import { recordGoogleEvent } from 'state/analytics/actions';
  */
 export class Team extends Component {
 	static propTypes = {
+		excludedUsers: PropTypes.array,
 		translate: PropTypes.func,
+		users: PropTypes.array,
 	};
 
 	static defaultProps = {
+		excludedUsers: [],
 		translate: identity,
+		users: [],
 	};
 
-	isLastPage = () => this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
+	isLastPage = () => {
+		const {
+			excludedUsers,
+			users,
+			totalUsers,
+		} = this.props;
+
+		return totalUsers <= ( users.length + excludedUsers.length );
+	}
 
 	renderPerson = ( user ) => {
 		return (
