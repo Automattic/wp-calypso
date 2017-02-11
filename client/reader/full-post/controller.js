@@ -2,8 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import { defer } from 'lodash';
@@ -45,20 +43,19 @@ export function blogPost( context ) {
 	}
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
-	ReactDom.render(
-		<ReduxProvider store={ context.store }>
-			<AsyncLoad
-				require="blocks/reader-full-post"
-				blogId={ blogId }
-				postId={ postId }
-				referral={ referral }
-				onClose={ function() {
-					page.back( context.lastRoute || '/' );
-				} }
-				onPostNotFound={ renderPostNotFound }
-			/>
-		</ReduxProvider>,
-		document.getElementById( 'primary' )
+	renderWithReduxStore(
+		<AsyncLoad
+			require="blocks/reader-full-post"
+			blogId={ blogId }
+			postId={ postId }
+			referral={ referral }
+			onClose={ function() {
+				page.back( context.lastRoute || '/' );
+			} }
+			onPostNotFound={ renderPostNotFound }
+		/>,
+		document.getElementById( 'primary' ),
+		context.store
 	);
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {
@@ -79,16 +76,15 @@ export function feedPost( context ) {
 		page.back( context.lastRoute || '/' );
 	}
 
-	ReactDom.render( (
-		<ReduxProvider store={ context.store }>
-			<AsyncLoad
-				require="blocks/reader-full-post"
-				feedId={ feedId }
-				postId={ postId }
-				onClose={ closer }
-				onPostNotFound={ renderPostNotFound } />
-		</ReduxProvider> ),
-		document.getElementById( 'primary' )
+	renderWithReduxStore(
+		<AsyncLoad
+			require="blocks/reader-full-post"
+			feedId={ feedId }
+			postId={ postId }
+			onClose={ closer }
+			onPostNotFound={ renderPostNotFound } />,
+		document.getElementById( 'primary' ),
+		context.store
 	);
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {
