@@ -25,6 +25,7 @@ export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getJetpackModule from './get-jetpack-module';
 export getJetpackModules from './get-jetpack-modules';
+export getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 export getJetpackSetting from './get-jetpack-setting';
 export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
