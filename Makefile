@@ -230,6 +230,7 @@ docker-build:
 	docker build -t wp-calypso .
 
 docker-run:
+	@echo running wp-calypso docker image at localhost:3000
 	docker run -it --name wp-calypso --rm -p 80:3000 -e NODE_ENV='wpcalypso' -e CALYPSO_ENV='wpcalypso' wp-calypso
 
 
