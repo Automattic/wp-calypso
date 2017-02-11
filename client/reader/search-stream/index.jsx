@@ -199,16 +199,16 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store } = this.props;
-		const emptyContent = <EmptyContent query={ this.props.query } />;
+		const { store, query } = this.props;
+		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
-		const sugList = initial( flatMap( this.state.suggestions, query =>
-			[ <Suggestion suggestion={ query } source="search" />, ', ' ] ) );
+		const sugList = initial( flatMap( this.state.suggestions, q =>
+			[ <Suggestion suggestion={ q } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
@@ -227,7 +227,7 @@ class SearchStream extends Component {
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
-							initialValue={ this.props.query }
+							initialValue={ query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
 							autoFocus={ this.props.autoFocusInput }
