@@ -37,7 +37,7 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?55' ); // W_JS_VER
+loadScript( '//stats.wp.com/w.js?56' ); // W_JS_VER
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {
