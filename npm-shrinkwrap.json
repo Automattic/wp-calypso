@@ -454,10 +454,10 @@
       "version": "2.11.0"
     },
     "body-parser": {
-      "version": "1.16.0",
+      "version": "1.16.1",
       "dependencies": {
         "debug": {
-          "version": "2.6.0"
+          "version": "2.6.1"
         },
         "ms": {
           "version": "0.7.2"
@@ -2158,6 +2158,9 @@
     "js-base64": {
       "version": "2.1.9"
     },
+    "js-sha1": {
+      "version": "0.4.1"
+    },
     "js-stringify": {
       "version": "1.0.2"
     },
@@ -2184,9 +2187,6 @@
     },
     "jsesc": {
       "version": "1.3.0"
-    },
-    "jshashes": {
-      "version": "1.0.5"
     },
     "json-loader": {
       "version": "0.5.4"
@@ -3754,7 +3754,7 @@
       "version": "1.1.2"
     },
     "symbol-tree": {
-      "version": "3.2.1",
+      "version": "3.2.2",
       "dev": true
     },
     "sync-exec": {
