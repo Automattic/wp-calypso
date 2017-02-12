@@ -33,6 +33,10 @@
 			width: 100%;
 			text-align: left;
 
+			&:first-child {
+				border-top: none;
+			}
+
 			a,
 			.no-link {
 				display: block;
