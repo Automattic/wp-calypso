@@ -224,9 +224,9 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	};
 
 	flows[ 'site-selected' ] = {
-		steps: [ 'themes-site-selected', 'plans-site-selected' ],
+		steps: [ 'themes-site-selected' ],
 		destination: getSiteDestination,
-		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+		providesDependenciesInQuery: [ 'siteSlug' ],
 		description: 'A flow to test updating an existing site with `Signup`',
 		lastModified: '2017-01-19'
 	};
