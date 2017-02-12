@@ -1,8 +1,9 @@
 const template = require( 'lodash/template' );
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
-const data = require( './parser' )( configPath, {
+const parser = require( './parser' );
+
+const { serverData: data, clientData } = parser( configPath, {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
-	includeSecrets: true,
 	enabledFeatures: process.env.ENABLE_FEATURES,
 	disabledFeatures: process.env.DISABLE_FEATURES
 } );
@@ -39,7 +40,7 @@ const ssrConfig = template(
 	'<%= isEnabled %>' +
 	'<%= anyEnabled %>'
 ) ( {
-	data: JSON.stringify( data ),
+	data: JSON.stringify( clientData ),
 	config: config.toString(),
 	isEnabled: isEnabled.toString(),
 	anyEnabled: anyEnabled.toString(),
@@ -48,4 +49,4 @@ const ssrConfig = template(
 module.exports = config;
 module.exports.isEnabled = isEnabled;
 module.exports.anyEnabled = anyEnabled;
-module.exports.srrConfig = ssrConfig;
+module.exports.ssrConfig = ssrConfig;

@@ -164,7 +164,7 @@ build-server: install
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
 
 build: install build-server build-dll build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
-	@$(BUNDLER)
+	@if [ $(CALYPSO_ENV) != development ]; then $(BUNDLER); fi
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
