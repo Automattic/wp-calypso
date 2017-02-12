@@ -246,42 +246,19 @@ export default class ReaderPostCard extends React.Component {
 		urlParams.push( 'userid=' + user.ID );
 		urlParams.push( 'useridtype=wpcom' );
 
-		window.console.log( 'https://pixel.wp.com/g.gif?' + urlParams.join( '&' ) );
+		( new Image() ).src = 'https://pixel.wp.com/g.gif?' + urlParams.join( '&' );
 	}
 
 	onAppear = ( user, key ) => {
 		this.triggerStreamPixelRequest( 'appear', user, key, 0 );
-		window.console.log(
-			'appearing: [%s:%s:%s] %s',
-			key,
-			this.props.post.feed_ID,
-			this.props.post.feed_item_ID,
-			this.props.post.title
-		);
 	}
 
 	onHeartbeat = ( user, key, timeOnScreen ) => {
 		this.triggerStreamPixelRequest( 'heartbeat', user, key, timeOnScreen );
-		window.console.log(
-			'heartbeat: [%s:%s:%s] %s read time so far %dms',
-			key,
-			this.props.post.feed_ID,
-			this.props.post.feed_item_ID,
-			this.props.post.title,
-			timeOnScreen
-		);
 	}
 
 	onLeave = ( user, key, timeOnScreen ) => {
 		this.triggerStreamPixelRequest( 'leave', user, key, timeOnScreen );
-		window.console.log(
-			'leaving  : [%s:%s:%s] %s read time %dms',
-			key,
-			this.props.post.feed_ID,
-			this.props.post.feed_item_ID,
-			this.props.post.title,
-			timeOnScreen
-		);
 	}
 
 	render() {
