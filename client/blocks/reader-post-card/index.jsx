@@ -49,24 +49,35 @@ function trackable( TrackedComponent ) {
 		componentDidMount() {
 			window.addEventListener( 'scroll', this.checkOnScreen );
 			window.addEventListener( 'resize', this.checkOnScreen );
+			document.addEventListener( 'visibilitychange', this.checkOnScreen );
 			this.checkOnScreen();
 		}
 
 		componentWillUnmount() {
 			window.removeEventListener( 'scroll', this.checkOnScreen );
 			window.removeEventListener( 'resize', this.checkOnScreen );
+			document.removeEventListener( 'visibilitychange', this.checkOnScreen );
 		}
 
 		checkOnScreen = throttle( () => {
+
 			if ( ! this.nodeRef ) {
 				if ( this.state.readPixelInterval ) {
 					window.clearInterval( this.state.readPixelInterval );
 				}
 				return;
 			}
+
 			const rect = this.nodeRef.getBoundingClientRect();
 			const html = document.documentElement;
 			const windowHeight = window.innerHeight || html.clientHeight;
+
+			function documentNotHidden() {
+				if ( typeof document.hidden === 'undefined' ) {
+					return true;
+				}
+				return ! document.hidden;
+			}
 
 			function entirelyOnScreen() {
 				return rect.top >= 0 &&
@@ -102,7 +113,7 @@ function trackable( TrackedComponent ) {
 					.replace( /\//g, '_' );
 			}
 
-			if ( entirelyOnScreen() || biggerThanScreen() || partiallyOnScreen() ) {
+			if ( documentNotHidden() && ( entirelyOnScreen() || biggerThanScreen() || partiallyOnScreen() ) ) {
 				if ( ! this.state.isOnScreen ) {
 					const self = this;
 					const key = generateKey();
