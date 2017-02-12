@@ -59,6 +59,9 @@ function trackable( TrackedComponent ) {
 
 		checkOnScreen = throttle( () => {
 			if ( ! this.nodeRef ) {
+				if ( this.state.readPixelInterval ) {
+					window.clearInterval( this.state.readPixelInterval );
+				}
 				return;
 			}
 			const rect = this.nodeRef.getBoundingClientRect();
@@ -116,6 +119,7 @@ function trackable( TrackedComponent ) {
 									performance.now() - self.state.isOnScreen
 								);
 							}
+							self.checkOnScreen();
 						}, 1E4 )
 					} );
 					this.props.onAppear( user, key );
