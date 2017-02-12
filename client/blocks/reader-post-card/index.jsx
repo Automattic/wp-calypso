@@ -101,11 +101,16 @@ function trackable( TrackedComponent ) {
 				if ( ! this.state.isOnScreen ) {
 					const self = this;
 					const key = generateKey();
-					this.setState( {
+					self.setState( {
 						isOnScreen: performance.now(),
 						readPixelKey: key,
 						readPixelInterval: window.setInterval( function() {
-							self.props.onHeartbeat( key );
+							if ( self.state.isOnScreen ) {
+								self.props.onHeartbeat(
+									self.state.readPixelKey,
+									performance.now() - self.state.isOnScreen
+								);
+							}
 						}, 1E4 )
 					} );
 					this.props.onAppear( key );
@@ -215,13 +220,14 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 
-	onHeartbeat = ( key ) => {
+	onHeartbeat = ( key, timeOnScreen ) => {
 		window.console.log(
-			'heartbeat: [%s:%s:%s] %s',
+			'heartbeat: [%s:%s:%s] %s read time so far %dms',
 			key,
 			this.props.post.feed_ID,
 			this.props.post.feed_item_ID,
-			this.props.post.title
+			this.props.post.title,
+			timeOnScreen
 		);
 	}
 
