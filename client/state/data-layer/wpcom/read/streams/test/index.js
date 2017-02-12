@@ -45,8 +45,10 @@ describe( 'streams', () => {
 			expect( dispatch ).to.have.been.calledWith( http( {
 				method: 'GET',
 				path: '/read/following',
-				apiVersion: 'v1.2',
-				query: action.query
+				apiVersion: '1.2',
+				query: action.query,
+				onSuccess: action,
+				onFailure: action,
 			} ) );
 		} );
 
@@ -123,8 +125,10 @@ describe( 'streams', () => {
 			expect( dispatch ).to.have.been.calledWith( http( {
 				method: 'GET',
 				path: '/read/following',
-				apiVersion: 'v1.2',
-				query: action.query
+				apiVersion: '1.2',
+				query: action.query,
+				onSuccess: action,
+				onFailure: action,
 			} ) );
 		} );
 
@@ -139,8 +143,10 @@ describe( 'streams', () => {
 			expect( dispatch ).to.have.been.calledWith( http( {
 				method: 'GET',
 				path: '/read/following',
-				apiVersion: 'v1.2',
-				query: action.query
+				apiVersion: '1.2',
+				query: action.query,
+				onSuccess: action,
+				onFailure: action
 			} ) );
 		} );
 	} );
@@ -181,7 +187,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/following',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -190,7 +196,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/a8c',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -199,7 +205,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/search',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {
 						q: 'foo'
 					}
@@ -210,7 +216,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/search',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {
 						q: 'foo:bar'
 					}
@@ -221,7 +227,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/feed/1234/posts',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -230,7 +236,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/sites/1234/posts',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -239,7 +245,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/sites/1234/featured',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -248,7 +254,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/liked',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {}
 				}
 			},
@@ -257,7 +263,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/recommendations/posts',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {
 						algorithm: 'read:recommendations:posts/es/1',
 						seed: match.number
@@ -269,7 +275,7 @@ describe( 'streams', () => {
 				expected: {
 					method: 'GET',
 					path: '/read/recommendations/posts',
-					apiVersion: 'v1.2',
+					apiVersion: '1.2',
 					query: {
 						algorithm: 'read:recommendations:posts/es/7',
 						seed: match.number
@@ -280,12 +286,13 @@ describe( 'streams', () => {
 			it( testCase.stream + ' should pass the expected params', () => {
 				const dispatch = spy();
 				const next = spy();
-				requestPage(
-					{ dispatch },
-					requestPageAction( testCase.stream, {} ),
-					next
-				);
-				expect( dispatch ).to.have.been.calledWithMatch( http( testCase.expected ) );
+				const pageAction = requestPageAction( testCase.stream, {} );
+				requestPage( { dispatch }, pageAction, next );
+				const expected = Object.assign( {
+					onSuccess: pageAction,
+					onFailure: pageAction
+				}, testCase.expected );
+				expect( dispatch ).to.have.been.calledWithMatch( http( expected ) );
 				expect( next ).to.have.been.calledOnce;
 			} );
 		} );

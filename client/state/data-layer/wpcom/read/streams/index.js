@@ -20,10 +20,36 @@ import {
 import { receivePage } from 'state/reader/streams/actions';
 import { errorNotice } from 'state/notices/actions';
 
+/**
+ * Pull the suffix off of a stream ID
+ *
+ * A stream id is a : delimited string, with the form
+ * {prefix}:{suffix}
+ *
+ * Prefix cannot contain a colon, while the suffix may.
+ *
+ * A colon is not required.
+ *
+ * Valid IDs look like
+ * `following`
+ * `site:1234`
+ * `search:a:value` ( prefix is `search`, suffix is `a:value` )
+ *
+ * @param  {String} streamId The stream ID to break apart
+ * @return {String}          The stream ID suffix
+ */
 function streamIdSuffix( streamId ) {
 	return streamId.substring( streamId.indexOf( ':' ) + 1 );
 }
 
+/**
+ * A Higher Order Function that generates a function that replaces a named token with the stream suffix
+ *
+ * Usage:
+ *   `replacePathTokenWithSuffix( 'name' )( '/a/path/:name', 'name:ben' )`
+ * @param  {String} token The named token to replace
+ * @return {Function}       A function that takes a path and an action with a `streamId` property
+ */
 function replacePathTokenWithSuffix( token ) {
 	return ( path, { streamId } ) => {
 		return path.replace( token, streamIdSuffix( streamId ) );
@@ -37,6 +63,11 @@ function getSeedForQuery( ) {
 const streamToPathMatchers = [
 	// ordering here is by how often we expect each stream type to be used
 	// search is linear, so putting common things near the front can be helpful
+	// Each object is a composed of:
+	//   match: a regexp that matches against a stream ID
+	//   path: The API path to hit
+	//   pathAdvice: a function that takes the path and an action. Returns the path to use in the request.
+	//   queryAdvice: a function that takes the query and an action. Returns the query to use.
 	{
 		match: /^following$/,
 		path: '/read/following'
@@ -115,6 +146,11 @@ const streamToPathMatchers = [
 	}
 ];
 
+/**
+ * Find the API descriptor for a stream ID
+ * @param  {String} streamId A stream ID
+ * @return {Object}          The API descriptor for the given stream. `null` if nothing matches.
+ */
 function apiForStream( streamId ) {
 	return find(
 		streamToPathMatchers,
@@ -122,6 +158,11 @@ function apiForStream( streamId ) {
 	);
 }
 
+/**
+ * Generate a unique key for the provided request. Used for deduping.
+ * @param  {Object} action The action
+ * @return {String}       	A key for the given action
+ */
 export function keyForRequest( action ) {
 	const { streamId, query } = action;
 	const actionString = !! query
@@ -155,7 +196,7 @@ export function requestPage( { dispatch }, action, next ) {
 	}
 
 	const {
-		apiVersion = 'v1.2',
+		apiVersion = '1.2',
 		path,
 		pathAdvice = identity,
 		queryAdvice = identity
@@ -171,11 +212,18 @@ export function requestPage( { dispatch }, action, next ) {
 		path: actualPath,
 		apiVersion,
 		query: actualQuery,
+		onSuccess: action,
+		onFailure: action,
 	} ) );
 
 	next( action );
 }
 
+/**
+ * Transform the response from the API
+ * @param  {Object} data The data from the API request
+ * @return {Object}      The transformed data
+ */
 export function transformResponse( data ) {
 	//TODO schema validation?
 	return ( data && data.posts ) || [];
