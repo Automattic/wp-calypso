@@ -31,11 +31,16 @@ function trackable( TrackedComponent ) {
 	return class Trackable extends React.Component {
 		constructor( props ) {
 			super( props );
-			this.state = { isOnScreen: false };
+			this.state = {
+				isOnScreen: false,
+				readPixelKey: false,
+				readPixelInterval: false
+			};
 		}
 
 		defaultProps = {
 			onAppear: noop,
+			onHeartbeat: noop,
 			onLeave: noop
 		}
 
@@ -73,15 +78,48 @@ function trackable( TrackedComponent ) {
 					( rect.bottom <= windowHeight && rect.bottom >= windowHeight * .25 );
 			}
 
+			function generateKey() {
+				const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
+				let i, randomBytes = [];
+
+				if ( window.crypto && window.crypto.getRandomValues ) {
+					randomBytes = new Uint8Array( randomBytesLength );
+					window.crypto.getRandomValues( randomBytes );
+				} else {
+					for ( i = 0; i < randomBytesLength; ++i ) {
+						randomBytes[ i ] = Math.floor( Math.random() * 256 );
+					}
+				}
+
+				return window
+					.btoa( String.fromCharCode.apply( String, randomBytes ) )
+					.replace( /\+/g, '-' )
+					.replace( /\//g, '_' );
+			}
+
 			if ( entirelyOnScreen() || biggerThanScreen() || partiallyOnScreen() ) {
 				if ( ! this.state.isOnScreen ) {
-					this.setState( { isOnScreen: performance.now() } );
-					this.props.onAppear();
+					const self = this;
+					const key = generateKey();
+					this.setState( {
+						isOnScreen: performance.now(),
+						readPixelKey: key,
+						readPixelInterval: window.setInterval( function() {
+							self.props.onHeartbeat( key );
+						}, 1E4 )
+					} );
+					this.props.onAppear( key );
 				}
 			} else if ( this.state.isOnScreen ) {
 				const timeOnScreen = performance.now() - this.state.isOnScreen;
-				this.setState( { isOnScreen: false } );
-				this.props.onLeave( timeOnScreen );
+				const key = this.state.readPixelKey;
+				window.clearInterval( this.state.readPixelInterval );
+				this.setState( {
+					isOnScreen: false,
+					readPixelKey: false,
+					readPixelInterval: false
+				} );
+				this.props.onLeave( key, timeOnScreen );
 			}
 		}, 150 )
 
@@ -89,7 +127,7 @@ function trackable( TrackedComponent ) {
 			this.nodeRef = ReactDom.findDOMNode( ref );
 		}
 		render() {
-			let { className, onAppear, onLeave, ...props } = this.props;
+			let { className, onAppear, onHeartbeat, onLeave, ...props } = this.props;
 			className = classnames( className, {
 				'is-on-screen': !! this.state.isOnScreen
 			} );
@@ -167,12 +205,35 @@ export default class ReaderPostCard extends React.Component {
 		}
 	}
 
-	onAppear = () => {
-		console.log( 'appearing: [%s:%s] %s', this.props.post.feed_ID, this.props.post.feed_item_ID, this.props.post.title );
+	onAppear = ( key ) => {
+		window.console.log(
+			'appearing: [%s:%s:%s] %s',
+			key,
+			this.props.post.feed_ID,
+			this.props.post.feed_item_ID,
+			this.props.post.title
+		);
 	}
 
-	onLeave = ( timeOnScreen ) => {
-		console.log( 'leaving after %dms: [%s:%s] %s', timeOnScreen, this.props.post.feed_ID, this.props.post.feed_item_ID, this.props.post.title );
+	onHeartbeat = ( key ) => {
+		window.console.log(
+			'heartbeat: [%s:%s:%s] %s',
+			key,
+			this.props.post.feed_ID,
+			this.props.post.feed_item_ID,
+			this.props.post.title
+		);
+	}
+
+	onLeave = ( key, timeOnScreen ) => {
+		window.console.log(
+			'leaving  : [%s:%s:%s] %s read time %dms',
+			key,
+			this.props.post.feed_ID,
+			this.props.post.feed_item_ID,
+			this.props.post.title,
+			timeOnScreen
+		);
 	}
 
 	render() {
@@ -240,7 +301,7 @@ export default class ReaderPostCard extends React.Component {
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 
 		return (
-			<TrackableCard onAppear={ this.onAppear } onLeave={ this.onLeave } className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
+			<TrackableCard onAppear={ this.onAppear } onHeartbeat={ this.onHeartbeat } onLeave={ this.onLeave } className={ classes } onClick={ ! isPhotoPost && this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } showSiteName={ showSiteName } />
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
