@@ -43,6 +43,7 @@ export getSiteGmtOffset from './get-site-gmt-offset';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
+export getSiteStatsViewSummary from './get-site-stats-view-summary';
 export getTimezones from './get-timezones';
 export getSiteTimezoneName from './get-site-timezone-name';
 export getSiteTimezoneValue from './get-site-timezone-value';
