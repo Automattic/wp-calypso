@@ -210,7 +210,36 @@ export default class ReaderPostCard extends React.Component {
 		}
 	}
 
+	triggerStreamPixelRequest = ( type, key, timeOnScreen ) => {
+		let urlParams = new Array();
+
+		// Stream type
+		urlParams.push( 'stream' );
+		switch ( type ) {
+			case 'appear':
+			case 'heartbeat':
+			case 'leave':
+				urlParams.push( 'type=' + encodeURIComponent( type ) );
+				break;
+			default:
+				return;
+		}
+
+		// Session ID / item key
+		urlParams.push( 'id=' + encodeURIComponent( key ) );
+
+		// Card info
+		urlParams.push( 'feed=' + this.props.post.feed_ID );
+		urlParams.push( 'feeditem=' + this.props.post.feed_item_ID );
+
+		// Total time
+		urlParams.push( 'ms=' + timeOnScreen.toFixed( 0 ) );
+
+		window.console.log( 'https://pixel.wp.com/g.gif?' + urlParams.join( '&' ) );
+	}
+
 	onAppear = ( key ) => {
+		this.triggerStreamPixelRequest( 'appear', key, 0 );
 		window.console.log(
 			'appearing: [%s:%s:%s] %s',
 			key,
@@ -221,6 +250,7 @@ export default class ReaderPostCard extends React.Component {
 	}
 
 	onHeartbeat = ( key, timeOnScreen ) => {
+		this.triggerStreamPixelRequest( 'heartbeat', key, timeOnScreen );
 		window.console.log(
 			'heartbeat: [%s:%s:%s] %s read time so far %dms',
 			key,
@@ -232,6 +262,7 @@ export default class ReaderPostCard extends React.Component {
 	}
 
 	onLeave = ( key, timeOnScreen ) => {
+		this.triggerStreamPixelRequest( 'leave', key, timeOnScreen );
 		window.console.log(
 			'leaving  : [%s:%s:%s] %s read time %dms',
 			key,
