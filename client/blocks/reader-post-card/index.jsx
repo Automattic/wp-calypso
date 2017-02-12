@@ -34,6 +34,7 @@ function trackable( TrackedComponent ) {
 			super( props );
 			this.state = {
 				isOnScreen: false,
+				user: false,
 				readPixelKey: false,
 				readPixelInterval: false
 			};
@@ -126,6 +127,7 @@ function trackable( TrackedComponent ) {
 				window.clearInterval( this.state.readPixelInterval );
 				this.setState( {
 					isOnScreen: false,
+					user: false,
 					readPixelKey: false,
 					readPixelInterval: false
 				} );
