@@ -6,6 +6,7 @@ import { noop, throttle, truncate } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
+import userModule from 'lib/user';
 
 /**
  * Internal Dependencies
@@ -101,30 +102,34 @@ function trackable( TrackedComponent ) {
 				if ( ! this.state.isOnScreen ) {
 					const self = this;
 					const key = generateKey();
+					const user = userModule().get();
 					self.setState( {
 						isOnScreen: performance.now(),
+						user: user,
 						readPixelKey: key,
 						readPixelInterval: window.setInterval( function() {
 							if ( self.state.isOnScreen ) {
 								self.props.onHeartbeat(
+									self.state.user,
 									self.state.readPixelKey,
 									performance.now() - self.state.isOnScreen
 								);
 							}
 						}, 1E4 )
 					} );
-					this.props.onAppear( key );
+					this.props.onAppear( user, key );
 				}
 			} else if ( this.state.isOnScreen ) {
 				const timeOnScreen = performance.now() - this.state.isOnScreen;
 				const key = this.state.readPixelKey;
+				const user = this.state.user;
 				window.clearInterval( this.state.readPixelInterval );
 				this.setState( {
 					isOnScreen: false,
 					readPixelKey: false,
 					readPixelInterval: false
 				} );
-				this.props.onLeave( key, timeOnScreen );
+				this.props.onLeave( user, key, timeOnScreen );
 			}
 		}, 150 )
 
@@ -210,7 +215,7 @@ export default class ReaderPostCard extends React.Component {
 		}
 	}
 
-	triggerStreamPixelRequest = ( type, key, timeOnScreen ) => {
+	triggerStreamPixelRequest = ( type, user, key, timeOnScreen ) => {
 		let urlParams = new Array();
 
 		// Stream type
@@ -235,11 +240,15 @@ export default class ReaderPostCard extends React.Component {
 		// Total time
 		urlParams.push( 'ms=' + timeOnScreen.toFixed( 0 ) );
 
+		// User ID and Type
+		urlParams.push( 'userid=' + user.ID );
+		urlParams.push( 'useridtype=wpcom' );
+
 		window.console.log( 'https://pixel.wp.com/g.gif?' + urlParams.join( '&' ) );
 	}
 
-	onAppear = ( key ) => {
-		this.triggerStreamPixelRequest( 'appear', key, 0 );
+	onAppear = ( user, key ) => {
+		this.triggerStreamPixelRequest( 'appear', user, key, 0 );
 		window.console.log(
 			'appearing: [%s:%s:%s] %s',
 			key,
@@ -249,8 +258,8 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 
-	onHeartbeat = ( key, timeOnScreen ) => {
-		this.triggerStreamPixelRequest( 'heartbeat', key, timeOnScreen );
+	onHeartbeat = ( user, key, timeOnScreen ) => {
+		this.triggerStreamPixelRequest( 'heartbeat', user, key, timeOnScreen );
 		window.console.log(
 			'heartbeat: [%s:%s:%s] %s read time so far %dms',
 			key,
@@ -261,8 +270,8 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 
-	onLeave = ( key, timeOnScreen ) => {
-		this.triggerStreamPixelRequest( 'leave', key, timeOnScreen );
+	onLeave = ( user, key, timeOnScreen ) => {
+		this.triggerStreamPixelRequest( 'leave', user, key, timeOnScreen );
 		window.console.log(
 			'leaving  : [%s:%s:%s] %s read time %dms',
 			key,
