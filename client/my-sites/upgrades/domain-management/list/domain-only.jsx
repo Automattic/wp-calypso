@@ -10,13 +10,13 @@ import React, { PropTypes } from 'react';
 import EmptyContent from 'components/empty-content';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 
-const DomainOnly = ( { domainName, siteId, translate } ) => (
+const DomainOnly = ( { domainName, translate } ) => (
 	<EmptyContent
 		title={ translate( '%(domainName)s is not set up yet.', {
 			args: { domainName }
 		} ) }
 		action={ translate( 'Create New Site' ) }
-		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
+		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }` }
 		secondaryAction={ translate( 'Advanced' ) }
 		secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
 		illustration={ '/calypso/images/drake/drake-browser.svg' } />
@@ -25,7 +25,6 @@ const DomainOnly = ( { domainName, siteId, translate } ) => (
 DomainOnly.propTypes = {
 	domainName: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,
-	siteId: PropTypes.number.isRequired,
 };
 
 export default localize( DomainOnly );
