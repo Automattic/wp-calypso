@@ -251,9 +251,8 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	handleCancel = () => {
 		const { mediaLibrarySelectedItems } = this.props;
-
 		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
@@ -262,9 +261,12 @@ export class EditorMediaModal extends Component {
 		}
 
 		this.props.setView( ModalViews.DETAIL );
+	}
 
+	onImageEditorCancel = imageEditorProps => {
 		const {	resetAllImageEditorState } = imageEditorProps;
 
+		this.handleCancel();
 		resetAllImageEditorState();
 	};
 
@@ -433,6 +435,7 @@ export class EditorMediaModal extends Component {
 					content = (
 						<VideoEditor
 							media={ media }
+							onCancel={ this.handleCancel }
 						/>
 					);
 				}

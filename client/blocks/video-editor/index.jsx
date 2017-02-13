@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -13,6 +14,20 @@ import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-vi
 import VideoEditorButtons from './video-editor-buttons';
 
 class VideoEditor extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+		media: PropTypes.object,
+		onCancel: PropTypes.func,
+
+		// Connected props
+		translate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		media: null,
+		onCancel: noop,
+	};
+
 	handleSelectFrame() {}
 
 	handleUploadImage() {}
@@ -53,19 +68,5 @@ class VideoEditor extends Component {
 		);
 	}
 }
-
-VideoEditor.propTypes = {
-	// Component props
-	className: PropTypes.string,
-	media: PropTypes.object,
-	siteId: PropTypes.number,
-
-	// Redux props
-	translate: PropTypes.func,
-};
-
-VideoEditor.defaultProps = {
-	media: null,
-};
 
 export default connect()( localize( VideoEditor ) );
