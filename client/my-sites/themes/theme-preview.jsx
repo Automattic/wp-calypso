@@ -13,7 +13,7 @@ import { connectOptions } from './theme-options';
 import {
 	getThemeForPreviewData,
 	getTheme,
-	getThemePreviewState,
+	isThemePreviewVisible,
 	isThemeActive
 } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
@@ -101,7 +101,7 @@ const ConnectedThemePreview = connectOptions( ThemePreview );
 
 export default connect(
 	( state ) => {
-		const showPreview = getThemePreviewState( state ) === 'enabled';
+		const showPreview = isThemePreviewVisible( state ) === 'enabled';
 
 		// data for preview not set.
 		if ( ! showPreview ) {

@@ -623,6 +623,6 @@ export function getThemeForPreviewData( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}  ThemePreview state
  */
-export function getThemePreviewState( state ) {
+export function isThemePreviewVisible( state ) {
 	return get( state.themes.previewingThemeState, 'isEnabled', 'disabled' );
 }
