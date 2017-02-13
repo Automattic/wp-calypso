@@ -45,6 +45,9 @@
 	color: darken( $gray, 20% );
 	padding: 8px 14px;
 	white-space: nowrap;
+	flex: 1 0 auto;
+	font-size: 16px;
+	line-height: 1.5;
 }
 
 .form-text-input-with-affixes__prefix {
