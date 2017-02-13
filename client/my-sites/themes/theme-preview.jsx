@@ -11,7 +11,8 @@ import Button from 'components/button';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
-	getThemeForPreviewData,
+	getThemePreviewInfo,
+	getThemePreviewThemeOptions,
 	getTheme,
 	isThemePreviewVisible,
 	isThemeActive
@@ -28,6 +29,7 @@ const ThemePreview = React.createClass( {
 
 	propTypes: {
 		theme: React.PropTypes.object,
+		themeOptions: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
 		showPreview: React.PropTypes.bool,
 		showExternal: React.PropTypes.bool,
@@ -47,12 +49,12 @@ const ThemePreview = React.createClass( {
 	},
 
 	getPrimaryOption() {
-		return this.props.previewData.themeOptions.primary;
+		return this.props.themeOptions.primary;
 	},
 
 	getSecondaryOption() {
 		const { isActive } = this.props;
-		return isActive ? null : this.props.previewData.themeOptions.secondary;
+		return isActive ? null : this.props.themeOptions.secondary;
 	},
 
 	renderSecondaryButton() {
@@ -75,7 +77,7 @@ const ThemePreview = React.createClass( {
 
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
-		const themeId = this.props.previewData.themeData.themeId;
+		const themeId = this.props.themePreviewInfo.themeId;
 
 		return (
 			<div>
@@ -108,17 +110,19 @@ export default connect(
 		if ( ! showPreview ) {
 			return { showPreview };
 		}
-		const previewData = getThemeForPreviewData( state );
-		const theme = getTheme( state, previewData.themeData.source, previewData.themeData.themeId );
+		const themePreviewInfo = getThemePreviewInfo( state );
+		const themeOptions = getThemePreviewThemeOptions( state );
+		const theme = getTheme( state, themePreviewInfo.source, themePreviewInfo.themeId );
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
 			theme,
 			siteId,
 			isJetpack,
-			previewData,
+			themePreviewInfo,
+			themeOptions,
 			showPreview,
-			isActive: isThemeActive( state, previewData.themeData.themeId, siteId ),
+			isActive: isThemeActive( state, themePreviewInfo.themeId, siteId ),
 			previewUrl: theme ? getPreviewUrl( theme ) : null,
 			options: [
 				'activate',

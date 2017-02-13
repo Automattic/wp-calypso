@@ -613,19 +613,6 @@ export function getThemePreviewInfo( state ) {
 }
 
 /**
- * Returns themeId to preview for site.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Object}         Last query
- */
-export function getThemeForPreviewData( state ) {
-	const themeData = get( state.themes, 'themePreviewInfo', {} );
-	const themeOptions = get( state.themes, 'themePreviewOptions', {} );
-	return { themeData, themeOptions };
-}
-
-/**
  * Returns the ThemePreview state
  *
  * @param  {Object}  state Global state tree
