@@ -121,7 +121,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 									return getScreenshotOption( theme ).label;
 								} }
 								trackScrollPage={ props.trackScrollPage }
-								queryWpcom={ true }
+								source="wpcom"
 							/>
 						</div>
 					}
