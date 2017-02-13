@@ -17,6 +17,7 @@ export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
+export eligibleForFreeToPaidUpsell from './eligible-for-free-to-paid-upsell';
 export getAccountRecoveryResetOptions from './get-account-recovery-reset-options';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';

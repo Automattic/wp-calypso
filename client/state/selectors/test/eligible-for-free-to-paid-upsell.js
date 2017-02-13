@@ -7,9 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
-	eligibleForFreeToPaidUpsell
-} from '../selectors';
+import { eligibleForFreeToPaidUpsell } from '..';
 
 describe( 'eligibleForFreeToPaidUpsell', () => {
 	it( 'should always return true', () => {
