@@ -35,7 +35,7 @@ Login.propTypes = {
 };
 
 Login.defaultProps = {
-	title: false
+	title: ''
 };
 
 export default Login;
