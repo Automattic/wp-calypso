@@ -12,7 +12,7 @@ import FormsButton from 'components/forms/form-button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
-import { loginUser } from 'state/login/actions';
+import { loginUser, redirect } from 'state/login/actions';
 import Notice from 'components/notice';
 
 import {
@@ -32,6 +32,12 @@ class Login extends Component {
 		usernameOrEmail: '',
 		password: '',
 	};
+
+	componentDidUpdate() {
+		if ( this.props.isLoginSuccessful ) {
+			this.props.redirect( this.props.redirectLocation || '/' );
+		}
+	}
 
 	onChangeField = ( event ) => {
 		this.setState( {
@@ -111,5 +117,6 @@ export default connect( state => {
 		loginError: getError( state )
 	};
 }, {
-	loginUser
+	loginUser,
+	redirect
 } )( localize( Login ) );

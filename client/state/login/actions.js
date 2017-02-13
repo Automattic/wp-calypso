@@ -31,7 +31,6 @@ export const loginUser = ( username_or_email, password ) => {
 					password,
 					data,
 				} );
-				location.href = '/';
 			} ).catch( ( error ) => {
 				dispatch( {
 					type: LOGIN_REQUEST_FAILURE,
@@ -41,4 +40,8 @@ export const loginUser = ( username_or_email, password ) => {
 				} );
 			} );
 	};
+};
+
+export const redirect = ( /* url */ ) => {
+	// location.href = url;
 };
