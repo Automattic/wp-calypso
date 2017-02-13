@@ -64,7 +64,7 @@ button {
 	}
 	&.is-compact {
 		padding: 7px;
-		color: darken( $gray, 10% );
+		color: $gray-text;
 		font-size: 11px;
 		line-height: 1;
 		text-transform: uppercase;
@@ -164,7 +164,7 @@ button {
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: darken( $gray, 10% );
+	color: $gray-text;
 	padding-left: 0;
 	padding-right: 0;
 	border-radius: 0;
