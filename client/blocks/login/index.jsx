@@ -13,6 +13,7 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
 import { loginUser } from 'state/login/actions';
+import Notice from 'components/notice';
 
 import {
 	isRequestingLogin,
@@ -43,10 +44,26 @@ class Login extends Component {
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password );
 	};
 
+	renderNotices = () => {
+		if ( this.props.loginError ) {
+			return (
+				<Notice status="is-error" text={ this.props.loginError } />
+			);
+		}
+	}
+
 	render() {
 		const buttonText = this.props.buttonText || this.props.translate( 'Sign in' );
+		const isDisabled = {};
+		if ( this.props.isRequestingLogin ) {
+			isDisabled.disabled = true;
+		}
+
 		return (
 			<div className="login">
+
+				{ this.renderNotices() }
+
 				<form onSubmit={ this.onSubmitForm }>
 					<Card className="login__form">
 						<div className="login__form-header">
@@ -60,7 +77,8 @@ class Login extends Component {
 									className="login__form-userdata-username-input"
 									onChange={ this.onChangeField }
 									name="usernameOrEmail"
-									value={ this.state.usernameOrEmail } />
+									value={ this.state.usernameOrEmail }
+									{ ...isDisabled } />
 							</label>
 							<label className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
@@ -69,7 +87,8 @@ class Login extends Component {
 									onChange={ this.onChangeField }
 									type="password"
 									name="password"
-									value={ this.state.password } />
+									value={ this.state.password }
+									{ ...isDisabled } />
 							</label>
 						</div>
 					</Card>
@@ -77,7 +96,7 @@ class Login extends Component {
 						<div className="login__form-action-legal">
 							{ this.props.legalText }
 						</div>
-						<FormsButton primary>{ buttonText }</FormsButton>
+						<FormsButton primary { ...isDisabled }>{ buttonText }</FormsButton>
 					</Card>
 				</form>
 			</div>

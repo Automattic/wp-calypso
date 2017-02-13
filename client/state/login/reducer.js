@@ -29,7 +29,7 @@ const requestError = createReducer( null, {
 const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
-	[ LOGIN_REQUEST_FAILURE ]: false
+	[ LOGIN_REQUEST_FAILURE ]: () => false
 } );
 
 export default combineReducers( {
