@@ -201,7 +201,7 @@ class Plans extends Component {
 		// clears whatever we had stored in local cache
 		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
 
-		if ( cartItem.product_slug === PLAN_JETPACK_FREE ) {
+		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
