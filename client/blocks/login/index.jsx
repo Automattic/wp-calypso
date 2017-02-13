@@ -14,6 +14,12 @@ import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
 import { loginUser } from 'state/login/actions';
 
+import {
+	isRequestingLogin,
+	isLoginSuccessful,
+	getError
+} from 'state/login/selectors';
+
 class Login extends Component {
 	static defaultProps = {
 		title: '',
@@ -67,18 +73,24 @@ class Login extends Component {
 							</label>
 						</div>
 					</Card>
+					<Card className="login__form-action">
+						<div className="login__form-action-legal">
+							{ this.props.legalText }
+						</div>
+						<FormsButton primary>{ buttonText }</FormsButton>
+					</Card>
 				</form>
-				<Card className="login__form-action">
-					<div className="login__form-action-legal">
-						{ this.props.legalText }
-					</div>
-					<FormsButton primary>{ buttonText }</FormsButton>
-				</Card>
 			</div>
 		);
 	}
 }
 
-export default connect( null, {
+export default connect( state => {
+	return {
+		isRequestingLogin: isRequestingLogin( state ),
+		isLoginSuccessful: isLoginSuccessful( state ),
+		loginError: getError( state )
+	};
+}, {
 	loginUser
 } )( localize( Login ) );
