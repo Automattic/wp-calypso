@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	is12hr,
 	isValidGMTOffset,
 	getLocalizedDate,
 	convertHoursToHHMM,
@@ -14,12 +15,24 @@ import {
 	parseAndValidateNumber,
 } from '../utils';
 
+describe( 'is12hr', () => {
+	it( 'Should return true for a 12-hour time format', () => {
+		expect( is12hr( 'F j, Y, g:i a' ) ).to.be.true;
+		expect( is12hr( 'h:i' ) ).to.be.true;
+	} );
+
+	it( 'Should return false for a 24-hour time', () => {
+		expect( is12hr( 'H:i:s' ) ).to.be.false;
+		expect( is12hr( 'G:i' ) ).to.be.false;
+	} );
+} );
+
 describe( 'gmtOffset', () => {
 	it( 'Should return true for a valid gtm offset', () => {
 		expect( isValidGMTOffset( 2 ) ).to.be.true;
 	} );
 
-	it( 'Should return true for a valid gtm offset', () => {
+	it( 'Should return false for an invalid gtm offset', () => {
 		expect( isValidGMTOffset( '2' ) ).to.be.false;
 	} );
 } );

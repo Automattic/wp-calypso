@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
-import { endsWith, noop } from 'lodash';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,7 @@ import viewport from 'lib/viewport';
  * Local dependencies
  */
 import {
+	is12hr,
 	isValidGMTOffset,
 	parseAndValidateNumber,
 	convertHoursToHHMM,
@@ -45,7 +46,7 @@ class PostScheduleClock extends Component {
 			return null;
 		}
 
-		const hour = endsWith( this.props.timeFormat, 'A' ) || endsWith( this.props.timeFormat, 'a' ) ? 11 : 23;
+		const hour = is12hr( this.props.timeFormat ) ? 11 : 23;
 		let value = Number( event.target.value ) - operation;
 
 		if ( 'hour' === field ) {
@@ -96,8 +97,8 @@ class PostScheduleClock extends Component {
 		this.props.onChange( date, modifiers );
 	};
 
-	setAmPm( event, amPm ) {
-		this.refs.amPmReference.value = amPm;
+	setAmPm( event, amOrPm ) {
+		this.refs.amPmReference.value = amOrPm;
 		this.setTime( event );
 	}
 
@@ -167,7 +168,7 @@ class PostScheduleClock extends Component {
 
 	render() {
 		const { date, timeFormat, translate } = this.props;
-		const hasAmPm = endsWith( timeFormat, 'A' ) || endsWith( timeFormat, 'a' );
+		const is12hour = is12hr( timeFormat );
 
 		return (
 			<div className="post-schedule__clock">
@@ -175,7 +176,7 @@ class PostScheduleClock extends Component {
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
 					ref="hourReference"
-					value={ date.format( hasAmPm ? 'hh' : 'HH' ) }
+					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
 					type="text" />
@@ -191,7 +192,7 @@ class PostScheduleClock extends Component {
 					onKeyDown={ this.adjustMinute }
 					type="text" />
 
-				{ hasAmPm && (
+				{ is12hour && (
 					<span>
 						<input type="hidden" ref="amPmReference" name="post-schedule__clock_am-pm" value={ date.format( 'A' ) } />
 						<SegmentedControl compact>
