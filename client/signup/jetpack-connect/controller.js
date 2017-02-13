@@ -86,16 +86,17 @@ const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 	);
 };
 
-const loginView = () => {
-	ReactDom.render(
+const loginView = ( context ) => {
+	renderWithReduxStore(
 		React.createElement( LoginComponent, {} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 };
 
 export default {
-	login() {
-		loginView();
+	login( context ) {
+		loginView( context );
 	},
 
 	redirectWithoutLocaleifLoggedIn( context, next ) {
