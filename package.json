@@ -73,7 +73,7 @@
     "is-my-json-valid": "2.13.1",
     "jade": "pugjs/jade#29784fd",
     "jquery": "1.11.3",
-    "jshashes": "1.0.5",
+    "js-sha1": "0.4.1",
     "json-loader": "0.5.4",
     "key-mirror": "1.0.1",
     "keymaster": "1.6.2",
