@@ -75,11 +75,12 @@ const ThemePreview = React.createClass( {
 
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
+		const themeId = this.props.previewData.themeData.themeId;
 
 		return (
 			<div>
-				{ this.props.isJetpack && <QueryTheme themeId={ this.props.theme.id } siteId="wporg" /> }
-				<WebPreview
+				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
+				{ this.props.previewUrl && <WebPreview
 					showPreview={ this.props.showPreview }
 					showExternal={ this.props.showExternal }
 					showSEO={ false }
@@ -90,7 +91,7 @@ const ThemePreview = React.createClass( {
 					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
 						{ primaryOption.extendedLabel }
 					</Button>
-				</WebPreview>
+				</WebPreview> }
 			</div>
 		);
 	}
@@ -118,7 +119,7 @@ export default connect(
 			previewData,
 			showPreview,
 			isActive: isThemeActive( state, previewData.themeData.themeId, siteId ),
-			previewUrl: getPreviewUrl( theme ),
+			previewUrl: theme ? getPreviewUrl( theme ) : null,
 			options: [
 				'activate',
 				'preview',
