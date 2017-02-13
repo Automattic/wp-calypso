@@ -50,7 +50,7 @@ function hasPendingServerUpdates() {
 function setSelectedSite() {
 	var selectedSite = sites.getSelectedSite();
 
-	if ( _cartKey === selectedSite.ID ) {
+	if ( selectedSite && _cartKey === selectedSite.ID ) {
 		return;
 	}
 

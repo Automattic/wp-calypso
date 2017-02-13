@@ -143,7 +143,7 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( ( state ) => {
+export default connect( ( state, { sites } ) => {
 	let siteId = getSelectedSiteId( state );
 	let siteSlug = getSiteSlug( state, siteId );
 
@@ -151,6 +151,13 @@ export default connect( ( state ) => {
 	if ( ! siteId ) {
 		const currentUser = getCurrentUser( state );
 		siteSlug = get( currentUser, 'primarySiteSlug' );
+
+		if ( ! sites.getSite( siteSlug ) ) {
+			// The user's `primarySiteSlug` property might be stale if a site
+			// was just deleted, so we need to make sure the site is still in
+			// `sites-list`.
+			siteSlug = null;
+		}
 
 		// Now we can look up the site ID from its slug
 		const site = getSiteBySlug( state, siteSlug );

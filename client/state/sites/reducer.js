@@ -18,6 +18,7 @@ import mediaStorage from './media-storage/reducer';
 import {
 	MEDIA_DELETE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
+	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -110,6 +111,9 @@ export function items( state = {}, action ) {
 				memo[ site.ID ] = transformedSite;
 				return memo;
 			}, initialNextState );
+
+		case SITE_DELETE_RECEIVE:
+			return omit( state, action.site.ID );
 
 		case THEME_ACTIVATE_REQUEST_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
