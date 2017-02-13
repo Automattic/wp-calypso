@@ -116,9 +116,15 @@ export function receiveThemes( themes, siteId ) {
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {Number|String} siteId Jetpack site ID or 'wpcom' for any WPCOM site
- * @param  {String}        query  Theme query
- * @return {Function}             Action thunk
+ * @param  {Number|String} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {Object}        query         Theme query
+ * @param  {String}        query.search  Search string
+ * @param  {String}        query.tier    Theme tier: 'free', 'premium', or '' (either)
+ * @param  {String}        query.filter  Filter
+ * @param  {Number}        query.number  How many themes to return per page
+ * @param  {Number}        query.offset  At which item to start the set of returned themes
+ * @param  {Number}        query.page    Which page of matching themes to return
+ * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch, getState ) => {
