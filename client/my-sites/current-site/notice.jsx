@@ -12,7 +12,10 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser } from 'state/selectors';
+import {
+	canCurrentUser,
+	eligibleForFreeToPaidUpsell,
+} from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
@@ -76,7 +79,7 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
-		if ( abtest( 'freeToPaidUpsell' ) !== 'stats' ) {
+		if ( this.props.eligibleForFreeToPaidUpsell && abtest( 'freeToPaidUpsell' ) !== 'stats' ) {
 			return null;
 		}
 		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
@@ -133,6 +136,7 @@ const SiteNotice = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
+		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )

@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,9 +10,12 @@ import React from 'react';
 import Banner from 'components/banner';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { abtest } from 'lib/abtest';
+import {
+	eligibleForFreeToPaidUpsell,
+} from 'state/selectors';
 
-const FreeToPaidNudge = () => {
-	if ( abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
+const FreeToPaidNudge = ( props ) => {
+	if ( props.eligibleForFreeToPaidUpsell && abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
 		return null;
 	}
 
@@ -24,4 +28,9 @@ const FreeToPaidNudge = () => {
 	);
 };
 
-export default FreeToPaidNudge;
+export default connect( ( state, ownProps ) => {
+	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+	return {
+		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId ),
+	};
+} )( FreeToPaidNudge );
