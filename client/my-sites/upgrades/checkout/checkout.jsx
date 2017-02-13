@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, includes, isEmpty, isEqual, map, reduce, startsWith, values } from 'lodash';
+import { flatten, find, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -42,6 +42,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { domainManagementList } from 'my-sites/upgrades/paths';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
@@ -201,9 +202,10 @@ const Checkout = React.createClass( {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
-		} else if ( cart.create_new_blog && ! cartItems.hasPlan( cart ) ) {
-			if ( isEmpty( receipt.failed_purchases ) ) {
-				return domainManagementList( map( values( receipt.purchases )[ 0 ], 'meta' )[ 0 ] );
+		} else if ( cart.create_new_blog ) {
+			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
+			if ( domainName ) {
+				return domainManagementList( domainName );
 			}
 
 			return '/start/domain-first';
