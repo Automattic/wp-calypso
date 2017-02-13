@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, isEqual, omit, property, snakeCase } from 'lodash';
+import { compact, includes, isEqual, omit, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -168,15 +168,20 @@ const ThemesSelection = React.createClass( {
 } );
 
 const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, queryWpcom } ) => {
+	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
-		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
+		let siteIdOrWpcom;
+		if ( source === 'wpcom' || source === 'wporg' ) {
+			siteIdOrWpcom = source;
+		} else {
+			siteIdOrWpcom = ( siteId && isJetpack ) ? siteId : 'wpcom';
+		}
 
 		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = isJetpack && ! ( queryWpcom === true ) ? 2000 : 20;
+		const number = isJetpack && ! includes( [ 'wpcom', 'wporg' ], source ) ? 2000 : 20;
 		const query = {
 			search,
 			page,
