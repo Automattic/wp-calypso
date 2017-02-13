@@ -12,3 +12,13 @@ README](../../api/directly) for config options.
 
 #### `askQuestion( { questionText, name, email } )`
 Opens the Directly widget and asks the given question.
+
+#### `maximize()`
+Maximizes the RTM widget to the full attached view.
+
+#### `minimize()`
+Minimizes the RTM widget to the Ask Bubble.
+
+#### `openAskForm()`
+Opens the ask form (or bubble). It only has effect if the `displayAskQuestion` setting
+is false.
