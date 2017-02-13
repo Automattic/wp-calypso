@@ -139,25 +139,35 @@ const Signup = React.createClass( {
 			providedDependencies = pick( this.props.queryObject, flow.providesDependenciesInQuery );
 		}
 
-		this.signupFlowController = new SignupFlowController( {
-			flowName: this.props.flowName,
-			providedDependencies,
-			reduxStore: this.context.store,
-			onComplete: function( dependencies, destination ) {
-				const timeSinceLoading = this.state.loadingScreenStartTime
-					? Date.now() - this.state.loadingScreenStartTime
-					: undefined;
-				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
+		try {
+			this.signupFlowController = new SignupFlowController( {
+				flowName: this.props.flowName,
+				providedDependencies,
+				reduxStore: this.context.store,
+				onComplete: function( dependencies, destination ) {
+					const timeSinceLoading = this.state.loadingScreenStartTime
+						? Date.now() - this.state.loadingScreenStartTime
+						: undefined;
+					const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
 
-				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
-					return delay(
-						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
-					);
-				}
-				return this.handleFlowComplete( dependencies, filteredDestination );
-			}.bind( this )
-		} );
+					if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
+						return delay(
+							this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
+							MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
+						);
+					}
+					return this.handleFlowComplete( dependencies, filteredDestination );
+				}.bind( this )
+			} );
+		} catch ( Exception ) {
+
+			// TODO fixme!
+
+			if ( this._flowName !== flows.defaultFlowName ) {
+				// redirect to the default signup flow, hopefully it will be valid
+				page( utils.getStepUrl() );
+			}
+		}
 
 		this.loadProgressFromStore();
 

@@ -15,9 +15,7 @@ var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-di
 	filter = require( 'lodash/filter' ),
 	find = require( 'lodash/find' ),
 	pick = require( 'lodash/pick' ),
-	keys = require( 'lodash/keys' ),
-	page = require( 'page' );
-
+	keys = require( 'lodash/keys' );
 /**
  * Internal dependencies
  */
@@ -27,8 +25,7 @@ var SignupActions = require( './actions' ),
 	flows = require( 'signup/config/flows' ),
 	steps = require( 'signup/config/steps' ),
 	wpcom = require( 'lib/wp' ),
-	user = require( 'lib/user' )(),
-	utils = require( 'signup/utils' );
+	user = require( 'lib/user' )();
 
 /**
  * Constants
@@ -101,12 +98,6 @@ assign( SignupFlowController.prototype, {
 			const dependenciesFound = pick( SignupDependencyStore.get(), step.dependencies );
 			const dependenciesNotProvided = difference( step.dependencies, keys( dependenciesFound ), this._getFlowProvidesDependencies() );
 			if ( ! isEmpty( dependenciesNotProvided ) ) {
-
-				if ( this._flowName !== flows.defaultFlowName ) {
-					// redirect to the default signup flow, hopefully it will be valid
-					page( utils.getStepUrl() );
-				}
-
 				throw new Error( 'The ' + step.stepName + ' step requires dependencies [' + dependenciesNotProvided + '] which ' +
 				'are not provided in the ' + this._flowName + ' flow and are not already present in the store.' );
 			}
