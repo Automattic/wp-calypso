@@ -769,12 +769,12 @@ export function confirmDelete( themeId, siteId ) {
 	};
 }
 
-function setPreviewingThemeData( themeId, siteId ) {
+function setPreviewingThemeData( themeId, source ) {
 	return {
 		type: THEME_PREVIEW_DATA,
 		themeData: {
 			themeId,
-			siteId
+			source
 		}
 	};
 }
@@ -803,11 +803,11 @@ export function hideThemePreview() {
 	};
 }
 
-export function preview( themeId, siteId ) {
+export function preview( themeId ) {
 	return ( dispatch, getState ) => {
 		const isWpcomTheme = !! getTheme( getState(), 'wpcom', themeId );
-		const siteIdOrWpcom = isWpcomTheme ? 'wpcom' : siteId;
-		dispatch( setPreviewingThemeData( themeId, siteIdOrWpcom ) );
+		const wpcomOrWporg = isWpcomTheme ? 'wpcom' : 'wporg';
+		dispatch( setPreviewingThemeData( themeId, wpcomOrWporg ) );
 		dispatch( showThemePreview() );
 	};
 }

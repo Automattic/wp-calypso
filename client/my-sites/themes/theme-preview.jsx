@@ -108,7 +108,7 @@ export default connect(
 			return { showPreview };
 		}
 		const previewData = getThemeForPreviewData( state );
-		const theme = getTheme( state, previewData.themeData.siteId, previewData.themeData.themeId );
+		const theme = getTheme( state, previewData.themeData.source, previewData.themeData.themeId );
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		return {
@@ -117,7 +117,7 @@ export default connect(
 			isJetpack,
 			previewData,
 			showPreview,
-			isActive: isThemeActive( state, theme.id, siteId ),
+			isActive: isThemeActive( state, previewData.themeData.themeId, siteId ),
 			previewUrl: getPreviewUrl( theme ),
 			options: [
 				'activate',
