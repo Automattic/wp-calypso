@@ -46,12 +46,11 @@ class PostScheduleClock extends Component {
 			return null;
 		}
 
-		const hour = is12hr( this.props.timeFormat ) ? 11 : 23;
-		let value = Number( event.target.value ) - operation;
+		let value = this.maybeConvertHour( Number( event.target.value ) ) - operation;
 
 		if ( 'hour' === field ) {
-			value = value > hour ? 0 : value;
-			value = value < 0 ? hour : value;
+			value = value > 24 ? 1 : value;
+			value = value < 0 ? 23 : value;
 		} else {
 			value = value > 59 ? 0 : value;
 			value = value < 0 ? 59 : value;
@@ -77,13 +76,14 @@ class PostScheduleClock extends Component {
 			modifiers.hour = Number( hour );
 		}
 
-		if ( amPmReference ) {
-			if ( 'PM' === amPmReference.value && modifiers.hour < 12 ) {
-				modifiers.hour += 12;
-			} else if ( modifiers.hour > 12 || ( 'AM' === amPmReference.value && 12 === modifiers.hour ) ) {
-				modifiers.hour = 0;
-			}
+		if ( amPmReference && (
+			'undefined' === typeof modifiers.hour ||
+			( 'PM' === amPmReference.value && modifiers.hour > 12 )
+		) ) {
+			modifiers.hour = Number( hourReference.value.toString().slice( -1 ) );
 		}
+
+		modifiers.hour = this.maybeConvertHour( modifiers.hour );
 
 		if ( false !== minute && minute <= 59 ) {
 			modifiers.minute = Number( minute );
@@ -100,6 +100,23 @@ class PostScheduleClock extends Component {
 	setAmPm( event, amOrPm ) {
 		this.refs.amPmReference.value = amOrPm;
 		this.setTime( event );
+	}
+
+	/**
+	 * Converts a 12-hour time to a 24-hour time, depending on time format.
+	 *
+	 * @param {Number}  hour The hour to convert.
+	 * @return {Number}      The converted hour.
+	 */
+	maybeConvertHour( hour ) {
+		if ( this.refs.amPmReference && (
+			( 'PM' === this.refs.amPmReference.value && hour < 12 ) ||
+			( 'AM' === this.refs.amPmReference.value && 12 === hour )
+		) ) {
+			hour += 12;
+		}
+
+		return hour;
 	}
 
 	renderTimezoneSection() {
