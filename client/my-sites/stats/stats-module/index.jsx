@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,11 +43,13 @@ class StatsModule extends Component {
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
 		moment: PropTypes.func,
+		onRefresh: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
-		query: {}
+		query: {},
+		onRefresh: noop
 	};
 
 	state = {
@@ -58,6 +60,14 @@ class StatsModule extends Component {
 		if ( ! nextProps.requesting && this.props.requesting ) {
 			this.setState( { loaded: true } );
 		}
+
+		if ( nextProps.query !== this.props.query ) {
+			this.setState( { loaded: false } );
+		}
+	}
+
+	componentDidUpdate() {
+		this.props.onRefresh();
 	}
 
 	getModuleLabel() {

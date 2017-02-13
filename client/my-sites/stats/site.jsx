@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import MasonryLayout from 'react-masonry-component';
+import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +27,8 @@ import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+
+const MASONRY_REFRESH_TIMEOUT = 200;
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -60,6 +63,14 @@ class StatsSite extends Component {
 		}
 	};
 
+	bindMasonry = ( ref ) => {
+		this.masonry = ref.masonry;
+	};
+
+	reloadMasonry = throttle( () => {
+		this.masonry && this.masonry.layout();
+	}, MASONRY_REFRESH_TIMEOUT );
+
 	render() {
 		const { date, isJetpack, hasPodcasts, slug, translate } = this.props;
 		const charts = [
@@ -91,6 +102,7 @@ class StatsSite extends Component {
 						query={ query }
 						statType="statsVideoPlays"
 						showSummaryLink
+						onRefresh={ this.reloadMasonry }
 					/>
 				</div>
 			);
@@ -105,6 +117,7 @@ class StatsSite extends Component {
 						query={ query }
 						statType="statsPodcastDownloads"
 						showSummaryLink
+						onRefresh={ this.reloadMasonry }
 					/>
 				</div>
 			);
@@ -140,6 +153,7 @@ class StatsSite extends Component {
 								gutter: '.stats__gutter-sizer',
 								percentPosition: true
 							} }
+							ref={ this.bindMasonry }
 						>
 							<div className="stats__grid-sizer"></div>
 							<div className="stats__gutter-sizer"></div>
@@ -159,14 +173,16 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsTopPosts"
-									showSummaryLink />
+									showSummaryLink
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							<div className="stats__grid-item">
 								<Countries
 									path="countries"
 									period={ this.props.period }
 									query={ query }
-									summary={ false } />
+									summary={ false }
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							<div className="stats__grid-item">
 								<StatsModule
@@ -175,7 +191,8 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsReferrers"
-									showSummaryLink />
+									showSummaryLink
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							<div className="stats__grid-item">
 								<StatsModule
@@ -184,7 +201,8 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsClicks"
-									showSummaryLink />
+									showSummaryLink
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							<div className="stats__grid-item">
 								<StatsModule
@@ -194,7 +212,8 @@ class StatsSite extends Component {
 									query={ query }
 									statType="statsTopAuthors"
 									className="stats__author-views"
-									showSummaryLink />
+									showSummaryLink
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							<div className="stats__grid-item">
 								<StatsModule
@@ -203,7 +222,8 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsSearchTerms"
-									showSummaryLink />
+									showSummaryLink
+									onRefresh={ this.reloadMasonry } />
 							</div>
 							{ videoList }
 							{ podcastList }
