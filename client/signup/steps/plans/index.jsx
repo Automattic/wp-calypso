@@ -54,15 +54,11 @@ class PlansStep extends Component {
 			stepName,
 			stepSectionName,
 			cartItem,
+			privacyItem,
 			...additionalStepData
 		};
 
-		const providedDependencies = { cartItem };
-
-		if ( privacyItem ) {
-			step.privacyItem = privacyItem;
-			providedDependencies.privacyItem = privacyItem;
-		}
+		const providedDependencies = { cartItem, privacyItem };
 
 		SignupActions.submitSignupStep( step, [], providedDependencies );
 

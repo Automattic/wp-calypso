@@ -38,7 +38,7 @@ module.exports = {
 		stepName: 'plans-site-selected',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId' ],
-		providesDependencies: [ 'cartItem' ]
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
 	'design-type': {
