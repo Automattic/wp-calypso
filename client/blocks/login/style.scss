@@ -1,3 +1,7 @@
-.card.login {
-	box-shadow: none;
+.card.login__form-userdata {
+	margin-bottom: 0;
+}
+
+.login__form-action {
+	background-color: $gray-light;
 }

@@ -1,41 +1,54 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 //import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-//import Button from 'components/button';
+import Button from 'components/button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
+import { localize } from 'i18n-calypso';
 
-const Login = ( { title, children } ) => {
-	return (
-		<Card className="login">
-			<div className="login__header">
-				<div className="login__header-title">{ title }</div>
+//const Login = ( { title, buttonText, legalText, translate, children } ) => {
+class Login extends Component {
+	static defaultProps = {
+		title: '',
+		buttonText: '',
+		legalText: ''
+	};
+
+	render() {
+		const buttonText = this.props.buttonText || this.props.translate( 'Sign in' );
+		return (
+			<div className="login">
+				<Card className="login__form-userdata">
+					<div className="login__form-header">
+						<div className="login__form-header-title">{ this.props.title }</div>
+					</div>
+					{ this.props.children }
+					<div className="login__form-userdata">
+						<label className="login__form-userdata-username">
+							{ this.props.translate( 'Username or email' ) }
+							<FormTextInput className="login__form-userdata-username-input" />
+						</label>
+						<label className="login__form-userdata-username">
+							{ this.props.translate( 'Password' ) }
+							<input className="login__form-userdata-username-password" type="password" />
+						</label>
+					</div>
+				</Card>
+				<Card className="login__form-action">
+					<div className="login__form-action-legal">
+						{ this.props.legalText }
+					</div>
+					<Button primary>{ buttonText }</Button>
+				</Card>
 			</div>
-			{ children }
-			<div className="login__form">
-				<label className="login__form-username">
-					Username or email <FormTextInput className="login__form-username-input" />
-				</label>
-				<label className="login__form-username">
-					Password <input className="login__form-username-password" type="password" />
-				</label>
-			</div>
-		</Card>
-	);
-};
+		);
+	}
+}
 
-Login.propTypes = {
-	title: React.PropTypes.string
-};
-
-Login.defaultProps = {
-	title: ''
-};
-
-export default Login;
+export default localize( Login );
