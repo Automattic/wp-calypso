@@ -58,7 +58,7 @@ describe( '#account-recovery/reset reducer', () => {
 		];
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-			options: fetchedOptions,
+			items: fetchedOptions,
 		} );
 
 		assert.deepEqual( state.options.items, fetchedOptions );

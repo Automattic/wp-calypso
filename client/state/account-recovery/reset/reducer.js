@@ -26,7 +26,7 @@ const error = ( state = null, action ) => get( {
 }, action.type, state );
 
 const items = ( state = [], action ) => get( {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: action.options,
+	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: action.items,
 	[ SERIALIZE ]: [],
 }, action.type, state );
 
