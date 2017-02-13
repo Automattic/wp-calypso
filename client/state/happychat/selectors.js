@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import map from 'lodash/map';
-import head from 'lodash/head';
-import get from 'lodash/get';
+import { map, head, get } from 'lodash';
 
 /**
  * Internal dependencies
