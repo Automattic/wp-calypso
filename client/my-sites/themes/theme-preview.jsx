@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -33,16 +32,6 @@ const ThemePreview = React.createClass( {
 		showPreview: React.PropTypes.bool,
 		showExternal: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
-		getPrimaryButtonHref: React.PropTypes.func,
-		secondaryButtonLabel: React.PropTypes.string,
-		onSecondaryButtonClick: React.PropTypes.func,
-	},
-
-	getDefaultProps() {
-		return {
-			getPrimaryButtonHref: () => null,
-			onSecondaryButtonClick: noop,
-		};
 	},
 
 	onPrimaryButtonClick() {
