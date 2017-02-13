@@ -604,6 +604,14 @@ export function isThemePurchased( state, themeId, siteId ) {
 	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
 
+export function getThemePreviewThemeOptions( state ) {
+	return get( state.themes, 'themePreviewOptions', {} );
+}
+
+export function getThemePreviewInfo( state ) {
+	return get( state.themes, 'themePreviewInfo', {} );
+}
+
 /**
  * Returns themeId to preview for site.
  *
