@@ -48,6 +48,11 @@ class PostScheduleClock extends Component {
 
 		let value = this.maybeConvertHour( Number( event.target.value ) ) - operation;
 
+		// Snap back a day, when looping through date line.
+		if ( 0 === value && 1 === operation ) {
+			modifiers.date = this.props.date.get( 'date' ) - 1;
+		}
+
 		if ( 'hour' === field ) {
 			value = value > 24 ? 1 : value;
 			value = value < 0 ? 23 : value;
