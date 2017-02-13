@@ -57,4 +57,6 @@ const BannerExample = () =>
 		/>
 	</div>;
 
+BannerExample.displayName = 'Banner';
+
 export default BannerExample;
