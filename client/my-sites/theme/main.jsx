@@ -130,10 +130,11 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getValidSections() {
+		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
 		const validSections = [];
 		validSections.push( '' ); // Default section
 		this.props.supportDocumentation && validSections.push( 'setup' );
-		validSections.push( 'support' );
+		( ! isLoggedIn || ( isCurrentUserPaid && ! isJetpack ) || forumUrl || isWpcomTheme ) && validSections.push( 'support' );
 		return validSections;
 	},
 
