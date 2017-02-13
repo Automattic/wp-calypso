@@ -92,10 +92,25 @@ function update( changeFunction ) {
 	cartAnalytics.recordEvents( previousCart, nextCart );
 }
 
+function disable() {
+	if ( _synchronizer && _poller ) {
+		PollerPool.remove( _poller );
+		_synchronizer.off( 'change', emitChange );
+	}
+
+	_synchronizer = null;
+	_poller = null;
+	_cartKey = null;
+}
+
 CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
+		case UpgradesActionTypes.CART_DISABLE:
+			disable();
+			break;
+
 		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
