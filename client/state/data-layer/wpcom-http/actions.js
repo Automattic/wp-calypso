@@ -82,7 +82,7 @@ const validators = [
  * @param {Object} [onProgress] Redux action to call on progress events from an upload
  * @param {Object} [options] extra options to send to the middleware, e.g. retry policy or offline policy
  * @param {Object} [action] default action to call on HTTP events
- * @return {Object} Redux action describing WordPress.com API HTTP request
+ * @returns {Object} Redux action describing WordPress.com API HTTP request
  */
 export const http = ( request, action = null ) => {
 	const {
