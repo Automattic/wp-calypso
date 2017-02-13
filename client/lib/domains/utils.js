@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { isEmpty, map, values } from 'lodash';
+import { isEmpty, find, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { type as domainTypes } from './constants';
 import { cartItems } from 'lib/cart-values';
+import { isDomainRegistration } from 'lib/products-values';
 
 function getDomainType( domainFromApi ) {
 	if ( domainFromApi.type === 'redirect' ) {
@@ -25,13 +26,28 @@ function getDomainType( domainFromApi ) {
 	return domainTypes.MAPPED;
 }
 
+/**
+ * Depending on the current step in checkout, the user's domain can be found in
+ * either the cart or the receipt.
+ *
+ * @param {?Object} receipt - The receipt for the transaction
+ * @param {?Object} cart - The cart for the transaction
+ *
+ * @return {?String} the name of the first domain for the transaction.
+ */
 function getDomainNameFromReceiptOrCart( receipt, cart ) {
-	if ( receipt && isEmpty( receipt.failed_purchases ) ) {
-		return map( values( receipt.purchases )[ 0 ], 'meta' )[ 0 ];
+	let domainRegistration;
+
+	if ( receipt && ! isEmpty( receipt.purchases ) ) {
+		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
 	}
 
 	if ( cartItems.hasDomainRegistration( cart ) ) {
-		return cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
+	}
+
+	if ( domainRegistration ) {
+		return domainRegistration.meta;
 	}
 
 	return null;
@@ -39,5 +55,5 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 
 export {
 	getDomainNameFromReceiptOrCart,
-	getDomainType
+	getDomainType,
 };
