@@ -15,7 +15,7 @@ import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
-import { getResetOptions } from 'state/account-recovery/reset/selectors';
+import { getAccountRecoveryResetOptions } from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
 	constructor() {
@@ -112,7 +112,7 @@ LostPasswordFormComponent.defaultProps = {
 
 export default connect(
 	( state ) => ( {
-		resetOptions: getResetOptions( state ),
+		resetOptions: getAccountRecoveryResetOptions( state ),
 	} ),
 	{ fetchResetOptionsByLogin }
 )( localize( LostPasswordFormComponent ) );
