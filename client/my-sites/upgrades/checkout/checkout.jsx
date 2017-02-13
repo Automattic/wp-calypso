@@ -43,7 +43,7 @@ import {
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
-import { domainManagementList } from 'my-sites/upgrades/paths';
+import { domainManagementList, domainManagementRoot } from 'my-sites/upgrades/paths';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
@@ -208,7 +208,8 @@ const Checkout = React.createClass( {
 				return domainManagementList( domainName );
 			}
 
-			return '/start/domain-first';
+			// TODO: Redirect to Thank You page, but no site slug atm, so we need a new route
+			return domainManagementRoot();
 		}
 
 		if ( ! selectedSiteSlug ) {
