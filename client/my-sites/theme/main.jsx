@@ -355,7 +355,7 @@ const ThemeSheet = React.createClass( {
 				<div>
 					{ isCurrentUserPaid && ! isJetpack &&
 						this.renderSupportContactUsCard( buttonCount++ ) }
-					{ forumUrl && isWpcomTheme &&
+					{ forumUrl &&
 						this.renderSupportThemeForumCard( buttonCount++ ) }
 					{ isWpcomTheme &&
 						this.renderSupportCssCard( buttonCount++ ) }
