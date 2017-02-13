@@ -381,11 +381,11 @@ export const previewingThemeOptions = createReducer( {}, {
 
 /**
  * Returns the updated previewing theme state
- * The state reflects a mapping of themId that can be used to show its preview.
+ * The state reflects if Theme Preview component should be visible or not.
  *
- * @param  {Object} state  Current state
+ * @param  {Bool}   state  Current state
  * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @return {Bool}          Updated state
  */
 export const previewingThemeState = createReducer( false, {
 	[ THEME_PREVIEW_STATE ]: ( state, { isVisible } ) => ( isVisible )
