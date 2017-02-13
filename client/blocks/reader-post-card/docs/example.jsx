@@ -146,4 +146,6 @@ const ReaderPostCard = () => (
 	</div>
 );
 
+ReaderPostCard.displayName = 'ReaderPostCard';
+
 export default ReaderPostCard;
