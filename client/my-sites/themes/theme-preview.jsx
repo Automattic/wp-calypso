@@ -101,7 +101,7 @@ const ConnectedThemePreview = connectOptions( ThemePreview );
 
 export default connect(
 	( state ) => {
-		const showPreview = isThemePreviewVisible( state ) === 'enabled';
+		const showPreview = isThemePreviewVisible( state );
 
 		// data for preview not set.
 		if ( ! showPreview ) {

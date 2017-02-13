@@ -387,11 +387,8 @@ export const previewingThemeOptions = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const previewingThemeState = createReducer( {}, {
-	[ THEME_PREVIEW_STATE ]: ( state, { isEnabled } ) => ( {
-		...state,
-		isEnabled
-	} )
+export const previewingThemeState = createReducer( false, {
+	[ THEME_PREVIEW_STATE ]: ( state, { isVisible } ) => ( isVisible )
 } );
 
 export default combineReducers( {

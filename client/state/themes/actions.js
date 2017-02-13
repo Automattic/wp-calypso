@@ -792,14 +792,14 @@ export function setPreviewOptions( primary, secondary ) {
 function openThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
-		isEnabled: 'enabled'
+		isVisible: true
 	};
 }
 
 export function closeThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
-		isEnabled: 'disabled'
+		isVisible: false
 	};
 }
 

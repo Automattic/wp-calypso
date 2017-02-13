@@ -624,5 +624,5 @@ export function getThemeForPreviewData( state ) {
  * @return {?String}  ThemePreview state
  */
 export function isThemePreviewVisible( state ) {
-	return get( state.themes.previewingThemeState, 'isEnabled', 'disabled' );
+	return get( state.themes, 'previewingThemeState', false );
 }
