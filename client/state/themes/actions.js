@@ -44,8 +44,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	PREVIEWING_THEME_DATA,
-	PREVIEWING_THEME_OPTIONS,
+	THEME_PREVIEW_DATA,
+	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 import {
@@ -771,7 +771,7 @@ export function confirmDelete( themeId, siteId ) {
 
 function setPreviewingThemeData( themeId, siteId ) {
 	return {
-		type: PREVIEWING_THEME_DATA,
+		type: THEME_PREVIEW_DATA,
 		themeData: {
 			themeId,
 			siteId
@@ -781,7 +781,7 @@ function setPreviewingThemeData( themeId, siteId ) {
 
 export function setPreviewOptions( primary, secondary ) {
 	return {
-		type: PREVIEWING_THEME_OPTIONS,
+		type: THEME_PREVIEW_OPTIONS,
 		themeOptions: {
 			primary,
 			secondary

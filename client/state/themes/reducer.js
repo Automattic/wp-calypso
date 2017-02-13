@@ -29,8 +29,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	PREVIEWING_THEME_DATA,
-	PREVIEWING_THEME_OPTIONS,
+	THEME_PREVIEW_DATA,
+	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 import {
@@ -358,7 +358,7 @@ export const lastQuery = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const previewingTheme = createReducer( {}, {
-	[ PREVIEWING_THEME_DATA ]: ( state, { themeData } ) => ( themeData )
+	[ THEME_PREVIEW_DATA ]: ( state, { themeData } ) => ( themeData )
 } );
 
 /**
@@ -370,7 +370,7 @@ export const previewingTheme = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const previewingThemeOptions = createReducer( {}, {
-	[ PREVIEWING_THEME_OPTIONS ]: ( state, { themeOptions } ) => ( themeOptions )
+	[ THEME_PREVIEW_OPTIONS ]: ( state, { themeOptions } ) => ( themeOptions )
 } );
 
 /**
