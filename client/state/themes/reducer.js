@@ -351,7 +351,7 @@ export const lastQuery = createReducer( {}, {
 
 /**
  * Returns the updated previewing theme state
- * The state reflects a mapping of themId that can be used to show its preview.
+ * The state holds information that can be used to show its preview.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -363,7 +363,7 @@ export const previewingTheme = createReducer( {}, {
 
 /**
  * Returns the updated previewing theme state
- * The state reflects a mapping of themId that can be used to show its preview.
+ * The state holds information about primary and secondary theme actions usable in preview.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
