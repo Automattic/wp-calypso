@@ -22,6 +22,8 @@ var _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=qu
 	_DEFAULT_CATEGORY = 'all',
 	_DEFAULT_FIRST_PAGE = 1;
 
+const _WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
+
 function getWporgLocaleCode( ) {
 	var currentLocaleCode,
 		wpOrgLocaleCode;
@@ -106,12 +108,11 @@ module.exports = {
 	 * @returns {?Promise} Promise  that is returned if no callback parameter is passed
 	 */
 	fetchThemeInformation: function( themeId, callback ) {
-		const url = 'https://api.wordpress.org/themes/info/1.1/';
 		const query = { action: 'theme_information', 'request[slug]': themeId };
 		// if callback is provided, behave traditionally
 		if ( 'function' === typeof callback ) {
 			return superagent
-				.get( url )
+				.get( _WPORG_THEMES_ENDPOINT )
 				.set( 'Accept', 'application/json' )
 				.query( query )
 				.end( ( err, { body } ) => {
@@ -122,7 +123,49 @@ module.exports = {
 		// otherwise, return a Promise
 		return new Promise( ( resolve, reject ) => {
 			return superagent
-				.get( url )
+				.get( _WPORG_THEMES_ENDPOINT )
+				.set( 'Accept', 'application/json' )
+				.query( query )
+				.end( ( err, { body } ) => {
+					err ? reject( err ) : resolve( body );
+				} );
+		} );
+	},
+	/**
+	 * Get information about a given theme from the WordPress.org API.
+	 * If provided with a callback, will call that on succes with an object with theme details.
+	 * Otherwise, will return a promise.
+	 *
+	 * @param  {Object}        options         Theme query
+	 * @param  {String}        options.search  Search string
+	 * @param  {Number}        options.number  How many themes to return per page
+	 * @param  {Number}        options.page    Which page of matching themes to return
+	 * @param  {function}      callback        Callback that gets executed after the XHR returns the results.
+	 * @returns {?Promise}                     Promise that is returned if no callback parameter is passed
+	 */
+	fetchThemesList: function( options = {}, callback ) {
+		const { search, page, number } = options;
+		const query = {
+			action: 'query_themes',
+			'request[search]': search,
+			'request[page]': page,
+			'request[per_page]:': number
+		};
+		// if callback is provided, behave traditionally
+		if ( 'function' === typeof callback ) {
+			return superagent
+				.get( _WPORG_THEMES_ENDPOINT )
+				.set( 'Accept', 'application/json' )
+				.query( query )
+				.end( ( err, { body } ) => {
+					callback( err, body );
+				} );
+		}
+
+		// otherwise, return a Promise
+		return new Promise( ( resolve, reject ) => {
+			return superagent
+				.get( _WPORG_THEMES_ENDPOINT )
 				.set( 'Accept', 'application/json' )
 				.query( query )
 				.end( ( err, { body } ) => {
