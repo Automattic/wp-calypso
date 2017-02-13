@@ -612,8 +612,8 @@ export function isThemePurchased( state, themeId, siteId ) {
  * @return {Object}         Last query
  */
 export function getThemeForPreviewData( state ) {
-	const themeData = get( state.themes, 'previewingTheme', {} );
-	const themeOptions = get( state.themes, 'previewingThemeOptions', {} );
+	const themeData = get( state.themes, 'themePreviewInfo', {} );
+	const themeOptions = get( state.themes, 'themePreviewOptions', {} );
 	return { themeData, themeOptions };
 }
 
@@ -624,5 +624,5 @@ export function getThemeForPreviewData( state ) {
  * @return {?String}  ThemePreview state
  */
 export function isThemePreviewVisible( state ) {
-	return get( state.themes, 'previewingThemeState', false );
+	return get( state.themes, 'isThemePreviewVisible', false );
 }

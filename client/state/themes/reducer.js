@@ -357,8 +357,11 @@ export const lastQuery = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const previewingTheme = createReducer( {}, {
-	[ THEME_PREVIEW_DATA ]: ( state, { themeData } ) => ( themeData )
+export const themePreviewInfo = createReducer( {}, {
+	[ THEME_PREVIEW_DATA ]: ( state, { themeId, source } ) => ( {
+		themeId,
+		source
+	} )
 } );
 
 /**
@@ -369,8 +372,11 @@ export const previewingTheme = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const previewingThemeOptions = createReducer( {}, {
-	[ THEME_PREVIEW_OPTIONS ]: ( state, { themeOptions } ) => ( themeOptions )
+export const themePreviewOptions = createReducer( {}, {
+	[ THEME_PREVIEW_OPTIONS ]: ( state, { primary, secondary } ) => ( {
+		primary,
+		secondary
+	} )
 } );
 
 /**
@@ -381,7 +387,7 @@ export const previewingThemeOptions = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Bool}          Updated state
  */
-export const previewingThemeState = createReducer( false, {
+export const isThemePreviewVisible = createReducer( false, {
 	[ THEME_PREVIEW_STATE ]: ( state, { isVisible } ) => ( isVisible )
 } );
 
@@ -399,7 +405,7 @@ export default combineReducers( {
 	completedActivationRequests,
 	themesUI,
 	uploadTheme,
-	previewingTheme,
-	previewingThemeOptions,
-	previewingThemeState
+	themePreviewInfo,
+	themePreviewOptions,
+	isThemePreviewVisible
 } );

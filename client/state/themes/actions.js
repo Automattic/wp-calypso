@@ -772,20 +772,16 @@ export function confirmDelete( themeId, siteId ) {
 function setPreviewingThemeData( themeId, source ) {
 	return {
 		type: THEME_PREVIEW_DATA,
-		themeData: {
-			themeId,
-			source
-		}
+		themeId,
+		source
 	};
 }
 
 export function setPreviewOptions( primary, secondary ) {
 	return {
 		type: THEME_PREVIEW_OPTIONS,
-		themeOptions: {
-			primary,
-			secondary
-		}
+		primary,
+		secondary
 	};
 }
 
