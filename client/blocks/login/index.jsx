@@ -12,7 +12,6 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
 
-//const Login = ( { title, buttonText, legalText, translate, children } ) => {
 class Login extends Component {
 	static defaultProps = {
 		title: '',
@@ -24,7 +23,7 @@ class Login extends Component {
 		const buttonText = this.props.buttonText || this.props.translate( 'Sign in' );
 		return (
 			<div className="login">
-				<Card className="login__form-userdata">
+				<Card className="login__form">
 					<div className="login__form-header">
 						<div className="login__form-header-title">{ this.props.title }</div>
 					</div>
@@ -34,9 +33,13 @@ class Login extends Component {
 							{ this.props.translate( 'Username or email' ) }
 							<FormTextInput className="login__form-userdata-username-input" />
 						</label>
-						<label className="login__form-userdata-username">
+						<label className="login__form-userdata-password">
 							{ this.props.translate( 'Password' ) }
-							<input className="login__form-userdata-username-password" type="password" />
+							<input className="login__form-userdata-password-input" type="password" />
+						</label>
+						<label className="login__form-userdata-stay-signed-in">
+							<input className="login__form-userdata-stay-signed-in-check" type="checkbox" />
+							{ this.props.translate( 'Stay signed in' ) }
 						</label>
 					</div>
 				</Card>

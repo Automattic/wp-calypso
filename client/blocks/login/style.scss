@@ -1,7 +1,20 @@
-.card.login__form-userdata {
+.card.login__form {
+	border-bottom: 0;
 	margin-bottom: 0;
 }
 
-.login__form-action {
-	background-color: $gray-light;
+.login__form-userdata label {
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 8px;
+}
+
+.card.login__form-action {
+	background: lighten( $gray, 34% );
+	border-top: 1px solid lighten( $gray, 30% );
+}
+
+.login__form-header-title {
+	font-size: 20px;
+	margin-bottom: 16px;
 }
