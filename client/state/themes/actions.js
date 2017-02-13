@@ -129,15 +129,6 @@ export function receiveThemes( themes, siteId ) {
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch, getState ) => {
 		const startTime = new Date().getTime();
-		let siteIdToQuery, queryWithApiVersion;
-
-		if ( siteId === 'wpcom' ) {
-			siteIdToQuery = null;
-			queryWithApiVersion = { ...query, apiVersion: '1.2' };
-		} else {
-			siteIdToQuery = siteId;
-			queryWithApiVersion = { ...query, apiVersion: '1' };
-		}
 
 		dispatch( {
 			type: THEMES_REQUEST,
@@ -145,10 +136,29 @@ export function requestThemes( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes: rawThemes } ) => {
+		let request;
+
+		if ( siteId === 'wporg' ) {
+			request = () => wporg.fetchThemesList( query );
+		} else if ( siteId === 'wpcom' ) {
+			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
+		} else {
+			request = () => wpcom.undocumented().themes( siteId, { ...query, apiVersion: '1' } );
+		}
+
+		// WP.com returns the number of results in a `found` attr, so we can use that right away.
+		// WP.org returns an `info` object containing a `results` number, so we destructure that
+		// and use it as default value for `found`.
+		return request().then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 			let themes;
 			let filteredThemes;
-			if ( siteId !== 'wpcom' ) {
+			if ( siteId === 'wporg' ) {
+				themes = map( rawThemes, normalizeWporgTheme );
+				filteredThemes = themes;
+			} else if ( siteId === 'wpcom' ) {
+				themes = map( rawThemes, normalizeWpcomTheme );
+				filteredThemes = themes;
+			} else { // Jetpack Site
 				themes = map( rawThemes, normalizeJetpackTheme );
 
 				// A Jetpack site's themes endpoint ignores the query,
@@ -166,9 +176,6 @@ export function requestThemes( siteId, query = {} ) {
 				);
 				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
 				found = filteredThemes.length;
-			} else {
-				themes = map( rawThemes, normalizeWpcomTheme );
-				filteredThemes = themes;
 			}
 
 			if ( query.search && query.page === 1 ) {
