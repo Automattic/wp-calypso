@@ -288,18 +288,20 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && isEmpty( receipt.failed_purchases ) ) {
+		if ( cart.create_new_blog ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
 
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
 
-			fetchSitesAndUser( domainName, () => {
-				page( redirectPath );
-			} );
+			if ( domainName ) {
+				fetchSitesAndUser( domainName, () => {
+					page( redirectPath );
+				} );
 
-			return;
+				return;
+			}
 		}
 
 		if ( receipt && receipt.receipt_id ) {
