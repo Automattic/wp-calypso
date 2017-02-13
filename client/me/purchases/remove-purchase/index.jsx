@@ -27,6 +27,10 @@ import olarkApi from 'lib/olark-api';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
 import analytics from 'lib/analytics';
+import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
+import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
+import { receiveDeletedSite } from 'state/sites/actions';
+import { setAllSitesSelected } from 'state/ui/actions';
 
 const user = userFactory();
 
@@ -39,12 +43,16 @@ const debug = debugFactory( 'calypso:purchases:survey' );
 const RemovePurchase = React.createClass( {
 	propTypes: {
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		isDomainOnlySite: React.PropTypes.bool,
+		receiveDeletedSite: React.PropTypes.func.isRequired,
+		removePurchase: React.PropTypes.func.isRequired,
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool,
 			React.PropTypes.undefined
-		] )
+		] ),
+		setAllSitesSelected: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -125,7 +133,7 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props ),
-			{ selectedSite } = this.props;
+			{ isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -154,34 +162,46 @@ const RemovePurchase = React.createClass( {
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
 
-		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
-			const productName = getName( purchase );
+		this.props.removePurchase( purchase.id, user.get().ID )
+			.then( () => {
+				const productName = getName( purchase );
 
-			if ( isDomainRegistration( purchase ) ) {
-				notices.success(
-					this.translate( 'The domain {{domain/}} was removed from your account.', {
-						components: { domain: <em>{ productName }</em> }
-					} ),
-					{ persistent: true }
-				);
-			} else {
-				notices.success(
-					this.translate( '%(productName)s was removed from {{siteName/}}.', {
-						args: { productName },
-						components: { siteName: <em>{ selectedSite.domain }</em> }
-					} ),
-					{ persistent: true }
-				);
-			}
+				if ( isDomainRegistration( purchase ) ) {
+					if ( isDomainOnlySite ) {
+						// Removing the domain from a domain-only site results
+						// in the site being deleted entirely. We need to call
+						// `receiveDeletedSiteDeprecated` here because the site
+						// exists in `sites-list` as well as the global store.
+						receiveDeletedSiteDeprecated( selectedSite );
+						this.props.receiveDeletedSite( selectedSite );
+						setAllSitesSelected();
+					}
 
-			page( purchasePaths.purchasesRoot() );
-		} ).catch( () => {
-			this.setState( { isRemoving: false } );
+					notices.success(
+						this.translate( 'The domain {{domain/}} was removed from your account.', {
+							components: { domain: <em>{ productName }</em> }
+						} ),
+						{ persistent: true }
+					);
+				} else {
+					notices.success(
+						this.translate( '%(productName)s was removed from {{siteName/}}.', {
+							args: { productName },
+							components: { siteName: <em>{ selectedSite.domain }</em> }
+						} ),
+						{ persistent: true }
+					);
+				}
 
-			closeDialog();
+				page( purchasePaths.purchasesRoot() );
+			} )
+			.catch( () => {
+				this.setState( { isRemoving: false } );
 
-			notices.error( this.props.selectedPurchase.error );
-		} );
+				closeDialog();
+
+				notices.error( this.props.selectedPurchase.error );
+			} );
 	},
 
 	renderCard() {
@@ -386,8 +406,13 @@ const RemovePurchase = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
+	( state, { selectedSite } ) => ( {
 		showChatLink: isOperatorsAvailable( state ) && isChatAvailable( state, 'precancellation' ),
+		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 	} ),
-	{ removePurchase }
+	{
+		receiveDeletedSite,
+		removePurchase,
+		setAllSitesSelected,
+	}
 )( RemovePurchase );
