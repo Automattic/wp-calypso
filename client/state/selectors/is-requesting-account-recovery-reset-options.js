@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Return a boolean value indicating whether requesting for the password reset options is in progress.
  *
  * @param  {Object} state  Global state tree
@@ -6,5 +11,5 @@
  */
 
 export default ( state ) => {
-	return state.accountRecovery.reset.options.isRequesting;
+	return get( state, 'accountRecovery.reset.options.isRequesting', false );
 };
