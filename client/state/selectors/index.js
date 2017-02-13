@@ -51,6 +51,7 @@ export getTimezonesLabelsByContinent from './get-timezones-labels-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
 export hasAutomatedTransferEligibilityMessages from './has-automated-transfer-eligibility-messages';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
+export hasOnlyAutomatedTransferEligibilityBusinessMessage from './has-only-automated-transfer-eligibility-business-message';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAutomatedTransferActive from './is-automated-transfer-active';
