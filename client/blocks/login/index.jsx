@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import FormsButton from 'components/forms/form-button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
@@ -73,7 +74,9 @@ class Login extends Component {
 						<div className="login__form-action-legal">
 							{ this.props.legalText }
 						</div>
-						<input type="submit" value={ buttonText } />
+						<FormsButton>
+							{ buttonText }
+						</FormsButton>
 					</Card>
 				</form>
 			</div>
