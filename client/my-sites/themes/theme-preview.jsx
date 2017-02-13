@@ -20,7 +20,7 @@ import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { closeThemePreview } from 'state/themes/actions';
+import { hideThemePreview } from 'state/themes/actions';
 import WebPreview from 'components/web-preview';
 
 const ThemePreview = React.createClass( {
@@ -37,13 +37,13 @@ const ThemePreview = React.createClass( {
 	onPrimaryButtonClick() {
 		const option = this.getPrimaryOption();
 		option.action && option.action( this.props.theme );
-		this.props.closeThemePreview();
+		this.props.hideThemePreview();
 	},
 
 	onSecondaryButtonClick() {
 		const secondary = this.getSecondaryOption();
 		secondary.action && secondary.action( this.props.theme );
-		this.props.closeThemePreview();
+		this.props.hideThemePreview();
 	},
 
 	getPrimaryOption() {
@@ -83,7 +83,7 @@ const ThemePreview = React.createClass( {
 					showPreview={ this.props.showPreview }
 					showExternal={ this.props.showExternal }
 					showSEO={ false }
-					onClose={ this.props.closeThemePreview }
+					onClose={ this.props.hideThemePreview }
 					previewUrl={ this.props.previewUrl }
 					externalUrl={ this.props.theme.demo_uri } >
 					{ this.renderSecondaryButton() }
@@ -133,5 +133,5 @@ export default connect(
 			]
 		};
 	},
-	{ closeThemePreview }
+	{ hideThemePreview }
 )( localize( ConnectedThemePreview ) );

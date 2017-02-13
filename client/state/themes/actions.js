@@ -789,25 +789,25 @@ export function setPreviewOptions( primary, secondary ) {
 	};
 }
 
-function openThemePreview() {
+function showThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
 		isVisible: true
 	};
 }
 
-export function closeThemePreview() {
+export function hideThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
 		isVisible: false
 	};
 }
 
-export function requestPreview( themeId, siteId ) {
+export function preview( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const isWpcomTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteIdOrWpcom = isWpcomTheme ? 'wpcom' : siteId;
 		dispatch( setPreviewingThemeData( themeId, siteIdOrWpcom ) );
-		dispatch( openThemePreview() );
+		dispatch( showThemePreview() );
 	};
 }

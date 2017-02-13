@@ -14,7 +14,7 @@ import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
-	requestPreview,
+	preview as themePreview,
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
@@ -92,7 +92,7 @@ const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	action: requestPreview
+	action: themePreview
 };
 
 const signupLabel = i18n.translate( 'Pick this design', {
