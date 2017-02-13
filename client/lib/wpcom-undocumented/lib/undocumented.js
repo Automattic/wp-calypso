@@ -75,6 +75,24 @@ Undocumented.prototype.accountRecoveryReset = function( userData ) {
 };
 
 /*
+ * Attempt to login the user into WordPress.
+ *
+ * @param {string} [username_or_email]
+ * @param {string} [password]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.login = function( username_or_email, password, fn ) {
+	return this.wpcom.req.post( {
+		path: '/login/',
+		body: {
+			username_or_email,
+			password,
+		},
+	}, fn );
+};
+
+/*
  * Retrieve Jetpack Jumpstart status for a site with id siteid.
  *
  * @param {int}      [siteId]
