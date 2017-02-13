@@ -46,16 +46,43 @@ function isCandidateForContentImage( image ) {
 	return ! ( isTrackingPixel( image ) || imageShouldBeExcludedFromCandidacy );
 }
 
+function deduceImageWidthAndHeight( image ) {
+	if ( image.height && image.width ) {
+		return {
+			height: image.height,
+			width: image.width
+		};
+	}
+	if ( image.naturalHeight && image.natualWidth ) {
+		return {
+			height: image.naturalHeight,
+			width: image.naturalWidth
+		};
+	}
+	if ( image.dataset && image.dataset.origSize ) {
+		const [ width, height ] = image.dataset.origSize.split( ',' ).map( Number );
+		return {
+			width,
+			height
+		};
+	}
+	return {
+		width: 0,
+		height: 0
+	};
+}
+
 /** Detects and returns metadata if it should be considered as a content image
 * @param {image} image - the image
 * @returns {object} metadata - regarding the image or null
 */
 const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {
+		const { width, height } = deduceImageWidthAndHeight( image );
 		return {
 			src: maxWidthPhotonishURL( image.getAttribute( 'src' ), READER_CONTENT_WIDTH ),
-			width: image.width,
-			height: image.height,
+			width: width,
+			height: height,
 			mediaType: 'image',
 		};
 	}
