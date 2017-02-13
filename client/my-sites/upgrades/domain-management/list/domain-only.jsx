@@ -15,7 +15,7 @@ const DomainOnly = ( { domainName, siteId, translate } ) => (
 		title={ translate( '%(domainName)s is not set up yet.', {
 			args: { domainName }
 		} ) }
-		action={ translate( 'Create New Site' ) }
+		action={ translate( 'Create Site' ) }
 		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
 		secondaryAction={ translate( 'Manage Domain' ) }
 		secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
