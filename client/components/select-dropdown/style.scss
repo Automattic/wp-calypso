@@ -90,7 +90,7 @@ $compact-header-height: 35;
 	.is-compact & {
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
-		color: darken( $gray, 10% );
+		color: $gray-text;
 		font-size: 11px;
 		text-transform: uppercase;
 
