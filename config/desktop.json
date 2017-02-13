@@ -28,6 +28,7 @@
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
+		"manage/import/medium": true,
 		"manage/jetpack": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
