@@ -8,9 +8,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 } from 'state/action-types';
 
-export const fetchResetOptionsSuccess = ( options ) => ( {
+export const fetchResetOptionsSuccess = ( items ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-	options,
+	items,
 } );
 
 export const fetchResetOptionsError = ( error ) => ( {
