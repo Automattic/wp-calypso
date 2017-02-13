@@ -612,8 +612,8 @@ export function isThemePurchased( state, themeId, siteId ) {
  * @return {Object}         Last query
  */
 export function getThemeForPreviewData( state ) {
-	const themeData = get( state.themes.previewingTheme, 'themeData', null );
-	const themeOptions = get( state.themes.previewingThemeOptions, 'themeOptions', null );
+	const themeData = get( state.themes, 'previewingTheme', {} );
+	const themeOptions = get( state.themes, 'previewingThemeOptions', {} );
 	return { themeData, themeOptions };
 }
 

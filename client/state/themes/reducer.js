@@ -358,10 +358,7 @@ export const lastQuery = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const previewingTheme = createReducer( {}, {
-	[ PREVIEWING_THEME_DATA ]: ( state, { themeData } ) => ( {
-		...state,
-		themeData
-	} )
+	[ PREVIEWING_THEME_DATA ]: ( state, { themeData } ) => ( themeData )
 } );
 
 /**
@@ -373,10 +370,7 @@ export const previewingTheme = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const previewingThemeOptions = createReducer( {}, {
-	[ PREVIEWING_THEME_OPTIONS ]: ( state, { themeOptions } ) => ( {
-		...state,
-		themeOptions
-	} )
+	[ PREVIEWING_THEME_OPTIONS ]: ( state, { themeOptions } ) => ( themeOptions )
 } );
 
 /**
