@@ -60,7 +60,6 @@ function trackable( TrackedComponent ) {
 		}
 
 		checkOnScreen = throttle( () => {
-
 			if ( ! this.nodeRef ) {
 				if ( this.state.readPixelInterval ) {
 					window.clearInterval( this.state.readPixelInterval );
@@ -233,7 +232,7 @@ export default class ReaderPostCard extends React.Component {
 	}
 
 	triggerStreamPixelRequest = ( type, user, key, timeOnScreen ) => {
-		let urlParams = new Array();
+		const urlParams = new Array();
 
 		// Stream type
 		urlParams.push( 'stream' );
