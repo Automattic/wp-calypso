@@ -130,11 +130,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getValidSections() {
-		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
 		const validSections = [];
 		validSections.push( '' ); // Default section
 		this.props.supportDocumentation && validSections.push( 'setup' );
-		( ! isLoggedIn || ( isCurrentUserPaid && ! isJetpack ) || forumUrl || isWpcomTheme ) && validSections.push( 'support' );
+		validSections.push( 'support' );
 		return validSections;
 	},
 
@@ -350,9 +349,10 @@ const ThemeSheet = React.createClass( {
 	renderSupportTab() {
 		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
 		let buttonCount = 1;
+		let renderedTab = null;
 
 		if ( isLoggedIn ) {
-			return (
+			renderedTab = (
 				<div>
 					{ isCurrentUserPaid && ! isJetpack &&
 						this.renderSupportContactUsCard( buttonCount++ ) }
@@ -362,22 +362,41 @@ const ThemeSheet = React.createClass( {
 						this.renderSupportCssCard( buttonCount++ ) }
 				</div>
 			);
+
+			// No card has been rendered
+			if ( buttonCount === 1 ) {
+				renderedTab = (
+					<Card className="theme__sheet-card-support">
+						<Gridicon icon="notice-outline" size={ 48 } />
+						<div className="theme__sheet-card-support-details">
+							{ i18n.translate( 'This theme is unsupported' ) }
+							<small>
+								{ i18n.translate( 'Maybe it\'s a custom theme? Sorry about that.',
+									{ context: 'Support message when we no support links are available' } )
+								}
+							</small>
+						</div>
+					</Card>
+				);
+			}
+		} else {
+			// Logged out
+			renderedTab = (
+				<Card className="theme__sheet-card-support">
+					<Gridicon icon="help" size={ 48 } />
+					<div className="theme__sheet-card-support-details">
+						{ i18n.translate( 'Have a question about this theme?' ) }
+						<small>
+							{ i18n.translate( 'Pick this design and start a site with us, we can help!',
+								{ context: 'Logged out theme support message' } )
+							}
+						</small>
+					</div>
+				</Card>
+			);
 		}
 
-		// Logged out
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="help" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Have a question about this theme?' ) }
-					<small>
-						{ i18n.translate( 'Pick this design and start a site with us, we can help!',
-							{ context: 'Logged out theme support message' } )
-						}
-					</small>
-				</div>
-			</Card>
-		);
+		return renderedTab;
 	},
 
 	renderFeaturesCard() {
