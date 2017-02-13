@@ -27,6 +27,7 @@
 @import 'blocks/eligibility-warnings/style';
 @import 'blocks/image-editor/style';
 @import 'blocks/like-button/style';
+@import 'blocks/login/style';
 @import 'blocks/plan-thank-you-card/style';
 @import 'blocks/post-edit-button/style';
 @import 'blocks/post-item/style';
@@ -434,6 +435,7 @@
 @import 'signup/style';
 @import 'signup/flow-progress-indicator/style';
 @import 'signup/jetpack-connect/style';
+@import 'signup/jetpack-connect/jetpack-login/style';
 @import 'signup/jetpack-connect/plan-features-tab/style';
 @import 'signup/locale-suggestions/style';
 @import 'signup/navigation-link/style';

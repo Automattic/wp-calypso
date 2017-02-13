@@ -25,6 +25,7 @@ import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import LoginComponent from './jetpack-login';
 
 /**
  * Module variables
@@ -85,7 +86,18 @@ const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
 	);
 };
 
+const loginView = () => {
+	ReactDom.render(
+		React.createElement( LoginComponent, {} ),
+		document.getElementById( 'primary' )
+	);
+};
+
 export default {
+	login() {
+		loginView();
+	},
+
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 			const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );

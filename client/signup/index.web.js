@@ -83,6 +83,11 @@ module.exports = function() {
 			sitesController.siteSelection,
 			jetpackConnectController.plansSelection
 		);
+
+		page(
+			'/jetpack/login',
+			jetpackConnectController.login
+		);
 	}
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', jetpackConnectController.sso );
