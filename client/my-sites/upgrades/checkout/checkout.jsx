@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -139,7 +139,7 @@ const Checkout = React.createClass( {
 	},
 
 	redirectIfEmptyCart: function() {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, transaction } = this.props;
 		let redirectTo = '/plans/';
 
 		if ( ! this.state.previousCart && this.props.product ) {
@@ -151,11 +151,14 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		// Do not redirect if cart is empty, but we're submitting or received transaction response
-		if ( includes(
-			[ transactionStepTypes.SUBMITTING_WPCOM_REQUEST, transactionStepTypes.RECEIVED_WPCOM_RESPONSE ],
-			this.props.transaction.step.name )
-		) {
+		if ( transactionStepTypes.SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
+			return false;
+		}
+
+		if ( transactionStepTypes.RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
+			// If the cart is emptied by the server after the transaction is
+			// complete without errors, do not redirect as we're waiting for
+			// some post-transaction requests to complete.
 			return false;
 		}
 
