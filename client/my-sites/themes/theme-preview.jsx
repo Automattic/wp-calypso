@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import {
 	isThemeActive
 } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
-import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
