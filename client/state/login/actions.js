@@ -7,6 +7,7 @@ import {
 	LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
+import { externalRedirect } from 'lib/route/path';
 
 /**
  * Attempt to login a user.
@@ -42,6 +43,8 @@ export const loginUser = ( username_or_email, password ) => {
 	};
 };
 
-export const redirect = ( /* url */ ) => {
-	// location.href = url;
+export const redirect = ( url ) => {
+	return () => {
+		externalRedirect( url );
+	};
 };
