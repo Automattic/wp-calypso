@@ -16,15 +16,10 @@ import SectionHeader from 'components/section-header';
 import wrapSettingsForm from '../wrap-settings-form';
 
 export class DateTimeFormatOptions extends Component {
-	// TODO: Rebase and remove after #10400 merge
-	handleSelect = event => {
-		const { name, value } = event.currentTarget;
-		this.props.updateFields( { [ name ]: value } );
-	}
-
 	startOfWeekOption() {
 		const {
 			fields: { start_of_week },
+			handleSelect,
 			isRequestingSettings,
 			translate,
 		} = this.props;
@@ -47,7 +42,7 @@ export class DateTimeFormatOptions extends Component {
 				<FormSelect
 					disabled={ isRequestingSettings }
 					name="start_of_week"
-					onChange={ this.handleSelect }
+					onChange={ handleSelect }
 					value={ start_of_week || 0 }
 				>
 					{ daysOfWeek.map( ( day, index ) =>
