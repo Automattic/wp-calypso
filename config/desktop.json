@@ -16,7 +16,6 @@
 		"apple-pay": false,
 		"catch-js-errors": false,
 		"code-splitting": false,
-		"community-translator": true,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,
