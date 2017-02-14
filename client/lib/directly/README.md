@@ -38,7 +38,7 @@ const directlyConfig = {
 		preferredTransport: 'Segway',
 	},
 	userName: 'GOB Bluth',
-	userEmail: 'gob@bluthcompany.com'
+	userEmail: 'gob@bluthcompany.com',
 	labels: {
 		askBubble: 'Ask\nour specialists',
 		askButton: 'Submit your question',
