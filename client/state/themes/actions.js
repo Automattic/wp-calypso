@@ -452,7 +452,7 @@ export function installTheme( themeId, siteId ) {
  * @param {number} siteId site ID
  * @return {function} Action thunk
  */
-function installWpcomParentTheme( themeId, siteId ) {
+export function installWpcomParentTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const theme = getTheme( getState(), 'wpcom', themeId.replace( '-wpcom', '' ) );
 		const parentThemeId = theme && theme.template;
