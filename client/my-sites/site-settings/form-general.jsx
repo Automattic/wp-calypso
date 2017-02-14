@@ -623,12 +623,27 @@ class SiteSettingsFormGeneral extends Component {
 				date_format,
 				start_of_week,
 				time_format,
+				timezone_string,
 			},
+			moment,
 			site,
 			translate,
 		} = this.props;
 
-		// Placeholder formats
+		const today = startsWith( timezone_string, 'UTC' )
+			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
+			: moment.tz( timezone_string );
+
+		const daysOfWeek = [
+			translate( 'Sunday' ),
+			translate( 'Monday' ),
+			translate( 'Tuesday' ),
+			translate( 'Wednesday' ),
+			translate( 'Thursday' ),
+			translate( 'Friday' ),
+			translate( 'Saturday' ),
+		];
+
 		return (
 			<Card
 				className="site-settings__date-time-format"
@@ -638,7 +653,9 @@ class SiteSettingsFormGeneral extends Component {
 					{ translate( 'Date and time format configuration' ) }
 				</h2>
 				<div className="site-settings__date-time-format-info">
-					{ date_format } &bull; { time_format } &bull; { start_of_week }
+					{ date_format ? today.format( phpToMomentDatetimeFormat( date_format ) ) : '' } &bull;&nbsp;
+					{ time_format ? today.format( phpToMomentDatetimeFormat( time_format ) ) : '' } &bull;&nbsp;
+					{ translate( 'Week Starts On' ) } { start_of_week ? daysOfWeek[ start_of_week ] : daysOfWeek[ 0 ] }
 				</div>
 			</Card>
 		);
