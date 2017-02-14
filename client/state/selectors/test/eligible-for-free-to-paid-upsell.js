@@ -15,36 +15,52 @@ import {
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'eligibleForFreeToPaidUpsell', () => {
+	const state = deepFreeze( {} );
+	let canCurrentUser;
 	let getCurrentPlan;
 	let eligibleForFreeToPaidUpsell;
 
 	useMockery( mockery => {
+		canCurrentUser = stub();
 		getCurrentPlan = stub();
+		mockery.registerMock( 'state/selectors/', { canCurrentUser } );
 		mockery.registerMock( 'state/sites/plans/selectors', { getCurrentPlan } );
 	} );
 
 	before( () => {
-		eligibleForFreeToPaidUpsell = require( '..' ).eligibleForFreeToPaidUpsell;
+		eligibleForFreeToPaidUpsell = require( '../eligible-for-free-to-paid-upsell' );
 	} );
 
-	it( 'should return false when plan is not known', () => {
-		getCurrentPlan.returns( null );
-		const state = deepFreeze( {} );
-		const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
-		expect( eligible ).to.be.false;
+	describe( 'user can not manage options', () => {
+		it( 'should return false', () => {
+			getCurrentPlan.returns( { product_slug: PLAN_FREE } );
+			canCurrentUser.withArgs( state, 'site1', 'manage_options' ).returns( false );
+			const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
+			expect( eligible ).to.be.false;
+		} );
 	} );
 
-	it( 'should return true when on free plan', () => {
-		getCurrentPlan.returns( { product_slug: PLAN_FREE } );
-		const state = deepFreeze( {} );
-		const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
-		expect( eligible ).to.be.true;
-	} );
+	describe( 'user can manage options for site', () => {
+		before( () => {
+			canCurrentUser.withArgs( state, 'site1', 'manage_options' ).returns( true );
+		} );
 
-	it( 'should return false when not on free plan', () => {
-		getCurrentPlan.returns( { product_slug: PLAN_BUSINESS } );
-		const state = deepFreeze( {} );
-		const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
-		expect( eligible ).to.be.false;
+		it( 'should return false when plan is not known', () => {
+			getCurrentPlan.returns( null );
+			const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
+			expect( eligible ).to.be.false;
+		} );
+
+		it( 'should return false when not on free plan', () => {
+			getCurrentPlan.returns( { product_slug: PLAN_BUSINESS } );
+			const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
+			expect( eligible ).to.be.false;
+		} );
+
+		it( 'should return true when on free plan', () => {
+			getCurrentPlan.returns( { product_slug: PLAN_FREE } );
+			const eligible = eligibleForFreeToPaidUpsell( state, 'site1' );
+			expect( eligible ).to.be.true;
+		} );
 	} );
 } );
