@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { includes, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,6 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
-import ExternalLink from 'components/external-link';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -423,82 +422,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	timeFormatOption() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: { time_format, timezone_string },
-			handleRadio,
-			isRequestingSettings,
-			moment,
-			onChangeField,
-			translate,
-		} = this.props;
-
-		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
-		const isCustomFormat = ! includes( defaultFormats, time_format );
-		const today = startsWith( timezone_string, 'UTC' )
-			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
-			: moment.tz( timezone_string );
-
-		const customFieldClasses = classNames(
-			'site-settings__date-time-format-custom',
-			{ 'is-custom': isCustomFormat }
-		);
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Time Format' ) }
-				</FormLabel>
-				{ defaultFormats.map( ( format, key ) =>
-					<FormLabel key={ key }>
-						<FormRadio
-							checked={ format === time_format }
-							disabled={ isRequestingSettings }
-							name="time_format"
-							onChange={ handleRadio }
-							value={ format }
-						/>
-						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
-					</FormLabel>
-				) }
-				<FormLabel className={ customFieldClasses }>
-					<FormRadio
-						checked={ isCustomFormat }
-						disabled={ isRequestingSettings }
-						name="time_format"
-						onChange={ handleRadio }
-						value={ time_format }
-					/>
-					<span>
-						{ translate( 'Custom' ) }
-						<FormInput
-							disabled={ isRequestingSettings }
-							name="time_format_custom"
-							onChange={ onChangeField( 'time_format' ) }
-							type="text"
-							value={ time_format || '' }
-						/>
-						<span className="site-settings__date-time-format-custom-preview">
-							{ isCustomFormat && time_format
-								? today.format( phpToMomentDatetimeFormat( time_format ) )
-								: ''
-							}
-						</span>
-					</span>
-					<FormSettingExplanation>
-						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
-							{ translate( 'Documentation on date and time formatting.' ) }
-						</ExternalLink>
-					</FormSettingExplanation>
-				</FormLabel>
-			</FormFieldset>
-		);
-	}
-
 	startOfWeekOption() {
 		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
 			return null;
@@ -678,8 +601,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ this.dateFormatOption() }
-						{ this.timeFormatOption() }
 						{ this.startOfWeekOption() }
 						{ this.holidaySnowOption() }
 					</form>
