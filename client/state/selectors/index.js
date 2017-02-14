@@ -71,6 +71,7 @@ export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-una
 export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
+export isMappedDomainSite from './is-mapped-domain-site';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-email';
