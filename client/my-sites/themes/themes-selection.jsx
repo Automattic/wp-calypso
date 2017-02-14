@@ -175,9 +175,6 @@ const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, queryWpcom } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
-		// If a preview action is passed, use that. Otherwise, use our own.
-		// we switch action for one that will tell preview that theme comes from wpocm list
-
 		const query = {
 			search,
 			page,
