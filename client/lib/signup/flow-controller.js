@@ -22,10 +22,11 @@ var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-di
 var SignupActions = require( './actions' ),
 	SignupProgressStore = require( './progress-store' ),
 	SignupDependencyStore = require( './dependency-store' ),
-	flows = require( 'signup/config/flows' ),
 	steps = require( 'signup/config/steps' ),
 	wpcom = require( 'lib/wp' ),
 	user = require( 'lib/user' )();
+
+import flows from 'signup/config/flows';
 
 /**
  * Constants

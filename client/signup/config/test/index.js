@@ -13,6 +13,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 import useMockery from 'test/helpers/use-mockery';
 import { reducer } from 'state';
+import flowsData from 'signup/config/flows-configuration';
 
 describe( 'index', () => {
 	let flows, steps;
@@ -66,33 +67,31 @@ describe( 'Signup flows configuration validation', () => {
 	} );
 
 	describe( 'Signup flows configuration validation', () => {
-		it( 'Verifying flows', () => {
-			Object.keys( Flows.getFlows() ).forEach( ( flowName ) => {
-				describe( `Verifying flow "${ flowName }"`, () => {
-					afterEach( function() {
-						flowControllerInstance.reset();
-						DependencyStore.reset();
-						ProgressStore.reset();
-					} );
+		Object.keys( flowsData ).forEach( ( flowName ) => {
+			describe( `Verifying flow "${ flowName }"`, () => {
+				afterEach( function() {
+					flowControllerInstance.reset();
+					DependencyStore.reset();
+					ProgressStore.reset();
+				} );
 
-					it( 'Valid configuration', () => {
-						try {
-							flowControllerInstance = FlowController( {
-								flowName: flowName,
-								onComplete: () => {
-									console.log('Complete flow');
-								}
-							} );
-						} catch ( Exception ) {
-							/**
-							 * We have some steps that require parameters from the HTTP query.
-							 * Since at the moment we can't reliably test those, we silently skip them :)
-							 */
-							if ( ! Exception.message.match( /did not provide the query dependencies/ ) ) {
-								throw Exception;
+				it( 'Valid configuration', () => {
+					try {
+						flowControllerInstance = FlowController( {
+							flowName: flowName,
+							onComplete: () => {
+								console.log( 'Complete flow' );
 							}
+						} );
+					} catch ( Exception ) {
+						/**
+						 * We have some steps that require parameters from the HTTP query.
+						 * Since at the moment we can't reliably test those, we silently skip them :)
+						 */
+						if ( ! Exception.message.match( /did not provide the query dependencies/ ) ) {
+							throw Exception;
 						}
-					} );
+					}
 				} );
 			} );
 		} );
