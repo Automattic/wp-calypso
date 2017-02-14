@@ -12,10 +12,6 @@
 	&:focus,
 	&:active {
 		color: $blue-medium;
-
-		.gridicon {
-			fill: $blue-medium;
-		}
 	}
 
 	.post-edit-button__label {
@@ -36,7 +32,6 @@
 }
 
 .post-edit-button__icon {
-	fill: lighten( $gray, 10% );
 	position: relative;
 		top: 1px;
 }

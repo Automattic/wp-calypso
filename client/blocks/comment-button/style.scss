@@ -12,10 +12,6 @@
 	&:focus,
 	&:active {
 		color: $blue-medium;
-
-		.gridicon {
-			fill: $blue-medium;
-		}
 	}
 
 	.comment-button__label-count {
@@ -36,10 +32,6 @@
 }
 
 .comment-button__icon {
-	fill: lighten( $gray, 10% );
 	position: relative;
 		top: 1px;
-	&:hover {
-		fill: $blue-light;
-	}
 }

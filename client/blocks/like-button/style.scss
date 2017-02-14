@@ -22,10 +22,6 @@
 		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
 	}
 
-	.gridicons-star-outline {
-		fill: lighten( $gray, 10 );
-	}
-
 	&.is-animated .gridicons-star-outline {
 		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
 	}
@@ -33,10 +29,6 @@
 	&:hover {
 		cursor: pointer;
 		color: $blue-medium;
-
-		.gridicons-star-outline {
-			fill: $blue-medium;
-		}
 	}
 
 	&.is-liked {
