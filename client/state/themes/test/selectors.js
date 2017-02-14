@@ -28,6 +28,7 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
+	isWpcomTheme,
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -1864,6 +1865,33 @@ describe( 'themes selectors', () => {
 			}, 'twentyseventeen' );
 
 			expect( isWporg ).to.be.true;
+		} );
+	} );
+
+	describe( '#isWpcomTheme()', () => {
+		it( 'should return false if theme is not found on WP.com', () => {
+			const isWpcom = isWporgTheme( {
+				themes: {
+					queries: {
+					}
+				}
+			}, 'twentysixteen' );
+
+			expect( isWpcom ).to.be.false;
+		} );
+
+		it( 'should return true if theme is found on WP.com', () => {
+			const isWpcom = isWpcomTheme( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} ),
+					}
+				}
+			}, 'twentysixteen' );
+
+			expect( isWpcom ).to.be.true;
 		} );
 	} );
 
