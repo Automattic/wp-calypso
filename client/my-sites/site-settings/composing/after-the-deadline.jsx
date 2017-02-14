@@ -185,13 +185,15 @@ class AfterTheDeadline extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="after-the-deadline"
-					label={ translate( 'Check your spelling, style, and grammar.' ) }
+					label={ translate( 'Check your spelling, style, and grammar' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 
-				<a href="#" onClick={ this.onAdvancedOptionsClick }>
-					{ translate( 'Advanced Options' ) }
-				</a>
+				<div className="composing__module-settings site-settings__child-settings">
+					<a href="#" onClick={ this.onAdvancedOptionsClick }>
+						{ translate( 'Advanced Options' ) }
+					</a>
+				</div>
 
 				{ this.state.advancedOptionsVisible && (
 					<div>
