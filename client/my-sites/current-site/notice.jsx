@@ -79,7 +79,7 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
-		if ( this.props.eligibleForFreeToPaidUpsell && abtest( 'freeToPaidUpsell' ) !== 'stats' ) {
+		if ( ! this.props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'stats' ) {
 			return null;
 		}
 		const eventName = 'calypso_free_to_paid_plan_nudge_impression';

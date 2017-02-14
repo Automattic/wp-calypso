@@ -15,7 +15,7 @@ import {
 } from 'state/selectors';
 
 const FreeToPaidNudge = ( props ) => {
-	if ( props.eligibleForFreeToPaidUpsell && abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
+	if ( ! props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
 		return null;
 	}
 
