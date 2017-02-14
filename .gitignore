@@ -33,6 +33,7 @@ env-config.sh
 /public/style*.css
 /public/style*.css.map
 /public/editor*.css
+/public/directly*.css
 /public/images/flags/*.svg
 /public/images/flags/*.png
 /server/devdocs/search-index.js
