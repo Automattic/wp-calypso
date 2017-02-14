@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
+import { find, includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -66,6 +66,22 @@ export const getTheme = createSelector(
 	},
 	( state ) => state.themes.queries
 );
+
+/**
+ * Returns a theme object from what is considered the 'canonical' source, i.e.
+ * the one with richest information. Checks WP.com (which has a long description
+ * and multiple screenshots, and a preview URL) first, then WP.org (which has a
+ * preview URL), then the given JP site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Jetpack Site ID to fall back to
+ * @param  {String}  themeId Theme ID
+ * @return {?Object}         Theme object
+ */
+export function getCanonicalTheme( state, siteId, themeId ) {
+	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
+	return getTheme( state, source, themeId );
+}
 
 /**
  * When wpcom themes are installed on Jetpack sites, the

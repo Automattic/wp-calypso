@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getTheme,
+	getCanonicalTheme,
 	getThemeRequestErrors,
 	isRequestingTheme,
 	getThemesForQuery,
@@ -133,61 +134,67 @@ describe( 'themes selectors', () => {
 
 			expect( theme ).to.equal( twentysixteen );
 		} );
+	} );
 
-		context( 'on a Jetpack site', () => {
-			it( 'with a theme not found on WP.org, should return the theme object', () => {
-				const jetpackTheme = {
-					id: 'twentyseventeen',
-					name: 'Twenty Seventeen',
-					author: 'the WordPress team',
-				};
-
-				const theme = getTheme( {
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: { twentyseventeen: jetpackTheme }
-							} )
-						}
+	describe( '#getCanonicalTheme()', () => {
+		it( 'with a theme found on WP.com, should return the object fetched from there', () => {
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} ),
 					}
-				}, 2916284, 'twentyseventeen' );
+				}
+			}, 2916284, 'twentysixteen' );
 
-				expect( theme ).to.deep.equal( jetpackTheme );
-			} );
+			expect( theme ).to.deep.equal( twentysixteen );
+		} );
 
-			it( 'with a theme found on WP.org, should return an object with some attrs merged from WP.org', () => {
-				const jetpackTheme = {
-					id: 'twentyseventeen',
-					name: 'Twenty Seventeen',
-					author: 'the WordPress team',
-				};
-				const wporgTheme = {
-					demo_uri: 'https://wp-themes.com/twentyseventeen',
-					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
-					taxonomies: {
-						theme_feature: {
-							'custom-header': 'Custom Header'
-						}
+		it( 'with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
+			const wporgTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'the WordPress team',
+				demo_uri: 'https://wp-themes.com/twentyseventeen',
+				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+				taxonomies: {
+					theme_feature: {
+						'custom-header': 'Custom Header'
 					}
-				};
-				const theme = getTheme( {
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: { twentyseventeen: jetpackTheme }
-							} ),
-							wporg: new ThemeQueryManager( {
-								items: { twentyseventeen: wporgTheme }
-							} ),
-						}
+				}
+			};
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						wporg: new ThemeQueryManager( {
+							items: { twentyseventeen: wporgTheme }
+						} ),
 					}
-				}, 2916284, 'twentyseventeen' );
+				}
+			}, 2916284, 'twentyseventeen' );
 
-				expect( theme ).to.deep.equal( {
-					...jetpackTheme,
-					...wporgTheme
-				} );
-			} );
+			expect( theme ).to.deep.equal( wporgTheme );
+		} );
+
+		it( 'with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
+			const jetpackTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'the WordPress team',
+			};
+
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: { twentyseventeen: jetpackTheme }
+						} )
+					}
+				}
+			}, 2916284, 'twentyseventeen' );
+
+			expect( theme ).to.deep.equal( jetpackTheme );
 		} );
 	} );
 
