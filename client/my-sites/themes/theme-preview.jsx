@@ -68,19 +68,19 @@ const ThemePreview = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.theme ) {
+		const { themeId } = this.props;
+		if ( ! themeId ) {
 			return null;
 		}
 
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
-		const themeId = this.props.theme.ID;
 
 		return (
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
 				{ this.props.previewUrl && <WebPreview
-					showPreview={ !! this.props.theme }
+					showPreview={ true }
 					showExternal={ false }
 					showSEO={ false }
 					onClose={ this.props.hideThemePreview }
@@ -105,24 +105,25 @@ export default connect(
 		if ( ! themeId ) {
 			return { themeId };
 		}
+
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		let theme = getTheme( state, 'wpcom', themeId );
 
 		if ( ! theme && isJetpack ) {
-			//for Jetpack sites if theme is not from wpcom we fetch demo data
-			//from wporg because data from Jetpack enpoint does not have demo_uri
-			theme = getTheme( state, 'wporg', themeId );
+			// This is not wpcom theme so check jetpack and org list.
+			theme = getTheme( state, siteId, themeId );
 		}
 
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
+			themeId,
 			theme,
 			siteId,
 			isJetpack,
 			themeOptions,
 			isActive: isThemeActive( state, themeId, siteId ),
-			previewUrl: theme ? getPreviewUrl( theme ) : null,
+			previewUrl: theme && theme.demo_uri ? getPreviewUrl( theme ) : null,
 			options: [
 				'activate',
 				'preview',
