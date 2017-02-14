@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
@@ -11,17 +10,22 @@ import { stub } from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'eligibleForFreeToPaidUpsell', () => {
-	const state = deepFreeze( {} );
+	const state = 'state';
+	const siteId = 'siteId';
+
 	let canCurrentUser;
 	let isSiteOnFreePlan;
 	let eligibleForFreeToPaidUpsell;
+	let isUserRegistrationDaysWithinRange;
 
 	useMockery( mockery => {
 		canCurrentUser = stub();
 		isSiteOnFreePlan = stub();
+		isUserRegistrationDaysWithinRange = stub();
 		mockery.registerMock( 'state/selectors/', {
 			canCurrentUser,
-			isSiteOnFreePlan
+			isSiteOnFreePlan,
+			isUserRegistrationDaysWithinRange
 		} );
 	} );
 
@@ -30,19 +34,24 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	} );
 
 	it( 'should return false when user can not manage options', () => {
-		canCurrentUser.withArgs( state, 'site1', 'manage_options' ).returns( false );
-		expect( eligibleForFreeToPaidUpsell( state, 'site1' ) ).to.be.false;
+		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
+		expect( eligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
 	} );
 
 	it( 'should return false when site is not on a free plan', () => {
-		canCurrentUser.withArgs( state, 'site1', 'manage_options' ).returns( true );
-		isSiteOnFreePlan.withArgs( state, 'site1' ).returns( false );
-		expect( eligibleForFreeToPaidUpsell( state, 'site1' ) ).to.be.false;
+		isSiteOnFreePlan.withArgs( state, siteId ).returns( false );
+		expect( eligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
 	} );
 
-	it( 'should return true when user can manage options and site is on a free plan', () => {
-		canCurrentUser.withArgs( state, 'site1', 'manage_options' ).returns( true );
-		isSiteOnFreePlan.withArgs( state, 'site1' ).returns( true );
-		expect( eligibleForFreeToPaidUpsell( state, 'site1' ) ).to.be.true;
+	it( 'should return false when user registration days is not within range', () => {
+		isUserRegistrationDaysWithinRange.withArgs( state, 2, 30 ).returns( false );
+		expect( eligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+	} );
+
+	it( 'should return true when all conditions are met', () => {
+		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );
+		isSiteOnFreePlan.withArgs( state, siteId ).returns( true );
+		isUserRegistrationDaysWithinRange.withArgs( state, 2, 30 ).returns( true );
+		expect( eligibleForFreeToPaidUpsell( state, siteId ) ).to.be.true;
 	} );
 } );
