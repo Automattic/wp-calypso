@@ -448,7 +448,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: $gray-text-min;
+	color: $gray;
 
 	&:hover {
 		color: $blue-light;
@@ -473,7 +473,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: $gray-text-min;
+	color: $gray;
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -489,7 +489,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: $gray-text-min;
+	color: $gray;
 	display: inline;
 	margin-right: 5px;
 
@@ -508,7 +508,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: $gray-text-min;
+	color: $gray;
 
 	&:hover {
 		color: $blue-light;
