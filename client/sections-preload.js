@@ -2,15 +2,13 @@
  * sections-preload
  *
  * This is a simple eventbus that sections.js listens to to know when to preload sections.
- * This exists because we needed a way to break the chunk dependency cycle. In days past,
- * the preloader was part of sections.js, and to preload a module, you would import sections
- * and call preload directly. Unfortunately, since all of the require.ensure calls live in sections,
- * that make webpack think that every chunk that included sections was dependant on every other chunk.
- * This ballooned compile times and made module analysis in chunks very difficult.
  *
- * To break the dependency cycle, we introduced sections-preload, which had no dependencies. Now modules
- * that want to preload a section can import sections-preload instead. sections also imports sections-preload
- * and listens on the exposed eventbus to know when to preload a section.
+ * In days past, the preloader was part of sections.js. To preload a module you would import sections
+ * and call preload directly. However, all of the require.ensure calls live in sections.js. This makes
+ * webpack think that imported sections was also dependant on every other chunk. The cyclic dependencies
+ * ballooned compile times and made module analysis very difficult.
+ *
+ * To break the dependency cycle, we introduced the dependency-free `sections-preload`.
  */
 
 /**
