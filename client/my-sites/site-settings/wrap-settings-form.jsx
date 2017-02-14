@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick } from 'lodash';
+import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -123,6 +123,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
 		};
 
+		handleSelect = event => {
+			const { name, value } = event.currentTarget;
+			// Attempt to cast numeric fields value to int
+			const parsedValue = parseInt( value, 10 );
+			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+		};
+
 		handleToggle = name => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
@@ -155,6 +162,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		render() {
 			const utils = {
 				handleRadio: this.handleRadio,
+				handleSelect: this.handleSelect,
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
 				onChangeField: this.onChangeField,
