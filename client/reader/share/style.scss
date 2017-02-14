@@ -1,7 +1,7 @@
 .reader-share_button {
 	align-items: center;
 	box-sizing: border-box;
-	color: $gray-text-min;
+	color: $gray;
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
@@ -10,7 +10,11 @@
 	&:focus,
 	&:active {
 		cursor: pointer;
-		color: $blue-light;
+		color: $blue-medium;
+
+		.gridicon {
+			fill: $blue-medium;
+		}
 	}
 
 	.gridicon {

@@ -2,7 +2,7 @@
 	align-items: center;
 	display: inline-flex;
 	padding: 4px;
-	color: $gray-text-min;
+	color: $gray;
 	position: relative;
 	box-sizing: border-box;
 
@@ -32,10 +32,10 @@
 
 	&:hover {
 		cursor: pointer;
-		color: $blue-light;
+		color: $blue-medium;
 
 		.gridicons-star-outline {
-			fill: $blue-light;
+			fill: $blue-medium;
 		}
 	}
 
