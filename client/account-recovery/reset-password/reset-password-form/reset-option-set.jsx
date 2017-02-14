@@ -46,7 +46,7 @@ const ResetOptionSet = ( props ) => {
 						className="reset-password-form__sms-option"
 						value={ smsFieldValue }
 						checked={ smsFieldValue === selectedResetOption }
-						onChange={ this.onResetOptionChanged } />
+						onChange={ onOptionChanged } />
 					<span>
 						{ translate(
 							'Send a reset code to {{strong}}your phone{{/strong}}',
