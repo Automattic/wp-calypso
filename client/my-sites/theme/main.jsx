@@ -52,7 +52,7 @@ import { decodeEntities } from 'lib/formatting';
 import { getTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { setPreviewOptions } from 'state/themes/actions';
+import { setThemePreviewOptions } from 'state/themes/actions';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -180,7 +180,7 @@ const ThemeSheet = React.createClass( {
 
 	previewAction() {
 		const { preview } = this.props.options;
-		this.props.setPreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
 		return preview.action( this.props.theme );
 	},
 
@@ -688,7 +688,7 @@ export default connect(
 		};
 	},
 	{
-		setPreviewOptions,
+		setThemePreviewOptions,
 		recordTracksEvent,
 	}
 )( ThemeSheetWithOptions );

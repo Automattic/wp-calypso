@@ -25,7 +25,7 @@ import {
 	isThemeActive,
 	isInstallingTheme
 } from 'state/themes/selectors';
-import { setPreviewOptions } from 'state/themes/actions';
+import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -126,7 +126,7 @@ const ThemesSelection = React.createClass( {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setPreviewOptions( defaultOption, secondaryOption );
+				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
 				return action( themeObj );
 			};
 		};
@@ -202,7 +202,7 @@ const ConnectedThemesSelection = connect(
 			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
 	},
-	{ setPreviewOptions }
+	{ setThemePreviewOptions }
 )( ThemesSelection );
 
 /**
