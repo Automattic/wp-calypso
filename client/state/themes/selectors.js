@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
+import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -44,25 +44,7 @@ export const getTheme = createSelector(
 			return null;
 		}
 
-		const theme = manager.getItem( themeId );
-		if ( siteId === 'wpcom' || siteId === 'wporg' ) {
-			return theme;
-		}
-
-		if ( ! theme ) {
-			return null;
-		}
-
-		// We're dealing with a Jetpack site. If we have theme info obtained from the
-		// WordPress.org API, merge it.
-		const wporgTheme = getTheme( state, 'wporg', themeId );
-		if ( ! wporgTheme ) {
-			return theme;
-		}
-		return {
-			...theme,
-			...pick( wporgTheme, [ 'demo_uri', 'download', 'taxonomies' ] )
-		};
+		return manager.getItem( themeId );
 	},
 	( state ) => state.themes.queries
 );
