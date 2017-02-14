@@ -20,6 +20,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData
 } from 'state/stats/lists/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class StatsAllTime extends Component {
 
@@ -31,7 +32,8 @@ class StatsAllTime extends Component {
 		posts: PropTypes.number,
 		views: PropTypes.number,
 		viewsBestDay: PropTypes.string,
-		viewsBestDayTotal: PropTypes.number
+		viewsBestDayTotal: PropTypes.number,
+		siteSlug: PropTypes.string,
 	};
 
 	render() {
@@ -44,7 +46,8 @@ class StatsAllTime extends Component {
 			visitors,
 			viewsBestDay,
 			viewsBestDayTotal,
-			query
+			query,
+			siteSlug,
 		} = this.props;
 		const isLoading = requesting && ! views;
 
@@ -72,6 +75,7 @@ class StatsAllTime extends Component {
 							compact />
 						<StatsTab
 							gridicon="visible"
+							href={ `/stats/day/views/${ siteSlug }` }
 							label={ translate( 'Views' ) }
 							loading={ isLoading }
 							value={ views }
@@ -112,6 +116,7 @@ export default connect( ( state ) => {
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'stats', query ),
+		siteSlug: getSiteSlug( state, siteId ),
 		query,
 		siteId,
 		...allTimeStats

@@ -12,10 +12,13 @@ import numeral from 'numeral';
 import Popover from 'components/popover';
 
 class Month extends PureComponent {
-	static propTypes: {
+	static propTypes = {
 		isHeader: PropTypes.bool,
 		className: PropTypes.string,
-		value: PropTypes.number,
+		value: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number
+		] ),
 		position: PropTypes.string,
 	}
 
