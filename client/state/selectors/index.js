@@ -93,3 +93,4 @@ export isSiteOnFreePlan from './is-site-on-free-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isTransientMedia from './is-transient-media';
 export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
+export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
