@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
+var debug = require( 'debug' )( 'calypso:cart-store' ), // eslint-disable-line no-unused-vars
+	assign = require( 'lodash/assign' ),
 	partialRight = require( 'lodash/partialRight' ),
 	flowRight = require( 'lodash/flowRight' ),
 	flow = require( 'lodash/flow' );
@@ -75,7 +76,7 @@ function emitChange() {
 	CartStore.emit( 'change' );
 }
 
-function update( changeFunction ) {
+function update( changeFunction, serverFlushCallback ) {
 	var wrappedFunction,
 		previousCart,
 		nextCart;
@@ -88,7 +89,7 @@ function update( changeFunction ) {
 	previousCart = CartStore.get();
 	nextCart = wrappedFunction( previousCart );
 
-	_synchronizer.update( wrappedFunction );
+	_synchronizer.update( wrappedFunction, serverFlushCallback );
 	cartAnalytics.recordEvents( previousCart, nextCart );
 }
 
@@ -112,22 +113,27 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			break;
 
 		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
+			debug( 'Got action %s', action.type );
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
 		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_REMOVE:
+			debug( 'Got action %s', action.type );
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
 		case UpgradesActionTypes.CART_ITEMS_ADD:
-			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
+			debug( 'Got action %s', action.type );
+			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ), action.serverFlushCallback );
 			break;
 
 		case UpgradesActionTypes.CART_COUPON_APPLY:
+			debug( 'Got action %s', action.type );
 			update( applyCoupon( action.coupon ) );
 			break;
 
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
+			debug( 'Got action %s', action.type );
 			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly ) );
 			break;
 	}

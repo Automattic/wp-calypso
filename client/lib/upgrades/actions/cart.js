@@ -47,17 +47,18 @@ function addItem( item ) {
 	addItems( [ item ] );
 }
 
-function addItems( items ) {
+function addItems( items, itemsContext, serverFlushCallback ) {
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
-			context: 'calypstore'
+			context: itemsContext || 'calypstore'
 		} );
 		return assign( {}, item, { extra } );
 	} );
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEMS_ADD,
-		cartItems: extendedItems
+		cartItems: extendedItems,
+		serverFlushCallback
 	} );
 }
 

@@ -68,6 +68,7 @@ function CartSynchronizer( cartKey, wpcom ) {
 	this._activeRequest = null;
 	this._queuedChanges = null;
 	this._paused = false;
+	this._serverFlushCallbacks = [];
 
 	this.dispatchToken = Dispatcher.register( this.handleDispatch.bind( this ) );
 }
@@ -94,7 +95,7 @@ CartSynchronizer.prototype.handleDispatch = function( payload ) {
 	}
 };
 
-CartSynchronizer.prototype.update = function( changeFunction ) {
+CartSynchronizer.prototype.update = function( changeFunction, serverFlushCallback ) {
 	if ( ! this._hasLoadedFromServer ) {
 		// If we haven't loaded any data from the server yet, it's possible that
 		// the local data could completely overwrite the existing data. This would
@@ -106,17 +107,27 @@ CartSynchronizer.prototype.update = function( changeFunction ) {
 		// with a consistent state when we apply our local changes. The strategy
 		// here is to queue the changes until the first request has completed, then
 		// proceed as normal.
-		this._enqueueChange( changeFunction );
+		this._enqueueChange( changeFunction, serverFlushCallback );
+		if ( ! this._activeRequest ) {
+			this.fetch();
+		}
+		debug( 'update: change enqueued' );
 		return;
 	}
 
+	debug( 'update: processing change' );
+	this._addFlushCallback( serverFlushCallback );
+	this._processChangeFunction( changeFunction );
+	this.emit( 'change' );
+};
+
+CartSynchronizer.prototype._processChangeFunction = function ( changeFunction ) {
 	if ( this._activeRequest && this._activeRequest.state !== 'canceled' ) {
 		this._activeRequest.state = 'canceled';
 	}
 
 	this._latestValue = changeFunction( this._latestValue );
 	this._performRequest( 'update', this._postToServer.bind( this ) );
-	this.emit( 'change' );
 };
 
 CartSynchronizer.prototype.pause = function() {
@@ -127,12 +138,14 @@ CartSynchronizer.prototype.resume = function() {
 	this._paused = false;
 };
 
-CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
+CartSynchronizer.prototype._enqueueChange = function( changeFunction, serverFlushCallback ) {
 	if ( this._queuedChanges ) {
 		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
 	} else {
 		this._queuedChanges = changeFunction;
 	}
+
+	this._addFlushCallback( serverFlushCallback );
 };
 
 CartSynchronizer.prototype._processQueuedChanges = function() {
@@ -140,14 +153,20 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 		return;
 	}
 
-	if ( this._activeRequest && this._activeRequest.state !== 'canceled' ) {
-		this._activeRequest.state = 'canceled';
-	}
-
-	this._latestValue = this._queuedChanges( this._latestValue );
+	this._processChangeFunction( this._queuedChanges );
 	this._queuedChanges = null;
+};
 
-	this._performRequest( 'update', this._postToServer.bind( this ) );
+CartSynchronizer.prototype._addFlushCallback = function ( flushCallback ) {
+	if ( flushCallback ) {
+		this._serverFlushCallbacks.push( flushCallback );
+	}
+};
+
+CartSynchronizer.prototype._processServerFlushCallbacks = function ( error, data ) {
+	debug( 'reporting server flush to %d callbacks', this._serverFlushCallbacks.length );
+	this._serverFlushCallbacks.forEach( flushCallback => flushCallback( error, data ) );
+	this._serverFlushCallbacks = [];
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
@@ -208,8 +227,16 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 		}
 
 		if ( error ) {
+			if ( request.type === 'update' ) {
+				this._processServerFlushCallbacks( error, null );
+			}
 			throw error;
 		}
+
+		if ( request.type === 'update' ) {
+			this._processServerFlushCallbacks( null, error );
+		}
+
 		debug( request.id + ': finishing ' + request.type );
 
 		this._latestValue = newValue;

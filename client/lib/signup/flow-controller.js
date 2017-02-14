@@ -45,7 +45,7 @@ function SignupFlowController( options ) {
 	this._onComplete = options.onComplete;
 	this._processingSteps = {};
 
-	this._boundProcess = this._process.bind( this );
+	this._boundProcess = (...args) => defer( this._process.bind( this ), args );
 
 	this._assertFlowHasValidDependencies();
 
