@@ -476,7 +476,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-left: -2px;
 
 		.gridicon {
-			fill: lighten( $gray, 10% );
+			fill: $gray;
 			position: relative;
 				left: -8px;
 				top: -1px;
