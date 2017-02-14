@@ -420,6 +420,10 @@ export function installTheme( themeId, siteId ) {
 			themeId
 		} );
 
+		if ( isThemeFromWpcom( themeId ) ) {
+			dispatch( installWpcomParentTheme( themeId, siteId ) );
+		}
+
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
@@ -437,6 +441,25 @@ export function installTheme( themeId, siteId ) {
 					error
 				} );
 			} );
+	};
+}
+
+/**
+ * Returns an action thunk that will install a wpcom
+ * parent theme if the supplied theme requires one.
+ *
+ * @param {string} themeId child theme ID
+ * @param {number} siteId site ID
+ * @return {function} Action thunk
+ */
+function installWpcomParentTheme( themeId, siteId ) {
+	return ( dispatch, getState ) => {
+		const theme = getTheme( getState(), 'wpcom', themeId.replace( '-wpcom', '' ) );
+		const parentThemeId = theme && theme.template;
+
+		if ( parentThemeId ) {
+			dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+		}
 	};
 }
 
