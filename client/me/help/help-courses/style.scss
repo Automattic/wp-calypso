@@ -6,6 +6,8 @@
 }
 
 .help-courses__course{
+	margin-top: 16px;
+
 	&.is-placeholder {
 		@include placeholder( 23% );
 	}
