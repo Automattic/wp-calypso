@@ -13,7 +13,6 @@ import {
 
 import { updateEligibility } from 'state/automated-transfer/actions';
 import {
-	transferStates,
 	eligibilityHolds,
 } from 'state/automated-transfer/constants';
 
@@ -68,7 +67,6 @@ const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
  */
 const fromApi = data => ( {
 	lastUpdate: Date.now(),
-	status: transferStates.INQUIRING,
 	eligibilityHolds: eligibilityHoldsFromApi( data ),
 	eligibilityWarnings: eligibilityWarningsFromApi( data ),
 } );

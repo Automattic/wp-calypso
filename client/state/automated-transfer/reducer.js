@@ -23,7 +23,7 @@ import {
 } from 'state/action-types';
 
 export const status = ( state = null, action ) => get( {
-	[ ELIGIBILITY_UPDATE ]: action.status,
+	[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
 	[ INITIATE ]: transferStates.START,
 	[ INITIATE_FAILURE ]: transferStates.INQUIRING,
 	[ SET_STATUS ]: action.status,
