@@ -8,6 +8,7 @@ function getAssets( stats ) {
 			hash: chunk.hash,
 			file: filename,
 			url: stats.publicPath + filename,
+			size: chunk.size
 		};
 	} );
 }
