@@ -14,6 +14,7 @@ import ThemesList from 'components/themes-list';
 import ThemeUploadCard from './themes-upload-card';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
@@ -24,6 +25,7 @@ import {
 	isThemeActive,
 	isInstallingTheme
 } from 'state/themes/selectors';
+import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
@@ -107,6 +109,35 @@ const ThemesSelection = React.createClass( {
 		this.props.incrementPage();
 	},
 
+	//intercept preview and add primary and secondary
+	getOptions( theme ) {
+		const options = this.props.getOptions( theme );
+		const wrappedPreviewAction = ( action ) => {
+			let defaultOption;
+			let secondaryOption = this.props.secondaryOption;
+			return ( themeObj ) => {
+				if ( ! this.props.isLoggedIn ) {
+					defaultOption = options.signup;
+					secondaryOption = null;
+				} else if ( this.props.isThemeActive( theme.id ) ) {
+					defaultOption = options.customize;
+				} else if ( theme.price && options.purchase ) {
+					defaultOption = options.purchase;
+				} else {
+					defaultOption = options.activate;
+				}
+				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
+				return action( themeObj );
+			};
+		};
+
+		if ( options && options.preview ) {
+			options.preview.action = wrappedPreviewAction( options.preview.action );
+		}
+
+		return options;
+	},
+
 	render() {
 		const { siteIdOrWpcom, query, listLabel, showUploadButton, themesCount } = this.props;
 
@@ -124,8 +155,8 @@ const ThemesSelection = React.createClass( {
 				}
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
-					getButtonOptions={ this.props.getOptions }
 					onMoreButtonClick={ this.recordSearchResultsClick }
+					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
@@ -144,7 +175,6 @@ const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, queryWpcom } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
-
 		const query = {
 			search,
 			page,
@@ -161,6 +191,7 @@ const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, siteIdOrWpcom, query ),
 			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
 			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
+			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
@@ -170,7 +201,8 @@ const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
-	}
+	},
+	{ setThemePreviewOptions }
 )( ThemesSelection );
 
 /**

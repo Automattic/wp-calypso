@@ -44,6 +44,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEME_PREVIEW_OPTIONS,
+	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -763,5 +765,27 @@ export function confirmDelete( themeId, siteId ) {
 			),
 			i18n.translate( 'Back', { context: 'go back (like the back button in a browser)' } )
 		);
+	};
+}
+
+export function setThemePreviewOptions( primary, secondary ) {
+	return {
+		type: THEME_PREVIEW_OPTIONS,
+		primary,
+		secondary
+	};
+}
+
+export function showThemePreview( themeId ) {
+	return {
+		type: THEME_PREVIEW_STATE,
+		themeId
+	};
+}
+
+export function hideThemePreview() {
+	return {
+		type: THEME_PREVIEW_STATE,
+		themeId: null
 	};
 }

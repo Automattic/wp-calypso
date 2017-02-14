@@ -603,3 +603,17 @@ export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
 	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
 }
+
+export function getThemePreviewThemeOptions( state ) {
+	return get( state.themes, 'themePreviewOptions', {} );
+}
+
+/**
+ * Returns the ThemePreview state
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}  ThemePreview state
+ */
+export function themePreviewVisibility( state ) {
+	return get( state.themes, 'themePreviewVisibility', null );
+}

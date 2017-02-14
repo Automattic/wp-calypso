@@ -74,7 +74,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		return Object.assign(
 			{},
 			option,
-			option.action || ( option.getUrl && option.header )
+			option.header
 				? { action: theme => this.showSiteSelectorModal( option, theme ) }
 				: {},
 			option.getUrl && option.header

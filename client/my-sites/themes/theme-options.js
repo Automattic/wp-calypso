@@ -14,6 +14,7 @@ import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
+	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,
@@ -36,6 +37,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		label: i18n.translate( 'Purchase', {
 			context: 'verb'
 		} ),
+		extendedLabel: i18n.translate( 'Purchase this design' ),
 		header: i18n.translate( 'Purchase on:', {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
@@ -50,6 +52,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 
 const activate = {
 	label: i18n.translate( 'Activate' ),
+	extendedLabel: i18n.translate( 'Activate this design' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
 	hideForTheme: ( state, theme, siteId ) => (
@@ -66,6 +69,7 @@ const deleteTheme = {
 
 const customize = {
 	label: i18n.translate( 'Customize' ),
+	extendedLabel: i18n.translate( 'Customize this design' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
@@ -75,6 +79,7 @@ const customize = {
 
 const tryandcustomize = {
 	label: i18n.translate( 'Try & Customize' ),
+	extendedLabel: i18n.translate( 'Try & Customize' ),
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
@@ -83,20 +88,20 @@ const tryandcustomize = {
 	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
 };
 
-// This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
-// respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	hideForSite: ( state, siteId ) => isJetpackSite( state, siteId ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
+	action: themePreview
 };
 
+const signupLabel = i18n.translate( 'Pick this design', {
+	comment: 'when signing up for a WordPress.com account with a selected theme'
+} );
+
 const signup = {
-	label: i18n.translate( 'Pick this design', {
-		comment: 'when signing up for a WordPress.com account with a selected theme'
-	} ),
+	label: signupLabel,
+	extendedLabel: signupLabel,
 	getUrl: getSignupUrl
 };
 
