@@ -349,25 +349,6 @@
 	float: right;
 }
 
-.site-settings__date-time-format-custom {
-	.form-radio {
-		display: none;
-		margin-top: 12px;
-	}
-	&.is-custom .form-radio {
-		display: block;
-	}
-
-	.form-text-input {
-		margin: 0 12px;
-		width: 100px;
-	}
-
-	.site-settings__date-time-format-custom-preview {
-		white-space: nowrap;
-	}
-}
-
 .site-settings__date-time-format {
 	margin-top: -16px;
 
