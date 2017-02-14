@@ -5,18 +5,13 @@
 /**
  * Internal dependencies
  */
-import { canCurrentUser } from 'state/selectors/';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { PLAN_FREE } from 'lib/plans/constants';
+import {
+	canCurrentUser,
+	isSiteOnFreePlan,
+} from 'state/selectors/';
 
 const eligibleForFreeToPaidUpsell = ( state, siteId ) => {
-	const currentPlan = getCurrentPlan( state, siteId );
-
-	if ( ! currentPlan ) {
-		return false;
-	}
-
-	return canCurrentUser( state, siteId, 'manage_options' ) && currentPlan.product_slug === PLAN_FREE;
+	return canCurrentUser( state, siteId, 'manage_options' ) && isSiteOnFreePlan( state, siteId );
 };
 
 export default eligibleForFreeToPaidUpsell;
