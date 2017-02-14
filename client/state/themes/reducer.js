@@ -29,6 +29,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEME_PREVIEW_OPTIONS,
+	THEME_PREVIEW_STATE,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -346,6 +348,33 @@ export const lastQuery = createReducer( {}, {
 	} )
 } );
 
+/**
+ * Returns the updated previewing theme state
+ * The state holds information about primary and secondary theme actions usable in preview.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const themePreviewOptions = createReducer( {}, {
+	[ THEME_PREVIEW_OPTIONS ]: ( state, { primary, secondary } ) => ( {
+		primary,
+		secondary
+	} )
+} );
+
+/**
+ * Returns the updated previewing theme state
+ * The state reflects if Theme Preview component should be visible or not.
+ *
+ * @param  {Bool}   state  Current state
+ * @param  {Object} action Action payload
+ * @return {Bool}          Updated state
+ */
+export const themePreviewVisibility = createReducer( null, {
+	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
+} );
+
 export default combineReducers( {
 	queries,
 	queryRequests,
@@ -359,5 +388,7 @@ export default combineReducers( {
 	activationRequests,
 	completedActivationRequests,
 	themesUI,
-	uploadTheme
+	uploadTheme,
+	themePreviewOptions,
+	themePreviewVisibility
 } );
