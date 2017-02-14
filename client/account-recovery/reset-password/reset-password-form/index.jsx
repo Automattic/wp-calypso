@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
 
@@ -15,6 +16,8 @@ import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
+import { getAccountRecoveryResetOptions } from 'state/selectors';
+
 export class ResetPasswordFormComponent extends Component {
 	static defaultProps = {
 		translate: identity,
@@ -22,6 +25,7 @@ export class ResetPasswordFormComponent extends Component {
 
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
+		resetOptions: PropTypes.array.isRequired,
 	};
 
 	state = {
@@ -30,6 +34,8 @@ export class ResetPasswordFormComponent extends Component {
 	};
 
 	submitForm = () => {
+		// TODO:
+		// This is going to be replaced by corresponding redux actions.
 		this.setState( { isSubmitting: true } );
 	};
 
@@ -114,4 +120,8 @@ export class ResetPasswordFormComponent extends Component {
 	}
 }
 
-export default localize( ResetPasswordFormComponent );
+export default connect(
+	( state ) => ( {
+		resetOptions: getAccountRecoveryResetOptions( state ),
+	} )
+, localize( ResetPasswordFormComponent ) );
