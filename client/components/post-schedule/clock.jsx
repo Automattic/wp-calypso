@@ -49,7 +49,7 @@ class PostScheduleClock extends Component {
 		let value = this.maybeConvertHour( Number( event.target.value ) ) - operation;
 
 		// Snap back a day, when looping through date line.
-		if ( 0 === value && 1 === operation ) {
+		if ( ( this.props.is12hour ? 23 : -1 ) === value && 1 === operation ) {
 			modifiers.date = this.props.date.get( 'date' ) - 1;
 		}
 
@@ -114,7 +114,7 @@ class PostScheduleClock extends Component {
 	 * @return {Number}      The converted hour.
 	 */
 	maybeConvertHour( hour ) {
-		if ( this.refs.amPmReference && (
+		if ( this.props.is12hour && this.refs.amPmReference && (
 			( 'PM' === this.refs.amPmReference.value && hour < 12 ) ||
 			( 'AM' === this.refs.amPmReference.value && 12 === hour )
 		) ) {
@@ -189,8 +189,7 @@ class PostScheduleClock extends Component {
 	}
 
 	render() {
-		const { date, timeFormat, translate } = this.props;
-		const is12hour = is12hr( timeFormat );
+		const { date, is12hour, translate } = this.props;
 
 		return (
 			<div className="post-schedule__clock">
@@ -249,6 +248,6 @@ PostScheduleClock.defaultProps = {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		timeFormat: getSiteSetting( state, siteId, 'time_format' ),
+		is12hour: is12hr( getSiteSetting( state, siteId, 'time_format' ) ),
 	} ),
-)( localize( PostScheduleClock )) ;
+)( localize( PostScheduleClock ) ) ;
