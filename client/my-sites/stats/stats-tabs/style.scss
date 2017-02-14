@@ -32,6 +32,7 @@
 			float: none;
 			width: 100%;
 			text-align: left;
+			font-size: 14px;
 
 			&:first-child {
 				border-top: none;
@@ -47,14 +48,14 @@
 
 			.label {
 				float: left;
-				text-transform: uppercase;
-				letter-spacing: 0.1em;
-				font-size: 16px;
+				text-transform: none;
+				letter-spacing: 0;
+				font-size: 14px;
 			}
 
 			.gridicon {
 				float: left;
-				margin: 3px 8px 0 20px;
+				margin: 2px 20px 0 20px; 
 			}
 
 			.value {
