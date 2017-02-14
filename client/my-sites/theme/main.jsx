@@ -26,7 +26,7 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -284,7 +284,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderContactUsCard( isPrimary = false ) {
+	renderSupportContactUsCard( buttonCount ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -293,7 +293,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
 				</div>
 				<Button
-					primary={ isPrimary }
+					primary={ buttonCount === 1 }
 					href={ '/help/contact/' }
 					onClick={ this.trackContactUsClick }>
 					{ i18n.translate( 'Contact us' ) }
@@ -302,7 +302,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderThemeForumCard( isPrimary = false ) {
+	renderSupportThemeForumCard( buttonCount ) {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -319,7 +319,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ description }</small>
 				</div>
 				<Button
-					primary={ isPrimary }
+					primary={ buttonCount === 1 }
 					href={ this.props.forumUrl }
 					onClick={ this.trackThemeForumClick }>
 					{ i18n.translate( 'Visit forum' ) }
@@ -328,7 +328,7 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderCssSupportCard() {
+	renderSupportCssCard( buttonCount ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -337,6 +337,7 @@ const ThemeSheet = React.createClass( {
 					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button
+					primary={ buttonCount === 1 }
 					href="//en.forums.wordpress.com/forum/css-customization"
 					onClick={ this.trackCssClick }>
 					{ i18n.translate( 'Visit forum' ) }
@@ -346,22 +347,56 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		if ( this.props.isCurrentUserPaid ) {
-			return (
+		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
+		let buttonCount = 1;
+		let renderedTab = null;
+
+		if ( isLoggedIn ) {
+			renderedTab = (
 				<div>
-					{ this.renderContactUsCard( true ) }
-					{ this.renderThemeForumCard() }
-					{ this.renderCssSupportCard() }
+					{ isCurrentUserPaid && ! isJetpack &&
+						this.renderSupportContactUsCard( buttonCount++ ) }
+					{ forumUrl &&
+						this.renderSupportThemeForumCard( buttonCount++ ) }
+					{ isWpcomTheme &&
+						this.renderSupportCssCard( buttonCount++ ) }
 				</div>
+			);
+
+			// No card has been rendered
+			if ( buttonCount === 1 ) {
+				renderedTab = (
+					<Card className="theme__sheet-card-support">
+						<Gridicon icon="notice-outline" size={ 48 } />
+						<div className="theme__sheet-card-support-details">
+							{ i18n.translate( 'This theme is unsupported' ) }
+							<small>
+								{ i18n.translate( 'Maybe it\'s a custom theme? Sorry about that.',
+									{ context: 'Support message when we no support links are available' } )
+								}
+							</small>
+						</div>
+					</Card>
+				);
+			}
+		} else {
+			// Logged out
+			renderedTab = (
+				<Card className="theme__sheet-card-support">
+					<Gridicon icon="help" size={ 48 } />
+					<div className="theme__sheet-card-support-details">
+						{ i18n.translate( 'Have a question about this theme?' ) }
+						<small>
+							{ i18n.translate( 'Pick this design and start a site with us, we can help!',
+								{ context: 'Logged out theme support message' } )
+							}
+						</small>
+					</div>
+				</Card>
 			);
 		}
 
-		return (
-			<div>
-				{ this.renderThemeForumCard( true ) }
-				{ this.renderCssSupportCard() }
-			</div>
-		);
+		return renderedTab;
 	},
 
 	renderFeaturesCard() {
@@ -664,6 +699,7 @@ export default connect(
 			isWpcomTheme,
 			isLoggedIn: !! currentUserId,
 			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
