@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 
 function DomainSuggestionFlag( { domain, translate } ) {
-	const newTLDs = [ 'blog' ];
+	const newTLDs = [];
 
 	if ( newTLDs.some(
 		( tld ) => endsWith( domain, tld ) && domain.substring( 0, domain.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
