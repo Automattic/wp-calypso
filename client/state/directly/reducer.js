@@ -11,52 +11,28 @@ import {
 	DIRECTLY_INITIALIZED,
 	DIRECTLY_INITIALIZATION_ERROR
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
 
-export const initialSiteState = {
-	hasInitialized: null,
-	error: null,
-	config: null
-};
+export const isInitializing = createReducer( false, {
+	[ DIRECTLY_INITIALIZING ]: () => true,
+	[ DIRECTLY_INITIALIZED ]: () => false,
+	[ DIRECTLY_INITIALIZATION_ERROR ]: () => false,
+} );
 
-const isInitializing = ( state = false, action ) => {
-	switch ( action.type ) {
-		case DIRECTLY_INITIALIZING:
-			return true;
-		case DIRECTLY_INITIALIZED:
-		case DIRECTLY_INITIALIZATION_ERROR:
-			return false;
-	}
-	return state;
-};
+export const isReady = createReducer( false, {
+	[ DIRECTLY_INITIALIZING ]: () => false,
+	[ DIRECTLY_INITIALIZED ]: () => true,
+	[ DIRECTLY_INITIALIZATION_ERROR ]: () => false,
+} );
 
-const isReady = ( state = false, action ) => {
-	switch ( action.type ) {
-		case DIRECTLY_INITIALIZED:
-			return true;
-		case DIRECTLY_INITIALIZING:
-		case DIRECTLY_INITIALIZATION_ERROR:
-			return false;
-	}
-	return state;
-};
+export const error = createReducer( null, {
+	[ DIRECTLY_INITIALIZING ]: () => null,
+	[ DIRECTLY_INITIALIZED ]: () => null,
+	[ DIRECTLY_INITIALIZATION_ERROR ]: ( state, action ) => action.error,
+} );
 
-const error = ( state = null, action ) => {
-	switch ( action.type ) {
-		case DIRECTLY_INITIALIZATION_ERROR:
-			return action.error;
-		case DIRECTLY_INITIALIZING:
-		case DIRECTLY_INITIALIZED:
-			return null;
-	}
-	return state;
-};
-
-const config = ( state = null, action ) => {
-	switch ( action.type ) {
-		case DIRECTLY_INITIALIZING:
-			return action.config;
-	}
-	return state;
-};
+export const config = createReducer( null, {
+	[ DIRECTLY_INITIALIZING ]: ( state, action ) => action.config,
+} );
 
 export default combineReducers( { isInitializing, isReady, error, config } );
