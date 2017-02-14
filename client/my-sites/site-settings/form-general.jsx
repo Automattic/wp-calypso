@@ -24,7 +24,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
@@ -422,49 +421,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	startOfWeekOption() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: { start_of_week },
-			handleSelect,
-			isRequestingSettings,
-			translate,
-		} = this.props;
-
-		const daysOfWeek = [
-			translate( 'Sunday' ),
-			translate( 'Monday' ),
-			translate( 'Tuesday' ),
-			translate( 'Wednesday' ),
-			translate( 'Thursday' ),
-			translate( 'Friday' ),
-			translate( 'Saturday' ),
-		];
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Week Starts On' ) }
-				</FormLabel>
-				<FormSelect
-					disabled={ isRequestingSettings }
-					name="start_of_week"
-					onChange={ handleSelect }
-					value={ start_of_week || 0 }
-				>
-					{ daysOfWeek.map( ( day, index ) =>
-						<option key={ index } value={ index } >
-							{ day }
-						</option>
-					) }
-				</FormSelect>
-			</FormFieldset>
-		);
-	}
-
 	dateTimeFormat() {
 		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
 			return null;
@@ -601,7 +557,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ this.startOfWeekOption() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
