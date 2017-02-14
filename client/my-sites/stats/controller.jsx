@@ -279,7 +279,16 @@ module.exports = {
 		let period;
 
 		const validModules = [
-			'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms'
+			'posts',
+			'referrers',
+			'clicks',
+			'countryviews',
+			'authors',
+			'videoplays',
+			'videodetails',
+			'podcastdownloads',
+			'searchterms',
+			'views'
 		];
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );

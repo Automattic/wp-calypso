@@ -19,7 +19,7 @@ import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 export default function getSiteStatsViewSummary( state, siteId ) {
 	const query = {
 		stat_fields: 'views',
-		num: -1
+		quantity: -1
 	};
 	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
 
@@ -42,14 +42,14 @@ export default function getSiteStatsViewSummary( state, siteId ) {
 			viewSummary[ years ][ months ] = {
 				total: 0,
 				data: [],
-				average: 0.0,
+				average: 0,
 				daysInMonth: momentDate.daysInMonth()
 			};
 		}
 		viewSummary[ years ][ months ].total += value;
 		viewSummary[ years ][ months ].data.push( item );
 		const average = viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
-		viewSummary[ years ][ months ].average = round( average, 2 );
+		viewSummary[ years ][ months ].average = round( average, 0 );
 	} );
 
 	return viewSummary;

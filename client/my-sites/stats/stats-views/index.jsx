@@ -1,0 +1,99 @@
+/**
+ * External dependencies
+ */
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import QuerySiteStats from 'components/data/query-site-stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteStatsViewSummary } from 'state/selectors';
+import Card from 'components/card';
+import Months from './months';
+import SegmentedControl from 'components/segmented-control';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+
+class StatsViews extends Component {
+	static propTypes = {
+		query: PropTypes.object,
+		siteId: PropTypes.number,
+		statType: PropTypes.string,
+		viewData: PropTypes.object,
+	};
+
+	state = {
+		chartOption: 'total'
+	};
+
+	toggleViews = ( option ) => {
+		this.setState( {
+			chartOption: option.value
+		} );
+	}
+
+	render() {
+		const { query, siteId, statType, viewData, translate } = this.props;
+		const monthViewOptions = [
+			{ value: 'total', label: translate( 'Months and Years' ) },
+			{ value: 'average', label: translate( 'Average per Day' ) }
+		];
+
+		return (
+			<div>
+				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				<Card className={ classNames( 'stats-views', { 'is-loading': ! viewData } ) }>
+					<StatsModulePlaceholder isLoading={ ! viewData } />
+					{ viewData &&
+						<SegmentedControl
+							className="stats-views__month-control"
+							options={ monthViewOptions }
+							onSelect={ this.toggleViews }
+							compact
+						/>
+					}
+					<Months dataKey={ this.state.chartOption } data={ viewData } />
+					<div className="stats-views__key-container">
+						<span className="stats-views__key-label">
+							{
+								translate( 'Fewer Views', {
+									context: 'Legend label in stats all time views table'
+								} )
+							}
+						</span>
+						<ul className="stats-views__key">
+							<li className="stats-views__key-item level-1"></li>
+							<li className="stats-views__key-item level-2"></li>
+							<li className="stats-views__key-item level-3"></li>
+							<li className="stats-views__key-item level-4"></li>
+							<li className="stats-views__key-item level-5"></li>
+						</ul>
+						<span className="stats-views__key-label">
+							{
+								translate( 'More Views', {
+									context: 'Legend label in stats all time views table'
+								} )
+							}
+						</span>
+					</div>
+				</Card>
+			</div>
+		);
+	}
+}
+
+export default connect( ( state ) => {
+	const query = { quantity: -1, stat_fields: 'views' };
+	const statType = 'statsVisits';
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		viewData: getSiteStatsViewSummary( state, siteId ),
+		query,
+		statType,
+		siteId,
+	};
+} )( localize( StatsViews ) );

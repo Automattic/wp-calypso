@@ -18,6 +18,7 @@ import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import StatsViews from '../stats-views';
 import QueryMedia from 'components/data/query-media';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getMediaItem } from 'state/selectors';
@@ -134,6 +135,11 @@ class StatsSummary extends Component {
 					query={ query }
 					statType="statsVideoPlays"
 					summary />;
+				break;
+
+			case 'views':
+				title = translate( 'All Time Views' );
+				summaryView = <StatsViews key="views-summary" />;
 				break;
 
 			case 'podcastdownloads':
