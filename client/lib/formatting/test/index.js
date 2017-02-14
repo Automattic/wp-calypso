@@ -10,7 +10,7 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import decodeEntitiesNode from '../decode-entities/node';
 
 describe( 'formatting', () => {
-	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;
+	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows, phpToMomentDatetimeFormat;
 
 	useFakeDom();
 
@@ -20,6 +20,7 @@ describe( 'formatting', () => {
 		parseHtml = formatting.parseHtml;
 		decodeEntitiesBrowser = require( '../decode-entities/browser' );
 		preventWidows = formatting.preventWidows;
+		phpToMomentDatetimeFormat = formatting.phpToMomentDatetimeFormat;
 	} );
 
 	describe( '#capitalPDangit()', function() {
@@ -175,6 +176,21 @@ describe( 'formatting', () => {
 				preventWidows( input, 4 ),
 				'I really love BBQ. It is one of my favorite foods. Beef\xA0ribs\xA0are\xA0amazing.'
 			);
+		} );
+	} );
+
+	describe( '#phpToMomentDatetimeFormat()', () => {
+		it( 'should return the correct Moment date', function() {
+			chai.assert.equal( phpToMomentDatetimeFormat( 'F j, Y' ), 'MMMM D, YYYY' );
+			chai.assert.equal( phpToMomentDatetimeFormat( 'Y-m-d' ), 'YYYY-MM-DD' );
+			chai.assert.equal( phpToMomentDatetimeFormat( 'm/d/Y' ), 'MM/DD/YYYY' );
+			chai.assert.equal( phpToMomentDatetimeFormat( 'd/m/Y' ), 'DD/MM/YYYY' );
+		} );
+
+		it( 'should return the correct Moment time', function() {
+			chai.assert.equal( phpToMomentDatetimeFormat( 'g:i a' ), 'h:mm a' );
+			chai.assert.equal( phpToMomentDatetimeFormat( 'g:i A' ), 'h:mm A' );
+			chai.assert.equal( phpToMomentDatetimeFormat( 'H:i' ), 'HH:mm' );
 		} );
 	} );
 } );
