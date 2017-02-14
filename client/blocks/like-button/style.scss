@@ -2,7 +2,7 @@
 	align-items: center;
 	display: inline-flex;
 	padding: 4px;
-	color: $gray-text;
+	color: $gray-text-min;
 	position: relative;
 	box-sizing: border-box;
 
@@ -40,7 +40,7 @@
 	}
 
 	&.is-liked {
-		color: $gray-text;
+		color: $gray-text-min;
 
 		.gridicons-star {
 			opacity: 1;

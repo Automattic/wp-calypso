@@ -240,7 +240,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link
 {
-	color: $gray-text;
+	color: $gray-text-min;
 	margin-top: 2px;
 	cursor: pointer;
 }

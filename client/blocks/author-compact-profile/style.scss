@@ -41,7 +41,7 @@
 			}
 
 			.follow-button__label {
-				color: $gray-text;
+				color: $gray-text-min;
 			}
 		}
 
@@ -77,7 +77,7 @@
 	justify-content: center;
 
 	&:hover {
-		color: $gray-text;
+		color: $gray-text-min;
 	}
 }
 
@@ -97,7 +97,7 @@
 }
 
 .author-compact-profile__follow-count {
-	color: $gray-text;
+	color: $gray-text-min;
 	padding: 5px;
 }
 
