@@ -2,82 +2,62 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
-import FormSelect from 'components/forms/form-select';
+import DefaultPostFormat from './default-post-format';
+import Markdown from './markdown';
+import AfterTheDeadline from './after-the-deadline';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
 	fields,
 	handleToggle,
 	onChangeField,
+	setFieldValue,
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
-	translate
+	jetpackSettingsUISupported,
+	siteIsJetpack
 } ) => {
 	return (
 		<Card className="site-settings">
-			<FormFieldset>
-				<FormLabel htmlFor="default_post_format">
-					{ translate( 'Default Post Format' ) }
-				</FormLabel>
-				<FormSelect
-					name="default_post_format"
-					id="default_post_format"
-					value={ fields.default_post_format }
-					onChange={ onChangeField( 'default_post_format' ) }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onClick={ eventTracker( 'Selected Default Post Format' ) }
-				>
-					<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
-					<option value="aside">{ translate( 'Aside', { context: 'Post format' } ) }</option>
-					<option value="chat">{ translate( 'Chat', { context: 'Post format' } ) }</option>
-					<option value="gallery">{ translate( 'Gallery', { context: 'Post format' } ) }</option>
-					<option value="link">{ translate( 'Link', { context: 'Post format' } ) }</option>
-					<option value="image">{ translate( 'Image', { context: 'Post format' } ) }</option>
-					<option value="quote">{ translate( 'Quote', { context: 'Post format' } ) }</option>
-					<option value="status">{ translate( 'Status', { context: 'Post format' } ) }</option>
-					<option value="video">{ translate( 'Video', { context: 'Post format' } ) }</option>
-					<option value="audio">{ translate( 'Audio', { context: 'Post format' } ) }</option>
-				</FormSelect>
-			</FormFieldset>
+			<DefaultPostFormat
+				onChangeField={ onChangeField }
+				eventTracker={ eventTracker }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
 
-			{ fields.markdown_supported &&
-				<FormFieldset className="has-divider is-top-only">
-					<FormLabel>
-						{ translate( 'Markdown' ) }
-					</FormLabel>
-					<FormLabel>
-						<FormToggle
-							className="is-compact"
-							name="wpcom_publish_posts_with_markdown"
-							checked={ !! fields.wpcom_publish_posts_with_markdown }
-							onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
-							disabled={ isRequestingSettings || isSavingSettings }
-						>
-							{
-								translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
-									components: {
-										a: (
-											<a
-												href="http://en.support.wordpress.com/markdown-quick-reference/"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										)
-									}
-								} )
-							}
-						</FormToggle>
-					</FormLabel>
-				</FormFieldset>
+			{
+				fields.markdown_supported &&
+				<Markdown
+					handleToggle={ handleToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			}
+
+			{
+				siteIsJetpack && jetpackSettingsUISupported && (
+					<div>
+						<hr />
+						<AfterTheDeadline
+							handleToggle={ handleToggle }
+							setFieldValue={ setFieldValue }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				)
 			}
 		</Card>
 	);
@@ -90,13 +70,22 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
+	setFieldValue: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
 };
 
-export default localize( Composing );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+		};
+	}
+)( Composing );

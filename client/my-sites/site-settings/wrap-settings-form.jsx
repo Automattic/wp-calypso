@@ -134,6 +134,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
+		setFieldValue = ( field, value ) => {
+			this.props.updateFields( {
+				[ field ]: value
+			} );
+		};
+
 		uniqueEventTracker = message => () => {
 			if ( this.state.uniqueEvents[ message ] ) {
 				return;
@@ -152,6 +158,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
 				onChangeField: this.onChangeField,
+				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,
 				uniqueEventTracker: this.uniqueEventTracker,
 			};

@@ -76,6 +76,22 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		markdown: [
 			'wpcom_publish_comments_with_markdown',
 		],
+		'after-the-deadline': [
+			'onpublish',
+			'onupdate',
+			'guess_lang',
+			'Bias Language',
+			'Cliches',
+			'Complex Expression',
+			'Diacritical Marks',
+			'Double Negative',
+			'Hidden Verbs',
+			'Jargon Language',
+			'Passive voice',
+			'Phrases to Avoid',
+			'Redundant Expression',
+			'ignored_phrases',
+		],
 		'custom-content-types': [
 			'jetpack_testimonial',
 			'jetpack_portfolio',
