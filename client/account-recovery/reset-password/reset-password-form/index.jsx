@@ -13,8 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import ResetOptionSet from './reset-option-set';
 
 import { getAccountRecoveryResetOptions } from 'state/selectors';
 
@@ -44,7 +43,11 @@ export class ResetPasswordFormComponent extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const {
+			resetOptions,
+			translate
+		} = this.props;
+
 		const { isSubmitting, selectedResetOption } = this.state;
 		const isPrimaryButtonEnabled = selectedResetOption && ! isSubmitting;
 
@@ -64,48 +67,15 @@ export class ResetPasswordFormComponent extends Component {
 						<FormLegend className="reset-password-form__legend">
 							{ translate( 'How would you like to reset your password?' ) }
 						</FormLegend>
-						<FormLabel>
-							<FormRadio
-								className="reset-password-form__primary-email-option"
-								value="primaryEmail"
-								checked={ 'primaryEmail' === selectedResetOption }
-								disabled={ isSubmitting }
-								onChange={ this.onResetOptionChanged } />
-							<span>
-								{ translate(
-									'Email a reset link to {{strong}}your main email address{{/strong}}',
-									{ components: { strong: <strong /> } }
-								) }
-							</span>
-						</FormLabel>
-						<FormLabel>
-							<FormRadio
-								className="reset-password-form__secondary-email-option"
-								value="secondaryEmail"
-								checked={ 'secondaryEmail' === selectedResetOption }
-								disabled={ isSubmitting }
-								onChange={ this.onResetOptionChanged } />
-							<span>
-								{ translate(
-									'Email a reset link to {{strong}}your recovery email address{{/strong}}',
-									{ components: { strong: <strong /> } }
-								) }
-							</span>
-						</FormLabel>
-						<FormLabel>
-							<FormRadio
-								className="reset-password-form__sms-option"
-								value="sms"
-								checked={ 'sms' === selectedResetOption }
-								disabled={ isSubmitting }
-								onChange={ this.onResetOptionChanged } />
-							<span>
-								{ translate(
-									'Send a reset code to {{strong}}your phone{{/strong}}',
-									{ components: { strong: <strong /> } }
-								) }
-							</span>
-						</FormLabel>
+						{ resetOptions.map( ( resetOption ) => (
+							<ResetOptionSet
+								email={ resetOption.email }
+								sms={ resetOption.sms }
+								name={ resetOption.name }
+								onOptionChanged={ this.onResetOptionChanged }
+								selectedResetOption={ selectedResetOption }
+							/>
+						) ) }
 					</FormFieldset>
 					<Button
 						className="reset-password-form__submit-button"
