@@ -608,16 +608,12 @@ export function getThemePreviewThemeOptions( state ) {
 	return get( state.themes, 'themePreviewOptions', {} );
 }
 
-export function getThemePreviewInfo( state ) {
-	return get( state.themes, 'themePreviewInfo', {} );
-}
-
 /**
  * Returns the ThemePreview state
  *
  * @param  {Object}  state Global state tree
  * @return {?String}  ThemePreview state
  */
-export function isThemePreviewVisible( state ) {
-	return get( state.themes, 'isThemePreviewVisible', false );
+export function themePreviewVisibility( state ) {
+	return get( state.themes, 'themePreviewVisibility', null );
 }

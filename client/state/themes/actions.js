@@ -44,7 +44,6 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_PREVIEW_DATA,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
@@ -769,14 +768,6 @@ export function confirmDelete( themeId, siteId ) {
 	};
 }
 
-function setThemePreviewData( themeId, source ) {
-	return {
-		type: THEME_PREVIEW_DATA,
-		themeId,
-		source
-	};
-}
-
 export function setThemePreviewOptions( primary, secondary ) {
 	return {
 		type: THEME_PREVIEW_OPTIONS,
@@ -785,25 +776,16 @@ export function setThemePreviewOptions( primary, secondary ) {
 	};
 }
 
-function showThemePreview() {
+export function showThemePreview( themeId ) {
 	return {
 		type: THEME_PREVIEW_STATE,
-		isVisible: true
+		themeId
 	};
 }
 
 export function hideThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
-		isVisible: false
-	};
-}
-
-export function preview( themeId ) {
-	return ( dispatch, getState ) => {
-		const isWpcomTheme = !! getTheme( getState(), 'wpcom', themeId );
-		const wpcomOrWporg = isWpcomTheme ? 'wpcom' : 'wporg';
-		dispatch( setThemePreviewData( themeId, wpcomOrWporg ) );
-		dispatch( showThemePreview() );
+		themeId: null
 	};
 }

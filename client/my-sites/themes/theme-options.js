@@ -14,7 +14,7 @@ import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
-	preview as themePreview,
+	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
 	getThemeSignupUrl as getSignupUrl,

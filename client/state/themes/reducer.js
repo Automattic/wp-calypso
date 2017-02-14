@@ -29,7 +29,6 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-	THEME_PREVIEW_DATA,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 } from 'state/action-types';
@@ -351,21 +350,6 @@ export const lastQuery = createReducer( {}, {
 
 /**
  * Returns the updated previewing theme state
- * The state holds information that can be used to show its preview.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const themePreviewInfo = createReducer( {}, {
-	[ THEME_PREVIEW_DATA ]: ( state, { themeId, source } ) => ( {
-		themeId,
-		source
-	} )
-} );
-
-/**
- * Returns the updated previewing theme state
  * The state holds information about primary and secondary theme actions usable in preview.
  *
  * @param  {Object} state  Current state
@@ -387,8 +371,8 @@ export const themePreviewOptions = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Bool}          Updated state
  */
-export const isThemePreviewVisible = createReducer( false, {
-	[ THEME_PREVIEW_STATE ]: ( state, { isVisible } ) => ( isVisible )
+export const themePreviewVisibility = createReducer( null, {
+	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
 } );
 
 export default combineReducers( {
@@ -405,7 +389,6 @@ export default combineReducers( {
 	completedActivationRequests,
 	themesUI,
 	uploadTheme,
-	themePreviewInfo,
 	themePreviewOptions,
-	isThemePreviewVisible
+	themePreviewVisibility
 } );

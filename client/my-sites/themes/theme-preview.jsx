@@ -12,10 +12,9 @@ import Button from 'components/button';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
-	getThemePreviewInfo,
 	getThemePreviewThemeOptions,
 	getTheme,
-	isThemePreviewVisible,
+	themePreviewVisibility,
 	isThemeActive
 } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
@@ -31,7 +30,6 @@ const ThemePreview = React.createClass( {
 		theme: React.PropTypes.object,
 		themeOptions: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
-		showPreview: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 	},
 
@@ -70,19 +68,19 @@ const ThemePreview = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.showPreview ) {
+		if ( ! this.props.theme ) {
 			return null;
 		}
 
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
-		const themeId = this.props.themePreviewInfo.themeId;
+		const themeId = this.props.theme.ID;
 
 		return (
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
 				{ this.props.previewUrl && <WebPreview
-					showPreview={ this.props.showPreview }
+					showPreview={ !! this.props.theme }
 					showExternal={ false }
 					showSEO={ false }
 					onClose={ this.props.hideThemePreview }
@@ -103,25 +101,27 @@ const ConnectedThemePreview = connectOptions( ThemePreview );
 
 export default connect(
 	( state ) => {
-		const showPreview = isThemePreviewVisible( state );
-
-		// data for preview not set.
-		if ( ! showPreview ) {
-			return { showPreview };
+		const themeId = themePreviewVisibility( state );
+		if ( ! themeId ) {
+			return { themeId };
 		}
-		const themePreviewInfo = getThemePreviewInfo( state );
-		const themeOptions = getThemePreviewThemeOptions( state );
-		const theme = getTheme( state, themePreviewInfo.source, themePreviewInfo.themeId );
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		let theme = getTheme( state, 'wpcom', themeId );
+
+		if ( ! theme && isJetpack ) {
+			//for Jetpack sites if theme is not from wpcom we fetch demo data
+			//from wporg because data from Jetpack enpoint does not have demo_uri
+			theme = getTheme( state, 'wporg', themeId );
+		}
+
+		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
 			theme,
 			siteId,
 			isJetpack,
-			themePreviewInfo,
 			themeOptions,
-			showPreview,
-			isActive: isThemeActive( state, themePreviewInfo.themeId, siteId ),
+			isActive: isThemeActive( state, themeId, siteId ),
 			previewUrl: theme ? getPreviewUrl( theme ) : null,
 			options: [
 				'activate',
