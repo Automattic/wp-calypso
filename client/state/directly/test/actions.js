@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { useSandbox } from 'test/helpers/use-sinon';
 import directly from 'lib/directly';
 import {
 	askQuestion,
@@ -26,22 +26,16 @@ import {
 } from 'state/action-types';
 
 describe( 'actions', () => {
-	const sandbox = sinon.sandbox.create();
-	const dispatchSpy = sandbox.spy();
+	let dispatchSpy;
 
-	// Stub in all lib/directly functions to avoid them being actually called
-	sandbox.stub( directly, 'askQuestion' );
-	sandbox.stub( directly, 'initialize' );
-	sandbox.stub( directly, 'maximize' );
-	sandbox.stub( directly, 'minimize' );
-	sandbox.stub( directly, 'openAskForm' );
-
-	afterEach( () => {
-		sandbox.reset();
-	} );
-
-	after( () => {
-		sandbox.restore();
+	useSandbox( ( sandbox ) => {
+		dispatchSpy = sandbox.spy();
+		// Stub in all lib/directly functions to avoid them being actually called
+		sandbox.stub( directly, 'askQuestion' );
+		sandbox.stub( directly, 'initialize' );
+		sandbox.stub( directly, 'maximize' );
+		sandbox.stub( directly, 'minimize' );
+		sandbox.stub( directly, 'openAskForm' );
 	} );
 
 	describe( '#askQuestion()', () => {
