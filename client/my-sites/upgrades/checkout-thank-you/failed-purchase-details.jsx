@@ -29,12 +29,12 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 						);
 					} ) }
 				</ul>
+				<hr />
 			</div>
 		),
 		description = (
 		<div>
 			{ successfulPurchases }
-			<hr />
 			<p>
 				{
 					translate(

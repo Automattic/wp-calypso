@@ -30,7 +30,6 @@ const analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 import { getStoredCards } from 'state/stored-cards/selectors';
-
 import {
 	isValidFeatureKey,
 	getUpgradePlanSlugFromPath
@@ -43,7 +42,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
-import { domainManagementList } from 'my-sites/upgrades/paths';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
+import { domainManagementList, domainManagementRoot } from 'my-sites/upgrades/paths';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
@@ -139,7 +139,7 @@ const Checkout = React.createClass( {
 	},
 
 	redirectIfEmptyCart: function() {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, transaction } = this.props;
 		let redirectTo = '/plans/';
 
 		if ( ! this.state.previousCart && this.props.product ) {
@@ -151,7 +151,14 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST ) {
+		if ( transactionStepTypes.SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
+			return false;
+		}
+
+		if ( transactionStepTypes.RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
+			// If the cart is emptied by the server after the transaction is
+			// complete without errors, do not redirect as we're waiting for
+			// some post-transaction requests to complete.
 			return false;
 		}
 
@@ -187,6 +194,9 @@ const Checkout = React.createClass( {
 			}
 		} = this.props;
 
+		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
+		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+
 		if ( cartItems.hasRenewalItem( cart ) ) {
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 
@@ -195,18 +205,19 @@ const Checkout = React.createClass( {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
-		} else if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) && ! cartItems.hasPlan( cart ) ) {
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+		} else if ( cart.create_new_blog ) {
+			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
+			if ( domainName ) {
+				return domainManagementList( domainName );
+			}
 
-			return domainManagementList( domainName );
+			// TODO: Redirect to Thank You page, but no site slug atm, so we need a new route
+			return domainManagementRoot();
 		}
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
 		}
-
-		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
-		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
@@ -277,18 +288,20 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( cart.create_new_blog && cartItems.hasDomainRegistration( cart ) ) {
+		if ( cart.create_new_blog ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
 
-			const domainName = cartItems.getDomainRegistrations( cart )[ 0 ].meta;
+			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
 
-			fetchSitesAndUser( domainName, () => {
-				page( redirectPath );
-			} );
+			if ( domainName ) {
+				fetchSitesAndUser( domainName, () => {
+					page( redirectPath );
+				} );
 
-			return;
+				return;
+			}
 		}
 
 		if ( receipt && receipt.receipt_id ) {

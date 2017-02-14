@@ -138,13 +138,13 @@ function startFreePremiumTrial( callback, dependencies, data ) {
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, callback ) {
+	if ( sites.select( siteSlug ) ) {
+		callback();
+		return;
+	}
+
 	sites.once( 'change', function() {
-		if ( ! sites.select( siteSlug ) ) {
-			// if the site isn't in the list then bind to change and fetch again again
-			fetchSitesUntilSiteAppears( siteSlug, callback );
-		} else {
-			callback();
-		}
+		fetchSitesUntilSiteAppears( siteSlug, callback );
 	} );
 
 	// this call is deferred because sites.fetching is not set to false until
