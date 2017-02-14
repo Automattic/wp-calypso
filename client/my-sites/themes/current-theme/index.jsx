@@ -14,8 +14,7 @@ import Card from 'components/card';
 import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 
 /**
@@ -91,9 +90,8 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme } ) => (
 export default connect(
 	( state, { siteId } ) => {
 		const currentThemeId = getActiveTheme( state, siteId );
-		const siteIdOrWpcom = isJetpackSite( state, siteId ) ? siteId : 'wpcom';
 		return {
-			currentTheme: getTheme( state, siteIdOrWpcom, currentThemeId ),
+			currentTheme: getCanonicalTheme( state, siteId, currentThemeId ),
 		};
 	}
 )( CurrentThemeWithOptions );

@@ -41,6 +41,7 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isWpcomTheme as isThemeWpcom,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
@@ -49,7 +50,7 @@ import EmptyContentComponent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getTheme } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
@@ -661,12 +662,12 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
+		const isWpcomTheme = isThemeWpcom( state, id );
 		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getTheme( state, siteIdOrWpcom, id );
+		const theme = getCanonicalTheme( state, selectedSite && selectedSite.ID, id );
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
 		return {
