@@ -47,7 +47,7 @@ a.post-item__title-link {
 
 .post-item__meta {
 	font-size: 12px;
-	color: lighten( $gray, 10% );
+	color: $gray-text-min;
 }
 
 .post-item__meta .post-relative-time,
