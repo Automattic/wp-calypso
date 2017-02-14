@@ -1,7 +1,7 @@
 .reader-share_button {
 	align-items: center;
 	box-sizing: border-box;
-	color: lighten( $gray, 10% );
+	color: $gray-text;
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
@@ -14,6 +14,7 @@
 	}
 
 	.gridicon {
+		fill: lighten( $gray, 10 );
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 

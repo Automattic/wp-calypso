@@ -16,7 +16,7 @@
 		flex: 1;
 
 		.reader-post-actions__visit-label {
-			color: lighten( $gray, 10% );
+			color: $gray-text;
 		}
 
 		.external-link {

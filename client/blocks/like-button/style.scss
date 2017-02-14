@@ -2,7 +2,7 @@
 	align-items: center;
 	display: inline-flex;
 	padding: 4px;
-	color: lighten( $gray, 10 );
+	color: $gray-text;
 	position: relative;
 	box-sizing: border-box;
 
@@ -23,7 +23,7 @@
 	}
 
 	.gridicons-star-outline {
-		fill: lighten( $gray, 20 );
+		fill: lighten( $gray, 10 );
 	}
 
 	&.is-animated .gridicons-star-outline {
@@ -40,7 +40,7 @@
 	}
 
 	&.is-liked {
-		color: lighten( $gray, 10 );;
+		color: $gray-text;
 
 		.gridicons-star {
 			opacity: 1;
