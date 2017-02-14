@@ -211,12 +211,11 @@ export class DateTimeFormatOptions extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Privacy' ) }>
+				<SectionHeader>
 					<Button
 						compact={ true }
 						onClick={ handleSubmitForm }
 						primary={ true }
-
 						type="submit"
 						disabled={ isRequestingSettings || isSavingSettings }>
 							{ isSavingSettings
