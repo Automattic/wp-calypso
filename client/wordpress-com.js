@@ -314,54 +314,44 @@ if ( config.isEnabled( 'reader' ) ) {
 	} );
 }
 
-if ( config.isEnabled( 'vip' ) ) {
-	sections.push( {
-		name: 'vip',
-		paths: [ '/vip', '/vip/deploys', '/vip/billing', '/vip/support', '/vip/backups', '/vip/logs' ],
-		module: 'vip',
-		secondary: true
-	} );
-}
+sections.push( {
+	name: 'vip',
+	paths: [ '/vip', '/vip/deploys', '/vip/billing', '/vip/support', '/vip/backups', '/vip/logs' ],
+	module: 'vip',
+	secondary: true
+} );
 
-if ( config.isEnabled( 'help' ) ) {
-	sections.push( {
-		name: 'help',
-		paths: [ '/help' ],
-		module: 'me/help',
-		secondary: true,
-		enableLoggedOut: true,
-		group: 'me'
-	} );
-}
+sections.push( {
+	name: 'help',
+	paths: [ '/help' ],
+	module: 'me/help',
+	secondary: true,
+	enableLoggedOut: true,
+	group: 'me'
+} );
 
-if ( config.isEnabled( 'oauth' ) ) {
-	sections.push( {
-		name: 'auth',
-		paths: [ '/login', '/authorize', '/api/oauth/token' ],
-		module: 'auth',
-		secondary: false,
-		enableLoggedOut: true
-	} );
-}
+sections.push( {
+	name: 'auth',
+	paths: [ '/login', '/authorize', '/api/oauth/token' ],
+	module: 'auth',
+	secondary: false,
+	enableLoggedOut: true
+} );
 
-if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-	sections.push( {
-		name: 'posts-custom',
-		paths: [ '/types' ],
-		module: 'my-sites/types',
-		secondary: true,
-		group: 'sites'
-	} );
-}
+sections.push( {
+	name: 'posts-custom',
+	paths: [ '/types' ],
+	module: 'my-sites/types',
+	secondary: true,
+	group: 'sites'
+} );
 
-if ( config.isEnabled( 'happychat' ) ) {
-	sections.push( {
-		name: 'happychat',
-		paths: [ '/me/chat' ],
-		module: 'me/happychat',
-		group: 'me',
-		secondary: true
-	} );
-}
+sections.push( {
+	name: 'happychat',
+	paths: [ '/me/chat' ],
+	module: 'me/happychat',
+	group: 'me',
+	secondary: true
+} );
 
 module.exports = sections;
