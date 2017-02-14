@@ -29,7 +29,6 @@
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
-		"boosted-post-survey": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
