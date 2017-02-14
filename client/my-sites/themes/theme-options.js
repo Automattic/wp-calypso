@@ -17,6 +17,7 @@ import {
 	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
+	getTheme,
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
 	getThemeCustomizeUrl as	getCustomizeUrl,
@@ -92,7 +93,9 @@ const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	action: themePreview
+	action: themePreview,
+	// We only get a preview URL for themes found on WP.com or WP.org
+	hideForTheme: ( state, theme ) => ! getTheme( state, 'wpcom', theme.id ) && ! getTheme( state, 'wporg', theme.id )
 };
 
 const signupLabel = i18n.translate( 'Pick this design', {
