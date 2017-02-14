@@ -32,7 +32,6 @@ const ThemePreview = React.createClass( {
 		themeOptions: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
 		showPreview: React.PropTypes.bool,
-		showExternal: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 	},
 
@@ -84,7 +83,7 @@ const ThemePreview = React.createClass( {
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
 				{ this.props.previewUrl && <WebPreview
 					showPreview={ this.props.showPreview }
-					showExternal={ this.props.showExternal }
+					showExternal={ false }
 					showSEO={ false }
 					onClose={ this.props.hideThemePreview }
 					previewUrl={ this.props.previewUrl }
