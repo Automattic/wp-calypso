@@ -46,17 +46,21 @@ class PostScheduleClock extends Component {
 			return null;
 		}
 
-		let value = this.maybeConvertHour( Number( event.target.value ) ) - operation;
-
-		// Snap back a day, when looping through date line.
-		if ( ( this.props.is12hour ? 23 : -1 ) === value && 1 === operation ) {
-			modifiers.date = this.props.date.get( 'date' ) - 1;
-		}
+		let value = Number( event.target.value );
 
 		if ( 'hour' === field ) {
+			value = this.maybeConvertHour( value ) - operation;
+
+			// Snap back a day, when looping through date line.
+			if ( ( this.props.is12hour ? 23 : -1 ) === value && 1 === operation ) {
+				modifiers.date = this.props.date.get( 'date' ) - 1;
+			}
+
 			value = value > 24 ? 1 : value;
 			value = value < 0 ? 23 : value;
 		} else {
+			value -= operation;
+
 			value = value > 59 ? 0 : value;
 			value = value < 0 ? 59 : value;
 		}
