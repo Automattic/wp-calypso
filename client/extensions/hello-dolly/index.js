@@ -9,18 +9,14 @@ import React from 'react';
  */
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { addReducer } from 'state';
 import HelloDollyPage from './hello-dolly-page';
 import reducer from './state/reducer';
+import useReducer from './use-reducer';
 
-/**
- * Extension init
- */
-// TODO: Maybe make this part of the extension load/unload code for all extensions?
-addReducer( 'helloDolly', reducer );
+const MainPage = useReducer( 'helloDolly', reducer )( HelloDollyPage );
 
 const render = ( context ) => {
-	renderWithReduxStore( <HelloDollyPage />, document.getElementById( 'primary' ), context.store );
+	renderWithReduxStore( <MainPage />, document.getElementById( 'primary' ), context.store );
 };
 
 export default function() {
