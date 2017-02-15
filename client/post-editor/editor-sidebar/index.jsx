@@ -35,7 +35,8 @@ export default class EditorSidebar extends Component {
 		userUtils: PropTypes.object,
 		type: PropTypes.string,
 		showDrafts: PropTypes.bool,
-		onMoreInfoAboutEmailVerify: PropTypes.func
+		onMoreInfoAboutEmailVerify: PropTypes.func,
+		warnPublishDateChange: PropTypes.func
 	}
 
 	renderDraftsList() {
@@ -64,6 +65,7 @@ export default class EditorSidebar extends Component {
 					type={ this.props.type }
 				/>
 				<EditorGroundControl
+					warnPublishDateChange={ this.props.warnPublishDateChange }
 					hasContent={ this.props.hasContent }
 					isDirty={ this.props.isDirty }
 					isSaveBlocked={ this.props.isSaveBlocked }
