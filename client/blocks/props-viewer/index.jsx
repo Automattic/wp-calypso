@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { find } from 'lodash';
 import React, { PropTypes, PureComponent } from 'react';
 import Gridicon from 'gridicons';
 
@@ -20,7 +21,7 @@ const components = require( '../../../server/devdocs/proptypes-index.json' );
 export function findRealComponent( slug ) {
 	// remove the last character. As of right now, all plural display names are with just an 's'
 	const singular = slug.slice( 0, -1 );
-	return components.filter( ( component ) => {
+	return find( components, ( component ) => {
 		return ( slug === component.slug || singular === component.slug ) && component.includePath.indexOf( 'example' ) < 0;
 	} );
 }
