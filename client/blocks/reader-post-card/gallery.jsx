@@ -13,8 +13,7 @@ import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderPostCardExcerpt from './excerpt';
-
-const GALLERY_ITEM_THUMBNAIL_WIDTH = 420;
+import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
@@ -31,7 +30,7 @@ function getGalleryWorthyImages( post ) {
 const PostGallery = ( { post, children, isDiscover } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
 	const listItems = map( imagesToDisplay, ( image, index ) => {
-		const imageUrl = resizeImageUrl( image.src, { w: GALLERY_ITEM_THUMBNAIL_WIDTH } );
+		const imageUrl = resizeImageUrl( image.src, { w: READER_CONTENT_WIDTH / imagesToDisplay.length } );
 		const safeCssUrl = cssSafeUrl( imageUrl );
 		const imageStyle = {
 			backgroundImage: 'url(' + safeCssUrl + ')',
