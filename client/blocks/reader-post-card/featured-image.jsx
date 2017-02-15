@@ -8,6 +8,9 @@ import { noop } from 'lodash';
  * Internal Dependencies
  */
 import cssSafeUrl from 'lib/css-safe-url';
+import resizeImageUrl from 'lib/resize-image-url';
+
+const FEATURED_IMAGE_WIDTH = 250; // typical width of a featured image in the refresh
 
 const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 	if ( imageUri === undefined ) {
@@ -15,7 +18,7 @@ const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 	}
 
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
+		backgroundImage: 'url(' + cssSafeUrl( resizeImageUrl( imageUri, { w: FEATURED_IMAGE_WIDTH } ) ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center center'
