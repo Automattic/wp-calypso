@@ -91,7 +91,8 @@
 		"upgrades/premium-themes": false,
 		"upgrades/removal-survey": false,
 		"upgrades/precancellation-chat": false,
-		"upgrades/presale-chat": false
+		"upgrades/presale-chat": false,
+		"use-page-hashbang": true
 	},
 	"rtl": false,
 	"jetpack_min_version": "4.5",
