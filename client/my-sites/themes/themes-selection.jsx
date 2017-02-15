@@ -43,7 +43,6 @@ const ThemesSelection = React.createClass( {
 			PropTypes.number,
 			PropTypes.oneOf( [ 'wpcom' ] )
 		] ),
-		showUploadButton: PropTypes.bool,
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
 		isRequesting: PropTypes.bool,
@@ -139,20 +138,17 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { siteIdOrWpcom, query, listLabel, showUploadButton, themesCount } = this.props;
+		const { siteIdOrWpcom, query, listLabel, themesCount } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes
 					query={ query }
 					siteId={ siteIdOrWpcom } />
-				{ config.isEnabled( 'manage/themes/upload' ) &&
-					<ThemeUploadCard
-						label={ listLabel }
-						count={ themesCount }
-						href={ showUploadButton ? `/design/upload/${ this.props.siteSlug }` : null }
-					/>
-				}
+				<ThemeUploadCard
+					label={ listLabel }
+					count={ themesCount }
+				/>
 				<ThemesList themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
