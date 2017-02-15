@@ -14,7 +14,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import FollowersCount from 'blocks/followers-count';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import FreeToPaidNudge from './free-to-paid-nudge';
 
 const StatsNavigation = ( props ) => {
 	const { translate, section, slug } = props;
@@ -28,29 +27,26 @@ const StatsNavigation = ( props ) => {
 	};
 
 	return (
-		<div>
-			<FreeToPaidNudge />
-			<SectionNav selectedText={ sectionTitles[ section ] }>
-				<NavTabs label={ translate( 'Stats' ) }>
-					<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
-						{ sectionTitles.insights }
-					</NavItem>
-					<NavItem path={ '/stats/day' + siteFragment } selected={ section === 'day' }>
-						{ sectionTitles.day }
-					</NavItem>
-					<NavItem path={ '/stats/week' + siteFragment } selected={ section === 'week' }>
-						{ sectionTitles.week }
-					</NavItem>
-					<NavItem path={ '/stats/month' + siteFragment } selected={ section === 'month' }>
-						{ sectionTitles.month }
-					</NavItem>
-					<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
-						{ sectionTitles.year }
-					</NavItem>
-				</NavTabs>
-				<FollowersCount />
-			</SectionNav>
-		</div>
+		<SectionNav selectedText={ sectionTitles[ section ] }>
+			<NavTabs label={ translate( 'Stats' ) }>
+				<NavItem path={ '/stats/insights' + siteFragment } selected={ section === 'insights' }>
+					{ sectionTitles.insights }
+				</NavItem>
+				<NavItem path={ '/stats/day' + siteFragment } selected={ section === 'day' }>
+					{ sectionTitles.day }
+				</NavItem>
+				<NavItem path={ '/stats/week' + siteFragment } selected={ section === 'week' }>
+					{ sectionTitles.week }
+				</NavItem>
+				<NavItem path={ '/stats/month' + siteFragment } selected={ section === 'month' }>
+					{ sectionTitles.month }
+				</NavItem>
+				<NavItem path={ '/stats/year' + siteFragment } selected={ section === 'year' }>
+					{ sectionTitles.year }
+				</NavItem>
+			</NavTabs>
+			<FollowersCount />
+		</SectionNav>
 	);
 };
 
