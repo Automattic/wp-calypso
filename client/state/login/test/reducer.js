@@ -7,6 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
@@ -15,6 +18,7 @@ import {
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
+	isSubmittingVerificationCode,
 	requestError,
 	requestSuccess,
 	twoFactorAuth
@@ -74,6 +78,54 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = isRequesting( true, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( 'isSubmittingVerificationCode', () => {
+		it( 'should default to a false', () => {
+			const state = isSubmittingVerificationCode( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should set isSubmittingVerificationCode to true value if a request is initiated', () => {
+			const state = isSubmittingVerificationCode( undefined, {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should set isSubmittingVerificationCode to false value if a request was unsuccessful', () => {
+			const state = isSubmittingVerificationCode( undefined, {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should set isSubmittingVerificationCode to false value if a request was successful', () => {
+			const state = isSubmittingVerificationCode( undefined, {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should not persist state', () => {
+			const state = isSubmittingVerificationCode( true, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = isSubmittingVerificationCode( true, {
 				type: DESERIALIZE
 			} );
 
