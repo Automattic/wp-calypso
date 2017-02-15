@@ -11,6 +11,7 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
+import LayoutJetpack from 'layout/jetpack';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
@@ -27,24 +28,36 @@ export { setSection } from './shared.js';
 const user = userFactory();
 const sites = sitesFactory();
 const debug = debugFactory( 'calypso:controller' );
+const config = require( 'config' );
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
-	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() )
-			? <Layout primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary }
-				user={ user }
-				sites={ sites }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
-			/>
-			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
-		}
-	</ReduxProvider>
-);
+export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => {
+	if ( 'jetpack' === config( 'project' ) ) {
+		return (
+			<ReduxProvider store={ store }>
+				<LayoutJetpack primary={ primary }
+					secondary={ secondary }
+					tertiary={ tertiary } />
+			</ReduxProvider>
+		);
+	}
+	return (
+		<ReduxProvider store={ store }>
+			{ getCurrentUser( store.getState() )
+				? <Layout primary={ primary }
+					secondary={ secondary }
+					tertiary={ tertiary }
+					user={ user }
+					sites={ sites }
+					nuxWelcome={ nuxWelcome }
+					translatorInvitation={ translatorInvitation }
+				/>
+				: <LayoutLoggedOut primary={ primary }
+					secondary={ secondary }
+					tertiary={ tertiary } />
+			}
+		</ReduxProvider>
+	);
+}
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 

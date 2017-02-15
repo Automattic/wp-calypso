@@ -1,18 +1,18 @@
 const sections = [
 	{
-		name: 'page-a',
-		paths: [ '/jetpack-ui/writing' ],
+		name: 'writing',
+		paths: [ '/writing' ],
 		module: 'jetpack-ui',
 		group: 'jetpack',
-		isomorphic: true,
+		enableLoggedOut: true,
 		secondary: false
 	},
 	{
-		name: 'page-b',
-		paths: [ '/jetpack-ui/discussion' ],
+		name: 'discussion',
+		paths: [ '/discussion' ],
 		module: 'jetpack-ui',
 		group: 'jetpack',
-		isomorphic: true,
+		enableLoggedOut: true,
 		secondary: false
 	},
 ];

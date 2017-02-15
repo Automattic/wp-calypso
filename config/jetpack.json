@@ -5,6 +5,7 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"project": "jetpack",
+	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": false,
 	"features": {
 		"ad-tracking": false,
@@ -93,6 +94,7 @@
 		"upgrades/presale-chat": false
 	},
 	"rtl": false,
+	"jetpack_min_version": "4.5",
 	"mc_analytics_enabled": false,
 	"boom_analytics_enabled": false,
 	"google_analytics_enabled": false,
