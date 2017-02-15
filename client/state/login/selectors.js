@@ -23,6 +23,10 @@ export const getTwoFactorAuthNonce = ( state ) => {
 	return get( state, [ 'login', 'twoFactorAuth', 'twostep_nonce' ], null );
 };
 
+export const getVerificationCodeSubmissionError = ( state ) => {
+	return state.login.verificationCodeSubmissionError;
+};
+
 export const isTwoFactorEnabled = ( state ) => {
 	const twoFactorAuth = get( state, [ 'login', 'twoFactorAuth' ] );
 	if ( ! twoFactorAuth ) {
