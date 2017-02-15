@@ -54,7 +54,7 @@ const ingressChain = [
 ];
 
 const applyIngressChain = ( ingressData, nextLink ) =>
-	ingressData.nextAction !== null
+	ingressData.nextRequest !== null
 		? nextLink( ingressData )
 		: ingressData;
 
@@ -66,7 +66,7 @@ const applyEgressChain = ( egressData, nextLink ) =>
 export const processIngressChain = chain => ( originalRequest, store ) =>
 	chain
 		.reduce( applyIngressChain, { originalRequest, store, nextRequest: originalRequest } )
-		.nextAction;
+		.nextRequest;
 
 export const processEgressChain = chain => ( originalRequest, store, originalData, originalError ) =>
 	pick(
@@ -76,11 +76,11 @@ export const processEgressChain = chain => ( originalRequest, store, originalDat
 			originalData,
 			originalError,
 			nextData: originalData,
-			nextError: originalData,
+			nextError: originalError,
 			failures: compact( [ originalRequest.onFailure ] ),
 			successes: compact( [ originalRequest.onSuccess ] ),
 		} ),
-		[ 'failures', 'successes', 'shouldAbort' ],
+		[ 'failures', 'nextData', 'nextError', 'successes', 'shouldAbort' ],
 	);
 
 export const processIngress = processIngressChain( ingressChain );

@@ -33,7 +33,7 @@ export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
 const queueRequest = ( { dispatch }, rawAction, next ) => {
-	const { action } = processIngress( rawAction, dispatch );
+	const action = processIngress( rawAction, dispatch );
 
 	if ( null === action ) {
 		return next( action );
@@ -54,16 +54,22 @@ const queueRequest = ( { dispatch }, rawAction, next ) => {
 		{ path, formData },
 		query,
 		method === 'POST' && body,
-		( rawError, rawData ) => {
-			const { error, data, onFailure, onSuccess, shouldAbort } = processEgress( rawError, rawData, action, dispatch );
+		( error, data ) => {
+			const {
+				failures,
+				nextData,
+				nextError,
+				shouldAbort,
+				successes
+			} = processEgress( action, { dispatch }, data, error );
 
 			if ( true === shouldAbort ) {
 				return null;
 			}
 
-			return !! error
-				? onFailure.forEach( handler => dispatch( extendAction( handler, failureMeta( error ) ) ) )
-				: onSuccess.forEach( handler => dispatch( extendAction( handler, successMeta( data ) ) ) );
+			return !! nextError
+				? failures.forEach( handler => dispatch( extendAction( handler, failureMeta( nextError ) ) ) )
+				: successes.forEach( handler => dispatch( extendAction( handler, successMeta( nextData ) ) ) );
 		}
 	] ) );
 
