@@ -26,6 +26,6 @@ class Login2FA extends Component {
 	}
 }
 
-export default connect( null, {
-	waitingAppVerification: true
-} )( localize( Login2FA ) );
+export default connect( () => ( {
+	waitingAppVerification: false
+} ) )( localize( Login2FA ) );
