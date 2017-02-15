@@ -39,11 +39,7 @@ class PropsViewer extends PureComponent {
 		 * The element to display as an example of this component
 		 */
 		example: PropTypes.element.isRequired
-	}
-
-	constructor( props ) {
-		super( props );
-	}
+	};
 
 	/**
 	 * Set the state of this component to the first matching slug
