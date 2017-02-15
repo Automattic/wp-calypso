@@ -36,6 +36,7 @@ import {
 	isThemePurchased,
 	isPremiumSquaredTheme,
 	isPremiumThemeAvailable,
+	getWpcomParentThemeId,
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
@@ -92,6 +93,11 @@ const zuki = {
 	stylesheet: 'premium/zuki',
 	demo_uri: 'https:/zukidemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/'
+};
+
+const sidekick = {
+	id: 'sidekick',
+	template: 'superhero',
 };
 
 describe( 'themes selectors', () => {
@@ -2228,6 +2234,49 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isAvailable ).to.be.true;
+		} );
+	} );
+
+	describe( 'getWpcomParentThemeId', () => {
+		it( 'should return null for non-existent theme', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {}
+					}
+				}, 'blah'
+			);
+			expect( parentId ).to.be.null;
+		} );
+
+		it( 'should return null for theme with no parent', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				}, 'mood'
+			);
+			expect( parentId ).to.be.null;
+		} );
+
+		it( 'should return parent id', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { sidekick }
+							} )
+						}
+					}
+				}, 'sidekick'
+			);
+			expect( parentId ).to.equal( 'superhero' );
 		} );
 	} );
 } );

@@ -870,6 +870,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installTheme', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager()
+				}
+			}
+		} );
+
 		const successResponse = {
 			id: 'karuna-wpcom',
 			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
@@ -915,7 +923,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch install theme request action when triggered', () => {
-			installTheme( 'karuna-wpcom', 2211667 )( spy );
+			installTheme( 'karuna-wpcom', 2211667 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL,
@@ -925,7 +933,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installTheme( 'karuna-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'karuna-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
@@ -935,7 +943,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installTheme( 'typist-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
@@ -946,7 +954,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installTheme( 'pinboard-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,

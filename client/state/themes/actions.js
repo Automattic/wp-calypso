@@ -51,7 +51,13 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
+import {
+	getTheme,
+	getActiveTheme,
+	getLastThemeQuery,
+	getThemeCustomizeUrl,
+	getWpcomParentThemeId,
+} from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	isThemeMatchingQuery,
@@ -415,7 +421,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * @return {Function}         Action thunk
  */
 export function installTheme( themeId, siteId ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: THEME_INSTALL,
 			siteId,
@@ -423,7 +429,13 @@ export function installTheme( themeId, siteId ) {
 		} );
 
 		if ( isThemeFromWpcom( themeId ) ) {
-			dispatch( installWpcomParentTheme( themeId, siteId ) );
+			const parentThemeId = getWpcomParentThemeId(
+				getState(),
+				themeId.replace( '-wpcom', '' )
+			);
+			if ( parentThemeId ) {
+				dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+			}
 		}
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
@@ -443,25 +455,6 @@ export function installTheme( themeId, siteId ) {
 					error
 				} );
 			} );
-	};
-}
-
-/**
- * Returns an action thunk that will install a wpcom
- * parent theme if the supplied theme requires one.
- *
- * @param {string} themeId child theme ID
- * @param {number} siteId site ID
- * @return {function} Action thunk
- */
-function installWpcomParentTheme( themeId, siteId ) {
-	return ( dispatch, getState ) => {
-		const theme = getTheme( getState(), 'wpcom', themeId.replace( '-wpcom', '' ) );
-		const parentThemeId = theme && theme.template;
-
-		if ( parentThemeId ) {
-			dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
-		}
 	};
 }
 
