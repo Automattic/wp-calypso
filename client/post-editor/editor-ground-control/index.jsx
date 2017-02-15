@@ -126,7 +126,7 @@ export default React.createClass( {
 		const dateValue = date ? date.format() : null;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( { date: dateValue } );
-		this.showDateWarning( dateValue );
+		this.checkForDateChange( dateValue );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -136,7 +136,7 @@ export default React.createClass( {
 		} );
 	},
 
-	showDateWarning( date ) {
+	checkForDateChange( date ) {
 		const { savedPost, warnPublishDateChange } = this.props;
 
 		if ( ! savedPost ) {
