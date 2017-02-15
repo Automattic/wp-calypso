@@ -13,6 +13,7 @@ import {
 	getTwoFactorAuthId,
 	getTwoFactorAuthNonce,
 	isTwoFactorEnabled,
+	getVerificationCodeSubmissionError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -132,13 +133,13 @@ describe( 'selectors', () => {
 
 	describe( 'isTwoFactorEnabled()', () => {
 		it( 'should return null if there is no two factor information yet', () => {
-			const id = isTwoFactorEnabled( undefined );
+			const twoFactorEnabled = isTwoFactorEnabled( undefined );
 
-			expect( id ).to.be.null;
+			expect( twoFactorEnabled ).to.be.null;
 		} );
 
 		it( 'should return true if the request was successful and two-factor auth is enabled', () => {
-			const id = isTwoFactorEnabled( {
+			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
 						twostep_id: 123456,
@@ -148,11 +149,11 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( id ).to.be.true;
+			expect( twoFactorEnabled ).to.be.true;
 		} );
 
 		it( 'should return false if the request was successful and two-factor auth is not', () => {
-			const id = isTwoFactorEnabled( {
+			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
 						twostep_id: '',
@@ -162,11 +163,11 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( id ).to.be.false;
+			expect( twoFactorEnabled ).to.be.false;
 		} );
 
 		it( 'should return false if the request was unsuccessful', () => {
-			const id = isTwoFactorEnabled( {
+			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
 						twostep_id: '',
@@ -176,7 +177,25 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( id ).to.be.false;
+			expect( twoFactorEnabled ).to.be.false;
+		} );
+	} );
+
+	describe( 'getVerificationCodeSubmissionError()', () => {
+		it( 'should return null if there is no error yet', () => {
+			const verificationCode = getVerificationCodeSubmissionError( undefined );
+
+			expect( verificationCode ).to.be.null;
+		} );
+
+		it( 'should return the error if there is such', () => {
+			const verificationCode = getVerificationCodeSubmissionError( {
+				login: {
+					verificationCodeSubmissionError: 'Incorrect verification code.'
+				}
+			} );
+
+			expect( verificationCode ).to.eql( 'Incorrect verification code.' );
 		} );
 	} );
 } );

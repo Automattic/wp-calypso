@@ -84,5 +84,5 @@ export const isTwoFactorEnabled = ( state ) => {
  * @return {?String}         The last verification code request error, null if none.
  */
 export const getVerificationCodeSubmissionError = ( state ) => {
-	return get( state, [ 'login', 'verificationCodeSubmissionError' ] );
+	return get( state, [ 'login', 'verificationCodeSubmissionError' ], null );
 };
