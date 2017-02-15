@@ -98,7 +98,9 @@ export const List = React.createClass( {
 				<Main>
 					<SidebarNavigation />
 					<DomainOnly
-						domainName={ this.props.selectedSite.domain } />
+						domainName={ this.props.selectedSite.domain }
+						siteId={ this.props.selectedSite.ID }
+					/>
 				</Main>
 			);
 		}
