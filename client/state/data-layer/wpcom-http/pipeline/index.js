@@ -53,24 +53,24 @@ const ingressChain = [
 	removeDuplicateGets,
 ];
 
-const applyIngressChain = ( ingressData, nextLink ) =>
+const applyIngressProcessor = ( ingressData, nextProcessor ) =>
 	ingressData.nextRequest !== null
-		? nextLink( ingressData )
+		? nextProcessor( ingressData )
 		: ingressData;
 
-const applyEgressChain = ( egressData, nextLink ) =>
+const applyEgressProcessor = ( egressData, nextProcessor ) =>
 	egressData.shouldAbort !== true
-		? nextLink( egressData )
+		? nextProcessor( egressData )
 		: egressData;
 
 export const processIngressChain = chain => ( originalRequest, store ) =>
 	chain
-		.reduce( applyIngressChain, { originalRequest, store, nextRequest: originalRequest } )
+		.reduce( applyIngressProcessor, { originalRequest, store, nextRequest: originalRequest } )
 		.nextRequest;
 
 export const processEgressChain = chain => ( originalRequest, store, originalData, originalError ) =>
 	pick(
-		chain.reduce( applyEgressChain, {
+		chain.reduce( applyEgressProcessor, {
 			originalRequest,
 			store,
 			originalData,
