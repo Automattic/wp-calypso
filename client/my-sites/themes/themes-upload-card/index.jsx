@@ -10,28 +10,23 @@ import classNames from 'classnames';
 import SectionHeader from 'components/section-header';
 import { localize } from 'i18n-calypso';
 
-class ThemeUploadCard extends React.Component {
+const ThemeUploadCard = ( { label, count, translate } ) => {
+	const uploadClassName = classNames( 'themes-upload-card', {
+		'is-placeholder': count === null,
+	} );
 
-	static propTypes = {
-		label: PropTypes.string,
-		count: PropTypes.number,
-	};
+	return (
+		<div className={ uploadClassName }>
+			<SectionHeader
+				label={ label || translate( 'WordPress.com themes' ) }
+				count={ count } />
+		</div>
+	);
+};
 
-	render() {
-		const { translate } = this.props;
-
-		const uploadClassName = classNames( 'themes-upload-card', {
-			'is-placeholder': this.props.count === null,
-		} );
-
-		return (
-			<div className={ uploadClassName }>
-				<SectionHeader
-					label={ this.props.label || translate( 'WordPress.com themes' ) }
-					count={ this.props.count } />
-			</div>
-		);
-	}
-}
+ThemeUploadCard.propTypes = {
+	label: PropTypes.string,
+	count: PropTypes.number
+};
 
 export default localize( ThemeUploadCard );
