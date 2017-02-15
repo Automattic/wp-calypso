@@ -153,6 +153,10 @@ Adds a "Character Map" TinyMCE button. Upon click, renders a dialog listing a se
 
 Adds a "Help" TinyMCE button. Upon click, renders a dialog detailing supported keyboard shortcuts.
 
+### `wpcom-track-paste`
+
+Tracks paste events in the editor.
+
 ### `wpcom-view`
 
 A heavily adapted version of the [WordPress Core `wpview` TinyMCE plugin](https://github.com/WordPress/WordPress/blob/4.3.1/wp-includes/js/tinymce/plugins/wpview/plugin.js). While much of the behavior is the same as the plugin from which it was based upon, the rendering of the views leverages React components.
