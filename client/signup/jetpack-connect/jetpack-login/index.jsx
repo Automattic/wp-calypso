@@ -23,7 +23,7 @@ const JetpackLogin = ( { translate } ) => {
 					<Login
 						title={ translate( 'Sign in to connect to WordPress.com' ) }
 						legalText={ translate( 'By connecting, you agree to share details between WordPress.com and ' ) }
-						redirectLocation={ '/jetpack/login' }
+						redirectLocation={ '/' }
 					/>
 				</div>
 			</div>

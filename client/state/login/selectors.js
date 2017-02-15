@@ -14,16 +14,6 @@ export const isRequestingLogin = ( state ) => {
 };
 
 /**
- * Whether the last login request was successful.
- *
- * @param  {Object}   state  Global state tree
- * @return {Boolean}         True if the login request was successful, false otherwise.
- */
-export const isLoginSuccessful = ( state ) => {
-	return get( state, [ 'login', 'requestSuccess' ], false );
-};
-
-/**
  * Retrieve the last login request error.
  * Returns null if there was no error at the last request.
  *
@@ -85,4 +75,16 @@ export const isTwoFactorEnabled = ( state ) => {
  */
 export const getVerificationCodeSubmissionError = ( state ) => {
 	return get( state, [ 'login', 'verificationCodeSubmissionError' ], null );
+};
+
+/**
+ * Whether the last login request was successful.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         True if the login request was successful, false otherwise.
+ */
+export const isLoginSuccessful = ( state ) => {
+	return isTwoFactorEnabled( state )
+		? get( state, [ 'login', 'verificationCodeSubmissionSuccess' ], false )
+		: get( state, [ 'login', 'requestSuccess' ], false );
 };

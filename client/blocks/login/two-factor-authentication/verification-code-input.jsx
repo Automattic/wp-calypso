@@ -18,9 +18,13 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
-import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
+import { loginUserWithTwoFactorVerificationCode, internalRedirect } from 'state/login/actions';
 import { getVerificationCodeSubmissionError } from 'state/login/selectors';
-import { getTwoFactorAuthId, getTwoFactorAuthNonce } from 'state/login/selectors';
+import {
+	getTwoFactorAuthId,
+	getTwoFactorAuthNonce,
+	isLoginSuccessful
+} from 'state/login/selectors';
 
 class VerificationCodeInput extends Component {
 	state = {
@@ -39,6 +43,12 @@ class VerificationCodeInput extends Component {
 		this.setState( {
 			error: newProps.error
 		} );
+	}
+
+	componentDidUpdate() {
+		if ( this.props.isLoginSuccessful ) {
+			this.props.internalRedirect( this.props.redirectLocation || '/' );
+		}
 	}
 
 	onChangeField = ( event ) => {
@@ -130,8 +140,10 @@ export default connect(
 		return {
 			twostep_id: getTwoFactorAuthId( state ),
 			twostep_nonce: getTwoFactorAuthNonce( state ),
-			error: getVerificationCodeSubmissionError( state )
+			error: getVerificationCodeSubmissionError( state ),
+			isLoginSuccessful: isLoginSuccessful( state )
 		};
 	}, {
-		loginUserWithTwoFactorVerificationCode
+		loginUserWithTwoFactorVerificationCode,
+		internalRedirect
 	} )( localize( VerificationCodeInput ) );

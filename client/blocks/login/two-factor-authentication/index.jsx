@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 
 class Login2FA extends Component {
 	render() {
-		const { waitingAppVerification } = this.props;
+		const { waitingAppVerification, redirectLocation } = this.props;
 		return (
 			<div className="login">
 				{
 					waitingAppVerification
-					? ( <WaitingTwoFactorNotificationApproval /> )
-					: ( <VerificationCodeInput /> )
+					? ( <WaitingTwoFactorNotificationApproval redirectLocation={ redirectLocation } /> )
+					: ( <VerificationCodeInput redirectLocation={ redirectLocation } /> )
 				}
 			</div>
 		);

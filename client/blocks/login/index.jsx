@@ -18,7 +18,7 @@ const Login = ( {
 	twoFactorEnabled
 } ) => {
 	return twoFactorEnabled
-		? ( <TwoFactorAuthentication /> )
+		? ( <TwoFactorAuthentication redirectLocation={ redirectLocation } /> )
 		: ( <LoginForm
 			title={ title }
 			legalText={ legalText }
