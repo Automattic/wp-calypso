@@ -46,6 +46,7 @@ import DocumentHead from 'components/data/document-head';
 import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
+import { disableCart } from 'lib/upgrades/actions';
 
 /**
  * Constants
@@ -122,6 +123,11 @@ const Signup = React.createClass( {
 			ref: this.props.refParameter
 		} );
 		recordSignupStart();
+
+		// Signup updates the cart through `SignupCart`. To prevent
+		// synchronization issues and unnecessary polling, the cart is disabled
+		// here.
+		disableCart();
 
 		this.submitQueryDependencies();
 
