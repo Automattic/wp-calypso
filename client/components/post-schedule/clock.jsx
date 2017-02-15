@@ -77,9 +77,9 @@ class PostScheduleClock extends Component {
 			minuteRef
 		} = this.refs;
 
-		const hour = parseAndValidateNumber( hourReference.value );
-		const minute = parseAndValidateNumber( minuteRef.value );
 		const modifiers = {};
+		const hour = parseAndValidateNumber( hourReference.value );
+		let minute = parseAndValidateNumber( minuteRef.value );
 
 		if ( false !== hour && hour < 24 ) {
 			modifiers.hour = Number( hour );
@@ -89,12 +89,16 @@ class PostScheduleClock extends Component {
 			'undefined' === typeof modifiers.hour ||
 			( 'PM' === amPmReference.value && modifiers.hour > 12 )
 		) ) {
-			modifiers.hour = Number( hourReference.value.toString().slice( -1 ) );
+			modifiers.hour = Number( hourReference.value.substr( -1 ) );
 		}
 
 		modifiers.hour = this.maybeConvertHour( modifiers.hour );
 
-		if ( false !== minute && minute <= 59 ) {
+		if ( false !== minute ) {
+			if ( minute > 60 ) {
+				minute = minuteRef.value.substr( -1 );
+			}
+
 			modifiers.minute = Number( minute );
 		}
 
