@@ -114,7 +114,7 @@ export class RecommendedPosts extends React.PureComponent {
 RecommendedPosts.propTypes = {
 	index: PropTypes.number,
 	translate: PropTypes.func,
-	recommendations: PropTypes.object,
+	recommendations: PropTypes.array,
 };
 
 export default localize( RecommendedPosts );
