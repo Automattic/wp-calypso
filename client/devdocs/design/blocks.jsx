@@ -51,6 +51,7 @@ import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
+import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
@@ -122,6 +123,7 @@ export default React.createClass( {
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
+					<ReaderCombinedCard />
 					<PlanPrice />
 					<PlanThankYouCard />
 					<DismissibleCard />
