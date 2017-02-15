@@ -29,8 +29,6 @@ export function findRealComponent( slug ) {
  * Renders a table of prop-types for auto-documentation
  */
 class PropsViewer extends PureComponent {
-	static displayName = 'PropsViewer';
-
 	static propTypes = {
 		/**
 		 * The slug of the component being displayed
