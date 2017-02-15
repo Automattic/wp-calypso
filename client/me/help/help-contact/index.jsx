@@ -45,6 +45,7 @@ const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 let savedContactForm = null;
 
+const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
 const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
@@ -162,6 +163,12 @@ const HelpContact = React.createClass( {
 		this.sendMessageToOperator( message );
 
 		this.clearSavedContactForm();
+	},
+
+	submitDirectlyQuestion: function( contactForm ) {
+		// TODO: open Directly form here
+
+		return contactForm; // TODO: Remove this line once functionality is implemented
 	},
 
 	submitKayakoTicket: function( contactForm ) {
@@ -420,6 +427,11 @@ const HelpContact = React.createClass( {
 		return isHappychatAvailable && olark.isUserEligible;
 	},
 
+	shouldUseDirectly: function() {
+		const isEn = this.props.currentUserLocale === 'en';
+		return config.isEnabled( 'help/directly' ) && isEn;
+	},
+
 	canShowChatbox: function() {
 		const { olark, isChatEnded } = this.state;
 		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
@@ -439,6 +451,10 @@ const HelpContact = React.createClass( {
 
 		if ( olark.details.isConversing || ticketSupportEligible ) {
 			return SUPPORT_TICKET;
+		}
+
+		if ( this.shouldUseDirectly() ) {
+			return SUPPORT_DIRECTLY;
 		}
 
 		return SUPPORT_FORUM;
@@ -478,6 +494,27 @@ const HelpContact = React.createClass( {
 					showSubjectField: true,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
+					showSiteField: hasMoreThanOneSite,
+				};
+
+			case SUPPORT_DIRECTLY:
+				return {
+					onSubmit: this.submitDirectlyQuestion,
+					buttonLabel: translate( 'Ask an Expert' ),
+					formDescription: translate(
+						'Chat with an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
+						'These are other users, like yourself, that have been selected ' +
+						'because of their knowledge to help answer your questions. ' +
+						'{{strong}}Please do not{{/strong}} provide financial or ' +
+						'contact information when submitting this form.',
+						{
+							components: {
+								strong: <strong />
+							}
+						} ),
+					showSubjectField: false,
+					showHowCanWeHelpField: false,
+					showHowYouFeelField: false,
 					showSiteField: hasMoreThanOneSite,
 				};
 

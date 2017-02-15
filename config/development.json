@@ -46,6 +46,7 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
 		"help/courses": true,
+		"help/directly": true,
 		"jetpack/connect": true,
 		"jetpack/invites": true,
 		"jetpack/personalPlan": true,
