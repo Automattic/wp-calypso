@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,8 +12,9 @@ import MainWrapper from '../main-wrapper';
 import Login from 'blocks/login';
 import TwoFactorAuthentication from 'blocks/login/two-factor-authentication';
 import { localize } from 'i18n-calypso';
+import { isTwoFactorEnabled } from 'state/login/selectors';
 
-const JetpackLogin = ( { translate, inCodeVerificationStep } ) => {
+const JetpackLogin = ( { twoFactorEnabled, translate } ) => {
 	return (
 		<MainWrapper>
 			<div className="jetpack-connect__login">
@@ -22,7 +24,7 @@ const JetpackLogin = ( { translate, inCodeVerificationStep } ) => {
 				</div>
 				<div className="jetpack-connect__login-container">
 					{
-						inCodeVerificationStep
+						twoFactorEnabled
 						? ( <TwoFactorAuthentication /> )
 						: ( <Login
 							title={ translate( 'Sign in to connect to WordPress.com' ) }
@@ -38,4 +40,8 @@ const JetpackLogin = ( { translate, inCodeVerificationStep } ) => {
 	);
 };
 
-export default localize( JetpackLogin );
+export default connect(
+	( state ) => ( {
+		twoFactorEnabled: isTwoFactorEnabled( state )
+	} ),
+)( localize( JetpackLogin ) );
