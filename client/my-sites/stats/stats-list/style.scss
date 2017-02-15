@@ -190,12 +190,10 @@
 	}
 
 	.icon {
-		$icon-size: 24px;
-
 		position: relative;
 		display: inline-block;
-		width: $icon-size;
-		height: $icon-size;
+		width: 24px;
+		height: 24px;
 		overflow: hidden;
 		vertical-align: middle;
 		min-width: 24px;
@@ -205,6 +203,14 @@
 			display: block;
 			background: $white;
 			position: relative;
+			width: 20px;
+			height: 20px;
+
+			&.is-flag {
+				width: 24px;
+				height: 18px;
+				padding-top: 2px;
+			}
 		}
 
 		// Hide for user avatars
