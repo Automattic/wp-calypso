@@ -9,3 +9,12 @@ export const isLoginSuccessful = ( state ) => {
 export const getError = ( state ) => {
 	return state.login.requestError;
 };
+
+export const isTwoFactorEnabled = ( state ) => {
+	return (
+		state.twoFactorAuth &&
+		state.twoFactorAuth.result &&
+		state.twoFactorAuth.twostep_id !== '' &&
+		state.twoFactorAuth.twostep_nonce !== ''
+	);
+};
