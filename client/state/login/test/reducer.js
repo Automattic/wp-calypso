@@ -16,7 +16,8 @@ import {
 import reducer, {
 	isRequesting,
 	requestError,
-	requestSuccess
+	requestSuccess,
+	twoFactorAuth
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -25,6 +26,7 @@ describe( 'reducer', () => {
 			'isRequesting',
 			'requestError',
 			'requestSuccess',
+			'twoFactorAuth',
 		] );
 	} );
 
@@ -166,6 +168,60 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requestSuccess( true, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+	} );
+
+	describe( 'twoFactorAuth', () => {
+		it( 'should default to a null', () => {
+			const state = twoFactorAuth( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set twoFactorAuth to null value if a request is initiated', () => {
+			const state = twoFactorAuth( undefined, {
+				type: LOGIN_REQUEST,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set twoFactorAuth to the response value if a request was successful', () => {
+			const data = {
+				result: true,
+				twostep_id: 12345678,
+				twostep_nonce: 'abcdefgh1234',
+			};
+			const state = twoFactorAuth( null, {
+				type: LOGIN_REQUEST_SUCCESS,
+				data
+			} );
+
+			expect( state ).to.eql( data );
+		} );
+
+		it( 'should set twoFactorAuth to null value if a request is unsuccessful', () => {
+			const state = twoFactorAuth( null, {
+				type: LOGIN_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not persist state', () => {
+			const state = twoFactorAuth( true, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = twoFactorAuth( true, {
 				type: DESERIALIZE
 			} );
 
