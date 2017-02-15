@@ -45,7 +45,7 @@ function SignupFlowController( options ) {
 	this._onComplete = options.onComplete;
 	this._processingSteps = {};
 
-	this._boundProcess = (...args) => defer( this._process.bind( this ), args );
+	this._boundProcess = this._process.bind( this );
 
 	this._assertFlowHasValidDependencies();
 
@@ -205,11 +205,12 @@ assign( SignupFlowController.prototype, {
 			SignupActions.processSignupStep( step );
 
 			const apiFunction = steps[ step.stepName ].apiRequestFunction.bind( this );
-
-			apiFunction( ( errors, providedDependencies ) => {
+			const apiFunctionDoneCallback = ( errors, providedDependencies ) => {
 				this._processingSteps[ step.stepName ] = false;
 				SignupActions.processedSignupStep( step, errors, providedDependencies );
-			}, dependenciesFound, step );
+			};
+
+			defer( apiFunction, apiFunctionDoneCallback, dependenciesFound, step );
 		}
 	},
 
