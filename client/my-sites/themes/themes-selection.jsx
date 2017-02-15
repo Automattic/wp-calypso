@@ -180,7 +180,7 @@ const ConnectedThemesSelection = connect(
 			page,
 			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
-			number: 20
+			number: isJetpack && ! ( queryWpcom === true ) ? 2000 : 20
 		};
 
 		return {
