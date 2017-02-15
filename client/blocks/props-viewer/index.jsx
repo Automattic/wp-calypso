@@ -2,12 +2,12 @@
  * External Dependencies
  */
 import React, { PropTypes, PureComponent } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 
 // todo: move this file!
 const components = require( '../../../server/devdocs/proptypes-index.json' );
