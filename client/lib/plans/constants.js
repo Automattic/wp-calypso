@@ -165,7 +165,7 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			FEATURE_REPUBLICIZE
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
@@ -202,13 +202,13 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
-			FEATURE_REPUBLICIZE
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
