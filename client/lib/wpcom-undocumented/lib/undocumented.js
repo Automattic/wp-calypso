@@ -93,6 +93,27 @@ Undocumented.prototype.login = function( username_or_email, password, fn ) {
 };
 
 /*
+ * Attempt to login the user into WordPress after a verification code is passed.
+ *
+ * @param {Number} [twostep_id]
+ * @param {string} [twostep_code]
+ * @param {string} [nonce]
+ * @param {Function} fn
+ * @api public
+ */
+Undocumented.prototype.loginWithTwoFactorVerificationCode = function( twostep_id, twostep_code, twostep_nonce, remember, fn ) {
+	return this.wpcom.req.post( {
+		path: '/login/two-step/',
+		body: {
+			twostep_id,
+			twostep_code,
+			twostep_nonce,
+			remember
+		},
+	}, fn );
+};
+
+/*
  * Retrieve Jetpack Jumpstart status for a site with id siteid.
  *
  * @param {int}      [siteId]
