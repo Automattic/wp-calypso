@@ -63,6 +63,7 @@ export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
+export const FEATURE_REPUBLICIZE = 'republicize';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -163,7 +164,8 @@ export const PLANS_LIST = {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_REPUBLICIZE
 		],
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
@@ -205,7 +207,8 @@ export const PLANS_LIST = {
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING
+			FEATURE_NO_BRANDING,
+			FEATURE_REPUBLICIZE
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
@@ -621,7 +624,13 @@ export const FEATURES_LIST = {
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
-
+	[ FEATURE_REPUBLICIZE ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => i18n.translate( 'Social sharing menu' ),
+		getDescription: () => i18n.translate(
+			'Share any post on connected social media accounts'
+		)
+	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,
 		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
@@ -937,7 +946,6 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
-
 };
 
 export const getPlanObject = planName => {
