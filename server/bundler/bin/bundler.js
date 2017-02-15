@@ -20,8 +20,7 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
 /**
  * Variables
  */
-var _children = [],
-	start = new Date().getTime(),
+var start = new Date().getTime(),
 	CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	bundleEnv = config( 'env' ),
 	outputOptions;
@@ -45,8 +44,6 @@ function minify( files ) {
 		}
 
 		console.log( '  minifying ' + file );
-
-		const startFile = Date.now();
 
 		child = cp.spawn(
 			path.join( 'node_modules', '.bin', 'uglifyjs' ),
