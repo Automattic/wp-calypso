@@ -10,9 +10,9 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
-	LOGIN_2FA_VERIFICATION_CODE_REQUEST,
-	LOGIN_2FA_VERIFICATION_CODE_REQUEST_FAILURE,
-	LOGIN_2FA_VERIFICATION_CODE_REQUEST_SUCCESS,
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { loginUser } from '../actions';
 import { loginUserWithTwoFactorVerificationCode } from '../actions';
@@ -118,7 +118,7 @@ describe( 'actions', () => {
 				loginUserWithTwoFactorVerificationCode( twostep_id, twostep_code, twostep_nonce, remember_me )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
-					type: LOGIN_2FA_VERIFICATION_CODE_REQUEST,
+					type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
 					twostep_id,
 					twostep_code,
 					twostep_nonce,
@@ -129,7 +129,7 @@ describe( 'actions', () => {
 			it( 'should return a verification-code-based login success action when request successfully completes', () => {
 				return loginUserWithTwoFactorVerificationCode( twostep_id, twostep_code, twostep_nonce, remember_me )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: LOGIN_2FA_VERIFICATION_CODE_REQUEST_SUCCESS,
+						type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
 						twostep_id,
 						twostep_code,
 						twostep_nonce,
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 			it( 'should return a verification-code-based login failure action when an error occurs', () => {
 				return loginUserWithTwoFactorVerificationCode( twostep_id, twostep_code, twostep_nonce, remember_me )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
-						type: LOGIN_2FA_VERIFICATION_CODE_REQUEST_FAILURE,
+						type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
 						twostep_id,
 						twostep_code,
 						twostep_nonce,
