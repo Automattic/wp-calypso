@@ -21,7 +21,7 @@ import {
 	getError
 } from 'state/login/selectors';
 
-class Login extends Component {
+export class Login extends Component {
 	static defaultProps = {
 		title: '',
 		buttonText: '',
