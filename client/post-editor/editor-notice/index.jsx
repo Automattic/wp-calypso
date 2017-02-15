@@ -56,6 +56,8 @@ export class EditorNotice extends Component {
 		const { translate, type, typeObject, site } = this.props;
 
 		switch ( key ) {
+			case 'warnPublishDateChange':
+				return translate( 'Are you sure about that? If you change the date, existing links to your post will stop working.' );
 			case 'publishFailure':
 				if ( 'page' === type ) {
 					return translate( 'Publishing of page failed.' );
