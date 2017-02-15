@@ -62,7 +62,8 @@ export default React.createClass( {
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
 							intervalType={ this.props.intervalType }
-							hideFreePlan={ this.props.hideFreePlan } />
+							hideFreePlan={ this.props.hideFreePlan }
+							displayJetpackPlans={ true } />
 					</div>
 				</div>
 			</Main>
