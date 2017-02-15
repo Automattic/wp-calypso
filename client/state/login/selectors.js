@@ -4,15 +4,15 @@
 import { get } from 'lodash';
 
 export const isRequestingLogin = ( state ) => {
-	return state.login.isRequesting;
+	return get( state, [ 'login', 'isRequesting' ], false );
 };
 
 export const isLoginSuccessful = ( state ) => {
-	return !! state.login.requestSuccess;
+	return get( state, [ 'login', 'requestSuccess' ], false );
 };
 
 export const getError = ( state ) => {
-	return state.login.requestError;
+	return get( state, [ 'login', 'requestError' ], null );
 };
 
 export const getTwoFactorAuthId = ( state ) => {
@@ -24,10 +24,14 @@ export const getTwoFactorAuthNonce = ( state ) => {
 };
 
 export const isTwoFactorEnabled = ( state ) => {
+	const twoFactorAuth = get( state, [ 'login', 'twoFactorAuth' ] );
+	if ( ! twoFactorAuth ) {
+		return null;
+	}
+
 	return (
-		state.login.twoFactorAuth &&
-		state.login.twoFactorAuth.result &&
-		state.login.twoFactorAuth.twostep_id !== '' &&
-		state.login.twoFactorAuth.twostep_nonce !== ''
+		twoFactorAuth.result &&
+		twoFactorAuth.twostep_id !== '' &&
+		twoFactorAuth.twostep_nonce !== ''
 	);
 };
