@@ -178,7 +178,7 @@ class PropsViewer extends PureComponent {
 							</tr>
 							</thead>
 							<tbody>
-							{ this.rows( component ) }
+								{ this.rows( component ) }
 							</tbody>
 						</table>
 					</div>
