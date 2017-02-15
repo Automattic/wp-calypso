@@ -50,12 +50,38 @@ export class LoginForm extends Component {
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password );
 	};
 
-	renderNotices = () => {
+	renderNotices() {
 		if ( this.props.loginError ) {
 			return (
 				<Notice status="is-error" text={ this.props.loginError } />
 			);
 		}
+	}
+
+	renderTitle() {
+		const title = this.props.title;
+		if ( ! title ) {
+			return null;
+		}
+
+		return (
+			<div className="login__form-header">
+				<h1 className="login__form-header-title">{ title }</h1>
+			</div>
+		);
+	}
+
+	renderLegalText() {
+		const legalText = this.props.legalText;
+		if ( ! legalText ) {
+			return null;
+		}
+
+		return (
+			<div className="login__form-action-legal">
+				{ legalText }
+			</div>
+		);
 	}
 
 	render() {
@@ -66,15 +92,13 @@ export class LoginForm extends Component {
 		}
 
 		return (
-			<div className="login">
+			<div className="login__container">
 
 				{ this.renderNotices() }
 
 				<form onSubmit={ this.onSubmitForm }>
 					<Card className="login__form">
-						<div className="login__form-header">
-							<div className="login__form-header-title">{ this.props.title }</div>
-						</div>
+						{ this.renderTitle() }
 						{ this.props.children }
 						<div className="login__form-userdata">
 							<label className="login__form-userdata-username">
@@ -99,9 +123,7 @@ export class LoginForm extends Component {
 						</div>
 					</Card>
 					<Card className="login__form-action">
-						<div className="login__form-action-legal">
-							{ this.props.legalText }
-						</div>
+						{ this.renderLegalText() }
 						<FormsButton primary { ...isDisabled }>{ buttonText }</FormsButton>
 					</Card>
 				</form>
