@@ -4,16 +4,16 @@
 import {
 	filter,
 	find,
-	flow,
 	forEach,
 	map,
 	pull,
+	take,
 } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { thumbIsLikelyImage } from './utils';
+import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -43,7 +43,12 @@ function promiseForImage( image ) {
 	} );
 }
 
-const promiseForURL = flow( imageForURL, promiseForImage );
+const promiseForURL = function( urlOrPromise ) {
+	if ( urlOrPromise instanceof Promise ) {
+		return urlOrPromise;
+	}
+	return promiseForImage( imageForURL( urlOrPromise ) );
+};
 
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
@@ -81,7 +86,17 @@ export default function waitForImagesToLoad( post ) {
 			imagesToCheck.push( post.featured_image );
 		}
 
+		const knownImages = {};
+
 		forEach( post.content_images, function( image ) {
+			const knownDimensions = deduceImageWidthAndHeight( image );
+			if ( knownDimensions ) {
+				knownImages[ image.src ] = {
+					src: image.src,
+					naturalWidth: knownDimensions.width,
+					naturalHeight: knownDimensions.height
+				};
+			}
 			imagesToCheck.push( image.src );
 		} );
 
@@ -90,10 +105,16 @@ export default function waitForImagesToLoad( post ) {
 			return;
 		}
 
-		// convert to image objects to start the load process
-		let promises = map( imagesToCheck, promiseForURL );
-
 		const imagesLoaded = {};
+
+		// convert to image objects to start the load process
+		// only check the first 5 images
+		let promises = map( take( imagesToCheck, 5 ), ( imageUrl ) => {
+			if ( imageUrl in knownImages ) {
+				return Promise.resolve( knownImages[ imageUrl ] );
+			}
+			return promiseForURL( imageUrl );
+		} );
 
 		forEach( promises, promise => {
 			promise.then( image => {
