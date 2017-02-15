@@ -49,7 +49,7 @@ module.exports = {
 	},
 
 	userCreationWithoutToken: {
-		stepName: 'userCreation',
+		stepName: 'userCreationWithoutToken',
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
 		apiRequestFunction: function( callback ) {

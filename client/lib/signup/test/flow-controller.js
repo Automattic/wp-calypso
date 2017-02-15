@@ -4,6 +4,8 @@
 import assert from 'assert';
 import defer from 'lodash/defer';
 import ary from 'lodash/ary';
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -103,15 +105,24 @@ describe( 'flow-controller', function() {
 			} );
 		} );
 
-		it( 'should throw an error when the flow is completed without all dependencies provided', function() {
+		it( 'should throw an error when the flow is completed without all dependencies provided', function( done ) {
 			signupFlowController = SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
 				onComplete: function() {}
 			} );
 
+			sinon.spy( console, 'error' );
+
 			SignupActions.submitSignupStep( { stepName: 'siteCreation' } );
-			assert.throws( function() {
-				SignupActions.submitSignupStep( { stepName: 'userCreationWithoutToken' } );
+			SignupActions.submitSignupStep( { stepName: 'userCreationWithoutToken' } );
+
+			defer( () => {
+				const errorMessage = 'The dependencies [bearer_token] were not provided to siteCreation step ' +
+					'after all other steps completion [ current flow: invalid_flow_with_dependencies ] ' +
+					'[ providing steps: userCreationWithoutToken ].';
+				expect( console.error ).to.have.been.calledWith( errorMessage ); //eslint-disable-line no-console
+				console.error.restore(); //eslint-disable-line no-console
+				done();
 			} );
 		} );
 	} );

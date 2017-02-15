@@ -130,6 +130,45 @@ assign( SignupFlowController.prototype, {
 		}.bind( this ) );
 	},
 
+	/**
+	 * This assertion helper validates that there are dependencies for the step provided
+	 * by completed steps
+	 * @param step The step to validate
+	 */
+	_assertStepDependencies( step ) {
+		const dependencies = steps[ step.stepName ].dependencies || [];
+		const dependenciesFound = pick( SignupDependencyStore.get(), dependencies );
+		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
+		const signupProgress = filter(
+			SignupProgressStore.get(),
+			_step => ( -1 !== this._flow.steps.indexOf( _step.stepName ) )
+		);
+
+		if ( ! dependenciesSatisfied ) {
+			const missingDependencies = difference( dependencies, dependenciesFound );
+
+			const stepsProvideMissingDependencies = this._flow.steps
+				.map( stepName => steps[ stepName ] )
+				.filter( step => Array.isArray( step.providesDependencies ) && step.providesDependencies.length > 0 )
+				.filter( step => step
+					.providesDependencies
+					.filter( dep => missingDependencies.indexOf( dep ) > -1 ).length > 0
+				).map( step => step.stepName );
+
+			const allProvidingStepsCompleted = stepsProvideMissingDependencies
+				.map( stepNameWithMissingDep =>
+					find( signupProgress, progressStep => stepNameWithMissingDep === progressStep.stepName )
+				).every( progress => progress && progress.status === 'completed' );
+
+			if ( allProvidingStepsCompleted ) {
+				console.error( 'The dependencies [' + missingDependencies + '] were not provided to ' + step.stepName + //eslint-disable-line no-console
+					' step after all other steps completion ' +
+					'[ current flow: ' + this._flowName + ' ] ' +
+					'[ providing steps: ' + stepsProvideMissingDependencies + ' ].' );
+			}
+		}
+	},
+
 	_canMakeAuthenticatedRequests: function() {
 		return wpcom.isTokenLoaded() || user.get();
 	},
@@ -188,6 +227,8 @@ assign( SignupFlowController.prototype, {
 			allStepsSubmitted = reject( signupProgress, {
 				status: 'in-progress'
 			} ).length === currentSteps.length;
+
+		this._assertStepDependencies( step );
 
 		return dependenciesSatisfied &&
 			! this._processingSteps[ step.stepName ] &&
