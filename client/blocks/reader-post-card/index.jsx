@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import userModule from 'lib/user';
+import { generateKeyOfLen } from 'lib/unique-key';
 
 /**
  * Internal Dependencies
@@ -93,29 +94,10 @@ function trackable( TrackedComponent ) {
 					( rect.bottom <= windowHeight && rect.bottom >= windowHeight * .25 );
 			}
 
-			function generateKey() {
-				const randomBytesLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-				let i, randomBytes = [];
-
-				if ( window.crypto && window.crypto.getRandomValues ) {
-					randomBytes = new Uint8Array( randomBytesLength );
-					window.crypto.getRandomValues( randomBytes );
-				} else {
-					for ( i = 0; i < randomBytesLength; ++i ) {
-						randomBytes[ i ] = Math.floor( Math.random() * 256 );
-					}
-				}
-
-				return window
-					.btoa( String.fromCharCode.apply( String, randomBytes ) )
-					.replace( /\+/g, '-' )
-					.replace( /\//g, '_' );
-			}
-
 			if ( documentNotHidden() && ( entirelyOnScreen() || biggerThanScreen() || partiallyOnScreen() ) ) {
 				if ( ! this.state.isOnScreen ) {
 					const self = this;
-					const key = generateKey();
+					const key = generateKeyOfLen( 24 );
 					const user = userModule().get();
 					self.setState( {
 						isOnScreen: performance.now(),
