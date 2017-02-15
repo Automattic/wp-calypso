@@ -19,8 +19,14 @@ export default localize( ( props ) => {
 
 	return (
 		<div className="help-courses__course-videos">
-			<Card compact className="help-courses__course-videos-label">{ translate( 'Latest course' ) }</Card>
-			{ videos.map( ( video, key ) => <CourseVideo { ...video } key={ key }/> ) }
+			<Card compact className="help-courses__course-videos-label">
+				{ translate(
+					'Latest course',
+					'Latest courses',
+					{ count: videos.length }
+				) }
+			</Card>
+			{ videos.map( ( video, key ) => <CourseVideo { ...video } key={ key } /> ) }
 		</div>
 	);
 } );

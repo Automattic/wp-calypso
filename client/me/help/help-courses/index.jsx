@@ -37,6 +37,17 @@ function getCourses() {
 			],
 			videos: [
 				{
+					date: i18n.moment( new Date( 'Thur, 2 Feb 2017 17:00:00 +0000' ) ),
+					title: i18n.translate( 'Everything You Need to Know About SEO and Marketing for Your Website' ),
+					description: i18n.translate(
+						'You will leave this 60-minute session with a plan for optimizing your site for search engines ' +
+						'and an overview of basic tactics for increasing your traffic. Our Happiness Engineers will provide a ' +
+						'foundation for making sure that your site meets current SEO standards. We\'ll also discuss how to ' +
+						'maximize tools like Google Analytics and Webmaster Tools.'
+					),
+					youtubeId: 'FU7uxbngrq4'
+				},
+				{
 					date: i18n.moment( new Date( 'Fri, 2 Sep 2016 01:00:00 +0000' ) ),
 					title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
 					description: i18n.translate(
