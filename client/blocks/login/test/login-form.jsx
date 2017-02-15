@@ -13,19 +13,19 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 import FormTextInput from 'components/forms/form-text-input';
 import FormsButton from 'components/forms/form-button';
 
-describe( 'Login', function() {
-	let Login;
+describe( 'LoginForm', function() {
+	let LoginForm;
 
 	useFakeDom();
 
 	before( () => {
-		Login = require( 'blocks/login' ).Login;
+		LoginForm = require( 'blocks/login/login-form' ).LoginForm;
 	} );
 
 	context( 'component rendering', () => {
 		it( 'displays a login form', () => {
 			const wrapper = shallow(
-				<Login translate={ noop } />
+				<LoginForm translate={ noop } />
 			);
 			expect( wrapper.find( FormTextInput ).length ).to.equal( 1 );
 			expect( wrapper.find( 'input[type="password"]' ).length ).to.equal( 1 );
@@ -34,7 +34,7 @@ describe( 'Login', function() {
 
 		it( 'shows the header text', () => {
 			const wrapper = shallow(
-				<Login
+				<LoginForm
 					translate={ noop }
 					title={ 'Sign in to connect to WordPress.com' }
 					legalText={ 'By connecting, you agree to share details…' } />
@@ -44,7 +44,7 @@ describe( 'Login', function() {
 
 		it( 'shows the legal text', () => {
 			const wrapper = shallow(
-				<Login
+				<LoginForm
 					translate={ noop }
 					title={ 'Sign in to connect to WordPress.com' }
 					legalText={ 'By connecting, you agree to share details…' } />
