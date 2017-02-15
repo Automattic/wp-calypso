@@ -138,7 +138,7 @@ module.exports = {
 		datestamp: '20170210',
 		variations: {
 			sidebar: 33,
-			stats: 33,
+			banner: 33,
 			disabled: 34
 		},
 		defaultVariation: 'disabled',

@@ -15,8 +15,8 @@ import {
 	eligibleForFreeToPaidUpsell,
 } from 'state/selectors';
 
-const FreeToPaidNudge = ( props ) => {
-	if ( ! props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'sidebar' ) {
+const FreeToPaidBanner = ( props ) => {
+	if ( ! props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'banner' ) {
 		return null;
 	}
 
@@ -34,4 +34,4 @@ export default connect( ( state, ownProps ) => {
 	return {
 		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 	};
-} )( FreeToPaidNudge );
+} )( FreeToPaidBanner );
