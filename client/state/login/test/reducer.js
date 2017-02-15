@@ -20,6 +20,7 @@ import reducer, {
 	isRequesting,
 	isSubmittingVerificationCode,
 	requestError,
+	verificationCodeSubmissionError,
 	requestSuccess,
 	twoFactorAuth
 } from '../reducer';
@@ -175,6 +176,55 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const state = requestError( 'some error', {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+	} );
+
+	describe( 'verificationCodeSubmissionError', () => {
+		it( 'should default to a null', () => {
+			const state = verificationCodeSubmissionError( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set verificationCodeSubmissionError to null value if a request is initiated', () => {
+			const state = verificationCodeSubmissionError( 'some error', {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should set verificationCodeSubmissionError to null value if a request was successful', () => {
+			const state = verificationCodeSubmissionError( 'some error', {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should store the error in verificationCodeSubmissionError if a request is unsuccessful', () => {
+			const state = verificationCodeSubmissionError( 'some error', {
+				type: LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
+				error: 'another error'
+			} );
+
+			expect( state ).to.eql( 'another error' );
+		} );
+
+		it( 'should not persist state', () => {
+			const state = verificationCodeSubmissionError( 'some error', {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should not load persisted state', () => {
+			const state = verificationCodeSubmissionError( 'some error', {
 				type: DESERIALIZE
 			} );
 
