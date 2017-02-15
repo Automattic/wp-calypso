@@ -9,9 +9,10 @@ import Gridicon from 'gridicons';
  */
 import MainWrapper from '../main-wrapper';
 import Login from 'blocks/login';
+import TwoFactorAuthentication from 'blocks/login/two-factor-authentication';
 import { localize } from 'i18n-calypso';
 
-const JetpackLogin = ( { translate } ) => {
+const JetpackLogin = ( { translate, inCodeVerificationStep } ) => {
 	return (
 		<MainWrapper>
 			<div className="jetpack-connect__login">
@@ -20,11 +21,17 @@ const JetpackLogin = ( { translate } ) => {
 					<div>{ translate( 'You are signed out' ) }</div>
 				</div>
 				<div className="jetpack-connect__login-container">
-					<Login
-						title={ translate( 'Sign in to connect to WordPress.com' ) }
-						legalText={ translate( 'By connecting, you agree to share details between WordPress.com and ' ) }
-					>
-					</Login>
+					{
+						inCodeVerificationStep
+						? ( <TwoFactorAuthentication /> )
+						: ( <Login
+							title={ translate( 'Sign in to connect to WordPress.com' ) }
+							legalText={ translate( 'By connecting, you agree to share details between WordPress.com and ' ) }
+							>
+						</Login>
+						)
+					}
+
 				</div>
 			</div>
 		</MainWrapper>
