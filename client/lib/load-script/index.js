@@ -67,8 +67,28 @@ var loadjQueryDependentScript = function( scriptURL, callback ) {
 	} );
 };
 
+const removeScriptCallback = function( url, callback ) {
+	if ( ! callbacksForURLsInProgress[ url ] ) {
+		return;
+	}
+
+	const index = callbacksForURLsInProgress[ url ].indexOf( callback );
+
+	if ( -1 === index ) {
+		return;
+	}
+
+	if ( 1 === callbacksForURLsInProgress[ url ].length ) {
+		delete callbacksForURLsInProgress[ url ];
+		return;
+	}
+
+	callbacksForURLsInProgress[ url ].splice( index, 1 );
+};
+
 module.exports = {
 	loadScript: loadScript,
 	loadjQueryDependentScript: loadjQueryDependentScript,
+	removeScriptCallback: removeScriptCallback,
 	JQUERY_URL: JQUERY_URL
 };
