@@ -10,13 +10,13 @@ import classNames from 'classnames';
 import SectionHeader from 'components/section-header';
 import { localize } from 'i18n-calypso';
 
-const ThemeUploadCard = ( { label, count, translate } ) => {
-	const uploadClassName = classNames( 'themes-upload-card', {
+const ThemesSelectionHeader = ( { label, count, translate } ) => {
+	const selectionHeaderClassName = classNames( 'themes-selection-header', {
 		'is-placeholder': count === null,
 	} );
 
 	return (
-		<div className={ uploadClassName }>
+		<div className={ selectionHeaderClassName }>
 			<SectionHeader
 				label={ label || translate( 'WordPress.com themes' ) }
 				count={ count } />
@@ -24,9 +24,9 @@ const ThemeUploadCard = ( { label, count, translate } ) => {
 	);
 };
 
-ThemeUploadCard.propTypes = {
+ThemesSelectionHeader.propTypes = {
 	label: PropTypes.string,
 	count: PropTypes.number
 };
 
-export default localize( ThemeUploadCard );
+export default localize( ThemesSelectionHeader );

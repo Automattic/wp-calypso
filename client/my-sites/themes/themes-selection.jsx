@@ -11,7 +11,7 @@ import { compact, isEqual, omit, property, snakeCase } from 'lodash';
 import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
-import ThemeUploadCard from './themes-upload-card';
+import ThemesSelectionHeader from './themes-selection-header';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -145,7 +145,7 @@ const ThemesSelection = React.createClass( {
 				<QueryThemes
 					query={ query }
 					siteId={ siteIdOrWpcom } />
-				<ThemeUploadCard
+				<ThemesSelectionHeader
 					label={ listLabel }
 					count={ themesCount }
 				/>
