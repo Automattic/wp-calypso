@@ -332,7 +332,7 @@ const PluginsBrowser = React.createClass( {
 		}
 
 		return (
-			<MainComponent>
+			<MainComponent className="is-wide-layout">
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
