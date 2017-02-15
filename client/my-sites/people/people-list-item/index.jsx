@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, identity } from 'lodash';
@@ -15,7 +15,7 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-export class PeopleListItem extends PureComponent {
+export class PeopleListItem extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
