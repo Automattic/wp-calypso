@@ -4,6 +4,7 @@
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -136,7 +137,7 @@ const SiteNotice = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId ),
+		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )
