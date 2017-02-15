@@ -279,6 +279,7 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -315,6 +316,7 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
@@ -416,6 +418,7 @@ export const PLANS_LIST = {
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
 				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
@@ -461,6 +464,7 @@ export const PLANS_LIST = {
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
 				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
