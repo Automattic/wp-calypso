@@ -45,34 +45,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isLoginSuccessful()', () => {
-		it( 'should return false if there is no login information yet', () => {
-			const id = isLoginSuccessful( undefined );
-
-			expect( id ).to.be.false;
-		} );
-
-		it( 'should return true if the login request was successful', () => {
-			const id = isLoginSuccessful( {
-				login: {
-					requestSuccess: true,
-				}
-			} );
-
-			expect( id ).to.be.true;
-		} );
-
-		it( 'should return false if the login request was not succesful', () => {
-			const id = isLoginSuccessful( {
-				login: {
-					requestSuccess: false,
-				}
-			} );
-
-			expect( id ).to.be.false;
-		} );
-	} );
-
 	describe( 'getError()', () => {
 		it( 'should return null if there is no error yet', () => {
 			const id = getError( undefined );
@@ -196,6 +168,64 @@ describe( 'selectors', () => {
 			} );
 
 			expect( verificationCode ).to.eql( 'Incorrect verification code.' );
+		} );
+	} );
+
+	describe( 'isLoginSuccessful()', () => {
+		it( 'should return false if there is no login information yet', () => {
+			const id = isLoginSuccessful( undefined );
+
+			expect( id ).to.be.false;
+		} );
+
+		it( 'should return true if the login request was successful', () => {
+			const id = isLoginSuccessful( {
+				login: {
+					requestSuccess: true,
+				}
+			} );
+
+			expect( id ).to.be.true;
+		} );
+
+		it( 'should return true if the verification code submission request was successful', () => {
+			const id = isLoginSuccessful( {
+				login: {
+					twoFactorAuth: {
+						twostep_id: 123456,
+						twostep_nonce: 'abcdef123456',
+						result: true,
+					},
+					verificationCodeSubmissionSuccess: true,
+				}
+			} );
+
+			expect( id ).to.be.true;
+		} );
+
+		it( 'should return false if the login request was not succesful', () => {
+			const id = isLoginSuccessful( {
+				login: {
+					requestSuccess: false,
+				}
+			} );
+
+			expect( id ).to.be.false;
+		} );
+
+		it( 'should return false if the verification code submission request was not succesful', () => {
+			const id = isLoginSuccessful( {
+				login: {
+					twoFactorAuth: {
+						twostep_id: 123456,
+						twostep_nonce: 'abcdef123456',
+						result: true,
+					},
+					verificationCodeSubmissionSuccess: false,
+				}
+			} );
+
+			expect( id ).to.be.false;
 		} );
 	} );
 } );
