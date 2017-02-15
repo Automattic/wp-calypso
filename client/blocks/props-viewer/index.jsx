@@ -157,7 +157,7 @@ class PropsViewer extends PureComponent {
 
 		return (
 			<Card compact={ true } className="props-viewer__card" tagName="div">
-				<p className="props-viewer__description" >{ PropsViewer.componentDescription( component ) }</p>
+				<p className="props-viewer__description">{ PropsViewer.componentDescription( component ) }</p>
 				<div className="props-viewer__usage">
 					<div className="props-viewer__example" >
 						<span className="props-viewer__heading">Use It</span>
