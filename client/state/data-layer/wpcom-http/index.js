@@ -32,7 +32,7 @@ export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
-const queueRequest = ( { dispatch }, rawAction, next ) => {
+export const queueRequest = ( processIngress, processEgress ) => ( { dispatch }, rawAction, next ) => {
 	const action = processIngress( rawAction, dispatch );
 
 	if ( null === action ) {
@@ -81,5 +81,5 @@ const queueRequest = ( { dispatch }, rawAction, next ) => {
 };
 
 export default {
-	[ WPCOM_HTTP_REQUEST ]: [ queueRequest ],
+	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( processIngress, processEgress ) ],
 };
