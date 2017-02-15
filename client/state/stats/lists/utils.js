@@ -227,8 +227,8 @@ export const normalizers = {
 
 		return map( countryData, ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
-			//const icon = country.flat_flag_icon.match( /grey\.png/ ) ? null : country.flat_flag_icon;
-			const icon = `/calypso/images/flags/${ viewData.country_code.toLowerCase() }.svg`
+			const icon = `/calypso/images/flags/${ viewData.country_code.toLowerCase() }.svg`;
+
 			// ’ in country names causes google's geo viz to break
 			return {
 				label: country.country_full.replace( /’/, "'" ),
