@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
-import CourseVideos from './course-videos';
+import CourseVideo from './course-video';
 import sitesList from 'lib/sites-list';
 import analytics from 'lib/analytics';
 
@@ -36,7 +36,7 @@ class Course extends Component {
 			description,
 			schedule,
 			isBusinessPlanUser,
-			videos,
+			video,
 			translate
 		} = this.props;
 
@@ -44,7 +44,7 @@ class Course extends Component {
 
 		return (
 			<div className="help-courses__course">
-				<Card compact className="help-courses__course-label">{ translate( 'Next course' ) }</Card>
+				{ isBusinessPlanUser && video && <CourseVideo { ...video } /> }
 				<Card compact>
 					<h1 className="help-courses__course-title">{ title }</h1>
 					<p className="help-courses__course-description">{ description }</p>
@@ -58,10 +58,9 @@ class Course extends Component {
 						/>
 					}
 				</Card>
-				{ schedule.map( ( item, key ) => {
+				{ schedule && schedule.map( ( item, key ) => {
 					return ( <CourseScheduleItem { ...item } key={ key } isBusinessPlanUser={ isBusinessPlanUser } /> );
 				} ) }
-				{ isBusinessPlanUser && <CourseVideos videos={ videos } /> }
 			</div>
 		);
 	}
