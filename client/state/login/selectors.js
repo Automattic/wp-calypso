@@ -12,9 +12,9 @@ export const getError = ( state ) => {
 
 export const isTwoFactorEnabled = ( state ) => {
 	return (
-		state.twoFactorAuth &&
-		state.twoFactorAuth.result &&
-		state.twoFactorAuth.twostep_id !== '' &&
-		state.twoFactorAuth.twostep_nonce !== ''
+		state.login.twoFactorAuth &&
+		state.login.twoFactorAuth.result &&
+		state.login.twoFactorAuth.twostep_id !== '' &&
+		state.login.twoFactorAuth.twostep_nonce !== ''
 	);
 };

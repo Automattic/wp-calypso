@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-//import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +11,7 @@ import FormsButton from 'components/forms/form-button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
-import { loginUser, redirect } from 'state/login/actions';
+import { loginUser, internalRedirect } from 'state/login/actions';
 import Notice from 'components/notice';
 
 import {
@@ -35,7 +34,7 @@ export class LoginForm extends Component {
 
 	componentDidUpdate() {
 		if ( this.props.isLoginSuccessful ) {
-			this.props.redirect( this.props.redirectLocation || '/' );
+			this.props.internalRedirect( this.props.redirectLocation || '/' );
 		}
 	}
 
@@ -118,5 +117,5 @@ export default connect( state => {
 	};
 }, {
 	loginUser,
-	redirect
+	internalRedirect,
 } )( localize( LoginForm ) );

@@ -18,7 +18,7 @@ const Login = ( { twoFactorEnabled, translate } ) => {
 		: ( <LoginForm
 			title={ translate( 'Sign in to connect to WordPress.com' ) }
 			legalText={ translate( 'By connecting, you agree to share details between WordPress.com and ' ) }
-			redirectLocation={ '/jetpack/login/' }
+			redirectLocation={ '/jetpack/login' }
 		/> );
 };
 
