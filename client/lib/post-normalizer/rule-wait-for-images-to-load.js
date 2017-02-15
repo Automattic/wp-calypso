@@ -4,6 +4,7 @@
 import {
 	filter,
 	find,
+	flow,
 	forEach,
 	map,
 	pull,
@@ -43,12 +44,7 @@ function promiseForImage( image ) {
 	} );
 }
 
-const promiseForURL = function( urlOrPromise ) {
-	if ( urlOrPromise instanceof Promise ) {
-		return urlOrPromise;
-	}
-	return promiseForImage( imageForURL( urlOrPromise ) );
-};
+const promiseForURL = flow( imageForURL, promiseForImage );
 
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {

@@ -21,8 +21,10 @@ import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
+const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
+
 function FeaturedImage( { image, href } ) {
-	const uri = resizeImageUrl( safeImageUrl( image.uri ), { w: 385 } )
+	const uri = resizeImageUrl( safeImageUrl( image.uri ), { w: RELATED_IMAGE_WIDTH } )
 	return (
 		<div className="reader-related-card-v2__featured-image" href={ href } style={ {
 			backgroundImage: 'url(' + uri + ')',

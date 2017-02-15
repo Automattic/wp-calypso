@@ -13,8 +13,7 @@ import resizeImageUrl from 'lib/resize-image-url';
 import cssSafeUrl from 'lib/css-safe-url';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderPostCardExcerpt from './excerpt';
-
-const READER_CONTENT_WIDTH = 800;
+import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
