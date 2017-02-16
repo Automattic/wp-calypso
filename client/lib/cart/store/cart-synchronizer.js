@@ -234,7 +234,7 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 		}
 
 		if ( request.type === 'update' ) {
-			this._processServerFlushCallbacks( null, error );
+			this._processServerFlushCallbacks( null, newValue );
 		}
 
 		debug( request.id + ': finishing ' + request.type );

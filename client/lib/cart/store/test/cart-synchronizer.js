@@ -114,4 +114,30 @@ describe( 'cart-synchronizer', function() {
 
 		expect( serverFlushCallback ).to.have.been.called;
 	} );
+
+	it.only( 'should call server flush callback after update with proper data on success', () => {
+		const wpcom = FakeWPCOM(),
+			synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
+			changeFunction = applyCoupon( 'foo' ),
+			serverFlushCallback = sinon.spy(),
+			dataAfterPost = Object.assign( {},
+				emptyCart( TEST_CART_KEY ),
+				{
+					test: 'THIS_IS_JUST_A_TEST',
+				}
+			);
+
+		synchronizer.update( changeFunction, serverFlushCallback );
+		// get request
+		wpcom.resolveRequest( 0, emptyCart( TEST_CART_KEY ) );
+		// post request
+		wpcom.resolveRequest( 1, dataAfterPost );
+
+
+		// The check here is like that because there is additional info added except dataAfterPost
+		// inside the CartSynchronizer
+		expect( serverFlushCallback ).to.have.been.called;
+		expect( serverFlushCallback.firstCall.args[ 0 ] ).to.equal( null );
+		expect( serverFlushCallback.firstCall.args[ 1 ].test ).to.equal( dataAfterPost.test );
+	} );
 } );
