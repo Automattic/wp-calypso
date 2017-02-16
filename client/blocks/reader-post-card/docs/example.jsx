@@ -7,16 +7,16 @@ import React from 'react';
  * Internal dependencies
  */
 import ReaderPostCardBlock from 'blocks/reader-post-card';
-import { posts } from './fixtures';
+import { posts, site } from './fixtures';
 
 const ReaderPostCard = () => (
 	<div className="design-assets__group">
 		<div>
 			{ posts.map( item => (
 				<ReaderPostCardBlock
-					key={ item.post.global_ID }
-					post={ item.post }
-					site={ item.site }
+					key={ item.global_ID }
+					post={ item }
+					site={ site }
 				/>
 			) ) }
 		</div>
