@@ -18,7 +18,7 @@ const inflightRequests = new Set();
 * 1. new request not inflight: add it to the inflight set and pass-through unharmed
 * 2. new request already inflight: do not let the request through
 */
-function handleInbound( store, next, action ) {
+function handleIngress( store, next, action ) {
 	const key = requestKey( action );
 	if ( inflightRequests.has( key ) ) {
 		return; // action should not pass go, should not collect $200
@@ -27,13 +27,13 @@ function handleInbound( store, next, action ) {
 	next( action );
 }
 
-function handleOutbound( store, next, action ) {
+function handleEgress( store, next, action ) {
 	const key = requestKey( action );
 	inflightRequests.delete( key );
 	next( action );
 }
 
 export default processHttpRequest(
-	handleInbound,
-	handleOutbound,
+	handleIngress,
+	handleEgress,
 );
