@@ -122,6 +122,12 @@ export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispa
 	} ) )
 );
 
+export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) => dispatch(
+	errorNotice( error.message || translate( 'An error occurred while connecting the account.', {
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
 export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
 		args: { service: connection.label },
@@ -212,7 +218,7 @@ export const handlers = {
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
-	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchError( translate( 'An error occurred while connecting the account.' ) ),
+	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: onPublicizeConnectionCreateFailure,
 	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ PUBLICIZE_CONNECTION_REFRESH ]: onPublicizeConnectionRefresh,
