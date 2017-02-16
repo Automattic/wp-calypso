@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 	Internal deps
 */
 import { renderWithReduxStore } from 'lib/react-helpers';
+import config from 'config';
 import controller from 'me/controller';
 import Happychat from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
@@ -23,5 +24,7 @@ const renderChat = ( context ) => {
 };
 
 export default () => {
-	page( '/me/chat', controller.sidebar, renderChat );
+	if ( config.isEnabled( 'happychat' ) ) {
+		page( '/me/chat', controller.sidebar, renderChat );
+	}
 };
