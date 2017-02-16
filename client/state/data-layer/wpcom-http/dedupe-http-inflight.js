@@ -1,16 +1,28 @@
 /**
  * External dependencies
  */
+import { sortBy, toPairs, head } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { processHttpRequest } from './utils';
 
-export const requestKey = ( { path, query } ) => Object
-	.keys( query || {} )
-	.sort()
-	.reduce( ( memo, key ) => memo + `&${ key }=${ query[ key ] }`, `path=${ path }` );
+/**
+ * Generate a deterministic key for comparing request descriptions
+ *
+ * @param {String} path API endpoint path
+ * @param {String} apiNamespace used for endpoint versioning
+ * @param {String} apiVersion used for endpoint versioning
+ * @param {Object<String, *>} query GET query string
+ * @returns {String} unique key up to duplicate request descriptions
+ */
+export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => JSON.stringify( [
+	path,
+	apiNamespace,
+	apiVersion,
+	sortBy( toPairs( query ), head ),
+] );
 
 const inflightRequests = new Set();
 
@@ -19,7 +31,7 @@ const inflightRequests = new Set();
 * 2. new request already inflight: do not let the request through
 */
 function handleIngress( store, next, action ) {
-	const key = requestKey( action );
+	const key = buildKey( action );
 	if ( inflightRequests.has( key ) ) {
 		return; // action should not pass go, should not collect $200
 	}
@@ -28,7 +40,7 @@ function handleIngress( store, next, action ) {
 }
 
 function handleEgress( store, next, action ) {
-	const key = requestKey( action );
+	const key = buildKey( action );
 	inflightRequests.delete( key );
 	next( action );
 }
