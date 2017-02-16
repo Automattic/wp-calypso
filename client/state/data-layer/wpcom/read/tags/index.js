@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { map } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -34,13 +39,17 @@ export function requestTags( store, action, next ) {
  * @return {Tags}             An object containing list of tags
  */
 function fromApi( apiResponse ) {
+	let tags;
 	if ( apiResponse.tag )	 {
-		return { tags: [ apiResponse.tag ] };
+		tags = [ apiResponse.tag ];
 	} else if ( apiResponse.tags ) {
-		return apiResponse;
+		tags = map( apiResponse.tags, tag => ( { ...tag, followed: true } ) );
+	} else {
+		// TODO: what should happen here? throw an error somehow?
+		tags = [];
 	}
-	// TODO: what should happen here? throw an error somehow?
-	return { tags: [] };
+
+	return { tags };
 }
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
