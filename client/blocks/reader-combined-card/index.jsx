@@ -11,7 +11,7 @@ import { getStreamUrl } from 'reader/route';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
-// import AutoDirection from 'components/auto-direction';
+import ReaderCombinedCardPost from './post';
 
 const ReaderCombinedCard = ( { posts, site, feed } ) => {
 	const feedId = get( feed, 'ID' );
@@ -36,12 +36,12 @@ const ReaderCombinedCard = ( { posts, site, feed } ) => {
 					siteId={ siteId }>
 					{ siteName }
 				</ReaderSiteStreamLink>
-				<p>x posts in timespan</p>
+				<p>{ posts.length } posts in timespan</p>
 			</header>
 			<ul>
-				<li>post</li>
-				<li>post</li>
-				<li>post</li>
+				{ posts.map( post => (
+					<ReaderCombinedCardPost key={ `post-${ post.ID }` } post={ post } />
+				) ) }
 			</ul>
 		</div>
 	);
