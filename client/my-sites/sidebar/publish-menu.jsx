@@ -139,6 +139,7 @@ const PublishMenu = React.createClass( {
 			case 'page': icon = 'pages'; break;
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
+			case 'media': icon = 'image'; break;
 			default: icon = 'custom-post-type';
 		}
 
