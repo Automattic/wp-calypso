@@ -19,7 +19,8 @@ function doesNotNeedSandbox( iframe ) {
 		'kickstarter.com'
 	];
 
-	const iframeHost = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const iframeHost = hostName && hostName.toLowerCase();
 
 	return some( trustedHosts, trustedHost => endsWith( '.' + iframeHost, '.' + trustedHost ) );
 }

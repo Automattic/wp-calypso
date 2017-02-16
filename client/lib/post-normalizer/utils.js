@@ -138,8 +138,8 @@ export function iframeIsWhitelisted( iframe ) {
 		'facebook.com',
 		'embed.itunes.apple.com'
 	];
-
-	const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const iframeSrc = hostName && hostName.toLowerCase();
 	return some( iframeWhitelist, function( whitelistedSuffix ) {
 		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );
