@@ -49,7 +49,11 @@ class PostScheduleClock extends Component {
 		let value = Number( event.target.value );
 
 		if ( 'hour' === field ) {
-			value = this.maybeConvertHour( value ) - operation;
+			if ( this.props.is12hour && this.refs.amPmReference ) {
+				value = this.convertTo24Hour( value );
+			}
+
+			value = value - operation;
 
 			// Snap back a day, when looping through date line.
 			if ( ( this.props.is12hour ? 23 : -1 ) === value && 1 === operation ) {
@@ -85,14 +89,13 @@ class PostScheduleClock extends Component {
 			modifiers.hour = Number( hour );
 		}
 
-		if ( amPmReference && (
-			'undefined' === typeof modifiers.hour ||
-			( 'PM' === amPmReference.value && modifiers.hour > 12 )
-		) ) {
-			modifiers.hour = Number( hourReference.value.substr( -1 ) );
-		}
+		if ( this.props.is12hour && amPmReference ) {
+			if ( 'undefined' === typeof modifiers.hour || ( 'PM' === amPmReference.value && modifiers.hour > 12 ) ) {
+				modifiers.hour = Number( hourReference.value.substr( -1 ) );
+			}
 
-		modifiers.hour = this.maybeConvertHour( modifiers.hour );
+			modifiers.hour = this.convertTo24Hour( modifiers.hour );
+		}
 
 		if ( false !== minute ) {
 			if ( minute > 60 ) {
@@ -121,11 +124,11 @@ class PostScheduleClock extends Component {
 	 * @param {Number}  hour The hour to convert.
 	 * @return {Number}      The converted hour.
 	 */
-	maybeConvertHour( hour ) {
-		if ( this.props.is12hour && this.refs.amPmReference && (
+	convertTo24Hour( hour ) {
+		if (
 			( 'PM' === this.refs.amPmReference.value && hour < 12 ) ||
 			( 'AM' === this.refs.amPmReference.value && 12 === hour )
-		) ) {
+		) {
 			hour += 12;
 		}
 
