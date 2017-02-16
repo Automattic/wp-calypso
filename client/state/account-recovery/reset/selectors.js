@@ -1,1 +1,1 @@
-export const getResetOptions = ( state ) => state.accountRecovery.reset.options;
+export const getResetOptions = ( state ) => state.accountRecovery.reset.options.items;
