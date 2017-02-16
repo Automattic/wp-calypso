@@ -15,7 +15,8 @@ const config = require( './server/config' ),
 	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
-	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
+	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
+	WebpackStableModuleIdAndHash = require( 'webpack-stable-module-id-and-hash' );
 
 /**
  * Internal variables
@@ -92,7 +93,7 @@ const webpackConfig = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new webpack.optimize.OccurenceOrderPlugin( true ),
+		new WebpackStableModuleIdAndHash(),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
 	],
