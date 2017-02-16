@@ -108,9 +108,12 @@ import { openAskForm as openDirectlyAskForm } from 'lib/directly';
 openDirectlyAskForm();
 ```
 
-## A note on the integration code
+## A note on the library integration
 
-The standard integration code from Directly assumes the library should be downloaded
-on pageload with a snippet placed in the main HTML payload. Our use case is different,
-so we had to heavily modify the standard code snippet. If Directly sends us new integration code
-in the future, we'll need to review it thoroughly to understand how to modify our custom integration.
+For a variety of reasons we aren't able to use Directly's out-of-the-box integration
+code, which looks like pretty standard async script load but has some inherent quirks.
+Instead we've hard-coded their script into `vendor.js` (with some annotated modifications)
+and you can execute the exported function to configure and initialize the Directly RTM widget.
+
+In most cases `vendor.js` shouldn't be used and those wishing to interact with Directly
+should stick with the API documented above.
