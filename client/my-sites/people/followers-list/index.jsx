@@ -193,7 +193,7 @@ const Followers = localize( class FollowersComponent extends Component {
 			followers = this.renderPlaceholders();
 		}
 
-		const downloadListLink = this.props.fetchOptions.type === 'email'
+		const downloadListLink = this.props.fetchOptions.type === 'email' && !! this.props.site
 			? 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' +
 				this.props.site.ID + '&blog_subscribers=csv&type=email'
 			: null;
