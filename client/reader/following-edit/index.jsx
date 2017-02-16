@@ -409,7 +409,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedExportNotice() {
 		const feedExport = this.state.feedExport;
-		if ( ! feedExport ) return null;
+		if ( ! feedExport ) {
+			return null;
+		}
 
 		const message = this.translate( 'Your Followed Sites list has been exported.' );
 		return (
@@ -425,7 +427,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedImportNotice() {
 		const feedImport = this.state.feedImport;
-		if ( ! feedImport ) return null;
+		if ( ! feedImport ) {
+			return null;
+		}
 
 		const message = this.translate( '{{em}}%(name)s{{/em}} has been imported. Refresh this page to see the new sites you follow.', {
 			args: { name: feedImport.fileName },
@@ -447,7 +451,9 @@ const FollowingEdit = React.createClass( {
 
 	renderFeedImportExportError() {
 		const error = this.state.feedImportError || this.state.feedExportError;
-		if ( ! error ) return null;
+		if ( ! error ) {
+			return null;
+		}
 
 		const message = this.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
 			args: { message: error.message }
