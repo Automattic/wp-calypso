@@ -632,7 +632,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_REPUBLICIZE,
 		getTitle: () => i18n.translate( 'Social sharing menu' ),
 		getDescription: () => i18n.translate(
-			'Share any post from your archive using social sharing menu'
+			'Share this post as many times as you like on all your connected social media accounts using Publicize.'
 		)
 	},
 	[ FEATURE_NO_BRANDING ]: {
