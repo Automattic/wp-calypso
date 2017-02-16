@@ -54,13 +54,7 @@ class PostScheduleClock extends Component {
 			}
 
 			value = value - operation;
-
-			// Snap back a day, when looping through date line.
-			if ( ( this.props.is12hour ? 23 : -1 ) === value && 1 === operation ) {
-				modifiers.date = this.props.date.get( 'date' ) - 1;
-			}
-
-			value = value > 24 ? 1 : value;
+			value = value > 23 ? 0 : value;
 			value = value < 0 ? 23 : value;
 		} else {
 			value -= operation;
@@ -125,11 +119,10 @@ class PostScheduleClock extends Component {
 	 * @return {Number}      The converted hour.
 	 */
 	convertTo24Hour( hour ) {
-		if (
-			( 'PM' === this.refs.amPmReference.value && hour < 12 ) ||
-			( 'AM' === this.refs.amPmReference.value && 12 === hour )
-		) {
+		if ( 'PM' === this.refs.amPmReference.value && hour < 12 ) {
 			hour += 12;
+		} else if ( 'AM' === this.refs.amPmReference.value && 12 === hour ) {
+			hour = 0;
 		}
 
 		return hour;
