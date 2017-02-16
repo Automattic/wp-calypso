@@ -28,8 +28,7 @@ import { extendAction } from 'state/utils';
  * while one is still transiting over the network
  *
  * Two requests are considered identical if they
- * are both GET requests and share the same
- * fundamental properties.
+ * are both GET requests and share the same path,query,apiVersion, apiNamespace
  *
  * @module state/data-layer/wpcom-http/optimizations/remove-duplicate-gets
  */
