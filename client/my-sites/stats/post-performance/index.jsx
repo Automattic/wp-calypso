@@ -37,7 +37,7 @@ class StatsPostPerformance extends Component {
 		translate: PropTypes.func,
 	};
 
-	buildTabs( summaryUrl ) {
+	buildTabs() {
 		const { viewCount, post, loading, translate } = this.props;
 		const tabClassName = 'is-post-summary';
 
@@ -46,23 +46,25 @@ class StatsPostPerformance extends Component {
 				label: translate( 'Views' ),
 				gridicon: 'visible',
 				value: viewCount,
-				href: summaryUrl,
 				className: tabClassName,
-				loading: loading
+				loading: loading,
+				compact: true,
 			},
 			{
 				label: translate( 'Likes' ),
 				gridicon: 'star',
 				value: post ? post.like_count : null,
 				className: tabClassName,
-				loading: loading
+				loading: loading,
+				compact: true,
 			},
 			{
 				label: translate( 'Comments' ),
 				gridicon: 'comment',
 				value: post ? post.discussion.comment_count : null,
 				className: tabClassName,
-				loading: loading
+				loading: loading,
+				compact: true,
 			}
 		];
 
@@ -137,8 +139,8 @@ class StatsPostPerformance extends Component {
 					}
 					{ post
 						? (
-							<StatsTabs>
-								{ this.buildTabs( summaryUrl ) }
+							<StatsTabs compact>
+								{ this.buildTabs() }
 							</StatsTabs>
 						)
 						: null
