@@ -14,6 +14,7 @@ export default {
 	COMMUNITY_TRANSLATOR: `${ root }/community-translator`,
 	COMPLETING_GOOGLE_APPS_SIGNUP: `${ root }/adding-g-suite-to-your-site/#completing-sign-up`,
 	CONNECT: `${ root }/connect`,
+	CONTACT: `${ root }/contact`,
 	CALYPSO_CONTACT: '/help/contact',
 	CALYPSO_COURSES: '/help/courses',
 	CREATE: `${ root }/create`,
