@@ -1,30 +1,22 @@
 /**
  * External dependencies
  */
-import { endsWith, includes } from 'lodash';
 import { moment } from 'i18n-calypso';
 
 /**
  * Checks whether the passed time  format is of a 12-hour format.
+ *
+ * g - 12-hour format of an hour without leading zeros.
+ * h - 12-hour format of an hour with leading zeros.
+ * a - Lowercase Ante meridiem and Post meridiem.
+ * A - Uppercase Ante meridiem and Post meridiem.
  *
  * @see https://wikipedia.org/wiki/12-hour_clock
  *
  * @param  {String}  timeFormat Time format.
  * @return {Boolean}            Whether it's a 12-hour time format.
  */
-const is12hr = ( timeFormat ) => (
-	// 12-hour format of an hour without leading zeros.
-	includes( timeFormat, 'g' ) ||
-
-	// 12-hour format of an hour with leading zeros.
-	includes( timeFormat, 'h' ) ||
-
-	// Lowercase Ante meridiem and Post meridiem.
-	endsWith( timeFormat, 'a' ) ||
-
-	// Uppercase Ante meridiem and Post meridiem.
-	endsWith( timeFormat, 'A' )
-);
+const is12hr = ( timeFormat ) => timeFormat && /[gh]|[aA]$/.test( timeFormat );
 
 /**
  * Check whether is a valid gmtOffset value.
