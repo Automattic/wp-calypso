@@ -10,6 +10,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 } from 'state/action-types';
 
 export const fetchResetOptionsSuccess = ( items ) => ( {
@@ -68,3 +71,25 @@ export const requestReset = ( request ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_REQUEST,
 	request,
 } );
+
+export const validateRequestSuccess = () => ( {
+	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+} );
+
+export const validateRequestError = ( error ) => ( {
+	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+	error,
+} );
+
+export const validateResetRequest = ( request ) => ( dispatch ) => {
+	dispatch( {
+		type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+	} );
+
+	return wpcom.req.post( {
+		body: request,
+		apiNamespace: 'wpcom/v2',
+		path: '/account-recovery/validate',
+	} ).then( () => dispatch( validateRequestSuccess() ) )
+	.catch( ( error ) => dispatch( validateRequestError( error ) ) );
+};
