@@ -139,6 +139,7 @@ const PostSharing = React.createClass( {
 					feature="republicize"
 					title={ this.translate( 'Upgrade to Premium' ) }
 					message={ this.translate( 'Unlock social sharing menu, premium themes, video uploads and more' ) }
+					jetpack={ true }
 				/>
 			</div> );
 		}
