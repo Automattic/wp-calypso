@@ -17,7 +17,7 @@ export default function streamReducer( state = {}, action ) {
 	if ( action.type !== READER_STREAMS_PAGE_RECEIVE ) {
 		return state;
 	}
-	const { payload: { posts }, streamId } = action;
+	const { payload: posts, streamId } = action;
 
 	if ( ! posts ) {
 		return state;
