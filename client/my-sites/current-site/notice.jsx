@@ -87,7 +87,7 @@ const SiteNotice = React.createClass( {
 		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
 		return (
 			<Notice isCompact status="is-success" icon="info-outline">
-				{ this.translate( 'Attract more traffic' ) }
+				{ this.translate( 'Free domain with a plan' ) }
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
