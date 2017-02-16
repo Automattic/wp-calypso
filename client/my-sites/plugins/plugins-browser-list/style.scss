@@ -39,7 +39,7 @@
 }
 
 .plugins-browser-list__elements {
-	min-height: 50px;
-	overflow: hidden; // lazy clearfix
+	display: flex;
+	flex-wrap: wrap;
 	padding: 0;
 }
