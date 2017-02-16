@@ -154,7 +154,7 @@ export class DateTimeFormatOptions extends Component {
 					</span>
 					<FormSettingExplanation>
 						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
-							{ translate( 'Documentation on date and time formatting.' ) }
+							{ translate( 'Learn more about date and time formatting.' ) }
 						</ExternalLink>
 					</FormSettingExplanation>
 				</FormLabel>
@@ -183,7 +183,7 @@ export class DateTimeFormatOptions extends Component {
 		return (
 			<FormFieldset>
 				<FormLabel>
-					{ translate( 'Week Starts On' ) }
+					{ translate( 'Week starts on' ) }
 				</FormLabel>
 				<FormSelect
 					disabled={ isRequestingSettings }

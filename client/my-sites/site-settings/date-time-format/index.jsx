@@ -21,7 +21,7 @@ export const DateTimeFormat = ( { translate, site } ) => {
 
 	return (
 		<div className="main main-column date-time-format" role="main">
-			<DocumentHead title={ translate( 'Manage Date and Time Format Configurations' ) } />
+			<DocumentHead title={ translate( 'Manage Date and Time Format' ) } />
 			<HeaderCake onClick={ goBack }>
 				<h1>
 					{ translate( 'Date and Time Format' ) }

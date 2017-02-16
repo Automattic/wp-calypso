@@ -458,12 +458,12 @@ class SiteSettingsFormGeneral extends Component {
 				href={ `/settings/date-time-format/${ site.slug }` }
 			>
 				<h2 className="site-settings__date-time-format-title">
-					{ translate( 'Date and time format configuration' ) }
+					{ translate( 'Date and Time Format' ) }
 				</h2>
 				<div className="site-settings__date-time-format-info">
 					{ date_format ? today.format( phpToMomentDatetimeFormat( date_format ) ) : '' } &bull;&nbsp;
 					{ time_format ? today.format( phpToMomentDatetimeFormat( time_format ) ) : '' } &bull;&nbsp;
-					{ translate( 'Week Starts On' ) } { start_of_week ? daysOfWeek[ start_of_week ] : daysOfWeek[ 0 ] }
+					{ translate( 'Week starts on' ) } { start_of_week ? daysOfWeek[ start_of_week ] : daysOfWeek[ 0 ] }
 				</div>
 			</Card>
 		);
