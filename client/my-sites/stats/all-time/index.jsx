@@ -68,23 +68,27 @@ class StatsAllTime extends Component {
 							gridicon="posts"
 							label={ translate( 'Posts' ) }
 							loading={ isLoading }
-							value={ posts } />
+							value={ posts }
+							compact />
 						<StatsTab
 							gridicon="visible"
 							label={ translate( 'Views' ) }
 							loading={ isLoading }
-							value={ views } />
+							value={ views }
+							compact />
 						<StatsTab
 							gridicon="user"
 							label={ translate( 'Visitors' ) }
 							loading={ isLoading }
-							value={ visitors } />
+							value={ visitors }
+							compact />
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
 							label={ translate( 'Best Views Ever' ) }
 							loading={ isLoading }
-							value={ viewsBestDayTotal }>
+							value={ viewsBestDayTotal }
+							compact >
 							<span className="all-time__best-day">{ bestDay }</span>
 						</StatsTab>
 					</StatsTabs>
