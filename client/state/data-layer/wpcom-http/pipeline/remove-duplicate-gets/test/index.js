@@ -125,7 +125,7 @@ describe( '#addResponder', () => {
 } );
 
 describe( '#removeDuplicateGets', () => {
-	before( clearQueue );
+	beforeEach( clearQueue );
 
 	it( 'should pass through non-GET requests', () => {
 		const primed = removeDuplicateGets( { nextRequest: postLike } );
