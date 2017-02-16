@@ -72,12 +72,20 @@
 		align-self: center;
 		color: $white;
 		display: block;
+
+		svg {
+			margin-top: 3px;
+		}
 	}
 
 	.banner__icon-circle {
 		color: white;
 		display: none;
 		padding: 3px 4px 4px 3px;
+
+		svg {
+			margin-top: 3px;
+		}
 	}
 
 	@include breakpoint( ">480px" ) {
