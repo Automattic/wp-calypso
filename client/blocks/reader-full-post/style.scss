@@ -295,7 +295,7 @@
 }
 
 .reader-full-post .reader-full-post__sidebar {
-	color: lighten( $gray, 10% );
+	color: $gray-text-min;
 
 	a.reader-author-link,
 	a.author-compact-profile__site-link {

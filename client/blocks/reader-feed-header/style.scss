@@ -120,7 +120,7 @@
 	}
 
 	.reader-feed-header__follow-count {
-		color: lighten( $gray, 10% );
+		color: $gray-text-min;
 		font-size: 14px;
 	}
 

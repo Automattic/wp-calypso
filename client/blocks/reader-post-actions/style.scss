@@ -16,7 +16,7 @@
 		flex: 1;
 
 		.reader-post-actions__visit-label {
-			color: lighten( $gray, 10% );
+			color: $gray;
 		}
 
 		.external-link {
@@ -32,11 +32,11 @@
 		.external-link:active {
 
 			.gridicon {
-				fill: $blue-light;
+				fill: $blue-medium;
 			}
 
 			.reader-post-actions__visit-label {
-				color: $blue-light;
+				color: $blue-medium;
 			}
 		}
 	}

@@ -366,7 +366,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-count {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;
