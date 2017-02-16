@@ -144,5 +144,5 @@
 		{ "value": 452, "langSlug": "zh-tw", "name": "zh-tw - 繁體中文", "wpLocale": "zh_TW", "popular": 14 }
 	],
 	"project": "wordpress-com",
-	"twemoji_cdn_url": "//s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/"
+	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/"
 }
