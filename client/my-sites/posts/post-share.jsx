@@ -137,8 +137,8 @@ const PostSharing = React.createClass( {
 			return ( <div className="posts__post-share-wrapper">
 				<UpgradeNudge
 					feature="republicize"
-					title="Upgrade to Premium"
-					message="Unlock social sharing menu, premium themes, video uploads and more"
+					title={ this.translate( 'Upgrade to Premium' ) }
+					message={ this.translate( 'Unlock social sharing menu, premium themes, video uploads and more' ) }
 				/>
 			</div> );
 		}
