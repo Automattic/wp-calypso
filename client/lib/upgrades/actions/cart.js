@@ -14,10 +14,6 @@ import { cartItems } from 'lib/cart-values';
 // dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
-function disableCart() {
-	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );
-}
-
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_OPEN,
@@ -98,7 +94,6 @@ export {
 	addPrivacyToAllDomains,
 	applyCoupon,
 	closeCartPopup,
-	disableCart,
 	openCartPopup,
 	removeDomainFromCart,
 	removeItem,
