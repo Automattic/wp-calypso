@@ -3,6 +3,7 @@
 */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { map } from 'lodash';
 
 /**
 * Internal dependencies
@@ -18,21 +19,21 @@ import {
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const successfulMultipleTagsResponse = {
+const successfulFollowedTagsResponse = {
 	tags: [
 		{
 			ID: '307',
 			slug: 'chickens',
 			title: 'Chickens',
 			display_name: 'chickens',
-			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts',
 		},
 		{
 			ID: '148',
 			slug: 'design',
 			title: 'Design',
 			display_name: 'design',
-			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
 	]
 };
@@ -118,13 +119,18 @@ describe( 'wpcom-api', () => {
 				const dispatch = sinon.spy();
 				const next = sinon.spy();
 
-				receiveTagsSuccess( { dispatch }, action, next, successfulMultipleTagsResponse );
+				receiveTagsSuccess( { dispatch }, action, next, successfulFollowedTagsResponse );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
-						payload: successfulMultipleTagsResponse,
-						error: false
+						payload: {
+							tags: map(
+								successfulFollowedTagsResponse.tags,
+								tag => ( { ...tag, is_following: true } )
+							),
+						},
+						error: false,
 					} )
 				);
 			} );

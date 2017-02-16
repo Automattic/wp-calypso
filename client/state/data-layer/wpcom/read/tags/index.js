@@ -43,7 +43,7 @@ function fromApi( apiResponse ) {
 	if ( apiResponse.tag )	 {
 		tags = [ apiResponse.tag ];
 	} else if ( apiResponse.tags ) {
-		tags = map( apiResponse.tags, tag => ( { ...tag, followed: true } ) );
+		tags = map( apiResponse.tags, tag => ( { ...tag, is_following: true } ) );
 	} else {
 		// TODO: what should happen here? throw an error somehow?
 		tags = [];
