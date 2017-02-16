@@ -123,6 +123,7 @@ describe( 'utils', () => {
 			const normalizedTheme = normalizeWporgTheme();
 			expect( normalizedTheme ).to.deep.equal( {} );
 		} );
+
 		it( 'should rename some keys', () => {
 			const normalizedTheme = normalizeWporgTheme( {
 				slug: 'twentyfifteen',
@@ -131,6 +132,9 @@ describe( 'utils', () => {
 				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				preview_url: 'https://wp-themes.com/twentyfifteen',
 				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				sections: {
+					description: 'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...'
+				},
 				tags: {
 					'custom-header': 'Custom Header',
 					'two-columns': 'Two Columns'
@@ -143,6 +147,7 @@ describe( 'utils', () => {
 				screenshot: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				demo_uri: 'https://wp-themes.com/twentyfifteen',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				description: 'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...',
 				taxonomies: {
 					theme_feature: [
 						{ slug: 'custom-header', name: 'Custom Header' },
