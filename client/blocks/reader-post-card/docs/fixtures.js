@@ -11,6 +11,7 @@ export const posts = [
 		site_ID: 1,
 		global_ID: 1,
 		site_URL: 'http://example.com',
+		URL: 'http://example.com/post1',
 		feed_ID: 1,
 		feed_item_ID: 1,
 		author: {
@@ -30,7 +31,7 @@ export const posts = [
 
 		site: 'cats.wordpress.com',
 
-		better_excerpt_no_html: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
+		better_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 	},
 	{
 		ID: 2,
@@ -39,6 +40,7 @@ export const posts = [
 		site_ID: 2,
 		global_ID: 2,
 		site_URL: 'http://example.com',
+		URL: 'http://example.com/post2',
 		feed_ID: 2,
 		feed_item_ID: 2,
 		author: {
@@ -61,7 +63,7 @@ export const posts = [
 			mediaType: "video",
 			width: 640
 		},
-		better_excerpt_no_html: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
+		better_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 	},
 	{
 		ID: 3,
@@ -71,6 +73,7 @@ export const posts = [
 		site_ID: 3,
 		global_ID: 3,
 		site_URL: 'http://example.com',
+		URL: 'http://example.com/post3',
 		feed_ID: 1,
 		feed_item_ID: 1,
 		author: {
@@ -97,6 +100,7 @@ export const posts = [
 		global_ID: 4,
 		display_type: DisplayTypes.GALLERY,
 		site_URL: 'http://example.com',
+		URL: 'http://example.com/post4',
 		feed_ID: 1,
 		feed_item_ID: 1,
 		author: {
@@ -114,7 +118,7 @@ export const posts = [
 		},
 		date: '1976-09-15T10:12:00Z',
 		site: 'cats.wordpress.com',
-		better_excerpt_no_html: 'Every four years, the Get Out the Vote campaign invites graphic designers to make posters that rally US voters to go to the polls. Here, 14 posters that rock…'
+		better_excerpt: 'Every four years, the Get Out the Vote campaign invites graphic designers to make posters that rally US voters to go to the polls. Here, 14 posters that rock…'
 	},
 ];
 

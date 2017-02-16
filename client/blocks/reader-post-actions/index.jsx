@@ -22,7 +22,6 @@ import ReaderVisitLink from 'blocks/reader-visit-link';
 
 const ReaderPostActions = ( props ) => {
 	const {
-		translate,
 		post,
 		site,
 		onCommentClick,
@@ -47,6 +46,8 @@ const ReaderPostActions = ( props ) => {
 	}
 
 	const listClassnames = classnames( 'reader-post-actions', className );
+
+	const visitLinkUrl = visitUrl || post.URL;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -126,4 +127,4 @@ ReaderPostActions.defaultProps = {
 	showMenuFollow: true
 };
 
-export default localize( ReaderPostActions );
+export default ReaderPostActions;
