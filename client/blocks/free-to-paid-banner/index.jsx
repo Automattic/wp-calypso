@@ -9,6 +9,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import Banner from 'components/banner';
+import {
+	PLAN_PERSONAL,
+} from 'lib/plans/constants';
 import { abtest } from 'lib/abtest';
 import {
 	eligibleForFreeToPaidUpsell,
@@ -22,8 +25,10 @@ const FreeToPaidBanner = ( props ) => {
 	return (
 		<Banner
 			event="free-to-paid-stats-nudge"
+			plan={ PLAN_PERSONAL }
 			icon="star"
-			title="Upgrade to attract more traffic"
+			title="Choose a free custom domain name with a WordPress.com plan!"
+			description="Get extra storage for your photos and images, expert live chat and email support, and more."
 		/>
 	);
 };
