@@ -84,8 +84,8 @@ export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = nul
 	return initiator( store, action, next );
 };
 
-const isHttpIngress = action => action.type === WPCOM_HTTP_REQUEST;
-const isHttpEgress = action => getError( action ) || getData( action );
+export const isHttpIngress = action => action.type === WPCOM_HTTP_REQUEST;
+export const isHttpEgress = action => getError( action ) || getData( action );
 
 export const processHttpRequest = ( handleIngress, handleEgress ) => store => next => action => {
 	// if is ingress/egress then leave it up to the handler to call next.
