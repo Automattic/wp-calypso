@@ -13,7 +13,7 @@ export function fetchResetOptions( userData ) {
 		dispatch( { type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } );
 
 		wpcom.undocumented().accountRecoveryReset( userData ).getResetOptions()
-			.then( options => dispatch( { type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE, options } ) )
+			.then( items => dispatch( { type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE, items } ) )
 			.catch( error => dispatch( { type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR, error } ) );
 	};
 }
