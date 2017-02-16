@@ -27,7 +27,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		const lastRevision = this.props.revisions[0];
+		const lastRevision = this.props.revisions[ 0 ];
 		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
 
 		return (

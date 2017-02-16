@@ -24,12 +24,12 @@ const initialize = editor => {
 		type: 'splitbutton',
 		title: i18n.translate( 'Insert content' ),
 		classes: 'btn wpcom-insert-menu insert-menu',
-		cmd: menuItems[0].cmd,
+		cmd: menuItems[ 0 ].cmd,
 		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			ReactDOM.render(
 				<Gridicon icon="add-outline" />,
-				this.$el[0].children[0]
+				this.$el[ 0 ].children[ 0 ]
 			);
 		}
 	} );

@@ -141,7 +141,7 @@ const MediaUtils = {
 		mimePrefixMatch = mimeType.match( /^([^\/]+)\// );
 
 		if ( mimePrefixMatch ) {
-			return mimePrefixMatch[1];
+			return mimePrefixMatch[ 1 ];
 		}
 	},
 
@@ -478,12 +478,12 @@ const MediaUtils = {
 		if ( ! HTMLCanvasElement.prototype.toBlob ) {
 			Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
 				value: function( polyfillCallback, polyfillType, polyfillQuality ) {
-					const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[1] ),
+					const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[ 1 ] ),
 						len = binStr.length,
 						arr = new Uint8Array( len );
 
 					for ( let i = 0; i < len; i++ ) {
-						arr[i] = binStr.charCodeAt( i );
+						arr[ i ] = binStr.charCodeAt( i );
 					}
 
 					polyfillCallback( new Blob( [ arr ], {

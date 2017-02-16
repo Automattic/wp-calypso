@@ -164,7 +164,7 @@ PluginUtils = {
 				case 'sections':
 					let cleanItem = {};
 					for ( let sectionKey of Object.keys( item ) ) {
-						cleanItem[ sectionKey] = sanitizeHtml( item[ sectionKey ], {
+						cleanItem[ sectionKey ] = sanitizeHtml( item[ sectionKey ], {
 							allowedTags: [ 'h4', 'h5', 'h6', 'blockquote', 'code', 'b', 'i', 'em', 'strong', 'a', 'p', 'img', 'ul', 'ol', 'li' ],
 							allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
 							allowedSchemes: [ 'http', 'https' ],

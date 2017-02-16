@@ -325,12 +325,12 @@ MenuData.prototype.isValidMenu = function( menu ) {
 MenuData.prototype.getPrimaryLocation = function( ) {
 	var primaryLocation;
 
-	if ( ! this.data.locations || ! this.data.locations[0] ) {
+	if ( ! this.data.locations || ! this.data.locations[ 0 ] ) {
 		return false;
 	}
 
 	primaryLocation = find( this.data.locations, { name: 'primary' } );
-	return ( primaryLocation || this.data.locations[0] ).name;
+	return ( primaryLocation || this.data.locations[ 0 ] ).name;
 };
 
 MenuData.prototype.getMenu = function( locationName ) {
@@ -494,7 +494,7 @@ MenuData.prototype.deleteMenu = function( menu, callback ) {
 
 	menusBackup = this.data.menus.slice();
 	menuIndex = findIndex( this.data.menus, { id: menu.id } );
-	this.deletedMenu = this.data.menus.splice( menuIndex, 1 )[0];
+	this.deletedMenu = this.data.menus.splice( menuIndex, 1 )[ 0 ];
 
 	this.emit( 'change' );
 	this.emit( 'saving' );
@@ -634,7 +634,7 @@ MenuData.prototype.moveItem = function( sourceId, targetId, position ) {
 			}
 
 			// Traverse items tree to remove & reattach 'item'
-			this.data.menus[i] = Traverser.traverse( menu, [
+			this.data.menus[ i ] = Traverser.traverse( menu, [
 				Traverser.remover( source.id ),
 				Traverser.inserter( source, target.id, position )
 			] );
@@ -696,7 +696,7 @@ MenuData.prototype.find = function( criterion, menus ) {
 	menus = menus || this.data.menus;
 
 	for ( i = 0; i < menus.length; i++ ) {
-		if ( result = Traverser.find( menus[i], predicate ) ) { // eslint-disable-line no-cond-assign
+		if ( result = Traverser.find( menus[ i ], predicate ) ) { // eslint-disable-line no-cond-assign
 			return result;
 		}
 	}
@@ -712,7 +712,7 @@ MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
 	menus = menus || this.data.menus;
 
 	for ( i = 0; i < menus.length; i++ ) {
-		Traverser.replaceItem( menus[i], newItem, predicate );
+		Traverser.replaceItem( menus[ i ], newItem, predicate );
 	}
 };
 
@@ -799,7 +799,7 @@ MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
 			menu.items = [ item ];
 		}
 
-		this.data.menus[i] = menu;
+		this.data.menus[ i ] = menu;
 		this.change();
 		return true;
 	}, this );
@@ -860,7 +860,7 @@ MenuData.prototype._incrementMenuName = function( menus ) {
 		menuNumbers = menus.concat( deletedMenus ).map( function( menu ) {
 			var matches;
 			if ( matches = menu.name.match( RegExp( '^' + menuString + ' (\\d+)$' ) ) ) { // eslint-disable-line no-cond-assign
-				return Number( matches[1] );
+				return Number( matches[ 1 ] );
 			}
 			return 0;
 		} );
@@ -882,8 +882,8 @@ MenuData.prototype.isAncestor = function( ancestor, descendent ) {
 MenuData.prototype.replaceMenu = function( newMenu ) {
 	this.data.menus.some( function( menu, i ) {
 		if ( menu.id === newMenu.id ) {
-			this.data.menus[i] = newMenu;
-			debug( 'replaced menu', this.data.menus[i] );
+			this.data.menus[ i ] = newMenu;
+			debug( 'replaced menu', this.data.menus[ i ] );
 			return true;
 		}
 	}, this );

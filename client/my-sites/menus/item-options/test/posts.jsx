@@ -39,7 +39,7 @@ describe( 'Posts', function() {
 		it( 'should inject when the menu type is "page"', function() {
 			const postsNode = new Posts( {posts: [], type: 'page' } );
 			const injectedPosts = postsNode.maybeInjectPosts();
-			chai.expect( injectedPosts[0] ).to.equal( this.itemToInject );
+			chai.expect( injectedPosts[ 0 ] ).to.equal( this.itemToInject );
 		} );
 
 		it( 'should not inject when the menu type is not "page"', function() {

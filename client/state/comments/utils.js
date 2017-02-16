@@ -22,7 +22,7 @@ export function getCommentParentKey( siteId, postId ) {
  */
 export function createRequestId( siteId, postId, query ) {
 	const queryKeys = Object.keys( query ).sort();
-	const queryString = queryKeys.map( ( key ) => `${ key }=${ query[key] }` ).join( '-' );
+	const queryString = queryKeys.map( ( key ) => `${ key }=${ query[ key ] }` ).join( '-' );
 
 	return `${siteId}-${postId}-${ queryString }`;
 }

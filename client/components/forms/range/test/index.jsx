@@ -28,7 +28,7 @@ describe( 'index', function() {
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
-		expect( content[0].getAttribute( 'class' ) ).to.contain( 'is-min' );
+		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-min' );
 	} );
 
 	it( 'should render ending content if passed a `maxContent` prop', function() {
@@ -41,7 +41,7 @@ describe( 'index', function() {
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
-		expect( content[0].getAttribute( 'class' ) ).to.contain( 'is-max' );
+		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-max' );
 	} );
 
 	it( 'should render a value label if passed a truthy `showValueLabel` prop', function() {

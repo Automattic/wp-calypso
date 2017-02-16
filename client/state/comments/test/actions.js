@@ -169,25 +169,25 @@ describe( 'actions', () => {
 
 			const reqPromise = writeCommentThunk( dispatchSpy );
 
-			const firstSpyCallArg = dispatchSpy.args[0][0];
+			const firstSpyCallArg = dispatchSpy.args[ 0 ][ 0 ];
 
 			expect( firstSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
-			expect( firstSpyCallArg.comments[0].ID.indexOf( 'placeholder-' ) ).to.equal( 0 );
+			expect( firstSpyCallArg.comments[ 0 ].ID.indexOf( 'placeholder-' ) ).to.equal( 0 );
 
 			return reqPromise.then( ( comment ) => {
 				expect( comment ).to.be.object;
 				expect( comment ).to.not.equal( undefined );
 				expect( comment ).to.not.equal( null );
 
-				const secondSpyCallArg = dispatchSpy.args[1][0];
-				const thirdSpyCallArg = dispatchSpy.args[2][0];
+				const secondSpyCallArg = dispatchSpy.args[ 1 ][ 0 ];
+				const thirdSpyCallArg = dispatchSpy.args[ 2 ][ 0 ];
 
 				expect( secondSpyCallArg.type ).to.eql( COMMENTS_REMOVE );
 				expect( secondSpyCallArg.commentId.indexOf( 'placeholder-' ) ).to.equal( 0 );
 
 				expect( thirdSpyCallArg.type ).to.eql( COMMENTS_RECEIVE );
 				expect( thirdSpyCallArg.comments.length ).to.eql( 1 );
-				expect( thirdSpyCallArg.comments[0].ID ).to.be.a.number;
+				expect( thirdSpyCallArg.comments[ 0 ].ID ).to.be.a.number;
 			} );
 		} );
 	} ); // writeComment

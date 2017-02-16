@@ -189,7 +189,7 @@ var MenuEditableItem = React.createClass( {
 	},
 
 	renderItemOptions: function() {
-		return this.state.itemType && this[this.state.itemType.renderer]( this.state.itemType );
+		return this.state.itemType && this[ this.state.itemType.renderer ]( this.state.itemType );
 	},
 
 	renderLinkOptions: function( itemType ) {
