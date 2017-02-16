@@ -1,12 +1,41 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, head } from 'lodash';
+import {
+	sortBy,
+	toPairs,
+	head,
+	get,
+	compact,
+	uniqBy,
+	isEqual,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { processHttpRequest } from './utils';
+import {
+	processHttpRequest,
+	getError,
+	getData,
+ } from './utils';
+
+import { failureMeta, successMeta } from './index';
+import { extendAction } from 'state/utils';
+
+/**
+ * Prevent sending multiple identical GET requests
+ * while one is still transiting over the network
+ *
+ * Two requests are considered identical if they
+ * are both GET requests and share the same
+ * fundamental properties.
+ *
+ * @module state/data-layer/wpcom-http/optimizations/remove-duplicate-gets
+ */
+
+/** @type {Map} holds in-transit request keys + the associated onSuccess/onError actions */
+const requestMap = new Map();
 
 /**
  * Generate a deterministic key for comparing request descriptions
@@ -24,28 +53,86 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => JSON.st
 	sortBy( toPairs( query ), head ),
 ] );
 
-const inflightRequests = new Set();
+/**
+ * Determines if a request object specifies the GET HTTP method
+ *
+ * @param {Object} request the HTTP request action
+ * @returns {Boolean} whether or not the method is GET
+ */
+const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 
-/** We care about handling two cases of inbound http requests here
-* 1. new request not inflight: add it to the inflight set and pass-through unharmed
-* 2. new request already inflight: do not let the request through
-*/
-function handleIngress( store, next, action ) {
-	const key = buildKey( action );
-	if ( inflightRequests.has( key ) ) {
-		return; // action should not pass go, should not collect $200
+/**
+ * Places all of the inflight requests into a map of of:
+ * 	{ requestKey: { successActions: [], failureActions: [] } }.
+ *
+ * If it sees that a requestKey is already in flight, then it drops the action
+ * and adds its success/failure actions to the map.
+ *
+ * @param  {Object}   store  Redux store
+ * @param  {Function} next   Redux middleware next
+ * @param  {Object}   action Redux action
+ */
+export function handleIngress( store, next, action ) {
+	if ( ! isGetRequest( action ) ) {
+		next( action );
+		return;
 	}
-	inflightRequests.add( key );
-	next( action );
+
+	const key = buildKey( action );
+	const request = requestMap.get( key );
+
+	if ( request ) {
+		request.successActions.push( action.onSuccess );
+		request.errorActions.push( action.onError );
+	} else {
+		requestMap.set( key, {
+			successActions: [ action.onSuccess ],
+			errorActions: [ action.onError ],
+		} );
+		next( action );
+	}
 }
 
-function handleEgress( store, next, action ) {
+/**
+ * Does a deep uniqify and removes nulls for any list
+ * @param  {Array} list
+ */
+export const deepUnique = list => compact( uniqBy( list, isEqual ) );
+
+/**
+ * Takes any completed that was placed into the requestMap and
+ * sends out all of its associated onSuccess/onFailure actions;
+ *
+ * @param  {Object}   store  Redux store
+ * @param  {Function} next   Redux middleware next
+ * @param  {Object}   action Redux action
+ */
+export function handleEgress( store, next, action ) {
 	const key = buildKey( action );
-	inflightRequests.delete( key );
-	next( action );
+	const request = requestMap( key );
+
+	if ( ! request ) {
+		next( action );
+		return;
+	}
+
+	const successActions = deepUnique( request.successActions );
+	const errorActions = deepUnique( request.errorActions );
+
+	const error = getError( action );
+	const data = getData( action );
+	if ( error ) {
+		errorActions.forEach( axn => next( extendAction( axn, failureMeta( error ) ) ) );
+	} else if ( data ) {
+		successActions.forEach( axn => next( extendAction( axn, successMeta( data ) ) ) );
+	}
+
+	requestMap.delete( key );
 }
 
 export default processHttpRequest(
 	handleIngress,
 	handleEgress,
 );
+
+// TODO add tests. this is probably broken
