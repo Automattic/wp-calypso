@@ -7,7 +7,7 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import {
-	READER_FETCH_TAGS_REQUEST,
+	READER_TAGS_REQUEST,
 } from 'state/action-types';
 import {
 	receiveTags,
@@ -67,5 +67,5 @@ export function receiveTagsError( store, action, next, error ) {
 }
 
 export default {
-	[ READER_FETCH_TAGS_REQUEST ]: [ dispatchRequest( requestTags, receiveTagsSuccess, receiveTagsSuccess ) ],
+	[ READER_TAGS_REQUEST ]: [ dispatchRequest( requestTags, receiveTagsSuccess, receiveTagsSuccess ) ],
 };
