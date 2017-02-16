@@ -50,7 +50,6 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	} ) );
 }
 
-
 export function receiveTagsError( store, action, next, error ) {
 	store.dispatch( receiveTags( {
 		payload: error,
