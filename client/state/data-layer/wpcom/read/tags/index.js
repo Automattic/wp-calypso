@@ -12,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 export function requestTags( store, action, next ) {
-	const path = action.payload && action.payload.tag
+	const path = action.payload && action.payload.slug
 		? `/read/tags/${ action.payload.slug }`
 		: '/read/tags';
 
