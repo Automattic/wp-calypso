@@ -6,5 +6,5 @@
  */
 export default ( state ) => {
 	const resetOptions = state.accountRecovery.reset.options;
-	return null == resetOptions.error && 0 < resetOptions.items.length;
+	return ! resetOptions.error && 0 < resetOptions.items.length;
 };
