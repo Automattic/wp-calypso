@@ -137,9 +137,9 @@ module.exports = {
 	freeToPaidUpsell: {
 		datestamp: '20170210',
 		variations: {
-			sidebar: 33,
-			banner: 33,
-			disabled: 34
+			sidebar: 45,
+			banner: 45,
+			disabled: 10
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: true
