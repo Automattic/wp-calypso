@@ -50,4 +50,4 @@ export const sites = [ {
 		}
 	},
 	'user_can_manage': true
-}];
+} ];

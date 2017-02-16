@@ -67,7 +67,7 @@ function observeDomChanges( MutationObserver ) {
 		subtree: true,
 		attributes: true,
 		childList: true,
-		attributeFilter: ['class']
+		attributeFilter: [ 'class' ]
 	} );
 }
 
@@ -138,7 +138,7 @@ function recordPlaceholders( mutation ) {
 	var nodes = [];
 
 	if ( mutation.attributeName === 'class' ) { // mutation.type === 'attributes' is redundant
-		nodes = [mutation.target];
+		nodes = [ mutation.target ];
 	} else if ( mutation.type === 'childList' && mutation.addedNodes.length > 0 ) {
 		nodes = mutation.addedNodes;
 	} else {

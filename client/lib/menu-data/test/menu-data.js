@@ -79,7 +79,7 @@ describe( 'MenuData', function() {
 		describe ( 'interceptSaveForHomepageLink', function () {
 			it( 'should convert the home item to link', function () {
 				var item = this.menuData.generateHomePageMenuItem(),
-					menu = { items: [item] },
+					menu = { items: [ item ] },
 					interceptedMenu = this.menuData.interceptSaveForHomepageLink( menu );
 
 				expect( interceptedMenu.items[0].type ).to.equal( 'custom' );
@@ -92,7 +92,7 @@ describe( 'MenuData', function() {
 		describe( 'interceptLoadForHomepageLink', function () {
 			beforeEach( function () {
 				this.menuItem = this.menuData.generateHomePageMenuItem();
-				this.menu = { items: [this.menuItem] };
+				this.menu = { items: [ this.menuItem ] };
 			} );
 			it( 'should convert the home link to page item', function () {
 				var pageItemOriginal = this.menuData.generateHomePageMenuItem(),

@@ -447,7 +447,7 @@ function wpview( editor ) {
 			} )
 			.observe( editor.getBody(), {
 				attributes: true,
-				attributeFilter: ['class']
+				attributeFilter: [ 'class' ]
 			} );
 		}
 	});
