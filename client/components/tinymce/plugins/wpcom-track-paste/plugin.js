@@ -44,8 +44,8 @@ function trackPaste( editor ) {
 		} ) );
 	};
 
-	const onPasteFromTinyMCEEditor = event => recordPasteEvent( 'visual-editor', event.clipboardData.types );
-	const onPasteFromHTMLEditor = event => recordPasteEvent( 'html-editor', event.clipboardData.types );
+	const onPasteFromTinyMCEEditor = event => event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
+	const onPasteFromHTMLEditor = event => event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
 
 	editor.on( 'paste', onPasteFromTinyMCEEditor );
 	const textarea = editor.getParam( 'textarea' );
