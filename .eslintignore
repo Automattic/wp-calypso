@@ -2,7 +2,6 @@
 assets/
 bin/
 build/
-config/
 docs/
 public/
 !.eslintrc.js
