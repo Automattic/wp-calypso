@@ -15,6 +15,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { isAutomatedTransferActive } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import WpAdminAutoLogin from './wpadmin-auto-login';
 
 class PluginAutomatedTransfer extends Component {
 
@@ -138,21 +139,24 @@ class PluginAutomatedTransfer extends Component {
 		}
 
 		return (
-			<Notice
-				icon={ this.getIcon() }
-				className="plugin-automated-transfer"
-				showDismiss={ false }
-				status={ this.getStatus() }
-				text={ this.getNoticeText() }
-			>
-				{ ! transferComplete && CONFLICTS === transferState &&
-					<NoticeAction href="#">
-						{ translate( 'View Conflicts', {
-							comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
-						} ) }
-					</NoticeAction>
-				}
-			</Notice>
+			<div>
+				<Notice
+					icon={ this.getIcon() }
+					className="plugin-automated-transfer"
+					showDismiss={ false }
+					status={ this.getStatus() }
+					text={ this.getNoticeText() }
+				>
+					{ ! transferComplete && CONFLICTS === transferState &&
+						<NoticeAction href="#">
+							{ translate( 'View Conflicts', {
+								comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
+							} ) }
+						</NoticeAction>
+					}
+				</Notice>
+				this.state.transferComplete && <WpAdminAutoLogin />
+			</div>
 		);
 	}
 
