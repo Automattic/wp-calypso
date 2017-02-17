@@ -137,13 +137,16 @@ export class DateTimeFormatOptions extends Component {
 							type="text"
 							value={ dateFormat || '' }
 						/>
-						<span className="date-time-format__custom-preview">
+						<FormSettingExplanation>
 							{ isCustomFormat && dateFormat
-								? today.format( phpToMomentDatetimeFormat( dateFormat ) )
+								? translate( 'Preview: %s', {
+									args: today.format( phpToMomentDatetimeFormat( dateFormat ) ),
+									comment: 'Date/time format preview'
+								} )
 								: ''
 							}
-						</span>
-				</span>
+						</FormSettingExplanation>
+					</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -199,12 +202,15 @@ export class DateTimeFormatOptions extends Component {
 							type="text"
 							value={ timeFormat || '' }
 						/>
-						<span className="date-time-format__custom-preview">
+						<FormSettingExplanation>
 							{ isCustomFormat && timeFormat
-								? today.format( phpToMomentDatetimeFormat( timeFormat ) )
+								? translate( 'Preview: %s', {
+									args: today.format( phpToMomentDatetimeFormat( timeFormat ) ),
+									comment: 'Date/time format preview'
+								} )
 								: ''
 							}
-						</span>
+						</FormSettingExplanation>
 					</span>
 					<FormSettingExplanation>
 						<ExternalLink
