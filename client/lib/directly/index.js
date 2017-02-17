@@ -1,12 +1,15 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import { initializeDirectly } from './vendor';
 
 const DEFAULT_RTM_WIDGET_OPTIONS = {
-	// Automattic widget ID
-	id: '8a2968fc57d1e2f40157f42bf2d43160',
-	// By default don't show the "Ask a Question" button
+	id: config( 'directly_rtm_widget_id' ),
 	displayAskQuestion: false
 };
 

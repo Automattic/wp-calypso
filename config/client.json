@@ -18,6 +18,7 @@
   "google_analytics_key",
   "google_adwords_conversion_id",
   "olark",
+  "directly_rtm_widget_id",
   "languages",
   "jetpack_min_version",
   "signup_url",

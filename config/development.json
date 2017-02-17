@@ -21,6 +21,7 @@
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": false
 	},
+	"directly_rtm_widget_id": "8a2968fc57d1e2f40157f42bf2d43160",
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
