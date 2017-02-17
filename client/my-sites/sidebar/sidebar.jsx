@@ -324,7 +324,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.jetpack ) {
+		if ( site.jetpack && ! ( config.isEnabled( 'automated-transfer' ) ) ) {
 			return null;
 		}
 
