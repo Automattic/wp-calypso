@@ -22,6 +22,12 @@ import SectionHeader from 'components/section-header';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
 import wrapSettingsForm from '../wrap-settings-form';
 
+/**
+ * Module constants
+ */
+const defaultDateFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
+const defaultTimeFormats = [ 'g:i a', 'g:i A', 'H:i' ];
+
 export class DateTimeFormatOptions extends Component {
 	dateFormatOption() {
 		const {
@@ -36,8 +42,7 @@ export class DateTimeFormatOptions extends Component {
 			translate,
 		} = this.props;
 
-		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
-		const isCustomFormat = ! includes( defaultFormats, dateFormat );
+		const isCustomFormat = ! includes( defaultDateFormats, dateFormat );
 		const today = startsWith( timezoneString, 'UTC' )
 			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
 			: moment.tz( timezoneString );
@@ -52,7 +57,7 @@ export class DateTimeFormatOptions extends Component {
 				<FormLabel>
 					{ translate( 'Date Format' ) }
 				</FormLabel>
-				{ defaultFormats.map( ( format, key ) =>
+				{ defaultDateFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
 							checked={ format === dateFormat }
@@ -106,8 +111,7 @@ export class DateTimeFormatOptions extends Component {
 			translate,
 		} = this.props;
 
-		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
-		const isCustomFormat = ! includes( defaultFormats, timeFormat );
+		const isCustomFormat = ! includes( defaultTimeFormats, timeFormat );
 		const today = startsWith( timezoneString, 'UTC' )
 			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
 			: moment.tz( timezoneString );
@@ -122,7 +126,7 @@ export class DateTimeFormatOptions extends Component {
 				<FormLabel>
 					{ translate( 'Time Format' ) }
 				</FormLabel>
-				{ defaultFormats.map( ( format, key ) =>
+				{ defaultTimeFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
 							checked={ format === timeFormat }
