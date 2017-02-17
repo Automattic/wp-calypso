@@ -134,22 +134,23 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			} );
 		} );
 
+		const ingressAction = { type: WPCOM_HTTP_REQUEST };
+		const egressAction = { type: 'requestRooster', meta: { dataLayer: { data: 'Astro Chicken' } } };
+		const unrelatedAction = { type: 'unrelated' };
+
 		describe( '#isHttpIngress', () => {
 			it( 'should return true for an action that is going to initiate a http request', () => {
-				const action = { type: WPCOM_HTTP_REQUEST };
-				assert( isHttpIngress( action ) );
+				assert( isHttpIngress( ingressAction ) );
 			} );
 
 			it( 'should return false for any actions not of type WPCOM_HTTP_REQUEST', () => {
-				const action = { type: 'not an http request' };
-				assert.isFalse( isHttpIngress( action ) );
+				assert.isFalse( isHttpIngress( unrelatedAction ) );
 			} );
 		} );
 
 		describe( '#isHttpEgress', () => {
 			it( 'should return true for any action that is the result of an onSuccess http handler', () => {
-				const action = { type: 'requestRooster', meta: { dataLayer: { data: 'Astro Chicken' } } };
-				assert( isHttpEgress( action ) );
+				assert( isHttpEgress( egressAction ) );
 			} );
 
 			it( 'should return true for any action that is the result of an onError http handler', () => {
@@ -158,8 +159,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			} );
 
 			it( 'should return false for any actions without the onSuccess/onError meta', () => {
-				const unrelatedAction = { type: 'unrelated to http' };
-				const httpRequestAction = { type: WPCOM_HTTP_REQUEST };
+				const httpRequestAction = unrelatedAction;
 
 				assert.isNotOk( isHttpEgress( unrelatedAction ) );
 				assert.isNotOk( isHttpEgress( httpRequestAction ) );
@@ -171,9 +171,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const handleEgress = spy();
 			const next = spy();
 			const store = spy();
-			const ingressAction = { type: WPCOM_HTTP_REQUEST };
-			const egressAction = { type: 'requestRooster', meta: { dataLayer: { data: 'Astro Chicken' } } };
-			const unrelatedAction = { type: 'unrelated' };
 
 			beforeEach( () => {
 				handleIngress.reset();

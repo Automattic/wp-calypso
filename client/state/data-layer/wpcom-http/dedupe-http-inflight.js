@@ -7,7 +7,7 @@ import {
 	head,
 	get,
 	compact,
-	uniqBy,
+	uniqWith,
 	isEqual,
 } from 'lodash';
 
@@ -35,6 +35,11 @@ import { extendAction } from 'state/utils';
 
 /** @type {Map} holds in-transit request keys + the associated onSuccess/onError actions */
 const requestMap = new Map();
+
+// just for unit tests
+export function clearMap() {
+	requestMap.clear();
+}
 
 /**
  * Generate a deterministic key for comparing request descriptions
@@ -72,6 +77,7 @@ const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCa
  * @param  {Object}   action Redux action
  */
 export function handleIngress( store, next, action ) {
+	// ignore anything that isn't a GET request
 	if ( ! isGetRequest( action ) ) {
 		next( action );
 		return;
@@ -80,14 +86,11 @@ export function handleIngress( store, next, action ) {
 	const key = buildKey( action );
 	const request = requestMap.get( key );
 
-	if ( request ) {
-		request.successActions.push( action.onSuccess );
-		request.errorActions.push( action.onError );
-	} else {
-		requestMap.set( key, {
-			successActions: [ action.onSuccess ],
-			errorActions: [ action.onError ],
-		} );
+	const successActions = get( request, 'successActions', [] ).concat( [ action.onSuccess ] );
+	const errorActions = get( request, 'errorActions', [] ).concat( [ action.onError ] );
+	requestMap.set( key, { successActions, errorActions } );
+
+	if ( ! request ) {
 		next( action );
 	}
 }
@@ -96,7 +99,7 @@ export function handleIngress( store, next, action ) {
  * Does a deep uniqify and removes nulls for any list
  * @param  {Array} list
  */
-export const deepUnique = list => compact( uniqBy( list, isEqual ) );
+export const deepUnique = list => compact( uniqWith( list, isEqual ) );
 
 /**
  * Takes any completed that was placed into the requestMap and
@@ -108,7 +111,7 @@ export const deepUnique = list => compact( uniqBy( list, isEqual ) );
  */
 export function handleEgress( store, next, action ) {
 	const key = buildKey( action );
-	const request = requestMap( key );
+	const request = requestMap.get( key );
 
 	if ( ! request ) {
 		next( action );
@@ -133,5 +136,3 @@ export default processHttpRequest(
 	handleIngress,
 	handleEgress,
 );
-
-// TODO add tests. this is probably broken
