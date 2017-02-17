@@ -48,7 +48,7 @@ import { JPC_PLANS_PAGE } from './constants';
  *  Local variables;
  */
 const _fetching = {};
-const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const calypsoEnv = config( 'env_id' );
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';

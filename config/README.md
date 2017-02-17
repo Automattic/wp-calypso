@@ -15,7 +15,7 @@ console.log( config( 'redirect_uri' ) );
 Feature Flags
 -------------
 
-The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds two methods to detect this: `config.isEnabled()` and `config.anyEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find.
+The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find.
 
 ```json
 {
@@ -29,5 +29,5 @@ The config files contain a features object that can be used to determine whether
 If you want to temporarily enable/disable some feature flags for a given build, you can do so by setting the `ENABLE_FEATURES` and/or `DISABLE_FEATURES` environment variables. Set them to a comma separated list of features you want to enable/disable, respectively:
 
 ```bash
-ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader
+ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader make run
 ```
