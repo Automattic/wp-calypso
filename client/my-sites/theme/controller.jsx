@@ -12,10 +12,10 @@ import startsWith from 'lodash/startsWith';
 import ThemeSheetComponent from './main';
 import {
 	receiveTheme,
-	themeRequestFailure,
+	requestTheme,
 	setBackPath
 } from 'state/themes/actions';
-import wpcom from 'lib/wp';
+import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -40,21 +40,22 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	wpcom.undocumented().themeDetails( themeSlug )
-		.then( themeDetails => {
-			debug( 'caching', themeSlug );
-			themeDetails.timestamp = Date.now();
+	context.store.dispatch( requestTheme( themeSlug, 'wpcom' ) )
+		.then( () => {
+			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
+			if ( ! themeDetails ) {
+				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
+				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
+				context.renderCacheKey = 'theme not found';
+			} else {
+				debug( 'caching', themeSlug );
+				themeDetails.timestamp = Date.now();
+				context.renderCacheKey = context.path + themeDetails.timestamp;
+			}
 			themeDetailsCache.set( themeSlug, themeDetails );
-			context.store.dispatch( receiveTheme( themeDetails, 'wpcom' ) );
-			context.renderCacheKey = context.path + themeDetails.timestamp;
 			next();
 		} )
-		.catch( error => {
-			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			context.store.dispatch( themeRequestFailure( 'wpcom', themeSlug, error ) );
-			context.renderCacheKey = 'theme not found';
-			next();
-		} );
+		.catch( next );
 }
 
 export function details( context, next ) {
