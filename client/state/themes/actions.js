@@ -51,7 +51,13 @@ import {
 	recordTracksEvent,
 	withAnalytics
 } from 'state/analytics/actions';
-import { getTheme, getActiveTheme, getLastThemeQuery, getThemeCustomizeUrl } from './selectors';
+import {
+	getTheme,
+	getActiveTheme,
+	getLastThemeQuery,
+	getThemeCustomizeUrl,
+	getWpcomParentThemeId,
+} from './selectors';
 import {
 	getThemeIdFromStylesheet,
 	isThemeMatchingQuery,
@@ -415,12 +421,22 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
  * @return {Function}         Action thunk
  */
 export function installTheme( themeId, siteId ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: THEME_INSTALL,
 			siteId,
 			themeId
 		} );
+
+		if ( isThemeFromWpcom( themeId ) ) {
+			const parentThemeId = getWpcomParentThemeId(
+				getState(),
+				themeId.replace( '-wpcom', '' )
+			);
+			if ( parentThemeId ) {
+				dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+			}
+		}
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
