@@ -42,7 +42,7 @@ config.anyEnabled = function() {
 	} );
 }
 
-const ssrConfig = `var configData = ${ clientData };`;
+const ssrConfig = `var configData = ${ JSON.stringify( clientData ) };`;
 
 module.exports = config;
 module.exports.ssrConfig = ssrConfig;
