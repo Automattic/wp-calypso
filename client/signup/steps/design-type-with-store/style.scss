@@ -3,7 +3,16 @@
 	text-align: center;
 }
 
-.design-type-with-store__section-wrapper {
+.design-type-with-store__substep-wrapper {
+	position: relative;
+}
+
+.design-type-with-store__list {
+	margin: 0 auto;
+	display: flex;
+	flex-flow: row wrap;
+	max-width: 640px;
+
 	opacity: 1;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
@@ -30,13 +39,6 @@
 		transform: translateZ( 0 ) translateX( 25% );
 		opacity: 0;
 	}
-}
-
-.design-type-with-store__list {
-	margin: 0 auto;
-	display: flex;
-	flex-flow: row wrap;
-	max-width: 640px;
 }
 
 .design-type-with-store__choice {
@@ -104,6 +106,10 @@
 	background-color: #f3f6f8;
 	box-sizing: border-box;
 	height: 195px;
+}
+
+.design-type-with-store__partner-box {
+	text-align: center;
 }
 
 @include breakpoint( "<480px" ) {
@@ -191,6 +197,7 @@
 
 .design-type-with-store__back-button-wrapper {
 	margin: 32px;
+	text-align: center;
 }
 
 .design-type-with-store__bluehost-logo {
