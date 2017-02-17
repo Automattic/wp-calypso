@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
 /**
@@ -68,11 +69,13 @@ const PostsMain = React.createClass( {
 
 	mostRecentDrafts() {
 		const site = this.props.sites.getSelectedSite();
-		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
 
 		if ( ! site || ! this.showDrafts() ) {
 			return null;
 		}
+
+		const { draftCount, translate } = this.props;
+		const isLoading = draftCount !== 0 && this.props.loadingDrafts;
 
 		return (
 			<div className="posts__recent-drafts">
@@ -80,19 +83,19 @@ const PostsMain = React.createClass( {
 					siteId={ site.ID }
 					query={ this.props.draftsQuery } />
 				<QueryPostCounts siteId={ site.ID } type="post" />
-				<SectionHeader className="posts__drafts-header" label={ this.translate( 'Latest Drafts' ) }>
+				<SectionHeader className="posts__drafts-header" label={ translate( 'Latest Drafts' ) }>
 					<Button compact href={ this.props.newPostPath }>
-						{ this.translate( 'Start New' ) }
+						{ translate( 'Start New' ) }
 					</Button>
 				</SectionHeader>
 				{ map( this.props.drafts, ( { global_ID: globalId } ) => (
 					<PostItem compact key={ globalId } globalId={ globalId } />
 				) ) }
 				{ isLoading && <PostItem compact /> }
-				{ this.props.draftCount > 6 &&
+				{ draftCount > 6 &&
 					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ site.slug }` }>
-						{ this.translate( 'See all drafts' ) }
-						{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
+						{ translate( 'See all drafts' ) }
+						{ draftCount ? <Count count={ draftCount } /> : null }
 					</Button>
 				}
 			</div>
@@ -121,8 +124,13 @@ const PostsMain = React.createClass( {
 	setWarning( selectedSite ) {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
 			notices.warning(
-				this.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', { args: { version: config( 'jetpack_min_version' ) } } ),
-				{ button: this.translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+				this.props.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', {
+					args: { version: config( 'jetpack_min_version' ) }
+				} ),
+				{
+					button: this.props.translate( 'Update now' ),
+					href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade',
+				}
 			);
 		}
 	}
@@ -147,4 +155,4 @@ export default connect( ( state, props ) => {
 		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
 		newPostPath: getEditorNewPostPath( state, siteId )
 	};
-} )( PostsMain );
+} )( localize( PostsMain ) );
