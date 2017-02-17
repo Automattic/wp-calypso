@@ -1,58 +1,57 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import omit from 'lodash/omit';
+import { get, identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
-import analytics from 'lib/analytics';
 import config from 'config';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
+export class PeopleListItem extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+	};
 
-	displayName: 'PeopleListItem',
+	static defaultProps = {
+		translate: identity,
+	};
 
-	mixins: [ PureRenderMixin ],
+	userHasPromoteCapability = () => get( this.props.site, 'capabilities.promote_users', false );
 
-	navigateToUser() {
-		window.scrollTo( 0, 0 );
-		analytics.ga.recordEvent( 'People', 'Clicked User Profile From Team List' );
-	},
-
-	userHasPromoteCapability() {
-		const site = this.props.site;
-		return site && site.capabilities && site.capabilities.promote_users;
-	},
-
-	canLinkToProfile() {
-		const site = this.props.site,
-			user = this.props.user;
+	canLinkToProfile = () => {
+		const {
+			isSelectable,
+			site,
+			user,
+		} = this.props;
 		return (
 			config.isEnabled( 'manage/edit-user' ) &&
 			user &&
 			user.roles &&
 			site &&
 			site.slug &&
-			this.userHasPromoteCapability() &&
-			! this.props.isSelectable
+			this.userHasPromoteCapability() && ! isSelectable
 		);
-	},
+	};
 
 	render() {
 		const canLinkToProfile = this.canLinkToProfile();
+
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
+				type={ this.props.type }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login }
-				onClick={ canLinkToProfile && this.navigateToUser }>
+				onClick={ canLinkToProfile && this.props.navigateToUser }>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
 				</div>
@@ -60,11 +59,21 @@ export default React.createClass( {
 				this.props.onRemove &&
 				<div className="people-list-item__actions">
 					<button className="button is-link people-list-item__remove-button" onClick={ this.props.onRemove }>
-						{ this.translate( 'Remove', { context: 'Verb: Remove a user or follower from the blog.' } ) }
+						{ this.props.translate( 'Remove' ) }
 					</button>
 				</div>
 				}
 			</CompactCard>
 		);
 	}
-} );
+}
+
+const navigateToUser = () => {
+	return recordGoogleEvent( 'People', 'Clicked User profile from team list' );
+};
+
+const mapDispatchToProps = {
+	navigateToUser,
+};
+
+export default connect( null, mapDispatchToProps )( localize( PeopleListItem ) );
