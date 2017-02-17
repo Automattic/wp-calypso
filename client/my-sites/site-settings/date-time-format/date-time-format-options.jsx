@@ -25,7 +25,10 @@ import wrapSettingsForm from '../wrap-settings-form';
 export class DateTimeFormatOptions extends Component {
 	dateFormatOption() {
 		const {
-			fields: { date_format, timezone_string },
+			fields: {
+				date_format: dateFormat,
+				timezone_string: timezoneString,
+			},
 			handleRadio,
 			isRequestingSettings,
 			moment,
@@ -34,10 +37,10 @@ export class DateTimeFormatOptions extends Component {
 		} = this.props;
 
 		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
-		const isCustomFormat = ! includes( defaultFormats, date_format );
-		const today = startsWith( timezone_string, 'UTC' )
-			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
-			: moment.tz( timezone_string );
+		const isCustomFormat = ! includes( defaultFormats, dateFormat );
+		const today = startsWith( timezoneString, 'UTC' )
+			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
+			: moment.tz( timezoneString );
 
 		const customFieldClasses = classNames(
 			'date-time-format__custom-field',
@@ -52,7 +55,7 @@ export class DateTimeFormatOptions extends Component {
 				{ defaultFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
-							checked={ format === date_format }
+							checked={ format === dateFormat }
 							disabled={ isRequestingSettings }
 							name="date_format"
 							onChange={ handleRadio }
@@ -67,7 +70,7 @@ export class DateTimeFormatOptions extends Component {
 						disabled={ isRequestingSettings }
 						name="date_format"
 						onChange={ handleRadio }
-						value={ date_format }
+						value={ dateFormat }
 					/>
 					<span>
 						{ translate( 'Custom' ) }
@@ -76,11 +79,11 @@ export class DateTimeFormatOptions extends Component {
 							name="date_format_custom"
 							onChange={ onChangeField( 'date_format' ) }
 							type="text"
-							value={ date_format || '' }
+							value={ dateFormat || '' }
 						/>
 						<span className="date-time-format__custom-preview">
-							{ isCustomFormat && date_format
-								? today.format( phpToMomentDatetimeFormat( date_format ) )
+							{ isCustomFormat && dateFormat
+								? today.format( phpToMomentDatetimeFormat( dateFormat ) )
 								: ''
 							}
 						</span>
@@ -92,7 +95,10 @@ export class DateTimeFormatOptions extends Component {
 
 	timeFormatOption() {
 		const {
-			fields: { time_format, timezone_string },
+			fields: {
+				time_format: timeFormat,
+				timezone_string: timezoneString,
+			},
 			handleRadio,
 			isRequestingSettings,
 			moment,
@@ -101,10 +107,10 @@ export class DateTimeFormatOptions extends Component {
 		} = this.props;
 
 		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
-		const isCustomFormat = ! includes( defaultFormats, time_format );
-		const today = startsWith( timezone_string, 'UTC' )
-			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
-			: moment.tz( timezone_string );
+		const isCustomFormat = ! includes( defaultFormats, timeFormat );
+		const today = startsWith( timezoneString, 'UTC' )
+			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
+			: moment.tz( timezoneString );
 
 		const customFieldClasses = classNames(
 			'date-time-format__custom-field',
@@ -119,7 +125,7 @@ export class DateTimeFormatOptions extends Component {
 				{ defaultFormats.map( ( format, key ) =>
 					<FormLabel key={ key }>
 						<FormRadio
-							checked={ format === time_format }
+							checked={ format === timeFormat }
 							disabled={ isRequestingSettings }
 							name="time_format"
 							onChange={ handleRadio }
@@ -134,7 +140,7 @@ export class DateTimeFormatOptions extends Component {
 						disabled={ isRequestingSettings }
 						name="time_format"
 						onChange={ handleRadio }
-						value={ time_format }
+						value={ timeFormat }
 					/>
 					<span>
 						{ translate( 'Custom' ) }
@@ -143,17 +149,21 @@ export class DateTimeFormatOptions extends Component {
 							name="time_format_custom"
 							onChange={ onChangeField( 'time_format' ) }
 							type="text"
-							value={ time_format || '' }
+							value={ timeFormat || '' }
 						/>
 						<span className="date-time-format__custom-preview">
-							{ isCustomFormat && time_format
-								? today.format( phpToMomentDatetimeFormat( time_format ) )
+							{ isCustomFormat && timeFormat
+								? today.format( phpToMomentDatetimeFormat( timeFormat ) )
 								: ''
 							}
 						</span>
 					</span>
 					<FormSettingExplanation>
-						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
+						<ExternalLink
+							href="https://codex.wordpress.org/Formatting_Date_and_Time"
+							icon
+							target="_blank"
+						>
 							{ translate( 'Learn more about date and time formatting.' ) }
 						</ExternalLink>
 					</FormSettingExplanation>
@@ -164,7 +174,9 @@ export class DateTimeFormatOptions extends Component {
 
 	startOfWeekOption() {
 		const {
-			fields: { start_of_week },
+			fields: {
+				start_of_week: startOfWeek,
+			},
 			handleSelect,
 			isRequestingSettings,
 			translate,
@@ -189,7 +201,7 @@ export class DateTimeFormatOptions extends Component {
 					disabled={ isRequestingSettings }
 					name="start_of_week"
 					onChange={ handleSelect }
-					value={ start_of_week || 0 }
+					value={ startOfWeek || 0 }
 				>
 					{ daysOfWeek.map( ( day, index ) =>
 						<option key={ index } value={ index }>
