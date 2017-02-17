@@ -148,7 +148,7 @@ const analytics = {
 
 			eventProperties = eventProperties || {};
 
-			if ( process.env.NODE_ENV !== 'production' ) {
+			if ( config( 'env' ) !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
 						console.error( `Unable to record event "${ eventName }" because nested properties are not supported by Tracks. Check '${ key }' on`, eventProperties ); //eslint-disable-line no-console

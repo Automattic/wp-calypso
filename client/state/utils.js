@@ -12,6 +12,7 @@ import {
 	SERIALIZE,
 } from './action-types';
 import warn from 'lib/warn';
+import config from 'config';
 
 export function isValidStateWithSchema( state, schema ) {
 	const validate = validator( schema );
@@ -214,7 +215,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 	return ( state = initialState, action ) => {
 		const { type } = action;
 
-		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
+		if ( 'production' !== config( 'env' ) && 'type' in action && ! type ) {
 			throw new TypeError( 'Reducer called with undefined type.' +
 				' Verify that the action type is defined in state/action-types.js' );
 		}

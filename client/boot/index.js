@@ -1,6 +1,7 @@
 // Initialize localStorage polyfill before any dependencies are loaded
 require( 'lib/local-storage' )();
-if ( process.env.NODE_ENV === 'development' ) {
+const config = require( 'config' );
+if ( config( 'env' ) === 'development' ) {
 	require( 'lib/wrap-es6-functions' )();
 }
 
@@ -24,8 +25,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 // lib/local-storage must be run before lib/user
-var config = require( 'config' ),
-	abtestModule = require( 'lib/abtest' ),
+var abtestModule = require( 'lib/abtest' ),
 	getSavedVariations = abtestModule.getSavedVariations,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
@@ -120,7 +120,7 @@ function setUpContext( reduxStore ) {
 }
 
 function loadDevModulesAndBoot() {
-	if ( process.env.NODE_ENV === 'development' && config.isEnabled( 'render-visualizer' ) ) {
+	if ( config( 'env' ) === 'development' && config.isEnabled( 'render-visualizer' ) ) {
 		// Use Webpack's code splitting feature to put the render visualizer in a separate fragment.
 		// This way it won't get downloaded unless this feature is enabled.
 		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,

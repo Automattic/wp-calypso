@@ -10,6 +10,7 @@ import supertest from 'supertest';
  */
 import { allowNetworkAccess } from 'test/helpers/nock-control';
 import { useSandbox } from 'test/helpers/use-sinon';
+import unmodifiedConfig from 'config';
 
 describe( 'api', function() {
 	let app, config, localRequest, sandbox;
@@ -46,7 +47,7 @@ describe( 'api', function() {
 	} );
 
 	let maybeIt = it;
-	if ( process.env.NODE_ENV !== 'desktop' ) {
+	if ( unmodifiedConfig( 'env_id' ) !== 'desktop' ) {
 		maybeIt = maybeIt.skip;
 	}
 
