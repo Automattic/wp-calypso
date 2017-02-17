@@ -10,16 +10,16 @@ import supertest from 'supertest';
  */
 import { allowNetworkAccess } from 'test/helpers/nock-control';
 import { useSandbox } from 'test/helpers/use-sinon';
+import config from 'config';
 
 describe( 'api', function() {
-	let app, config, localRequest, sandbox;
+	let app, localRequest, sandbox;
 
 	allowNetworkAccess();
 	useSandbox( newSandbox => sandbox = newSandbox );
 
 	before( () => {
-		config = require( 'config' );
-		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
+		config.isEnabled = arg => arg === 'oauth';
 		app = require( '../' )();
 		localRequest = supertest( app );
 	} );
