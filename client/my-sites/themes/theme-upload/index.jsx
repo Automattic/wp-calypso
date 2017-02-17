@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find } from 'lodash';
+import { includes, find, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
@@ -45,6 +45,11 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import QueryEligibility from 'components/data/query-atat-eligibility';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer
+} from 'state/automated-transfer/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -64,10 +69,11 @@ class Upload extends React.Component {
 		isJetpack: React.PropTypes.bool,
 		upgradeJetpack: React.PropTypes.bool,
 		backPath: React.PropTypes.string,
+		showEligibility: React.PropTypes.bool,
 	};
 
 	state = {
-		showEligibility: ! this.props.isJetpack,
+		showEligibility: this.props.showEligibility,
 	}
 
 	componentDidMount() {
@@ -79,8 +85,10 @@ class Upload extends React.Component {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
+		}
 
-			this.setState( { showEligibility: ! nextProps.isJetpack } );
+		if ( nextProps.showEligibility !== this.props.showEligibility ) {
+			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 	}
 
@@ -268,10 +276,11 @@ class Upload extends React.Component {
 			isJetpack
 		} = this.props;
 
-		const showEligibility = ! isJetpack && this.state.showEligibility;
+		const { showEligibility } = this.state;
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
@@ -314,6 +323,14 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+		// Use this selector to take advantage of eligibility card placeholders
+		// before data has loaded.
+		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+		const hasEligibilityMessages = ! (
+			isEmpty( eligibilityHolds ) &&
+			isEmpty( eligibilityWarnings )
+		);
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
@@ -330,6 +347,7 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
+			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
