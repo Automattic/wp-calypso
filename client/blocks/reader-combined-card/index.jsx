@@ -40,7 +40,7 @@ const ReaderCombinedCard = ( { posts, site, feed } ) => {
 			</header>
 			<ul>
 				{ posts.map( post => (
-					<ReaderCombinedCardPost key={ `post-${ post.ID }` } post={ post } />
+					<ReaderCombinedCardPost key={ `post-${ post.ID }` } post={ post } streamUrl={ streamUrl } />
 				) ) }
 			</ul>
 		</div>

@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { has } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -9,8 +10,11 @@ import React from 'react';
 import AutoDirection from 'components/auto-direction';
 import ReaderPostCardExcerpt from 'blocks/reader-post-card/excerpt';
 import ReaderPostActionsVisitLink from 'blocks/reader-post-actions/visit';
+import ReaderAuthorLink from 'blocks/reader-author-link';
 
-const ReaderCombinedCardPost = ( { post/*, site, feed*/ } ) => {
+const ReaderCombinedCardPost = ( { post, streamUrl /*, site, feed*/ } ) => {
+	const hasAuthorName = has( post, 'author.name' );
+
 	return (
 		<li className="reader-combined-card__post">
 			<AutoDirection>
@@ -20,12 +24,22 @@ const ReaderCombinedCardPost = ( { post/*, site, feed*/ } ) => {
 			</AutoDirection>
 			<ReaderPostCardExcerpt post={ post } isDiscover={ false } />
 			<ReaderPostActionsVisitLink visitUrl={ post.URL } />
+			{ hasAuthorName &&
+				<ReaderAuthorLink
+					className="reader-combined-card__author-link"
+					author={ post.author }
+					siteUrl={ streamUrl }
+					post={ post }>
+					{ post.author.name }
+				</ReaderAuthorLink>
+			}
 		</li>
 	);
 };
 
 ReaderCombinedCardPost.propTypes = {
 	post: React.PropTypes.object.isRequired,
+	streamUrl: React.PropTypes.string,
 	site: React.PropTypes.object,
 	feed: React.PropTypes.object,
 };
