@@ -16,26 +16,17 @@ import { addReducer, removeReducer } from 'state';
  * @param { func } reducerFunc The function that takes (state, action) and returns state.
  * @returns { func } A curried function that takes a component to wrap.
  */
-export default function useReducer( reducerName, reducerFunc ) {
-	return function wrapWithUseReducer( WrappedComponent ) {
-		class UseReducer extends Component {
+export default function withReducer( reducerName, reducerFunc ) {
+	return function wrapWithWithReducer( WrappedComponent ) {
+		class WithReducer extends Component {
 			constructor( props, context ) {
 				super( props, context );
-				this.store = props.store || context.store;
 				this.reducerName = reducerName;
 				this.reducerFunc = reducerFunc;
 			}
 
 			componentDidMount() {
 				addReducer( reducerName, reducerFunc );
-			}
-
-			componentWillReceiveProps( newProps ) {
-				if ( newProps.store ) {
-					removeReducer( reducerName );
-					this.store = newProps.store;
-					addReducer( reducerName, reducerFunc );
-				}
 			}
 
 			componentWillUnmount() {
@@ -48,7 +39,7 @@ export default function useReducer( reducerName, reducerFunc ) {
 			}
 		}
 
-		return UseReducer;
+		return WithReducer;
 	};
 }
 

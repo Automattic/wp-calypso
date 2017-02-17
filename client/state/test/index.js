@@ -9,42 +9,48 @@ import chai, { expect } from 'chai';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import { createReduxStore, addReducer, removeReducer, reducers } from '../';
+import { CalypsoStore } from '../';
 import currentUser from 'state/current-user/reducer';
 
 const should = chai.should();
 
 describe( 'index', () => {
-	describe( 'addReducer', () => {
+	describe( 'CalypsoStore#addReducer', () => {
 		const name = 'myReducer';
-		const func = () => {};
+		const func = ( state ) => state;
 
 		it( 'should add and remove a reducer by name', () => {
-			should.not.exist( reducers[ name ] );
+			const store = new CalypsoStore();
 
-			addReducer( name, func );
-			should.exist( reducers[ name ] );
+			should.not.exist( store.reducers[ name ] );
 
-			removeReducer( name );
-			should.not.exist( reducers[ name ] );
+			store.addReducer( name, func );
+			should.exist( store.reducers[ name ] );
+
+			store.removeReducer( name );
+			should.not.exist( store.reducers[ name ] );
 		} );
 
 		it( 'should throw when trying to add a reducer with an existing name', () => {
+			const store = new CalypsoStore();
+
 			const addFunc = () => {
-				addReducer( name, func );
+				store.addReducer( name, func );
 			};
 
 			expect( addFunc ).to.not.throw( Error );
-			should.exist( reducers[ name ] );
+			should.exist( store.reducers[ name ] );
 
 			expect( addFunc ).to.throw( Error );
 		} );
 	} );
 
-	describe( 'createReduxStore', () => {
+	describe( 'CalypsoStore#createReduxStore', () => {
 		it( 'can be called without specifying initialState', () => {
-			const reduxStoreNoArgs = createReduxStore().getState();
-			const reduxStoreWithEmptyState = createReduxStore( {} ).getState();
+			const store = new CalypsoStore();
+
+			const reduxStoreNoArgs = store.createReduxStore().getState();
+			const reduxStoreWithEmptyState = store.createReduxStore( {} ).getState();
 			expect( reduxStoreNoArgs ).to.be.an( 'object' );
 			expect( reduxStoreWithEmptyState ).to.eql( reduxStoreNoArgs );
 		} );
@@ -53,7 +59,7 @@ describe( 'index', () => {
 			// If you're here investigating why tests are failing, you should
 			// ensure that your reducer is not returning a new state object if
 			// it's not handling the action (i.e. that nothing has changed)
-			const store = createReduxStore();
+			const store = new CalypsoStore().createReduxStore();
 			const originalState = store.getState();
 
 			store.dispatch( { type: '__GARBAGE' } );
@@ -67,7 +73,7 @@ describe( 'index', () => {
 				currentUser: { id: 1234 },
 				users: { items: { 1234: user } }
 			};
-			const reduxStoreWithCurrentUser = createReduxStore( initialState ).getState();
+			const reduxStoreWithCurrentUser = new CalypsoStore().createReduxStore( initialState ).getState();
 			expect( reduxStoreWithCurrentUser.currentUser ).to.eql( currentUser( { id: 1234 }, {} ) );
 			expect( Object.keys( reduxStoreWithCurrentUser.users.items ).length ).to.eql( 1 );
 			expect( reduxStoreWithCurrentUser.users.items[ 1234 ] ).to.eql( user );
@@ -79,9 +85,13 @@ describe( 'index', () => {
 			} );
 
 			it( 'ignores non-existent keys', () => {
+				const store = new CalypsoStore();
+
 				expect( console.error.calledOnce ).to.eql( false );
-				const reduxStoreNoArgs = createReduxStore().getState();
-				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();
+				const reduxStoreNoArgs = store.createReduxStore().getState();
+				const reduxStoreBadData = store.createReduxStore(
+					{ some: { bad: { stuff: true } } }
+				).getState();
 				expect( reduxStoreBadData ).to.eql( reduxStoreNoArgs );
 				expect( console.error.calledOnce ).to.eql( true );
 			} );

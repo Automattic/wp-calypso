@@ -65,6 +65,7 @@ const debug = debugFactory( 'calypso:state:reducers' );
 /**
  * Module variables
  */
+
 const initialReducers = {
 	application,
 	accountRecovery,
@@ -116,62 +117,111 @@ const initialReducers = {
 	wordads,
 };
 
-// TODO: This is temporary just to make the tests run until I refactor this.
-export let reducers = { ...initialReducers };
-let onChange = null;
-
-// TODO: See if this export can be eliminated.
-export let reducer = combineReducers( reducers );
-
-export function addReducer( name, reducerFunc ) {
-	if ( reducers[ name ] !== undefined ) {
-		throw new Error( `addReducer(): name ${ name } already in use` );
+/**
+ * Creates and holds the Redux Store and its dependencies.
+ * @param { object } reducers: The named set of reducers for the store.
+ */
+export class CalypsoStore {
+	constructor() {
+		this.reducers = { ...initialReducers };
+		this.reduxStore = null;
 	}
 
-	reducers = { ...reducers, [ name ]: reducerFunc };
+	createReduxStore( initialState = {} ) {
+		const isBrowser = typeof window === 'object';
+		const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
-	if ( onChange ) {
-		onChange();
+		const middlewares = [
+			thunkMiddleware,
+			noticesMiddleware,
+			isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+			isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+			isAudioSupported && require( './audio/middleware.js' ).default,
+		].filter( Boolean );
+
+		const enhancers = [
+			isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+			applyMiddleware( ...middlewares ),
+			isBrowser && sitesSync,
+			isBrowser && window.devToolsExtension && window.devToolsExtension()
+		].filter( Boolean );
+
+		const reducer = this.getCombinedReducer();
+		this.reduxStore = compose( ...enhancers )( createStore )( reducer, initialState );
+		return this.reduxStore;
+	}
+
+	addReducer( name, reducerFunc ) {
+		if ( this.reducers[ name ] !== undefined ) {
+			throw new Error( `addReducer(): name ${ name } already in use` );
+		}
+
+		this.setReducers( { ...this.reducers, [ name ]: reducerFunc } );
+	}
+
+	removeReducer( name ) {
+		const { [ name ]: removedReducer, ...remainingReducers } = this.reducers;
+
+		if ( ! removedReducer ) {
+			debug( 'removeReducer(): name not found' );
+			return;
+		}
+
+		this.setReducers( remainingReducers );
+	}
+
+	getCombinedReducer() {
+		const reducers = this.reducers;
+		return combineReducers( reducers );
+	}
+
+	setReducers( reducers ) {
+		this.reducers = reducers;
+
+		if ( this.reduxStore ) {
+			this.reduxStore.replaceReducer( this.getCombinedReducer() );
+		}
 	}
 }
 
+const calypsoStore = new CalypsoStore();
+
+/**
+ * Named export function for creating a redux store.
+ * This creates a new redux store within the calypsoStore instance.
+ *
+ * @param { object } initialState Redux state with which to initialize (optional).
+ * @return { object } The redux store that was created.
+ */
+export function createReduxStore( initialState ) {
+	return calypsoStore.createReduxStore( initialState );
+}
+
+/**
+ * Named export for adding a reducer dynamically to the store.
+ *
+ * @param { string } name The top-level context name for the reducer.
+ * @param { function } func The reducer function, in the format of ( state, action ), returning state.
+ */
+export function addReducer( name, func ) {
+	calypsoStore.addReducer( name, func );
+}
+
+/**
+ * Named export for adding a reducer dynamically to the store.
+ *
+ * @param { string } name The top-level context name for the reducer.
+ */
 export function removeReducer( name ) {
-	const { [ name ]: removedReducer, ...remainingReducers } = reducers;
-
-	if ( ! removedReducer ) {
-		debug( 'removeReducer(): name not found' );
-		return;
-	}
-
-	reducers = remainingReducers;
+	calypsoStore.removeReducer( name );
 }
 
-export function createReduxStore( initialState = {} ) {
-	const isBrowser = typeof window === 'object';
-	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
-
-	const middlewares = [
-		thunkMiddleware,
-		noticesMiddleware,
-		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
-	].filter( Boolean );
-
-	const enhancers = [
-		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
-		applyMiddleware( ...middlewares ),
-		isBrowser && sitesSync,
-		isBrowser && window.devToolsExtension && window.devToolsExtension()
-	].filter( Boolean );
-
-	const store = compose( ...enhancers )( createStore )( reducer, initialState );
-
-	onChange = () => {
-		reducer = combineReducers( reducers );
-		store.replaceReducer( reducer );
-	};
-
-	return store;
+/**
+ * Named export for getting the combined reducer from the store.
+ *
+ * @return { function } The currently configured reducer chain.
+ */
+export function getCombinedReducer() {
+	return calypsoStore.getCombinedReducer();
 }
 
