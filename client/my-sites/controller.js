@@ -367,7 +367,7 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const selectedSite = sites.getSelectedSite();
 
-		if ( selectedSite && selectedSite.jetpack ) {
+		if ( selectedSite && selectedSite.jetpack && ! ( config.isEnabled( 'automated-transfer' ) ) ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage
