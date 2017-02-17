@@ -16,6 +16,7 @@ import { abtest } from 'lib/abtest';
 import {
 	eligibleForFreeToPaidUpsell,
 } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const FreeToPaidBanner = ( props ) => {
 	if ( ! props.eligibleForFreeToPaidUpsell || abtest( 'freeToPaidUpsell' ) !== 'banner' ) {
@@ -33,8 +34,8 @@ const FreeToPaidBanner = ( props ) => {
 	);
 };
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
 	return {
 		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 	};
