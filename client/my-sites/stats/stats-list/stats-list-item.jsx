@@ -181,7 +181,7 @@ module.exports = React.createClass( {
 				}
 
 				if ( labelItem.icon ) {
-					avatar = ( <span className='icon'><img alt="" src={ labelItem.icon } width="20" height="20" className={ classNames( iconClassSetOptions ) } /></span> );
+					avatar = ( <span className='icon'><img alt="" src={ labelItem.icon } className={ classNames( iconClassSetOptions ) } /></span> );
 				}
 
 				icon = avatar;
