@@ -617,3 +617,15 @@ export function getThemePreviewThemeOptions( state ) {
 export function themePreviewVisibility( state ) {
 	return get( state.themes, 'themePreviewVisibility', null );
 }
+
+/**
+ * Returns id of the parent theme, if any, for a wpcom theme.
+ *
+ * @param {Object} state Global state tree
+ * @param {string} themeId Child theme ID
+ *
+ * @return {?string} Parent theme id if it exists
+ */
+export function getWpcomParentThemeId( state, themeId ) {
+	return get( getTheme( state, 'wpcom', themeId ), [ 'template' ], null );
+}
