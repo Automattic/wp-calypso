@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-const template = require( 'lodash/template' );
-
-/**
  * Internal dependencies
  */
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
@@ -16,11 +11,7 @@ const { serverData: data, clientData } = parser( configPath, {
 	disabledFeatures: process.env.DISABLE_FEATURES
 } );
 
-const ssrConfig = template(
-	'var configData = <%= data %>;'
-)( {
-	data: JSON.stringify( clientData )
-} );
+const ssrConfig = `var configData = ${ JSON.stringify( clientData ) };'`;
 
 module.exports = createConfig( data );
 module.exports.ssrConfig = ssrConfig;
