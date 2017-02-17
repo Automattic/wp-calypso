@@ -15,10 +15,10 @@ import {
 /**
  * Returns true if the current user is eligible to participate in the free to paid plan upsell for the site
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Object}  moment Current moment for determination of elapsed days since registration
- * @return {bool}           True if the user can participate in the free to paid upsell
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @param {Object} moment Current moment for determination of elapsed days since registration
+ * @return {bool} True if the user can participate in the free to paid upsell
  */
 const eligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
