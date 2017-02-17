@@ -1,12 +1,20 @@
-const template = require( 'lodash/template' );
+/**
+ * Internal dependencies
+ */
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
 const parser = require( './parser' );
 
-const { serverData: data, clientData } = parser( configPath, {
+const { serverData, clientData } = parser( configPath, {
 	env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
 	enabledFeatures: process.env.ENABLE_FEATURES,
 	disabledFeatures: process.env.DISABLE_FEATURES
 } );
+
+// if in browser, grab windows configData,
+// if in server use serverData from config files
+const data = 'undefined' !== typeof window && window.configData
+	? window.configData
+	: serverData;
 
 /**
  * Return config `key`.
@@ -23,30 +31,18 @@ function config( key ) {
 	throw new Error( 'config key `' + key + '` does not exist' );
 }
 
-function isEnabled( feature ) {
+config.isEnabled = function( feature ) {
 	return !! data.features[ feature ];
 }
 
-function anyEnabled() {
+config.anyEnabled = function() {
 	var args = Array.prototype.slice.call( arguments );
 	return args.some( function( feature ) {
 		return isEnabled( feature );
 	} );
 }
 
-const ssrConfig = template(
-	'var data = <%= data %>;' +
-	'<%= config %>' +
-	'<%= isEnabled %>' +
-	'<%= anyEnabled %>'
-) ( {
-	data: JSON.stringify( clientData ),
-	config: config.toString(),
-	isEnabled: isEnabled.toString(),
-	anyEnabled: anyEnabled.toString(),
-} );
+const ssrConfig = `var configData = ${ JSON.stringify( clientData ) };`;
 
 module.exports = config;
-module.exports.isEnabled = isEnabled;
-module.exports.anyEnabled = anyEnabled;
 module.exports.ssrConfig = ssrConfig;

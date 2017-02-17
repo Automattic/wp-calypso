@@ -1,12 +1,11 @@
-/***** WARNING: ES5 code only here. Used by un-transpiled script! *****/
-
 /**
- * Module dependencies
+ * External dependencies
  */
 const fs = require( 'fs' ),
 	path = require( 'path' ),
 	assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'config' );
+	isUndefined = require( 'lodash/assign' ),
+	debug = require( 'debug' )( 'config' )
 
 function getDataFromFile( file ) {
 	var fileData = {};
@@ -22,6 +21,11 @@ function getDataFromFile( file ) {
 }
 
 module.exports = function( configPath, defaultOpts ) {
+	// if on browser, return early without trying to read config files
+	if ( 'undefined' !== typeof window  && window.configData ) {
+		return { serverData: {}, clientData: {} };
+	}
+
 	var opts = assign( {
 			env: 'development',
 		}, defaultOpts ),
@@ -54,6 +58,6 @@ module.exports = function( configPath, defaultOpts ) {
 
 	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = assign( {}, data );
-	
+
 	return { serverData, clientData };
 }
