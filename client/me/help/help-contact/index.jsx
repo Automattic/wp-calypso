@@ -130,7 +130,7 @@ const HelpContact = React.createClass( {
 		const { message, siteId } = contactForm;
 		const site = sites.getSite( siteId );
 
-		const browserInfoMsg = [ `User Agent: ${navigator.userAgent}` ];
+		const browserInfoMsg = [ `Information to assist trouble shooting.\nScreen Resolution: ${ screen.width }x${ screen.height }\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }\nUser Agent: ${navigator.userAgent}` ];
 
 		let messages = [
 			browserInfoMsg, message
