@@ -280,7 +280,7 @@ function filterFlowName( flowName ) {
 	return flowName;
 }
 
-function filterDestination( destination, dependencies, flowName ) {
+function filterDestination( destination ) {
 	return destination;
 }
 
