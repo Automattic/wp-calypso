@@ -38,7 +38,7 @@ class DesignTypeWithStoreStep extends Component {
 		const { translate } = this.props;
 
 		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage />  },
+			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
 			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
 			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
 			{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
@@ -87,7 +87,7 @@ class DesignTypeWithStoreStep extends Component {
 	renderChoice = ( choice ) => {
 		return (
 			<Card className="design-type-with-store__choice" key={ choice.type }>
-				<a className="design-type-with-store__choice__link"
+				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
 					{ choice.image }
@@ -98,9 +98,24 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoices() {
+		const storeWrapperClassName = classNames(
+			'design-type-with-store__store-wrapper',
+			{ 'is-hidden': ! this.state.showStore }
+		);
+
+		const designTypeListClassName = classNames(
+			'design-type-with-store__list',
+			{ 'is-hidden': this.state.showStore }
+		);
+
 		return (
-			<div className="design-type-with-store__list">
-				{ this.getChoices().map( this.renderChoice ) }
+			<div className="design-type-with-store__substep-wrapper">
+				<div className={ storeWrapperClassName }>
+					{ this.renderStoreStep() }
+				</div>
+				<div className={ designTypeListClassName }>
+					{ this.getChoices().map( this.renderChoice ) }
+				</div>
 			</div>
 		);
 	}
@@ -136,34 +151,46 @@ class DesignTypeWithStoreStep extends Component {
 		}
 	}
 
-	render() {
-		const storeWrapperClassName = classNames( {
-			'design-type-with-store__store-wrapper': true,
-			'is-hidden': ! this.state.showStore,
-		} );
+	getSubHeaderText() {
+		const { translate } = this.props;
 
-		const sectionWrapperClassName = classNames( {
-			'design-type-with-store__section-wrapper': true,
-			'is-hidden': this.state.showStore,
-		} );
+		if ( this.state.showStore ) {
+			switch ( abtest( 'signupStoreBenchmarking' ) ) {
+				case 'bluehost':
+					return translate( 'Our partners at BlueHost are here for you.'	);
+				case 'bluehostWithWoo':
+					return translate( 'Our partners at BlueHost and WooCommerce are here for you.' );
+				case 'siteground':
+					return translate( 'Our partners at SiteGround and WooCommerce are here for you.' );
+				default:
+					return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
+			}
+		}
+
+		return translate( 'This will help us figure out what kinds of designs to show you.' );
+	}
+
+	render() {
+		const { translate } = this.props;
+
+		const headerText = this.state.showStore
+			? translate( 'Create your WordPress Store' )
+			: translate( 'What would you like your homepage to look like?' );
+
+		const subHeaderText = this.getSubHeaderText();
 
 		return (
-			<div className="design-type-with-store">
-				<div className={ storeWrapperClassName } >
-					{ this.renderStoreStep() }
-				</div>
-				<div className={ sectionWrapperClassName }>
-					<StepWrapper
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						positionInFlow={ this.props.positionInFlow }
-						fallbackHeaderText={ this.props.translate( 'What would you like your homepage to look like?' ) }
-						fallbackSubHeaderText={ this.props.translate( 'This will help us figure out what kinds of designs to show you.' ) }
-						subHeaderText={ this.props.translate( 'First up, what would you like your homepage to look like?' ) }
-						signupProgress={ this.props.signupProgress }
-						stepContent={ this.renderChoices() } />
-				</div>
-			</div>
+			<StepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ headerText }
+				fallbackSubHeaderText={ subHeaderText }
+				subHeaderText={ subHeaderText }
+				signupProgress={ this.props.signupProgress }
+				stepContent={ this.renderChoices() }
+				shouldHideNavButtons={ this.state.showStore }
+			/>
 		);
 	}
 }
