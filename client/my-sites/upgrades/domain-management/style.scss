@@ -76,6 +76,10 @@
 	margin-bottom: 0;
 }
 
+.domain-management-list__add-a-domain {
+	margin-left: 8px;
+}
+
 .domain-management-list-item {
 	&.busy {
 		background-color: $gray-light;
