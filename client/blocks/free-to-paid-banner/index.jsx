@@ -27,8 +27,8 @@ const FreeToPaidBanner = ( props ) => {
 			event="free-to-paid-stats-nudge"
 			plan={ PLAN_PERSONAL }
 			icon="star"
-			title="Choose a free custom domain name with a WordPress.com plan!"
-			description="Get extra storage for your photos and images, expert live chat and email support, and more."
+			title="Get a free custom domain name with a WordPress.com plan!"
+			description="Choose a unique custom domain name to make it easier for people to find and visit your site."
 		/>
 	);
 };
