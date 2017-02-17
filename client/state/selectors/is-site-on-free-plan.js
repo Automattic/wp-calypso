@@ -8,10 +8,10 @@ const isSiteOnFreePlan = ( state, siteId ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
 
 	if ( ! currentPlan ) {
-		return false;
+		return null;
 	}
 
-	return currentPlan.product_slug === PLAN_FREE;
+	return currentPlan.productSlug === PLAN_FREE;
 };
 
 export default isSiteOnFreePlan;

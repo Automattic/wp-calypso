@@ -28,18 +28,18 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 		isSiteOnFreePlan = require( '../is-site-on-free-plan' );
 	} );
 
-	it( 'should return false when plan is not known', () => {
+	it( 'should return null when plan is not known', () => {
 		getCurrentPlan.returns( null );
-		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
+		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.null;
 	} );
 
 	it( 'should return false when not on free plan', () => {
-		getCurrentPlan.returns( { product_slug: PLAN_BUSINESS } );
+		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
 		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.false;
 	} );
 
 	it( 'should return true when on free plan', () => {
-		getCurrentPlan.returns( { product_slug: PLAN_FREE } );
+		getCurrentPlan.returns( { productSlug: PLAN_FREE } );
 		expect( isSiteOnFreePlan( state, 'site1' ) ).to.be.true;
 	} );
 } );
