@@ -11,9 +11,15 @@ import AutoDirection from 'components/auto-direction';
 import ReaderPostCardExcerpt from 'blocks/reader-post-card/excerpt';
 import ReaderPostActionsVisitLink from 'blocks/reader-post-actions/visit';
 import ReaderAuthorLink from 'blocks/reader-author-link';
+import { recordPermalinkClick } from 'reader/stats';
+import PostTime from 'reader/post-time';
 
 const ReaderCombinedCardPost = ( { post, streamUrl /*, site, feed*/ } ) => {
 	const hasAuthorName = has( post, 'author.name' );
+
+	const recordDateClick = () => {
+		recordPermalinkClick( 'timestamp_combined_card', post );
+	}
 
 	return (
 		<li className="reader-combined-card__post">
@@ -32,6 +38,17 @@ const ReaderCombinedCardPost = ( { post, streamUrl /*, site, feed*/ } ) => {
 					post={ post }>
 					{ post.author.name }
 				</ReaderAuthorLink>
+			}
+			{ post.date && post.URL &&
+				<span className="reader-combined-card__timestamp">
+					<a className="reader-combined-card__timestamp-link"
+						onClick={ recordDateClick }
+						href={ post.URL }
+						target="_blank"
+						rel="noopener noreferrer">
+						<PostTime date={ post.date } />
+					</a>
+				</span>
 			}
 		</li>
 	);
