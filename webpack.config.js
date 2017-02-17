@@ -20,13 +20,10 @@ const config = require( './server/config' ),
 /**
  * Internal variables
  */
-const CALYPSO_ENV = process.env.CALYPSO_ENV || 'development';
-
-const bundleEnv = config( 'env' );
 const sectionCount = sections.length;
 
 const webpackConfig = {
-	bail: CALYPSO_ENV !== 'development',
+	bail: config( 'env' ) !== 'development',
 	cache: true,
 	entry: {},
 	devtool: '#eval',
@@ -87,11 +84,6 @@ const webpackConfig = {
 		fs: 'empty'
 	},
 	plugins: [
-		new webpack.DefinePlugin( {
-			'process.env': {
-				NODE_ENV: JSON.stringify( bundleEnv )
-			}
-		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
@@ -99,7 +91,7 @@ const webpackConfig = {
 	externals: [ 'electron' ]
 };
 
-if ( CALYPSO_ENV === 'desktop' ) {
+if ( config( 'env' ) === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
@@ -165,7 +157,7 @@ const jsLoader = {
 	}
 };
 
-if ( CALYPSO_ENV === 'development' ) {
+if ( config( 'env' ) === 'development' ) {
 	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
@@ -194,7 +186,7 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
-if ( CALYPSO_ENV === 'production' ) {
+if ( config( 'env' ) === 'production' ) {
 	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
 		/^debug$/,
 		path.join( __dirname, 'client', 'lib', 'debug-noop' )

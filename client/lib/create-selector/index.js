@@ -1,8 +1,14 @@
 /**
  * External dependencies
  */
-import memoize from 'lodash/memoize';
+import { memoize, includes } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import warn from 'lib/warn';
 
 /**
  * Constants
@@ -36,14 +42,7 @@ const DEFAULT_GET_DEPENDANTS = ( state ) => state;
  * @type {Function} Function returning cache key for memoized selector
  */
 const DEFAULT_GET_CACHE_KEY = ( () => {
-	let warn, includes;
-	if ( 'production' !== process.env.NODE_ENV ) {
-		// Webpack can optimize bundles if it can detect that a block will
-		// never be reached. Since `NODE_ENV` is defined using DefinePlugin,
-		// these debugging modules will be excluded from the production build.
-		warn = require( 'lib/warn' );
-		includes = require( 'lodash/includes' );
-	} else {
+	if ( 'production' === config( 'env' ) ) {
 		return ( state, ...args ) => args.join();
 	}
 
@@ -104,4 +103,3 @@ export default function createSelector( selector, getDependants = DEFAULT_GET_DE
 		return memoizedSelector( state, ...args );
 	}, { memoizedSelector } );
 }
-

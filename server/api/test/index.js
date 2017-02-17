@@ -46,7 +46,7 @@ describe( 'api', function() {
 	} );
 
 	let maybeIt = it;
-	if ( process.env.NODE_ENV !== 'desktop' ) {
+	if ( config( 'env' ) !== 'desktop' ) {
 		maybeIt = maybeIt.skip;
 	}
 

@@ -9,6 +9,7 @@ import debugFactory from 'debug';
  */
 import { mc, ga, tracks } from 'lib/analytics';
 import SubscriptionStore from 'lib/reader-feed-subscriptions';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -96,7 +97,7 @@ export function recordTrack( eventName, eventProperties ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
 
-	if ( process.env.NODE_ENV !== 'production' ) {
+	if ( config( 'env' ) !== 'production' ) {
 		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! ( 'is_jetpack' in eventProperties ) ) {
 			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
 		}
@@ -143,7 +144,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {} )
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract( eventName, post.railcar, pick( additionalProps, [ 'ui_position', 'ui_algo' ] ) );
-	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
+	} else if ( config( 'env' ) !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
 	}
 }

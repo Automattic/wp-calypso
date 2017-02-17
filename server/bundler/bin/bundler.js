@@ -21,7 +21,6 @@ var webpackConfig = require( process.cwd() + '/webpack.config' ),
  * Variables
  */
 var start = new Date().getTime(),
-	CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	bundleEnv = config( 'env' ),
 	outputOptions;
 
