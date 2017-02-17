@@ -53,6 +53,7 @@ import {
 	tryAndCustomizeTheme,
 	tryAndCustomize,
 	deleteTheme,
+	installWpcomParentTheme,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -954,6 +955,38 @@ describe( 'actions', () => {
 					error: sinon.match( { message: 'The theme is already installed' } ),
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'installWpcomParentTheme', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: {
+							karuna: {
+								id: 'karuna',
+							},
+							sidekick: {
+								id: 'sidekick',
+								template: 'superhero',
+							},
+						}
+					} )
+				}
+			}
+		};
+
+		it( 'should do nothing for theme with no parent', () => {
+			installWpcomParentTheme( 'karuna-wpcom', 2211667 )( spy, () => state );
+			expect( spy ).to.not.have.been.called;
+		} );
+
+		it( 'should install parent', () => {
+			installWpcomParentTheme( 'sidekick-wpcom', 2211667 )( spy, () => state );
+			expect( spy ).to.have.been.calledWith( matchFunction(
+				installTheme( 'superhero-wpcom', 2211667 )
+			) );
 		} );
 	} );
 
