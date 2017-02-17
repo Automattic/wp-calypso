@@ -12,4 +12,4 @@ if ( 'undefined' === typeof window ||  ! window.configData ) {
  * @property {Function} anyEnabled whether one of a set of properties is enabled
  * @property {Function} isEnabled whether a specific property is enabled
  */
-export default require( '../../server/config' );
+export default require( 'server/config' );

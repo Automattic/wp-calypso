@@ -22,7 +22,7 @@ function getDataFromFile( file ) {
 
 module.exports = function( configPath, defaultOpts ) {
 	// if on browser, return early without trying to read config files
-	if ( 'undefined' !== typeof window ) {
+	if ( 'undefined' !== typeof window  && window.configData ) {
 		return { serverData: {}, clientData: {} };
 	}
 
