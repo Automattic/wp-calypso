@@ -1,13 +1,17 @@
+.stats-views {
+	overflow-x: auto;
+}
+
 .stats-views__months {
 	.is-loading & {
 		display: none;
 	}
 	td, th {
 		padding: 6px;
-		border: 1px solid white;
 		text-align: center;
 		cursor: pointer;
 		user-select: none;
+		font-size: 14px;
 	}
 }
 
