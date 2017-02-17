@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-const template = require( 'lodash/template' );
-
-/**
  * Internal dependencies
  */
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );
@@ -47,9 +42,7 @@ config.anyEnabled = function() {
 	} );
 }
 
-const ssrConfig = template( 'var configData = <%= data %>;' )( {
-	data: JSON.stringify( clientData ),
-} );
+const ssrConfig = `var configData = ${ clientData };`;
 
 module.exports = config;
 module.exports.ssrConfig = ssrConfig;
