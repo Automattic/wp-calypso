@@ -10,9 +10,7 @@ import {
 } from 'lib/directly';
 import {
 	DIRECTLY_ASKING_QUESTION,
-	DIRECTLY_INITIALIZING,
 	DIRECTLY_INITIALIZED,
-	DIRECTLY_INITIALIZATION_ERROR,
 	DIRECTLY_MAXIMIZING,
 	DIRECTLY_MINIMIZING,
 	DIRECTLY_OPENING_ASK_FORM,
@@ -25,15 +23,8 @@ export const askQuestion = ( { questionText, name, email } ) => ( dispatch ) => 
 
 // See README for list of options
 export const initialize = ( config = {} ) => ( dispatch ) => {
-	dispatch( { type: DIRECTLY_INITIALIZING, config } );
-	initializeDirectly( config, ( error ) => {
-		if ( error ) {
-			// TODO: Do something if there's an error
-			dispatch( { type: DIRECTLY_INITIALIZATION_ERROR, error } );
-		} else {
-			dispatch( { type: DIRECTLY_INITIALIZED } );
-		}
-	} );
+	initializeDirectly( config );
+	dispatch( { type: DIRECTLY_INITIALIZED, config } );
 };
 
 export const maximize = () => ( dispatch ) => {

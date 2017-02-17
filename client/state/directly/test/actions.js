@@ -17,9 +17,7 @@ import {
 } from '../actions';
 import {
 	DIRECTLY_ASKING_QUESTION,
-	DIRECTLY_INITIALIZING,
 	DIRECTLY_INITIALIZED,
-	DIRECTLY_INITIALIZATION_ERROR,
 	DIRECTLY_MAXIMIZING,
 	DIRECTLY_MINIMIZING,
 	DIRECTLY_OPENING_ASK_FORM,
@@ -75,7 +73,7 @@ describe( 'actions', () => {
 		it( 'immediately dispatches an action with appropriate type', () => {
 			initialize( config )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: DIRECTLY_INITIALIZING,
+				type: DIRECTLY_INITIALIZED,
 				config
 			} );
 		} );
@@ -83,30 +81,6 @@ describe( 'actions', () => {
 		it( 'invokes initialize() from lib/directly and passes the config', () => {
 			initialize( config )( dispatchSpy );
 			expect( directly.initialize ).to.have.been.calledWith( config );
-		} );
-
-		it( 'dispatches a success action when initialization completes', () => {
-			initialize( config )( dispatchSpy );
-			// Grab the callback which was passed into directly.initialize( config, callback )
-			const initializationCallback = directly.initialize.lastCall.args[ 1 ];
-			// Invoke the callback with no parameters, indicating success
-			initializationCallback();
-			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: DIRECTLY_INITIALIZED
-			} );
-		} );
-
-		it( 'dispatches an error action when initialization fails', () => {
-			const error = { src: '/path/to/script.js' };
-			initialize( config )( dispatchSpy );
-			// Grab the callback which was passed into directly.initialize( config, callback )
-			const initializationCallback = directly.initialize.lastCall.args[ 1 ];
-			// Invoke the callback with no parameters, indicating success
-			initializationCallback( error );
-			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: DIRECTLY_INITIALIZATION_ERROR,
-				error
-			} );
 		} );
 	} );
 

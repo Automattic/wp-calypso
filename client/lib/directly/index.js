@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import initializeDirectly from './vendor';
+import { initializeDirectly } from './vendor';
 
 const DEFAULT_RTM_WIDGET_OPTIONS = {
 	// Automattic widget ID

@@ -415,7 +415,7 @@ const executeVendorScript = ( baseUrl ) => {
 const DIRECTLY_BASE_URL = 'https://www.directly.com';
 let isInitialized = false;
 
-export default function( config, baseUrl = DIRECTLY_BASE_URL ) {
+export const initializeDirectly = ( config, baseUrl = DIRECTLY_BASE_URL ) => {
 	// Havoc is wreaked if you try to reload or even reconfigure the widget. Protect
 	// against that with a flag:
 	if ( isInitialized ) {

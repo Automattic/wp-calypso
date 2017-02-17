@@ -4,90 +4,40 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+// const initializeSpy = sinon.spy( require( '../vendor' ) );
+
  /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-
-const DIRECTLY_SCRIPT_SELECTOR = 'script#directlyRTMScript';
+// const initializeDirectly = require( '../vendor' );
+import directly from '..';
 
 describe( 'index', () => {
-	let directly;
+	let vendor;
 	useFakeDom();
 
 	beforeEach( () => {
-		directly = require( '..' );
+		vendor = require( '../vendor' );
+		sinon.spy( vendor, 'initializeDirectly' );
 	} );
 
 	afterEach( () => {
-		// After each test, clean up the globals put in place by Directly and delete the
-		// cached module so its internal variables are reset
-		const script = document.querySelector( DIRECTLY_SCRIPT_SELECTOR );
-		if ( script ) {
-			script.remove();
-		}
+		// After each test, clean up the globals put in place by Directly
 		delete window.DirectlyRTM;
-		delete require.cache[ require.resolve( '..' ) ];
+		delete require.cache[ require.resolve( '../vendor' ) ];
 	} );
 
 	describe( 'initialize', () => {
-		it( 'adds a <script> with correct ID', () => {
-			// Directly requires the script to have a certain ID for the library to work
-			directly.initialize();
-			const script = document.querySelector( DIRECTLY_SCRIPT_SELECTOR );
-			expect( script ).not.to.be.null;
-		} );
-
 		it( 'uses the given config data for Directly', () => {
 			const config = { a: '1', b: '2', c: '3' };
 			directly.initialize( config );
-
-			expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
-			expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
-			expect( window.DirectlyRTM.cq[ 0 ][ 1 ] ).to.contain.all.keys( config );
-		} );
-
-		it( 'invokes the callback on successful script load', () => {
-			const spy = sinon.spy();
-
-			directly.initialize( {}, spy );
-			document.querySelector( DIRECTLY_SCRIPT_SELECTOR ).onload( {} );
-
-			expect( spy ).to.have.been.calledWith( null );
-		} );
-
-		it( 'invokes the callback with non-null error argument on failed script load', () => {
-			const spy = sinon.spy();
-			const errorEvent = {
-				type: 'error',
-				target: {
-					src: ''
-				}
-			};
-
-			directly.initialize( {}, spy );
-			document.querySelector( DIRECTLY_SCRIPT_SELECTOR ).onerror( errorEvent );
-
-			expect( spy ).to.have.been.called.once;
-			expect( spy.firstCall.args[ 0 ] ).not.to.be.null;
-		} );
-
-		it( 'does nothing after the first call', () => {
-			window.DirectlyRTM = sinon.spy();
-			const config1 = { a: 'e', b: 'e', c: 'e' };
-			const config2 = { m: '4', n: '5', o: '6' };
-			const config3 = { x: '7', y: '8', z: '9' };
-
-			directly.initialize( config1 );
-			directly.initialize( config2 );
-			directly.initialize( config3 );
-
-			expect( window.DirectlyRTM ).to.have.been.called.once;
-			expect( window.DirectlyRTM.firstCall.args[ 0 ] ).to.equal( 'config' );
-			Object.keys( config1 ).forEach( ( key ) => {
-				expect( window.DirectlyRTM.firstCall.args[ 1 ][ key ] ).to.equal( config1[ key ] );
-			} );
-			expect( document.querySelectorAll( DIRECTLY_SCRIPT_SELECTOR ) ).to.have.lengthOf( 1 );
+			//
+			// expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
+			// expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
+			// expect( window.DirectlyRTM.cq[ 0 ][ 1 ] ).to.contain.all.keys( config );
+			expect( vendor.initializeDirectly.callCount ).to.equal( 1 );
+			expect( vendor.initializeDirectly.firstCall.args[ 0 ] ).to.contain.all.keys( config );
 		} );
 	} );
 
@@ -99,9 +49,8 @@ describe( 'index', () => {
 		};
 
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			window.DirectlyRTM = sinon.spy();
-			directly.askQuestion( questionOptions );
-			expect( window.DirectlyRTM ).not.to.have.been.called;
+			expect( directly.askQuestion( questionOptions ) ).not.to.throw;
+			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
@@ -114,9 +63,8 @@ describe( 'index', () => {
 
 	describe( 'maximize', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			window.DirectlyRTM = sinon.spy();
-			directly.maximize();
-			expect( window.DirectlyRTM ).not.to.have.been.called;
+			expect( directly.maximize() ).not.to.throw;
+			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
@@ -129,9 +77,8 @@ describe( 'index', () => {
 
 	describe( 'minimize', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			window.DirectlyRTM = sinon.spy();
-			directly.minimize();
-			expect( window.DirectlyRTM ).not.to.have.been.called;
+			expect( directly.minimize() ).not.to.throw;
+			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
@@ -144,9 +91,8 @@ describe( 'index', () => {
 
 	describe( 'openAskForm', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			window.DirectlyRTM = sinon.spy();
-			directly.openAskForm();
-			expect( window.DirectlyRTM ).not.to.have.been.called;
+			expect( directly.openAskForm() ).not.to.throw;
+			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
