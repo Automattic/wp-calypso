@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -36,7 +37,7 @@ const ReaderCombinedCard = ( { posts, site, feed } ) => {
 					siteId={ siteId }>
 					{ siteName }
 				</ReaderSiteStreamLink>
-				<p>{ posts.length } posts in timespan</p>
+				<p>{ posts.length } posts</p>
 			</header>
 			<ul>
 				{ posts.map( post => (
@@ -53,4 +54,4 @@ ReaderCombinedCard.propTypes = {
 	feed: React.PropTypes.object,
 };
 
-export default ReaderCombinedCard;
+export default localize( ReaderCombinedCard );

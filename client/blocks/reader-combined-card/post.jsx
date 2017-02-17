@@ -13,16 +13,21 @@ import ReaderPostActionsVisitLink from 'blocks/reader-post-actions/visit';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
+import FeaturedImage from 'blocks/reader-post-card/featured-image';
 
 const ReaderCombinedCardPost = ( { post, streamUrl /*, site, feed*/ } ) => {
 	const hasAuthorName = has( post, 'author.name' );
-
+	let featuredAsset = null;
+	if ( post.canonical_media ) {
+		featuredAsset = <FeaturedImage imageUri={ post.canonical_media.src } href={ post.URL } />;
+	}
 	const recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_combined_card', post );
-	}
+	};
 
 	return (
 		<li className="reader-combined-card__post">
+			{ featuredAsset }
 			<AutoDirection>
 				<h1 className="reader-combined-card__post-title">
 					<a className="reader-combined-card__post-title-link" href={ post.URL }>{ post.title }</a>

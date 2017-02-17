@@ -22,7 +22,7 @@ export const posts = [
 			comment_count: 99
 		},
 		canonical_media: {
-			src: 'https://placekitten.com/600/400',
+			src: 'https://discover.files.wordpress.com/2017/02/cpgreber.jpg',
 			width: 300,
 			height: 200,
 			mediaType: 'image',
@@ -84,7 +84,7 @@ export const posts = [
 			comment_count: 42
 		},
 		canonical_media: {
-			src: 'https://placekitten.com/600/400',
+			src: 'https://discover.files.wordpress.com/2015/03/empty-open-notebook-e1485546386849.jpg',
 			mediaType: 'image',
 			width: 300,
 			height: 200
