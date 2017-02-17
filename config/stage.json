@@ -74,6 +74,7 @@
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/insert-menu": true,
+		"post-editor/image-editor": true,
 		"press-this": true,
 		"preview-layout": true,
 		"push-notifications": true,

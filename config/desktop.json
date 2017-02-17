@@ -64,6 +64,7 @@
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
+		"post-editor/image-editor": true,
 		"press-this": false,
 		"preview-layout": true,
 		"reader": true,
