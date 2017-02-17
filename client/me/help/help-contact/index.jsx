@@ -171,11 +171,11 @@ const HelpContact = React.createClass( {
 	submitDirectlyQuestion: function( contactForm ) {
 		const { display_name, email } = this.props.currentUser;
 
-		this.props.askDirectlyQuestion( {
-			questionText: contactForm.message,
-			name: display_name,
-			email: email
-		} );
+		this.props.askDirectlyQuestion(
+			contactForm.message,
+			display_name,
+			email
+		);
 	},
 
 	submitKayakoTicket: function( contactForm ) {

@@ -37,25 +37,23 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#askQuestion()', () => {
-		const questionParams = {
-			questionText: 'To be or not to be?',
-			name: 'Hamlet',
-			email: 'hammie@royalfamily.dk',
-		};
+		const questionText = 'To be or not to be?';
+		const name = 'Hamlet';
+		const email = 'hammie@royalfamily.dk';
 
 		it( 'immediately dispatches an action with appropriate type and question parameters', () => {
-			askQuestion( questionParams )( dispatchSpy );
+			askQuestion( questionText, name, email )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: DIRECTLY_ASKING_QUESTION,
-				questionText: questionParams.questionText,
-				name: questionParams.name,
-				email: questionParams.email,
+				questionText,
+				name,
+				email,
 			} );
 		} );
 
 		it( 'invokes askQuestion() from lib/directly and passes the question parameters', () => {
-			askQuestion( questionParams )( dispatchSpy );
-			expect( directly.askQuestion ).to.have.been.calledWith( questionParams );
+			askQuestion( questionText, name, email )( dispatchSpy );
+			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
 		} );
 	} );
 

@@ -42,22 +42,20 @@ describe( 'index', () => {
 	} );
 
 	describe( 'askQuestion', () => {
-		const questionOptions = {
-			questionText: 'How can I give you all my money?',
-			name: 'Richie Rich',
-			email: 'richie@richenterprises.biz',
-		};
+		const questionText = 'How can I give you all my money?';
+		const name = 'Richie Rich';
+		const email = 'richie@richenterprises.biz';
 
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			expect( directly.askQuestion( questionOptions ) ).not.to.throw;
+			expect( directly.askQuestion( questionText, name, email ) ).not.to.throw;
 			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
 			window.DirectlyRTM = sinon.spy();
 			directly.initialize();
-			directly.askQuestion( questionOptions );
-			expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', questionOptions );
+			directly.askQuestion( questionText, name, email );
+			expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', { questionText, name, email } );
 		} );
 	} );
 

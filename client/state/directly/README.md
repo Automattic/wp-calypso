@@ -10,7 +10,7 @@ These execute the exported functions from `api/directly` and dispatch related Ac
 Initializes the library with the given configuration options. See [the `api/directly`
 README](../../api/directly) for config options.
 
-#### `askQuestion( { questionText, name, email } )`
+#### `askQuestion( questionText, name, email )`
 Opens the Directly widget and asks the given question.
 
 #### `maximize()`

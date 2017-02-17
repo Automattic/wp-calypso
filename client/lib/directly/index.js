@@ -15,13 +15,10 @@ const directly = {
 		initializeDirectly( Object.assign( {}, DEFAULT_RTM_WIDGET_OPTIONS, config ) );
 	},
 
-	askQuestion: function( { questionText, name, email } ) {
+	askQuestion: function( questionText, name, email ) {
 		if ( ! window.DirectlyRTM ) {
 			return;
 		}
-
-		// We're using destructuring and shorthand properties just to explicitly document
-		// the options available from the Directly API.
 		window.DirectlyRTM( 'askQuestion', { questionText, name, email } );
 	},
 

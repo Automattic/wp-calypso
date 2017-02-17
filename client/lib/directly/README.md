@@ -66,18 +66,18 @@ initializeDirectly( directlyConfig, directlyCallback );
 The `callback` function is called when the Directly library loads or runs into an error. The `error` parameter will be `null` for successful load, and an error Object for load failure.
 
 
-#### `askQuestion( { questionText, name, email } )`
+#### `askQuestion( questionText, name, email )`
 
 Asks a question with the given params and open the "Alerting experts" view. Example:
 
 ```
 import { askQuestion as askDirectlyQuestion } from 'lib/directly';
 
-askDirectlyQuestion( {
-	questionText: 'What have we always said is the most important thing?',
-	name: 'Michael Bluth',
-	email: 'michael@bluthcompany.com'
-} );
+askDirectlyQuestion(
+	'What have we always said is the most important thing?',
+	'Michael Bluth',
+	'michael@bluthcompany.com'
+);
 ```
 
 #### `maximize()`
