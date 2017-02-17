@@ -67,12 +67,12 @@ export class ResetPasswordFormComponent extends Component {
 						<FormLegend className="reset-password-form__legend">
 							{ translate( 'How would you like to reset your password?' ) }
 						</FormLegend>
-						{ resetOptions.map( ( resetOption, index ) => (
+						{ resetOptions.map( ( { email, sms, name }, index ) => (
 							<ResetOptionSet
 								key={ index }
-								email={ resetOption.email }
-								sms={ resetOption.sms }
-								name={ 'todo' }
+								email={ email }
+								sms={ sms }
+								name={ name }
 								onOptionChanged={ this.onResetOptionChanged }
 								selectedResetOption={ selectedResetOption }
 							/>
