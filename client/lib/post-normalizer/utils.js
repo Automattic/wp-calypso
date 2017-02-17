@@ -136,7 +136,8 @@ export function iframeIsWhitelisted( iframe ) {
 		'bandcamp.com',
 		'kickstarter.com',
 		'facebook.com',
-		'embed.itunes.apple.com'
+		'embed.itunes.apple.com',
+		'nyt.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
