@@ -3,7 +3,8 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,13 +24,17 @@ const FreeToPaidBanner = ( props ) => {
 		return null;
 	}
 
+	const { translate = noop } = props;
+	const title = translate( 'Get a free custom domain name with a WordPress.com plan!' );
+	const description = translate( 'Choose a unique custom domain name to make it easier for people to find and visit your site.' );
+
 	return (
 		<Banner
 			event="free-to-paid-stats-nudge"
 			plan={ PLAN_PERSONAL }
 			icon="star"
-			title="Get a free custom domain name with a WordPress.com plan!"
-			description="Choose a unique custom domain name to make it easier for people to find and visit your site."
+			title={ title }
+			description={ description }
 		/>
 	);
 };
@@ -37,6 +42,6 @@ const FreeToPaidBanner = ( props ) => {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
+		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, moment() ),
 	};
-} )( FreeToPaidBanner );
+} )( localize( FreeToPaidBanner ) );
