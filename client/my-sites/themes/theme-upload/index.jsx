@@ -46,7 +46,10 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import { getEligibility } from 'state/automated-transfer/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer
+} from 'state/automated-transfer/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -82,7 +85,9 @@ class Upload extends React.Component {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
+		}
 
+		if ( nextProps.showEligibility !== this.props.showEligibility ) {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 	}
@@ -319,6 +324,9 @@ export default connect(
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+		// Use this selector to take advantage of eligibility card placeholders
+		// before data has loaded.
+		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 		const hasEligibilityMessages = ! (
 			isEmpty( eligibilityHolds ) &&
 			isEmpty( eligibilityWarnings )
@@ -339,7 +347,7 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
-			showEligibility: ! isJetpack && hasEligibilityMessages,
+			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
