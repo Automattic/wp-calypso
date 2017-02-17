@@ -45,6 +45,8 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import QueryEligibility from 'components/data/query-atat-eligibility';
+import { hasEligibilityMessagesOtherThanBusiness } from 'state/automated-transfer/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -64,10 +66,11 @@ class Upload extends React.Component {
 		isJetpack: React.PropTypes.bool,
 		upgradeJetpack: React.PropTypes.bool,
 		backPath: React.PropTypes.string,
+		showEligibility: React.PropTypes.bool,
 	};
 
 	state = {
-		showEligibility: ! this.props.isJetpack,
+		showEligibility: this.props.showEligibility,
 	}
 
 	componentDidMount() {
@@ -80,7 +83,7 @@ class Upload extends React.Component {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
 
-			this.setState( { showEligibility: ! nextProps.isJetpack } );
+			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 	}
 
@@ -268,10 +271,11 @@ class Upload extends React.Component {
 			isJetpack
 		} = this.props;
 
-		const showEligibility = ! isJetpack && this.state.showEligibility;
+		const { showEligibility } = this.state;
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
@@ -330,6 +334,7 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
+			showEligibility: ! isJetpack && hasEligibilityMessagesOtherThanBusiness( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },

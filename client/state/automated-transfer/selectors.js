@@ -4,6 +4,7 @@
 import {
 	flowRight as compose,
 	get,
+	includes,
 } from 'lodash';
 
 export const getAutomatedTransfer = ( state, siteId ) =>
@@ -68,3 +69,21 @@ export const isEligibleForAutomatedTransfer = compose(
 	getEligibilityStatus,
 	getEligibility
 );
+
+/**
+ * Determine if eligibility warnings or holds exist for
+ * a site other than a business plan hold.
+ *
+ * @param {Object} state global app state
+ * @param {number} siteId requested site for transfer info
+ * @returns {boolean} False if there is one and only one hold/warning referring to missing business plan
+ */
+export const hasEligibilityMessagesOtherThanBusiness = ( state, siteId ) => {
+	const data = getEligibility( state, siteId );
+	const holds = get( data, 'eligibilityHolds', [] );
+	const warnings = get( data, 'eligibilityWarnings', [] );
+
+	return warnings.length > 0 ||
+		holds.length > 1 ||
+		( holds.length > 0 && ! includes( holds, 'NO_BUSINESS_PLAN' ) );
+};
