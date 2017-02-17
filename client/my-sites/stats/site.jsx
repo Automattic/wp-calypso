@@ -112,7 +112,7 @@ class StatsSite extends Component {
 				<SidebarNavigation />
 				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
-					<FreeToPaidBanner />
+					{ period === 'day' && <FreeToPaidBanner /> }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
