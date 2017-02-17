@@ -26,7 +26,7 @@ const debug = debugFactory( 'calypso:pages' );
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
-const CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+const calypsoEnv = config( 'env_id' );
 
 const staticFiles = [
 	{ path: 'style.css' },
@@ -124,7 +124,7 @@ function getDefaultContext( request ) {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
-		env: CALYPSO_ENV,
+		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
@@ -146,26 +146,26 @@ function getDefaultContext( request ) {
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
 
-	if ( CALYPSO_ENV === 'wpcalypso' ) {
-		context.badge = CALYPSO_ENV;
+	if ( calypsoEnv === 'wpcalypso' ) {
+		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
-	if ( CALYPSO_ENV === 'horizon' ) {
+	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
 		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
-	if ( CALYPSO_ENV === 'stage' ) {
+	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( CALYPSO_ENV === 'development' ) {
+	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';

@@ -10,6 +10,7 @@ const { serverData: data, clientData } = parser( configPath, {
 	enabledFeatures: process.env.ENABLE_FEATURES,
 	disabledFeatures: process.env.DISABLE_FEATURES
 } );
+
 const ssrConfig = `var configData = ${ JSON.stringify( clientData ) };`;
 
 module.exports = createConfig( data );
