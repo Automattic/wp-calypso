@@ -15,7 +15,7 @@ console.log( config( 'redirect_uri' ) );
 Feature Flags
 -------------
 
-The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds two methods to detect this: `config.isEnabled()` and `config.anyEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find.
+The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a methods to detect this: `config.isEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find.
 
 ```json
 {
