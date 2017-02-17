@@ -10,16 +10,17 @@ import supertest from 'supertest';
  */
 import { allowNetworkAccess } from 'test/helpers/nock-control';
 import { useSandbox } from 'test/helpers/use-sinon';
-import config from 'config';
+import unmodifiedConfig from 'config';
 
 describe( 'api', function() {
-	let app, localRequest, sandbox;
+	let app, config, localRequest, sandbox;
 
 	allowNetworkAccess();
 	useSandbox( newSandbox => sandbox = newSandbox );
 
 	before( () => {
-		config.isEnabled = arg => arg === 'oauth';
+		config = require( 'config' );
+		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
 		app = require( '../' )();
 		localRequest = supertest( app );
 	} );
@@ -46,7 +47,7 @@ describe( 'api', function() {
 	} );
 
 	let maybeIt = it;
-	if ( config( 'env' ) !== 'desktop' ) {
+	if ( unmodifiedConfig( 'env_id' ) !== 'desktop' ) {
 		maybeIt = maybeIt.skip;
 	}
 
