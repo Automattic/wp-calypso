@@ -123,16 +123,6 @@ module.exports = {
 		defaultVariation: 'noTabs'
 	},
 
-	boostedPostSurvey: {
-		datestamp: '20170127',
-		variations: {
-			disabled: 90,
-			enabled: 10
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	},
-
 	readerSearchOnFollowing: {
 		datestamp: '20170206',
 		variations: {

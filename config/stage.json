@@ -15,7 +15,6 @@
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
-		"boosted-post-survey": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"community-translator": true,
