@@ -22,8 +22,10 @@ const config = require( './server/config' ),
  */
 const sectionCount = sections.length;
 
+const calypsoEnv = config( 'env_id' );
+
 const webpackConfig = {
-	bail: config( 'env' ) !== 'development',
+	bail: calypsoEnv !== 'development',
 	cache: true,
 	entry: {},
 	devtool: '#eval',
@@ -91,7 +93,7 @@ const webpackConfig = {
 	externals: [ 'electron' ]
 };
 
-if ( config( 'env' ) === 'desktop' ) {
+if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
@@ -157,7 +159,7 @@ const jsLoader = {
 	}
 };
 
-if ( config( 'env' ) === 'development' ) {
+if ( calypsoEnv === 'development' ) {
 	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
@@ -186,7 +188,7 @@ if ( config( 'env' ) === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
-if ( config( 'env' ) === 'production' ) {
+if ( calypsoEnv === 'production' ) {
 	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
 		/^debug$/,
 		path.join( __dirname, 'client', 'lib', 'debug-noop' )

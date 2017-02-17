@@ -25,7 +25,7 @@ const debug = debugFactory( 'calypso:pages' );
 const HASH_LENGTH = 10;
 const URL_BASE_PATH = '/calypso';
 const SERVER_BASE_PATH = '/public';
-const calypsoEnv = config( 'env' );
+const calypsoEnv = config( 'env_id' );
 
 const staticFiles = [
 	{ path: 'style.css' },
