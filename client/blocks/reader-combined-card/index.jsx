@@ -14,7 +14,7 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 
-const ReaderCombinedCard = ( { posts, site, feed } ) => {
+const ReaderCombinedCard = ( { posts, site, feed, translate } ) => {
 	const feedId = get( feed, 'ID' );
 	const siteId = get( site, 'ID' );
 	const siteIcon = get( site, 'icon.img' );
@@ -37,7 +37,12 @@ const ReaderCombinedCard = ( { posts, site, feed } ) => {
 					siteId={ siteId }>
 					{ siteName }
 				</ReaderSiteStreamLink>
-				<p>{ posts.length } posts</p>
+				<p>{ translate( '%(count)d posts', {
+						args: {
+							count: posts.length
+						}
+					} ) }
+				</p>
 			</header>
 			<ul>
 				{ posts.map( post => (
