@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
+import config from 'config';
+import pkgJson from './package.json';
 
 const render = ( context ) => {
 	renderWithReduxStore( (
@@ -56,5 +59,8 @@ const render = ( context ) => {
 };
 
 export default function() {
-	page( '/hello-dolly/:site?', siteSelection, navigation, render );
+	const calypsoEnv = config( 'env_id' );
+	if ( some( pkgJson.env_id, env => env === calypsoEnv ) ) {
+		page( '/hello-dolly/:site?', siteSelection, navigation, render );
+	}
 }

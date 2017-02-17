@@ -29,15 +29,6 @@ const createConfig = data => {
 	 */
 	config.isEnabled = feature => data.features && !! data.features[ feature ] || false;
 
-	/**
-	 * Checks whether one of a set of features is enabled.
-	 *
-	 * @param {Array} args List of feature names.
-	 * @return {Boolean} True when at least one feature is enabled.
-	 * @api public
-	 */
-	config.anyEnabled = ( ...args ) => args.some( config.isEnabled );
-
 	return config;
 };
 

@@ -14,9 +14,7 @@ const extensions = require( 'extensions' );
 const extensionSections = extensions.map( extension => {
 	try {
 		const pkg = JSON.parse( fs.readFileSync( path.join( __dirname, 'extensions', extension, 'package.json' ) ) );
-		return pkg.env_id.indexOf( config( 'env_id' ) ) > -1
-			? pkg.section
-			: null;
+		return pkg.section;
 	} catch ( e ) {
 		return null;
 	}
