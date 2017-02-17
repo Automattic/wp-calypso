@@ -5,12 +5,14 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import wrapWithClickOutside from 'react-click-outside';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { isAutomatedTransferActive } from 'state/selectors';
 import Notice from 'components/notice';
@@ -155,7 +157,7 @@ class PluginAutomatedTransfer extends Component {
 						</NoticeAction>
 					}
 				</Notice>
-				this.state.transferComplete && <WpAdminAutoLogin />
+				{ this.state.transferComplete && <WpAdminAutoLogin siteUrl={ this.props.siteUrl } /> }
 			</div>
 		);
 	}
@@ -164,10 +166,11 @@ class PluginAutomatedTransfer extends Component {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-
+	const site = getSite( state, siteId );
 	return {
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
+		siteUrl: get( site, 'URL' ),
 	};
 };
 
