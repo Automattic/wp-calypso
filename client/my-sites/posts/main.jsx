@@ -16,7 +16,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostList from './post-list';
 import config from 'config';
 import Main from 'components/main';
-import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
 import PostItem from 'blocks/post-item';
@@ -34,6 +33,7 @@ import {
 	getMyPostCount
 } from 'state/posts/counts/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { warningNotice } from 'state/notices/actions';
 
 const PostsMain = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -123,7 +123,7 @@ const PostsMain = React.createClass( {
 
 	setWarning( selectedSite ) {
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
-			notices.warning(
+			this.props.warningNotice(
 				this.props.translate( 'Jetpack %(version)s is required to take full advantage of all post editing features.', {
 					args: { version: config( 'jetpack_min_version' ) }
 				} ),
@@ -137,22 +137,27 @@ const PostsMain = React.createClass( {
 
 } );
 
-export default connect( ( state, props ) => {
-	const siteId = getSelectedSiteId( state );
-	const draftsQuery = {
-		type: 'post',
-		status: 'draft',
-		number: 6,
-		order_by: 'modified',
-		author: props.author
-	};
+export default connect(
+	( state, { author } ) => {
+		const siteId = getSelectedSiteId( state );
+		const draftsQuery = {
+			author,
+			number: 6,
+			order_by: 'modified',
+			status: 'draft',
+			type: 'post',
+		};
 
-	return {
-		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
-		draftsQuery: draftsQuery,
-		draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
-		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
-		newPostPath: getEditorNewPostPath( state, siteId )
-	};
-} )( localize( PostsMain ) );
+		return {
+			drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
+			draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+			draftsQuery,
+			loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
+			myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
+			newPostPath: getEditorNewPostPath( state, siteId )
+		};
+	},
+	{
+		warningNotice,
+	},
+)( localize( PostsMain ) );
