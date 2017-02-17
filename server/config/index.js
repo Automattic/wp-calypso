@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { template, get } from 'lodash';
+const template = require( 'lodash/template' );
 
 /**
  * Internal dependencies
@@ -15,7 +15,8 @@ const { serverData, clientData } = parser( configPath, {
 	disabledFeatures: process.env.DISABLE_FEATURES
 } );
 
-// if in browser, grab configData, if in server use serverData
+// if in browser, grab windows configData,
+// if in server use serverData from config files
 const data = 'undefined' !== typeof window && window.configData
 	? window.configData
 	: serverData;

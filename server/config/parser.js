@@ -3,9 +3,9 @@
  */
 const fs = require( 'fs' ),
 	path = require( 'path' ),
-	debug = require( 'debug' )( 'config' );
-
-import { assign, isUndefined } from 'lodash';
+	assign = require( 'lodash/assign' ),
+	isUndefined = require( 'lodash/assign' ),
+	debug = require( 'debug' )( 'config' )
 
 function getDataFromFile( file ) {
 	var fileData = {};
