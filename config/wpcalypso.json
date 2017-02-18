@@ -16,6 +16,7 @@
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
+		"browsehappy": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"community-translator": true,

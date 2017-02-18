@@ -362,4 +362,21 @@ if ( config.isEnabled( 'happychat' ) ) {
 	} );
 }
 
+/*
+ * Needs to be behind feature gate until there is a way to redirect unsupported
+ * navigators' requests to /accept-invites that doesn't require Atlas.
+ */
+if ( config.isEnabled( 'browsehappy' ) ) {
+	sections.push( {
+		name: 'browsehappy',
+		paths: [ '/browsehappy' ],
+		module: 'my-sites/browsehappy',
+		enableLoggedOut: true,
+		secondary: false,
+		group: 'sites',
+		isomorphic: true,
+		title: 'Browser Unsupported'
+	} );
+}
+
 module.exports = sections;

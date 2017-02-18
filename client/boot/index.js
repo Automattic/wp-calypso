@@ -55,6 +55,9 @@ var config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
+// FIXME remove before merge!
+window.page = page;
+
 function init() {
 	var i18nLocaleStringsObject = null;
 
@@ -404,7 +407,7 @@ function reduxStoreReady( reduxStore ) {
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
-		const singleTreeSections = [ 'theme', 'themes' ];
+		const singleTreeSections = [ 'browsehappy', 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
 		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
 
