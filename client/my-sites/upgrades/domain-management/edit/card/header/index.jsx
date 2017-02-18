@@ -32,10 +32,11 @@ const Header = React.createClass( {
 				<DomainPrimaryFlag
 					domain={ domain } />
 
+				{ this.props.selectedSite && ! this.props.selectedSite.jetpack &&
 				<PrimaryDomainButton
 					domain={ domain }
 					selectedSite={ this.props.selectedSite }
-					settingPrimaryDomain={ this.props.settingPrimaryDomain } />
+					settingPrimaryDomain={ this.props.settingPrimaryDomain } /> }
 			</SectionHeader>
 		);
 	}
