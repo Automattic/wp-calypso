@@ -42,6 +42,7 @@ class PostActionsEllipsisMenuView extends Component {
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
+		this.props.onClick();
 		event.preventDefault();
 	}
 
