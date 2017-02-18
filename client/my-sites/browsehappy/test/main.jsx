@@ -60,8 +60,8 @@ describe( 'main', function() {
 		} );
 
 		describe( 'when no selected or primary sites available', function() {
-			it( "links to Dashboard's wp-login.php when logged out", function() {
-				const store = createReduxStore();
+			it( "links to Dashboard's wp-admin when logged in", function() {
+				const store = createReduxStore( baseState );
 				const layout = (
 					<ReduxProvider store={ store }>
 						<this.BrowseHappyComponent />
@@ -73,12 +73,11 @@ describe( 'main', function() {
 				} ).to.not.throw();
 				expect( markup )
 					.to.include( 'browsehappy__main' )
-					.and.to.include( 'href="https://dashboard.wordpress.com/wp-login.php"' )
-					.and.to.not.include( 'wp-admin' );
+					.and.to.include( 'href="https://dashboard.wordpress.com/wp-admin/"' )
+					.and.to.not.include( 'wp-login' );
 			} );
-
-			it( "links to Dashboard's wp-admin when logged in", function() {
-				const store = createReduxStore( baseState );
+			it( "also links to Dashboard's wp-admin when logged out", function() {
+				const store = createReduxStore();
 				const layout = (
 					<ReduxProvider store={ store }>
 						<this.BrowseHappyComponent />

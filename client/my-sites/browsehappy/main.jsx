@@ -15,16 +15,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
-//const wpcomRe = /^https?:\/\/[A-z_-]+\.wordpress\.com$/;
-//
-//function isWpcom( url ) {
-//	return wpcomRe.test( url );
-//}
-//
-//function addAdminPath( url ) {
-//	return url + '/wp-admin';
-//}
-
 class BrowseHappy extends Component {
 	static propTypes = {
 		// connected props
@@ -33,29 +23,19 @@ class BrowseHappy extends Component {
 		primarySite: PropTypes.object,
 	};
 
-	realAdminUrl() {
+	siteAdminUrl() {
 		return get( this, find( [
 			'props.selectedSite.options.admin_url',
 			'props.primarySite.options.admin_url',
 		], has.bind( null, this ) ) );
 	}
 
-	//guessedAdminUrl() {
-	//	const primaryUrl = get( this.props, 'currentUser.primary_blog_url' );
-	//	return primaryUrl && isWpcom( primaryUrl ) &&
-	//		addAdminPath( primaryUrl );
-	//}
-
-	dashboardUrl() {
-		return this.props.currentUser
-			? 'https://dashboard.wordpress.com/wp-admin/'
-			: 'https://dashboard.wordpress.com/wp-login.php';
+	dashboardAdminUrl() {
+		return 'https://dashboard.wordpress.com/wp-admin/';
 	}
 
 	render() {
-		const adminUrl = this.realAdminUrl() ||
-			//this.guessedAdminUrl() ||
-			this.dashboardUrl();
+		const adminUrl = this.siteAdminUrl() || this.dashboardAdminUrl();
 
 		const title = i18n.translate( 'Unsupported Browser' );
 		const line = i18n.translate(
@@ -92,10 +72,3 @@ export default connect(
 		};
 	}
 )( BrowseHappy );
-
-/*
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-const analyticsPath = '/browsehapppy';
-const analyticsPageTitle = 'Browsehappy';
-<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
-*/
