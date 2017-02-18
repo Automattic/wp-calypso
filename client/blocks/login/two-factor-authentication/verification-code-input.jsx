@@ -18,7 +18,11 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
-import { loginUserWithTwoFactorVerificationCode, internalRedirect } from 'state/login/actions';
+import {
+	loginUserWithTwoFactorVerificationCode,
+	internalRedirect,
+	clearTwoFactorVerficationCodeSubmissionError
+} from 'state/login/actions';
 import { getVerificationCodeSubmissionError } from 'state/login/selectors';
 import {
 	getTwoFactorAuthId,
@@ -29,21 +33,8 @@ import {
 class VerificationCodeInput extends Component {
 	state = {
 		twostep_code: '',
-		remember: false,
-		error: null
+		remember: false
 	};
-
-	componentWillMount() {
-		this.setState( {
-			error: this.props.error
-		} );
-	}
-
-	componentWillReceiveProps( newProps ) {
-		this.setState( {
-			error: newProps.error
-		} );
-	}
 
 	componentDidUpdate() {
 		if ( this.props.isLoginSuccessful ) {
@@ -58,12 +49,12 @@ class VerificationCodeInput extends Component {
 			} );
 			return;
 		}
+		this.setState( {
+			[ event.target.name ]: event.target.value
+		} );
 		// Reset the error state if the user updates the field after an error coming
 		// from the state
-		this.setState( {
-			[ event.target.name ]: event.target.value,
-			error: null
-		} );
+		this.props.clearTwoFactorVerficationCodeSubmissionError();
 	};
 
 	onCodeSubmit = ( e ) => {
@@ -74,8 +65,8 @@ class VerificationCodeInput extends Component {
 	}
 
 	render() {
-		const isError = !! this.state.error;
-		let errorText = this.state.error;
+		const isError = !! this.props.error;
+		let errorText = this.props.error;
 		if ( isError ) {
 			errorText = this.props.translate( 'Invalid verification code' );
 		}
@@ -145,5 +136,6 @@ export default connect(
 		};
 	}, {
 		loginUserWithTwoFactorVerificationCode,
+		clearTwoFactorVerficationCodeSubmissionError,
 		internalRedirect
 	} )( localize( VerificationCodeInput ) );

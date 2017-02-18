@@ -14,7 +14,8 @@ import {
 	LOGIN_REQUEST_SUCCESS,
 	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST,
 	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS,
-	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE
+	LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE,
+	LOGIN_2FA_VERIFICATION_CODE_CLEAR_ERROR
 } from 'state/action-types';
 
 export const isRequesting = createReducer( false, {
@@ -38,7 +39,8 @@ export const requestError = createReducer( null, {
 export const verificationCodeSubmissionError = createReducer( null, {
 	[ LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST ]: () => null,
 	[ LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_SUCCESS ]: () => null,
-	[ LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE ]: ( state, { error } ) => error
+	[ LOGIN_2FA_VERIFICATION_CODE_SEND_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ LOGIN_2FA_VERIFICATION_CODE_CLEAR_ERROR ]: () => null
 } );
 
 export const requestSuccess = createReducer( null, {
