@@ -27,6 +27,7 @@ var PageList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
+		hierarchical: React.PropTypes.bool,
 		sites: React.PropTypes.object,
 		siteID: React.PropTypes.any
 	},
@@ -35,6 +36,7 @@ var PageList = React.createClass( {
 		return (
 			<PostListFetcher
 				type="page"
+				hierarchical={ this.props.hierarchical }
 				siteID={ this.props.siteID }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
@@ -60,6 +62,7 @@ var Pages = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
+		hierarchical: React.PropTypes.bool,
 		sites: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired
@@ -71,6 +74,7 @@ var Pages = React.createClass( {
 			loading: false,
 			hasRecentError: false,
 			lastPage: false,
+			hierarchical: false,
 			page: 0,
 			posts: [],
 			trackScrollPage: function() {}
@@ -200,10 +204,9 @@ var Pages = React.createClass( {
 	render: function() {
 		var pages = this.props.posts,
 			rows = [];
-
 		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
 		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
+			if ( ! ( this.props.search || this.props.hierarchical ) ) {
 				// we're listing in reverse chrono. use the markers.
 				pages = this._insertTimeMarkers( pages );
 			}
@@ -228,7 +231,7 @@ var Pages = React.createClass( {
 			const status = this.props.status || 'published';
 
 			if ( site && status === 'published' ) {
-				rows.push(
+				rows.unshift(
 					<BlogPostsPage
 						key="blog-posts-page"
 						site={ site }

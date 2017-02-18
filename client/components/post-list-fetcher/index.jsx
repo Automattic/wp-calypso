@@ -28,6 +28,7 @@ function queryPosts( props ) {
 		type: props.type || 'post',
 		siteID: props.siteID,
 		status: props.status,
+		hierarchical: props.hierarchical,
 		author: props.author,
 		search: props.search,
 		exclude_tree: props.excludeTree,
@@ -72,6 +73,7 @@ function shouldQueryPosts( props, nextProps ) {
 
 	return props.type !== nextProps.type ||
 		props.status !== nextProps.status ||
+		props.hierarchical !== nextProps.hierarchical ||
 		props.author !== nextProps.author ||
 		props.search !== nextProps.search ||
 		props.excludeTree !== nextProps.excludeTree ||
@@ -91,6 +93,7 @@ PostListFetcher = React.createClass( {
 		children: React.PropTypes.element.isRequired,
 		type: React.PropTypes.string,
 		status: React.PropTypes.string,
+		hierarchical: React.PropTypes.bool,
 		author: React.PropTypes.number,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
