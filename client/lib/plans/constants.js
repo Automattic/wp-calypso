@@ -93,6 +93,8 @@ export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
 export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack';
 export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
 export const FEATURE_SEO_TOOLS_JETPACK = 'seo-tools-jetpack';
+export const FEATURE_WORDADS_JETPACK = 'wordads-jetpack';
+export const FEATURE_GOOGLE_ANALYTICS_JETPACK = 'google-analytics-jetpack';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -934,6 +936,22 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'SEO Tools' ),
 		getDescription: () => i18n.translate(
 			'Preview and optimize site content for better search engine results.'
+		),
+		hideInfoPopover: true
+	},
+	[ FEATURE_WORDADS_JETPACK ]: {
+		getSlug: () => FEATURE_WORDADS_JETPACK,
+		getTitle: () => i18n.translate( 'Ads' ),
+		getDescription: () => i18n.translate(
+			'Earn income by allowing Jetpack to display high quality ads.'
+		),
+		hideInfoPopover: true
+	},
+	[ FEATURE_GOOGLE_ANALYTICS_JETPACK ]: {
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS_JETPACK,
+		getTitle: () => i18n.translate( 'Analytics Settings' ),
+		getDescription: () => i18n.translate(
+			'Google Analytics includes advanced features to complement WordPress.com stats.'
 		),
 		hideInfoPopover: true
 	},
