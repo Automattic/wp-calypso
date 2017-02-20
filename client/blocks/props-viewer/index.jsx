@@ -41,28 +41,8 @@ class PropsViewer extends PureComponent {
 		example: PropTypes.element.isRequired
 	};
 
-	/**
-	 * Set the state of this component to the first matching slug
-	 * @param {string} slug The slug to search for
-	 */
-	setComponent = ( slug ) => {
-		const component = findRealComponent( slug );
-
-		this.setState( {
-			component
-		} );
-	};
-
-	componentWillMount() {
-		this.setComponent( this.props.component );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setComponent( nextProps.component );
-	}
-
 	render() {
-		const component = this.state.component;
+		const component = findRealComponent( this.props.component );
 
 		return (
 			<div>
