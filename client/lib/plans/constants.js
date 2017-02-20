@@ -630,9 +630,9 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_REPUBLICIZE ]: {
 		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => i18n.translate( 'Social sharing menu' ),
+		getTitle: () => i18n.translate( 'Targeted Social Media' ),
 		getDescription: () => i18n.translate(
-			'Share this post as many times as you like on all your connected social media accounts using Publicize.'
+			'Share your posts as many times as you like on all your connected social media accounts using Publicize.'
 		)
 	},
 	[ FEATURE_NO_BRANDING ]: {
