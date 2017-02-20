@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render } from 'enzyme';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PropsViewer', () => {
@@ -99,30 +99,30 @@ describe( 'PropsViewer', () => {
 	context( 'no matching component', () => {
 		it( 'should render only the example', () => {
 			const component = ( <PropsViewer.default component={ 'no-match-here-go-away' } example={ <div /> } /> );
-			const wrapper = shallow( component );
-			expect( wrapper.childAt( 0 ).matchesElement( <div></div> ) ).to.be.true;
+			const wrapper = render( component );
+			expect( wrapper.text() ).to.be.empty;
 		} );
 	} );
 
 	context( 'renders a table of propTypes', () => {
 		it( 'can render itself', () => {
-			const example = ( <div>Example goes here</div> );
+			const example = ( <div id="example">Example goes here</div> );
 			const component = ( <PropsViewer.default component={ 'props-viewer' } example={ example } /> );
 			const componentDescription = PropsViewer.findRealComponent( 'props-viewer' );
 
-			const wrapper = shallow( component );
-			expect( wrapper.childAt( 0 ).matchesElement( <div>Example goes here</div> ) ).to.be.true;
+			const wrapper = render( component );
+			expect( wrapper.find( '#example' ).text() ).to.be.equal( 'Example goes here' );
 
-			const tableWrapper = wrapper.childAt( 1 );
-			expect( tableWrapper.childAt( 0 ).text() ).equals( componentDescription.description );
+			const tableWrapper = wrapper.find( '.props-viewer__card' );
+			expect( tableWrapper.find( '.props-viewer__description' ).text() ).equals( componentDescription.description );
 
 			const tbody = wrapper.find( 'tbody' );
-			const componentRow = tbody.childAt( 0 );
+			const componentRow = tbody.find( 'tr' ).children();
 
-			expect( componentRow.childAt( 1 ).text() ).equals( 'component' );
-			expect( componentRow.childAt( 2 ).text() ).equals( componentDescription.props.component.type.name );
-			expect( componentRow.childAt( 3 ).text() ).equals( 'undefined' );
-			expect( componentRow.childAt( 4 ).text() ).equals( componentDescription.props.component.description );
+			expect( componentRow.eq( 1 ).text() ).equals( 'component' );
+			expect( componentRow.eq( 2 ).text() ).equals( componentDescription.props.component.type.name );
+			expect( componentRow.eq( 3 ).text() ).equals( 'undefined' );
+			expect( componentRow.eq( 4 ).text() ).equals( componentDescription.props.component.description );
 		} );
 	} );
 
