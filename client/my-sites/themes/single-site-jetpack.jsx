@@ -45,14 +45,14 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		const {
 			analyticsPath,
 			analyticsPageTitle,
+			emptyContent,
 			getScreenshotOption,
 			search,
 			site,
 			siteId,
 			wpcomTier,
 			filter,
-			vertical,
-			showNoThemesFound
+			vertical
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -83,7 +83,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<CurrentTheme siteId={ siteId } />
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
-					showNoThemesFound={ false } >
+					emptyContent={ <div /> } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
@@ -126,7 +126,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								} }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
-								showNoThemesFound={ showNoThemesFound }
+								emptyContent={ emptyContent }
 							/>
 						</div>
 					}
@@ -139,18 +139,18 @@ const ConnectedSingleSiteJetpack = connectOptions(
 export default connect(
 	( state, { siteId, tier } ) => {
 		const showWpcomThemesList = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
-		let showNoThemesFound = true;
+		let emptyContent = null;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
 			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
 			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
 			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
-			showNoThemesFound = ! siteThemesCount && ! wpcomThemesCount;
+			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
 		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
-			showNoThemesFound,
+			emptyContent
 		};
 	}
 )( ConnectedSingleSiteJetpack );

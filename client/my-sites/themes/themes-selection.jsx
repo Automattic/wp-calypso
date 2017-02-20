@@ -31,6 +31,7 @@ import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
+		emptyContent: PropTypes.element,
 		query: PropTypes.object.isRequired,
 		siteId: PropTypes.number,
 		onScreenshotClick: PropTypes.func,
@@ -50,14 +51,13 @@ const ThemesSelection = React.createClass( {
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
-		placeholderCount: PropTypes.number,
-		showNoThemesFound: PropTypes.bool
+		placeholderCount: PropTypes.number
 	},
 
 	getDefaultProps() {
 		return {
-			showUploadButton: true,
-			showNoThemesFound: true
+			emptyContent: null,
+			showUploadButton: true
 		};
 	},
 
@@ -139,10 +139,6 @@ const ThemesSelection = React.createClass( {
 		return options;
 	},
 
-	showNoThemesFound( ) {
-		return this.props.showNoThemesFound ? null : <div />;
-	},
-
 	render() {
 		const { source, query, listLabel, themesCount } = this.props;
 
@@ -166,7 +162,7 @@ const ThemesSelection = React.createClass( {
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
-					emptyContent={ this.showNoThemesFound() }
+					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
 		);
