@@ -52,8 +52,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			wpcomTier,
 			filter,
 			vertical,
-			showNoThemesFoundJetpack,
-			showNoThemesFoundWpcom,
+			showNoThemesFound
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -84,7 +83,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<CurrentTheme siteId={ siteId } />
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
-					showNoThemesFound={ showNoThemesFoundJetpack } >
+					showNoThemesFound={ false } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
@@ -127,7 +126,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								} }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
-								showNoThemesFound={ showNoThemesFoundWpcom }
+								showNoThemesFound={ showNoThemesFound }
 							/>
 						</div>
 					}
@@ -140,26 +139,18 @@ const ConnectedSingleSiteJetpack = connectOptions(
 export default connect(
 	( state, { siteId, tier } ) => {
 		const showWpcomThemesList = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
-		let showNoThemesFoundJetpack = true;
-		let showNoThemesFoundWpcom = true;
+		let showNoThemesFound = true;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
 			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
 			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
 			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
-
-			if ( siteThemesCount && ! wpcomThemesCount ) {
-				showNoThemesFoundWpcom = false;
-			} else if ( ! siteThemesCount ) {
-				showNoThemesFoundJetpack = false;
-			}
-
+			showNoThemesFound = ! siteThemesCount && ! wpcomThemesCount;
 		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
-			showNoThemesFoundJetpack,
-			showNoThemesFoundWpcom,
+			showNoThemesFound,
 		};
 	}
 )( ConnectedSingleSiteJetpack );
