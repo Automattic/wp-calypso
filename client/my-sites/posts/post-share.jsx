@@ -24,6 +24,9 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import FormToggle from 'components/forms/form-toggle/compact';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
+import Banner from 'components/banner';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -130,6 +133,17 @@ const PostSharing = React.createClass( {
 			'has-connections': this.hasConnections()
 		} );
 
+		if ( ! this.props.planHasRepublicizeFeature ) {
+			return ( <div className="posts__post-share-wrapper">
+				<Banner
+					feature="republicize"
+					title={ this.translate( 'Unlock the ability to re-share posts to social media' ) }
+					callToAction={ this.translate( 'Upgrade to Premium' ) }
+					description={ this.translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
+				/>
+			</div> );
+		}
+
 		return (
 			<div className="posts__post-share-wrapper">
 				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Sharing...' ) }</Notice> }
@@ -212,6 +226,7 @@ export default connect(
 		const userId = getCurrentUserId( state );
 
 		return {
+			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
