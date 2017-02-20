@@ -221,6 +221,9 @@ function planHasFeature( plan, feature ) {
 /**
  * Whether a site's current plan includes a given feature
  *
+ * DO NOT USE THIS FOR FEATURE GATES, this is only to be used for deciding
+ * if nudge should be shown.
+ * If you want a feature gate, you should make it backend-side.
  * @param  {Object}  state   Global State tree
  * @param  {Number}  siteId  Site ID
  * @param  {String}  feature The feature we're looking for

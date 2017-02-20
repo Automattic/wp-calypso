@@ -63,6 +63,7 @@ export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
+export const FEATURE_REPUBLICIZE = 'republicize';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -154,7 +155,7 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: ( abtest ) => [ // pay attention to ordering, shared features should align on /plan page
+		getFeatures: ( abtest ) => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -163,8 +164,9 @@ export const PLANS_LIST = {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS
-		],
+			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NO_ADS,
@@ -200,12 +202,13 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING
+			FEATURE_NO_BRANDING,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
@@ -265,7 +268,7 @@ export const PLANS_LIST = {
 			FEATURE_REVENUE_GENERATION_JETPACK,
 			FEATURE_VIDEO_HOSTING_JETPACK
 		]
-		: [
+		: compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -276,7 +279,8 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-		],
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -301,7 +305,7 @@ export const PLANS_LIST = {
 			FEATURE_SECURITY_SCANNING_JETPACK,
 			FEATURE_REVENUE_GENERATION_JETPACK,
 			FEATURE_VIDEO_HOSTING_JETPACK
-		] : [
+		] : compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -312,7 +316,8 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-		],
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
 
@@ -413,6 +418,7 @@ export const PLANS_LIST = {
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
 				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
@@ -458,6 +464,7 @@ export const PLANS_LIST = {
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
 				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
@@ -621,7 +628,13 @@ export const FEATURES_LIST = {
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
-
+	[ FEATURE_REPUBLICIZE ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => i18n.translate( 'Targeted Social Media' ),
+		getDescription: () => i18n.translate(
+			'Share your posts as many times as you like on all your connected social media accounts using Publicize.'
+		)
+	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,
 		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
@@ -937,7 +950,6 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
-
 };
 
 export const getPlanObject = planName => {
