@@ -25,12 +25,6 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		isPlaying: false,
 	};
 
-	constructor() {
-		super();
-
-		this.onScriptLoaded = this.onScriptLoaded.bind( this );
-	}
-
 	componentDidMount() {
 		this.loadInitializeScript();
 	}
@@ -61,20 +55,25 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		loadScript.loadScript( videoPressUrl, this.onScriptLoaded );
 	}
 
-	onScriptLoaded( error ) {
+	onScriptLoaded = ( error ) => {
 		if ( error ) {
 			log( `Script${ error.src } failed to load.` );
 			return;
 		}
 
-		/* eslint-disable no-undef */
-		this.player = videopress( this.props.item.videopress_guid, this.video, {
-		/* eslint-enable no-undef */
-			autoPlay: this.props.isPlaying,
-			height: this.props.item.height,
-			width: this.props.item.width,
-		} );
-	}
+		const {
+			isPlaying,
+			item,
+		} = this.props;
+
+		if ( typeof window !== 'undefined' && window.videopress ) {
+			this.player = window.videopress( item.videopress_guid, this.video, {
+				autoPlay: isPlaying,
+				height: item.height,
+				width: item.width,
+			} );
+		}
+	};
 
 	destroy() {
 		if ( ! this.player ) {
