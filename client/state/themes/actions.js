@@ -116,22 +116,19 @@ export function receiveThemes( themes, siteId ) {
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {Number|String} siteId Jetpack site ID or 'wpcom' for any WPCOM site
- * @param  {String}        query  Theme query
- * @return {Function}             Action thunk
+ * @param  {Number|String} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {Object}        query         Theme query
+ * @param  {String}        query.search  Search string
+ * @param  {String}        query.tier    Theme tier: 'free', 'premium', or '' (either)
+ * @param  {String}        query.filter  Filter
+ * @param  {Number}        query.number  How many themes to return per page
+ * @param  {Number}        query.offset  At which item to start the set of returned themes
+ * @param  {Number}        query.page    Which page of matching themes to return
+ * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
 	return ( dispatch, getState ) => {
 		const startTime = new Date().getTime();
-		let siteIdToQuery, queryWithApiVersion;
-
-		if ( siteId === 'wpcom' ) {
-			siteIdToQuery = null;
-			queryWithApiVersion = { ...query, apiVersion: '1.2' };
-		} else {
-			siteIdToQuery = siteId;
-			queryWithApiVersion = { ...query, apiVersion: '1' };
-		}
 
 		dispatch( {
 			type: THEMES_REQUEST,
@@ -139,10 +136,29 @@ export function requestThemes( siteId, query = {} ) {
 			query
 		} );
 
-		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes: rawThemes } ) => {
+		let request;
+
+		if ( siteId === 'wporg' ) {
+			request = () => wporg.fetchThemesList( query );
+		} else if ( siteId === 'wpcom' ) {
+			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
+		} else {
+			request = () => wpcom.undocumented().themes( siteId, { ...query, apiVersion: '1' } );
+		}
+
+		// WP.com returns the number of results in a `found` attr, so we can use that right away.
+		// WP.org returns an `info` object containing a `results` number, so we destructure that
+		// and use it as default value for `found`.
+		return request().then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 			let themes;
 			let filteredThemes;
-			if ( siteId !== 'wpcom' ) {
+			if ( siteId === 'wporg' ) {
+				themes = map( rawThemes, normalizeWporgTheme );
+				filteredThemes = themes;
+			} else if ( siteId === 'wpcom' ) {
+				themes = map( rawThemes, normalizeWpcomTheme );
+				filteredThemes = themes;
+			} else { // Jetpack Site
 				themes = map( rawThemes, normalizeJetpackTheme );
 
 				// A Jetpack site's themes endpoint ignores the query,
@@ -160,9 +176,6 @@ export function requestThemes( siteId, query = {} ) {
 				);
 				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
 				found = filteredThemes.length;
-			} else {
-				themes = map( rawThemes, normalizeWpcomTheme );
-				filteredThemes = themes;
 			}
 
 			if ( query.search && query.page === 1 ) {

@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, isEqual, omit, property, snakeCase } from 'lodash';
+import { compact, includes, isEqual, omit, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,9 +39,9 @@ const ThemesSelection = React.createClass( {
 		incrementPage: PropTypes.func,
 		resetPage: PropTypes.func,
 		// connected props
-		siteIdOrWpcom: PropTypes.oneOfType( [
+		source: PropTypes.oneOfType( [
 			PropTypes.number,
-			PropTypes.oneOf( [ 'wpcom' ] )
+			PropTypes.oneOf( [ 'wpcom', 'wporg' ] )
 		] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
@@ -138,13 +138,13 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { siteIdOrWpcom, query, listLabel, themesCount } = this.props;
+		const { source, query, listLabel, themesCount } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes
 					query={ query }
-					siteId={ siteIdOrWpcom } />
+					siteId={ source } />
 				<ThemesSelectionHeader
 					label={ listLabel }
 					count={ themesCount }
@@ -168,15 +168,20 @@ const ThemesSelection = React.createClass( {
 } );
 
 const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, queryWpcom } ) => {
+	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
-		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
+		let sourceSiteId;
+		if ( source === 'wpcom' || source === 'wporg' ) {
+			sourceSiteId = source;
+		} else {
+			sourceSiteId = ( siteId && isJetpack ) ? siteId : 'wpcom';
+		}
 
 		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = isJetpack && ! ( queryWpcom === true ) ? 2000 : 20;
+		const number = ! includes( [ 'wpcom', 'wporg' ], source ) ? 2000 : 20;
 		const query = {
 			search,
 			page,
@@ -187,12 +192,12 @@ const ConnectedThemesSelection = connect(
 
 		return {
 			query,
-			siteIdOrWpcom,
+			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, siteIdOrWpcom, query ) || [],
-			themesCount: getThemesFoundForQuery( state, siteIdOrWpcom, query ),
-			isRequesting: isRequestingThemesForQuery( state, siteIdOrWpcom, query ),
-			isLastPage: isThemesLastPageForQuery( state, siteIdOrWpcom, query ),
+			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
+			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
+			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
+			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
