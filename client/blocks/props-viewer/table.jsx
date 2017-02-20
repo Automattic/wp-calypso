@@ -86,7 +86,7 @@ class Table extends PureComponent {
 							</tr>
 							</thead>
 							<tbody>
-							{ this.rows() }
+								{ this.rows() }
 							</tbody>
 						</table>
 					</div>
