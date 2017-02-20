@@ -176,6 +176,8 @@ const HelpContact = React.createClass( {
 			display_name,
 			email
 		);
+
+		this.clearSavedContactForm();
 	},
 
 	submitKayakoTicket: function( contactForm ) {
