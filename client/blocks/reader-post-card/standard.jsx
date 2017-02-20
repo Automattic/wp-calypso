@@ -9,7 +9,7 @@ import React from 'react';
 import AutoDirection from 'components/auto-direction';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
-import ReaderPostCardExcerpt from './excerpt';
+import ReaderExcerpt from 'blocks/reader-excerpt';
 
 const StandardPost = ( { post, children, isDiscover } )=> {
 	const canonicalMedia = post.canonical_media;
@@ -31,7 +31,7 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 						<a className="reader-post-card__title-link" href={ post.URL }>{ post.title }</a>
 					</h1>
 				</AutoDirection>
-				<ReaderPostCardExcerpt post={ post } isDiscover={ isDiscover } />
+				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }
 			</div>
 		</div> );
