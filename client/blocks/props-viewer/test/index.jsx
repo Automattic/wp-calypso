@@ -108,7 +108,7 @@ describe( 'PropsViewer', () => {
 		it( 'can render itself', () => {
 			const example = ( <div>Example goes here</div> );
 			const component = ( <PropsViewer.default component={ 'props-viewer' } example={ example } /> );
-			const componentDescription = PropsViewer.findRealComponent( 'props-viewer' )[ 0 ];
+			const componentDescription = PropsViewer.findRealComponent( 'props-viewer' );
 
 			const wrapper = shallow( component );
 			expect( wrapper.childAt( 0 ).matchesElement( <div>Example goes here</div> ) ).to.be.true;
@@ -127,13 +127,13 @@ describe( 'PropsViewer', () => {
 	} );
 
 	context( 'reducer', () => {
-		it( 'returns empty array if nothing is found', () => {
+		it( 'returns undefined if nothing is found', () => {
 			const description = PropsViewer.findRealComponent( 'no-results' );
-			expect( description ).to.be.empty;
+			expect( description ).to.equal( undefined );
 		} );
 		it( 'returns an item if something is found', () => {
 			const description = PropsViewer.findRealComponent( 'props-viewer' );
-			expect( description.length ).to.equal( 1 );
+			expect( description ).to.not.equal( undefined );
 		} );
 	} );
 } );

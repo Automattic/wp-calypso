@@ -48,11 +48,6 @@ class PropsViewer extends PureComponent {
 	 */
 	setComponent = ( slug ) => {
 		let component = findRealComponent( slug );
-		if ( component.length > 0 ) {
-			component = component[ 0 ];
-		} else {
-			component = null;
-		}
 
 		this.setState( {
 			component
