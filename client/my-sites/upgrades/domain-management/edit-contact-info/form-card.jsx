@@ -35,6 +35,7 @@ import support from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/upgrades/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
@@ -46,7 +47,8 @@ class EditContactInfoFormCard extends React.Component {
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
-		] ).isRequired
+		] ).isRequired,
+		currentUser: React.PropTypes.object.isRequired
 	};
 
 	constructor( props ) {
@@ -118,6 +120,26 @@ class EditContactInfoFormCard extends React.Component {
 		}
 	}
 
+	hasEmailChanged() {
+		return this.props.contactInformation.email === formState.getFieldValue( this.state.form, 'email' );
+	}
+
+	getCurrentEmails() {
+		const currentEmail = this.props.contactInformation.email,
+			wpcomEmail = this.props.currentUser.email;
+
+		if ( currentEmail === wpcomEmail ) {
+			return currentEmail;
+		}
+
+		return this.props.translate( '%(currentEmail)s (additionally to %(wpcomEmail)s)',
+			{
+				args: { currentEmail, wpcomEmail },
+				context: 'List of emails the WHOIS confirmation email is sent to'
+			}
+		);
+	}
+
 	handleFormControllerError = ( error ) => {
 		if ( error ) {
 			throw error;
@@ -167,21 +189,22 @@ class EditContactInfoFormCard extends React.Component {
 					isPrimary: true
 				}
 			],
-			oldEmail = this.props.contactInformation.email,
-			newEmail = formState.getFieldValue( this.state.form, 'email' );
+			currentEmails = this.getCurrentEmails();
 
 		let text;
-		if ( oldEmail === newEmail ) {
+		if ( this.hasEmailChanged() ) {
 			text = translate( 'To finish this process, this change will need to be confirmed by an email ' +
 				'sent to {{strong}}%(email)s{{/strong}}. Please make sure you have access to it.', {
-					args: { email: newEmail }, components: { strong }
+					args: { email: currentEmails }, components: { strong }
 				}
 			);
 		} else {
+			const newEmail = formState.getFieldValue( this.state.form, 'email' );
+
 			text = translate( 'To finish this process, this change will need to be confirmed by emails ' +
-				'sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
+				'sent to {{strong}}%(currentEmails)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
 				'you\'ll be able to do so.', {
-					args: { oldEmail, newEmail }, components: { strong }
+					args: { currentEmails, newEmail }, components: { strong }
 				}
 			);
 		}
@@ -420,25 +443,26 @@ class EditContactInfoFormCard extends React.Component {
 
 				case WWD:
 				default:
-					const oldEmail = this.props.contactInformation.email,
-						newEmail = formState.getFieldValue( this.state.form, 'email' ),
+					const currentEmails = this.getCurrentEmails(),
 						strong = <strong />;
 
-					if ( oldEmail === newEmail ) {
+					if ( this.hasEmailChanged() ) {
 						message = this.props.translate(
 							'An email has been sent to {{strong}}%(email)s{{/strong}}. ' +
 							'Please confirm it to finish this process.',
 							{
-								args: { email: oldEmail },
+								args: { email: currentEmails },
 								components: { strong }
 							}
 						);
 					} else {
+						const newEmail = formState.getFieldValue( this.state.form, 'email' );
+
 						message = this.props.translate(
-							'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+							'Emails have been sent to {{strong}}%(currentEmails)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
 							'Please ensure they\'re both confirmed to finish this process.',
 							{
-								args: { oldEmail, newEmail },
+								args: { currentEmails, newEmail },
 								components: { strong }
 							}
 						);
@@ -458,6 +482,6 @@ class EditContactInfoFormCard extends React.Component {
 }
 
 export default connect(
-	null,
+	state => ( { currentUser: getCurrentUser( state ) } ),
 	dispatch => bindActionCreators( { successNotice }, dispatch )
 )( localize( EditContactInfoFormCard ) );
