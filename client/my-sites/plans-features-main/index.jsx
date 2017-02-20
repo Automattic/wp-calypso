@@ -48,7 +48,7 @@ class PlansFeaturesMain extends Component {
 				jetpackPlans.shift();
 			}
 			return (
-				<div className="plans-features-main__group">
+				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
 						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
@@ -69,7 +69,7 @@ class PlansFeaturesMain extends Component {
 				jetpackPlans.shift();
 			}
 			return (
-				<div className="plans-features-main__group">
+				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
 						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
@@ -95,7 +95,7 @@ class PlansFeaturesMain extends Component {
 		);
 
 		return (
-			<div className="plans-features-main__group">
+			<div className="plans-features-main__group" data-e2e-plans="wpcom">
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
