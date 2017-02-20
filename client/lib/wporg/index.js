@@ -104,46 +104,26 @@ module.exports = {
 	 * Otherwise, will return a promise.
 	 *
 	 * @param {string}     themeId  The theme identifier.
-	 * @param {function}   callback Callback that gets executed after the XHR returns the results.
-	 * @returns {?Promise} Promise  that is returned if no callback parameter is passed
+	 * @returns {Promise.<Object>}  A promise that returns a `theme` object
 	 */
-	fetchThemeInformation: function( themeId, callback ) {
+	fetchThemeInformation: function( themeId ) {
 		const query = { action: 'theme_information', 'request[slug]': themeId };
-		// if callback is provided, behave traditionally
-		if ( 'function' === typeof callback ) {
-			return superagent
-				.get( _WPORG_THEMES_ENDPOINT )
-				.set( 'Accept', 'application/json' )
-				.query( query )
-				.end( ( err, { body } ) => {
-					callback( err, body );
-				} );
-		}
-
-		// otherwise, return a Promise
-		return new Promise( ( resolve, reject ) => {
-			return superagent
-				.get( _WPORG_THEMES_ENDPOINT )
-				.set( 'Accept', 'application/json' )
-				.query( query )
-				.end( ( err, { body } ) => {
-					err ? reject( err ) : resolve( body );
-				} );
-		} );
+		return superagent
+			.get( _WPORG_THEMES_ENDPOINT )
+			.set( 'Accept', 'application/json' )
+			.query( query )
+			.then( ( { body } ) => ( body ) );
 	},
 	/**
 	 * Get information about a given theme from the WordPress.org API.
-	 * If provided with a callback, will call that on succes with an object with theme details.
-	 * Otherwise, will return a promise.
 	 *
 	 * @param  {Object}        options         Theme query
 	 * @param  {String}        options.search  Search string
 	 * @param  {Number}        options.number  How many themes to return per page
 	 * @param  {Number}        options.page    Which page of matching themes to return
-	 * @param  {function}      callback        Callback that gets executed after the XHR returns the results.
-	 * @returns {?Promise}                     Promise that is returned if no callback parameter is passed
+	 * @returns {Promise.<Object>}             A promise that returns an object containing a `themes` array and an `info` object
 	 */
-	fetchThemesList: function( options = {}, callback ) {
+	fetchThemesList: function( options = {} ) {
 		const { search, page, number } = options;
 		const query = {
 			action: 'query_themes',
@@ -151,26 +131,11 @@ module.exports = {
 			'request[page]': page,
 			'request[per_page]:': number
 		};
-		// if callback is provided, behave traditionally
-		if ( 'function' === typeof callback ) {
-			return superagent
-				.get( _WPORG_THEMES_ENDPOINT )
-				.set( 'Accept', 'application/json' )
-				.query( query )
-				.end( ( err, { body } ) => {
-					callback( err, body );
-				} );
-		}
 
-		// otherwise, return a Promise
-		return new Promise( ( resolve, reject ) => {
-			return superagent
-				.get( _WPORG_THEMES_ENDPOINT )
-				.set( 'Accept', 'application/json' )
-				.query( query )
-				.end( ( err, { body } ) => {
-					err ? reject( err ) : resolve( body );
-				} );
-		} );
+		return superagent
+			.get( _WPORG_THEMES_ENDPOINT )
+			.set( 'Accept', 'application/json' )
+			.query( query )
+			.then( ( { body } ) => ( body ) );
 	},
 };
