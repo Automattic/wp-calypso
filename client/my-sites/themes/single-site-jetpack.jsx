@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CurrentTheme from 'my-sites/themes/current-theme';
-import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
@@ -54,9 +53,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			wpcomTier,
 			filter,
 			vertical,
-			showNoThemesFound,
-			showNoThemesFoundBanner,
-			translate
+			showNoThemesFoundJetpack,
+			showNoThemesFoundWpcom,
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -87,7 +85,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<CurrentTheme siteId={ siteId } />
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
-					showNoThemesFoundBanner={ showNoThemesFoundBanner } >
+					showNoThemesFound={ showNoThemesFoundJetpack } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
@@ -130,15 +128,11 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								} }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
-								showNoThemesFoundBanner={ showNoThemesFoundBanner }
+								showNoThemesFound={ showNoThemesFoundWpcom }
 							/>
 						</div>
 					}
 				</ThemeShowcase>
-				{	showNoThemesFound && <EmptyContent
-					title={ translate( 'Sorry, no themes found.' ) }
-					line={ translate( 'Try a different search or more filters?' ) } />
-				}
 			</div>
 		);
 	}
@@ -147,19 +141,28 @@ const ConnectedSingleSiteJetpack = connectOptions(
 export default connect(
 	( state, { siteId, tier } ) => {
 		const showWpcomThemesList = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
-		let showNoThemesFound = false;
+		let showNoThemesFoundJetpack = true;
+		let showNoThemesFoundWpcom = true;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
 			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
 			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
 			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
-			showNoThemesFound = ! siteThemesCount && ! wpcomThemesCount;
+
+			if ( siteThemesCount && ! wpcomThemesCount ) {
+				showNoThemesFoundWpcom = false;
+			} else if ( ! siteThemesCount && wpcomThemesCount ) {
+				showNoThemesFoundJetpack = false;
+			} else if ( ! siteThemesCount && ! wpcomThemesCount ) {
+				showNoThemesFoundJetpack = false;
+			}
 		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
-			showNoThemesFound,
-			showNoThemesFoundBanner: ! showWpcomThemesList
+			showNoThemesFoundJetpack,
+			showNoThemesFoundWpcom,
+			showNoThemesFound: ! showWpcomThemesList
 		};
 	}
 )( localize( ConnectedSingleSiteJetpack ) );

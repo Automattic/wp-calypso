@@ -71,7 +71,7 @@ const ThemeShowcase = React.createClass( {
 			tier: '',
 			search: '',
 			showUploadButton: true,
-			showNoThemesFoundBanner: true
+			showNoThemesFound: true
 		};
 	},
 
@@ -180,7 +180,7 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
-					showNoThemesFoundBanner={ this.props.showNoThemesFoundBanner }
+					showNoThemesFound={ this.props.showNoThemesFound }
 				/>
 				<ThemePreview />
 				{ this.props.children }
