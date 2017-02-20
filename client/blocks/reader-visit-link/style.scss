@@ -1,0 +1,19 @@
+.reader-visit-link {
+	border: 1px solid red;
+}
+
+.reader-visit-link__label {
+	color: $gray;
+}
+
+.reader-visit-link:hover,
+.reader-visit-link:focus,
+.reader-visit-link:active {
+	.reader-visit-link__icon {
+		fill: $blue-medium !important;
+	}
+
+	.reader-visit-link__label {
+		color: $blue-medium;
+	}
+}

@@ -34,6 +34,7 @@ export default React.createClass( {
 		const classes = classnames( 'external-link', this.props.className, {
 			'has-icon': !! this.props.icon,
 		} );
+		const iconClassName = this.props.className && `${ this.props.className }__icon`;
 
 		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst' ), {
 			className: classes,
@@ -44,7 +45,7 @@ export default React.createClass( {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
 		}
 
-		const iconComponent = <Gridicon icon="external" size={ this.props.iconSize } />;
+		const iconComponent = <Gridicon className={ iconClassName } icon="external" size={ this.props.iconSize } />;
 
 		return (
 			<a { ...props }>
