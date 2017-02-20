@@ -1,4 +1,4 @@
-.themes-upload-card {
+.themes-selection-header {
 	.section-header {
 		background-color: transparent;
 		border-color: transparent;
@@ -11,32 +11,10 @@
 		background-image: none;
 	}
 
-	.button {
-		color: $gray-dark;
-		float: right;
-
-		&.is-compact {
-			.gridicon {
-				top: 6px;
-				padding-right: 4px;
-			}
-		}
-	}
-
 	@include breakpoint( "<480px" ) {
 		.card {
 			padding-left: 15px;
 			padding-right: 15px;
-		}
-
-		.button {
-			font-size: 0;
-
-			&.is-compact {
-				.gridicon {
-					padding: 0;
-				}
-			}
 		}
 	}
 
@@ -46,11 +24,6 @@
 			color: transparent;
 			background-color: lighten( $gray, 30% );
 			animation: loading-fade 1.6s ease-in-out infinite;
-		}
-		.button {
-			color: transparent;
-			background-color: transparent;
-			border-style: none;
 		}
 	}
 
