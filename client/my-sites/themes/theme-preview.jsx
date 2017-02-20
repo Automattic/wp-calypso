@@ -13,7 +13,7 @@ import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
 	getThemePreviewThemeOptions,
-	getTheme,
+	getCanonicalTheme,
 	themePreviewVisibility,
 	isThemeActive
 } from 'state/themes/selectors';
@@ -108,12 +108,7 @@ export default connect(
 
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		let theme = getTheme( state, 'wpcom', themeId );
-
-		if ( ! theme && isJetpack ) {
-			// This is not wpcom theme so check jetpack and org list.
-			theme = getTheme( state, siteId, themeId );
-		}
+		const theme = getCanonicalTheme( state, siteId, themeId );
 
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {

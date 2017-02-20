@@ -150,7 +150,7 @@ export function requestThemes( siteId, query = {} ) {
 				// So we have to filter on the client side.
 				// Also if Jetpack plugin has Themes Extended Features,
 				// we filter out -wpcom suffixed themes because we will show them in
-				// second list that is specific to WorpPress.com themes.
+				// second list that is specific to WordPress.com themes.
 				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
 					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId );
 
@@ -439,8 +439,11 @@ export function installTheme( themeId, siteId ) {
 		}
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
-			.then( ( theme ) => {
-				dispatch( receiveTheme( theme, siteId ) );
+			.then( () => {
+				// We do not `dispatch( receiveTheme( theme, siteId ) )` here because
+				// in our UI, themes from WP.com (and WP.org) are already present in
+				// a separate list, and we do not want to duplicate them.
+
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,

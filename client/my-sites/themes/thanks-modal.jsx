@@ -12,10 +12,9 @@ import { translate } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
-import { isJetpackSite } from 'state/sites/selectors';
 import {
 	getActiveTheme,
-	getTheme,
+	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
 	getThemeForumUrl,
@@ -202,9 +201,8 @@ const ThanksModal = React.createClass( {
 
 export default connect(
 	( state, { site } ) => {
-		const siteIdOrWpcom = ( site && isJetpackSite( state, site.ID ) ) ? site.ID : 'wpcom';
 		const currentThemeId = site && getActiveTheme( state, site.ID );
-		const currentTheme = currentThemeId && getTheme( state, siteIdOrWpcom, currentThemeId );
+		const currentTheme = currentThemeId && getCanonicalTheme( state, site.ID, currentThemeId );
 
 		return {
 			currentTheme,
