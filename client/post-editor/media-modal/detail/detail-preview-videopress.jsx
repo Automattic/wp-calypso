@@ -7,7 +7,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import loadScript from 'lib/load-script';
+import { loadScript, removeScriptCallback } from 'lib/load-script';
 
 /**
  * Module variables
@@ -30,7 +30,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	componentWillUnmount() {
-		loadScript.removeScriptCallback( videoPressUrl, this.onScriptLoaded );
+		removeScriptCallback( videoPressUrl, this.onScriptLoaded );
 		this.destroy();
 	}
 
@@ -52,7 +52,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	setVideoInstance = ref => this.video = ref;
 
 	loadInitializeScript() {
-		loadScript.loadScript( videoPressUrl, this.onScriptLoaded );
+		loadScript( videoPressUrl, this.onScriptLoaded );
 	}
 
 	onScriptLoaded = ( error ) => {
