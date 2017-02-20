@@ -8,9 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
  * Internal Dependencies
  */
 import Table from './table';
-
-// todo: move this file!
-const components = require( '../../../server/devdocs/proptypes-index.json' );
+import components from '../../../server/devdocs/proptypes-index.json';
 
 /**
  * Finds a non-example component in the library of components
