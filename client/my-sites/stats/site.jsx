@@ -25,7 +25,6 @@ import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import FreeToPaidBanner from 'blocks/free-to-paid-banner';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -112,7 +111,6 @@ class StatsSite extends Component {
 				<SidebarNavigation />
 				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
-					{ period === 'day' && <FreeToPaidBanner /> }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
