@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import directly from 'lib/directly';
+import * as directly from 'lib/directly';
 import {
 	askQuestion,
 	initialize,

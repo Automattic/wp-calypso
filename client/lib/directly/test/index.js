@@ -10,8 +10,13 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-// const initializeDirectly = require( '../vendor' );
-import directly from '..';
+import {
+	initialize as initializeDirectly,
+	askQuestion as askDirectlyQuestion,
+	maximize as maximizeDirectly,
+	minimize as minimizeDirectly,
+	openAskForm as openDirectlyAskForm
+} from '..';
 
 describe( 'index', () => {
 	let vendor;
@@ -31,7 +36,7 @@ describe( 'index', () => {
 	describe( 'initialize', () => {
 		it( 'uses the given config data for Directly', () => {
 			const config = { a: '1', b: '2', c: '3' };
-			directly.initialize( config );
+			initializeDirectly( config );
 			//
 			// expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
 			// expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
@@ -47,56 +52,56 @@ describe( 'index', () => {
 		const email = 'richie@richenterprises.biz';
 
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			expect( directly.askQuestion( questionText, name, email ) ).not.to.throw;
+			expect( askDirectlyQuestion( questionText, name, email ) ).not.to.throw;
 			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
 			window.DirectlyRTM = sinon.spy();
-			directly.initialize();
-			directly.askQuestion( questionText, name, email );
+			initializeDirectly();
+			askDirectlyQuestion( questionText, name, email );
 			expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', { questionText, name, email } );
 		} );
 	} );
 
 	describe( 'maximize', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			expect( directly.maximize() ).not.to.throw;
+			expect( maximizeDirectly() ).not.to.throw;
 			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
 			window.DirectlyRTM = sinon.spy();
-			directly.initialize();
-			directly.maximize();
+			initializeDirectly();
+			maximizeDirectly();
 			expect( window.DirectlyRTM ).to.have.been.calledWith( 'maximize' );
 		} );
 	} );
 
 	describe( 'minimize', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			expect( directly.minimize() ).not.to.throw;
+			expect( minimizeDirectly() ).not.to.throw;
 			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
 			window.DirectlyRTM = sinon.spy();
-			directly.initialize();
-			directly.minimize();
+			initializeDirectly();
+			minimizeDirectly();
 			expect( window.DirectlyRTM ).to.have.been.calledWith( 'minimize' );
 		} );
 	} );
 
 	describe( 'openAskForm', () => {
 		it( 'does nothing if Directly hasn\'t been initialized', () => {
-			expect( directly.openAskForm() ).not.to.throw;
+			expect( openDirectlyAskForm() ).not.to.throw;
 			expect( window.DirectlyRTM ).to.be.undefined;
 		} );
 
 		it( 'invokes the Directly API with the given paramaters', () => {
 			window.DirectlyRTM = sinon.spy();
-			directly.initialize();
-			directly.openAskForm();
+			initializeDirectly();
+			openDirectlyAskForm();
 			expect( window.DirectlyRTM ).to.have.been.calledWith( 'openAskForm' );
 		} );
 	} );

@@ -13,38 +13,29 @@ const DEFAULT_RTM_WIDGET_OPTIONS = {
 	displayAskQuestion: false
 };
 
-const directly = {
-	initialize: function( config = {} ) {
-		initializeDirectly( Object.assign( {}, DEFAULT_RTM_WIDGET_OPTIONS, config ) );
-	},
+function DirectlyRTM( ...args ) {
+	if ( ! window.DirectlyRTM ) {
+		return;
+	}
+	return window.DirectlyRTM( ...args );
+}
 
-	askQuestion: function( questionText, name, email ) {
-		if ( ! window.DirectlyRTM ) {
-			return;
-		}
-		window.DirectlyRTM( 'askQuestion', { questionText, name, email } );
-	},
+export function initialize( directlyConfig = {} ) {
+	initializeDirectly( { ...DEFAULT_RTM_WIDGET_OPTIONS, ...directlyConfig } );
+}
 
-	maximize: function() {
-		if ( ! window.DirectlyRTM ) {
-			return;
-		}
-		window.DirectlyRTM( 'maximize' );
-	},
+export function askQuestion( questionText, name, email ) {
+	DirectlyRTM( 'askQuestion', { questionText, name, email } );
+}
 
-	minimize: function() {
-		if ( ! window.DirectlyRTM ) {
-			return;
-		}
-		window.DirectlyRTM( 'minimize' );
-	},
+export function maximize() {
+	DirectlyRTM( 'maximize' );
+}
 
-	openAskForm: function() {
-		if ( ! window.DirectlyRTM ) {
-			return;
-		}
-		window.DirectlyRTM( 'openAskForm' );
-	},
-};
+export function minimize() {
+	DirectlyRTM( 'minimize' );
+}
 
-export default directly;
+export function openAskForm() {
+	DirectlyRTM( 'openAskForm' );
+}
