@@ -69,6 +69,7 @@ import Collection from 'devdocs/design/search-collection';
 import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
+import EmojifyExample from 'components/emojify/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -127,6 +128,7 @@ let DesignAssets = React.createClass( {
 					<DatePicker />
 					<DropZones searchKeywords="drag" />
 					<EllipsisMenu />
+					<EmojifyExample />
 					<ExternalLink />
 					<FAQ />
 					<FeatureGate />
