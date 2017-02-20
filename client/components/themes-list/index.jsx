@@ -32,7 +32,7 @@ export const ThemesList = React.createClass( {
 		loading: React.PropTypes.bool.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
 		getButtonOptions: React.PropTypes.func,
-		onScreenshotClick: React.PropTypes.func.isRequired,
+		getScreenshotOption: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
 		getActionLabel: React.PropTypes.func,
 		isActive: React.PropTypes.func,
@@ -59,6 +59,7 @@ export const ThemesList = React.createClass( {
 			onThemeUpload: identity,
 			fetchNextPage: noop,
 			placeholderCount: DEFAULT_THEME_QUERY.number,
+			//getScreenshotOption: () => ( { } ),
 			optionsGenerator: () => [],
 			getActionLabel: () => '',
 			isActive: () => false,
@@ -71,19 +72,23 @@ export const ThemesList = React.createClass( {
 		return nextProps.loading !== this.props.loading ||
 			! isEqual( nextProps.themes, this.props.themes ) ||
 			( nextProps.getButtonOptions !== this.props.getButtonOptions ) ||
-			( nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ) ||
-			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
+			( nextProps.getScreenshotOption !== this.props.getScreenshotOption ) ||
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
 	renderTheme( theme, index ) {
+		const { action = noop, label, getUrl } = this.props.getScreenshotOption( theme.id );
+		const onScreenshotClick = () => {
+			action( theme.id );
+		};
+
 		return <Theme
 			key={ 'theme-' + theme.id }
 			buttonContents={ this.props.getButtonOptions( theme.id ) }
-			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id ) }
-			onScreenshotClick={ this.props.onScreenshotClick }
+			screenshotClickUrl={ getUrl && getUrl( theme.id ) }
+			onScreenshotClick={ onScreenshotClick }
 			onMoreButtonClick={ this.props.onMoreButtonClick }
-			actionLabel={ this.props.getActionLabel( theme.id ) }
+			actionLabel={ label }
 			index={ index }
 			theme={ theme }
 			active={ this.props.isActive( theme.id ) }

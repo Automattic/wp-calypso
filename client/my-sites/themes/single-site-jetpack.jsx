@@ -53,7 +53,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			canManage,
 			emptyContent,
 			filter,
-			getScreenshotOption,
+			getUnmodifiedScreenshotOption: getScreenshotOption, // Need to make sure it's not connect()ed twice
 			hasJetpackThemes,
 			showWpcomThemesList,
 			search,
@@ -112,21 +112,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								filter={ filter }
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }
-								getScreenshotUrl={ function( theme ) {
-									if ( ! getScreenshotOption( theme ).getUrl ) {
-										return null;
-									}
-									return getScreenshotOption( theme ).getUrl( theme );
-								} }
-								onScreenshotClick={ function( theme ) {
-									if ( ! getScreenshotOption( theme ).action ) {
-										return;
-									}
-									getScreenshotOption( theme ).action( theme );
-								} }
-								getActionLabel={ function( theme ) {
-									return getScreenshotOption( theme ).label;
-								} }
+								getScreenshotOption={ getScreenshotOption }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
 								emptyContent={ emptyContent }
