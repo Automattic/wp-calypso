@@ -16,7 +16,7 @@ import {
 	openAskForm,
 } from '../actions';
 import {
-	DIRECTLY_ASKING_QUESTION,
+	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZED,
 	DIRECTLY_MAXIMIZING,
 	DIRECTLY_MINIMIZING,
@@ -44,7 +44,7 @@ describe( 'actions', () => {
 		it( 'immediately dispatches an action with appropriate type and question parameters', () => {
 			askQuestion( questionText, name, email )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: DIRECTLY_ASKING_QUESTION,
+				type: DIRECTLY_ASK_QUESTION,
 				questionText,
 				name,
 				email,

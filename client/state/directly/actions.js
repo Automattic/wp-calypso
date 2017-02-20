@@ -9,7 +9,7 @@ import {
 	openAskForm as openDirectlyAskForm,
 } from 'lib/directly';
 import {
-	DIRECTLY_ASKING_QUESTION,
+	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZED,
 	DIRECTLY_MAXIMIZING,
 	DIRECTLY_MINIMIZING,
@@ -17,7 +17,7 @@ import {
 } from 'state/action-types';
 
 export const askQuestion = ( questionText, name, email ) => ( dispatch ) => {
-	dispatch( { type: DIRECTLY_ASKING_QUESTION, questionText, name, email } );
+	dispatch( { type: DIRECTLY_ASK_QUESTION, questionText, name, email } );
 	askDirectlyQuestion( questionText, name, email );
 };
 
