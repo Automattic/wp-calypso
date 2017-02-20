@@ -27,18 +27,18 @@ describe( 'getVisibleSites()', () => {
 						ID: 2916284,
 						visible: true,
 						name: 'WordPress.com Example Blog',
-						URL: 'https://example.com',
+						URL: 'http://example.com',
 						options: {
-							unmapped_url: 'https://example.wordpress.com'
+							unmapped_url: 'http://example.com'
 						}
 					},
 					2916285: {
 						ID: 2916285,
 						visible: false,
 						name: 'WordPress.com Non visible Blog',
-						URL: 'https://example2.com',
+						URL: 'http://example2.com',
 						options: {
-							unmapped_url: 'https://example2.wordpress.com'
+							unmapped_url: 'http://example2.com'
 						}
 					}
 				}
@@ -50,16 +50,16 @@ describe( 'getVisibleSites()', () => {
 				ID: 2916284,
 				visible: true,
 				name: 'WordPress.com Example Blog',
-				URL: 'https://example.com',
+				URL: 'http://example.com',
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
 				is_customizable: false,
-				is_previewable: true,
+				is_previewable: false,
 				options: {
 					default_post_format: 'standard',
-					unmapped_url: 'https://example.wordpress.com'
+					unmapped_url: 'http://example.com'
 				}
 			}
 		] );
