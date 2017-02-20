@@ -73,6 +73,9 @@
 
 .plugins-browser-item__title,
 .plugins-browser-item__author {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 	margin-left: 60px;
 
 	.is-placeholder & {
