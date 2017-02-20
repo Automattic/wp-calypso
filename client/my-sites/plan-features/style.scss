@@ -25,7 +25,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile {
-	color: $gray;
+	color: $gray-text-min;
 	margin: 0 16px;
 	display: block;
 
@@ -70,7 +70,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__mobile-plan {
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
-	background-color: lighten( $gray, 35% );
+	background-color: $white;
 	margin-bottom: 24px;
 }
 
@@ -83,7 +83,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table {
 	font-size: 14px;
-	color: $gray;
+	color: $gray-text-min;
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
@@ -107,7 +107,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__table-item {
 	border-right: solid 1px lighten( $gray, 27% );
 	border-left: solid 1px lighten( $gray, 27% );
-	background-color: lighten( $gray, 35% );
+	background-color: $white;
 	position: relative;
 
 	&.is-highlighted {
@@ -261,7 +261,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 12px;
 	font-style: italic;
 	font-weight: 400;
-	color: $gray;
+	color: $gray-text-min;
 	line-height: .6;
 	white-space: nowrap;
 
