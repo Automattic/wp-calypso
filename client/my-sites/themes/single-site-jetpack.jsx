@@ -150,11 +150,10 @@ export default connect(
 
 			if ( siteThemesCount && ! wpcomThemesCount ) {
 				showNoThemesFoundWpcom = false;
-			} else if ( ! siteThemesCount && wpcomThemesCount ) {
-				showNoThemesFoundJetpack = false;
-			} else if ( ! siteThemesCount && ! wpcomThemesCount ) {
+			} else if ( ! siteThemesCount ) {
 				showNoThemesFoundJetpack = false;
 			}
+
 		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
