@@ -38,7 +38,7 @@ class Table extends PureComponent {
 		const left = component.props[ leftName ];
 		const right = component.props[ rightName ];
 		if ( left.required === right.required ) {
-			return ( leftName.toLowerCase() < rightName.toLowerCase() ? -1 : 1 );
+			return leftName.toLowerCase().localeCompare( rightName.toLowerCase() );
 		}
 
 		if ( left.required ) {
