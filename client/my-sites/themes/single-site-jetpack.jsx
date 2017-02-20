@@ -4,11 +4,13 @@
 import React from 'react';
 import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CurrentTheme from 'my-sites/themes/current-theme';
+import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import config from 'config';
@@ -22,6 +24,7 @@ import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
@@ -50,7 +53,10 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			siteId,
 			wpcomTier,
 			filter,
-			vertical
+			vertical,
+			showNoThemesFound,
+			showNoThemesFoundBanner,
+			translate
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -79,7 +85,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
-				<ThemeShowcase { ...props } siteId={ siteId }>
+				<ThemeShowcase { ...props }
+					siteId={ siteId }
+					showNoThemesFoundBanner={ showNoThemesFoundBanner } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
@@ -122,10 +130,15 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								} }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
+								showNoThemesFoundBanner={ showNoThemesFoundBanner }
 							/>
 						</div>
 					}
 				</ThemeShowcase>
+				{	showNoThemesFound && <EmptyContent
+					title={ translate( 'Sorry, no themes found.' ) }
+					line={ translate( 'Try a different search or more filters?' ) } />
+				}
 			</div>
 		);
 	}
@@ -133,9 +146,20 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
+		const showWpcomThemesList = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+		let showNoThemesFound = false;
+		if ( showWpcomThemesList ) {
+			const siteQuery = getLastThemeQuery( state, siteId );
+			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
+			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
+			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
+			showNoThemesFound = ! siteThemesCount && ! wpcomThemesCount;
+		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
-			showWpcomThemesList: hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+			showWpcomThemesList,
+			showNoThemesFound,
+			showNoThemesFoundBanner: ! showWpcomThemesList
 		};
 	}
-)( ConnectedSingleSiteJetpack );
+)( localize( ConnectedSingleSiteJetpack ) );

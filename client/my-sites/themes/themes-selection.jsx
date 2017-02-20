@@ -50,12 +50,14 @@ const ThemesSelection = React.createClass( {
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
-		placeholderCount: PropTypes.number
+		placeholderCount: PropTypes.number,
+		showNoThemesFoundBanner: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
-			showUploadButton: true
+			showUploadButton: true,
+			showNoThemesFoundBanner: true
 		};
 	},
 
@@ -137,6 +139,10 @@ const ThemesSelection = React.createClass( {
 		return options;
 	},
 
+	showNoThemesFoundBanner( ) {
+		return this.props.showNoThemesFoundBanner ? null : <div />;
+	},
+
 	render() {
 		const { source, query, listLabel, themesCount } = this.props;
 
@@ -160,6 +166,7 @@ const ThemesSelection = React.createClass( {
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
+					emptyContent={ this.showNoThemesFoundBanner() }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
 		);
