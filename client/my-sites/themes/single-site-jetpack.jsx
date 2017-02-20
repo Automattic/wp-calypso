@@ -4,7 +4,6 @@
 import React from 'react';
 import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -162,7 +161,6 @@ export default connect(
 			showWpcomThemesList,
 			showNoThemesFoundJetpack,
 			showNoThemesFoundWpcom,
-			showNoThemesFound: ! showWpcomThemesList
 		};
 	}
-)( localize( ConnectedSingleSiteJetpack ) );
+)( ConnectedSingleSiteJetpack );
