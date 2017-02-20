@@ -26,7 +26,7 @@ import QueryPublicizeConnections from 'components/data/query-publicize-connectio
 import FormToggle from 'components/forms/form-toggle/compact';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import Banner from 'components/banner';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -135,11 +135,11 @@ const PostSharing = React.createClass( {
 
 		if ( ! this.props.planHasRepublicizeFeature ) {
 			return ( <div className="posts__post-share-wrapper">
-				<UpgradeNudge
+				<Banner
 					feature="republicize"
-					title={ this.translate( 'Upgrade to Premium' ) }
-					message={ this.translate( 'Unlock the ability to re-share posts to social media, get unlimited premium themes, video uploads, and more.' ) }
-					shouldDisplay={ () => true }
+					title={ this.translate( 'Unlock the ability to re-share posts to social media' ) }
+					callToAction={ this.translate( 'Upgrade to Premium' ) }
+					description={ this.translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
 				/>
 			</div> );
 		}
