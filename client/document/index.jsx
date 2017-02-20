@@ -92,6 +92,7 @@ class Document extends React.Component {
 					{ i18nLocaleScript &&
 						<script src={ i18nLocaleScript } />
 					}
+					<script src={ urls[ 'manifest' + scriptSuffix ] } />
 					<script src={ urls[ 'vendor' + scriptSuffix ] } />
 					<script src={ urls[ `${ jsFile }-${ config( 'env' ) }${ scriptSuffix }` ] } />
 					{ chunk &&
