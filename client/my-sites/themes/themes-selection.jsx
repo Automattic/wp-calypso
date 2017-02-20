@@ -175,12 +175,18 @@ const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, queryWpcom } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		const siteIdOrWpcom = ( siteId && isJetpack && ! ( queryWpcom === true ) ) ? siteId : 'wpcom';
+
+		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
+		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
+		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
+		// Jetpack themes endpoint.
+		const number = isJetpack && ! ( queryWpcom === true ) ? 2000 : 20;
 		const query = {
 			search,
 			page,
 			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
-			number: 20
+			number
 		};
 
 		return {
