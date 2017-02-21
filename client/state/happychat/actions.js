@@ -20,8 +20,7 @@ import {
 } from 'state/action-types';
 import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import olarkStore from 'lib/olark-store';
-import userSettings from 'lib/user-settings';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -81,37 +80,14 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 	);
 };
 
-const getSettings = new Promise( resolve => {
-	if ( userSettings.initialized ) {
-		return resolve( userSettings );
-	}
-	userSettings.once( 'change', () => {
-		resolve( userSettings );
-	} );
-} );
-
-const DEFAULT_LOCALE = 'en';
-
-const getLocale = getSettings.then( settings => {
-	const olarkState = olarkStore.get();
-	const olarkLocale = olarkState.locale;
-	const accountLocale = settings.getSetting( 'language' );
-
-	if ( accountLocale === DEFAULT_LOCALE ) {
-		debug( 'using olark chat locale' );
-		return olarkLocale;
-	}
-
-	return accountLocale;
-} );
-
 /**
  * Opens Happychat Socket.IO client connection.
  * @return {Thunk} Action thunk
  */
-export const connectChat = () => ( dispatch, getState ) => getLocale.then( locale => {
+export const connectChat = () => ( dispatch, getState ) => {
 	const state = getState();
 	const user = getCurrentUser( state );
+	const locale = getCurrentUserLocale( state );
 
 	debug( 'opening with chat locale', locale );
 
@@ -121,7 +97,6 @@ export const connectChat = () => ( dispatch, getState ) => getLocale.then( local
 	}
 	dispatch( setChatConnecting() );
 	// create new session id and get signed identity data for authenticating
-	debug( 'connecting to chat session with locale', locale );
 	startSession()
 	.then( ( { session_id } ) => sign( { user, session_id } ) )
 	.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
@@ -136,7 +111,7 @@ export const connectChat = () => ( dispatch, getState ) => getLocale.then( local
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
-} );
+};
 
 export const updateChatMessage = message => dispatch => {
 	dispatch( setChatMessage( message ) );
