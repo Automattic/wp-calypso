@@ -79,15 +79,15 @@ export const addResponder = ( list, item ) => ( {
  *
  * @see applyDuplicateHandlers
  *
- * @type IngressProcessor
- * @param {IngressData} ingressData
- * @returns {IngressData}
+ * @type OutboundProcessor
+ * @param {OutboundData} outboundData
+ * @returns {OutboundData}
  */
-export const removeDuplicateGets = ingressData => {
-	const { nextRequest } = ingressData;
+export const removeDuplicateGets = outboundData => {
+	const { nextRequest } = outboundData;
 
 	if ( ! isGetRequest( nextRequest ) ) {
-		return ingressData;
+		return outboundData;
 	}
 
 	const key = buildKey( nextRequest );
@@ -97,8 +97,8 @@ export const removeDuplicateGets = ingressData => {
 	requestQueue.set( key, request );
 
 	return queued
-		? { ...ingressData, nextRequest: null }
-		: ingressData;
+		? { ...outboundData, nextRequest: null }
+		: outboundData;
 };
 
 /**
@@ -108,30 +108,30 @@ export const removeDuplicateGets = ingressData => {
  *
  * @see removeDuplicateGets
  *
- * @type EgressProcessor
- * @param {EgressData} egressData
- * @returns {EgressData}
+ * @type InboundProcessor
+ * @param {InboundData} inboundData
+ * @returns {InboundData}
  */
-export const applyDuplicatesHandlers = egressData => {
-	const { originalRequest } = egressData;
+export const applyDuplicatesHandlers = inboundData => {
+	const { originalRequest } = inboundData;
 
 	if ( ! isGetRequest( originalRequest ) ) {
-		return egressData;
+		return inboundData;
 	}
 
 	const key = buildKey( originalRequest );
 	const queued = requestQueue.get( key );
 
 	if ( ! queued ) {
-		return egressData;
+		return inboundData;
 	}
 
 	requestQueue.delete( key );
 
 	const responders = {
-		failures: union( egressData.failures || [], queued.failures ),
-		successes: union( egressData.successes || [], queued.successes ),
+		failures: union( inboundData.failures || [], queued.failures ),
+		successes: union( inboundData.successes || [], queued.successes ),
 	};
 
-	return { ...egressData, ...responders };
+	return { ...inboundData, ...responders };
 };

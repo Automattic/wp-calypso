@@ -8,23 +8,26 @@ This _pipeline_ however intercepts that stream of requests in order to augment i
 
 Requests come into the HTTP layer on Redux actions and leave when the network requests return with either a success or failure.
 Each request is run through the pipeline at these points.
-The initial entry into the HTTP system hits the pipeline ingress.
-The final exit from the the HTTP system hits the pipeline egress.
+The initial entry into the HTTP system is through the outbound pipeline.
+The final exit from the the HTTP system is through the inbound pipeline.
 
-### Ingress
+ - _**Outbound**_ denotes requests on their way _out_ of Calypso.
+ - _**Inbound**_ denotes requests returning from remote servers back _into_ Calypso.
 
-Requests on ingress run through the pipeline as if it were some kind of funnel or chain.
+### Outbound
+
+Outbound requests run through the pipeline as if it were some kind of funnel or chain.
 At this stage we can perform the following kinds of operations on the requests:
  - filter out and drop unnecessary or redundant requests
  - transform them by manipulating their data
  - queue them for later if offline
  - persist them to storage
 
-### Egress
+### Inbound
 
-Requests on egress run through the pipeline to provide a way to follow-up with requests previously sent out.
+Inbound requests run through the pipeline to provide a way to follow-up with requests previously sent out.
 At this stage we can perform the following kinds of operations on the requests:
- - Clean up and close out operations started on ingress
+ - Clean up and close out operations started on inbound
  - Audit and perform accounting on requests as they come back (for example, track failed requests)
 
 ## Detailed Operation
@@ -61,7 +64,7 @@ If the original action contained an `onSuccess` or `onFailure` responder (also a
 
 ### HTTP flow _with_ the pipeline
 
-The pipeline injects itself at the ingress and egress of the actual network operations.
+The pipeline injects itself at the inbound and outbound of the actual network operations.
 It is the gatekeeper and the overseer.
 
 These gates are designed to introduce augmentation, introspection, and optimization into the HTTP layer which are _specifically_ and _only_ related to HTTP requests.
@@ -71,11 +74,11 @@ The HTTP layer is given liberty to execute the requests fed into it in a way tha
 Because of this liberty it must also constrain itself to the language of HTTP to prevent accidentally introducing bugs or breaking assumptions that other code will be making.
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
-![Pipelined HTTP flow](https://cldup.com/JldmoGqrPX.svg)
+![Pipelined HTTP flow](https://cldup.com/lpS7pC7Ksj.svg)
 
-#### Step F: Pipeline ingress
+#### Step F: Outbound pipeline
 
-As Redux actions describing HTTP requests feed into the HTTP middleware the ingress chain gets called with the given action.
+As Redux actions describing HTTP requests feed into the HTTP middleware the outbound chain gets called with the given action.
 The chain can drop the request, modify the request, add additional requests, etc…
 
 For the sake of illustration, let's consider adding a function to make sure that we don't send out requests whose `GET` line exceeds 2,048 characters.
@@ -84,10 +87,10 @@ IE and some other browsers and routers will fail in these conditions.
 This new function finds the sum of the lengths of the URL for the request and the query string and will throw a new error if it exceeds our limit and drop the request if we're in a development environment.
 It will do this in order to and notify a developer that the request will likely fail in production.
 
-#### Step G: Pipeline egress
+#### Step G: Inbound pipeline
 
 Once network requests return or fail they will feed back into the Redux system by way of the associated `onSuccess` and `onFailure` actions if they were provided on the original action.
-Before these are run we have the same kinds of abilities we had to interact with HTTP requests on ingress, except now those abilities relate to the follow-up actions: we can prevent them from running, change which ones run, or add additional actions to run.
+Before these are run we have the same kinds of abilities we had to interact with HTTP requests on outbound, except now those abilities relate to the follow-up actions: we can prevent them from running, change which ones run, or add additional actions to run.
 
 Further, we can introduce additional behaviors to run based on these responses.
 For the sake of illustration, let's consider adding a function to help us know which API endpoints need some help in their error reporting.

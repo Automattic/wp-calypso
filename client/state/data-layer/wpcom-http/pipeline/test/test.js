@@ -4,8 +4,8 @@
 import { expect } from 'chai';
 
 import {
-	processEgressChain,
-	processIngressChain,
+	processInboundChain,
+	processOutboundChain,
 } from '../';
 
 const succeeder = { type: 'SUCCESS' };
@@ -19,23 +19,23 @@ const getSites = {
 	onFailure: failer,
 };
 
-describe( '#processEgressChain', () => {
-	const aborter = egressData => ( {
-		...egressData,
+describe( '#processInboundChain', () => {
+	const aborter = inboundData => ( {
+		...inboundData,
 		failures: [],
 		shouldAbort: true,
 		successes: [],
 	} );
 
-	const responderDoubler = egressData => ( {
-		...egressData,
-		failures: [ ...egressData.failures, ...egressData.failures ],
-		successes: [ ...egressData.successes, ...egressData.successes ],
+	const responderDoubler = inboundData => ( {
+		...inboundData,
+		failures: [ ...inboundData.failures, ...inboundData.failures ],
+		successes: [ ...inboundData.successes, ...inboundData.successes ],
 	} );
 
 	it( 'should pass through data given an empty chain', () => {
 		expect(
-			processEgressChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' } )
+			processInboundChain( [] )( getSites, {}, { value: 1 }, { error: 'bad' } )
 		).to.eql( {
 			failures: [ getSites.onFailure ],
 			nextData: { value: 1 },
@@ -46,7 +46,7 @@ describe( '#processEgressChain', () => {
 
 	it( 'should sequence a single processor', () => {
 		expect(
-			processEgressChain( [ responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ responderDoubler ] )( getSites, {}, {}, {} )
 		).to.eql( {
 			failures: [ getSites.onFailure, getSites.onFailure ],
 			nextData: {},
@@ -57,7 +57,7 @@ describe( '#processEgressChain', () => {
 
 	it( 'should sequence multiple processors', () => {
 		expect(
-			processEgressChain( [ responderDoubler, responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ responderDoubler, responderDoubler ] )( getSites, {}, {}, {} )
 		).to.eql( {
 			failures: ( new Array( 4 ) ).fill( getSites.onFailure ),
 			nextData: {},
@@ -68,7 +68,7 @@ describe( '#processEgressChain', () => {
 
 	it( 'should abort the chain as soon as `shouldAbort` is set', () => {
 		expect(
-			processEgressChain( [ aborter, responderDoubler ] )( getSites, {}, {}, {} )
+			processInboundChain( [ aborter, responderDoubler ] )( getSites, {}, {}, {} )
 		).to.eql( {
 			failures: [],
 			nextData: {},
@@ -79,18 +79,18 @@ describe( '#processEgressChain', () => {
 	} );
 } );
 
-describe( '#processIngressChain', () => {
-	const aborter = ingressData => ( {
-		...ingressData,
+describe( '#processOutboundChain', () => {
+	const aborter = outboundData => ( {
+		...outboundData,
 		nextRequest: null,
 	} );
 
-	const pathDoubler = ingressData => {
-		const { nextRequest } = ingressData;
+	const pathDoubler = outboundData => {
+		const { nextRequest } = outboundData;
 		const { path } = nextRequest;
 
 		return {
-			...ingressData,
+			...outboundData,
 			nextRequest: {
 				...nextRequest,
 				path: path + path,
@@ -99,24 +99,24 @@ describe( '#processIngressChain', () => {
 	};
 
 	it( 'should pass requests given an empty chain', () => {
-		expect( processIngressChain( [] )( getSites, {} ) ).to.eql( getSites );
+		expect( processOutboundChain( [] )( getSites, {} ) ).to.eql( getSites );
 	} );
 
 	it( 'should sequence a single processor', () => {
-		expect( processIngressChain( [ pathDoubler ] )( getSites, {} ) ).to.eql( {
+		expect( processOutboundChain( [ pathDoubler ] )( getSites, {} ) ).to.eql( {
 			...getSites,
 			path: getSites.path + getSites.path,
 		} );
 	} );
 
 	it( 'should sequence multiple processors', () => {
-		expect( processIngressChain( [ pathDoubler, pathDoubler ] )( getSites, {} ) ).to.eql( {
+		expect( processOutboundChain( [ pathDoubler, pathDoubler ] )( getSites, {} ) ).to.eql( {
 			...getSites,
 			path: ( new Array( 4 ) ).fill( getSites.path ).join( '' ),
 		} );
 	} );
 
 	it( 'should abort the chain as soon as the `nextRequest` is `null`', () => {
-		expect( processIngressChain( [ aborter, pathDoubler ] )( getSites, {} ) ).to.be.null;
+		expect( processOutboundChain( [ aborter, pathDoubler ] )( getSites, {} ) ).to.be.null;
 	} );
 } );

@@ -15,15 +15,15 @@ import {
 	successMeta,
 } from '../';
 
-const processIngress = action => action;
-const processEgress = ( action, store, data, error ) => ( {
+const processInbound = action => action;
+const processOutbound = ( action, store, data, error ) => ( {
 	failures: [ action.onFailure ],
 	nextData: data,
 	nextError: error,
 	successes: [ action.onSuccess ],
 } );
 
-const http = queueRequest( processIngress, processEgress );
+const http = queueRequest( processInbound, processOutbound );
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };

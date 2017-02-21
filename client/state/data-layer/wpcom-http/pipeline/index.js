@@ -12,8 +12,8 @@ import {
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 
 /**
- * @typedef {Object} EgressData
- * @property {Object} originalRequest the Redux action describing the egressing request
+ * @typedef {Object} InboundData
+ * @property {Object} originalRequest the Redux action describing the inbound request
  * @property {ReduxStore} store Redux store
  * @property {*} originalData response data from returned network request
  * @property {*} originalError response error from returned network request
@@ -25,52 +25,47 @@ import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate
  */
 
 /**
- * @typedef {Function} EgressProcessor
- * @param {EgressData} information about request response at this stage in the pipeline
- * @returns {EgressData} contains transformed responder actions
+ * @typedef {Function} InboundProcessor
+ * @param {InboundData} information about request response at this stage in the pipeline
+ * @returns {InboundData} contains transformed responder actions
  */
 
 /**
- * @typedef {Object} IngressData
- * @property {Object} originalRequest the Redux action describing the ingressing request
+ * @typedef {Object} OutboundData
+ * @property {Object} originalRequest the Redux action describing the outbound request
  * @property {ReduxStore} store Redux store
  * @property {?Object} nextRequest the processed request to pass along the chain
  */
 
 /**
- * @typedef {Function} IngressProcessor
- * @param {IngressData} information about request at this stage in the pipeline
- * @returns {IngressData} contains transformed nextRequest
+ * @typedef {Function} OutboundProcessor
+ * @param {OutboundData} information about request at this stage in the pipeline
+ * @returns {OutboundData} contains transformed nextRequest
  */
 
-/** @type {EgressProcessor[]} */
-const egressChain = [
+/** @type {InboundProcessor[]} */
+const inboundChain = [
 	applyDuplicatesHandlers,
 ];
 
-/** @type {IngressProcessor[]} */
-const ingressChain = [
+/** @type {OutboundProcessor[]} */
+const outboundChain = [
 	removeDuplicateGets,
 ];
 
-const applyIngressProcessor = ( ingressData, nextProcessor ) =>
-	ingressData.nextRequest !== null
-		? nextProcessor( ingressData )
-		: ingressData;
+const applyInboundProcessor = ( inboundData, nextProcessor ) =>
+	inboundData.shouldAbort !== true
+		? nextProcessor( inboundData )
+		: inboundData;
 
-const applyEgressProcessor = ( egressData, nextProcessor ) =>
-	egressData.shouldAbort !== true
-		? nextProcessor( egressData )
-		: egressData;
+const applyOutboundProcessor = ( outboundData, nextProcessor ) =>
+	outboundData.nextRequest !== null
+		? nextProcessor( outboundData )
+		: outboundData;
 
-export const processIngressChain = chain => ( originalRequest, store ) =>
-	chain
-		.reduce( applyIngressProcessor, { originalRequest, store, nextRequest: originalRequest } )
-		.nextRequest;
-
-export const processEgressChain = chain => ( originalRequest, store, originalData, originalError ) =>
+export const processInboundChain = chain => ( originalRequest, store, originalData, originalError ) =>
 	pick(
-		chain.reduce( applyEgressProcessor, {
+		chain.reduce( applyInboundProcessor, {
 			originalRequest,
 			store,
 			originalData,
@@ -83,6 +78,11 @@ export const processEgressChain = chain => ( originalRequest, store, originalDat
 		[ 'failures', 'nextData', 'nextError', 'successes', 'shouldAbort' ],
 	);
 
-export const processIngress = processIngressChain( ingressChain );
+export const processOutboundChain = chain => ( originalRequest, store ) =>
+	chain
+		.reduce( applyOutboundProcessor, { originalRequest, store, nextRequest: originalRequest } )
+		.nextRequest;
 
-export const processEgress = processEgressChain( egressChain );
+export const processInbound = processInboundChain( outboundChain );
+
+export const processOutbound = processOutboundChain( inboundChain );

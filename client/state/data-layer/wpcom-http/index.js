@@ -11,8 +11,8 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { extendAction } from 'state/utils';
 
 import {
-	processEgress,
-	processIngress,
+	processInbound,
+	processOutbound,
 } from './pipeline';
 
 /**
@@ -32,8 +32,8 @@ export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
-export const queueRequest = ( processIngress, processEgress ) => ( { dispatch }, rawAction, next ) => {
-	const action = processIngress( rawAction, dispatch );
+export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction, next ) => {
+	const action = processOutbound( rawAction, dispatch );
 
 	if ( null === action ) {
 		return next( action );
@@ -61,7 +61,7 @@ export const queueRequest = ( processIngress, processEgress ) => ( { dispatch },
 				nextError,
 				shouldAbort,
 				successes
-			} = processEgress( action, { dispatch }, data, error );
+			} = processInbound( action, { dispatch }, data, error );
 
 			if ( true === shouldAbort ) {
 				return null;
@@ -81,5 +81,5 @@ export const queueRequest = ( processIngress, processEgress ) => ( { dispatch },
 };
 
 export default {
-	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( processIngress, processEgress ) ],
+	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( processOutbound, processInbound ) ],
 };
