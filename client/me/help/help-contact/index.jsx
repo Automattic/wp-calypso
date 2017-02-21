@@ -131,11 +131,11 @@ const HelpContact = React.createClass( {
 		const site = sites.getSite( siteId );
 
 		const userAgent = `User Agent: ${ navigator.userAgent }`;
-		const browserInfoMsg = [ `Information to assist trouble shooting.\nScreen Resolution: ${ screen.width }x${ screen.height }\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }\n ${ userAgent }` ];
+		const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+		const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+		const browserInfoMsg = [ `Information to assist trouble shooting.\n ${ screenRes } ${ browserSize } ${ userAgent }` ];
 
-		let messages = [
-			browserInfoMsg, message
-		];
+		let messages = browserInfoMsg.concat( message );
 
 		if ( site ) {
 			messages = [ `Site I need help with: ${ site.URL }` ].concat( messages );
