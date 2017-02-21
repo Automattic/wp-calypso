@@ -34,7 +34,7 @@ export class LoginForm extends Component {
 
 	componentDidUpdate() {
 		if ( this.props.isLoginSuccessful ) {
-			//this.props.internalRedirect( this.props.redirectLocation || '/' );
+			window.location.href = ( this.props.redirectLocation || '/' );
 		}
 	}
 
