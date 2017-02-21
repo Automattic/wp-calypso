@@ -47,6 +47,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			analyticsPageTitle,
 			emptyContent,
 			getScreenshotOption,
+			showWpcomThemesList,
 			search,
 			site,
 			siteId,
@@ -83,13 +84,13 @@ const ConnectedSingleSiteJetpack = connectOptions(
 				<CurrentTheme siteId={ siteId } />
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
-					emptyContent={ <div /> } >
+					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					{ config.isEnabled( 'manage/themes/upload' ) && props.showWpcomThemesList &&
+					{ config.isEnabled( 'manage/themes/upload' ) && showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
 								options={ [
