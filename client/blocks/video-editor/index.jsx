@@ -14,6 +14,11 @@ import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
 import {
+	updateVideoEditorPoster,
+} from 'state/ui/editor/video-editor/actions';
+import {
+	isVideoEditorPosterUpdated,
+	videoEditorHasPosterUpdateError,
 	videoEditorHasScriptLoadError,
 } from 'state/ui/editor/video-editor/selectors';
 
@@ -22,16 +27,46 @@ class VideoEditor extends Component {
 		className: PropTypes.string,
 		media: PropTypes.object.isRequired,
 		onCancel: PropTypes.func,
+		onUpdatePoster: PropTypes.func,
 
 		// Connected props
+		hasPosterUpdateError: PropTypes.bool,
 		hasScriptLoadError: PropTypes.bool,
+		isPosterUpdated: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onCancel: noop,
+		onUpdatePoster: noop,
 	};
 
-	handleSelectFrame() {}
+	state = {
+		pauseVideo: false,
+	};
+
+	shouldComponentUpdate( nextProps ) {
+		if ( nextProps.isPosterUpdated && ! nextProps.hasPosterUpdateError ) {
+			this.props.onUpdatePoster();
+		}
+
+		return true;
+	}
+
+	handleSelectFrame = () => {
+		this.setState( { pauseVideo: true } );
+	}
+
+	handlePause = ( currentTime ) => {
+		const {
+			media,
+			updatePoster,
+		} = this.props;
+		const guid = media && media.videopress_guid ? media.videopress_guid : null;
+
+		if ( guid ) {
+			updatePoster( guid, { at_time: Math.floor( currentTime ) } );
+		}
+	}
 
 	handleUploadImage() {}
 
@@ -54,11 +89,15 @@ class VideoEditor extends Component {
 	render() {
 		const {
 			className,
+			hasPosterUpdateError,
 			hasScriptLoadError,
 			media,
 			onCancel,
 			translate,
 		} = this.props;
+		const {
+			pauseVideo,
+		} = this.state;
 
 		const classes = classNames(
 			'video-editor',
@@ -67,14 +106,16 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
-				{ hasScriptLoadError && this.renderError() }
+				{ ( hasScriptLoadError || hasPosterUpdateError ) && this.renderError() }
 
 				<figure>
 					<div className="video-editor__content">
 						<div className="video-editor__preview-wrapper">
 							<DetailPreviewVideo
 								className="video-editor__preview"
+								isPlaying={ ! pauseVideo }
 								item={ media }
+								onPause={ this.handlePause }
 							/>
 						</div>
 						<span className="video-editor__text">
@@ -95,7 +136,12 @@ class VideoEditor extends Component {
 export default connect(
 	( state ) => {
 		return {
+			hasPosterUpdateError: videoEditorHasPosterUpdateError( state ),
 			hasScriptLoadError: videoEditorHasScriptLoadError( state ),
+			isPosterUpdated: isVideoEditorPosterUpdated( state ),
 		};
+	},
+	{
+		updatePoster: updateVideoEditorPoster,
 	}
 )( localize( VideoEditor ) );
