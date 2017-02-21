@@ -1,52 +1,41 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent, PropTypes } from 'react';
 import twemoji from 'twemoji';
 import config from 'config';
 
-export default React.createClass( {
-	displayName: 'Emojify',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+export default class Emojify extends PureComponent {
+	static propTypes = {
 		children: PropTypes.string.isRequired,
-		size: PropTypes.oneOf( [
-			'16x16', '36x36', '72x72'
-		] ),
 		className: PropTypes.string
-	},
+	}
 
-	componentDidMount: function() {
-		this._parseEmoji();
-	},
+	static defaultProps = {
+		className: 'emojify__emoji'
+	}
 
-	componentDidUpdate: function() {
-		this._parseEmoji();
-	},
+	componentDidMount() {
+		this.parseEmoji();
+	}
 
-	getDefaultProps: function() {
-		return {
-			size: '36x36',
-			className: 'emojify__emoji'
-		};
-	},
+	componentDidUpdate() {
+		this.parseEmoji();
+	}
 
-	_parseEmoji: function() {
-		const { size, className } = this.props;
+	parseEmoji = () => {
+		const { className } = this.props;
 
 		twemoji.parse( this.refs.emojified, {
 			base: config( 'twemoji_cdn_url' ),
-			size: size,
+			size: '72x72',
 			className: className
 		} );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<span ref="emojified">{ this.props.children }</span>
 		);
 	}
-} );
+}
