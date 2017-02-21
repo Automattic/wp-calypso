@@ -10,21 +10,24 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
+import {
+	videoEditorHasScriptLoadError,
+} from 'state/ui/editor/video-editor/selectors';
 
 class VideoEditor extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		media: PropTypes.object,
+		media: PropTypes.object.isRequired,
 		onCancel: PropTypes.func,
 
 		// Connected props
-		translate: PropTypes.func,
+		hasScriptLoadError: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		media: null,
 		onCancel: noop,
 	};
 
@@ -32,9 +35,26 @@ class VideoEditor extends Component {
 
 	handleUploadImage() {}
 
+	renderError() {
+		const {
+			onCancel,
+			translate,
+		} = this.props;
+
+		return (
+			<Notice
+				status="is-error"
+				showDismiss={ true }
+				text={ translate( 'We are unable to edit this video.' ) }
+				isCompact={ false }
+				onDismissClick={ onCancel } />
+		);
+	}
+
 	render() {
 		const {
 			className,
+			hasScriptLoadError,
 			media,
 			onCancel,
 			translate,
@@ -47,10 +67,13 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
+				{ hasScriptLoadError && this.renderError() }
+
 				<figure>
 					<div className="video-editor__content">
 						<div className="video-editor__preview-wrapper">
 							<DetailPreviewVideo
+								className="video-editor__preview"
 								item={ media }
 							/>
 						</div>
@@ -69,4 +92,10 @@ class VideoEditor extends Component {
 	}
 }
 
-export default connect()( localize( VideoEditor ) );
+export default connect(
+	( state ) => {
+		return {
+			hasScriptLoadError: videoEditorHasScriptLoadError( state ),
+		};
+	}
+)( localize( VideoEditor ) );
