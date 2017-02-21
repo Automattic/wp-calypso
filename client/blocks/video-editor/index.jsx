@@ -14,6 +14,8 @@ import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
 import {
+	resetVideoEditorPosterState,
+	resetVideoEditorState,
 	updateVideoEditorPoster,
 } from 'state/ui/editor/video-editor/actions';
 import {
@@ -44,6 +46,10 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
+	componentDidMount() {
+		this.props.resetState();
+	}
+
 	shouldComponentUpdate( nextProps ) {
 		if ( nextProps.isPosterUpdated && ! nextProps.hasPosterUpdateError ) {
 			this.props.onUpdatePoster();
@@ -53,6 +59,7 @@ class VideoEditor extends Component {
 	}
 
 	handleSelectFrame = () => {
+		this.props.resetPosterState();
 		this.setState( { pauseVideo: true } );
 	}
 
@@ -142,6 +149,8 @@ export default connect(
 		};
 	},
 	{
+		resetPosterState: resetVideoEditorPosterState,
+		resetState: resetVideoEditorState,
 		updatePoster: updateVideoEditorPoster,
 	}
 )( localize( VideoEditor ) );
