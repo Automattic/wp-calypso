@@ -3,31 +3,32 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
+import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wrapSettingsForm from './wrap-settings-form';
+import Button from 'components/button';
+import Card from 'components/card';
+import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Card from 'components/card';
-import Button from 'components/button';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionHeader from 'components/section-header';
+import Subscriptions from './subscriptions';
+import wrapSettingsForm from './wrap-settings-form';
 import {
-	isJetpackModuleActive,
 	isJetpackSite,
 	siteSupportsJetpackSettingsUi
 } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Subscriptions from './subscriptions';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
@@ -35,7 +36,7 @@ class SiteSettingsFormDiscussion extends Component {
 		this.props.updateFields( {
 			comment_order: this.props.fields.comment_order === 'desc' ? 'asc' : 'desc'
 		} );
-	};
+	}
 
 	defaultArticleSettings() {
 		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
@@ -66,6 +67,31 @@ class SiteSettingsFormDiscussion extends Component {
 					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
+		);
+	}
+
+	commentDisplaySettings() {
+		const { isJetpack, jetpackSettingsUISupported } = this.props;
+		if ( ! isJetpack || ! jetpackSettingsUISupported ) {
+			return null;
+		}
+
+		const { fields, isRequestingSettings, isSavingSettings, onChangeField } = this.props;
+
+		const commentDisplaySettingsFields = {
+			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
+			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
+		};
+
+		return (
+			<div>
+				<QueryJetpackModules siteId={ this.props.siteId } />
+				<CommentDisplaySettings
+					onChangeField={ onChangeField }
+					submittingForm={ isRequestingSettings || isSavingSettings }
+					fields={ commentDisplaySettingsFields } />
+				<hr />
+			</div>
 		);
 	}
 
@@ -350,7 +376,7 @@ class SiteSettingsFormDiscussion extends Component {
 	commentModerationSettings() {
 		const { eventTracker, fields, isRequestingSettings, onChangeField, translate, uniqueEventTracker } = this.props;
 		return (
-			<FormFieldset>
+			<FormFieldset className="site-settings__moderation-settings">
 				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
 				<p>{
 					translate(
@@ -433,7 +459,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	renderSectionHeader( title, showButton = true ) {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
+		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
 			<SectionHeader label={ title }>
 				{ showButton &&
@@ -470,6 +496,7 @@ class SiteSettingsFormDiscussion extends Component {
 
 				{ this.renderSectionHeader( translate( 'Comments' ) ) }
 				<Card className="site-settings__discussion-settings">
+					{ this.commentDisplaySettings() }
 					{ this.otherCommentSettings() }
 					<hr />
 					{ this.emailMeSettings() }
@@ -506,6 +533,7 @@ class SiteSettingsFormDiscussion extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+
 		const isJetpack = isJetpackSite( state, siteId );
 		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
@@ -519,38 +547,39 @@ const connectComponent = connect(
 	}
 );
 
-const getFormSettings = partialRight( pick, [
-	'default_pingback_flag',
-	'default_ping_status',
-	'default_comment_status',
-	'require_name_email',
-	'comment_registration',
-	'close_comments_for_old_posts',
-	'close_comments_days_old',
-	'thread_comments',
-	'thread_comments_depth',
-	'page_comments',
-	'comments_per_page',
-	'default_comments_page',
-	'comment_order',
-	'comments_notify',
-	'moderation_notify',
-	'likes',
-	'social_notifications_like',
-	'social_notifications_reblog',
-	'social_notifications_subscribe',
-	'comment_moderation',
-	'comment_whitelist',
-	'comment_max_links',
-	'moderation_keys',
-	'blacklist_keys',
-	'admin_url',
-	'wpcom_publish_comments_with_markdown',
-	'markdown_supported',
-	'subscriptions',
-	'stb_enabled',
-	'stc_enabled',
-] );
+const getFormSettings = settings => {
+	return pick( settings, [
+		'default_pingback_flag',
+		'default_ping_status',
+		'default_comment_status',
+		'require_name_email',
+		'comments',
+		'comment_registration',
+		'close_comments_for_old_posts',
+		'close_comments_days_old',
+		'thread_comments',
+		'thread_comments_depth',
+		'page_comments',
+		'comments_per_page',
+		'default_comments_page',
+		'comment_order',
+		'comments_notify',
+		'moderation_notify',
+		'social_notifications_like',
+		'social_notifications_reblog',
+		'social_notifications_subscribe',
+		'comment_moderation',
+		'comment_whitelist',
+		'comment_max_links',
+		'moderation_keys',
+		'blacklist_keys',
+		'admin_url',
+		'wpcom_publish_comments_with_markdown',
+		'markdown_supported',
+		'highlander_comment_form_prompt',
+		'jetpack_comment_form_color_scheme',
+	] );
+};
 
 export default flowRight(
 	connectComponent,
