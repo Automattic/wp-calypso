@@ -4,6 +4,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import {
+	includes
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -166,7 +169,7 @@ const MapDomainStep = React.createClass( {
 
 		checkDomainAvailability( domain, ( error, result ) => {
 			if ( error ) {
-				if ( error.code === 'not_available_but_mappable' ) {
+				if ( includes( [ 'not_available_but_mappable', 'no_availability_but_mappable' ], error.code ) ) {
 					this.props.onMapDomain( domain );
 					return;
 				}

@@ -48,6 +48,7 @@ function getAvailabilityNotice( domain, error ) {
 			}
 			break;
 		case 'not_available_but_mappable':
+		case 'no_availability_but_mappable':
 		case 'domain_registration_unavailable':
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
