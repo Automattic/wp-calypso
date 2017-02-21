@@ -4,7 +4,7 @@
 import React from 'react';
 
 function getPixelUrl( siteUrl ) {
-	const pixel = encodeURI( siteUrl + 'wp-includes/images/blank.gif' );
+	const pixel = encodeURI( siteUrl + '/wp-includes/images/blank.gif' );
 	return `${ siteUrl }/wp-login.php?redirect_to=${ pixel }`;
 }
 
