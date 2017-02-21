@@ -23,7 +23,7 @@ import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import { isJetpackSiteMultiSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
@@ -152,7 +152,8 @@ export default connect(
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
-			emptyContent
+			emptyContent,
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		};
 	}
 )( ConnectedSingleSiteJetpack );
