@@ -5,6 +5,7 @@ import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import electron from 'electron';
 
 /**
  * Internal dependencies
@@ -130,7 +131,13 @@ const HelpContact = React.createClass( {
 		const { message, siteId } = contactForm;
 		const site = sites.getSite( siteId );
 
-		const browserInfoMsg = [ `Information to assist trouble shooting.\nScreen Resolution: ${ screen.width }x${ screen.height }\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }\nUser Agent: ${navigator.userAgent}` ];
+		let userAgent = `User Agent: ${ navigator.userAgent }`;
+		if ( config.client_slug === 'desktop' ) {
+			const version = electron.remote.getGlobal( 'desktop' ).config.version;
+			const build = electron.remote.getGlobal( 'desktop' ).config.build;
+			userAgent = `Desktop app ${ version } ${ build }`;
+		}
+		const browserInfoMsg = [ `Information to assist trouble shooting.\nScreen Resolution: ${ screen.width }x${ screen.height }\nBrowser Size: ${ window.innerWidth }x${ window.innerHeight }\n ${userAgent}` ];
 
 		let messages = [
 			browserInfoMsg, message
