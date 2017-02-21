@@ -138,8 +138,13 @@ function loadDevModulesAndBoot() {
 
 function boot() {
 	var localeSlug;
+	const project = config( 'project' );
 
 	init();
+
+	if ( project ) {
+		require( './' + project );
+	}
 
 	// When the user is bootstrapped, we also bootstrap the
 	// locale strings
