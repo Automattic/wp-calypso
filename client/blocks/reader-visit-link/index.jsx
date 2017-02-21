@@ -31,6 +31,7 @@ class ReaderVisitLink extends React.Component {
 				icon={ true }
 				showIconFirst={ true }
 				iconSize={ this.props.iconSize }
+				iconClassName="reader-visit-link__icon"
 				onClick={ this.props.onClick }>
 				<span className="reader-visit-link__label">
 					{ this.props.children }
