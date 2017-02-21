@@ -11,8 +11,7 @@ doctype html
 
 html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width' : '')
 	head
-		title
-			!= head.title
+		title Unsupported Browser — WordPress.com
 		meta(charset='utf-8')
 		meta(http-equiv='X-UA-Compatible' content='IE=Edge')
 		meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
@@ -20,12 +19,6 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		meta(name='mobile-web-app-capable', content='yes')
 		meta(name='apple-mobile-web-app-capable', content='yes')
 		meta(name='referrer', content='origin')
-
-		each meta in head.metas
-			meta(name=meta.name, property=meta.property, content=meta.content)
-
-		each link in head.links
-			link(rel=link.rel, href=link.href)
 
 		link(rel='shortcut icon', type='image/vnd.microsoft.icon', href=faviconURL, sizes='16x16 32x32')
 		link(rel='shortcut icon', type='image/x-icon', href=faviconURL, sizes='16x16 32x32')
@@ -56,22 +49,20 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
-		if renderedLayout
-			#wpcom.wpcom-site!= renderedLayout
-		else
-			#wpcom.wpcom-site
-				.wpcom-site__logo.noticon.noticon-wordpress
-		if badge
-			div.environment-badge
-				if abTestHelper
-					div(class=['environment', 'is-tests'])
-				if branchName && branchName !== 'master'
-					span(class=['environment', 'branch-name'], title='Commit ' + commitChecksum)=branchName
-				if devDocs
-					span(class=['environment', 'is-docs'])
-						a(href=devDocsURL title='DevDocs') docs
-				span(class=['environment', 'is-' + badge, 'is-env'])=badge
-				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
-
-		noscript.wpcom-site__global-noscript
-			|Please enable JavaScript in your browser to enjoy WordPress.com.
+		#wpcom.wpcom-site
+			.layout.has-no-sidebar
+				#content.layout__content
+					#primary.layout__primary
+						main.browsehappy__main.main(role="main")
+							.empty-content
+								img.empty-content__illustration(src="/calypso/images/drake/drake-browser.svg")
+								h2.empty-content__title Unsupported Browser
+								h3.empty-content__line
+									| Unfortunately this page cannot be used by your browser. You can either 
+									a(
+										href="https://dashboard.wordpress.com/wp-admin/"
+									) use the classic WordPress dashboard
+									| , or 
+									a(
+										href="http://browsehappy.com"
+									) upgrade your browser

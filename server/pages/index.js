@@ -370,6 +370,12 @@ module.exports = function() {
 			}
 		} );
 
+	app.get( '/browsehappy', function( request, response ) {
+		response.status( 200 ).render( 'browsehappy.jade', {
+			urls: generateStaticUrls( request )
+		} );
+	} );
+
 	// catchall to render 404 for all routes not whitelisted in client/sections
 	app.get( '*', render404 );
 
