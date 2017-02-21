@@ -25,6 +25,11 @@ import {
 	videoEditorHasScriptLoadError,
 } from 'state/ui/editor/video-editor/selectors';
 
+/**
+ * Module variables
+ */
+let isSelectingFrame = false;
+
 class VideoEditor extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -71,10 +76,15 @@ class VideoEditor extends Component {
 			return;
 		}
 
+		isSelectingFrame = true;
 		this.setState( { pauseVideo: true } );
 	}
 
 	handlePause = ( currentTime ) => {
+		if ( ! isSelectingFrame ) {
+			return;
+		}
+
 		const {
 			media,
 			updatePoster,
@@ -86,7 +96,27 @@ class VideoEditor extends Component {
 		}
 	}
 
-	handleUploadImage() {}
+	handleUploadImageClick = () => {
+		isSelectingFrame = false;
+		this.setState( { pauseVideo: true } );
+	}
+
+	handleUploadImage = ( file ) => {
+		if ( ! file ) {
+			return;
+		}
+
+		const {
+			media,
+			updatePoster,
+		} = this.props;
+		const guid = media && media.videopress_guid ? media.videopress_guid : null;
+
+		if ( guid ) {
+			this.props.resetPosterState();
+			updatePoster( guid, { file } );
+		}
+	}
 
 	renderError() {
 		const {
@@ -146,6 +176,7 @@ class VideoEditor extends Component {
 							onCancel={ onCancel }
 							onSelectFrame={ this.handleSelectFrame }
 							onUploadImage={ this.handleUploadImage }
+							onUploadImageClick={ this.handleUploadImageClick }
 						/>
 					</div>
 				</figure>
