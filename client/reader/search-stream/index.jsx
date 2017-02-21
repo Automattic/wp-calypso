@@ -207,8 +207,8 @@ class SearchStream extends Component {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
-		const sugList = initial( flatMap( this.state.suggestions, q =>
-			[ <Suggestion suggestion={ q } source="search" />, ', ' ] ) );
+		const sugList = initial( flatMap( this.state.suggestions, suggestionKeyword =>
+			[ <Suggestion suggestion={ suggestionKeyword } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
