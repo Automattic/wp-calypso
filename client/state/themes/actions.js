@@ -108,11 +108,52 @@ export function receiveTheme( theme, siteId ) {
  * @return {Object}        Action object
  */
 export function receiveThemes( themes, siteId ) {
-	return {
-		type: THEMES_RECEIVE,
-		themes,
-		siteId
+	return ( dispatch, getState ) => {
+		const { filteredThemes } = filterThemes( getState, themes, siteId );
+		dispatch( {
+			type: THEMES_RECEIVE,
+			themes: filteredThemes,
+			siteId
+		} );
 	};
+}
+
+function receiveThemesQuery( themes, siteId, query, foundCount ) {
+	return ( dispatch, getState ) => {
+		const { filteredThemes, found } = filterThemes( getState, themes, siteId, query, foundCount );
+		dispatch( {
+			type: THEMES_REQUEST_SUCCESS,
+			themes: filteredThemes,
+			siteId,
+			query,
+			found,
+		} );
+	};
+}
+
+function filterThemes( getState, themes, siteId, query, found ) {
+	if ( siteId === 'wporg' || siteId === 'wpcom' ) {
+		return { filteredThemes: themes, found };
+	}
+
+	// A Jetpack site's themes endpoint ignores the query,
+	// returning an unfiltered list of all installed themes instead.
+	// So we have to filter on the client side.
+	// Also if Jetpack plugin has Themes Extended Features,
+	// we filter out -wpcom suffixed themes because we will show them in
+	// second list that is specific to WordPress.com themes.
+	const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
+		! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
+		isJetpackSiteMultiSite( getState(), siteId );
+
+	const filteredThemes = filter(
+		themes,
+		theme => isThemeMatchingQuery( query, theme ) && ( keepWpcom || ! isThemeFromWpcom( theme.id ) )
+	);
+	// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
+	found = filteredThemes.length;
+
+	return { filteredThemes, found };
 }
 
 /**
@@ -129,7 +170,7 @@ export function receiveThemes( themes, siteId ) {
  * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		const startTime = new Date().getTime();
 
 		dispatch( {
@@ -153,34 +194,12 @@ export function requestThemes( siteId, query = {} ) {
 		// and use it as default value for `found`.
 		return request().then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
 			let themes;
-			let filteredThemes;
 			if ( siteId === 'wporg' ) {
 				themes = map( rawThemes, normalizeWporgTheme );
-				filteredThemes = themes;
 			} else if ( siteId === 'wpcom' ) {
 				themes = map( rawThemes, normalizeWpcomTheme );
-				filteredThemes = themes;
 			} else { // Jetpack Site
 				themes = map( rawThemes, normalizeJetpackTheme );
-
-				// A Jetpack site's themes endpoint ignores the query,
-				// returning an unfiltered list of all installed themes instead.
-				// So we have to filter on the client side.
-				// Also if Jetpack plugin has Themes Extended Features,
-				// we filter out -wpcom suffixed themes because we will show them in
-				// second list that is specific to WordPress.com themes.
-				// For multi-site installation we do not provide themes upload yet so
-				// we can only show one list and we should not filter wpcom themes.
-				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
-					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
-					isJetpackSiteMultiSite( getState(), siteId );
-
-				filteredThemes = filter(
-					themes,
-					theme => isThemeMatchingQuery( query, theme ) && ( keepWpcom || ! isThemeFromWpcom( theme.id ) )
-				);
-				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
-				found = filteredThemes.length;
 			}
 
 			if ( query.search && query.page === 1 ) {
@@ -192,21 +211,14 @@ export function requestThemes( siteId, query = {} ) {
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
-						results_first_page: filteredThemes.map( property( 'id' ) ).join()
+						results_first_page: themes.map( property( 'id' ) ).join()
 					}
 				);
 				dispatch( trackShowcaseSearch );
 			}
 
-			// receiveThemes is query-agnostic, so it gets its themes unfiltered
 			dispatch( receiveThemes( themes, siteId ) );
-			dispatch( {
-				type: THEMES_REQUEST_SUCCESS,
-				themes: filteredThemes,
-				siteId,
-				query,
-				found,
-			} );
+			dispatch( receiveThemesQuery( themes, siteId, query, found ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
