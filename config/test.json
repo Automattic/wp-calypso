@@ -92,7 +92,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
-		"republicize": false,
+		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"signup/domain-first-flow": false,
