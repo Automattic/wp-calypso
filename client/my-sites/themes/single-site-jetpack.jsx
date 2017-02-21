@@ -22,6 +22,7 @@ import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
@@ -44,7 +45,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		const {
 			analyticsPath,
 			analyticsPageTitle,
+			emptyContent,
 			getScreenshotOption,
+			showWpcomThemesList,
 			search,
 			site,
 			siteId,
@@ -79,13 +82,15 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
-				<ThemeShowcase { ...props } siteId={ siteId }>
+				<ThemeShowcase { ...props }
+					siteId={ siteId }
+					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					{ config.isEnabled( 'manage/themes/upload' ) && props.showWpcomThemesList &&
+					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
 								options={ [
@@ -122,6 +127,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								} }
 								trackScrollPage={ props.trackScrollPage }
 								source="wpcom"
+								emptyContent={ emptyContent }
 							/>
 						</div>
 					}
@@ -133,9 +139,20 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
+		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+		let emptyContent = null;
+		if ( showWpcomThemesList ) {
+			const siteQuery = getLastThemeQuery( state, siteId );
+			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
+			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
+			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
+			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
+		}
 		return {
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
-			showWpcomThemesList: hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+			showWpcomThemesList,
+			emptyContent
 		};
 	}
 )( ConnectedSingleSiteJetpack );
