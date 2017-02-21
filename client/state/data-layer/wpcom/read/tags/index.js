@@ -45,7 +45,9 @@ function fromApi( apiResponse ) {
 	} else if ( apiResponse.tags ) {
 		tags = map( apiResponse.tags, tag => ( { ...tag, is_following: true } ) );
 	} else {
-		// TODO: what should happen here? throw an error somehow?
+		if ( process.env.NODE_ENV === 'development' ) {
+			throw new Error( 'bad api response for /read/tags' );
+		}
 		tags = [];
 	}
 
