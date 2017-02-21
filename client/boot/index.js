@@ -55,9 +55,6 @@ var config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-// FIXME remove before merge!
-window.page = page;
-
 function init() {
 	var i18nLocaleStringsObject = null;
 

@@ -6,6 +6,8 @@ const config = require( 'config' );
 /**
  * Module variables
  */
+let editorPaths;
+
 const sections = [
 	{
 		name: 'sites',
@@ -196,7 +198,7 @@ const sections = [
 	}
 ];
 
-const editorPaths = [ '/post', '/page' ];
+editorPaths = [ '/post', '/page' ];
 if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 	editorPaths.push( '/edit' );
 }

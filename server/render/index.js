@@ -96,9 +96,7 @@ export function serverRender( req, res ) {
 
 	context.head = { title, metas, links };
 
-	if ( context.template && typeof context.template === 'string' ) {
-		res.render( context.template, context );
-	} else if ( config.isEnabled( 'desktop' ) ) {
+	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop.jade', context );
 	} else {
 		res.render( 'index.jade', context );
