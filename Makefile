@@ -26,6 +26,7 @@ RECORD_ENV ?= $(BIN)/record-env
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
 COMPONENTS_PROPTYPES_JS ?= server/devdocs/bin/generate-proptypes-index.js
+JETPACK_DIR := ~/Vagrants/Themes/www/wordpress-trunk/wp-content/plugins/jetpack-ui
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -185,6 +186,16 @@ build-desktop: build-server $(CLIENT_CONFIG_FILE) build-css
 
 build-jetpack: clean build-server build-dll $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
+	@$(MAKE) push-jetpack-files
+
+push-jetpack-files:
+	@rm -rf $(JETPACK_DIR)/public
+	@mkdir $(JETPACK_DIR)/public
+	@find ./public -iregex ".*manifest.*\.js" !  -iregex ".*\.m\.js" -exec cp {} $(JETPACK_DIR)/public/manifest.js \;
+	@find ./public -iregex ".*build-jetpack.*\.js" !  -iregex ".*\.m\.js" -exec cp {} $(JETPACK_DIR)/public/build-jetpack.js \;
+	@cp ./public/vendor.jetpack.js $(JETPACK_DIR)/public/
+	@cp ./public/style.css $(JETPACK_DIR)/public/
+	@printf "  Files copied to Jetpack.\n"
 
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
