@@ -85,7 +85,7 @@ const PostsMain = React.createClass( {
 				<QueryPostCounts siteId={ site.ID } type="post" />
 				<SectionHeader className="posts__drafts-header" label={ translate( 'Latest Drafts' ) }>
 					<Button compact href={ this.props.newPostPath }>
-						{ translate( 'Start New' ) }
+						{ translate( 'New Post' ) }
 					</Button>
 				</SectionHeader>
 				{ map( this.props.drafts, ( { global_ID: globalId } ) => (
