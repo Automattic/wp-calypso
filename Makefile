@@ -183,7 +183,7 @@ build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONF
 build-desktop: build-server $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
-build-jetpack: build-server build-dll $(CLIENT_CONFIG_FILE)
+build-jetpack: clean build-server build-dll $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
