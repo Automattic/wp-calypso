@@ -76,14 +76,14 @@ class PostPhoto extends React.Component {
 
 	renderFeaturedImage() {
 		const { post, title } = this.props;
-		const imageUri = post.canonical_media.src;
+		const imageUrl = post.canonical_media.src;
 		const imageSize = {
 			height: post.canonical_media.height,
 			width: post.canonical_media.width
 		};
 
 		const featuredImageStyle = {
-			backgroundImage: 'url(' + cssSafeUrl( imageUri ) + ')',
+			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
 			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center'
