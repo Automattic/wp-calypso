@@ -10,7 +10,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Followers from '../stats-followers-page';
+import Followers from '../stats-comment-followers-page';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
@@ -18,9 +18,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-class StatsFollows extends Component {
+class StatsCommentFollows extends Component {
 	static propTypes = {
-		followType: PropTypes.string,
 		followList: PropTypes.object,
 		page: PropTypes.number,
 		perPage: PropTypes.number,
@@ -37,7 +36,7 @@ class StatsFollows extends Component {
 	}
 
 	paginationHandler = ( pageNum ) => {
-		let path = '/stats/follows/' + this.props.followType + '/';
+		let path = '/stats/follows/comment/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
 		}
@@ -46,31 +45,24 @@ class StatsFollows extends Component {
 		page( path );
 	};
 
-	changeFilter = ( selection ) => {
-		const filter = selection.value;
-
-		page( '/stats/follows/' + filter + '/' + this.props.slug );
-	};
-
 	render() {
-		const { followType, followList, perPage, translate } = this.props;
+		const { followList, perPage, translate } = this.props;
 
 		return (
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 
-				<div id="my-stats-content" className={ 'follows-detail follows-detail-' + followType }>
+				<div id="my-stats-content" className="follows-detail follows-detail-comment">
 					<HeaderCake onClick={ this.goBack }>
-						{ translate( 'Followers' ) }
+						{ translate( 'Comments Followers' ) }
 					</HeaderCake>
 					<Followers
-						path={ followType + '-follow-summary' }
-						followType={ followType }
+						path="comment-follow-summary"
 						followList={ followList }
 						page={ this.props.page }
 						perPage={ perPage }
 						pageClick={ this.paginationHandler }
-						changeFilter={ this.changeFilter } />
+					/>
 				</div>
 			</Main>
 		);
@@ -91,4 +83,4 @@ const connectComponent = connect(
 export default flowRight(
 	connectComponent,
 	localize
-)( StatsFollows );
+)( StatsCommentFollows );
