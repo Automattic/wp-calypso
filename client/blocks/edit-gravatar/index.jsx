@@ -7,23 +7,21 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import path from 'path';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Button from 'components/button';
 import Dialog from 'components/dialog';
 import FilePicker from 'components/file-picker';
-import FormLabel from 'components/forms/form-label';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getToken as getOauthToken } from 'lib/oauth-token';
 import Gravatar from 'components/gravatar';
 import {
 	isCurrentUserUploadingGravatar,
 } from 'state/current-user/gravatar-status/selectors';
-import { isOffline } from 'state/application/selectors';
 import {
 	resetAllImageEditorState
 } from 'state/ui/editor/image-editor/actions';
@@ -49,7 +47,6 @@ export class EditGravatar extends Component {
 	}
 
 	static propTypes = {
-		isOffline: PropTypes.bool,
 		isUploading: PropTypes.bool,
 		translate: PropTypes.func,
 		receiveGravatarImageFailed: PropTypes.func,
@@ -158,49 +155,41 @@ export class EditGravatar extends Component {
 		}
 	}
 
+	renderInstructionText() {
+		return (
+			<div className="edit-gravatar__label-container">
+				<Gridicon icon="cloud-upload" size={ 36 } />
+				<span className="edit-gravatar__label">
+					{ this.props.translate( 'Click to change photo' ) }
+				</span>
+			</div>
+		);
+	}
+
 	render() {
 		const {
-			isOffline: userIsOffline,
 			isUploading,
-			translate,
 			user
 		} = this.props;
 		return (
-			<div>
+			<div className="edit-gravatar">
 				{ this.renderImageEditor() }
-				<FormLabel>
-					{
-						translate( 'Avatar', {
-							comment: 'A section heading on the profile page.'
-						} )
-					}
-				</FormLabel>
-				<div
-					className={
-						classnames( 'edit-gravatar__image-container',
-							{ 'is-uploading': isUploading }
-						)
-					}
-				>
-					<Gravatar
-						imgSize={ 270 }
-						size={ 100 }
-						user={ user }
-					/>
-					{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
-				</div>
-				<p>
-					{
-						translate( 'To change, select an image or ' +
-							'drag and drop a picture from your computer.' )
-					}
-				</p>
 				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
-					<Button
-						disabled={ userIsOffline || isUploading || ! user.email_verified }
+					<div
+						className={
+							classnames( 'edit-gravatar__image-container',
+								{ 'is-uploading': isUploading }
+							)
+						}
 					>
-						{ translate( 'Select Image' ) }
-					</Button>
+						<Gravatar
+							imgSize={ 400 }
+							size={ 150 }
+							user={ user }
+						/>
+						{ ! isUploading && this.renderInstructionText() }
+						{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
+						</div>
 				</FilePicker>
 			</div>
 		);
@@ -210,7 +199,6 @@ export class EditGravatar extends Component {
 export default connect(
 	state => ( {
 		user: getCurrentUser( state ),
-		isOffline: isOffline( state ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{
