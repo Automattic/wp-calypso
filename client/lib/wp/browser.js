@@ -5,7 +5,7 @@ import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wp' );
 import qs from 'querystring';
-import cookie from 'cookie';
+import localforage from 'lib/localforage';
 
 /**
  * Internal dependencies
@@ -15,7 +15,8 @@ import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
 
-const GUEST_COOKIE_NAME = 'guest_sandbox_ticket';
+const GUEST_TICKET_LOCALSTORAGE_KEY = 'guest_sandbox_ticket';
+const GUEST_TICKET_VALIDITY_TIME = 60 * 60 * 2;
 let guestSandboxTicket = null;
 
 /***
@@ -27,12 +28,19 @@ function initializeGuestSandboxTicket() {
 
 	if ( queryObject.guestTicket ) {
 		guestSandboxTicket = queryObject.guestTicket;
-		document.cookie = cookie.serialize( GUEST_COOKIE_NAME, guestSandboxTicket, { maxAge: 60 * 60 * 2 } );
+		localforage.setItem(
+			GUEST_TICKET_LOCALSTORAGE_KEY,
+			{
+				guestSandboxTicket,
+				createdDate: Date.now()
+			}
+		);
 	} else {
-		const cookies = cookie.parse( document.cookie );
-		if ( cookies[ GUEST_COOKIE_NAME ] ) {
-			guestSandboxTicket = cookies[ GUEST_COOKIE_NAME ];
-		}
+		localforage.getItem( GUEST_TICKET_LOCALSTORAGE_KEY, ( error, value ) => {
+			if ( ( Date.now() - value.createdDate ) / 1000 < GUEST_TICKET_VALIDITY_TIME ) {
+				guestSandboxTicket = value.guestSandboxTicket;
+			}
+		} );
 	}
 }
 initializeGuestSandboxTicket();
