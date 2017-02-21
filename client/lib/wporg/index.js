@@ -107,7 +107,13 @@ module.exports = {
 	 * @returns {Promise.<Object>}  A promise that returns a `theme` object
 	 */
 	fetchThemeInformation: function( themeId ) {
-		const query = { action: 'theme_information', 'request[slug]': themeId };
+		const query = {
+			action: 'theme_information',
+			// Return an `author` object containing `user_nicename` and `display_name` attrs.
+			// This is for consistency with WP.com, which always returns the display name as `author`.
+			'request[fields][extended_author]': true,
+			'request[slug]': themeId
+		};
 		return superagent
 			.get( _WPORG_THEMES_ENDPOINT )
 			.set( 'Accept', 'application/json' )
@@ -127,6 +133,9 @@ module.exports = {
 		const { search, page, number } = options;
 		const query = {
 			action: 'query_themes',
+			// Return an `author` object containing `user_nicename` and `display_name` attrs.
+			// This is for consistency with WP.com, which always returns the display name as `author`.
+			'request[fields][extended_author]': true,
 			'request[search]': search,
 			'request[page]': page,
 			'request[per_page]:': number
