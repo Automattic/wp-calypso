@@ -56,6 +56,7 @@ const optionShape = PropTypes.shape( {
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
+		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
 		// Connected props
@@ -70,6 +71,7 @@ const ThemeShowcase = React.createClass( {
 		return {
 			tier: '',
 			search: '',
+			emptyContent: null,
 			showUploadButton: true
 		};
 	},
@@ -179,6 +181,7 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
+					emptyContent={ this.props.emptyContent }
 				/>
 				<ThemePreview />
 				{ this.props.children }
