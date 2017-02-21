@@ -1,5 +1,5 @@
-.reader-visit-link {
-	border: 1px solid red;
+.reader-visit-link__icon {
+	fill: $gray;
 }
 
 .reader-visit-link__label {
@@ -10,7 +10,7 @@
 .reader-visit-link:focus,
 .reader-visit-link:active {
 	.reader-visit-link__icon {
-		fill: $blue-medium !important;
+		fill: $blue-medium;
 	}
 
 	.reader-visit-link__label {
