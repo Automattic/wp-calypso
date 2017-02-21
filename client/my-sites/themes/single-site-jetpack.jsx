@@ -90,7 +90,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					<ThanksModal
 						site={ site }
 						source={ 'list' } />
-					{ config.isEnabled( 'manage/themes/upload' ) && showWpcomThemesList &&
+					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
 								options={ [
@@ -139,7 +139,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
-		const showWpcomThemesList = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
 		let emptyContent = null;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
