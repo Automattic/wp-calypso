@@ -22,7 +22,7 @@ import { getSiteSlug, getSiteBySlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -71,9 +71,7 @@ const MasterbarLoggedIn = React.createClass( {
 	render() {
 		const { isDomainOnlySite, siteSlug } = this.props,
 			mySitesUrl = isDomainOnlySite
-				// The site slug for a domain-only site is equal to its only
-				// domain, so we can use it for the domain parameter here.
-				? domainManagementEdit( siteSlug, siteSlug )
+				? domainManagementList( siteSlug )
 				: getStatsPathForTab( 'day', siteSlug );
 
 		return (
