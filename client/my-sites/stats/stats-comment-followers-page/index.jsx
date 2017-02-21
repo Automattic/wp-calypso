@@ -12,13 +12,11 @@ import { get, flowRight } from 'lodash';
  */
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import ErrorPanel from '../stats-error';
 import Pagination from '../pagination';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -28,31 +26,10 @@ import {
 } from 'state/stats/lists/selectors';
 
 class StatModuleFollowersPage extends Component {
-	filterSelect() {
-		const { changeFilter, followType, translate } = this.props;
-		if ( 'comment' === followType ) {
-			return null;
-		}
-
-		const options = [
-			{
-				value: 'wpcom',
-				label: translate( 'WordPress.com Followers' )
-			},
-			{
-				value: 'email',
-				label: translate( 'Email Followers' )
-			}
-		];
-
-		return <StatsModuleSelectDropdown options={ options } onSelect={ changeFilter } initialSelected={ followType } />;
-	}
-
 	render() {
 		const {
 			data,
 			followList,
-			followType,
 			hasError,
 			numberFormat,
 			page,
@@ -61,10 +38,9 @@ class StatModuleFollowersPage extends Component {
 			perPage,
 			requestingFollowers,
 			siteId,
-			statsType,
 			translate
 		} = this.props;
-		const noData = followType === 'comment' ? ! get( data, 'posts' ) : ! get( data, 'subscribers' );
+		const noData = ! get( data, 'posts' );
 		const isLoading = requestingFollowers && noData;
 		const classes = [
 			'stats-module',
@@ -77,24 +53,7 @@ class StatModuleFollowersPage extends Component {
 			}
 		];
 
-		let itemType;
-		let total;
-		switch ( followType ) {
-			case 'comment':
-				itemType = translate( 'Comments' );
-				total = get( data, 'total' );
-				break;
-
-			case 'email':
-				itemType = translate( 'Email' );
-				total = get( data, 'total_email' );
-				break;
-
-			case 'wpcom':
-				itemType = translate( 'WordPress.com' );
-				total = get( data, 'total_wpcom' );
-				break;
-		}
+		const total = get( data, 'total' );
 
 		let paginationSummary;
 		if ( total ) {
@@ -111,7 +70,7 @@ class StatModuleFollowersPage extends Component {
 					startIndex: numberFormat( startIndex ),
 					endIndex: numberFormat( endIndex ),
 					total: numberFormat( total ),
-					itemType
+					itemType: translate( 'Comments' )
 				}
 			} );
 
@@ -138,23 +97,12 @@ class StatModuleFollowersPage extends Component {
 			labelLegend = translate( 'Follower' );
 			valueLegend = translate( 'Since' );
 		}
-
-		const emailExportUrl = followType === 'email'
-			? 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' + siteId + '&blog_subscribers=csv&type=email'
-			: null;
-
 		return (
 			<div className="followers">
-				<QuerySiteStats statType={ statsType } siteId={ siteId } query={ query } />
-				<SectionHeader label={ translate( 'Followers' ) }>
-					{ emailExportUrl
-						? ( <Button compact href={ emailExportUrl }>{ translate( 'Download Data as CSV' ) }</Button> )
-						: null }
-				</SectionHeader>
+				<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ query } />
+				<SectionHeader label={ translate( 'Comments Followers' ) } />
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
-						{ this.filterSelect() }
-
 						{ noData && ! hasError && ! isLoading &&
 							<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
 						}
@@ -179,30 +127,19 @@ class StatModuleFollowersPage extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, { followType, page, perPage } ) => {
-	let statsType;
-	let query;
-	if ( followType === 'comment' ) {
-		statsType = 'statsCommentFollowers';
-		query = {};
-	} else {
-		statsType = 'statsFollowers';
-		query = { type: followType };
-	}
-	query = {
-		...query,
+const connectComponent = connect( ( state, { page, perPage } ) => {
+	const query = {
 		max: perPage,
 		page
 	};
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		requestingFollowers: isRequestingSiteStatsForQuery( state, siteId, statsType, query ),
-		data: getSiteStatsNormalizedData( state, siteId, statsType, query ),
-		hasError: hasSiteStatsQueryFailed( state, siteId, statsType, query ),
+		requestingFollowers: isRequestingSiteStatsForQuery( state, siteId, 'statsCommentFollowers', query ),
+		data: getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', query ),
+		hasError: hasSiteStatsQueryFailed( state, siteId, 'statsCommentFollowers', query ),
 		query,
-		siteId,
-		statsType
+		siteId
 	};
 } );
 

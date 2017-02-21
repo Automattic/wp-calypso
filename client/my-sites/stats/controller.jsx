@@ -386,11 +386,9 @@ module.exports = {
 		}
 	},
 
-	follows: function( context, next ) {
+	follows: function( context ) {
 		let siteId = context.params.site_id;
 		const FollowList = require( 'lib/follow-list' );
-		const validFollowTypes = [ 'wpcom', 'email', 'comment' ];
-		const followType = context.params.follow_type;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
 		const basePath = route.sectionify( context.path );
@@ -404,9 +402,7 @@ module.exports = {
 		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 			? site.slug : route.getSiteFragment( context.path );
 
-		if ( -1 === validFollowTypes.indexOf( followType ) ) {
-			next();
-		} else if ( 0 === siteId ) {
+		if ( 0 === siteId ) {
 			if ( 0 === sites.data.length ) {
 				sites.once( 'change', function() {
 					page( context.path );
@@ -424,7 +420,7 @@ module.exports = {
 
 			analytics.pageView.record(
 				basePath.replace( '/' + pageNum, '' ),
-				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
+				analyticsPageTitle + ' > Followers > Comment'
 			);
 
 			const props = {
@@ -435,11 +431,10 @@ module.exports = {
 				domain: siteDomain,
 				sites,
 				siteId,
-				followType,
 				followList,
 			};
 			renderWithReduxStore(
-				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/follows" { ...props } />,
+				<AsyncLoad placeholder={ <StatsPagePlaceholder /> } require="my-sites/stats/comment-follows" { ...props } />,
 				document.getElementById( 'primary' ),
 				context.store
 			);
