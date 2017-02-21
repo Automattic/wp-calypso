@@ -1,6 +1,6 @@
 # Reader Visit Link
 
-A link to an external site from Reader, labelled 'Visit'.
+A link to an external site from Reader.
 
 ## Example
 
