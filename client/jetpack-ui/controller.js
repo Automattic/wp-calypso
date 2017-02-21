@@ -3,6 +3,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -10,12 +11,16 @@ import React from 'react';
 import WritingSettings from './writing';
 import DiscussionSettings from './discussion';
 
+const loadPage = ( path ) => {
+	return () => page( path );
+};
+
 const jetpackUi = {
 
 	// Writing Settings
 	writingSettings() {
 		ReactDom.render(
-			React.createElement( WritingSettings, {} ),
+			React.createElement( WritingSettings, { loadPage } ),
 			document.getElementById( 'primary' )
 		);
 	},
@@ -23,7 +28,7 @@ const jetpackUi = {
 	// Discussion Settings
 	discussionSettings() {
 		ReactDom.render(
-			React.createElement( DiscussionSettings, {} ),
+			React.createElement( DiscussionSettings, { loadPage } ),
 			document.getElementById( 'primary' )
 		);
 	},

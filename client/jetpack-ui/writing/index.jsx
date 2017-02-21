@@ -17,7 +17,7 @@ export default class JetpackWriting extends PureComponent {
 				<Card>
 					<h1>Writing</h1>
 					<p>Settings, or something, would go here.</p>
-					<Button href="/discussion">Discussion</Button>
+					<Button onClick={ this.props.loadPage( '/discussion' ) }>Discussion</Button>
 				</Card>
 			</Main>
 		);
