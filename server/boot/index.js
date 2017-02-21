@@ -1,20 +1,52 @@
 /**
- * Module dependencies
+ * External dependencies
  */
-var path = require( 'path' ),
-	build = require( 'build' ),
-	config = require( 'config' ),
-	express = require( 'express' ),
-	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+import path from 'path';
+import express from 'express';
+import morgan from 'morgan';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+/**
+ * External dependencies
+ */
+import build from 'build';
+import config from 'config';
+import pages from 'pages';
+
+function renderJsxFile( filename, options, callback ) {
+	let markup = `<!DOCTYPE html><!--
+	<3
+	             _
+	    ___ __ _| |_   _ _ __  ___  ___
+	   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+	  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+	   \\___\\__,_|_|\\__, | .__/|___/\\___/
+	               |___/|_|
+
+-->
+	`;
+	try {
+		const requireView = require.context( '../../client/document/', true, /^\.\/.*\.jsx$/ );
+		// Unfortunately, we need to prefix with './'
+		const component = requireView( './' + path.basename( filename ) );
+		markup += renderToStaticMarkup(
+			React.createElement( component, options )
+		);
+	} catch ( e ) {
+		callback( e );
+	}
+
+	callback( null, markup );
+}
 
 /**
  * Returns the server HTTP request handler "app".
  *
  * @api public
+ * @returns { object } Express app
  */
 function setup() {
-
 	var app = express(),
 		assets,
 		devdocs,
@@ -24,8 +56,8 @@ function setup() {
 	// for nginx
 	app.enable( 'trust proxy' );
 
-	// template engine
-	app.set( 'view engine', 'jade' );
+	app.engine( '.jsx', renderJsxFile );
+	app.set( 'view engine', 'jsx' );
 
 	if ( 'development' === config( 'env' ) ) {
 		// use legacy CSS rebuild system if css-hot-reload is disabled

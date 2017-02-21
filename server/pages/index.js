@@ -5,15 +5,14 @@ import express from 'express';
 import fs from 'fs';
 import crypto from 'crypto';
 import qs from 'qs';
-import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import { join as pathJoin } from 'path';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
@@ -24,8 +23,7 @@ const debug = debugFactory( 'calypso:pages' );
 
 let HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
-	SERVER_BASE_PATH = '/public',
-	CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+	SERVER_BASE_PATH = '/public';
 
 const staticFiles = [
 	{ path: 'style.css' },
@@ -102,76 +100,25 @@ function generateStaticUrls( request ) {
 	return urls;
 }
 
-function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
 function getDefaultContext( request ) {
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
-		env: CALYPSO_ENV,
-		sanitize: sanitize,
-		isRTL: config( 'rtl' ),
+		isRtl: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
-		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: '//s1.wp.com/i/favicon.ico',
-		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
-		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
-		devDocsURL: '/devdocs',
 		store: createReduxStore()
 	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug: config( 'env' ) === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
-
-	if ( CALYPSO_ENV === 'wpcalypso' ) {
-		context.badge = CALYPSO_ENV;
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
-	}
-
-	if ( CALYPSO_ENV === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
-	}
-
-	if ( CALYPSO_ENV === 'stage' ) {
-		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
-	}
-
-	if ( CALYPSO_ENV === 'development' ) {
-		context.badge = 'dev';
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
-		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
 
 	return context;
 }
@@ -229,7 +176,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.log( 'API Error: ' + errorMessage );
 
-					res.status( 500 ).render( '500.jade', context );
+					res.status( 500 ).render( '500', context );
 				}
 
 				return;
@@ -239,7 +186,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
-			context.isRTL = data.isRTL ? true : false;
+			context.isRtl = data.isRTL ? true : false;
 
 			if ( data.localeSlug ) {
 				context.lang = data.localeSlug;
@@ -284,7 +231,7 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404.jade', {
+	response.status( 404 ).render( '404', {
 		urls: generateStaticUrls( request )
 	} );
 }
@@ -292,7 +239,7 @@ function render404( request, response ) {
 module.exports = function() {
 	const app = express();
 
-	app.set( 'views', __dirname );
+	app.set( 'views', pathJoin( __dirname, '../../client/document' ) );
 
 	app.use( cookieParser() );
 
