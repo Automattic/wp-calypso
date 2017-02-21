@@ -55,6 +55,7 @@ export getTimezonesLabel from './get-timezones-label';
 export getTimezonesLabels from './get-timezones-labels';
 export getTimezonesLabelsByContinent from './get-timezones-labels-by-continent';
 export getUpcomingBillingTransactions from './get-upcoming-billing-transactions';
+export getVisibleSites from './get-visible-sites';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-options-ready';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
