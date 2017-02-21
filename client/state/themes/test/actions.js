@@ -281,7 +281,7 @@ describe( 'actions', () => {
 					.defaultReplyHeaders( {
 						'Content-Type': 'application/json'
 					} )
-					.get( '/themes/info/1.1/?action=query_themes' )
+					.get( '/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true' )
 					.reply( 200, {
 						info: { page: 1, pages: 123, results: 2452 },
 						themes: [
@@ -291,7 +291,8 @@ describe( 'actions', () => {
 							{ slug: 'intentionally-blank', name: 'Intentionally Blank' }
 						]
 					} )
-					.get( '/themes/info/1.1/?action=query_themes&request%5Bsearch%5D=Sixteen' )
+					.get( '/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bsearch%5D=Sixteen' )
 					.reply( 200, {
 						info: { page: 1, pages: 1, results: 1 },
 						themes: [
@@ -481,9 +482,11 @@ describe( 'actions', () => {
 					.defaultReplyHeaders( {
 						'Content-Type': 'application/json'
 					} )
-					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyseventeen' )
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bslug%5D=twentyseventeen' )
 					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
-					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyumpteen' )
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bslug%5D=twentyumpteen' )
 					.reply( 200, false );
 			} );
 

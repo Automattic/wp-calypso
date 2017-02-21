@@ -98,13 +98,18 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download'
 	};
 
-	const normalizedTheme = mapKeys( omit( theme, 'sections' ), ( value, key ) => (
+	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) => (
 		get( attributesMap, key, key )
 	) );
 
 	const description = get( theme, [ 'sections', 'description' ] );
 	if ( description ) {
 		normalizedTheme.description = description;
+	}
+
+	const author = get( theme, [ 'author', 'display_name' ] );
+	if ( author ) {
+		normalizedTheme.author = author;
 	}
 
 	if ( ! normalizedTheme.tags ) {
