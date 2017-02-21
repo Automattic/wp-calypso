@@ -14,6 +14,12 @@
 	}
 }
 
+.edit-gravatar__image-container .gravatar.is-missing {
+	display: block;
+	width: 150px;
+	height: 150px;
+}
+
 .edit-gravatar__spinner {
 	position: absolute;
 		top: 50%;

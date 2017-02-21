@@ -99,5 +99,40 @@ describe( 'Gravatar', () => {
 			expect( img.prop( 'width' ) ).to.equal( 32 );
 			expect( img.prop( 'height' ) ).to.equal( 32 );
 		} );
+
+		describe( 'when Gravatar fails to load',  function() {
+			it( 'should render a span element', function() {
+				const gravatar = shallow( <Gravatar user={ genericUser } /> );
+
+				// simulate the Gravatar not loading
+				gravatar.setState( { failedToLoad: true } );
+
+				const img = gravatar.find( 'img' );
+				const span = gravatar.find( 'span' );
+
+				expect( img.length ).to.equal( 0 );
+				expect( span.length ).to.equal( 1 );
+				expect( span.hasClass( 'is-missing' ) ).to.equal( true );
+			} );
+
+			it( 'should show temp image if it exists', function() {
+				const gravatar = shallow(
+					<Gravatar
+						tempImage={ 'tempImage' }
+						user={ genericUser } />
+				);
+
+				// simulate the Gravatar not loading
+				gravatar.setState( { failedToLoad: true } );
+
+				const img = gravatar.find( 'img' );
+				const span = gravatar.find( 'span' );
+
+				expect( img.length ).to.equal( 1 );
+				expect( span.length ).to.equal( 0 );
+				expect( img.prop( 'src' ) ).to.equal( 'tempImage' );
+				expect( img.hasClass( 'gravatar' ) ).to.equal( true );
+			} );
+		} );
 	} );
 } );
