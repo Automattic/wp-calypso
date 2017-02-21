@@ -13,6 +13,7 @@ import debug from 'debug';
 import { loadScript, removeScriptCallback } from 'lib/load-script';
 import {
 	setVideoEditorHasScriptLoadError,
+	setVideoEditorVideoHasLoaded,
 } from 'state/ui/editor/video-editor/actions';
 
 /**
@@ -91,11 +92,29 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 				width: item.width,
 			} );
 		}
+
+		if ( this.player && this.player.state ) {
+			this.player.state.on( 'change state', this.onPlayerStateChange );
+		}
 	};
+
+	onPlayerStateChange = () => {
+		if ( ! this.player || ! this.player.state ) {
+			return;
+		}
+
+		if ( 'loaded' === this.player.state.state() ) {
+			this.props.setVideoHasLoaded();
+		}
+	}
 
 	destroy() {
 		if ( ! this.player ) {
 			return;
+		}
+
+		if ( this.player.state ) {
+			this.player.state.removeListener( 'change state', this.onPlayerStateChange );
 		}
 
 		this.player.destroy();
@@ -140,5 +159,6 @@ export default connect(
 	null,
 	{
 		setHasScriptLoadError: setVideoEditorHasScriptLoadError,
+		setVideoHasLoaded: setVideoEditorVideoHasLoaded,
 	}
 )( EditorMediaModalDetailPreviewVideoPress );
