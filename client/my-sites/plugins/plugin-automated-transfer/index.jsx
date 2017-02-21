@@ -17,7 +17,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { isAutomatedTransferActive } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import WpAdminAutoLogin from './wpadmin-auto-login';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 
 class PluginAutomatedTransfer extends Component {
 
