@@ -7,7 +7,7 @@ A link to an external site from Reader.
 The component can be used in much the same way that you would use an `<a>` element. The link wraps whatever is placed between the ReaderVisitLink elements.
 
 ```html
-<ReaderVisitLink url={ post.URL }>Visit this</ReaderVisitLink>
+<ReaderVisitLink href={ post.URL }>Visit this</ReaderVisitLink>
 ```
 
 ## Props
