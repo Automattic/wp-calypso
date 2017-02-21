@@ -17,14 +17,14 @@ import {
 	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
-	getThemeSignupUrl as getSignupUrl,
-	getThemePurchaseUrl as getPurchaseUrl,
-	getThemeCustomizeUrl as	getCustomizeUrl,
-	getThemeDetailsUrl as getDetailsUrl,
-	getThemeSupportUrl as getSupportUrl,
-	getThemeHelpUrl as getHelpUrl,
-	isThemeActive as isActive,
-	isThemePremium as isPremium,
+	getThemeSignupUrl,
+	getThemePurchaseUrl,
+	getThemeCustomizeUrl,
+	getThemeDetailsUrl,
+	getThemeSupportUrl,
+	getThemeHelpUrl,
+	isThemeActive,
+	isThemePremium,
 	isPremiumThemeAvailable,
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -42,10 +42,12 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
-		getUrl: getPurchaseUrl,
+		getUrl: getThemePurchaseUrl,
 		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		hideForTheme: ( state, theme, siteId ) => (
-			! isPremium( state, theme.id ) || isActive( state, theme.id, siteId ) || isPremiumThemeAvailable( state, theme.id, siteId )
+			! isThemePremium( state, theme.id ) ||
+			isThemeActive( state, theme.id, siteId ) ||
+			isPremiumThemeAvailable( state, theme.id, siteId )
 		)
 	}
 	: {};
@@ -56,7 +58,8 @@ const activate = {
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
 	hideForTheme: ( state, theme, siteId ) => (
-		isActive( state, theme.id, siteId ) || ( isPremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
+		isThemeActive( state, theme.id, siteId ) ||
+		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
 	)
 };
 
@@ -64,7 +67,7 @@ const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
 	action: confirmDelete,
 	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ) || ! config.isEnabled( 'manage/themes/upload' ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId ),
+	hideForTheme: ( state, theme, siteId ) => isThemeActive( state, theme.id, siteId ),
 };
 
 const customize = {
@@ -72,9 +75,9 @@ const customize = {
 	extendedLabel: i18n.translate( 'Customize this design' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
-	getUrl: getCustomizeUrl,
+	getUrl: getThemeCustomizeUrl,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => ! isActive( state, theme.id, siteId )
+	hideForTheme: ( state, theme, siteId ) => ! isThemeActive( state, theme.id, siteId )
 };
 
 const tryandcustomize = {
@@ -85,7 +88,7 @@ const tryandcustomize = {
 	} ),
 	action: tryAndCustomizeAction,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => isActive( state, theme.id, siteId )
+	hideForTheme: ( state, theme, siteId ) => isThemeActive( state, theme.id, siteId )
 };
 
 const preview = {
@@ -102,7 +105,7 @@ const signupLabel = i18n.translate( 'Pick this design', {
 const signup = {
 	label: signupLabel,
 	extendedLabel: signupLabel,
-	getUrl: getSignupUrl
+	getUrl: getThemeSignupUrl
 };
 
 const separator = {
@@ -114,19 +117,19 @@ const info = {
 		comment: 'label for displaying the theme info sheet'
 	} ),
 	icon: 'info',
-	getUrl: getDetailsUrl,
+	getUrl: getThemeDetailsUrl,
 };
 
 const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
-	getUrl: getSupportUrl,
-	hideForTheme: ( state, theme ) => ! isPremium( state, theme.id )
+	getUrl: getThemeSupportUrl,
+	hideForTheme: ( state, theme ) => ! isThemePremium( state, theme.id )
 };
 
 const help = {
 	label: i18n.translate( 'Support' ),
-	getUrl: getHelpUrl,
+	getUrl: getThemeHelpUrl,
 };
 
 const ALL_THEME_OPTIONS = {
