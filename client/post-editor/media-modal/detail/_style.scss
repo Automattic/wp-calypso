@@ -68,6 +68,13 @@
 		transition: opacity 200ms ease-in-out;
 	}
 
+	&.is-video {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		width: 100%;
+	}
+
 	&.is-uploading,
 	&.is-loading {
 		opacity: 0.5;
