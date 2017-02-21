@@ -71,7 +71,7 @@
 		"reader/full-errors": false,
 		"reader/search": true,
 		"resume-editing": true,
-		"republicize": false,
+		"republicize": true,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
 		"signup/domain-first-flow": false,
