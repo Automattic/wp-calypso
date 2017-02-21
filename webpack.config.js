@@ -190,6 +190,9 @@ if ( CALYPSO_ENV === 'development' ) {
 	}
 } else {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
+	if ( CALYPSO_ENV === 'jetpack' ) {
+		webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot', 'jetpack' );
+	}
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
