@@ -128,7 +128,10 @@ describe( 'utils', () => {
 			const normalizedTheme = normalizeWporgTheme( {
 				slug: 'twentyfifteen',
 				name: 'Twenty Fifteen',
-				author: 'wordpressdotorg',
+				author: {
+					user_nicename: 'wordpressdotorg',
+					display_name: 'WordPress.org'
+				},
 				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				preview_url: 'https://wp-themes.com/twentyfifteen',
 				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
@@ -143,7 +146,7 @@ describe( 'utils', () => {
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
-				author: 'wordpressdotorg',
+				author: 'WordPress.org',
 				screenshot: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				demo_uri: 'https://wp-themes.com/twentyfifteen',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
