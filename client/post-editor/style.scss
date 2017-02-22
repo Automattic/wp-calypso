@@ -44,11 +44,11 @@
 
 .post-editor__content {
 	@include breakpoint( ">660px" ) {
-		margin-left: ( $sidebar-width-min + 1 );
+		margin-right: ( $sidebar-width-min + 1 );
 	}
 
 	@include breakpoint( ">960px" ) {
-		margin-left: ( $sidebar-width-max + 1 );
+		margin-right: ( $sidebar-width-max + 1 );
 	}
 }
 

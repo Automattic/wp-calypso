@@ -7,7 +7,6 @@ import React, { PropTypes, Component } from 'react';
  * Internal dependencies
  */
 import EditorDrawer from 'post-editor/editor-drawer';
-import EditorGroundControl from 'post-editor/editor-ground-control';
 import AsyncLoad from 'components/async-load';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -63,25 +62,6 @@ export default class EditorSidebar extends Component {
 					savedPost={ this.props.savedPost }
 					site={ this.props.site }
 					type={ this.props.type }
-				/>
-				<EditorGroundControl
-					warnPublishDateChange={ this.props.warnPublishDateChange }
-					hasContent={ this.props.hasContent }
-					isDirty={ this.props.isDirty }
-					isSaveBlocked={ this.props.isSaveBlocked }
-					isPublishing={ this.props.isPublishing }
-					isSaving={ this.props.isSaving }
-					onPreview={ this.props.onPreview }
-					onPublish={ this.props.onPublish }
-					onSave={ this.props.onSave }
-					onSaveDraft={ this.props.onSaveDraft }
-					post={ this.props.post }
-					savedPost={ this.props.savedPost }
-					site={ this.props.site }
-					user={ this.props.user }
-					userUtils={ this.props.userUtils }
-					type={ this.props.type }
-					onMoreInfoAboutEmailVerify={ this.props.onMoreInfoAboutEmailVerify }
 				/>
 				<EditorDrawer
 					site={ this.props.site }

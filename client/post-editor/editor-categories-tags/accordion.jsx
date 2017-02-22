@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, toArray } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -179,7 +178,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 			<Accordion
 				title={ this.getTitle() }
 				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="tag" /> }
 				className={ classes }
 			>
 				{ this.renderCategories() }

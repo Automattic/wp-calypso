@@ -4,7 +4,6 @@
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -280,7 +279,6 @@ const EditorDrawer = React.createClass( {
 		return (
 			<Accordion
 				title={ this.translate( 'More Options' ) }
-				icon={ <Gridicon icon="ellipsis" /> }
 				className="editor-drawer__more-options"
 			>
 				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }

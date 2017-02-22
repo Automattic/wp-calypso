@@ -7,21 +7,13 @@
 	font-size: 12px;
 }
 
-.editor-drawer .accordion__toggle {
-	background: lighten( $gray, 30% );
-}
-
 .editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
-	&:hover {
-		background: $gray-light;
-	}
-
 	.accordion__subtitle::after {
-		@include long-content-fade( $color: lighten( $gray, 30% ) );
+		@include long-content-fade( $color: $white );
 	}
 
 	&:hover .accordion__subtitle::after {
-		@include long-content-fade( $color: $gray-light );
+		@include long-content-fade( $color: $white );
 	}
 }
 

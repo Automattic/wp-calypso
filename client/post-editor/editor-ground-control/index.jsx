@@ -334,7 +334,6 @@ export default React.createClass( {
 					homeLink={ true }
 					externalLink={ true }
 				/>
-				<hr className="editor-ground-control__separator" />
 				<div className="editor-ground-control__status">
 					<StatusLabel
 						post={ this.props.savedPost }

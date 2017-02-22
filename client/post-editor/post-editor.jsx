@@ -52,6 +52,7 @@ import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
+import EditorGroundControl from 'post-editor/editor-ground-control';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -205,6 +206,25 @@ export const PostEditor = React.createClass( {
 						hasContent={ this.state.hasContent || this.props.hasContent }
 						onClose={ this.onClose }
 						onTabChange={ this.hideNotice } />
+					<EditorGroundControl
+						warnPublishDateChange={ this.warnPublishDateChange }
+						hasContent={ this.state.hasContent }
+						isDirty={ this.state.isDirty || this.props.dirty }
+						isSaveBlocked={ this.state.isSaveBlocked }
+						isPublishing={ this.state.isPublishing }
+						isSaving={ this.state.isSaving }
+						onPreview={ this.onPreview }
+						onPublish={ this.onPublish }
+						onSave={ this.onSave }
+						onSaveDraft={ this.props.onSaveDraft }
+						post={ this.state.post }
+						savedPost={ this.state.savedPost }
+						site={ site }
+						user={ this.props.user }
+						userUtils={ this.props.userUtils }
+						type={ this.props.type }
+						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+					/>
 					<div className="post-editor__content">
 						<div className="editor">
 							<EditorActionBar

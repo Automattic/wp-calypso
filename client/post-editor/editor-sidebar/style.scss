@@ -1,5 +1,12 @@
 .post-editor__sidebar {
 	@extend .sidebar;
+	background: $white;
+	left: auto;
+	right: 0;
+	border-left: 1px solid darken( $sidebar-bg-color, 5% );
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-right: none;
+	top: 112px;
 
 	@include breakpoint( "<660px" ) {
 		position: relative;
