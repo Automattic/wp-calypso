@@ -139,8 +139,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
+		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
 		let emptyContent = null;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
@@ -153,7 +154,7 @@ export default connect(
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
 			emptyContent,
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			isMultisite,
 		};
 	}
 )( ConnectedSingleSiteJetpack );
