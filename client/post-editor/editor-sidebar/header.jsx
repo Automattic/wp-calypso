@@ -31,6 +31,14 @@ function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPo
 
 	return (
 		<div className={ className }>
+			{ translate( 'Document' ) }
+			<Button
+				compact borderless
+				className="editor-sidebar__close"
+				onClick={ toggleDrafts }
+				aria-label={ translate( 'Close sidebar' ) }>
+				<Gridicon icon="cross" />
+			</Button>
 			{ showDrafts && (
 				<Button
 					compact borderless

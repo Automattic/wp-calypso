@@ -47,6 +47,7 @@ import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
@@ -163,9 +164,17 @@ export const PostEditor = React.createClass( {
 		this.setState( { notice: null } );
 	},
 
+	getLayout() {
+		return this.props.setLayoutFocus( 'content' );
+	},
+
 	toggleSidebar: function() {
 		this.hideDrafts();
-		this.props.setLayoutFocus( 'content' );
+		if ( this.props.layoutFocus === 'sidebar' ) {
+			this.props.setLayoutFocus( 'content' );
+		} else {
+			this.props.setLayoutFocus( 'sidebar' );
+		}
 	},
 
 	hideDrafts() {
@@ -222,6 +231,7 @@ export const PostEditor = React.createClass( {
 						site={ site }
 						user={ this.props.user }
 						userUtils={ this.props.userUtils }
+						toggleSidebar={ this.toggleSidebar }
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 					/>
@@ -813,7 +823,8 @@ export default connect(
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
-			hasContent: editedPostHasContent( state, siteId, postId )
+			hasContent: editedPostHasContent( state, siteId, postId ),
+			layoutFocus: getCurrentLayoutFocus( state ),
 		};
 	},
 	( dispatch ) => {

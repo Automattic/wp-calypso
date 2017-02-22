@@ -2,11 +2,16 @@
 	@extend .sidebar;
 	background: $white;
 	left: auto;
-	right: 0;
+	right: -272px;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	top: 112px;
+	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+	.focus-sidebar & {
+		transform: translateX(-272px);
+	}
 
 	@include breakpoint( "<660px" ) {
 		position: relative;
@@ -24,14 +29,18 @@
 }
 
 .editor-sidebar__header {
+	background: lighten( $gray, 30% );
 	display: none;
+	font-size: 13px;
+	color: $gray-dark;
+	font-weight: 600;
 
 	@include breakpoint( ">660px" ) {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		flex-shrink: 0;
-		padding: 8px;
+		padding: 8px 16px;
 	}
 }
 
