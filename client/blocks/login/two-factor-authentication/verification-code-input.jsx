@@ -20,7 +20,6 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import {
 	loginUserWithTwoFactorVerificationCode,
-	internalRedirect,
 	clearTwoFactorVerficationCodeSubmissionError
 } from 'state/login/actions';
 import { getVerificationCodeSubmissionError } from 'state/login/selectors';
@@ -38,7 +37,7 @@ class VerificationCodeInput extends Component {
 
 	componentDidUpdate() {
 		if ( this.props.isLoginSuccessful ) {
-			this.props.internalRedirect( this.props.redirectLocation || '/' );
+			window.location.href = ( this.props.redirectLocation || '/' );
 		}
 	}
 
@@ -136,6 +135,5 @@ export default connect(
 		};
 	}, {
 		loginUserWithTwoFactorVerificationCode,
-		clearTwoFactorVerficationCodeSubmissionError,
-		internalRedirect
+		clearTwoFactorVerficationCodeSubmissionError
 	} )( localize( VerificationCodeInput ) );
