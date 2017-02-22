@@ -14,6 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
+//import { recordTracksEvent } from 'state/analytics/actions';
 
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLInput',
@@ -62,14 +63,28 @@ export default React.createClass( {
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
 	},
 
-	renderTermsOfServiceLink() {
+	onClickShareDetailsLink() {
+		this.props.recordTracksEvent( 'calypso_jpc_share_details_link_click' );
+	},
+
+	renderDisclaimerText() {
+		const shareDetailsLink = (
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ this.onClickShareDetailsLink }
+				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+				className="jetpack-connect__sso-actions-modal-link" />
+		);
+
 		return (
 			<p className="jetpack-connect__tos-link">{
 				this.translate(
-					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
+					'By connecting your site you agree to our fascinating {{tosLink}}Terms of Service{{/tosLink}} and to {{shareDetailsLink}}share details{{/shareDetailsLink}} with WordPress.com',
 					{
 						components: {
-							a: <a
+							shareDetailsLink,
+							tosLink: <a
 								className="jetpack-connect__tos-link-text"
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.props.handleOnClickTos }
@@ -105,10 +120,10 @@ export default React.createClass( {
 						: null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
-					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
 						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
+					{ this.renderDisclaimerText() }
 				</Card>
 			</div>
 		);
