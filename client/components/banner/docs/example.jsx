@@ -16,9 +16,13 @@ import Banner from 'components/banner';
 
 const BannerExample = () =>
 	<div>
-		<Banner title="Banner unrelated to any plan"/>
+		<Banner
+			disableHref
+			title="Banner unrelated to any plan"
+		/>
 		<Banner
 			description="And with a description."
+			disableHref
 			icon="star"
 			title="Banner unrelated to any plan"
 		/>
