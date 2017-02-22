@@ -33,6 +33,7 @@ const ReaderPostActions = ( props ) => {
 		className,
 		visitUrl,
 		fullPost,
+		translate,
 	} = props;
 
 	const onEditClick = () => {
@@ -46,8 +47,6 @@ const ReaderPostActions = ( props ) => {
 	}
 
 	const listClassnames = classnames( 'reader-post-actions', className );
-
-	const visitLinkUrl = visitUrl || post.URL;
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
@@ -127,4 +126,4 @@ ReaderPostActions.defaultProps = {
 	showMenuFollow: true
 };
 
-export default ReaderPostActions;
+export default localize( ReaderPostActions );
