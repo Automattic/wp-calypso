@@ -164,7 +164,10 @@ export default React.createClass( {
 	renderConflicts() {
 		const conflict = this.props.plugin.jetpack_conflict;
 		const siteSlug = this.props.selectedSite.slug;
-		if ( ! conflict || ! siteSlug ) {
+		// Only show banner if site has the business plan and hasn't installed the plugin
+		if ( ! conflict || ! siteSlug ||
+			this.props.isInstalledOnSite ||
+			! this.hasBusinessPlan() ) {
 			return null;
 		}
 
