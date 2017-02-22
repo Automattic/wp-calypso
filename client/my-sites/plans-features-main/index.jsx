@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -328,7 +328,7 @@ class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main">
 				<QueryPlans />
-				<QuerySitePlans siteId={ site.ID } />
+				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
 
 				{
