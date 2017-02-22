@@ -350,6 +350,10 @@ module.exports = function() {
 
 	sections
 		.forEach( section => {
+			if ( section.envId && section.envId.indexOf( config( 'env_id' ) ) === -1 ) {
+				return;
+			}
+
 			section.paths.forEach( path => {
 				const pathRegex = utils.pathToRegExp( path );
 
