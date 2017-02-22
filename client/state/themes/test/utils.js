@@ -261,6 +261,7 @@ describe( 'utils', () => {
 
 	describe( '#matches()', () => {
 		const DEFAULT_THEME = {
+			id: 'twentysomething',
 			name: 'Twenty Something',
 			author: 'the WordPress team',
 			screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysomething/screenshot.png',
@@ -311,17 +312,25 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return true for a matching title search', () => {
+			it( 'should return true for a falsey search', () => {
 				const isMatch = isThemeMatchingQuery( {
-					search: 'Twenty'
+					search: null
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a falsey title search', () => {
+			it( 'should return true for a matching ID search', () => {
 				const isMatch = isThemeMatchingQuery( {
-					search: null
+					search: 'twentysomething'
+				}, DEFAULT_THEME );
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return true for a matching title search', () => {
+				const isMatch = isThemeMatchingQuery( {
+					search: 'Twenty'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
