@@ -5,6 +5,7 @@ const noop = require( 'lodash/noop' ),
 	React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	i18n = require( 'i18n-calypso' );
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -325,6 +326,15 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<Card className="editor-ground-control">
+				<Button
+					borderless
+					className="editor-ground-control__back"
+					href={ '' }
+					onClick={ page.back.bind( page, this.props.allPostsUrl ) }
+					aria-label={ this.translate( 'Go back' ) }
+				>
+					<Gridicon icon="arrow-left" />
+				</Button>
 				<Site
 					site={ this.props.site }
 					indicator={ false }

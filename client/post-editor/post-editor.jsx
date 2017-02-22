@@ -234,6 +234,7 @@ export const PostEditor = React.createClass( {
 						toggleSidebar={ this.toggleSidebar }
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+						allPostsUrl={ this.getAllPostsUrl() }
 					/>
 					<div className="post-editor__content">
 						<div className="editor">

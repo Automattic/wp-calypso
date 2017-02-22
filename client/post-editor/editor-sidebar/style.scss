@@ -42,6 +42,12 @@
 		flex-shrink: 0;
 		padding: 8px 16px;
 	}
+
+	// Fix this
+	.editor-sidebar__close.button.is-compact.is-borderless,
+	.drafts-button {
+		display: none;
+	}
 }
 
 .editor-sidebar__close.button.is-compact.is-borderless {

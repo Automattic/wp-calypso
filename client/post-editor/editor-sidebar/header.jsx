@@ -34,7 +34,7 @@ function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPo
 			{ translate( 'Document' ) }
 			<Button
 				compact borderless
-				className="editor-sidebar__close"
+				className="editor-sidebar__back"
 				onClick={ toggleDrafts }
 				aria-label={ translate( 'Close sidebar' ) }>
 				<Gridicon icon="cross" />
