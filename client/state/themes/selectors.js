@@ -480,18 +480,17 @@ export function getThemeSignupUrl( state, theme ) {
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) ) {
-		if ( isWporgTheme( state, themeId ) ) {
-			return '//wordpress.org/support/theme/' + themeId;
-		}
-		return null;
-	}
-
+export function getThemeForumUrl( state, themeId ) {
 	if ( isThemePremium( state, themeId ) ) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}
-	return '//en.forums.wordpress.com/forum/themes';
+	if ( isWpcomTheme( state, themeId ) ) {
+		return '//en.forums.wordpress.com/forum/themes';
+	}
+	if ( isWporgTheme( state, themeId ) ) {
+		return '//wordpress.org/support/theme/' + themeId;
+	}
+	return null;
 }
 
 /**
