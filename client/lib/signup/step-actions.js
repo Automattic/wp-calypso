@@ -38,7 +38,7 @@ function createCart( callback, dependencies, data, reduxStore ) {
 			themeItem
 		};
 
-		SignupCart.addToCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
+		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
 	} else {
 		createSiteWithCart( callback, dependencies, data, reduxStore );
 	}
