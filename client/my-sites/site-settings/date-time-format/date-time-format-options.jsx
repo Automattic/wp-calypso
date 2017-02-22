@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { includes, startsWith } from 'lodash';
+import { capitalize, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,58 +34,48 @@ export class DateTimeFormatOptions extends Component {
 		isLoadingSettings: true,
 	};
 
-	isDefaultFormat = ( defaultFormats, format ) => ! includes( defaultFormats, format );
-
-	handleRadio = event => {
-		const { name: field, value: format } = event.currentTarget;
-		this.props.handleRadio( event );
-		if ( 'date_format' === field ) {
-			this.setState( {
-				customDateFormat: this.isDefaultFormat( defaultDateFormats, format ),
-			} );
-		} else if ( 'time_format' === field ) {
-			this.setState( {
-				customTimeFormat: this.isDefaultFormat( defaultTimeFormats, format ),
-			} );
-		}
-	}
-
-	handleInput = field => event => {
-		this.props.onChangeField( field )( event );
-		if ( 'date_format' === field ) {
-			this.setState( { customDateFormat: true } );
-		} else if ( 'time_format' === field ) {
-			this.setState( { customTimeFormat: true } );
-		}
-	}
-
-	handleCustomRadio = event => {
-		const { name: field } = event.currentTarget;
-		if ( 'date_format' === field ) {
-			this.setState( { customDateFormat: true } );
-		} else if ( 'time_format' === field ) {
-			this.setState( { customTimeFormat: true } );
-		}
-	}
-
-	componentWillReceiveProps( newProps ) {
+	componentWillReceiveProps( nextProps ) {
 		const {
 			fields: {
 				date_format: dateFormat,
 				time_format: timeFormat,
 			},
-		} = newProps;
+		} = nextProps;
 
 		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
 			return;
 		}
 
 		this.setState( {
-			customDateFormat: this.isDefaultFormat( defaultDateFormats, dateFormat ),
-			customTimeFormat: this.isDefaultFormat( defaultTimeFormats, timeFormat ),
+			customDateFormat: ! includes( defaultDateFormats, dateFormat ),
+			customTimeFormat: ! includes( defaultTimeFormats, timeFormat ),
 			isLoadingSettings: false,
 		} );
 	}
+
+	setFormat = ( name, defaultFormats ) => event => {
+		const { value: format } = event.currentTarget;
+		this.props.updateFields( { [ `${ name }_format` ]: format } );
+		this.setState( {
+			[ `custom${ capitalize( name ) }Format` ]: ! includes( defaultFormats, format ),
+		} );
+	};
+
+	setDateFormat = this.setFormat( 'date', defaultDateFormats );
+
+	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
+
+	setCustomFormat = name => event => {
+		const { value: format } = event.currentTarget;
+		this.props.updateFields( { [ `${ name }_format` ]: format } );
+		this.setState( {
+			[ `custom${ capitalize( name ) }Format` ]: true,
+		} );
+	};
+
+	setCustomDateFormat = this.setCustomFormat( 'date' );
+
+	setCustomTimeFormat = this.setCustomFormat( 'time' );
 
 	dateFormatOption() {
 		const {
@@ -114,7 +104,7 @@ export class DateTimeFormatOptions extends Component {
 							checked={ ! isCustomFormat && format === dateFormat }
 							disabled={ isRequestingSettings }
 							name="date_format"
-							onChange={ this.handleRadio }
+							onChange={ this.setDateFormat }
 							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
@@ -125,7 +115,7 @@ export class DateTimeFormatOptions extends Component {
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
 						name="date_format"
-						onChange={ this.handleCustomRadio }
+						onChange={ this.setCustomDateFormat }
 						value={ dateFormat }
 					/>
 					<span>
@@ -133,7 +123,7 @@ export class DateTimeFormatOptions extends Component {
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="date_format_custom"
-							onChange={ this.handleInput( 'date_format' ) }
+							onChange={ this.setCustomDateFormat }
 							type="text"
 							value={ dateFormat || '' }
 						/>
@@ -179,7 +169,7 @@ export class DateTimeFormatOptions extends Component {
 							checked={ ! isCustomFormat && format === timeFormat }
 							disabled={ isRequestingSettings }
 							name="time_format"
-							onChange={ this.handleRadio }
+							onChange={ this.setTimeFormat }
 							value={ format }
 						/>
 						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
@@ -190,7 +180,7 @@ export class DateTimeFormatOptions extends Component {
 						checked={ isCustomFormat }
 						disabled={ isRequestingSettings }
 						name="time_format"
-						onChange={ this.handleCustomRadio }
+						onChange={ this.setCustomTimeFormat }
 						value={ timeFormat }
 					/>
 					<span>
@@ -198,7 +188,7 @@ export class DateTimeFormatOptions extends Component {
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="time_format_custom"
-							onChange={ this.handleInput( 'time_format' ) }
+							onChange={ this.setCustomTimeFormat }
 							type="text"
 							value={ timeFormat || '' }
 						/>
