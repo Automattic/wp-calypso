@@ -30,7 +30,22 @@ import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser
+} from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
 
 /**
@@ -130,15 +145,26 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
+function isPathAllowedForDomainOnlySite( path, domainName ) {
 	const urlWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
+		domainManagementAddGoogleApps( domainName, domainName ),
+		domainManagementContactsPrivacy( domainName, domainName ),
+		domainManagementDns( domainName, domainName ),
 		domainManagementEdit( domainName ),
-		domainManagementDns( domainName ),
+		domainManagementEditContactInfo( domainName, domainName ),
+		domainManagementEmail( domainName, domainName ),
+		domainManagementEmailForwarding( domainName, domainName ),
+		domainManagementList( domainName, domainName ),
+		domainManagementNameServers( domainName, domainName ),
+		domainManagementPrivacyProtection( domainName, domainName ),
+		domainManagementRedirectSettings( domainName, domainName ),
+		domainManagementTransfer( domainName, domainName ),
+		domainManagementTransferOut( domainName, domainName ),
+		domainManagementTransferToAnotherUser( domainName, domainName ),
 		`/checkout/${ domainName }`,
 	];
 
-	return urlWhiteListForDomainOnlySite.indexOf( pathname ) > -1;
+	return urlWhiteListForDomainOnlySite.indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
