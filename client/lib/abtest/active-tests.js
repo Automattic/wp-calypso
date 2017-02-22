@@ -114,15 +114,6 @@ module.exports = {
 		allowExistingUsers: true
 	},
 
-	jetpackPlansTabs: {
-		datestamp: '20170117',
-		variations: {
-			tabs: 50,
-			noTabs: 50
-		},
-		defaultVariation: 'noTabs'
-	},
-
 	readerSearchOnFollowing: {
 		datestamp: '20170206',
 		variations: {
