@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import Card from 'components/card';
 import { getStreamUrl } from 'reader/route';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
@@ -23,33 +24,35 @@ const ReaderCombinedCard = ( { posts, site, feed, translate } ) => {
 	const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
 
 	return (
-		<div className="reader-combined-card">
+		<Card className="reader-combined-card">
 			<header className="reader-combined-card__header">
-				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ null }
-					preferGravatar={ true }
-					siteUrl={ streamUrl } />
-				<ReaderSiteStreamLink
-					className="reader-combined-card__site-link"
-					feedId={ feedId }
-					siteId={ siteId }>
-					{ siteName }
-				</ReaderSiteStreamLink>
-				<p>{ translate( '%(count)d posts', {
-						args: {
-							count: posts.length
-						}
-					} ) }
-				</p>
+				<div className="reader-combined-card__header-details">
+					<ReaderAvatar
+						siteIcon={ siteIcon }
+						feedIcon={ feedIcon }
+						author={ null }
+						preferGravatar={ true }
+						siteUrl={ streamUrl } />
+					<ReaderSiteStreamLink
+						className="reader-combined-card__site-link"
+						feedId={ feedId }
+						siteId={ siteId }>
+						{ siteName }
+					</ReaderSiteStreamLink>
+					<p>{ translate( '%(count)d posts', {
+							args: {
+								count: posts.length
+							}
+						} ) }
+					</p>
+				</div>
 			</header>
-			<ul>
+			<ul className="reader-combined-card__post-list">
 				{ posts.map( post => (
 					<ReaderCombinedCardPost key={ `post-${ post.ID }` } post={ post } streamUrl={ streamUrl } />
 				) ) }
 			</ul>
-		</div>
+		</Card>
 	);
 };
 

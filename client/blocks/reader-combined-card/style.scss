@@ -1,3 +1,7 @@
+.reader-combined-card__header {
+	font-size: 13px;
+}
+
 .reader-combined-card__post-title-link {
 	cursor: pointer;
 }
@@ -5,4 +9,23 @@
 .reader-combined-card .reader-featured-image {
 	display: block;
 	min-height: 100px;
+}
+
+.reader-combined-card__post-list {
+	margin-left: 0;
+}
+
+li.reader-combined-card__post {
+	list-style-type: none;
+}
+
+.reader-combined-card__post-author-and-time {
+	font-size: 13px;
+	color: $gray;
+}
+
+.reader-visit-link,
+.reader-combined-card__author-link,
+.reader-combined-card__timestamp-link {
+	color: $gray;
 }
