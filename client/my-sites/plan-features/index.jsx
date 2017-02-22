@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActions from './actions';
@@ -36,8 +35,6 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/plans';
 import {
@@ -459,11 +456,6 @@ export default connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const planProperties = compact(
 			map( plans, ( plan ) => {
-				if ( ! config.isEnabled( 'jetpack/personalPlan' ) &&
-					( plan === PLAN_JETPACK_PERSONAL || plan === PLAN_JETPACK_PERSONAL_MONTHLY )
-				) {
-					return;
-				}
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
