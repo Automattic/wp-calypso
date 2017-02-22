@@ -8,7 +8,7 @@ import React from 'react';
  */
 import AutoDirection from 'components/auto-direction';
 import FeaturedVideo from './featured-video';
-import FeaturedImage from './featured-image';
+import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 
 const StandardPost = ( { post, children, isDiscover } )=> {
@@ -19,7 +19,7 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 	} else if ( canonicalMedia.mediaType === 'video' ) {
 		featuredAsset = <FeaturedVideo { ...canonicalMedia } videoEmbed={ canonicalMedia } />;
 	} else {
-		featuredAsset = <FeaturedImage imageUri={ canonicalMedia.src } href={ post.URL } />;
+		featuredAsset = <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ post.URL } />;
 	}
 
 	return (
