@@ -62,18 +62,11 @@ const ThanksModal = React.createClass( {
 		};
 	},
 
-	renderWpcomInfo() {
-		const features = this.renderThemeInfo();
-		const customize = translate( '{{a}}Customize{{/a}} this design.', {
-			components: {
-				a: <a href={ this.props.customizeUrl }
-					onClick={ this.onLinkClick( 'customize' ) } />
-			}
-		} );
+	renderBody() {
 		return (
 			<ul>
 				<li>
-					{ this.props.source === 'list' ? features : customize }
+					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
 				</li>
 			<li>
 				{ this.renderSupportInfo() }
@@ -87,6 +80,15 @@ const ThanksModal = React.createClass( {
 			components: {
 				a: <a href={ this.props.detailsUrl }
 					onClick={ this.onLinkClick( 'theme info' ) } />
+			}
+		} );
+	},
+
+	renderCustomizeInfo() {
+		return translate( '{{a}}Customize{{/a}} this design.', {
+			components: {
+				a: <a href={ this.props.customizeUrl }
+					onClick={ this.onLinkClick( 'customize' ) } />
 			}
 		} );
 	},
@@ -131,7 +133,7 @@ const ThanksModal = React.createClass( {
 						}
 					} ) }
 				</h1>
-				{ this.renderWpcomInfo() }
+				{ this.renderBody() }
 			</div>
 		);
 	},
