@@ -9,13 +9,13 @@ import Gridicon from 'gridicons';
  */
 import AsyncLoad from 'components/async-load';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import EditorPostType from 'post-editor/editor-post-type';
 import EditorSticky from 'post-editor/editor-sticky';
 import EditorVisibility from 'post-editor/editor-visibility';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
+import EditorStatusLabel from 'post-editor/editor-status-label';
 
 export default React.createClass( {
 
@@ -77,7 +77,11 @@ export default React.createClass( {
 					}
 				</div>
 				<div className="editor-action-bar__cell is-center">
-					<EditorPostType />
+					<EditorStatusLabel
+						post={ this.props.savedPost }
+						advancedStatus
+						type={ this.props.type }
+					/>
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }

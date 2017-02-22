@@ -4,6 +4,11 @@
 	padding: 0;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
+	position: fixed;
+	top: 47px;
+	left: 0;
+	right: 0;
+	z-index: z-index( 'root', '.editor-ground-control' );
 
 	@include breakpoint( "<660px" ) {
 		padding-top: 0;
@@ -17,6 +22,10 @@
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+}
+
+.editor-ground-control .site .site__content {
+	padding: 12px 16px;
 }
 
 .editor-ground-control__separator {
@@ -36,7 +45,11 @@
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	padding: 8px 16px;
+	padding: 6px 12px;
+}
+
+.editor-ground-control__action-buttons .button.is-borderless {
+	padding: 3px 6px 9px;
 }
 
 .editor-ground-control__preview-button {
@@ -46,7 +59,7 @@
 }
 
 .editor-ground-control__toggle-sidebar {
-	margin: 0 16px;
+	margin: 0 16px 0 8px;
 }
 
 .editor-ground-control__publish-combo {

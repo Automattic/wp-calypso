@@ -10,11 +10,9 @@ const noop = require( 'lodash/noop' ),
  * Internal dependencies
  */
 const Card = require( 'components/card' ),
-	EditPostStatus = require( 'post-editor/edit-post-status' ),
 	Gridicon = require( 'gridicons' ),
 	Popover = require( 'components/popover' ),
 	Site = require( 'blocks/site' ),
-	StatusLabel = require( 'post-editor/editor-status-label' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
 	postActions = require( 'lib/posts/actions' ),
@@ -25,6 +23,7 @@ const Card = require( 'components/card' ),
 import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
+import EditorPostType from 'post-editor/editor-post-type';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -324,10 +323,6 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
 		return (
 			<Card className="editor-ground-control">
 				<Site
@@ -336,13 +331,8 @@ export default React.createClass( {
 					homeLink={ true }
 					externalLink={ true }
 				/>
+				<EditorPostType />
 				<div className="editor-ground-control__status">
-					<StatusLabel
-						post={ this.props.savedPost }
-						onClick={ this.toggleAdvancedStatus }
-						advancedStatus={ this.state.showAdvanceStatus }
-						type={ this.props.type }
-					/>
 					{ this.isSaveEnabled() &&
 						<button
 							className="editor-ground-control__save button is-link"
@@ -358,18 +348,6 @@ export default React.createClass( {
 						</span>
 					}
 				</div>
-				{
-					this.state.showAdvanceStatus &&
-						<EditPostStatus
-							savedPost={ this.props.savedPost }
-							postDate={ postDate }
-							type={ this.props.type }
-							onSave={ this.props.onSave }
-							onTrashingPost={ this.props.onTrashingPost }
-							onDateChange={ this.setPostDate }
-							site={ this.props.site }>
-						</EditPostStatus>
-				}
 				<div className="editor-ground-control__action-buttons">
 					<Button
 						borderless
@@ -412,8 +390,8 @@ export default React.createClass( {
 								tabIndex={ 6 }
 							>
 								{ postUtils.isFutureDated( this.props.post )
-									? <Gridicon icon="scheduled" size={ 18 } />
-									: <Gridicon icon="calendar" size={ 18 } />
+									? <Gridicon icon="scheduled" />
+									: <Gridicon icon="calendar" />
 								}
 								<span className="editor-ground-control__time-button-label">
 									{ postUtils.isFutureDated( this.props.post )

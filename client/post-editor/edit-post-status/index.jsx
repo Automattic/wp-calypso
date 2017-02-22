@@ -105,7 +105,7 @@ class EditPostStatus extends Component {
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
-			isScheduled = this.props.savedPost.status === 'future';
+			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
 
@@ -140,9 +140,6 @@ class EditPostStatus extends Component {
 					{ this.renderTZTooltop() }
 					{ this.renderPostSchedulePopover() }
 				</span>
-				<Revisions
-						revisions={ this.props.post && this.props.post.revisions }
-						adminUrl={ adminUrl } />
 				{ this.props.type === 'post' &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
@@ -182,6 +179,10 @@ class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				}
+				<Revisions
+					revisions={ this.props.post && this.props.post.revisions }
+					adminUrl={ adminUrl }
+				/>
 			</div>
 		);
 	}

@@ -16,7 +16,7 @@
 }
 
 .edit-post-status__label-text {
-	color: darken( $gray, 10% );
+	color: $gray-text;
 	font-size: 13px;
 	line-height: 1.7;
 }
@@ -33,7 +33,7 @@
 }
 
 .edit-post-status__full-date {
-	color: darken( $gray, 10% );
+	color: $gray-text;
 	font-size: 13px;
 	display: inline-block;
 	margin-bottom: 12px;
@@ -41,19 +41,10 @@
 	cursor: pointer;
 
 	.gridicon {
-		color: $gray;
+		color: $gray-text;
 		margin-left: -2px;
 		margin-right: 6px;
 		vertical-align: top;
-	}
-
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-
-		.gridicon {
-			color: $gray-dark;
-		}
 	}
 }
 

@@ -32,6 +32,7 @@ import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
+import EditPostStatus from 'post-editor/edit-post-status';
 
 /**
  * Constants
@@ -66,6 +67,7 @@ const POST_TYPE_SUPPORTS = {
 const EditorDrawer = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
+		savedPost: React.PropTypes.object,
 		post: React.PropTypes.object,
 		canJetpackUseTaxonomies: React.PropTypes.bool,
 		typeObject: React.PropTypes.object,
@@ -298,6 +300,27 @@ const EditorDrawer = React.createClass( {
 		return <EditorDrawerPageOptions />;
 	},
 
+	renderStatus() {
+		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
+		const postDate = this.props.post && this.props.post.date
+				? this.props.post.date
+				: null;
+
+		return (
+			<Accordion title={ this.translate( 'Status' ) }>
+				<EditPostStatus
+					savedPost={ this.props.savedPost }
+					postDate={ postDate }
+					type={ this.props.type }
+					onSave={ this.props.onSave }
+					onTrashingPost={ this.props.onTrashingPost }
+					onDateChange={ this.setPostDate }
+					site={ this.props.site }>
+				</EditPostStatus>
+			</Accordion>
+		);
+	},
+
 	render: function() {
 		const { site } = this.props;
 
@@ -306,6 +329,7 @@ const EditorDrawer = React.createClass( {
 				{ site && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
+				{ this.renderStatus() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }

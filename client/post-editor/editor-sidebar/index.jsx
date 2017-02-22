@@ -65,6 +65,7 @@ export default class EditorSidebar extends Component {
 				/>
 				<EditorDrawer
 					site={ this.props.site }
+					savedPost={ this.props.savedPost }
 					post={ this.props.post }
 					isNew={ this.props.isNew }
 					type={ this.props.type }
