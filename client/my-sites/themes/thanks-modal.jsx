@@ -115,15 +115,6 @@ const ThanksModal = React.createClass( {
 		return null;
 	},
 
-	renderJetpackInfo() {
-		return (
-			<ul>
-				<li>{ this.renderThemeInfo() }</li>
-				<li>{ this.renderSupportInfo() }</li>
-			</ul>
-		);
-	},
-
 	renderContent() {
 		const {
 			name: themeName,
@@ -140,9 +131,7 @@ const ThanksModal = React.createClass( {
 						}
 					} ) }
 				</h1>
-				<ul>
-					{ this.props.site.jetpack ? this.renderJetpackInfo() : this.renderWpcomInfo() }
-				</ul>
+				{ this.renderWpcomInfo() }
 			</div>
 		);
 	},
