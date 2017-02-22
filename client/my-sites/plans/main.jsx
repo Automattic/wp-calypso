@@ -9,7 +9,6 @@ import React from 'react';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getPlans } from 'state/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -17,8 +16,6 @@ import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -27,9 +24,7 @@ const Plans = React.createClass( {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		intervalType: React.PropTypes.string,
-		plans: React.PropTypes.array.isRequired,
 		selectedSite: React.PropTypes.object,
-		selectedSiteId: React.PropTypes.number,
 		displayJetpackPlans: React.PropTypes.bool
 	},
 
@@ -64,12 +59,11 @@ const Plans = React.createClass( {
 	render() {
 		const {
 			selectedSite,
-			selectedSiteId,
 			translate,
 			displayJetpackPlans
 		} = this.props;
 
-		if ( this.props.isPlaceholder ) {
+		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
@@ -86,9 +80,6 @@ const Plans = React.createClass( {
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
-
-						<QueryPlans />
-						<QuerySitePlans siteId={ selectedSiteId } />
 
 						<PlansFeaturesMain
 							site={ selectedSite }
@@ -107,16 +98,12 @@ const Plans = React.createClass( {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const isPlaceholder = ! selectedSiteId;
 
 		const jetpackSite = isJetpackSite( state, selectedSiteId );
 		const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 
 		return {
-			isPlaceholder,
-			plans: getPlans( state ),
 			selectedSite: getSelectedSite( state ),
-			selectedSiteId: selectedSiteId,
 			displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite
 		};
 	}
