@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
+import { includes, find, isEmpty, get } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import config from 'config';
@@ -55,6 +55,8 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer
 } from 'state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -264,6 +266,7 @@ class Upload extends React.Component {
 				{ ! inProgress && ! complete && this.renderDropZone() }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin siteUrl={ this.props.siteUrl } /> }
 			</Card>
 		);
 	}
@@ -353,6 +356,7 @@ const UploadWithOptions = ( props ) => {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -366,7 +370,7 @@ export default connect(
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite: site,
 			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
@@ -381,6 +385,8 @@ export default connect(
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+			siteUrl: get( site, 'URL' ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
