@@ -13,6 +13,7 @@ export default class WpadminAutoLogin extends Component {
 
 	state = {
 		timeout: null,
+		retries: 10,
 	};
 
 	static defaultProps = {
@@ -29,12 +30,6 @@ export default class WpadminAutoLogin extends Component {
 		this.state.timeout = setTimeout( this.requestLogin, this.props.delay );
 	}
 
-	componentWillUnmount() {
-		if ( this.state.timeout ) {
-			clearTimeout( this.state.timeout );
-		}
-	}
-
 	getPixelUrl( siteUrl ) {
 		const pixel = encodeURI( siteUrl + '/wp-includes/images/blank.gif' );
 		return `${ siteUrl }/wp-login.php?redirect_to=${ pixel }`;
@@ -45,7 +40,9 @@ export default class WpadminAutoLogin extends Component {
 	 * We may want to retry since just post-transfer there are certificate issues.
 	 */
 	onerror() {
-		this.state.timeout = setTimeout( this.requestLogin, this.props.delay );
+		if ( this.state.retries > 0 ) {
+			this.state.timeout = setTimeout( this.requestLogin, this.props.delay );
+		}
 	}
 
 	/**
@@ -53,6 +50,7 @@ export default class WpadminAutoLogin extends Component {
 	 * If SSO login pass-thru is enabled, you will be redirected to pixel
 	 */
 	requestLogin() {
+		this.setState( { retries: this.state.retries - 1 } );
 		const siteUrl = get( this.props.site, 'URL' );
 
 		//Site needs to be jetpack
