@@ -135,7 +135,7 @@ module.exports = {
 	},
 
 	freeToPaidUpsell: {
-		datestamp: '20170210',
+		datestamp: '20170222',
 		variations: {
 			sidebar: 50,
 			disabled: 50
