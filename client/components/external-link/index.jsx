@@ -35,7 +35,7 @@ export default React.createClass( {
 		const classes = classnames( 'external-link', this.props.className, {
 			'has-icon': !! this.props.icon,
 		} );
-		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst' ), {
+		const props = assign( {}, omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ), {
 			className: classes,
 			rel: 'external'
 		} );
