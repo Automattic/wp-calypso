@@ -13,9 +13,13 @@ import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import analytics from 'lib/analytics';
-import { isJetpackSite } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteSlug,
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
@@ -180,6 +184,15 @@ const ConnectedThemesSelection = connect(
 			sourceSiteId = ( siteId && isJetpack ) ? siteId : 'wpcom';
 		}
 
+		// Don't show wpcom themes in the 'Uploaded themes' list
+		const filterWpcomThemes = (
+			siteId &&
+			isJetpack &&
+			config.isEnabled( 'manage/themes/upload' ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
+			! isJetpackSiteMultiSite( state, siteId )
+		);
+
 		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
@@ -190,7 +203,8 @@ const ConnectedThemesSelection = connect(
 			page,
 			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
-			number
+			number,
+			filterWpcomThemes,
 		};
 
 		return {
