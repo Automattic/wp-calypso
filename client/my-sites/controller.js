@@ -113,18 +113,12 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
+	const FeatureUnavailable = require( 'components/empty-content/feature-unavailable' );
 	const { store: reduxStore } = reactContext;
 
-	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate( 'Add a site to start using this feature.' ),
-			line: i18n.translate( 'Your domain is only set up with a temporary page. Start a site now to unlock everything WordPress.com can offer.' ),
-			action: i18n.translate( 'Create Site' ),
-			actionURL: `/start/site-selected/?siteSlug=${ encodeURIComponent( selectedSite.slug ) }&siteId=${ encodeURIComponent( selectedSite.ID ) }`,
-			secondaryAction: i18n.translate( 'Manage Domain' ),
-			secondaryActionURL: domainManagementEdit( selectedSite.slug )
-		} ),
+	renderWithReduxStore( (
+			<FeatureUnavailable selectedSite={ selectedSite } />
+		),
 		document.getElementById( 'primary' ),
 		reduxStore
 	);

@@ -1,0 +1,11 @@
+// Repositions the content of the page whenever the editor is requested (this is just a hack to cope with the different
+// layout applied in the editor styles)
+.is-group-editor .layout__content .feature-unavailable {
+	@media ( min-width: 661px ) {
+		padding: 9px 24px 24px 252px;
+	}
+
+	@media ( min-width: 961px ) {
+		padding: 17px 32px 32px 296px;
+	}
+}
