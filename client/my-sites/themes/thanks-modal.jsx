@@ -94,8 +94,16 @@ const ThanksModal = React.createClass( {
 	renderSupportInfo() {
 		const { author_uri: authorUri } = this.props.currentTheme;
 
-		// For WP.com theme, authorUri is wp.com/themes or automattic.com, which isn't too helpful
-		if ( authorUri && ! this.props.isThemeWpcom ) {
+		if ( this.props.forumUrl ) {
+			return translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
+				components: {
+					a: <a href={ this.props.forumUrl }
+						onClick={ this.onLinkClick( 'support' ) } />
+				}
+			} );
+		}
+
+		if ( authorUri ) {
 			return translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 				components: {
 					a: <a href={ authorUri }
@@ -104,12 +112,7 @@ const ThanksModal = React.createClass( {
 			} );
 		}
 
-		return translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
-			components: {
-				a: <a href={ this.props.forumUrl }
-					onClick={ this.onLinkClick( 'support' ) } />
-			}
-		} );
+		return null;
 	},
 
 	renderJetpackInfo() {
