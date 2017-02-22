@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import wrapWithClickOutside from 'react-click-outside';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -157,7 +156,7 @@ class PluginAutomatedTransfer extends Component {
 						</NoticeAction>
 					}
 				</Notice>
-				{ this.state.transferComplete && <WpAdminAutoLogin siteUrl={ this.props.siteUrl } /> }
+				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
 			</div>
 		);
 	}
@@ -166,11 +165,10 @@ class PluginAutomatedTransfer extends Component {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const site = getSite( state, siteId );
 	return {
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
-		siteUrl: get( site, 'URL' ),
+		site: getSite( state, siteId ),
 	};
 };
 
