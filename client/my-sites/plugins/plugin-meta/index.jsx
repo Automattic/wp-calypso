@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
 import Count from 'components/count';
@@ -158,6 +159,75 @@ export default React.createClass( {
 				linkToAuthor
 			}
 		} );
+	},
+
+	renderConflicts() {
+		const conflict = this.props.plugin.jetpack_conflict;
+		const siteSlug = this.props.selectedSite.slug;
+		if ( ! conflict || ! siteSlug ) {
+			return null;
+		}
+
+		let message = '';
+		switch ( conflict ) {
+			case 'analytics':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}Google Analytics{{/a}}.',
+					{ components: { a: <a href={ `/settings/analytics/${ siteSlug }` } /> } }
+				);
+				break;
+			case 'backup':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}VaultPress{{/a}}.',
+					{ components: { a: <a href="https://vaultpress.com" /> } }
+				);
+				break;
+			case 'cache':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}WordPress.com Cache{{/a}}.',
+					{ components: { a: <a href="/settings/analytics/" /> } }
+				);
+				break;
+			case 'contact':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}Contact Form{{/a}}.',
+					{ components: { a: <a href="https://en.support.wordpress.com/forms/contact-form/" /> } }
+				);
+				break;
+			case 'duplicate':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}Copy Post{{/a}}.',
+					{ components: { a: <a href="https://en.support.wordpress.com/posts/copy-a-post/" /> } }
+				);
+				break;
+			case 'seo':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}SEO Tools{{/a}}.',
+					{ components: { a: <a href={ `/settings/seo/${ siteSlug }` } /> } }
+				);
+				break;
+			case 'security':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}Jetpack Security{{/a}}.',
+					{ components: { a: <a href="https://jetpack.com/support/security-features/" /> } }
+				);
+				break;
+			case 'sitemap':
+				message = this.translate(
+					'Installing this plugin may conflict with {{a}}SEO Sitemap{{/a}}.',
+					{ components: { a: <a href={ `/settings/seo/${ siteSlug }` } /> } }
+				);
+				break;
+			default:
+				return null;
+		}
+
+		return (
+			<div className="plugin-meta__conflict">
+				<Banner title={ message } disableHref={ true } dismissTemporary
+					dismissPreferenceName="plugin-meta-conflict" />
+			</div>
+		);
 	},
 
 	getInstallButton() {
@@ -345,6 +415,7 @@ export default React.createClass( {
 						</div>
 						{ this.renderActions() }
 					</div>
+					{ this.renderConflicts() }
 					{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) &&
 						<PluginInformation
 							plugin={ this.props.plugin }
