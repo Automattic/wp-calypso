@@ -8,7 +8,8 @@ function getSectionsModule( sections ) {
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		dependencies = [
-			"var page = require( 'page' ),",
+			"var config = require( 'config' ),",
+			"\tpage = require( 'page' ),",
 			"\tReact = require( 'react' ),",
 			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
 			"\tLoadingError = require( 'layout/error' ),",
@@ -47,7 +48,8 @@ function getSectionsModule( sections ) {
 	}
 
 	dependencies = [
-		"var page = require( 'page' ),",
+		"var config = require( 'config' ),",
+		"\tpage = require( 'page' ),",
 		"\tcontroller = require( 'controller' );\n"
 	].join( '\n' );
 
@@ -82,6 +84,10 @@ function splitTemplate( path, section ) {
 
 	result = [
 		'page( ' + pathRegex + ', function( context, next ) {',
+		'	var envId = ' + JSON.stringify( section.envId ) + ';',
+		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
+		'		return next();',
+		'	}',
 		'	if ( _loadedSections[ ' + JSON.stringify( section.module ) + ' ] ) {',
 		'		controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
@@ -134,6 +140,10 @@ function requireTemplate( section ) {
 
 		return acc.concat( [
 			'page( ' + pathRegex + ', function( context, next ) {',
+			'	var envId = ' + JSON.stringify( section.envId ) + ';',
+			'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
+			'		return next();',
+			'	}',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
