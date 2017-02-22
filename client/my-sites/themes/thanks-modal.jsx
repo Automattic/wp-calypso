@@ -97,7 +97,7 @@ const ThanksModal = React.createClass( {
 		const { author_uri: authorUri } = this.props.currentTheme;
 
 		if ( this.props.forumUrl ) {
-			return translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
+			return translate( 'Have questions? Stop by our {{a}}support forums{{/a}}.', {
 				components: {
 					a: <a href={ this.props.forumUrl }
 						onClick={ this.onLinkClick( 'support' ) } />
