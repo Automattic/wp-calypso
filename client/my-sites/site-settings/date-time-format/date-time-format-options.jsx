@@ -77,21 +77,38 @@ export class DateTimeFormatOptions extends Component {
 
 	setCustomTimeFormat = this.setCustomFormat( 'time' );
 
+	/**
+	 * Adjust the current date and time to the site settings timezone.
+	 * The timezone can be formatted either as an UTC offset ("UTC+0"),
+	 * or as a timezone identifier ("Europe/London").
+	 * In the first case, the date-time must be adjusted by the UTC offset converted in minutes;
+	 * in the latter, it's enough to use the tz() method provided by Moment.js.
+	 *
+	 * @see http://momentjs.com/docs/#/manipulating/utc-offset/
+	 * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
+	 *
+	 * @return {Object} The timezone-adjusted Moment.js object of the current date and time.
+	 */
+	getNow = () => {
+		const {
+			fields: { timezone_string: timezoneString },
+			moment,
+		} = this.props;
+
+		return startsWith( timezoneString, 'UTC' )
+			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
+			: moment.tz( timezoneString );
+	}
+
 	dateFormatOption() {
 		const {
-			fields: {
-				date_format: dateFormat,
-				timezone_string: timezoneString,
-			},
+			fields: { date_format: dateFormat },
 			isRequestingSettings,
-			moment,
 			translate,
 		} = this.props;
 		const { customDateFormat: isCustomFormat } = this.state;
 
-		const today = startsWith( timezoneString, 'UTC' )
-			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
-			: moment.tz( timezoneString );
+		const now = this.getNow();
 
 		return (
 			<FormFieldset>
@@ -107,7 +124,7 @@ export class DateTimeFormatOptions extends Component {
 							onChange={ this.setDateFormat }
 							value={ format }
 						/>
-						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
+						<span>{ now.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
 				<FormLabel className="date-time-format__custom-field">
@@ -130,7 +147,7 @@ export class DateTimeFormatOptions extends Component {
 						<FormSettingExplanation>
 							{ isCustomFormat && dateFormat
 								? translate( 'Preview: %s', {
-									args: today.format( phpToMomentDatetimeFormat( dateFormat ) ),
+									args: now.format( phpToMomentDatetimeFormat( dateFormat ) ),
 									comment: 'Date/time format preview'
 								} )
 								: ''
@@ -144,19 +161,13 @@ export class DateTimeFormatOptions extends Component {
 
 	timeFormatOption() {
 		const {
-			fields: {
-				time_format: timeFormat,
-				timezone_string: timezoneString,
-			},
+			fields: { time_format: timeFormat },
 			isRequestingSettings,
-			moment,
 			translate,
 		} = this.props;
 		const { customTimeFormat: isCustomFormat } = this.state;
 
-		const today = startsWith( timezoneString, 'UTC' )
-			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
-			: moment.tz( timezoneString );
+		const now = this.getNow();
 
 		return (
 			<FormFieldset>
@@ -172,7 +183,7 @@ export class DateTimeFormatOptions extends Component {
 							onChange={ this.setTimeFormat }
 							value={ format }
 						/>
-						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
+						<span>{ now.format( phpToMomentDatetimeFormat( format ) ) }</span>
 					</FormLabel>
 				) }
 				<FormLabel className="date-time-format__custom-field">
@@ -195,7 +206,7 @@ export class DateTimeFormatOptions extends Component {
 						<FormSettingExplanation>
 							{ isCustomFormat && timeFormat
 								? translate( 'Preview: %s', {
-									args: today.format( phpToMomentDatetimeFormat( timeFormat ) ),
+									args: now.format( phpToMomentDatetimeFormat( timeFormat ) ),
 									comment: 'Date/time format preview'
 								} )
 								: ''
@@ -218,9 +229,7 @@ export class DateTimeFormatOptions extends Component {
 
 	startOfWeekOption() {
 		const {
-			fields: {
-				start_of_week: startOfWeek,
-			},
+			fields: { start_of_week: startOfWeek },
 			handleSelect,
 			isRequestingSettings,
 			translate,
