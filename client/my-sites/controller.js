@@ -123,7 +123,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 			action: i18n.translate( 'Create Site' ),
 			actionURL: `/start/site-selected/?siteSlug=${ encodeURIComponent( selectedSite.slug ) }&siteId=${ encodeURIComponent( selectedSite.ID ) }`,
 			secondaryAction: i18n.translate( 'Manage Domain' ),
-			secondaryActionURL: domainManagementList( selectedSite.slug )
+			secondaryActionURL: domainManagementEdit( selectedSite.slug )
 		} ),
 		document.getElementById( 'primary' ),
 		reduxStore
