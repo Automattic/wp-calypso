@@ -10,6 +10,17 @@ export function isVideoEditorVideoLoaded( state ) {
 }
 
 /**
+ * Returns true if the poster is updating.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean} true if the poster is updating.
+ *
+ */
+export function isVideoEditorPosterUpdating( state ) {
+	return state.ui.editor.videoEditor.posterIsUpdating;
+}
+
+/**
  * Returns true if the poster has been updated.
  *
  * @param  {Object}  state Global state tree

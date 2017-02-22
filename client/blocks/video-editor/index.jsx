@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import Spinner from 'components/spinner';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
@@ -20,6 +21,7 @@ import {
 } from 'state/ui/editor/video-editor/actions';
 import {
 	isVideoEditorPosterUpdated,
+	isVideoEditorPosterUpdating,
 	isVideoEditorVideoLoaded,
 	videoEditorHasPosterUpdateError,
 	videoEditorHasScriptLoadError,
@@ -41,6 +43,7 @@ class VideoEditor extends Component {
 		hasPosterUpdateError: PropTypes.bool,
 		hasScriptLoadError: PropTypes.bool,
 		isPosterUpdated: PropTypes.bool,
+		isPosterUpdating: PropTypes.bool,
 		isVideoLoaded: PropTypes.bool,
 	};
 
@@ -139,6 +142,7 @@ class VideoEditor extends Component {
 			className,
 			hasPosterUpdateError,
 			hasScriptLoadError,
+			isPosterUpdating,
 			isVideoLoaded,
 			media,
 			onCancel,
@@ -167,6 +171,7 @@ class VideoEditor extends Component {
 								item={ media }
 								onPause={ this.handlePause }
 							/>
+							{ isPosterUpdating && <Spinner /> }
 						</div>
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
@@ -191,6 +196,7 @@ export default connect(
 			hasPosterUpdateError: videoEditorHasPosterUpdateError( state ),
 			hasScriptLoadError: videoEditorHasScriptLoadError( state ),
 			isPosterUpdated: isVideoEditorPosterUpdated( state ),
+			isPosterUpdating: isVideoEditorPosterUpdating( state ),
 			isVideoLoaded: isVideoEditorVideoLoaded( state ),
 		};
 	},
