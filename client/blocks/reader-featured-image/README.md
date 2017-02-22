@@ -4,7 +4,11 @@ Displays a featured image for a Reader post card.
 
 ## Example
 
-The `ReaderFeaturedImage` component can be used in much the same way that you would use an `<ExternalLink>` component. The link wraps whatever is placed between the ReaderFeaturedImage elements.
+The component outputs an `<a>` element with imageUrl as a background image. It wraps whatever is placed between the ReaderFeaturedImage elements (we use this to add a play button to video thumbnails, for example).
+
+```html
+<ReaderFeaturedImage imageUrl={ imageUrl } href={ href } />
+```
 
 ```html
 <ReaderFeaturedImage imageUrl={ imageUrl } href={ href }>[button]</ReaderFeaturedImage>
