@@ -116,8 +116,6 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	const EmptyContentComponent = require( 'components/empty-content' );
 	const { store: reduxStore } = reactContext;
 
-	removeSidebar( reactContext );
-
 	renderWithReduxStore(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'Add a site to start using this feature.' ),
@@ -128,6 +126,12 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 			secondaryActionURL: domainManagementList( selectedSite.slug )
 		} ),
 		document.getElementById( 'primary' ),
+		reduxStore
+	);
+
+	renderWithReduxStore(
+		createNavigation( reactContext ),
+		document.getElementById( 'secondary' ),
 		reduxStore
 	);
 }
