@@ -14,7 +14,8 @@ const extensions = require( 'extensions' );
 const extensionSections = extensions.map( extension => {
 	try {
 		const pkg = JSON.parse( fs.readFileSync( path.join( __dirname, 'extensions', extension, 'package.json' ) ) );
-		return pkg.section;
+
+		return Object.assign( {}, pkg.section, { envId: pkg.env_id } );
 	} catch ( e ) {
 		return null;
 	}
