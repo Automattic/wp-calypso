@@ -11,7 +11,14 @@
 		text-align: center;
 		cursor: pointer;
 		user-select: none;
-		font-size: 14px;
+		font-size: 12px;
+	}
+
+	th {
+		font-size: 11px;
+		color: darken( $gray,10 );
+		text-transform: uppercase;
+		letter-spacing: .1em;
 	}
 }
 

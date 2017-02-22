@@ -22,6 +22,7 @@ class StatsViews extends Component {
 		query: PropTypes.object,
 		siteId: PropTypes.number,
 		statType: PropTypes.string,
+		translate: PropTypes.func,
 		viewData: PropTypes.object,
 	};
 

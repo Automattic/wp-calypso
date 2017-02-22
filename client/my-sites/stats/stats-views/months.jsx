@@ -20,6 +20,7 @@ class Month extends PureComponent {
 			PropTypes.number
 		] ),
 		position: PropTypes.string,
+		translate: PropTypes.func,
 	}
 
 	state = {
@@ -140,7 +141,7 @@ const StatsViewsMonths = ( props ) => {
 				</Month>;
 		} );
 		const yearTotal = isAverageChart ? Math.round( totals.years[ year ] / totals.yearsCount[ year ] ) : totals.years[ year ];
-		cells.splice( 0, 0,
+		cells.unshift(
 			<Month
 				className="stats-views__month is-year"
 				position="left"
