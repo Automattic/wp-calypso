@@ -180,7 +180,7 @@ export default connect(
 			currentTheme,
 			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
 			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
-			forumUrl: getThemeForumUrl( state, currentThemeId ),
+			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
 			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId )
