@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { Component, PropTypes } from 'react';
-import { get, isArray } from 'lodash';
+import { get } from 'lodash';
 
 export default class WpadminAutoLogin extends Component {
 
@@ -52,17 +52,6 @@ export default class WpadminAutoLogin extends Component {
 	requestLogin() {
 		this.setState( { retries: this.state.retries - 1 } );
 		const siteUrl = get( this.props.site, 'URL' );
-
-		//Site needs to be jetpack
-		if ( ! siteUrl || ! this.props.site.jetpack ) {
-			return null;
-		}
-
-		//If SSO module is not enabled it makes 0 sense
-		if ( ! isArray( this.props.site.jetpack_modules ) || this.props.site.jetpack_modules.indexOf( 'sso' ) !== -1 ) {
-			return null;
-		}
-
 		const requestUrl = this.getPixelUrl( siteUrl );
 
 		this.image = new Image();
