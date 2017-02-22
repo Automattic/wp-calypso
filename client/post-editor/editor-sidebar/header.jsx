@@ -19,6 +19,7 @@ import { getEditorPostId, isEditorDraftsVisible } from 'state/ui/editor/selector
 import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
 import Button from 'components/button';
 import AsyncLoad from 'components/async-load';
+import EditorPostType from 'post-editor/editor-post-type';
 
 function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPostsUrl } ) {
 	const className = classnames( 'editor-sidebar__header', {
@@ -31,7 +32,7 @@ function EditorSidebarHeader( { translate, type, showDrafts, toggleDrafts, allPo
 
 	return (
 		<div className={ className }>
-			{ translate( 'Document' ) }
+			<EditorPostType />
 			<Button
 				compact borderless
 				className="editor-sidebar__back"

@@ -341,7 +341,6 @@ export default React.createClass( {
 					homeLink={ true }
 					externalLink={ true }
 				/>
-				<EditorPostType />
 				<div className="editor-ground-control__status">
 					{ this.isSaveEnabled() &&
 						<button
@@ -373,7 +372,7 @@ export default React.createClass( {
 						className="editor-ground-control__toggle-sidebar"
 						onClick={ this.props.toggleSidebar }
 					>
-						<Gridicon icon="cog" /> { this.translate( 'Document' ) }
+						<Gridicon icon="cog" /> <EditorPostType />
 					</Button>
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton

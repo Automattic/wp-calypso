@@ -11,33 +11,20 @@ import { localize } from 'i18n-calypso';
  */
 import { getEditedPost } from 'state/posts/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';
 import PostStatus from 'blocks/post-status';
 
-function EditorPostType( { translate, siteId, isNew, typeSlug, type, globalId } ) {
+function EditorPostType( { translate, siteId, typeSlug, type, globalId } ) {
 	let label;
 	if ( 'page' === typeSlug ) {
-		if ( isNew ) {
-			label = translate( 'New Page' );
-		} else {
-			label = translate( 'Page', { context: 'noun' } );
-		}
+		label = translate( 'Page', { context: 'noun' } );
 	} else if ( 'post' === typeSlug ) {
-		if ( isNew ) {
-			label = translate( 'New Post' );
-		} else {
-			label = translate( 'Post', { context: 'noun' } );
-		}
+		label = translate( 'Post', { context: 'noun' } );
 	} else if ( type ) {
-		if ( isNew ) {
-			label = type.labels.new_item;
-		} else {
-			label = type.labels.singular_name;
-		}
-
+		label = type.labels.singular_name;
 		label = decodeEntities( label );
 	} else {
 		label = translate( 'Loading…' );
@@ -60,14 +47,13 @@ function EditorPostType( { translate, siteId, isNew, typeSlug, type, globalId } 
 EditorPostType.propTypes = {
 	translate: PropTypes.func,
 	siteId: PropTypes.number,
-	isNew: PropTypes.bool,
 	typeSlug: PropTypes.string,
 	type: PropTypes.object,
 	globalId: PropTypes.string
 };
 
 export default connect( ( state ) => {
-	const props = { isNew: isEditorNewPost( state ) };
+	const props = {};
 	const site = getSelectedSite( state );
 	if ( ! site ) {
 		return props;

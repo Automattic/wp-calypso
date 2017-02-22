@@ -68,6 +68,13 @@ export default React.createClass( {
 		return (
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__cell is-left">
+					<EditorStatusLabel
+						post={ this.props.savedPost }
+						advancedStatus
+						type={ this.props.type }
+					/>
+				</div>
+				<div className="editor-action-bar__cell is-center">
 					{ multiUserSite &&
 						<AsyncLoad
 							require="post-editor/editor-author"
@@ -75,13 +82,6 @@ export default React.createClass( {
 							isNew={ this.props.isNew }
 						/>
 					}
-				</div>
-				<div className="editor-action-bar__cell is-center">
-					<EditorStatusLabel
-						post={ this.props.savedPost }
-						advancedStatus
-						type={ this.props.type }
-					/>
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }

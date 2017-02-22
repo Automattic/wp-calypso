@@ -230,7 +230,7 @@ class EditPostStatus extends Component {
 			<Tooltip
 				context={ this.refs && this.refs.postStatusTooltip }
 				isVisible={ this.state.showTZTooltip }
-				position="right"
+				position="left"
 				onClose={ noop }
 			>
 				<div className="edit-post-status__full-date__tooltip">
