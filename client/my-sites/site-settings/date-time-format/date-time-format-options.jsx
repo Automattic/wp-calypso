@@ -136,7 +136,7 @@ export class DateTimeFormatOptions extends Component {
 						value={ dateFormat }
 					/>
 					<span>
-						{ translate( 'Custom' ) }
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="date_format_custom"
@@ -148,7 +148,7 @@ export class DateTimeFormatOptions extends Component {
 							{ isCustomFormat && dateFormat
 								? translate( 'Preview: %s', {
 									args: now.format( phpToMomentDatetimeFormat( dateFormat ) ),
-									comment: 'Date/time format preview'
+									comment: 'Date/time format preview',
 								} )
 								: ''
 							}
@@ -195,7 +195,7 @@ export class DateTimeFormatOptions extends Component {
 						value={ timeFormat }
 					/>
 					<span>
-						{ translate( 'Custom' ) }
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
 						<FormInput
 							disabled={ isRequestingSettings }
 							name="time_format_custom"
