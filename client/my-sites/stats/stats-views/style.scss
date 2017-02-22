@@ -11,14 +11,15 @@
 		text-align: center;
 		cursor: pointer;
 		user-select: none;
+		font-weight: normal;
 		font-size: 12px;
+		text-transform: uppercase;
+		letter-spacing: .1em;
 	}
 
 	th {
 		font-size: 11px;
 		color: darken( $gray,10 );
-		text-transform: uppercase;
-		letter-spacing: .1em;
 	}
 }
 
@@ -29,6 +30,8 @@
 	&.is-year {
 		background: none;
 		text-align: left;
+		font-size: 11px;
+		color: darken( $gray,10 );
 	}
 
 	&.level-0 {

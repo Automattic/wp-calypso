@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteStatsViewSummary } from 'state/selectors';
 import Card from 'components/card';
 import Months from './months';
@@ -21,6 +21,7 @@ class StatsViews extends Component {
 	static propTypes = {
 		query: PropTypes.object,
 		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		statType: PropTypes.string,
 		translate: PropTypes.func,
 		viewData: PropTypes.object,
@@ -37,7 +38,7 @@ class StatsViews extends Component {
 	}
 
 	render() {
-		const { query, siteId, statType, viewData, translate } = this.props;
+		const { query, siteId, statType, viewData, translate, siteSlug } = this.props;
 		const monthViewOptions = [
 			{ value: 'total', label: translate( 'Months and Years' ) },
 			{ value: 'average', label: translate( 'Average per Day' ) }
@@ -56,7 +57,7 @@ class StatsViews extends Component {
 							compact
 						/>
 					}
-					<Months dataKey={ this.state.chartOption } data={ viewData } />
+					<Months dataKey={ this.state.chartOption } data={ viewData } siteSlug={ siteSlug } />
 					<div className="stats-views__key-container">
 						<span className="stats-views__key-label">
 							{
@@ -93,6 +94,7 @@ export default connect( ( state ) => {
 
 	return {
 		viewData: getSiteStatsViewSummary( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 		query,
 		statType,
 		siteId,

@@ -5,6 +5,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import numeral from 'numeral';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ class Month extends PureComponent {
 		] ),
 		position: PropTypes.string,
 		translate: PropTypes.func,
+		href: PropTypes.string,
 	}
 
 	state = {
@@ -36,6 +38,12 @@ class Month extends PureComponent {
 	}
 
 	openPopover = () => {
+		const { isHeader, href } = this.props;
+
+		if ( ! isHeader && href ) {
+			page( href );
+			return;
+		}
 		this.setState( { showPopover: ! this.state.showPopover } );
 	}
 
@@ -66,7 +74,7 @@ class Month extends PureComponent {
 }
 
 const StatsViewsMonths = ( props ) => {
-	const { translate, dataKey, data, numberFormat, moment } = props;
+	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
 	const today = moment();
@@ -136,9 +144,12 @@ const StatsViewsMonths = ( props ) => {
 				totals.monthsCount[ month ] += 1;
 				displayValue = value >= 1000 ? numeral( value ).format( '0.0a' ) : value;
 			}
-			return <Month className={ className } key={ `month-${ month }` } value={ numberFormat( value ) }>
-					{ displayValue }
-				</Month>;
+			return <Month
+					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
+					className={ className }
+					key={ `month-${ month }` }
+					value={ numberFormat( value ) }>
+					{ displayValue }</Month>;
 		} );
 		const yearTotal = isAverageChart ? Math.round( totals.years[ year ] / totals.yearsCount[ year ] ) : totals.years[ year ];
 		cells.unshift(
