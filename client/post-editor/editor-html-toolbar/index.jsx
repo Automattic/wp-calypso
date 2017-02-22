@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
+	every,
 	get,
 	map,
 	reduce,
@@ -74,6 +75,13 @@ export class EditorHtmlToolbar extends Component {
 		document.addEventListener( 'click', this.clickOutsideInsertContentMenu );
 
 		this.toggleToolbarScrollableOnResize();
+
+		this.isIE11Detected = every( [
+			window,
+			document,
+			window.MSInputMethodContext,
+			document.documentMode,
+		] );
 	}
 
 	componentWillUnmount() {
@@ -161,15 +169,11 @@ export class EditorHtmlToolbar extends Component {
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	updateEditorContent( before, newContent, after ) {
-		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
-		// Using the previous version of replacing the entire content value instead.
-		if ( !! window.MSInputMethodContext && !! document.documentMode ) {
-			this.updateEditorContentIE11( before + newContent + after );
-		} else {
-			this.insertEditorContent( before, newContent, after );
-		}
-	}
+	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
+	// Using the previous version of replacing the entire content value instead.
+	updateEditorContent = this.isIE11Detected
+		? this.updateEditorContentIE11
+		: this.insertEditorContent;
 
 	insertEditorContent( before, newContent, after ) {
 		const { content, onToolbarChangeContent } = this.props;
@@ -178,11 +182,12 @@ export class EditorHtmlToolbar extends Component {
 		onToolbarChangeContent( before + newContent + after );
 	}
 
-	updateEditorContentIE11( newContent ) {
+	updateEditorContentIE11( before, newContent, after ) {
+		const fullContent = before + newContent + after;
 		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
-		this.props.content.value = newContent;
-		onToolbarChangeContent( newContent );
-		this.setCursorPosition( selectionEnd, newContent.length - value.length );
+		this.props.content.value = fullContent;
+		onToolbarChangeContent( fullContent );
+		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
 		this.props.content.focus();
 	}
 
@@ -244,7 +249,8 @@ export class EditorHtmlToolbar extends Component {
 		this.updateEditorContent(
 			before,
 			inner + ( options.paragraph ? '\n' : '' ) + content + ( options.paragraph ? '\n\n' : '' ),
-			after );
+			after
+		);
 	}
 
 	insertHtmlTag( tag ) {
