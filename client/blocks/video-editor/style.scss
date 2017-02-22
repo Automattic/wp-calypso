@@ -62,6 +62,10 @@
 .video-editor__upload-button {
 	position: relative;
 	display: inline-block;
+
+	&.is-disabled span {
+		color: lighten( $gray, 30% );
+	}
 }
 
 .video-editor__upload-button-input {
@@ -72,6 +76,10 @@
 		left: 0;
 	opacity: 0;
 	cursor: pointer;
+
+	&:disabled {
+		cursor: default;
+	}
 }
 
 .video-editor__buttons-button.button {

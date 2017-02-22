@@ -9,11 +9,13 @@ import classNames from 'classnames';
 class VideoEditorUploadButton extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		isPosterUpdating: PropTypes.bool,
 		onClick: PropTypes.func,
 		onUploadImage: PropTypes.func,
 	};
 
 	static defaultProps = {
+		isPosterUpdating: false,
 		onClick: noop,
 		onUploadImage: noop,
 	};
@@ -35,19 +37,25 @@ class VideoEditorUploadButton extends Component {
 		const {
 			children,
 			className,
+			isPosterUpdating,
 			onClick,
 		} = this.props;
-		const classes = classNames( 'video-editor__upload-button', className );
+		const classes = classNames(
+			className,
+			'video-editor__upload-button',
+			{ 'is-disabled': isPosterUpdating }
+		);
 
 		return (
 			<form ref={ this.setFormInstance } className={ classes }>
 				<span>{ children }</span>
 				<input
-					type="file"
 					accept="image/*"
+					className="video-editor__upload-button-input"
+					disabled={ isPosterUpdating }
 					onChange={ this.handleChange }
 					onClick={ onClick }
-					className="video-editor__upload-button-input" />
+					type="file" />
 			</form>
 		);
 	}
