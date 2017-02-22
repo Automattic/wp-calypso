@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { initial, flatMap, sampleSize } from 'lodash';
+import { initial, flatMap, sampleSize, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,10 @@ function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
 		query
 	} );
-	page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
+
+	if ( trim( query ) !== '' ) {
+		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
+	}
 }
 
 const shouldShowSearchOnFollowing = abtest( 'readerSearchOnFollowing' ) === 'show';
