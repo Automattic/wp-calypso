@@ -61,7 +61,7 @@ export default class WpadminAutoLogin extends Component {
 		}
 
 		//If SSO module is not enabled it makes 0 sense
-		if ( ! isArray( this.props.site.jetpack_modules ) || ! this.props.site.jetpack_modules.indexOf( 'sso' ) ) {
+		if ( ! isArray( this.props.site.jetpack_modules ) || this.props.site.jetpack_modules.indexOf( 'sso' ) !== -1 ) {
 			return null;
 		}
 
