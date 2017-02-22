@@ -9,7 +9,6 @@ import classNames from 'classnames';
  */
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
-import config from 'config';
 
 export default React.createClass( {
 	displayName: 'StepWrapper',
@@ -84,9 +83,7 @@ export default React.createClass( {
 				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
-					{ config.isEnabled( 'jetpack/connect' )
-						? headerButton
-						: null }
+					{ ( headerButton ) }
 				</StepHeader>
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
