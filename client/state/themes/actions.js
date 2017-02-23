@@ -452,11 +452,8 @@ export function installTheme( themeId, siteId ) {
 		}
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
-			.then( () => {
-				// We do not `dispatch( receiveTheme( theme, siteId ) )` here because
-				// in our UI, themes from WP.com (and WP.org) are already present in
-				// a separate list, and we do not want to duplicate them.
-
+			.then( ( theme ) => {
+				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
