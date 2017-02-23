@@ -30,6 +30,7 @@ describe( 'reducer', () => {
 			'byContinents',
 			'labels',
 			'rawOffsets',
+			'requesting'
 		] );
 	} );
 

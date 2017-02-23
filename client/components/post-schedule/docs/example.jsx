@@ -9,7 +9,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import PostSchedule from 'components/post-schedule';
-import Timezone from 'components/timezone';
+import Timezone from 'blocks/timezone';
 import Card from 'components/card';
 
 /**
