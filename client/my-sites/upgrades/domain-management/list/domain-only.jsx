@@ -16,7 +16,7 @@ const DomainOnly = ( { domainName, siteId, translate } ) => (
 		action={ translate( 'Create Site' ) }
 		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
 		secondaryAction={ translate( 'Manage Domain' ) }
-		secondaryActionURL={ domainManagementEdit( domainName ) }
+		secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
 		illustration={ '/calypso/images/drake/drake-browser.svg' } />
 );
 

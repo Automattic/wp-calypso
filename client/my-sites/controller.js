@@ -132,7 +132,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (
-			<FeatureUnavailable selectedSite={ selectedSite } />
+			<FeatureUnavailable domainName={ selectedSite.slug } siteId={ selectedSite.ID } />
 		),
 		document.getElementById( 'primary' ),
 		reduxStore
@@ -146,25 +146,28 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 }
 
 function isPathAllowedForDomainOnlySite( path, domainName ) {
-	const urlWhiteListForDomainOnlySite = [
-		domainManagementAddGoogleApps( domainName, domainName ),
-		domainManagementContactsPrivacy( domainName, domainName ),
-		domainManagementDns( domainName, domainName ),
-		domainManagementEdit( domainName ),
-		domainManagementEditContactInfo( domainName, domainName ),
-		domainManagementEmail( domainName, domainName ),
-		domainManagementEmailForwarding( domainName, domainName ),
-		domainManagementList( domainName, domainName ),
-		domainManagementNameServers( domainName, domainName ),
-		domainManagementPrivacyProtection( domainName, domainName ),
-		domainManagementRedirectSettings( domainName, domainName ),
-		domainManagementTransfer( domainName, domainName ),
-		domainManagementTransferOut( domainName, domainName ),
-		domainManagementTransferToAnotherUser( domainName, domainName ),
-		`/checkout/${ domainName }`,
+	const domainManagementPaths = [
+		domainManagementAddGoogleApps,
+		domainManagementContactsPrivacy,
+		domainManagementDns,
+		domainManagementEdit,
+		domainManagementEditContactInfo,
+		domainManagementEmail,
+		domainManagementEmailForwarding,
+		domainManagementList,
+		domainManagementNameServers,
+		domainManagementPrivacyProtection,
+		domainManagementRedirectSettings,
+		domainManagementTransfer,
+		domainManagementTransferOut,
+		domainManagementTransferToAnotherUser
+	].map( pathFactory => pathFactory( domainName, domainName ) );
+
+	const otherPaths = [
+		`/checkout/${ domainName }`
 	];
 
-	return urlWhiteListForDomainOnlySite.indexOf( path ) > -1;
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
