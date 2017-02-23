@@ -1,76 +1,88 @@
 .eligibility-warnings {
-    margin-top: 32px;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.5;
+	margin-top: 32px;
+	font-size: 14px;
 }
 
 .eligibility-warnings__placeholder {
-    @include placeholder();
-}
+	@include placeholder();
 
-.eligibility-warnings__placeholder .eligibility-warnings__message-content {
-    color: $gray-light;
-    background-color: $gray-light;
-}
+	.section-header__label-text,
+	.eligibility-warnings__message {
+		color: $gray-light;
+		background-color: $gray-light;
+	}
 
-.eligibility-warnings__placeholder .eligibility-warnings__error-icon{
-    color: $gray-light;
-}
+	.gridicon {
+		color: $gray-light;
+	}
 
-.eligibility-warnings__placeholder .eligibility-warnings__message-action .button {
-    display: none;
+	.button,
+	.eligibility-warnings__confirm-box {
+		display: none;
+	}
 }
 
 .eligibility-warnings .card {
-    margin: 0;
-    display: flex;
+	margin: 0;
+}
+
+.eligibility-warnings__hold,
+.eligibility-warnings__warning,
+.eligibility-warnings__confirm-box.card {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+}
+
+.eligibility-warnings__hold,
+.eligibility-warnings__warning {
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.eligibility-warnings .gridicon {
+	color: $alert-red;
+	flex-shrink: 0;
 }
 
 .eligibility-warnings__message {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    min-height: 80px;
+	flex-grow: 1;
+	padding: 0 16px;
+
+	.eligibility-warnings__message-title {
+		font-weight: 600;
+	}
+
+	.eligibility-warnings__message-description {
+		color: $gray-text-min;
+	}
 }
 
-.eligibility-warnings__message-content {
-    flex-grow: 1;
-    margin: 0 16px;
-}
-
-.eligibility-warnings__message-description,
-.eligibility-warnings__warning-action,
-.eligibility-warnings__confirm-icon {
-    color: $gray;
-}
-
-.eligibility-warnings__error-icon {
-    color: $alert-red;
-    flex-shrink: 0;
-}
-
-.eligibility-warnings__warning-icon {
-    color: $alert-yellow;
-    flex-shrink: 0;
+.eligibility-warnings__action a {
+	.gridicons-help-outline {
+		color: $gray;
+	}
+	&:hover .gridicons-help-outline {
+		color: $blue-wordpress;
+	}
 }
 
 .eligibility-warnings__confirm-box {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-}
+	flex-wrap: wrap;
+	justify-content: center;
 
-.eligibility-warnings__confirm-text {
-    flex-grow: 1;
-    color: $gray;
-    font-style: italic;
-    flex-basis: 60%;
-    margin: 8px 16px;
-}
+	.eligibility-warnings__confirm-text {
+		color: $gray-text-min;
+		flex-basis: 60%;
+		flex-grow: 1;
+		font-style: italic;
+		padding: 8px 0;
+	}
 
-.eligibility-warnings__confirm-box .button {
-    margin-left: 16px;
+	.button {
+		margin-left: 16px;
+	}
 }
