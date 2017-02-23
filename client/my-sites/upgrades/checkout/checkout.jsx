@@ -211,7 +211,7 @@ const Checkout = React.createClass( {
 				return domainManagementList( domainName );
 			}
 
-			return `/checkout/no-site/${ receiptId }`;
+			return `/checkout/thank-you/no-site/${ receiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
@@ -237,7 +237,8 @@ const Checkout = React.createClass( {
 				}
 			}
 		} = this.props;
-		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const redirectPath = this.getCheckoutCompleteRedirectPath(),
+			{ receipt_id: receiptId } = receipt;
 
 		this.props.clearPurchases();
 
@@ -287,11 +288,9 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( receipt && receipt.receipt_id ) {
-			const receiptId = receipt.receipt_id;
-
+		if ( receiptId ) {
 			this.props.fetchReceiptCompleted( receiptId, {
-				receiptId: receiptId,
+				receiptId,
 				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
 				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
 			} );

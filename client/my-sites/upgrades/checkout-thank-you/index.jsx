@@ -109,7 +109,7 @@ const CheckoutThankYou = React.createClass( {
 			nextProps.receipt.hasLoadedFromServer &&
 			this.hasPlanOrDomainProduct( nextProps )
 		) {
-			this.props.refreshSitePlans( this.props.selectedSite.ID );
+			this.props.refreshSitePlans( this.props.selectedSite );
 		}
 	},
 
@@ -200,7 +200,7 @@ const CheckoutThankYou = React.createClass( {
 
 		const userCreatedMoment = moment( this.props.userDate ),
 			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) ),
-			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register domain' );
+			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
 		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {

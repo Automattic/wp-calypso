@@ -234,6 +234,11 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
+			'/checkout/thank-you/no-site/:receiptId',
+			upgradesController.checkoutThankYou
+		);
+
+		page(
 			'/checkout/thank-you/:site/:receiptId?',
 			controller.siteSelection,
 			upgradesController.checkoutThankYou
@@ -254,11 +259,6 @@ module.exports = function() {
 		page(
 			'/checkout/no-site',
 			upgradesController.sitelessCheckout
-		);
-
-		page(
-			'/checkout/no-site/:receiptId',
-			upgradesController.checkoutThankYou
 		);
 
 		page(
