@@ -12,7 +12,7 @@ import noop from 'lodash/noop';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSite } from 'state/sites/selectors';
-import PlanStorageButton from 'my-sites/plan-storage/button';
+import PlanStorageButton from './button';
 
 const PlanStorage = React.createClass( {
 
