@@ -1454,7 +1454,30 @@ describe( 'themes selectors', () => {
 		} );
 
 		context( 'on a Jetpack site', () => {
-			it( 'given a theme that\'s not found on WP.org, should return null', () => {
+			it( 'given a theme that\'s found on neither WP.com nor WP.org, should return null', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {}
+						}
+					},
+					'twentysixteen',
+					77203074
+				);
+
+				expect( forumUrl ).to.be.null;
+			} );
+
+			it( 'given a theme that\'s found on WP.com, should return the generic WP.com themes support forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1478,7 +1501,7 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).to.be.null;
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
 			it( 'given a theme that\'s found on WP.org, should return the correspoding WP.org theme forum URL', () => {
