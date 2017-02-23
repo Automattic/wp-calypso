@@ -36,7 +36,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	const action = processOutbound( rawAction, dispatch );
 
 	if ( null === action ) {
-		return next( action );
+		return next( rawAction );
 	}
 
 	const {
