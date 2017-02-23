@@ -89,7 +89,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade();
+		@include long-content-fade($color: lighten( $sidebar-bg-color, 5% ));
 	}
 }
 

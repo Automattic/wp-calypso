@@ -10,12 +10,12 @@
 		left: 0;
 
 	@include breakpoint( "<960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid lighten( $gray, 20% );
 		width: $sidebar-width-min;
 	}
 
 	@include breakpoint( ">960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid lighten( $gray, 20% );
 		width: $sidebar-width-max;
 	}
 
@@ -69,7 +69,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: rgba( saturate( $sidebar-text-color, 60% ), 0.6 );
+	color: lighten( $gray, 20% );
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -167,7 +167,7 @@
 		position: absolute;
 			top: 11px;
 			left: 20px;
-		fill: $gray;
+		fill: lighten( $gray, 20% );
 		height: 24px;
 		width: 24px;
 
@@ -198,7 +198,7 @@
 			top: 15px;
 			right: 19px;
 		z-index: z-index( 'icon-parent', '.sidebar__menu .noticon-external' );
-		color: $gray;
+		color: lighten( $gray, 20% );
 
 		@include breakpoint( "<660px" ) {
 			top: 9px;
@@ -274,16 +274,16 @@ a.sidebar__button {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 	&:not(.selected) {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: $sidebar-selected-color;
 
 		a {
-			color: $blue-medium;
+			// color: $blue-medium;
 
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
-					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
-					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50% );
+					rgba( $sidebar-selected-color, 0 ),
+					rgba( $sidebar-selected-color, 1 ) 50% );
 			}
 
 			&.sidebar__button {
@@ -293,7 +293,7 @@ a.sidebar__button {
 		}
 
 		.gridicon {
-			fill: $blue-medium;
+			fill: $white;
 		}
 	}
 

@@ -4,10 +4,19 @@
  */
 
 .current-site.card {
+	background: lighten( $sidebar-bg-color, 5% );
 	margin: 0;
 	padding: 0;
 	box-shadow: none;
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+
+	.site__title {
+		color: $white;
+	}
+
+	.site__domain {
+		color: $gray;
+	}
 
 	&.is-loading {
 		.site-icon {
@@ -15,7 +24,7 @@
 		}
 
 		.site__title {
-			color: darken( $gray, 20% );
+			color: $gray-dark;
 			line-height: 35px;
 		}
 
@@ -51,6 +60,7 @@
 	position: relative;
 
 	.button {
+		color: $white;
 		text-align: left;
 		padding: 16px;
 		width: 100%;
