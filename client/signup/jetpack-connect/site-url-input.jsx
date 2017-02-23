@@ -120,10 +120,10 @@ export default React.createClass( {
 						: null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
+					{ this.renderDisclaimerText() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
 						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
-					{ this.renderDisclaimerText() }
 				</Card>
 			</div>
 		);

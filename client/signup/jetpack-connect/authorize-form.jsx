@@ -626,7 +626,6 @@ const LoggedInForm = React.createClass( {
 		}
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				{ this.getDisclaimerText() }
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
@@ -634,6 +633,7 @@ const LoggedInForm = React.createClass( {
 				>
 					{ this.getButtonText() }
 				</Button>
+				{ this.getDisclaimerText() }
 			</LoggedOutFormFooter>
 
 		);
