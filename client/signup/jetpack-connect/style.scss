@@ -87,31 +87,6 @@
 	}
 }
 
-.jetpack-connect__authorize-form {
-	.jetpack-connect__authorize-form-header {
-		text-align: center;
-	}
-}
-
-.jetpack-connect__logged-in-form {
-	.jetpack-connect__logged-in-form-user-text {
-		text-align: center;
-	}
-
-	.gravatar {
-		display: block;
-		margin: 0 auto 8px auto;
-	}
-
-	.button {
-		width: 100%;
-	}
-
-	.logged-out-form__links .gridicon {
-		top: 2px;
-	}
-}
-
 .jetpack-connect__back-button {
 	margin-top: 16px;
 }
@@ -364,20 +339,6 @@
 	display: block;
 	text-align: center;
 	width: 100%;
-}
-
-.jetpack-connect__logged-in-form-loading {
-	text-align: center;
-
-	span {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		display: block;
-	}
-
-	.spinner {
-		display: inline-block;
-		margin-top: 8px;
-	}
 }
 
 .jetpack-connect__tos-link {
