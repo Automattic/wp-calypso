@@ -309,7 +309,6 @@ module.exports = function() {
 	// redirects to handle old newdash formats
 	app.use( '/sites/:site/:section', function( req, res, next ) {
 		let redirectUrl;
-		// IS THE FOLLOWING RIGHT??
 		sections = [ 'posts', 'pages', 'sharing', 'upgrade', 'checkout', 'change-theme' ];
 
 		if ( -1 === sections.indexOf( req.params.section ) ) {
