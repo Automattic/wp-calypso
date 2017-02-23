@@ -319,6 +319,11 @@ module.exports = {
 	},
 
 	domainManagementTransferToOtherUser( pageContext ) {
+		const selectedSite = sites.getSelectedSite();
+		if ( selectedSite && selectedSite.options.is_automated_transfer ) {
+			page.redirect( '/domains/manage' + ( selectedSite ? ( '/' + selectedSite.slug ) : '' ) );
+		}
+
 		setTitle(
 			i18n.translate( 'Transfer Domain' ),
 			pageContext
