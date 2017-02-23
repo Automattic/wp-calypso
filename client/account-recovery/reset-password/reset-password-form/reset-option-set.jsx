@@ -14,11 +14,11 @@ const getResetOptionDisplayString = ( optionName, translate ) => {
 	switch ( optionName ) {
 		case 'primary':
 			return translate( 'main', {
-				context: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
+				comment: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
 			} );
 		case 'secondary':
 			return translate( 'recovery', {
-				context: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
+				comment: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
 			} );
 		default:
 			return '';
@@ -54,7 +54,7 @@ const ResetOptionSet = ( props ) => {
 							{
 								components: { strong: <strong /> },
 								args: { optionName: optionDisplayName },
-								context: 'The %(optionName)s can be "main" or "recovery".',
+								comment: 'The %(optionName)s can be "main" or "recovery".',
 							}
 						) }
 					</span>
@@ -73,7 +73,7 @@ const ResetOptionSet = ( props ) => {
 							{
 								components: { strong: <strong /> },
 								args: { optionName: optionDisplayName },
-								context: 'The %(optionName)s can be "main" or "recovery".',
+								comment: 'The %(optionName)s can be "main" or "recovery".',
 							}
 						) }
 					</span>
