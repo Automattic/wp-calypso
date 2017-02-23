@@ -286,3 +286,57 @@ $autobar-height: 20px;
 		margin-right: auto;
 	}
 }
+
+.masterbar__recent-drafts.popover {
+	width: 280px;
+
+	.popover__inner {
+		overflow-y: auto;
+		text-align: left;
+		max-height: 70vh;
+
+		.async-load {
+			margin: 16px;
+			width: auto;
+		}
+	}
+}
+
+.masterbar__publish {
+	display: flex;
+
+	.async-load {
+		display: none;
+	}
+}
+
+.masterbar__toggle-drafts.button.is-borderless {
+	background: lighten( $gray, 26% );
+	border-left: 1px solid lighten( $gray, 10% );
+	color: $gray-text-min;
+	height: 36px;
+	margin: 5px 8px 5px -10px;
+	padding: 0 8px;
+	border-radius: 0 3px 3px 0;
+	position: relative;
+
+	.count {
+		border: none;
+		margin: 0;
+		font-size: 13px;
+		font-weight: 400;
+		color: $gray-dark;
+		padding: 0 4px;
+		line-height: 30px;
+	}
+}
+
+.masterbar__see-all-drafts {
+	display: block;
+	text-align: center;
+	margin: 4px 0;
+
+	.count {
+		margin-left: 8px;
+	}
+}
