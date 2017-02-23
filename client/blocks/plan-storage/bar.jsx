@@ -10,13 +10,12 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import ProgressBar from 'components/progress-bar';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
 
-class PlanStorageButton extends Component {
+class PlanStorageBar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
@@ -32,9 +31,9 @@ class PlanStorageButton extends Component {
 		const { sitePlanName, translate } = this.props;
 
 		if ( sitePlanName === 'Premium' ) {
-			return translate( 'Premium Plan', { context: 'Short plan name on storage button' } );
+			return translate( 'Premium Plan', { context: 'Short plan name on storage bar' } );
 		} else if ( sitePlanName === 'Free' ) {
-			return translate( 'Free Plan', { context: 'Short plan name on storage button' } );
+			return translate( 'Free Plan', { context: 'Short plan name on storage bar' } );
 		}
 		//This is a fallback if we add a new plan. We ideally want to add any plan levels for proper i18n.
 		return translate( '%(planName)s Plan', { args: { planName: sitePlanName } } );
@@ -55,14 +54,15 @@ class PlanStorageButton extends Component {
 			Math.round( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes * 1000 ) / 10,
 		100 );
 
-		const classes = classNames( className, 'plan-storage__button', {
+		const classes = classNames( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT
 		} );
 
 		const max = filesize( mediaStorage.max_storage_bytes );
+
 		return (
-			<Button className={ classes } onClick={ onClick }>
+			<div className={ classes } onClick={ onClick }>
 				<span className="plan-storage__plan-label">
 					{ this.getPlanTranslation() }
 				</span>
@@ -74,15 +74,17 @@ class PlanStorageButton extends Component {
 						}
 					} ) }
 				</span>
+
 				<ProgressBar
 					className="plan-storage__bar"
 					value={ percent }
 					total={ 100 }
 					compact={ true } />
+
 				{ this.props.children }
-			</Button>
+			</div>
 		);
 	}
 }
 
-export default localize( PlanStorageButton );
+export default localize( PlanStorageBar );

@@ -9,18 +9,19 @@
 	margin-left: 20px;
 }
 
-.plan-storage__button {
+.plan-storage__bar {
 	line-height: 12px;
+	display: inline-block;
 }
 
 .plan-storage__bar .progress-bar__progress {
 	background-color: $alert-green;
 }
 
-.plan-storage__button.is-warn .progress-bar__progress {
+.plan-storage__bar.is-warn .progress-bar__progress {
 	background-color: $alert-yellow;
 }
 
-.plan-storage__button.is-alert .progress-bar__progress {
+.plan-storage__bar.is-alert .progress-bar__progress {
 	background-color: $alert-red;
 }
