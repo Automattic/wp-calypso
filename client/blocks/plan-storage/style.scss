@@ -1,13 +1,27 @@
 
-.plan-storage__storage-label {
-	font-size: 11px;
-	color: $gray-text-min;
-	margin-left: 20px;
-}
-
 .plan-storage__bar {
 	line-height: 12px;
 	display: inline-block;
+	width: 100%;
+}
+
+.plan-storage__storage-label,
+.plan-storage__storage-link {
+	font-size: 11px;
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+}
+
+.plan-storage__storage-label {
+	color: $gray-dark;
+	font-weight: 500;
+	margin-right: 10px;
+}
+
+.plan-storage__storage-link {
+	float: right;
+	text-decoration: none;
 }
 
 .plan-storage__bar .progress-bar__progress {
