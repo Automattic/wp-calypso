@@ -64,7 +64,7 @@ module.exports = React.createClass( {
 
 		return (
 			<form ref="form" className={ classes }>
-				<span>{ this.props.children }</span>
+				<div>{ this.props.children }</div>
 				<input
 					type="file"
 					accept={ this.getInputAccept() }
