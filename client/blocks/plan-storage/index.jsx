@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 
@@ -14,39 +14,39 @@ import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSite } from 'state/sites/selectors';
 import PlanStorageButton from './button';
 
-const PlanStorage = React.createClass( {
+class PlanStorage extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+		mediaStorage: PropTypes.object,
+		siteId: PropTypes.number,
+		onClick: PropTypes.func
+	};
 
-	propTypes: {
-		className: React.PropTypes.string,
-		mediaStorage: React.PropTypes.object,
-		siteId: React.PropTypes.number.isRequired,
-		onClick: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			onClick: noop
-		}
-	},
+	static defaultProps = {
+		onClick: noop
+	}
 
 	render() {
-		if ( ! this.props.site || this.props.site.jetpack ) {
+		const { className, site, siteId } = this.props;
+
+		if ( ! site || site.jetpack ) {
 			return null;
 		}
-		const classes = classNames( this.props.className, 'plan-storage' );
+
 		return (
-			<div className={ classes } >
-				<QueryMediaStorage siteId={ this.props.siteId } />
+			<div className={ classNames( className, 'plan-storage' ) } >
+				<QueryMediaStorage siteId={ siteId } />
 				<PlanStorageButton
-					sitePlanName={ this.props.site.plan.product_name_short }
+					sitePlanName={ site.plan.product_name_short }
 					mediaStorage={ this.props.mediaStorage }
-					onClick={ this.props.onClick } >
+					onClick={ this.props.onClick }
+				>
 					{ this.props.children }
 				</PlanStorageButton>
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	return {
