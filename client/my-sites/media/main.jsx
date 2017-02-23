@@ -15,6 +15,8 @@ import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 
 export default React.createClass( {
 	displayName: 'Media',
@@ -28,7 +30,7 @@ export default React.createClass( {
 	getInitialState: function() {
 		return {
 			editedItem: null,
-			openedDetails: null,
+			currentDetail: null,
 		};
 	},
 
@@ -52,21 +54,21 @@ export default React.createClass( {
 		page( redirect );
 	},
 
-	openDetailsModal( item ) {
-		this.setState( { openedDetails: item } );
+	openDetailsModal() {
+		this.setState( { currentDetail: 0 } );
 	},
 
 	closeDetailsModal() {
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { editedItem: null, currentDetail: null } );
 	},
 
 	editImage() {
-		this.setState( { openedDetails: null, editedItem: this.state.openedDetails } );
+		this.setState( { currentDetail: null, editedItem: this.state.currentDetail } );
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
 		const {	resetAllImageEditorState } = imageEditorProps;
-		this.setState( { openedDetails: this.state.editedItem, editedItem: null } );
+		this.setState( { currentDetail: this.state.editedItem, editedItem: null } );
 
 		resetAllImageEditorState();
 	},
@@ -97,14 +99,17 @@ export default React.createClass( {
 
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null } );
 	},
 	restoreOriginalMedia: function( siteId, item ) {
 		if ( ! siteId || ! item ) {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null } );
+	},
+	setDetailSelectedIndex: function( index ) {
+		this.setState( { currentDetail: index } );
 	},
 
 	render: function() {
@@ -112,39 +117,44 @@ export default React.createClass( {
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ ( this.state.editedItem || this.state.openedDetails ) &&
+				{ ( this.state.editedItem !== null || this.state.currentDetail !== null) &&
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal"
 						onClose={ this.closeDetailsModal }
 					>
-					{ this.state.openedDetails &&
+					{ this.state.currentDetail !== null &&
 						<EditorMediaModalDetail
 							site={ site }
-							items={ [ this.state.openedDetails ] }
-							selectedIndex={ 0 }
+							items={ MediaLibrarySelectedStore.getAll( site.ID ) }
+							selectedIndex={ this.state.currentDetail }
 							onReturnToList={ this.closeDetailsModal }
 							onEditItem={ this.editImage }
 							onRestoreItem={ this.restoreOriginalMedia }
+							onSelectedIndexChange={ this.setDetailSelectedIndex }
 						/>
 					}
-					{ this.state.editedItem &&
+					{ this.state.editedItem !== null &&
 						<ImageEditor
 							siteId={ site && site.ID }
-							media={ this.state.editedItem }
+							media={ MediaLibrarySelectedStore.getAll( site.ID )[ this.state.editedItem ] }
 							onDone={ this.onImageEditorDone }
 							onCancel={ this.onImageEditorCancel }
 						/>
 					}
 					</Dialog>
 				}
-				<MediaLibrary
-					{ ...this.props }
-					onFilterChange={ this.onFilterChange }
-					site={ site || false }
-					single={ true }
-					onEditItem={ this.openDetailsModal }
-					containerWidth={ this.state.containerWidth } />
+				<MediaLibrarySelectedData siteId={ site && site.ID }>
+					<MediaLibrary
+						{ ...this.props }
+						onFilterChange={ this.onFilterChange }
+						site={ site || false }
+						single={ false }
+						onEditItem={ this.openDetailsModal }
+						onViewDetails={ this.openDetailsModal }
+						onDeleteItem={ () => {} }
+						containerWidth={ this.state.containerWidth } />
+				</MediaLibrarySelectedData>
 			</div>
 		);
 	}

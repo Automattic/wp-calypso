@@ -128,7 +128,9 @@ module.exports = React.createClass( {
 				onAddMedia={ this.onAddMedia }
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
-				onEditItem={ this.props.onEditItem } />
+				selectedItems={ this.props.mediaLibrarySelectedItems }
+				onDeleteItem={ this.props.onDeleteItem }
+				onViewDetails={ this.props.onViewDetails } />
 		);
 
 		if ( this.props.site ) {
