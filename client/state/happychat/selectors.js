@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, head, map } from 'lodash';
+import { map, head, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,8 +54,4 @@ export const isHappychatAvailable = createSelector(
 export const getHappychatTimeline = createSelector(
 	state => state.happychat.timeline,
 	state => map( state.happychat.timeline, 'id' )
-);
-
-export const getHappychatMessage = createSelector(
-	state => get( state, [ 'happychat', 'message' ] )
 );
