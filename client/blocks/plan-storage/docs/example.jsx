@@ -22,8 +22,10 @@ export default React.createClass( {
 	render() {
 		const plans = {
 			free: 'Free',
-			premium: 'Premium'
+			premium: 'Premium',
+			business: 'Business',
 		};
+
 		const mediaStorage = {
 			red: {
 				storage_used_bytes: 11362335981,
@@ -45,6 +47,7 @@ export default React.createClass( {
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorage siteId={ siteId } />
 				</div>
+
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
@@ -52,17 +55,29 @@ export default React.createClass( {
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
-				<div style={ { marginBottom: 16 } }>
+				<div style={ { marginBottom: 16, maxWidth: '400' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
-				<div style={ { marginBottom: 16 } }>
+
+				<div style={ { marginBottom: 16, maxWidth: '300' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
 						sitePlanName={ plans.premium }
+						mediaStorage={ mediaStorage.red }
+					/>
+				</div>
+
+				<div style={ { marginBottom: 16 } }>
+					<span style={ { fontSize: 12, color: 'grey' } }>
+						Business plans have unlimited storage, so PlanStorage will not be rendered.
+					</span>
+					<PlanStorageBar
+						siteSlug={ primarySite.slug }
+						sitePlanName={ plans.business }
 						mediaStorage={ mediaStorage.red }
 					/>
 				</div>
