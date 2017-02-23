@@ -1,5 +1,6 @@
 .editor-title {
 	position: relative;
+	top: 2px;
 
 	&.is-loading::before {
 		content: '';
