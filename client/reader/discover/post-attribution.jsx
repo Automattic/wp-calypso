@@ -62,7 +62,12 @@ class DiscoverPostAttribution extends React.Component {
 					: <Gridicon icon="arrow-right" /> }
 				<span className="discover-attribution__text">
           { translate( 'Post', { context: 'random context' } ) }&nbsp;
-					{ translate( 'Originally posted by' ) }&nbsp;
+
+          { translate( 'Some string', { context: 'This context is very long. Really long' } ) }
+
+          { translate( "This string is quite long. Really. I don't think it needs a context.", { context: 'Context' } ) }
+
+          { translate( 'Originally posted by' ) }&nbsp;
 					<a className="discover-attribution__author" target="_blank" rel="external noopener noreferrer" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>
 						{ attribution.author_name }
 					</a>&nbsp;
