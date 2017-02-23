@@ -17,7 +17,8 @@ import {
 	getCanonicalTheme,
 	themePreviewVisibility,
 	isThemeActive,
-	isInstallingTheme
+	isInstallingTheme,
+	isActivatingTheme
 } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -32,19 +33,35 @@ const ThemePreview = React.createClass( {
 		theme: React.PropTypes.object,
 		themeOptions: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
+		isInstalling: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
+	},
+
+	getInitialState() {
+		return {
+			isInstalling: false
+		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.isActivatingTheme && nextProps.isActivatingTheme ) {
+			this.props.hideThemePreview();
+		}
+		if ( ! this.props.isInstalling && nextProps.isInstalling ) {
+			this.setState( { isInstalling: true } );
+		}
 	},
 
 	onPrimaryButtonClick() {
 		const option = this.getPrimaryOption();
 		option.action && option.action( this.props.theme );
-		//this.props.hideThemePreview();
+		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 
 	onSecondaryButtonClick() {
 		const secondary = this.getSecondaryOption();
 		secondary.action && secondary.action( this.props.theme );
-		//this.props.hideThemePreview();
+		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 
 	getPrimaryOption() {
@@ -81,7 +98,8 @@ const ThemePreview = React.createClass( {
 	},
 
 	render() {
-		const { themeId, isInstalling } = this.props;
+		const { themeId } = this.props;
+		const { isInstalling } = this.state;
 		if ( ! themeId ) {
 			return null;
 		}
@@ -127,6 +145,7 @@ export default connect(
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
+			isActivating: isActivatingTheme( state, siteId ),
 			previewUrl: theme && theme.demo_uri ? getPreviewUrl( theme ) : null,
 			options: [
 				'activate',
