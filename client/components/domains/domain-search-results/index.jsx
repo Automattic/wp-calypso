@@ -16,6 +16,7 @@ import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestio
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
+import { getTld } from 'lib/domains';
 
 var DomainSearchResults = React.createClass( {
 	propTypes: {
@@ -93,7 +94,7 @@ var DomainSearchResults = React.createClass( {
 			}
 
 			const domainUnavailableMessage = this.noAvailabilityInfoForDomain()
-				? this.translate( '%(domain)s might be taken.', { args: { domain } } )
+				? this.translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
 				: this.translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
