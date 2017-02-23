@@ -388,9 +388,11 @@ export default React.createClass( {
 							needsVerification={ this.state.needsVerification }
 						/>
 						{ this.canPublishPost() &&
-							<button
+							<Button
+								primary
+								compact
 								ref="schedulePost"
-								className="editor-ground-control__time-button button"
+								className="editor-ground-control__time-button"
 								onClick={ this.toggleSchedulePopover }
 								onMouseEnter={ this.showDateTooltip }
 								onMouseLeave={ this.hideDateTooltip }
@@ -408,7 +410,7 @@ export default React.createClass( {
 										: this.translate( 'Choose Date' )
 									}
 								</span>
-							</button>
+							</Button>
 						}
 						{ this.renderDateTooltip() }
 					</div>

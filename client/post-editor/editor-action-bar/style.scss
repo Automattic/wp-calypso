@@ -9,6 +9,12 @@
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 8px;
 	}
+
+	.editor-status-label {
+		position: fixed;
+		bottom: 12px;
+		left: 16px;
+	}
 }
 
 .editor-action-bar__cell {

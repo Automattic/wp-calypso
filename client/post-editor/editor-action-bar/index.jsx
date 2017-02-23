@@ -10,7 +10,6 @@ import Gridicon from 'gridicons';
 import AsyncLoad from 'components/async-load';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorSticky from 'post-editor/editor-sticky';
-import EditorVisibility from 'post-editor/editor-visibility';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
@@ -37,31 +36,6 @@ export default React.createClass( {
 		};
 	},
 
-	renderPostVisibility() {
-		if ( ! this.props.post ) {
-			return;
-		}
-
-		const { status, password, type } = this.props.post || {};
-		const isPrivateSite = this.props.site && this.props.site.is_private;
-		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
-		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
-		const props = {
-			visibility: utils.getVisibility( this.props.post ),
-			onPrivatePublish: this.props.onPrivatePublish,
-			isPrivateSite,
-			type,
-			status,
-			password,
-			savedStatus,
-			savedPassword
-		};
-
-		return (
-			<EditorVisibility { ...props } />
-		);
-	},
-
 	render() {
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
 
@@ -85,7 +59,6 @@ export default React.createClass( {
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
-					{ this.renderPostVisibility() }
 					<EditorDeletePost
 						post={ this.props.post }
 						onTrashingPost={ this.props.onTrashingPost }

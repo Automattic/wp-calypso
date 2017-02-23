@@ -62,6 +62,11 @@
 	margin: 0 16px 0 8px;
 }
 
+.editor-ground-control__toggle-sidebar.button.is-borderless,
+.editor-ground-control__preview-button.button.is-borderless {
+	font-size: 13px;
+}
+
 .editor-ground-control__publish-combo {
 	flex-grow: 1;
 	display: flex;

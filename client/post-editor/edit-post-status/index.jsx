@@ -25,6 +25,8 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import EditorVisibility from 'post-editor/editor-visibility';
+import utils from 'lib/posts/utils';
 
 class EditPostStatus extends Component {
 
@@ -179,11 +181,37 @@ class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				}
+				{ this.renderPostVisibility() }
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
 				/>
 			</div>
+		);
+	}
+
+	renderPostVisibility() {
+		if ( ! this.props.post ) {
+			return;
+		}
+
+		const { status, password, type } = this.props.post || {};
+		const isPrivateSite = this.props.site && this.props.site.is_private;
+		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
+		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
+		const props = {
+			visibility: utils.getVisibility( this.props.post ),
+			onPrivatePublish: this.props.onPrivatePublish,
+			isPrivateSite,
+			type,
+			status,
+			password,
+			savedStatus,
+			savedPassword
+		};
+
+		return (
+			<EditorVisibility { ...props } />
 		);
 	}
 
