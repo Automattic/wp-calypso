@@ -226,8 +226,7 @@ $z-layers: (
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
 	'icon-parent': (
-		'.sidebar__menu .gridicon.gridicons-external': 1,
-		'.sidebar__menu .noticon-external': 1
+		'.sidebar__menu .gridicon.gridicons-external': 1
 	),
 	'screen-reader-text-parent': (
 		'.screen-reader-text:focus': 100000

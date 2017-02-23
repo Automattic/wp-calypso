@@ -192,20 +192,6 @@
 			}
 		}
 	}
-
-	.noticon-external {
-		position: absolute;
-			top: 15px;
-			right: 19px;
-		z-index: z-index( 'icon-parent', '.sidebar__menu .noticon-external' );
-		color: $gray;
-
-		@include breakpoint( "<660px" ) {
-			top: 9px;
-			right: 16px;
-			font-size: 32px;
-		}
-	}
 }
 
 a.sidebar__button {
