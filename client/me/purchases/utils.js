@@ -76,6 +76,7 @@ function enrichedSurveyData( surveyData, moment, site, purchase ) {
 
 	if ( purchaseStartDate ) {
 		enrichment.daysSincePurchase = moment.diff( purchaseStartDate, 'days', true );
+		enrichment.newOrRenewal = moment.diff( purchaseStartDate, 'years', true ) > 1.0 ? 'renewal' : 'new purchase';
 	}
 
 	if ( siteStartDate ) {
