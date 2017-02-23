@@ -5,9 +5,10 @@ import {
 	compact,
 	get,
 	head,
+	isEqual,
 	sortBy,
 	toPairs,
-	union,
+	unionWith,
 } from 'lodash';
 
 /**
@@ -69,8 +70,8 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => JSON.st
  * @returns {Object<String, Object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
-	failures: union( list.failures, compact( [ item.onFailure ] ) ),
-	successes: union( list.successes, compact( [ item.onSuccess ] ) ),
+	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),
+	successes: unionWith( list.successes, compact( [ item.onSuccess ] ), isEqual ),
 } );
 
 /**
@@ -129,8 +130,8 @@ export const applyDuplicatesHandlers = inboundData => {
 	requestQueue.delete( key );
 
 	const responders = {
-		failures: union( inboundData.failures || [], queued.failures ),
-		successes: union( inboundData.successes || [], queued.successes ),
+		failures: unionWith( inboundData.failures || [], queued.failures, isEqual ),
+		successes: unionWith( inboundData.successes || [], queued.successes, isEqual ),
 	};
 
 	return { ...inboundData, ...responders };
