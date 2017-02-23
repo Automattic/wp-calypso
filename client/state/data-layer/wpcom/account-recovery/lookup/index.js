@@ -9,16 +9,37 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
 
-export const fromApi = data => ( [
-	{
-		email: data.primary_email,
-		sms: data.primary_sms,
-	},
-	{
-		email: data.secondary_email,
-		sms: data.secondary_sms,
-	},
-] );
+const validate = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => [
+	primary_email,
+	primary_sms,
+	secondary_email,
+	secondary_sms,
+].every( String );
+
+export const fromApi = data => (
+	validate( data ) ? [
+		{
+			email: data.primary_email,
+			sms: data.primary_sms,
+			name: 'primary',
+		},
+		{
+			email: data.secondary_email,
+			sms: data.secondary_sms,
+			name: 'secondary',
+		},
+	] : [
+		{
+			email: '',
+			sms: '',
+			name: 'primary',
+		},
+		{
+			email: '',
+			sms: '',
+			name: 'secondary',
+		},
+	] );
 
 export const requestResetOptions = ( { dispatch }, { userData } ) => (
 	wpcom.req.get( {
