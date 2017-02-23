@@ -2,17 +2,18 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
-
 import {
-	timezonesRequestSuccess,
-	timezonesReceive,
-} from 'state/timezones/actions';
+	TIMEZONES_RECEIVE,
+	TIMEZONES_REQUEST_SUCCESS,
+} from 'state/action-types';
+
+import { requestTimezones } from 'state/timezones/actions';
 
 const WP_REST_API = {
 	hostname: 'https://public-api.wordpress.com',
@@ -26,8 +27,7 @@ const WP_REST_API = {
 import { fetchTimezones } from '../';
 
 describe( 'request', () => {
-	let dispatch;
-	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
+	const nextSpy = sinon.spy();
 
 	describe( 'successful requests', () => {
 		useNock( ( nock ) => {
@@ -61,16 +61,20 @@ describe( 'request', () => {
 				} );
 		} );
 
-		it( 'should dispatch SUCCESS action when request completes', () => {
-			const action = timezonesRequestSuccess();
+		it( 'should dispatch SUCCESS action when request completes', done => {
+			const dispatch = sinon.spy( action => {
+				if ( action.type === TIMEZONES_REQUEST_SUCCESS ) {
+					expect( dispatch ).to.have.been.calledWith( {
+						type: TIMEZONES_REQUEST_SUCCESS
+					} );
+					done();
+				}
+			} );
 
-			return fetchTimezones( { dispatch } )
-				.then( () => (
-					expect( dispatch ).to.have.been.calledWith( action )
-				) );
+			fetchTimezones( { dispatch }, requestTimezones(), nextSpy, );
 		} );
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
+		it( 'should dispatch RECEIVE action when request completes', done => {
 			const responseData = {
 				rawOffsets: {
 					'UTC+0': 'UTC',
@@ -97,12 +101,17 @@ describe( 'request', () => {
 				},
 			};
 
-			const action = timezonesReceive( responseData );
+			const dispatch = sinon.spy( action => {
+				if ( action.type === TIMEZONES_RECEIVE ) {
+					expect( dispatch ).to.have.been.calledWith( {
+						type: TIMEZONES_RECEIVE,
+						...responseData,
+					} );
+					done();
+				}
+			} );
 
-			return fetchTimezones( { dispatch } )
-				.then( () => (
-					expect( dispatch ).to.have.been.calledWith( action )
-				) );
+			fetchTimezones( { dispatch }, requestTimezones(), nextSpy, );
 		} );
 	} );
 } );
