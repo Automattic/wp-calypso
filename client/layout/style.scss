@@ -119,7 +119,7 @@
 
 // site selector in the sidebar
 .layout__secondary .site-selector {
-	background: lighten( $gray, 30% );
+	// background: lighten( $gray, 30% );
 	border-right: 1px solid lighten( $gray, 25% );
 	position: fixed;
 		top: 47px;
@@ -132,7 +132,7 @@
 	pointer-events: none;
 
 	.search {
-		border-bottom: 1px solid lighten( $gray, 20% );
+		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
 	}
 
 	.site,
@@ -140,7 +140,7 @@
 		.site__title,
 		.site__domain {
 			&::after {
-				@include long-content-fade( $color: lighten( $gray, 30% ) );
+				@include long-content-fade( $color: $sidebar-bg-color );
 			}
 		}
 	}
@@ -152,7 +152,7 @@
 	}
 
 	.site-selector__recent {
-		border-bottom-color: lighten( $gray, 20% );
+		border-bottom-color: darken( $sidebar-bg-color, 10% );
 	}
 }
 
