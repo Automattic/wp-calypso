@@ -42,7 +42,7 @@ module.exports = React.createClass( {
 		if ( this.props.isWpcom ) {
 			return this.getWpcomFilteredSections();
 		}
-		
+
 		return [
 			{
 				key: 'description',
@@ -142,7 +142,7 @@ module.exports = React.createClass( {
 	},
 
 	renderReadMore: function() {
-		if ( this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
+		if ( this.props.isWpcom || this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
 			return null;
 		}
 		const button = (
@@ -164,7 +164,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const contentClasses = classNames( 'plugin-sections__content', { trimmed: ! this.state.readMore } );
+		const contentClasses = classNames(
+			'plugin-sections__content',
+			{ trimmed: ! this.props.isWpcom && ! this.state.readMore }
+		);
 
 		// Defensively check if this plugin has sections. If not, don't render anything.
 		if ( ! this.props.plugin || ! this.props.plugin.sections || ! this.getAvailableSections() ) {
