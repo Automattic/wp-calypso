@@ -30,9 +30,14 @@ class PlanStorageBar extends Component {
 		const {
 			className,
 			mediaStorage,
+			sitePlanName,
 			siteSlug,
 			translate,
 		} = this.props;
+
+		if ( sitePlanName === 'Business' ) {
+			return null;
+		}
 
 		if ( ! mediaStorage || mediaStorage.max_storage_bytes === -1 ) {
 			return null;
