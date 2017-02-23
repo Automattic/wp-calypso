@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,12 +22,14 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import SectionHeader from 'components/section-header';
+import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId } = props;
+	const { followList, isJetpack, siteId, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let tagsList;
@@ -48,6 +51,8 @@ const StatsInsights = ( props ) => {
 			<StatsNavigation section="insights" />
 			<div>
 				<PostingActivity />
+				<SectionHeader label={ translate( 'All Time Views' ) } />
+				<StatsViews />
 				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">
@@ -96,5 +101,6 @@ const connectComponent = connect(
 );
 
 export default flowRight(
-	connectComponent
+	connectComponent,
+	localize,
 )( StatsInsights );
