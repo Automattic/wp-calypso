@@ -546,17 +546,62 @@ function wpEditImage( editor ) {
 		}
 	} );
 
+	editor.on( 'PastePostProcess', function( event ) {
+		var selectedNode = editor.selection.getNode(),
+			c, cl, child, computedStyle;
+
+		// Test paste within caption
+		if ( ! editor.dom.getParent( selectedNode, 'div.mceTemp' ) ) {
+			return;
+		}
+
+		// Avoid paste in new paragraph behavior for inline node types
+		for ( c = 0, cl = event.node.children.length; c < cl; c++ ) {
+			child = event.node.children[ c ];
+			if ( 'getComputedStyle' in window ) {
+				computedStyle = window.getComputedStyle( child );
+			} else {
+				computedStyle = child.currentStyle;
+			}
+
+			if ( 'block' === computedStyle.display ) {
+				return;
+			}
+		}
+
+		// If entire element selected, change selection to contents to avoid
+		// accidental removal
+		const startContainer = editor.selection.getRng().startContainer;
+		if ( editor.dom.hasClass( startContainer, 'wp-caption' ) ) {
+			editor.selection.select( selectedNode, true );
+		}
+
+		// For inline text nodes, recreate default TinyMCE paste behavior with
+		// custom data value for detection in `mceInsertContent` handler
+		//
+		// See: https://github.com/tinymce/tinymce/blob/e35d1de/js/tinymce/plugins/paste/classes/Clipboard.js#L69-L71
+		event.preventDefault();
+		editor.insertContent( event.node.innerHTML, {
+			merge: editor.settings.paste_merge_formats !== false,
+			data: {
+				inline: true,
+				paste: true
+			}
+		} );
+	} );
+
 	editor.on( 'BeforeExecCommand', function( event ) {
-		var node, p, DL, align, replacement,
+		var node, p, DL, align, replacement, caption,
 			cmd = event.command,
 			dom = editor.dom;
 
 		if ( cmd === 'mceInsertContent' ) {
 			// When inserting content, if the caret is inside a caption create new paragraph under
 			// and move the caret there
-			if ( node = dom.getParent( editor.selection.getNode(), 'div.mceTemp' ) ) { //eslint-disable-line no-cond-assign
+			caption = dom.getParent( editor.selection.getNode(), 'div.mceTemp' );
+			if ( caption && ! ( event.value && event.value.data && event.value.data.inline ) ) {
 				p = dom.create( 'p' );
-				dom.insertAfter( p, node );
+				dom.insertAfter( p, caption );
 				editor.selection.setCursorLocation( p, 0 );
 				editor.nodeChanged();
 			}
