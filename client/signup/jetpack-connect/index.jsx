@@ -70,6 +70,7 @@ const JetpackConnectMain = React.createClass( {
 	getInitialState() {
 		return {
 			currentUrl: '',
+			waitingForSites: false
 		};
 	},
 
@@ -108,7 +109,7 @@ const JetpackConnectMain = React.createClass( {
 			jetpack_url: this.state.currentUrl
 		} );
 		if ( this.props.isRequestingSites ) {
-			this.waitingForSites = true;
+			this.setState( { waitingForSites: true } );
 		} else {
 			this.props.checkUrl(
 				this.state.currentUrl,
@@ -156,8 +157,8 @@ const JetpackConnectMain = React.createClass( {
 			return this.props.goToPlans( this.state.currentUrl );
 		}
 
-		if ( this.waitingForSites && ! this.props.isRequestingSites ) {
-			this.waitingForSites = false;
+		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
+			this.setState( { waitingForSites: false } );
 			this.props.checkUrl(
 				this.state.currentUrl,
 				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
@@ -323,7 +324,7 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.waitingForSites }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
 					isInstall={ this.isInstall() } />
 			</Card>
 		);
