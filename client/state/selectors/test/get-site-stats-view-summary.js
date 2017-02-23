@@ -28,7 +28,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 					items: {
 						2916284: {
 							statsVisits: {
-								'[["num",-1],["stat_fields","views"]]': {
+								'[["quantity",-1],["stat_fields","views"]]': {
 									data: [],
 									fields: [ 'period', 'views' ],
 									unit: 'day'
@@ -43,14 +43,14 @@ describe( 'getSiteStatsViewSummary()', () => {
 		expect( data ).to.eql( {} );
 	} );
 
-	it( 'should return an empty object if data is empty', () => {
+	it( 'should return a parsed object if data is present', () => {
 		const data = getSiteStatsViewSummary( {
 			stats: {
 				lists: {
 					items: {
 						2916284: {
 							statsVisits: {
-								'[["num",-1],["stat_fields","views"]]': {
+								'[["quantity",-1],["stat_fields","views"]]': {
 									data: [
 										[ '2014-01-01', 4 ],
 										[ '2014-01-02', 4 ],
@@ -83,7 +83,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2015: {
 				0: {
 					total: 10,
-					average: 0.32,
+					average: 0,
 					daysInMonth: 31,
 					data: [
 						[ '2015-01-01', 10 ]
