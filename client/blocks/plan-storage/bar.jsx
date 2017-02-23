@@ -27,18 +27,6 @@ class PlanStorageBar extends Component {
 		onClick: noop
 	};
 
-	getPlanTranslation() {
-		const { sitePlanName, translate } = this.props;
-
-		if ( sitePlanName === 'Premium' ) {
-			return translate( 'Premium Plan', { context: 'Short plan name on storage bar' } );
-		} else if ( sitePlanName === 'Free' ) {
-			return translate( 'Free Plan', { context: 'Short plan name on storage bar' } );
-		}
-		//This is a fallback if we add a new plan. We ideally want to add any plan levels for proper i18n.
-		return translate( '%(planName)s Plan', { args: { planName: sitePlanName } } );
-	}
-
 	render() {
 		const {
 			className,
@@ -63,9 +51,6 @@ class PlanStorageBar extends Component {
 
 		return (
 			<div className={ classes } onClick={ onClick }>
-				<span className="plan-storage__plan-label">
-					{ this.getPlanTranslation() }
-				</span>
 				<span className="plan-storage__storage-label" >
 					{ translate( '%(percent)f%% of %(max)s used', {
 						args: {
