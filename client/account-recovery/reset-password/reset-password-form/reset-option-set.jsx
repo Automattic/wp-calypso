@@ -10,6 +10,17 @@ import { localize } from 'i18n-calypso';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
+const getResetOptionDisplayString = ( optionName, translate ) => {
+	switch ( optionName ) {
+		case 'primary':
+			return translate( 'main' );
+		case 'secondary':
+			return translate( 'recovery' );
+		default:
+			return '';
+	}
+};
+
 const ResetOptionSet = ( props ) => {
 	const {
 		email,
@@ -20,8 +31,9 @@ const ResetOptionSet = ( props ) => {
 		selectedResetOption,
 	} = props;
 
-	const emailFieldValue = name + '-email';
-	const smsFieldValue = name + '-sms';
+	const emailFieldValue = name + '_email';
+	const smsFieldValue = name + '_sms';
+	const optionDisplayName = getResetOptionDisplayString( name, translate );
 
 	return (
 		<div>
@@ -34,8 +46,11 @@ const ResetOptionSet = ( props ) => {
 						onChange={ onOptionChanged } />
 					<span>
 						{ translate(
-							'Email a reset link to {{strong}}your main email address{{/strong}}',
-							{ components: { strong: <strong /> } }
+							'Email a reset link to {{strong}}your %(optionName)s email address{{/strong}}',
+							{
+								components: { strong: <strong /> },
+								args: { optionName: optionDisplayName },
+							}
 						) }
 					</span>
 				</FormLabel> )
@@ -49,8 +64,11 @@ const ResetOptionSet = ( props ) => {
 						onChange={ onOptionChanged } />
 					<span>
 						{ translate(
-							'Send a reset code to {{strong}}your phone{{/strong}}',
-							{ components: { strong: <strong /> } }
+							'Send a reset code to {{strong}}your %(optionName)s phone{{/strong}}',
+							{
+								components: { strong: <strong /> },
+								args: { optionName: optionDisplayName },
+							}
 						) }
 					</span>
 				</FormLabel> )
