@@ -1,123 +1,23 @@
 /**
  * External dependencies
  */
-import isEmpty from 'lodash/isEmpty';
-import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import buildConnection from 'lib/happychat/connection';
 import {
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_SET_AVAILABLE,
-	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_RECEIVE_TRANSCRIPT
+	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_CONNECTION_OPEN,
+	HAPPYCHAT_TRANSCRIPT_REQUEST
 } from 'state/action-types';
-import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 
-const debug = require( 'debug' )( 'calypso:happychat:actions' );
+export const connectChat = () => ( { type: HAPPYCHAT_CONNECTION_OPEN } );
 
-// Promise based interface for wpcom.request
-const request = ( ... args ) => new Promise( ( resolve, reject ) => {
-	wpcom.request( ... args, ( error, response ) => {
-		if ( error ) {
-			return reject( error );
-		}
-		resolve( response );
-	} );
+export const updateChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
+
+export const sendChatMessage = message => ( {
+	type: HAPPYCHAT_SEND_MESSAGE, message
 } );
 
-const sign = ( payload ) => request( {
-	method: 'POST',
-	path: '/jwt/sign',
-	body: { payload: JSON.stringify( payload ) }
-} );
-
-const startSession = () => request( {
-	method: 'POST',
-	path: '/happychat/session' }
-);
-
-const connection = buildConnection();
-
-const setHappychatChatStatus = status => ( {
-	type: HAPPYCHAT_SET_CHAT_STATUS, status
-} );
-
-const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
-const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
-const setChatMessage = message => {
-	if ( isEmpty( message ) ) {
-		connection.notTyping();
-	}
-	return { type: HAPPYCHAT_SET_MESSAGE, message };
-};
-const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
-
-const clearChatMessage = () => setChatMessage( '' );
-
-const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
-const receiveChatTranscript = ( messages, timestamp ) => ( {
-	type: HAPPYCHAT_RECEIVE_TRANSCRIPT, messages, timestamp
-} );
-const sendTyping = throttle( message => {
-	connection.typing( message );
-}, 1000, { leading: true, trailing: false } );
-
-export const requestTranscript = () => ( dispatch, getState ) => {
-	const timestamp = getHappychatTranscriptTimestamp( getState() );
-	debug( 'time to get the transcript', timestamp );
-	connection.transcript( timestamp ).then(
-		result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
-		e => debug( 'failed to get transcript', e )
-	);
-};
-
-/**
- * Opens Happychat Socket.IO client connection.
- * @return {Thunk} Action thunk
- */
-export const connectChat = () => ( dispatch, getState ) => {
-	const state = getState();
-	const user = getCurrentUser( state );
-
-	// if chat is already connected then do nothing
-	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
-		return;
-	}
-	dispatch( setChatConnecting() );
-	// create new session id and get signed identity data for authenticating
-	startSession()
-	.then( ( { session_id } ) => sign( { user, session_id } ) )
-	.then( ( { jwt } ) => connection.open( user.ID, jwt ) )
-	.then(
-		() => {
-			dispatch( setChatConnected() );
-			dispatch( requestTranscript() );
-			connection
-			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
-			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept', isAvailable => dispatch( setHappychatAvailable( isAvailable ) ) );
-		},
-		e => debug( 'failed to start happychat session', e, e.stack )
-	);
-};
-
-export const updateChatMessage = message => dispatch => {
-	dispatch( setChatMessage( message ) );
-	if ( ! isEmpty( message ) ) {
-		sendTyping( message );
-	}
-};
-
-export const sendChatMessage = message => dispatch => {
-	debug( 'sending message', message );
-	dispatch( clearChatMessage() );
-	connection.send( message );
-};
+export const requestTranscript = () => ( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
