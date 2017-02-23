@@ -8,6 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -370,11 +371,18 @@ module.exports = function() {
 			}
 		} );
 
-	app.get( '/browsehappy', function( request, response ) {
-		response.status( 200 ).render( 'browsehappy.jade', {
-			urls: generateStaticUrls( request )
+	app.get( '/browsehappy', setUpRoute, function( req, res, next ) {
+		const wpcomRe = /^https?:\/\/[A-z_-]+\.wordpress\.com$/;
+		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
+		const isWpcom = wpcomRe.test( primaryBlogUrl );
+		req.context = Object.assign( {}, req.context, {
+			template: 'browsehappy.jade',
+			dashboardUrl: isWpcom
+				? primaryBlogUrl + '/wp-admin'
+				: 'https://dashboard.wordpress.com/wp-admin/'
 		} );
-	} );
+		next();
+	}, serverRender );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
 	app.get( '*', render404 );
