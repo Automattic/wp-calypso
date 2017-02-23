@@ -1,18 +1,6 @@
 .jetpack-connect__main {
 	max-width: 400px;
 
-	.logged-out-form__links {
-		max-width: 100%;
-
-		.logged-out-form__link-item {
-			.gridicon {
-				position: relative;
-				top: 4px;
-			}
-		}
-
-	}
-
 	.step-header {
 		margin-bottom: 16px;
 	}
@@ -25,20 +13,6 @@
 
 	.button.is-primary {
 		width: 320px;
-	}
-}
-
-.jetpack-connect__main-error {
-	.logged-out-form__links {
-		margin-top: 15px;
-		text-align: center;
-
-		.logged-out-form__link-item {
-			.gridicon {
-				position: relative;
-				top: 4px;
-			}
-		}
 	}
 }
 
@@ -84,31 +58,6 @@
 		width: 100%;
 		margin-top: 16px;
 		word-wrap: nowrap;
-	}
-}
-
-.jetpack-connect__authorize-form {
-	.jetpack-connect__authorize-form-header {
-		text-align: center;
-	}
-}
-
-.jetpack-connect__logged-in-form {
-	.jetpack-connect__logged-in-form-user-text {
-		text-align: center;
-	}
-
-	.gravatar {
-		display: block;
-		margin: 0 auto 8px auto;
-	}
-
-	.button {
-		width: 100%;
-	}
-
-	.logged-out-form__links .gridicon {
-		top: 2px;
 	}
 }
 
@@ -364,20 +313,6 @@
 	display: block;
 	text-align: center;
 	width: 100%;
-}
-
-.jetpack-connect__logged-in-form-loading {
-	text-align: center;
-
-	span {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		display: block;
-	}
-
-	.spinner {
-		display: inline-block;
-		margin-top: 8px;
-	}
 }
 
 .jetpack-connect__tos-link {
