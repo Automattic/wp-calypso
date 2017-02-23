@@ -27,7 +27,7 @@ media storage limits are fetched.
 #### Usage:
 
 ```javascript
-import PlanStorageButton from 'blocks/plan-storage/button';
+import PlanStorageButton from 'blocks/plan-storage/bar';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 
